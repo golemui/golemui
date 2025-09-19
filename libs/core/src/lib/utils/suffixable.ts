@@ -1,4 +1,4 @@
-// TODO: Make suffixable also take the available state suffixes that can be used
+// TODO: add vitest type tests
 type Suffixable<T, K extends keyof T, TSuffixes extends string> = {
   [P in keyof T as P extends K ? never : P]: T[P];
 } & {
