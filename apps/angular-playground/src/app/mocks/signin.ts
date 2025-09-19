@@ -1,6 +1,6 @@
-import * as Core from '@formforge/core';
+import { defineForm } from '@formforge/core';
 
-export const signin: Core.Form = {
+export const signin = defineForm({
   states: {
     register: '$.registerMode === true',
   },
@@ -14,7 +14,7 @@ export const signin: Core.Form = {
         kind: 'control',
         widget: 'textinput',
         label: 'Email',
-        'label.aaa': 'Email',
+        'label.register': 'Email',
         path: 'user.email',
         required: true,
       },
@@ -47,7 +47,6 @@ export const signin: Core.Form = {
         widget: 'button',
         label: 'Login',
         'label.register': 'Register',
-        'label.something': 'string',
         on: {
           click: 'login',
           'click.register': 'register',
@@ -55,4 +54,4 @@ export const signin: Core.Form = {
       },
     ],
   },
-};
+});

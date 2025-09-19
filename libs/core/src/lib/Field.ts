@@ -37,12 +37,15 @@ export type FieldWidget = string;
  */
 type EventExpression = string;
 
-type On = AllSuffixable<{
-  load?: EventExpression;
-  click?: EventExpression;
-  change?: EventExpression;
-  //[k: string]: any;
-}>;
+type On<StateKeys extends UiState = never> = AllSuffixable<
+  {
+    load?: EventExpression;
+    click?: EventExpression;
+    change?: EventExpression;
+    //[k: string]: any;
+  },
+  StateKeys
+>;
 
 export type BaseField = {
   //kind: 'field' | 'button' | 'control' | 'layout';
@@ -55,34 +58,52 @@ export type BaseField = {
   //[k: string]: any;
 };
 
-export type Field = SomeSuffixable<
+export type Field<StateKeys extends UiState = never> = SomeSuffixable<
   BaseField & { kind: 'field' },
-  'enabled' | 'required'
+  'enabled' | 'required',
+  StateKeys
 >;
 
-export type ButtonField = SomeSuffixable<
-  BaseField & { kind: 'button'; label: string; on?: On },
-  'enabled' | 'required' | 'label'
+export type ButtonField<StateKeys extends UiState = never> = SomeSuffixable<
+  BaseField & { kind: 'button'; label: string; on?: On<StateKeys> },
+  'enabled' | 'required' | 'label',
+  StateKeys
 >;
 
-export type ControlField<T> = SomeSuffixable<
+export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
   BaseField & {
     kind: 'control';
     path: JsonPath;
     label?: ReactiveExpression | string;
-    on?: On;
+    on?: On<StateKeys>;
     defaultValue?: T;
     validators?: Record<string, any>;
   },
-  'enabled' | 'required' | 'label' | 'validators'
+  'enabled' | 'required' | 'label' | 'validators',
+  StateKeys
 >;
 
-export type LayoutField = SomeSuffixable<
-  BaseField & { kind: 'layout'; children: FormField[] },
-  'enabled' | 'required'
+export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
+  BaseField & {
+    kind: 'layout';
+    // TODO: this should be FormField, but types cannot reference themselves. Keep in sync!
+    children: (
+      | Field<StateKeys>
+      | ControlField<any, StateKeys>
+      | LayoutField<StateKeys>
+      | ButtonField<StateKeys>
+    )[];
+  },
+  'enabled' | 'required',
+  StateKeys
 >;
 
-export type FormField = Field | ControlField<any> | LayoutField | ButtonField;
+// TODO: when updating, update LayoutField['children'] too!
+export type FormField<StateKeys extends UiState = never> =
+  | Field<StateKeys>
+  | ControlField<any, StateKeys>
+  | LayoutField<StateKeys>
+  | ButtonField<StateKeys>;
 
 // --------------------------------
 //

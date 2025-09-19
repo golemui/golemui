@@ -1,21 +1,22 @@
 // TODO: Make suffixable also take the available state suffixes that can be used
-type Suffixable<T, K extends keyof T> = {
+type Suffixable<T, K extends keyof T, TSuffixes extends string> = {
   [P in keyof T as P extends K ? never : P]: T[P];
 } & {
   [P in K as P]: T[P];
 } & {
-  [P in K as `${string & P}.${string}`]: T[P];
+  [P in K as `${string & P}.${TSuffixes}`]: T[P];
 };
 
 export type SomeSuffixable<
   T extends Record<string, any>,
-  P extends Partial<keyof T>
-> = Suffixable<T, P>;
+  P extends Partial<keyof T>,
+  TSuffixes extends string = string
+> = Suffixable<T, P, TSuffixes>;
 
-export type AllSuffixable<T extends Record<string, any>> = Suffixable<
-  T,
-  keyof T
->;
+export type AllSuffixable<
+  T extends Record<string, any>,
+  TSuffixes extends string
+> = Suffixable<T, keyof T, TSuffixes>;
 
 /**
  * Takes a type T and an exclusion set E
@@ -24,5 +25,6 @@ export type AllSuffixable<T extends Record<string, any>> = Suffixable<
  */
 export type AllSuffixableExcept<
   T extends Record<string, any>,
-  E extends keyof T
-> = Suffixable<T, Exclude<keyof T, E>>;
+  E extends keyof T,
+  TSuffixes extends string
+> = Suffixable<T, Exclude<keyof T, E>, TSuffixes>;
