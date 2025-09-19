@@ -1,0 +1,15 @@
+/**
+ * The UI state name.
+ * To be used with includeIn, excludeFrom and composite property names `{ "label.success": "Message sent successfully", "label.error": "An error occurred" }`
+ */
+export type UiState = string;
+
+/**
+ * A ReactiveExpression is an expression that is evaluated and then substituted by the produced value.
+ */
+export type ReactiveExpression = string;
+
+/**
+ * The path to a json object
+ */
+export type JsonPath = string;
