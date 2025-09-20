@@ -12,4 +12,9 @@ export type ReactiveExpression = string;
 /**
  * The path to a json object
  */
-export type JsonPath = string;
+export type DotPath = string;
+
+/**
+ * The components uid identifier
+ */
+export type Uid = string;

@@ -1,5 +1,5 @@
 import * as z from 'zod/mini';
-import { JsonPath, ReactiveExpression, UiState } from './shared';
+import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 
 // --------------------------------
@@ -7,6 +7,13 @@ import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 // Types
 //
 // --------------------------------
+
+export type Flags = {
+  hidden?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  dirty?: boolean;
+};
 
 export type FieldWidget = string;
 // export type FieldWidget =
@@ -49,7 +56,7 @@ type On<StateKeys extends UiState = never> = AllSuffixable<
 
 export type BaseField = {
   //kind: 'field' | 'button' | 'control' | 'layout';
-  uid: string;
+  uid: Uid;
   widget: FieldWidget;
   enabled?: boolean | { when: ReactiveExpression };
   required?: boolean | { when: ReactiveExpression };
@@ -73,7 +80,7 @@ export type ButtonField<StateKeys extends UiState = never> = SomeSuffixable<
 export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
   BaseField & {
     kind: 'control';
-    path: JsonPath;
+    path: DotPath;
     label?: ReactiveExpression | string;
     on?: On<StateKeys>;
     defaultValue?: T;
