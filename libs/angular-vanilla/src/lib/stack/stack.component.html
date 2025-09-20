@@ -1,0 +1,5 @@
+<div class="field">
+  @for (child of field.children; track child.uid) {
+    <ng-container ffField [field]="child" />
+  }
+</div>

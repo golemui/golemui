@@ -1,39 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import * as Core from '@formforge/core';
-import * as Mocks from '../../mocks/signin';
+import { Component, inject } from '@angular/core';
+import * as Angular from '@formforge/angular';
+import * as Vanilla from '@formforge/angular-vanilla';
+import { APP_CONFIG } from '../../../environments/environment.model';
+import { loggerMiddleware } from '../../middlewares/logger.middleware';
+import { signin } from '../../mocks';
 
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, Angular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
 })
-export class AppFromPage implements OnInit {
-  protected formState = '';
+export class AppFromPage {
+  private readonly appConfig = inject(APP_CONFIG);
+  protected middlewares = [loggerMiddleware];
+  protected formDef = signin;
+  protected vanillaFieldLoaders = Vanilla.vanillaFieldLoaders;
 
-  ngOnInit(): void {
-    const logger: Core.Middleware<Core.State, Core.Action> =
-      ({ getState }) =>
-      (next) =>
-      (action) => {
-        console.groupCollapsed(action.type);
-        console.log('Prev state:', getState());
-        console.log('Action:', action);
-        next(action);
-        console.log('Next state:', getState());
-        console.groupEnd();
-      };
-
-    const store = Core.createFormStore([logger]);
-
-    store.state$.subscribe((state) => {
-      this.formState = JSON.stringify(state, undefined, 2);
-    });
-
-    store.dispatch({
-      type: 'INITIALIZE',
-      payload: { formDef: JSON.stringify(Mocks.signin) },
-    });
+  constructor() {
+    console.log(`Playground started in "${this.appConfig.env}" mode`);
   }
 }

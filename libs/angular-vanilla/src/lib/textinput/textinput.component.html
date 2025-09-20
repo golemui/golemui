@@ -1,0 +1,6 @@
+<div class="field">
+  @if (templateData.label) {
+    <label [for]="field.uid">{{ templateData.label }}</label>
+  }
+  <input type="text" [id]="field.uid" [value]="templateData.value ?? ''" />
+</div>

@@ -168,7 +168,7 @@ const FieldSchema = z.looseObject({
   kind: z.literal('field'),
   uid: z.pipe(
     z.optional(z.string()),
-    z.transform((s) => s || crypto.randomUUID())
+    z.transform((s) => s || crypto.randomUUID()),
   ),
   widget: z.string(),
   include: z.optional(InWhenSchema),
@@ -185,7 +185,7 @@ export const ButtonFieldSchema = z.extend(FieldSchema, {
 });
 
 export const ControlFieldSchema = <S extends z.ZodMiniType>(
-  defaultValueSchema: S
+  defaultValueSchema: S,
 ) =>
   z.pipe(
     z.extend(FieldSchema, {
@@ -194,7 +194,7 @@ export const ControlFieldSchema = <S extends z.ZodMiniType>(
       label: z.optional(z.string()),
       defaultValue: z.optional(defaultValueSchema),
     }),
-    z.transform((ctrl) => ({ ...ctrl, uid: `${ctrl.path}-${ctrl.widget}` }))
+    z.transform((ctrl) => ({ ...ctrl, uid: `${ctrl.path}-${ctrl.widget}` })),
   );
 
 export const StringControlFieldSchema = ControlFieldSchema(z.string());
@@ -203,7 +203,7 @@ export const BooleanControlFieldSchema = ControlFieldSchema(z.boolean());
 
 export const LayoutFieldSchema = z.extend(FieldSchema, {
   kind: z.literal('layout'),
-  children: z.array(z.lazy(() => AllFieldSchema)),
+  children: z.lazy(() => z.array(AllFieldSchema)),
 });
 
 const AllFieldSchema: z.ZodMiniType = z.union([

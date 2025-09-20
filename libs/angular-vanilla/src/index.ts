@@ -1,1 +1,1 @@
-export * from './lib/angular-vanilla/angular-vanilla';
+export * from './lib/field.loaders';

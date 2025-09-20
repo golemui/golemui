@@ -34,7 +34,7 @@ export const signin = defineForm({
         path: 'confirm',
         include: { in: ['register'] },
       },
-      {
+      /*{
         uid: '',
         kind: 'control',
         widget: 'checkbox',
@@ -51,7 +51,7 @@ export const signin = defineForm({
           click: 'login',
           'click.register': 'register',
         },
-      },
+      },*/
     ],
   },
 });

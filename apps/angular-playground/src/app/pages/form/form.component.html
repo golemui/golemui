@@ -1,4 +1,9 @@
 <div>
-  <h1>From</h1>
-  <pre>{{ formState }}</pre>
+  <h1>Form</h1>
+
+  <ff-form
+    [formDef]="formDef"
+    [fieldLoaders]="vanillaFieldLoaders"
+    [middlewares]="middlewares"
+  ></ff-form>
 </div>

@@ -1,0 +1,14 @@
+:root {
+  --field-padding: 0.5rem;
+  --field-border-color: #ccc;
+  --field-label-color: #333;
+}
+
+.field {
+  padding: var(--field-padding);
+  border: 1px solid var(--field-border-color);
+}
+
+.field label {
+  color: var(--field-label-color);
+}
