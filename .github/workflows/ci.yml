@@ -19,7 +19,6 @@ jobs:
           filter: tree:0
           fetch-depth: 0
 
-      # Cache node_modules
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -27,4 +26,8 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
-      - run: npx nx run-many -t lint test build
+      - run: npx nx run-many -t lint test build --skip-nx-cloud
+
+      # Remove this line since it's Nx Cloud specific
+      # - run: npx nx fix-ci
+      #   if: always()
