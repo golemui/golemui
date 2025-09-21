@@ -16,10 +16,10 @@ const selectData = pipe(
 
 export const data$ = (store: Observable<State>) => store.pipe(selectData);
 
-export const dataByPath$ = (path: DotPath) =>
+export const dataByPath$ = <T = any>(path: DotPath) =>
   pipe(
     selectData,
-    map((data) => Obj.get(data, path)),
+    map((data) => Obj.get<T>(data, path)),
     distinctUntilChanged(),
   );
 

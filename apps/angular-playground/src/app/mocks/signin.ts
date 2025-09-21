@@ -17,6 +17,7 @@ export const signin = defineForm({
         'label.register': 'Email',
         path: 'user.email',
         required: true,
+        defaultValue: 'joan@joan.com',
       },
       {
         uid: '',

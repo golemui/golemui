@@ -48,7 +48,7 @@ import { DotPath } from '../shared';
  * get(obj, "x.y.z");   // Returns undefined
  * ```
  */
-export const get = (obj: Record<string, any>, path: DotPath) => {
+export const get = <T = any>(obj: Record<string, any>, path: DotPath): T => {
   if (obj === undefined) {
     throw new Error('obj is undefined');
   }
@@ -67,7 +67,7 @@ export const get = (obj: Record<string, any>, path: DotPath) => {
     }
 
     return acc[prop];
-  }, obj);
+  }, obj) as T;
 };
 
 /**

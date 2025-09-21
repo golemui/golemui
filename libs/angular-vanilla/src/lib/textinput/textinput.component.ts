@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
 
@@ -7,14 +7,23 @@ import * as Core from '@formforge/core';
   standalone: true,
   selector: 'ff-textinput',
   imports: [CommonModule],
+  providers: [Angular.ControlAdapter],
   templateUrl: './textinput.component.html',
   styleUrl: '../styles.scss',
 })
-export class TextinputComponent implements Angular.WithField {
+export class TextinputComponent
+  implements OnInit, OnDestroy, Angular.WithField
+{
   field!: Core.ControlField<string>;
+  protected adapter: Angular.ControlAdapter<string> = inject(
+    Angular.ControlAdapter,
+  );
 
-  protected templateData: { label?: string; value?: string } = {
-    label: 'Label',
-    value: 'Hello',
-  };
+  ngOnInit(): void {
+    this.adapter.init(this.field);
+  }
+
+  ngOnDestroy(): void {
+    this.adapter.destroy();
+  }
 }

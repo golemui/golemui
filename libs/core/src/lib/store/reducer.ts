@@ -1,42 +1,21 @@
-import * as Form from '../Form';
+import { assertNever } from '../utils/assert-never';
 import { Action } from './actions';
-import { createInitialState, FormStoreError, State } from './model';
+import { State } from './model';
+import * as Reducers from './reducers';
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'INITIALIZE': {
-      const initialState = {
-        ...createInitialState(),
-        formName: action.payload.formName,
-      };
-      let formDef = action.payload.formDef;
-      let formStoreError: FormStoreError = { kind: 'none' };
+    case 'INITIALIZE':
+      return Reducers.initialize(state, action);
 
-      if (typeof formDef === 'string') {
-        try {
-          formDef = JSON.parse(formDef);
-        } catch {
-          formStoreError = { kind: 'fatal', error: 'Invalid JSON form schema' };
-        }
-        if (formStoreError.kind === 'fatal') {
-          return { ...initialState, error: formStoreError };
-        }
-      }
+    case 'SET_DATA':
+      return Reducers.setData(state, action);
 
-      const { error, success, data } = Form.FormSchema.safeParse(formDef);
-
-      if (success) {
-        return { ...initialState, formDef: data as Form.Form };
-      }
-
-      return {
-        ...initialState,
-        error: { kind: 'fatal', error: error.message },
-      };
-    }
+    case 'SET_FIELD_DATA':
+      return Reducers.setFieldData(state, action);
 
     default: {
-      return state;
+      return assertNever(action);
     }
   }
 }
