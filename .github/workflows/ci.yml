@@ -26,7 +26,7 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
-      - run: npx nx run-many -t lint test build --skip-nx-cloud
+      - run: npx nx run-many -t lint test build --no-cloud
 
       # Remove this line since it's Nx Cloud specific
       # - run: npx nx fix-ci
