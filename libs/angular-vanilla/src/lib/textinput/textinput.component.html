@@ -6,5 +6,6 @@
     type="text"
     [id]="field.uid"
     [value]="adapter.templateData.value ?? ''"
+    (input)="valueChanged($event)"
   />
 </div>

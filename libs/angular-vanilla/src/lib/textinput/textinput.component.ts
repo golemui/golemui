@@ -26,4 +26,9 @@ export class TextinputComponent
   ngOnDestroy(): void {
     this.adapter.destroy();
   }
+
+  valueChanged(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.adapter.valueChanged(target.value);
+  }
 }

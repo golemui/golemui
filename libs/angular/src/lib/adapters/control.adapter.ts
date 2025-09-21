@@ -31,6 +31,13 @@ export class ControlAdapter<T> {
       .subscribe((value) => (this.templateData.value = value));
   }
 
+  valueChanged<T>(value: T) {
+    this.context.store.dispatch({
+      type: 'SET_FIELD_DATA',
+      payload: { path: this.field.path, data: value },
+    });
+  }
+
   destroy() {
     this.destroy$.next();
   }
