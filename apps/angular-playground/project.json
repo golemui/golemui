@@ -41,8 +41,8 @@
           "outputHashing": "all",
           "fileReplacements": [
             {
-              "replace": "src/environments/environment.ts",
-              "with": "src/environments/environment.production.ts"
+              "replace": "apps/angular-playground/src/environments/environment.ts",
+              "with": "apps/angular-playground/src/environments/environment.production.ts"
             }
           ]
         },
@@ -55,8 +55,8 @@
           "namedChunks": true,
           "fileReplacements": [
             {
-              "replace": "src/environments/environment.ts",
-              "with": "src/environments/environment.development.ts"
+              "replace": "apps/angular-playground/src/environments/environment.ts",
+              "with": "apps/angular-playground/src/environments/environment.development.ts"
             }
           ]
         }

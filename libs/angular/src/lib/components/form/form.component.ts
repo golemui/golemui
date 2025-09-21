@@ -2,10 +2,13 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   input,
   OnInit,
+  output,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as Core from '@formforge/core';
 import { FieldLoaders } from '../../context/field.registry';
 import { FormContext } from '../../context/form.context';
@@ -35,11 +38,22 @@ export class FormComponent implements OnInit {
   i18n = input<I18n>(defaultI18n);
   formName = input(crypto.randomUUID());
 
+  // OUTPUTS
+  protected formError = output<Core.FormStoreError>();
+
   // INJECTS
   protected context = inject(FormContext);
 
+  // PRIVATE
+  private destroyRef = inject(DestroyRef);
+
+  // LIFE CYCLE
   ngOnInit(): void {
     this.context.initialize(this.fieldLoaders(), this.middlewares());
+
+    Core.formErrors(this.context.store.state$)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((error) => this.formError.emit(error));
 
     this.context.store.dispatch({
       type: 'INITIALIZE',

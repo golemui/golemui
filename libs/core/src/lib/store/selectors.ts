@@ -1,4 +1,4 @@
-import { distinctUntilChanged, map, pipe } from 'rxjs';
+import { distinctUntilChanged, map, Observable, pipe } from 'rxjs';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
 import { State } from './model';
@@ -13,8 +13,6 @@ const selectData = pipe(
   map((store: State) => store.data),
   distinctUntilChanged(),
 );
-
-//export const data$ = (store: Observable<State>) => store.pipe(selectData);
 
 export const dataByPath$ = <T = any>(path: DotPath) =>
   pipe(
@@ -34,11 +32,23 @@ const selectComponents = pipe(
   distinctUntilChanged(),
 );
 
-//export const components$ = (store: Observable<State>) => store.pipe(selectComponents);
-
 export const componentsByUid$ = (uid: Uid) =>
   pipe(
     selectComponents,
     map((components) => components[uid]),
     distinctUntilChanged(),
   );
+
+// --------------------------------
+//
+// ERRORS
+//
+// --------------------------------
+
+const selectErrors = pipe(
+  map((store: State) => store.error),
+  distinctUntilChanged(),
+);
+
+export const formErrors = (store: Observable<State>) =>
+  store.pipe(selectErrors);

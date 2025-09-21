@@ -1,9 +1,14 @@
 <div>
   <h1>Form</h1>
 
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
   <ff-form
     [formDef]="formDef"
     [fieldLoaders]="vanillaFieldLoaders"
     [middlewares]="middlewares"
+    (formError)="onFormError($event)"
   ></ff-form>
 </div>

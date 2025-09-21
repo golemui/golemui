@@ -2,8 +2,10 @@
   "name": "@formforge/angular-vanilla",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^20.2.0",
-    "@angular/core": "^20.2.0"
+    "@angular/common": "20",
+    "@angular/core": "20",
+    "@formforge/angular": "*",
+    "@formforge/core": "*"
   },
   "sideEffects": false
 }
