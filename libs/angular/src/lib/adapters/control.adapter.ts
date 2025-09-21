@@ -14,7 +14,12 @@ export class ControlAdapter<T> {
   init(field: Core.ControlField<T>) {
     this.field = field;
 
-    this.templateData.label = this.field.label;
+    this.templateData.label =
+      this.field.label === undefined
+        ? Core.toLabel(field.path)
+        : this.field.label === ''
+          ? undefined
+          : this.field.label;
 
     this.context.store.dispatch({
       type: 'SET_FIELD_DATA',

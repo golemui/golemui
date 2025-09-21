@@ -81,6 +81,12 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
   BaseField & {
     kind: 'control';
     path: DotPath;
+    /**
+     * Defines the label behavior:
+     * - If `label` is `undefined`, it will be derived from the control path.
+     * - If `label` is an empty string, no label will be displayed.
+     * - Otherwise, the provided label will be rendered.
+     */
     label?: ReactiveExpression | string;
     on?: On<StateKeys>;
     defaultValue?: T;
