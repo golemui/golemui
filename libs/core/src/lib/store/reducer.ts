@@ -14,6 +14,9 @@ export function reducer(state: State, action: Action): State {
     case 'SET_FIELD_DATA':
       return Reducers.setFieldData(state, action);
 
+    case 'SET_ERROR':
+      return Reducers.setError(state, action);
+
     default: {
       return assertNever(action);
     }

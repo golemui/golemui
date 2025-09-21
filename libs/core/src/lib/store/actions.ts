@@ -1,4 +1,5 @@
 import { DotPath } from '../shared';
+import { FormStoreError } from './model';
 
 export type INITIALIZE = {
   type: 'INITIALIZE';
@@ -15,4 +16,9 @@ export type SET_FIELD_DATA = {
   payload: { data: any; path: DotPath };
 };
 
-export type Action = INITIALIZE | SET_DATA | SET_FIELD_DATA;
+export type SET_ERROR = {
+  type: 'SET_ERROR';
+  payload: { error: FormStoreError };
+};
+
+export type Action = INITIALIZE | SET_DATA | SET_FIELD_DATA | SET_ERROR;
