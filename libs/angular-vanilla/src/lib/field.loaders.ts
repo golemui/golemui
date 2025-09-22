@@ -1,6 +1,10 @@
 import * as Angular from '@formforge/angular';
 
 export const vanillaFieldLoaders: Angular.FieldLoaders = {
+  // BUTTON
+  button: async () =>
+    (await import('./button/button.component')).ButtonComponent,
+
   // CONTROLS
   textinput: async () =>
     (await import('./textinput/textinput.component')).TextinputComponent,

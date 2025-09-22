@@ -46,7 +46,7 @@ export const signin = defineForm({
         path: 'registerMode',
         on: { load: 'registerMode loaded', change: 'registerMode change' },
       },
-      /*{
+      {
         uid: '',
         kind: 'button',
         widget: 'button',
@@ -56,7 +56,7 @@ export const signin = defineForm({
           click: 'login',
           'click.register': 'register',
         },
-      },*/
+      },
     ],
   },
 });
