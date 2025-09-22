@@ -29,6 +29,8 @@ export class ControlAdapter<T> {
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
       .subscribe((value) => (this.templateData.value = value));
+
+    this.context.emitEvent(this.field.on?.load);
   }
 
   valueChanged<T>(value: T) {
@@ -36,6 +38,7 @@ export class ControlAdapter<T> {
       type: 'SET_FIELD_DATA',
       payload: { path: this.field.path, data: value },
     });
+    this.context.emitEvent(this.field.on?.change);
   }
 
   destroy() {

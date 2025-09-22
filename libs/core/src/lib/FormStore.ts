@@ -35,10 +35,12 @@ export function createFormStore(
   return {
     state$,
     dispatch: realDispatch,
+    getState: () => subject.getValue(),
   };
 }
 
 export type FormStore = {
   state$: Observable<State>;
   dispatch: (action: Action) => void;
+  getState: () => State;
 };

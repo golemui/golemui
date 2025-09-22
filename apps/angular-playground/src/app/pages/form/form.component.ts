@@ -25,12 +25,16 @@ export class AppFromPage {
     console.log(`Playground started in "${this.appConfig.env}" mode`);
   }
 
-  protected onFormError(event: Core.FormStoreError) {
+  protected onFormError(error: Core.FormStoreError) {
     this.error = '';
-    if (event.kind === 'validation') {
-      this.error = 'Validation errors: ' + event.errors;
-    } else if (event.kind === 'fatal') {
-      this.error = 'Fatal error: ' + event.error;
+    if (error.kind === 'validation') {
+      this.error = 'Validation errors: ' + error.errors;
+    } else if (error.kind === 'fatal') {
+      this.error = 'Fatal error: ' + error.error;
     }
+  }
+
+  protected onFormEvent(event: Core.FormEvent) {
+    console.log(event.name, event.data);
   }
 }

@@ -40,6 +40,7 @@ export class FormComponent implements OnInit {
 
   // OUTPUTS
   protected formError = output<Core.FormStoreError>();
+  protected event = output<Core.FormEvent>();
 
   // INJECTS
   protected context = inject(FormContext);
@@ -54,6 +55,10 @@ export class FormComponent implements OnInit {
     Core.formErrors(this.context.store.state$)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((error) => this.formError.emit(error));
+
+    this.context.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => this.event.emit(event));
 
     this.context.store.dispatch({
       type: 'INITIALIZE',
