@@ -18,3 +18,12 @@ export type DotPath = string;
  * The components uid identifier
  */
 export type Uid = string;
+
+/**
+ * Form event payload
+ */
+export type EventName = string;
+export type FormEvent = {
+  name: EventName;
+  data: Record<string, any> /*State['data']*/;
+};

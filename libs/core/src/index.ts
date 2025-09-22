@@ -5,4 +5,5 @@ export * from './lib/store/actions';
 export * from './lib/store/model';
 export * from './lib/store/selectors';
 
+export * from './lib/shared';
 export * from './lib/utils/dot-path';
