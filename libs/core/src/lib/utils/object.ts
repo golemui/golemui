@@ -178,3 +178,22 @@ function isIndex(value: string) {
   const num = Number(value);
   return Number.isInteger(num) && num >= 0 && num.toString() === value;
 }
+
+/**
+ * Deletes a key from an object and returns the same mutated object.
+ *
+ * @param object - The object to remove the key from.
+ * @param key - The property name to delete.
+ * @returns The same object, with the specified key removed.
+ *
+ * @example
+ * ```ts
+ * const obj = { a: 1, b: 2, c: 3 };
+ * deleteKey(obj, "b");
+ * console.log(obj); // { a: 1, c: 3 }
+ * ```
+ */
+export const deleteKey = (object: Record<string, any>, key: string) => {
+  delete object[key];
+  return object;
+};

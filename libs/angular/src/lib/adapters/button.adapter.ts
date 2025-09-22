@@ -14,6 +14,12 @@ export class ButtonAdapter {
   init(field: Core.ButtonField) {
     this.field = field;
     this.templateData.label = this.field.label;
+
+    this.context.store.dispatch({
+      type: 'ADD_FIELD',
+      payload: { field },
+    });
+
     this.context.emitEvent(this.field.on?.load);
   }
 
@@ -22,6 +28,10 @@ export class ButtonAdapter {
   }
 
   destroy() {
+    this.context.store.dispatch({
+      type: 'REMOVE_FIELD',
+      payload: { uid: this.field.uid },
+    });
     this.destroy$.next();
   }
 }

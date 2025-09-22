@@ -16,10 +16,7 @@ export const signin = defineForm({
         path: 'user.email',
         required: true,
         defaultValue: 'joan@joan.com',
-        on: {
-          change: 'emailChanged',
-          load: 'user.email loaded',
-        },
+        on: { load: 'user.email loaded' },
       },
       {
         uid: '',
@@ -27,7 +24,7 @@ export const signin = defineForm({
         widget: 'textinput',
         path: 'user.password',
         required: true,
-        on: { load: 'user.password loaded' },
+        on: { change: 'checkPasswordMatch' },
       },
       {
         uid: '',
@@ -35,8 +32,8 @@ export const signin = defineForm({
         widget: 'textinput',
         label: 'Confirm Password',
         path: 'confirm',
+        on: { change: 'checkPasswordMatch' },
         include: { in: ['register'] },
-        on: { load: 'confirm loaded' },
       },
       {
         uid: '',
@@ -44,7 +41,7 @@ export const signin = defineForm({
         widget: 'checkbox',
         label: 'Register',
         path: 'registerMode',
-        on: { load: 'registerMode loaded', change: 'registerMode change' },
+        on: { change: 'registerModeChange' },
       },
       {
         uid: '',

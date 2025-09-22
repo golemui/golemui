@@ -23,19 +23,19 @@ export const dataByPath$ = <T = any>(path: DotPath) =>
 
 // --------------------------------
 //
-// COMPONENTS
+// FIELDS
 //
 // --------------------------------
 
-const selectComponents = pipe(
-  map((store: State) => store.components),
+const selectFields = pipe(
+  map((store: State) => store.fields),
   distinctUntilChanged(),
 );
 
-export const componentsByUid$ = (uid: Uid) =>
+export const fieldsByUid$ = (uid: Uid) =>
   pipe(
-    selectComponents,
-    map((components) => components[uid]),
+    selectFields,
+    map((fields) => fields[uid]),
     distinctUntilChanged(),
   );
 

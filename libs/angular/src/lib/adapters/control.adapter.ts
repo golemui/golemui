@@ -22,6 +22,11 @@ export class ControlAdapter<T> {
           : this.field.label;
 
     this.context.store.dispatch({
+      type: 'ADD_FIELD',
+      payload: { field },
+    });
+
+    this.context.store.dispatch({
       type: 'SET_FIELD_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
@@ -42,6 +47,10 @@ export class ControlAdapter<T> {
   }
 
   destroy() {
+    this.context.store.dispatch({
+      type: 'REMOVE_FIELD',
+      payload: { uid: this.field.uid },
+    });
     this.destroy$.next();
   }
 }

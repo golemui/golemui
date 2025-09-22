@@ -10,10 +10,10 @@ export type FormStoreError =
 export type State = {
   formName: string;
   formDef: Form.Form;
-  formData: Record<Uid, Record<string, any>>;
-  components: Record<Uid, Field.FormField>;
-  componentFlags: Record<Uid, Field.Flags>;
-  componentData: Record<Uid, Record<string, any>>;
+  formMeta: Record<Uid, Record<string, any>>;
+  fields: Record<Uid, Field.FormField>;
+  fieldFlags: Record<Uid, Field.Flags>;
+  fieldMeta: Record<Uid, Record<string, any>>;
   data: Record<string, any>;
   error: FormStoreError;
 };
@@ -23,10 +23,10 @@ export const createInitialState = (): State => ({
   formDef: Form.FormSchema.parse({
     form: Field.stack([] as Field.FormField[]),
   }) as Form.Form,
-  formData: {},
-  components: {},
-  componentFlags: {},
-  componentData: {},
+  formMeta: {},
+  fields: {},
+  fieldFlags: {},
+  fieldMeta: {},
   data: {},
   error: { kind: 'none' },
 });

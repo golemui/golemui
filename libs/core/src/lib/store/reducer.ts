@@ -11,6 +11,12 @@ export function reducer(state: State, action: Action): State {
     case 'SET_DATA':
       return Reducers.setData(state, action);
 
+    case 'ADD_FIELD':
+      return Reducers.addField(state, action);
+
+    case 'REMOVE_FIELD':
+      return Reducers.removeField(state, action);
+
     case 'SET_FIELD_DATA':
       return Reducers.setFieldData(state, action);
 
