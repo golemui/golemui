@@ -38,14 +38,15 @@ export const signin = defineForm({
         include: { in: ['register'] },
         on: { load: 'confirm loaded' },
       },
-      /*{
+      {
         uid: '',
         kind: 'control',
         widget: 'checkbox',
         label: 'Register',
         path: 'registerMode',
+        on: { load: 'registerMode loaded', change: 'registerMode change' },
       },
-      {
+      /*{
         uid: '',
         kind: 'button',
         widget: 'button',

@@ -1,0 +1,11 @@
+<div class="field">
+  @if (adapter.templateData.label) {
+    <label [for]="field.uid">{{ adapter.templateData.label }}</label>
+  }
+  <input
+    type="checkbox"
+    [id]="field.uid"
+    [value]="adapter.templateData.value ?? false"
+    (input)="valueChanged($event)"
+  />
+</div>
