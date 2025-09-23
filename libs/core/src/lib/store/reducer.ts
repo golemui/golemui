@@ -3,7 +3,6 @@ import { pipe } from '../utils/pipe';
 import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
-import { calculateCurrentState } from './reducers/calculate-states';
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -20,7 +19,11 @@ export function reducer(state: State, action: Action): State {
       return Reducers.removeField(state, action);
 
     case 'SET_FIELD_DATA':
-      return pipe(Reducers.setFieldData(state, action), calculateCurrentState);
+      return pipe(
+        Reducers.setFieldData(state, action),
+        Reducers.calculateCurrentState,
+        Reducers.applyCurrentState,
+      );
 
     case 'SET_ERROR':
       return Reducers.setError(state, action);
