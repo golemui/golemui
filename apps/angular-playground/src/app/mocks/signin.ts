@@ -2,7 +2,9 @@ import { defineForm } from '@formforge/core';
 
 export const signin = defineForm({
   states: {
-    register: '$.registerMode === true',
+    register:
+      '$form.registerMode === true && $log($form.user.age, "age") >= 18',
+    registerMinor: '$form.registerMode === true && $form.user.age < 18',
   },
   form: {
     uid: '',
@@ -34,6 +36,13 @@ export const signin = defineForm({
         path: 'confirm',
         on: { change: 'checkPasswordMatch' },
         include: { in: ['register'] },
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'textinput',
+        path: 'user.age',
+        required: true,
       },
       {
         uid: '',

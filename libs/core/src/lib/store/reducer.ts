@@ -1,7 +1,9 @@
 import { assertNever } from '../utils/assert-never';
+import { pipe } from '../utils/pipe';
 import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
+import { calculateCurrentState } from './reducers/calculate-states';
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -18,7 +20,7 @@ export function reducer(state: State, action: Action): State {
       return Reducers.removeField(state, action);
 
     case 'SET_FIELD_DATA':
-      return Reducers.setFieldData(state, action);
+      return pipe(Reducers.setFieldData(state, action), calculateCurrentState);
 
     case 'SET_ERROR':
       return Reducers.setError(state, action);

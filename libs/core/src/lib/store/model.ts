@@ -9,11 +9,14 @@ export type FormStoreError =
 
 export type State = {
   formName: string;
-  formDef: Form.Form;
-  formMeta: Record<Uid, Record<string, any>>;
+  formDef: Form.Form<string>;
+  formMeta: Record<string, any>;
+  currentState: string;
+
   fields: Record<Uid, Field.FormField>;
   fieldFlags: Record<Uid, Field.Flags>;
   fieldMeta: Record<Uid, Record<string, any>>;
+
   data: Record<string, any>;
   error: FormStoreError;
 };
@@ -24,6 +27,7 @@ export const createInitialState = (): State => ({
     form: Field.stack([] as Field.FormField[]),
   }) as Form.Form,
   formMeta: {},
+  currentState: '',
   fields: {},
   fieldFlags: {},
   fieldMeta: {},

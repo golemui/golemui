@@ -3,7 +3,7 @@ type Suffixable<T, K extends keyof T, TSuffixes extends string> = {
 } & {
   [P in K as P]: T[P];
 } & {
-  [P in K as `${string & P}.${TSuffixes}`]: T[P];
+  [P in K as `${string & P}.${TSuffixes}`]?: T[P];
 };
 
 export type SomeSuffixable<
