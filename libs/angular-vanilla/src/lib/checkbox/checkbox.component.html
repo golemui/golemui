@@ -1,11 +1,14 @@
-<div class="field">
+<div class="field horizontal">
   @if (adapter.templateData.label) {
-    <label [for]="field.uid">{{ adapter.templateData.label }}</label>
+    <label [for]="field.uid">{{
+      adapter.templateData.label + (adapter.templateData.required ? ' *' : '')
+    }}</label>
   }
   <input
     type="checkbox"
     [id]="field.uid"
     [value]="adapter.templateData.value ?? false"
+    [disabled]="adapter.templateData.disabled"
     (input)="valueChanged($event)"
   />
 </div>

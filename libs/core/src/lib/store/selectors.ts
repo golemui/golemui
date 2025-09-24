@@ -41,6 +41,24 @@ export const fieldsByUid$ = (uid: Uid) =>
 
 // --------------------------------
 //
+// FIELD FLAGS
+//
+// --------------------------------
+
+const selectFieldFlags = pipe(
+  map((store: State) => store.fieldFlags),
+  distinctUntilChanged(),
+);
+
+export const fieldFlagsByUid$ = (uid: Uid) =>
+  pipe(
+    selectFieldFlags,
+    map((fieldFlags) => fieldFlags[uid]),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
 // FORM FIELDS (calculatedForm)
 //
 // --------------------------------

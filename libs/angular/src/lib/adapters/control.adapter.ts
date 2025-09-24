@@ -9,17 +9,15 @@ export class ControlAdapter<T> {
   private destroy$ = new Subject<void>();
   private field!: Core.ControlField<T>;
 
-  templateData: { label?: string; value?: T } = {};
+  templateData: {
+    label?: string;
+    value?: T;
+    disabled?: boolean;
+    required?: boolean;
+  } = {};
 
   init(field: Core.ControlField<T>) {
     this.field = field;
-
-    this.templateData.label =
-      this.field.label === undefined
-        ? Core.toLabel(field.path)
-        : this.field.label === ''
-          ? undefined
-          : this.field.label;
 
     this.context.store.dispatch({
       type: 'ADD_FIELD',
@@ -31,9 +29,25 @@ export class ControlAdapter<T> {
       payload: { data: field.defaultValue, path: field.path },
     });
 
+    this.templateData.label =
+      this.field.label === undefined
+        ? Core.toLabel(field.path)
+        : this.field.label === ''
+          ? undefined
+          : this.field.label;
+
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
       .subscribe((value) => (this.templateData.value = value));
+
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
+      .subscribe((fieldFlags) => {
+        this.templateData.disabled =
+          fieldFlags?.disabled ?? (field.disabled as boolean);
+        this.templateData.required =
+          fieldFlags?.required ?? (field.required as boolean);
+      });
 
     this.context.emitEvent(this.field.on?.load);
   }

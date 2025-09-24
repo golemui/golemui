@@ -58,7 +58,7 @@ export type BaseField = {
   //kind: 'field' | 'button' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
-  enabled?: boolean | { when: ReactiveExpression };
+  disabled?: boolean | { when: ReactiveExpression };
   required?: boolean | { when: ReactiveExpression };
   include?: { in: UiState[] } | { when: ReactiveExpression };
   exclude?: { from: UiState[] } | { when: ReactiveExpression };
@@ -67,13 +67,13 @@ export type BaseField = {
 
 export type Field<StateKeys extends UiState = never> = SomeSuffixable<
   BaseField & { kind: 'field' },
-  'enabled' | 'required',
+  never,
   StateKeys
 >;
 
 export type ButtonField<StateKeys extends UiState = never> = SomeSuffixable<
   BaseField & { kind: 'button'; label: string; on?: On<StateKeys> },
-  'enabled' | 'required' | 'label',
+  'disabled' | 'label',
   StateKeys
 >;
 
@@ -92,7 +92,7 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
     defaultValue?: T;
     validators?: Record<string, any>;
   },
-  'enabled' | 'required' | 'label' | 'validators',
+  'disabled' | 'required' | 'label' | 'validators',
   StateKeys
 >;
 
@@ -107,7 +107,7 @@ export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
       | ButtonField<StateKeys>
     )[];
   },
-  'enabled' | 'required',
+  never,
   StateKeys
 >;
 

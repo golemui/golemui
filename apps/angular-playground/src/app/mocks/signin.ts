@@ -16,6 +16,8 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'textinput',
         path: 'user.email',
+        disabled: true,
+        'disabled.register': false,
         required: true,
         defaultValue: 'joan@joan.com',
         on: { load: 'userEmailLoaded' },
@@ -26,6 +28,7 @@ export const signin = defineForm({
         widget: 'textinput',
         path: 'user.password',
         required: true,
+        'required.register': false,
         on: { change: 'checkPasswordMatch' },
       },
       {
