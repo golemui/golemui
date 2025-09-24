@@ -41,6 +41,20 @@ export const fieldsByUid$ = (uid: Uid) =>
 
 // --------------------------------
 //
+// FORM FIELDS (calculatedForm)
+//
+// --------------------------------
+
+const selectCalculatedForm = pipe(
+  map((store: State) => store.calculatedForm),
+  distinctUntilChanged(),
+);
+
+export const calculatedForm = (store: Observable<State>) =>
+  store.pipe(selectCalculatedForm);
+
+// --------------------------------
+//
 // ERRORS
 //
 // --------------------------------

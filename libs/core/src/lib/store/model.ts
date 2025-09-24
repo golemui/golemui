@@ -10,6 +10,8 @@ export type FormStoreError =
 export type State = {
   formName: string;
   formDef: Form.Form<string>;
+  flatForm: Field.FormField[];
+  calculatedForm: Field.LayoutField;
   formMeta: Record<string, any>;
   currentState: string;
 
@@ -26,6 +28,8 @@ export const createInitialState = (): State => ({
   formDef: Form.FormSchema.parse({
     form: Field.stack([] as Field.FormField[]),
   }) as Form.Form,
+  flatForm: [],
+  calculatedForm: Field.stack([] as Field.FormField[]),
   formMeta: {},
   currentState: '',
   fields: {},

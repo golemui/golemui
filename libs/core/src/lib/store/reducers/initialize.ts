@@ -1,3 +1,4 @@
+import * as Field from '../../Field';
 import * as Form from '../../Form';
 import * as Actions from '../actions';
 import { createInitialState, FormStoreError, State } from '../model';
@@ -24,7 +25,11 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
   const { error, success, data } = Form.FormSchema.safeParse(formDef);
 
   if (success) {
-    return { ...initialState, formDef: data as Form.Form };
+    return {
+      ...initialState,
+      formDef: data as Form.Form,
+      flatForm: flattenForm([data.form] as Field.FormField[]),
+    };
   }
 
   return {
@@ -32,3 +37,10 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     error: { kind: 'fatal', error: error.message },
   };
 };
+
+function flattenForm(fields: Field.FormField[]): Field.FormField[] {
+  return fields.flatMap((field) => [
+    field,
+    ...(Field.isLayoutField(field) ? flattenForm(field.children) : []),
+  ]);
+}

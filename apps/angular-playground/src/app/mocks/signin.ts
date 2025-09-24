@@ -18,7 +18,7 @@ export const signin = defineForm({
         path: 'user.email',
         required: true,
         defaultValue: 'joan@joan.com',
-        on: { load: 'user.email loaded' },
+        on: { load: 'userEmailLoaded' },
       },
       {
         uid: '',
@@ -35,13 +35,14 @@ export const signin = defineForm({
         label: 'Confirm Password',
         path: 'confirm',
         on: { change: 'checkPasswordMatch' },
-        include: { in: ['register'] },
+        include: { in: ['register', 'registerMinor'] },
       },
       {
         uid: '',
         kind: 'control',
         widget: 'textinput',
         path: 'user.age',
+        defaultValue: 0,
         required: true,
       },
       {

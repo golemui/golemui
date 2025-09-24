@@ -1,5 +1,7 @@
+@let children = adapter.templateData.children;
+
 <div class="field">
-  @for (child of field.children; track child.uid) {
+  @for (child of children; track child.uid) {
     <ng-container ffField [field]="child" />
   }
 </div>

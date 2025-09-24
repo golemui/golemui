@@ -35,6 +35,8 @@ export class AppFromPage {
   }
 
   protected onFormEvent(event: Core.FormEvent) {
-    console.log(event.name, event.data);
+    console.groupCollapsed(`onFormEvent('${event.name}')`);
+    console.log(event.data);
+    console.groupEnd();
   }
 }

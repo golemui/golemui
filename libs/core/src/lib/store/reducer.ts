@@ -10,10 +10,18 @@ export function reducer(state: State, action: Action): State {
       return Reducers.initialize(state, action);
 
     case 'SET_DATA':
-      return Reducers.setData(state, action);
+      return pipe(
+        Reducers.setData(state, action),
+        Reducers.calculateCurrentState,
+        Reducers.applyCurrentState,
+      );
 
     case 'ADD_FIELD':
-      return Reducers.addField(state, action);
+      return pipe(
+        Reducers.addField(state, action),
+        Reducers.calculateCurrentState,
+        Reducers.applyCurrentState,
+      );
 
     case 'REMOVE_FIELD':
       return Reducers.removeField(state, action);
