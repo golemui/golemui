@@ -63,8 +63,8 @@ export const signin = defineForm({
         label: 'Login',
         'label.register': 'Register',
         on: {
-          click: 'login',
-          'click.register': 'register',
+          click: 'handleLogin',
+          'click.register': 'handleRegister',
         },
       },
     ],

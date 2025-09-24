@@ -44,7 +44,7 @@ export type FieldWidget = string;
  */
 type EventExpression = string;
 
-type On<StateKeys extends UiState = never> = AllSuffixable<
+export type On<StateKeys extends UiState = never> = AllSuffixable<
   {
     load?: EventExpression;
     click?: EventExpression;

@@ -20,11 +20,11 @@ export class ButtonAdapter {
       payload: { field },
     });
 
-    this.context.emitEvent(this.field.on?.load);
+    this.context.emitEvent('load', this.field);
   }
 
   click() {
-    this.context.emitEvent(this.field.on?.click);
+    this.context.emitEvent('click', this.field);
   }
 
   destroy() {

@@ -17,7 +17,13 @@ export class FormContext {
     this.store = Core.createFormStore(middlewares);
   }
 
-  emitEvent(eventName: Core.EventName | undefined) {
+  emitEvent(
+    eventType: keyof Core.On<string>,
+    field: Core.ControlField<any, string> | Core.ButtonField<string>,
+  ) {
+    const currentState = this.store.getState().currentState;
+    const eventName: Core.EventName | undefined =
+      field.on?.[`${eventType}.${currentState}`] ?? field.on?.[eventType];
     if (eventName) {
       this.events$.next({ name: eventName, data: this.store.getState().data });
     }

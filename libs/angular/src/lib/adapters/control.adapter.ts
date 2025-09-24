@@ -49,7 +49,7 @@ export class ControlAdapter<T> {
           fieldFlags?.required ?? (field.required as boolean);
       });
 
-    this.context.emitEvent(this.field.on?.load);
+    this.context.emitEvent('load', this.field);
   }
 
   valueChanged<T>(value: T) {
@@ -57,7 +57,7 @@ export class ControlAdapter<T> {
       type: 'SET_FIELD_DATA',
       payload: { path: this.field.path, data: value },
     });
-    this.context.emitEvent(this.field.on?.change);
+    this.context.emitEvent('change', this.field);
   }
 
   destroy() {
