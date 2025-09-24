@@ -15,7 +15,7 @@ import { WithField } from './with-field.type';
   standalone: true,
 })
 export class FieldDirective implements OnInit {
-  field = input.required<Core.FormField>();
+  field = input.required<Core.FormField<string>>();
 
   private formContext = inject(FormContext);
   private viewContainerRef = inject(ViewContainerRef);

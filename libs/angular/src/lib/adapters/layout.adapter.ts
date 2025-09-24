@@ -9,7 +9,7 @@ export class LayoutAdapter {
   private destroy$ = new Subject<void>();
   private field!: Core.LayoutField;
 
-  templateData: { hidden: boolean; children: Core.FormField[] } = {
+  templateData: { hidden: boolean; children: Core.FormField<string>[] } = {
     hidden: false,
     children: [],
   };

@@ -2,9 +2,11 @@ import { defineForm } from '@formforge/core';
 
 export const signin = defineForm({
   states: {
-    register:
-      '$form.registerMode === true && $log($form.user.age, "age") >= 18',
-    registerMinor: '$form.registerMode === true && $form.user.age < 18',
+    register: '$form.registerMode === true',
+    'register:adult': '$form.user.age >= 18',
+    'register:minor': '$form.user.age < 18',
+    'register:minor:tall': '$form.user.height > 180',
+    termsAccepted: '$form.terms === true',
   },
   form: {
     uid: '',
@@ -17,10 +19,8 @@ export const signin = defineForm({
         widget: 'textinput',
         path: 'user.email',
         disabled: true,
-        'disabled.register': false,
         required: true,
         defaultValue: 'joan@joan.com',
-        on: { load: 'userEmailLoaded' },
       },
       {
         uid: '',
@@ -28,8 +28,7 @@ export const signin = defineForm({
         widget: 'textinput',
         path: 'user.password',
         required: true,
-        'required.register': false,
-        on: { change: 'checkPasswordMatch' },
+        on: { 'change.register': 'checkPasswordMatch' },
       },
       {
         uid: '',
@@ -38,7 +37,7 @@ export const signin = defineForm({
         label: 'Confirm Password',
         path: 'confirm',
         on: { change: 'checkPasswordMatch' },
-        include: { in: ['register', 'registerMinor'] },
+        include: { in: ['register'] },
       },
       {
         uid: '',
@@ -51,10 +50,31 @@ export const signin = defineForm({
       {
         uid: '',
         kind: 'control',
+        widget: 'textinput',
+        path: 'user.height',
+        defaultValue: '170',
+        required: true,
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'checkbox',
+        path: 'user.playBasketball',
+        include: { in: ['register:minor:tall'] },
+      },
+      {
+        uid: '',
+        kind: 'control',
         widget: 'checkbox',
         label: 'Register',
         path: 'registerMode',
-        on: { change: 'registerModeChange' },
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'checkbox',
+        label: 'Accept Terms',
+        path: 'terms',
       },
       {
         uid: '',
@@ -62,6 +82,8 @@ export const signin = defineForm({
         widget: 'button',
         label: 'Login',
         'label.register': 'Register',
+        disabled: true,
+        'disabled.termsAccepted': false,
         on: {
           click: 'handleLogin',
           'click.register': 'handleRegister',

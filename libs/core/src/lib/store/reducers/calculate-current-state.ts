@@ -2,10 +2,11 @@ import { compile, parse } from 'subscript/justin';
 import { FormStoreError, State } from '../model';
 
 export const calculateCurrentState = (state: State): State => {
-  const stateExpressions = state.formDef.states;
+  let stateExpressions = state.formDef.states;
   if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
     return state;
   }
+  stateExpressions = expandStateExpressions(stateExpressions);
 
   let currentState = '';
   let error: FormStoreError = { kind: 'none' };
@@ -13,26 +14,97 @@ export const calculateCurrentState = (state: State): State => {
     // TODO: Security. See: https://github.com/dy/subscript/issues/25
     // TODO: Cache compiled expressions
     currentState =
-      Object.keys(stateExpressions).find((stateName) => {
-        const expression = stateExpressions[stateName];
-        const ast = parse(expression);
-        const evaluate = compile(ast);
-        const result = evaluate({
-          $form: state.data,
-          $log: (value: any, label?: string) => {
-            if (label) {
-              console.log(label, value);
-            } else {
-              console.log(value);
-            }
-            return value;
-          },
-        });
-        return result === true;
-      }) || '';
+      Object.keys(stateExpressions)
+        // TODO: doesn't matter when we move to currentState as array??
+        // We want to find the longest state name first because 'a.b.c' has preference over 'a.b' and 'a'
+        .sort((a, b) => b.length - a.length)
+        .find((stateName) => {
+          const expression = stateExpressions[stateName];
+          const ast = parse(expression);
+          const evaluate = compile(ast);
+          const result = evaluate({
+            $form: state.data,
+            $log: (value: any, label?: string) => {
+              if (label) {
+                console.log(label, value);
+              } else {
+                console.log(value);
+              }
+              return value;
+            },
+          });
+          return result === true;
+        }) || '';
   } catch (err: unknown) {
     error = { kind: 'fatal', error: (err as Error).message };
   }
 
   return { ...state, currentState, error };
 };
+
+/**
+ * Expands state expressions by combining inherited conditions with logical AND operators.
+ *
+ * This function takes a state object where keys can represent hierarchical relationships
+ * using colon separators (e.g., 'parent:child:grandchild') and expands each state's
+ * expression to include all conditions from its inheritance chain.
+ *
+ * @example
+ * ```ts
+ * const states = {
+ *   register: '$form.registerMode === true',
+ *   'register:adult': '$form.user.age >= 18',
+ *   'register:minor': '$form.user.age < 18',
+ *   'register:minor:tall': '$form.user.height > 180'
+ * };
+ *
+ * const expanded = expandStateExpressions(states);
+ * // Result:
+ * // {
+ * //   'register': '($form.registerMode === true)',
+ * //   'register:adult': '($form.registerMode === true) && ($form.user.age >= 18)',
+ * //   'register:minor': '($form.registerMode === true) && ($form.user.age < 18)',
+ * //   'register:minor:tall': '($form.registerMode === true) && ($form.user.age < 18) && ($form.user.height > 180)'
+ * // }
+ * ```
+ */
+function expandStateExpressions(
+  states: Record<string, string>,
+): Record<string, string> {
+  const expandedStates: Record<string, string> = {};
+
+  /**
+   * Helper function to get all parent state keys for a given state key
+   * @param {string} stateKey - The state key to get parent chain for
+   * @returns {string[]} Array of parent state keys from root to current state
+   */
+  function getParentChain(stateKey: string) {
+    const parts = stateKey.split(':');
+    const chain = [];
+
+    // Build the chain from root to current state
+    for (let i = 0; i < parts.length; i++) {
+      chain.push(parts.slice(0, i + 1).join(':'));
+    }
+
+    return chain;
+  }
+
+  // Process each state
+  for (const [stateKey, expression] of Object.entries(states)) {
+    const parentChain = getParentChain(stateKey);
+    const conditions = [];
+
+    // Collect all conditions from the inheritance chain
+    for (const parentKey of parentChain) {
+      if (states[parentKey]) {
+        conditions.push(`(${states[parentKey]})`);
+      }
+    }
+
+    // Join all conditions with &&
+    expandedStates[stateKey] = conditions.join(' && ');
+  }
+
+  return expandedStates;
+}

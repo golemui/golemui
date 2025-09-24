@@ -53,13 +53,16 @@ function calculateFieldFlags(state: State) {
           );
         }
         if (!flags[field.uid].hidden) {
-          if (Field.isControlField(field)) {
-            // disabled
+          // disabled
+          if (Field.isControlField(field) || Field.isButtonField(field)) {
             flags[field.uid].disabled =
               ((field as Field.ControlField<any, string>)[
                 `disabled.${state.currentState}`
               ] as boolean) ?? (field.disabled as boolean);
-            // required
+          }
+
+          // required
+          if (Field.isControlField(field)) {
             flags[field.uid].required =
               ((field as Field.ControlField<any, string>)[
                 `required.${state.currentState}`
@@ -73,10 +76,10 @@ function calculateFieldFlags(state: State) {
 }
 
 function calculateForm(
-  fields: Field.FormField[],
+  fields: Field.FormField<string>[],
   fieldFlags: State['fieldFlags'],
 ) {
-  const acc: Field.FormField[] = [];
+  const acc: Field.FormField<string>[] = [];
   fields.forEach((field) => {
     if (field.uid in fieldFlags && fieldFlags[field.uid].hidden) {
       // skip

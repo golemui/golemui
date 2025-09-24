@@ -1,5 +1,11 @@
 <div class="field">
-  <button type="button" [id]="field.uid" (click)="onClick()">
+  <button
+    type="button"
+    [id]="field.uid"
+    (click)="onClick()"
+    [disabled]="adapter.templateData.disabled"
+  >
     {{ adapter.templateData.label }}
   </button>
+  {{ adapter.templateData.disabled }}
 </div>

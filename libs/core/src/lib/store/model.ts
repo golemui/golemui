@@ -10,12 +10,12 @@ export type FormStoreError =
 export type State = {
   formName: string;
   formDef: Form.Form<string>;
-  flatForm: Field.FormField[];
-  calculatedForm: Field.LayoutField;
+  flatForm: Field.FormField<string>[];
+  calculatedForm: Field.LayoutField<string>;
   formMeta: Record<string, any>;
   currentState: string;
 
-  fields: Record<Uid, Field.FormField>;
+  fields: Record<Uid, Field.FormField<string>>;
   fieldFlags: Record<Uid, Field.Flags>;
   fieldMeta: Record<Uid, Record<string, any>>;
 
