@@ -5,8 +5,15 @@
 }
 
 .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding: var(--field-padding);
   border: 1px solid var(--field-border-color);
+
+  &.horizontal {
+    flex-direction: row;
+  }
 }
 
 .field label {

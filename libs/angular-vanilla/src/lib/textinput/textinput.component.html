@@ -1,11 +1,14 @@
 <div class="field">
   @if (adapter.templateData.label) {
-    <label [for]="field.uid">{{ adapter.templateData.label }}</label>
+    <label [for]="field.uid">{{
+      adapter.templateData.label + (adapter.templateData.required ? ' *' : '')
+    }}</label>
   }
   <input
     type="text"
     [id]="field.uid"
     [value]="adapter.templateData.value ?? ''"
+    [disabled]="adapter.templateData.disabled"
     (input)="valueChanged($event)"
   />
 </div>

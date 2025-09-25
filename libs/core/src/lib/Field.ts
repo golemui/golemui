@@ -44,7 +44,7 @@ export type FieldWidget = string;
  */
 type EventExpression = string;
 
-type On<StateKeys extends UiState = never> = AllSuffixable<
+export type On<StateKeys extends UiState = never> = AllSuffixable<
   {
     load?: EventExpression;
     click?: EventExpression;
@@ -54,31 +54,31 @@ type On<StateKeys extends UiState = never> = AllSuffixable<
   StateKeys
 >;
 
-export type BaseField = {
+export type BaseField<StateKeys extends UiState = never> = {
   //kind: 'field' | 'button' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
-  enabled?: boolean | { when: ReactiveExpression };
+  disabled?: boolean | { when: ReactiveExpression };
   required?: boolean | { when: ReactiveExpression };
-  include?: { in: UiState[] } | { when: ReactiveExpression };
-  exclude?: { from: UiState[] } | { when: ReactiveExpression };
+  include?: { in: StateKeys[] } | { when: ReactiveExpression };
+  exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
   //[k: string]: any;
 };
 
 export type Field<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField & { kind: 'field' },
-  'enabled' | 'required',
+  BaseField<StateKeys> & { kind: 'field' },
+  never,
   StateKeys
 >;
 
 export type ButtonField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField & { kind: 'button'; label: string; on?: On<StateKeys> },
-  'enabled' | 'required' | 'label',
+  BaseField<StateKeys> & { kind: 'button'; label: string; on?: On<StateKeys> },
+  'disabled' | 'label',
   StateKeys
 >;
 
 export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField & {
+  BaseField<StateKeys> & {
     kind: 'control';
     path: DotPath;
     /**
@@ -92,12 +92,12 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
     defaultValue?: T;
     validators?: Record<string, any>;
   },
-  'enabled' | 'required' | 'label' | 'validators',
+  'disabled' | 'required' | 'label' | 'validators',
   StateKeys
 >;
 
 export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField & {
+  BaseField<StateKeys> & {
     kind: 'layout';
     // TODO: this should be FormField, but types cannot reference themselves. Keep in sync!
     children: (
@@ -107,7 +107,7 @@ export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
       | ButtonField<StateKeys>
     )[];
   },
-  'enabled' | 'required',
+  never,
   StateKeys
 >;
 
@@ -124,17 +124,21 @@ export type FormField<StateKeys extends UiState = never> =
 //
 // --------------------------------
 
-export const isField = (field: FormField): field is Field =>
-  field.kind === 'field';
+export const isField = <StateKeys extends string>(
+  field: FormField<StateKeys>,
+): field is Field<StateKeys> => field.kind === 'field';
 
-export const isButtonField = (field: FormField): field is ButtonField =>
-  field.kind === 'button';
+export const isButtonField = <StateKeys extends string>(
+  field: FormField<StateKeys>,
+): field is ButtonField<StateKeys> => field.kind === 'button';
 
-export const isControlField = (field: FormField): field is ControlField<any> =>
-  field.kind === 'control';
+export const isControlField = <T, StateKeys extends string>(
+  field: FormField<StateKeys>,
+): field is ControlField<T, StateKeys> => field.kind === 'control';
 
-export const isLayoutField = (field: FormField): field is LayoutField =>
-  field.kind === 'layout';
+export const isLayoutField = <StateKeys extends string>(
+  field: FormField<StateKeys>,
+): field is LayoutField<StateKeys> => field.kind === 'layout';
 
 // --------------------------------
 //

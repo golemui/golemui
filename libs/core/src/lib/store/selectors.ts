@@ -23,21 +23,67 @@ export const dataByPath$ = <T = any>(path: DotPath) =>
 
 // --------------------------------
 //
-// COMPONENTS
+// FIELDS
 //
 // --------------------------------
 
-const selectComponents = pipe(
-  map((store: State) => store.components),
+const selectFields = pipe(
+  map((store: State) => store.fields),
   distinctUntilChanged(),
 );
 
-export const componentsByUid$ = (uid: Uid) =>
+export const fieldsByUid$ = (uid: Uid) =>
   pipe(
-    selectComponents,
-    map((components) => components[uid]),
+    selectFields,
+    map((fields) => fields[uid]),
     distinctUntilChanged(),
   );
+
+// --------------------------------
+//
+// FIELD FLAGS
+//
+// --------------------------------
+
+const selectFieldFlags = pipe(
+  map((store: State) => store.fieldFlags),
+  distinctUntilChanged(),
+);
+
+export const fieldFlagsByUid$ = (uid: Uid) =>
+  pipe(
+    selectFieldFlags,
+    map((fieldFlags) => fieldFlags[uid]),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
+// FORM FIELDS (calculatedForm)
+//
+// --------------------------------
+
+const selectCalculatedForm = pipe(
+  map((store: State) => store.calculatedForm),
+  distinctUntilChanged(),
+);
+
+export const calculatedForm = (store: Observable<State>) =>
+  store.pipe(selectCalculatedForm);
+
+// --------------------------------
+//
+// CURRENT STATES
+//
+// --------------------------------
+
+const selectCurrentStates = pipe(
+  map((store: State) => store.currentStates),
+  distinctUntilChanged(),
+);
+
+export const currentStates = (store: Observable<State>) =>
+  store.pipe(selectCurrentStates);
 
 // --------------------------------
 //
