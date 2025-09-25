@@ -1,10 +1,12 @@
+@let templateData = adapter.templateData();
+
 <div class="field">
   <button
     type="button"
     [id]="field.uid"
     (click)="onClick()"
-    [disabled]="adapter.templateData.disabled"
+    [disabled]="templateData.disabled"
   >
-    {{ adapter.templateData.label }}
+    {{ templateData.label }}
   </button>
 </div>

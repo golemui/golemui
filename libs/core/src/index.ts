@@ -10,4 +10,6 @@ export * from './lib/store/model';
 export * from './lib/store/selectors';
 
 export * from './lib/shared';
+
+export * from './lib/utils/debug';
 export * from './lib/utils/dot-path';
