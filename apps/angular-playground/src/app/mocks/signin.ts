@@ -3,10 +3,12 @@ import { defineForm } from '@formforge/core';
 export const signin = defineForm({
   states: {
     register: '$form.registerMode === true',
-    'register:adult': '$form.user.age >= 18',
+    'register:tall': '$form.user.height > 180',
     'register:minor': '$form.user.age < 18',
-    'register:minor:tall': '$form.user.height > 180',
-    termsAccepted: '$form.terms === true',
+    'register:minor:canSubmit':
+      '$form.terms === true && $form.parentalApproval === true',
+    'register:adult': '$form.user.age >= 18',
+    'register:adult:canSubmit': '$form.terms === true',
   },
   form: {
     uid: '',
@@ -47,6 +49,7 @@ export const signin = defineForm({
         path: 'user.age',
         defaultValue: 0,
         required: true,
+        include: { in: ['register'] },
       },
       {
         uid: '',
@@ -55,13 +58,14 @@ export const signin = defineForm({
         path: 'user.height',
         defaultValue: '170',
         required: true,
+        include: { in: ['register'] },
       },
       {
         uid: '',
         kind: 'control',
         widget: 'checkbox',
         path: 'user.playBasketball',
-        include: { in: ['register:minor:tall'] },
+        include: { in: ['register:tall'] },
       },
       {
         uid: '',
@@ -80,13 +84,22 @@ export const signin = defineForm({
       },
       {
         uid: '',
+        kind: 'control',
+        widget: 'checkbox',
+        label: 'Parental Approval',
+        path: 'parentalApproval',
+        include: { in: ['register:minor'] },
+      },
+      {
+        uid: '',
         kind: 'button',
         widget: 'button',
         label: 'Login',
         'label.register': 'Register',
         disabled: false,
         'disabled.register': true,
-        'disabled.termsAccepted': false,
+        'disabled.register:minor:canSubmit': false,
+        'disabled.register:adult:canSubmit': false,
         on: {
           click: 'handleLogin',
           'click.register': 'handleRegister',
