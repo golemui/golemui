@@ -27,6 +27,15 @@ export class ButtonAdapter {
           fieldFlags?.disabled ?? (field.disabled as boolean);
       });
 
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.currentStates)
+      .subscribe(() => {
+        this.templateData.label = this.context.getPropertyValueByCurrentState(
+          'label',
+          this.field,
+        );
+      });
+
     this.context.emitEvent('load', this.field);
   }
 

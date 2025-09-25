@@ -26,6 +26,7 @@ export const signin = defineForm({
         uid: '',
         kind: 'control',
         widget: 'textinput',
+        'label.register': 'Password 1',
         path: 'user.password',
         required: true,
         on: { 'change.register': 'checkPasswordMatch' },
@@ -75,6 +76,7 @@ export const signin = defineForm({
         widget: 'checkbox',
         label: 'Accept Terms',
         path: 'terms',
+        include: { in: ['register'] },
       },
       {
         uid: '',
@@ -82,7 +84,8 @@ export const signin = defineForm({
         widget: 'button',
         label: 'Login',
         'label.register': 'Register',
-        disabled: true,
+        disabled: false,
+        'disabled.register': true,
         'disabled.termsAccepted': false,
         on: {
           click: 'handleLogin',

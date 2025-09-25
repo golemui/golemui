@@ -29,12 +29,7 @@ export class ControlAdapter<T> {
       payload: { data: field.defaultValue, path: field.path },
     });
 
-    this.templateData.label =
-      this.field.label === undefined
-        ? Core.toLabel(field.path)
-        : this.field.label === ''
-          ? undefined
-          : this.field.label;
+    this.templateData.label = this.calculateLabel();
 
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
@@ -47,6 +42,14 @@ export class ControlAdapter<T> {
           fieldFlags?.disabled ?? (field.disabled as boolean);
         this.templateData.required =
           fieldFlags?.required ?? (field.required as boolean);
+      });
+
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.currentStates)
+      .subscribe(() => {
+        this.templateData.label =
+          this.context.getPropertyValueByCurrentState('label', this.field) ??
+          this.calculateLabel();
       });
 
     this.context.emitEvent('load', this.field);
@@ -66,5 +69,13 @@ export class ControlAdapter<T> {
       payload: { uid: this.field.uid },
     });
     this.destroy$.next();
+  }
+
+  private calculateLabel() {
+    return this.field.label === undefined
+      ? Core.toLabel(this.field.path)
+      : this.field.label === ''
+        ? undefined
+        : this.field.label;
   }
 }

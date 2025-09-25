@@ -73,6 +73,20 @@ export const calculatedForm = (store: Observable<State>) =>
 
 // --------------------------------
 //
+// CURRENT STATES
+//
+// --------------------------------
+
+const selectCurrentStates = pipe(
+  map((store: State) => store.currentStates),
+  distinctUntilChanged(),
+);
+
+export const currentStates = (store: Observable<State>) =>
+  store.pipe(selectCurrentStates);
+
+// --------------------------------
+//
 // ERRORS
 //
 // --------------------------------

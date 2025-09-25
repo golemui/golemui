@@ -8,38 +8,35 @@ export const calculateCurrentState = (state: State): State => {
   }
   stateExpressions = expandStateExpressions(stateExpressions);
 
-  let currentState = '';
+  let currentStates: string[] = [];
   let error: FormStoreError = { kind: 'none' };
   try {
     // TODO: Security. See: https://github.com/dy/subscript/issues/25
     // TODO: Cache compiled expressions
-    currentState =
-      Object.keys(stateExpressions)
-        // TODO: doesn't matter when we move to currentState as array??
-        // We want to find the longest state name first because 'a.b.c' has preference over 'a.b' and 'a'
-        .sort((a, b) => b.length - a.length)
-        .find((stateName) => {
-          const expression = stateExpressions[stateName];
-          const ast = parse(expression);
-          const evaluate = compile(ast);
-          const result = evaluate({
-            $form: state.data,
-            $log: (value: any, label?: string) => {
-              if (label) {
-                console.log(label, value);
-              } else {
-                console.log(value);
-              }
-              return value;
-            },
-          });
-          return result === true;
-        }) || '';
+    currentStates = Object.keys(stateExpressions)
+      .map((stateName) => {
+        const expression = stateExpressions[stateName];
+        const ast = parse(expression);
+        const evaluate = compile(ast);
+        const result = evaluate({
+          $form: state.data,
+          $log: (value: any, label?: string) => {
+            if (label) {
+              console.log(label, value);
+            } else {
+              console.log(value);
+            }
+            return value;
+          },
+        });
+        return result === true ? stateName : undefined;
+      })
+      .filter((stateName) => stateName !== undefined);
   } catch (err: unknown) {
     error = { kind: 'fatal', error: (err as Error).message };
   }
 
-  return { ...state, currentState, error };
+  return { ...state, currentStates, error };
 };
 
 /**

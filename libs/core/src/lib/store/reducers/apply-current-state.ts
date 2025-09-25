@@ -22,7 +22,7 @@ export const applyCurrentState = (state: State): State => {
   };
 };
 
-function calculateFieldFlags(state: State) {
+function calculateFieldFlags(state: State): State['fieldFlags'] {
   return state.flatForm
     .filter((field) => {
       if (field.include && 'in' in field.include) {
@@ -42,31 +42,37 @@ function calculateFieldFlags(state: State) {
         flags[field.uid] = flags[field.uid] || {};
         // show
         if (field.include && 'in' in field.include) {
-          flags[field.uid].hidden = !field.include.in.includes(
-            state.currentState,
+          flags[field.uid].hidden = !field.include.in.some((fieldState) =>
+            state.currentStates.includes(fieldState),
           );
         }
         // hide
         if (field.exclude && 'from' in field.exclude) {
-          flags[field.uid].hidden = field.exclude.from.includes(
-            state.currentState,
+          flags[field.uid].hidden = field.exclude.from.some((fieldState) =>
+            state.currentStates.includes(fieldState),
           );
         }
+
+        // Only process fields that are visible
         if (!flags[field.uid].hidden) {
           // disabled
           if (Field.isControlField(field) || Field.isButtonField(field)) {
-            flags[field.uid].disabled =
-              ((field as Field.ControlField<any, string>)[
-                `disabled.${state.currentState}`
-              ] as boolean) ?? (field.disabled as boolean);
+            setFlag({
+              property: 'disabled',
+              field,
+              flags,
+              currentStates: state.currentStates,
+            });
           }
 
           // required
           if (Field.isControlField(field)) {
-            flags[field.uid].required =
-              ((field as Field.ControlField<any, string>)[
-                `required.${state.currentState}`
-              ] as boolean) ?? (field.required as boolean);
+            setFlag({
+              property: 'required',
+              field,
+              flags,
+              currentStates: state.currentStates,
+            });
           }
         }
         return flags;
@@ -75,6 +81,7 @@ function calculateFieldFlags(state: State) {
     );
 }
 
+// recaculate form and remove elements that are hidden
 function calculateForm(
   fields: Field.FormField<string>[],
   fieldFlags: State['fieldFlags'],
@@ -91,4 +98,30 @@ function calculateForm(
     }
   });
   return acc;
+}
+
+// FIXME: No type safety at all!!
+function setFlag({
+  currentStates,
+  field,
+  property,
+  flags,
+}: {
+  currentStates: string[];
+  field: Record<string, any>;
+  property: string;
+  flags: Record<string, Record<string, any>>;
+}) {
+  const matchedState = currentStates
+    .sort((a, b) => b.length - a.length)
+    .find((currentState) => {
+      const currentStateValue = field[`${property}.${currentState}`];
+      return currentStateValue !== undefined;
+    });
+  // if the property is explicitly set on any of the current states, it wins.
+  if (matchedState !== undefined) {
+    flags[field['uid']][property] = field[`${property}.${matchedState}`];
+  } else {
+    flags[field['uid']][property] = field[property];
+  }
 }
