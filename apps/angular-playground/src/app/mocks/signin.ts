@@ -20,8 +20,9 @@ export const signin = defineForm({
         kind: 'field',
         widget: 'alert',
         props: {
-          text: 'Everything will be alright',
-          level: 'success',
+          text: 'Your are attempting to login',
+          'text.register': 'Your are attempting to register',
+          'level.register': 'warning',
         },
       },
       {

@@ -67,7 +67,7 @@ export type BaseField<StateKeys extends UiState = never> = {
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: Record<string, unknown>;
+  props?: Record<string, any>;
 };
 
 export type Field<StateKeys extends UiState = never> = SomeSuffixable<

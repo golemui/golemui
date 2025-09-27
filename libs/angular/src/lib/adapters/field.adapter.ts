@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FormContext } from '../context/form.context';
 
 @Injectable()
@@ -23,6 +23,35 @@ export class FieldAdapter<ExtraProps extends Record<string, any>> {
       type: 'ADD_FIELD',
       payload: { field },
     });
+
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.currentStates)
+      .subscribe(() => {
+        const props = this.field.props;
+        if (props !== undefined) {
+          // we dont want 'label.register', we only want the base keys 'label' (even if they are not set)
+          const uniquePropsWithoutState = Array.from(
+            new Set(
+              Object.keys(props).map((prop) => prop.split('.')[0]),
+            ).keys(),
+          );
+          const updatedProps = uniquePropsWithoutState.reduce(
+            (templateData, key: keyof ExtraProps) => {
+              templateData[key] = this.context.getPropertyValueByCurrentState(
+                key as string,
+                props,
+              ) as any;
+              return templateData;
+            },
+            {} as ExtraProps,
+          );
+
+          this.templateData.update((value) => ({
+            ...value,
+            ...updatedProps,
+          }));
+        }
+      });
   }
 
   destroy() {
