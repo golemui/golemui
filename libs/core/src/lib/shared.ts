@@ -27,8 +27,3 @@ export type FormEvent = {
   name: EventName;
   data: Record<string, any> /*State['data']*/;
 };
-
-/**
- * Same as Angular's `Type<T>`
- */
-export type Constructor<T = unknown> = new (...args: any[]) => T;

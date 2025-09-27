@@ -6,13 +6,13 @@ import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
 import { FieldLoaders, FieldRegistry } from './field.registry';
 
-export class FormContext {
-  fieldRegistry = new FieldRegistry();
+export class FormContext<ComponentType> {
+  fieldRegistry = new FieldRegistry<ComponentType>();
   store: FormStore = {} as FormStore;
   events$ = new Subject<FormEvent>();
 
   initialize(
-    fieldLoaders: FieldLoaders,
+    fieldLoaders: FieldLoaders<ComponentType>,
     middlewares: Middleware<State, Action>[] = [],
   ) {
     this.fieldRegistry.setFieldLoaders(fieldLoaders);

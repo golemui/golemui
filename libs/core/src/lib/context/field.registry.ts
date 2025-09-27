@@ -1,16 +1,14 @@
 import { FormField } from '../Field';
-import { Constructor } from '../shared';
-import { WithField } from './with-field.type';
 
-type Registry = Record<FormField['widget'], Constructor<WithField>>;
-export type FieldLoaders = Record<
+type Registry<ComponentType> = Record<FormField['widget'], ComponentType>;
+export type FieldLoaders<ComponentType> = Record<
   FormField['widget'],
-  () => Promise<Constructor<WithField>>
+  () => Promise<ComponentType>
 >;
 
-export class FieldRegistry {
-  private registry: Registry = {};
-  private fieldLoaders: FieldLoaders = {};
+export class FieldRegistry<ComponentType> {
+  private registry: Registry<ComponentType> = {};
+  private fieldLoaders: FieldLoaders<ComponentType> = {};
 
   private _ready = false;
   /**
@@ -20,14 +18,12 @@ export class FieldRegistry {
     return this._ready;
   }
 
-  setFieldLoaders(fieldLoaders: FieldLoaders) {
+  setFieldLoaders(fieldLoaders: FieldLoaders<ComponentType>) {
     this.fieldLoaders = fieldLoaders;
     this._ready = true;
   }
 
-  async loadField(
-    widget: FormField['widget'],
-  ): Promise<Constructor<WithField>> {
+  async loadField(widget: FormField['widget']): Promise<ComponentType> {
     return (
       this.registry[widget] ??
       (this.registry[widget] = await this.fieldLoaders[widget]())

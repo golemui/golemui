@@ -7,6 +7,7 @@ import {
   input,
   OnInit,
   output,
+  Type,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as Core from '@formforge/core';
@@ -31,8 +32,9 @@ const defaultI18n: I18n = {};
 export class FormComponent implements OnInit {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
-  fieldLoaders = input.required<Core.FieldLoaders>();
+  fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
+  // TODO: not doing anything with data?
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);
   formName = input(crypto.randomUUID());
@@ -42,7 +44,8 @@ export class FormComponent implements OnInit {
   protected event = output<Core.FormEvent>();
 
   // INJECTS
-  protected context = inject(AngularFormContext);
+  protected context: AngularFormContext<Type<Core.WithField>> =
+    inject(AngularFormContext);
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);
