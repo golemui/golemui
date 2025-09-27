@@ -62,7 +62,12 @@ export type BaseField<StateKeys extends UiState = never> = {
   required?: boolean | { when: ReactiveExpression };
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
-  //[k: string]: any;
+  // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
+  /**
+   * Non-core properties e.g. text, level...
+   * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
+   */
+  props?: Record<string, unknown>;
 };
 
 export type Field<StateKeys extends UiState = never> = SomeSuffixable<

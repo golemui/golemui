@@ -2,7 +2,7 @@ import { defineForm } from '@formforge/core';
 
 export const signin = defineForm({
   states: {
-    register: '$form.registerMode === true',
+    register: /*javascript*/ `$form.registerMode === true`,
     'register:tall': '$form.user.height > 180',
     'register:minor': '$form.user.age < 18',
     'register:minor:canSubmit':
@@ -15,6 +15,15 @@ export const signin = defineForm({
     kind: 'layout',
     widget: 'stack',
     children: [
+      {
+        uid: '',
+        kind: 'field',
+        widget: 'alert',
+        props: {
+          text: 'Everything will be alright',
+          level: 'success',
+        },
+      },
       {
         uid: '',
         kind: 'control',
