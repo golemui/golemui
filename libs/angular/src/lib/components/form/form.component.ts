@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as Core from '@formforge/core';
-import { FieldLoaders } from '../../context/field.registry';
-import { FormContext } from '../../context/form.context';
+import { AngularFormContext } from '../../context/form.context';
 import { FieldDirective } from '../../directives/field.directive';
 
 type JsonStringified = string;
@@ -26,13 +25,13 @@ const defaultI18n: I18n = {};
   standalone: true,
   templateUrl: './form.component.html',
   imports: [CommonModule, FieldDirective],
-  providers: [FormContext],
+  providers: [AngularFormContext],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormComponent implements OnInit {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
-  fieldLoaders = input.required<FieldLoaders>();
+  fieldLoaders = input.required<Core.FieldLoaders>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);
@@ -43,7 +42,7 @@ export class FormComponent implements OnInit {
   protected event = output<Core.FormEvent>();
 
   // INJECTS
-  protected context = inject(FormContext);
+  protected context = inject(AngularFormContext);
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);

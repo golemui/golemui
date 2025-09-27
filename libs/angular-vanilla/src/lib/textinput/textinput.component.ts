@@ -11,9 +11,7 @@ import * as Core from '@formforge/core';
   templateUrl: './textinput.component.html',
   styleUrl: '../styles.scss',
 })
-export class TextinputComponent
-  implements OnInit, OnDestroy, Angular.WithField
-{
+export class TextinputComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
   protected adapter: Angular.ControlAdapter<string> = inject(
     Angular.ControlAdapter,

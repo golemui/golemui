@@ -1,11 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { Subject, takeUntil } from 'rxjs';
-import { FormContext } from '../context/form.context';
+import { AngularFormContext } from '../context/form.context';
 
 @Injectable()
 export class ControlAdapter<T> {
-  private context = inject(FormContext);
+  private context = inject(AngularFormContext);
   private destroy$ = new Subject<void>();
   private field!: Core.ControlField<T>;
 

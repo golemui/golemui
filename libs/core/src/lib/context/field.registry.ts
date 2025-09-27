@@ -1,11 +1,11 @@
-import { Type } from '@angular/core';
-import { FormField } from '@formforge/core';
-import { WithField } from '../directives/with-field.type';
+import { FormField } from '../Field';
+import { Constructor } from '../shared';
+import { WithField } from './with-field.type';
 
-type Registry = Record<FormField['widget'], Type<WithField>>;
+type Registry = Record<FormField['widget'], Constructor<WithField>>;
 export type FieldLoaders = Record<
   FormField['widget'],
-  () => Promise<Type<WithField>>
+  () => Promise<Constructor<WithField>>
 >;
 
 export class FieldRegistry {
@@ -25,7 +25,9 @@ export class FieldRegistry {
     this._ready = true;
   }
 
-  async loadField(widget: FormField['widget']): Promise<Type<WithField>> {
+  async loadField(
+    widget: FormField['widget'],
+  ): Promise<Constructor<WithField>> {
     return (
       this.registry[widget] ??
       (this.registry[widget] = await this.fieldLoaders[widget]())
