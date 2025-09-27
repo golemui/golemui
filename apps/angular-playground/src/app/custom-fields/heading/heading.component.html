@@ -1,0 +1,13 @@
+@let templateData = adapter.templateData();
+
+<div class="field">
+  <ng-container [ngSwitch]="templateData.level">
+    <h1 *ngSwitchCase="1" class="heading">{{ templateData.text }}</h1>
+    <h2 *ngSwitchCase="2" class="heading">{{ templateData.text }}</h2>
+    <h3 *ngSwitchCase="3" class="heading">{{ templateData.text }}</h3>
+    <h4 *ngSwitchCase="4" class="heading">{{ templateData.text }}</h4>
+    <h5 *ngSwitchCase="5" class="heading">{{ templateData.text }}</h5>
+    <h6 *ngSwitchCase="6" class="heading">{{ templateData.text }}</h6>
+    <h1 *ngSwitchDefault class="heading">{{ templateData.text }}</h1>
+  </ng-container>
+</div>
