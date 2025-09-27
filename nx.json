@@ -69,7 +69,8 @@
       },
       "library": {
         "style": "scss",
-        "linter": "none"
+        "linter": "none",
+        "unitTestRunner": "vitest"
       }
     }
   },

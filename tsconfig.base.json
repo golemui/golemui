@@ -17,7 +17,8 @@
     "paths": {
       "@formforge/angular": ["libs/angular/src/index.ts"],
       "@formforge/angular-vanilla": ["libs/angular-vanilla/src/index.ts"],
-      "@formforge/core": ["libs/core/src/index.ts"]
+      "@formforge/core": ["libs/core/src/index.ts"],
+      "@formforge/react": ["libs/react/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
