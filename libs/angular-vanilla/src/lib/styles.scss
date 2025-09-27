@@ -1,20 +1,14 @@
 :host {
-  --field-padding: 0.5rem;
-  --field-label-color: #333;
-  --field-heading-color: #1d7484;
+  --field-heading-color: var(--pico-h6-color);
+  --field-heading-margin: 0;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: var(--field-padding);
+  gap: 16px;
 
   &.horizontal {
     flex-direction: row;
   }
-}
-
-.field label {
-  color: var(--field-label-color);
 }

@@ -1,2 +1,3 @@
-@use 'styles/normalize';
-@use 'styles/sakura';
+@use '@picocss/pico/scss' with (
+  $theme-color: 'azure'
+);
