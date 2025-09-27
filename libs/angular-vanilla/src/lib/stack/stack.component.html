@@ -1,4 +1,4 @@
-@let children = adapter.templateData.children;
+@let children = adapter.templateData().children;
 
 <div class="field">
   @for (child of children; track child.uid) {

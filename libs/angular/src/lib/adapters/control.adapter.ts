@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { Subject, takeUntil } from 'rxjs';
 import { FormContext } from '../context/form.context';
@@ -9,12 +9,12 @@ export class ControlAdapter<T> {
   private destroy$ = new Subject<void>();
   private field!: Core.ControlField<T>;
 
-  templateData: {
+  templateData = signal<{
     label?: string;
     value?: T;
     disabled?: boolean;
     required?: boolean;
-  } = {};
+  }>({});
 
   init(field: Core.ControlField<T>) {
     this.field = field;
@@ -29,27 +29,39 @@ export class ControlAdapter<T> {
       payload: { data: field.defaultValue, path: field.path },
     });
 
-    this.templateData.label = this.calculateLabel();
+    this.templateData.update((value) => ({
+      ...value,
+      label: this.calculateLabel(),
+    }));
 
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
-      .subscribe((value) => (this.templateData.value = value));
+      .subscribe((data) =>
+        this.templateData.update((value) => ({ ...value, value: data })),
+      );
 
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.templateData.disabled =
-          fieldFlags?.disabled ?? (field.disabled as boolean);
-        this.templateData.required =
-          fieldFlags?.required ?? (field.required as boolean);
+        this.templateData.update((value) => ({
+          ...value,
+          disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
+        }));
+        this.templateData.update((value) => ({
+          ...value,
+          required: fieldFlags?.required ?? (field.required as boolean),
+        }));
       });
 
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.currentStates)
       .subscribe(() => {
-        this.templateData.label =
-          this.context.getPropertyValueByCurrentState('label', this.field) ??
-          this.calculateLabel();
+        this.templateData.update((value) => ({
+          ...value,
+          label:
+            this.context.getPropertyValueByCurrentState('label', this.field) ??
+            this.calculateLabel(),
+        }));
       });
 
     this.context.emitEvent('load', this.field);

@@ -1,0 +1,269 @@
+/* Sakura.css v1.5.1
+ * ================
+ * Minimal css theme.
+ * Project: https://github.com/oxalorg/sakura/
+ */
+
+/* Body */
+
+html {
+  font-size: 62.5%; // So that root size becomes 10px
+  font-family: $font-family-base;
+}
+
+body {
+  // $font-size-base must be a rem value
+  font-size: $font-size-base;
+  line-height: 1.618;
+  max-width: 38em;
+  margin: auto;
+  color: $color-text;
+  background-color: $color-bg;
+  padding: 13px;
+}
+
+@media (max-width: 684px) {
+  body {
+    font-size: $font-size-base * 0.85;
+  }
+}
+
+@media (max-width: 382px) {
+  body {
+    font-size: $font-size-base * 0.75;
+  }
+}
+
+@mixin word-wrap() {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  @include word-wrap;
+}
+
+h1 {
+  font-size: 2.35em;
+}
+h2 {
+  font-size: 2em;
+}
+h3 {
+  font-size: 1.75em;
+}
+h4 {
+  font-size: 1.5em;
+}
+h5 {
+  font-size: 1.25em;
+}
+h6 {
+  font-size: 1em;
+}
+
+p {
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+}
+
+small,
+sub,
+sup {
+  font-size: 75%;
+}
+
+hr {
+  border-color: $color-blossom;
+}
+
+a {
+  text-decoration: none;
+  color: $color-blossom;
+
+  &:visited {
+    color: darken($color-blossom, 10%);
+  }
+
+  &:hover {
+    color: $color-fade;
+    border-bottom: 2px solid $color-text;
+  }
+}
+
+ul {
+  padding-left: 1.4em;
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+}
+
+li {
+  margin-bottom: 0.4em;
+}
+
+blockquote {
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 1em;
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  padding-right: 0.8em;
+  border-left: 5px solid $color-blossom;
+  margin-bottom: 2.5rem;
+  background-color: $color-bg-alt;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+img,
+video {
+  height: auto;
+  max-width: 100%;
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+}
+
+/* Pre and Code */
+
+pre {
+  background-color: $color-bg-alt;
+  display: block;
+  padding: 1em;
+  overflow-x: auto;
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+  font-size: 0.9em;
+}
+
+code,
+kbd,
+samp {
+  font-size: 0.9em;
+  padding: 0 0.5em;
+  background-color: $color-bg-alt;
+  white-space: pre-wrap;
+}
+
+pre > code {
+  padding: 0;
+  background-color: transparent;
+  white-space: pre;
+  font-size: 1em;
+}
+
+/* Tables */
+
+table {
+  text-align: justify;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+td,
+th {
+  padding: 0.5em;
+  border-bottom: 1px solid $color-bg-alt;
+}
+
+/* Buttons, forms and input */
+
+input,
+textarea {
+  border: 1px solid $color-text;
+
+  &:focus {
+    border: 1px solid $color-blossom;
+  }
+}
+
+textarea {
+  width: 100%;
+}
+
+.button,
+button,
+input[type='submit'],
+input[type='reset'],
+input[type='button'],
+input[type='file']::file-selector-button {
+  display: inline-block;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  background-color: $color-blossom;
+  color: $color-bg;
+  border-radius: 1px;
+  border: 1px solid $color-blossom;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  &:hover {
+    background-color: $color-fade;
+    color: $color-bg;
+    outline: 0;
+  }
+}
+
+.button,
+button,
+input[type='submit'],
+input[type='reset'],
+input[type='button'],
+input[type='file'] {
+  &[disabled] {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  &:focus-visible {
+    outline-style: solid;
+    outline-width: 2px;
+  }
+}
+
+textarea,
+select,
+input {
+  color: $color-text;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  margin-bottom: 10px;
+  background-color: $color-bg-alt;
+  border: 1px solid $color-bg-alt;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border: 1px solid $color-blossom;
+    outline: 0;
+  }
+}
+
+input[type='checkbox']:focus {
+  outline: 1px dotted $color-blossom;
+}
+
+label,
+legend,
+fieldset {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}

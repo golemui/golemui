@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { Subject, takeUntil } from 'rxjs';
 import { FormContext } from '../context/form.context';
@@ -9,11 +9,14 @@ export class ButtonAdapter {
   private destroy$ = new Subject<void>();
   private field!: Core.ButtonField;
 
-  templateData: { label?: string; disabled?: boolean } = {};
+  templateData = signal<{ label?: string; disabled?: boolean }>({});
 
   init(field: Core.ButtonField) {
     this.field = field;
-    this.templateData.label = this.field.label;
+    this.templateData.update((value) => ({
+      ...value,
+      label: this.field.label,
+    }));
 
     this.context.store.dispatch({
       type: 'ADD_FIELD',
@@ -23,17 +26,22 @@ export class ButtonAdapter {
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.templateData.disabled =
-          fieldFlags?.disabled ?? (field.disabled as boolean);
+        this.templateData.update((value) => ({
+          ...value,
+          disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
+        }));
       });
 
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.currentStates)
       .subscribe(() => {
-        this.templateData.label = this.context.getPropertyValueByCurrentState(
-          'label',
-          this.field,
-        );
+        this.templateData.update((value) => ({
+          ...value,
+          label: this.context.getPropertyValueByCurrentState(
+            'label',
+            this.field,
+          ),
+        }));
       });
 
     this.context.emitEvent('load', this.field);

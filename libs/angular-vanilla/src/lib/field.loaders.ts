@@ -13,4 +13,7 @@ export const vanillaFieldLoaders: Angular.FieldLoaders = {
 
   // LAYOUTS
   stack: async () => (await import('./stack/stack.component')).StackComponent,
+
+  // FIELDS
+  alert: async () => (await import('./alert/alert.component')).AlertComponent,
 };
