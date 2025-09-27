@@ -1,7 +1,7 @@
-:root {
+:host {
   --field-padding: 0.5rem;
-  --field-border-color: #ccc;
   --field-label-color: #333;
+  --field-heading-color: #1d7484;
 }
 
 .field {
@@ -9,7 +9,6 @@
   flex-direction: column;
   gap: 8px;
   padding: var(--field-padding);
-  border: 1px solid var(--field-border-color);
 
   &.horizontal {
     flex-direction: row;

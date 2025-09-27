@@ -18,6 +18,14 @@ export const signin = defineForm({
       {
         uid: '',
         kind: 'field',
+        widget: 'heading',
+        props: {
+          text: 'This a heading',
+        },
+      },
+      {
+        uid: '',
+        kind: 'field',
         widget: 'alert',
         props: {
           text: 'Your are attempting to login',

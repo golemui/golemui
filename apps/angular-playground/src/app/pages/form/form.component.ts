@@ -17,7 +17,12 @@ export class AppFromPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [loggerMiddleware];
   protected formDef = signin;
-  protected vanillaFieldLoaders = Vanilla.vanillaFieldLoaders;
+  protected vanillaFieldLoaders = {
+    ...Vanilla.vanillaFieldLoaders,
+    heading: async () =>
+      (await import('../../custom-fields/heading/heading.component'))
+        .HeadingComponent,
+  };
 
   protected error = '';
 
