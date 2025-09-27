@@ -20,17 +20,8 @@ export const signin = defineForm({
         kind: 'field',
         widget: 'heading',
         props: {
-          text: 'This a heading',
-        },
-      },
-      {
-        uid: '',
-        kind: 'field',
-        widget: 'alert',
-        props: {
-          text: 'Your are attempting to login',
-          'text.register': 'Your are attempting to register',
-          'level.register': 'warning',
+          text: 'Login',
+          'text.register': 'Register',
         },
       },
       {
@@ -107,6 +98,19 @@ export const signin = defineForm({
         label: 'Parental Approval',
         path: 'parentalApproval',
         include: { in: ['register:minor'] },
+      },
+      {
+        uid: '',
+        kind: 'field',
+        widget: 'alert',
+        props: {
+          text: 'Some fields need your attention',
+          level: 'warning',
+          'text.register:adult:canSubmit': 'You can Register now',
+          'level.register:adult:canSubmit': 'success',
+          'text.register:minor:canSubmit': 'You can Register now',
+          'level.register:minor:canSubmit': 'success',
+        },
       },
       {
         uid: '',

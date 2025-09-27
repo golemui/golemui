@@ -5,6 +5,7 @@ import * as Core from '@formforge/core';
 
 type OwnWidgetProps = {
   text: string;
+  level?: number;
 };
 
 @Component({
