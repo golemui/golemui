@@ -1,6 +1,7 @@
 import * as Core from '@formforge/core';
 import { FieldRenderer, useLayout } from '@formforge/react';
 import { useCallback } from 'react';
+import '../styles.scss';
 
 export function Stack(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;

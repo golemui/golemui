@@ -1,5 +1,6 @@
 import * as Core from '@formforge/core';
 import { useButton } from '@formforge/react';
+import '../styles.scss';
 
 export function Button(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ButtonField;

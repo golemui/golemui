@@ -99,19 +99,19 @@ export const signin = defineForm({
         path: 'parentalApproval',
         include: { in: ['register:minor'] },
       },
-      // {
-      //   uid: '',
-      //   kind: 'field',
-      //   widget: 'alert',
-      //   props: {
-      //     text: 'Some fields need your attention',
-      //     level: 'warning',
-      //     'text.register:adult:canSubmit': 'You can Register now',
-      //     'level.register:adult:canSubmit': 'success',
-      //     'text.register:minor:canSubmit': 'You can Register now',
-      //     'level.register:minor:canSubmit': 'success',
-      //   },
-      // },
+      {
+        uid: '',
+        kind: 'field',
+        widget: 'alert',
+        props: {
+          text: 'Some fields need your attention',
+          level: 'warning',
+          'text.register:adult:canSubmit': 'You can Register now',
+          'level.register:adult:canSubmit': 'success',
+          'text.register:minor:canSubmit': 'You can Register now',
+          'level.register:minor:canSubmit': 'success',
+        },
+      },
       {
         uid: '',
         kind: 'button',

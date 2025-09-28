@@ -10,9 +10,9 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
   textinput: async () => (await import('./components/TextInput')).TextInput,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
 
-  // // LAYOUTS
+  // LAYOUTS
   stack: async () => (await import('./components/Stack')).Stack,
 
-  // // FIELDS
-  // alert: async () => (await import('./alert/alert.component')).AlertComponent,
+  // FIELDS
+  alert: async () => (await import('./components/Alert')).Alert,
 };

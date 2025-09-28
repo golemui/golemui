@@ -1,6 +1,7 @@
 import * as Core from '@formforge/core';
 import { useControl } from '@formforge/react';
 import { useCallback } from 'react';
+import '../styles.scss';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
