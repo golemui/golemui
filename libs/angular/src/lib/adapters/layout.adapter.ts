@@ -10,10 +10,8 @@ export class LayoutAdapter {
   private field!: Core.LayoutField;
 
   templateData = signal<{
-    hidden: boolean;
     children: Core.FormField<string>[];
   }>({
-    hidden: false,
     children: [],
   });
 
