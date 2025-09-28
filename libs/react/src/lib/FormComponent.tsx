@@ -1,0 +1,97 @@
+import * as Core from '@formforge/core';
+import { useEffect, useRef, useState } from 'react';
+import FieldRenderer from './FieldRenderer';
+import { ReactFormContextProvider } from './ReactFormContextProvider';
+
+type JsonStringified = string;
+type JsonObject = Record<string, any>;
+
+export interface FormComponentProps {
+  formDef: JsonStringified | JsonObject;
+  fieldLoader: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
+  middlewares?: Core.Middleware<Core.State, Core.Action>[];
+  data?: Record<string, any>;
+  formName?: string;
+  onFormEvent?: (event: Core.FormEvent) => void;
+  onFormError?: (error: Core.FormStoreError) => void;
+}
+
+export function FormComponent({
+  formDef,
+  fieldLoader,
+  middlewares,
+  data,
+  formName,
+  onFormError,
+  onFormEvent,
+}: FormComponentProps) {
+  const formContextRef = useRef<
+    Core.FormContext<React.ComponentType<Core.WithField>>
+  >(new Core.FormContext());
+  const formNameRef = useRef(formName || crypto.randomUUID());
+  const [formLayoutField, setFormLayoutField] =
+    useState<Core.LayoutField<string> | null>(null);
+
+  // INITIALIZE FORM CONTEXT
+  useEffect(() => {
+    formContextRef.current.initialize(fieldLoader, middlewares);
+  }, [fieldLoader, middlewares]);
+
+  // ERRORS
+  useEffect(() => {
+    const sub = Core.formErrors(formContextRef.current.store.state$).subscribe(
+      (error) => onFormError?.(error),
+    );
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [onFormError]);
+
+  // EVENTS
+  useEffect(() => {
+    const sub = formContextRef.current.events$.subscribe((event) =>
+      onFormEvent?.(event),
+    );
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [onFormEvent]);
+
+  // FORM ENTRY POINT
+  useEffect(() => {
+    const sub = formContextRef.current.store.state$.subscribe((state) => {
+      setFormLayoutField(state.formDef.form);
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
+  // INITIALIZE FORM
+  useEffect(() => {
+    formContextRef.current.store.dispatch({
+      type: 'INITIALIZE',
+      payload: {
+        formName: formNameRef.current,
+        formDef: formDef,
+      },
+    });
+  }, [formDef]);
+
+  if (!formLayoutField) {
+    return null;
+  }
+
+  return (
+    <ReactFormContextProvider formContext={formContextRef.current}>
+      <form id={formNameRef.current}>
+        <FieldRenderer
+          field={formLayoutField}
+          formContext={formContextRef.current}
+        />
+      </form>
+    </ReactFormContextProvider>
+  );
+}
+
+export default FormComponent;
