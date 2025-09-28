@@ -39,10 +39,10 @@ export function FormPage() {
       {error ? <p className={styles.error}>{error}</p> : null}
       <React.FormComponent
         formDef={formDef}
-        fieldLoaders={vanillaFieldLoaders}
+        fieldLoader={vanillaFieldLoaders}
         middlewares={middlewares}
         onFormError={onFormError}
-        onEvent={onFormEvent}
+        onFormEvent={onFormEvent}
       />
     </div>
   );

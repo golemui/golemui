@@ -13,6 +13,7 @@ function FieldRenderer(props: Props) {
   const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
     const loadComponent = async () => {
       try {
         const loadedComponent = await props.formContext.fieldRegistry.loadField(
@@ -22,6 +23,7 @@ function FieldRenderer(props: Props) {
           setComponent(() => loadedComponent);
         }
       } catch {
+        console.log('Error');
         props.formContext.store.dispatch({
           type: 'SET_ERROR',
           payload: {
