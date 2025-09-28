@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div class="field">
+<div class="field" [id]="field.uid">
   <div class="alert" [ngClass]="templateData.level || 'default'">
     {{ templateData.text }}
   </div>

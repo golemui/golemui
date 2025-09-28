@@ -1,4 +1,4 @@
-import { FormField } from '@formforge/core';
+import { FormField } from '../Field';
 
 export interface WithField {
   field: FormField<string>;

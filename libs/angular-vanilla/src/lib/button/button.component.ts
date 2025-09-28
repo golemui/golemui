@@ -11,7 +11,7 @@ import * as Core from '@formforge/core';
   templateUrl: './button.component.html',
   styleUrl: '../styles.scss',
 })
-export class ButtonComponent implements OnInit, OnDestroy, Angular.WithField {
+export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ButtonField;
   protected adapter: Angular.ButtonAdapter = inject(Angular.ButtonAdapter);
 

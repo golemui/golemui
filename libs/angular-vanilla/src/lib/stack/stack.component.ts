@@ -11,7 +11,7 @@ import * as Core from '@formforge/core';
   templateUrl: './stack.component.html',
   styleUrl: '../styles.scss',
 })
-export class StackComponent implements OnInit, OnDestroy, Angular.WithField {
+export class StackComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.LayoutField;
 
   protected adapter: Angular.LayoutAdapter = inject(Angular.LayoutAdapter);

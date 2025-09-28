@@ -11,7 +11,7 @@ import * as Core from '@formforge/core';
   templateUrl: './checkbox.component.html',
   styleUrl: '../styles.scss',
 })
-export class CheckboxComponent implements OnInit, OnDestroy, Angular.WithField {
+export class CheckboxComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
   protected adapter: Angular.ControlAdapter<string> = inject(
     Angular.ControlAdapter,

@@ -1,6 +1,7 @@
-import * as Angular from '@formforge/angular';
+import { Type } from '@angular/core';
+import * as Core from '@formforge/core';
 
-export const vanillaFieldLoaders: Angular.FieldLoaders = {
+export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
   // BUTTON
   button: async () =>
     (await import('./button/button.component')).ButtonComponent,

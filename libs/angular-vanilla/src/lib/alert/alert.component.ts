@@ -16,7 +16,7 @@ type OwnWidgetProps = {
   templateUrl: './alert.component.html',
   styleUrls: ['../styles.scss', './alert.component.scss'],
 })
-export class AlertComponent implements OnInit, OnDestroy, Angular.WithField {
+export class AlertComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.Field;
 
   protected adapter: Angular.FieldAdapter<OwnWidgetProps> = inject(

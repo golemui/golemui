@@ -16,7 +16,7 @@ type OwnWidgetProps = {
   templateUrl: './heading.component.html',
   styleUrls: ['./heading.component.scss'],
 })
-export class HeadingComponent implements OnInit, OnDestroy, Angular.WithField {
+export class HeadingComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.Field;
 
   protected adapter: Angular.FieldAdapter<OwnWidgetProps> = inject(

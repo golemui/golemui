@@ -7,8 +7,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import * as Core from '@formforge/core';
-import { FormContext } from '../context/form.context';
-import { WithField } from './with-field.type';
+import { AngularFormContext } from '../context/form.context';
 
 @Directive({
   selector: '[ffField]',
@@ -17,9 +16,9 @@ import { WithField } from './with-field.type';
 export class FieldDirective implements OnInit {
   field = input.required<Core.FormField<string>>();
 
-  private formContext = inject(FormContext);
+  private formContext = inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
-  private componentRef!: ComponentRef<WithField>;
+  private componentRef!: ComponentRef<Core.WithField>;
 
   async ngOnInit() {
     try {
