@@ -2,7 +2,7 @@ import * as Core from '@formforge/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 
-export function useControl<T = any>(field: Core.ControlField<T>) {
+export function useControl<T>(field: Core.ControlField<T>) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [label, setLabel] = useState<string | undefined>(undefined);
@@ -66,7 +66,7 @@ export function useControl<T = any>(field: Core.ControlField<T>) {
   }, [formContext, field]);
 
   const onValueChanged = useCallback(
-    (newValue: string) => {
+    (newValue: T) => {
       formContext.store.dispatch({
         type: 'SET_FIELD_DATA',
         payload: { path: field.path, data: newValue },

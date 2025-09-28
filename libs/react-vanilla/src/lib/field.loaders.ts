@@ -8,8 +8,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
 
   // CONTROLS
   textinput: async () => (await import('./components/TextInput')).TextInput,
-  // checkbox: async () =>
-  //   (await import('./checkbox/checkbox.component')).CheckboxComponent,
+  checkbox: async () => (await import('./components/Checkbox')).Checkbox,
 
   // // LAYOUTS
   stack: async () => (await import('./components/Stack')).Stack,
