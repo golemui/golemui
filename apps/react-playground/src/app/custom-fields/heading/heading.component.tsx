@@ -2,7 +2,7 @@ import styles from './heading.component.module.scss';
 
 export function HeadingComponent() {
   return (
-    <div className={styles.field}>
+    <div className="field">
       <h1 className={styles.heading}>Heading</h1>
     </div>
   );

@@ -15,15 +15,15 @@ export const signin = defineForm({
     kind: 'layout',
     widget: 'stack',
     children: [
-      // {
-      //   uid: '',
-      //   kind: 'field',
-      //   widget: 'heading',
-      //   props: {
-      //     text: 'Login',
-      //     'text.register': 'Register',
-      //   },
-      // },
+      {
+        uid: '',
+        kind: 'field',
+        widget: 'heading',
+        props: {
+          text: 'Login',
+          'text.register': 'Register',
+        },
+      },
       {
         uid: '',
         kind: 'control',
