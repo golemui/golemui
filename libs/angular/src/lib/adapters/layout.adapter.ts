@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import * as Core from '@formforge/core';
-import { combineLatest, map, Observable, of, Subject } from 'rxjs';
+import { combineLatest, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
 @Injectable()
@@ -18,6 +18,7 @@ export class LayoutAdapter {
     );
 
     this.children$ = combineLatest([children, selectFieldFlags]).pipe(
+      takeUntil(this.destroy$),
       map(([children]) => {
         const fieldFlags = this.context.store.getState().fieldFlags;
         return children.filter(
