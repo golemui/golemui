@@ -1,6 +1,6 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import * as Core from '@formforge/core';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, map, Observable, of, Subject } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
 @Injectable()
@@ -8,29 +8,30 @@ export class LayoutAdapter {
   private context = inject(AngularFormContext);
   private destroy$ = new Subject<void>();
   private field!: Core.LayoutField;
-
-  templateData = signal<{
-    children: Core.FormField<string>[];
-  }>({
-    children: [],
-  });
+  children$ = of<Core.FormField<string>[]>([]);
 
   init(field: Core.LayoutField) {
     this.field = field;
+    const children: Observable<Core.FormField<string>[]> = of(field.children);
+    const selectFieldFlags = this.context.store.state$.pipe(
+      Core.selectFieldFlags,
+    );
+
+    this.children$ = combineLatest([children, selectFieldFlags]).pipe(
+      map(([children]) => {
+        const fieldFlags = this.context.store.getState().fieldFlags;
+        return children.filter(
+          (child) =>
+            fieldFlags[child.uid] === undefined ||
+            !fieldFlags[child.uid].hidden,
+        );
+      }),
+    );
 
     this.context.store.dispatch({
       type: 'ADD_FIELD',
       payload: { field },
     });
-
-    Core.calculatedForm(this.context.store.state$)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((layout) =>
-        this.templateData.update((value) => ({
-          ...value,
-          children: layout.children,
-        })),
-      );
   }
 
   destroy() {

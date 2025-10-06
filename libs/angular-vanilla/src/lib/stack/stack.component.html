@@ -1,4 +1,4 @@
-@let children = adapter.templateData().children;
+@let children = adapter.children$ | async;
 
 <div class="field" [id]="field.uid">
   @for (child of children; track child.uid) {

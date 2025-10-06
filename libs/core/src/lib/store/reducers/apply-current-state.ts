@@ -5,20 +5,9 @@ import { State } from '../model';
 export const applyCurrentState = (state: State): State => {
   const fieldFlags = calculateFieldFlags(state);
 
-  const formLayoutChildren = calculateForm(
-    state.formDef.form.children,
-    fieldFlags,
-  );
-
-  const calculatedForm = {
-    ...state.formDef.form,
-    children: formLayoutChildren,
-  };
-
   return {
     ...state,
     fieldFlags,
-    calculatedForm,
   };
 };
 
@@ -79,25 +68,6 @@ function calculateFieldFlags(state: State): State['fieldFlags'] {
       },
       {} as State['fieldFlags'],
     );
-}
-
-// recaculate form and remove elements that are hidden
-function calculateForm(
-  fields: Field.FormField<string>[],
-  fieldFlags: State['fieldFlags'],
-) {
-  const acc: Field.FormField<string>[] = [];
-  fields.forEach((field) => {
-    if (field.uid in fieldFlags && fieldFlags[field.uid].hidden) {
-      // skip
-    } else {
-      if (Field.isLayoutField(field)) {
-        field.children = calculateForm(field.children, fieldFlags);
-      }
-      acc.push(field);
-    }
-  });
-  return acc;
 }
 
 // FIXME: No type safety at all!!
