@@ -1,5 +1,6 @@
 import * as Core from '@formforge/core';
 import { useEffect, useState } from 'react';
+import { combineLatest, map, Observable, of } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 
 export function useLayout(field: Core.LayoutField) {
@@ -19,11 +20,24 @@ export function useLayout(field: Core.LayoutField) {
   }, [field, formContext.store]);
 
   useEffect(() => {
-    const sub = Core.calculatedForm(formContext.store.state$).subscribe(
-      (layout) => setChildren(layout.children),
+    const children: Observable<Core.FormField<string>[]> = of(field.children);
+    const selectFieldFlags = formContext.store.state$.pipe(
+      Core.selectFieldFlags,
     );
+    const sub = combineLatest([children, selectFieldFlags])
+      .pipe(
+        map(([children]) => {
+          const fieldFlags = formContext.store.getState().fieldFlags;
+          return children.filter(
+            (child) =>
+              fieldFlags[child.uid] === undefined ||
+              !fieldFlags[child.uid].hidden,
+          );
+        }),
+      )
+      .subscribe(setChildren);
     return () => sub.unsubscribe();
-  }, [formContext.store.state$]);
+  }, [field.children, formContext.store]);
 
   useEffect(() => {
     return () => {
