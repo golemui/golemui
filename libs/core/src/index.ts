@@ -15,3 +15,5 @@ export * from './lib/shared';
 
 export * from './lib/utils/debug';
 export * from './lib/utils/dot-path';
+export * from './lib/utils/object';
+export * from './lib/utils/repeater';

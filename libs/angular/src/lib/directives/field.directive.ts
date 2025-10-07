@@ -58,8 +58,8 @@ export class FieldDirective implements OnInit {
     });
     const index = repeaterIndex ?? this.repeaterIndexToken;
     if (index > -1) {
-      this.componentRef.instance.field = FieldDirective.makeRepeaterItemConfig(
-        cloneObject(this.field()),
+      this.componentRef.instance.field = Core.makeRepeaterItemConfig(
+        Core.cloneObject(this.field()),
         index,
       );
     } else {
@@ -68,44 +68,4 @@ export class FieldDirective implements OnInit {
     (this.componentRef.location.nativeElement as HTMLElement).id =
       `host-${this.componentRef.instance.field.uid}`;
   }
-
-  private static makeRepeaterItemConfig(
-    field: Core.FormField<string>,
-    repeaterIndex: number,
-  ): Core.FormField<string> {
-    const uid = toRepeaterItemUid(field.uid, repeaterIndex);
-    if (Core.isControlField(field)) {
-      return {
-        ...field,
-        uid,
-        path: toRepeaterItemPath(field.path, repeaterIndex),
-      };
-    } else {
-      return {
-        ...field,
-        uid,
-      };
-    }
-  }
-}
-
-function toRepeaterItemUid(uid: Core.Uid, repeaterIndex: number): Core.Uid {
-  if (repeaterIndex === -1) {
-    throw new Error('-1 is an invalid Repeater index');
-  }
-  return `${uid}[${repeaterIndex}]` as Core.Uid;
-}
-
-function toRepeaterItemPath(
-  path: Core.DotPath,
-  repeaterIndex: number,
-): Core.DotPath {
-  if (repeaterIndex === -1) {
-    throw new Error('-1 is an invalid Repeater index');
-  }
-  return path.replace('.items.', `.${repeaterIndex}.`) as Core.DotPath;
-}
-
-function cloneObject(obj: Record<string, any>) {
-  return JSON.parse(JSON.stringify(obj));
 }
