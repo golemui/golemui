@@ -6,6 +6,10 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
   button: async () =>
     (await import('./button/button.component')).ButtonComponent,
 
+  // REPEATER
+  repeater: async () =>
+    (await import('./repeater/repeater.component')).RepeaterComponent,
+
   // CONTROLS
   textinput: async () =>
     (await import('./textinput/textinput.component')).TextinputComponent,

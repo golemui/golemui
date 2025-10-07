@@ -2,12 +2,15 @@ import {
   ComponentRef,
   Directive,
   inject,
+  Injector,
   input,
   OnInit,
+  Type,
   ViewContainerRef,
 } from '@angular/core';
 import * as Core from '@formforge/core';
 import { AngularFormContext } from '../context/form.context';
+import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
 
 @Directive({
   selector: '[ffField]',
@@ -15,17 +18,18 @@ import { AngularFormContext } from '../context/form.context';
 })
 export class FieldDirective implements OnInit {
   field = input.required<Core.FormField<string>>();
+  private repeaterIndexToken = inject(REPEATER_INDEX_TOKEN);
 
-  private formContext = inject(AngularFormContext);
+  private formContext: AngularFormContext<Type<Core.WithField>> =
+    inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
   private componentRef!: ComponentRef<Core.WithField>;
 
   async ngOnInit() {
     try {
-      this.componentRef = this.viewContainerRef.createComponent(
+      this.createComponent(
         await this.formContext.fieldRegistry.loadField(this.field().widget),
       );
-      this.componentRef.instance.field = this.field();
     } catch {
       this.formContext.store.dispatch({
         type: 'SET_ERROR',
@@ -38,4 +42,70 @@ export class FieldDirective implements OnInit {
       });
     }
   }
+
+  /**
+   *
+   * @param injector In case of components that are inside a repeater, we want to pass an injector with the repeater context set.
+   * @param repeaterIndex We need to pass the index also because otherwise the top layout component refId is not updated to be unique via the index
+   */
+  protected createComponent(
+    component: Type<Core.WithField>,
+    injector?: Injector,
+    repeaterIndex?: number,
+  ) {
+    this.componentRef = this.viewContainerRef.createComponent(component, {
+      injector,
+    });
+    const index = repeaterIndex ?? this.repeaterIndexToken;
+    if (index > -1) {
+      this.componentRef.instance.field = FieldDirective.makeRepeaterItemConfig(
+        cloneObject(this.field()),
+        index,
+      );
+    } else {
+      this.componentRef.instance.field = this.field();
+    }
+    (this.componentRef.location.nativeElement as HTMLElement).id =
+      `host-${this.componentRef.instance.field.uid}`;
+  }
+
+  private static makeRepeaterItemConfig(
+    field: Core.FormField<string>,
+    repeaterIndex: number,
+  ): Core.FormField<string> {
+    const uid = toRepeaterItemUid(field.uid, repeaterIndex);
+    if (Core.isControlField(field)) {
+      return {
+        ...field,
+        uid,
+        path: toRepeaterItemPath(field.path, repeaterIndex),
+      };
+    } else {
+      return {
+        ...field,
+        uid,
+      };
+    }
+  }
+}
+
+function toRepeaterItemUid(uid: Core.Uid, repeaterIndex: number): Core.Uid {
+  if (repeaterIndex === -1) {
+    throw new Error('-1 is an invalid Repeater index');
+  }
+  return `${uid}[${repeaterIndex}]` as Core.Uid;
+}
+
+function toRepeaterItemPath(
+  path: Core.DotPath,
+  repeaterIndex: number,
+): Core.DotPath {
+  if (repeaterIndex === -1) {
+    throw new Error('-1 is an invalid Repeater index');
+  }
+  return path.replace('.items.', `.${repeaterIndex}.`) as Core.DotPath;
+}
+
+function cloneObject(obj: Record<string, any>) {
+  return JSON.parse(JSON.stringify(obj));
 }
