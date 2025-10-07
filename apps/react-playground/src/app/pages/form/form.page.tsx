@@ -5,7 +5,7 @@ import * as React from '@formforge/react';
 import * as Vanilla from '@formforge/react-vanilla';
 import { useState } from 'react';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { signin } from '../../mocks';
+import { signin, signinData } from '../../mocks';
 
 function onFormEvent(event: Core.FormEvent) {
   console.groupCollapsed(`onFormEvent('${event.name}')`);
@@ -20,6 +20,7 @@ const vanillaFieldLoaders = {
       .HeadingComponent,
 };
 const formDef = signin;
+const formData = signinData;
 const middlewares = [loggerMiddleware];
 
 export function FormPage() {
@@ -39,6 +40,7 @@ export function FormPage() {
       {error ? <p className={styles.error}>{error}</p> : null}
       <React.FormComponent
         formDef={formDef}
+        data={formData}
         fieldLoader={vanillaFieldLoaders}
         middlewares={middlewares}
         onFormError={onFormError}

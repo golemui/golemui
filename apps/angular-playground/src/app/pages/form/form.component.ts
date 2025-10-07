@@ -5,7 +5,7 @@ import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { signin } from '../../mocks';
+import { signin, signinData } from '../../mocks';
 
 @Component({
   imports: [CommonModule, Angular.FormComponent],
@@ -17,6 +17,7 @@ export class AppFromPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [loggerMiddleware];
   protected formDef = signin;
+  protected formData = signinData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

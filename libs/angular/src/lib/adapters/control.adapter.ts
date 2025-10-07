@@ -26,6 +26,7 @@ export class ControlAdapter<T> {
 
     this.context.store.dispatch({
       type: 'SET_FIELD_DATA',
+      updateIf: (oldValue) => oldValue === undefined,
       payload: { data: field.defaultValue, path: field.path },
     });
 
@@ -70,6 +71,7 @@ export class ControlAdapter<T> {
   valueChanged<T>(value: T) {
     this.context.store.dispatch({
       type: 'SET_FIELD_DATA',
+      updateIf: () => true,
       payload: { path: this.field.path, data: value },
     });
     this.context.emitEvent('change', this.field);

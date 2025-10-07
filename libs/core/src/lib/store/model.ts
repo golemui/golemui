@@ -9,15 +9,29 @@ export type FormStoreError =
 
 export type State = {
   formName: string;
+  /**
+   * The complete form definition.
+   * In most cases, use `calculatedForm` instead, as it excludes hidden fields.
+   */
   formDef: Form.Form<string>;
+  /**
+   * Flattened version of `formDef`.
+   * Useful for performing certain operations more efficiently.
+   */
   flatForm: Field.FormField<string>[];
   formMeta: Record<string, any>;
   currentStates: string[];
-
+  /**
+   * Tracks fields whose components have been rendered.
+   * A field is added when its component mounts and removed when it unmounts.
+   */
   fields: Record<Uid, Field.FormField<string>>;
+  /**
+   * Tracks fields with state expressions.
+   * When data changes, these fields are updated and their flags recalculated.
+   */
   fieldFlags: Record<Uid, Field.Flags>;
   fieldMeta: Record<Uid, Record<string, any>>;
-
   data: Record<string, any>;
   error: FormStoreError;
 };

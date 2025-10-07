@@ -1,5 +1,7 @@
 import { defineForm } from '@formforge/core';
 
+export const signinData = { user: { email: 'joan-from-data@joan.com' } };
+
 export const signin = defineForm({
   states: {
     register: /*javascript*/ `$form.registerMode === true`,
@@ -31,7 +33,7 @@ export const signin = defineForm({
         path: 'user.email',
         disabled: true,
         required: true,
-        defaultValue: 'joan@joan.com',
+        defaultValue: 'default-joan@joan.com',
       },
       {
         uid: '',

@@ -34,7 +34,6 @@ export class FormComponent implements OnInit {
   formDef = input.required<JsonStringified | JsonObject>();
   fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
-  // TODO: not doing anything with data?
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);
   formName = input(crypto.randomUUID());
@@ -67,6 +66,13 @@ export class FormComponent implements OnInit {
       payload: {
         formName: this.formName(),
         formDef: this.formDef(),
+      },
+    });
+
+    this.context.store.dispatch({
+      type: 'SET_DATA',
+      payload: {
+        data: this.data(),
       },
     });
   }
