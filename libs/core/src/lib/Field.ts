@@ -216,12 +216,16 @@ export const ControlFieldSchema = <S extends z.ZodMiniType>(
       label: z.optional(z.string()),
       defaultValue: z.optional(defaultValueSchema),
     }),
-    z.transform((ctrl) => ({ ...ctrl, uid: `${ctrl.path}-${ctrl.widget}` })),
+    z.transform((ctrl) => {
+      const transformed = { ...ctrl, uid: `${ctrl.path}-${ctrl.widget}` };
+      // TODO: no type safety in this block
+      if (ctrl.widget === 'repeater') {
+        const props = ctrl['props'] as Record<string, any>;
+        props['template'] = LayoutFieldSchema.parse(props['template']);
+      }
+      return transformed;
+    }),
   );
-
-export const StringControlFieldSchema = ControlFieldSchema(z.string());
-export const NumberControlFieldSchema = ControlFieldSchema(z.number());
-export const BooleanControlFieldSchema = ControlFieldSchema(z.boolean());
 
 export const LayoutFieldSchema = z.extend(FieldSchema, {
   kind: z.literal('layout'),

@@ -1,0 +1,14 @@
+@let templateData = adapter.templateData();
+@let repeaterTemplate = field.props?.['template'];
+
+@if (repeaterTemplate && templateData.value) {
+  @for (_ of templateData.value; track $index) {
+    <div class="card">
+      <ng-container
+        ffRepeaterField
+        [repeaterIndex]="$index"
+        [field]="repeaterTemplate"
+      />
+    </div>
+  }
+}

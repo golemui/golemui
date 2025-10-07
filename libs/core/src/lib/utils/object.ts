@@ -197,3 +197,10 @@ export const deleteKey = (object: Record<string, any>, key: string) => {
   delete object[key];
   return object;
 };
+
+/**
+ * Cheap JSON.stringify-based clone object utility
+ */
+export function cloneObject(obj: Record<string, any>) {
+  return JSON.parse(JSON.stringify(obj));
+}

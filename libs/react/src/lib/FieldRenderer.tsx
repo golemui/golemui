@@ -1,16 +1,21 @@
 import * as Core from '@formforge/core';
 import { useEffect, useRef, useState } from 'react';
+import { useRepeaterIndex } from './RepeaterIndexContext';
 
 type Props = {
   field: Core.FormField<string>;
   formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
+  repeaterIndex?: number;
 };
 
 type FieldComponent = React.ComponentType<Core.WithField>;
 
 function FieldRenderer(props: Props) {
   const [Component, setComponent] = useState<FieldComponent | null>(null);
+  const [field, setField] = useState(props.field);
   const isMounted = useRef(true);
+  const repeaterIndexFromContext = useRepeaterIndex();
+  const repeaterIndex = props.repeaterIndex ?? repeaterIndexFromContext;
 
   useEffect(() => {
     isMounted.current = true;
@@ -20,6 +25,14 @@ function FieldRenderer(props: Props) {
           props.field.widget,
         );
         if (isMounted.current) {
+          if (repeaterIndex > -1) {
+            setField(
+              Core.makeRepeaterItemConfig(
+                Core.cloneObject(props.field),
+                repeaterIndex,
+              ),
+            );
+          }
           setComponent(() => loadedComponent);
         }
       } catch {
@@ -41,7 +54,8 @@ function FieldRenderer(props: Props) {
       isMounted.current = false;
     };
   }, [
-    props.field.widget,
+    props.field,
+    repeaterIndex,
     props.formContext.fieldRegistry,
     props.formContext.store,
   ]);
@@ -50,7 +64,7 @@ function FieldRenderer(props: Props) {
     return null;
   }
 
-  return <Component field={props.field} />;
+  return <Component field={field} />;
 }
 
 export default FieldRenderer;
