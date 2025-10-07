@@ -17,6 +17,7 @@ export function useControl<T>(field: Core.ControlField<T>) {
     });
     formContext.store.dispatch({
       type: 'SET_FIELD_DATA',
+      updateIf: (oldValue) => oldValue === undefined,
       payload: { data: field.defaultValue, path: field.path },
     });
     setLabel(calculateLabel(field));
@@ -69,6 +70,7 @@ export function useControl<T>(field: Core.ControlField<T>) {
     (newValue: T) => {
       formContext.store.dispatch({
         type: 'SET_FIELD_DATA',
+        updateIf: () => true,
         payload: { path: field.path, data: newValue },
       });
       formContext.emitEvent('change', field);

@@ -78,6 +78,14 @@ export function FormComponent({
     });
   }, [formDef]);
 
+  // SET FORM DATA
+  useEffect(() => {
+    formContextRef.current.store.dispatch({
+      type: 'SET_DATA',
+      payload: { data: data || {} },
+    });
+  }, [data]);
+
   if (!formLayoutField) {
     return null;
   }
