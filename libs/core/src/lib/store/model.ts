@@ -11,7 +11,6 @@ export type State = {
   formName: string;
   formDef: Form.Form<string>;
   flatForm: Field.FormField<string>[];
-  calculatedForm: Field.LayoutField<string>;
   formMeta: Record<string, any>;
   currentStates: string[];
 
@@ -29,7 +28,6 @@ export const createInitialState = (): State => ({
     form: Field.stack([] as Field.FormField[]),
   }) as Form.Form,
   flatForm: [],
-  calculatedForm: Field.stack([] as Field.FormField[]),
   formMeta: {},
   currentStates: [],
   fields: {},
