@@ -82,6 +82,7 @@ export function useControl<T>(field: Core.ControlField<T>) {
     uid,
     label,
     value,
+    formContext, // for the repeater
     isDisabled,
     isRequired,
     onValueChanged,

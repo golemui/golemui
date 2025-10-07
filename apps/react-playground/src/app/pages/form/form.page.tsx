@@ -5,7 +5,7 @@ import * as React from '@formforge/react';
 import * as Vanilla from '@formforge/react-vanilla';
 import { useState } from 'react';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { signin, signinData } from '../../mocks';
+import { users, usersData } from '../../mocks';
 
 function onFormEvent(event: Core.FormEvent) {
   console.groupCollapsed(`onFormEvent('${event.name}')`);
@@ -19,8 +19,8 @@ const vanillaFieldLoaders = {
     (await import('../../custom-fields/heading/heading.component'))
       .HeadingComponent,
 };
-const formDef = signin;
-const formData = signinData;
+const formDef = users;
+const formData = usersData;
 const middlewares = [loggerMiddleware];
 
 export function FormPage() {
