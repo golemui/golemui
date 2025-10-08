@@ -9,8 +9,10 @@
         [repeaterIndex]="$index"
         [field]="repeaterTemplate"
       />
-      <button type="button" (click)="removeItem($index)">Remove Item</button>
+      <button type="button" (click)="removeItem($index)">{{ field.props?.['removeLabel'] ?? 'Remove' }}</button>
     </div>
   }
 }
-<button type="button" (click)="addItem()">Add Item</button>
+<button type="button" (click)="addItem()" [disabled]="field.props?.['limit'] ? field.props?.['limit'] === (templateData.value?.length ?? 0) : false">
+  {{ field.props?.['addLabel'] ?? 'Add' }}
+</button>
