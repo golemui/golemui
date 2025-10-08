@@ -20,6 +20,7 @@ type RepeaterProps = {
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
+  // TODO: Improve type checking to not use this property here
   props: RepeaterProps = { template: {} as any};
   protected adapter: Angular.ControlAdapter<Record<string, unknown>[]> = inject(
     Angular.ControlAdapter,
