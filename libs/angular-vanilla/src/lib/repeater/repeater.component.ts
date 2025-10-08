@@ -21,6 +21,16 @@ export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
     this.adapter.init(this.field);
   }
 
+  addItem() {
+    this.adapter.valueChanged([...this.adapter.templateData().value ?? [], {}]);
+  }
+
+  removeItem(index: number) {
+    const arr = [...(this.adapter.templateData().value ?? [])];
+    arr.splice(index, 1);
+    this.adapter.valueChanged(arr);
+  }
+
   ngOnDestroy(): void {
     this.adapter.destroy();
   }

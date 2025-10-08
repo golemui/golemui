@@ -13,7 +13,7 @@ import { users, usersData } from '../../mocks';
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
 })
-export class AppFromPage {
+export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [loggerMiddleware];
   protected formDef = users;
