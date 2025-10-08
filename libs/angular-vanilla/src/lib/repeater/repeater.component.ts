@@ -3,6 +3,13 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
 
+type RepeaterProps = {
+  addLabel?: string;
+  removeLabel?: string;
+  limit?: number;
+  template: Core.FormField<string>;
+}
+
 @Component({
   standalone: true,
   selector: 'ff-repeater',
@@ -13,12 +20,14 @@ import * as Core from '@formforge/core';
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
+  props: RepeaterProps = { template: {} as any};
   protected adapter: Angular.ControlAdapter<Record<string, unknown>[]> = inject(
     Angular.ControlAdapter,
   );
 
   ngOnInit(): void {
     this.adapter.init(this.field);
+    this.props = this.field.props as RepeaterProps;
   }
 
   addItem() {

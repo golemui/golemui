@@ -1,18 +1,17 @@
 @let templateData = adapter.templateData();
-@let repeaterTemplate = field.props?.['template'];
 
-@if (repeaterTemplate && templateData.value) {
+@if (props.template && templateData.value) {
   @for (_ of templateData.value; track $index) {
     <div class="card">
       <ng-container
         ffRepeaterField
         [repeaterIndex]="$index"
-        [field]="repeaterTemplate"
+        [field]="props.template"
       />
-      <button type="button" (click)="removeItem($index)">{{ field.props?.['removeLabel'] ?? 'Remove' }}</button>
+      <button type="button" (click)="removeItem($index)">{{ props.removeLabel ?? 'Remove' }}</button>
     </div>
   }
 }
-<button type="button" (click)="addItem()" [disabled]="field.props?.['limit'] ? field.props?.['limit'] === (templateData.value?.length ?? 0) : false">
-  {{ field.props?.['addLabel'] ?? 'Add' }}
+<button type="button" (click)="addItem()" [disabled]="props.limit ? props.limit === (templateData.value?.length ?? 0) : false">
+  {{ props.addLabel ?? 'Add' }}
 </button>
