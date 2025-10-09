@@ -14,15 +14,17 @@ export function TextInput(fieldInstance: Core.WithField) {
   );
 
   return (
-    <div className="field">
-      {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
-      <input
-        type="text"
-        id={uid}
-        value={value ?? ''}
-        disabled={isDisabled}
-        onInput={handleChange}
-      />
-    </div>
+    <ff-textinput>
+      <div className="field">
+        {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
+        <input
+          type="text"
+          id={uid}
+          value={value ?? ''}
+          disabled={isDisabled}
+          onInput={handleChange}
+        />
+      </div>
+    </ff-textinput>
   );
 }

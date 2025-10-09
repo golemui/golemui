@@ -1,0 +1,161 @@
+:root {
+  /* Color system */
+  --ff-color-bg: #fff;
+  --ff-color-fg: #1a1a1a;
+  --ff-color-border: #d0d0d0;
+  --ff-color-primary: #007acc;
+  --ff-color-error: #d32f2f;
+
+  /* Typography & layout */
+  --ff-font-family: system-ui, sans-serif;
+  --ff-font-size: 14px;
+  --ff-radius: 4px;
+  --ff-padding: 0.5rem 0.75rem;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --ff-color-bg: #1e1e1e;
+  --ff-color-fg: #f5f5f5;
+  --ff-color-border: #3a3a3a;
+  --ff-color-primary: #5294e2;
+}
+
+/* Base reset for all ff-* components */
+ff-form,
+ff-button,
+ff-textinput,
+ff-select,
+ff-checkbox {
+  font-family: var(--ff-font-family);
+  font-size: var(--ff-font-size);
+  color: var(--ff-color-fg);
+  box-sizing: border-box;
+}
+
+/* ======================================
+   🧱 Scoped component styles (CSS Nesting)
+   ====================================== */
+
+/* Form wrapper */
+ff-form {
+  display: block;
+  background: var(--ff-color-bg);
+  padding: 1rem;
+  border-radius: var(--ff-radius);
+
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+  }
+
+  /* Button */
+  ff-button {
+    display: inline-block;
+
+    ff-repeater .card button,
+    button {
+      all: unset;
+      cursor: pointer;
+      background: var(--ff-color-primary);
+      color: white;
+      border-radius: var(--ff-radius);
+      padding: var(--ff-padding);
+      font-weight: 500;
+      text-align: center;
+      transition: filter 0.2s;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  /* Container */
+  ff-stack {
+    display: flex;
+    flex-direction: column;
+
+    .field[aria-orientation="horizontal"] {
+      flex-direction: row;
+    }
+  }
+
+  /* Input (standalone version, optional) */
+  ff-textinput {
+    display: block;
+
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: var(--ff-padding);
+      border: 1px solid var(--ff-color-border);
+      border-radius: var(--ff-radius);
+      background: var(--ff-color-bg);
+      color: var(--ff-color-fg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--ff-color-primary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--ff-color-primary) 25%, transparent);
+      }
+
+      &[aria-invalid="true"] {
+        border-color: var(--ff-color-error);
+      }
+    }
+  }
+
+  /* Checkbox */
+  ff-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--ff-color-primary);
+    }
+
+    label {
+      cursor: pointer;
+    }
+  }
+
+  ff-repeater {
+    button {
+      all: unset;
+      cursor: pointer;
+      background: var(--ff-color-primary);
+      color: white;
+      border-radius: var(--ff-radius);
+      padding: var(--ff-padding);
+      font-weight: 500;
+      text-align: center;
+      transition: filter 0.2s;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

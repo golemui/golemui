@@ -22,7 +22,10 @@
             "input": "apps/angular-playground/public"
           }
         ],
-        "styles": ["apps/angular-playground/src/styles.scss"]
+        "styles": [
+          "libs/core/src/styles/form-forge.css",
+          "apps/angular-playground/src/styles.scss"
+        ]
       },
       "configurations": {
         "production": {

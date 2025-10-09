@@ -2,7 +2,7 @@
 
 <div
   class="field"
-  [class.horizontal]="templateData.direction === 'horizontal'"
+  [aria-orientation]="templateData.direction"
   [id]="field.uid"
 >
   @for (child of templateData.children; track child.uid) {

@@ -8,9 +8,26 @@ export const users = defineForm({
     children: [
       {
         uid: '',
-        kind: 'control',
-        widget: 'textinput',
-        path: 'listName',
+        kind: 'layout',
+        widget: 'stack',
+        props: {
+          direction: 'horizontal',
+          'direction.limitReached': 'vertical',
+        },
+        children: [
+          {
+            uid: '',
+            kind: 'control',
+            widget: 'textinput',
+            path: 'listName',
+          },
+          {
+            uid: '',
+            kind: 'control',
+            widget: 'textinput',
+            path: 'listOwner',
+          },
+        ],
       },
       {
         uid: '',
