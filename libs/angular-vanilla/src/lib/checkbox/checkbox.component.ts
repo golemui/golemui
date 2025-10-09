@@ -13,7 +13,7 @@ import * as Core from '@formforge/core';
 })
 export class CheckboxComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlAdapter<string> = inject(
+  protected adapter: Angular.ControlAdapter<string, object> = inject(
     Angular.ControlAdapter,
   );
 

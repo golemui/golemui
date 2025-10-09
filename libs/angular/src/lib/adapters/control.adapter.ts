@@ -1,64 +1,71 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
-import { Subject, takeUntil } from 'rxjs';
-import { AngularFormContext } from '../context/form.context';
+import { takeUntil } from 'rxjs';
+import { BaseAdapter } from './base.adapter';
+
+type TemplateData<T> = {
+  label?: string;
+  value?: T;
+  disabled?: boolean;
+  required?: boolean;
+};
 
 @Injectable()
-export class ControlAdapter<T> {
-  private context = inject(AngularFormContext);
-  private destroy$ = new Subject<void>();
-  private field!: Core.ControlField<T>;
-
-  templateData = signal<{
-    label?: string;
-    value?: T;
-    disabled?: boolean;
-    required?: boolean;
-  }>({});
+export class ControlAdapter<
+  T,
+  ExtraProps extends Record<string, any>,
+> extends BaseAdapter<Core.ControlField<T>> {
+  templateData = signal<TemplateData<T> & ExtraProps>(
+    {} as TemplateData<T> & ExtraProps,
+  );
 
   init(field: Core.ControlField<T>) {
     this.field = field;
 
-    this.context.store.dispatch({
-      type: 'ADD_FIELD',
-      payload: { field },
-    });
+    this.addFieldToTheStore(field);
+    this.propsUpdaterByCurrentState(this.templateData);
 
+    // Set field data
     this.context.store.dispatch({
       type: 'SET_FIELD_DATA',
       updateIf: (oldValue) => oldValue === undefined,
       payload: { data: field.defaultValue, path: field.path },
     });
 
-    this.templateData.update((value) => ({
-      ...value,
+    // Set the initial control `label` and merge `props`
+    this.templateData.update((current) => ({
+      ...current,
       label: this.calculateLabel(),
+      ...this.field.props,
     }));
 
+    // Set the initial templateData, including the controls's data value
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
       .subscribe((data) =>
-        this.templateData.update((value) => ({ ...value, value: data })),
+        this.templateData.update((current) => ({ ...current, value: data })),
       );
 
+    // Listen to the fieldFlags stream (`disabled` and `required` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.templateData.update((value) => ({
-          ...value,
+        this.templateData.update((current) => ({
+          ...current,
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
         }));
-        this.templateData.update((value) => ({
-          ...value,
+        this.templateData.update((current) => ({
+          ...current,
           required: fieldFlags?.required ?? (field.required as boolean),
         }));
       });
 
+    // Listen to the form states stream and keep the `label` property in sync with the current state
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.currentStates)
       .subscribe(() => {
-        this.templateData.update((value) => ({
-          ...value,
+        this.templateData.update((current) => ({
+          ...current,
           label:
             this.context.getPropertyValueByCurrentState('label', this.field) ??
             this.calculateLabel(),
@@ -75,14 +82,6 @@ export class ControlAdapter<T> {
       payload: { path: this.field.path, data: value },
     });
     this.context.emitEvent('change', this.field);
-  }
-
-  destroy() {
-    this.context.store.dispatch({
-      type: 'REMOVE_FIELD',
-      payload: { uid: this.field.uid },
-    });
-    this.destroy$.next();
   }
 
   private calculateLabel() {

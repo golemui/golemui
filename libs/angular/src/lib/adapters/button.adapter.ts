@@ -1,42 +1,38 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
-import { Subject, takeUntil } from 'rxjs';
-import { AngularFormContext } from '../context/form.context';
+import { takeUntil } from 'rxjs';
+import { BaseAdapter } from './base.adapter';
 
 @Injectable()
-export class ButtonAdapter {
-  private context = inject(AngularFormContext);
-  private destroy$ = new Subject<void>();
-  private field!: Core.ButtonField;
-
+export class ButtonAdapter extends BaseAdapter<Core.ButtonField> {
   templateData = signal<{ label?: string; disabled?: boolean }>({});
 
   init(field: Core.ButtonField) {
     this.field = field;
-    this.templateData.update((value) => ({
-      ...value,
+    this.templateData.update((current) => ({
+      ...current,
       label: this.field.label,
     }));
 
-    this.context.store.dispatch({
-      type: 'ADD_FIELD',
-      payload: { field },
-    });
+    this.addFieldToTheStore(field);
+    this.propsUpdaterByCurrentState(this.templateData);
 
+    // Listen to the fieldFlags stream (`disabled` flag)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.templateData.update((value) => ({
-          ...value,
+        this.templateData.update((current) => ({
+          ...current,
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
         }));
       });
 
+    // Listen to the form states stream and keep the `label` property in sync with the current state
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.currentStates)
       .subscribe(() => {
-        this.templateData.update((value) => ({
-          ...value,
+        this.templateData.update((current) => ({
+          ...current,
           label: this.context.getPropertyValueByCurrentState(
             'label',
             this.field,
@@ -49,13 +45,5 @@ export class ButtonAdapter {
 
   click() {
     this.context.emitEvent('click', this.field);
-  }
-
-  destroy() {
-    this.context.store.dispatch({
-      type: 'REMOVE_FIELD',
-      payload: { uid: this.field.uid },
-    });
-    this.destroy$.next();
   }
 }

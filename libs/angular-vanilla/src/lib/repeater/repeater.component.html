@@ -3,18 +3,28 @@
 @if (templateData.label) {
   <h2>{{ templateData.label }}</h2>
 }
-@if (props.template && templateData.value) {
+@if (templateData.template && templateData.value) {
   @for (_ of templateData.value; track $index) {
     <div class="card">
       <ng-container
         ffRepeaterField
         [repeaterIndex]="$index"
-        [field]="props.template"
+        [field]="templateData.template"
       />
-      <button type="button" (click)="removeItem($index)">{{ props.removeLabel ?? 'Remove' }}</button>
+      <button type="button" (click)="removeItem($index)">
+        {{ templateData.removeLabel ?? 'Remove' }}
+      </button>
     </div>
   }
 }
-<button type="button" (click)="addItem()" [disabled]="props.limit ? props.limit === (templateData.value?.length ?? 0) : false">
-  {{ props.addLabel ?? 'Add' }}
+<button
+  type="button"
+  (click)="addItem()"
+  [disabled]="
+    templateData.limit
+      ? templateData.limit === (templateData.value?.length ?? 0)
+      : false
+  "
+>
+  {{ templateData.addLabel ?? 'Add' }}
 </button>
