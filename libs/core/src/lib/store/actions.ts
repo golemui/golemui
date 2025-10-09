@@ -14,7 +14,7 @@ export type SET_DATA = {
 
 export type ADD_FIELD = {
   type: 'ADD_FIELD';
-  payload: { field: FormField };
+  payload: { field: FormField<string> };
 };
 
 export type REMOVE_FIELD = {

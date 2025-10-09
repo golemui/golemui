@@ -1,6 +1,9 @@
 import { defineForm } from '@formforge/core';
 
 export const users = defineForm({
+  states: {
+    limitReached: '$form.users.length === 5',
+  },
   form: {
     uid: '',
     kind: 'layout',
@@ -8,9 +11,37 @@ export const users = defineForm({
     children: [
       {
         uid: '',
-        kind: 'control',
-        widget: 'textinput',
-        path: 'listName',
+        kind: 'field',
+        widget: 'alert',
+        props: {
+          text: 'Some fields need your attention',
+          level: 'warning',
+          'text.limitReached': 'You can Register now',
+          'level.limitReached': 'success',
+        },
+      },
+      {
+        uid: '',
+        kind: 'layout',
+        widget: 'stack',
+        props: {
+          direction: 'horizontal',
+          'direction.limitReached': 'vertical',
+        },
+        children: [
+          {
+            uid: '',
+            kind: 'control',
+            widget: 'textinput',
+            path: 'listName',
+          },
+          {
+            uid: '',
+            kind: 'control',
+            widget: 'textinput',
+            path: 'listOwner',
+          },
+        ],
       },
       {
         uid: '',
@@ -19,6 +50,7 @@ export const users = defineForm({
         path: 'users',
         props: {
           addLabel: 'Add new developer',
+          'addLabel.limitReached': "Limit Reached, you can't add more",
           removeLabel: 'Remove developer',
           limit: 5,
           template: {
