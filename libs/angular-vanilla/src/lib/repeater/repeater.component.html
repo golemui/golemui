@@ -1,5 +1,8 @@
 @let templateData = adapter.templateData();
 
+@if (templateData.label) {
+  <h2>{{ templateData.label }}</h2>
+}
 @if (templateData.template && templateData.value) {
   @for (_ of templateData.value; track $index) {
     <div class="card">
