@@ -1,11 +1,17 @@
 import * as Core from '@formforge/core';
 import { FieldRenderer, useLayout } from '@formforge/react';
+import clsx from 'clsx';
 import { useCallback } from 'react';
 import '../styles.scss';
+import styles from './Stack.module.scss';
+
+type StackProps = {
+  direction?: 'horizontal' | 'vertical';
+};
 
 export function Stack(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext } = useLayout(field);
+  const { uid, children, formContext, props } = useLayout<StackProps>(field);
 
   const renderFields = useCallback(() => {
     return children.map((field) => (
@@ -13,8 +19,9 @@ export function Stack(fieldInstance: Core.WithField) {
     ));
   }, [children, formContext]);
 
+  const direction = props.direction || 'vertical';
   return (
-    <div className="field" id={uid}>
+    <div className={clsx('field', styles[direction])} id={uid}>
       {renderFields()}
     </div>
   );

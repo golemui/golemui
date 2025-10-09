@@ -1,14 +1,18 @@
 import * as Core from '@formforge/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
+import { useExtraProps } from './internal/useExtraProps';
 
-export function useControl<T>(field: Core.ControlField<T>) {
+export function useControl<T, ExtraProps extends Record<string, any>>(
+  field: Core.ControlField<T, string>,
+) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [label, setLabel] = useState<string | undefined>(undefined);
   const [value, setValue] = useState<T | undefined>(undefined);
   const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
   const [isRequired, setIsRequired] = useState<boolean | undefined>(undefined);
+  const props = useExtraProps<ExtraProps>(field);
 
   useEffect(() => {
     formContext.store.dispatch({
@@ -83,13 +87,14 @@ export function useControl<T>(field: Core.ControlField<T>) {
     label,
     value,
     formContext, // for the repeater
+    props,
     isDisabled,
     isRequired,
     onValueChanged,
   };
 }
 
-function calculateLabel<T>(field: Core.ControlField<T>) {
+function calculateLabel<T>(field: Core.ControlField<T, string>) {
   return field.label === undefined
     ? Core.toLabel(field.path)
     : field.label === ''

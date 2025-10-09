@@ -1,12 +1,16 @@
 import * as Core from '@formforge/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
+import { useExtraProps } from './internal/useExtraProps';
 
-export function useButton(field: Core.ButtonField) {
+export function useButton<ExtraProps extends Record<string, any>>(
+  field: Core.ButtonField,
+) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [label, setLabel] = useState<string | undefined>(undefined);
   const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
+  const props = useExtraProps<ExtraProps>(field);
 
   useEffect(() => {
     setLabel(field.label);
@@ -58,6 +62,7 @@ export function useButton(field: Core.ButtonField) {
   return {
     uid,
     label,
+    props,
     isDisabled,
     onClick,
   };

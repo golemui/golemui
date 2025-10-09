@@ -4,14 +4,14 @@ import clsx from 'clsx';
 import '../styles.scss';
 import styles from './Alert.module.scss';
 
-type OwnWidgetProps = {
+type AlertProps = {
   text: string;
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
 
 export function Alert(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.Field;
-  const { uid, props } = useField<OwnWidgetProps>(field);
+  const { uid, props } = useField<AlertProps>(field);
 
   return (
     <div className="field" id={uid}>
