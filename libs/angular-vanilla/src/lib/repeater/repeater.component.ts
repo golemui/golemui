@@ -8,7 +8,7 @@ type RepeaterProps = {
   removeLabel?: string;
   limit?: number;
   template: Core.FormField<string>;
-}
+};
 
 @Component({
   standalone: true,
@@ -20,19 +20,20 @@ type RepeaterProps = {
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
-  // TODO: Improve type checking to not use this property here
-  props: RepeaterProps = { template: {} as any};
-  protected adapter: Angular.ControlAdapter<Record<string, unknown>[]> = inject(
-    Angular.ControlAdapter,
-  );
+  protected adapter: Angular.ControlAdapter<
+    Record<string, unknown>[],
+    RepeaterProps
+  > = inject(Angular.ControlAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);
-    this.props = this.field.props as RepeaterProps;
   }
 
   addItem() {
-    this.adapter.valueChanged([...this.adapter.templateData().value ?? [], {}]);
+    this.adapter.valueChanged([
+      ...(this.adapter.templateData().value ?? []),
+      {},
+    ]);
   }
 
   removeItem(index: number) {

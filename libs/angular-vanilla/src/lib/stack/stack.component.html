@@ -1,7 +1,11 @@
-@let children = adapter.children$ | async;
+@let templateData = adapter.templateData();
 
-<div class="field" [id]="field.uid">
-  @for (child of children; track child.uid) {
+<div
+  class="field"
+  [class.horizontal]="templateData.direction === 'horizontal'"
+  [id]="field.uid"
+>
+  @for (child of templateData.children; track child.uid) {
     <ng-container ffField [field]="child" />
   }
 </div>

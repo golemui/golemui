@@ -15,6 +15,7 @@ export class ButtonAdapter extends BaseAdapter<Core.ButtonField> {
     }));
 
     this.addFieldToTheStore(field);
+    this.propsUpdaterByCurrentState(this.templateData);
 
     // Listen to the fieldFlags stream (`disabled` flag)
     this.context.store.state$

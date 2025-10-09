@@ -3,19 +3,27 @@ import * as Core from '@formforge/core';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
 
+type TemplateData<T> = {
+  label?: string;
+  value?: T;
+  disabled?: boolean;
+  required?: boolean;
+};
+
 @Injectable()
-export class ControlAdapter<T> extends BaseAdapter<Core.ControlField<T>> {
-  templateData = signal<{
-    label?: string;
-    value?: T;
-    disabled?: boolean;
-    required?: boolean;
-  }>({});
+export class ControlAdapter<
+  T,
+  ExtraProps extends Record<string, any>,
+> extends BaseAdapter<Core.ControlField<T>> {
+  templateData = signal<TemplateData<T> & ExtraProps>(
+    {} as TemplateData<T> & ExtraProps,
+  );
 
   init(field: Core.ControlField<T>) {
     this.field = field;
 
     this.addFieldToTheStore(field);
+    this.propsUpdaterByCurrentState(this.templateData);
 
     // Set field data
     this.context.store.dispatch({
@@ -24,10 +32,11 @@ export class ControlAdapter<T> extends BaseAdapter<Core.ControlField<T>> {
       payload: { data: field.defaultValue, path: field.path },
     });
 
-    // Set the initial control `label`
+    // Set the initial control `label` and merge `props`
     this.templateData.update((current) => ({
       ...current,
       label: this.calculateLabel(),
+      ...this.field.props,
     }));
 
     // Set the initial templateData, including the controls's data value
