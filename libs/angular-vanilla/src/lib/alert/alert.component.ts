@@ -3,7 +3,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
 
-type OwnWidgetProps = {
+type AlertProps = {
   text: string;
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
@@ -19,7 +19,7 @@ type OwnWidgetProps = {
 export class AlertComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.Field;
 
-  protected adapter: Angular.FieldAdapter<OwnWidgetProps> = inject(
+  protected adapter: Angular.FieldAdapter<AlertProps> = inject(
     Angular.FieldAdapter,
   );
 
