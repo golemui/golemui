@@ -18,6 +18,9 @@ export const users = defineForm({
         widget: 'repeater',
         path: 'users',
         props: {
+          addLabel: 'Add new developer',
+          removeLabel: 'Remove developer',
+          limit: 5,
           template: {
             uid: '',
             kind: 'layout',

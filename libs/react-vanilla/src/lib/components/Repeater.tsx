@@ -34,25 +34,27 @@ export function Repeater(fieldInstance: Core.WithField) {
     return value?.map((_, index) => {
       return (
         <RepeaterIndexContext.Provider value={index}>
-          <FieldRenderer
-            key={`${uid}-${index}`}
-            field={field.props?.template}
-            repeaterIndex={index}
-            formContext={formContext}
-          />
-          <button type="button" onClick={() => removeItem(value, index)}>
-            {field.props?.removeLabel ?? 'Remove'}
-          </button>
+          <div className={'card'}>
+            <FieldRenderer
+              key={`${uid}-${index}`}
+              field={field.props?.template}
+              repeaterIndex={index}
+              formContext={formContext}
+            />
+            <button type="button" onClick={() => removeItem(value, index)}>
+              {field.props?.removeLabel ?? 'Remove'}
+            </button>
+          </div>
         </RepeaterIndexContext.Provider>
       );
     });
   }, [field.props, formContext, value, uid, removeItem]);
 
   return (
-    <div className="field" id={uid}>
+    <div className="card" id={uid}>
       {label && <h2 key={`${uid}-title`}>{label}</h2>}
       {renderFields()}
-      <button type="button" onClick={() => addItem(value || [])}>
+      <button type="button" onClick={() => addItem(value || [])} disabled={field.props?.limit ? field.props.limit === (value?.length ?? 0) : false}>
         {field.props?.addLabel ?? 'Add'}
       </button>
     </div>
