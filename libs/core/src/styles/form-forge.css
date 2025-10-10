@@ -9,16 +9,9 @@
   /* Typography & layout */
   --ff-font-family: system-ui, sans-serif;
   --ff-font-size: 14px;
-  --ff-radius: 4px;
-  --ff-padding: 0.5rem 0.75rem;
-}
-
-/* Dark theme */
-[data-theme="dark"] {
-  --ff-color-bg: #1e1e1e;
-  --ff-color-fg: #f5f5f5;
-  --ff-color-border: #3a3a3a;
-  --ff-color-primary: #5294e2;
+  --ff-radius: 8px;
+  --ff-padding: 0.75rem 0.75rem;
+  --ff-field-gap: 0.75rem 0;
 }
 
 /* Base reset for all ff-* components */
@@ -31,6 +24,7 @@
   font-size: var(--ff-font-size);
   color: var(--ff-color-fg);
   box-sizing: border-box;
+  margin: var(--ff-field-gap);
 }
 
 /* ======================================
@@ -54,7 +48,6 @@
   .ff-button {
     display: inline-block;
 
-    .ff-repeater .card button,
     button {
       all: unset;
       cursor: pointer;
@@ -85,6 +78,7 @@
     .field {
       display: flex;
       flex-direction: column;
+      column-gap: 0.75rem;
 
       .horizontal {
         flex-direction: row;
@@ -103,7 +97,6 @@
     }
 
     input {
-      width: 100%;
       padding: var(--ff-padding);
       border: 1px solid var(--ff-color-border);
       border-radius: var(--ff-radius);
@@ -161,6 +154,10 @@
         opacity: 0.6;
         cursor: not-allowed;
       }
+    }
+
+    > button {
+      margin: var(--ff-field-gap);
     }
   }
 
