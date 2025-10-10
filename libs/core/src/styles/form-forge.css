@@ -22,11 +22,11 @@
 }
 
 /* Base reset for all ff-* components */
-ff-form,
-ff-button,
-ff-textinput,
-ff-select,
-ff-checkbox {
+.ff-form,
+.ff-button,
+.ff-textinput,
+.ff-select,
+.ff-checkbox {
   font-family: var(--ff-font-family);
   font-size: var(--ff-font-size);
   color: var(--ff-color-fg);
@@ -38,7 +38,7 @@ ff-checkbox {
    ====================================== */
 
 /* Form wrapper */
-ff-form {
+.ff-form {
   display: block;
   background: var(--ff-color-bg);
   padding: 1rem;
@@ -51,10 +51,10 @@ ff-form {
   }
 
   /* Button */
-  ff-button {
+  .ff-button {
     display: inline-block;
 
-    ff-repeater .card button,
+    .ff-repeater .card button,
     button {
       all: unset;
       cursor: pointer;
@@ -78,17 +78,22 @@ ff-form {
   }
 
   /* Container */
-  ff-stack {
+  .ff-stack {
     display: flex;
     flex-direction: column;
 
-    .field[aria-orientation="horizontal"] {
-      flex-direction: row;
+    .field {
+      display: flex;
+      flex-direction: column;
+
+      .horizontal {
+        flex-direction: row;
+      }
     }
   }
 
   /* Input (standalone version, optional) */
-  ff-textinput {
+  .ff-textinput {
     display: block;
 
     label {
@@ -119,7 +124,7 @@ ff-form {
   }
 
   /* Checkbox */
-  ff-checkbox {
+  .ff-checkbox {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -136,7 +141,7 @@ ff-form {
     }
   }
 
-  ff-repeater {
+  .ff-repeater {
     button {
       all: unset;
       cursor: pointer;

@@ -28,6 +28,9 @@ const defaultI18n: I18n = {};
   imports: [CommonModule, FieldDirective],
   providers: [AngularFormContext],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    'class': 'ff-form'
+  }
 })
 export class FormComponent implements OnInit {
   // INPUTS

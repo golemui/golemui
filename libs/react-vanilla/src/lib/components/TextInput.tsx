@@ -14,7 +14,7 @@ export function TextInput(fieldInstance: Core.WithField) {
   );
 
   return (
-    <ff-textinput>
+    <div className="ff-textinput">
       <div className="field">
         {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
         <input
@@ -25,6 +25,6 @@ export function TextInput(fieldInstance: Core.WithField) {
           onInput={handleChange}
         />
       </div>
-    </ff-textinput>
+    </div>
   );
 }

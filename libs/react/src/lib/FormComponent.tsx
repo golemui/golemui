@@ -92,14 +92,14 @@ export function FormComponent({
 
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
-      <ff-form>
+      <div className="ff-form">
         <form id={formNameRef.current}>
           <FieldRenderer
             field={formLayoutField}
             formContext={formContextRef.current}
           />
         </form>
-      </ff-form>
+      </div>
     </ReactFormContextProvider>
   );
 }

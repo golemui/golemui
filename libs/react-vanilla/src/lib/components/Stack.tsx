@@ -14,10 +14,10 @@ export function Stack(fieldInstance: Core.WithField) {
   }, [children, formContext]);
 
   return (
-    <ff-stack>
-      <div className="field" aria-orientation={field.props?.direction ?? ''} id={uid}>
+    <div className="ff-stack">
+      <div className={`field ${field.props?.direction ?? ''}`} id={uid}>
         {renderFields()}
       </div>
-    </ff-stack>
+    </div>
   );
 }

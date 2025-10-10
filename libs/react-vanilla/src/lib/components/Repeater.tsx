@@ -51,7 +51,7 @@ export function Repeater(fieldInstance: Core.WithField) {
   }, [field.props, formContext, value, uid, removeItem]);
 
   return (
-    <ff-repeater>
+    <div className="ff-repeater">
       <div className="card" id={uid}>
         {label && <h2 key={`${uid}-title`}>{label}</h2>}
         {renderFields()}
@@ -59,6 +59,6 @@ export function Repeater(fieldInstance: Core.WithField) {
           {field.props?.addLabel ?? 'Add'}
         </button>
       </div>
-    </ff-repeater>
+    </div>
   );
 }

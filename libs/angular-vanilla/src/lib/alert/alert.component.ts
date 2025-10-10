@@ -15,6 +15,9 @@ type OwnWidgetProps = {
   providers: [Angular.FieldAdapter],
   templateUrl: './alert.component.html',
   styleUrls: ['../styles.scss', './alert.component.scss'],
+  host: {
+    'class': 'ff-alert'
+  }
 })
 export class AlertComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.Field;

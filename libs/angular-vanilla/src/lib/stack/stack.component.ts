@@ -14,6 +14,9 @@ type StackProps = {
   providers: [Angular.LayoutAdapter],
   templateUrl: './stack.component.html',
   styleUrls: ['../styles.scss', './stack.component.scss'],
+  host: {
+    'class': 'ff-stack'
+  }
 })
 export class StackComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.LayoutField;
