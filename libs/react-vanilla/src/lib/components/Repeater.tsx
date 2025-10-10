@@ -7,11 +7,21 @@ import {
 import { useCallback } from 'react';
 import '../styles.scss';
 
+type RepeaterProps = {
+  addLabel?: string;
+  removeLabel?: string;
+  limit?: number;
+  template: Core.FormField<string>;
+};
+
 export function Repeater(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<
     Record<string, unknown>[]
   >;
-  const { uid, value, label, formContext, onValueChanged } = useControl(field);
+  const { uid, value, label, formContext, onValueChanged, props } = useControl<
+    Record<string, unknown>[],
+    RepeaterProps
+  >(field);
 
   const addItem = useCallback(
     (value: Record<string, unknown>[]) => {
@@ -37,26 +47,27 @@ export function Repeater(fieldInstance: Core.WithField) {
           <div className={'card'}>
             <FieldRenderer
               key={`${uid}-${index}`}
-              field={field.props?.template}
+              field={props.template}
               repeaterIndex={index}
               formContext={formContext}
             />
             <button type="button" onClick={() => removeItem(value, index)}>
-              {field.props?.removeLabel ?? 'Remove'}
+              {props.removeLabel ?? 'Remove'}
             </button>
           </div>
         </RepeaterIndexContext.Provider>
       );
     });
-  }, [field.props, formContext, value, uid, removeItem]);
+  }, [props, formContext, value, uid, removeItem]);
 
   return (
     <div className="ff-repeater">
       <div className="card" id={uid}>
         {label && <h2 key={`${uid}-title`}>{label}</h2>}
         {renderFields()}
-        <button type="button" onClick={() => addItem(value || [])} disabled={field.props?.limit ? field.props.limit === (value?.length ?? 0) : false}>
-          {field.props?.addLabel ?? 'Add'}
+        <button type="button" onClick={() => addItem(value || [])} disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
+          >
+        {props.addLabel ?? 'Add'}
         </button>
       </div>
     </div>

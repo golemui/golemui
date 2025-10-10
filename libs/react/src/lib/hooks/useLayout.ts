@@ -1,12 +1,16 @@
 import * as Core from '@formforge/core';
 import { useEffect, useState } from 'react';
-import { combineLatest, map, Observable, of } from 'rxjs';
+import { combineLatest, map, of } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
+import { useExtraProps } from './internal/useExtraProps';
 
-export function useLayout(field: Core.LayoutField) {
+export function useLayout<ExtraProps extends Record<string, any>>(
+  field: Core.LayoutField,
+) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [children, setChildren] = useState<Core.FormField<string>[]>([]);
+  const props = useExtraProps<ExtraProps>(field);
 
   useEffect(() => {
     setUid(field.uid);
@@ -19,12 +23,12 @@ export function useLayout(field: Core.LayoutField) {
     });
   }, [field, formContext.store]);
 
+  // Listen to the fieldFlags stream and filter the layout's `children` based on their `hidden` flag
   useEffect(() => {
-    const children: Observable<Core.FormField<string>[]> = of(field.children);
     const selectFieldFlags = formContext.store.state$.pipe(
       Core.selectFieldFlags,
     );
-    const sub = combineLatest([children, selectFieldFlags])
+    const sub = combineLatest([of(field.children), selectFieldFlags])
       .pipe(
         map(([children]) => {
           const fieldFlags = formContext.store.getState().fieldFlags;
@@ -52,5 +56,6 @@ export function useLayout(field: Core.LayoutField) {
     uid,
     children,
     formContext,
+    props,
   };
 }
