@@ -1,7 +1,7 @@
 @let templateData = adapter.templateData();
 
 <div class="field" [id]="field.uid">
-  <div class="alert" [ngClass]="templateData.level || 'default'">
+  <div class="ff-alert-notification" [ngClass]="templateData.level || 'default'">
     {{ templateData.text }}
   </div>
 </div>
