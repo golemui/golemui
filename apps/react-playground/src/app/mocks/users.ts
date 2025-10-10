@@ -76,6 +76,13 @@ export const users = defineForm({
       },
       {
         uid: '',
+        kind: 'control',
+        widget: 'checkbox',
+        label: 'Create new account?',
+        path: 'isNewUser'
+      },
+      {
+        uid: '',
         kind: 'button',
         widget: 'button',
         label: 'Create',
