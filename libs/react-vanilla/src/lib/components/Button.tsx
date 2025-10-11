@@ -7,10 +7,12 @@ export function Button(fieldInstance: Core.WithField) {
   const { uid, isDisabled, label, onClick } = useButton(field);
 
   return (
-    <div className="field">
-      <button type="button" id={uid} onClick={onClick} disabled={isDisabled}>
-        {label}
-      </button>
+    <div className="ff-button">
+      <div className="field">
+        <button type="button" id={uid} onClick={onClick} disabled={isDisabled}>
+          {label}
+        </button>
+      </div>
     </div>
   );
 }

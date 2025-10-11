@@ -15,15 +15,17 @@ export function Checkbox(fieldInstance: Core.WithField) {
   );
 
   return (
-    <div className="field horizontal">
-      {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
-      <input
-        type="checkbox"
-        id={uid}
-        checked={value ?? false}
-        disabled={isDisabled}
-        onChange={handleChange}
-      />
+    <div className="ff-checkbox">
+      <div className="field horizontal">
+        {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
+        <input
+          type="checkbox"
+          id={uid}
+          checked={value ?? false}
+          disabled={isDisabled}
+          onChange={handleChange}
+        />
+      </div>
     </div>
   );
 }

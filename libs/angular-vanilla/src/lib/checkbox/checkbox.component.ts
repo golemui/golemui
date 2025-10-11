@@ -10,6 +10,9 @@ import * as Core from '@formforge/core';
   providers: [Angular.ControlAdapter],
   templateUrl: './checkbox.component.html',
   styleUrl: '../styles.scss',
+  host: {
+    'class': 'ff-checkbox'
+  }
 })
 export class CheckboxComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;

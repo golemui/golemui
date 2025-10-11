@@ -1,9 +1,7 @@
 import * as Core from '@formforge/core';
 import { FieldRenderer, useLayout } from '@formforge/react';
-import clsx from 'clsx';
 import { useCallback } from 'react';
 import '../styles.scss';
-import styles from './Stack.module.scss';
 
 type StackProps = {
   direction?: 'horizontal' | 'vertical';
@@ -21,8 +19,10 @@ export function Stack(fieldInstance: Core.WithField) {
 
   const direction = props.direction || 'vertical';
   return (
-    <div className={clsx('field', styles[direction])} id={uid}>
-      {renderFields()}
+    <div className="ff-stack">
+      <div className={`field ${direction}`} id={uid}>
+        {renderFields()}
+      </div>
     </div>
   );
 }

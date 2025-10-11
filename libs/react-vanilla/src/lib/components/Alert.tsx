@@ -1,8 +1,5 @@
 import * as Core from '@formforge/core';
 import { useField } from '@formforge/react';
-import clsx from 'clsx';
-import '../styles.scss';
-import styles from './Alert.module.scss';
 
 type AlertProps = {
   text: string;
@@ -14,9 +11,11 @@ export function Alert(fieldInstance: Core.WithField) {
   const { uid, props } = useField<AlertProps>(field);
 
   return (
-    <div className="field" id={uid}>
-      <div className={clsx(styles.alert, styles[props.level || 'default'])}>
-        {props.text}
+    <div className="ff-alert">
+      <div className="field" id={uid}>
+        <div className={`ff-alert-notification ${props.level || 'default'}`}>
+          {props.text}
+        </div>
       </div>
     </div>
   );

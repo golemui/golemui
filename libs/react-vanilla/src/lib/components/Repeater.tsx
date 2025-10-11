@@ -61,16 +61,15 @@ export function Repeater(fieldInstance: Core.WithField) {
   }, [props, formContext, value, uid, removeItem]);
 
   return (
-    <div className="card" id={uid}>
-      {label && <h2 key={`${uid}-title`}>{label}</h2>}
-      {renderFields()}
-      <button
-        type="button"
-        onClick={() => addItem(value || [])}
-        disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
-      >
+    <div className="ff-repeater">
+      <div className="card" id={uid}>
+        {label && <h2 key={`${uid}-title`}>{label}</h2>}
+        {renderFields()}
+        <button type="button" onClick={() => addItem(value || [])} disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
+          >
         {props.addLabel ?? 'Add'}
-      </button>
+        </button>
+      </div>
     </div>
   );
 }

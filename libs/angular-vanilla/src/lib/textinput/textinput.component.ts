@@ -10,6 +10,9 @@ import * as Core from '@formforge/core';
   providers: [Angular.ControlAdapter],
   templateUrl: './textinput.component.html',
   styleUrl: '../styles.scss',
+  host: {
+    'class': 'ff-textinput'
+  }
 })
 export class TextinputComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;

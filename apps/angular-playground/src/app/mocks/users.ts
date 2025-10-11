@@ -11,6 +11,15 @@ export const users = defineForm({
     children: [
       {
         uid: '',
+        kind: 'field',
+        widget: 'alert',
+        props: {
+          text: 'Some fields need your attention',
+          level: 'warning'
+        },
+      },
+      {
+        uid: '',
         kind: 'layout',
         widget: 'stack',
         props: {
@@ -62,6 +71,13 @@ export const users = defineForm({
             ],
           },
         },
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'checkbox',
+        label: 'Create new account?',
+        path: 'isNewUser'
       },
       {
         uid: '',

@@ -17,6 +17,9 @@ type RepeaterProps = {
   providers: [Angular.ControlAdapter, Angular.RepeaterFieldDirective],
   templateUrl: './repeater.component.html',
   styleUrls: ['../styles.scss', './repeater.component.scss'],
+  host: {
+    'class': 'ff-repeater'
+  }
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
