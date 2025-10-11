@@ -11,6 +11,35 @@ export const users = defineForm({
     children: [
       {
         uid: '',
+        kind: 'layout',
+        widget: 'tabs',
+        props: {
+          tabs: [
+            { label: 'Tab 1', uid: 'tab1' },
+            { label: 'Tab 2', uid: 'tab2' }
+          ]
+        },
+        children: [
+          {
+            uid: 'tab1',
+            kind: 'field',
+            widget: 'alert',
+            props: {
+              text: 'Tab 1 content'
+            },
+          },
+          {
+            uid: 'tab2',
+            kind: 'field',
+            widget: 'alert',
+            props: {
+              text: 'Tab 2 content'
+            },
+          },
+        ]
+      },
+      {
+        uid: '',
         kind: 'field',
         widget: 'alert',
         props: {

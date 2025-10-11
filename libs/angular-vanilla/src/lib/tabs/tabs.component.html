@@ -1,0 +1,21 @@
+@let templateData = adapter.templateData();
+
+<nav
+  class="field horizontal"
+  role="tablist"
+  [id]="field.uid"
+>
+  @for (tab of templateData.tabs; track tab.uid) {
+    <button type="button" [tabindex]="$index" [class.active]="tab.uid === activeTab" (click)="onClickTab(tab.uid)">
+      {{tab.label }}
+    </button>
+  }
+</nav>
+
+@for (child of templateData.children; track child.uid) {
+  @if (child.uid === activeTab) {
+    <section class="field" role="region">
+      <ng-container ffField [field]="child" />
+    </section>
+  }
+}
