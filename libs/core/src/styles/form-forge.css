@@ -160,7 +160,12 @@
 
   .ff-repeater {
     .card {
-
+      margin-bottom: var(--ff-space-gap);
+      padding: var(--ff-padding);
+      border: 1px solid var(--ff-color-border);
+      border-radius: var(--ff-radius) var(--ff-radius);
+      background: var(--ff-color-bg);
+      color: var(--ff-color-fg);
     }
 
     > button {
