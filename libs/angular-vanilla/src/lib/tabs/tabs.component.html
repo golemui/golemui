@@ -6,15 +6,15 @@
   [id]="field.uid"
 >
   @for (tab of templateData.tabs; track tab.uid) {
-    <button type="button" [tabindex]="$index" [class.active]="tab.uid === activeTab" (click)="onClickTab(tab.uid)">
+    <a role="tab" [tabindex]="$index" [class.active]="tab.uid === activeTab" (click)="onClickTab(tab.uid)" (keydown)="onClickTab(tab.uid)">
       {{tab.label }}
-    </button>
+    </a>
   }
 </nav>
 
 @for (child of templateData.children; track child.uid) {
   @if (child.uid === activeTab) {
-    <section class="field" role="region">
+    <section class="field" role="tabpanel">
       <ng-container ffField [field]="child" />
     </section>
   }

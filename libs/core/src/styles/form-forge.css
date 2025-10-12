@@ -7,11 +7,13 @@
   --ff-color-error: #d32f2f;
 
   /* Typography & layout */
+  --ff-space-gap: 0.75rem;
+
   --ff-font-family: system-ui, sans-serif;
   --ff-font-size: 14px;
   --ff-radius: 8px;
-  --ff-padding: 0.75rem 0.75rem;
-  --ff-field-gap: 0.75rem 0;
+  --ff-padding: var(--ff-space-gap) var(--ff-space-gap);
+  --ff-field-gap: var(--ff-space-gap) 0;
 }
 
 /* Form wrapper */
@@ -65,11 +67,13 @@
   .ff-stack {
     display: flex;
     flex-direction: column;
+    margin: var(--ff-space-gap) 0;
 
     .field {
       display: flex;
       flex-direction: column;
-      column-gap: 0.75rem;
+      column-gap: var(--ff-space-gap);
+      row-gap: var(--ff-space-gap);
 
       .horizontal {
         flex-direction: row;
@@ -79,6 +83,31 @@
 
   /* Container */
   .ff-tabs {
+    margin: var(--ff-space-gap) 0;
+
+    a[role="tab"] {
+      display: inline-block;
+      padding: var(--ff-padding);
+      border: 1px solid var(--ff-color-border);
+      border-radius: var(--ff-radius) var(--ff-radius) 0 0;
+      background: var(--ff-color-bg);
+      color: var(--ff-color-fg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+
+      &.active {
+        border-bottom-color: var(--ff-color-bg);
+      }
+    }
+
+    section[role="tabpanel"] {
+      margin-top: -1px;
+      padding: var(--ff-padding);
+      border: 1px solid var(--ff-color-border);
+      border-radius: 0 0 var(--ff-radius) var(--ff-radius);
+      background: var(--ff-color-bg);
+      color: var(--ff-color-fg);
+    }
   }
 
   /* Input (standalone version, optional) */
@@ -130,6 +159,10 @@
   }
 
   .ff-repeater {
+    .card {
+
+    }
+
     > button {
       margin: var(--ff-field-gap);
     }

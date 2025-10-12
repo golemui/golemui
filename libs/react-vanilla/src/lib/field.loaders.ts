@@ -15,6 +15,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
 
   // LAYOUTS
   stack: async () => (await import('./components/Stack')).Stack,
+  tabs: async () => (await import('./components/Tabs')).Tabs,
 
   // FIELDS
   alert: async () => (await import('./components/Alert')).Alert,
