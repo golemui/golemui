@@ -4,6 +4,7 @@ import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
 
 type TabsProps = {
+  defaultOpen?: string;
   tabs: { label: string; uid: string; }[];
 };
 
@@ -26,8 +27,9 @@ export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
   );
 
   ngOnInit(): void {
+    const props: TabsProps = (this.field.props as TabsProps);
     this.adapter.init(this.field);
-    this.activeTab = (this.field.props as TabsProps).tabs[0].uid;
+    this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
   }
 
   onClickTab(uid: string) {

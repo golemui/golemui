@@ -14,6 +14,7 @@ export const users = defineForm({
         kind: 'layout',
         widget: 'tabs',
         props: {
+          defaultOpen: 'tab2',
           tabs: [
             { label: 'Alert Component', uid: 'tab1' },
             { label: 'Stack Layout', uid: 'tab2' },

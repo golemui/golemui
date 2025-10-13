@@ -3,13 +3,14 @@ import { FieldRenderer, useLayout } from '@formforge/react';
 import { useCallback, useState } from 'react';
 
 type TabsProps = {
+  defaultOpen?: string;
   tabs: { label: string; uid: string; }[];
 };
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
   const { uid, children, formContext, props } = useLayout<TabsProps>(field);
-  const [activeTab, setActiveTab] = useState(props.tabs[0].uid);
+  const [activeTab, setActiveTab] = useState(props.defaultOpen ?? props.tabs[0].uid);
 
   const renderTabs = useCallback(() => {
     return props.tabs.map((tab, index) => (
