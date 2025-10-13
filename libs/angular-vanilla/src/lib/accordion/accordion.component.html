@@ -1,0 +1,26 @@
+@let templateData = adapter.templateData();
+
+<div
+  class="field"
+  [id]="field.uid"
+>
+  @for (section of templateData.sections; track section.uid) {
+    <div class="ff-accordion-section">
+      <button
+        type="button"
+        [tabindex]="$index"
+        [attr.aria-expanded]="activeSections[section.uid]"
+        [class.active]="activeSections[section.uid]"
+        (click)="onClickButton(section.uid)"
+      >
+        {{section.label }}<span class="ff-accordion-icon"></span>
+      </button>
+
+      @if (activeSections[section.uid]) {
+        <section class="field" role="region">
+          <ng-container ffField [field]="getChild(section.uid)" />
+        </section>
+      }
+    </div>
+  }
+</div>

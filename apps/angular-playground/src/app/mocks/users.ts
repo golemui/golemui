@@ -14,12 +14,13 @@ export const users = defineForm({
         kind: 'layout',
         widget: 'tabs',
         props: {
-          defaultOpen: 'tab2',
+          defaultOpen: 'tab5',
           tabs: [
             { label: 'Alert Component', uid: 'tab1' },
             { label: 'Stack Layout', uid: 'tab2' },
             { label: 'Repeater Component', uid: 'tab3' },
-            { label: 'Checkbox Component', uid: 'tab4' }
+            { label: 'Checkbox Component', uid: 'tab4' },
+            { label: 'Accordion Layout', uid: 'tab5' }
           ]
         },
         children: [
@@ -107,6 +108,81 @@ export const users = defineForm({
               }
             ]
           },
+          {
+            uid: 'tab5',
+            kind: 'layout',
+            widget: 'accordion',
+            props: {
+              singleOpen: false,
+              defaultOpen: {
+                section1: true
+              },
+              sections: [
+                { label: 'Personal Information', uid: 'section1' },
+                { label: 'Shipping Address', uid: 'section2' },
+                { label: 'Billing Address', uid: 'section3' }
+              ]
+            },
+            children: [
+              {
+                uid: 'section1',
+                kind: 'layout',
+                widget: 'stack',
+                children: [
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.firstName',
+                  },
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.lastName',
+                  },
+                ],
+              },
+              {
+                uid: 'section2',
+                kind: 'layout',
+                widget: 'stack',
+                children: [
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.shippingAddress',
+                  },
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.shippingState',
+                  },
+                ],
+              },
+              {
+                uid: 'section3',
+                kind: 'layout',
+                widget: 'stack',
+                children: [
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.billingAddress',
+                  },
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.billingState',
+                  },
+                ],
+              }
+            ]
+          }
         ]
       },
       {
