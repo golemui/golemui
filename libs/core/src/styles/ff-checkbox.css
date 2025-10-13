@@ -1,0 +1,18 @@
+.ff-form {
+  .ff-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--ff-color-primary);
+    }
+
+    label {
+      cursor: pointer;
+    }
+  }
+}

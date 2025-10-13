@@ -1,0 +1,30 @@
+.ff-form {
+  .ff-textinput {
+    display: block;
+
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    input {
+      padding: var(--ff-padding);
+      border: 1px solid var(--ff-color-border);
+      border-radius: var(--ff-radius);
+      background: var(--ff-color-bg);
+      color: var(--ff-color-fg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--ff-color-primary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--ff-color-primary) 25%, transparent);
+      }
+
+      &[aria-invalid="true"] {
+        border-color: var(--ff-color-error);
+      }
+    }
+  }
+}
