@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
