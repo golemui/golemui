@@ -11,8 +11,7 @@ import { users, usersData } from '../../mocks';
   imports: [CommonModule, Angular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.scss',
-  encapsulation: ViewEncapsulation.None
+  styleUrl: './form.component.scss'
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
