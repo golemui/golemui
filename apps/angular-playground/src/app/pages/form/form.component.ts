@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
@@ -11,8 +11,7 @@ import { users, usersData } from '../../mocks';
   imports: [CommonModule, Angular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.scss',
-  encapsulation: ViewEncapsulation.None
+  styleUrl: './form.component.scss'
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);

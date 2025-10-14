@@ -1,0 +1,20 @@
+.ff-form {
+  display: block;
+  background: var(--ff-color-bg);
+  padding: 1rem;
+  border-radius: var(--ff-radius);
+
+  /* Base reset for all ff-* components */
+  font-family: var(--ff-font-family);
+  font-size: var(--ff-font-size);
+  color: var(--ff-color-fg);
+  box-sizing: border-box;
+  margin: var(--ff-field-gap);
+
+
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+  }
+}

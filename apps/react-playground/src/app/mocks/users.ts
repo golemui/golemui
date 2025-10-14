@@ -11,75 +11,179 @@ export const users = defineForm({
     children: [
       {
         uid: '',
-        kind: 'field',
-        widget: 'alert',
-        props: {
-          text: 'Some fields need your attention',
-          level: 'warning',
-          'text.limitReached': 'You can Register now',
-          'level.limitReached': 'success',
-        },
-      },
-      {
-        uid: '',
         kind: 'layout',
-        widget: 'stack',
+        widget: 'tabs',
         props: {
-          direction: 'horizontal',
-          'direction.limitReached': 'vertical',
+          defaultOpen: 'tab5',
+          tabs: [
+            { label: 'Alert Component', uid: 'tab1' },
+            { label: 'Stack Layout', uid: 'tab2' },
+            { label: 'Repeater Component', uid: 'tab3' },
+            { label: 'Checkbox Component', uid: 'tab4' },
+            { label: 'Accordion Layout', uid: 'tab5' }
+          ]
         },
         children: [
           {
-            uid: '',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'listName',
+            uid: 'tab1',
+            kind: 'field',
+            widget: 'alert',
+            props: {
+              text: 'Some fields need your attention',
+              level: 'warning'
+            },
           },
           {
-            uid: '',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'listOwner',
+            uid: 'tab2',
+            kind: 'layout',
+            widget: 'stack',
+            props: {
+              direction: 'horizontal',
+              'direction.limitReached': 'vertical',
+            },
+            children: [
+              {
+                uid: '',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'listName',
+              },
+              {
+                uid: '',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'listOwner',
+              },
+            ],
           },
-        ],
-      },
-      {
-        uid: '',
-        kind: 'control',
-        widget: 'repeater',
-        path: 'users',
-        props: {
-          addLabel: 'Add new developer',
-          'addLabel.limitReached': "Limit Reached, you can't add more",
-          removeLabel: 'Remove developer',
-          limit: 5,
-          template: {
-            uid: '',
+          {
+            uid: 'tab3',
             kind: 'layout',
             widget: 'stack',
             children: [
               {
                 uid: '',
                 kind: 'control',
-                widget: 'textinput',
-                path: 'users.items.firstName',
-              },
+                widget: 'repeater',
+                path: 'users',
+                props: {
+                  addLabel: 'Add new developer',
+                  'addLabel.limitReached': "Limit Reached, you can't add more",
+                  removeLabel: 'Remove developer',
+                  limit: 5,
+                  template: {
+                    uid: '',
+                    kind: 'layout',
+                    widget: 'stack',
+                    children: [
+                      {
+                        uid: '',
+                        kind: 'control',
+                        widget: 'textinput',
+                        path: 'users.items.firstName',
+                      },
+                      {
+                        uid: '',
+                        kind: 'control',
+                        widget: 'textinput',
+                        path: 'users.items.lastName',
+                      },
+                    ],
+                  },
+                },
+              }
+            ]
+          },
+          {
+            uid: 'tab4',
+            kind: 'layout',
+            widget: 'stack',
+            children: [
               {
                 uid: '',
                 kind: 'control',
-                widget: 'textinput',
-                path: 'users.items.lastName',
-              },
-            ],
+                widget: 'checkbox',
+                label: 'Create new account?',
+                path: 'isNewUser'
+              }
+            ]
           },
-        },
-      },
-      {
-        uid: '',
-        kind: 'control',
-        widget: 'checkbox',
-        label: 'Create new account?',
-        path: 'isNewUser'
+          {
+            uid: 'tab5',
+            kind: 'layout',
+            widget: 'accordion',
+            props: {
+              singleOpen: false,
+              defaultOpen: {
+                section1: true
+              },
+              sections: [
+                { label: 'Personal Information', uid: 'section1' },
+                { label: 'Shipping Address', uid: 'section2' },
+                { label: 'Billing Address', uid: 'section3' }
+              ]
+            },
+            children: [
+              {
+                uid: 'section1',
+                kind: 'layout',
+                widget: 'stack',
+                children: [
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.firstName',
+                  },
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.lastName',
+                  },
+                ],
+              },
+              {
+                uid: 'section2',
+                kind: 'layout',
+                widget: 'stack',
+                children: [
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.shippingAddress',
+                  },
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.shippingState',
+                  },
+                ],
+              },
+              {
+                uid: 'section3',
+                kind: 'layout',
+                widget: 'stack',
+                children: [
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.billingAddress',
+                  },
+                  {
+                    uid: '',
+                    kind: 'control',
+                    widget: 'textinput',
+                    path: 'users.items.billingState',
+                  },
+                ],
+              }
+            ]
+          }
+        ]
       },
       {
         uid: '',

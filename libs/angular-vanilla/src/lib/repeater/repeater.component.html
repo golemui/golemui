@@ -1,30 +1,33 @@
 @let templateData = adapter.templateData();
 
-@if (templateData.label) {
-  <h2>{{ templateData.label }}</h2>
-}
-@if (templateData.template && templateData.value) {
-  @for (_ of templateData.value; track $index) {
-    <div class="card">
-      <ng-container
-        ffRepeaterField
-        [repeaterIndex]="$index"
-        [field]="templateData.template"
-      />
-      <button type="button" (click)="removeItem($index)">
-        {{ templateData.removeLabel ?? 'Remove' }}
-      </button>
-    </div>
+<div [id]="field.uid">
+  @if (templateData.label) {
+    <h2>{{ templateData.label }}</h2>
   }
-}
-<button
-  type="button"
-  (click)="addItem()"
-  [disabled]="
+  @if (templateData.template && templateData.value) {
+    @for (_ of templateData.value; track $index) {
+      <div class="card">
+        <ng-container
+          ffRepeaterField
+          [repeaterIndex]="$index"
+          [field]="templateData.template"
+        />
+        <button type="button" class="ff-button" (click)="removeItem($index)">
+          {{ templateData.removeLabel ?? 'Remove' }}
+        </button>
+      </div>
+    }
+  }
+  <button
+    type="button"
+    class="ff-button"
+    (click)="addItem()"
+    [disabled]="
     templateData.limit
       ? templateData.limit === (templateData.value?.length ?? 0)
       : false
   "
->
-  {{ templateData.addLabel ?? 'Add' }}
-</button>
+  >
+    {{ templateData.addLabel ?? 'Add' }}
+  </button>
+</div>

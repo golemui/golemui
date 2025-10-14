@@ -18,6 +18,8 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
 
   // LAYOUTS
   stack: async () => (await import('./stack/stack.component')).StackComponent,
+  tabs: async () => (await import('./tabs/tabs.component')).TabsComponent,
+  accordion: async () => (await import('./accordion/accordion.component')).AccordionComponent,
 
   // FIELDS
   alert: async () => (await import('./alert/alert.component')).AlertComponent,
