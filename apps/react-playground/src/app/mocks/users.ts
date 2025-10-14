@@ -20,8 +20,8 @@ export const users = defineForm({
             { label: 'Stack Layout', uid: 'tab2' },
             { label: 'Repeater Component', uid: 'tab3' },
             { label: 'Checkbox Component', uid: 'tab4' },
-            { label: 'Accordion Layout', uid: 'tab5' }
-          ]
+            { label: 'Accordion Layout', uid: 'tab5' },
+          ],
         },
         children: [
           {
@@ -30,7 +30,7 @@ export const users = defineForm({
             widget: 'alert',
             props: {
               text: 'Some fields need your attention',
-              level: 'warning'
+              level: 'warning',
             },
           },
           {
@@ -91,8 +91,8 @@ export const users = defineForm({
                     ],
                   },
                 },
-              }
-            ]
+              },
+            ],
           },
           {
             uid: 'tab4',
@@ -104,9 +104,9 @@ export const users = defineForm({
                 kind: 'control',
                 widget: 'checkbox',
                 label: 'Create new account?',
-                path: 'isNewUser'
-              }
-            ]
+                path: 'isNewUser',
+              },
+            ],
           },
           {
             uid: 'tab5',
@@ -115,13 +115,13 @@ export const users = defineForm({
             props: {
               singleOpen: false,
               defaultOpen: {
-                section1: true
+                section1: true,
               },
               sections: [
                 { label: 'Personal Information', uid: 'section1' },
                 { label: 'Shipping Address', uid: 'section2' },
-                { label: 'Billing Address', uid: 'section3' }
-              ]
+                { label: 'Billing Address', uid: 'section3' },
+              ],
             },
             children: [
               {
@@ -133,13 +133,13 @@ export const users = defineForm({
                     uid: '',
                     kind: 'control',
                     widget: 'textinput',
-                    path: 'users.items.firstName',
+                    path: 'shoppingCart.firstName',
                   },
                   {
                     uid: '',
                     kind: 'control',
                     widget: 'textinput',
-                    path: 'users.items.lastName',
+                    path: 'shoppingCart.lastName',
                   },
                 ],
               },
@@ -152,13 +152,13 @@ export const users = defineForm({
                     uid: '',
                     kind: 'control',
                     widget: 'textinput',
-                    path: 'users.items.shippingAddress',
+                    path: 'shoppingCart.shippingAddress',
                   },
                   {
                     uid: '',
                     kind: 'control',
                     widget: 'textinput',
-                    path: 'users.items.shippingState',
+                    path: 'shoppingCart.shippingState',
                   },
                 ],
               },
@@ -171,19 +171,19 @@ export const users = defineForm({
                     uid: '',
                     kind: 'control',
                     widget: 'textinput',
-                    path: 'users.items.billingAddress',
+                    path: 'shoppingCart.billingAddress',
                   },
                   {
                     uid: '',
                     kind: 'control',
                     widget: 'textinput',
-                    path: 'users.items.billingState',
+                    path: 'shoppingCart.billingState',
                   },
                 ],
-              }
-            ]
-          }
-        ]
+              },
+            ],
+          },
+        ],
       },
       {
         uid: '',
