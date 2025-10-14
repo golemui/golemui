@@ -217,7 +217,10 @@ export const ControlFieldSchema = <S extends z.ZodMiniType>(
       defaultValue: z.optional(defaultValueSchema),
     }),
     z.transform((ctrl) => {
-      const transformed = { ...ctrl, uid: `${ctrl.path}-${ctrl.widget}` };
+      const transformed = { ...ctrl };
+      if (!ctrl.uid) {
+        transformed.uid = `${ctrl.path}-${ctrl.widget}`;
+      }
       // TODO: no type safety in this block
       if (ctrl.widget === 'repeater') {
         const props = ctrl['props'] as Record<string, any>;
