@@ -72,6 +72,12 @@
         "linter": "none",
         "unitTestRunner": "vitest"
       }
+    },
+    "@nx/web:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "none",
+      "e2eTestRunner": "none"
     }
   },
   "release": {
