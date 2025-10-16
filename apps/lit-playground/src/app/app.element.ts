@@ -1,7 +1,10 @@
 import './pages/form/form.element';
 import './app.element.scss';
+import { LitElement } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
-export class AppElement extends HTMLElement {
+@customElement('lit-root')
+export class AppElement extends LitElement {
   public static observedAttributes = [];
 
   connectedCallback() {
@@ -13,4 +16,3 @@ export class AppElement extends HTMLElement {
     `;
   }
 }
-customElements.define('lit-root', AppElement);
