@@ -2,7 +2,12 @@
   "name": "@formforge/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "format": "nx format:write --all",
+    "precz": "nx run-many --target=lint --all --exclude=@formforge/source && nx format:check --all",
+    "cz": "czg checkbox",
+    "cz:breaking": "czg break"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~20.2.0",
@@ -57,6 +62,7 @@
     "ajv": "^8.0.0",
     "angular-eslint": "^20.2.0",
     "autoprefixer": "^10.4.0",
+    "czg": "^1.12.0",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-import": "2.31.0",
