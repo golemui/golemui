@@ -1,4 +1,3 @@
-/* libs/lit/src/lib/form/form.element.ts */
 import '../field/field.element';
 import * as Core from '@formforge/core';
 import { customElement, property } from 'lit/decorators.js';

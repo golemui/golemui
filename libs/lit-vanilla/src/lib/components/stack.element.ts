@@ -22,8 +22,23 @@ export class StackElement extends LitElement implements Core.WithField {
   }
 
   override render() {
-    super.render();
-    return html`<div class="ff-stack"></div>`;
+    if (!this.adapter.templateData) return html``;
+
+    const classes = {
+      field: true,
+      horizontal: this.adapter.templateData.direction === 'horizontal',
+    };
+
+    return html`
+      <div
+        class=${classes.horizontal ? 'field horizontal' : 'field'}
+        id=${this.field?.uid}
+      >
+        ${this.adapter.templateData.children.map(
+          (child: any) => html`<ff-field .field=${child}></ff-field>`,
+        )}
+      </div>
+    `;
   }
 
   override disconnectedCallback() {
