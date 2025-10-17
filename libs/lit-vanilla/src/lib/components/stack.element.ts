@@ -6,11 +6,11 @@ import * as Lit from '@formforge/lit';
 
 @customElement('ff-stack')
 export class StackElement extends LitElement implements Core.WithField {
-  field!: Core.Field;
+  field!: Core.LayoutField;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
-  formContext: Lit.LitFormContext<any>;
+  formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.layoutContext })
   adapter = new Lit.LayoutAdapter();
@@ -26,7 +26,7 @@ export class StackElement extends LitElement implements Core.WithField {
 
     const classes = {
       field: true,
-      horizontal: this.adapter.templateData.direction === 'horizontal',
+      horizontal: this.adapter.templateData['direction'] === 'horizontal',
     };
 
     return html`
@@ -34,7 +34,7 @@ export class StackElement extends LitElement implements Core.WithField {
         class=${classes.horizontal ? 'field horizontal' : 'field'}
         id=${this.field?.uid}
       >
-        ${this.adapter.templateData.children.map(
+        ${this.adapter.templateData['children'].map(
           (child: any) => html`<ff-field .field=${child}></ff-field>`,
         )}
       </div>
