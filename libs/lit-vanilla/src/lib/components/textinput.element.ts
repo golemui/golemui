@@ -23,12 +23,19 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
   override render() {
     super.render();
+    let label;
+    if (this.adapter.templateData) {
+      label = html` <label for=${this.field.uid}
+        >${this.adapter.templateData['label'] +
+        (this.adapter.templateData['required'] ? ' *' : '')}</label
+      >`;
+    } else {
+      label = html``;
+    }
+
     return html`
       <div class="field">
-        <label [for]="field.uid"
-          >${this.adapter.templateData['label'] +
-          (this.adapter.templateData['required'] ? ' *' : '')}</label
-        >
+        ${label}
         <input
           type="text"
           id=${this.field.uid}
