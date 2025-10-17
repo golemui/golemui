@@ -1,22 +1,26 @@
+/* libs/lit/src/lib/form/form.element.ts */
 import '../field/field.element';
 import * as Core from '@formforge/core';
 import { customElement, property } from 'lit/decorators.js';
 import { LitElement, html } from 'lit';
 import { Subscription } from 'rxjs';
-import { State } from '@formforge/core';
+import { FieldLoaders, State, WithField } from '@formforge/core';
+import { provide } from '@lit/context';
+import { formContext, LitFormContext } from '../../context/form.context';
+import { when } from 'lit/directives/when.js';
 
 @customElement('ff-form')
 export class FormElement extends LitElement {
-  @property({ type: Object }) formDef = {};
-  @property({ type: Array }) fieldLoaders = {};
-  @property({ type: Array }) middlewares = [];
-  @property({ type: Object }) data = {};
+  @provide({ context: formContext })
+  context = new LitFormContext();
+
+  @property({ type: Object }) formDef: any = {};
+  @property({ type: Array }) fieldLoaders!: FieldLoaders<WithField>;
+  @property({ type: Array }) middlewares: any[] = [];
+  @property({ type: Object }) data: any = {};
   @property({ type: String }) formName = crypto.randomUUID();
 
   state: State | undefined;
-  context: Core.FormContext<Core.WithField> =
-    new Core.FormContext<Core.WithField>();
-
   subscriptions: Subscription[] = [];
 
   static FORM_ERROR_EVENT = 'ff-form-error-event';
@@ -43,35 +47,31 @@ export class FormElement extends LitElement {
 
     this.context.store.dispatch({
       type: 'INITIALIZE',
-      payload: {
-        formName: this.formName,
-        formDef: this.formDef,
-      },
+      payload: { formName: this.formName, formDef: this.formDef },
     });
 
     this.context.store.dispatch({
       type: 'SET_DATA',
-      payload: {
-        data: this.data,
-      },
+      payload: { data: this.data },
     });
   }
 
-  override render() {
-    super.render();
+  override createRenderRoot() {
+    return this;
+  }
 
-    if (this.state?.formDef && this.context.fieldRegistry.ready) {
-      return html`
-        <form id=${this.formName}>
-          <ff-field
-            .field=${this.state.formDef.form}
-            .formContext=${this.context}
-          ></ff-field>
-        </form>
-      `;
-    } else {
-      return html`<div>Loading form...</div>`;
-    }
+  override render() {
+    const ready = this.state?.formDef && this.context.fieldRegistry.ready;
+
+    return html`
+      <form id=${this.formName}>
+        ${when(
+          ready,
+          () => html`<ff-field .field=${this.state!.formDef.form}></ff-field>`,
+          () => html`<div>Loading form...</div>`,
+        )}
+      </form>
+    `;
   }
 
   override disconnectedCallback() {

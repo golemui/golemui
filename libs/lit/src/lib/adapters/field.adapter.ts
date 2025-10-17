@@ -1,5 +1,8 @@
+import { createContext } from '@lit/context';
 import * as Core from '@formforge/core';
 import { BaseAdapter } from './base.adapter';
+
+export const fieldContext = createContext<FieldAdapter<any>>('ffFieldAdapter');
 
 export class FieldAdapter<
   ExtraProps extends Record<string, any>,

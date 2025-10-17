@@ -1,8 +1,10 @@
 import * as Core from '@formforge/core';
 import { Subject, takeUntil } from 'rxjs';
+import { LitFormContext } from '../context/form.context';
+import { WithField } from '@formforge/core';
 
 export abstract class BaseAdapter<F extends Core.FormField> {
-  protected context = new Core.FormContext();
+  context!: LitFormContext<WithField>;
   protected destroy$ = new Subject<void>();
   protected field!: F;
 
