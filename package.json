@@ -6,7 +6,7 @@
     "format": "nx format:write --all",
     "precz": "nx run-many --target=lint --all --exclude=@formforge/source && nx format:check --all",
     "cz": "czg checkbox",
-    "cz:breaking": "czg break"
+    "cz:breaking": "npm run precz && czg break"
   },
   "private": true,
   "dependencies": {
