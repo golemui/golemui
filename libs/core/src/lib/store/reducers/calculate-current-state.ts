@@ -88,7 +88,7 @@ function expandStateExpressions(
   }
 
   // Process each state
-  for (const [stateKey, expression] of Object.entries(states)) {
+  for (const [stateKey, _expression] of Object.entries(states)) {
     const parentChain = getParentChain(stateKey);
     const conditions = [];
 
