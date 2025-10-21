@@ -11,8 +11,8 @@ import * as Core from '@formforge/core';
   templateUrl: './button.component.html',
   styleUrl: '../styles.scss',
   host: {
-    'class': 'ff-button'
-  }
+    class: 'ff-button',
+  },
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ButtonField;

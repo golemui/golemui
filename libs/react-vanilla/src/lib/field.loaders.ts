@@ -1,8 +1,6 @@
 import * as Core from '@formforge/core';
 
-export const vanillaFieldLoaders: Core.FieldLoaders<
-  React.ComponentType<Core.WithField>
-> = {
+export const vanillaFieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>> = {
   // BUTTON
   button: async () => (await import('./components/Button')).Button,
 

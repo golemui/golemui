@@ -4,9 +4,7 @@ import * as Core from '@formforge/core';
 import { consume } from '@lit/context';
 import { formContext, LitFormContext } from '../context/form.context';
 
-export const FieldMixin = <T extends new (...args: any[]) => LitElement>(
-  superClass: T,
-) => {
+export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
   class FieldElement extends superClass {
     @consume({ context: formContext })
     @property({ attribute: false })
@@ -24,17 +22,12 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(
       if (!this.field) return;
 
       try {
-        const component = await this.formContext.fieldRegistry.loadField(
-          this.field.widget,
-        );
+        const component = await this.formContext.fieldRegistry.loadField(this.field.widget);
         const element = new component();
 
         (element as any).field =
           this.repeaterIndex > -1
-            ? Core.makeRepeaterItemConfig(
-                Core.cloneObject(this.field),
-                this.repeaterIndex,
-              )
+            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.field), this.repeaterIndex)
             : this.field;
 
         element.id = `host-${this.field.uid}`;

@@ -11,14 +11,12 @@ import * as Core from '@formforge/core';
   templateUrl: './checkbox.component.html',
   styleUrl: '../styles.scss',
   host: {
-    'class': 'ff-checkbox'
-  }
+    class: 'ff-checkbox',
+  },
 })
 export class CheckboxComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlAdapter<string, object> = inject(
-    Angular.ControlAdapter,
-  );
+  protected adapter: Angular.ControlAdapter<string, object> = inject(Angular.ControlAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

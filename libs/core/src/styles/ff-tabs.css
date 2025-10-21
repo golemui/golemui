@@ -2,14 +2,16 @@
   .ff-tabs {
     margin: var(--ff-space-gap) 0;
 
-    a[role="tab"] {
+    a[role='tab'] {
       display: inline-block;
       padding: var(--ff-padding);
       border: 1px solid var(--ff-color-border);
       border-radius: var(--ff-radius) var(--ff-radius) 0 0;
       background: var(--ff-color-bg);
       color: var(--ff-color-fg);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
       cursor: pointer;
 
       &.active {
@@ -17,7 +19,7 @@
       }
     }
 
-    section[role="tabpanel"] {
+    section[role='tabpanel'] {
       margin-top: -1px;
       padding: var(--ff-padding);
       border: 1px solid var(--ff-color-border);

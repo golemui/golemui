@@ -18,9 +18,7 @@ export type Form<StateKeys extends UiState = never> = {
  *
  * Use this helper to enforce strong typing in form structures.
  */
-export function defineForm<
-  States extends Record<string, ReactiveExpression>,
->(config: {
+export function defineForm<States extends Record<string, ReactiveExpression>>(config: {
   states?: States;
   form: LayoutField<Extract<keyof States, string>>; // this Extract<> removes number and symbol from the indexed type
 }) {

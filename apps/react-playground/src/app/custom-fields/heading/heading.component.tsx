@@ -19,10 +19,7 @@ export function HeadingComponent(fieldInstance: Core.WithField) {
   );
 }
 
-function DynamicHeading({
-  level,
-  children,
-}: PropsWithChildren<{ level: number }>) {
+function DynamicHeading({ level, children }: PropsWithChildren<{ level: number }>) {
   const HeadingTag = `h${level}`;
 
   return createElement(HeadingTag, { className: styles.heading }, children);

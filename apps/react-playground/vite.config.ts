@@ -32,6 +32,6 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       '@libs': path.resolve(__dirname, '../../libs'),
-    }
-  }
+    },
+  },
 }));

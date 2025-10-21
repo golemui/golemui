@@ -11,13 +11,10 @@ type TemplateData<T> = {
 };
 
 @Injectable()
-export class ControlAdapter<
-  T,
-  ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.ControlField<T>> {
-  templateData = signal<TemplateData<T> & ExtraProps>(
-    {} as TemplateData<T> & ExtraProps,
-  );
+export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
+  Core.ControlField<T>
+> {
+  templateData = signal<TemplateData<T> & ExtraProps>({} as TemplateData<T> & ExtraProps);
 
   init(field: Core.ControlField<T>) {
     this.field = field;
@@ -42,9 +39,7 @@ export class ControlAdapter<
     // Set the initial templateData, including the controls's data value
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
-      .subscribe((data) =>
-        this.templateData.update((current) => ({ ...current, value: data })),
-      );
+      .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
     // Listen to the fieldFlags stream (`disabled` and `required` flags)
     this.context.store.state$
@@ -61,16 +56,13 @@ export class ControlAdapter<
       });
 
     // Listen to the form states stream and keep the `label` property in sync with the current state
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.currentStates)
-      .subscribe(() => {
-        this.templateData.update((current) => ({
-          ...current,
-          label:
-            this.context.getPropertyValueByCurrentState('label', this.field) ??
-            this.calculateLabel(),
-        }));
-      });
+    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
+      this.templateData.update((current) => ({
+        ...current,
+        label:
+          this.context.getPropertyValueByCurrentState('label', this.field) ?? this.calculateLabel(),
+      }));
+    });
 
     this.context.emitEvent('load', this.field);
   }

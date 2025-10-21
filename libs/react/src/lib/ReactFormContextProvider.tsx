@@ -8,9 +8,5 @@ export function ReactFormContextProvider({
   children: React.ReactNode;
   formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
 }) {
-  return (
-    <ReactFormContext.Provider value={{ formContext }}>
-      {children}
-    </ReactFormContext.Provider>
-  );
+  return <ReactFormContext.Provider value={{ formContext }}>{children}</ReactFormContext.Provider>;
 }

@@ -11,7 +11,7 @@ import { users, usersData } from '../../mocks';
   imports: [CommonModule, Angular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.scss'
+  styleUrl: './form.component.scss',
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
@@ -21,8 +21,7 @@ export class AppFormPage {
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
-      (await import('../../custom-fields/heading/heading.component'))
-        .HeadingComponent,
+      (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
   };
 
   protected error = '';

@@ -33,14 +33,10 @@ export class FormElement extends LitElement {
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
       Core.formErrors(this.context.store.state$).subscribe((error) =>
-        this.dispatchEvent(
-          new CustomEvent(FormElement.FORM_ERROR_EVENT, { detail: error }),
-        ),
+        this.dispatchEvent(new CustomEvent(FormElement.FORM_ERROR_EVENT, { detail: error })),
       ),
       this.context.events$.subscribe((event) =>
-        this.dispatchEvent(
-          new CustomEvent(FormElement.FORM_EVENT, { detail: event }),
-        ),
+        this.dispatchEvent(new CustomEvent(FormElement.FORM_EVENT, { detail: event })),
       ),
     );
 

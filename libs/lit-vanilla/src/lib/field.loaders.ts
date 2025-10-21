@@ -5,8 +5,7 @@ export const vanillaFieldLoaders = {
   // button: async () => (await import('./components/Button')).Button,
   //
   // // CONTROLS
-  textinput: async () =>
-    (await import('./components/textinput.element')).TextinputElement,
+  textinput: async () => (await import('./components/textinput.element')).TextinputElement,
   // checkbox: async () => (await import('./components/Checkbox')).Checkbox,
   //
   // // REPEATER

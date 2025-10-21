@@ -16,8 +16,7 @@ function onFormEvent(event: Core.FormEvent) {
 const vanillaFieldLoaders = {
   ...Vanilla.vanillaFieldLoaders,
   heading: async () =>
-    (await import('../../custom-fields/heading/heading.component'))
-      .HeadingComponent,
+    (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
 const formDef = users;
 const formData = usersData;

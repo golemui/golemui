@@ -10,8 +10,7 @@ type AccordionProps = {
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext, props } =
-    useLayout<AccordionProps>(field);
+  const { uid, children, formContext, props } = useLayout<AccordionProps>(field);
   const [activeSections, setActiveSections] = useState(props.defaultOpen ?? {});
 
   const onClickButton = useCallback(
@@ -23,8 +22,7 @@ export function Accordion(fieldInstance: Core.WithField) {
           Object.keys(newState)
             .filter((sectionUid) => sectionUid !== uid)
             .forEach((sectionUid) => {
-              newState[sectionUid] =
-                sectionUid === uid ? !newState[sectionUid] : false;
+              newState[sectionUid] = sectionUid === uid ? !newState[sectionUid] : false;
             });
         }
 
@@ -38,9 +36,7 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   const renderContent = useCallback(
     (uid: string) => {
-      const child = children.find(
-        (section) => section.uid === uid,
-      ) as Core.FormField<string>;
+      const child = children.find((section) => section.uid === uid) as Core.FormField<string>;
       const isActiveSection = activeSections[uid];
 
       return isActiveSection && child ? (
@@ -54,10 +50,7 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   const renderAccordion = useCallback(() => {
     return props.sections.map((section, index) => (
-      <div
-        className="ff-accordion-section"
-        key={`${'accordion-section-' + section.uid}`}
-      >
+      <div className="ff-accordion-section" key={`${'accordion-section-' + section.uid}`}>
         <button
           type="button"
           tabIndex={index}

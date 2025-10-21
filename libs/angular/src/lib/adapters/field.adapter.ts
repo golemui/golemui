@@ -3,9 +3,7 @@ import * as Core from '@formforge/core';
 import { BaseAdapter } from './base.adapter';
 
 @Injectable()
-export class FieldAdapter<
-  ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.Field> {
+export class FieldAdapter<ExtraProps extends Record<string, any>> extends BaseAdapter<Core.Field> {
   templateData = signal<ExtraProps>({} as ExtraProps);
 
   init(field: Core.Field) {

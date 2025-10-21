@@ -5,7 +5,7 @@ import * as Core from '@formforge/core';
 
 type TabsProps = {
   defaultOpen?: string;
-  tabs: { label: string; uid: string; }[];
+  tabs: { label: string; uid: string }[];
 };
 
 @Component({
@@ -15,19 +15,17 @@ type TabsProps = {
   providers: [Angular.LayoutAdapter],
   templateUrl: './tabs.component.html',
   host: {
-    'class': 'ff-tabs'
-  }
+    class: 'ff-tabs',
+  },
 })
 export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.LayoutField;
   activeTab = '';
 
-  protected adapter: Angular.LayoutAdapter<TabsProps> = inject(
-    Angular.LayoutAdapter,
-  );
+  protected adapter: Angular.LayoutAdapter<TabsProps> = inject(Angular.LayoutAdapter);
 
   ngOnInit(): void {
-    const props: TabsProps = (this.field.props as TabsProps);
+    const props: TabsProps = this.field.props as TabsProps;
     this.adapter.init(this.field);
     this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
   }

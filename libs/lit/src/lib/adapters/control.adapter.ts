@@ -3,13 +3,11 @@ import * as Core from '@formforge/core';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
 
-export const controlContext =
-  createContext<ControlAdapter<any, any>>('ffControlAdapter');
+export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
 
-export class ControlAdapter<
-  T,
-  ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.ControlField<T>> {
+export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
+  Core.ControlField<T>
+> {
   templateData = {} as ExtraProps;
 
   init(field: Core.ControlField<T>) {
@@ -35,9 +33,7 @@ export class ControlAdapter<
     // Set the initial templateData, including the controls's data value
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$(field.path))
-      .subscribe(
-        (data) => (this.templateData = { ...this.templateData, value: data }),
-      );
+      .subscribe((data) => (this.templateData = { ...this.templateData, value: data }));
 
     // Listen to the fieldFlags stream (`disabled` and `required` flags)
     this.context.store.state$
@@ -54,16 +50,13 @@ export class ControlAdapter<
       });
 
     // Listen to the form states stream and keep the `label` property in sync with the current state
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.currentStates)
-      .subscribe(() => {
-        this.templateData = {
-          ...this.templateData,
-          label:
-            this.context.getPropertyValueByCurrentState('label', this.field) ??
-            this.calculateLabel(),
-        };
-      });
+    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
+      this.templateData = {
+        ...this.templateData,
+        label:
+          this.context.getPropertyValueByCurrentState('label', this.field) ?? this.calculateLabel(),
+      };
+    });
 
     this.context.emitEvent('load', this.field);
   }

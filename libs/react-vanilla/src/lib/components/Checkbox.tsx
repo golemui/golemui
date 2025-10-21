@@ -5,12 +5,10 @@ import '../styles.scss';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const { uid, isRequired, value, isDisabled, label, onValueChanged } =
-    useControl(field);
+  const { uid, isRequired, value, isDisabled, label, onValueChanged } = useControl(field);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onValueChanged(e.target.checked),
+    (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.checked),
     [onValueChanged],
   );
 
