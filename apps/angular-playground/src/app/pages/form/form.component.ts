@@ -5,24 +5,23 @@ import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { users, usersData } from '../../mocks';
+import { selects, selectsData } from '../../mocks/selects';
 
 @Component({
   imports: [CommonModule, Angular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.scss'
+  styleUrl: './form.component.scss',
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [loggerMiddleware];
-  protected formDef = users;
-  protected formData = usersData;
+  protected formDef = selects;
+  protected formData = selectsData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
-      (await import('../../custom-fields/heading/heading.component'))
-        .HeadingComponent,
+      (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
   };
 
   protected error = '';

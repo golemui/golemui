@@ -19,6 +19,10 @@ export type State = {
    * Useful for performing certain operations more efficiently.
    */
   flatForm: Field.FormField<string>[];
+  /**
+   * A namespace used to add flags or other properties unrelated to the form fields state
+   * that we may need to track.
+   */
   formMeta: Record<string, any>;
   currentStates: string[];
   /**
