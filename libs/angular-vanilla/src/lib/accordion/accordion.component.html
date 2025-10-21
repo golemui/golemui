@@ -1,9 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div
-  class="field"
-  [id]="field.uid"
->
+<div class="field" [id]="field.uid">
   @for (section of templateData.sections; track section.uid) {
     <div class="ff-accordion-section">
       <button
@@ -13,7 +10,7 @@
         [class.active]="activeSections[section.uid]"
         (click)="onClickButton(section.uid)"
       >
-        {{section.label }}<span class="ff-accordion-icon"></span>
+        {{ section.label }}<span class="ff-accordion-icon"></span>
       </button>
 
       @if (activeSections[section.uid]) {

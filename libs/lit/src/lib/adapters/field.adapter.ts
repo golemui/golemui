@@ -4,9 +4,7 @@ import { BaseAdapter } from './base.adapter';
 
 export const fieldContext = createContext<FieldAdapter<any>>('ffFieldAdapter');
 
-export class FieldAdapter<
-  ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.Field> {
+export class FieldAdapter<ExtraProps extends Record<string, any>> extends BaseAdapter<Core.Field> {
   templateData = {} as ExtraProps;
 
   init(field: Core.Field) {

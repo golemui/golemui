@@ -35,19 +35,21 @@
       border: 1px solid var(--ff-color-border);
       background: var(--ff-color-bg);
       color: var(--ff-color-fg);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
       cursor: pointer;
 
       &.active {
         border-bottom-color: var(--ff-color-bg);
       }
 
-      &[aria-expanded="true"] .ff-accordion-icon {
+      &[aria-expanded='true'] .ff-accordion-icon {
         transform: translateY(-50%) rotate(-135deg);
       }
     }
 
-    section[role="region"] {
+    section[role='region'] {
       padding: var(--ff-padding);
       border: 1px solid var(--ff-color-border);
       background: var(--ff-color-bg);

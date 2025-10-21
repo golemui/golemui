@@ -18,25 +18,21 @@ type RepeaterProps = {
   templateUrl: './repeater.component.html',
   styleUrls: ['../styles.scss', './repeater.component.scss'],
   host: {
-    'class': 'ff-repeater'
-  }
+    class: 'ff-repeater',
+  },
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
-  protected adapter: Angular.ControlAdapter<
-    Record<string, unknown>[],
-    RepeaterProps
-  > = inject(Angular.ControlAdapter);
+  protected adapter: Angular.ControlAdapter<Record<string, unknown>[], RepeaterProps> = inject(
+    Angular.ControlAdapter,
+  );
 
   ngOnInit(): void {
     this.adapter.init(this.field);
   }
 
   addItem() {
-    this.adapter.valueChanged([
-      ...(this.adapter.templateData().value ?? []),
-      {},
-    ]);
+    this.adapter.valueChanged([...(this.adapter.templateData().value ?? []), {}]);
   }
 
   removeItem(index: number) {

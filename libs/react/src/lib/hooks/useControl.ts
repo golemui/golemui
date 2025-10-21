@@ -46,14 +46,9 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
   }, [field, formContext.store]);
 
   useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(Core.currentStates)
-      .subscribe(() => {
-        setLabel(
-          formContext.getPropertyValueByCurrentState('label', field) ??
-            calculateLabel(field),
-        );
-      });
+    const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
+      setLabel(formContext.getPropertyValueByCurrentState('label', field) ?? calculateLabel(field));
+    });
     return () => sub.unsubscribe();
   }, [field, formContext]);
 

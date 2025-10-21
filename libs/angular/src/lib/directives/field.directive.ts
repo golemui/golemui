@@ -20,16 +20,13 @@ export class FieldDirective implements OnInit {
   field = input.required<Core.FormField<string>>();
   private repeaterIndexToken = inject(REPEATER_INDEX_TOKEN);
 
-  private formContext: AngularFormContext<Type<Core.WithField>> =
-    inject(AngularFormContext);
+  private formContext: AngularFormContext<Type<Core.WithField>> = inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
   private componentRef!: ComponentRef<Core.WithField>;
 
   async ngOnInit() {
     try {
-      this.createComponent(
-        await this.formContext.fieldRegistry.loadField(this.field().widget),
-      );
+      this.createComponent(await this.formContext.fieldRegistry.loadField(this.field().widget));
     } catch {
       this.formContext.store.dispatch({
         type: 'SET_ERROR',

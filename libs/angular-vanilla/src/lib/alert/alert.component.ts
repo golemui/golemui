@@ -16,15 +16,13 @@ type AlertProps = {
   templateUrl: './alert.component.html',
   styleUrls: ['../styles.scss', './alert.component.scss'],
   host: {
-    'class': 'ff-alert'
-  }
+    class: 'ff-alert',
+  },
 })
 export class AlertComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.Field;
 
-  protected adapter: Angular.FieldAdapter<AlertProps> = inject(
-    Angular.FieldAdapter,
-  );
+  protected adapter: Angular.FieldAdapter<AlertProps> = inject(Angular.FieldAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

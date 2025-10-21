@@ -3,9 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useButton<ExtraProps extends Record<string, any>>(
-  field: Core.ButtonField,
-) {
+export function useButton<ExtraProps extends Record<string, any>>(field: Core.ButtonField) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [label, setLabel] = useState<string | undefined>(undefined);
@@ -34,11 +32,9 @@ export function useButton<ExtraProps extends Record<string, any>>(
   }, [field, formContext.store]);
 
   useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(Core.currentStates)
-      .subscribe(() => {
-        setLabel(formContext.getPropertyValueByCurrentState('label', field));
-      });
+    const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
+      setLabel(formContext.getPropertyValueByCurrentState('label', field));
+    });
     return () => sub.unsubscribe();
   }, [field, formContext]);
 

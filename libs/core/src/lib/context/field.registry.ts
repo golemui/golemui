@@ -1,10 +1,7 @@
 import { FormField } from '../Field';
 
 type Registry<ComponentType> = Record<FormField['widget'], ComponentType>;
-export type FieldLoaders<ComponentType> = Record<
-  FormField['widget'],
-  () => Promise<ComponentType>
->;
+export type FieldLoaders<ComponentType> = Record<FormField['widget'], () => Promise<ComponentType>>;
 
 export class FieldRegistry<ComponentType> {
   private registry: Registry<ComponentType> = {};
@@ -25,9 +22,6 @@ export class FieldRegistry<ComponentType> {
 
   async loadField(widget: FormField['widget']): Promise<ComponentType> {
     console.log(this.fieldLoaders[widget]);
-    return (
-      this.registry[widget] ??
-      (this.registry[widget] = await this.fieldLoaders[widget]())
-    );
+    return this.registry[widget] ?? (this.registry[widget] = await this.fieldLoaders[widget]());
   }
 }

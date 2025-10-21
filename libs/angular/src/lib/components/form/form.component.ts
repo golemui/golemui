@@ -29,8 +29,8 @@ const defaultI18n: I18n = {};
   providers: [AngularFormContext],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    'class': 'ff-form'
-  }
+    class: 'ff-form',
+  },
 })
 export class FormComponent implements OnInit {
   // INPUTS
@@ -46,8 +46,7 @@ export class FormComponent implements OnInit {
   protected event = output<Core.FormEvent>();
 
   // INJECTS
-  protected context: AngularFormContext<Type<Core.WithField>> =
-    inject(AngularFormContext);
+  protected context: AngularFormContext<Type<Core.WithField>> = inject(AngularFormContext);
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);

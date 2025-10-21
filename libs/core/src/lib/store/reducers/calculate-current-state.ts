@@ -65,9 +65,7 @@ export const calculateCurrentState = (state: State): State => {
  * // }
  * ```
  */
-function expandStateExpressions(
-  states: Record<string, string>,
-): Record<string, string> {
+function expandStateExpressions(states: Record<string, string>): Record<string, string> {
   const expandedStates: Record<string, string> = {};
 
   /**

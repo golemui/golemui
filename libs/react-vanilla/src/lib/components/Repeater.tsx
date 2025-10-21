@@ -1,9 +1,5 @@
 import * as Core from '@formforge/core';
-import {
-  FieldRenderer,
-  RepeaterIndexContext,
-  useControl,
-} from '@formforge/react';
+import { FieldRenderer, RepeaterIndexContext, useControl } from '@formforge/react';
 import { useCallback } from 'react';
 import '../styles.scss';
 
@@ -15,9 +11,7 @@ type RepeaterProps = {
 };
 
 export function Repeater(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<
-    Record<string, unknown>[]
-  >;
+  const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;
   const { uid, value, label, formContext, onValueChanged, props } = useControl<
     Record<string, unknown>[],
     RepeaterProps
@@ -65,9 +59,13 @@ export function Repeater(fieldInstance: Core.WithField) {
       <div id={uid}>
         {label && <h2 key={`${uid}-title`}>{label}</h2>}
         {renderFields()}
-        <button type="button" className="ff-button" onClick={() => addItem(value || [])} disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
-          >
-        {props.addLabel ?? 'Add'}
+        <button
+          type="button"
+          className="ff-button"
+          onClick={() => addItem(value || [])}
+          disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
+        >
+          {props.addLabel ?? 'Add'}
         </button>
       </div>
     </div>

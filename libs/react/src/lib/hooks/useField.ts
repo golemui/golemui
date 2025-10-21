@@ -3,9 +3,7 @@ import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useField<ExtraProps extends Record<string, any>>(
-  field: Core.Field,
-) {
+export function useField<ExtraProps extends Record<string, any>>(field: Core.Field) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const props = useExtraProps<ExtraProps>(field);

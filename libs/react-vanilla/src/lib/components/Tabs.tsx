@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 
 type TabsProps = {
   defaultOpen?: string;
-  tabs: { label: string; uid: string; }[];
+  tabs: { label: string; uid: string }[];
 };
 
 export function Tabs(fieldInstance: Core.WithField) {
@@ -14,21 +14,23 @@ export function Tabs(fieldInstance: Core.WithField) {
 
   const renderTabs = useCallback(() => {
     return props.tabs.map((tab, index) => (
-      <a role="tab"
-         key={`${'tab-' + tab.uid}`}
-         tabIndex={index}
-         className={`${tab.uid === activeTab ? 'active' : ''}`}
-         onClick={() => setActiveTab(tab.uid)}
-         onKeyDown={() => setActiveTab(tab.uid)}>
+      <a
+        role="tab"
+        key={`${'tab-' + tab.uid}`}
+        tabIndex={index}
+        className={`${tab.uid === activeTab ? 'active' : ''}`}
+        onClick={() => setActiveTab(tab.uid)}
+        onKeyDown={() => setActiveTab(tab.uid)}
+      >
         {tab.label}
       </a>
     ));
   }, [props, activeTab]);
 
   const renderFields = useCallback(() => {
-    return children.filter((field) => field.uid === activeTab).map((field) => (
-      <FieldRenderer key={field.uid} field={field} formContext={formContext} />
-    ));
+    return children
+      .filter((field) => field.uid === activeTab)
+      .map((field) => <FieldRenderer key={field.uid} field={field} formContext={formContext} />);
   }, [children, formContext, activeTab]);
 
   return (

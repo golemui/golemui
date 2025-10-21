@@ -21,9 +21,7 @@ export class RepeaterFieldDirective extends FieldDirective {
 
   protected override createComponent(component: Type<Core.WithField>) {
     const injector = Injector.create({
-      providers: [
-        { provide: REPEATER_INDEX_TOKEN, useValue: this.repeaterIndex() },
-      ],
+      providers: [{ provide: REPEATER_INDEX_TOKEN, useValue: this.repeaterIndex() }],
       parent: this.injector,
     });
     super.createComponent(component, injector, this.repeaterIndex());

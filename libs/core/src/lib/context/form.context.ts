@@ -20,10 +20,7 @@ export class FormContext<ComponentType> {
   }
 
   // FIXME: Not type safety
-  getPropertyValueByCurrentState<T>(
-    property: string,
-    obj: Record<string, any>,
-  ): T | undefined {
+  getPropertyValueByCurrentState<T>(property: string, obj: Record<string, any>): T | undefined {
     const currentStates = this.store.getState().currentStates;
     const matchedStates = currentStates.filter((currentState) => {
       return obj[`${property}.${currentState}`] !== undefined;
@@ -41,10 +38,7 @@ export class FormContext<ComponentType> {
     }
   }
 
-  emitEvent(
-    eventType: keyof On<string>,
-    field: ControlField<any, string> | ButtonField<string>,
-  ) {
+  emitEvent(eventType: keyof On<string>, field: ControlField<any, string> | ButtonField<string>) {
     const currentStates = this.store.getState().currentStates;
     const matchedStates = currentStates.filter((currentState) => {
       return field.on?.[`${eventType}.${currentState}`] !== undefined;
@@ -53,8 +47,7 @@ export class FormContext<ComponentType> {
     // More than one event can be emitted if more than one currentstate matches
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
-        const eventName: EventName | undefined =
-          field.on?.[`${eventType}.${currentState}`];
+        const eventName: EventName | undefined = field.on?.[`${eventType}.${currentState}`];
         if (eventName) {
           this.events$.next({
             name: eventName,

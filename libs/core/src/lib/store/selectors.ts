@@ -68,8 +68,7 @@ const selectCurrentStates = pipe(
   distinctUntilChanged(),
 );
 
-export const currentStates = (store: Observable<State>) =>
-  store.pipe(selectCurrentStates);
+export const currentStates = (store: Observable<State>) => store.pipe(selectCurrentStates);
 
 // --------------------------------
 //
@@ -82,5 +81,4 @@ const selectErrors = pipe(
   distinctUntilChanged(),
 );
 
-export const formErrors = (store: Observable<State>) =>
-  store.pipe(selectErrors);
+export const formErrors = (store: Observable<State>) => store.pipe(selectErrors);

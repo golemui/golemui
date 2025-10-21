@@ -15,8 +15,7 @@ export class FormElement extends LitElement {
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
-      (await import('../../custom-fields/heading/heading.element'))
-        .HeadingElement,
+      (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
 
   error = '';
