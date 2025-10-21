@@ -5,8 +5,7 @@ import '../styles.scss';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, isRequired, value, isDisabled, label, onValueChanged } =
-    useControl(field);
+  const { uid, isRequired, value, isDisabled, label, onValueChanged } = useControl(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.value),

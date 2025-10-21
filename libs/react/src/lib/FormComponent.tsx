@@ -25,12 +25,11 @@ export function FormComponent({
   onFormError,
   onFormEvent,
 }: FormComponentProps) {
-  const formContextRef = useRef<
-    Core.FormContext<React.ComponentType<Core.WithField>>
-  >(new Core.FormContext());
+  const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithField>>>(
+    new Core.FormContext(),
+  );
   const formNameRef = useRef(formName || crypto.randomUUID());
-  const [formLayoutField, setFormLayoutField] =
-    useState<Core.LayoutField<string> | null>(null);
+  const [formLayoutField, setFormLayoutField] = useState<Core.LayoutField<string> | null>(null);
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {
@@ -39,8 +38,8 @@ export function FormComponent({
 
   // ERRORS
   useEffect(() => {
-    const sub = Core.formErrors(formContextRef.current.store.state$).subscribe(
-      (error) => onFormError?.(error),
+    const sub = Core.formErrors(formContextRef.current.store.state$).subscribe((error) =>
+      onFormError?.(error),
     );
     return () => {
       sub.unsubscribe();
@@ -49,9 +48,7 @@ export function FormComponent({
 
   // EVENTS
   useEffect(() => {
-    const sub = formContextRef.current.events$.subscribe((event) =>
-      onFormEvent?.(event),
-    );
+    const sub = formContextRef.current.events$.subscribe((event) => onFormEvent?.(event));
     return () => {
       sub.unsubscribe();
     };
@@ -94,10 +91,7 @@ export function FormComponent({
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="ff-form">
         <form id={formNameRef.current}>
-          <FieldRenderer
-            field={formLayoutField}
-            formContext={formContextRef.current}
-          />
+          <FieldRenderer field={formLayoutField} formContext={formContextRef.current} />
         </form>
       </div>
     </ReactFormContextProvider>

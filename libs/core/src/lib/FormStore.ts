@@ -1,16 +1,9 @@
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { Action } from './store/actions';
-import {
-  createInitialState,
-  Middleware,
-  MiddlewareAPI,
-  State,
-} from './store/model';
+import { createInitialState, Middleware, MiddlewareAPI, State } from './store/model';
 import { reducer } from './store/reducer';
 
-export function createFormStore(
-  middlewares: Middleware<State, Action>[] = [],
-): FormStore {
+export function createFormStore(middlewares: Middleware<State, Action>[] = []): FormStore {
   const subject = new BehaviorSubject<State>(createInitialState());
 
   const state$ = subject.asObservable().pipe(distinctUntilChanged());

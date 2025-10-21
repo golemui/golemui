@@ -7,8 +7,7 @@ export const signin = defineForm({
     register: /*javascript*/ `$form.registerMode === true`,
     'register:tall': '$form.user.height > 180',
     'register:minor': '$form.user.age < 18',
-    'register:minor:canSubmit':
-      '$form.terms === true && $form.parentalApproval === true',
+    'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
     'register:adult': '$form.user.age >= 18',
     'register:adult:canSubmit': '$form.terms === true',
   },

@@ -21,17 +21,10 @@ function FieldRenderer(props: Props) {
     isMounted.current = true;
     const loadComponent = async () => {
       try {
-        const loadedComponent = await props.formContext.fieldRegistry.loadField(
-          props.field.widget,
-        );
+        const loadedComponent = await props.formContext.fieldRegistry.loadField(props.field.widget);
         if (isMounted.current) {
           if (repeaterIndex > -1) {
-            setField(
-              Core.makeRepeaterItemConfig(
-                Core.cloneObject(props.field),
-                repeaterIndex,
-              ),
-            );
+            setField(Core.makeRepeaterItemConfig(Core.cloneObject(props.field), repeaterIndex));
           }
           setComponent(() => loadedComponent);
         }
@@ -53,12 +46,7 @@ function FieldRenderer(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [
-    props.field,
-    repeaterIndex,
-    props.formContext.fieldRegistry,
-    props.formContext.store,
-  ]);
+  }, [props.field, repeaterIndex, props.formContext.fieldRegistry, props.formContext.store]);
 
   if (!Component) {
     return null;

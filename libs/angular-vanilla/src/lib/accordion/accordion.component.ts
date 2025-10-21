@@ -6,7 +6,7 @@ import * as Core from '@formforge/core';
 type AccordionProps = {
   singleOpen?: boolean;
   defaultOpen?: { [key: string]: boolean };
-  sections: { label: string; uid: string; }[];
+  sections: { label: string; uid: string }[];
 };
 
 @Component({
@@ -16,36 +16,36 @@ type AccordionProps = {
   providers: [Angular.LayoutAdapter],
   templateUrl: './accordion.component.html',
   host: {
-    'class': 'ff-accordion'
-  }
+    class: 'ff-accordion',
+  },
 })
 export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.LayoutField;
   activeSections: { [key: string]: boolean } = {};
 
-  protected adapter: Angular.LayoutAdapter<AccordionProps> = inject(
-    Angular.LayoutAdapter,
-  );
+  protected adapter: Angular.LayoutAdapter<AccordionProps> = inject(Angular.LayoutAdapter);
 
   ngOnInit(): void {
-    const props: AccordionProps = (this.field.props as AccordionProps);
+    const props: AccordionProps = this.field.props as AccordionProps;
     this.adapter.init(this.field);
     this.activeSections = props.defaultOpen ?? {};
   }
 
   onClickButton(uid: string) {
-    const props: AccordionProps = (this.field.props as AccordionProps);
+    const props: AccordionProps = this.field.props as AccordionProps;
     if (props.singleOpen) {
       Object.keys(this.activeSections)
-        .filter(sectionUid => sectionUid !== uid)
-        .forEach((key) => { this.activeSections[key] = false; });
+        .filter((sectionUid) => sectionUid !== uid)
+        .forEach((key) => {
+          this.activeSections[key] = false;
+        });
     }
 
     this.activeSections[uid] = !this.activeSections[uid];
   }
 
   getChild(uid: string) {
-    return this.field.children.find(section => section.uid === uid) as Core.FormField<string>;
+    return this.field.children.find((section) => section.uid === uid) as Core.FormField<string>;
   }
 
   ngOnDestroy(): void {

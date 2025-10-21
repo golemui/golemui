@@ -19,35 +19,31 @@ export abstract class BaseAdapter<F extends Core.FormField> {
   protected propsUpdaterByCurrentState<ExtraProps extends Record<string, any>>(
     templateData: ExtraProps,
   ) {
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.currentStates)
-      .subscribe(() => {
-        const props = this.field.props;
-        if (props !== undefined) {
-          type ExtraProps = Record<string, any>;
-          // we dont want 'label.register', we only want the base keys 'label' (even if they are not set)
-          const uniquePropsWithoutState = Array.from(
-            new Set(
-              Object.keys(props).map((prop) => prop.split('.')[0]),
-            ).keys(),
-          );
-          const updatedProps = uniquePropsWithoutState.reduce(
-            (templateData, key: keyof ExtraProps) => {
-              templateData[key] = this.context.getPropertyValueByCurrentState(
-                key as string,
-                props,
-              ) as any;
-              return templateData;
-            },
-            {} as ExtraProps,
-          );
+    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
+      const props = this.field.props;
+      if (props !== undefined) {
+        type ExtraProps = Record<string, any>;
+        // we dont want 'label.register', we only want the base keys 'label' (even if they are not set)
+        const uniquePropsWithoutState = Array.from(
+          new Set(Object.keys(props).map((prop) => prop.split('.')[0])).keys(),
+        );
+        const updatedProps = uniquePropsWithoutState.reduce(
+          (templateData, key: keyof ExtraProps) => {
+            templateData[key] = this.context.getPropertyValueByCurrentState(
+              key as string,
+              props,
+            ) as any;
+            return templateData;
+          },
+          {} as ExtraProps,
+        );
 
-          templateData = {
-            ...templateData,
-            ...updatedProps,
-          };
-        }
-      });
+        templateData = {
+          ...templateData,
+          ...updatedProps,
+        };
+      }
+    });
   }
 
   destroy() {

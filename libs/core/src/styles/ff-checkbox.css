@@ -5,7 +5,7 @@
     gap: 0.5rem;
     cursor: pointer;
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       width: 1rem;
       height: 1rem;
       accent-color: var(--ff-color-primary);

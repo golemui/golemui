@@ -206,9 +206,7 @@ export const ButtonFieldSchema = z.extend(FieldSchema, {
   on: z.optional(OnSchema),
 });
 
-export const ControlFieldSchema = <S extends z.ZodMiniType>(
-  defaultValueSchema: S,
-) =>
+export const ControlFieldSchema = <S extends z.ZodMiniType>(defaultValueSchema: S) =>
   z.pipe(
     z.extend(FieldSchema, {
       kind: z.literal('control'),

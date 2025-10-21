@@ -2,9 +2,7 @@
 
 <div class="field horizontal">
   @if (templateData.label) {
-    <label [for]="field.uid">{{
-      templateData.label + (templateData.required ? ' *' : '')
-    }}</label>
+    <label [for]="field.uid">{{ templateData.label + (templateData.required ? ' *' : '') }}</label>
   }
   <input
     type="checkbox"

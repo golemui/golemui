@@ -19,9 +19,7 @@ type OwnWidgetProps = {
 export class HeadingComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.Field;
 
-  protected adapter: Angular.FieldAdapter<OwnWidgetProps> = inject(
-    Angular.FieldAdapter,
-  );
+  protected adapter: Angular.FieldAdapter<OwnWidgetProps> = inject(Angular.FieldAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

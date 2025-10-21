@@ -35,10 +35,4 @@ export type SET_ERROR = {
   payload: { error: FormStoreError };
 };
 
-export type Action =
-  | INITIALIZE
-  | SET_DATA
-  | ADD_FIELD
-  | REMOVE_FIELD
-  | SET_FIELD_DATA
-  | SET_ERROR;
+export type Action = INITIALIZE | SET_DATA | ADD_FIELD | REMOVE_FIELD | SET_FIELD_DATA | SET_ERROR;

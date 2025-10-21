@@ -12,10 +12,11 @@ export type SomeSuffixable<
   TSuffixes extends string = string,
 > = Suffixable<T, P, TSuffixes>;
 
-export type AllSuffixable<
-  T extends Record<string, any>,
-  TSuffixes extends string,
-> = Suffixable<T, keyof T, TSuffixes>;
+export type AllSuffixable<T extends Record<string, any>, TSuffixes extends string> = Suffixable<
+  T,
+  keyof T,
+  TSuffixes
+>;
 
 /**
  * Takes a type T and an exclusion set E

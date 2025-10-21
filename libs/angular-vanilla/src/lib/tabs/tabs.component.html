@@ -1,13 +1,15 @@
 @let templateData = adapter.templateData();
 
-<nav
-  class="field horizontal"
-  role="tablist"
-  [id]="field.uid"
->
+<nav class="field horizontal" role="tablist" [id]="field.uid">
   @for (tab of templateData.tabs; track tab.uid) {
-    <a role="tab" [tabindex]="$index" [class.active]="tab.uid === activeTab" (click)="onClickTab(tab.uid)" (keydown)="onClickTab(tab.uid)">
-      {{tab.label }}
+    <a
+      role="tab"
+      [tabindex]="$index"
+      [class.active]="tab.uid === activeTab"
+      (click)="onClickTab(tab.uid)"
+      (keydown)="onClickTab(tab.uid)"
+    >
+      {{ tab.label }}
     </a>
   }
 </nav>
