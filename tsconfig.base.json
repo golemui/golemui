@@ -18,6 +18,8 @@
       "@formforge/angular": ["libs/angular/src/index.ts"],
       "@formforge/angular-vanilla": ["libs/angular-vanilla/src/index.ts"],
       "@formforge/core": ["libs/core/src/index.ts"],
+      "@formforge/lit": ["libs/lit/src/index.ts"],
+      "@formforge/lit-vanilla": ["libs/lit-vanilla/src/index.ts"],
       "@formforge/react": ["libs/react/src/index.ts"],
       "@formforge/react-vanilla": ["libs/react-vanilla/src/index.ts"]
     }

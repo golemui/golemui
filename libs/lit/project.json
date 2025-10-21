@@ -1,0 +1,19 @@
+{
+  "name": "lit",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "/libs/lit/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/lit",
+        "main": "/libs/lit/src/index.ts",
+        "tsConfig": "/libs/lit/tsconfig.lib.json",
+        "assets": ["/libs/lit/*.md"]
+      }
+    }
+  }
+}

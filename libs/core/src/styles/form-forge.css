@@ -1,9 +1,6 @@
 /* Variables */
 @import 'ff-variables.css';
 
-/* Form container */
-@import 'ff-form.css';
-
 /* Control Fields */
 @import 'ff-textinput.css';
 @import 'ff-repeater.css';
@@ -19,3 +16,6 @@
 
 /* Fields */
 @import 'ff-alert.css';
+
+/* Form container */
+@import 'ff-form.css';
