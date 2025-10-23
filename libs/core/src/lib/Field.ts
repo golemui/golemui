@@ -1,5 +1,6 @@
 import * as z from 'zod/mini';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
+import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 
 // --------------------------------
@@ -190,7 +191,7 @@ const FieldSchema = z.looseObject({
   kind: z.literal('field'),
   uid: z.pipe(
     z.optional(z.string()),
-    z.transform((s) => s || crypto.randomUUID()),
+    z.transform((s) => s || shortUUID()),
   ),
   widget: z.string(),
   include: z.optional(InWhenSchema),
