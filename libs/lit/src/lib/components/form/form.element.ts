@@ -1,12 +1,12 @@
-import '../field/field.element';
 import * as Core from '@formforge/core';
-import { customElement, property } from 'lit/decorators.js';
-import { LitElement, html } from 'lit';
-import { Subscription } from 'rxjs';
 import { FieldLoaders, State, WithField } from '@formforge/core';
 import { provide } from '@lit/context';
-import { formContext, LitFormContext } from '../../context/form.context';
+import { html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
+import { Subscription } from 'rxjs';
+import { formContext, LitFormContext } from '../../context/form.context';
+import '../field/field.element';
 
 @customElement('ff-form')
 export class FormElement extends LitElement {
@@ -17,7 +17,7 @@ export class FormElement extends LitElement {
   @property({ type: Array }) fieldLoaders!: FieldLoaders<WithField>;
   @property({ type: Array }) middlewares: any[] = [];
   @property({ type: Object }) data: any = {};
-  @property({ type: String }) formName = crypto.randomUUID();
+  @property({ type: String }) formName = Core.shortUUID();
 
   state: State | undefined;
   subscriptions: Subscription[] = [];

@@ -21,7 +21,6 @@ export class FieldRegistry<ComponentType> {
   }
 
   async loadField(widget: FormField['widget']): Promise<ComponentType> {
-    console.log(this.fieldLoaders[widget]);
     return this.registry[widget] ?? (this.registry[widget] = await this.fieldLoaders[widget]());
   }
 }

@@ -28,7 +28,7 @@ export function FormComponent({
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithField>>>(
     new Core.FormContext(),
   );
-  const formNameRef = useRef(formName || crypto.randomUUID());
+  const formNameRef = useRef(formName || Core.shortUUID());
   const [formLayoutField, setFormLayoutField] = useState<Core.LayoutField<string> | null>(null);
 
   // INITIALIZE FORM CONTEXT
