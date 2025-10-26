@@ -1,5 +1,4 @@
 import { isControlField } from '../../Field';
-//import { get, set } from '../../utils/object';
 import * as Actions from '../actions';
 import { State } from '../model';
 
