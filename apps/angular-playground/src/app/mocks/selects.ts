@@ -18,6 +18,12 @@ export const selects = defineForm({
       {
         uid: '',
         kind: 'control',
+        widget: 'textinput',
+        path: 'name',
+      },
+      {
+        uid: '',
+        kind: 'control',
         widget: 'select',
         path: 'greeting',
         label: 'Greeting',
@@ -61,7 +67,7 @@ export const selects = defineForm({
         uid: '',
         kind: 'control',
         widget: 'select',
-        path: '#/properties/country',
+        path: 'country',
         include: { in: ['hasSubregion'] },
       },
       {

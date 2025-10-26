@@ -33,6 +33,13 @@ export function reducer(state: State, action: Action): State {
         Reducers.applyCurrentState,
       );
 
+    case 'OVERRIDE_FIELD_PROP':
+      return pipe(
+        Reducers.overrideFieldProp(state, action),
+        Reducers.calculateCurrentState,
+        Reducers.applyCurrentState,
+      );
+
     case 'SET_ERROR':
       return Reducers.setError(state, action);
 

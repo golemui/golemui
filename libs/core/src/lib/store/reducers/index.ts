@@ -2,6 +2,7 @@ export * from './add-field';
 export * from './apply-current-state';
 export * from './calculate-current-state';
 export * from './initialize';
+export * from './override-field-prop';
 export * from './remove-field';
 export * from './set-data';
 export * from './set-error';
