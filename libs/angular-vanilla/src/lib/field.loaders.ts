@@ -11,6 +11,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
   // CONTROLS
   textinput: async () => (await import('./textinput/textinput.component')).TextinputComponent,
   checkbox: async () => (await import('./checkbox/checkbox.component')).CheckboxComponent,
+  select: async () => (await import('./select/select.component')).SelectComponent,
 
   // LAYOUTS
   stack: async () => (await import('./stack/stack.component')).StackComponent,

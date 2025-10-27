@@ -19,6 +19,10 @@ export type State = {
    * Useful for performing certain operations more efficiently.
    */
   flatForm: Field.FormField<string>[];
+  /**
+   * A namespace used to add flags or other properties unrelated to the form fields state
+   * that we may need to track. For example, the state of a request through a `status` property.
+   */
   formMeta: Record<string, any>;
   currentStates: string[];
   /**
@@ -31,7 +35,12 @@ export type State = {
    * When data changes, these fields are updated and their flags recalculated.
    */
   fieldFlags: Record<Uid, Field.Flags>;
-  fieldMeta: Record<Uid, Record<string, any>>;
+  /**
+   * Allows overriding a field’s `prop` properties externally via its event handler mechanism.
+   * For example, this can be used to load options for a select field asynchronously.
+   * Overridden props can also use the state syntax to update specific states only.
+   */
+  fieldPropOverrides: Record<Uid, Record<string, any>>;
   data: Record<string, any>;
   error: FormStoreError;
 };
@@ -46,7 +55,7 @@ export const createInitialState = (): State => ({
   currentStates: [],
   fields: {},
   fieldFlags: {},
-  fieldMeta: {},
+  fieldPropOverrides: {},
   data: {},
   error: { kind: 'none' },
 });

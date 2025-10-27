@@ -1,3 +1,5 @@
+import { OVERRIDE_FIELD_PROP } from './store/actions';
+
 /**
  * The UI state name.
  * To be used with includeIn, excludeFrom and composite property names `{ "label.success": "Message sent successfully", "label.error": "An error occurred" }`
@@ -20,10 +22,17 @@ export type DotPath = string;
 export type Uid = string;
 
 /**
- * Form event payload
+ * Represents a form event payload.
  */
 export type EventName = string;
+
+export type EventHandlerCallback = OVERRIDE_FIELD_PROP;
+
 export type FormEvent = {
+  /** The name of the form field that dispatched the event. */
   name: EventName;
-  data: Record<string, any> /*State['data']*/;
+  /** The form's data at the moment the event was dispatched. */
+  data: Record<string, unknown>;
+  /** Actions that the client can execute to interact with the forms engine from the application scope */
+  callback: (action: EventHandlerCallback) => void;
 };

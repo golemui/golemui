@@ -39,7 +39,7 @@ export class FormComponent implements OnInit {
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);
-  formName = input(crypto.randomUUID());
+  formName = input(Core.shortUUID());
 
   // OUTPUTS
   protected formError = output<Core.FormStoreError>();

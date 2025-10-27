@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { ButtonField, ControlField, On } from '../Field';
 import { createFormStore, FormStore } from '../FormStore';
-import { EventName, FormEvent } from '../shared';
+import { EventHandlerCallback, EventName, FormEvent } from '../shared';
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
 import { FieldLoaders, FieldRegistry } from './field.registry';
@@ -52,6 +52,9 @@ export class FormContext<ComponentType> {
           this.events$.next({
             name: eventName,
             data: this.store.getState().data,
+            callback: (action: EventHandlerCallback) => {
+              this.store.dispatch(action);
+            },
           });
         }
       });
@@ -61,6 +64,9 @@ export class FormContext<ComponentType> {
         this.events$.next({
           name: eventName,
           data: this.store.getState().data,
+          callback: (action: EventHandlerCallback) => {
+            this.store.dispatch(action);
+          },
         });
       }
     }

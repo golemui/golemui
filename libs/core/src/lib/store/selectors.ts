@@ -1,4 +1,4 @@
-import { distinctUntilChanged, map, Observable, pipe } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, pipe } from 'rxjs';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
 import { State } from './model';
@@ -54,6 +54,25 @@ export const fieldFlagsByUid$ = (uid: Uid) =>
   pipe(
     selectFieldFlags,
     map((fieldFlags) => fieldFlags[uid]),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
+// FIELD PROP OVERRIDES
+//
+// --------------------------------
+
+export const selectFieldPropOverrides = pipe(
+  map((store: State) => store.fieldPropOverrides),
+  distinctUntilChanged(),
+);
+
+export const fieldPropOverridesByUid$ = (uid: Uid) =>
+  pipe(
+    selectFieldPropOverrides,
+    map((fieldPropOverrides) => fieldPropOverrides[uid]),
+    filter((fieldPropOverrides) => fieldPropOverrides !== undefined),
     distinctUntilChanged(),
   );
 

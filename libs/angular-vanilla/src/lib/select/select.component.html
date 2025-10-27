@@ -1,0 +1,28 @@
+@let templateData = adapter.templateData();
+
+<div class="field">
+  @if (templateData.label) {
+    <label [for]="field.uid">{{ templateData.label + (templateData.required ? ' *' : '') }}</label>
+  }
+  <select
+    [id]="field.uid"
+    [value]="templateData.value ?? ''"
+    [disabled]="templateData.disabled"
+    (change)="valueChanged($event)"
+  >
+    @if (optionsLoading === true) {
+      <option [value]="">Loading...</option>
+    } @else {
+      <option value="" selected disabled>Select an option</option>
+
+      @for (opt of templateData.options; track opt.value) {
+        <option
+          [value]="opt.value"
+          [selected]="hasMatchingValue && opt.value === templateData.value"
+        >
+          {{ opt.label }}
+        </option>
+      }
+    }
+  </select>
+</div>
