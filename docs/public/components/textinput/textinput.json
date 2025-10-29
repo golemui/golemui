@@ -1,0 +1,17 @@
+{
+  "form": {
+    "uid": "",
+    "kind": "layout",
+    "widget": "stack",
+    "children": [
+      {
+        "uid": "",
+        "kind": "control",
+        "widget": "textinput",
+        "path": "listName",
+        "label": "My Label",
+        "required": true
+      }
+    ]
+  }
+}

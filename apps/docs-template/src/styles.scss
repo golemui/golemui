@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../../../libs/core/src/styles/form-forge.css';
+
+html, body {
+  background-color: var(--ff-color-bg);
+}
+
+lit-form > div {
+  color: var(--ff-color-fg);
+}

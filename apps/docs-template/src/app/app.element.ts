@@ -1,6 +1,6 @@
 import './pages/form/form.element';
 import './app.element.scss';
-import { LitElement } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 @customElement('lit-root')
@@ -11,12 +11,7 @@ export class AppElement extends LitElement {
     return this;
   }
 
-  connectedCallback() {
-    this.innerHTML = `
-      <header><h1>Formforge</h1></header>
-      <main class="container">
-        <lit-form></lit-form>
-      </main>
-    `;
+  render() {
+    return html`<lit-form></lit-form>`;
   }
 }
