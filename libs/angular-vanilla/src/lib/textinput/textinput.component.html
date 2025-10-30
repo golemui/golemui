@@ -1,14 +1,25 @@
 @let templateData = adapter.templateData();
 
-<div class="field">
-  @if (templateData.label) {
-    <label [for]="field.uid">{{ templateData.label + (templateData.required ? ' *' : '') }}</label>
+<label [for]="field.uid">
+  {{ templateData.label + (templateData.required ? ' *' : '') }}
+  @if (templateData.hint) {
+    <div class="ff-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
   }
+</label>
+<div class="field">
   <input
     type="text"
     [id]="field.uid"
+    [class]="{ '--ff-icon': templateData.icon, '--ff-icon-right': templateData.iconPosition === 'right' }"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"
+    [attr.placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
+    [attr.aria-required]="templateData.required"
+    [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
   />
+
+  @if (templateData.icon) {
+    <span class="ff-icon" [class]="{ 'ff-icon--right': templateData.iconPosition === 'right' }"></span>
+  }
 </div>
