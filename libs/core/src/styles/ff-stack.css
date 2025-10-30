@@ -5,10 +5,11 @@
     margin: var(--ff-space-gap) 0;
 
     .field {
+      position: relative;
       display: flex;
       flex-direction: column;
-      column-gap: var(--ff-space-gap);
-      row-gap: var(--ff-space-gap);
+      column-gap: var(--ff-space-gap--inner);
+      row-gap: var(--ff-space-gap--inner);
 
       .horizontal {
         flex-direction: row;

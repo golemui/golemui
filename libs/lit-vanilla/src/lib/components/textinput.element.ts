@@ -1,7 +1,8 @@
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
+import { classMap } from 'lit/directives/class-map.js';
+import * as Core from '@formforge/core';
 import * as Lit from '@formforge/lit';
 
 @customElement('ff-textinput')
@@ -28,26 +29,52 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
   override render() {
     super.render();
-    let label;
-    if (this.adapter.templateData) {
-      label = html` <label for=${this.field.uid}
-        >${this.adapter.templateData['label'] +
-        (this.adapter.templateData['required'] ? ' *' : '')}</label
-      >`;
+
+    // Hint
+    const hint = this.adapter.templateData['hint']
+      ? html`<div class="ff-hint" id=${`${this.field.uid}_hint`}>${this.adapter.templateData['hint']}</div>`
+      : html``;
+
+    // Icon
+    const textinputIcon: { [key: string]: boolean } = {
+      '--ff-icon': false,
+      '--ff-icon-right': false,
+    };
+    let icon;
+    if (this.adapter.templateData['icon']) {
+      textinputIcon['--ff-icon'] = true;
+      textinputIcon['--ff-icon-right'] = this.adapter.templateData['iconPosition'] === 'right';
+
+      const classes = {
+        'ff-icon': true,
+        'ff-icon--right': this.adapter.templateData['iconPosition'] === 'right',
+        [this.adapter.templateData['icon']]: true,
+      };
+      icon = html`<span class=${classMap(classes)}></span>`;
     } else {
-      label = html``;
+      icon = html``;
     }
 
     return html`
+      <label for=${this.field.uid}>
+        ${this.adapter.templateData['label'] +
+        (this.adapter.templateData['required'] ? ' *' : '')}
+        ${hint}
+      </label>
+
       <div class="field">
-        ${label}
         <input
           type="text"
           id=${this.field.uid}
+          class=${classMap(textinputIcon)}
           value=${this.adapter.templateData['value'] ?? ''}
           disabled=${this.adapter.templateData['disabled'] || nothing}
+          placeholder=${this.adapter.templateData['placeholder'] || nothing}
           @input="${this.valueChanged}"
+          aria-required=${this.adapter.templateData['required'] || nothing}
+          aria-describedby=${hint ? `${this.field.uid}_hint` : nothing}
         />
+        ${icon}
       </div>
     `;
   }

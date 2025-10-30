@@ -9,7 +9,10 @@
         "kind": "control",
         "widget": "textinput",
         "path": "listName",
-        "label": "First Name"
+        "label": "First Name",
+        "props": {
+          "placeholder": "Enter your first name"
+        }
       }
     ]
   }

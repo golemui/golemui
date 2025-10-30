@@ -2,18 +2,24 @@
   /* Color system */
   --ff-color-bg: #fff;
   --ff-color-fg: #1a1a1a;
+  --ff-color-fg--secondary: #646464;
   --ff-color-border: #d0d0d0;
   --ff-color-primary: #007acc;
   --ff-color-error: #d32f2f;
 
   /* Typography & layout */
   --ff-space-gap: 0.75rem;
+  --ff-space-gap--inner: 0.25rem;
+  --ff-icon-space-gap: 1.5rem;
 
   --ff-font-family: system-ui, sans-serif;
   --ff-font-size: 14px;
+  --ff-font-size--small: 12px;
+  --ff-font-size--xsmall: 10px;
   --ff-radius: 8px;
   --ff-padding: var(--ff-space-gap) var(--ff-space-gap);
   --ff-field-gap: var(--ff-space-gap) 0;
+  --ff-field-gap--inner: var(--ff-space-gap) 0;
 }
 
 @media (prefers-color-scheme: dark) {

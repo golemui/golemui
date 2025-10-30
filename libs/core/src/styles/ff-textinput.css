@@ -3,8 +3,10 @@
     display: block;
 
     label {
-      display: block;
-      margin-bottom: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: var(--ff-space-gap--inner);
+      margin-bottom: var(--ff-space-gap--inner);
       font-weight: 500;
     }
 
@@ -27,6 +29,34 @@
       &[aria-invalid='true'] {
         border-color: var(--ff-color-error);
       }
+
+      &.--ff-icon {
+        padding-left: 2.5rem;
+      }
+
+      &.--ff-icon-right {
+        padding-left: var(--ff-space-gap);
+        padding-right: var(--ff-icon-space-gap);
+      }
+    }
+
+    .ff-hint {
+      font-size: var(--ff-font-size--small);
+      color: var(--ff-color-fg--secondary);
+    }
+
+    .ff-icon {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .ff-icon--right {
+      right: 0;
     }
   }
 }

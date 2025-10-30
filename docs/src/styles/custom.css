@@ -1,4 +1,7 @@
 iframe {
   border: 0;
+}
+
+.expressive-code + iframe {
   margin: 0;
 }

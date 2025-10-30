@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import '../../../libs/core/src/styles/form-forge.css';
 
 html, body {
@@ -7,4 +8,18 @@ html, body {
 
 lit-form > div {
   color: var(--ff-color-fg);
+}
+
+// Custom icons
+.material-icons {
+  font-family: 'Material Icons';
+  font-size: medium;
+
+  &-phone_callback::before {
+    content: 'phone_callback';
+  }
+
+  &-alternate_email::before {
+    content: 'alternate_email';
+  }
 }
