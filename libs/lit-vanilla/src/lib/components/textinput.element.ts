@@ -72,7 +72,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
           placeholder=${this.adapter.templateData['placeholder'] || nothing}
           @input="${this.valueChanged}"
           aria-required=${this.adapter.templateData['required'] || nothing}
-          aria-describedby=${hint ? `${this.field.uid}_hint` : nothing}
+          aria-describedby=${this.adapter.templateData['hint'] ? `${this.field.uid}_hint` : nothing}
         />
         ${icon}
       </div>
