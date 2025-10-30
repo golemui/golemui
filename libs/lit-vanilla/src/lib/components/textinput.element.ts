@@ -15,8 +15,13 @@ export class TextinputElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlAdapter();
 
+  override createRenderRoot() {
+    return this;
+  }
+
   override connectedCallback() {
     super.connectedCallback();
+    this.classList.add('ff-textinput');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
   }

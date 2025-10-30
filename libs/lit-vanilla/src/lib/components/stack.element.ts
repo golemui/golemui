@@ -15,8 +15,13 @@ export class StackElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.layoutContext })
   adapter = new Lit.LayoutAdapter();
 
+  override createRenderRoot() {
+    return this;
+  }
+
   override connectedCallback() {
     super.connectedCallback();
+    this.classList.add('ff-stack');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
   }

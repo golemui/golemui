@@ -1,20 +1,44 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🧹 Cleaning previous builds..."
-rm -rf dist/apps/docs-template
+# --- Parse arguments ---
+SKIP_INSTALL=false
 
-echo "🏗️  Building docs-template..."
+for arg in "$@"; do
+  case $arg in
+    --skip-install)
+      SKIP_INSTALL=true
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
+echo "Cleaning previous builds..."
+rm -rf dist
+rm -rf docs/public
+
+echo "Building docs-template (Nx)..."
 npx nx run docs-template:build
 
-echo "📦 Copying build from dist/apps/docs-template to docs/public..."
-rm -rf docs/public
+echo "Copying build from dist/apps/docs-template to docs/public..."
 mkdir -p docs/public
 cp -r dist/apps/docs-template/* docs/public/
 
-echo "🚀 Building Starlight docs..."
 cd docs
+
+if [ "$SKIP_INSTALL" = true ]; then
+  echo "Skipping dependency installation (--skip-install)"
+else
+  echo "Installing Starlight dependencies..."
+  npm ci
+fi
+
+echo "🚀 Building Starlight docs..."
 npm run build
+
 cd -
 
-echo "✅ Done!"
+echo "✅ Docs build complete!"

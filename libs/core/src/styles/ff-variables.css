@@ -15,3 +15,13 @@
   --ff-padding: var(--ff-space-gap) var(--ff-space-gap);
   --ff-field-gap: var(--ff-space-gap) 0;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ff-color-bg: #23262f;
+    --ff-color-fg: #f2f3f5;
+    --ff-color-border: #3b3e47;
+    --ff-color-primary: #58a6ff;
+    --ff-color-error: #ef5350;
+  }
+}
