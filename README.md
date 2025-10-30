@@ -8,4 +8,4 @@
 
 - Build documentation examples `./build-docs.sh`
 - `cd docs`
-- `npm run dev`
+- `npm i && npm run dev`
