@@ -8,6 +8,7 @@ type TemplateData<T> = {
   value?: T;
   disabled?: boolean;
   required?: boolean;
+  readonly?: boolean;
 };
 
 @Injectable()
@@ -41,7 +42,7 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
       .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
-    // Listen to the fieldFlags stream (`disabled` and `required` flags)
+    // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
@@ -52,6 +53,10 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
         this.templateData.update((current) => ({
           ...current,
           required: fieldFlags?.required ?? (field.required as boolean),
+        }));
+        this.templateData.update((current) => ({
+          ...current,
+          readonly: fieldFlags?.readonly ?? (field.readonly as boolean),
         }));
       });
 

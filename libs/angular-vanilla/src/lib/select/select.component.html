@@ -8,6 +8,7 @@
     [id]="field.uid"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"
+    [ariaReadOnly]="templateData.readonly"
     (change)="valueChanged($event)"
   >
     @if (optionsLoading === true) {
