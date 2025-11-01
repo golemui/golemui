@@ -10,7 +10,10 @@
   <input
     type="text"
     [id]="field.uid"
-    [class]="{ '--ff-icon': templateData.icon, '--ff-icon-right': templateData.iconPosition === 'right' }"
+    [class]="{
+      '--ff-icon': templateData.icon,
+      '--ff-icon-right': templateData.iconPosition === 'right',
+    }"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"
     [attr.placeholder]="templateData.placeholder"
@@ -20,6 +23,9 @@
   />
 
   @if (templateData.icon) {
-    <span class="ff-icon" [class]="{ 'ff-icon--right': templateData.iconPosition === 'right' }"></span>
+    <span
+      class="ff-icon"
+      [class]="{ 'ff-icon--right': templateData.iconPosition === 'right' }"
+    ></span>
   }
 </div>

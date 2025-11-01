@@ -23,7 +23,9 @@ interface TextinputProps {
 })
 export class TextinputComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlAdapter<string, TextinputProps> = inject(Angular.ControlAdapter);
+  protected adapter: Angular.ControlAdapter<string, TextinputProps> = inject(
+    Angular.ControlAdapter,
+  );
 
   ngOnInit(): void {
     this.adapter.init(this.field);

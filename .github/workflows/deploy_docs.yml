@@ -2,7 +2,7 @@ name: Deploy documentation
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types:
       - completed
 

@@ -12,7 +12,10 @@ type TextInputProps = {
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, isRequired, value, isDisabled, label, onValueChanged } = useControl<string, TextInputProps>(field);
+  const { uid, isRequired, value, isDisabled, label, onValueChanged } = useControl<
+    string,
+    TextInputProps
+  >(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.value),
@@ -28,11 +31,11 @@ export function TextInput(fieldInstance: Core.WithField) {
     <div className="ff-textinput">
       <label htmlFor={uid}>
         {label + (isRequired ? ' *' : '')}
-        {hint &&
+        {hint && (
           <div className="ff-hint" id={`${uid}_hint`}>
             {hint}
           </div>
-        }
+        )}
       </label>
       <div className="field">
         <input
@@ -46,7 +49,11 @@ export function TextInput(fieldInstance: Core.WithField) {
           aria-required={isRequired}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
-        {icon && <span className={`${icon} ff-icon ${iconPosition === 'right' ? 'ff-icon--right' : ''}`}></span>}
+        {icon && (
+          <span
+            className={`${icon} ff-icon ${iconPosition === 'right' ? 'ff-icon--right' : ''}`}
+          ></span>
+        )}
       </div>
     </div>
   );
