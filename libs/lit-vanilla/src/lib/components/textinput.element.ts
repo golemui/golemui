@@ -32,7 +32,9 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     // Hint
     const hint = this.adapter.templateData['hint']
-      ? html`<div class="ff-hint" id=${`${this.field.uid}_hint`}>${this.adapter.templateData['hint']}</div>`
+      ? html`<div class="ff-hint" id=${`${this.field.uid}_hint`}>
+          ${this.adapter.templateData['hint']}
+        </div>`
       : html``;
 
     // Icon
@@ -57,8 +59,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     return html`
       <label for=${this.field.uid}>
-        ${this.adapter.templateData['label'] +
-        (this.adapter.templateData['required'] ? ' *' : '')}
+        ${this.adapter.templateData['label'] + (this.adapter.templateData['required'] ? ' *' : '')}
         ${hint}
       </label>
 
