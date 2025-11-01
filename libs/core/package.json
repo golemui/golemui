@@ -9,7 +9,7 @@
     "subscript": "^9.1.0"
   },
   "peerDependencies": {
-    "zod": "^4.1.9",
+    "zod": "^3.25.0 || ^4.0.0",
     "rxjs": "^7.8.0"
   }
 }
