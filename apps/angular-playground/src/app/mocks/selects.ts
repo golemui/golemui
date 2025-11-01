@@ -24,6 +24,20 @@ export const selects = defineForm({
       {
         uid: '',
         kind: 'control',
+        widget: 'checkbox',
+        path: 'aaaa',
+        readonly: true,
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'checkbox',
+        path: 'bbb',
+        readonly: false,
+      },
+      {
+        uid: '',
+        kind: 'control',
         widget: 'select',
         path: 'greeting',
         label: 'Greeting',
