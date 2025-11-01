@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { Route, Routes } from 'react-router';
 import styles from './app.module.scss';
 import FormPage from './pages/form/form.page';
+import '../styles.scss'
 
 function WizardPage() {
   return <h1>TODO: Wizard</h1>;
