@@ -1,0 +1,49 @@
+---
+title: Textinput Component
+description: A Textinput component to allow user to enter string chains
+---
+
+import { Code } from '@astrojs/starlight/components';
+import textinputJson from '../../../../public/components/textinput/textinput.json?raw';
+import textinputPlaceholderJson from '../../../../public/components/textinput/textinput-placeholder.json?raw';
+import textinputHintJson from '../../../../public/components/textinput/textinput-hint.json?raw';
+import textinputIconJson from '../../../../public/components/textinput/textinput-icon.json?raw';
+export const fileName = 'textinput.json';
+
+Textinput components are [Control Fields](/components-reference/control-fields) that allow the user to enter string chains.
+
+<Code code={textinputJson} lang="js" title={fileName} />
+<iframe src="/index.html?form=components/textinput/textinput.json" title="Textinput example" width="100%"></iframe>
+
+## Props
+
+Use this `props` to customize your text input control.
+
+| prop           | type   | value                                                          |
+|----------------|--------|----------------------------------------------------------------|
+| `placeholder`  | string | A placeholder text to display when the text input has no value |
+| `hint`         | string | A description to display below the text input                  |
+| `icon`         | string | A css class to display an icon                                 |
+| `iconPosition` | string | The icon position, possible values are `right` or `left`       |
+
+### Placeholder
+
+Use the property `placeholder` to add a placeholder.
+
+<Code code={textinputPlaceholderJson} lang="js" title={fileName} />
+<iframe src="/index.html?form=components/textinput/textinput-placeholder.json" title="Textinput with placeholder" width="100%"></iframe>
+
+### Hint
+
+Use the property `hint` to add a description.
+
+<Code code={textinputHintJson} lang="js" title={fileName} />
+<iframe src="/index.html?form=components/textinput/textinput-hint.json" title="Textinput with hint" width="100%" style="height: 161px"></iframe>
+
+### Icon
+
+Use the property `icon` to add an icon to the `textinput`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed on the `left` by default, you can set the property `iconPosition` to `right` if you want the icon to be right aligned.
+
+<Code code={textinputIconJson} lang="js" title={fileName} />
+<iframe src="/index.html?form=components/textinput/textinput-icon.json" title="Textinput with icon" width="100%" style="height: 208px"></iframe>
+

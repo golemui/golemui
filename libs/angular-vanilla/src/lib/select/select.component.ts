@@ -17,8 +17,8 @@ type SelectProps = {
 const isOption = (opt: unknown): opt is Option =>
   opt !== null &&
   typeof opt === 'object' &&
-  Object.hasOwn(opt, 'label') &&
-  Object.hasOwn(opt, 'value');
+  Object.prototype.hasOwnProperty.call(opt, 'label') &&
+  Object.prototype.hasOwnProperty.call(opt, 'value');
 
 /** Checks if an object can be converted into an actual Option */
 const isProtoOption = (
@@ -30,8 +30,8 @@ const isProtoOption = (
   }
   const obj = opt as Record<string, unknown>;
 
-  const hasLabel = labelField ? Object.hasOwn(obj, labelField) : false;
-  const hasValue = valueField ? Object.hasOwn(obj, valueField) : false;
+  const hasLabel = labelField ? Object.prototype.hasOwnProperty.call(obj, labelField) : false;
+  const hasValue = valueField ? Object.prototype.hasOwnProperty.call(obj, valueField) : false;
 
   if (labelField && !hasLabel) {
     // labelField is provided but hasLabel is false → invalid
@@ -55,8 +55,8 @@ function createOptionMapper(
   const obj = opt as Record<string, unknown>;
 
   // Resolve fields: only keep those that exist on the object
-  const resolvedLabelField = labelField && Object.hasOwn(obj, labelField) ? labelField : undefined;
-  const resolvedValueField = valueField && Object.hasOwn(obj, valueField) ? valueField : undefined;
+  const resolvedLabelField = labelField && Object.prototype.hasOwnProperty.call(obj, labelField) ? labelField : undefined;
+  const resolvedValueField = valueField && Object.prototype.hasOwnProperty.call(obj, valueField) ? valueField : undefined;
 
   if (!resolvedLabelField && !resolvedValueField) {
     throw new Error('Neither labelField nor valueField exists on the object');

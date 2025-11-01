@@ -20,6 +20,10 @@ export class FormElement extends LitElement {
 
   error = '';
 
+  override createRenderRoot() {
+    return this;
+  }
+
   protected onFormError(error: Core.FormStoreError) {
     this.error = '';
     if (error.kind === 'validation') {

@@ -10,10 +10,4 @@
   color: var(--ff-color-fg);
   box-sizing: border-box;
   margin: var(--ff-field-gap);
-
-  label {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
-  }
 }
