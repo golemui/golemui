@@ -1,5 +1,5 @@
-import { createContext } from '@lit/context';
 import * as Core from '@formforge/core';
+import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
 
@@ -35,7 +35,7 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       .pipe(takeUntil(this.destroy$), Core.dataByPath$(field.path))
       .subscribe((data) => (this.templateData = { ...this.templateData, value: data }));
 
-    // Listen to the fieldFlags stream (`disabled` and `required` flags)
+    // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
@@ -46,6 +46,10 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
         this.templateData = {
           ...this.templateData,
           required: fieldFlags?.required ?? (field.required as boolean),
+        };
+        this.templateData = {
+          ...this.templateData,
+          required: fieldFlags?.readonly ?? (field.readonly as boolean),
         };
       });
 
