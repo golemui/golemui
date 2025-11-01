@@ -21,11 +21,11 @@ rm -rf dist
 rm -rf docs/public
 
 echo "Building docs-template (Nx)..."
-npx nx run docs-template:build
+BASE=/docs-template npx nx run docs-template:build
 
 echo "Copying build from dist/apps/docs-template to docs/public..."
-mkdir -p docs/public
-cp -r dist/apps/docs-template/* docs/public/
+mkdir -p docs/public/docs-template
+cp -r dist/apps/docs-template/* docs/public/docs-template
 
 cd docs
 

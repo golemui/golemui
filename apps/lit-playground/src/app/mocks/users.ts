@@ -2,7 +2,7 @@ import { defineForm } from '@formforge/core';
 
 export const users = defineForm({
   states: {
-    limitReached: '$form.users.length === 5',
+    itsFive: '$form.something === "5"',
   },
   form: {
     uid: '',
@@ -13,7 +13,19 @@ export const users = defineForm({
         uid: '',
         kind: 'control',
         widget: 'textinput',
+        label: 'The List Name',
+        'label.itsFive': 'Its five!!',
         path: 'listName',
+        readonly: true,
+        required: false,
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'textinput',
+        label: 'Something',
+        path: 'something',
+        defaultValue: 'Type 5 should change the label on the list name',
       },
     ],
   },

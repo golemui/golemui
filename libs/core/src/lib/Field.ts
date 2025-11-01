@@ -13,6 +13,7 @@ export type Flags = {
   hidden?: boolean;
   disabled?: boolean;
   required?: boolean;
+  readonly?: boolean;
   dirty?: boolean;
 };
 
@@ -59,10 +60,21 @@ export type BaseField<StateKeys extends UiState = never> = {
   //kind: 'field' | 'button' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
-  disabled?: boolean | { when: ReactiveExpression };
-  required?: boolean | { when: ReactiveExpression };
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
+  disabled?: boolean | { when: ReactiveExpression };
+  required?: boolean | { when: ReactiveExpression };
+  readonly?: boolean | { when: ReactiveExpression };
+
+  // <dev-note>
+  //    TODO: Is this better? {in} and {when} is maybe too verbose...
+  //    includeIn?: StateKeys[] | ReactiveExpression;
+  //    excludeFrom?: StateKeys[] | ReactiveExpression;
+  //    disabled?: boolean | ReactiveExpression;
+  //    required?: boolean | ReactiveExpression;
+  //    readonly?: boolean | ReactiveExpression;
+  // </ dev-note>
+
   // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
   /**
    * Non-core properties e.g. text, level...
@@ -196,7 +208,6 @@ const FieldSchema = z.looseObject({
   widget: z.string(),
   include: z.optional(InWhenSchema),
   exclude: z.optional(ExcludeSchema),
-  required: z.optional(InWhenBoolSchema),
   enabled: z.optional(InWhenBoolSchema),
   on: z.optional(OnSchema),
 });
@@ -213,6 +224,8 @@ export const ControlFieldSchema = <S extends z.ZodMiniType>(defaultValueSchema: 
       kind: z.literal('control'),
       path: z.string(),
       label: z.optional(z.string()),
+      required: z.optional(InWhenBoolSchema),
+      readonly: z.optional(InWhenBoolSchema),
       defaultValue: z.optional(defaultValueSchema),
     }),
     z.transform((ctrl) => {

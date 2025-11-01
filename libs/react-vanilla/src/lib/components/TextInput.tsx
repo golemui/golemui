@@ -12,7 +12,7 @@ type TextInputProps = {
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, isRequired, value, isDisabled, label, onValueChanged } = useControl<
+  const { uid, isRequired, value, isDisabled, isReadonly, label, onValueChanged } = useControl<
     string,
     TextInputProps
   >(field);
@@ -44,6 +44,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           className={`${icon ? '--ff-icon' : ''} ${iconPosition === 'right' ? '--ff-icon-right' : ''}`}
           value={value ?? ''}
           disabled={isDisabled}
+          readOnly={isReadonly}
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
           aria-required={isRequired}

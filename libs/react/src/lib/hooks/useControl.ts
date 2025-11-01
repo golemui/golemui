@@ -12,6 +12,7 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
   const [value, setValue] = useState<T | undefined>(undefined);
   const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
   const [isRequired, setIsRequired] = useState<boolean | undefined>(undefined);
+  const [isReadonly, setIsReadonly] = useState<boolean | undefined>(undefined);
   const props = useExtraProps<ExtraProps>(field);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
       .subscribe((fieldFlags) => {
         setIsDisabled(fieldFlags?.disabled ?? (field.disabled as boolean));
         setIsRequired(fieldFlags?.required ?? (field.required as boolean));
+        setIsReadonly(fieldFlags?.readonly ?? (field.readonly as boolean));
       });
     return () => sub.unsubscribe();
   }, [field, formContext.store]);
@@ -85,6 +87,7 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
     props,
     isDisabled,
     isRequired,
+    isReadonly,
     onValueChanged,
   };
 }

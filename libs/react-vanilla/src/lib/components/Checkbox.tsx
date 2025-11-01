@@ -5,11 +5,12 @@ import '../styles.scss';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const { uid, isRequired, value, isDisabled, label, onValueChanged } = useControl(field);
+  const { uid, isRequired, value, isDisabled, isReadonly, label, onValueChanged } =
+    useControl(field);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.checked),
-    [onValueChanged],
+    (e: React.ChangeEvent<HTMLInputElement>) => !isReadonly && onValueChanged(e.target.checked),
+    [onValueChanged, isReadonly],
   );
 
   return (
@@ -21,6 +22,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
           id={uid}
           checked={value ?? false}
           disabled={isDisabled}
+          aria-readonly={isReadonly}
           onChange={handleChange}
         />
       </div>

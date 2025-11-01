@@ -134,7 +134,11 @@ export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   valueChanged(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.adapter.valueChanged(target.value);
+    if (this.adapter.templateData().readonly) {
+      event.preventDefault();
+    } else {
+      const target = event.target as HTMLSelectElement;
+      this.adapter.valueChanged(target.value);
+    }
   }
 }

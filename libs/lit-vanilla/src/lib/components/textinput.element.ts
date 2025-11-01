@@ -1,9 +1,9 @@
-import { LitElement, html, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { consume, provide } from '@lit/context';
-import { classMap } from 'lit/directives/class-map.js';
 import * as Core from '@formforge/core';
 import * as Lit from '@formforge/lit';
+import { consume, provide } from '@lit/context';
+import { LitElement, html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('ff-textinput')
 export class TextinputElement extends LitElement implements Core.WithField {
@@ -69,7 +69,8 @@ export class TextinputElement extends LitElement implements Core.WithField {
           id=${this.field.uid}
           class=${classMap(textinputIcon)}
           value=${this.adapter.templateData['value'] ?? ''}
-          disabled=${this.adapter.templateData['disabled'] || nothing}
+          ?disabled=${this.adapter.templateData['disabled'] || nothing}
+          ?readonly=${this.adapter.templateData['readonly'] || nothing}
           placeholder=${this.adapter.templateData['placeholder'] || nothing}
           @input="${this.valueChanged}"
           aria-required=${this.adapter.templateData['required'] || nothing}

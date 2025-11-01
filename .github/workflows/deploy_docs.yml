@@ -30,6 +30,9 @@ jobs:
       - name: Build documentation
         run: ./build-docs.sh
 
+      - name: Add CNAME file
+        run: echo "golemui.com" > dist/docs/CNAME
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
