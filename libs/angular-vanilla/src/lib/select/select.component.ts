@@ -55,8 +55,10 @@ function createOptionMapper(
   const obj = opt as Record<string, unknown>;
 
   // Resolve fields: only keep those that exist on the object
-  const resolvedLabelField = labelField && Object.prototype.hasOwnProperty.call(obj, labelField) ? labelField : undefined;
-  const resolvedValueField = valueField && Object.prototype.hasOwnProperty.call(obj, valueField) ? valueField : undefined;
+  const resolvedLabelField =
+    labelField && Object.prototype.hasOwnProperty.call(obj, labelField) ? labelField : undefined;
+  const resolvedValueField =
+    valueField && Object.prototype.hasOwnProperty.call(obj, valueField) ? valueField : undefined;
 
   if (!resolvedLabelField && !resolvedValueField) {
     throw new Error('Neither labelField nor valueField exists on the object');
