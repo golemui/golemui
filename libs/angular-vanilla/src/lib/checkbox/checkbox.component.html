@@ -9,6 +9,8 @@
     [id]="field.uid"
     [value]="templateData.value ?? false"
     [disabled]="templateData.disabled"
+    [ariaReadOnly]="templateData.readonly"
+    (click)="templateData.readonly && $event.preventDefault()"
     (input)="valueChanged($event)"
   />
 </div>

@@ -16,6 +16,7 @@
     }"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"
+    [readOnly]="templateData.readonly"
     [attr.placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
     [attr.aria-required]="templateData.required"

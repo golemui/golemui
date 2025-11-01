@@ -27,6 +27,7 @@ export const selects = defineForm({
         widget: 'select',
         path: 'greeting',
         label: 'Greeting',
+        readonly: true,
         props: {
           options: ['hello', 'bye'],
         },
