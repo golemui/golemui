@@ -63,6 +63,16 @@ function calculateFieldFlags(state: State): State['fieldFlags'] {
               currentStates: state.currentStates,
             });
           }
+
+          // readonly
+          if (Field.isControlField(field)) {
+            setFlag({
+              property: 'readonly',
+              field,
+              flags,
+              currentStates: state.currentStates,
+            });
+          }
         }
         return flags;
       },
