@@ -57,8 +57,6 @@ export class TextinputElement extends LitElement implements Core.WithField {
       icon = html``;
     }
 
-    console.log(this.adapter.templateData);
-
     return html`
       <label for=${this.field.uid}>
         ${this.adapter.templateData['label'] + (this.adapter.templateData['required'] ? ' *' : '')}
