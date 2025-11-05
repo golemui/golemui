@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@formforge/lit';
-import { TabsProps } from '@formforge/shared';
+import { TabsProps } from '@formforge/shared-vanilla';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { Subscription } from 'rxjs';

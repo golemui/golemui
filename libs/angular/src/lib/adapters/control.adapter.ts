@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
-import { ControlTemplateData } from '@formforge/shared';
+import { ControlTemplateData } from '@formforge/shared-vanilla';
 
 @Injectable()
 export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<

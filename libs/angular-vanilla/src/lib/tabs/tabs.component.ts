@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-import { TabsProps } from '@formforge/shared';
+import { TabsProps } from '@formforge/shared-vanilla';
 
 @Component({
   standalone: true,

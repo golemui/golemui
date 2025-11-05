@@ -2,7 +2,7 @@ import * as Core from '@formforge/core';
 import { useControl } from '@formforge/react';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { TextinputProps } from '@formforge/shared';
+import { TextinputProps } from '@formforge/shared-vanilla';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;

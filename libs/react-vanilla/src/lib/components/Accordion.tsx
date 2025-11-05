@@ -1,7 +1,7 @@
 import * as Core from '@formforge/core';
 import { FieldRenderer, useLayout } from '@formforge/react';
 import { useCallback, useState } from 'react';
-import { AccordionProps } from '@formforge/shared';
+import { AccordionProps } from '@formforge/shared-vanilla';
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;

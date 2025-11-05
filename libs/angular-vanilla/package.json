@@ -6,7 +6,7 @@
     "@angular/core": "20",
     "@formforge/angular": "*",
     "@formforge/core": "*",
-    "@formforge/shared": "*"
+    "@formforge/shared-vanilla": "*"
   },
   "sideEffects": false
 }

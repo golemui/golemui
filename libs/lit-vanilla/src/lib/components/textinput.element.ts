@@ -4,7 +4,7 @@ import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { TextinputProps } from '@formforge/shared';
+import { TextinputProps } from '@formforge/shared-vanilla';
 import { Subscription, takeUntil } from 'rxjs';
 
 @customElement('ff-textinput')

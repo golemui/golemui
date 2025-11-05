@@ -3,7 +3,7 @@ import * as Lit from '@formforge/lit';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { RepeaterProps } from '@formforge/shared';
+import { RepeaterProps } from '@formforge/shared-vanilla';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { Subscription } from 'rxjs';
 

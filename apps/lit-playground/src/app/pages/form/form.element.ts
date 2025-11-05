@@ -5,7 +5,7 @@ import { LitElement, html } from 'lit';
 import * as Core from '@formforge/core';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 import * as Vanilla from '@formforge/lit-vanilla';
-import { users, usersData } from '@formforge/shared';
+import { users, usersData } from '@formforge/shared-vanilla';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {

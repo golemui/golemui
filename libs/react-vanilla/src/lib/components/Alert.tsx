@@ -1,6 +1,6 @@
 import * as Core from '@formforge/core';
 import { useField } from '@formforge/react';
-import { AlertProps } from '@formforge/shared';
+import { AlertProps } from '@formforge/shared-vanilla';
 
 export function Alert(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.Field;

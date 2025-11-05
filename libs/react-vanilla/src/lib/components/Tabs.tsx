@@ -1,7 +1,7 @@
 import * as Core from '@formforge/core';
 import { FieldRenderer, useLayout } from '@formforge/react';
 import { useCallback, useState } from 'react';
-import { TabsProps } from '@formforge/shared';
+import { TabsProps } from '@formforge/shared-vanilla';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;

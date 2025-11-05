@@ -3,7 +3,7 @@ import * as Lit from '@formforge/lit';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { CheckboxProps } from '@formforge/shared';
+import { CheckboxProps } from '@formforge/shared-vanilla';
 import { Subscription } from 'rxjs';
 
 @customElement('ff-checkbox')

@@ -2,7 +2,7 @@ import * as Core from '@formforge/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
-import { ControlTemplateData } from '@formforge/shared';
+import { ControlTemplateData } from '@formforge/shared-vanilla';
 
 export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
 

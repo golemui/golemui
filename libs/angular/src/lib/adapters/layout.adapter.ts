@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
-import { LayoutTemplateData } from '@formforge/shared';
+import { LayoutTemplateData } from '@formforge/shared-vanilla';
 
 @Injectable()
 export class LayoutAdapter<

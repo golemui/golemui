@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@formforge/lit';
-import { StackProps } from '@formforge/shared';
+import { StackProps } from '@formforge/shared-vanilla';
 import { Subscription } from 'rxjs';
 
 @customElement('ff-stack')
