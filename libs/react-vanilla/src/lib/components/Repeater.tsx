@@ -2,13 +2,7 @@ import * as Core from '@formforge/core';
 import { FieldRenderer, RepeaterIndexContext, useControl } from '@formforge/react';
 import { useCallback } from 'react';
 import '../styles.scss';
-
-type RepeaterProps = {
-  addLabel?: string;
-  removeLabel?: string;
-  limit?: number;
-  template: Core.FormField<string>;
-};
+import { RepeaterProps } from '@formforge/shared';
 
 export function Repeater(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;

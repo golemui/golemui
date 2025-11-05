@@ -5,7 +5,7 @@ import * as React from '@formforge/react';
 import * as Vanilla from '@formforge/react-vanilla';
 import { useState } from 'react';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { users, usersData } from '../../mocks';
+import { users, usersData } from '@formforge/shared';
 
 function onFormEvent(event: Core.FormEvent) {
   console.groupCollapsed(`onFormEvent('${event.name}')`);

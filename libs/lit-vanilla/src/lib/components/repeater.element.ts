@@ -5,6 +5,7 @@ import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { RepeaterProps } from '@formforge/shared';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-repeater')
 export class RepeaterElement extends LitElement implements Core.WithField {
@@ -17,6 +18,8 @@ export class RepeaterElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlAdapter<Record<string, unknown>[], RepeaterProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -26,6 +29,10 @@ export class RepeaterElement extends LitElement implements Core.WithField {
     this.classList.add('ff-repeater');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   addItem() {
@@ -75,5 +82,6 @@ export class RepeaterElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

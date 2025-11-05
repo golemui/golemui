@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { consume, provide } from '@lit/context';
 import * as Core from '@formforge/core';
 import * as Lit from '@formforge/lit';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-button')
 export class ButtonElement extends LitElement implements Core.WithField {
@@ -15,6 +16,8 @@ export class ButtonElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.buttonContext })
   adapter = new Lit.ButtonAdapter();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -24,6 +27,10 @@ export class ButtonElement extends LitElement implements Core.WithField {
     this.classList.add('ff-button');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   override render() {
@@ -39,5 +46,6 @@ export class ButtonElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

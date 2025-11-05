@@ -1,10 +1,6 @@
 import * as Core from '@formforge/core';
 import { useField } from '@formforge/react';
-
-type AlertProps = {
-  text: string;
-  level?: 'default' | 'info' | 'success' | 'warning' | 'error';
-};
+import { AlertProps } from '@formforge/shared';
 
 export function Alert(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.Field;

@@ -2,19 +2,13 @@ import * as Core from '@formforge/core';
 import { useControl } from '@formforge/react';
 import { useCallback } from 'react';
 import '../styles.scss';
-
-type TextInputProps = {
-  hint?: string;
-  placeholder?: string;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
-};
+import { TextinputProps } from '@formforge/shared';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
   const { uid, isRequired, value, isDisabled, isReadonly, label, onValueChanged } = useControl<
     string,
-    TextInputProps
+    TextinputProps
   >(field);
 
   const handleChange = useCallback(

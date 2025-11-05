@@ -4,6 +4,7 @@ import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { CheckboxProps } from '@formforge/shared';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-checkbox')
 export class CheckboxElement extends LitElement implements Core.WithField {
@@ -16,6 +17,8 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlAdapter<string, CheckboxProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -25,6 +28,10 @@ export class CheckboxElement extends LitElement implements Core.WithField {
     this.classList.add('ff-checkbox');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   override render() {
@@ -58,5 +65,6 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

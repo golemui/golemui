@@ -6,6 +6,7 @@ import * as Lit from '@formforge/lit';
 import { TabsProps } from '@formforge/shared';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-tabs')
 export class TabsElement extends LitElement implements Core.WithField {
@@ -19,6 +20,8 @@ export class TabsElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.layoutContext })
   adapter = new Lit.LayoutAdapter<TabsProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -30,6 +33,10 @@ export class TabsElement extends LitElement implements Core.WithField {
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
     this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   onClickTab(uid: string) {
@@ -72,5 +79,6 @@ export class TabsElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

@@ -5,6 +5,7 @@ import { consume, provide } from '@lit/context';
 import * as Lit from '@formforge/lit';
 import { AccordionProps } from '@formforge/shared';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-accordion')
 export class AccordionElement extends LitElement implements Core.WithField {
@@ -18,6 +19,8 @@ export class AccordionElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.layoutContext })
   adapter = new Lit.LayoutAdapter<AccordionProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -29,6 +32,10 @@ export class AccordionElement extends LitElement implements Core.WithField {
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
     this.activeSections = props.defaultOpen ?? {};
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   onClickButton(uid: string) {
@@ -83,5 +90,6 @@ export class AccordionElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

@@ -4,6 +4,7 @@ import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@formforge/lit';
 import { AlertProps } from '@formforge/shared';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-alert')
 export class AlertElement extends LitElement implements Core.WithField {
@@ -16,6 +17,8 @@ export class AlertElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.fieldContext })
   adapter = new Lit.FieldAdapter<AlertProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -25,6 +28,10 @@ export class AlertElement extends LitElement implements Core.WithField {
     this.classList.add('ff-alert');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   override render() {
@@ -40,5 +47,6 @@ export class AlertElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

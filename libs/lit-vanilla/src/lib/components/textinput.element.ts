@@ -5,6 +5,7 @@ import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { TextinputProps } from '@formforge/shared';
+import { Subscription, takeUntil } from 'rxjs';
 
 @customElement('ff-textinput')
 export class TextinputElement extends LitElement implements Core.WithField {
@@ -17,6 +18,8 @@ export class TextinputElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlAdapter<string, TextinputProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -26,6 +29,10 @@ export class TextinputElement extends LitElement implements Core.WithField {
     this.classList.add('ff-textinput');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   override render() {
@@ -90,5 +97,6 @@ export class TextinputElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }

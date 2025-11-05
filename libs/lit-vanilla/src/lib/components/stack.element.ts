@@ -4,6 +4,7 @@ import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@formforge/lit';
 import { StackProps } from '@formforge/shared';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-stack')
 export class StackElement extends LitElement implements Core.WithField {
@@ -16,6 +17,8 @@ export class StackElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.layoutContext })
   adapter = new Lit.LayoutAdapter<StackProps>();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -25,6 +28,10 @@ export class StackElement extends LitElement implements Core.WithField {
     this.classList.add('ff-stack');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+    );
   }
 
   override render() {
@@ -47,5 +54,6 @@ export class StackElement extends LitElement implements Core.WithField {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
