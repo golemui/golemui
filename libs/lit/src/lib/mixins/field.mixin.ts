@@ -36,8 +36,6 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
             ? Core.makeRepeaterItemConfig(Core.cloneObject(this.field), index)
             : this.field;
 
-        console.log('create element', element.field);
-
         element.id = `host-${this.field.uid}`;
 
         this.replaceWith(element);
