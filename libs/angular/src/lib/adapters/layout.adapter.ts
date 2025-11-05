@@ -2,18 +2,15 @@ import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
-
-type TemplateData = {
-  children: Core.FormField<string>[];
-};
+import { LayoutTemplateData } from '@formforge/shared';
 
 @Injectable()
 export class LayoutAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseAdapter<Core.LayoutField> {
-  templateData = signal<TemplateData & ExtraProps>({
+  templateData = signal<LayoutTemplateData & ExtraProps>({
     children: [] as Core.FormField<string>[],
-  } as TemplateData & ExtraProps);
+  } as LayoutTemplateData & ExtraProps);
 
   init(field: Core.LayoutField) {
     this.field = field;

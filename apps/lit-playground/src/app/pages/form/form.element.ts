@@ -4,8 +4,8 @@ import { customElement } from 'lit/decorators.js';
 import { LitElement, html } from 'lit';
 import * as Core from '@formforge/core';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { users, usersData } from '../../mocks';
 import * as Vanilla from '@formforge/lit-vanilla';
+import { users, usersData } from '@formforge/shared';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {

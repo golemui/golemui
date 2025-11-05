@@ -2,13 +2,14 @@ import * as Core from '@formforge/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
+import { ControlTemplateData } from '@formforge/shared';
 
 export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
 
 export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
   Core.ControlField<T>
 > {
-  templateData = {} as ExtraProps;
+  templateData = {} as ControlTemplateData<T> & ExtraProps;
 
   init(field: Core.ControlField<T>) {
     this.field = field;

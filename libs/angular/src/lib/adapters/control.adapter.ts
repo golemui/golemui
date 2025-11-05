@@ -2,20 +2,13 @@ import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
-
-type TemplateData<T> = {
-  label?: string;
-  value?: T;
-  disabled?: boolean;
-  required?: boolean;
-  readonly?: boolean;
-};
+import { ControlTemplateData } from '@formforge/shared';
 
 @Injectable()
 export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
   Core.ControlField<T>
 > {
-  templateData = signal<TemplateData<T> & ExtraProps>({} as TemplateData<T> & ExtraProps);
+  templateData = signal<ControlTemplateData<T> & ExtraProps>({} as ControlTemplateData<T> & ExtraProps);
 
   init(field: Core.ControlField<T>) {
     this.field = field;

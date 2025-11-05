@@ -21,7 +21,8 @@
       "@formforge/lit": ["libs/lit/src/index.ts"],
       "@formforge/lit-vanilla": ["libs/lit-vanilla/src/index.ts"],
       "@formforge/react": ["libs/react/src/index.ts"],
-      "@formforge/react-vanilla": ["libs/react-vanilla/src/index.ts"]
+      "@formforge/react-vanilla": ["libs/react-vanilla/src/index.ts"],
+      "@formforge/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

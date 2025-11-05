@@ -2,11 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-
-type TabsProps = {
-  defaultOpen?: string;
-  tabs: { label: string; uid: string }[];
-};
+import { TabsProps } from '@formforge/shared';
 
 @Component({
   standalone: true,

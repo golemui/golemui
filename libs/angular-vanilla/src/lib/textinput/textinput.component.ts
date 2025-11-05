@@ -2,13 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-
-interface TextinputProps {
-  hint?: string;
-  placeholder?: string;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
-}
+import { TextinputProps } from '@formforge/shared';
 
 @Component({
   standalone: true,

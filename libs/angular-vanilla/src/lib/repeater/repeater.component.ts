@@ -2,13 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-
-type RepeaterProps = {
-  addLabel?: string;
-  removeLabel?: string;
-  limit?: number;
-  template: Core.FormField<string>;
-};
+import { RepeaterProps } from '@formforge/shared';
 
 @Component({
   standalone: true,

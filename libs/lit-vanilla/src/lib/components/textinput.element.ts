@@ -4,6 +4,7 @@ import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { TextinputProps } from '@formforge/shared';
 
 @customElement('ff-textinput')
 export class TextinputElement extends LitElement implements Core.WithField {
@@ -14,7 +15,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlAdapter();
+  adapter = new Lit.ControlAdapter<string, TextinputProps>();
 
   override createRenderRoot() {
     return this;
@@ -31,9 +32,9 @@ export class TextinputElement extends LitElement implements Core.WithField {
     super.render();
 
     // Hint
-    const hint = this.adapter.templateData['hint']
+    const hint = this.adapter.templateData.hint
       ? html`<div class="ff-hint" id=${`${this.field.uid}_hint`}>
-          ${this.adapter.templateData['hint']}
+          ${this.adapter.templateData.hint}
         </div>`
       : html``;
 
@@ -43,14 +44,14 @@ export class TextinputElement extends LitElement implements Core.WithField {
       '--ff-icon-right': false,
     };
     let icon;
-    if (this.adapter.templateData['icon']) {
+    if (this.adapter.templateData.icon) {
       textinputIcon['--ff-icon'] = true;
-      textinputIcon['--ff-icon-right'] = this.adapter.templateData['iconPosition'] === 'right';
+      textinputIcon['--ff-icon-right'] = this.adapter.templateData.iconPosition === 'right';
 
       const classes = {
         'ff-icon': true,
-        'ff-icon--right': this.adapter.templateData['iconPosition'] === 'right',
-        [this.adapter.templateData['icon']]: true,
+        'ff-icon--right': this.adapter.templateData.iconPosition === 'right',
+        [this.adapter.templateData.icon]: true,
       };
       icon = html`<span class=${classMap(classes)}></span>`;
     } else {
@@ -59,7 +60,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     return html`
       <label for=${this.field.uid}>
-        ${this.adapter.templateData['label'] + (this.adapter.templateData['required'] ? ' *' : '')}
+        ${this.adapter.templateData.label + (this.adapter.templateData.required ? ' *' : '')}
         ${hint}
       </label>
 
@@ -68,21 +69,21 @@ export class TextinputElement extends LitElement implements Core.WithField {
           type="text"
           id=${this.field.uid}
           class=${classMap(textinputIcon)}
-          value=${this.adapter.templateData['value'] ?? ''}
-          ?disabled=${this.adapter.templateData['disabled'] || nothing}
-          ?readonly=${this.adapter.templateData['readonly'] || nothing}
-          placeholder=${this.adapter.templateData['placeholder'] || nothing}
-          @input="${this.valueChanged}"
-          aria-required=${this.adapter.templateData['required'] || nothing}
-          aria-describedby=${this.adapter.templateData['hint'] ? `${this.field.uid}_hint` : nothing}
+          value=${this.adapter.templateData.value ?? ''}
+          ?disabled=${this.adapter.templateData.disabled || nothing}
+          ?readonly=${this.adapter.templateData.readonly || nothing}
+          placeholder=${this.adapter.templateData.placeholder || nothing}
+          @input="${() => this.valueChanged(event)}"
+          aria-required=${this.adapter.templateData.required || nothing}
+          aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         />
         ${icon}
       </div>
     `;
   }
 
-  valueChanged(event: Event) {
-    const target = event.target as HTMLInputElement;
+  valueChanged(event: Event | undefined) {
+    const target = event?.target as HTMLInputElement;
     this.adapter.valueChanged(target.value);
   }
 

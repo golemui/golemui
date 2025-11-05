@@ -2,17 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-
-type Option = {
-  label: string;
-  value: unknown;
-};
-
-type SelectProps = {
-  options: Option[];
-  labelField?: string;
-  valueField?: string;
-};
+import { Option, SelectProps } from '@formforge/shared';
 
 const isOption = (opt: unknown): opt is Option =>
   opt !== null &&

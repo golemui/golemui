@@ -2,13 +2,14 @@ import * as Core from '@formforge/core';
 import { BaseAdapter } from './base.adapter';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { createContext } from '@lit/context';
+import { LayoutTemplateData } from '@formforge/shared';
 
 export const layoutContext = createContext<LayoutAdapter<any>>('ffLayoutAdapter');
 
 export class LayoutAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseAdapter<Core.LayoutField> {
-  templateData = {} as ExtraProps;
+  templateData = {} as LayoutTemplateData & ExtraProps;
 
   init(field: Core.LayoutField) {
     this.field = field;
