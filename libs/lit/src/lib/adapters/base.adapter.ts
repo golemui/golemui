@@ -7,6 +7,14 @@ export abstract class BaseAdapter<F extends Core.FormField> {
   context!: LitFormContext<WithField>;
   protected destroy$ = new Subject<void>();
   protected field!: F;
+  protected templateData: any = {};
+
+  templateDataChanged$ = new Subject<void>();
+
+  protected setTemplateData(patch: any) {
+    this.templateData = { ...this.templateData, ...patch };
+    this.templateDataChanged$.next();
+  }
 
   protected addFieldToTheStore(field: F) {
     this.context.store.dispatch({

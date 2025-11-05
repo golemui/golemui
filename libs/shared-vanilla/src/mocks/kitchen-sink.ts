@@ -1,6 +1,6 @@
 import { defineForm } from '@formforge/core';
 
-export const users = defineForm({
+export const kitchenSink = defineForm({
   states: {
     limitReached: '$form.users.length === 5',
   },
@@ -14,7 +14,7 @@ export const users = defineForm({
         kind: 'layout',
         widget: 'tabs',
         props: {
-          defaultOpen: 'tab5',
+          defaultOpen: 'tab3',
           tabs: [
             { label: 'Alert Component', uid: 'tab1' },
             { label: 'Stack Layout', uid: 'tab2' },
@@ -198,7 +198,7 @@ export const users = defineForm({
   },
 });
 
-export const usersData = {
+export const kitchenSinkData = {
   listName: 'Development Team',
   users: [
     {

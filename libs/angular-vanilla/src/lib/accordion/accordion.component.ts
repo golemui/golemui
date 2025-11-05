@@ -2,12 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-
-type AccordionProps = {
-  singleOpen?: boolean;
-  defaultOpen?: { [key: string]: boolean };
-  sections: { label: string; uid: string }[];
-};
+import { AccordionProps } from '@formforge/shared-vanilla';
 
 @Component({
   standalone: true,

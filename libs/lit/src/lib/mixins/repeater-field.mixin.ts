@@ -1,46 +1,42 @@
 import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import * as Core from '@formforge/core';
-import { consume } from '@lit/context';
+import { consume, ContextProvider, provide } from '@lit/context';
 import { formContext, LitFormContext } from '../context/form.context';
 import {
   RepeaterIndexTokenContext,
   repeaterIndexTokenContext,
 } from '../context/repeater-index-token.context';
 
-export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
-  class FieldElement extends superClass {
+export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
+  class RepeaterFieldElementMixin extends superClass {
     @consume({ context: formContext })
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
     @property({ type: Object }) field!: Core.FormField<string>;
-    @property({ type: Number }) repeaterIndex: number | undefined;
+    @property({ type: Number }) repeaterIndex = -1;
 
-    @consume({ context: repeaterIndexTokenContext, subscribe: true })
-    @property({ attribute: false })
-    repeaterIndexToken?: RepeaterIndexTokenContext;
+    @provide({ context: repeaterIndexTokenContext })
+    repeaterIndexToken = new RepeaterIndexTokenContext();
 
     override connectedCallback() {
-      super.connectedCallback?.();
-      this.loadFieldComponent();
+      super.connectedCallback();
+      this.loadFieldComponent(this.repeaterIndex);
     }
 
-    private async loadFieldComponent() {
+    public async loadFieldComponent(repeaterIndex: number) {
       if (!this.field) return;
 
       try {
         const component = await this.formContext.fieldRegistry.loadField(this.field.widget);
         const element = new component();
 
-        const index = this.repeaterIndex ?? this.repeaterIndexToken?.index;
-        element.field =
-          typeof index === 'number' && !Number.isNaN(index) && index > -1
-            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.field), index)
-            : this.field;
+        this.repeaterIndexToken.index = repeaterIndex;
+        new ContextProvider(element, repeaterIndexTokenContext, this.repeaterIndexToken);
 
+        element.field = Core.makeRepeaterItemConfig(Core.cloneObject(this.field), repeaterIndex);
         element.id = `host-${this.field.uid}`;
-
         this.replaceWith(element);
       } catch (err) {
         console.error(`Field "${this.field.widget}" could not be loaded`, err);
@@ -62,5 +58,5 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
     }
   }
 
-  return FieldElement as unknown as T & (new (...args: any[]) => LitElement);
+  return RepeaterFieldElementMixin as unknown as T & (new (...args: any[]) => LitElement);
 };
