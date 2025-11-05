@@ -2,13 +2,14 @@ import * as Core from '@formforge/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
+import { ControlTemplateData } from '@formforge/shared-vanilla';
 
 export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
 
 export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
   Core.ControlField<T>
 > {
-  templateData = {} as ExtraProps;
+  override templateData = {} as ControlTemplateData<T> & ExtraProps;
 
   init(field: Core.ControlField<T>) {
     this.field = field;
@@ -24,42 +25,33 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
     });
 
     // Set the initial control `label` and merge `props`
-    this.templateData = {
-      ...this.templateData,
+    this.setTemplateData({
       label: this.calculateLabel(),
       ...this.field.props,
-    };
+    });
 
-    // Set the initial templateData, including the controls's data value
+    // Set the initial templateData, including the control's data value
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$(field.path))
-      .subscribe((data) => (this.templateData = { ...this.templateData, value: data }));
+      .subscribe((data) => this.setTemplateData({ value: data }));
 
     // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.templateData = {
-          ...this.templateData,
+        this.setTemplateData({
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-        };
-        this.templateData = {
-          ...this.templateData,
           required: fieldFlags?.required ?? (field.required as boolean),
-        };
-        this.templateData = {
-          ...this.templateData,
-          required: fieldFlags?.readonly ?? (field.readonly as boolean),
-        };
+          readonly: fieldFlags?.readonly ?? (field.readonly as boolean),
+        });
       });
 
     // Listen to the form states stream and keep the `label` property in sync with the current state
     this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.templateData = {
-        ...this.templateData,
+      this.setTemplateData({
         label:
           this.context.getPropertyValueByCurrentState('label', this.field) ?? this.calculateLabel(),
-      };
+      });
     });
 
     this.context.emitEvent('load', this.field);

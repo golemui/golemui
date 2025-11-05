@@ -1,11 +1,7 @@
 import * as Core from '@formforge/core';
 import { FieldRenderer, useLayout } from '@formforge/react';
 import { useCallback, useState } from 'react';
-
-type TabsProps = {
-  defaultOpen?: string;
-  tabs: { label: string; uid: string }[];
-};
+import { TabsProps } from '@formforge/shared-vanilla';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;

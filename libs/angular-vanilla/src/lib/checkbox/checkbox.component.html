@@ -10,6 +10,7 @@
     [value]="templateData.value ?? false"
     [disabled]="templateData.disabled"
     [attr.aria-readonly]="templateData.readonly"
+    [attr.aria-required]="templateData.required"
     (click)="!templateData.readonly && valueChanged($event)"
   />
 </div>

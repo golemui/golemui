@@ -1,21 +1,20 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
+import * as Core from '@formforge/core';
 import * as Lit from '@formforge/lit';
-import { StackProps } from '@formforge/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-stack')
-export class StackElement extends LitElement implements Core.WithField {
-  field!: Core.LayoutField;
+@customElement('ff-button')
+export class ButtonElement extends LitElement implements Core.WithField {
+  field!: Core.ButtonField;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutAdapter<StackProps>();
+  @provide({ context: Lit.buttonContext })
+  adapter = new Lit.ButtonAdapter();
 
   subscriptions: Subscription[] = [];
 
@@ -25,7 +24,7 @@ export class StackElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-stack');
+    this.classList.add('ff-button');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -35,18 +34,16 @@ export class StackElement extends LitElement implements Core.WithField {
   }
 
   override render() {
-    if (!this.adapter.templateData) return html``;
-
-    const classes = {
-      field: true,
-      horizontal: this.adapter.templateData.direction === 'horizontal',
-    };
-
     return html`
-      <div class=${classes.horizontal ? 'field horizontal' : 'field'} id=${this.field?.uid}>
-        ${this.adapter.templateData.children.map(
-          (child: any) => html`<ff-field .field=${child}></ff-field>`,
-        )}
+      <div class="field">
+        <button
+          type="button"
+          id=${this.field.uid}
+          @click=${() => this.adapter.click()}
+          disabled=${this.adapter.templateData.disabled}
+        >
+          ${this.adapter.templateData.label}
+        </button>
       </div>
     `;
   }

@@ -2,11 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Core from '@formforge/core';
-
-type AlertProps = {
-  text: string;
-  level?: 'default' | 'info' | 'success' | 'warning' | 'error';
-};
+import { AlertProps } from '@formforge/shared-vanilla';
 
 @Component({
   standalone: true,

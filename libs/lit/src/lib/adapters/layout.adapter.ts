@@ -2,22 +2,22 @@ import * as Core from '@formforge/core';
 import { BaseAdapter } from './base.adapter';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { createContext } from '@lit/context';
+import { LayoutTemplateData } from '@formforge/shared-vanilla';
 
 export const layoutContext = createContext<LayoutAdapter<any>>('ffLayoutAdapter');
 
 export class LayoutAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseAdapter<Core.LayoutField> {
-  templateData = {} as ExtraProps;
+  override templateData = {} as LayoutTemplateData & ExtraProps;
 
   init(field: Core.LayoutField) {
     this.field = field;
 
     // Set initial templateData
-    this.templateData = {
-      ...this.templateData,
+    this.setTemplateData({
       ...this.field.props,
-    };
+    });
 
     const fieldFlagsSelector = this.context.store.state$.pipe(Core.selectFieldFlags);
 
@@ -33,10 +33,9 @@ export class LayoutAdapter<
         }),
       )
       .subscribe((children) => {
-        this.templateData = {
-          ...this.templateData,
+        this.setTemplateData({
           children,
-        };
+        });
       });
 
     this.addFieldToTheStore(field);

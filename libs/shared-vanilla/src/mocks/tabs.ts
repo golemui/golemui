@@ -1,6 +1,6 @@
 import { defineForm } from '@formforge/core';
 
-export const users = defineForm({
+export const tabs = defineForm({
   states: {
     limitReached: '$form.users.length === 5',
   },
@@ -198,7 +198,7 @@ export const users = defineForm({
   },
 });
 
-export const usersData = {
+export const tabsData = {
   listName: 'Development Team',
   users: [
     {
