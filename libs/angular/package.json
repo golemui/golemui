@@ -5,6 +5,7 @@
     "@angular/common": "20",
     "@angular/core": "20",
     "@formforge/core": "*",
+    "@formforge/shared": "*",
     "rxjs": "^7.8.0"
   },
   "sideEffects": false
