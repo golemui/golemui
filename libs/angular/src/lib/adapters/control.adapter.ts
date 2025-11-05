@@ -8,7 +8,9 @@ import { ControlTemplateData } from '@formforge/shared-vanilla';
 export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
   Core.ControlField<T>
 > {
-  templateData = signal<ControlTemplateData<T> & ExtraProps>({} as ControlTemplateData<T> & ExtraProps);
+  templateData = signal<ControlTemplateData<T> & ExtraProps>(
+    {} as ControlTemplateData<T> & ExtraProps,
+  );
 
   init(field: Core.ControlField<T>) {
     this.field = field;

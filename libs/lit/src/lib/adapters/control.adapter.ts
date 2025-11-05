@@ -27,13 +27,13 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
     // Set the initial control `label` and merge `props`
     this.setTemplateData({
       label: this.calculateLabel(),
-      ...this.field.props
+      ...this.field.props,
     });
 
     // Set the initial templateData, including the control's data value
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.dataByPath$(field.path))
-      .subscribe((data) => (this.setTemplateData({ value: data })));
+      .subscribe((data) => this.setTemplateData({ value: data }));
 
     // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$

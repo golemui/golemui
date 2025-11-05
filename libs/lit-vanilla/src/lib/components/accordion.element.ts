@@ -34,7 +34,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
     this.activeSections = props.defaultOpen ?? {};
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
   }
 
@@ -59,32 +59,33 @@ export class AccordionElement extends LitElement implements Core.WithField {
   override render() {
     if (!this.adapter.templateData) return html``;
 
-    return html` <div class="field" id=${this.field.uid}>
-      ${this.adapter.templateData.sections.map((section: any, index: number) => {
-        const sectionContent =
-          this.activeSections[section.uid]
+    return html`
+      <div class="field" id=${this.field.uid}>
+        ${this.adapter.templateData.sections.map((section: any, index: number) => {
+          const sectionContent = this.activeSections[section.uid]
             ? html`<section class="field" role="region">
-              <ff-field .field=${this.getChild(section.uid)}></ff-field>
-            </section>`
+                <ff-field .field=${this.getChild(section.uid)}></ff-field>
+              </section>`
             : nothing;
 
-        return html`<div class="ff-accordion-section">
-          <button
-            type="button"
-            tabindex=${index}
-            class=${{
-              active: this.activeSections[section.uid],
-            }}
-            aria-expanded=${this.activeSections[section.uid]}
-            @click=${() => this.onClickButton(section.uid)}
-          >
-            ${section.label}<span class="ff-accordion-icon"></span>
-          </button>
+          return html`<div class="ff-accordion-section">
+            <button
+              type="button"
+              tabindex=${index}
+              class=${{
+                active: this.activeSections[section.uid],
+              }}
+              aria-expanded=${this.activeSections[section.uid]}
+              @click=${() => this.onClickButton(section.uid)}
+            >
+              ${section.label}<span class="ff-accordion-icon"></span>
+            </button>
 
-          ${sectionContent}
-        </div>`;
-      })}
-    </div> `;
+            ${sectionContent}
+          </div>`;
+        })}
+      </div>
+    `;
   }
 
   override disconnectedCallback() {

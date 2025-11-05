@@ -35,7 +35,7 @@ export class TabsElement extends LitElement implements Core.WithField {
     this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
   }
 
@@ -52,28 +52,27 @@ export class TabsElement extends LitElement implements Core.WithField {
     );
 
     return html`<nav class="field horizontal" role="tablist" id=${this.field.uid}>
-      ${this.adapter.templateData.tabs.map(
-        (tab: any, index: number) => html`
-          <a
-            role="tab"
-            tabindex=${index}
-            class=${classMap({ active: tab.uid === this.activeTab })}
-            @click=${() => this.onClickTab(tab.uid)}
-            @keydown=${() => this.onClickTab(tab.uid)}
-          >
-            ${tab.label}
-          </a>
-        `,
-      )}
-    </nav>
-    <section class="field" role="tabpanel">
-      ${repeat(
-        [activeSection],
-        (section) => section?.uid,
-        (section) => html`<ff-field .field=${section}></ff-field>`
-      )}
-    </section>
-    `;
+        ${this.adapter.templateData.tabs.map(
+          (tab: any, index: number) => html`
+            <a
+              role="tab"
+              tabindex=${index}
+              class=${classMap({ active: tab.uid === this.activeTab })}
+              @click=${() => this.onClickTab(tab.uid)}
+              @keydown=${() => this.onClickTab(tab.uid)}
+            >
+              ${tab.label}
+            </a>
+          `,
+        )}
+      </nav>
+      <section class="field" role="tabpanel">
+        ${repeat(
+          [activeSection],
+          (section) => section?.uid,
+          (section) => html`<ff-field .field=${section}></ff-field>`,
+        )}
+      </section> `;
   }
 
   override disconnectedCallback() {

@@ -31,7 +31,7 @@ export class RepeaterElement extends LitElement implements Core.WithField {
     this.adapter.init(this.field);
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
   }
 
@@ -59,19 +59,24 @@ export class RepeaterElement extends LitElement implements Core.WithField {
           (field) => field['uid'],
           (field, index) => html`
             <div class="card">
-              <ff-repeater-field .repeaterIndex=${index} .field=${this.adapter.templateData.template}></ff-repeater-field>
+              <ff-repeater-field
+                .repeaterIndex=${index}
+                .field=${this.adapter.templateData.template}
+              ></ff-repeater-field>
               <button type="button" class="ff-button" @click=${() => this.removeItem(index)}>
                 ${this.adapter.templateData.removeLabel ?? 'Remove'}
               </button>
             </div>
-          `
+          `,
         )}
 
         <button
           type="button"
           class="ff-button"
           @click=${() => this.addItem()}
-          disabled=${this.adapter.templateData.limit === this.adapter.templateData.value?.length ? true : nothing}
+          disabled=${this.adapter.templateData.limit === this.adapter.templateData.value?.length
+            ? true
+            : nothing}
         >
           ${this.adapter.templateData.addLabel ?? 'Add'}
         </button>

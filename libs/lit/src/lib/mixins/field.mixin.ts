@@ -3,7 +3,10 @@ import { property } from 'lit/decorators.js';
 import * as Core from '@formforge/core';
 import { consume } from '@lit/context';
 import { formContext, LitFormContext } from '../context/form.context';
-import { RepeaterIndexTokenContext, repeaterIndexTokenContext } from '../context/repeater-index-token.context';
+import {
+  RepeaterIndexTokenContext,
+  repeaterIndexTokenContext,
+} from '../context/repeater-index-token.context';
 
 export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
   class FieldElement extends superClass {

@@ -17,7 +17,7 @@ export class LayoutAdapter<
     // Set initial templateData
     this.setTemplateData({
       ...this.field.props,
-    })
+    });
 
     const fieldFlagsSelector = this.context.store.state$.pipe(Core.selectFieldFlags);
 

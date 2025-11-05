@@ -31,7 +31,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
     this.adapter.init(this.field);
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
   }
 

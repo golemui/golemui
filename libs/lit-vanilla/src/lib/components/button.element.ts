@@ -29,14 +29,19 @@ export class ButtonElement extends LitElement implements Core.WithField {
     this.adapter.init(this.field);
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate())
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
   }
 
   override render() {
     return html`
       <div class="field">
-        <button type="button" id=${this.field.uid} @click=${() => this.adapter.click()} disabled=${this.adapter.templateData.disabled}>
+        <button
+          type="button"
+          id=${this.field.uid}
+          @click=${() => this.adapter.click()}
+          disabled=${this.adapter.templateData.disabled}
+        >
           ${this.adapter.templateData.label}
         </button>
       </div>
