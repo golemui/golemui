@@ -5,3 +5,7 @@ iframe {
 .expressive-code + iframe {
   margin: 0;
 }
+
+code {
+  word-wrap: normal;
+}

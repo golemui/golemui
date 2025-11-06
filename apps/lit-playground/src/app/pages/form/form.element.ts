@@ -5,13 +5,13 @@ import { LitElement, html } from 'lit';
 import * as Core from '@formforge/core';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 import * as Vanilla from '@formforge/lit-vanilla';
-import { users, usersData } from '@formforge/shared-vanilla';
+import { kitchenSink, kitchenSinkData } from '@formforge/shared-vanilla';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
   middlewares = [loggerMiddleware];
-  formDef = users;
-  formData = usersData;
+  formDef = kitchenSink;
+  formData = kitchenSinkData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

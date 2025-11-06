@@ -45,7 +45,7 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   const renderAccordion = useCallback(() => {
     return props.sections.map((section, index) => (
-      <div className="ff-accordion-section" key={`${'accordion-section-' + section.uid}`}>
+      <div className="ff-accordion__section" key={`${'accordion-section-' + section.uid}`}>
         <button
           type="button"
           tabIndex={index}
@@ -54,7 +54,7 @@ export function Accordion(fieldInstance: Core.WithField) {
           onClick={() => onClickButton(section.uid)}
         >
           {section.label}
-          <span className="ff-accordion-icon"></span>
+          <span className="ff-accordion__icon"></span>
         </button>
 
         {renderContent(section.uid)}

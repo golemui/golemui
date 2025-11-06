@@ -6,7 +6,7 @@
       row-gap: 0;
     }
 
-    .ff-accordion-section {
+    .ff-accordion__section {
       display: flex;
       flex-direction: column;
 
@@ -15,7 +15,7 @@
       }
     }
 
-    .ff-accordion-icon {
+    .ff-accordion__icon {
       border: solid currentcolor;
       border-width: 0 2px 2px 0;
       height: 0.5rem;
@@ -44,7 +44,7 @@
         border-bottom-color: var(--ff-color-bg);
       }
 
-      &[aria-expanded='true'] .ff-accordion-icon {
+      &[aria-expanded='true'] .ff-accordion__icon {
         transform: translateY(-50%) rotate(-135deg);
       }
     }

@@ -3,7 +3,7 @@
 <label [for]="field.uid">
   {{ templateData.label + (templateData.required ? ' *' : '') }}
   @if (templateData.hint) {
-    <div class="ff-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
+    <div class="ff-textinput__hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
   }
 </label>
 <div class="field">
@@ -11,8 +11,8 @@
     type="text"
     [id]="field.uid"
     [class]="{
-      '--ff-icon': templateData.icon,
-      '--ff-icon-right': templateData.iconPosition === 'right',
+      'ff-textinput--icon': templateData.icon,
+      'ff-textinput--icon-right': templateData.iconPosition === 'right',
     }"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"
@@ -25,8 +25,8 @@
 
   @if (templateData.icon) {
     <span
-      class="ff-icon"
-      [class]="{ 'ff-icon--right': templateData.iconPosition === 'right' }"
+      class="ff-textinput__icon"
+      [class]="{ 'ff-textinput__icon-right': templateData.iconPosition === 'right' }"
     ></span>
   }
 </div>

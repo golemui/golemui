@@ -5,7 +5,7 @@ import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { selects, selectsData } from '@formforge/shared-vanilla';
+import { kitchenSink, kitchenSinkData } from '@formforge/shared-vanilla';
 
 @Component({
   imports: [CommonModule, Angular.FormComponent],
@@ -16,8 +16,8 @@ import { selects, selectsData } from '@formforge/shared-vanilla';
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [loggerMiddleware];
-  protected formDef = selects;
-  protected formData = selectsData;
+  protected formDef = kitchenSink;
+  protected formData = kitchenSinkData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
