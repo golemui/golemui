@@ -4,7 +4,6 @@ import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@formforge/lit';
 import { AccordionProps } from '@formforge/shared-vanilla';
-import { repeat } from 'lit-html/directives/repeat.js';
 import { Subscription } from 'rxjs';
 
 @customElement('ff-accordion')
@@ -68,7 +67,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
               </section>`
             : nothing;
 
-          return html`<div class="ff-accordion-section">
+          return html`<div class="ff-accordion__section">
             <button
               type="button"
               tabindex=${index}
@@ -78,7 +77,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
               aria-expanded=${this.activeSections[section.uid]}
               @click=${() => this.onClickButton(section.uid)}
             >
-              ${section.label}<span class="ff-accordion-icon"></span>
+              ${section.label}<span class="ff-accordion__icon"></span>
             </button>
 
             ${sectionContent}

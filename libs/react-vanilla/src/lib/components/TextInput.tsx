@@ -26,7 +26,7 @@ export function TextInput(fieldInstance: Core.WithField) {
       <label htmlFor={uid}>
         {label + (isRequired ? ' *' : '')}
         {hint && (
-          <div className="ff-hint" id={`${uid}_hint`}>
+          <div className="ff-textinput__hint" id={`${uid}_hint`}>
             {hint}
           </div>
         )}
@@ -35,7 +35,7 @@ export function TextInput(fieldInstance: Core.WithField) {
         <input
           type="text"
           id={uid}
-          className={`${icon ? '--ff-icon' : ''} ${iconPosition === 'right' ? '--ff-icon-right' : ''}`}
+          className={`${icon ? 'ff-textinput--icon' : ''} ${iconPosition === 'right' ? 'ff-textinput--icon-right' : ''}`}
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}
@@ -46,7 +46,7 @@ export function TextInput(fieldInstance: Core.WithField) {
         />
         {icon && (
           <span
-            className={`${icon} ff-icon ${iconPosition === 'right' ? 'ff-icon--right' : ''}`}
+            className={`${icon} ff-textinput__icon ${iconPosition === 'right' ? 'ff-textinput__icon--right' : ''}`}
           ></span>
         )}
       </div>

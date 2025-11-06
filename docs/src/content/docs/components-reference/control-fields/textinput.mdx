@@ -1,0 +1,97 @@
+---
+title: Textinput Component
+description: A Textinput component to allow user to enter string chains
+---
+
+import { Code } from '@astrojs/starlight/components';
+import textinputJson from '../../../../../public/docs-template/components/textinput/textinput.json?raw';
+import textinputPlaceholderJson from '../../../../../public/docs-template/components/textinput/textinput-placeholder.json?raw';
+import textinputHintJson from '../../../../../public/docs-template/components/textinput/textinput-hint.json?raw';
+import textinputIconJson from '../../../../../public/docs-template/components/textinput/textinput-icon.json?raw';
+import textinputAnatomyHtml from '../../../../../public/docs-template/components/textinput/textinput-anatomy.html?raw';
+export const configJson = 'textinput.json';
+export const anatomy = 'textinput.html';
+
+Textinput components are [Control Fields](/components-reference/control-fields/overview) that allow the user to enter string chains.
+
+<Code code={textinputJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/textinput/textinput.json"
+  title="Textinput example"
+  width="100%"
+></iframe>
+
+## Props
+
+Use this `props` to customize your Textinput component.
+
+| prop           | type   | value                                                          |
+| -------------- | ------ | -------------------------------------------------------------- |
+| `placeholder`  | string | A placeholder text to display when the text input has no value |
+| `hint`         | string | A description to display below the text input                  |
+| `icon`         | string | A css class to display an icon                                 |
+| `iconPosition` | string | The icon position, possible values are `right` or `left`       |
+
+### Placeholder
+
+Use the property `placeholder` to add a placeholder.
+
+<Code code={textinputPlaceholderJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/textinput/textinput-placeholder.json"
+  title="Textinput with placeholder"
+  width="100%"
+></iframe>
+
+### Hint
+
+Use the property `hint` to add a description.
+
+<Code code={textinputHintJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/textinput/textinput-hint.json"
+  title="Textinput with hint"
+  width="100%"
+  style="height: 161px"
+></iframe>
+
+### Icon
+
+Use the property `icon` to add an icon to the `textinput`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed on the `left` by default, you can set the property `iconPosition` to `right` if you want the icon to be right aligned.
+
+<Code code={textinputIconJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/textinput/textinput-icon.json"
+  title="Textinput with icon"
+  width="100%"
+  style="height: 208px"
+></iframe>
+
+## Styling
+
+Textinputs can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable               | Description                             |
+| -------------------------- | --------------------------------------- |
+| `--ff-space-gap--inner`    | Label gap and margin bottom             |
+| `--ff-padding`             | Input padding                           |
+| `--ff-color-border`        | Input border color                      |
+| `--ff-radius`              | Input radius                            |
+| `--ff-color-bg`            | Input background color                  |
+| `--ff-color-fg`            | Input text color                        |
+| `--ff-color-primary`       | Input border color and outline on focus |
+| `--ff-color-error`         | Input border color when invalid         |
+| `--ff-space-gap`           | Icon left padding                       |
+| `--ff-icon-space-gap`      | Icon right padding                      |
+| `--ff-font-size--small`    | Hint font size                          |
+| `--ff-color-fg--secondary` | Hint font color                         |
+
+### Anatomy
+
+This is the anatomy of the Textinput Component in case you want to use your CSS styles.
+
+<Code code={textinputAnatomyHtml} lang="html" title={anatomy} />

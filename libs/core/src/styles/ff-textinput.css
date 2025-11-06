@@ -30,22 +30,21 @@
         border-color: var(--ff-color-error);
       }
 
-      &.--ff-icon {
+      .ff-textinput--icon {
         padding-left: 2.5rem;
       }
-
-      &.--ff-icon-right {
+      .ff-textinput--icon-right {
         padding-left: var(--ff-space-gap);
         padding-right: var(--ff-icon-space-gap);
       }
     }
 
-    .ff-hint {
+    .ff-textinput__hint {
       font-size: var(--ff-font-size--small);
       color: var(--ff-color-fg--secondary);
     }
 
-    .ff-icon {
+    .ff-textinput__icon {
       position: absolute;
       width: 40px;
       height: 40px;
@@ -55,7 +54,7 @@
       align-items: center;
     }
 
-    .ff-icon--right {
+    .ff-textinput__icon--right {
       right: 0;
     }
   }
