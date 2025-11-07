@@ -14,7 +14,7 @@ export class AlertElement extends LitElement implements Core.WithField {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.fieldContext })
+  @provide({ context: Lit.displayFieldContext })
   adapter = new Lit.DisplayFieldAdapter<AlertProps>();
 
   subscriptions: Subscription[] = [];
