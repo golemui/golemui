@@ -35,7 +35,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="field">
+      <div class="ff-field">
         <button
           type="button"
           id=${this.field.uid}

@@ -2,7 +2,7 @@
   .ff-accordion {
     margin: var(--ff-space-gap) 0;
 
-    > .field {
+    > .ff-field {
       row-gap: 0;
     }
 

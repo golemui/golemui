@@ -4,14 +4,14 @@
     flex-direction: column;
     margin: var(--ff-space-gap) 0;
 
-    .field {
+    .ff-field {
       position: relative;
       display: flex;
       flex-direction: column;
       column-gap: var(--ff-space-gap--inner);
       row-gap: var(--ff-space-gap--inner);
 
-      .horizontal {
+      &.ff-field--horizontal {
         flex-direction: row;
       }
     }

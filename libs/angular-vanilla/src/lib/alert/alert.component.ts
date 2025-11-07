@@ -7,7 +7,7 @@ import { AlertProps } from '@formforge/shared-vanilla';
 @Component({
   standalone: true,
   selector: 'ff-alert',
-  imports: [CommonModule, Angular.FieldDirective],
+  imports: [CommonModule],
   providers: [Angular.FieldAdapter],
   templateUrl: './alert.component.html',
   styleUrls: ['../styles.scss', './alert.component.scss'],

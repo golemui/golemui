@@ -1,0 +1,21 @@
+---
+title: Overview
+description: A plain field to display information
+sidebar:
+  order: 0
+---
+
+Fields are components used to display information in several ways to users. An alert or a custom header are examples of Fields.
+
+Fields are defined by setting the `kind` property as `field`.
+
+## Main Properties
+
+Use these properties to customize your Fields.
+
+| property | type   | value                                                                                                                      |
+| -------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `uid`    | string | A unique id, if none provided, one will be generated automatically                                                         |
+| `kind`   | string | **MANDATORY** All Fields are type `field`                                                                        |
+| `widget` | string | **MANDATORY** The Field widget that you want to use (for example: `alert`)                                     |
+| `props`  | object | An object with custom properties defined by each Field, check the documentation of each Field to know more |
