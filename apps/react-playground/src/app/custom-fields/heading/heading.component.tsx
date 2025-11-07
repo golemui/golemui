@@ -13,7 +13,7 @@ export function HeadingComponent(fieldInstance: Core.WithField) {
   const { uid, props } = useDisplay<OwnWidgetProps>(field);
 
   return (
-    <div className="field" id={uid}>
+    <div className="ff-field" id={uid}>
       <DynamicHeading level={props.level || 1}>{props.text}</DynamicHeading>
     </div>
   );
