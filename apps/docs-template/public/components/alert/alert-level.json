@@ -6,7 +6,7 @@
     "children": [
       {
         "uid": "",
-        "kind": "field",
+        "kind": "display",
         "widget": "alert",
         "props": {
           "text": "Default level",
@@ -15,7 +15,7 @@
       },
       {
         "uid": "",
-        "kind": "field",
+        "kind": "display",
         "widget": "alert",
         "props": {
           "text": "Info level",
@@ -24,7 +24,7 @@
       },
       {
         "uid": "",
-        "kind": "field",
+        "kind": "display",
         "widget": "alert",
         "props": {
           "text": "Success level",
@@ -33,7 +33,7 @@
       },
       {
         "uid": "",
-        "kind": "field",
+        "kind": "display",
         "widget": "alert",
         "props": {
           "text": "Warning level",
@@ -42,7 +42,7 @@
       },
       {
         "uid": "",
-        "kind": "field",
+        "kind": "display",
         "widget": "alert",
         "props": {
           "text": "Error level",

@@ -6,7 +6,7 @@
     "children": [
       {
         "uid": "",
-        "kind": "field",
+        "kind": "display",
         "widget": "alert",
         "props": {
           "text": "Some fields need your attention"
