@@ -36,8 +36,11 @@ export class AlertElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="field" id=${this.field.uid}>
-        <div class="ff-alert-notification ${this.adapter.templateData.level || 'default'}">
+      <div class="ff-field" id=${this.field.uid}>
+        <div
+          class="ff-alert-notification ff-alert-notification--${this.adapter.templateData.level ||
+          'default'}"
+        >
           ${this.adapter.templateData.text}
         </div>
       </div>

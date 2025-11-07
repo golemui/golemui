@@ -42,7 +42,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
         ${this.adapter.templateData.label + (this.adapter.templateData.required ? ' *' : '')}
       </label>
 
-      <div class="field">
+      <div class="ff-field">
         <input
           type="checkbox"
           id=${this.field.uid}

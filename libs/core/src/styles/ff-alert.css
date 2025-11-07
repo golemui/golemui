@@ -11,37 +11,37 @@
       margin: 8px 0;
 
       /* Default level */
-      &.default {
+      &.ff-alert-notification--default {
         background-color: #f8f9fa;
-        border-color: #adb5bd; /* Darker gray for better contrast */
+        border-color: #adb5bd;
         color: #495057;
       }
 
       /* Info level */
-      &.info {
+      &.ff-alert-notification--info {
         background-color: #d1ecf1;
-        border-color: #7ed4e8; /* Darker, more saturated blue */
+        border-color: #7ed4e8;
         color: #0c5460;
       }
 
       /* Success level */
-      &.success {
+      &.ff-alert-notification--success {
         background-color: #d4edda;
-        border-color: #28a745; /* Much darker green */
+        border-color: #28a745;
         color: #155724;
       }
 
       /* Warning level */
-      &.warning {
+      &.ff-alert-notification--warning {
         background-color: #fff3cd;
-        border-color: #ffc107; /* Darker, more vibrant yellow */
+        border-color: #ffc107;
         color: #856404;
       }
 
       /* Error level */
-      &.error {
+      &.ff-alert-notification--error {
         background-color: #f8d7da;
-        border-color: #dc3545; /* Much darker red */
+        border-color: #dc3545;
         color: #721c24;
       }
     }

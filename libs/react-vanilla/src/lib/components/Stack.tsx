@@ -14,10 +14,10 @@ export function Stack(fieldInstance: Core.WithField) {
     ));
   }, [children, formContext]);
 
-  const direction = props.direction || 'vertical';
+  const direction = props.direction === 'horizontal' ? 'ff-field--horizontal' : '';
   return (
     <div className="ff-stack">
-      <div className={`field ${direction}`} id={uid}>
+      <div className={`ff-field ${direction}`} id={uid}>
         {renderFields()}
       </div>
     </div>

@@ -72,7 +72,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
         ${hint}
       </label>
 
-      <div class="field">
+      <div class="ff-field">
         <input
           type="text"
           id=${this.field.uid}

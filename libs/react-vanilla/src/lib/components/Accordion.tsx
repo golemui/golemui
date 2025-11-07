@@ -35,7 +35,7 @@ export function Accordion(fieldInstance: Core.WithField) {
       const isActiveSection = activeSections[uid];
 
       return isActiveSection && child ? (
-        <section className="field" role="region">
+        <section className="ff-field" role="region">
           <FieldRenderer field={child} formContext={formContext} />
         </section>
       ) : null;
@@ -64,7 +64,7 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   return (
     <div className="ff-accordion">
-      <div className="field" id={uid}>
+      <div className="ff-field" id={uid}>
         {renderAccordion()}
       </div>
     </div>

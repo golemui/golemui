@@ -1,6 +1,6 @@
 .ff-form {
   .ff-stack {
-    .field {
+    .ff-field {
       .horizontal {
         margin-bottom: -1px;
         z-index: 1;

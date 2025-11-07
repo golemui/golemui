@@ -8,8 +8,10 @@ export function Alert(fieldInstance: Core.WithField) {
 
   return (
     <div className="ff-alert">
-      <div className="field" id={uid}>
-        <div className={`ff-alert-notification ${props.level || 'default'}`}>{props.text}</div>
+      <div className="ff-field" id={uid}>
+        <div className={`ff-alert-notification ff-alert-notification--${props.level || 'default'}`}>
+          {props.text}
+        </div>
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           </div>
         )}
       </label>
-      <div className="field">
+      <div className="ff-field">
         <input
           type="text"
           id={uid}

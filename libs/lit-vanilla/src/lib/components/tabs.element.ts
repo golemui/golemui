@@ -51,7 +51,7 @@ export class TabsElement extends LitElement implements Core.WithField {
       (section: any) => section.uid === this.activeTab,
     );
 
-    return html`<nav class="field horizontal" role="tablist" id=${this.field.uid}>
+    return html`<nav class="ff-field ff-field--horizontal" role="tablist" id=${this.field.uid}>
         ${this.adapter.templateData.tabs.map(
           (tab: any, index: number) => html`
             <a
@@ -66,7 +66,7 @@ export class TabsElement extends LitElement implements Core.WithField {
           `,
         )}
       </nav>
-      <section class="field" role="tabpanel">
+      <section class="ff-field" role="tabpanel">
         ${repeat(
           [activeSection],
           (section) => section?.uid,

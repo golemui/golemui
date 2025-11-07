@@ -15,7 +15,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
 
   return (
     <div className="ff-checkbox">
-      <div className="field horizontal">
+      <div className="ff-field ff-field--horizontal">
         {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
         <input
           type="checkbox"

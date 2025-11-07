@@ -59,10 +59,10 @@ export class AccordionElement extends LitElement implements Core.WithField {
     if (!this.adapter.templateData) return html``;
 
     return html`
-      <div class="field" id=${this.field.uid}>
+      <div class="ff-field" id=${this.field.uid}>
         ${this.adapter.templateData.sections.map((section: any, index: number) => {
           const sectionContent = this.activeSections[section.uid]
-            ? html`<section class="field" role="region">
+            ? html`<section class="ff-field" role="region">
                 <ff-field .field=${this.getChild(section.uid)}></ff-field>
               </section>`
             : nothing;
