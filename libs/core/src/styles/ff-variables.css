@@ -5,7 +5,27 @@
   --ff-color-fg--secondary: #646464;
   --ff-color-border: #d0d0d0;
   --ff-color-primary: #007acc;
+
+  --ff-color-default--light: #f8f9fa;
+  --ff-color-default: #adb5bd;
+  --ff-color-default--dark: #495057;
+
+  --ff-color-info--light: #d1ecf1;
+  --ff-color-info: #7ed4e8;
+  --ff-color-info--dark: #0c5460;
+
+  --ff-color-success--light: #d4edda;
+  --ff-color-success: #28a745;
+  --ff-color-success--dark: #155724;
+
+  --ff-color-warning--light: #fff3cd;
+  --ff-color-warning: #ffc107;
+  --ff-color-warning--dark: #856404;
+
+  --ff-color-error--light: #f8d7da;
   --ff-color-error: #d32f2f;
+  --ff-color-error--dark: #721c24;
+
 
   /* Typography & layout */
   --ff-space-gap: 0.75rem;

@@ -12,37 +12,37 @@
 
       /* Default level */
       &.ff-alert-notification--default {
-        background-color: #f8f9fa;
-        border-color: #adb5bd;
-        color: #495057;
+        background-color: var(--ff-color-default--light);
+        border-color: var(--ff-color-default);
+        color: var(--ff-color-default--dark);
       }
 
       /* Info level */
       &.ff-alert-notification--info {
-        background-color: #d1ecf1;
-        border-color: #7ed4e8;
-        color: #0c5460;
+        background-color: var(--ff-color-info--light);
+        border-color: var(--ff-color-info);
+        color: var(--ff-color-info--dark);
       }
 
       /* Success level */
       &.ff-alert-notification--success {
-        background-color: #d4edda;
-        border-color: #28a745;
-        color: #155724;
+        background-color: var(--ff-color-success--light);
+        border-color: var(--ff-color-success);
+        color: var(--ff-color-success--dark);
       }
 
       /* Warning level */
       &.ff-alert-notification--warning {
-        background-color: #fff3cd;
-        border-color: #ffc107;
-        color: #856404;
+        background-color: var(--ff-color-warning--light);
+        border-color: var(--ff-color-warning);
+        color: var(--ff-color-warning--dark);
       }
 
       /* Error level */
       &.ff-alert-notification--error {
-        background-color: #f8d7da;
-        border-color: #dc3545;
-        color: #721c24;
+        background-color: var(--ff-color-error--light);
+        border-color: var(--ff-color-error);
+        color: var(--ff-color-error--dark);
       }
     }
   }
