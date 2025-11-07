@@ -1,4 +1,4 @@
 export * from './useButton';
 export * from './useControl';
-export * from './useField';
+export * from './useDisplay';
 export * from './useLayout';

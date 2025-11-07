@@ -11,6 +11,15 @@ export const kitchenSink = defineForm({
     children: [
       {
         uid: '',
+        kind: 'field',
+        widget: 'heading',
+        props: {
+          text: 'KITCHEN SINK',
+          level: 3,
+        },
+      },
+      {
+        uid: '',
         kind: 'layout',
         widget: 'tabs',
         props: {
