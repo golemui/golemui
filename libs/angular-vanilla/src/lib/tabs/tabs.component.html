@@ -16,7 +16,7 @@
 
 @for (child of templateData.children; track child.uid) {
   @if (child.uid === activeTab) {
-    <section class="field" role="tabpanel">
+    <section role="tabpanel">
       <ng-container ffField [field]="child" />
     </section>
   }

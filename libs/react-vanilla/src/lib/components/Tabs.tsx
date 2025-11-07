@@ -34,9 +34,7 @@ export function Tabs(fieldInstance: Core.WithField) {
       <nav className={`ff-field ff-field--horizontal`} role="tablist" id={uid}>
         {renderTabs()}
       </nav>
-      <section className="ff-field" role="tabpanel">
-        {renderFields()}
-      </section>
+      <section role="tabpanel">{renderFields()}</section>
     </div>
   );
 }

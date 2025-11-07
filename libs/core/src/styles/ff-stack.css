@@ -11,7 +11,7 @@
       column-gap: var(--ff-space-gap--inner);
       row-gap: var(--ff-space-gap--inner);
 
-      &--horizontal {
+      &.ff-field--horizontal {
         flex-direction: row;
       }
     }

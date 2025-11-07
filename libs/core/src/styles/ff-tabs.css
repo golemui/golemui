@@ -1,13 +1,4 @@
 .ff-form {
-  .ff-stack {
-    .ff-field {
-      .horizontal {
-        margin-bottom: -1px;
-        z-index: 1;
-      }
-    }
-  }
-
   .ff-tabs {
     margin: var(--ff-space-gap) 0;
 

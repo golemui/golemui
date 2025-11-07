@@ -66,7 +66,7 @@ export class TabsElement extends LitElement implements Core.WithField {
           `,
         )}
       </nav>
-      <section class="ff-field" role="tabpanel">
+      <section role="tabpanel">
         ${repeat(
           [activeSection],
           (section) => section?.uid,
