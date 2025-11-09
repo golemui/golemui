@@ -3,6 +3,7 @@ import { customElement } from 'lit/decorators.js';
 import * as Lit from '@formforge/lit';
 import * as Core from '@formforge/core';
 import { consume, provide } from '@lit/context';
+import './heading.element.scss';
 
 type OwnWidgetProps = {
   text: string;
@@ -19,6 +20,10 @@ export class HeadingElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.displayFieldContext })
   adapter: Lit.DisplayFieldAdapter<OwnWidgetProps> = new Lit.DisplayFieldAdapter();
 
+  override createRenderRoot() {
+    return this;
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this.adapter.context = this.formContext;
@@ -27,21 +32,30 @@ export class HeadingElement extends LitElement implements Core.WithField {
 
   override render() {
     super.render();
+    let heading;
     switch (this.adapter.templateData.level) {
       case 6:
-        return html`<h6>${this.adapter.templateData.text}</h6>`;
+        heading = html`<h6 class="heading">${this.adapter.templateData.text}</h6>`;
+        break;
       case 5:
-        return html`<h5>${this.adapter.templateData.text}</h5>`;
+        heading = html`<h5 class="heading">${this.adapter.templateData.text}</h5>`;
+        break;
       case 4:
-        return html`<h4>${this.adapter.templateData.text}</h4>`;
+        heading = html`<h4 class="heading">${this.adapter.templateData.text}</h4>`;
+        break;
       case 3:
-        return html`<h3>${this.adapter.templateData.text}</h3>`;
+        heading = html`<h3 class="heading">${this.adapter.templateData.text}</h3>`;
+        break;
       case 2:
-        return html`<h2>${this.adapter.templateData.text}</h2>`;
+        heading = html`<h2 class="heading">${this.adapter.templateData.text}</h2>`;
+        break;
       case 1:
       default:
-        return html`<h1>${this.adapter.templateData.text}</h1>`;
+        heading = html`<h1 class="heading">${this.adapter.templateData.text}</h1>`;
+        break;
     }
+
+    return html`<div class="ff-field">${heading}</div>`;
   }
 
   disconnectedCallback() {

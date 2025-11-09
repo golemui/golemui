@@ -3,17 +3,17 @@
     display: flex;
     flex-direction: column;
     margin: var(--ff-space-gap) 0;
+  }
 
-    .ff-field {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      column-gap: var(--ff-space-gap--inner);
-      row-gap: var(--ff-space-gap--inner);
+  .ff-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    column-gap: var(--ff-space-gap--inner);
+    row-gap: var(--ff-space-gap--inner);
 
-      &.ff-field--horizontal {
-        flex-direction: row;
-      }
+    &.ff-field--horizontal {
+      flex-direction: row;
     }
   }
 }

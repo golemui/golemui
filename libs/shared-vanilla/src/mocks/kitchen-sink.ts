@@ -23,7 +23,7 @@ export const kitchenSink = defineForm({
         kind: 'layout',
         widget: 'tabs',
         props: {
-          defaultOpen: 'tab3',
+          defaultOpen: 'tab4',
           tabs: [
             { label: 'Alert Component', uid: 'tab1' },
             { label: 'Stack Layout', uid: 'tab2' },
@@ -114,6 +114,9 @@ export const kitchenSink = defineForm({
                 widget: 'checkbox',
                 label: 'Create new account?',
                 path: 'isNewUser',
+                props: {
+                  checkboxPosition: 'left',
+                },
               },
             ],
           },
