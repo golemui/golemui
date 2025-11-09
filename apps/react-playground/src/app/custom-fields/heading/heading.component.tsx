@@ -1,5 +1,5 @@
 import * as Core from '@formforge/core';
-import { useField } from '@formforge/react';
+import { useDisplay } from '@formforge/react';
 import { createElement, PropsWithChildren } from 'react';
 import styles from './heading.component.module.scss';
 
@@ -9,11 +9,11 @@ type OwnWidgetProps = {
 };
 
 export function HeadingComponent(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.Field;
-  const { uid, props } = useField<OwnWidgetProps>(field);
+  const field = fieldInstance.field as Core.DisplayField;
+  const { uid, props } = useDisplay<OwnWidgetProps>(field);
 
   return (
-    <div className="field" id={uid}>
+    <div className="ff-field" id={uid}>
       <DynamicHeading level={props.level || 1}>{props.text}</DynamicHeading>
     </div>
   );

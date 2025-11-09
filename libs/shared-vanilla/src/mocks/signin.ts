@@ -18,7 +18,7 @@ export const signin = defineForm({
     children: [
       {
         uid: '',
-        kind: 'field',
+        kind: 'display',
         widget: 'heading',
         props: {
           text: 'Login',
@@ -111,7 +111,7 @@ export const signin = defineForm({
       },
       {
         uid: '',
-        kind: 'field',
+        kind: 'display',
         widget: 'alert',
         props: {
           text: 'Some fields need your attention',

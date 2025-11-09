@@ -1,4 +1,4 @@
-import { FormField } from '../Field';
+import { FormField } from '../DisplayField';
 
 type Registry<ComponentType> = Record<FormField['widget'], ComponentType>;
 export type FieldLoaders<ComponentType> = Record<FormField['widget'], () => Promise<ComponentType>>;

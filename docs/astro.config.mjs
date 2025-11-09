@@ -24,8 +24,8 @@ export default defineConfig({
           items: [
             // Each item here is one entry in the navigation menu.
             {
-              label: 'Fields',
-              autogenerate: { directory: 'components-reference/fields' },
+              label: 'Display Fields',
+              autogenerate: { directory: 'components-reference/display-fields' },
             },
             {
               label: 'Control Fields',

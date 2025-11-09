@@ -12,14 +12,16 @@ type OwnWidgetProps = {
   standalone: true,
   selector: 'app-heading',
   imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.FieldAdapter],
+  providers: [Angular.DisplayFieldAdapter],
   templateUrl: './heading.component.html',
   styleUrls: ['./heading.component.scss'],
 })
 export class HeadingComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.Field;
+  field!: Core.DisplayField;
 
-  protected adapter: Angular.FieldAdapter<OwnWidgetProps> = inject(Angular.FieldAdapter);
+  protected adapter: Angular.DisplayFieldAdapter<OwnWidgetProps> = inject(
+    Angular.DisplayFieldAdapter,
+  );
 
   ngOnInit(): void {
     this.adapter.init(this.field);

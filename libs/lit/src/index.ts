@@ -1,5 +1,5 @@
 export * from './lib/adapters/base.adapter';
-export * from './lib/adapters/field.adapter';
+export * from './lib/adapters/display.adapter';
 export * from './lib/adapters/layout.adapter';
 export * from './lib/adapters/control.adapter';
 export * from './lib/adapters/button.adapter';

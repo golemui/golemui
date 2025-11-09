@@ -8,14 +8,14 @@ import { Subscription } from 'rxjs';
 
 @customElement('ff-alert')
 export class AlertElement extends LitElement implements Core.WithField {
-  field!: Core.Field;
+  field!: Core.DisplayField;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.fieldContext })
-  adapter = new Lit.FieldAdapter<AlertProps>();
+  @provide({ context: Lit.displayFieldContext })
+  adapter = new Lit.DisplayFieldAdapter<AlertProps>();
 
   subscriptions: Subscription[] = [];
 

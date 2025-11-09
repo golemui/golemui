@@ -31,7 +31,7 @@ export function Repeater(fieldInstance: Core.WithField) {
   const renderFields = useCallback(() => {
     return value?.map((_, index) => {
       return (
-        <RepeaterIndexContext.Provider value={index}>
+        <RepeaterIndexContext.Provider value={index} key={`${uid}-${index}`}>
           <div className={'card'}>
             <FieldRenderer
               key={`${uid}-${index}`}

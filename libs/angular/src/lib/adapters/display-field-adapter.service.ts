@@ -3,10 +3,12 @@ import * as Core from '@formforge/core';
 import { BaseAdapter } from './base.adapter';
 
 @Injectable()
-export class FieldAdapter<ExtraProps extends Record<string, any>> extends BaseAdapter<Core.Field> {
+export class DisplayFieldAdapter<
+  ExtraProps extends Record<string, any>,
+> extends BaseAdapter<Core.DisplayField> {
   templateData = signal<ExtraProps>({} as ExtraProps);
 
-  init(field: Core.Field) {
+  init(field: Core.DisplayField) {
     this.field = field;
 
     // Set initial templateData

@@ -1,10 +1,10 @@
 import * as Core from '@formforge/core';
-import { useField } from '@formforge/react';
+import { useDisplay } from '@formforge/react';
 import { AlertProps } from '@formforge/shared-vanilla';
 
 export function Alert(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.Field;
-  const { uid, props } = useField<AlertProps>(field);
+  const field = fieldInstance.field as Core.DisplayField;
+  const { uid, props } = useDisplay<AlertProps>(field);
 
   return (
     <div className="ff-alert">
