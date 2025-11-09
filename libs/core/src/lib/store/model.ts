@@ -4,7 +4,7 @@ import { Uid } from '../shared';
 
 export type FormStoreError =
   | { kind: 'none' }
-  | { kind: 'fatal'; error: string }
+  | { kind: 'fatal'; error: string | string[] }
   | { kind: 'validation'; errors: string[] };
 
 export type State = {
