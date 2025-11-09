@@ -1,8 +1,8 @@
 // JSON Schema 2020-12 --> GolemUI dynamic form description
 
-import { FormField } from '@formforge/core';
-import { Option, Vanilla } from '@formforge/shared-vanilla';
-import { SchemaToFieldMap } from './json-schema.middleware';
+import { FormField, SchemaToFieldMap } from '@formforge/core';
+import { Vanilla } from '../field.factory';
+import { Option } from '../field.props';
 
 // TODO: this is copied from libs/angular-vanilla/src/lib/select/select.component.ts
 // TODO: refactor all these to avoid duplication

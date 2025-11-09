@@ -1,4 +1,7 @@
-import * as Core from '@formforge/core';
+import { FormField, LayoutField } from '../../DisplayField';
+import { Form } from '../../Form';
+import { Action } from '../../store/actions';
+import { Middleware, State } from '../../store/model';
 import { isJsonSchema, JSONSchemaObject, RefResolver } from './json-schema';
 
 type JsonSchemaTypeMap =
@@ -17,11 +20,19 @@ type JsonSchemaTypeMap =
  */
 export type SchemaToFieldMap = Record<
   JsonSchemaTypeMap,
-  (schema: JSONSchemaObject, ...rest: any[]) => Core.FormField
+  (schema: JSONSchemaObject, ...rest: any[]) => FormField
 >;
 
+/**
+ * Use this middleware to convert a JSON schema into a JSON form.
+ *
+ * @example
+ *  protected middlewares = jsonSchemaMiddleware(vanillaSchemaToFieldMap);
+ * @example
+ *  <ff-form [middlewares]="middlewares" />
+ */
 export const jsonSchemaMiddleware =
-  (schemaToFieldMap: SchemaToFieldMap): Core.Middleware<Core.State, Core.Action> =>
+  (schemaToFieldMap: SchemaToFieldMap): Middleware<State, Action> =>
   (_) =>
   (next) =>
   (action) => {
@@ -42,7 +53,7 @@ export const jsonSchemaMiddleware =
         );
         formDef = {
           form: formDef,
-        } as Core.Form;
+        } as Form;
       }
       next({ ...action, payload: { ...action.payload, formDef } });
     } else {
@@ -55,7 +66,7 @@ function schemaToForm(
   schemaToFieldMap: SchemaToFieldMap,
   resolveRef: RefResolver,
   path: string[] = [],
-): Core.FormField {
+): FormField {
   // TODO: Resolve refs
   if (schema.$ref) {
     const resolved = resolveRef(schema.$ref);
@@ -64,7 +75,7 @@ function schemaToForm(
 
   // oneOf --> tabs XOR
   if (schema.oneOf) {
-    const tabs = schemaToFieldMap.oneOf(schema) as Core.LayoutField;
+    const tabs = schemaToFieldMap.oneOf(schema) as LayoutField;
     return {
       ...tabs,
       props: {},
@@ -74,7 +85,7 @@ function schemaToForm(
 
   // anyOf --> tabs OR
   if (schema.anyOf) {
-    const tabs = schemaToFieldMap.anyOf(schema) as Core.LayoutField;
+    const tabs = schemaToFieldMap.anyOf(schema) as LayoutField;
     return {
       ...tabs,
       props: {},
@@ -86,7 +97,7 @@ function schemaToForm(
   // Object --> always a vertical stack
   //
   if (schema.type === 'object') {
-    const children: Core.FormField[] = [];
+    const children: FormField[] = [];
     if (schema.properties) {
       for (const [key, subschema] of Object.entries(schema.properties)) {
         const childPath = [...path, key];

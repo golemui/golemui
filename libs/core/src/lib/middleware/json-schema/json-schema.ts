@@ -10,6 +10,8 @@ export function isJsonSchema(json: Record<string, any>): json is JSONSchemaObjec
 
 /**
  * JSON Schema Draft 2020-12
+ * @see
+ * https://json-schema.org/draft/2020-12
  */
 export interface JSONSchemaObject {
   // Core vocabulary

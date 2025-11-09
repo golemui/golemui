@@ -1,5 +1,7 @@
 export * from './lib/field.factory';
 export * from './lib/field.props';
+export * from './lib/middleware/json-schema-vanilla';
+
 export * from './mocks/json-schema-test';
 export * from './mocks/kitchen-sink';
 export * from './mocks/selects';

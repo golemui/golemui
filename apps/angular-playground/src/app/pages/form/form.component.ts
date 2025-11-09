@@ -3,10 +3,8 @@ import { Component, inject } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
-import { testingJsonSchema } from '@formforge/shared-vanilla';
+import { testingJsonSchema, vanillaSchemaToFieldMap } from '@formforge/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
-import { vanillaSchemaToFieldMap } from '../../middlewares/json-schema-vanilla';
-import { jsonSchemaMiddleware } from '../../middlewares/json-schema.middleware';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
 @Component({
@@ -17,7 +15,7 @@ import { loggerMiddleware } from '../../middlewares/logger.middleware';
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected middlewares = [jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
+  protected middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
   protected formDef = testingJsonSchema;
   protected formData = {};
   protected vanillaFieldLoaders = {
