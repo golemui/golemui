@@ -7,7 +7,7 @@ export default defineConfig({
   outDir: '../dist/docs',
   integrations: [
     starlight({
-      title: 'My Docs',
+      title: 'GolemUI',
       customCss: ['./src/styles/custom.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
       sidebar: [
@@ -15,12 +15,27 @@ export default defineConfig({
           label: 'Guides',
           items: [
             // Each item here is one entry in the navigation menu.
-            { label: 'Example Guide', slug: 'guides/example' },
+            { label: 'Getting Started', slug: 'guides/getting-started' },
+            { label: 'CSS & Styling', slug: 'guides/styling' },
           ],
         },
         {
           label: 'Components Reference',
-          autogenerate: { directory: 'components-reference' },
+          items: [
+            // Each item here is one entry in the navigation menu.
+            {
+              label: 'Display Fields',
+              autogenerate: { directory: 'components-reference/display-fields' },
+            },
+            {
+              label: 'Control Fields',
+              autogenerate: { directory: 'components-reference/control-fields' },
+            },
+            {
+              label: 'Layout Fields',
+              autogenerate: { directory: 'components-reference/layout-fields' },
+            },
+          ],
         },
       ],
     }),

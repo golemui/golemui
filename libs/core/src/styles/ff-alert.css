@@ -11,38 +11,38 @@
       margin: 8px 0;
 
       /* Default level */
-      &.default {
-        background-color: #f8f9fa;
-        border-color: #adb5bd; /* Darker gray for better contrast */
-        color: #495057;
+      &.ff-alert-notification--default {
+        background-color: var(--ff-color-default--light);
+        border-color: var(--ff-color-default);
+        color: var(--ff-color-default--dark);
       }
 
       /* Info level */
-      &.info {
-        background-color: #d1ecf1;
-        border-color: #7ed4e8; /* Darker, more saturated blue */
-        color: #0c5460;
+      &.ff-alert-notification--info {
+        background-color: var(--ff-color-info--light);
+        border-color: var(--ff-color-info);
+        color: var(--ff-color-info--dark);
       }
 
       /* Success level */
-      &.success {
-        background-color: #d4edda;
-        border-color: #28a745; /* Much darker green */
-        color: #155724;
+      &.ff-alert-notification--success {
+        background-color: var(--ff-color-success--light);
+        border-color: var(--ff-color-success);
+        color: var(--ff-color-success--dark);
       }
 
       /* Warning level */
-      &.warning {
-        background-color: #fff3cd;
-        border-color: #ffc107; /* Darker, more vibrant yellow */
-        color: #856404;
+      &.ff-alert-notification--warning {
+        background-color: var(--ff-color-warning--light);
+        border-color: var(--ff-color-warning);
+        color: var(--ff-color-warning--dark);
       }
 
       /* Error level */
-      &.error {
-        background-color: #f8d7da;
-        border-color: #dc3545; /* Much darker red */
-        color: #721c24;
+      &.ff-alert-notification--error {
+        background-color: var(--ff-color-error--light);
+        border-color: var(--ff-color-error);
+        color: var(--ff-color-error--dark);
       }
     }
   }

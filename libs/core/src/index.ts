@@ -2,7 +2,7 @@
 import type * as justin from './types/subscript__justin';
 type _ = justin;
 
-export * from './lib/Field';
+export * from './lib/DisplayField';
 export * from './lib/Form';
 export * from './lib/FormStore';
 export * from './lib/store/actions';

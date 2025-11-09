@@ -13,15 +13,19 @@ export function Checkbox(fieldInstance: Core.WithField) {
     [onValueChanged, isReadonly],
   );
 
+  const checkboxPosition = field.props?.checkboxPosition;
+
   return (
-    <div className="ff-checkbox">
-      <div className="field horizontal">
-        {label && <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>}
+    <div className={`ff-checkbox ${checkboxPosition === 'left' ? 'ff-checkbox--left' : ''}`}>
+      <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>
+
+      <div className="ff-field ff-field--horizontal">
         <input
           type="checkbox"
           id={uid}
           checked={value ?? false}
           disabled={isDisabled}
+          aria-checked={value ?? false}
           aria-readonly={isReadonly}
           onChange={handleChange}
         />

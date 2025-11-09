@@ -26,7 +26,7 @@ export const tabs = defineForm({
         children: [
           {
             uid: 'tab1',
-            kind: 'field',
+            kind: 'display',
             widget: 'alert',
             props: {
               text: 'Some fields need your attention',

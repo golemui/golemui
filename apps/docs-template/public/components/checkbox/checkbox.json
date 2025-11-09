@@ -1,0 +1,16 @@
+{
+  "form": {
+    "uid": "",
+    "kind": "layout",
+    "widget": "stack",
+    "children": [
+      {
+        "uid": "",
+        "kind": "control",
+        "widget": "checkbox",
+        "path": "createUser",
+        "label": "Create a new user?"
+      }
+    ]
+  }
+}

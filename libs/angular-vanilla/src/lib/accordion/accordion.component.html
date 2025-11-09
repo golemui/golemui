@@ -1,8 +1,8 @@
 @let templateData = adapter.templateData();
 
-<div class="field" [id]="field.uid">
+<div class="ff-field" [id]="field.uid">
   @for (section of templateData.sections; track section.uid) {
-    <div class="ff-accordion-section">
+    <div class="ff-accordion__section">
       <button
         type="button"
         [tabindex]="$index"
@@ -10,11 +10,11 @@
         [class.active]="activeSections[section.uid]"
         (click)="onClickButton(section.uid)"
       >
-        {{ section.label }}<span class="ff-accordion-icon"></span>
+        {{ section.label }}<span class="ff-accordion__icon"></span>
       </button>
 
       @if (activeSections[section.uid]) {
-        <section class="field" role="region">
+        <section class="ff-field" role="region">
           <ng-container ffField [field]="getChild(section.uid)" />
         </section>
       }

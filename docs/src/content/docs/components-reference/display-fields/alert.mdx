@@ -1,0 +1,73 @@
+---
+title: Alert Component
+description: A Textinput component to allow the user to enter string chains
+---
+
+import { Code } from '@astrojs/starlight/components';
+import alertJson from '../../../../../public/docs-template/components/alert/alert.json?raw';
+import alertLevelJson from '../../../../../public/docs-template/components/alert/alert-level.json?raw';
+import alertAnatomyHtml from '../../../../../public/docs-template/components/alert/alert-anatomy.html?raw';
+export const configJson = 'alert.json';
+export const anatomy = 'alert.html';
+
+Alert components are [Display Fields](/components-reference/display-fields/overview) to display contextual feedback messages for user actions or system events.
+
+<Code code={alertJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/alert/alert.json"
+  title="Alert example"
+  width="100%"
+></iframe>
+
+## Props
+
+Use this `props` to customize your Alert component.
+
+| prop    | type   | value                                                                                                                    |
+| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `text`  | string | **MANDATORY** The message to display                                                                                     |
+| `level` | string | Defines the type of alert to display (`success`, `warning`, `error`, `info`), if no level is set, `default` is the level |
+
+### Level
+
+Use the property `level` to determines the tone and appearance of the alert.
+
+<Code code={alertLevelJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/alert/alert-level.json"
+  title="Alert with level"
+  width="100%"
+  style="height: 410px;"
+></iframe>
+
+## Styling
+
+Textinputs can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable                | Description                          |
+| --------------------------- | ------------------------------------ |
+| `--ff-color-default--light` | Background color for `default` level |
+| `--ff-color-default`        | Border color for `default` level     |
+| `--ff-color-default--dark`  | Font color for `default` level       |
+| `--ff-color-info--light`    | Background color for `info` level    |
+| `--ff-color-info`           | Border color for `info` level        |
+| `--ff-color-info--dark`     | Font color for `info` level          |
+| `--ff-color-success--light` | Background color for `success` level |
+| `--ff-color-success`        | Border color for `success` level     |
+| `--ff-color-success--dark`  | Font color for `success` level       |
+| `--ff-color-warning--light` | Background color for `warning` level |
+| `--ff-color-warning`        | Border color for `warning` level     |
+| `--ff-color-warning--dark`  | Font color for `warning` level       |
+| `--ff-color-error--light`   | Background color for `error` level   |
+| `--ff-color-error`          | Border color for `error` level       |
+| `--ff-color-error--dark`    | Font color for `error` level         |
+
+### Anatomy
+
+This is the anatomy of the Alert Component in case you want to use your CSS styles.
+
+<Code code={alertAnatomyHtml} lang="html" title={anatomy} />

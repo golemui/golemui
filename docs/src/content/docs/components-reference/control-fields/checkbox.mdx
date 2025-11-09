@@ -1,0 +1,61 @@
+---
+title: Checkbox Component
+description: A Checkbox component to allow user to enter boolean chains
+---
+
+import { Code } from '@astrojs/starlight/components';
+import checkboxJson from '../../../../../public/docs-template/components/checkbox/checkbox.json?raw';
+import checkboxPositionJson from '../../../../../public/docs-template/components/checkbox/checkbox-position.json?raw';
+import checkboxAnatomyHtml from '../../../../../public/docs-template/components/checkbox/checkbox-anatomy.html?raw';
+export const configJson = 'checkbox.json';
+export const anatomy = 'checkbox.html';
+
+Checkbox components are [Control Fields](/components-reference/control-fields/overview) that allow the user to enter boolean chains.
+
+<Code code={checkboxJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/checkbox/checkbox.json"
+  title="Checkbox example"
+  width="100%"
+  style="height: 102px;"
+></iframe>
+
+## Props
+
+Use this `props` to customize your Checkbox component.
+
+| prop               | type   | value                                                        |
+| ------------------ | ------ | ------------------------------------------------------------ |
+| `checkboxPosition` | string | The checkbox position, possible values are `right` or `left` |
+
+### Checkbox Position
+
+Use the property `checkboxPosition` to add align the checkbox input to `left` or `right`.
+
+<Code code={checkboxPositionJson} lang="js" title={configJson} />
+<iframe
+  src="/docs-template/index.html?form=docs-template/components/checkbox/checkbox-position.json"
+  title="Checkbox aligned to left"
+  width="100%"
+  style="height: 102px;"
+></iframe>
+
+## Styling
+
+Checkboxes can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable           | Description                       |
+| ---------------------- | --------------------------------- |
+| `--ff-color-border`    | Input border color                |
+| `--ff-checkbox-radius` | Checkbox radius                   |
+| `--ff-color-primary`   | Accent color and box shadow color |
+
+### Anatomy
+
+This is the anatomy of the Checkbox Component in case you want to use your CSS styles.
+
+<Code code={checkboxAnatomyHtml} lang="html" title={anatomy} />

@@ -7,8 +7,8 @@ import { AlertProps } from '@formforge/shared-vanilla';
 @Component({
   standalone: true,
   selector: 'ff-alert',
-  imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.FieldAdapter],
+  imports: [CommonModule],
+  providers: [Angular.DisplayFieldAdapter],
   templateUrl: './alert.component.html',
   styleUrls: ['../styles.scss', './alert.component.scss'],
   host: {
@@ -16,9 +16,9 @@ import { AlertProps } from '@formforge/shared-vanilla';
   },
 })
 export class AlertComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.Field;
+  field!: Core.DisplayField;
 
-  protected adapter: Angular.FieldAdapter<AlertProps> = inject(Angular.FieldAdapter);
+  protected adapter: Angular.DisplayFieldAdapter<AlertProps> = inject(Angular.DisplayFieldAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

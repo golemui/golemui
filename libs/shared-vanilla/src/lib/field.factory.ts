@@ -1,4 +1,4 @@
-import { BaseField, ControlField, Field, LayoutField } from '@formforge/core';
+import { BaseField, ControlField, DisplayField, LayoutField } from '@formforge/core';
 import * as Props from './field.props';
 
 type ControlFieldConfig<T> = Omit<ControlField<T>, 'kind' | 'widget' | 'uid' | 'props'>;
@@ -59,9 +59,9 @@ export const Vanilla = {
   }),
 
   // Display fields
-  alert: (config: DisplayFieldConfig, props?: Props.AlertProps): Field => ({
+  alert: (config: DisplayFieldConfig, props?: Props.AlertProps): DisplayField => ({
     uid: '',
-    kind: 'field',
+    kind: 'display',
     widget: 'alert',
     ...(props && { props }),
     ...config,

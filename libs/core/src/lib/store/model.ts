@@ -1,4 +1,4 @@
-import * as Field from '../Field';
+import * as Field from '../DisplayField';
 import * as Form from '../Form';
 import { Uid } from '../shared';
 

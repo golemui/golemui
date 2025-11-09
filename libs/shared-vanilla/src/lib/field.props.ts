@@ -14,10 +14,7 @@ export type TextinputProps = {
 };
 
 export type CheckboxProps = {
-  hint?: string;
-  placeholder?: string;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
+  checkboxPosition?: 'left' | 'right';
 };
 
 export type AlertProps = {

@@ -57,7 +57,7 @@ export type On<StateKeys extends UiState = never> = AllSuffixable<
 >;
 
 export type BaseField<StateKeys extends UiState = never> = {
-  //kind: 'field' | 'button' | 'control' | 'layout';
+  //kind: 'display' | 'button' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
@@ -83,8 +83,8 @@ export type BaseField<StateKeys extends UiState = never> = {
   props?: Record<string, any>;
 };
 
-export type Field<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & { kind: 'field' },
+export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
+  BaseField<StateKeys> & { kind: 'display' },
   never,
   StateKeys
 >;
@@ -119,7 +119,7 @@ export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
     kind: 'layout';
     // TODO: this should be FormField, but types cannot reference themselves. Keep in sync!
     children: (
-      | Field<StateKeys>
+      | DisplayField<StateKeys>
       | ControlField<any, StateKeys>
       | LayoutField<StateKeys>
       | ButtonField<StateKeys>
@@ -131,7 +131,7 @@ export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
 
 // TODO: when updating, update LayoutField['children'] too!
 export type FormField<StateKeys extends UiState = never> =
-  | Field<StateKeys>
+  | DisplayField<StateKeys>
   | ControlField<any, StateKeys>
   | LayoutField<StateKeys>
   | ButtonField<StateKeys>;
@@ -144,7 +144,7 @@ export type FormField<StateKeys extends UiState = never> =
 
 export const isField = <StateKeys extends string>(
   field: FormField<StateKeys>,
-): field is Field<StateKeys> => field.kind === 'field';
+): field is DisplayField<StateKeys> => field.kind === 'display';
 
 export const isButtonField = <StateKeys extends string>(
   field: FormField<StateKeys>,
@@ -200,7 +200,7 @@ const OnSchema = z.looseObject({
 
 // TODO: add types z.ZodMiniType<Field>
 const FieldSchema = z.looseObject({
-  kind: z.literal('field'),
+  kind: z.literal('display'),
   uid: z.pipe(
     z.optional(z.string()),
     z.transform((s) => s || shortUUID()),

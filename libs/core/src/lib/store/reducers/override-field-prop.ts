@@ -1,4 +1,4 @@
-import { isControlField } from '../../Field';
+import { isControlField } from '../../DisplayField';
 import * as Actions from '../actions';
 import { State } from '../model';
 

@@ -8,7 +8,7 @@ export function Button(fieldInstance: Core.WithField) {
 
   return (
     <div className="ff-button">
-      <div className="field">
+      <div className="ff-field">
         <button type="button" id={uid} onClick={onClick} disabled={isDisabled}>
           {label}
         </button>

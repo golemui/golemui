@@ -43,7 +43,10 @@ export class StackElement extends LitElement implements Core.WithField {
     };
 
     return html`
-      <div class=${classes.horizontal ? 'field horizontal' : 'field'} id=${this.field?.uid}>
+      <div
+        class=${classes.horizontal ? 'ff-field ff-field--horizontal' : 'ff-field'}
+        id=${this.field?.uid}
+      >
         ${this.adapter.templateData.children.map(
           (child: any) => html`<ff-field .field=${child}></ff-field>`,
         )}

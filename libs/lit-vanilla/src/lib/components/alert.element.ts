@@ -8,14 +8,14 @@ import { Subscription } from 'rxjs';
 
 @customElement('ff-alert')
 export class AlertElement extends LitElement implements Core.WithField {
-  field!: Core.Field;
+  field!: Core.DisplayField;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.fieldContext })
-  adapter = new Lit.FieldAdapter<AlertProps>();
+  @provide({ context: Lit.displayFieldContext })
+  adapter = new Lit.DisplayFieldAdapter<AlertProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -36,8 +36,11 @@ export class AlertElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="field" id=${this.field.uid}>
-        <div class="ff-alert-notification ${this.adapter.templateData.level || 'default'}">
+      <div class="ff-field" id=${this.field.uid}>
+        <div
+          class="ff-alert-notification ff-alert-notification--${this.adapter.templateData.level ||
+          'default'}"
+        >
           ${this.adapter.templateData.text}
         </div>
       </div>

@@ -5,7 +5,7 @@ import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { TextinputProps } from '@formforge/shared-vanilla';
-import { Subscription, takeUntil } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @customElement('ff-textinput')
 export class TextinputElement extends LitElement implements Core.WithField {
@@ -40,24 +40,25 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     // Hint
     const hint = this.adapter.templateData.hint
-      ? html`<div class="ff-hint" id=${`${this.field.uid}_hint`}>
+      ? html`<div class="ff-textinput__hint" id=${`${this.field.uid}_hint`}>
           ${this.adapter.templateData.hint}
         </div>`
       : html``;
 
     // Icon
     const textinputIcon: { [key: string]: boolean } = {
-      '--ff-icon': false,
-      '--ff-icon-right': false,
+      'ff-textinput--icon': false,
+      'ff-textinput--icon-right': false,
     };
     let icon;
     if (this.adapter.templateData.icon) {
-      textinputIcon['--ff-icon'] = true;
-      textinputIcon['--ff-icon-right'] = this.adapter.templateData.iconPosition === 'right';
+      textinputIcon['ff-textinput--icon'] = true;
+      textinputIcon['ff-textinput--icon-right'] =
+        this.adapter.templateData.iconPosition === 'right';
 
       const classes = {
-        'ff-icon': true,
-        'ff-icon--right': this.adapter.templateData.iconPosition === 'right',
+        'ff-textinput__icon': true,
+        'ff-textinput__icon--right': this.adapter.templateData.iconPosition === 'right',
         [this.adapter.templateData.icon]: true,
       };
       icon = html`<span class=${classMap(classes)}></span>`;
@@ -71,7 +72,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
         ${hint}
       </label>
 
-      <div class="field">
+      <div class="ff-field">
         <input
           type="text"
           id=${this.field.uid}

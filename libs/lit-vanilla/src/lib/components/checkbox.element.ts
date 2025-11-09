@@ -37,12 +37,18 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
+    if (this.adapter.templateData.checkboxPosition === 'left') {
+      this.classList.add('ff-checkbox--left');
+    } else if (this.classList.contains('ff-checkbox--left')) {
+      this.classList.remove('ff-checkbox--left');
+    }
+
     return html`
       <label for=${this.field.uid}>
         ${this.adapter.templateData.label + (this.adapter.templateData.required ? ' *' : '')}
       </label>
 
-      <div class="field">
+      <div class="ff-field">
         <input
           type="checkbox"
           id=${this.field.uid}
@@ -52,6 +58,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
           @click="${() => this.valueChanged(event)}"
           aria-required=${this.adapter.templateData.required || nothing}
           aria-readonly=${this.adapter.templateData.readonly || nothing}
+          aria-checked=${this.adapter.templateData.value ? true : nothing}
         />
       </div>
     `;
