@@ -3,7 +3,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    cursor: pointer;
 
     &.ff-checkbox--left {
       flex-direction: row-reverse;
@@ -12,6 +11,7 @@
 
     input[type='checkbox'] {
       display: grid;
+      cursor: pointer;
       place-content: center;
       width: 1rem;
       height: 1rem;

@@ -1,0 +1,19 @@
+{
+  "form": {
+    "uid": "",
+    "kind": "layout",
+    "widget": "stack",
+    "children": [
+      {
+        "uid": "",
+        "kind": "control",
+        "widget": "checkbox",
+        "path": "acceptConditions",
+        "label": "Yes, I have read terms and conditions",
+        "props": {
+          "checkboxPosition": "left"
+        }
+      }
+    ]
+  }
+}
