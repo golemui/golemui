@@ -3,12 +3,39 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    cursor: pointer;
+
+    &.ff-checkbox--left {
+      flex-direction: row-reverse;
+      align-self: flex-start;
+    }
 
     input[type='checkbox'] {
+      display: grid;
+      cursor: pointer;
+      place-content: center;
       width: 1rem;
       height: 1rem;
+      border: 1px solid var(--ff-color-border);
+      border-radius: var(--ff-checkbox-radius);
       accent-color: var(--ff-color-primary);
+      appearance: none;
+
+      &::before {
+        content: "";
+        width: 0.65rem;
+        height: 0.65rem;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        transform: scale(0);
+        transform-origin: center center;
+        transition: 150ms transform cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: inset 1em 1em var(--ff-color-primary);
+        /* Windows High Contrast Mode */
+        background-color: CanvasText;
+      }
+
+      &:checked::before {
+        transform: scale(1);
+      }
     }
 
     label {

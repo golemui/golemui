@@ -40,6 +40,9 @@
   --ff-padding: var(--ff-space-gap) var(--ff-space-gap);
   --ff-field-gap: var(--ff-space-gap) 0;
   --ff-field-gap--inner: var(--ff-space-gap) 0;
+
+  /* Checkbox */
+  --ff-checkbox-radius: 0.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
