@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
-import { selects, vanillaSchemaToFieldMap } from '@formforge/shared-vanilla';
+import { kitchenSink, vanillaSchemaToFieldMap } from '@formforge/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
@@ -16,7 +16,7 @@ import { loggerMiddleware } from '../../middlewares/logger.middleware';
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
-  protected formDef = selects;
+  protected formDef = kitchenSink;
   protected formData = {};
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
