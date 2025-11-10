@@ -1,5 +1,5 @@
 import * as z from 'zod/mini';
-import { LayoutField, LayoutFieldSchema } from './DisplayField';
+import { LayoutField, LayoutFieldSchema } from './FormField';
 import { ReactiveExpression, UiState } from './shared';
 
 // --------------------------------

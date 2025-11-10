@@ -1,4 +1,4 @@
-import { FormField, isControlField } from '../DisplayField';
+import { FormField, isControlField } from '../FormField';
 import { DotPath, Uid } from '../shared';
 
 export function makeRepeaterItemConfig(

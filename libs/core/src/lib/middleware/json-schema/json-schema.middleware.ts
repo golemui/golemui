@@ -1,4 +1,4 @@
-import { FormField, LayoutField } from '../../DisplayField';
+import { FormField, LayoutField } from '../../FormField';
 import { Form } from '../../Form';
 import { Action } from '../../store/actions';
 import { Middleware, State } from '../../store/model';
