@@ -1,3 +1,4 @@
+import { FormField } from './DisplayField';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 
 /**
@@ -35,4 +36,22 @@ export type FormEvent = {
   data: Record<string, unknown>;
   /** Actions that the client can execute to interact with the forms engine from the application scope */
   callback: (action: EventHandlerCallback) => void;
+};
+
+/**
+ * Control adapter templateData
+ */
+export type ControlTemplateData<T> = {
+  label?: string;
+  value?: T;
+  disabled?: boolean;
+  required?: boolean;
+  readonly?: boolean;
+};
+
+/**
+ * Layout adapter templateData
+ */
+export type LayoutTemplateData = {
+  children: FormField<string>[];
 };

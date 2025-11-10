@@ -2,14 +2,13 @@ import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
 import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
-import { ControlTemplateData } from '@formforge/shared-vanilla';
 
 @Injectable()
 export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
   Core.ControlField<T>
 > {
-  templateData = signal<ControlTemplateData<T> & ExtraProps>(
-    {} as ControlTemplateData<T> & ExtraProps,
+  templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
+    {} as Core.ControlTemplateData<T> & ExtraProps,
   );
 
   init(field: Core.ControlField<T>) {

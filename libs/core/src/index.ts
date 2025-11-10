@@ -13,6 +13,8 @@ export * from './lib/context';
 
 export * from './lib/shared';
 
+export * from './lib/middleware';
+
 export * from './lib/utils/debug';
 export * from './lib/utils/dot-path';
 export * from './lib/utils/object';

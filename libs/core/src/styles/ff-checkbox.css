@@ -21,7 +21,7 @@
       appearance: none;
 
       &::before {
-        content: "";
+        content: '';
         width: 0.65rem;
         height: 0.65rem;
         clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);

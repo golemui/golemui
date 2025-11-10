@@ -1,6 +1,8 @@
-export * from './lib/props';
-export * from './lib/layout';
-export * from './lib/control';
+export * from './lib/field.factory';
+export * from './lib/field.props';
+export * from './lib/middleware/json-schema-vanilla';
+
+export * from './mocks/json-schema-test';
 export * from './mocks/kitchen-sink';
 export * from './mocks/selects';
 export * from './mocks/signin';

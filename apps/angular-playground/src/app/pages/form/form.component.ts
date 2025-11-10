@@ -3,9 +3,9 @@ import { Component, inject } from '@angular/core';
 import * as Angular from '@formforge/angular';
 import * as Vanilla from '@formforge/angular-vanilla';
 import * as Core from '@formforge/core';
+import { testingJsonSchema, vanillaSchemaToFieldMap } from '@formforge/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { kitchenSink, kitchenSinkData } from '@formforge/shared-vanilla';
 
 @Component({
   imports: [CommonModule, Angular.FormComponent],
@@ -15,9 +15,9 @@ import { kitchenSink, kitchenSinkData } from '@formforge/shared-vanilla';
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected middlewares = [loggerMiddleware];
-  protected formDef = kitchenSink;
-  protected formData = kitchenSinkData;
+  protected middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
+  protected formDef = testingJsonSchema;
+  protected formData = {};
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
