@@ -14,7 +14,9 @@
     @if (optionsLoading === true) {
       <option [value]="">Loading...</option>
     } @else {
-      <option value="" selected disabled>Select an option</option>
+      <option value="" selected disabled>
+        {{ templateData.placeholder ?? 'Select an option' }}
+      </option>
 
       @for (opt of templateData.options; track opt.value) {
         <option
