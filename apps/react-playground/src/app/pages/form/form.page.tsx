@@ -3,9 +3,9 @@ import styles from './form.page.module.scss';
 import * as Core from '@formforge/core';
 import * as React from '@formforge/react';
 import * as Vanilla from '@formforge/react-vanilla';
+import { signin, signinData } from '@formforge/shared-vanilla';
 import { useState } from 'react';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import { kitchenSink, kitchenSinkData } from '@formforge/shared-vanilla';
 
 function onFormEvent(event: Core.FormEvent) {
   console.groupCollapsed(`onFormEvent('${event.name}')`);
@@ -18,8 +18,8 @@ const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = kitchenSink;
-const formData = kitchenSinkData;
+const formDef = signin;
+const formData = signinData;
 const middlewares = [loggerMiddleware];
 
 export function FormPage() {
