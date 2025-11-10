@@ -3,8 +3,8 @@ import type * as justin from './types/subscript__justin';
 
 type _ = justin;
 
-export * from './lib/FormField';
 export * from './lib/Form';
+export * from './lib/FormField';
 export * from './lib/FormStore';
 export * from './lib/store/actions';
 export * from './lib/store/model';
@@ -21,4 +21,5 @@ export * from './lib/utils/dot-path';
 export * from './lib/utils/object';
 export * from './lib/utils/random';
 export * from './lib/utils/repeater';
+export * from './lib/utils/types';
 export * from './lib/utils/value';
