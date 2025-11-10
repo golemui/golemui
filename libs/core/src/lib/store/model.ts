@@ -1,5 +1,5 @@
-import * as Field from '../FormField';
 import * as Form from '../Form';
+import * as Field from '../FormField';
 import { Uid } from '../shared';
 
 export type FormStoreError =
@@ -48,7 +48,9 @@ export type State = {
 export const createInitialState = (): State => ({
   formName: '',
   formDef: Form.FormSchema.parse({
-    form: Field.stack([] as Field.FormField[]),
+    widget: 'stack',
+    kind: 'layout',
+    children: [],
   }) as Form.Form,
   flatForm: [],
   formMeta: {},
