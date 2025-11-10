@@ -47,6 +47,9 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'textinput',
         'label.register': 'Password 1',
+        props: {
+          'placeholder.register': 'Enter password 1',
+        },
         path: 'user.password',
         required: true,
         on: { 'change.register': 'checkPasswordMatch' },
@@ -56,6 +59,9 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'textinput',
         label: 'Confirm Password',
+        props: {
+          'placeholder.register': 'Enter password 2',
+        },
         path: 'confirm',
         on: { change: 'checkPasswordMatch' },
         include: { in: ['register'] },
