@@ -1,4 +1,4 @@
-import { FormField } from '../DisplayField';
+import { FormField } from '../FormField';
 import { DotPath, Uid } from '../shared';
 import { FormStoreError } from './model';
 

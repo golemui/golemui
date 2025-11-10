@@ -1,4 +1,4 @@
-import * as Field from '../../DisplayField';
+import * as Field from '../../FormField';
 import * as Form from '../../Form';
 import * as Actions from '../actions';
 import { createInitialState, FormStoreError, State } from '../model';

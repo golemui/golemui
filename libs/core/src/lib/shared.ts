@@ -1,4 +1,4 @@
-import { FormField } from './DisplayField';
+import { FormField } from './FormField';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 
 /**

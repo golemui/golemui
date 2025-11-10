@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { ButtonField, ControlField, On } from '../DisplayField';
+import { ButtonField, ControlField, On } from '../FormField';
 import { createFormStore, FormStore } from '../FormStore';
 import { EventHandlerCallback, EventName, FormEvent } from '../shared';
 import { Action } from '../store/actions';
