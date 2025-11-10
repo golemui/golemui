@@ -1,16 +1,9 @@
 // JSON Schema 2020-12 --> GolemUI dynamic form description
 
 import { FormField, SchemaToFieldMap } from '@formforge/core';
+import { isOption } from '../components';
 import { Vanilla } from '../field.factory';
 import { Option } from '../field.props';
-
-// TODO: this is copied from libs/angular-vanilla/src/lib/select/select.component.ts
-// TODO: refactor all these to avoid duplication
-const isOption = (opt: unknown): opt is Option =>
-  opt !== null &&
-  typeof opt === 'object' &&
-  Object.prototype.hasOwnProperty.call(opt, 'label') &&
-  Object.prototype.hasOwnProperty.call(opt, 'value');
 
 function enumToOption(opt: unknown): Option {
   if (isOption(opt)) {

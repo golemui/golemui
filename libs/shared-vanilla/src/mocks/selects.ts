@@ -44,6 +44,7 @@ export const selects = defineForm({
         readonly: true,
         props: {
           options: ['hello', 'bye'],
+          placeholder: 'Please, select an option',
         },
       },
       {

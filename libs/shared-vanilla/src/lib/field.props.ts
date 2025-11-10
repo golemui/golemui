@@ -36,6 +36,7 @@ export type Option = {
 
 export type SelectProps = {
   options: Option[];
+  placeholder?: string;
   labelField?: string;
   valueField?: string;
 };
