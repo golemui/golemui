@@ -1,4 +1,4 @@
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { consume, provide } from '@lit/context';
 import * as Core from '@formforge/core';
@@ -40,7 +40,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
           type="button"
           id=${this.field.uid}
           @click=${() => this.adapter.click()}
-          disabled=${this.adapter.templateData.disabled}
+          disabled=${this.adapter.templateData.disabled === true ? true : nothing}
         >
           ${this.adapter.templateData.label}
         </button>
