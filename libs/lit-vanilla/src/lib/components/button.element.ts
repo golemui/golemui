@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { consume, provide } from '@lit/context';
 import * as Core from '@formforge/core';
@@ -7,14 +7,14 @@ import { Subscription } from 'rxjs';
 
 @customElement('ff-button')
 export class ButtonElement extends LitElement implements Core.WithField {
-  field!: Core.ButtonField;
+  field!: Core.InteractiveField;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.buttonContext })
-  adapter = new Lit.ButtonAdapter();
+  @provide({ context: Lit.interactiveContext })
+  adapter = new Lit.InteractiveAdapter();
 
   subscriptions: Subscription[] = [];
 

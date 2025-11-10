@@ -45,7 +45,7 @@ function calculateFieldFlags(state: State): State['fieldFlags'] {
         // Only process fields that are visible
         if (!flags[field.uid].hidden) {
           // disabled
-          if (Field.isControlField(field) || Field.isButtonField(field)) {
+          if (Field.isControlField(field) || Field.isInteractiveField(field)) {
             setFlag({
               property: 'disabled',
               field,

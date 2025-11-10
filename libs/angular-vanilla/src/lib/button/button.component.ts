@@ -7,7 +7,7 @@ import * as Core from '@formforge/core';
   standalone: true,
   selector: 'ff-button',
   imports: [CommonModule],
-  providers: [Angular.ButtonAdapter],
+  providers: [Angular.InteractiveAdapter],
   templateUrl: './button.component.html',
   styleUrl: '../styles.scss',
   host: {
@@ -15,8 +15,8 @@ import * as Core from '@formforge/core';
   },
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ButtonField;
-  protected adapter: Angular.ButtonAdapter = inject(Angular.ButtonAdapter);
+  field!: Core.InteractiveField;
+  protected adapter: Angular.InteractiveAdapter = inject(Angular.InteractiveAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

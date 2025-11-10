@@ -2,7 +2,7 @@ import { defineForm } from '@formforge/core';
 
 export const kitchenSink = defineForm({
   states: {
-    limitReached: '$form.users.length === 5',
+    limitReached: '$form.users?.length === 5',
   },
   form: {
     uid: '',
@@ -199,7 +199,7 @@ export const kitchenSink = defineForm({
       },
       {
         uid: '',
-        kind: 'button',
+        kind: 'interactive',
         widget: 'button',
         label: 'Create',
         on: {

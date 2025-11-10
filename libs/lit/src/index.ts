@@ -2,7 +2,7 @@ export * from './lib/adapters/base.adapter';
 export * from './lib/adapters/display.adapter';
 export * from './lib/adapters/layout.adapter';
 export * from './lib/adapters/control.adapter';
-export * from './lib/adapters/button.adapter';
+export * from './lib/adapters/interactiveAdapter';
 
 export * from './lib/components/field/field.element';
 export * from './lib/components/field/repeater-field.element';

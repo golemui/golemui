@@ -88,7 +88,7 @@ export const selects = defineForm({
       },
       {
         uid: '',
-        kind: 'button',
+        kind: 'interactive',
         widget: 'button',
         label: 'Send',
         disabled: true,

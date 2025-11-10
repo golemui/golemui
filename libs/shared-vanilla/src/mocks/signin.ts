@@ -133,7 +133,7 @@ export const signin = defineForm({
       },
       {
         uid: '',
-        kind: 'button',
+        kind: 'interactive',
         widget: 'button',
         label: 'Login',
         'label.register': 'Register',

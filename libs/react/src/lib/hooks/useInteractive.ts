@@ -3,7 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useButton<ExtraProps extends Record<string, any>>(field: Core.ButtonField) {
+export function useInteractive<ExtraProps extends Record<string, any>>(
+  field: Core.InteractiveField,
+) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [label, setLabel] = useState<string | undefined>(undefined);
