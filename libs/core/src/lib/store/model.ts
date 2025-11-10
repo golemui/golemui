@@ -48,9 +48,11 @@ export type State = {
 export const createInitialState = (): State => ({
   formName: '',
   formDef: Form.FormSchema.parse({
-    widget: 'stack',
-    kind: 'layout',
-    children: [],
+    form: {
+      widget: 'stack',
+      kind: 'layout',
+      children: [],
+    },
   }) as Form.Form,
   flatForm: [],
   formMeta: {},
