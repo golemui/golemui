@@ -1,19 +1,20 @@
 import * as Core from '@formforge/core';
 import { useControl } from '@formforge/react';
+import { CheckboxProps } from '@formforge/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const { uid, isRequired, value, isDisabled, isReadonly, label, onValueChanged } =
-    useControl(field);
+  const { uid, isRequired, value, isDisabled, isReadonly, label, onValueChanged, props } =
+    useControl<boolean, CheckboxProps>(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => !isReadonly && onValueChanged(e.target.checked),
     [onValueChanged, isReadonly],
   );
 
-  const checkboxPosition = field.props?.checkboxPosition;
+  const checkboxPosition = props.checkboxPosition;
 
   return (
     <div className={`ff-checkbox ${checkboxPosition === 'left' ? 'ff-checkbox--left' : ''}`}>

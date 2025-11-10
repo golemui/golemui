@@ -90,6 +90,10 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'checkbox',
         label: 'Register',
+        props: {
+          checkboxPosition: 'left',
+          'checkboxPosition.register': 'right',
+        },
         path: 'registerMode',
       },
       {
@@ -105,7 +109,6 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'checkbox',
         label: 'Parental Approval!',
-        readonly: true,
         path: 'parentalApproval',
         include: { in: ['register:minor'] },
       },
