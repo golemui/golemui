@@ -54,27 +54,30 @@ export class RepeaterElement extends LitElement implements Core.WithField {
       <div id=${this.field.uid}>
         <h2>${this.adapter.templateData.label}</h2>
 
-        ${repeat(
-          this.adapter.templateData.value!,
-          (field) => field['uid'],
-          (field, index) => html`
-            <div class="card">
-              <ff-repeater-field
-                .repeaterIndex=${index}
-                .field=${this.adapter.templateData.template}
-              ></ff-repeater-field>
-              <button type="button" class="ff-button" @click=${() => this.removeItem(index)}>
-                ${this.adapter.templateData.removeLabel ?? 'Remove'}
-              </button>
-            </div>
-          `,
-        )}
+        ${this.adapter.templateData.value
+          ? repeat(
+              this.adapter.templateData.value,
+              (field) => field['uid'],
+              (field, index) => html`
+                <div class="card">
+                  <ff-repeater-field
+                    .repeaterIndex=${index}
+                    .field=${this.adapter.templateData.template}
+                  ></ff-repeater-field>
+                  <button type="button" class="ff-button" @click=${() => this.removeItem(index)}>
+                    ${this.adapter.templateData.removeLabel ?? 'Remove'}
+                  </button>
+                </div>
+              `,
+            )
+          : nothing}
 
         <button
           type="button"
           class="ff-button"
           @click=${() => this.addItem()}
-          disabled=${this.adapter.templateData.limit === this.adapter.templateData.value?.length
+          disabled=${this.adapter.templateData.limit &&
+          this.adapter.templateData.limit === this.adapter.templateData.value?.length
             ? true
             : nothing}
         >
