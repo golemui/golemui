@@ -187,7 +187,7 @@ export const tabs = defineForm({
       },
       {
         uid: '',
-        kind: 'button',
+        kind: 'interactive',
         widget: 'button',
         label: 'Create',
         on: {

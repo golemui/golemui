@@ -57,7 +57,7 @@ export type On<StateKeys extends UiState = never> = AllSuffixable<
 >;
 
 export type BaseField<StateKeys extends UiState = never> = {
-  //kind: 'display' | 'button' | 'control' | 'layout';
+  // kind: 'display' | 'interactive' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
@@ -89,8 +89,8 @@ export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
   StateKeys
 >;
 
-export type ButtonField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & { kind: 'button'; label: string; on?: On<StateKeys> },
+export type InteractiveField<StateKeys extends UiState = never> = SomeSuffixable<
+  BaseField<StateKeys> & { kind: 'interactive'; label: string; on?: On<StateKeys> },
   'disabled' | 'label',
   StateKeys
 >;
@@ -122,7 +122,7 @@ export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
       | DisplayField<StateKeys>
       | ControlField<any, StateKeys>
       | LayoutField<StateKeys>
-      | ButtonField<StateKeys>
+      | InteractiveField<StateKeys>
     )[];
   },
   never,
@@ -134,7 +134,7 @@ export type FormField<StateKeys extends UiState = never> =
   | DisplayField<StateKeys>
   | ControlField<any, StateKeys>
   | LayoutField<StateKeys>
-  | ButtonField<StateKeys>;
+  | InteractiveField<StateKeys>;
 
 // --------------------------------
 //
@@ -146,9 +146,9 @@ export const isField = <StateKeys extends string>(
   field: FormField<StateKeys>,
 ): field is DisplayField<StateKeys> => field.kind === 'display';
 
-export const isButtonField = <StateKeys extends string>(
+export const isInteractiveField = <StateKeys extends string>(
   field: FormField<StateKeys>,
-): field is ButtonField<StateKeys> => field.kind === 'button';
+): field is InteractiveField<StateKeys> => field.kind === 'interactive';
 
 export const isControlField = <T, StateKeys extends string>(
   field: FormField<StateKeys>,
@@ -212,8 +212,8 @@ const FieldSchema = z.looseObject({
   on: z.optional(OnSchema),
 });
 
-export const ButtonFieldSchema = z.extend(FieldSchema, {
-  kind: z.literal('button'),
+export const InteractiveFieldSchema = z.extend(FieldSchema, {
+  kind: z.literal('interactive'),
   label: z.optional(z.string()),
   on: z.optional(OnSchema),
 });
@@ -251,7 +251,7 @@ const AllFieldSchema: z.ZodMiniType = z.union([
   LayoutFieldSchema,
   ControlFieldSchema(z.any()),
   FieldSchema,
-  ButtonFieldSchema,
+  InteractiveFieldSchema,
 ]);
 
 // --------------------------------

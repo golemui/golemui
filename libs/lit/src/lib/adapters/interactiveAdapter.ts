@@ -1,18 +1,18 @@
-import { Injectable, signal } from '@angular/core';
 import * as Core from '@formforge/core';
-import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
+import { takeUntil } from 'rxjs';
+import { createContext } from '@lit/context';
 
-@Injectable()
-export class ButtonAdapter extends BaseAdapter<Core.ButtonField> {
-  templateData = signal<{ label?: string; disabled?: boolean }>({});
+export const interactiveContext = createContext<InteractiveAdapter>('ffInteractiveAdapter');
 
-  init(field: Core.ButtonField) {
+export class InteractiveAdapter extends BaseAdapter<Core.InteractiveField> {
+  override templateData: { label?: string; disabled?: boolean } = {};
+
+  init(field: Core.InteractiveField) {
     this.field = field;
-    this.templateData.update((current) => ({
-      ...current,
+    this.setTemplateData({
       label: this.field.label,
-    }));
+    });
 
     this.addFieldToTheStore(field);
     this.propsUpdaterByCurrentState(this.templateData);
@@ -21,18 +21,16 @@ export class ButtonAdapter extends BaseAdapter<Core.ButtonField> {
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.templateData.update((current) => ({
-          ...current,
+        this.setTemplateData({
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-        }));
+        });
       });
 
     // Listen to the form states stream and keep the `label` property in sync with the current state
     this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.templateData.update((current) => ({
-        ...current,
+      this.setTemplateData({
         label: this.context.getPropertyValueByCurrentState('label', this.field),
-      }));
+      });
     });
 
     this.context.emitEvent('load', this.field);

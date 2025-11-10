@@ -1,17 +1,17 @@
 import './form.element.scss';
 import '@formforge/lit';
 import { customElement } from 'lit/decorators.js';
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import * as Core from '@formforge/core';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 import * as Vanilla from '@formforge/lit-vanilla';
-import { kitchenSink, kitchenSinkData } from '@formforge/shared-vanilla';
+import { kitchenSink } from '@formforge/shared-vanilla';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
   middlewares = [loggerMiddleware];
   formDef = kitchenSink;
-  formData = kitchenSinkData;
+  formData = {};
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

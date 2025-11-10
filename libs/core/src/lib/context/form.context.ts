@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { ButtonField, ControlField, On } from '../FormField';
+import { ControlField, InteractiveField, On } from '../FormField';
 import { createFormStore, FormStore } from '../FormStore';
 import { EventHandlerCallback, EventName, FormEvent } from '../shared';
 import { Action } from '../store/actions';
@@ -38,7 +38,10 @@ export class FormContext<ComponentType> {
     }
   }
 
-  emitEvent(eventType: keyof On<string>, field: ControlField<any, string> | ButtonField<string>) {
+  emitEvent(
+    eventType: keyof On<string>,
+    field: ControlField<any, string> | InteractiveField<string>,
+  ) {
     const currentStates = this.store.getState().currentStates;
     const matchedStates = currentStates.filter((currentState) => {
       return field.on?.[`${eventType}.${currentState}`] !== undefined;
