@@ -4,7 +4,7 @@ export const signinData = { user: { email: 'joan-from-data@joan.com' } };
 
 export const signin = defineForm({
   states: {
-    register: /*javascript*/ `$form.registerMode === true`,
+    register: '$form.registerMode === true',
     'register:tall': '$form.user.height > 180',
     'register:minor': '$form.user.age < 18',
     'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
@@ -30,9 +30,11 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'textinput',
         path: 'user.email',
-        disabled: true,
         required: true,
-        defaultValue: 'default-joan@joan.com',
+        validator: {
+          type: 'string',
+          format: 'email',
+        },
       },
       {
         uid: '',

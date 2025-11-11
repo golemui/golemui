@@ -36,6 +36,16 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
       .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
+    // Listen to the validation stream for this control
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.validationByPath$(field.path))
+      .subscribe((validation) => {
+        this.templateData.update((current) => ({
+          ...current,
+          errors: validation?.status?.errors || [],
+        }));
+      });
+
     // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))

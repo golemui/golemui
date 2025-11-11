@@ -44,6 +44,10 @@ export type FormEvent = {
 export type ControlTemplateData<T> = {
   label?: string;
   value?: T;
+  /**
+   * validation errors
+   */
+  errors?: string[];
   disabled?: boolean;
   required?: boolean;
   readonly?: boolean;

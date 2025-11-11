@@ -30,3 +30,11 @@
     ></span>
   }
 </div>
+
+@if (templateData.errors && templateData.errors.length > 0) {
+  <ul class="ff-textinput__errors">
+    @for (error of templateData.errors; track $index) {
+      <li>{{ error }}</li>
+    }
+  </ul>
+}

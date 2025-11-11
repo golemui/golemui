@@ -23,6 +23,24 @@ export const dataByPath$ = <T = any>(path: DotPath) =>
 
 // --------------------------------
 //
+// VALIDATIONS
+//
+// --------------------------------
+
+const selectValidations = pipe(
+  map((store: State) => store.validations),
+  distinctUntilChanged(),
+);
+
+export const validationByPath$ = (path: DotPath) =>
+  pipe(
+    selectValidations,
+    map((validations) => validations[path]),
+    distinctUntilChanged((prev, current) => prev?.status !== current?.status),
+  );
+
+// --------------------------------
+//
 // FIELDS
 //
 // --------------------------------

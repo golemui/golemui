@@ -14,6 +14,7 @@ export function reducer(state: State, action: Action): State {
         Reducers.setData(state, action),
         Reducers.calculateCurrentState,
         Reducers.applyCurrentState,
+        Reducers.validateAll,
       );
 
     case 'ADD_FIELD':
@@ -21,6 +22,7 @@ export function reducer(state: State, action: Action): State {
         Reducers.addField(state, action),
         Reducers.calculateCurrentState,
         Reducers.applyCurrentState,
+        Reducers.validateAll,
       );
 
     case 'REMOVE_FIELD':
@@ -31,6 +33,7 @@ export function reducer(state: State, action: Action): State {
         Reducers.setFieldData(state, action),
         Reducers.calculateCurrentState,
         Reducers.applyCurrentState,
+        Reducers.validateAll,
       );
 
     case 'OVERRIDE_FIELD_PROP':
@@ -38,6 +41,7 @@ export function reducer(state: State, action: Action): State {
         Reducers.overrideFieldProp(state, action),
         Reducers.calculateCurrentState,
         Reducers.applyCurrentState,
+        Reducers.validateAll,
       );
 
     case 'SET_ERROR':
