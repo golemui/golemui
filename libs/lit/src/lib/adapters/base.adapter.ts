@@ -1,5 +1,5 @@
-import * as Core from '@formforge/core';
-import { WithField } from '@formforge/core';
+import * as Core from '@golemui/core';
+import { WithField } from '@golemui/core';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { LitFormContext } from '../context/form.context';
 

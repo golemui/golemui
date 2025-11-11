@@ -1,5 +1,5 @@
-import * as Core from '@formforge/core';
-import { useDisplay } from '@formforge/react';
+import * as Core from '@golemui/core';
+import { useDisplay } from '@golemui/react';
 import { createElement, PropsWithChildren } from 'react';
 import styles from './heading.component.module.scss';
 
@@ -13,7 +13,7 @@ export function HeadingComponent(fieldInstance: Core.WithField) {
   const { uid, props } = useDisplay<OwnWidgetProps>(field);
 
   return (
-    <div className="ff-field" id={uid}>
+    <div className="gui-field" id={uid}>
       <DynamicHeading level={props.level || 1}>{props.text}</DynamicHeading>
     </div>
   );

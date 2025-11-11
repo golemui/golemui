@@ -29,7 +29,7 @@ export type SchemaToFieldMap = Record<
  * @example
  *  protected middlewares = jsonSchemaMiddleware(vanillaSchemaToFieldMap);
  * @example
- *  <ff-form [middlewares]="middlewares" />
+ *  <gui-form [middlewares]="middlewares" />
  */
 export const jsonSchemaMiddleware =
   (schemaToFieldMap: SchemaToFieldMap): Middleware<State, Action> =>

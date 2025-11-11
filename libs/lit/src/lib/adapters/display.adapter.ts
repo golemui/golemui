@@ -1,5 +1,5 @@
 import { createContext } from '@lit/context';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { BaseAdapter } from './base.adapter';
 
 export const displayFieldContext = createContext<DisplayFieldAdapter<any>>('ffDisplayFieldAdapter');

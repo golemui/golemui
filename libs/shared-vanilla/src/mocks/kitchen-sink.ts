@@ -1,4 +1,4 @@
-import { defineForm } from '@formforge/core';
+import { defineForm } from '@golemui/core';
 
 export const kitchenSink = defineForm({
   states: {

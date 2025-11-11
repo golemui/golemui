@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div class="ff-field">
+<div class="gui-field">
   @if (templateData.label) {
     <label [for]="field.uid">{{ templateData.label + (templateData.required ? ' *' : '') }}</label>
   }

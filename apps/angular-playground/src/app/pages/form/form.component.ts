@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Vanilla from '@formforge/angular-vanilla';
-import * as Core from '@formforge/core';
-import { kitchenSink, vanillaSchemaToFieldMap } from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Vanilla from '@golemui/angular-vanilla';
+import * as Core from '@golemui/core';
+import { kitchenSink, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 

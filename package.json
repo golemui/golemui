@@ -1,10 +1,10 @@
 {
-  "name": "@formforge/source",
+  "name": "@golemui/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "format": "nx format:write --all",
-    "precz": "nx run-many --target=lint --all --exclude=@formforge/source && nx format:check --all",
+    "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:check --all",
     "cz": "czg checkbox",
     "build:docs": "./build-docs.sh --skip-install && cd docs && npm run build",
     "run:docs": "./build-docs.sh --skip-install && cd docs && npm run dev",

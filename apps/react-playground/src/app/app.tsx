@@ -12,7 +12,7 @@ export function App() {
   return (
     <>
       <header className={styles.header}>
-        <h1>Formforge</h1>
+        <h1>golemui</h1>
       </header>
       <main className={clsx(styles.main, 'container')}>
         <Routes>

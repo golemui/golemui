@@ -1,5 +1,5 @@
-import * as Core from '@formforge/core';
-import { FieldLoaders, State, WithField } from '@formforge/core';
+import * as Core from '@golemui/core';
+import { FieldLoaders, State, WithField } from '@golemui/core';
 import { provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
 import '../field/field.element';
 
-@customElement('ff-form')
+@customElement('gui-form')
 export class FormElement extends LitElement {
   @provide({ context: formContext })
   context = new LitFormContext();
@@ -27,7 +27,7 @@ export class FormElement extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-form');
+    this.classList.add('gui-form');
     this.context.initialize(this.fieldLoaders, this.middlewares);
 
     this.subscriptions.push(
@@ -66,7 +66,7 @@ export class FormElement extends LitElement {
       <form id=${this.formName}>
         ${when(
           ready,
-          () => html` <ff-field .field=${this.state!.formDef.form}></ff-field>`,
+          () => html` <gui-field .field=${this.state!.formDef.form}></gui-field>`,
           () => html` <div>Loading form...</div>`,
         )}
       </form>

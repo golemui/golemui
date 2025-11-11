@@ -1,13 +1,13 @@
-import * as Core from '@formforge/core';
-import * as Lit from '@formforge/lit';
+import * as Core from '@golemui/core';
+import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { RepeaterProps } from '@formforge/shared-vanilla';
+import { RepeaterProps } from '@golemui/shared-vanilla';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-repeater')
+@customElement('gui-repeater')
 export class RepeaterElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
 
@@ -26,7 +26,7 @@ export class RepeaterElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-repeater');
+    this.classList.add('gui-repeater');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -60,11 +60,11 @@ export class RepeaterElement extends LitElement implements Core.WithField {
               (field) => field['uid'],
               (field, index) => html`
                 <div class="card">
-                  <ff-repeater-field
+                  <gui-repeater-field
                     .repeaterIndex=${index}
                     .field=${this.adapter.templateData.template}
-                  ></ff-repeater-field>
-                  <button type="button" class="ff-button" @click=${() => this.removeItem(index)}>
+                  ></gui-repeater-field>
+                  <button type="button" class="gui-button" @click=${() => this.removeItem(index)}>
                     ${this.adapter.templateData.removeLabel ?? 'Remove'}
                   </button>
                 </div>
@@ -74,7 +74,7 @@ export class RepeaterElement extends LitElement implements Core.WithField {
 
         <button
           type="button"
-          class="ff-button"
+          class="gui-button"
           @click=${() => this.addItem()}
           disabled=${this.adapter.templateData.limit &&
           this.adapter.templateData.limit === this.adapter.templateData.value?.length

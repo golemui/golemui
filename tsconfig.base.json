@@ -10,20 +10,42 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@formforge/angular": ["libs/angular/src/index.ts"],
-      "@formforge/angular-vanilla": ["libs/angular-vanilla/src/index.ts"],
-      "@formforge/core": ["libs/core/src/index.ts"],
-      "@formforge/lit": ["libs/lit/src/index.ts"],
-      "@formforge/lit-vanilla": ["libs/lit-vanilla/src/index.ts"],
-      "@formforge/react": ["libs/react/src/index.ts"],
-      "@formforge/react-vanilla": ["libs/react-vanilla/src/index.ts"],
-      "@formforge/shared-vanilla": ["libs/shared-vanilla/src/index.ts"]
+      "@golemui/angular": [
+        "libs/angular/src/index.ts"
+      ],
+      "@golemui/angular-vanilla": [
+        "libs/angular-vanilla/src/index.ts"
+      ],
+      "@golemui/core": [
+        "libs/core/src/index.ts"
+      ],
+      "@golemui/lit": [
+        "libs/lit/src/index.ts"
+      ],
+      "@golemui/lit-vanilla": [
+        "libs/lit-vanilla/src/index.ts"
+      ],
+      "@golemui/react": [
+        "libs/react/src/index.ts"
+      ],
+      "@golemui/react-vanilla": [
+        "libs/react-vanilla/src/index.ts"
+      ],
+      "@golemui/shared-vanilla": [
+        "libs/shared-vanilla/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

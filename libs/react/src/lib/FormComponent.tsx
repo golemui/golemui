@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
 import FieldRenderer from './FieldRenderer';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
@@ -89,7 +89,7 @@ export function FormComponent({
 
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
-      <div className="ff-form">
+      <div className="gui-form">
         <form id={formNameRef.current}>
           <FieldRenderer field={formLayoutField} formContext={formContextRef.current} />
         </form>

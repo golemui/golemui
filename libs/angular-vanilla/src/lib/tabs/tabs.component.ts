@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
-import { TabsProps } from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { TabsProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'ff-tabs',
+  selector: 'gui-tabs',
   imports: [CommonModule, Angular.FieldDirective],
   providers: [Angular.LayoutAdapter],
   templateUrl: './tabs.component.html',
   host: {
-    class: 'ff-tabs',
+    class: 'gui-tabs',
   },
 })
 export class TabsComponent implements OnInit, OnDestroy, Core.WithField {

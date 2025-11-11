@@ -1,12 +1,12 @@
-import * as Core from '@formforge/core';
-import * as Lit from '@formforge/lit';
+import * as Core from '@golemui/core';
+import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { CheckboxProps } from '@formforge/shared-vanilla';
+import { CheckboxProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-checkbox')
+@customElement('gui-checkbox')
 export class CheckboxElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -25,7 +25,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-checkbox');
+    this.classList.add('gui-checkbox');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -38,9 +38,9 @@ export class CheckboxElement extends LitElement implements Core.WithField {
     super.render();
 
     if (this.adapter.templateData.checkboxPosition === 'left') {
-      this.classList.add('ff-checkbox--left');
-    } else if (this.classList.contains('ff-checkbox--left')) {
-      this.classList.remove('ff-checkbox--left');
+      this.classList.add('gui-checkbox--left');
+    } else if (this.classList.contains('gui-checkbox--left')) {
+      this.classList.remove('gui-checkbox--left');
     }
 
     return html`
@@ -48,7 +48,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
         ${this.adapter.templateData.label + (this.adapter.templateData.required ? ' *' : '')}
       </label>
 
-      <div class="ff-field">
+      <div class="gui-field">
         <input
           type="checkbox"
           id=${this.field.uid}

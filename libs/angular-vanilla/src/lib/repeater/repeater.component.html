@@ -7,8 +7,8 @@
   @if (templateData.template && templateData.value) {
     @for (_ of templateData.value; track $index) {
       <div class="card">
-        <ng-container ffRepeaterField [repeaterIndex]="$index" [field]="templateData.template" />
-        <button type="button" class="ff-button" (click)="removeItem($index)">
+        <ng-container guiRepeaterField [repeaterIndex]="$index" [field]="templateData.template" />
+        <button type="button" class="gui-button" (click)="removeItem($index)">
           {{ templateData.removeLabel ?? 'Remove' }}
         </button>
       </div>
@@ -16,7 +16,7 @@
   }
   <button
     type="button"
-    class="ff-button"
+    class="gui-button"
     (click)="addItem()"
     [disabled]="
       templateData.limit ? templateData.limit === (templateData.value?.length ?? 0) : false

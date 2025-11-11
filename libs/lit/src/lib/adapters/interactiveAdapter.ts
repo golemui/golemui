@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { BaseAdapter } from './base.adapter';
 import { takeUntil } from 'rxjs';
 import { createContext } from '@lit/context';

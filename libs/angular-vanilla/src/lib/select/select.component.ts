@@ -1,23 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
-import {
-  createOptionMapper,
-  isOption,
-  isProtoOption,
-  SelectProps,
-} from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { createOptionMapper, isOption, isProtoOption, SelectProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'ff-select',
+  selector: 'gui-select',
   imports: [CommonModule],
   providers: [Angular.ControlAdapter],
   templateUrl: './select.component.html',
   styleUrl: '../styles.scss',
   host: {
-    class: 'ff-select',
+    class: 'gui-select',
   },
 })
 export class SelectComponent implements OnInit, OnDestroy, Core.WithField {

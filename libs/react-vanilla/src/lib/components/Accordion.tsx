@@ -1,7 +1,7 @@
-import * as Core from '@formforge/core';
-import { FieldRenderer, useLayout } from '@formforge/react';
+import * as Core from '@golemui/core';
+import { FieldRenderer, useLayout } from '@golemui/react';
 import { useCallback, useState } from 'react';
-import { AccordionProps } from '@formforge/shared-vanilla';
+import { AccordionProps } from '@golemui/shared-vanilla';
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
@@ -35,7 +35,7 @@ export function Accordion(fieldInstance: Core.WithField) {
       const isActiveSection = activeSections[uid];
 
       return isActiveSection && child ? (
-        <section className="ff-field" role="region">
+        <section className="gui-field" role="region">
           <FieldRenderer field={child} formContext={formContext} />
         </section>
       ) : null;
@@ -45,7 +45,7 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   const renderAccordion = useCallback(() => {
     return props.sections.map((section, index) => (
-      <div className="ff-accordion__section" key={`${'accordion-section-' + section.uid}`}>
+      <div className="gui-accordion__section" key={`${'accordion-section-' + section.uid}`}>
         <button
           type="button"
           tabIndex={index}
@@ -54,7 +54,7 @@ export function Accordion(fieldInstance: Core.WithField) {
           onClick={() => onClickButton(section.uid)}
         >
           {section.label}
-          <span className="ff-accordion__icon"></span>
+          <span className="gui-accordion__icon"></span>
         </button>
 
         {renderContent(section.uid)}
@@ -63,8 +63,8 @@ export function Accordion(fieldInstance: Core.WithField) {
   }, [props, activeSections, onClickButton, renderContent]);
 
   return (
-    <div className="ff-accordion">
-      <div className="ff-field" id={uid}>
+    <div className="gui-accordion">
+      <div className="gui-field" id={uid}>
         {renderAccordion()}
       </div>
     </div>

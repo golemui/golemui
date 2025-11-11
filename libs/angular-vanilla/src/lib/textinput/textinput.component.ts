@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
-import { TextinputProps } from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { TextinputProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'ff-textinput',
+  selector: 'gui-textinput',
   imports: [CommonModule],
   providers: [Angular.ControlAdapter],
   templateUrl: './textinput.component.html',
   styleUrl: '../styles.scss',
   host: {
-    class: 'ff-textinput',
+    class: 'gui-textinput',
   },
 })
 export class TextinputComponent implements OnInit, OnDestroy, Core.WithField {

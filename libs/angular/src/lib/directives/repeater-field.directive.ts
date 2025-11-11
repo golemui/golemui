@@ -1,5 +1,5 @@
 import { Directive, inject, Injector, input, Type } from '@angular/core';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { FieldDirective } from './field.directive';
 import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
 
@@ -8,11 +8,11 @@ import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
  *
  * @example
  * ```html
- * <ng-container ffRepeaterField [repeaterIndex]="2" [config]="fieldConfig" />
+ * <ng-container guiRepeaterField [repeaterIndex]="2" [config]="fieldConfig" />
  * ```
  */
 @Directive({
-  selector: '[ffRepeaterField]',
+  selector: '[guiRepeaterField]',
   standalone: true,
 })
 export class RepeaterFieldDirective extends FieldDirective {

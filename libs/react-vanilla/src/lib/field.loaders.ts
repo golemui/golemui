@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 
 export const vanillaFieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>> = {
   // BUTTON

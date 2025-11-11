@@ -1,4 +1,4 @@
-import { defineForm } from '@formforge/core';
+import { defineForm } from '@golemui/core';
 
 export const selectsData = {
   greeting: 'bye',

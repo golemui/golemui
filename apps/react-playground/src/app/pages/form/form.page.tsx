@@ -1,9 +1,9 @@
 import styles from './form.page.module.scss';
 
-import * as Core from '@formforge/core';
-import * as React from '@formforge/react';
-import * as Vanilla from '@formforge/react-vanilla';
-import { kitchenSink } from '@formforge/shared-vanilla';
+import * as Core from '@golemui/core';
+import * as React from '@golemui/react';
+import * as Vanilla from '@golemui/react-vanilla';
+import { kitchenSink } from '@golemui/shared-vanilla';
 import { useState } from 'react';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 

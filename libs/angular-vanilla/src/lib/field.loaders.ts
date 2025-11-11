@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 
 export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
   // BUTTON

@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
 
 @Component({
   standalone: true,
-  selector: 'ff-button',
+  selector: 'gui-button',
   imports: [CommonModule],
   providers: [Angular.InteractiveAdapter],
   templateUrl: './button.component.html',
   styleUrl: '../styles.scss',
   host: {
-    class: 'ff-button',
+    class: 'gui-button',
   },
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {

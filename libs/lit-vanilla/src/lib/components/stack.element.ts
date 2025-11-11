@@ -1,12 +1,12 @@
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
-import * as Lit from '@formforge/lit';
-import { StackProps } from '@formforge/shared-vanilla';
+import * as Lit from '@golemui/lit';
+import { StackProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-stack')
+@customElement('gui-stack')
 export class StackElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
 
@@ -25,7 +25,7 @@ export class StackElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-stack');
+    this.classList.add('gui-stack');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -44,11 +44,11 @@ export class StackElement extends LitElement implements Core.WithField {
 
     return html`
       <div
-        class=${classes.horizontal ? 'ff-field ff-field--horizontal' : 'ff-field'}
+        class=${classes.horizontal ? 'gui-field gui-field--horizontal' : 'gui-field'}
         id=${this.field?.uid}
       >
         ${this.adapter.templateData.children.map(
-          (child: any) => html`<ff-field .field=${child}></ff-field>`,
+          (child: any) => html`<gui-field .field=${child}></gui-field>`,
         )}
       </div>
     `;

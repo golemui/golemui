@@ -1,12 +1,12 @@
-.ff-form {
-  .ff-accordion {
-    margin: var(--ff-space-gap) 0;
+.gui-form {
+  .gui-accordion {
+    margin: var(--gui-space-gap) 0;
 
-    > .ff-field {
+    > .gui-field {
       row-gap: 0;
     }
 
-    .ff-accordion__section {
+    .gui-accordion__section {
       display: flex;
       flex-direction: column;
 
@@ -15,7 +15,7 @@
       }
     }
 
-    .ff-accordion__icon {
+    .gui-accordion__icon {
       border: solid currentcolor;
       border-width: 0 2px 2px 0;
       height: 0.5rem;
@@ -31,29 +31,28 @@
     button {
       position: relative;
       display: inline-block;
-      padding: var(--ff-padding);
-      border: 1px solid var(--ff-color-border);
-      background: var(--ff-color-bg);
-      color: var(--ff-color-fg);
-      transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
+      padding: var(--gui-padding);
+      border: 1px solid var(--gui-color-border);
+      background: var(--gui-color-bg);
+      color: var(--gui-color-fg);
+      transition: border-color 0.2s,
+      box-shadow 0.2s;
       cursor: pointer;
 
       &.active {
-        border-bottom-color: var(--ff-color-bg);
+        border-bottom-color: var(--gui-color-bg);
       }
 
-      &[aria-expanded='true'] .ff-accordion__icon {
+      &[aria-expanded='true'] .gui-accordion__icon {
         transform: translateY(-50%) rotate(-135deg);
       }
     }
 
     section[role='region'] {
-      padding: var(--ff-padding);
-      border: 1px solid var(--ff-color-border);
-      background: var(--ff-color-bg);
-      color: var(--ff-color-fg);
+      padding: var(--gui-padding);
+      border: 1px solid var(--gui-color-border);
+      background: var(--gui-color-bg);
+      color: var(--gui-color-fg);
     }
   }
 }

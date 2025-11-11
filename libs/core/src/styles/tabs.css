@@ -1,0 +1,30 @@
+.gui-form {
+  .gui-tabs {
+    margin: var(--gui-space-gap) 0;
+
+    a[role='tab'] {
+      display: inline-block;
+      padding: var(--gui-padding);
+      border: 1px solid var(--gui-color-border);
+      border-radius: var(--gui-radius) var(--gui-radius) 0 0;
+      background: var(--gui-color-bg);
+      color: var(--gui-color-fg);
+      transition: border-color 0.2s,
+      box-shadow 0.2s;
+      cursor: pointer;
+
+      &.active {
+        border-bottom-color: var(--gui-color-bg);
+      }
+    }
+
+    section[role='tabpanel'] {
+      margin-top: -1px;
+      padding: var(--gui-padding);
+      border: 1px solid var(--gui-color-border);
+      border-radius: 0 0 var(--gui-radius) var(--gui-radius);
+      background: var(--gui-color-bg);
+      color: var(--gui-color-fg);
+    }
+  }
+}

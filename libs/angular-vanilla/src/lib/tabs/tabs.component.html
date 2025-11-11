@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<nav class="ff-field ff-field--horizontal" role="tablist" [id]="field.uid">
+<nav class="gui-field gui-field--horizontal" role="tablist" [id]="field.uid">
   @for (tab of templateData.tabs; track tab.uid) {
     <a
       role="tab"
@@ -17,7 +17,7 @@
 @for (child of templateData.children; track child.uid) {
   @if (child.uid === activeTab) {
     <section role="tabpanel">
-      <ng-container ffField [field]="child" />
+      <ng-container guiField [field]="child" />
     </section>
   }
 }

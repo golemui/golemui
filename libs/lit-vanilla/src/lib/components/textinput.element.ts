@@ -1,13 +1,13 @@
-import * as Core from '@formforge/core';
-import * as Lit from '@formforge/lit';
+import * as Core from '@golemui/core';
+import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { TextinputProps } from '@formforge/shared-vanilla';
+import { TextinputProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-textinput')
+@customElement('gui-textinput')
 export class TextinputElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -26,7 +26,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-textinput');
+    this.classList.add('gui-textinput');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -40,25 +40,25 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     // Hint
     const hint = this.adapter.templateData.hint
-      ? html`<div class="ff-textinput__hint" id=${`${this.field.uid}_hint`}>
+      ? html`<div class="gui-textinput__hint" id=${`${this.field.uid}_hint`}>
           ${this.adapter.templateData.hint}
         </div>`
       : html``;
 
     // Icon
     const textinputIcon: { [key: string]: boolean } = {
-      'ff-textinput--icon': false,
-      'ff-textinput--icon-right': false,
+      'gui-textinput--icon': false,
+      'gui-textinput--icon-right': false,
     };
     let icon;
     if (this.adapter.templateData.icon) {
-      textinputIcon['ff-textinput--icon'] = true;
-      textinputIcon['ff-textinput--icon-right'] =
+      textinputIcon['gui-textinput--icon'] = true;
+      textinputIcon['gui-textinput--icon-right'] =
         this.adapter.templateData.iconPosition === 'right';
 
       const classes = {
-        'ff-textinput__icon': true,
-        'ff-textinput__icon--right': this.adapter.templateData.iconPosition === 'right',
+        'gui-textinput__icon': true,
+        'gui-textinput__icon--right': this.adapter.templateData.iconPosition === 'right',
         [this.adapter.templateData.icon]: true,
       };
       icon = html`<span class=${classMap(classes)}></span>`;
@@ -72,7 +72,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
         ${hint}
       </label>
 
-      <div class="ff-field">
+      <div class="gui-field">
         <input
           type="text"
           id=${this.field.uid}

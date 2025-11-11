@@ -1,0 +1,61 @@
+.gui-form {
+  .gui-textinput {
+    display: block;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gui-space-gap--inner);
+      margin-bottom: var(--gui-space-gap--inner);
+      font-weight: 500;
+    }
+
+    input {
+      padding: var(--gui-padding);
+      border: 1px solid var(--gui-color-border);
+      border-radius: var(--gui-radius);
+      background: var(--gui-color-bg);
+      color: var(--gui-color-fg);
+      transition: border-color 0.2s,
+      box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--gui-color-primary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-primary) 25%, transparent);
+      }
+
+      &[aria-invalid='true'] {
+        border-color: var(--gui-color-error);
+      }
+
+      .gui-textinput--icon {
+        padding-left: 2.5rem;
+      }
+
+      .gui-textinput--icon-right {
+        padding-left: var(--gui-space-gap);
+        padding-right: var(--gui-icon-space-gap);
+      }
+    }
+
+    .gui-textinput__hint {
+      font-size: var(--gui-font-size--small);
+      color: var(--gui-color-fg--secondary);
+    }
+
+    .gui-textinput__icon {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .gui-textinput__icon--right {
+      right: 0;
+    }
+  }
+}

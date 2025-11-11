@@ -1,8 +1,8 @@
-import * as Core from '@formforge/core';
-import { FieldRenderer, RepeaterIndexContext, useControl } from '@formforge/react';
+import * as Core from '@golemui/core';
+import { FieldRenderer, RepeaterIndexContext, useControl } from '@golemui/react';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { RepeaterProps } from '@formforge/shared-vanilla';
+import { RepeaterProps } from '@golemui/shared-vanilla';
 
 export function Repeater(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;
@@ -39,7 +39,7 @@ export function Repeater(fieldInstance: Core.WithField) {
               repeaterIndex={index}
               formContext={formContext}
             />
-            <button type="button" className="ff-button" onClick={() => removeItem(value, index)}>
+            <button type="button" className="gui-button" onClick={() => removeItem(value, index)}>
               {props.removeLabel ?? 'Remove'}
             </button>
           </div>
@@ -49,13 +49,13 @@ export function Repeater(fieldInstance: Core.WithField) {
   }, [props, formContext, value, uid, removeItem]);
 
   return (
-    <div className="ff-repeater">
+    <div className="gui-repeater">
       <div id={uid}>
         {label && <h2 key={`${uid}-title`}>{label}</h2>}
         {renderFields()}
         <button
           type="button"
-          className="ff-button"
+          className="gui-button"
           onClick={() => addItem(value || [])}
           disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
         >

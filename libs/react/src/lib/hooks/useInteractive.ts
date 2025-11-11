@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';

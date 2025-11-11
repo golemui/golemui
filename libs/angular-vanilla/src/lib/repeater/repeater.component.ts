@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
-import { RepeaterProps } from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { RepeaterProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'ff-repeater',
+  selector: 'gui-repeater',
   imports: [CommonModule, Angular.RepeaterFieldDirective],
   providers: [Angular.ControlAdapter, Angular.RepeaterFieldDirective],
   templateUrl: './repeater.component.html',
   styleUrls: ['../styles.scss', './repeater.component.scss'],
   host: {
-    class: 'ff-repeater',
+    class: 'gui-repeater',
   },
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
