@@ -24,19 +24,23 @@ export class FormElement extends LitElement {
     return this;
   }
 
-  protected onFormError(error: Core.FormStoreError) {
+  protected onFormError(event: CustomEvent<Core.FormStoreError>) {
+    const error = event.detail;
     this.error = '';
     if (error.kind === 'validation') {
       this.error = 'Validation errors: ' + error.errors;
     } else if (error.kind === 'fatal') {
       this.error = 'Fatal error: ' + error.error;
     }
+    Promise.resolve().then(() => this.requestUpdate());
   }
 
-  protected onFormEvent(event: Core.FormEvent) {
-    console.groupCollapsed(`onFormEvent('${event.name}')`);
-    console.log(event.data);
+  protected onFormEvent(event: CustomEvent<Core.FormEvent>) {
+    const evt = event.detail;
+    console.groupCollapsed(`onFormEvent('${evt.name}')`);
+    console.log(evt.data);
     console.groupEnd();
+    Promise.resolve().then(() => this.requestUpdate());
   }
 
   render() {
