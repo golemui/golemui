@@ -1,9 +1,9 @@
 @let templateData = adapter.templateData();
 
-<div class="ff-field" [id]="field.uid">
+<div class="gui-field" [id]="field.uid">
   <div
-    class="ff-alert-notification"
-    [ngClass]="`ff-alert-notification--${templateData.level || 'default'}`"
+    class="gui-alert-notification"
+    [ngClass]="`gui-alert-notification--${templateData.level || 'default'}`"
   >
     {{ templateData.text }}
   </div>

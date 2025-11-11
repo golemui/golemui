@@ -1,7 +1,7 @@
-import * as Core from '@formforge/core';
-import { FieldRenderer, useLayout } from '@formforge/react';
+import * as Core from '@golemui/core';
+import { FieldRenderer, useLayout } from '@golemui/react';
 import { useCallback, useState } from 'react';
-import { TabsProps } from '@formforge/shared-vanilla';
+import { TabsProps } from '@golemui/shared-vanilla';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
@@ -30,8 +30,8 @@ export function Tabs(fieldInstance: Core.WithField) {
   }, [children, formContext, activeTab]);
 
   return (
-    <div className="ff-tabs">
-      <nav className={`ff-field ff-field--horizontal`} role="tablist" id={uid}>
+    <div className="gui-tabs">
+      <nav className={`gui-field gui-field--horizontal`} role="tablist" id={uid}>
         {renderTabs()}
       </nav>
       <section role="tabpanel">{renderFields()}</section>

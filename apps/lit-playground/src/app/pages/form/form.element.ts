@@ -1,11 +1,11 @@
 import './form.element.scss';
-import '@formforge/lit';
+import '@golemui/lit';
 import { customElement } from 'lit/decorators.js';
 import { html, LitElement } from 'lit';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
-import * as Vanilla from '@formforge/lit-vanilla';
-import { kitchenSink } from '@formforge/shared-vanilla';
+import * as Vanilla from '@golemui/lit-vanilla';
+import { kitchenSink } from '@golemui/shared-vanilla';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -48,14 +48,14 @@ export class FormElement extends LitElement {
       <div>
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
-        <ff-form
+        <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
           .fieldLoaders=${this.vanillaFieldLoaders}
           .middlewares=${this.middlewares}
           @formError=${this.onFormError}
           @event=${this.onFormEvent}
-        ></ff-form>
+        ></gui-form>
       </div>
     `;
   }

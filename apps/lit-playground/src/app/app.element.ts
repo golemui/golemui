@@ -13,7 +13,7 @@ export class AppElement extends LitElement {
 
   connectedCallback() {
     this.innerHTML = `
-      <header><h1>Formforge</h1></header>
+      <header><h1>golemui</h1></header>
       <main class="container">
         <lit-form></lit-form>
       </main>

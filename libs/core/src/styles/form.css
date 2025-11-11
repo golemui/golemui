@@ -1,0 +1,13 @@
+.gui-form {
+  display: block;
+  background: var(--gui-color-bg);
+  padding: 1rem;
+  border-radius: var(--gui-radius);
+
+  /* Base reset for all gui-* components */
+  font-family: var(--gui-font-family);
+  font-size: var(--gui-font-size);
+  color: var(--gui-color-fg);
+  box-sizing: border-box;
+  margin: var(--gui-field-gap);
+}

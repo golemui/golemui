@@ -1,0 +1,19 @@
+.gui-form {
+  .gui-stack {
+    display: flex;
+    flex-direction: column;
+    margin: var(--gui-space-gap) 0;
+  }
+
+  .gui-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    column-gap: var(--gui-space-gap--inner);
+    row-gap: var(--gui-space-gap--inner);
+
+    &.gui-field--horizontal {
+      flex-direction: row;
+    }
+  }
+}

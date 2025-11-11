@@ -1,6 +1,6 @@
 // JSON Schema 2020-12 --> GolemUI dynamic form description
 
-import { FormField, SchemaToFieldMap } from '@formforge/core';
+import { FormField, SchemaToFieldMap } from '@golemui/core';
 import { isOption } from '../components';
 import { Vanilla } from '../field.factory';
 import { Option } from '../field.props';

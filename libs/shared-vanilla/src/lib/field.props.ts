@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 
 export type AccordionProps = {
   singleOpen?: boolean;

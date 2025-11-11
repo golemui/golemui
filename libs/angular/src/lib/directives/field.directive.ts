@@ -8,12 +8,12 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { AngularFormContext } from '../context/form.context';
 import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
 
 @Directive({
-  selector: '[ffField]',
+  selector: '[guiField]',
   standalone: true,
 })
 export class FieldDirective implements OnInit {

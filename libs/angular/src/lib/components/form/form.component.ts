@@ -10,7 +10,7 @@ import {
   Type,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { AngularFormContext } from '../../context/form.context';
 import { FieldDirective } from '../../directives/field.directive';
 
@@ -22,14 +22,14 @@ type I18n = Record<string, any>;
 const defaultI18n: I18n = {};
 
 @Component({
-  selector: 'ff-form',
+  selector: 'gui-form',
   standalone: true,
   templateUrl: './form.component.html',
   imports: [CommonModule, FieldDirective],
   providers: [AngularFormContext],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'ff-form',
+    class: 'gui-form',
   },
 })
 export class FormComponent implements OnInit {

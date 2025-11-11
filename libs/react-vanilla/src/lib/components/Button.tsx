@@ -1,5 +1,5 @@
-import * as Core from '@formforge/core';
-import { useInteractive } from '@formforge/react';
+import * as Core from '@golemui/core';
+import { useInteractive } from '@golemui/react';
 import '../styles.scss';
 
 export function Button(fieldInstance: Core.WithField) {
@@ -7,8 +7,8 @@ export function Button(fieldInstance: Core.WithField) {
   const { uid, isDisabled, label, onClick } = useInteractive(field);
 
   return (
-    <div className="ff-button">
-      <div className="ff-field">
+    <div className="gui-button">
+      <div className="gui-field">
         <button type="button" id={uid} onClick={onClick} disabled={isDisabled}>
           {label}
         </button>

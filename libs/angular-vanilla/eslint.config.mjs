@@ -27,7 +27,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'ff',
+          prefix: 'gui',
           style: 'camelCase',
         },
       ],
@@ -35,7 +35,7 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'ff',
+          prefix: 'gui',
           style: 'kebab-case',
         },
       ],

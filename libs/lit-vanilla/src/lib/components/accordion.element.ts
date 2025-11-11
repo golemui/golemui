@@ -1,12 +1,12 @@
-import { LitElement, html, nothing } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
-import * as Lit from '@formforge/lit';
-import { AccordionProps } from '@formforge/shared-vanilla';
+import * as Lit from '@golemui/lit';
+import { AccordionProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-accordion')
+@customElement('gui-accordion')
 export class AccordionElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
   activeSections: { [key: string]: boolean } = {};
@@ -26,7 +26,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-accordion');
+    this.classList.add('gui-accordion');
     const props: AccordionProps = this.field.props as AccordionProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
@@ -59,15 +59,15 @@ export class AccordionElement extends LitElement implements Core.WithField {
     if (!this.adapter.templateData) return html``;
 
     return html`
-      <div class="ff-field" id=${this.field.uid}>
+      <div class="gui-field" id=${this.field.uid}>
         ${this.adapter.templateData.sections.map((section: any, index: number) => {
           const sectionContent = this.activeSections[section.uid]
-            ? html`<section class="ff-field" role="region">
-                <ff-field .field=${this.getChild(section.uid)}></ff-field>
+            ? html`<section class="gui-field" role="region">
+                <gui-field .field=${this.getChild(section.uid)}></gui-field>
               </section>`
             : nothing;
 
-          return html`<div class="ff-accordion__section">
+          return html`<div class="gui-accordion__section">
             <button
               type="button"
               tabindex=${index}
@@ -77,7 +77,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
               aria-expanded=${this.activeSections[section.uid]}
               @click=${() => this.onClickButton(section.uid)}
             >
-              ${section.label}<span class="ff-accordion__icon"></span>
+              ${section.label}<span class="gui-accordion__icon"></span>
             </button>
 
             ${sectionContent}

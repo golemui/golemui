@@ -1,6 +1,6 @@
 import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { consume } from '@lit/context';
 import { formContext, LitFormContext } from '../context/form.context';
 import {
