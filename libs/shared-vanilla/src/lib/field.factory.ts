@@ -1,4 +1,4 @@
-import { BaseField, ControlField, DisplayField, LayoutField } from '@formforge/core';
+import { BaseField, ControlField, DisplayField, LayoutField } from '@golemui/core';
 import * as Props from './field.props';
 
 type ControlFieldConfig<T> = Omit<ControlField<T>, 'kind' | 'widget' | 'uid' | 'props'>;

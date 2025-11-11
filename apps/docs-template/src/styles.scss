@@ -1,14 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '../../../libs/core/src/styles/form-forge.css';
+@import '../../../libs/core/src/styles/index.css';
 
 html,
 body {
-  background-color: var(--ff-color-bg);
+  background-color: var(--gui-color-bg);
 }
 
 lit-form > div {
-  color: var(--ff-color-fg);
+  color: var(--gui-color-fg);
 }
 
 // Custom icons

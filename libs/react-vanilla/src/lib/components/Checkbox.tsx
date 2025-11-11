@@ -1,6 +1,6 @@
-import * as Core from '@formforge/core';
-import { useControl } from '@formforge/react';
-import { CheckboxProps } from '@formforge/shared-vanilla';
+import * as Core from '@golemui/core';
+import { useControl } from '@golemui/react';
+import { CheckboxProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
@@ -17,10 +17,10 @@ export function Checkbox(fieldInstance: Core.WithField) {
   const checkboxPosition = props.checkboxPosition;
 
   return (
-    <div className={`ff-checkbox ${checkboxPosition === 'left' ? 'ff-checkbox--left' : ''}`}>
+    <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
       <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>
 
-      <div className="ff-field ff-field--horizontal">
+      <div className="gui-field gui-field--horizontal">
         <input
           type="checkbox"
           id={uid}

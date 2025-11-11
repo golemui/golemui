@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 
 export const formContext = createContext<LitFormContext<any>>('ffFormContext');

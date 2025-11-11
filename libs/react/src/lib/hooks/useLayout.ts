@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { useEffect, useState } from 'react';
 import { combineLatest, map, of } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';

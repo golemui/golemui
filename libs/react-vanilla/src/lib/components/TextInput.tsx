@@ -1,6 +1,6 @@
-import * as Core from '@formforge/core';
-import { useControl } from '@formforge/react';
-import { TextinputProps } from '@formforge/shared-vanilla';
+import * as Core from '@golemui/core';
+import { useControl } from '@golemui/react';
+import { TextinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
@@ -20,20 +20,20 @@ export function TextInput(fieldInstance: Core.WithField) {
   const iconPosition = props.iconPosition;
 
   return (
-    <div className="ff-textinput">
+    <div className="gui-textinput">
       <label htmlFor={uid}>
         {label + (isRequired ? ' *' : '')}
         {hint && (
-          <div className="ff-textinput__hint" id={`${uid}_hint`}>
+          <div className="gui-textinput__hint" id={`${uid}_hint`}>
             {hint}
           </div>
         )}
       </label>
-      <div className="ff-field">
+      <div className="gui-field">
         <input
           type="text"
           id={uid}
-          className={`${icon ? 'ff-textinput--icon' : ''} ${iconPosition === 'right' ? 'ff-textinput--icon-right' : ''}`}
+          className={`${icon ? 'gui-textinput--icon' : ''} ${iconPosition === 'right' ? 'gui-textinput--icon-right' : ''}`}
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}
@@ -44,7 +44,7 @@ export function TextInput(fieldInstance: Core.WithField) {
         />
         {icon && (
           <span
-            className={`${icon} ff-textinput__icon ${iconPosition === 'right' ? 'ff-textinput__icon--right' : ''}`}
+            className={`${icon} gui-textinput__icon ${iconPosition === 'right' ? 'gui-textinput__icon--right' : ''}`}
           ></span>
         )}
       </div>

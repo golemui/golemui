@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
-import { AlertProps } from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { AlertProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'ff-alert',
+  selector: 'gui-alert',
   imports: [CommonModule],
   providers: [Angular.DisplayFieldAdapter],
   templateUrl: './alert.component.html',
   styleUrls: ['../styles.scss', './alert.component.scss'],
   host: {
-    class: 'ff-alert',
+    class: 'gui-alert',
   },
 })
 export class AlertComponent implements OnInit, OnDestroy, Core.WithField {

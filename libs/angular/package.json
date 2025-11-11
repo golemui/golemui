@@ -1,10 +1,10 @@
 {
-  "name": "@formforge/angular",
+  "name": "@golemui/angular",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "20",
     "@angular/core": "20",
-    "@formforge/core": "*",
+    "@golemui/core": "*",
     "rxjs": "^7.8.0"
   },
   "sideEffects": false

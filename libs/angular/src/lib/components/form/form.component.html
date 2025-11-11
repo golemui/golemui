@@ -2,7 +2,7 @@
 
 <form [id]="formName()">
   @if (formState && formState.formDef && context.fieldRegistry.ready) {
-    <ng-container ffField [field]="formState.formDef.form" />
+    <ng-container guiField [field]="formState.formDef.form" />
   } @else {
     <div>Loading form...</div>
   }

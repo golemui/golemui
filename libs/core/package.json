@@ -1,5 +1,5 @@
 {
-  "name": "@formforge/core",
+  "name": "@golemui/core",
   "version": "0.0.1",
   "type": "commonjs",
   "main": "./src/index.js",

@@ -1,11 +1,11 @@
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { consume, provide } from '@lit/context';
-import * as Core from '@formforge/core';
-import * as Lit from '@formforge/lit';
+import * as Core from '@golemui/core';
+import * as Lit from '@golemui/lit';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-button')
+@customElement('gui-button')
 export class ButtonElement extends LitElement implements Core.WithField {
   field!: Core.InteractiveField;
 
@@ -24,7 +24,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-button');
+    this.classList.add('gui-button');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -35,7 +35,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="ff-field">
+      <div class="gui-field">
         <button
           type="button"
           id=${this.field.uid}

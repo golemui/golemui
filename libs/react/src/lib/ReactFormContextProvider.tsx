@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { ReactFormContext } from './ReactFormContext';
 
 export function ReactFormContextProvider({

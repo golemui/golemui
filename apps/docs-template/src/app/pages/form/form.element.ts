@@ -1,8 +1,8 @@
 import './form.element.scss';
-import '@formforge/lit';
+import '@golemui/lit';
 import { customElement, property } from 'lit/decorators.js';
 import { LitElement, html } from 'lit';
-import * as Vanilla from '@formforge/lit-vanilla';
+import * as Vanilla from '@golemui/lit-vanilla';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -38,11 +38,11 @@ export class FormElement extends LitElement {
     } else {
       return html`
         <div>
-          <ff-form
+          <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
             .fieldLoaders=${this.vanillaFieldLoaders}
-          ></ff-form>
+          ></gui-form>
         </div>
       `;
     }

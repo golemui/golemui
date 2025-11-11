@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
 

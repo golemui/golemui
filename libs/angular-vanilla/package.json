@@ -1,12 +1,12 @@
 {
-  "name": "@formforge/angular-vanilla",
+  "name": "@golemui/angular-vanilla",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "20",
     "@angular/core": "20",
-    "@formforge/angular": "*",
-    "@formforge/core": "*",
-    "@formforge/shared-vanilla": "*"
+    "@golemui/angular": "*",
+    "@golemui/core": "*",
+    "@golemui/shared-vanilla": "*"
   },
   "sideEffects": false
 }

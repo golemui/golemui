@@ -1,4 +1,4 @@
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 
 export const loggerMiddleware: Core.Middleware<Core.State, Core.Action> =
   ({ getState }) =>

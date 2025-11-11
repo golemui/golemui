@@ -1,5 +1,5 @@
 import { inject, WritableSignal } from '@angular/core';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 

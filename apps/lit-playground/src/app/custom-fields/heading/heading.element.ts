@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import * as Lit from '@formforge/lit';
-import * as Core from '@formforge/core';
+import * as Lit from '@golemui/lit';
+import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import './heading.element.scss';
 
@@ -55,7 +55,7 @@ export class HeadingElement extends LitElement implements Core.WithField {
         break;
     }
 
-    return html`<div class="ff-field">${heading}</div>`;
+    return html`<div class="gui-field">${heading}</div>`;
   }
 
   disconnectedCallback() {

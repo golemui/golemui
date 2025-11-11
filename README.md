@@ -1,4 +1,4 @@
-# Formforge
+# golemui
 
 - Angular Playground `npx nx run angular-playground:serve`. Open http://localhost:4200/
 - React Playground `npx nx run react-playground:serve`. Open http://localhost:8080/

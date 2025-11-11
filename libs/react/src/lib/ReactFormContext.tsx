@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 
 export const ReactFormContext = createContext<{
   formContext: Core.FormContext<React.ComponentType<Core.WithField>>;

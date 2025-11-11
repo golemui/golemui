@@ -1,15 +1,16 @@
-.ff-form {
+.gui-form {
   /* Buttons inside fields */
-  button.ff-button,
-  /* Button Field */
-  .ff-button button {
+
+  button.gui-button,
+    /* Button Field */
+  .gui-button button {
     display: inline-block;
     all: unset;
     cursor: pointer;
-    background: var(--ff-color-primary);
+    background: var(--gui-color-primary);
     color: white;
-    border-radius: var(--ff-radius);
-    padding: var(--ff-padding);
+    border-radius: var(--gui-radius);
+    padding: var(--gui-padding);
     font-weight: 500;
     text-align: center;
     transition: filter 0.2s;

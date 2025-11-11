@@ -3,12 +3,12 @@
     <p class="error">{{ error }}</p>
   }
 
-  <ff-form
+  <gui-form
     [formDef]="formDef"
     [data]="formData"
     [fieldLoaders]="vanillaFieldLoaders"
     [middlewares]="middlewares"
     (formError)="onFormError($event)"
     (event)="onFormEvent($event)"
-  ></ff-form>
+  ></gui-form>
 </div>

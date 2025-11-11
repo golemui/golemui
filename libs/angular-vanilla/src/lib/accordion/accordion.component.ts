@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@formforge/angular';
-import * as Core from '@formforge/core';
-import { AccordionProps } from '@formforge/shared-vanilla';
+import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { AccordionProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'ff-accordion',
+  selector: 'gui-accordion',
   imports: [CommonModule, Angular.FieldDirective],
   providers: [Angular.LayoutAdapter],
   templateUrl: './accordion.component.html',
   host: {
-    class: 'ff-accordion',
+    class: 'gui-accordion',
   },
 })
 export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {

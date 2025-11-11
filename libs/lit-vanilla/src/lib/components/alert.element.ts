@@ -1,12 +1,12 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@formforge/core';
+import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
-import * as Lit from '@formforge/lit';
-import { AlertProps } from '@formforge/shared-vanilla';
+import * as Lit from '@golemui/lit';
+import { AlertProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('ff-alert')
+@customElement('gui-alert')
 export class AlertElement extends LitElement implements Core.WithField {
   field!: Core.DisplayField;
 
@@ -25,7 +25,7 @@ export class AlertElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('ff-alert');
+    this.classList.add('gui-alert');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -36,9 +36,9 @@ export class AlertElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="ff-field" id=${this.field.uid}>
+      <div class="gui-field" id=${this.field.uid}>
         <div
-          class="ff-alert-notification ff-alert-notification--${this.adapter.templateData.level ||
+          class="gui-alert-notification gui-alert-notification--${this.adapter.templateData.level ||
           'default'}"
         >
           ${this.adapter.templateData.text}
