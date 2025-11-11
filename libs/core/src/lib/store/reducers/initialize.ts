@@ -1,5 +1,6 @@
-import * as Field from '../../FormField';
 import * as Form from '../../Form';
+import * as Field from '../../FormField';
+import { flattenForm } from '../../utils/form';
 import * as Actions from '../actions';
 import { createInitialState, FormStoreError, State } from '../model';
 
@@ -37,10 +38,3 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     error: { kind: 'fatal', error: error.message },
   };
 };
-
-function flattenForm(fields: Field.FormField[]): Field.FormField[] {
-  return fields.flatMap((field) => [
-    field,
-    ...(Field.isLayoutField(field) ? flattenForm(field.children) : []),
-  ]);
-}
