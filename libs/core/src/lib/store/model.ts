@@ -1,11 +1,23 @@
+import * as z from 'zod/mini';
 import * as Form from '../Form';
 import * as Field from '../FormField';
-import { Uid } from '../shared';
+import { DotPath, Uid, UiState } from '../shared';
 
 export type FormStoreError =
   | { kind: 'none' }
   | { kind: 'fatal'; error: string | string[] }
   | { kind: 'validation'; errors: string[] };
+
+export type ValidationState = {
+  /**
+   * Cache of calculated schemas
+   */
+  validators: Record<UiState, z.ZodMiniType>;
+  /**
+   * Current status
+   */
+  status: null | { errors: string[] };
+};
 
 export type State = {
   formName: string;
@@ -17,6 +29,7 @@ export type State = {
   /**
    * Flattened version of `formDef`.
    * Useful for performing certain operations more efficiently.
+   * // TODO: Is this safe? What about sigle source of truth? this might be problematic if fields get out of sync (keep an eye on this)
    */
   flatForm: Field.FormField<string>[];
   /**
@@ -24,12 +37,19 @@ export type State = {
    * that we may need to track. For example, the state of a request through a `status` property.
    */
   formMeta: Record<string, any>;
+  /**
+   * List of states computed for the current form state.
+   */
   currentStates: string[];
   /**
    * Tracks fields whose components have been rendered.
    * A field is added when its component mounts and removed when it unmounts.
    */
   fields: Record<Uid, Field.FormField<string>>;
+  /**
+   * Tracks field validation status.
+   */
+  validations: Record<DotPath, ValidationState>;
   /**
    * Tracks fields with state expressions.
    * When data changes, these fields are updated and their flags recalculated.
@@ -58,6 +78,7 @@ export const createInitialState = (): State => ({
   formMeta: {},
   currentStates: [],
   fields: {},
+  validations: {},
   fieldFlags: {},
   fieldPropOverrides: {},
   data: {},

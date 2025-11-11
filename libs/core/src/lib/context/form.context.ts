@@ -19,6 +19,7 @@ export class FormContext<ComponentType> {
     this.store = createFormStore(middlewares);
   }
 
+  // TODO: There's an almost duplicate of this in the validate-all reducer
   // FIXME: Not type safety
   getPropertyValueByCurrentState<T>(property: string, obj: Record<string, any>): T | undefined {
     const currentStates = this.store.getState().currentStates;
