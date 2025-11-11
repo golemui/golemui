@@ -1,6 +1,10 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-field" [class.horizontal]="templateData.direction === 'horizontal'" [id]="field.uid">
+<div
+  class="gui-field"
+  [class.horizontal]="templateData.direction === 'horizontal'"
+  [id]="field.uid"
+>
   @for (child of templateData.children; track child.uid) {
     <ng-container guiField [field]="child" />
   }

@@ -9,8 +9,9 @@
       border-radius: var(--gui-radius) var(--gui-radius) 0 0;
       background: var(--gui-color-bg);
       color: var(--gui-color-fg);
-      transition: border-color 0.2s,
-      box-shadow 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
       cursor: pointer;
 
       &.active {

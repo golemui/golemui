@@ -16,8 +16,9 @@
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);
       color: var(--gui-color-fg);
-      transition: border-color 0.2s,
-      box-shadow 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 
       &:focus {
         outline: none;

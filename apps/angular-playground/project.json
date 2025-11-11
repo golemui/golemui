@@ -8,16 +8,12 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/angular-playground",
         "index": "apps/angular-playground/src/index.html",
         "main": "apps/angular-playground/src/main.ts",
-        "polyfills": [
-          "zone.js"
-        ],
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/angular-playground/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -26,10 +22,7 @@
             "input": "apps/angular-playground/public"
           }
         ],
-        "styles": [
-          "libs/core/src/styles/index.css",
-          "apps/angular-playground/src/styles.scss"
-        ]
+        "styles": ["libs/core/src/styles/index.css", "apps/angular-playground/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -94,9 +87,7 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/apps/angular-playground"
       }
