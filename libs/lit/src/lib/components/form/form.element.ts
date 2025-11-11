@@ -22,8 +22,8 @@ export class FormElement extends LitElement {
   state: State | undefined;
   subscriptions: Subscription[] = [];
 
-  static FORM_ERROR_EVENT = 'ff-form-error-event';
-  static FORM_EVENT = 'ff-form-event';
+  static FORM_ERROR_EVENT = 'formError';
+  static FORM_EVENT = 'event';
 
   override connectedCallback() {
     super.connectedCallback();
@@ -32,11 +32,15 @@ export class FormElement extends LitElement {
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
-      Core.formErrors(this.context.store.state$).subscribe((error) =>
-        this.dispatchEvent(new CustomEvent(FormElement.FORM_ERROR_EVENT, { detail: error })),
-      ),
+      Core.formErrors(this.context.store.state$).subscribe((error) => {
+        this.dispatchEvent(
+          new CustomEvent(FormElement.FORM_ERROR_EVENT, { detail: error, bubbles: true }),
+        );
+      }),
       this.context.events$.subscribe((event) =>
-        this.dispatchEvent(new CustomEvent(FormElement.FORM_EVENT, { detail: event })),
+        this.dispatchEvent(
+          new CustomEvent(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
+        ),
       ),
     );
 
@@ -62,8 +66,8 @@ export class FormElement extends LitElement {
       <form id=${this.formName}>
         ${when(
           ready,
-          () => html`<ff-field .field=${this.state!.formDef.form}></ff-field>`,
-          () => html`<div>Loading form...</div>`,
+          () => html` <ff-field .field=${this.state!.formDef.form}></ff-field>`,
+          () => html` <div>Loading form...</div>`,
         )}
       </form>
     `;
