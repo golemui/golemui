@@ -3,10 +3,11 @@ import { useControl } from '@golemui/react';
 import { CheckboxProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
+import { Errors } from './shared/Errors';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const { uid, isRequired, value, isDisabled, isReadonly, label, onValueChanged, props } =
+  const { uid, validator, errors, value, isDisabled, isReadonly, label, onValueChanged, props } =
     useControl<boolean, CheckboxProps>(field);
 
   const handleChange = useCallback(
@@ -18,7 +19,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
 
   return (
     <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
-      <label htmlFor={uid}>{label + (isRequired ? ' *' : '')}</label>
+      <label htmlFor={uid}>{label + (validator?.required ? ' *' : '')}</label>
 
       <div className="gui-field gui-field--horizontal">
         <input
@@ -31,6 +32,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
           onChange={handleChange}
         />
       </div>
+      <Errors errors={errors} />
     </div>
   );
 }

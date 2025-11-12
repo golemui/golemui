@@ -10,8 +10,9 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
   const [uid, setUid] = useState('');
   const [label, setLabel] = useState<string | undefined>(undefined);
   const [value, setValue] = useState<T | undefined>(undefined);
+  const [validator, setValidator] = useState<Core.Validator | undefined>(undefined);
+  const [errors, setErrors] = useState<string[]>([]);
   const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
-  const [isRequired, setIsRequired] = useState<boolean | undefined>(undefined);
   const [isReadonly, setIsReadonly] = useState<boolean | undefined>(undefined);
   const props = useExtraProps<ExtraProps>(field);
 
@@ -29,6 +30,7 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
     setUid(field.uid);
   }, [field, formContext.store]);
 
+  // Set the initial templateData, including the controls's data value
   useEffect(() => {
     const sub = formContext.store.state$
       .pipe(Core.dataByPath$<T>(field.path))
@@ -36,20 +38,39 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
     return () => sub.unsubscribe();
   }, [field.path, formContext.store.state$]);
 
+  // Listen to the validation stream for this control
+  useEffect(() => {
+    const sub = formContext.store.state$
+      .pipe(Core.validationByPath$(field.path))
+      .subscribe((validation) => {
+        setErrors(validation?.status?.errors || []);
+      });
+    return () => sub.unsubscribe();
+  }, [field, formContext.store]);
+
+  // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
   useEffect(() => {
     const sub = formContext.store.state$
       .pipe(Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
         setIsDisabled(fieldFlags?.disabled ?? (field.disabled as boolean));
-        setIsRequired(fieldFlags?.required ?? (field.required as boolean));
         setIsReadonly(fieldFlags?.readonly ?? (field.readonly as boolean));
       });
     return () => sub.unsubscribe();
   }, [field, formContext.store]);
 
+  // Listen to the form states stream and keep the `label` property in sync with the current state
   useEffect(() => {
     const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
       setLabel(formContext.getPropertyValueByCurrentState('label', field) ?? calculateLabel(field));
+    });
+    return () => sub.unsubscribe();
+  }, [field, formContext]);
+
+  // Listen to the form states stream and keep the `validator` property in sync with the current state
+  useEffect(() => {
+    const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
+      setValidator(formContext.getPropertyValueByCurrentState('validator', field));
     });
     return () => sub.unsubscribe();
   }, [field, formContext]);
@@ -85,8 +106,9 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
     value,
     formContext, // for the repeater
     props,
+    validator,
+    errors,
     isDisabled,
-    isRequired,
     isReadonly,
     onValueChanged,
   };

@@ -3,10 +3,11 @@ import { useControl } from '@golemui/react';
 import { TextinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
+import { Errors } from './shared/Errors';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, isRequired, value, isDisabled, isReadonly, label, props, onValueChanged } =
+  const { uid, validator, errors, value, isDisabled, isReadonly, label, props, onValueChanged } =
     useControl<string, TextinputProps>(field);
 
   const handleChange = useCallback(
@@ -22,7 +23,7 @@ export function TextInput(fieldInstance: Core.WithField) {
   return (
     <div className="gui-textinput">
       <label htmlFor={uid}>
-        {label + (isRequired ? ' *' : '')}
+        {label + (validator?.required ? ' *' : '')}
         {hint && (
           <div className="gui-textinput__hint" id={`${uid}_hint`}>
             {hint}
@@ -39,7 +40,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           readOnly={isReadonly}
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
-          aria-required={isRequired}
+          aria-required={validator?.required}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
         {icon && (
@@ -48,6 +49,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           ></span>
         )}
       </div>
+      <Errors errors={errors} />
     </div>
   );
 }
