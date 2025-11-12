@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
 import * as Core from '@golemui/core';
-import { signin, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import { signin, signinData, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
@@ -17,7 +17,7 @@ export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
   protected formDef = signin;
-  protected formData = {};
+  protected formData = signinData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

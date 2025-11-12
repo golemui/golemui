@@ -42,9 +42,6 @@ export type BaseField<StateKeys extends UiState = never> = {
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
   disabled?: boolean | { when: ReactiveExpression };
-  // TODO: remove and use the required validator instead
-  // TODO: Also, this should only be available for controls
-  required?: boolean | { when: ReactiveExpression };
   readonly?: boolean | { when: ReactiveExpression };
 
   // <dev-note>
@@ -91,7 +88,7 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
     defaultValue?: T;
     validator?: Validator;
   },
-  'disabled' | 'required' | 'label' | 'validator',
+  'disabled' | 'label' | 'validator',
   StateKeys
 >;
 

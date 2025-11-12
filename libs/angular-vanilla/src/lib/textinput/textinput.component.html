@@ -1,7 +1,7 @@
 @let templateData = adapter.templateData();
 
 <label [for]="field.uid">
-  {{ templateData.label + (templateData.required ? ' *' : '') }}
+  {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
   @if (templateData.hint) {
     <div class="gui-textinput__hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
   }
@@ -19,7 +19,7 @@
     [readOnly]="templateData.readonly"
     [attr.placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
-    [attr.aria-required]="templateData.required"
+    [attr.aria-required]="templateData.validator?.required"
     [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
   />
 

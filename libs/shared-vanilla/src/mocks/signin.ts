@@ -1,6 +1,6 @@
-import { defineForm } from '@golemui/core';
+import { defineForm, stringValidator } from '@golemui/core';
 
-export const signinData = { user: { email: 'joan-from-data@joan.com' } };
+export const signinData = { user: { id: 'ASDFGHJKL4567' } };
 
 export const signin = defineForm({
   states: {
@@ -29,20 +29,22 @@ export const signin = defineForm({
         uid: '',
         kind: 'control',
         widget: 'textinput',
-        path: 'user.email',
-        required: true,
-        validator: {
-          type: 'string',
-          format: 'email',
-        },
+        path: 'user.id',
+        readonly: true,
       },
       {
         uid: '',
         kind: 'control',
         widget: 'textinput',
         path: 'user.name',
-        readonly: true,
-        defaultValue: 'Joan readonly',
+        'validator.register': stringValidator({ required: true }),
+      },
+      {
+        uid: '',
+        kind: 'control',
+        widget: 'textinput',
+        path: 'user.email',
+        validator: stringValidator({ required: true, format: 'email' }),
       },
       {
         uid: '',
@@ -53,7 +55,13 @@ export const signin = defineForm({
           'placeholder.register': 'Enter password 1',
         },
         path: 'user.password',
-        required: true,
+        validator: {
+          type: 'string',
+          required: true,
+          minLength: 8,
+          maxLength: 20,
+          pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
+        },
         on: { 'change.register': 'checkPasswordMatch' },
       },
       {
@@ -74,7 +82,7 @@ export const signin = defineForm({
         widget: 'textinput',
         path: 'user.age',
         defaultValue: 0,
-        required: true,
+        validator: { type: 'string', required: true },
         include: { in: ['register'] },
       },
       {
@@ -83,7 +91,7 @@ export const signin = defineForm({
         widget: 'textinput',
         path: 'user.height',
         defaultValue: '170',
-        required: true,
+        validator: { type: 'string', required: true },
         include: { in: ['register'] },
       },
       {

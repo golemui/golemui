@@ -11,7 +11,6 @@ interface BaseValidator {
   const?: unknown; // exactly this value or fails.
   enum?: unknown[]; // exactly one of these values or fails.
   required?: boolean; // when required=true, undefined or empty fails.
-  requiredJsonSchema?: boolean; // Use strictly the JSON schema semantics. When required undefined fails, but empty doesn't.
 }
 
 const stringFormat = {
@@ -162,8 +161,12 @@ function fromStringValidator(v: StringValidator) {
       schema = schema.check(z.refine((val) => val === v.const));
     }
 
-    if (v.format !== undefined && stringFormatKeys.includes(v.format)) {
-      schema = schema.check(stringFormat[v.format].schema);
+    if (v.format !== undefined) {
+      if (stringFormatKeys.includes(v.format)) {
+        schema = schema.check(stringFormat[v.format].schema);
+      } else {
+        console.error(`The string validation format "${v.format}" is not supported`);
+      }
     }
 
     return schema;
@@ -232,7 +235,7 @@ function withOptional<T extends z.ZodMiniType, V extends Validator>(
   builder: (v: V) => T,
 ): T | z.ZodMiniOptional<T> {
   const schema = builder(validator);
-  if (!validator.required && !validator.requiredJsonSchema) {
+  if (!validator.required) {
     return z.optional(schema);
   }
   return schema;

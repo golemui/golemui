@@ -1,4 +1,5 @@
 import { FormField } from './FormField';
+import { Validator } from './FormValidator';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 
 /**
@@ -48,8 +49,8 @@ export type ControlTemplateData<T> = {
    * validation errors
    */
   errors?: string[];
+  validator?: Validator;
   disabled?: boolean;
-  required?: boolean;
   readonly?: boolean;
 };
 
