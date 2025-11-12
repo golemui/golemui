@@ -1,56 +1,103 @@
-import { BaseField, ControlField, DisplayField, LayoutField } from '@golemui/core';
+import * as Core from '@golemui/core';
 import * as Props from './field.props';
 
-type ControlFieldConfig<T> = Omit<ControlField<T>, 'kind' | 'widget' | 'uid' | 'props'>;
-type LayoutFieldConfig = Omit<LayoutField, 'kind' | 'widget' | 'uid' | 'props'>;
-type DisplayFieldConfig = Omit<BaseField, 'kind' | 'widget' | 'uid' | 'props'>;
+type ControlFieldConfig<T> = Omit<
+  Core.ControlField<T>,
+  'kind' | 'widget' | 'uid' | 'props' | 'validator'
+>;
+type LayoutFieldConfig = Omit<Core.LayoutField, 'kind' | 'widget' | 'uid' | 'props'>;
+type DisplayFieldConfig = Omit<Core.BaseField, 'kind' | 'widget' | 'uid' | 'props'>;
 
 /**
  * Vanilla field factory
  */
 export const Vanilla = {
+  //
   // Control fields
-  textinput: <T extends string>(
-    config: ControlFieldConfig<T>,
-    props?: Props.TextinputProps,
-  ): ControlField<T> => ({
+  //
+  textinput: <StateKeys extends Core.UiState = string>({
+    config,
+    props,
+    validator,
+  }: {
+    config: ControlFieldConfig<string>;
+    props?: Props.TextinputProps;
+    validator?: Core.StringValidator | Core.CustomValidator;
+  }): Core.ControlField<string, StateKeys> => ({
     uid: '',
     kind: 'control',
     widget: 'textinput',
     // The `props` key only exists in the returned object when `props` is actually provided
     ...(props && { props }),
+    ...(validator && { validator }),
     ...config,
   }),
-  checkbox: <T extends boolean>(
-    config: ControlFieldConfig<T>,
-    props?: Props.CheckboxProps,
-  ): ControlField<T> => ({
+  numberinput: <StateKeys extends Core.UiState = string>({
+    config,
+    props,
+    validator,
+  }: {
+    config: ControlFieldConfig<number>;
+    props?: Props.NumberinputProps;
+    validator?: Core.NumberValidator | Core.CustomValidator;
+  }): Core.ControlField<number, StateKeys> => ({
+    uid: '',
+    kind: 'control',
+    widget: 'numberinput',
+    ...(props && { props }),
+    ...(validator && { validator }),
+    ...config,
+  }),
+  checkbox: <StateKeys extends Core.UiState = string>({
+    config,
+    props,
+    validator,
+  }: {
+    config: ControlFieldConfig<boolean>;
+    props?: Props.CheckboxProps;
+    validator?: Core.BooleanValidator | Core.CustomValidator;
+  }): Core.ControlField<boolean, StateKeys> => ({
     uid: '',
     kind: 'control',
     widget: 'checkbox',
     ...(props && { props }),
+    ...(validator && { validator }),
     ...config,
   }),
-  select: <T extends string>(
-    config: ControlFieldConfig<T>,
-    props?: Props.SelectProps,
-  ): ControlField<T> => ({
+  select: <StateKeys extends Core.UiState = string>({
+    config,
+    props,
+    validator,
+  }: {
+    config: ControlFieldConfig<string>;
+    props?: Props.SelectProps;
+    validator?: Core.StringValidator | Core.CustomValidator;
+  }): Core.ControlField<string, StateKeys> => ({
     uid: '',
     kind: 'control',
     widget: 'select',
     ...(props && { props }),
+    ...(validator && { validator }),
     ...config,
   }),
 
+  //
   // Layout fields
-  stack: (config: LayoutFieldConfig, props?: Props.StackProps): LayoutField => ({
+  //
+  stack: <StateKeys extends Core.UiState = string>(
+    config: LayoutFieldConfig,
+    props?: Props.StackProps,
+  ): Core.LayoutField<StateKeys> => ({
     uid: '',
     kind: 'layout',
     widget: 'stack',
     ...(props && { props }),
     ...config,
   }),
-  tabs: (config: LayoutFieldConfig, props?: Props.TabsProps): LayoutField => ({
+  tabs: <StateKeys extends Core.UiState = string>(
+    config: LayoutFieldConfig,
+    props?: Props.TabsProps,
+  ): Core.LayoutField<StateKeys> => ({
     uid: '',
     kind: 'layout',
     widget: 'tabs',
@@ -58,8 +105,13 @@ export const Vanilla = {
     ...config,
   }),
 
+  //
   // Display fields
-  alert: (config: DisplayFieldConfig, props?: Props.AlertProps): DisplayField => ({
+  //
+  alert: <StateKeys extends Core.UiState = string>(
+    config: DisplayFieldConfig,
+    props?: Props.AlertProps,
+  ): Core.DisplayField<StateKeys> => ({
     uid: '',
     kind: 'display',
     widget: 'alert',

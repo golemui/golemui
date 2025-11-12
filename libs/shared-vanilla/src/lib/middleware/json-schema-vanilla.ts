@@ -1,6 +1,6 @@
 // JSON Schema 2020-12 --> GolemUI dynamic form description
 
-import { FormField, SchemaToFieldMap } from '@golemui/core';
+import * as Core from '@golemui/core';
 import { isOption } from '../components';
 import { Vanilla } from '../field.factory';
 import { Option } from '../field.props';
@@ -12,29 +12,36 @@ function enumToOption(opt: unknown): Option {
   return { label: opt as string, value: opt as string };
 }
 
-export const vanillaSchemaToFieldMap: SchemaToFieldMap = {
-  string: (_schema, path: string) => Vanilla.textinput({ path }),
+export const vanillaSchemaToFieldMap: Core.SchemaToFieldMap = {
+  string: (_schema, path: string) => Vanilla.textinput({ config: { path } }),
   enum: (_schema, path: string) =>
-    Vanilla.select({ path }, { options: _schema.enum?.map(enumToOption) ?? [] }),
-  boolean: (_schema, path: string) => Vanilla.checkbox({ path }),
-  number: (_schema, path: string) => Vanilla.textinput({ path }),
-  integer: (_schema, path: string) => Vanilla.textinput({ path }),
-  object: (_schema, children: FormField[]) => Vanilla.stack({ children }),
+    Vanilla.select({
+      config: { path },
+      props: { options: _schema.enum?.map(enumToOption) ?? [] },
+      validator: Core.stringValidator(),
+    }),
+  boolean: (_schema, path: string) =>
+    Vanilla.checkbox({ config: { path }, validator: Core.booleanValidator() }),
+  number: (_schema, path: string) =>
+    Vanilla.numberinput({ config: { path }, validator: Core.numberValidator() }),
+  integer: (_schema, path: string) =>
+    Vanilla.numberinput({ config: { path }, validator: Core.integerValidator() }),
+  object: (_schema, children: Core.FormField[]) => Vanilla.stack({ children }),
   // one or the other must be valid .
   // - remove data when tabs change.
   // - don't generate all tabs initially.
-  oneOf: (_schema, children: FormField[]) =>
+  oneOf: (_schema, children: Core.FormField[]) =>
     Vanilla.tabs({ children } /* TODO: , props: {logic: 'XOR'} as TabsProps*/),
   // one or more must be valid.
   // - don't remove data when tabs change.
   // - generate all tabs initially, there might be a defaultValue to populate initial values.
-  anyOf: (_schema, children: FormField[]) =>
+  anyOf: (_schema, children: Core.FormField[]) =>
     Vanilla.tabs({ children } /* TODO: , props: {logic: 'OR'} as TabsProps*/),
   fallback: (_schema) =>
     Vanilla.alert(
       {},
       {
-        text: `Unsupported Json Schema field ${JSON.stringify(_schema)}`,
+        text: `❌ Unsupported Json Schema field ${JSON.stringify(_schema)}`,
         level: 'error',
       },
     ),

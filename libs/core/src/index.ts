@@ -6,6 +6,7 @@ type _ = justin;
 export * from './lib/Form';
 export * from './lib/FormField';
 export * from './lib/FormStore';
+export * from './lib/FormValidator';
 export * from './lib/store/actions';
 export * from './lib/store/model';
 export * from './lib/store/selectors';

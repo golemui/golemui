@@ -30,7 +30,7 @@ const stringFormat = {
 type StringFormat = keyof typeof stringFormat;
 const stringFormatKeys = Object.keys(stringFormat) as StringFormat[];
 
-interface StringValidator extends BaseValidator {
+export interface StringValidator extends BaseValidator {
   type: 'string';
   minLength?: number;
   maxLength?: number;
@@ -38,7 +38,7 @@ interface StringValidator extends BaseValidator {
   format?: StringFormat;
 }
 
-interface NumberValidator extends BaseValidator {
+export interface NumberValidator extends BaseValidator {
   type: 'number' | 'integer';
   minimum?: number;
   maximum?: number;
@@ -47,12 +47,12 @@ interface NumberValidator extends BaseValidator {
   multipleOf?: number;
 }
 
-interface BooleanValidator extends BaseValidator {
+export interface BooleanValidator extends BaseValidator {
   type: 'boolean';
 }
 
 // TODO: Repeater at some point in the future?
-interface ArrayValidator extends BaseValidator {
+export interface ArrayValidator extends BaseValidator {
   type: 'array';
   minItems?: number;
   maxItems?: number;
@@ -60,9 +60,8 @@ interface ArrayValidator extends BaseValidator {
   items?: Validator;
 }
 
-type CustomValidator = LooseObject<{
+export type CustomValidator = LooseObject<{
   type: 'custom';
-  [k: string]: any;
 }>;
 
 // --- Union of all supported types ---
@@ -72,6 +71,42 @@ export type Validator =
   | BooleanValidator
   | ArrayValidator
   | CustomValidator;
+
+// --------------------------------
+//
+// Factory
+//
+// --------------------------------
+
+export const stringValidator = (config?: Omit<StringValidator, 'type'>): StringValidator => ({
+  type: 'string',
+  ...(config || {}),
+});
+
+export const numberValidator = (config?: Omit<NumberValidator, 'type'>): NumberValidator => ({
+  type: 'number',
+  ...(config || {}),
+});
+
+export const integerValidator = (config?: Omit<NumberValidator, 'type'>): NumberValidator => ({
+  type: 'integer',
+  ...(config || {}),
+});
+
+export const booleanValidator = (config?: Omit<BooleanValidator, 'type'>): BooleanValidator => ({
+  type: 'boolean',
+  ...(config || {}),
+});
+
+export const arrayValidator = (config?: Omit<ArrayValidator, 'type'>): ArrayValidator => ({
+  type: 'array',
+  ...(config || {}),
+});
+
+export const customValidator = (config?: Omit<CustomValidator, 'type'>): CustomValidator => ({
+  type: 'custom',
+  ...(config || {}),
+});
 
 // --------------------------------
 //

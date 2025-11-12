@@ -1,4 +1,3 @@
-import * as z from 'zod/mini';
 import { ControlField, isControlField } from '../../FormField';
 import { createValidator, Validator } from '../../FormValidator';
 import { get } from '../../utils/object';
@@ -44,7 +43,7 @@ export const validateAll = (state: State): State => {
           const result = schema.safeParse(controlValue);
           newValidations[control.path].status = result.success
             ? null
-            : { errors: [z.prettifyError(result.error)] };
+            : { errors: result.error!.issues.map((err) => err.message) };
         } else {
           // If there's no validator, the field is valid
           newValidations[control.path].status = null;
