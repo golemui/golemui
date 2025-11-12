@@ -14,5 +14,6 @@
     [attr.aria-required]="templateData.validator?.required"
     [attr.aria-checked]="templateData.value ?? false"
     (click)="!templateData.readonly && valueChanged($event)"
+    (blur)="adapter.onBlur()"
   />
 </div>

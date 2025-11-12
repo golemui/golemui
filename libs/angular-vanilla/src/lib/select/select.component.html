@@ -12,6 +12,7 @@
     [disabled]="templateData.disabled"
     [ariaReadOnly]="templateData.readonly"
     (change)="valueChanged($event)"
+    (blur)="adapter.onBlur()"
   >
     @if (optionsLoading === true) {
       <option [value]="">Loading...</option>

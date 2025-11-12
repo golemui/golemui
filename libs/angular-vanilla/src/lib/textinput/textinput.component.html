@@ -19,6 +19,7 @@
     [readOnly]="templateData.readonly"
     [attr.placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
+    (blur)="adapter.onBlur()"
     [attr.aria-required]="templateData.validator?.required"
     [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
   />
