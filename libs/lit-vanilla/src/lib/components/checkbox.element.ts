@@ -1,9 +1,9 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
+import { CheckboxProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { CheckboxProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-checkbox')
@@ -45,7 +45,8 @@ export class CheckboxElement extends LitElement implements Core.WithField {
 
     return html`
       <label for=${this.field.uid}>
-        ${this.adapter.templateData.label + (this.adapter.templateData.required ? ' *' : '')}
+        ${this.adapter.templateData.label +
+        (this.adapter.templateData.validator?.required ? ' *' : '')}
       </label>
 
       <div class="gui-field">
@@ -56,11 +57,17 @@ export class CheckboxElement extends LitElement implements Core.WithField {
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
           @click="${() => this.valueChanged(event)}"
-          aria-required=${this.adapter.templateData.required || nothing}
+          aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-readonly=${this.adapter.templateData.readonly || nothing}
           aria-checked=${this.adapter.templateData.value ? true : nothing}
         />
       </div>
+
+      ${this.adapter.templateData.errors && this.adapter.templateData.errors.length > 0
+        ? html`<ul>
+            ${this.adapter.templateData.errors.map((error) => html`<li>${error}</li>`)}
+          </ul>`
+        : ''}
     `;
   }
 

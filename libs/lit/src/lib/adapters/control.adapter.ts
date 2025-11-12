@@ -34,13 +34,21 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       .pipe(takeUntil(this.destroy$), Core.dataByPath$(field.path))
       .subscribe((data) => this.setTemplateData({ value: data }));
 
+    // Listen to the validation stream for this control
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.validationByPath$(field.path))
+      .subscribe((validation) => {
+        this.setTemplateData({
+          errors: validation?.status?.errors || [],
+        });
+      });
+
     // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
         this.setTemplateData({
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-          required: fieldFlags?.required ?? (field.required as boolean),
           readonly: fieldFlags?.readonly ?? (field.readonly as boolean),
         });
       });
@@ -50,6 +58,13 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       this.setTemplateData({
         label:
           this.context.getPropertyValueByCurrentState('label', this.field) ?? this.calculateLabel(),
+      });
+    });
+
+    // Listen to the form states stream and keep the `validator` property in sync with the current state
+    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
+      this.setTemplateData({
+        validator: this.context.getPropertyValueByCurrentState('validator', this.field),
       });
     });
 
