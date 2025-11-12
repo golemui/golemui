@@ -47,6 +47,9 @@ export function reducer(state: State, action: Action): State {
     case 'SET_ERROR':
       return Reducers.setError(state, action);
 
+    case 'TOUCHED':
+      return state.touched === false ? { ...state, touched: true } : state;
+
     default: {
       return assertNever(action);
     }

@@ -28,7 +28,8 @@ export const dataByPath$ = <T = any>(path: DotPath) =>
 // --------------------------------
 
 const selectValidations = pipe(
-  map((store: State) => store.validations),
+  filter((store: State) => store.touched === true),
+  map((store) => store.validations),
   distinctUntilChanged(),
 );
 

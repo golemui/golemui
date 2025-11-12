@@ -6,6 +6,7 @@ import { DotPath, Uid, UiState } from '../shared';
 export type FormStoreError =
   | { kind: 'none' }
   | { kind: 'fatal'; error: string | string[] }
+  // TODO: Is this still needed since we have proper validators now?
   | { kind: 'validation'; errors: string[] };
 
 export type ValidationState = {
@@ -63,6 +64,11 @@ export type State = {
   fieldPropOverrides: Record<Uid, Record<string, any>>;
   data: Record<string, any>;
   error: FormStoreError;
+  /**
+   * Indicates whether the user has interacted with the form.
+   * Set to true when a blur event occurs on any form control.
+   */
+  touched: boolean;
 };
 
 export const createInitialState = (): State => ({
@@ -83,6 +89,7 @@ export const createInitialState = (): State => ({
   fieldPropOverrides: {},
   data: {},
   error: { kind: 'none' },
+  touched: false,
 });
 
 export type MiddlewareAPI<S, A> = {
