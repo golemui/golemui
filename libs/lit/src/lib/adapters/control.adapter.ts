@@ -80,6 +80,12 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
     this.context.emitEvent('change', this.field);
   }
 
+  onBlur() {
+    this.context.store.dispatch({
+      type: 'TOUCHED',
+    });
+  }
+
   private calculateLabel() {
     return this.field.label === undefined
       ? Core.toLabel(this.field.path)

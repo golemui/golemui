@@ -83,6 +83,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
           ?readonly=${this.adapter.templateData.readonly || nothing}
           placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
+          @blur="${() => this.adapter.onBlur()}"
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         />
