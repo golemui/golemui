@@ -7,8 +7,18 @@ import { Errors } from './shared/Errors';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const { uid, validator, errors, value, isDisabled, isReadonly, label, onValueChanged, props } =
-    useControl<boolean, CheckboxProps>(field);
+  const {
+    uid,
+    validator,
+    errors,
+    value,
+    isDisabled,
+    isReadonly,
+    label,
+    onValueChanged,
+    onBlur,
+    props,
+  } = useControl<boolean, CheckboxProps>(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => !isReadonly && onValueChanged(e.target.checked),
@@ -30,6 +40,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
           aria-checked={value ?? false}
           aria-readonly={isReadonly}
           onChange={handleChange}
+          onBlur={onBlur}
         />
       </div>
       <Errors errors={errors} />

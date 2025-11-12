@@ -7,8 +7,18 @@ import { Errors } from './shared/Errors';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, validator, errors, value, isDisabled, isReadonly, label, props, onValueChanged } =
-    useControl<string, TextinputProps>(field);
+  const {
+    uid,
+    validator,
+    errors,
+    value,
+    isDisabled,
+    isReadonly,
+    label,
+    props,
+    onValueChanged,
+    onBlur,
+  } = useControl<string, TextinputProps>(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.value),
@@ -40,6 +50,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           readOnly={isReadonly}
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
+          onBlur={onBlur}
           aria-required={validator?.required}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />

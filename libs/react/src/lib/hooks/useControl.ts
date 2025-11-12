@@ -100,6 +100,12 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
     [field, formContext],
   );
 
+  const onBlur = useCallback(() => {
+    formContext.store.dispatch({
+      type: 'TOUCHED',
+    });
+  }, [formContext]);
+
   return {
     uid,
     label,
@@ -111,6 +117,7 @@ export function useControl<T, ExtraProps extends Record<string, any>>(
     isDisabled,
     isReadonly,
     onValueChanged,
+    onBlur,
   };
 }
 
