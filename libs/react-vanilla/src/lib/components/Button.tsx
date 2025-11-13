@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
-import { useInteractive } from '@golemui/react';
+import { useInteractiveField } from '@golemui/react';
 import '../styles.scss';
 
 export function Button(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.InteractiveField;
-  const { uid, isDisabled, label, onClick } = useInteractive(field);
+  const { uid, isDisabled, label, onClick } = useInteractiveField(field);
 
   return (
     <div className="gui-button">

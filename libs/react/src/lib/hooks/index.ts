@@ -1,4 +1,4 @@
 export * from './useControlField';
 export * from './useDisplayField';
-export * from './useInteractive';
+export * from './useInteractiveField';
 export * from './useLayout';
