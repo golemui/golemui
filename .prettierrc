@@ -7,5 +7,14 @@
   "useTabs": false,
   "quoteProps": "as-needed",
   "bracketSpacing": true,
-  "requirePragma": false
+  "requirePragma": false,
+  "overrides": [
+    {
+      "files": "*.mdx",
+      "options": {
+        "parser": "markdown",
+        "proseWrap": "preserve"
+      }
+    }
+  ]
 }
