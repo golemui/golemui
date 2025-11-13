@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs';
 import { BaseAdapter } from './base.adapter';
 
 @Injectable()
-export class InteractiveAdapter extends BaseAdapter<Core.InteractiveField> {
+export class InteractiveFieldAdapter extends BaseAdapter<Core.InteractiveField> {
   templateData = signal<{ label?: string; disabled?: boolean }>({});
 
   init(field: Core.InteractiveField) {
