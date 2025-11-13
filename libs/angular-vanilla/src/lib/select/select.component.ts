@@ -8,7 +8,7 @@ import { createOptionMapper, isOption, isProtoOption, SelectProps } from '@golem
   standalone: true,
   selector: 'gui-select',
   imports: [CommonModule],
-  providers: [Angular.ControlAdapter],
+  providers: [Angular.ControlFieldAdapter],
   templateUrl: './select.component.html',
   styleUrl: '../styles.scss',
   host: {
@@ -17,7 +17,9 @@ import { createOptionMapper, isOption, isProtoOption, SelectProps } from '@golem
 })
 export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlAdapter<string, SelectProps> = inject(Angular.ControlAdapter);
+  protected adapter: Angular.ControlFieldAdapter<string, SelectProps> = inject(
+    Angular.ControlFieldAdapter,
+  );
   protected optionsLoading = false;
   protected hasMatchingValue = false;
 

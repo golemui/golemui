@@ -8,7 +8,7 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-repeater',
   imports: [CommonModule, Angular.RepeaterFieldDirective],
-  providers: [Angular.ControlAdapter, Angular.RepeaterFieldDirective],
+  providers: [Angular.ControlFieldAdapter, Angular.RepeaterFieldDirective],
   templateUrl: './repeater.component.html',
   styleUrls: ['../styles.scss', './repeater.component.scss'],
   host: {
@@ -17,8 +17,8 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
-  protected adapter: Angular.ControlAdapter<Record<string, unknown>[], RepeaterProps> = inject(
-    Angular.ControlAdapter,
+  protected adapter: Angular.ControlFieldAdapter<Record<string, unknown>[], RepeaterProps> = inject(
+    Angular.ControlFieldAdapter,
   );
 
   ngOnInit(): void {

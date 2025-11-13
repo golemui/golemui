@@ -8,7 +8,7 @@ import { TextinputProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-textinput',
   imports: [CommonModule],
-  providers: [Angular.ControlAdapter],
+  providers: [Angular.ControlFieldAdapter],
   templateUrl: './textinput.component.html',
   styleUrl: '../styles.scss',
   host: {
@@ -17,8 +17,8 @@ import { TextinputProps } from '@golemui/shared-vanilla';
 })
 export class TextinputComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlAdapter<string, TextinputProps> = inject(
-    Angular.ControlAdapter,
+  protected adapter: Angular.ControlFieldAdapter<string, TextinputProps> = inject(
+    Angular.ControlFieldAdapter,
   );
 
   ngOnInit(): void {

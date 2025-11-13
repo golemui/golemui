@@ -4,9 +4,10 @@ import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
-export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseFieldAdapter<
-  Core.ControlField<T>
-> {
+export class ControlFieldAdapter<
+  T,
+  ExtraProps extends Record<string, any>,
+> extends BaseFieldAdapter<Core.ControlField<T>> {
   templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
     {} as Core.ControlTemplateData<T> & ExtraProps,
   );
