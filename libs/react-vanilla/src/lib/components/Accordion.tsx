@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, useLayout } from '@golemui/react';
-import { useCallback, useState } from 'react';
+import { FieldRenderer, useLayoutField } from '@golemui/react';
 import { AccordionProps } from '@golemui/shared-vanilla';
+import { useCallback, useState } from 'react';
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext, props } = useLayout<AccordionProps>(field);
+  const { uid, children, formContext, props } = useLayoutField<AccordionProps>(field);
   const [activeSections, setActiveSections] = useState(props.defaultOpen ?? {});
 
   const onClickButton = useCallback(
