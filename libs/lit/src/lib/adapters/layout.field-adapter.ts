@@ -3,9 +3,9 @@ import { createContext } from '@lit/context';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const layoutContext = createContext<LayoutAdapter<any>>('ffLayoutAdapter');
+export const layoutContext = createContext<LayoutFieldAdapter<any>>('ffLayoutFieldAdapter');
 
-export class LayoutAdapter<
+export class LayoutFieldAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.LayoutField> {
   override templateData = {} as Core.LayoutTemplateData & ExtraProps;

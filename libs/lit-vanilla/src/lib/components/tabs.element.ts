@@ -1,11 +1,11 @@
-import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
 import * as Core from '@golemui/core';
-import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
 import { TabsProps } from '@golemui/shared-vanilla';
-import { classMap } from 'lit/directives/class-map.js';
+import { consume, provide } from '@lit/context';
+import { html, LitElement } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-tabs')
@@ -18,7 +18,7 @@ export class TabsElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutAdapter<TabsProps>();
+  adapter = new Lit.LayoutFieldAdapter<TabsProps>();
 
   subscriptions: Subscription[] = [];
 
