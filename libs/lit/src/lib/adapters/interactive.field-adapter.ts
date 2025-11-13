@@ -3,9 +3,11 @@ import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const interactiveContext = createContext<InteractiveAdapter>('ffInteractiveAdapter');
+export const interactiveContext = createContext<InteractiveFieldAdapter>(
+  'ffInteractiveFieldAdapter',
+);
 
-export class InteractiveAdapter extends BaseFieldAdapter<Core.InteractiveField> {
+export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveField> {
   override templateData: { label?: string; disabled?: boolean } = {};
 
   init(field: Core.InteractiveField) {

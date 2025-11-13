@@ -1,7 +1,7 @@
 export * from './lib/adapters/base.field-adapter';
 export * from './lib/adapters/control.field-adapter';
 export * from './lib/adapters/display.field-adapter';
-export * from './lib/adapters/interactiveAdapter';
+export * from './lib/adapters/interactive.field-adapter';
 export * from './lib/adapters/layout.adapter';
 
 export * from './lib/components/field/field.element';
