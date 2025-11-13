@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, useLayout } from '@golemui/react';
-import { useCallback, useState } from 'react';
+import { FieldRenderer, useLayoutField } from '@golemui/react';
 import { TabsProps } from '@golemui/shared-vanilla';
+import { useCallback, useState } from 'react';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext, props } = useLayout<TabsProps>(field);
+  const { uid, children, formContext, props } = useLayoutField<TabsProps>(field);
   const [activeTab, setActiveTab] = useState(props.defaultOpen ?? props.tabs[0].uid);
 
   const renderTabs = useCallback(() => {

@@ -8,7 +8,7 @@ import { AccordionProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-accordion',
   imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.LayoutAdapter],
+  providers: [Angular.LayoutFieldAdapter],
   templateUrl: './accordion.component.html',
   host: {
     class: 'gui-accordion',
@@ -18,7 +18,9 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.LayoutField;
   activeSections: { [key: string]: boolean } = {};
 
-  protected adapter: Angular.LayoutAdapter<AccordionProps> = inject(Angular.LayoutAdapter);
+  protected adapter: Angular.LayoutFieldAdapter<AccordionProps> = inject(
+    Angular.LayoutFieldAdapter,
+  );
 
   ngOnInit(): void {
     const props: AccordionProps = this.field.props as AccordionProps;

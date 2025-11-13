@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
-import { useDisplay } from '@golemui/react';
+import { useDisplayField } from '@golemui/react';
 import { AlertProps } from '@golemui/shared-vanilla';
 
 export function Alert(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.DisplayField;
-  const { uid, props } = useDisplay<AlertProps>(field);
+  const { uid, props } = useDisplayField<AlertProps>(field);
 
   return (
     <div className="gui-alert">

@@ -1,21 +1,21 @@
-import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { BaseAdapter } from './base.adapter';
+import { createContext } from '@lit/context';
+import { BaseFieldAdapter } from './base.field-adapter';
 
-@Injectable()
+export const displayFieldContext = createContext<DisplayFieldAdapter<any>>('ffDisplayFieldAdapter');
+
 export class DisplayFieldAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.DisplayField> {
-  templateData = signal<ExtraProps>({} as ExtraProps);
+> extends BaseFieldAdapter<Core.DisplayField> {
+  override templateData = {} as ExtraProps;
 
   init(field: Core.DisplayField) {
     this.field = field;
 
     // Set initial templateData
-    this.templateData.update((current) => ({
-      ...current,
+    this.setTemplateData({
       ...this.field.props,
-    }));
+    });
 
     this.addFieldToTheStore(field);
     this.propsUpdaterByCurrentState(this.templateData);

@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, useLayout } from '@golemui/react';
+import { FieldRenderer, useLayoutField } from '@golemui/react';
+import { StackProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { StackProps } from '@golemui/shared-vanilla';
 
 export function Stack(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext, props } = useLayout<StackProps>(field);
+  const { uid, children, formContext, props } = useLayoutField<StackProps>(field);
 
   const renderFields = useCallback(() => {
     return children.map((field) => (

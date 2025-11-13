@@ -1,5 +1,5 @@
-import * as Form from '../../Form';
-import * as Field from '../../FormField';
+import * as Form from '../../form';
+import * as Field from '../../form-field';
 import { flattenForm } from '../../utils/form';
 import * as Actions from '../actions';
 import { createInitialState, FormStoreError, State } from '../model';

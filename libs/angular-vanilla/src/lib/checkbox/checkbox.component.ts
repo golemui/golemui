@@ -8,7 +8,7 @@ import { CheckboxProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-checkbox',
   imports: [CommonModule],
-  providers: [Angular.ControlAdapter],
+  providers: [Angular.ControlFieldAdapter],
   templateUrl: './checkbox.component.html',
   host: {
     class: 'gui-checkbox',
@@ -17,7 +17,9 @@ import { CheckboxProps } from '@golemui/shared-vanilla';
 })
 export class CheckboxComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlAdapter<string, CheckboxProps> = inject(Angular.ControlAdapter);
+  protected adapter: Angular.ControlFieldAdapter<string, CheckboxProps> = inject(
+    Angular.ControlFieldAdapter,
+  );
 
   ngOnInit(): void {
     this.adapter.init(this.field);

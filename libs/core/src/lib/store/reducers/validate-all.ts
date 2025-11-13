@@ -1,5 +1,5 @@
-import { ControlField, isControlField } from '../../FormField';
-import { createValidator, Validator } from '../../FormValidator';
+import { ControlField, isControlField } from '../../form-field';
+import { createValidator, Validator } from '../../form-validator';
 import { get } from '../../utils/object';
 import { State, ValidationState } from '../model';
 

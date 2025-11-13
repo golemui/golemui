@@ -3,8 +3,6 @@
     "uid": "",
     "kind": "layout",
     "widget": "stack",
-    "children": [
-      { "uid": "", "kind": "control", "widget": "textinput", "path": "username" }
-    ]
+    "children": [{ "uid": "", "kind": "control", "widget": "textinput", "path": "username" }]
   }
 }

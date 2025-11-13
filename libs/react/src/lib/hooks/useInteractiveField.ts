@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useInteractive<ExtraProps extends Record<string, any>>(
+export function useInteractiveField<ExtraProps extends Record<string, any>>(
   field: Core.InteractiveField,
 ) {
   const { formContext } = useReactFormContext();

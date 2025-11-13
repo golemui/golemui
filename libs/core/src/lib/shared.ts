@@ -1,5 +1,5 @@
-import { FormField } from './FormField';
-import { Validator } from './FormValidator';
+import { FormField } from './form-field';
+import { Validator } from './form-validator';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 
 /**

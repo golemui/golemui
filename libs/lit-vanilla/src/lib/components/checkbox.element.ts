@@ -15,7 +15,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlAdapter<string, CheckboxProps>();
+  adapter = new Lit.ControlFieldAdapter<string, CheckboxProps>();
 
   subscriptions: Subscription[] = [];
 

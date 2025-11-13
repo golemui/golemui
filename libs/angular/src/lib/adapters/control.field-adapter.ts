@@ -1,14 +1,16 @@
+import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
-export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
-
-export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
-  Core.ControlField<T>
-> {
-  override templateData = {} as Core.ControlTemplateData<T> & ExtraProps;
+@Injectable()
+export class ControlFieldAdapter<
+  T,
+  ExtraProps extends Record<string, any>,
+> extends BaseFieldAdapter<Core.ControlField<T>> {
+  templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
+    {} as Core.ControlTemplateData<T> & ExtraProps,
+  );
 
   init(field: Core.ControlField<T>) {
     this.field = field;
@@ -24,48 +26,56 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
     });
 
     // Set the initial control `label` and merge `props`
-    this.setTemplateData({
+    this.templateData.update((current) => ({
+      ...current,
       label: this.calculateLabel(),
       ...this.field.props,
-    });
+    }));
 
-    // Set the initial templateData, including the control's data value
+    // Set the initial templateData, including the controls's data value
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.dataByPath$(field.path))
-      .subscribe((data) => this.setTemplateData({ value: data }));
+      .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
+      .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
     // Listen to the validation stream for this control
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.validationByPath$(field.path))
       .subscribe((validation) => {
-        this.setTemplateData({
+        this.templateData.update((current) => ({
+          ...current,
           errors: validation?.status?.errors || [],
-        });
+        }));
       });
 
-    // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
+    // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
-        this.setTemplateData({
+        this.templateData.update((current) => ({
+          ...current,
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
+        }));
+        this.templateData.update((current) => ({
+          ...current,
           readonly: fieldFlags?.readonly ?? (field.readonly as boolean),
-        });
+        }));
       });
 
     // Listen to the form states stream and keep the `label` property in sync with the current state
     this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.setTemplateData({
+      this.templateData.update((current) => ({
+        ...current,
         label:
           this.context.getPropertyValueByCurrentState('label', this.field) ?? this.calculateLabel(),
-      });
+      }));
     });
 
     // Listen to the form states stream and keep the `validator` property in sync with the current state
     this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.setTemplateData({
+      this.templateData.update((current) => ({
+        ...current,
         validator: this.context.getPropertyValueByCurrentState('validator', this.field),
-      });
+      }));
     });
 
     this.context.emitEvent('load', this.field);

@@ -1,5 +1,5 @@
-import { FormField, LayoutField } from '../../FormField';
-import { Form } from '../../Form';
+import { Form } from '../../form';
+import { FormField, LayoutField } from '../../form-field';
 import { Action } from '../../store/actions';
 import { Middleware, State } from '../../store/model';
 import { isJsonSchema, JSONSchemaObject, RefResolver } from './json-schema';

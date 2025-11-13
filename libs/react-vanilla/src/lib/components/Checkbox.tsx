@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useControl } from '@golemui/react';
+import { useControlField } from '@golemui/react';
 import { CheckboxProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
@@ -18,7 +18,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
     onValueChanged,
     onBlur,
     props,
-  } = useControl<boolean, CheckboxProps>(field);
+  } = useControlField<boolean, CheckboxProps>(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => !isReadonly && onValueChanged(e.target.checked),

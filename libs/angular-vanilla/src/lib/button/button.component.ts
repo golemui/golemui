@@ -7,7 +7,7 @@ import * as Core from '@golemui/core';
   standalone: true,
   selector: 'gui-button',
   imports: [CommonModule],
-  providers: [Angular.InteractiveAdapter],
+  providers: [Angular.InteractiveFieldAdapter],
   templateUrl: './button.component.html',
   styleUrl: '../styles.scss',
   host: {
@@ -16,7 +16,7 @@ import * as Core from '@golemui/core';
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.InteractiveField;
-  protected adapter: Angular.InteractiveAdapter = inject(Angular.InteractiveAdapter);
+  protected adapter: Angular.InteractiveFieldAdapter = inject(Angular.InteractiveFieldAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

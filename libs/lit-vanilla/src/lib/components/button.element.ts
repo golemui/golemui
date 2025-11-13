@@ -1,8 +1,8 @@
-import { html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { consume, provide } from '@lit/context';
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
+import { consume, provide } from '@lit/context';
+import { html, LitElement, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-button')
@@ -14,7 +14,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.interactiveContext })
-  adapter = new Lit.InteractiveAdapter();
+  adapter = new Lit.InteractiveFieldAdapter();
 
   subscriptions: Subscription[] = [];
 

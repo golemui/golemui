@@ -1,6 +1,6 @@
 import * as z from 'zod/mini';
-import * as Form from '../Form';
-import * as Field from '../FormField';
+import * as Form from '../form';
+import * as Field from '../form-field';
 import { DotPath, Uid, UiState } from '../shared';
 
 export type FormStoreError =

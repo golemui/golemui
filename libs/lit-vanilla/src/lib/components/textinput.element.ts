@@ -16,7 +16,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlAdapter<string, TextinputProps>();
+  adapter = new Lit.ControlFieldAdapter<string, TextinputProps>();
 
   subscriptions: Subscription[] = [];
 

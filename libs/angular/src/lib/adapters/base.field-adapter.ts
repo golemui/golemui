@@ -1,20 +1,12 @@
+import { inject, WritableSignal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { WithField } from '@golemui/core';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
-import { LitFormContext } from '../context/form.context';
+import { AngularFormContext } from '../context/form.context';
 
-export abstract class BaseAdapter<F extends Core.FormField> {
-  context!: LitFormContext<WithField>;
+export abstract class BaseFieldAdapter<F extends Core.FormField> {
+  protected context = inject(AngularFormContext);
   protected destroy$ = new Subject<void>();
   protected field!: F;
-  protected templateData: any = {};
-
-  templateDataChanged$ = new Subject<void>();
-
-  protected setTemplateData(patch: any) {
-    this.templateData = { ...this.templateData, ...patch };
-    this.templateDataChanged$.next();
-  }
 
   protected addFieldToTheStore(field: F) {
     this.context.store.dispatch({
@@ -25,7 +17,7 @@ export abstract class BaseAdapter<F extends Core.FormField> {
 
   // Listen to the form states stream and keep all `props` in sync with the current state
   protected propsUpdaterByCurrentState<ExtraProps extends Record<string, any>>(
-    templateData: ExtraProps,
+    templateData: WritableSignal<ExtraProps>,
   ) {
     const getFieldOverrides$ = Core.fieldPropOverridesByUid$(this.field.uid);
     combineLatest([
@@ -52,10 +44,10 @@ export abstract class BaseAdapter<F extends Core.FormField> {
             {} as ExtraProps,
           );
 
-          templateData = {
-            ...templateData,
+          templateData.update((current) => ({
+            ...current,
             ...updatedProps,
-          };
+          }));
         }
       });
   }

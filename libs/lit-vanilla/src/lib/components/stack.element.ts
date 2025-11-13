@@ -1,9 +1,9 @@
-import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
 import * as Core from '@golemui/core';
-import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
 import { StackProps } from '@golemui/shared-vanilla';
+import { consume, provide } from '@lit/context';
+import { html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-stack')
@@ -15,7 +15,7 @@ export class StackElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutAdapter<StackProps>();
+  adapter = new Lit.LayoutFieldAdapter<StackProps>();
 
   subscriptions: Subscription[] = [];
 

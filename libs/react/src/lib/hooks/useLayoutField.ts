@@ -4,7 +4,7 @@ import { combineLatest, map, of } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useLayout<ExtraProps extends Record<string, any>>(field: Core.LayoutField) {
+export function useLayoutField<ExtraProps extends Record<string, any>>(field: Core.LayoutField) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const [children, setChildren] = useState<Core.FormField<string>[]>([]);

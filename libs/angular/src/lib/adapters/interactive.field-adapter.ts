@@ -1,10 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
-export class InteractiveAdapter extends BaseAdapter<Core.InteractiveField> {
+export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveField> {
   templateData = signal<{ label?: string; disabled?: boolean }>({});
 
   init(field: Core.InteractiveField) {

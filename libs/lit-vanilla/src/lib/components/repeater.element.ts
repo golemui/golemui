@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
+import { RepeaterProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { RepeaterProps } from '@golemui/shared-vanilla';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-repeater')
@@ -16,7 +16,7 @@ export class RepeaterElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlAdapter<Record<string, unknown>[], RepeaterProps>();
+  adapter = new Lit.ControlFieldAdapter<Record<string, unknown>[], RepeaterProps>();
 
   subscriptions: Subscription[] = [];
 
