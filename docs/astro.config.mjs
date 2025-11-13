@@ -13,11 +13,7 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Guides',
-          items: [
-            // Each item here is one entry in the navigation menu.
-            { label: 'Getting Started', slug: 'guides/getting-started' },
-            { label: 'CSS & Styling', slug: 'guides/styling' },
-          ],
+          autogenerate: { directory: 'guides' },
         },
         {
           label: 'Components Reference',
