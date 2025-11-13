@@ -7,8 +7,12 @@
     "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:check --all",
     "cz": "czg checkbox",
     "build:docs": "./build-docs.sh --skip-install && cd docs && npm run build",
+    "build:styles": "npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/core/src/styles/index.css",
     "run:docs": "./build-docs.sh --skip-install && cd docs && npm run dev",
-    "cz:breaking": "npm run precz && czg break"
+    "cz:breaking": "npm run precz && czg break",
+    "release": "npx nx run-many --target=build && npm run build:styles && nx release",
+    "release:dry": "npx nx run-many --target=build && npm run build:styles && nx release -d",
+    "release:verdaccio": "npx nx run-many --target=build && npm run build:styles && nx release publish --skip-push"
   },
   "private": true,
   "dependencies": {

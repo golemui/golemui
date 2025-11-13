@@ -22,7 +22,7 @@
             "input": "apps/angular-playground/public"
           }
         ],
-        "styles": ["libs/core/src/styles/index.css", "apps/angular-playground/src/styles.scss"]
+        "styles": ["libs/shared-vanilla/src/styles/index.scss", "apps/angular-playground/src/styles.scss"]
       },
       "configurations": {
         "production": {
