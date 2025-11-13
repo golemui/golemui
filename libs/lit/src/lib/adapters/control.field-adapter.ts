@@ -3,7 +3,7 @@ import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const controlContext = createContext<ControlFieldAdapter<any, any>>('ffControlAdapter');
+export const controlContext = createContext<ControlFieldAdapter<any, any>>('ffControlFieldAdapter');
 
 export class ControlFieldAdapter<
   T,
