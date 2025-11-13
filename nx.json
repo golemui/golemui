@@ -86,8 +86,16 @@
     }
   },
   "release": {
+    "projects": ["libs/*"],
     "version": {
+      "conventionalCommits": true,
       "preVersionCommand": "npx nx run-many -t build"
+    },
+    "changelog": {
+      "workspaceChangelog": {
+        "createRelease": "github"
+      },
+      "projectChangelogs": true
     }
   },
   "plugins": [
