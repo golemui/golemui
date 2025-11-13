@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useDisplay } from '@golemui/react';
+import { useDisplayField } from '@golemui/react';
 import { createElement, PropsWithChildren } from 'react';
 import styles from './heading.component.module.scss';
 
@@ -10,7 +10,7 @@ type OwnWidgetProps = {
 
 export function HeadingComponent(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.DisplayField;
-  const { uid, props } = useDisplay<OwnWidgetProps>(field);
+  const { uid, props } = useDisplayField<OwnWidgetProps>(field);
 
   return (
     <div className="gui-field" id={uid}>

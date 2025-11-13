@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useDisplay<ExtraProps extends Record<string, any>>(field: Core.DisplayField) {
+export function useDisplayField<ExtraProps extends Record<string, any>>(field: Core.DisplayField) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
   const props = useExtraProps<ExtraProps>(field);
