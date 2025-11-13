@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 export const interactiveContext = createContext<InteractiveAdapter>('ffInteractiveAdapter');
 
-export class InteractiveAdapter extends BaseAdapter<Core.InteractiveField> {
+export class InteractiveAdapter extends BaseFieldAdapter<Core.InteractiveField> {
   override templateData: { label?: string; disabled?: boolean } = {};
 
   init(field: Core.InteractiveField) {

@@ -1,12 +1,12 @@
-import { createContext } from '@lit/context';
 import * as Core from '@golemui/core';
-import { BaseAdapter } from './base.adapter';
+import { createContext } from '@lit/context';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 export const displayFieldContext = createContext<DisplayFieldAdapter<any>>('ffDisplayFieldAdapter');
 
 export class DisplayFieldAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.DisplayField> {
+> extends BaseFieldAdapter<Core.DisplayField> {
   override templateData = {} as ExtraProps;
 
   init(field: Core.DisplayField) {

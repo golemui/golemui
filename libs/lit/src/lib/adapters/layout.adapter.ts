@@ -1,13 +1,13 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 export const layoutContext = createContext<LayoutAdapter<any>>('ffLayoutAdapter');
 
 export class LayoutAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.LayoutField> {
+> extends BaseFieldAdapter<Core.LayoutField> {
   override templateData = {} as Core.LayoutTemplateData & ExtraProps;
 
   init(field: Core.LayoutField) {

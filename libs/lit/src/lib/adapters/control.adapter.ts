@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
 
-export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
+export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseFieldAdapter<
   Core.ControlField<T>
 > {
   override templateData = {} as Core.ControlTemplateData<T> & ExtraProps;

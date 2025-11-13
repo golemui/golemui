@@ -3,7 +3,7 @@ import { WithField } from '@golemui/core';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { LitFormContext } from '../context/form.context';
 
-export abstract class BaseAdapter<F extends Core.FormField> {
+export abstract class BaseFieldAdapter<F extends Core.FormField> {
   context!: LitFormContext<WithField>;
   protected destroy$ = new Subject<void>();
   protected field!: F;
