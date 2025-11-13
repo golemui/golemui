@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, RepeaterIndexContext, useControl } from '@golemui/react';
+import { FieldRenderer, RepeaterIndexContext, useControlField } from '@golemui/react';
+import { RepeaterProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { RepeaterProps } from '@golemui/shared-vanilla';
 
 export function Repeater(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;
-  const { uid, value, label, formContext, onValueChanged, props } = useControl<
+  const { uid, value, label, formContext, onValueChanged, props } = useControlField<
     Record<string, unknown>[],
     RepeaterProps
   >(field);

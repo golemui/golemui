@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useControl } from '@golemui/react';
+import { useControlField } from '@golemui/react';
 import { TextinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
@@ -18,7 +18,7 @@ export function TextInput(fieldInstance: Core.WithField) {
     props,
     onValueChanged,
     onBlur,
-  } = useControl<string, TextinputProps>(field);
+  } = useControlField<string, TextinputProps>(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.value),

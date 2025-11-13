@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
 
-export function useControl<T, ExtraProps extends Record<string, any>>(
+export function useControlField<T, ExtraProps extends Record<string, any>>(
   field: Core.ControlField<T, string>,
 ) {
   const { formContext } = useReactFormContext();
