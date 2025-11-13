@@ -1,17 +1,17 @@
-import './form.element.scss';
-import '@golemui/lit';
-import { customElement } from 'lit/decorators.js';
-import { html, LitElement } from 'lit';
 import * as Core from '@golemui/core';
-import { loggerMiddleware } from '../../middlewares/logger.middleware';
+import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
-import { kitchenSink } from '@golemui/shared-vanilla';
+import { signin, signinData } from '@golemui/shared-vanilla';
+import { html, LitElement } from 'lit';
+import { customElement } from 'lit/decorators.js';
+import { loggerMiddleware } from '../../middlewares/logger.middleware';
+import './form.element.scss';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
   middlewares = [loggerMiddleware];
-  formDef = kitchenSink;
-  formData = {};
+  formDef = signin;
+  formData = signinData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

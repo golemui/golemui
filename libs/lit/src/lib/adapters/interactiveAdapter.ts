@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
-import { BaseAdapter } from './base.adapter';
-import { takeUntil } from 'rxjs';
 import { createContext } from '@lit/context';
+import { takeUntil } from 'rxjs';
+import { BaseAdapter } from './base.adapter';
 
 export const interactiveContext = createContext<InteractiveAdapter>('ffInteractiveAdapter');
 
@@ -37,6 +37,7 @@ export class InteractiveAdapter extends BaseAdapter<Core.InteractiveField> {
   }
 
   click() {
+    this.context.store.dispatch({ type: 'TOUCHED' });
     this.context.emitEvent('click', this.field);
   }
 }

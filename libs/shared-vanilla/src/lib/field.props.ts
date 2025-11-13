@@ -13,6 +13,13 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type NumberinputProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+};
+
 export type CheckboxProps = {
   checkboxPosition?: 'left' | 'right';
 };
