@@ -1,12 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
 export class LayoutAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseAdapter<Core.LayoutField> {
+> extends BaseFieldAdapter<Core.LayoutField> {
   templateData = signal<Core.LayoutTemplateData & ExtraProps>({
     children: [] as Core.FormField<string>[],
   } as Core.LayoutTemplateData & ExtraProps);

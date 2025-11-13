@@ -1,10 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { takeUntil } from 'rxjs';
-import { BaseAdapter } from './base.adapter';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
-export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseAdapter<
+export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseFieldAdapter<
   Core.ControlField<T>
 > {
   templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
