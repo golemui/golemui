@@ -1,4 +1,4 @@
-import * as Field from '../../FormField';
+import * as Field from '../../form-field';
 import { State } from '../model';
 
 // TODO: Should we allow include.in and exclude.from at the same time?

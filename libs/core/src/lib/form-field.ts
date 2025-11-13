@@ -1,5 +1,5 @@
 import * as z from 'zod/mini';
-import { Validator } from './FormValidator';
+import { Validator } from './form-validator';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';

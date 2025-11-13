@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
-import { ControlField, InteractiveField, On } from '../FormField';
-import { createFormStore, FormStore } from '../FormStore';
+import { ControlField, InteractiveField, On } from '../form-field';
+import { createFormStore, FormStore } from '../form-store';
 import { EventHandlerCallback, EventName, FormEvent } from '../shared';
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
