@@ -1,6 +1,8 @@
 @let templateData = adapter.templateData();
 
-<label [for]="field.uid">{{ templateData.label + (templateData.required ? ' *' : '') }}</label>
+<label [for]="field.uid">{{
+  templateData.label + (templateData.validator?.required ? ' *' : '')
+}}</label>
 
 <div class="gui-field gui-field--horizontal">
   <input
@@ -9,8 +11,9 @@
     [value]="templateData.value ?? false"
     [disabled]="templateData.disabled"
     [attr.aria-readonly]="templateData.readonly"
-    [attr.aria-required]="templateData.required"
+    [attr.aria-required]="templateData.validator?.required"
     [attr.aria-checked]="templateData.value ?? false"
     (click)="!templateData.readonly && valueChanged($event)"
+    (blur)="adapter.onBlur()"
   />
 </div>

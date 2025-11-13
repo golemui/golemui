@@ -2,7 +2,9 @@
 
 <div class="gui-field">
   @if (templateData.label) {
-    <label [for]="field.uid">{{ templateData.label + (templateData.required ? ' *' : '') }}</label>
+    <label [for]="field.uid">{{
+      templateData.label + (templateData.validator?.required ? ' *' : '')
+    }}</label>
   }
   <select
     [id]="field.uid"
@@ -10,6 +12,7 @@
     [disabled]="templateData.disabled"
     [ariaReadOnly]="templateData.readonly"
     (change)="valueChanged($event)"
+    (blur)="adapter.onBlur()"
   >
     @if (optionsLoading === true) {
       <option [value]="">Loading...</option>

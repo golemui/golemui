@@ -36,17 +36,23 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
       .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
-    // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
+    // Listen to the validation stream for this control
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.validationByPath$(field.path))
+      .subscribe((validation) => {
+        this.templateData.update((current) => ({
+          ...current,
+          errors: validation?.status?.errors || [],
+        }));
+      });
+
+    // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
         this.templateData.update((current) => ({
           ...current,
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-        }));
-        this.templateData.update((current) => ({
-          ...current,
-          required: fieldFlags?.required ?? (field.required as boolean),
         }));
         this.templateData.update((current) => ({
           ...current,
@@ -63,6 +69,14 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       }));
     });
 
+    // Listen to the form states stream and keep the `validator` property in sync with the current state
+    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
+      this.templateData.update((current) => ({
+        ...current,
+        validator: this.context.getPropertyValueByCurrentState('validator', this.field),
+      }));
+    });
+
     this.context.emitEvent('load', this.field);
   }
 
@@ -73,6 +87,12 @@ export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends B
       payload: { path: this.field.path, data: value },
     });
     this.context.emitEvent('change', this.field);
+  }
+
+  onBlur() {
+    this.context.store.dispatch({
+      type: 'TOUCHED',
+    });
   }
 
   private calculateLabel() {

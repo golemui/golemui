@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
+import { TextinputProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { TextinputProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-textinput')
@@ -68,7 +68,8 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     return html`
       <label for=${this.field.uid}>
-        ${this.adapter.templateData.label + (this.adapter.templateData.required ? ' *' : '')}
+        ${this.adapter.templateData.label +
+        (this.adapter.templateData.validator?.required ? ' *' : '')}
         ${hint}
       </label>
 
@@ -82,11 +83,18 @@ export class TextinputElement extends LitElement implements Core.WithField {
           ?readonly=${this.adapter.templateData.readonly || nothing}
           placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
-          aria-required=${this.adapter.templateData.required || nothing}
+          @blur="${() => this.adapter.onBlur()}"
+          aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         />
         ${icon}
       </div>
+
+      ${this.adapter.templateData.errors && this.adapter.templateData.errors.length > 0
+        ? html`<ul>
+            ${this.adapter.templateData.errors.map((error) => html`<li>${error}</li>`)}
+          </ul>`
+        : ''}
     `;
   }
 

@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { Validator } from './FormValidator';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
@@ -18,28 +19,7 @@ export type Flags = {
 };
 
 export type FieldWidget = string;
-// export type FieldWidget =
-//   | 'textinput'
-//   | 'textarea'
-//   | 'password'
-//   | 'number'
-//   | 'radio'
-//   | 'checkbox'
-//   | 'toggle'
-//   | 'date'
-//   | 'daterange'
-//   | 'select'
-//   | 'repeater'
-//   | 'button'
-//   // layout
-//   | 'stack'
-//   | 'grid'
-//   | 'expander'
-//   | 'card'
-//   // presentation
-//   | 'heading'
-//   | 'markdown'
-//   | 'alert';
+// export type FieldWidget = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 
 /**
  * An event expression is basically a way to change the current UI state: `currentState = 'loading'` or send an event `loadData` for the forms engine runtime to process.
@@ -51,7 +31,6 @@ export type On<StateKeys extends UiState = never> = AllSuffixable<
     load?: EventExpression;
     click?: EventExpression;
     change?: EventExpression;
-    //[k: string]: any;
   },
   StateKeys
 >;
@@ -63,7 +42,6 @@ export type BaseField<StateKeys extends UiState = never> = {
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
   disabled?: boolean | { when: ReactiveExpression };
-  required?: boolean | { when: ReactiveExpression };
   readonly?: boolean | { when: ReactiveExpression };
 
   // <dev-note>
@@ -108,9 +86,9 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
     label?: ReactiveExpression | string;
     on?: On<StateKeys>;
     defaultValue?: T;
-    validators?: Record<string, any>;
+    validator?: Validator;
   },
-  'disabled' | 'required' | 'label' | 'validators',
+  'disabled' | 'label' | 'validator',
   StateKeys
 >;
 
@@ -253,16 +231,3 @@ const AllFieldSchema: z.ZodMiniType = z.union([
   FieldSchema,
   InteractiveFieldSchema,
 ]);
-
-// --------------------------------
-//
-// Factory
-//
-// --------------------------------
-
-export const stack = (children: FormField[]): LayoutField => ({
-  uid: '',
-  widget: 'stack',
-  kind: 'layout',
-  children,
-});

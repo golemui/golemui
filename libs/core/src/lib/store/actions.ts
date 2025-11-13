@@ -49,6 +49,10 @@ export type SET_ERROR = {
   payload: { error: FormStoreError };
 };
 
+export type TOUCHED = {
+  type: 'TOUCHED';
+};
+
 export type Action =
   | INITIALIZE
   | SET_DATA
@@ -56,4 +60,5 @@ export type Action =
   | REMOVE_FIELD
   | SET_FIELD_DATA
   | OVERRIDE_FIELD_PROP
-  | SET_ERROR;
+  | SET_ERROR
+  | TOUCHED;

@@ -3,7 +3,7 @@ import styles from './form.page.module.scss';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
-import { kitchenSink } from '@golemui/shared-vanilla';
+import { signin, signinData } from '@golemui/shared-vanilla';
 import { useState } from 'react';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
@@ -18,8 +18,8 @@ const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = kitchenSink;
-const formData = {};
+const formDef = signin;
+const formData = signinData;
 const middlewares = [loggerMiddleware];
 
 export function FormPage() {
