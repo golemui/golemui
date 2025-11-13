@@ -8,7 +8,7 @@ import { StackProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-stack',
   imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.LayoutAdapter],
+  providers: [Angular.LayoutFieldAdapter],
   templateUrl: './stack.component.html',
   styleUrls: ['../styles.scss', './stack.component.scss'],
   host: {
@@ -18,7 +18,7 @@ import { StackProps } from '@golemui/shared-vanilla';
 export class StackComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.LayoutField;
 
-  protected adapter: Angular.LayoutAdapter<StackProps> = inject(Angular.LayoutAdapter);
+  protected adapter: Angular.LayoutFieldAdapter<StackProps> = inject(Angular.LayoutFieldAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.field);

@@ -4,7 +4,7 @@ import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
-export class LayoutAdapter<
+export class LayoutFieldAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.LayoutField> {
   templateData = signal<Core.LayoutTemplateData & ExtraProps>({
