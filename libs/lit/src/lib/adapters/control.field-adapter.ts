@@ -3,11 +3,12 @@ import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const controlContext = createContext<ControlAdapter<any, any>>('ffControlAdapter');
+export const controlContext = createContext<ControlFieldAdapter<any, any>>('ffControlAdapter');
 
-export class ControlAdapter<T, ExtraProps extends Record<string, any>> extends BaseFieldAdapter<
-  Core.ControlField<T>
-> {
+export class ControlFieldAdapter<
+  T,
+  ExtraProps extends Record<string, any>,
+> extends BaseFieldAdapter<Core.ControlField<T>> {
   override templateData = {} as Core.ControlTemplateData<T> & ExtraProps;
 
   init(field: Core.ControlField<T>) {
