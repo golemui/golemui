@@ -7,7 +7,7 @@ export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
       if (names.includes(val) == false) {
         ctx.addIssue({
           code: 'custom',
-          message: `Name "${val}" not in ${names.join(', ')}`,
+          message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,
           input: val,
         });
       }

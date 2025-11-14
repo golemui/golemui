@@ -256,9 +256,11 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
           z.superRefine((val, ctx) => {
             const result = resolvedSchema.safeParse(val);
             if (!result.success) {
+              const firstError = result.error.issues[0];
               ctx.addIssue({
                 code: 'custom',
-                message: result.error.message || `Validation failed for ${key}`,
+                path: [],
+                message: firstError?.message || `Validation failed for ${key}`,
               });
             }
           }),
