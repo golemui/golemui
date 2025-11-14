@@ -37,7 +37,8 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'textinput',
         path: 'user.name',
-        'validator.register': stringValidator({ required: true }),
+        validator: { type: 'custom', allowedNames: ['Joan', 'Raul'] },
+        'validator.register': { type: 'custom', allowedNames: ['Joan', 'Raul'], required: true },
       },
       {
         uid: '',

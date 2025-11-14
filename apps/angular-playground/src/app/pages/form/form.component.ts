@@ -5,6 +5,7 @@ import * as Vanilla from '@golemui/angular-vanilla';
 import * as Core from '@golemui/core';
 import { signin, signinData, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
+import { allowedNames } from '../../custom-validators/allowed-names';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
 @Component({
@@ -22,6 +23,9 @@ export class AppFormPage {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
+  };
+  protected customValidators: Core.CustomValidatorSchemas = {
+    allowedNames,
   };
 
   protected error = '';
