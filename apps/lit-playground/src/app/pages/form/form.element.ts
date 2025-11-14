@@ -1,8 +1,8 @@
-import { allowedNames, loggerMiddleware } from '@golemui/apps-shared';
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
-import { signin, signinData, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';

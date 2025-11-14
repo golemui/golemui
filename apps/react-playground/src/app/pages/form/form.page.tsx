@@ -1,10 +1,10 @@
 import styles from './form.page.module.scss';
 
-import { allowedNames, loggerMiddleware } from '@golemui/apps-shared';
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
-import { signin, signinData, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { useState } from 'react';
 
 function onFormEvent(event: Core.FormEvent) {
