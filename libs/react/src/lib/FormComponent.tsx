@@ -10,6 +10,7 @@ export interface FormComponentProps {
   formDef: JsonStringified | JsonObject;
   fieldLoader: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
+  customValidators?: Core.CustomValidatorSchemas;
   data?: Record<string, any>;
   formName?: string;
   onFormEvent?: (event: Core.FormEvent) => void;
@@ -20,6 +21,7 @@ export function FormComponent({
   formDef,
   fieldLoader,
   middlewares,
+  customValidators,
   data,
   formName,
   onFormError,
@@ -33,8 +35,8 @@ export function FormComponent({
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {
-    formContextRef.current.initialize(fieldLoader, middlewares);
-  }, [fieldLoader, middlewares]);
+    formContextRef.current.initialize(fieldLoader, middlewares, customValidators || {});
+  }, [fieldLoader, middlewares, customValidators]);
 
   // ERRORS
   useEffect(() => {

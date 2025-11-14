@@ -1,11 +1,11 @@
 import styles from './form.page.module.scss';
 
+import { allowedNames, loggerMiddleware } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
-import { signin, signinData } from '@golemui/shared-vanilla';
+import { signin, signinData, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { useState } from 'react';
-import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
 function onFormEvent(event: Core.FormEvent) {
   console.groupCollapsed(`onFormEvent('${event.name}')`);
@@ -20,7 +20,10 @@ const vanillaFieldLoaders = {
 };
 const formDef = signin;
 const formData = signinData;
-const middlewares = [loggerMiddleware];
+const middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
+const customValidators: Core.CustomValidatorSchemas = {
+  allowedNames,
+};
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -42,6 +45,7 @@ export function FormPage() {
         data={formData}
         fieldLoader={vanillaFieldLoaders}
         middlewares={middlewares}
+        customValidators={customValidators}
         onFormError={onFormError}
         onFormEvent={onFormEvent}
       />
