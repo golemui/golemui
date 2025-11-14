@@ -1,0 +1,126 @@
+---
+title: Validators
+description: Learn how to validate dynamic forms and create custom validators for GolemUI.
+---
+
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+
+### Adding validators to your Control Fields
+
+### Creating a custom validator
+
+To create custom validators, implement functions that follow the `CustomValidatorSchemaFn` interface. For example, let's create a validator that allows us to enter only certain names:
+
+```ts
+import { CustomValidatorSchemaFn } from '@golemui/core';
+import * as z from 'zod/mini';
+
+export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
+  z.string().check(
+    z.superRefine((val, ctx) => {
+      if (names.includes(val) === false) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,
+          input: val,
+        });
+      }
+    }),
+  );
+```
+
+Next, inform the form that it should use the custom validator when it encounters a specific key in the `validator` declaration within your JSON. To do this, create a `CustomValidatorSchemas` object and pass it to the form through its `customValidators` input.
+
+<Tabs syncKey="framework">
+  <TabItem label="React">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    const customValidators: Core.CustomValidatorSchemas = {
+      allowedNames,
+    };
+
+    export function FormPage() {
+      return (
+        <div>
+        <React.FormComponent
+          (...)
+          customValidators={customValidators}
+        />
+      </div>
+      );
+    }
+    ```
+
+  </TabItem>
+  <TabItem label="Angular">
+    ```ts
+    import * as Core from '@golemui/core';
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    @Component({
+      selector: 'my-form-app',
+      template: `<gui-form
+        (...)
+        [customValidators]="customValidators">
+        </gui-form>
+      `,
+    })
+    class MyFormApp {
+      protected customValidators: Core.CustomValidatorSchemas = {
+        allowedNames,
+      };
+    }
+    ```
+
+  </TabItem>
+  <TabItem label="Lit">
+    ```ts
+    import * as Core from '@golemui/core';
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    @customElement('lit-form')
+    export class FormElement extends LitElement {
+      protected customValidators: Core.CustomValidatorSchemas = {
+        allowedNames,
+      };
+
+      render() {
+        return html`
+            <gui-form
+              (...)
+              .customValidators=${this.customValidators}
+            ></gui-form>
+          `;
+      }
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+Finally, declare your validator:
+
+```json
+{
+  {
+    kind: 'control',
+    widget: 'textinput',
+    path: 'user.name',
+    validator: { type: 'custom', allowedNames: ['John', 'Jane'] }
+  },
+}
+```
+
+Type something different than `John` and `Jane` and then focus out the input to trigger the validation.
+
+<iframe
+  src="/docs-template/index.html?form=docs-template/validators/custom-validators.json"
+  title="Repeater example"
+  width="100%"
+></iframe>
+
+### JsonSchema support
+
+### Suffixes support

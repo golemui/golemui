@@ -1,0 +1,15 @@
+{
+  "form": {
+    "uid": "",
+    "kind": "layout",
+    "widget": "stack",
+    "children": [
+      {
+        "kind": "control",
+        "widget": "textinput",
+        "path": "user.name",
+        "validator": { "type": "custom", "allowedNames": ["John", "Jane"] }
+      }
+    ]
+  }
+}

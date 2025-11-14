@@ -1,8 +1,10 @@
 import './form.element.scss';
 import '@golemui/lit';
 import { customElement, property } from 'lit/decorators.js';
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import * as Vanilla from '@golemui/lit-vanilla';
+import * as Core from '@golemui/core';
+import { allowedNames } from '../validators/allowed-names.validator';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -11,6 +13,10 @@ export class FormElement extends LitElement {
 
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
+  };
+
+  protected customValidators: Core.CustomValidatorSchemas = {
+    allowedNames,
   };
 
   override createRenderRoot() {
@@ -42,6 +48,7 @@ export class FormElement extends LitElement {
             .formDef=${this.formDef}
             .data=${this.formData}
             .fieldLoaders=${this.vanillaFieldLoaders}
+            .customValidators=${this.customValidators}
           ></gui-form>
         </div>
       `;
