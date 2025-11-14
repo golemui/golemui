@@ -61,6 +61,7 @@ export interface ArrayValidator extends BaseValidator {
 
 export type CustomValidator = LooseObject<{
   type: 'custom';
+  required?: boolean;
 }>;
 
 // --- Union of all supported types ---
@@ -102,9 +103,9 @@ export const arrayValidator = (config?: Omit<ArrayValidator, 'type'>): ArrayVali
   ...(config || {}),
 });
 
-export const customValidator = (config?: Omit<CustomValidator, 'type'>): CustomValidator => ({
+export const customValidator = (config: Omit<CustomValidator, 'type'>): CustomValidator => ({
   type: 'custom',
-  ...(config || {}),
+  ...config,
 });
 
 // --------------------------------
@@ -113,7 +114,16 @@ export const customValidator = (config?: Omit<CustomValidator, 'type'>): CustomV
 //
 // --------------------------------
 
-export const createValidator = (validator: Validator): z.ZodMiniType => {
+export type CustomValidatorSchemaFn = (input: any) => z.ZodMiniType;
+export type CustomValidatorSchemas = {
+  // [key: string]: StandardSchemaV1;
+  [key: string]: CustomValidatorSchemaFn;
+};
+
+export const createValidator = (
+  validator: Validator,
+  customValidators: CustomValidatorSchemas,
+): z.ZodMiniType => {
   switch (validator.type) {
     case 'string':
       return fromStringValidator(validator);
@@ -129,10 +139,9 @@ export const createValidator = (validator: Validator): z.ZodMiniType => {
       // TODO: implement
       console.warn('TODO');
       return z.success(z.any());
+
     case 'custom':
-      // TODO: implement
-      console.warn('TODO');
-      return z.success(z.any());
+      return fromCustomValidator(validator, customValidators);
   }
 };
 
@@ -217,13 +226,44 @@ function fromNumberValidator(v: NumberValidator) {
   });
 }
 
-export function fromBooleanValidator(v: BooleanValidator) {
+function fromBooleanValidator(v: BooleanValidator) {
   return withOptional(v, (v) => {
     let schema = z.boolean();
 
     if (v.const !== undefined) {
       schema = schema.check(z.refine((val) => val === v.const));
     }
+
+    return schema;
+  });
+}
+
+function fromCustomValidator(v: CustomValidator, customValidators: CustomValidatorSchemas) {
+  return withOptional(v, (v) => {
+    let schema = z.any();
+
+    Object.keys(v)
+      // filter non-custom validator keys
+      .filter((key) => key !== 'type' && key !== 'required')
+      .forEach((key) => {
+        // This originates from the validator field in the JSON form
+        const validatorInput = v[key];
+        // This originates from the user-defined custom validators in the form
+        const resolvedSchemaFn = customValidators[key];
+        const resolvedSchema = resolvedSchemaFn(validatorInput);
+
+        schema = schema.check(
+          z.superRefine((val, ctx) => {
+            const result = resolvedSchema.safeParse(val);
+            if (!result.success) {
+              ctx.addIssue({
+                code: 'custom',
+                message: result.error.message || `Validation failed for ${key}`,
+              });
+            }
+          }),
+        );
+      });
 
     return schema;
   });

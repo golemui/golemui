@@ -1,16 +1,20 @@
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
+import { CustomValidatorSchemas } from './form-validator';
 import { Action } from './store/actions';
 import { createInitialState, Middleware, MiddlewareAPI, State } from './store/model';
 import { reducer } from './store/reducer';
 
-export function createFormStore(middlewares: Middleware<State, Action>[] = []): FormStore {
+export function createFormStore(
+  middlewares: Middleware<State, Action>[] = [],
+  customValidators: CustomValidatorSchemas,
+): FormStore {
   const subject = new BehaviorSubject<State>(createInitialState());
-
   const state$ = subject.asObservable().pipe(distinctUntilChanged());
+  const reducerFn = reducer(customValidators);
 
   function baseDispatch(action: Action) {
     const current = subject.getValue();
-    const next = reducer(current, action);
+    const next = reducerFn(current, action);
     subject.next(next);
   }
 
