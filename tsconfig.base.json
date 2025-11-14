@@ -17,6 +17,7 @@
     "paths": {
       "@golemui/angular": ["libs/angular/src/index.ts"],
       "@golemui/angular-vanilla": ["libs/angular-vanilla/src/index.ts"],
+      "@golemui/apps-shared": ["apps/apps-shared/src/index.ts"],
       "@golemui/core": ["libs/core/src/index.ts"],
       "@golemui/lit": ["libs/lit/src/index.ts"],
       "@golemui/lit-vanilla": ["libs/lit-vanilla/src/index.ts"],
