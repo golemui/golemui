@@ -40,6 +40,7 @@ export class FormComponent implements OnInit {
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);
   formName = input(Core.shortUUID());
+  customValidators = input<Core.CustomValidatorSchemas>({});
 
   // OUTPUTS
   protected formError = output<Core.FormStoreError>();
@@ -53,7 +54,7 @@ export class FormComponent implements OnInit {
 
   // LIFE CYCLE
   ngOnInit(): void {
-    this.context.initialize(this.fieldLoaders(), this.middlewares());
+    this.context.initialize(this.fieldLoaders(), this.middlewares(), this.customValidators());
 
     Core.formErrors(this.context.store.state$)
       .pipe(takeUntilDestroyed(this.destroyRef))

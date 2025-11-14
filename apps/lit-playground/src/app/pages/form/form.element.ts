@@ -1,21 +1,24 @@
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
-import { signin, signinData } from '@golemui/shared-vanilla';
+import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { loggerMiddleware } from '../../middlewares/logger.middleware';
 import './form.element.scss';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  middlewares = [loggerMiddleware];
+  middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
   formDef = signin;
   formData = signinData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
+  };
+  customValidators: Core.CustomValidatorSchemas = {
+    allowedNames,
   };
 
   error = '';
@@ -53,6 +56,7 @@ export class FormElement extends LitElement {
           .data=${this.formData}
           .fieldLoaders=${this.vanillaFieldLoaders}
           .middlewares=${this.middlewares}
+          .customValidators=${this.customValidators}
           @formError=${this.onFormError}
           @event=${this.onFormEvent}
         ></gui-form>

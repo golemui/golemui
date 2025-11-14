@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import { signin, signinData, vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
-import { loggerMiddleware } from '../../middlewares/logger.middleware';
 
 @Component({
   imports: [CommonModule, Angular.FormComponent],
@@ -22,6 +22,9 @@ export class AppFormPage {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
+  };
+  protected customValidators: Core.CustomValidatorSchemas = {
+    allowedNames,
   };
 
   protected error = '';
