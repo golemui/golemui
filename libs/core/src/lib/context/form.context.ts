@@ -55,7 +55,7 @@ export class FormContext<ComponentType> {
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
         const eventName: EventName | undefined = field.on?.[`${eventType}.${currentState}`];
-        this.attemptValidation(eventType, eventName);
+        this.attemptValidation(eventType, eventName, field);
         if (eventName) {
           this.events$.next({
             name: eventName,
@@ -68,7 +68,7 @@ export class FormContext<ComponentType> {
       });
     } else {
       const eventName: EventName | undefined = field.on?.[eventType];
-      this.attemptValidation(eventType, eventName);
+      this.attemptValidation(eventType, eventName, field);
       if (eventName) {
         this.events$.next({
           name: eventName,
@@ -81,16 +81,19 @@ export class FormContext<ComponentType> {
     }
   }
 
-  attemptValidation(eventType: keyof On<string>, eventName: EventName | undefined) {
+  attemptValidation(
+    eventType: keyof On<string>,
+    eventName: EventName | undefined,
+    field: ControlField<any, string> | InteractiveField<string>,
+  ) {
     if (eventType === 'change') {
       this.store.dispatch({
         type: 'ATTEMPT_VALIDATION',
-        payload: { reason: 'change' },
+        payload: { reason: 'change', path: (field as ControlField<any, string>).path },
       });
     } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
       this.store.dispatch({
-        type: 'ATTEMPT_VALIDATION',
-        payload: { reason: 'submit' },
+        type: 'VALIDATE_ALL',
       });
     }
   }

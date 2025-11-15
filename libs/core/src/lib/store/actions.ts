@@ -52,12 +52,32 @@ export type SET_ERROR = {
 /**
  * Action type indicating an attempt to validate form data.
  *
- * The actual validation behavior depends on the form configuration -
- * it may or may not trigger immediate validation when dispatched.
+ * When dispatched, this action triggers validation for the entire form based on
+ * the form's validation configuration. However, validation errors will only be
+ * displayed for the specific field identified by the `path` property, which will
+ * be marked as _touched_.
+ *
+ * The actual validation behavior is determined by the form's configuration and
+ * may not execute immediately upon dispatch.
+ * ```
  */
 export type ATTEMPT_VALIDATION = {
   type: 'ATTEMPT_VALIDATION';
-  payload: { reason: Exclude<ValidateOn, any[] | 'eager'> };
+  payload: { reason: Exclude<ValidateOn, any[] | 'eager' | 'submit'>; path: DotPath };
+};
+
+/**
+ * Action type that validates all form fields and marks them as _touched_.
+ *
+ * When dispatched, this action triggers validation for every field in the form
+ * and marks all fields as _touched_, causing validation errors to be displayed
+ * for all invalid fields regardless of the form's validation configuration.
+ *
+ * This action is typically dispatched when the user attempts to submit the form,
+ * ensuring all validation errors are visible before submission proceeds.
+ */
+export type VALIDATE_ALL = {
+  type: 'VALIDATE_ALL';
 };
 
 export type Action =
@@ -68,4 +88,5 @@ export type Action =
   | SET_FIELD_DATA
   | OVERRIDE_FIELD_PROP
   | SET_ERROR
-  | ATTEMPT_VALIDATION;
+  | ATTEMPT_VALIDATION
+  | VALIDATE_ALL;

@@ -1,3 +1,4 @@
+import { DotPath } from '../../shared';
 import { State } from '../model';
 
 /**
@@ -34,4 +35,9 @@ export const reduceIf =
     return state;
   };
 
-export const isTouched = (state: State) => state.touched;
+export const isControlTouched =
+  (fieldPath: DotPath) =>
+  (state: State): boolean => {
+    const touched = state.touchedControls[fieldPath];
+    return state.touched && touched;
+  };

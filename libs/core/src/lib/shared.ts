@@ -71,6 +71,7 @@ export type ControlTemplateData<T> = {
   validator?: Validator;
   disabled?: boolean;
   readonly?: boolean;
+  touched?: boolean;
 };
 
 /**

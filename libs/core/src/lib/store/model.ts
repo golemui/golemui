@@ -56,6 +56,11 @@ export type State = {
    * When data changes, these fields are updated and their flags recalculated.
    */
   fieldFlags: Record<Uid, Field.Flags>;
+
+  /**
+   * Tracks controls that have been _touched_ hence can display validation errors.
+   */
+  touchedControls: Record<DotPath, boolean>;
   /**
    * Allows overriding a field’s `prop` properties externally via its event handler mechanism.
    * For example, this can be used to load options for a select field asynchronously.
@@ -86,6 +91,7 @@ export const createInitialState = (): State => ({
   fields: {},
   validations: {},
   fieldFlags: {},
+  touchedControls: {},
   fieldPropOverrides: {},
   data: {},
   error: { kind: 'none' },

@@ -15,7 +15,6 @@ export type Flags = {
   disabled?: boolean;
   required?: boolean;
   readonly?: boolean;
-  dirty?: boolean;
 };
 
 export type FieldWidget = string;
