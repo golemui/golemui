@@ -1,3 +1,17 @@
+## 0.1.1 (2025-11-15)
+
+### 🩹 Fixes
+
+- ci release ([befc463](https://github.com/golemui/formforge/commit/befc463))
+- update dependencies on libraries ([374b3c9](https://github.com/golemui/formforge/commit/374b3c9))
+- **ci:** create release group for all libs ([5458694](https://github.com/golemui/formforge/commit/5458694))
+- **ci:** remove unknown parameters ([e7bdaf5](https://github.com/golemui/formforge/commit/e7bdaf5))
+- **react:** add css classes for validation errors ([87f422f](https://github.com/golemui/formforge/commit/87f422f))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.1.0 (2025-11-15)
 
 ### 🚀 Features

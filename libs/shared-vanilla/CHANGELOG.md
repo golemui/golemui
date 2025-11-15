@@ -1,3 +1,13 @@
+## 0.1.1 (2025-11-15)
+
+### 🩹 Fixes
+
+- update dependencies on libraries ([374b3c9](https://github.com/golemui/formforge/commit/374b3c9))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.1.0 (2025-11-15)
 
 ### 🚀 Features
