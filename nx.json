@@ -86,7 +86,21 @@
     }
   },
   "release": {
-    "projects": ["libs/*"],
+    "groups": {
+      "libs": {
+        "projects": [
+          "libs/angular",
+          "libs/angular-vanilla",
+          "libs/core",
+          "libs/lit",
+          "libs/lit-vanilla",
+          "libs/react",
+          "libs/react-vanilla",
+          "libs/shared-vanilla"
+        ],
+        "projectsRelationship": "fixed"
+      }
+    },
     "version": {
       "conventionalCommits": true,
       "preVersionCommand": "npx nx run-many -t build"
