@@ -14,6 +14,7 @@ export function TextInput(fieldInstance: Core.WithField) {
     value,
     isDisabled,
     isReadonly,
+    isTouched,
     label,
     props,
     onValueChanged,
@@ -29,6 +30,7 @@ export function TextInput(fieldInstance: Core.WithField) {
   const placeholder = props.placeholder;
   const icon = props.icon;
   const iconPosition = props.iconPosition;
+  const showErrors = isTouched && errors && errors.length > 0;
 
   return (
     <div className="gui-textinput">
@@ -51,7 +53,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
           onBlur={onBlur}
-          aria-invalid={errors && errors.length > 0}
+          aria-invalid={showErrors}
           aria-required={validator?.required}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
@@ -61,7 +63,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           ></span>
         )}
       </div>
-      <Errors errors={errors} />
+      {showErrors && <Errors errors={errors} />}
     </div>
   );
 }

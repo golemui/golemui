@@ -14,6 +14,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   const [errors, setErrors] = useState<string[]>([]);
   const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
   const [isReadonly, setIsReadonly] = useState<boolean | undefined>(undefined);
+  const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
   const props = useExtraProps<ExtraProps>(field);
 
   useEffect(() => {
@@ -44,6 +45,16 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
       .pipe(Core.validationByPath$(field.path))
       .subscribe((validation) => {
         setErrors(validation?.status?.errors || []);
+      });
+    return () => sub.unsubscribe();
+  }, [field, formContext.store]);
+
+  // Listen to the touchedControls stream for this control
+  useEffect(() => {
+    const sub = formContext.store.state$
+      .pipe(Core.touchedControlsByPath$(field.path))
+      .subscribe((touched) => {
+        setIsTouched(touched);
       });
     return () => sub.unsubscribe();
   }, [field, formContext.store]);
@@ -103,9 +114,9 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   const onBlur = useCallback(() => {
     formContext.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur' },
+      payload: { reason: 'blur', path: field.path },
     });
-  }, [formContext]);
+  }, [formContext, field]);
 
   return {
     uid,
@@ -117,6 +128,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     errors,
     isDisabled,
     isReadonly,
+    isTouched,
     onValueChanged,
     onBlur,
   };
