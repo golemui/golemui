@@ -1,6 +1,6 @@
 {
   "name": "@golemui/lit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -8,7 +8,7 @@
     "lit": "^3.3.1",
     "@lit/context": "^1.1.6",
     "@golemui/lit": "*",
-    "@golemui/core": "0.1.1",
-    "@golemui/shared-vanilla": "0.1.1"
+    "@golemui/core": "0.1.2",
+    "@golemui/shared-vanilla": "0.1.2"
   }
 }
