@@ -10,7 +10,7 @@
     "build:styles": "npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/shared-vanilla/src/styles/index.css",
     "run:docs": "./build-docs.sh --skip-install && cd docs && npm run dev",
     "cz:breaking": "npm run precz && czg break",
-    "release": "npx nx run-many --target=build && npm run build:styles && nx release publish --yes",
+    "release": "npx nx run-many --target=build && npm run build:styles && nx release version --yes && nx release publish --yes",
     "release:dry": "npx nx run-many --target=build && npm run build:styles && nx release -d",
     "release:verdaccio": "npx nx run-many --target=build && npm run build:styles && nx release publish --skip-push"
   },
