@@ -1,11 +1,14 @@
 {
   "name": "@golemui/lit",
   "version": "0.1.0",
-  "private": true,
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "lit": "^3.3.1",
+    "@lit/context": "^1.1.6",
+    "@golemui/lit": "*",
+    "@golemui/core": "*",
+    "@golemui/shared-vanilla": "*"
   }
 }
