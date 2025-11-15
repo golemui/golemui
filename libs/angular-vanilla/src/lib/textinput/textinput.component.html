@@ -1,4 +1,5 @@
 @let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <label [for]="field.uid">
   {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
@@ -20,7 +21,7 @@
     [attr.placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
     (blur)="adapter.onBlur()"
-    [attr.aria-invalid]="templateData.errors && templateData.errors.length > 0"
+    [attr.aria-invalid]="showErrors"
     [attr.aria-required]="templateData.validator?.required"
     [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
   />
@@ -33,7 +34,7 @@
   }
 </div>
 
-@if (templateData.errors && templateData.errors.length > 0) {
+@if (showErrors) {
   <ul class="gui-validator">
     @for (error of templateData.errors; track $index) {
       <li class="gui-validator__error">{{ error }}</li>

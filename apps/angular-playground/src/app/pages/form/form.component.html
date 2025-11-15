@@ -9,7 +9,7 @@
     [fieldLoaders]="vanillaFieldLoaders"
     [middlewares]="middlewares"
     [customValidators]="customValidators"
-    [validateOn]="'blur'"
+    [validateOn]="'change'"
     (formError)="onFormError($event)"
     (event)="onFormEvent($event)"
   ></gui-form>
