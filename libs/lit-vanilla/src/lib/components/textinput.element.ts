@@ -66,6 +66,11 @@ export class TextinputElement extends LitElement implements Core.WithField {
       icon = html``;
     }
 
+    const showErrors =
+      this.adapter.templateData.touched &&
+      this.adapter.templateData.errors &&
+      this.adapter.templateData.errors.length > 0;
+
     return html`
       <label for=${this.field.uid}>
         ${this.adapter.templateData.label +
@@ -84,18 +89,16 @@ export class TextinputElement extends LitElement implements Core.WithField {
           placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
-          aria-invalid=${(this.adapter.templateData.errors &&
-            this.adapter.templateData.errors.length > 0) ||
-          nothing}
+          aria-invalid=${showErrors || nothing}
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         />
         ${icon}
       </div>
 
-      ${this.adapter.templateData.errors && this.adapter.templateData.errors.length > 0
+      ${showErrors
         ? html`<ul class="gui-validator">
-            ${this.adapter.templateData.errors.map(
+            ${this.adapter.templateData.errors?.map(
               (error) => html`<li class="gui-validator__error">${error}</li>`,
             )}
           </ul>`

@@ -44,6 +44,11 @@ export class ControlFieldAdapter<
         });
       });
 
+    // Listen to the touchedControls stream for this control
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.touchedControlsByPath$(field.path))
+      .subscribe((touched) => this.setTemplateData({ touched }));
+
     // Listen to the fieldFlags stream (`disabled`, `required` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
@@ -84,7 +89,7 @@ export class ControlFieldAdapter<
   onBlur() {
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur' },
+      payload: { reason: 'blur', path: this.field.path },
     });
   }
 
