@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
+import { ComplexAttributeConverter } from 'lit';
 
-export const ValidateOnConverter = {
+export const ValidateOnConverter: ComplexAttributeConverter<Core.ValidateOn | undefined> = {
   fromAttribute(value: string | null): Core.ValidateOn | undefined {
     // Attribute not present -> return undefined
     if (value === null) {
