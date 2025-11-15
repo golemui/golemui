@@ -26,7 +26,7 @@ export type Uid = string;
 /**
  * Defines when field validation should run.
  * - `'eager'` validates on `'change'`, `'blur'` and `'submit'`.
- * - When using `'submit'`, validation triggers when the 'submit' event is emitted.
+ * - When using 'submit', validation triggers when the 'submit' event is emitted. When that happens, all fields are also _touched_ first.
  * ```ts
  * {
  *   widget: 'button',
