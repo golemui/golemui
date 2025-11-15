@@ -1,6 +1,6 @@
 {
   "name": "@golemui/react",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "main": "./index.js",
   "types": "./index.d.ts",
   "exports": {
