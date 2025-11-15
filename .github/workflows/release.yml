@@ -42,12 +42,8 @@ jobs:
       - name: Build shared styles
         run: npm run build:styles
 
-      - name: Nx Versioning & Tag
-        run: npx nx release version
+      - name: Release to Github and NPM
+        run: npx nx release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Nx Publish to NPM
-        run: npx nx release publish
-        env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
