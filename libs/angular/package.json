@@ -1,6 +1,6 @@
 {
   "name": "@golemui/angular",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "peerDependencies": {
     "@angular/common": "20",
     "@angular/core": "20",
