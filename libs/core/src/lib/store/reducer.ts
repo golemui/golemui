@@ -65,7 +65,6 @@ export const reducer =
           validateOn === 'eager' ||
           reason === validateOn ||
           (validateOn as string[]).includes(reason);
-        console.log('shouldValidate', reason, validateOn, shouldValidate);
         if (shouldValidate) {
           return pipe({ ...state, touched: true }, Reducers.validateAll(customValidators));
         }
