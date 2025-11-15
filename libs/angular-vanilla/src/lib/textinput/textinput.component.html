@@ -20,6 +20,7 @@
     [attr.placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
     (blur)="adapter.onBlur()"
+    [attr.aria-invalid]="templateData.errors && templateData.errors.length > 0"
     [attr.aria-required]="templateData.validator?.required"
     [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
   />
@@ -33,9 +34,9 @@
 </div>
 
 @if (templateData.errors && templateData.errors.length > 0) {
-  <ul>
+  <ul class="gui-validator">
     @for (error of templateData.errors; track $index) {
-      <li>{{ error }}</li>
+      <li class="gui-validator__error">{{ error }}</li>
     }
   </ul>
 }

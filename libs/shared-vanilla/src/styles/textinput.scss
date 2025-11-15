@@ -28,6 +28,10 @@
 
       &[aria-invalid='true'] {
         border-color: var(--gui-color-error);
+
+        &:focus {
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
+        }
       }
 
       .gui-textinput--icon {

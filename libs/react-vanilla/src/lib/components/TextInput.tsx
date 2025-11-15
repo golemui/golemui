@@ -51,6 +51,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
           onBlur={onBlur}
+          aria-invalid={errors && errors.length > 0}
           aria-required={validator?.required}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
