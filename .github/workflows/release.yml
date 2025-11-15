@@ -43,11 +43,11 @@ jobs:
         run: npm run build:styles
 
       - name: Nx Versioning & Tag
-        run: npx nx release version --yes
+        run: npx nx release version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Nx Publish to NPM
-        run: npx nx release publish --yes
+        run: npx nx release publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

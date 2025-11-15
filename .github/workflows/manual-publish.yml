@@ -32,6 +32,6 @@ jobs:
         run: npm run build:styles
 
       - name: Publish existing versions to npm
-        run: npx nx release publish --yes --skip-git
+        run: npx nx release publish --skip-git
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
