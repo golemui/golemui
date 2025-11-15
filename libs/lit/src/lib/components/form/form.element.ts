@@ -7,6 +7,7 @@ import { when } from 'lit/directives/when.js';
 import { Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
 import '../field/field.element';
+import { ValidateOnConverter } from './property.converters';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
@@ -17,6 +18,7 @@ export class FormElement extends LitElement {
   @property({ type: Array }) fieldLoaders!: FieldLoaders<WithField>;
   @property({ type: Array }) middlewares: any[] = [];
   @property({ type: Object }) customValidators: Core.CustomValidatorSchemas = {};
+  @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) data: any = {};
   @property({ type: String }) formName = Core.shortUUID();
 
@@ -29,7 +31,12 @@ export class FormElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-form');
-    this.context.initialize(this.fieldLoaders, this.middlewares, this.customValidators);
+    this.context.initialize(
+      this.fieldLoaders,
+      this.middlewares,
+      this.customValidators,
+      this.validateOn,
+    );
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
