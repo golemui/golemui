@@ -1,5 +1,5 @@
 import { FormField } from '../form-field';
-import { DotPath, Uid } from '../shared';
+import { DotPath, Uid, ValidateOn } from '../shared';
 import { FormStoreError } from './model';
 
 export type INITIALIZE = {
@@ -49,8 +49,15 @@ export type SET_ERROR = {
   payload: { error: FormStoreError };
 };
 
-export type TOUCHED = {
-  type: 'TOUCHED';
+/**
+ * Action type indicating an attempt to validate form data.
+ *
+ * The actual validation behavior depends on the form configuration -
+ * it may or may not trigger immediate validation when dispatched.
+ */
+export type ATTEMPT_VALIDATION = {
+  type: 'ATTEMPT_VALIDATION';
+  payload: { reason: Exclude<ValidateOn, any[] | 'eager'> };
 };
 
 export type Action =
@@ -61,4 +68,4 @@ export type Action =
   | SET_FIELD_DATA
   | OVERRIDE_FIELD_PROP
   | SET_ERROR
-  | TOUCHED;
+  | ATTEMPT_VALIDATION;
