@@ -83,7 +83,8 @@ export class ControlFieldAdapter<
 
   onBlur() {
     this.context.store.dispatch({
-      type: 'TOUCHED',
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'blur' },
     });
   }
 

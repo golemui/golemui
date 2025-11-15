@@ -39,7 +39,6 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
   }
 
   click() {
-    this.context.store.dispatch({ type: 'TOUCHED' });
     this.context.emitEvent('click', this.field);
   }
 }
