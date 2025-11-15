@@ -102,7 +102,8 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
 
   const onBlur = useCallback(() => {
     formContext.store.dispatch({
-      type: 'TOUCHED',
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'blur' },
     });
   }, [formContext]);
 
