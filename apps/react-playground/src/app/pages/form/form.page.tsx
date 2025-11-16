@@ -45,6 +45,7 @@ export function FormPage() {
         fieldLoader={vanillaFieldLoaders}
         middlewares={middlewares}
         customValidators={customValidators}
+        validateOn="change"
         onFormError={onFormError}
         onFormEvent={onFormEvent}
       />

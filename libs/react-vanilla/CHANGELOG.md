@@ -60,7 +60,7 @@ This was a version bump only for react-vanilla to align it with other projects, 
 - **react-vanilla:** Fix textinput state props ([c8936d4](https://github.com/golemui/formforge/commit/c8936d4))
 - **react-vanilla:** Fix Checkbox state props ([e3991f9](https://github.com/golemui/formforge/commit/e3991f9))
 - **css:** Use BEM ([a3ac802](https://github.com/golemui/formforge/commit/a3ac802))
-- **react:** Add  useExternalProps hook and refactor so all components use props ([c0d2a93](https://github.com/golemui/formforge/commit/c0d2a93))
+- **react:** Add useExternalProps hook and refactor so all components use props ([c0d2a93](https://github.com/golemui/formforge/commit/c0d2a93))
 - **styles:** Remove pico from dependencies and fix react repeater ([0d9b595](https://github.com/golemui/formforge/commit/0d9b595))
 
 ### ❤️ Thank You

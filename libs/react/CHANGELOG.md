@@ -51,7 +51,7 @@ This was a version bump only for react to align it with other projects, there we
 
 - Integrate custom validators on lit and react projects ([b109a1b](https://github.com/golemui/formforge/commit/b109a1b))
 - **core:** Rename Button to Interactive ([25fcea3](https://github.com/golemui/formforge/commit/25fcea3))
-- **react:** Add  useExternalProps hook and refactor so all components use props ([c0d2a93](https://github.com/golemui/formforge/commit/c0d2a93))
+- **react:** Add useExternalProps hook and refactor so all components use props ([c0d2a93](https://github.com/golemui/formforge/commit/c0d2a93))
 
 ### ❤️ Thank You
 

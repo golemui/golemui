@@ -29,7 +29,6 @@ function FieldRenderer(props: Props) {
           setComponent(() => loadedComponent);
         }
       } catch {
-        console.log('Error');
         props.formContext.store.dispatch({
           type: 'SET_ERROR',
           payload: {

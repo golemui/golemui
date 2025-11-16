@@ -11,6 +11,7 @@ export interface FormComponentProps {
   fieldLoader: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   customValidators?: Core.CustomValidatorSchemas;
+  validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
   formName?: string;
   onFormEvent?: (event: Core.FormEvent) => void;
@@ -22,6 +23,7 @@ export function FormComponent({
   fieldLoader,
   middlewares,
   customValidators,
+  validateOn,
   data,
   formName,
   onFormError,
@@ -35,8 +37,13 @@ export function FormComponent({
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {
-    formContextRef.current.initialize(fieldLoader, middlewares, customValidators || {});
-  }, [fieldLoader, middlewares, customValidators]);
+    formContextRef.current.initialize(
+      fieldLoader,
+      middlewares,
+      customValidators || {},
+      validateOn || 'eager',
+    );
+  }, [fieldLoader, middlewares, customValidators, validateOn]);
 
   // ERRORS
   useEffect(() => {

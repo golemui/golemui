@@ -53,7 +53,7 @@ This was a version bump only for core to align it with other projects, there wer
 - **core:** Rename Button to Interactive ([25fcea3](https://github.com/golemui/formforge/commit/25fcea3))
 - **core:** Rename DisplayField.ts to FormField.ts ([0be69c2](https://github.com/golemui/formforge/commit/0be69c2))
 - **core:** Add readonly to formFlags ([ef5f63e](https://github.com/golemui/formforge/commit/ef5f63e))
-- **react:** Add  useExternalProps hook and refactor so all components use props ([c0d2a93](https://github.com/golemui/formforge/commit/c0d2a93))
+- **react:** Add useExternalProps hook and refactor so all components use props ([c0d2a93](https://github.com/golemui/formforge/commit/c0d2a93))
 
 ### ❤️ Thank You
 

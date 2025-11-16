@@ -54,7 +54,6 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
   }, [formContext, field]);
 
   const onClick = useCallback(() => {
-    formContext.store.dispatch({ type: 'TOUCHED' });
     formContext.emitEvent('click', field);
   }, [field, formContext]);
 

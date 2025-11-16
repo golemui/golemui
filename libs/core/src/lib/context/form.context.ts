@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 import { ControlField, InteractiveField, On } from '../form-field';
 import { createFormStore, FormStore } from '../form-store';
 import { CustomValidatorSchemas } from '../form-validator';
-import { EventHandlerCallback, EventName, FormEvent } from '../shared';
+import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
 import { FieldLoaders, FieldRegistry } from './field.registry';
@@ -16,9 +16,10 @@ export class FormContext<ComponentType> {
     fieldLoaders: FieldLoaders<ComponentType>,
     middlewares: Middleware<State, Action>[] = [],
     customValidators: CustomValidatorSchemas,
+    validateOn: ValidateOn,
   ) {
     this.fieldRegistry.setFieldLoaders(fieldLoaders);
-    this.store = createFormStore(middlewares, customValidators);
+    this.store = createFormStore(middlewares, customValidators, validateOn);
   }
 
   // TODO: There's an almost duplicate of this in the validate-all reducer
@@ -54,6 +55,7 @@ export class FormContext<ComponentType> {
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
         const eventName: EventName | undefined = field.on?.[`${eventType}.${currentState}`];
+        this.attemptValidation(eventType, eventName, field);
         if (eventName) {
           this.events$.next({
             name: eventName,
@@ -66,6 +68,7 @@ export class FormContext<ComponentType> {
       });
     } else {
       const eventName: EventName | undefined = field.on?.[eventType];
+      this.attemptValidation(eventType, eventName, field);
       if (eventName) {
         this.events$.next({
           name: eventName,
@@ -75,6 +78,23 @@ export class FormContext<ComponentType> {
           },
         });
       }
+    }
+  }
+
+  attemptValidation(
+    eventType: keyof On<string>,
+    eventName: EventName | undefined,
+    field: ControlField<any, string> | InteractiveField<string>,
+  ) {
+    if (eventType === 'change') {
+      this.store.dispatch({
+        type: 'ATTEMPT_VALIDATION',
+        payload: { reason: 'change', path: (field as ControlField<any, string>).path },
+      });
+    } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
+      this.store.dispatch({
+        type: 'VALIDATE_ALL',
+      });
     }
   }
 }

@@ -47,16 +47,23 @@ export class ControlFieldAdapter<
         }));
       });
 
-    // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
+    // Listen to the touchedControls stream for this control
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.touchedControlsByPath$(field.path))
+      .subscribe((touched) => {
+        this.templateData.update((current) => ({
+          ...current,
+          touched,
+        }));
+      });
+
+    // Listen to the fieldFlags stream (`touched`, `disabled` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
         this.templateData.update((current) => ({
           ...current,
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-        }));
-        this.templateData.update((current) => ({
-          ...current,
           readonly: fieldFlags?.readonly ?? (field.readonly as boolean),
         }));
       });
@@ -92,7 +99,8 @@ export class ControlFieldAdapter<
 
   onBlur() {
     this.context.store.dispatch({
-      type: 'TOUCHED',
+      type: 'ATTEMPT_VALIDATION',
+      payload: { reason: 'blur', path: this.field.path },
     });
   }
 

@@ -78,6 +78,24 @@ export const fieldFlagsByUid$ = (uid: Uid) =>
 
 // --------------------------------
 //
+// TOUCHED CONTROLS
+//
+// --------------------------------
+
+const selectTouchedControls = pipe(
+  map((store: State) => store.touchedControls),
+  distinctUntilChanged(),
+);
+
+export const touchedControlsByPath$ = (path: DotPath) =>
+  pipe(
+    selectTouchedControls,
+    map((touchedControls) => touchedControls[path]),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
 // FIELD PROP OVERRIDES
 //
 // --------------------------------

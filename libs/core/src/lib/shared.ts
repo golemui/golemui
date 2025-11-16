@@ -24,10 +24,29 @@ export type DotPath = string;
 export type Uid = string;
 
 /**
+ * Defines when field validation should run.
+ * - `'eager'` validates on `'change'`, `'blur'` and `'submit'`.
+ * - When using 'submit', validation triggers when the 'submit' event is emitted. When that happens, all fields are also _touched_ first.
+ * ```ts
+ * {
+ *   widget: 'button',
+ *   label: 'Create User',
+ *   on: {
+ *     click: 'submit',
+ *   }
+ * }
+ * ```
+ */
+export type ValidateOn = 'eager' | 'change' | 'blur' | 'submit' | ('change' | 'blur' | 'submit')[];
+
+/**
  * Represents a form event payload.
  */
 export type EventName = string;
 
+/**
+ * Actions that can be called back from the event handler callback
+ */
 export type EventHandlerCallback = OVERRIDE_FIELD_PROP;
 
 export type FormEvent = {
@@ -52,6 +71,7 @@ export type ControlTemplateData<T> = {
   validator?: Validator;
   disabled?: boolean;
   readonly?: boolean;
+  touched?: boolean;
 };
 
 /**
