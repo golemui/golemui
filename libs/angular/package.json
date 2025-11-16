@@ -1,12 +1,10 @@
 {
   "name": "@golemui/angular",
   "version": "0.1.3",
-  "dependencies": {
-    "@golemui/core": "*"
-  },
   "peerDependencies": {
     "@angular/common": "20",
     "@angular/core": "20",
+    "@golemui/core": "*",
     "rxjs": "^7.8.0"
   },
   "sideEffects": false

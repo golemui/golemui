@@ -1,14 +1,12 @@
 {
   "name": "@golemui/angular-vanilla",
   "version": "0.1.3",
-  "dependencies": {
+  "peerDependencies": {
+    "@angular/common": "20",
+    "@angular/core": "20",
     "@golemui/angular": "*",
     "@golemui/core": "*",
     "@golemui/shared-vanilla": "*"
-  },
-  "peerDependencies": {
-    "@angular/common": "20",
-    "@angular/core": "20"
   },
   "sideEffects": false
 }
