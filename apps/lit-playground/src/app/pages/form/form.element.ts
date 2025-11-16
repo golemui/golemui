@@ -1,4 +1,4 @@
-import { allowedNames, loggerMiddleware, selects, selectsData } from '@golemui/apps-shared';
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
@@ -10,8 +10,8 @@ import './form.element.scss';
 @customElement('lit-form')
 export class FormElement extends LitElement {
   middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
-  formDef = selects;
-  formData = selectsData;
+  formDef = signin;
+  formData = signinData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

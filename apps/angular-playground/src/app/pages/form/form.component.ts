@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
-import { allowedNames, loggerMiddleware, selects, selectsData } from '@golemui/apps-shared';
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
@@ -16,8 +16,8 @@ import { APP_CONFIG } from '../../../environments/environment.model';
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
-  protected formDef = selects;
-  protected formData = selectsData;
+  protected formDef = signin;
+  protected formData = signinData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>

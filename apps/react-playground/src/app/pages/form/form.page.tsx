@@ -1,6 +1,6 @@
 import styles from './form.page.module.scss';
 
-import { allowedNames, loggerMiddleware, selects, selectsData } from '@golemui/apps-shared';
+import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
@@ -18,8 +18,8 @@ const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = selects;
-const formData = selectsData;
+const formDef = signin;
+const formData = signinData;
 const middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
 const customValidators: Core.CustomValidatorSchemas = {
   allowedNames,
