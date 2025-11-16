@@ -5,7 +5,7 @@
   "projectType": "library",
   "release": {
     "version": {
-      "manifestRootsToUpdate": ["build/packages/{projectRoot}"],
+      "manifestRootsToUpdate": ["build/{projectRoot}"],
       "currentVersionResolver": "git-tag"
     }
   },
@@ -23,7 +23,7 @@
     },
     "nx-release-publish": {
       "options": {
-        "packageRoot": "build/packages/{projectRoot}"
+        "packageRoot": "build/{projectRoot}"
       }
     },
     "lint": {
