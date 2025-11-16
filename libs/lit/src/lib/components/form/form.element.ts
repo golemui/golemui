@@ -74,7 +74,7 @@ export class FormElement extends LitElement {
       <form id=${this.formName}>
         ${when(
           ready,
-          () => html` <gui-field .field=${this.state!.formDef.form}></gui-field>`,
+          () => html` <gui-field .field=${this.state?.formDef.form}></gui-field>`,
           () => html` <div>Loading form...</div>`,
         )}
       </form>

@@ -43,7 +43,7 @@ jobs:
         run: npm run build:styles
 
       - name: Release to Github and NPM
-        run: npx nx release
+        run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
