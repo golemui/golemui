@@ -1,3 +1,14 @@
+## 0.1.5 (2025-11-16)
+
+### 🩹 Fixes
+
+- lint errors and peer dependencies ([d0f139d](https://github.com/golemui/formforge/commit/d0f139d))
+- set build paths for release artifacts ([9760118](https://github.com/golemui/formforge/commit/9760118))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.1.4 (2025-11-16)
 
 ### 🩹 Fixes
