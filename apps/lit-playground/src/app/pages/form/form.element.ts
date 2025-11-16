@@ -29,7 +29,6 @@ export class FormElement extends LitElement {
 
   protected onFormError(event: CustomEvent<Core.FormStoreError>) {
     const error = event.detail;
-    this.error = '';
     if (error.kind === 'validation') {
       this.error = 'Validation errors: ' + error.errors;
     } else if (error.kind === 'fatal') {

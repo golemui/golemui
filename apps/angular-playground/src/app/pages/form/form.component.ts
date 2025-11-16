@@ -34,7 +34,6 @@ export class AppFormPage {
   }
 
   protected onFormError(error: Core.FormStoreError) {
-    this.error = '';
     if (error.kind === 'validation') {
       this.error = 'Validation errors: ' + error.errors;
     } else if (error.kind === 'fatal') {
