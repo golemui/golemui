@@ -1,8 +1,8 @@
-name: release
+name: Release
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types:
       - completed
 
