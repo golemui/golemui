@@ -3,6 +3,12 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared-vanilla/src",
   "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["build/{projectRoot}"],
+      "currentVersionResolver": "git-tag"
+    }
+  },
   "tags": [],
   "targets": {
     "build": {
@@ -14,6 +20,14 @@
         "tsConfig": "libs/shared-vanilla/tsconfig.lib.json",
         "assets": ["libs/shared-vanilla/*.md"]
       }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "build/{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     }
   }
 }
