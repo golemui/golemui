@@ -1,3 +1,19 @@
+## 0.2.0 (2025-11-16)
+
+### 🚀 Features
+
+- **lit:** integrate touched flag ([8f9d918](https://github.com/golemui/formforge/commit/8f9d918))
+- **lit:** Integrate the validateOn flag ([747e477](https://github.com/golemui/formforge/commit/747e477))
+
+### 🩹 Fixes
+
+- **lit:** Add types to ValidateOnConverter ([473b98c](https://github.com/golemui/formforge/commit/473b98c))
+- **lit:** Integrate validateOn ([08927b1](https://github.com/golemui/formforge/commit/08927b1))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.1.5 (2025-11-16)
 
 ### 🩹 Fixes

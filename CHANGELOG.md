@@ -1,3 +1,32 @@
+## 0.2.0 (2025-11-16)
+
+### 🚀 Features
+
+- **angular:** Integrate the validateOn flag ([e0333fd](https://github.com/golemui/formforge/commit/e0333fd))
+- **angular:** integrate touched flag ([5b44434](https://github.com/golemui/formforge/commit/5b44434))
+- **core:** Implement the ValidateOn flag core ([41cd4b3](https://github.com/golemui/formforge/commit/41cd4b3))
+- **core:** expose controlsTouched to track controls that can display validation errors ([89aa1b8](https://github.com/golemui/formforge/commit/89aa1b8))
+- **lit:** Integrate the validateOn flag ([747e477](https://github.com/golemui/formforge/commit/747e477))
+- **lit:** integrate touched flag ([8f9d918](https://github.com/golemui/formforge/commit/8f9d918))
+- **react:** Integrate the validateOn flag ([9a81a89](https://github.com/golemui/formforge/commit/9a81a89))
+- **react:** integrate touched flag ([a283095](https://github.com/golemui/formforge/commit/a283095))
+
+### 🩹 Fixes
+
+- Fix form error handling on react and lit apps ([47cd8d7](https://github.com/golemui/formforge/commit/47cd8d7))
+- use release script instead of nx command ([657646e](https://github.com/golemui/formforge/commit/657646e))
+- resolve version with conventional-commits ([9cb1e12](https://github.com/golemui/formforge/commit/9cb1e12))
+- remove access public on release publish ([6bc9a84](https://github.com/golemui/formforge/commit/6bc9a84))
+- set git user for releases ([0c1e432](https://github.com/golemui/formforge/commit/0c1e432))
+- **lit:** Integrate validateOn ([08927b1](https://github.com/golemui/formforge/commit/08927b1))
+- **lit:** Add types to ValidateOnConverter ([473b98c](https://github.com/golemui/formforge/commit/473b98c))
+- **react:** Integrate validateOn ([6ba8ab2](https://github.com/golemui/formforge/commit/6ba8ab2))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.1.5 (2025-11-16)
 
 ### 🩹 Fixes

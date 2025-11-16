@@ -1,3 +1,14 @@
+## 0.2.0 (2025-11-16)
+
+### 🚀 Features
+
+- **angular:** integrate touched flag ([5b44434](https://github.com/golemui/formforge/commit/5b44434))
+- **angular:** Integrate the validateOn flag ([e0333fd](https://github.com/golemui/formforge/commit/e0333fd))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.1.5 (2025-11-16)
 
 ### 🩹 Fixes

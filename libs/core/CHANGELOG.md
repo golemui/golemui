@@ -1,3 +1,14 @@
+## 0.2.0 (2025-11-16)
+
+### 🚀 Features
+
+- **core:** expose controlsTouched to track controls that can display validation errors ([89aa1b8](https://github.com/golemui/formforge/commit/89aa1b8))
+- **core:** Implement the ValidateOn flag core ([41cd4b3](https://github.com/golemui/formforge/commit/41cd4b3))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.1.5 (2025-11-16)
 
 ### 🩹 Fixes

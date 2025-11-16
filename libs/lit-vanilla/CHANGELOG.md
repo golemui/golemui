@@ -1,3 +1,13 @@
+## 0.2.0 (2025-11-16)
+
+### 🚀 Features
+
+- **lit:** integrate touched flag ([8f9d918](https://github.com/golemui/formforge/commit/8f9d918))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.1.5 (2025-11-16)
 
 ### 🩹 Fixes
