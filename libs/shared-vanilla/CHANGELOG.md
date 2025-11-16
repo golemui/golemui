@@ -1,3 +1,13 @@
+## 0.2.1 (2025-11-16)
+
+### 🩹 Fixes
+
+- **shared-vanilla:** trigger patch release ([767eb85](https://github.com/golemui/formforge/commit/767eb85))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.2.0 (2025-11-16)
 
 This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
