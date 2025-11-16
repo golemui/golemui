@@ -1,3 +1,15 @@
+## 0.1.4 (2025-11-16)
+
+### 🩹 Fixes
+
+- create release tool ([7cd7845](https://github.com/golemui/formforge/commit/7cd7845))
+- set angular dependencies as peer ([44960be](https://github.com/golemui/formforge/commit/44960be))
+- set correct paths for release artifacts ([8941d2f](https://github.com/golemui/formforge/commit/8941d2f))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.1.3 (2025-11-15)
 
 This was a version bump only, there were no code changes.

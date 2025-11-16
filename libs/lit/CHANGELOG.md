@@ -1,3 +1,14 @@
+## 0.1.4 (2025-11-16)
+
+### 🩹 Fixes
+
+- set correct paths for release artifacts ([8941d2f](https://github.com/golemui/formforge/commit/8941d2f))
+- create release tool ([7cd7845](https://github.com/golemui/formforge/commit/7cd7845))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.1.3 (2025-11-15)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.
