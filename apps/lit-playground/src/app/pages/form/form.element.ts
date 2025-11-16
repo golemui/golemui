@@ -1,4 +1,4 @@
-import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
+import { allowedNames, loggerMiddleware, selects, selectsData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
@@ -10,8 +10,8 @@ import './form.element.scss';
 @customElement('lit-form')
 export class FormElement extends LitElement {
   middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
-  formDef = signin;
-  formData = signinData;
+  formDef = selects;
+  formData = selectsData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
@@ -29,7 +29,6 @@ export class FormElement extends LitElement {
 
   protected onFormError(event: CustomEvent<Core.FormStoreError>) {
     const error = event.detail;
-    this.error = '';
     if (error.kind === 'validation') {
       this.error = 'Validation errors: ' + error.errors;
     } else if (error.kind === 'fatal') {
