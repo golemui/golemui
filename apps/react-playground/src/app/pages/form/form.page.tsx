@@ -29,7 +29,6 @@ export function FormPage() {
   const [error, setError] = useState('');
 
   function onFormError(storeError: Core.FormStoreError) {
-    setError('');
     if (storeError.kind === 'validation') {
       setError('Validation errors: ' + storeError.errors);
     } else if (storeError.kind === 'fatal') {
