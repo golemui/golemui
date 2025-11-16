@@ -42,6 +42,11 @@ jobs:
       - name: Build shared styles
         run: npm run build:styles
 
+      - name: config git user
+        run: |
+          git config --global user.name "Raúl Jiménez"
+          git config --global user.email "elecash@gmail.com"
+
       - name: Release to Github and NPM
         run: npm run release
         env:
