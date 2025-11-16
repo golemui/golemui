@@ -87,12 +87,8 @@
   },
   "release": {
     "version": {
-      "generatorOptions": {
-        "specifierSource": "conventional-commits",
-        "packageRoot": "build/{projectRoot}",
-        "currentVersionResolver": "git-tag",
-        "skipLockFileUpdate": true
-      }
+      "specifierSource": "conventional-commits",
+      "currentVersionResolver": "git-tag"
     },
     "changelog": {
       "workspaceChangelog": {
