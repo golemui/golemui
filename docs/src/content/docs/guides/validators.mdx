@@ -126,7 +126,12 @@ Type something different than `John` and `Jane` and then focus out the input to 
 To allow users to define when field validation should run, set the `validateOn: ValidateOn` property at the form level.
 
 ```ts
-type ValidateOn = 'eager' | 'change' | 'blur' | 'submit' | ('change' | 'blur' | 'submit')[];
+type ValidateOn =
+  | 'eager'
+  | 'change'
+  | 'blur'
+  | 'submit'
+  | ('change' | 'blur' | 'submit')[];
 ```
 
 When not set, the default `validateOn` behaviour is `'eager'`.
