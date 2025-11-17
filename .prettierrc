@@ -12,6 +12,7 @@
     {
       "files": "*.mdx",
       "options": {
+        "printWidth": 80,
         "parser": "markdown",
         "proseWrap": "preserve"
       }
