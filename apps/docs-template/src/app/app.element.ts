@@ -1,6 +1,6 @@
 import './pages/form/form.element';
 import './app.element.scss';
-import { html, LitElement } from 'lit';
+import { LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 @customElement('lit-root')
@@ -12,6 +12,6 @@ export class AppElement extends LitElement {
   }
 
   render() {
-    return html`<lit-form></lit-form>`;
+    this.innerHTML = `<lit-form></lit-form>`;
   }
 }

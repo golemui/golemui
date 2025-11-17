@@ -90,6 +90,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
           @input="${() => this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
           aria-invalid=${showErrors || nothing}
+          aria-errormessage=${`${this.field.uid}-error`}
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         />
@@ -99,7 +100,10 @@ export class TextinputElement extends LitElement implements Core.WithField {
       ${showErrors
         ? html`<ul class="gui-validator">
             ${this.adapter.templateData.errors?.map(
-              (error) => html`<li class="gui-validator__error">${error}</li>`,
+              (error) =>
+                html`<li class="gui-validator__error" id=${`${this.field.uid}-error`}>
+                  ${error}
+                </li>`,
             )}
           </ul>`
         : ''}

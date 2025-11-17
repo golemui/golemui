@@ -18,6 +18,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
     onValueChanged,
     onBlur,
     props,
+    isTouched,
   } = useControlField<boolean, CheckboxProps>(field);
 
   const handleChange = useCallback(
@@ -26,6 +27,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
   );
 
   const checkboxPosition = props.checkboxPosition;
+  const showErrors = isTouched && errors && errors.length > 0;
 
   return (
     <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
@@ -43,7 +45,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
           onBlur={onBlur}
         />
       </div>
-      <Errors errors={errors} />
+      {showErrors && <Errors errors={errors} uid={uid} />}
     </div>
   );
 }

@@ -7,6 +7,70 @@ import { TabItem, Tabs } from '@astrojs/starlight/components';
 
 ### Adding validators to your Control Fields
 
+Validators provide contextual messages for errors in Control Fields.
+
+A Validator can validate different types of data, and each Validator will have a set of validations. For example, a String Validator will be able to check the length of a string, meanwhile a Number Validator can check the maximum or minimum value. You can also create custom Validators, please check the section [Creating a custom Validator](#creating-a-custom-validator) to know more.
+
+Let's create a password input with a required Validator. Just add a `validator` property to a Control Field as shown below:
+
+```json
+{
+  "form": {
+    "uid": "",
+    "kind": "layout",
+    "widget": "stack",
+    "children": [
+      {
+        "uid": "userPasswordInput",
+        "kind": "control",
+        "widget": "textinput",
+        "path": "user.password",
+        "validator": {
+          "type": "string",
+          "required": true
+        }
+      }
+    ]
+  }
+}
+```
+
+You can add more validators, triggering multiple errors if one or more of the requirements are not fulfilled. Let's add validations for minimum length 8 characters, maximum length 20 characters and a pattern to check that the password has only letters and numbers.
+
+```json
+{
+  "form": {
+    "uid": "",
+    "kind": "layout",
+    "widget": "stack",
+    "children": [
+      {
+        "uid": "userPasswordInput",
+        "kind": "control",
+        "widget": "textinput",
+        "path": "user.password",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 8,
+          "maxLength": 20,
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
+        }
+      }
+    ]
+  }
+}
+```
+
+Let's give it a try!
+
+<iframe
+  src="/docs-template/index.html?form=docs-template/validators/string-validators.json"
+  title="Custom Validator example"
+  width="100%"
+  style="height: 200px"
+></iframe>
+
 ### Creating a custom validator
 
 To create custom validators, implement functions that follow the `CustomValidatorSchemaFn` interface. For example, let's create a validator that allows us to enter only certain names:
@@ -113,11 +177,11 @@ Finally, declare your validator:
 }
 ```
 
-Type something different than `John` and `Jane` and then focus out the input to trigger the validation.
+Type something different from `John` and `Jane` to trigger the validation error.
 
 <iframe
   src="/docs-template/index.html?form=docs-template/validators/custom-validators.json"
-  title="Repeater example"
+  title="Custom Validator example"
   width="100%"
 ></iframe>
 

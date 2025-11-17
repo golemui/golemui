@@ -22,6 +22,7 @@
     (input)="valueChanged($event)"
     (blur)="adapter.onBlur()"
     [attr.aria-invalid]="showErrors"
+    [attr.aria-errormessage]="showErrors ? field.uid + '_errors' : undefined"
     [attr.aria-required]="templateData.validator?.required"
     [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
   />
@@ -35,7 +36,7 @@
 </div>
 
 @if (showErrors) {
-  <ul class="gui-validator">
+  <ul class="gui-validator" [id]="field.uid + '_errors'">
     @for (error of templateData.errors; track $index) {
       <li class="gui-validator__error">{{ error }}</li>
     }
