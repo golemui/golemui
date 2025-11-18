@@ -1,34 +1,32 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import fg from 'fast-glob';
+import { build } from 'esbuild';
+import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
+import { execSync } from 'node:child_process';
 
-async function copyLibsToBuild() {
-  const buildDir = path.join(process.cwd(), 'build');
-  const packagesDir = path.join(process.cwd(), 'dist/libs');
+async function minifyDist() {
+  const entryPoints = await fg(['dist/libs/**/*.js', 'dist/libs/**/*.mjs', 'dist/libs/**/*.css']);
 
-  // Remove build directory if it exists and create it fresh
-  await fs.remove(buildDir);
-  await fs.ensureDir(buildDir);
-  await fs.ensureDir(path.join(buildDir, 'libs'));
+  if (!entryPoints.length) return;
 
-  // Get all package directories
-  const packageDirs = await fs.readdir(packagesDir);
+  await build({
+    entryPoints,
+    outdir: 'build/libs',
+    minify: true,
+    bundle: false,
+    allowOverwrite: true,
+  });
+}
 
-  // Copy each package directory
-  for (const pkg of packageDirs) {
-    const srcDir = path.join(packagesDir, pkg);
-    const destDir = path.join(buildDir, 'libs', pkg);
+async function copyFiles() {
+  const typeFiles = await fg(['dist/libs/**/*.d.ts', 'dist/libs/**/*.json', 'dist/libs/**/*.md']);
 
-    // Only copy if it's a directory
-    const stats = await fs.stat(srcDir);
-    if (!stats.isDirectory()) continue;
-
-    await fs.copy(srcDir, destDir, {
-      filter: (src) => {
-        // Skip node_modules, test files, and dist folders
-        return !src.includes('node_modules') && !src.includes('__tests__');
-      },
-    });
+  for (const file of typeFiles) {
+    const destPath = file.replace('dist/libs', 'build/libs');
+    await fs.ensureDir(path.dirname(destPath));
+    await fs.copy(file, destPath);
   }
 }
 
@@ -47,8 +45,31 @@ async function copyChangelogFiles() {
   }
 }
 
+function updateLatestDistTag(projectsVersionData: VersionData) {
+  const version = projectsVersionData.newVersion;
+  if (version) {
+    [
+      '@golemui/core',
+      '@golemui/angular',
+      '@golemui/angular-vanilla',
+      '@golemui/react',
+      '@golemui/react-vanilla',
+      '@golemui/lit',
+      '@golemui/lit-vanilla',
+      '@golemui/shared-vanilla',
+    ].forEach((packageName) => {
+      console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
+
+      execSync(`npm dist-tag add ${packageName}@${version} latest`, {
+        stdio: 'inherit',
+      });
+    });
+  }
+}
+
 (async () => {
-  await copyLibsToBuild();
+  await minifyDist();
+  await copyFiles();
 
   const { workspaceVersion, projectsVersionData } = await releaseVersion({});
 
@@ -62,5 +83,9 @@ async function copyChangelogFiles() {
   const publishResult = await releasePublish({
     registry: 'https://registry.npmjs.org/',
   });
-  process.exit(Object.values(publishResult).every((result) => result.code === 0) ? 0 : 1);
+
+  updateLatestDistTag(projectsVersionData);
+
+  const ok = Object.values(publishResult).every((result) => result.code === 0);
+  process.exit(ok ? 0 : 1);
 })();
