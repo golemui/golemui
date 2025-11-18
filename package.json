@@ -7,12 +7,11 @@
     "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:check --all",
     "cz": "czg checkbox",
     "build:docs": "./build-docs.sh --skip-install && cd docs && npm run build",
+    "build:libs": "npx nx run-many --target=build --projects=libs/*",
     "build:styles": "npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/shared-vanilla/src/styles/index.css",
     "run:docs": "./build-docs.sh --skip-install && cd docs && npm run dev",
     "cz:breaking": "npm run precz && czg break",
-    "release": "npx nx run-many --target=build && npm run build:styles && tsx tools/release.ts",
-    "release:dry": "npx nx run-many --target=build && npm run build:styles && nx release -d",
-    "release:verdaccio": "npx nx run-many --target=build && npm run build:styles && nx release publish --skip-push"
+    "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts"
   },
   "private": true,
   "dependencies": {
@@ -77,6 +76,7 @@
     "eslint-plugin-jsx-a11y": "6.10.1",
     "eslint-plugin-react": "7.35.0",
     "eslint-plugin-react-hooks": "5.0.0",
+    "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.2",
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
@@ -93,7 +93,7 @@
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.40.0",
     "verdaccio": "^6.0.5",
-    "vite": "^7.0.0",
+    "vite": "7.1.11",
     "vite-plugin-dts": "~4.5.0",
     "vitest": "^3.0.0"
   },
