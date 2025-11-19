@@ -1,0 +1,193 @@
+---
+---
+
+<section class="hero">
+  <div class="container">
+    <div class="content">
+      <div class="badge">
+        <span class="badge-text">New: GolemUI 2.0 is out!</span>
+        <a href="/guides/getting-started" class="badge-link">Read the docs &rarr;</a>
+      </div>
+      <h1 class="title">
+        The <span class="gradient-text">Ultra-Fast</span><br />
+        Dynamic Forms Library
+      </h1>
+      <p class="subtitle">
+        State-based, reactive, and 100% customizable. Built for enterprise teams who need performance, extensibility, and control.
+      </p>
+      <div class="cta-group">
+        <a href="/guides/getting-started" class="btn btn-primary">Get Started Free</a>
+        <a href="mailto:sales@golemui.com" class="btn btn-secondary">Request Enterprise Demo</a>
+      </div>
+      <div class="frameworks">
+        <span>Works with:</span>
+        <div class="framework-icons">
+          <!-- Simple text placeholders for now, will replace with icons later -->
+          <span class="framework">Angular</span>
+          <span class="framework">React</span>
+          <span class="framework">Lit</span>
+        </div>
+      </div>
+    </div>
+    <div class="visual">
+      live demo of GolemUI
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .hero {
+    padding: 8rem 0 6rem;
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(var(--accent-color-rgb), 0.15) 0%, transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    @media (max-width: 960px) {
+      align-items: center;
+    }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(var(--accent-color-rgb), 0.1);
+    border: 1px solid rgba(var(--accent-color-rgb), 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    width: fit-content;
+
+    .badge-text {
+      font-weight: 500;
+      color: var(--accent-color);
+    }
+
+    .badge-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      &:hover {
+        color: var(--text-color);
+      }
+    }
+  }
+
+  .title {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent-color) 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 540px;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 960px) {
+      justify-content: center;
+    }
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+
+    &.btn-primary {
+      background: var(--accent-color);
+      color: white;
+      &:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      &:hover {
+        background: var(--bg-surface);
+        border-color: var(--text-color);
+      }
+    }
+  }
+
+  .frameworks {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+
+    .framework-icons {
+      display: flex;
+      gap: 1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+
+  .visual {
+    position: relative;
+  }
+</style>

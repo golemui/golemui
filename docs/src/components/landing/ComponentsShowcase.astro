@@ -1,0 +1,169 @@
+---
+---
+
+<section class="components-showcase">
+  <div class="container">
+    <div class="header">
+      <h2>Comprehensive Component Library</h2>
+      <p class="subtitle">Everything you need to build world-class forms.</p>
+    </div>
+
+    <div class="grid">
+      <div class="block free">
+        <div class="block-header">
+          <h3>Core Components</h3>
+          <span class="tag">Free & Open Source</span>
+        </div>
+        <p class="description">
+          The essential building blocks for any application. Accessible, responsive, and ready to
+          use.
+        </p>
+        <ul class="component-list">
+          <li>Accordion</li>
+          <li>Alert</li>
+          <li>Button</li>
+          <li>Checkbox</li>
+          <li>Select</li>
+          <li>Stack</li>
+          <li>Tabs</li>
+          <li>TextInput</li>
+          <li>Date</li>
+          <li>Slider</li>
+          <li>RadioGroup</li>
+          <li>Switch</li>
+          <li>Menu</li>
+          <li>Tags</li>
+          <li>Number</li>
+          <li>Checkbox Tree</li>
+          <li>Textarea</li>
+        </ul>
+      </div>
+
+      <div class="block pro">
+        <div class="block-header">
+          <h3>Pro Components</h3>
+          <span class="tag pro-tag">Pro</span>
+        </div>
+        <p class="description">
+          Advanced components for data-heavy enterprise applications. Grid, Charts, and complex
+          inputs.
+        </p>
+        <ul class="component-list">
+          <li>Repeater</li>
+          <li>Dropdown</li>
+          <li>File Upload</li>
+          <li>Markdown Editor</li>
+          <li>HTML Editor</li>
+          <li>Input Mask</li>
+          <li>Percentage</li>
+          <li>Math Number</li>
+          <li>Calendar</li>
+          <li>Data Grid</li>
+          <li>Currency</li>
+          <li>Color Picker</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .components-showcase {
+    padding: 6rem 0;
+    background: var(--bg-surface);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .block {
+    background: var(--bg-color);
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--border-color);
+
+    &.pro {
+      border-color: var(--accent-color);
+      box-shadow:
+        0 0 0 1px var(--accent-color),
+        0 10px 30px -10px rgba(var(--accent-color-rgb), 0.15);
+    }
+
+    .block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .tag {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        background: var(--bg-surface);
+        color: var(--text-muted);
+
+        &.pro-tag {
+          background: var(--accent-color);
+          color: white;
+        }
+      }
+    }
+
+    .description {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .component-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+
+      li {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        background: var(--bg-surface);
+        border-radius: 0.5rem;
+        color: var(--text-color);
+        border: 1px solid transparent;
+
+        &:hover {
+          border-color: var(--border-color);
+        }
+      }
+    }
+  }
+</style>

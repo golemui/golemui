@@ -1,0 +1,328 @@
+---
+import Hero from '../components/landing/Hero.astro';
+import ValueProposition from '../components/landing/ValueProposition.astro';
+import Frameworks from '../components/landing/Frameworks.astro';
+import ComponentsShowcase from '../components/landing/ComponentsShowcase.astro';
+import CustomPower from '../components/landing/CustomPower.astro';
+import Pricing from '../components/landing/Pricing.astro';
+import Testimonials from '../components/landing/Testimonials.astro';
+import LatestReleases from '../components/landing/LatestReleases.astro';
+import FAQ from '../components/landing/FAQ.astro';
+import '../styles/custom.css';
+---
+
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GolemUI - Ultra-Fast Dynamic Forms</title>
+    <meta
+      name="description"
+      content="The enterprise-grade, state-driven forms library for Angular, React, and Lit."
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="landing-header">
+      <div class="container">
+        <a href="/" class="logo">
+          Golem<span class="highlight">UI</span>
+        </a>
+        <nav>
+          <a href="/guides/getting-started">Docs</a>
+          <a href="#pricing">Pricing</a>
+          <a href="https://github.com/golemui/formforge" target="_blank">GitHub</a>
+          <button id="theme-toggle" aria-label="Toggle theme">
+            <svg
+              class="sun-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"
+              ></line><line x1="12" y1="21" x2="12" y2="23"></line><line
+                x1="4.22"
+                y1="4.22"
+                x2="5.64"
+                y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line
+                x1="1"
+                y1="12"
+                x2="3"
+                y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line
+                x1="4.22"
+                y1="19.78"
+                x2="5.64"
+                y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg
+            >
+            <svg
+              class="moon-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg
+            >
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <Hero />
+      <ValueProposition />
+      <Frameworks />
+      <ComponentsShowcase />
+      <CustomPower />
+      <Pricing />
+      <Testimonials />
+      <LatestReleases />
+      <FAQ />
+    </main>
+
+    <footer class="landing-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <h3>GolemUI</h3>
+            <p>The enterprise-grade forms library.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Product</h4>
+            <a href="/guides/getting-started">Documentation</a>
+            <a href="#pricing">Pricing</a>
+            <a href="/changelog">Changelog</a>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="https://github.com/golemui/formforge">GitHub</a>
+            <a href="#">NPM</a>
+          </div>
+          <div class="footer-col">
+            <h4>Legal</h4>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+          </div>
+        </div>
+        <div class="copyright">&copy; 2025 GolemUI. All rights reserved.</div>
+      </div>
+    </footer>
+
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+
+      // Check local storage or system preference
+      const savedTheme = localStorage.getItem('theme');
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+
+      if (savedTheme) {
+        html.className = savedTheme;
+      } else {
+        html.className = systemTheme;
+      }
+
+      themeToggle?.addEventListener('click', () => {
+        const currentTheme = html.className;
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.className = newTheme;
+        localStorage.setItem('theme', newTheme);
+      });
+    </script>
+  </body>
+</html>
+
+<style lang="scss" is:global>
+  :root {
+    --bg-color: #ffffff;
+    --text-color: #1a1a1a;
+    --text-muted: #666666;
+    --accent-color: #3b82f6;
+    --accent-color-rgb: 59, 130, 246;
+    --border-color: #e5e5e5;
+    --bg-surface: #f5f5f5;
+  }
+
+  html.dark {
+    --bg-color: #23262f;
+    --text-color: #ffffff;
+    --text-muted: #a1a1aa;
+    --accent-color: #60a5fa;
+    --accent-color-rgb: 96, 165, 250;
+    --border-color: #3f3f46;
+    --bg-surface: #2d3039;
+  }
+
+  body {
+    margin: 0;
+    font-family:
+      'Inter',
+      'Fira Code',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .landing-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(var(--bg-color), 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--text-color);
+
+      .highlight {
+        color: var(--accent-color);
+      }
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+
+      a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+
+        &:hover {
+          color: var(--text-color);
+        }
+      }
+    }
+  }
+
+  #theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: var(--bg-surface);
+    }
+
+    .sun-icon {
+      display: none;
+    }
+    .moon-icon {
+      display: block;
+    }
+  }
+
+  html.dark #theme-toggle {
+    .sun-icon {
+      display: block;
+    }
+    .moon-icon {
+      display: none;
+    }
+  }
+
+  .landing-footer {
+    padding: 4rem 0 2rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-surface);
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-col {
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 1rem;
+      }
+
+      h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 1rem;
+        color: var(--text-color);
+      }
+
+      p {
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      a {
+        display: block;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 0.5rem;
+        transition: color 0.2s;
+
+        &:hover {
+          color: var(--accent-color);
+        }
+      }
+    }
+
+    .copyright {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+    }
+  }
+</style>

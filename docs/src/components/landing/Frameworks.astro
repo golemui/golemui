@@ -1,0 +1,117 @@
+---
+---
+
+<section class="frameworks">
+  <div class="container">
+    <div class="header">
+      <h2>Write Once, Run Everywhere</h2>
+      <p class="subtitle">Native support for the most popular enterprise frameworks.</p>
+    </div>
+
+    <div class="grid">
+      <div class="framework-card angular">
+        <div class="logo-placeholder">A</div>
+        <h3>Angular</h3>
+        <p>
+          Seamless integration with Angular's dependency injection and change detection. Full
+          support for Signals and RxJS.
+        </p>
+      </div>
+
+      <div class="framework-card react">
+        <div class="logo-placeholder">R</div>
+        <h3>React</h3>
+        <p>
+          First-class React hooks and components. Optimized for Concurrent Mode and Server
+          Components.
+        </p>
+      </div>
+
+      <div class="framework-card lit">
+        <div class="logo-placeholder">L</div>
+        <h3>Lit</h3>
+        <p>
+          Lightweight Web Components that work anywhere. The foundation for a truly
+          framework-agnostic design system.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .frameworks {
+    padding: 6rem 0;
+    background: var(--bg-color);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .framework-card {
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: var(--accent-color);
+      background: rgba(var(--accent-color-rgb), 0.05);
+    }
+
+    .logo-placeholder {
+      width: 64px;
+      height: 64px;
+      background: var(--bg-surface);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0 auto 1.5rem;
+      color: var(--text-color);
+    }
+
+    &.angular .logo-placeholder {
+      color: #dd0031;
+    }
+    &.react .logo-placeholder {
+      color: #61dafb;
+    }
+    &.lit .logo-placeholder {
+      color: #324fff;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  }
+</style>

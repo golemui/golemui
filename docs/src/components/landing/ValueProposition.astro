@@ -1,0 +1,100 @@
+---
+---
+
+<section class="value-prop">
+  <div class="container">
+    <div class="header">
+      <h2>Why GolemUI?</h2>
+      <p class="subtitle">Built for performance, designed for control.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>Ultra-Fast Performance</h3>
+        <p>
+          Built on a reactive state architecture that minimizes re-renders. Handle complex forms
+          with thousands of fields without skipping a frame.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>100% Customizable</h3>
+        <p>
+          Every component is fully skinnable via CSS variables or custom themes. Match your brand
+          identity perfectly without fighting the library.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🧩</div>
+        <h3>API-First Extensibility</h3>
+        <p>
+          Create custom components, validators, and middlewares. GolemUI is designed to be extended,
+          not just configured.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .value-prop {
+    padding: 6rem 0;
+    background: var(--bg-surface);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .card {
+    background: var(--bg-color);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  }
+</style>
