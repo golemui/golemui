@@ -23,7 +23,8 @@
       "@golemui/lit-vanilla": ["libs/lit-vanilla/src/index.ts"],
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/react-vanilla": ["libs/react-vanilla/src/index.ts"],
-      "@golemui/shared-vanilla": ["libs/shared-vanilla/src/index.ts"]
+      "@golemui/shared-vanilla": ["libs/shared-vanilla/src/index.ts"],
+      "@golemui/validators-zod": ["libs/validators-zod/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

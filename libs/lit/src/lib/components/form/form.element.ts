@@ -16,8 +16,8 @@ export class FormElement extends LitElement {
 
   @property({ type: Object }) formDef: any = {};
   @property({ type: Array }) fieldLoaders!: FieldLoaders<WithField>;
+  @property({ type: Object }) validatorConfig!: Core.ValidatorConfig;
   @property({ type: Array }) middlewares: any[] = [];
-  @property({ type: Object }) customValidators: Core.CustomValidatorSchemas = {};
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) data: any = {};
   @property({ type: String }) formName = Core.shortUUID();
@@ -34,7 +34,7 @@ export class FormElement extends LitElement {
     this.context.initialize(
       this.fieldLoaders,
       this.middlewares,
-      this.customValidators,
+      this.validatorConfig,
       this.validateOn,
     );
 

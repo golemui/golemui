@@ -12,20 +12,22 @@ function enumToOption(opt: unknown): Option {
   return { label: opt as string, value: opt as string };
 }
 
-export const vanillaSchemaToFieldMap: Core.SchemaToFieldMap = {
+export const vanillaSchemaToFieldMap = <V>(
+  validators: Core.JsonSchemaValidators<V>,
+): Core.SchemaToFieldMap => ({
   string: (_schema, path: string) => Vanilla.textinput({ config: { path } }),
   enum: (_schema, path: string) =>
     Vanilla.select({
       config: { path },
       props: { options: _schema.enum?.map(enumToOption) ?? [] },
-      validator: Core.stringValidator(),
+      validator: validators.stringValidator(),
     }),
   boolean: (_schema, path: string) =>
-    Vanilla.checkbox({ config: { path }, validator: Core.booleanValidator() }),
+    Vanilla.checkbox({ config: { path }, validator: validators.booleanValidator() }),
   number: (_schema, path: string) =>
-    Vanilla.numberinput({ config: { path }, validator: Core.numberValidator() }),
+    Vanilla.numberinput({ config: { path }, validator: validators.numberValidator() }),
   integer: (_schema, path: string) =>
-    Vanilla.numberinput({ config: { path }, validator: Core.integerValidator() }),
+    Vanilla.numberinput({ config: { path }, validator: validators.integerValidator() }),
   object: (_schema, children: Core.FormField[]) => Vanilla.stack({ children }),
   // one or the other must be valid .
   // - remove data when tabs change.
@@ -45,4 +47,4 @@ export const vanillaSchemaToFieldMap: Core.SchemaToFieldMap = {
         level: 'error',
       },
     ),
-};
+});

@@ -22,6 +22,7 @@
     "@angular/platform-browser": "~20.2.0",
     "@angular/router": "~20.2.0",
     "@lit/context": "^1.1.6",
+    "@standard-schema/spec": "^1.0.0",
     "clsx": "^2.1.1",
     "lit": "^3.3.1",
     "react": "19.0.0",

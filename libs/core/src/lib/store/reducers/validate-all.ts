@@ -1,10 +1,11 @@
+import { StandardSchemaV1 } from '@standard-schema/spec';
 import { ControlField, isControlField } from '../../form-field';
-import { createValidator, CustomValidatorSchemas, Validator } from '../../form-validator';
+import { isStandardValidateSuccess, standardValidate, ValidatorConfig } from '../../form-validator';
 import { get } from '../../utils/object';
 import { State, ValidationState } from '../model';
 
 export const validateAll =
-  (customValidators: CustomValidatorSchemas) =>
+  (validatorConfig: ValidatorConfig) =>
   (state: State): State => {
     const controls = state.flatForm.filter(isControlField);
     const oldValidations = state.validations;
@@ -25,7 +26,7 @@ export const validateAll =
             } satisfies ValidationState);
 
           // Is there a base validator or a validator that matches the current state?
-          const validatorByState = getPropertyValueByCurrentState<Validator>(
+          const validatorByState = getPropertyValueByCurrentState<StandardSchemaV1>(
             state.currentStates,
             'validator',
             control,
@@ -36,17 +37,24 @@ export const validateAll =
             const matchedPropertyWithState =
               validatorByState.matchedPropertyWithState || 'baseValidator';
             if (!newValidations[control.path].validators[matchedPropertyWithState]) {
-              newValidations[control.path].validators[matchedPropertyWithState] = createValidator(
-                validatorByState.validator,
-                customValidators,
-              );
+              newValidations[control.path].validators[matchedPropertyWithState] =
+                validatorConfig.createValidator(
+                  validatorByState.validator,
+                  validatorConfig.customValidators,
+                );
             }
-            const schema = newValidations[control.path].validators[matchedPropertyWithState];
+
+            const schema: StandardSchemaV1<unknown> =
+              newValidations[control.path].validators[matchedPropertyWithState];
             const controlValue = get(state.data, control.path);
-            const result = schema.safeParse(controlValue);
-            newValidations[control.path].status = result.success
+            const result = standardValidate(
+              schema,
+              controlValue,
+            ) as StandardSchemaV1.Result<unknown>;
+
+            newValidations[control.path].status = isStandardValidateSuccess(result)
               ? null
-              : { errors: result.error!.issues.map((err) => err.message) };
+              : { errors: result.issues.map((issue) => issue.message) };
           } else {
             // If there's no validator, the field is valid
             newValidations[control.path].status = null;

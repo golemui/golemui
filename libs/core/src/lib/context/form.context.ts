@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { ControlField, InteractiveField, On } from '../form-field';
 import { createFormStore, FormStore } from '../form-store';
-import { CustomValidatorSchemas } from '../form-validator';
+import { ValidatorConfig } from '../form-validator';
 import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
@@ -15,11 +15,11 @@ export class FormContext<ComponentType> {
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
     middlewares: Middleware<State, Action>[] = [],
-    customValidators: CustomValidatorSchemas,
+    validatorConfig: ValidatorConfig,
     validateOn: ValidateOn,
   ) {
     this.fieldRegistry.setFieldLoaders(fieldLoaders);
-    this.store = createFormStore(middlewares, customValidators, validateOn);
+    this.store = createFormStore(middlewares, validatorConfig, validateOn);
   }
 
   // TODO: There's an almost duplicate of this in the validate-all reducer
