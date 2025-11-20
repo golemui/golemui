@@ -10,12 +10,17 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "^0.36.1",
     "@golemui/core": "^0.2.1",
     "@golemui/react": "^0.2.1",
     "@golemui/react-vanilla": "^0.2.1",
     "@golemui/shared-vanilla": "^0.2.1",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "astro": "5.15.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "sharp": "^0.34.2"
   },
   "devDependencies": {
