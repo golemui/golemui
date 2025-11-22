@@ -36,7 +36,7 @@ export class FormComponent implements OnInit {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
   fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
-  validatorConfig = input.required<Core.ValidatorConfig>();
+  validatorConfig = input.required<Core.ValidatorConfig<any>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);

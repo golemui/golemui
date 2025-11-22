@@ -7,7 +7,7 @@ import { reducer } from './store/reducer';
 
 export function createFormStore(
   middlewares: Middleware<State, Action>[] = [],
-  validatorConfig: ValidatorConfig,
+  validatorConfig: ValidatorConfig<any>,
   validateOn: ValidateOn,
 ): FormStore {
   const subject = new BehaviorSubject<State>(createInitialState());

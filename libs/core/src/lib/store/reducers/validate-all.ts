@@ -5,7 +5,7 @@ import { get } from '../../utils/object';
 import { State, ValidationState } from '../model';
 
 export const validateAll =
-  (validatorConfig: ValidatorConfig) =>
+  (validatorConfig: ValidatorConfig<any>) =>
   (state: State): State => {
     const controls = state.flatForm.filter(isControlField);
     const oldValidations = state.validations;

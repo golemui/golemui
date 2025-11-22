@@ -15,7 +15,7 @@ export class FormContext<ComponentType> {
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
     middlewares: Middleware<State, Action>[] = [],
-    validatorConfig: ValidatorConfig,
+    validatorConfig: ValidatorConfig<any>,
     validateOn: ValidateOn,
   ) {
     this.fieldRegistry.setFieldLoaders(fieldLoaders);

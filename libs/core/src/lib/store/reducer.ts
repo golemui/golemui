@@ -9,7 +9,13 @@ import * as Reducers from './reducers';
 import { isControlTouched, reduceIf } from './reducers/utils';
 
 export const reducer =
-  ({ validatorConfig, validateOn }: { validatorConfig: ValidatorConfig; validateOn: ValidateOn }) =>
+  ({
+    validatorConfig,
+    validateOn,
+  }: {
+    validatorConfig: ValidatorConfig<any>;
+    validateOn: ValidateOn;
+  }) =>
   (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':

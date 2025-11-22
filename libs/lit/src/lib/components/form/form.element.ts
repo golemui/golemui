@@ -16,7 +16,7 @@ export class FormElement extends LitElement {
 
   @property({ type: Object }) formDef: any = {};
   @property({ type: Array }) fieldLoaders!: FieldLoaders<WithField>;
-  @property({ type: Object }) validatorConfig!: Core.ValidatorConfig;
+  @property({ type: Object }) validatorConfig!: Core.ValidatorConfig<any>;
   @property({ type: Array }) middlewares: any[] = [];
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) data: any = {};
