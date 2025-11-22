@@ -12,7 +12,7 @@ export type CustomValidatorSchemas = {
   [key: string]: CustomValidatorSchemaFn;
 };
 
-export type ValidatorConfig<V = unknown> = {
+export type ValidatorConfig<V = any> = {
   createValidator: (validator: V, customValidators?: CustomValidatorSchemas) => StandardSchemaV1;
   customValidators?: CustomValidatorSchemas;
 };

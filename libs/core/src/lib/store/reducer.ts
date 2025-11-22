@@ -2,7 +2,7 @@ import { Flags } from '../form-field';
 import { ValidatorConfig } from '../form-validator';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import { pipe } from '../utils/pipe';
+import { pipe } from '../utils/function';
 import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
