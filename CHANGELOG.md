@@ -1,3 +1,24 @@
+## 0.2.4 (2025-11-22)
+
+### 🩹 Fixes
+
+- **react:** fix react package name ([7095c8b](https://github.com/golemui/formforge/commit/7095c8b))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.2.3 (2025-11-22)
+
+### 🩹 Fixes
+
+- enable again releases ([347dbdd](https://github.com/golemui/formforge/commit/347dbdd))
+- **react:** fix react package jsons build ([b98d9e2](https://github.com/golemui/formforge/commit/b98d9e2))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.2.2 (2025-11-22)
 
 ### 🩹 Fixes
