@@ -25,10 +25,9 @@ const middlewares = [
   Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsZod.jsonSchemaValidators)),
   loggerMiddleware,
 ];
-const validatorConfig: Core.ValidatorConfig<ValidatorsZod.Validator> = {
-  createValidator: ValidatorsZod.createValidator,
-  customValidators: { allowedNames },
-};
+const validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.createValidator({
+  allowedNames,
+});
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -49,7 +48,7 @@ export function FormPage() {
         data={formData}
         fieldLoader={vanillaFieldLoaders}
         middlewares={middlewares}
-        validatorConfig={validatorConfig}
+        validators={validators}
         validateOn="change"
         onFormError={onFormError}
         onFormEvent={onFormEvent}
