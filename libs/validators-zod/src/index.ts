@@ -1,1 +1,2 @@
-export * from './lib/validators-zod';
+export * from './lib/json-schema';
+export * from './lib/validators';

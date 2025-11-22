@@ -76,49 +76,6 @@ export type Validator =
 
 // --------------------------------
 //
-// Factory
-//
-// --------------------------------
-
-export const stringValidator = (config?: Omit<StringValidator, 'type'>): StringValidator => ({
-  type: 'string',
-  ...(config || {}),
-});
-
-export const numberValidator = (config?: Omit<NumberValidator, 'type'>): NumberValidator => ({
-  type: 'number',
-  ...(config || {}),
-});
-
-export const integerValidator = (config?: Omit<NumberValidator, 'type'>): NumberValidator => ({
-  type: 'integer',
-  ...(config || {}),
-});
-
-export const booleanValidator = (config?: Omit<BooleanValidator, 'type'>): BooleanValidator => ({
-  type: 'boolean',
-  ...(config || {}),
-});
-
-export const arrayValidator = (config?: Omit<ArrayValidator, 'type'>): ArrayValidator => ({
-  type: 'array',
-  ...(config || {}),
-});
-
-export const customValidator = (config: Omit<CustomValidator, 'type'>): CustomValidator => ({
-  type: 'custom',
-  ...config,
-});
-
-export const jsonSchemaValidators: Core.JsonSchemaValidators<Validator> = {
-  stringValidator,
-  booleanValidator,
-  numberValidator,
-  integerValidator,
-};
-
-// --------------------------------
-//
 // Schema
 //
 // --------------------------------
@@ -140,7 +97,7 @@ export const createValidator = (
 
     case 'array':
       // TODO: implement
-      console.warn('TODO');
+      console.warn('TODO: array validator not yet supported');
       return z.success(z.any());
 
     case 'custom': {
