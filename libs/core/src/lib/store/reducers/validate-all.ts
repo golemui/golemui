@@ -1,11 +1,11 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import { ControlField, isControlField } from '../../form-field';
-import { isStandardValidateSuccess, standardValidate, ValidatorConfig } from '../../form-validator';
+import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '../../form-validator';
 import { get } from '../../utils/object';
 import { State, ValidationState } from '../model';
 
 export const validateAll =
-  (validatorConfig: ValidatorConfig<any>) =>
+  (validators: ValidatorFn<any>) =>
   (state: State): State => {
     const controls = state.flatForm.filter(isControlField);
     const oldValidations = state.validations;
@@ -37,11 +37,9 @@ export const validateAll =
             const matchedPropertyWithState =
               validatorByState.matchedPropertyWithState || 'baseValidator';
             if (!newValidations[control.path].validators[matchedPropertyWithState]) {
-              newValidations[control.path].validators[matchedPropertyWithState] =
-                validatorConfig.createValidator(
-                  validatorByState.validator,
-                  validatorConfig.customValidators,
-                );
+              newValidations[control.path].validators[matchedPropertyWithState] = validators(
+                validatorByState.validator,
+              );
             }
 
             const schema: StandardSchemaV1<unknown> =

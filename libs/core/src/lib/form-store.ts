@@ -1,5 +1,5 @@
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
-import { ValidatorConfig } from './form-validator';
+import { ValidatorFn } from './form-validator';
 import { ValidateOn } from './shared';
 import { Action } from './store/actions';
 import { createInitialState, Middleware, MiddlewareAPI, State } from './store/model';
@@ -7,12 +7,12 @@ import { reducer } from './store/reducer';
 
 export function createFormStore(
   middlewares: Middleware<State, Action>[] = [],
-  validatorConfig: ValidatorConfig<any>,
+  validators: ValidatorFn<any>,
   validateOn: ValidateOn,
 ): FormStore {
   const subject = new BehaviorSubject<State>(createInitialState());
   const state$ = subject.asObservable().pipe(distinctUntilChanged());
-  const reducerFn = reducer({ validatorConfig, validateOn });
+  const reducerFn = reducer({ validators, validateOn });
 
   function baseDispatch(action: Action) {
     const current = subject.getValue();

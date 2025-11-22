@@ -7,15 +7,7 @@ export type JsonSchemaValidators<V> = {
   integerValidator: () => V;
 };
 
-export type CustomValidatorSchemaFn = (input: any) => StandardSchemaV1;
-export type CustomValidatorSchemas = {
-  [key: string]: CustomValidatorSchemaFn;
-};
-
-export type ValidatorConfig<V> = {
-  createValidator: (validator: V, customValidators?: CustomValidatorSchemas) => StandardSchemaV1;
-  customValidators?: CustomValidatorSchemas;
-};
+export type ValidatorFn<V> = (validator: V) => StandardSchemaV1;
 
 export function standardValidate<T extends StandardSchemaV1>(
   schema: T,

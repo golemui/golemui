@@ -65,6 +65,10 @@ export type CustomValidator = LooseObject<{
   type: 'custom';
   required?: boolean;
 }>;
+export type CustomValidatorSchemaFn = (input: any) => StandardSchemaV1;
+export type CustomValidatorSchemas = {
+  [key: string]: CustomValidatorSchemaFn;
+};
 
 // --- Union of all supported types ---
 export type Validator =
@@ -80,36 +84,35 @@ export type Validator =
 //
 // --------------------------------
 
-export const createValidator = (
-  validator: Validator,
-  customValidators?: Core.CustomValidatorSchemas,
-): StandardSchemaV1 => {
-  switch (validator.type) {
-    case 'string':
-      return fromStringValidator(validator);
+export const createValidator =
+  (customValidators?: CustomValidatorSchemas): Core.ValidatorFn<Validator> =>
+  (validator: Validator): StandardSchemaV1 => {
+    switch (validator.type) {
+      case 'string':
+        return fromStringValidator(validator);
 
-    case 'integer':
-    case 'number':
-      return fromNumberValidator(validator);
+      case 'integer':
+      case 'number':
+        return fromNumberValidator(validator);
 
-    case 'boolean':
-      return fromBooleanValidator(validator);
+      case 'boolean':
+        return fromBooleanValidator(validator);
 
-    case 'array':
-      // TODO: implement
-      console.warn('TODO: array validator not yet supported');
-      return z.success(z.any());
+      case 'array':
+        // TODO: implement
+        console.warn('TODO: array validator not yet supported');
+        return z.success(z.any());
 
-    case 'custom': {
-      if (!customValidators) {
-        throw new Error(
-          'Validator type "custom" requires a customValidators object, but it was not supplied.',
-        );
+      case 'custom': {
+        if (!customValidators) {
+          throw new Error(
+            'Validator type "custom" requires a customValidators object, but it was not supplied.',
+          );
+        }
+        return fromCustomValidator(validator, customValidators);
       }
-      return fromCustomValidator(validator, customValidators);
     }
-  }
-};
+  };
 
 function fromStringValidator(v: StringValidator) {
   return withOptional(v, (v) => {
@@ -204,7 +207,7 @@ function fromBooleanValidator(v: BooleanValidator) {
   });
 }
 
-function fromCustomValidator(v: CustomValidator, customValidators: Core.CustomValidatorSchemas) {
+function fromCustomValidator(v: CustomValidator, customValidators: CustomValidatorSchemas) {
   return withOptional(v, (v) => {
     let schema = z.any();
 
