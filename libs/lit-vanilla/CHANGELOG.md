@@ -1,3 +1,7 @@
+## 0.2.4 (2025-11-22)
+
+This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.
+
 ## 0.2.3 (2025-11-22)
 
 ### 🩹 Fixes
