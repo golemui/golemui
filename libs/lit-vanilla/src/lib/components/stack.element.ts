@@ -5,6 +5,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
+import { repeat } from 'lit-html/directives/repeat.js';
 
 @customElement('gui-stack')
 export class StackElement extends LitElement implements Core.WithField {
@@ -35,10 +36,7 @@ export class StackElement extends LitElement implements Core.WithField {
   }
 
   override render() {
-    if (!this.adapter.templateData) return html``;
-
     const classes = {
-      field: true,
       horizontal: this.adapter.templateData.direction === 'horizontal',
     };
 
@@ -47,7 +45,9 @@ export class StackElement extends LitElement implements Core.WithField {
         class=${classes.horizontal ? 'gui-field gui-field--horizontal' : 'gui-field'}
         id=${this.field?.uid}
       >
-        ${this.adapter.templateData.children.map(
+        ${repeat(
+          this.adapter.templateData.children || [],
+          (child: any) => child?.uid,
           (child: any) => html`<gui-field .field=${child}></gui-field>`,
         )}
       </div>
