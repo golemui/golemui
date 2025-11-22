@@ -1,3 +1,15 @@
+## 0.2.2 (2025-11-22)
+
+### 🩹 Fixes
+
+- combine push to branch with workflow run complete ([c7795a9](https://github.com/golemui/formforge/commit/c7795a9))
+- **angular:** fix horizontal class in angular stack ([b89ce50](https://github.com/golemui/formforge/commit/b89ce50))
+- **lit:** use repeat directive in stack instead of map ([083f044](https://github.com/golemui/formforge/commit/083f044))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.2.1 (2025-11-16)
 
 ### 🩹 Fixes

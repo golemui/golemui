@@ -1,3 +1,13 @@
+## 0.2.2 (2025-11-22)
+
+### 🩹 Fixes
+
+- **angular:** fix horizontal class in angular stack ([b89ce50](https://github.com/golemui/formforge/commit/b89ce50))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.2.1 (2025-11-16)
 
 This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
