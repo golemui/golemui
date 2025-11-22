@@ -1,3 +1,21 @@
+## 0.2.4 (2025-11-22)
+
+This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
+
+## 0.2.3 (2025-11-22)
+
+### 🩹 Fixes
+
+- **react:** fix react package jsons build ([b98d9e2](https://github.com/golemui/formforge/commit/b98d9e2))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.2.2 (2025-11-22)
+
+This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
+
 ## 0.2.1 (2025-11-16)
 
 ### 🩹 Fixes
