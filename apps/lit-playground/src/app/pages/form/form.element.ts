@@ -21,10 +21,9 @@ export class FormElement extends LitElement {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
-  validatorConfig: Core.ValidatorConfig<ValidatorsZod.Validator> = {
-    createValidator: ValidatorsZod.createValidator,
-    customValidators: { allowedNames },
-  };
+  validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.createValidator({
+    allowedNames,
+  });
 
   error = '';
 
@@ -60,7 +59,7 @@ export class FormElement extends LitElement {
           .data=${this.formData}
           .fieldLoaders=${this.vanillaFieldLoaders}
           .middlewares=${this.middlewares}
-          .validatorConfig=${this.validatorConfig}
+          .validators=${this.validators}
           validateOn="change"
           @formError=${this.onFormError}
           @event=${this.onFormEvent}

@@ -16,7 +16,7 @@ export class FormElement extends LitElement {
 
   @property({ type: Object }) formDef: any = {};
   @property({ type: Array }) fieldLoaders!: FieldLoaders<WithField>;
-  @property({ type: Object }) validatorConfig!: Core.ValidatorConfig<any>;
+  @property({ attribute: false }) validators!: Core.ValidatorFn<any>;
   @property({ type: Array }) middlewares: any[] = [];
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) data: any = {};
@@ -31,12 +31,7 @@ export class FormElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-form');
-    this.context.initialize(
-      this.fieldLoaders,
-      this.middlewares,
-      this.validatorConfig,
-      this.validateOn,
-    );
+    this.context.initialize(this.fieldLoaders, this.middlewares, this.validators, this.validateOn);
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
