@@ -4,6 +4,7 @@ import fg from 'fast-glob';
 import { build } from 'esbuild';
 import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import { execSync } from 'node:child_process';
+import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 
 async function minifyDist() {
   const jsAndCssEntries = await fg(['dist/libs/**/*.js', 'dist/libs/**/*.css']);
@@ -84,21 +85,21 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
   await minifyDist();
   await copyFiles();
 
-  // const { workspaceVersion, projectsVersionData } = await releaseVersion({});
-  //
-  // await releaseChangelog({
-  //   versionData: projectsVersionData,
-  //   version: workspaceVersion,
-  // });
-  //
-  // await copyChangelogFiles();
-  //
-  // const publishResult = await releasePublish({
-  //   registry: 'https://registry.npmjs.org/',
-  // });
-  //
-  // updateLatestDistTag(projectsVersionData);
-  //
-  // const ok = Object.values(publishResult).every((result) => result.code === 0);
-  // process.exit(ok ? 0 : 1);
+  const { workspaceVersion, projectsVersionData } = await releaseVersion({});
+
+  await releaseChangelog({
+    versionData: projectsVersionData,
+    version: workspaceVersion,
+  });
+
+  await copyChangelogFiles();
+
+  const publishResult = await releasePublish({
+    registry: 'https://registry.npmjs.org/',
+  });
+
+  updateLatestDistTag(projectsVersionData);
+
+  const ok = Object.values(publishResult).every((result) => result.code === 0);
+  process.exit(ok ? 0 : 1);
 })();
