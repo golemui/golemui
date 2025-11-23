@@ -11,6 +11,7 @@ export class FormContext<ComponentType> {
   fieldRegistry = new FieldRegistry<ComponentType>();
   store: FormStore = {} as FormStore;
   events$ = new Subject<FormEvent>();
+  uuid = crypto.randomUUID();
 
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
