@@ -39,6 +39,11 @@ export type Uid = string;
 export type ValidateOn = 'eager' | 'change' | 'blur' | 'submit' | ('change' | 'blur' | 'submit')[];
 
 /**
+ * The bare minimum validation required for ny validation implementation
+ */
+export type Validator = { required?: boolean };
+
+/**
  * Represents a form event payload.
  */
 export type EventName = string;
