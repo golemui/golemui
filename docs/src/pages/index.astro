@@ -1,13 +1,9 @@
 ---
 import Hero from '../components/landing/Hero.astro';
-import ValueProposition from '../components/landing/ValueProposition.astro';
-import Frameworks from '../components/landing/Frameworks.astro';
-import ComponentsShowcase from '../components/landing/ComponentsShowcase.astro';
-import CustomPower from '../components/landing/CustomPower.astro';
-import Pricing from '../components/landing/Pricing.astro';
-import Testimonials from '../components/landing/Testimonials.astro';
 import LatestReleases from '../components/landing/LatestReleases.astro';
 import FAQ from '../components/landing/FAQ.astro';
+import Components from '../components/landing/Components.astro';
+import UnlimitedPower from '../components/landing/UnlimitedPower.astro';
 ---
 
 <html lang="en" class="dark">
@@ -84,12 +80,8 @@ import FAQ from '../components/landing/FAQ.astro';
 
     <main>
       <Hero />
-      <ValueProposition />
-      <Frameworks />
-      <ComponentsShowcase />
-      <CustomPower />
-      <Pricing />
-      <Testimonials />
+      <UnlimitedPower />
+      <Components />
       <LatestReleases />
       <FAQ />
     </main>
@@ -515,5 +507,10 @@ import FAQ from '../components/landing/FAQ.astro';
       padding-top: 2rem;
       border-top: 1px solid var(--border-color);
     }
+  }
+
+  .home-examples .expressive-code .frame pre {
+    max-height: 300px;
+    overflow-y: auto;
   }
 </style>

@@ -14,48 +14,40 @@
         <div class="feature">
           <h3>Components</h3>
           <p>
-            Build your own complex widgets that integrate seamlessly with the form state.
-          </p>
-        </div>
-        <div class="feature">
-          <h3>Middlewares</h3>
-          <p>
-            Intercept value changes, transform data, or trigger side effects with a powerful
-            middleware pipeline.
+            <a href="guides/custom-components/">Build your own complex widgets</a> that integrate seamlessly with the form state.
           </p>
         </div>
         <div class="feature">
           <h3>Validators</h3>
           <p>
-            Write complex async validators that run on the server or client with full type safety.
+            <a href="/guides/validators/">Write complex validators</a> that run async on the server or client with full type safety.
+          </p>
+        </div>
+        <div class="feature">
+          <h3>Middlewares</h3>
+          <p>
+            Intercept value changes, transform data, or trigger side effects with a <a href="/guides/middlewares/">powerful middleware pipeline</a>.
           </p>
         </div>
       </div>
     </div>
     <div class="visual">
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="title">custom-validator.ts</span>
-        </div>
-        <pre><code>
-export const uniqueUsername = async (value) =&gt; &lbrace;
-  const exists = await api.checkUser(value);
-
-  if (exists) &lbrace;
-    return &lbrace;
-      unique: 'Username is already taken'
-    &rbrace;;
-  &rbrace;
-
-  return null;
-&rbrace;;
-        </code></pre>
+      <div>
+        <iframe
+          src="/docs-template/index.html?form=docs-template/components/alert/alert.json"
+          title="Custom components"
+          width="100%"
+        ></iframe>
       </div>
     </div>
   </div>
 </section>
 
 <style lang="scss">
+  a {
+    color: var(--accent-color);
+  }
+
   .custom-power {
     padding: 8rem 0;
     background: var(--bg-color);
@@ -113,33 +105,7 @@ export const uniqueUsername = async (value) =&gt; &lbrace;
     }
   }
 
-  .terminal {
-    background: #1e1e1e;
-    border-radius: 0.75rem;
-    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
-    border: 1px solid #333;
-    overflow: hidden;
-
-    .terminal-header {
-      background: #2d2d2d;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #333;
-
-      .title {
-        font-family: monospace;
-        font-size: 0.875rem;
-        color: #999;
-      }
-    }
-
-    pre {
-      margin: 0;
-      padding: 1.5rem;
-      font-family: 'Fira Code', monospace;
-      font-size: 0.875rem;
-      line-height: 1.5;
-      color: #d4d4d4;
-      overflow-x: auto;
-    }
+  iframe {
+    border: none;
   }
 </style>
