@@ -87,7 +87,7 @@ export function FormComponent({
     });
   }, [data]);
 
-  if (!formLayoutField) {
+  if (!formLayoutField || formContextRef.current === null) {
     return null;
   }
 
