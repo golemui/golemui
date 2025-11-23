@@ -1,4 +1,4 @@
-import { defineForm, stringValidator } from '@golemui/core';
+import { defineForm } from '@golemui/core';
 
 export const users = defineForm({
   states: {
@@ -17,7 +17,7 @@ export const users = defineForm({
         'label.itsFive': 'Its five!!',
         path: 'listName',
         readonly: true,
-        validator: stringValidator({ required: true }),
+        validator: { type: 'string', required: true },
       },
       {
         uid: '',

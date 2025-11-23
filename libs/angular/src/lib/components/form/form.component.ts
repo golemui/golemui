@@ -36,11 +36,11 @@ export class FormComponent implements OnInit {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
   fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
+  validators = input.required<Core.ValidatorFn<any>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
   i18n = input<I18n>(defaultI18n);
   formName = input(Core.shortUUID());
-  customValidators = input<Core.CustomValidatorSchemas>({});
   validateOn = input<Core.ValidateOn>('eager');
 
   // OUTPUTS
@@ -58,7 +58,7 @@ export class FormComponent implements OnInit {
     this.context.initialize(
       this.fieldLoaders(),
       this.middlewares(),
-      this.customValidators(),
+      this.validators(),
       this.validateOn(),
     );
 
