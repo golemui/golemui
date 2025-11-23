@@ -1,3 +1,13 @@
+## 0.3.0 (2025-11-23)
+
+### 🚀 Features
+
+- **validators:** Make validators pluggable ([397e67c](https://github.com/golemui/formforge/commit/397e67c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.2.4 (2025-11-22)
 
 ### 🩹 Fixes
