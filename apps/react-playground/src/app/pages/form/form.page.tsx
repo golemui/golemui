@@ -25,7 +25,7 @@ const middlewares = [
   Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsZod.jsonSchemaValidators)),
   loggerMiddleware,
 ];
-const validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.createValidator({
+const validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.initValidators({
   allowedNames,
 });
 

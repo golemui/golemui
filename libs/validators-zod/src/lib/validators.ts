@@ -84,7 +84,7 @@ export type Validator =
 //
 // --------------------------------
 
-export const createValidator =
+export const initValidators =
   (customValidators?: CustomValidatorSchemas): Core.ValidatorFn<Validator> =>
   (validator: Validator): StandardSchemaV1 => {
     switch (validator.type) {

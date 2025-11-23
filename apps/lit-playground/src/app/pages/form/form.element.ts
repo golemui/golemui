@@ -21,7 +21,7 @@ export class FormElement extends LitElement {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
-  validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.createValidator({
+  validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.initValidators({
     allowedNames,
   });
 

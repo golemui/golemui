@@ -28,7 +28,7 @@ export class AppFormPage {
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
   };
 
-  protected validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.createValidator({
+  protected validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.initValidators({
     allowedNames,
   });
 
