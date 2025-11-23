@@ -1,3 +1,13 @@
+## 0.3.5 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** remove the need to pass formContext to components ([ddce6aa](https://github.com/golemui/formforge/commit/ddce6aa))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.4 (2025-11-23)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

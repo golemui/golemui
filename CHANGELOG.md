@@ -1,3 +1,14 @@
+## 0.3.5 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** remove the need to pass formContext to components ([ddce6aa](https://github.com/golemui/formforge/commit/ddce6aa))
+- **react:** fix react FieldRenderer ([2ff9d71](https://github.com/golemui/formforge/commit/2ff9d71))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.4 (2025-11-23)
 
 ### 🩹 Fixes
