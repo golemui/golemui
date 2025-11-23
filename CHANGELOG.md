@@ -1,3 +1,13 @@
+## 0.3.1 (2025-11-23)
+
+### 🩹 Fixes
+
+- add validators-vanilla to package ([bf69a9c](https://github.com/golemui/formforge/commit/bf69a9c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.0 (2025-11-23)
 
 ### 🚀 Features
