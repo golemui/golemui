@@ -95,7 +95,7 @@ export function FormComponent({
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
         <form id={formNameRef.current}>
-          <FieldRenderer field={formLayoutField} formContext={formContextRef.current} />
+          <FieldRenderer field={formLayoutField} />
         </form>
       </div>
     </ReactFormContextProvider>

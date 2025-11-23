@@ -1,16 +1,17 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
+import { useReactFormContext } from './ReactFormContext';
 import { useRepeaterIndex } from './RepeaterIndexContext';
 
 type Props = {
   field: Core.FormField<string>;
-  formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
   repeaterIndex?: number;
 };
 
 type FieldComponent = React.ComponentType<Core.WithField>;
 
 function FieldRenderer(props: Props) {
+  const { formContext } = useReactFormContext();
   const [Component, setComponent] = useState<FieldComponent | null>(null);
   const [field, setField] = useState(props.field);
   const isMounted = useRef(true);
@@ -21,7 +22,7 @@ function FieldRenderer(props: Props) {
     isMounted.current = true;
     const loadComponent = async () => {
       try {
-        const loadedComponent = await props.formContext.fieldRegistry.loadField(props.field.widget);
+        const loadedComponent = await formContext.fieldRegistry.loadField(props.field.widget);
         if (isMounted.current) {
           if (repeaterIndex > -1) {
             setField(Core.makeRepeaterItemConfig(Core.cloneObject(props.field), repeaterIndex));
@@ -29,7 +30,7 @@ function FieldRenderer(props: Props) {
           setComponent(() => loadedComponent);
         }
       } catch {
-        props.formContext.store.dispatch({
+        formContext.store.dispatch({
           type: 'SET_ERROR',
           payload: {
             error: {
@@ -45,7 +46,7 @@ function FieldRenderer(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [props.field, repeaterIndex, props.formContext.fieldRegistry, props.formContext.store]);
+  }, [props.field, repeaterIndex, formContext.fieldRegistry, formContext.store]);
 
   if (!Component) {
     return null;
