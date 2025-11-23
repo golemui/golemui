@@ -1,3 +1,7 @@
+## 0.3.7 (2025-11-23)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
 ## 0.3.6 (2025-11-23)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

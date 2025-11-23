@@ -1,3 +1,13 @@
+## 0.3.7 (2025-11-23)
+
+### 🩹 Fixes
+
+- disable minification for testing purposes ([eee4d87](https://github.com/golemui/formforge/commit/eee4d87))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.6 (2025-11-23)
 
 ### 🩹 Fixes
