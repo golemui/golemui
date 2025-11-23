@@ -1,3 +1,13 @@
+## 0.3.6 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** fix react FieldRenderer ([e29d12e](https://github.com/golemui/formforge/commit/e29d12e))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.5 (2025-11-23)
 
 ### 🩹 Fixes
