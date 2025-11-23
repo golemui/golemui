@@ -1,3 +1,13 @@
+## 0.3.2 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** fix react context provider duplicity ([dcad867](https://github.com/golemui/formforge/commit/dcad867))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.1 (2025-11-23)
 
 This was a version bump only for core to align it with other projects, there were no code changes.
