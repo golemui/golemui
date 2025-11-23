@@ -5,6 +5,9 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "peerDependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^3.25.0 || ^4.0.0",
+    "@standard-schema/spec": "^1.0.0",
+    "@golemui/core": "*"
   }
 }
