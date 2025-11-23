@@ -8,5 +8,6 @@ export function ReactFormContextProvider({
   children: React.ReactNode;
   formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
 }) {
+  console.log(`<ReactFormContext.Provider> created with value ${JSON.stringify(formContext)}`);
   return <ReactFormContext.Provider value={{ formContext }}>{children}</ReactFormContext.Provider>;
 }
