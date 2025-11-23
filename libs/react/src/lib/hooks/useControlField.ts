@@ -122,7 +122,6 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     uid,
     label,
     value,
-    formContext, // for the repeater
     props,
     validator,
     errors,

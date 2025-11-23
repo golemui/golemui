@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext, props } = useLayoutField<TabsProps>(field);
+  const { uid, children, props } = useLayoutField<TabsProps>(field);
   const [activeTab, setActiveTab] = useState(props.defaultOpen ?? props.tabs[0].uid);
 
   const renderTabs = useCallback(() => {
@@ -26,8 +26,8 @@ export function Tabs(fieldInstance: Core.WithField) {
   const renderFields = useCallback(() => {
     return children
       .filter((field) => field.uid === activeTab)
-      .map((field) => <FieldRenderer key={field.uid} field={field} formContext={formContext} />);
-  }, [children, formContext, activeTab]);
+      .map((field) => <FieldRenderer key={field.uid} field={field} />);
+  }, [children, activeTab]);
 
   return (
     <div className="gui-tabs">

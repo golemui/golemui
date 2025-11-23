@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { memo, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FieldRenderer from './FieldRenderer';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 
@@ -91,14 +91,11 @@ export function FormComponent({
     return null;
   }
 
-  // Wrap FieldRenderer in a memo to force React to evaluate it only after the provider is mounted
-  const SafeFieldRenderer = memo(FieldRenderer);
-
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
         <form id={formNameRef.current}>
-          <SafeFieldRenderer field={formLayoutField} />
+          <FieldRenderer field={formLayoutField} />
         </form>
       </div>
     </ReactFormContextProvider>
