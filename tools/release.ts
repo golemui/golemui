@@ -1,10 +1,10 @@
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import fg from 'fast-glob';
 import { build } from 'esbuild';
-import { VersionData } from 'nx/src/command-line/release/utils/shared';
+import fg from 'fast-glob';
+import * as fs from 'fs-extra';
 import { execSync } from 'node:child_process';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
+import { VersionData } from 'nx/src/command-line/release/utils/shared';
+import * as path from 'path';
 
 async function minifyDist() {
   const jsAndCssEntries = await fg(['dist/libs/**/*.js', 'dist/libs/**/*.css']);
@@ -71,6 +71,7 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
       '@golemui/lit',
       '@golemui/lit-vanilla',
       '@golemui/shared-vanilla',
+      '@golemui/validators-vanilla',
     ].forEach((packageName) => {
       console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
 

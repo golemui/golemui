@@ -6,8 +6,7 @@
   "release": {
     "version": {
       "manifestRootsToUpdate": ["build/{projectRoot}"],
-      "currentVersionResolver": "git-tag",
-      "fallbackCurrentVersionResolver": "disk"
+      "currentVersionResolver": "git-tag"
     }
   },
   "tags": [],
@@ -24,8 +23,11 @@
     },
     "nx-release-publish": {
       "options": {
-        "packageRoot": "dist/{projectRoot}"
+        "packageRoot": "build/{projectRoot}"
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     }
   }
 }
