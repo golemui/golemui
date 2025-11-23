@@ -18,9 +18,7 @@ function FieldRenderer(props: Props) {
   const repeaterIndexFromContext = useRepeaterIndex();
   const repeaterIndex = props.repeaterIndex ?? repeaterIndexFromContext;
 
-  console.log(
-    `<FieldRenderer ${props.field.uid}> created with value ${JSON.stringify(formContext)}`,
-  );
+  console.log(`<FieldRenderer ${props.field.uid}> created with value`, formContext);
 
   useEffect(() => {
     isMounted.current = true;
