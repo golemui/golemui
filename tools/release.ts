@@ -12,7 +12,8 @@ async function minifyDist() {
 
   const commonConfig = {
     outdir: 'build/libs',
-    minify: true,
+    //minify: true,
+    minify: false,
     bundle: false,
     allowOverwrite: true,
     outbase: 'dist/libs',
