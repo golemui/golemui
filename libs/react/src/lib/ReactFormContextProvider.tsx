@@ -8,6 +8,5 @@ export function ReactFormContextProvider({
   children: React.ReactNode;
   formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
 }) {
-  console.log(`<ReactFormContext.Provider> created with uid`, formContext?.uuid);
   return <ReactFormContext.Provider value={{ formContext }}>{children}</ReactFormContext.Provider>;
 }
