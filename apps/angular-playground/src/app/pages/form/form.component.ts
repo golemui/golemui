@@ -5,7 +5,7 @@ import * as Vanilla from '@golemui/angular-vanilla';
 import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
-import * as ValidatorsZod from '@golemui/validators-zod';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
 
 @Component({
@@ -17,7 +17,7 @@ import { APP_CONFIG } from '../../../environments/environment.model';
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsZod.jsonSchemaValidators)),
+    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
     loggerMiddleware,
   ];
   protected formDef = signin;
@@ -28,9 +28,10 @@ export class AppFormPage {
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
   };
 
-  protected validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.initValidators({
-    allowedNames,
-  });
+  protected validators: Core.ValidatorFn<ValidatorsVanilla.Validator> =
+    ValidatorsVanilla.initValidators({
+      allowedNames,
+    });
 
   protected error = '';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@golemui/validators-zod",
+  "name": "@golemui/validators-vanilla",
   "version": "0.0.1",
   "type": "commonjs",
   "main": "./src/index.js",

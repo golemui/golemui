@@ -5,7 +5,7 @@ import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
-import * as ValidatorsZod from '@golemui/validators-zod';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
 
 function onFormEvent(event: Core.FormEvent) {
@@ -22,10 +22,10 @@ const vanillaFieldLoaders = {
 const formDef = signin;
 const formData = signinData;
 const middlewares = [
-  Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsZod.jsonSchemaValidators)),
+  Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
   loggerMiddleware,
 ];
-const validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.initValidators({
+const validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
   allowedNames,
 });
 

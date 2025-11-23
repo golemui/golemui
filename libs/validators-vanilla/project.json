@@ -1,7 +1,7 @@
 {
-  "name": "validators-zod",
+  "name": "validators-vanilla",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/validators-zod/src",
+  "sourceRoot": "libs/validators-vanilla/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -16,10 +16,10 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/validators-zod",
-        "main": "libs/validators-zod/src/index.ts",
-        "tsConfig": "libs/validators-zod/tsconfig.lib.json",
-        "assets": ["libs/validators-zod/*.md"]
+        "outputPath": "dist/libs/validators-vanilla",
+        "main": "libs/validators-vanilla/src/index.ts",
+        "tsConfig": "libs/validators-vanilla/tsconfig.lib.json",
+        "assets": ["libs/validators-vanilla/*.md"]
       }
     },
     "nx-release-publish": {

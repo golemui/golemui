@@ -3,7 +3,7 @@ import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
-import * as ValidatorsZod from '@golemui/validators-zod';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';
@@ -11,7 +11,7 @@ import './form.element.scss';
 @customElement('lit-form')
 export class FormElement extends LitElement {
   middlewares = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsZod.jsonSchemaValidators)),
+    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
     loggerMiddleware,
   ];
   formDef = signin;
@@ -21,7 +21,7 @@ export class FormElement extends LitElement {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
-  validators: Core.ValidatorFn<ValidatorsZod.Validator> = ValidatorsZod.initValidators({
+  validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
     allowedNames,
   });
 
