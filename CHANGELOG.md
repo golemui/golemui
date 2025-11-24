@@ -1,3 +1,13 @@
+## 0.3.10 (2025-11-24)
+
+### 🩹 Fixes
+
+- shared and validators package exports ([f160cea](https://github.com/golemui/formforge/commit/f160cea))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.9 (2025-11-24)
 
 ### 🩹 Fixes
