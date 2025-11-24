@@ -1,3 +1,13 @@
+## 0.3.8 (2025-11-24)
+
+### 🩹 Fixes
+
+- build libs for es2022 and commonjs ([7a7c037](https://github.com/golemui/formforge/commit/7a7c037))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.7 (2025-11-23)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.

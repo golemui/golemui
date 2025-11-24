@@ -1,3 +1,14 @@
+## 0.3.8 (2025-11-24)
+
+### 🩹 Fixes
+
+- build libs for es2022 and commonjs ([7a7c037](https://github.com/golemui/formforge/commit/7a7c037))
+- add release scripts again ([7c48293](https://github.com/golemui/formforge/commit/7c48293))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.7 (2025-11-23)
 
 ### 🩹 Fixes
