@@ -1,3 +1,13 @@
+## 0.3.13 (2025-11-24)
+
+### 🩹 Fixes
+
+- include correct paths in shared and validators ([a676081](https://github.com/golemui/formforge/commit/a676081))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.12 (2025-11-24)
 
 ### 🩹 Fixes
