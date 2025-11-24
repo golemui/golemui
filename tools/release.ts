@@ -2,27 +2,35 @@ import { build } from 'esbuild';
 import fg from 'fast-glob';
 import * as fs from 'fs-extra';
 import { execSync } from 'node:child_process';
-import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import * as path from 'path';
 
 async function minifyDist() {
-  const jsAndCssEntries = await fg(['dist/libs/**/*.js', 'dist/libs/**/*.css']);
+  const jsEntries = await fg(['dist/libs/**/*.js']);
+  const cssEntries = await fg(['dist/libs/**/*.css']);
   const mjsEntries = await fg(['dist/libs/**/*.mjs']);
 
   const commonConfig = {
     outdir: 'build/libs',
-    //minify: true,
-    minify: false,
+    minify: true,
     bundle: false,
     allowOverwrite: true,
     outbase: 'dist/libs',
+    target: 'es2019',
   };
 
-  if (jsAndCssEntries.length > 0) {
+  if (jsEntries.length > 0) {
     await build({
       ...commonConfig,
-      entryPoints: jsAndCssEntries,
+      entryPoints: jsEntries,
+      format: 'esm',
+      outExtension: { '.js': '.mjs' },
+    });
+
+    await build({
+      ...commonConfig,
+      entryPoints: jsEntries,
+      format: 'cjs',
     });
   }
 
@@ -30,7 +38,16 @@ async function minifyDist() {
     await build({
       ...commonConfig,
       entryPoints: mjsEntries,
+      format: 'esm',
       outExtension: { '.js': '.mjs' },
+    });
+  }
+
+  if (cssEntries.length > 0) {
+    await build({
+      ...commonConfig,
+      entryPoints: cssEntries,
+      loader: { '.css': 'css' },
     });
   }
 }
@@ -48,6 +65,8 @@ async function copyFiles() {
 async function copyChangelogFiles() {
   const buildDir = path.join(process.cwd(), 'build');
   const packages = path.join(process.cwd(), 'libs');
+  if (!fs.existsSync(packages)) return;
+
   const packageDirs = await fs.readdir(packages);
 
   for (const pkg of packageDirs) {
@@ -75,33 +94,40 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
       '@golemui/validators-vanilla',
     ].forEach((packageName) => {
       console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
-
-      execSync(`npm dist-tag add ${packageName}@${version} latest`, {
-        stdio: 'inherit',
-      });
+      try {
+        execSync(`npm dist-tag add ${packageName}@${version} latest`, {
+          stdio: 'inherit',
+        });
+      } catch (e) {
+        console.warn(
+          `Failed to update dist-tag for ${packageName}. It might not be published yet.`,
+        );
+      }
     });
   }
 }
 
 (async () => {
+  console.log('Minifying files...');
   await minifyDist();
+  console.log('Copying asset files...');
   await copyFiles();
 
-  const { workspaceVersion, projectsVersionData } = await releaseVersion({});
-
-  await releaseChangelog({
-    versionData: projectsVersionData,
-    version: workspaceVersion,
-  });
-
-  await copyChangelogFiles();
-
-  const publishResult = await releasePublish({
-    registry: 'https://registry.npmjs.org/',
-  });
-
-  updateLatestDistTag(projectsVersionData);
-
-  const ok = Object.values(publishResult).every((result) => result.code === 0);
-  process.exit(ok ? 0 : 1);
+  // const { workspaceVersion, projectsVersionData } = await releaseVersion({});
+  //
+  // await releaseChangelog({
+  //   versionData: projectsVersionData,
+  //   version: workspaceVersion,
+  // });
+  //
+  // await copyChangelogFiles();
+  //
+  // const publishResult = await releasePublish({
+  //   registry: 'https://registry.npmjs.org/',
+  // });
+  //
+  // updateLatestDistTag(projectsVersionData);
+  //
+  // const ok = Object.values(publishResult).every((result) => result.code === 0);
+  // process.exit(ok ? 0 : 1);
 })();
