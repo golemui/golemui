@@ -8,8 +8,8 @@ import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 
 async function minifyDist() {
   const jsEntries = await fg(['dist/libs/**/*.js']);
-  const cssEntries = await fg(['dist/libs/**/*.css']);
   const mjsEntries = await fg(['dist/libs/**/*.mjs']);
+  const cssEntries = await fg(['dist/libs/**/*.css']);
 
   const commonConfig = {
     outdir: 'build/libs',
@@ -20,27 +20,20 @@ async function minifyDist() {
     target: 'es2022',
   };
 
-  if (jsEntries.length > 0) {
+  const allScriptEntries = [...jsEntries, ...mjsEntries];
+
+  if (allScriptEntries.length > 0) {
     await build({
       ...commonConfig,
-      entryPoints: jsEntries,
+      entryPoints: allScriptEntries,
       format: 'esm',
-      outExtension: { '.js': '.mjs' },
     });
 
     await build({
       ...commonConfig,
-      entryPoints: jsEntries,
+      entryPoints: allScriptEntries,
       format: 'cjs',
-    });
-  }
-
-  if (mjsEntries.length > 0) {
-    await build({
-      ...commonConfig,
-      entryPoints: mjsEntries,
-      format: 'esm',
-      outExtension: { '.js': '.mjs' },
+      outExtension: { '.js': '.cjs' },
     });
   }
 
