@@ -1,3 +1,14 @@
+## 0.3.12 (2025-11-24)
+
+### 🩹 Fixes
+
+- build with bundle ([098397c](https://github.com/golemui/formforge/commit/098397c))
+- trigger build ([b5c36ca](https://github.com/golemui/formforge/commit/b5c36ca))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.11 (2025-11-24)
 
 ### 🩹 Fixes
