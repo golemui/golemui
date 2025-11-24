@@ -1,3 +1,7 @@
+## 0.3.9 (2025-11-24)
+
+This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
+
 ## 0.3.8 (2025-11-24)
 
 ### 🩹 Fixes

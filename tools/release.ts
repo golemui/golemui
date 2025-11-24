@@ -17,7 +17,7 @@ async function minifyDist() {
     bundle: false,
     allowOverwrite: true,
     outbase: 'dist/libs',
-    target: 'es2019',
+    target: 'es2022',
   };
 
   if (jsEntries.length > 0) {

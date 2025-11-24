@@ -1,3 +1,13 @@
+## 0.3.9 (2025-11-24)
+
+### 🩹 Fixes
+
+- react-vanilla should not have type module ([c715ff8](https://github.com/golemui/formforge/commit/c715ff8))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.8 (2025-11-24)
 
 ### 🩹 Fixes
