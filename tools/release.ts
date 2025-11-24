@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import { execSync } from 'node:child_process';
 import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import * as path from 'path';
+import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 
 async function minifyDist() {
   const jsEntries = await fg(['dist/libs/**/*.js']);
@@ -113,21 +114,21 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
   console.log('Copying asset files...');
   await copyFiles();
 
-  // const { workspaceVersion, projectsVersionData } = await releaseVersion({});
-  //
-  // await releaseChangelog({
-  //   versionData: projectsVersionData,
-  //   version: workspaceVersion,
-  // });
-  //
-  // await copyChangelogFiles();
-  //
-  // const publishResult = await releasePublish({
-  //   registry: 'https://registry.npmjs.org/',
-  // });
-  //
-  // updateLatestDistTag(projectsVersionData);
-  //
-  // const ok = Object.values(publishResult).every((result) => result.code === 0);
-  // process.exit(ok ? 0 : 1);
+  const { workspaceVersion, projectsVersionData } = await releaseVersion({});
+
+  await releaseChangelog({
+    versionData: projectsVersionData,
+    version: workspaceVersion,
+  });
+
+  await copyChangelogFiles();
+
+  const publishResult = await releasePublish({
+    registry: 'https://registry.npmjs.org/',
+  });
+
+  updateLatestDistTag(projectsVersionData);
+
+  const ok = Object.values(publishResult).every((result) => result.code === 0);
+  process.exit(ok ? 0 : 1);
 })();
