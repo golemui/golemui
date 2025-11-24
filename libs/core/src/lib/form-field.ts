@@ -1,5 +1,4 @@
 import * as z from 'zod/mini';
-import { Validator } from './form-validator';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
@@ -85,7 +84,7 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
     label?: ReactiveExpression | string;
     on?: On<StateKeys>;
     defaultValue?: T;
-    validator?: Validator;
+    validator?: any;
   },
   'disabled' | 'label' | 'validator',
   StateKeys

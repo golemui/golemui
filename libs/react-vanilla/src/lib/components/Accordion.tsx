@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, formContext, props } = useLayoutField<AccordionProps>(field);
+  const { uid, children, props } = useLayoutField<AccordionProps>(field);
   const [activeSections, setActiveSections] = useState(props.defaultOpen ?? {});
 
   const onClickButton = useCallback(
@@ -36,11 +36,11 @@ export function Accordion(fieldInstance: Core.WithField) {
 
       return isActiveSection && child ? (
         <section className="gui-field" role="region">
-          <FieldRenderer field={child} formContext={formContext} />
+          <FieldRenderer field={child} />
         </section>
       ) : null;
     },
-    [children, formContext, activeSections],
+    [children, activeSections],
   );
 
   const renderAccordion = useCallback(() => {

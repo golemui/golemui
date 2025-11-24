@@ -6,7 +6,7 @@ import '../styles.scss';
 
 export function Repeater(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;
-  const { uid, value, label, formContext, onValueChanged, props } = useControlField<
+  const { uid, value, label, onValueChanged, props } = useControlField<
     Record<string, unknown>[],
     RepeaterProps
   >(field);
@@ -33,12 +33,7 @@ export function Repeater(fieldInstance: Core.WithField) {
       return (
         <RepeaterIndexContext.Provider value={index} key={`${uid}-${index}`}>
           <div className={'card'}>
-            <FieldRenderer
-              key={`${uid}-${index}`}
-              field={props.template}
-              repeaterIndex={index}
-              formContext={formContext}
-            />
+            <FieldRenderer key={`${uid}-${index}`} field={props.template} repeaterIndex={index} />
             <button type="button" className="gui-button" onClick={() => removeItem(value, index)}>
               {props.removeLabel ?? 'Remove'}
             </button>
@@ -46,7 +41,7 @@ export function Repeater(fieldInstance: Core.WithField) {
         </RepeaterIndexContext.Provider>
       );
     });
-  }, [props, formContext, value, uid, removeItem]);
+  }, [props, value, uid, removeItem]);
 
   return (
     <div className="gui-repeater">

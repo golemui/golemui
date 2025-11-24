@@ -1,4 +1,4 @@
-import { defineForm, stringValidator } from '@golemui/core';
+import { defineForm } from '@golemui/core';
 
 export const signinData = { user: { id: 'ASDFGHJKL4567' } };
 
@@ -45,7 +45,7 @@ export const signin = defineForm({
         kind: 'control',
         widget: 'textinput',
         path: 'user.email',
-        validator: stringValidator({ required: true, format: 'email' }),
+        validator: { type: 'string', required: true, format: 'email' },
       },
       {
         uid: '',

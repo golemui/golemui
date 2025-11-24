@@ -15,14 +15,15 @@ export const Vanilla = {
   //
   // Control fields
   //
-  textinput: <StateKeys extends Core.UiState = string>({
+  textinput: <StateKeys extends Core.UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: ControlFieldConfig<string>;
     props?: Props.TextinputProps;
-    validator?: Core.StringValidator | Core.CustomValidator;
+    // validator?: Core.StringValidator | Core.CustomValidator;
+    validator?: V;
   }): Core.ControlField<string, StateKeys> => ({
     uid: '',
     kind: 'control',
@@ -32,14 +33,15 @@ export const Vanilla = {
     ...(validator && { validator }),
     ...config,
   }),
-  numberinput: <StateKeys extends Core.UiState = string>({
+  numberinput: <StateKeys extends Core.UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: ControlFieldConfig<number>;
     props?: Props.NumberinputProps;
-    validator?: Core.NumberValidator | Core.CustomValidator;
+    // validator?: Core.NumberValidator | Core.CustomValidator;
+    validator?: V;
   }): Core.ControlField<number, StateKeys> => ({
     uid: '',
     kind: 'control',
@@ -48,14 +50,15 @@ export const Vanilla = {
     ...(validator && { validator }),
     ...config,
   }),
-  checkbox: <StateKeys extends Core.UiState = string>({
+  checkbox: <StateKeys extends Core.UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: ControlFieldConfig<boolean>;
     props?: Props.CheckboxProps;
-    validator?: Core.BooleanValidator | Core.CustomValidator;
+    // validator?: Core.BooleanValidator | Core.CustomValidator;
+    validator?: V;
   }): Core.ControlField<boolean, StateKeys> => ({
     uid: '',
     kind: 'control',
@@ -64,14 +67,15 @@ export const Vanilla = {
     ...(validator && { validator }),
     ...config,
   }),
-  select: <StateKeys extends Core.UiState = string>({
+  select: <StateKeys extends Core.UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: ControlFieldConfig<string>;
     props?: Props.SelectProps;
-    validator?: Core.StringValidator | Core.CustomValidator;
+    // validator?: Core.StringValidator | Core.CustomValidator;
+    validator?: V;
   }): Core.ControlField<string, StateKeys> => ({
     uid: '',
     kind: 'control',

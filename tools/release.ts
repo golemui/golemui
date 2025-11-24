@@ -1,13 +1,14 @@
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import fg from 'fast-glob';
 import { build } from 'esbuild';
-import { VersionData } from 'nx/src/command-line/release/utils/shared';
+import fg from 'fast-glob';
+import * as fs from 'fs-extra';
 import { execSync } from 'node:child_process';
+import { VersionData } from 'nx/src/command-line/release/utils/shared';
+import * as path from 'path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 
 async function minifyDist() {
-  const jsAndCssEntries = await fg(['dist/libs/**/*.js', 'dist/libs/**/*.css']);
+  const jsEntries = await fg(['dist/libs/**/*.js']);
+  const cssEntries = await fg(['dist/libs/**/*.css']);
   const mjsEntries = await fg(['dist/libs/**/*.mjs']);
 
   const commonConfig = {
@@ -16,12 +17,21 @@ async function minifyDist() {
     bundle: false,
     allowOverwrite: true,
     outbase: 'dist/libs',
+    target: 'es2019',
   };
 
-  if (jsAndCssEntries.length > 0) {
+  if (jsEntries.length > 0) {
     await build({
       ...commonConfig,
-      entryPoints: jsAndCssEntries,
+      entryPoints: jsEntries,
+      format: 'esm',
+      outExtension: { '.js': '.mjs' },
+    });
+
+    await build({
+      ...commonConfig,
+      entryPoints: jsEntries,
+      format: 'cjs',
     });
   }
 
@@ -29,7 +39,16 @@ async function minifyDist() {
     await build({
       ...commonConfig,
       entryPoints: mjsEntries,
+      format: 'esm',
       outExtension: { '.js': '.mjs' },
+    });
+  }
+
+  if (cssEntries.length > 0) {
+    await build({
+      ...commonConfig,
+      entryPoints: cssEntries,
+      loader: { '.css': 'css' },
     });
   }
 }
@@ -47,6 +66,8 @@ async function copyFiles() {
 async function copyChangelogFiles() {
   const buildDir = path.join(process.cwd(), 'build');
   const packages = path.join(process.cwd(), 'libs');
+  if (!fs.existsSync(packages)) return;
+
   const packageDirs = await fs.readdir(packages);
 
   for (const pkg of packageDirs) {
@@ -71,18 +92,26 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
       '@golemui/lit',
       '@golemui/lit-vanilla',
       '@golemui/shared-vanilla',
+      '@golemui/validators-vanilla',
     ].forEach((packageName) => {
       console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
-
-      execSync(`npm dist-tag add ${packageName}@${version} latest`, {
-        stdio: 'inherit',
-      });
+      try {
+        execSync(`npm dist-tag add ${packageName}@${version} latest`, {
+          stdio: 'inherit',
+        });
+      } catch (e) {
+        console.warn(
+          `Failed to update dist-tag for ${packageName}. It might not be published yet.`,
+        );
+      }
     });
   }
 }
 
 (async () => {
+  console.log('Minifying files...');
   await minifyDist();
+  console.log('Copying asset files...');
   await copyFiles();
 
   const { workspaceVersion, projectsVersionData } = await releaseVersion({});

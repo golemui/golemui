@@ -1,9 +1,27 @@
 {
   "name": "@golemui/lit-vanilla",
   "version": "0.0.1",
-  "type": "commonjs",
   "main": "./src/index.js",
+  "module": "./src/index.mjs",
   "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.mjs",
+      "require": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./*": {
+      "types": "./src/*.d.ts",
+      "import": "./src/*.mjs",
+      "require": "./src/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "*.md"
+  ],
   "peerDependencies": {
     "@golemui/lit": "*",
     "@golemui/core": "*",

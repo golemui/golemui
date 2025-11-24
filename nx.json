@@ -87,6 +87,7 @@
   },
   "release": {
     "version": {
+      "preVersionCommand": "npx nx run-many -t build",
       "specifierSource": "conventional-commits",
       "currentVersionResolver": "git-tag"
     },

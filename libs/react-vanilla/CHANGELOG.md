@@ -1,3 +1,51 @@
+## 0.3.8 (2025-11-24)
+
+### 🩹 Fixes
+
+- build libs for es2022 and commonjs ([7a7c037](https://github.com/golemui/formforge/commit/7a7c037))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.7 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.6 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.5 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** remove the need to pass formContext to components ([ddce6aa](https://github.com/golemui/formforge/commit/ddce6aa))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.4 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.3 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.2 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.1 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.0 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
 ## 0.2.4 (2025-11-22)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

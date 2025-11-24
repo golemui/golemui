@@ -16,9 +16,9 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/lit",
-        "main": "/libs/lit/src/index.ts",
-        "tsConfig": "/libs/lit/tsconfig.lib.json",
-        "assets": ["/libs/lit/*.md"]
+        "main": "libs/lit/src/index.ts",
+        "tsConfig": "libs/lit/tsconfig.lib.json",
+        "assets": ["libs/lit/*.md"]
       }
     },
     "nx-release-publish": {
