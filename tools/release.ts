@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import { execSync } from 'node:child_process';
 import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import * as path from 'path';
+import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 
 async function minifyDist() {
   const jsEntries = await fg(['dist/libs/**/*.js']);
