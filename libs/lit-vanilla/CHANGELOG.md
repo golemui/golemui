@@ -1,3 +1,13 @@
+## 0.3.14 (2025-11-24)
+
+### 🩹 Fixes
+
+- package.json paths in core, lit and lit-vanilla ([677e530](https://github.com/golemui/formforge/commit/677e530))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.13 (2025-11-24)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.
