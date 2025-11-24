@@ -1,3 +1,13 @@
+## 0.3.11 (2025-11-24)
+
+### 🩹 Fixes
+
+- build files to output cjs and js ([20d24ec](https://github.com/golemui/formforge/commit/20d24ec))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.10 (2025-11-24)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.
