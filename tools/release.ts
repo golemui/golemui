@@ -6,51 +6,74 @@ import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import * as path from 'path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 
-async function minifyDist() {
-  const jsEntries = await fg(['dist/libs/**/*.js']);
-  const mjsEntries = await fg(['dist/libs/**/*.mjs']);
-  const cssEntries = await fg(['dist/libs/**/*.css']);
+async function bundleLibs() {
+  const libDirs = await fg(['dist/libs/*'], { onlyDirectories: true });
 
-  const commonConfig = {
-    outdir: 'build/libs',
-    minify: true,
-    bundle: false,
-    allowOverwrite: true,
-    outbase: 'dist/libs',
-    target: 'es2022',
-  };
+  for (const libPath of libDirs) {
+    const libName = path.basename(libPath);
 
-  const allScriptEntries = [...jsEntries, ...mjsEntries];
+    if (libName === 'assets') continue;
 
-  if (allScriptEntries.length > 0) {
+    let entryPoint = '';
+    const possibleEntries = [
+      path.join(libPath, 'index.js'),
+      path.join(libPath, 'index.mjs'),
+      path.join(libPath, 'src', 'index.js'),
+      path.join(libPath, 'src', 'index.mjs'),
+    ];
+
+    for (const p of possibleEntries) {
+      if (fs.existsSync(p)) {
+        entryPoint = p;
+        break;
+      }
+    }
+
+    if (!entryPoint) {
+      await fs.copy(libPath, path.join('build/libs', libName));
+      continue;
+    }
+
+    const outDir = path.join('build/libs', libName);
+
+    const buildOptions = {
+      entryPoints: [entryPoint],
+      bundle: true,
+      minify: true,
+      packages: 'external' as const,
+      target: 'es2022',
+    };
+
     await build({
-      ...commonConfig,
-      entryPoints: allScriptEntries,
+      ...buildOptions,
+      outfile: path.join(outDir, 'index.js'),
       format: 'esm',
     });
 
     await build({
-      ...commonConfig,
-      entryPoints: allScriptEntries,
+      ...buildOptions,
+      outfile: path.join(outDir, 'index.cjs'),
       format: 'cjs',
-      outExtension: { '.js': '.cjs' },
     });
-  }
 
-  if (cssEntries.length > 0) {
-    await build({
-      ...commonConfig,
-      entryPoints: cssEntries,
-      loader: { '.css': 'css' },
-    });
+    const cssFiles = await fg([`${libPath}/**/*.css`]);
+    if (cssFiles.length > 0) {
+    }
   }
 }
 
-async function copyFiles() {
-  const typeFiles = await fg(['dist/libs/**/*.d.ts', 'dist/libs/**/*.json', 'dist/libs/**/*.md']);
+async function copyAssetsAndTypes() {
+  const files = await fg(['dist/libs/**/*.d.ts', 'dist/libs/**/*.json', 'dist/libs/**/*.md']);
 
-  for (const file of typeFiles) {
+  for (const file of files) {
     const destPath = file.replace('dist/libs', 'build/libs');
+    await fs.ensureDir(path.dirname(destPath));
+    await fs.copy(file, destPath);
+  }
+
+  const libMdFiles = await fg(['libs/*/*.md']);
+  for (const file of libMdFiles) {
+    const destPath = path.join('build', file);
     await fs.ensureDir(path.dirname(destPath));
     await fs.copy(file, destPath);
   }
@@ -93,19 +116,15 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
           stdio: 'inherit',
         });
       } catch (e) {
-        console.warn(
-          `Failed to update dist-tag for ${packageName}. It might not be published yet.`,
-        );
+        console.warn(`Tag update failed: ${e.message}`);
       }
     });
   }
 }
 
 (async () => {
-  console.log('Minifying files...');
-  await minifyDist();
-  console.log('Copying asset files...');
-  await copyFiles();
+  await bundleLibs();
+  await copyAssetsAndTypes();
 
   const { workspaceVersion, projectsVersionData } = await releaseVersion({});
 
