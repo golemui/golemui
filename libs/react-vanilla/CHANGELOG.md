@@ -1,3 +1,13 @@
+## 0.3.16 (2025-11-25)
+
+### 🩹 Fixes
+
+- set external libs in react vite config file ([c2e7c0c](https://github.com/golemui/formforge/commit/c2e7c0c))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.15 (2025-11-25)
 
 ### 🩹 Fixes

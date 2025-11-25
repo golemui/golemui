@@ -1,3 +1,7 @@
+## 0.3.16 (2025-11-25)
+
+This was a version bump only for angular to align it with other projects, there were no code changes.
+
 ## 0.3.15 (2025-11-25)
 
 ### 🩹 Fixes
