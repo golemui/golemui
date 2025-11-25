@@ -1,20 +1,17 @@
 {
   "name": "@golemui/lit",
   "version": "0.0.1",
-  "main": "./src/index.js",
-  "module": "./src/index.mjs",
+  "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "exports": {
     ".": {
       "types": "./src/index.d.ts",
-      "import": "./src/index.mjs",
-      "require": "./src/index.js",
+      "import": "./src/index.js",
       "default": "./src/index.js"
     },
     "./*": {
       "types": "./src/*.d.ts",
-      "import": "./src/*.mjs",
-      "require": "./src/*.js"
+      "import": "./src/*.js"
     },
     "./package.json": "./package.json"
   },

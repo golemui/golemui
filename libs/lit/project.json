@@ -5,7 +5,7 @@
   "projectType": "library",
   "release": {
     "version": {
-      "manifestRootsToUpdate": ["build/{projectRoot}"],
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
       "currentVersionResolver": "git-tag"
     }
   },
@@ -18,12 +18,12 @@
         "outputPath": "dist/libs/lit",
         "main": "libs/lit/src/index.ts",
         "tsConfig": "libs/lit/tsconfig.lib.json",
-        "assets": ["libs/lit/*.md"]
+        "assets": ["*.md"]
       }
     },
     "nx-release-publish": {
       "options": {
-        "packageRoot": "build/{projectRoot}"
+        "packageRoot": "dist/{projectRoot}"
       }
     },
     "lint": {

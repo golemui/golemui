@@ -1,3 +1,64 @@
+## 0.3.16 (2025-11-25)
+
+### 🩹 Fixes
+
+- set external libs in react vite config file ([c2e7c0c](https://github.com/golemui/formforge/commit/c2e7c0c))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.15 (2025-11-25)
+
+### 🩹 Fixes
+
+- build with nx ([3f423b4](https://github.com/golemui/formforge/commit/3f423b4))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.14 (2025-11-24)
+
+### 🩹 Fixes
+
+- package.json paths in core, lit and lit-vanilla ([677e530](https://github.com/golemui/formforge/commit/677e530))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.13 (2025-11-24)
+
+### 🩹 Fixes
+
+- include correct paths in shared and validators ([a676081](https://github.com/golemui/formforge/commit/a676081))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.12 (2025-11-24)
+
+### 🩹 Fixes
+
+- build with bundle ([098397c](https://github.com/golemui/formforge/commit/098397c))
+- trigger build ([b5c36ca](https://github.com/golemui/formforge/commit/b5c36ca))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.11 (2025-11-24)
+
+### 🩹 Fixes
+
+- build files to output cjs and js ([20d24ec](https://github.com/golemui/formforge/commit/20d24ec))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.10 (2025-11-24)
 
 ### 🩹 Fixes
