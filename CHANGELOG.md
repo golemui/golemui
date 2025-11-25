@@ -1,3 +1,14 @@
+## 0.3.17 (2025-11-25)
+
+### 🩹 Fixes
+
+- rename remaining Field to DispayField ([779ba6d](https://github.com/golemui/formforge/commit/779ba6d))
+- change form entry point to an array of fields ([e67ad5c](https://github.com/golemui/formforge/commit/e67ad5c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.16 (2025-11-25)
 
 ### 🩹 Fixes
