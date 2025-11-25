@@ -5,7 +5,7 @@
   "projectType": "library",
   "release": {
     "version": {
-      "manifestRootsToUpdate": ["build/{projectRoot}"],
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
       "currentVersionResolver": "git-tag"
     }
   },
@@ -18,12 +18,12 @@
         "outputPath": "dist/libs/shared-vanilla",
         "main": "libs/shared-vanilla/src/index.ts",
         "tsConfig": "libs/shared-vanilla/tsconfig.lib.json",
-        "assets": ["libs/shared-vanilla/*.md"]
+        "assets": ["*.md"]
       }
     },
     "nx-release-publish": {
       "options": {
-        "packageRoot": "build/{projectRoot}"
+        "packageRoot": "dist/{projectRoot}"
       }
     },
     "lint": {

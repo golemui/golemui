@@ -1,30 +1,25 @@
 {
   "name": "@golemui/react",
   "version": "0.0.1",
-  "main": "./index.cjs",
-  "module": "./index.js",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "import": "./index.js",
-      "require": "./index.cjs",
-      "default": "./index.js"
+      "import": "./index.mjs",
+      "default": "./index.mjs"
     },
     "./package.json": "./package.json",
     "./*": {
       "types": "./*.d.ts",
-      "import": "./*.js",
-      "require": "./*.cjs"
+      "import": "./*.mjs"
     }
   },
   "files": [
-    "index.js",
-    "index.cjs",
+    "lib",
+    "index.mjs",
     "index.d.ts",
-    "*.js",
-    "*.cjs",
-    "lib"
+    "*.md"
   ],
   "peerDependencies": {
     "react": ">=18.0.0",
