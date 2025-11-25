@@ -1,3 +1,13 @@
+## 0.3.15 (2025-11-25)
+
+### 🩹 Fixes
+
+- build with nx ([3f423b4](https://github.com/golemui/formforge/commit/3f423b4))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.14 (2025-11-24)
 
 This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
