@@ -24,7 +24,6 @@ export type State = {
   formName: string;
   /**
    * The complete form definition.
-   * In most cases, use `calculatedForm` instead, as it excludes hidden fields.
    */
   formDef: Form.Form<string>;
   /**

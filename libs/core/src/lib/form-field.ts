@@ -118,7 +118,7 @@ export type FormField<StateKeys extends UiState = never> =
 //
 // --------------------------------
 
-export const isField = <StateKeys extends string>(
+export const isDisplayField = <StateKeys extends string>(
   field: FormField<StateKeys>,
 ): field is DisplayField<StateKeys> => field.kind === 'display';
 
@@ -175,7 +175,7 @@ const OnSchema = z.looseObject({
 });
 
 // TODO: add types z.ZodMiniType<Field>
-const FieldSchema = z.looseObject({
+const DisplayFieldSchema = z.looseObject({
   kind: z.literal('display'),
   uid: z.pipe(
     z.optional(z.string()),
@@ -188,7 +188,7 @@ const FieldSchema = z.looseObject({
   on: z.optional(OnSchema),
 });
 
-export const InteractiveFieldSchema = z.extend(FieldSchema, {
+export const InteractiveFieldSchema = z.extend(DisplayFieldSchema, {
   kind: z.literal('interactive'),
   label: z.optional(z.string()),
   on: z.optional(OnSchema),
@@ -196,7 +196,7 @@ export const InteractiveFieldSchema = z.extend(FieldSchema, {
 
 export const ControlFieldSchema = <S extends z.ZodMiniType>(defaultValueSchema: S) =>
   z.pipe(
-    z.extend(FieldSchema, {
+    z.extend(DisplayFieldSchema, {
       kind: z.literal('control'),
       path: z.string(),
       label: z.optional(z.string()),
@@ -218,7 +218,7 @@ export const ControlFieldSchema = <S extends z.ZodMiniType>(defaultValueSchema: 
     }),
   );
 
-export const LayoutFieldSchema = z.extend(FieldSchema, {
+export const LayoutFieldSchema = z.extend(DisplayFieldSchema, {
   kind: z.literal('layout'),
   children: z.lazy(() => z.array(AllFieldSchema)),
 });
@@ -226,6 +226,6 @@ export const LayoutFieldSchema = z.extend(FieldSchema, {
 const AllFieldSchema: z.ZodMiniType = z.union([
   LayoutFieldSchema,
   ControlFieldSchema(z.any()),
-  FieldSchema,
+  DisplayFieldSchema,
   InteractiveFieldSchema,
 ]);

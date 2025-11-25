@@ -1,5 +1,5 @@
 import * as z from 'zod/mini';
-import { LayoutField, LayoutFieldSchema } from './form-field';
+import { FormField, LayoutField, LayoutFieldSchema } from './form-field';
 import { ReactiveExpression, UiState } from './shared';
 
 // --------------------------------
@@ -20,9 +20,17 @@ export type Form<StateKeys extends UiState = never> = {
  */
 export function defineForm<States extends Record<string, ReactiveExpression>>(config: {
   states?: States;
-  form: LayoutField<Extract<keyof States, string>>; // this Extract<> removes number and symbol from the indexed type
-}) {
-  return config;
+  form: FormField<Extract<keyof States, string>>[]; // this Extract<> removes number and symbol from the indexed type
+}): Form<Extract<keyof States, string>> {
+  return {
+    ...config,
+    form: {
+      uid: '',
+      widget: 'stack',
+      kind: 'layout',
+      children: config.form,
+    },
+  };
 }
 
 // --------------------------------
