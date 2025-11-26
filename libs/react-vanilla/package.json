@@ -17,6 +17,7 @@
     "index.d.ts",
     "index.js",
     "index.umd.cjs",
+    "*.js",
     "*.md"
   ],
   "peerDependencies": {
