@@ -1,4 +1,4 @@
-@import "@golemui/shared-vanilla/src/styles/index.css";
+@import "@golemui/shared-vanilla/index.css";
 
 iframe {
   border: 0;
