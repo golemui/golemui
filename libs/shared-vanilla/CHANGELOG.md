@@ -1,3 +1,13 @@
+## 0.3.20 (2025-11-26)
+
+### 🩹 Fixes
+
+- add styles to files in shared-vanilla ([db69f0d](https://github.com/golemui/formforge/commit/db69f0d))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.19 (2025-11-26)
 
 This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
