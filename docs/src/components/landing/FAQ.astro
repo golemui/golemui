@@ -1,0 +1,111 @@
+---
+---
+
+<section class="faq">
+  <div class="container">
+    <div class="header">
+      <h2>Frequently Asked Questions</h2>
+      <p class="subtitle">Everything you need to know about GolemUI.</p>
+    </div>
+
+    <div class="grid">
+      <div class="item">
+        <h3>Can I use GolemUI with Next.js or Nuxt?</h3>
+        <p>
+          Yes! GolemUI is fully compatible with SSR frameworks like Next.js, Nuxt, and Astro. Our
+          Pro components are specifically optimized for server-side rendering.
+        </p>
+      </div>
+
+      <div class="item">
+        <h3>Is the Free tier really free forever?</h3>
+        <p>
+          Absolutely. The core library and all 15+ core components are open source and free to use
+          in commercial projects without any limits.
+        </p>
+      </div>
+
+      <div class="item">
+        <h3>How does the licensing work for Pro?</h3>
+        <p>
+          The Pro license is per-developer. You buy a license for each developer working directly
+          with GolemUI Pro components. There are no runtime fees or limits on end-users.
+        </p>
+      </div>
+
+      <div class="item">
+        <h3>Can I customize the theme?</h3>
+        <p>
+          Yes, GolemUI is built with CSS variables. You can easily override colors, spacing, and
+          typography to match your brand. We also support Tailwind CSS integration.
+        </p>
+      </div>
+
+      <div class="item">
+        <h3>Do you offer support for enterprise?</h3>
+        <p>
+          Yes, our Enterprise plan includes 24/7 priority support, a dedicated success manager, and
+          custom SLAs. Contact our sales team for more details.
+        </p>
+      </div>
+
+      <div class="item">
+        <h3>What if I need a component that isn't in the library?</h3>
+        <p>
+          GolemUI is designed to be extensible. You can easily build custom components using our API
+          that integrate perfectly with the form state and validation engine.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .faq {
+    padding: 6rem 0;
+    background: var(--bg-color);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .item {
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-color);
+    }
+
+    p {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  }
+</style>

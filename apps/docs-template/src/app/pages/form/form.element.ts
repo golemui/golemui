@@ -35,11 +35,13 @@ export class FormElement extends LitElement {
     if (params.has('data')) {
       const formDataResponse = await fetch(params.get('data')!);
       this.formData = await formDataResponse.json();
+    } else {
+      this.formData = {};
     }
   }
 
   render() {
-    if (!this.formDef) {
+    if (!this.formDef || !this.formData) {
       return html`<div>loading...</div>`;
     } else {
       return html`

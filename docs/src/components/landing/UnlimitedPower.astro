@@ -1,0 +1,87 @@
+---
+import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import AngularForm from '../../../public/docs-template/code-samples/angular/golemui-form.component?raw';
+import ReactForm from '../../../public/docs-template/code-samples/react/MyGolemUIForm.tsx?raw';
+---
+
+<section class="custom-power">
+  <div class="container">
+    <div class="content">
+      <h2>Unlimited Power.<br />Made easy.</h2>
+      <p>
+        GolemUI is the easiest and fastest library to build dynamic forms.
+      </p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="home-examples">
+      <Tabs>
+        <TabItem label="Angular">
+          <Code code={AngularForm} lang="js" title="golemui-form.component.ts" />
+        </TabItem>
+        <TabItem label="React">
+          <Code code={ReactForm} lang="js" title="MyGolemUIForm.tsx" />
+        </TabItem>
+      </Tabs>
+    </div>
+    <div>
+      <iframe
+        src="/docs-template/index.html?form=docs-template/components/alert/alert.json"
+        title="Custom components"
+        width="100%"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  iframe {
+    border: none;
+  }
+
+  .home-examples .expressive-code .frame pre {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .custom-power {
+    padding: 6rem 0;
+    background: var(--bg-color);
+    overflow: hidden;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+  }
+
+  .content {
+    h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 2.5rem;
+      }
+    }
+
+    p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+    }
+  }
+
+  iframe {
+    border: 0;
+  }
+</style>
