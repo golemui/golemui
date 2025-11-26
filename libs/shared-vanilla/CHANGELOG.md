@@ -1,3 +1,7 @@
+## 0.3.19 (2025-11-26)
+
+This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
+
 ## 0.3.18 (2025-11-26)
 
 ### 🩹 Fixes

@@ -1,3 +1,13 @@
+## 0.3.19 (2025-11-26)
+
+### 🩹 Fixes
+
+- add all js files in lit-vanilla and react-vanilla ([3f94cf1](https://github.com/golemui/formforge/commit/3f94cf1))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.18 (2025-11-26)
 
 ### 🩹 Fixes
