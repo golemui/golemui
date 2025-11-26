@@ -21,9 +21,6 @@
     "*.md"
   ],
   "peerDependencies": {
-    "@golemui/core": "*",
-    "@nx/vite":  "^21.0.0",
-    "vite":  "^7.0.0",
-    "vite-plugin-dts": "^4.0.0"
+    "@golemui/core": "*"
   }
 }
