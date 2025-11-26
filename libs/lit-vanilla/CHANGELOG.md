@@ -1,3 +1,13 @@
+## 0.3.18 (2025-11-26)
+
+### 🩹 Fixes
+
+- build all libraries with vite ([2880d7f](https://github.com/golemui/formforge/commit/2880d7f))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.17 (2025-11-25)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.
