@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/libs/core',
+  cacheDir: '../../node_modules/.vite/libs/lit-vanilla',
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -18,28 +18,35 @@ export default defineConfig(() => ({
   ],
   // Configuration for building your library.
   build: {
-    outDir: '../../dist/libs/core',
+    outDir: '../../dist/libs/lit-vanilla',
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
       entry: 'src/index.ts',
-      name: 'core',
+      name: 'lit-vanilla',
       fileName: 'index',
     },
     rollupOptions: {
-      // External packages that should not be bundled into your library.
-      external: ['subscript', 'rxjs', '@standard-schema/spec', 'zod', 'zod/mini'],
+      external: [
+        '@golemui/lit',
+        '@golemui/core',
+        '@golemui/shared-vanilla',
+        '@lit/context',
+        'lit-html',
+        'lit',
+        'rxjs',
+      ],
     },
   },
   test: {
-    name: 'core',
+    name: 'lit-vanilla',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/libs/core',
+      reportsDirectory: '../../coverage/libs/lit-vanilla',
       provider: 'v8' as const,
     },
   },

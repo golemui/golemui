@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
 import { BooleanValidator, NumberValidator, StringValidator, Validator } from './validators';
+import { JsonSchemaValidators } from '@golemui/core';
 
 export const stringValidator = (config?: Omit<StringValidator, 'type'>): StringValidator => ({
   type: 'string',
@@ -21,7 +21,7 @@ export const booleanValidator = (config?: Omit<BooleanValidator, 'type'>): Boole
   ...(config || {}),
 });
 
-export const jsonSchemaValidators: Core.JsonSchemaValidators<Validator> = {
+export const jsonSchemaValidators: JsonSchemaValidators<Validator> = {
   stringValidator,
   booleanValidator,
   numberValidator,
