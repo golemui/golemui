@@ -23,6 +23,21 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     }
   }
 
+  // defineForm() converts the form array into a layout (the formDef.form entry point).
+  // When the form declaration originates from JSON (i.e., not via defineForm()),
+  // the layout must be generated here instead.
+  if (Array.isArray((formDef as Record<string, any>)['form'])) {
+    const formDef_ = formDef as Record<string, any>;
+    const fields: any[] = formDef_['form'];
+    // mutate
+    formDef_['form'] = {
+      uid: '',
+      widget: 'stack',
+      kind: 'layout',
+      children: fields,
+    };
+  }
+
   const { error, success, data } = Form.FormSchema.safeParse(formDef);
 
   if (success) {

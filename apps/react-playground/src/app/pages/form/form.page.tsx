@@ -5,6 +5,7 @@ import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
 
 function onFormEvent(event: Core.FormEvent) {
@@ -20,10 +21,13 @@ const vanillaFieldLoaders = {
 };
 const formDef = signin;
 const formData = signinData;
-const middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
-const customValidators: Core.CustomValidatorSchemas = {
+const middlewares = [
+  Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
+  loggerMiddleware,
+];
+const validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
   allowedNames,
-};
+});
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -44,7 +48,7 @@ export function FormPage() {
         data={formData}
         fieldLoader={vanillaFieldLoaders}
         middlewares={middlewares}
-        customValidators={customValidators}
+        validators={validators}
         validateOn="change"
         onFormError={onFormError}
         onFormEvent={onFormEvent}

@@ -9,7 +9,7 @@ export const ReactFormContext = createContext<{
 export function useReactFormContext() {
   const context = useContext(ReactFormContext);
   if (!context) {
-    throw new Error('useFormStore must be used within a ReactFormProvider');
+    throw new Error('useReactFormContext must be used within a ReactFormContextProvider');
   }
   return context;
 }

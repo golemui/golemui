@@ -1,4 +1,4 @@
-import { pipe } from './pipe';
+import { pipe } from './function';
 import { toCapitalizedWords } from './string';
 
 export const toLabel = (path: string): string => {

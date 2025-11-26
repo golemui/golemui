@@ -1,0 +1,28 @@
+{
+  "name": "@golemui/validators-vanilla",
+  "version": "0.0.1",
+  "module": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./*": {
+      "types": "./src/*.d.ts",
+      "import": "./src/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "*.md"
+  ],
+  "peerDependencies": {
+    "tslib": "^2.3.0",
+    "zod": "^3.25.0 || ^4.0.0",
+    "@standard-schema/spec": "^1.0.0",
+    "@golemui/core": "*"
+  }
+}

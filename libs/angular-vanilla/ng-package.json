@@ -3,5 +3,6 @@
   "dest": "../../dist/libs/angular-vanilla",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "assets": ["README.md", "CHANGELOG.md"]
 }

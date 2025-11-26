@@ -49,7 +49,6 @@ export function useLayoutField<ExtraProps extends Record<string, any>>(field: Co
   return {
     uid,
     children,
-    formContext,
     props,
   };
 }

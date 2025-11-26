@@ -2,7 +2,7 @@
 
 <div
   class="gui-field"
-  [class.horizontal]="templateData.direction === 'horizontal'"
+  [class.gui-field--horizontal]="templateData.direction === 'horizontal'"
   [id]="field.uid"
 >
   @for (child of templateData.children; track child.uid) {

@@ -1,5 +1,4 @@
 import { FormField } from './form-field';
-import { Validator } from './form-validator';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 
 /**
@@ -40,6 +39,11 @@ export type Uid = string;
 export type ValidateOn = 'eager' | 'change' | 'blur' | 'submit' | ('change' | 'blur' | 'submit')[];
 
 /**
+ * The bare minimum validation required for ny validation implementation
+ */
+export type Validator = { required?: boolean };
+
+/**
  * Represents a form event payload.
  */
 export type EventName = string;
@@ -61,14 +65,14 @@ export type FormEvent = {
 /**
  * Control adapter templateData
  */
-export type ControlTemplateData<T> = {
+export type ControlTemplateData<T, V = any> = {
   label?: string;
   value?: T;
   /**
    * validation errors
    */
   errors?: string[];
-  validator?: Validator;
+  validator?: V;
   disabled?: boolean;
   readonly?: boolean;
   touched?: boolean;

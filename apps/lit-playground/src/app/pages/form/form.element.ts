@@ -3,13 +3,17 @@ import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  middlewares = [Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap), loggerMiddleware];
+  middlewares = [
+    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
+    loggerMiddleware,
+  ];
   formDef = signin;
   formData = signinData;
   vanillaFieldLoaders = {
@@ -17,9 +21,9 @@ export class FormElement extends LitElement {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
-  customValidators: Core.CustomValidatorSchemas = {
+  validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
     allowedNames,
-  };
+  });
 
   error = '';
 
@@ -55,7 +59,7 @@ export class FormElement extends LitElement {
           .data=${this.formData}
           .fieldLoaders=${this.vanillaFieldLoaders}
           .middlewares=${this.middlewares}
-          .customValidators=${this.customValidators}
+          .validators=${this.validators}
           validateOn="change"
           @formError=${this.onFormError}
           @event=${this.onFormEvent}

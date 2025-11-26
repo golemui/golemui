@@ -1,3 +1,222 @@
+## 0.3.17 (2025-11-25)
+
+### 🩹 Fixes
+
+- rename remaining Field to DispayField ([779ba6d](https://github.com/golemui/formforge/commit/779ba6d))
+- change form entry point to an array of fields ([e67ad5c](https://github.com/golemui/formforge/commit/e67ad5c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.16 (2025-11-25)
+
+### 🩹 Fixes
+
+- set external libs in react vite config file ([c2e7c0c](https://github.com/golemui/formforge/commit/c2e7c0c))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.15 (2025-11-25)
+
+### 🩹 Fixes
+
+- build with nx ([3f423b4](https://github.com/golemui/formforge/commit/3f423b4))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.14 (2025-11-24)
+
+### 🩹 Fixes
+
+- package.json paths in core, lit and lit-vanilla ([677e530](https://github.com/golemui/formforge/commit/677e530))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.13 (2025-11-24)
+
+### 🩹 Fixes
+
+- include correct paths in shared and validators ([a676081](https://github.com/golemui/formforge/commit/a676081))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.12 (2025-11-24)
+
+### 🩹 Fixes
+
+- build with bundle ([098397c](https://github.com/golemui/formforge/commit/098397c))
+- trigger build ([b5c36ca](https://github.com/golemui/formforge/commit/b5c36ca))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.11 (2025-11-24)
+
+### 🩹 Fixes
+
+- build files to output cjs and js ([20d24ec](https://github.com/golemui/formforge/commit/20d24ec))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.10 (2025-11-24)
+
+### 🩹 Fixes
+
+- shared and validators package exports ([f160cea](https://github.com/golemui/formforge/commit/f160cea))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.9 (2025-11-24)
+
+### 🩹 Fixes
+
+- react-vanilla should not have type module ([c715ff8](https://github.com/golemui/formforge/commit/c715ff8))
+- add imports in release script ([cf3a136](https://github.com/golemui/formforge/commit/cf3a136))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.8 (2025-11-24)
+
+### 🩹 Fixes
+
+- build libs for es2022 and commonjs ([7a7c037](https://github.com/golemui/formforge/commit/7a7c037))
+- add release scripts again ([7c48293](https://github.com/golemui/formforge/commit/7c48293))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.7 (2025-11-23)
+
+### 🩹 Fixes
+
+- disable minification for testing purposes ([eee4d87](https://github.com/golemui/formforge/commit/eee4d87))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.6 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** fix react FieldRenderer ([0cb7882](https://github.com/golemui/formforge/commit/0cb7882))
+- **react:** fix react FieldRenderer ([e29d12e](https://github.com/golemui/formforge/commit/e29d12e))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.5 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** remove the need to pass formContext to components ([ddce6aa](https://github.com/golemui/formforge/commit/ddce6aa))
+- **react:** fix react FieldRenderer ([2ff9d71](https://github.com/golemui/formforge/commit/2ff9d71))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.4 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** fix react FieldRenderer ([57be08d](https://github.com/golemui/formforge/commit/57be08d))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.3 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** fix react context provider null value ([ee9505f](https://github.com/golemui/formforge/commit/ee9505f))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.2 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** fix react context provider duplicity ([dcad867](https://github.com/golemui/formforge/commit/dcad867))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.1 (2025-11-23)
+
+### 🩹 Fixes
+
+- add validators-vanilla to package ([bf69a9c](https://github.com/golemui/formforge/commit/bf69a9c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.0 (2025-11-23)
+
+### 🚀 Features
+
+- **validators:** Make validators pluggable ([397e67c](https://github.com/golemui/formforge/commit/397e67c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.2.4 (2025-11-22)
+
+### 🩹 Fixes
+
+- **react:** fix react package name ([7095c8b](https://github.com/golemui/formforge/commit/7095c8b))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.2.3 (2025-11-22)
+
+### 🩹 Fixes
+
+- enable again releases ([347dbdd](https://github.com/golemui/formforge/commit/347dbdd))
+- **react:** fix react package jsons build ([b98d9e2](https://github.com/golemui/formforge/commit/b98d9e2))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.2.2 (2025-11-22)
+
+### 🩹 Fixes
+
+- combine push to branch with workflow run complete ([c7795a9](https://github.com/golemui/formforge/commit/c7795a9))
+- **angular:** fix horizontal class in angular stack ([b89ce50](https://github.com/golemui/formforge/commit/b89ce50))
+- **lit:** use repeat directive in stack instead of map ([083f044](https://github.com/golemui/formforge/commit/083f044))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.2.1 (2025-11-16)
 
 ### 🩹 Fixes

@@ -1,3 +1,129 @@
+## 0.3.17 (2025-11-25)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.16 (2025-11-25)
+
+### 🩹 Fixes
+
+- set external libs in react vite config file ([c2e7c0c](https://github.com/golemui/formforge/commit/c2e7c0c))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.15 (2025-11-25)
+
+### 🩹 Fixes
+
+- build with nx ([3f423b4](https://github.com/golemui/formforge/commit/3f423b4))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.14 (2025-11-24)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.13 (2025-11-24)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.12 (2025-11-24)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.11 (2025-11-24)
+
+### 🩹 Fixes
+
+- build files to output cjs and js ([20d24ec](https://github.com/golemui/formforge/commit/20d24ec))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.10 (2025-11-24)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.9 (2025-11-24)
+
+### 🩹 Fixes
+
+- react-vanilla should not have type module ([c715ff8](https://github.com/golemui/formforge/commit/c715ff8))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.8 (2025-11-24)
+
+### 🩹 Fixes
+
+- build libs for es2022 and commonjs ([7a7c037](https://github.com/golemui/formforge/commit/7a7c037))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.7 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.6 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.5 (2025-11-23)
+
+### 🩹 Fixes
+
+- **react:** remove the need to pass formContext to components ([ddce6aa](https://github.com/golemui/formforge/commit/ddce6aa))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.3.4 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.3 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.2 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.1 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.3.0 (2025-11-23)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.2.4 (2025-11-22)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
+## 0.2.3 (2025-11-22)
+
+### 🩹 Fixes
+
+- **react:** fix react package jsons build ([b98d9e2](https://github.com/golemui/formforge/commit/b98d9e2))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.2.2 (2025-11-22)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
 ## 0.2.1 (2025-11-16)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

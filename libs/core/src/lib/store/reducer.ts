@@ -1,21 +1,15 @@
 import { Flags } from '../form-field';
-import { CustomValidatorSchemas } from '../form-validator';
+import { ValidatorFn } from '../form-validator';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import { pipe } from '../utils/pipe';
+import { pipe } from '../utils/function';
 import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
 import { isControlTouched, reduceIf } from './reducers/utils';
 
 export const reducer =
-  ({
-    customValidators,
-    validateOn,
-  }: {
-    customValidators: CustomValidatorSchemas;
-    validateOn: ValidateOn;
-  }) =>
+  ({ validators, validateOn }: { validators: ValidatorFn<any>; validateOn: ValidateOn }) =>
   (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
@@ -26,7 +20,7 @@ export const reducer =
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(customValidators)),
+          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
 
       case 'ADD_FIELD':
@@ -34,7 +28,7 @@ export const reducer =
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(customValidators)),
+          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
 
       case 'REMOVE_FIELD':
@@ -45,7 +39,7 @@ export const reducer =
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(customValidators)),
+          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
 
       case 'OVERRIDE_FIELD_PROP':
@@ -54,7 +48,7 @@ export const reducer =
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
           // Apply validation here because this action can be dispatched from the form's event handlers callback
-          reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(customValidators)),
+          reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );
 
       case 'SET_ERROR':
@@ -72,7 +66,7 @@ export const reducer =
             {} as State['fieldFlags'],
           ),
         };
-        return pipe(newState, Reducers.validateAll(customValidators));
+        return pipe(newState, Reducers.validateAll(validators));
       }
 
       case 'ATTEMPT_VALIDATION': {
@@ -89,7 +83,7 @@ export const reducer =
               touched: true,
               touchedControls: { ...state.touchedControls, [path]: true },
             },
-            Reducers.validateAll(customValidators),
+            Reducers.validateAll(validators),
           );
         }
 

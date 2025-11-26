@@ -1,17 +1,29 @@
 {
   "name": "@golemui/react",
-  "version": "0.1.3",
-  "main": "./index.js",
+  "version": "0.0.1",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
-      "require": "./index.js"
+      "default": "./index.mjs"
+    },
+    "./package.json": "./package.json",
+    "./*": {
+      "types": "./*.d.ts",
+      "import": "./*.mjs"
     }
   },
+  "files": [
+    "lib",
+    "index.mjs",
+    "index.d.ts",
+    "*.md"
+  ],
   "peerDependencies": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
     "@golemui/core": "*"
   }
 }

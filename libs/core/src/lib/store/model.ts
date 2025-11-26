@@ -1,4 +1,4 @@
-import * as z from 'zod/mini';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as Form from '../form';
 import * as Field from '../form-field';
 import { DotPath, Uid, UiState } from '../shared';
@@ -13,7 +13,7 @@ export type ValidationState = {
   /**
    * Cache of calculated schemas
    */
-  validators: Record<UiState, z.ZodMiniType>;
+  validators: Record<UiState, StandardSchemaV1>;
   /**
    * Current status
    */
@@ -24,7 +24,6 @@ export type State = {
   formName: string;
   /**
    * The complete form definition.
-   * In most cases, use `calculatedForm` instead, as it excludes hidden fields.
    */
   formDef: Form.Form<string>;
   /**

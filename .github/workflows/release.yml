@@ -35,11 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Build all packages
-        run: npx nx run-many --target=build --all --parallel
-
-      - name: Build shared styles
-        run: npm run build:styles
+      - name: Configure git remote with PAT
+        run: |
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }}.git
 
       - name: config git user
         run: |
