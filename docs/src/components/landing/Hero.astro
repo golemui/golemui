@@ -1,27 +1,4 @@
 ---
-import { vanillaFieldLoaders } from "@golemui/react-vanilla";
-import { FormComponent } from "@golemui/react";
-import * as Core from '@golemui/core';
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
-
-const validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators();
-const formDef = {
-  form: {
-    uid: '',
-    kind: 'layout',
-    widget: 'stack',
-    children: [
-      {
-        uid: '',
-        kind: 'control',
-        widget: 'textinput',
-        path: 'user.id',
-        readonly: true,
-      }
-    ],
-  },
-};
-const formData = { user: { id: 'ASDFGHJKL4567' } };
 ---
 
 <section class="hero">
@@ -66,13 +43,7 @@ const formData = { user: { id: 'ASDFGHJKL4567' } };
     </div>
     <div class="example-container">
       <div class="visual">
-        <FormComponent
-            client:only="react"
-            formDef={formDef}
-            data={formData}
-            fieldLoader={{ ...vanillaFieldLoaders }}
-            validators={validators}
-        />
+        <!--iframe>ADD DEMO IFRAME</iframe-->
       </div>
     </div>
   </div>
