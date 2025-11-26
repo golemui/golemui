@@ -1,7 +1,10 @@
 ---
 import { vanillaFieldLoaders } from "@golemui/react-vanilla";
 import { FormComponent } from "@golemui/react";
+import * as Core from '@golemui/core';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 
+const validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators();
 const formDef = {
   form: {
     uid: '',
@@ -68,6 +71,7 @@ const formData = { user: { id: 'ASDFGHJKL4567' } };
             formDef={formDef}
             data={formData}
             fieldLoader={{ ...vanillaFieldLoaders }}
+            validators={validators}
         />
       </div>
     </div>
