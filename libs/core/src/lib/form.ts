@@ -1,6 +1,6 @@
-import * as z from 'zod/mini';
 import { FormField, LayoutField, LayoutFieldSchema } from './form-field';
 import { ReactiveExpression, UiState } from './shared';
+import { object, optional, record, string } from 'zod/mini';
 
 // --------------------------------
 //
@@ -39,7 +39,7 @@ export function defineForm<States extends Record<string, ReactiveExpression>>(co
 //
 // --------------------------------
 
-export const FormSchema = z.object({
-  states: z.optional(z.record(z.string(), z.string())),
+export const FormSchema = object({
+  states: optional(record(string(), string())),
   form: LayoutFieldSchema,
 });

@@ -1,7 +1,22 @@
-import * as z from 'zod/mini';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
+import {
+  any,
+  array,
+  boolean,
+  extend,
+  lazy,
+  literal,
+  looseObject,
+  object,
+  optional,
+  pipe,
+  string,
+  transform,
+  union,
+  ZodMiniType,
+} from 'zod/mini';
 
 // --------------------------------
 //
@@ -140,71 +155,71 @@ export const isLayoutField = <StateKeys extends string>(
 //
 // --------------------------------
 
-const InWhenSchema = z.union([
-  z.object({
-    in: z.array(z.string()),
+const InWhenSchema = union([
+  object({
+    in: array(string()),
   }),
-  z.object({
-    when: z.string(),
-  }),
-]);
-
-const InWhenBoolSchema = z.union([
-  z.boolean(),
-  z.object({
-    in: z.array(z.string()),
-  }),
-  z.object({
-    when: z.string(),
+  object({
+    when: string(),
   }),
 ]);
 
-const ExcludeSchema = z.union([
-  z.object({
-    from: z.array(z.string()),
+const InWhenBoolSchema = union([
+  boolean(),
+  object({
+    in: array(string()),
   }),
-  z.object({
-    when: z.string(),
+  object({
+    when: string(),
   }),
 ]);
 
-const OnSchema = z.looseObject({
-  load: z.optional(z.string()),
-  click: z.optional(z.string()),
-  change: z.optional(z.string()),
+const ExcludeSchema = union([
+  object({
+    from: array(string()),
+  }),
+  object({
+    when: string(),
+  }),
+]);
+
+const OnSchema = looseObject({
+  load: optional(string()),
+  click: optional(string()),
+  change: optional(string()),
 });
 
-// TODO: add types z.ZodMiniType<Field>
-const DisplayFieldSchema = z.looseObject({
-  kind: z.literal('display'),
-  uid: z.pipe(
-    z.optional(z.string()),
-    z.transform((s) => s || shortUUID()),
+// TODO: add types ZodMiniType<Field>
+const DisplayFieldSchema = looseObject({
+  kind: literal('display'),
+  uid: pipe(
+    optional(string()),
+    transform((s) => s || shortUUID()),
   ),
-  widget: z.string(),
-  include: z.optional(InWhenSchema),
-  exclude: z.optional(ExcludeSchema),
-  enabled: z.optional(InWhenBoolSchema),
-  on: z.optional(OnSchema),
+  widget: string(),
+  include: optional(InWhenSchema),
+  exclude: optional(ExcludeSchema),
+  enabled: optional(InWhenBoolSchema),
+  on: optional(OnSchema),
 });
 
-export const InteractiveFieldSchema = z.extend(DisplayFieldSchema, {
-  kind: z.literal('interactive'),
-  label: z.optional(z.string()),
-  on: z.optional(OnSchema),
+export const InteractiveFieldSchema = extend(DisplayFieldSchema, {
+  kind: literal('interactive'),
+  label: optional(string()),
+  on: optional(OnSchema),
 });
 
-export const ControlFieldSchema = <S extends z.ZodMiniType>(defaultValueSchema: S) =>
-  z.pipe(
-    z.extend(DisplayFieldSchema, {
-      kind: z.literal('control'),
-      path: z.string(),
-      label: z.optional(z.string()),
-      required: z.optional(InWhenBoolSchema),
-      readonly: z.optional(InWhenBoolSchema),
-      defaultValue: z.optional(defaultValueSchema),
+export const ControlFieldSchema = <S extends ZodMiniType>(defaultValueSchema: S) =>
+  pipe(
+    extend(DisplayFieldSchema, {
+      kind: literal('control'),
+      path: string(),
+      label: optional(string()),
+      required: optional(InWhenBoolSchema),
+      readonly: optional(InWhenBoolSchema),
+      defaultValue: optional(defaultValueSchema),
     }),
-    z.transform((ctrl) => {
+    transform((ctrl) => {
       const transformed = { ...ctrl };
       if (!ctrl.uid) {
         transformed.uid = `${ctrl.path}-${ctrl.widget}`;
@@ -218,14 +233,14 @@ export const ControlFieldSchema = <S extends z.ZodMiniType>(defaultValueSchema: 
     }),
   );
 
-export const LayoutFieldSchema = z.extend(DisplayFieldSchema, {
-  kind: z.literal('layout'),
-  children: z.lazy(() => z.array(AllFieldSchema)),
+export const LayoutFieldSchema = extend(DisplayFieldSchema, {
+  kind: literal('layout'),
+  children: lazy(() => array(AllFieldSchema)),
 });
 
-const AllFieldSchema: z.ZodMiniType = z.union([
+const AllFieldSchema: ZodMiniType = union([
   LayoutFieldSchema,
-  ControlFieldSchema(z.any()),
+  ControlFieldSchema(any()),
   DisplayFieldSchema,
   InteractiveFieldSchema,
 ]);

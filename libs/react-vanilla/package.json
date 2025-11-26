@@ -1,25 +1,22 @@
 {
   "name": "@golemui/react-vanilla",
   "version": "0.0.1",
-  "module": "./index.mjs",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
   "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "import": "./index.mjs",
-      "default": "./index.mjs"
-    },
-    "./package.json": "./package.json",
-    "./*": {
-      "types": "./*.d.ts",
-      "import": "./*.mjs"
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
     }
   },
   "files": [
     "lib",
-    "index.mjs",
     "index.d.ts",
-    "*.mjs",
+    "index.js",
+    "index.umd.cjs",
     "*.md"
   ],
   "peerDependencies": {
