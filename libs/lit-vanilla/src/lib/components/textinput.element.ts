@@ -99,7 +99,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
       ${showErrors
         ? html`<ul class="gui-validator">
             ${this.adapter.templateData.errors?.map(
-              (error) => html`<li class="gui-validator__error">${error}</li>`,
+              (error: any) => html`<li class="gui-validator__error">${error}</li>`,
             )}
           </ul>`
         : ''}

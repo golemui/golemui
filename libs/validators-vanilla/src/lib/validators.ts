@@ -1,7 +1,31 @@
-import * as Core from '@golemui/core';
 import { StandardSchemaV1 } from '@standard-schema/spec';
-import * as z from 'zod/mini';
 import { LooseObject } from './utils';
+import {
+  any,
+  boolean,
+  email,
+  hostname,
+  int,
+  ipv4,
+  ipv6,
+  maximum,
+  maxLength,
+  minimum,
+  minLength,
+  number,
+  optional,
+  refine,
+  regex,
+  string,
+  success,
+  superRefine,
+  url,
+  uuid,
+  ZodMiniOptional,
+  ZodMiniType,
+} from 'zod/mini';
+import { iso } from 'zod';
+import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '@golemui/core';
 
 // --------------------------------
 //
@@ -16,16 +40,16 @@ interface BaseValidator {
 }
 
 const stringFormat = {
-  email: { schema: z.email() },
-  hostname: { schema: z.hostname() },
-  ipv4: { schema: z.ipv4() },
-  ipv6: { schema: z.ipv6() },
-  url: { schema: z.url() },
-  uuid: { schema: z.uuid() },
-  date: { schema: z.iso.date() },
-  time: { schema: z.iso.time() },
-  'date-time': { schema: z.iso.datetime() },
-  duration: { schema: z.iso.duration() },
+  email: { schema: email() },
+  hostname: { schema: hostname() },
+  ipv4: { schema: ipv4() },
+  ipv6: { schema: ipv6() },
+  url: { schema: url() },
+  uuid: { schema: uuid() },
+  date: { schema: iso.date() },
+  time: { schema: iso.time() },
+  'date-time': { schema: iso.datetime() },
+  duration: { schema: iso.duration() },
 };
 
 type StringFormat = keyof typeof stringFormat;
@@ -85,7 +109,7 @@ export type Validator =
 // --------------------------------
 
 export const initValidators =
-  (customValidators?: CustomValidatorSchemas): Core.ValidatorFn<Validator> =>
+  (customValidators?: CustomValidatorSchemas): ValidatorFn<Validator> =>
   (validator: Validator): StandardSchemaV1 => {
     switch (validator.type) {
       case 'string':
@@ -101,7 +125,7 @@ export const initValidators =
       case 'array':
         // TODO: implement
         console.warn('TODO: array validator not yet supported');
-        return z.success(z.any());
+        return success(any());
 
       case 'custom': {
         if (!customValidators) {
@@ -116,27 +140,27 @@ export const initValidators =
 
 function fromStringValidator(v: StringValidator) {
   return withOptional(v, (v) => {
-    let schema = z.string();
+    let schema = string();
 
     if (typeof v.minLength === 'number') {
-      schema = schema.check(z.minLength(v.minLength));
+      schema = schema.check(minLength(v.minLength));
     }
 
     if (typeof v.maxLength === 'number') {
-      schema = schema.check(z.maxLength(v.maxLength));
+      schema = schema.check(maxLength(v.maxLength));
     }
 
     if (typeof v.pattern === 'string') {
-      schema = schema.check(z.regex(new RegExp(v.pattern)));
+      schema = schema.check(regex(new RegExp(v.pattern)));
     }
 
     if (v.enum) {
       const enum_ = v.enum;
-      schema = schema.check(z.refine((val) => enum_.includes(val)));
+      schema = schema.check(refine((val) => enum_.includes(val)));
     }
 
     if (v.const !== undefined) {
-      schema = schema.check(z.refine((val) => val === v.const));
+      schema = schema.check(refine((val) => val === v.const));
     }
 
     if (v.format !== undefined) {
@@ -153,42 +177,42 @@ function fromStringValidator(v: StringValidator) {
 
 function fromNumberValidator(v: NumberValidator) {
   return withOptional(v, (v) => {
-    let schema = z.number();
+    let schema = number();
 
     if (v.type === 'integer') {
-      schema = schema.check(z.int());
+      schema = schema.check(int());
     }
 
     if (v.minimum !== undefined) {
-      schema = schema.check(z.minimum(v.minimum));
+      schema = schema.check(minimum(v.minimum));
     }
 
     if (v.maximum !== undefined) {
-      schema = schema.check(z.maximum(v.maximum));
+      schema = schema.check(maximum(v.maximum));
     }
 
     if (v.exclusiveMinimum !== undefined) {
       const t = v.exclusiveMinimum;
-      schema = schema.check(z.refine((n) => n > t));
+      schema = schema.check(refine((n) => n > t));
     }
 
     if (v.exclusiveMaximum !== undefined) {
       const t = v.exclusiveMaximum;
-      schema = schema.check(z.refine((n) => n > t));
+      schema = schema.check(refine((n) => n > t));
     }
 
     if (v.multipleOf !== undefined) {
       const t = v.multipleOf;
-      schema = schema.check(z.refine((n) => n % t === 0));
+      schema = schema.check(refine((n) => n % t === 0));
     }
 
     if (v.enum) {
       const enum_ = v.enum;
-      schema = schema.check(z.refine((val) => enum_.includes(val)));
+      schema = schema.check(refine((val) => enum_.includes(val)));
     }
 
     if (v.const !== undefined) {
-      schema = schema.check(z.refine((val) => val === v.const));
+      schema = schema.check(refine((val) => val === v.const));
     }
 
     return schema;
@@ -197,10 +221,10 @@ function fromNumberValidator(v: NumberValidator) {
 
 function fromBooleanValidator(v: BooleanValidator) {
   return withOptional(v, (v) => {
-    let schema = z.boolean();
+    let schema = boolean();
 
     if (v.const !== undefined) {
-      schema = schema.check(z.refine((val) => val === v.const));
+      schema = schema.check(refine((val) => val === v.const));
     }
 
     return schema;
@@ -209,7 +233,7 @@ function fromBooleanValidator(v: BooleanValidator) {
 
 function fromCustomValidator(v: CustomValidator, customValidators: CustomValidatorSchemas) {
   return withOptional(v, (v) => {
-    let schema = z.any();
+    let schema = any();
 
     Object.keys(v)
       // filter non-custom validator keys
@@ -222,12 +246,12 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
         const resolvedSchema = resolvedSchemaFn(validatorInput);
 
         schema = schema.check(
-          z.superRefine((val, ctx) => {
-            const result = Core.standardValidate(
+          superRefine((val, ctx) => {
+            const result = standardValidate(
               resolvedSchema,
               val,
             ) as StandardSchemaV1.Result<unknown>;
-            if (!Core.isStandardValidateSuccess(result)) {
+            if (!isStandardValidateSuccess(result)) {
               const firstError = result.issues[0];
               ctx.addIssue({
                 code: 'custom',
@@ -244,13 +268,13 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
 }
 
 // We need this to isolate the optional schema type from the from*Validator functions
-function withOptional<T extends z.ZodMiniType, V extends Validator>(
+function withOptional<T extends ZodMiniType, V extends Validator>(
   validator: V,
   builder: (v: V) => T,
-): T | z.ZodMiniOptional<T> {
+): T | ZodMiniOptional<T> {
   const schema = builder(validator);
   if (!validator.required) {
-    return z.optional(schema);
+    return optional(schema);
   }
   return schema;
 }

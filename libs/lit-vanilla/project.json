@@ -12,13 +12,11 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/lit-vanilla",
-        "main": "libs/lit-vanilla/src/index.ts",
-        "tsConfig": "libs/lit-vanilla/tsconfig.lib.json",
-        "assets": ["*.md"]
+        "configFile": "libs/lit-vanilla/vite.config.ts"
       }
     },
     "nx-release-publish": {

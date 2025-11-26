@@ -1,26 +1,29 @@
 {
   "name": "@golemui/shared-vanilla",
   "version": "0.0.1",
-  "module": "./src/index.js",
-  "types": "./src/index.d.ts",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./src/index.js",
-      "default": "./src/index.js"
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
     },
-    "./*": {
-      "types": "./src/*.d.ts",
-      "import": "./src/*.js"
-    },
-    "./package.json": "./package.json"
+    "./index.css": "./lib/styles/index.css"
   },
   "files": [
-    "src",
+    "lib",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
     "*.md"
   ],
   "peerDependencies": {
     "@golemui/core": "*",
-    "tslib": "^2.3.0"
+    "@nx/vite":  "^21.0.0",
+    "vite":  "^7.0.0",
+    "vite-plugin-dts": "^4.0.0"
   }
 }
