@@ -53,5 +53,6 @@ vitest.config.*.timestamp*
 /docs/public
 
 # Local apps to test package installations from npm
+angular-test-app
 react-test-app
 lit-test-app
