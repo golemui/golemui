@@ -15,6 +15,7 @@
   },
   "files": [
     "lib",
+    "lib/styles/index.css",
     "index.d.ts",
     "index.js",
     "index.umd.cjs",

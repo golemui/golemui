@@ -1,3 +1,37 @@
+## 0.3.25 (2025-11-27)
+
+### 🩹 Fixes
+
+- **angular:** force installation of zod v4 ([964f529](https://github.com/golemui/formforge/commit/964f529))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.24 (2025-11-27)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.3.23 (2025-11-27)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.3.22 (2025-11-27)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.3.21 (2025-11-27)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.3.20 (2025-11-26)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.3.19 (2025-11-26)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
 ## 0.3.18 (2025-11-26)
 
 ### 🩹 Fixes

@@ -1,3 +1,74 @@
+## 0.3.25 (2025-11-27)
+
+### 🩹 Fixes
+
+- **angular:** force installation of zod v4 ([964f529](https://github.com/golemui/formforge/commit/964f529))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.24 (2025-11-27)
+
+### 🩹 Fixes
+
+- **lit:** remove all lit external dependencies from builds ([1ad4504](https://github.com/golemui/formforge/commit/1ad4504))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.23 (2025-11-27)
+
+### 🩹 Fixes
+
+- **lit:** Use experimental decorators ([77856c0](https://github.com/golemui/formforge/commit/77856c0))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.22 (2025-11-27)
+
+### 🩹 Fixes
+
+- remove build command on preVersion ([0615d37](https://github.com/golemui/formforge/commit/0615d37))
+- trigger release ([c553724](https://github.com/golemui/formforge/commit/c553724))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.21 (2025-11-27)
+
+### 🩹 Fixes
+
+- trigger build ([f1177e7](https://github.com/golemui/formforge/commit/f1177e7))
+
+### ❤️ Thank You
+
+- Raul Jimenez
+
+## 0.3.20 (2025-11-26)
+
+### 🩹 Fixes
+
+- add styles to files in shared-vanilla ([db69f0d](https://github.com/golemui/formforge/commit/db69f0d))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.3.19 (2025-11-26)
+
+### 🩹 Fixes
+
+- add all js files in lit-vanilla and react-vanilla ([3f94cf1](https://github.com/golemui/formforge/commit/3f94cf1))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.18 (2025-11-26)
 
 ### 🩹 Fixes
