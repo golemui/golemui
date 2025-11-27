@@ -1,3 +1,13 @@
+## 0.3.22 (2025-11-27)
+
+### 🩹 Fixes
+
+- trigger release ([c553724](https://github.com/golemui/formforge/commit/c553724))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.21 (2025-11-27)
 
 ### 🩹 Fixes
