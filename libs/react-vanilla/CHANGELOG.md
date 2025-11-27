@@ -1,3 +1,7 @@
+## 0.3.21 (2025-11-27)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
 ## 0.3.20 (2025-11-26)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

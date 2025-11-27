@@ -1,3 +1,13 @@
+## 0.3.21 (2025-11-27)
+
+### 🩹 Fixes
+
+- trigger build ([f1177e7](https://github.com/golemui/formforge/commit/f1177e7))
+
+### ❤️ Thank You
+
+- Raul Jimenez
+
 ## 0.3.20 (2025-11-26)
 
 ### 🩹 Fixes
