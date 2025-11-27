@@ -1,3 +1,13 @@
+## 0.3.25 (2025-11-27)
+
+### 🩹 Fixes
+
+- **angular:** force installation of zod v4 ([964f529](https://github.com/golemui/formforge/commit/964f529))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.24 (2025-11-27)
 
 ### 🩹 Fixes
