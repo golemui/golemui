@@ -27,7 +27,7 @@ export default defineConfig(() => ({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['@golemui/core', '@lit/context', 'lit-html', 'lit', 'rxjs'],
+      external: ['@golemui/core', 'rxjs', /^@?lit(-\w+)?($|\/.+)/],
     },
   },
   test: {
