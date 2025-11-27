@@ -1,3 +1,13 @@
+## 0.3.23 (2025-11-27)
+
+### 🩹 Fixes
+
+- **lit:** Use experimental decorators ([77856c0](https://github.com/golemui/formforge/commit/77856c0))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.22 (2025-11-27)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.
