@@ -1,3 +1,13 @@
+## 0.3.24 (2025-11-27)
+
+### 🩹 Fixes
+
+- **lit:** remove all lit external dependencies from builds ([1ad4504](https://github.com/golemui/formforge/commit/1ad4504))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.3.23 (2025-11-27)
 
 ### 🩹 Fixes
