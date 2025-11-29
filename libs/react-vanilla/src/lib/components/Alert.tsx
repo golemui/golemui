@@ -10,6 +10,7 @@ export function Alert(fieldInstance: Core.WithField) {
     <div className="gui-alert">
       <div className="gui-field" id={uid}>
         <div
+          role="alert"
           className={`gui-alert-notification gui-alert-notification--${props.level || 'default'}`}
         >
           {props.text}

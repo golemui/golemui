@@ -8,11 +8,10 @@
   <input
     type="checkbox"
     [id]="field.uid"
-    [value]="templateData.value ?? false"
     [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
     [attr.aria-readonly]="templateData.readonly"
     [attr.aria-required]="templateData.validator?.required"
-    [attr.aria-checked]="templateData.value ?? false"
     (click)="!templateData.readonly && valueChanged($event)"
     (blur)="adapter.onBlur()"
   />

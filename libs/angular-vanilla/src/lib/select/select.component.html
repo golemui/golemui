@@ -9,8 +9,8 @@
   <select
     [id]="field.uid"
     [value]="templateData.value ?? ''"
-    [disabled]="templateData.disabled"
-    [ariaReadOnly]="templateData.readonly"
+    [disabled]="templateData.disabled || templateData.readonly"
+    [attr.aria-readonly]="templateData.disabled || templateData.readonly"
     (change)="valueChanged($event)"
     (blur)="adapter.onBlur()"
   >

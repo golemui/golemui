@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
@@ -38,6 +38,7 @@ export class AlertElement extends LitElement implements Core.WithField {
     return html`
       <div class="gui-field" id=${this.field.uid}>
         <div
+          role="alert"
           class="gui-alert-notification gui-alert-notification--${this.adapter.templateData.level ||
           'default'}"
         >

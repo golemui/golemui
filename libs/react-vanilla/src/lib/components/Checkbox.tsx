@@ -37,9 +37,8 @@ export function Checkbox(fieldInstance: Core.WithField) {
         <input
           type="checkbox"
           id={uid}
-          checked={value ?? false}
           disabled={isDisabled}
-          aria-checked={value ?? false}
+          readOnly={isReadonly}
           aria-readonly={isReadonly}
           onChange={handleChange}
           onBlur={onBlur}

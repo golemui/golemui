@@ -1,4 +1,4 @@
-import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
+import { allowedNames, kitchenSink, loggerMiddleware, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
@@ -14,7 +14,7 @@ export class FormElement extends LitElement {
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
     loggerMiddleware,
   ];
-  formDef = signin;
+  formDef = kitchenSink;
   formData = signinData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,

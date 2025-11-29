@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
-import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
+import { allowedNames, kitchenSink, loggerMiddleware, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
@@ -20,7 +20,7 @@ export class AppFormPage {
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
     loggerMiddleware,
   ];
-  protected formDef = signin;
+  protected formDef = kitchenSink;
   protected formData = signinData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,

@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { CheckboxProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { LitElement, html, nothing } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
@@ -53,14 +53,12 @@ export class CheckboxElement extends LitElement implements Core.WithField {
         <input
           type="checkbox"
           id=${this.field.uid}
-          checked=${this.adapter.templateData.value ? true : nothing}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
-          @click="${() => this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-readonly=${this.adapter.templateData.readonly || nothing}
-          aria-checked=${this.adapter.templateData.value ? true : nothing}
+          @click="${() => this.valueChanged(event)}"
+          @blur="${() => this.adapter.onBlur()}"
         />
       </div>
 
