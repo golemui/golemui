@@ -1,3 +1,13 @@
+## 0.3.26 (2025-11-29)
+
+### 🩹 Fixes
+
+- force release ([1dc3120](https://github.com/golemui/formforge/commit/1dc3120))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.3.25 (2025-11-27)
 
 ### 🩹 Fixes
