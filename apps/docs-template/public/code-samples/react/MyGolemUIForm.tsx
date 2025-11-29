@@ -1,18 +1,14 @@
-import * as React from '@golemui/react';
-import * as Vanilla from '@golemui/react-vanilla';
-import { use } from 'react';
-
-export function MyGolemUIForm() {
-  const form = use(fetch('/form.json').then((r) => r.json()));
-  const data = use(fetch('/data.json').then((r) => r.json()));
-
+function App() {
+  const formDef = myForm;
+  const validators: ValidatorFn<Validator> = initValidators();
   return (
-    <div>
-      <React.FormComponent
-        formDef={form}
-        data={data}
-        fieldLoader={{ ...Vanilla.vanillaFieldLoaders }}
+    <>
+      <FormComponent
+        formDef={formDef}
+        data={{}}
+        fieldLoader={{ ...vanillaFieldLoaders }}
+        validators={validators}
       />
-    </div>
+    </>
   );
 }
