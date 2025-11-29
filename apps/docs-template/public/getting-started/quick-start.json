@@ -1,8 +1,10 @@
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [{ "uid": "", "kind": "control", "widget": "textinput", "path": "username" }]
-  }
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "textinput",
+      "path": "username"
+    }
+  ]
 }

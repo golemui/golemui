@@ -15,23 +15,18 @@ Let's create a password input with a required Validator. Just add a `validator` 
 
 ```json
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [
-      {
-        "uid": "userPasswordInput",
-        "kind": "control",
-        "widget": "textinput",
-        "path": "user.password",
-        "validator": {
-          "type": "string",
-          "required": true
-        }
+  "form": [
+    {
+      "uid": "userPasswordInput",
+      "kind": "control",
+      "widget": "textinput",
+      "path": "user.password",
+      "validator": {
+        "type": "string",
+        "required": true
       }
-    ]
-  }
+    }
+  ]
 }
 ```
 
@@ -39,26 +34,21 @@ You can add more validators, triggering multiple errors if one or more of the re
 
 ```json
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [
-      {
-        "uid": "userPasswordInput",
-        "kind": "control",
-        "widget": "textinput",
-        "path": "user.password",
-        "validator": {
-          "type": "string",
-          "required": true,
-          "minLength": 8,
-          "maxLength": 20,
-          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
-        }
+  "form": [
+    {
+      "uid": "userPasswordInput",
+      "kind": "control",
+      "widget": "textinput",
+      "path": "user.password",
+      "validator": {
+        "type": "string",
+        "required": true,
+        "minLength": 8,
+        "maxLength": 20,
+        "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
       }
-    ]
-  }
+    }
+  ]
 }
 ```
 
