@@ -5,6 +5,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
+import { repeat } from 'lit-html/directives/repeat.js';
 
 @customElement('gui-accordion')
 export class AccordionElement extends LitElement implements Core.WithField {
@@ -60,29 +61,41 @@ export class AccordionElement extends LitElement implements Core.WithField {
 
     return html`
       <div class="gui-field" id=${this.field.uid}>
-        ${this.adapter.templateData.sections.map((section: any, index: number) => {
-          const sectionContent = this.activeSections[section.uid]
-            ? html`<section class="gui-field" role="region">
-                <gui-field .field=${this.getChild(section.uid)}></gui-field>
-              </section>`
-            : nothing;
+        ${this.adapter.templateData.sections
+          ? repeat(
+              this.adapter.templateData.sections,
+              (section: any) => section.uid,
+              (section: any) => {
+                const sectionContent = this.activeSections[section.uid]
+                  ? html`<section
+                      class="gui-field"
+                      role="region"
+                      id=${`accordion_section_${section.uid}`}
+                      aria-labelledby=${`accordion_button_${section.uid}`}
+                    >
+                      <gui-field .field=${this.getChild(section.uid)}></gui-field>
+                    </section>`
+                  : nothing;
 
-          return html`<div class="gui-accordion__section">
-            <button
-              type="button"
-              tabindex=${index}
-              class=${{
-                active: this.activeSections[section.uid],
-              }}
-              aria-expanded=${this.activeSections[section.uid]}
-              @click=${() => this.onClickButton(section.uid)}
-            >
-              ${section.label}<span class="gui-accordion__icon"></span>
-            </button>
+                return html`<div class="gui-accordion__section">
+                  <button
+                    type="button"
+                    class=${{
+                      active: this.activeSections[section.uid],
+                    }}
+                    id=${`accordion_button_${section.uid}`}
+                    aria-controls=${`accordion_section_${section.uid}`}
+                    aria-expanded=${this.activeSections[section.uid] ? 'true' : 'false'}
+                    @click=${() => this.onClickButton(section.uid)}
+                  >
+                    ${section.label}<span class="gui-accordion__icon"></span>
+                  </button>
 
-            ${sectionContent}
-          </div>`;
-        })}
+                  ${sectionContent}
+                </div>`;
+              },
+            )
+          : nothing}
       </div>
     `;
   }

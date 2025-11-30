@@ -12,13 +12,13 @@ export function Checkbox(fieldInstance: Core.WithField) {
     validator,
     errors,
     value,
-    isTouched,
     isDisabled,
     isReadonly,
     label,
     onValueChanged,
     onBlur,
     props,
+    isTouched,
   } = useControlField<boolean, CheckboxProps>(field);
 
   const handleChange = useCallback(
@@ -45,15 +45,14 @@ export function Checkbox(fieldInstance: Core.WithField) {
         <input
           type="checkbox"
           id={uid}
-          checked={value ?? false}
           disabled={isDisabled}
-          aria-checked={value ?? false}
+          readOnly={isReadonly}
           aria-readonly={isReadonly}
           onChange={handleChange}
           onBlur={onBlur}
         />
       </div>
-      {showErrors && <Errors errors={errors} />}
+      {showErrors && <Errors errors={errors} uid={uid} />}
     </div>
   );
 }

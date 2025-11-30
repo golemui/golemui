@@ -2,15 +2,19 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { TabsProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, queryAll } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-tabs')
 export class TabsElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
+
+  @queryAll('button[role="tab"]')
+  tabButtons!: HTMLButtonElement[];
+
   @property({ type: String }) activeTab = '';
 
   @consume({ context: Lit.formContext })
@@ -35,13 +39,46 @@ export class TabsElement extends LitElement implements Core.WithField {
     this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
 
     this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+      this.adapter.templateDataChanged$.subscribe(() => {
+        this.requestUpdate();
+      }),
     );
   }
 
   onClickTab(uid: string) {
     this.activeTab = uid;
     this.requestUpdate();
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    const tabs = (this.field.props as TabsProps).tabs;
+    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
+    const tabButtons = Array.from(this.tabButtons);
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        if (currentIndex > 0) {
+          this.activeTab = tabs[currentIndex - 1].uid;
+          tabButtons[currentIndex - 1].focus();
+        }
+        break;
+      case 'ArrowRight':
+        if (currentIndex < tabs.length - 1) {
+          this.activeTab = tabs[currentIndex + 1].uid;
+          tabButtons[currentIndex + 1].focus();
+        }
+        break;
+      case 'Home':
+        this.activeTab = tabs[0].uid;
+        tabButtons[0].focus();
+        break;
+      case 'End':
+        this.activeTab = tabs[tabs.length - 1].uid;
+        tabButtons[tabs.length - 1].focus();
+        break;
+      default:
+        return;
+    }
   }
 
   override render() {
@@ -52,27 +89,40 @@ export class TabsElement extends LitElement implements Core.WithField {
     );
 
     return html`<nav class="gui-field gui-field--horizontal" role="tablist" id=${this.field.uid}>
-        ${this.adapter.templateData.tabs.map(
-          (tab: any, index: number) => html`
-            <a
-              role="tab"
-              tabindex=${index}
-              class=${classMap({ active: tab.uid === this.activeTab })}
-              @click=${() => this.onClickTab(tab.uid)}
-              @keydown=${() => this.onClickTab(tab.uid)}
-            >
-              ${tab.label}
-            </a>
-          `,
-        )}
+        ${this.adapter.templateData.tabs
+          ? repeat(
+              this.adapter.templateData.tabs,
+              (tab, index) => html`
+                <button
+                  type="button"
+                  role="tab"
+                  tabindex=${tab.uid === this.activeTab ? nothing : -1}
+                  id=${`tab_${this.field.uid}_${index}`}
+                  aria-controls=${`tabpanel_${this.field.uid}_${index}`}
+                  aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
+                  class=${classMap({ active: tab.uid === this.activeTab })}
+                  @click=${() => this.onClickTab(tab.uid)}
+                  @keydown=${(event: KeyboardEvent) => this.onKeyDown(event)}
+                >
+                  ${tab.label}
+                </button>
+              `,
+            )
+          : nothing}
       </nav>
-      <section role="tabpanel">
-        ${repeat(
-          [activeSection],
-          (section) => section?.uid,
-          (section) => html`<gui-field .field=${section}></gui-field>`,
-        )}
-      </section> `;
+      ${repeat(
+        [activeSection],
+        (section) => section?.uid,
+        (section, index) =>
+          html`<section
+            role="tabpanel"
+            tabindex="0"
+            id=${`tabpanel_${this.field.uid}_${index}`}
+            aria-labeledby=${`tab_${this.field.uid}_${index}`}
+          >
+            <gui-field .field=${section}></gui-field>
+          </section>`,
+      )}`;
   }
 
   override disconnectedCallback() {

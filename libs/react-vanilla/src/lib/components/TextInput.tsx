@@ -54,6 +54,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           onInput={handleChange}
           onBlur={onBlur}
           aria-invalid={showErrors}
+          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
           aria-required={validator?.required}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
@@ -63,7 +64,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           ></span>
         )}
       </div>
-      {showErrors && <Errors errors={errors} />}
+      {showErrors && <Errors errors={errors} uid={uid} />}
     </div>
   );
 }

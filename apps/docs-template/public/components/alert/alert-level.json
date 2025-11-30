@@ -1,54 +1,49 @@
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [
-      {
-        "uid": "",
-        "kind": "display",
-        "widget": "alert",
-        "props": {
-          "text": "Default level",
-          "level": "default"
-        }
-      },
-      {
-        "uid": "",
-        "kind": "display",
-        "widget": "alert",
-        "props": {
-          "text": "Info level",
-          "level": "info"
-        }
-      },
-      {
-        "uid": "",
-        "kind": "display",
-        "widget": "alert",
-        "props": {
-          "text": "Success level",
-          "level": "success"
-        }
-      },
-      {
-        "uid": "",
-        "kind": "display",
-        "widget": "alert",
-        "props": {
-          "text": "Warning level",
-          "level": "warning"
-        }
-      },
-      {
-        "uid": "",
-        "kind": "display",
-        "widget": "alert",
-        "props": {
-          "text": "Error level",
-          "level": "error"
-        }
+  "form": [
+    {
+      "uid": "",
+      "kind": "display",
+      "widget": "alert",
+      "props": {
+        "text": "Default level",
+        "level": "default"
       }
-    ]
-  }
+    },
+    {
+      "uid": "",
+      "kind": "display",
+      "widget": "alert",
+      "props": {
+        "text": "Info level",
+        "level": "info"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "display",
+      "widget": "alert",
+      "props": {
+        "text": "Success level",
+        "level": "success"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "display",
+      "widget": "alert",
+      "props": {
+        "text": "Warning level",
+        "level": "warning"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "display",
+      "widget": "alert",
+      "props": {
+        "text": "Error level",
+        "level": "error"
+      }
+    }
+  ]
 }

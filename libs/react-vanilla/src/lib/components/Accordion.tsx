@@ -35,7 +35,12 @@ export function Accordion(fieldInstance: Core.WithField) {
       const isActiveSection = activeSections[uid];
 
       return isActiveSection && child ? (
-        <section className="gui-field" role="region">
+        <section
+          className="gui-field"
+          role="region"
+          id={`accordion_section_${uid}`}
+          aria-labelledby={`accordion_button_${uid}`}
+        >
           <FieldRenderer field={child} />
         </section>
       ) : null;
@@ -45,11 +50,12 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   const renderAccordion = useCallback(() => {
     return props.sections.map((section, index) => (
-      <div className="gui-accordion__section" key={`${'accordion-section-' + section.uid}`}>
+      <div className="gui-accordion__section" key={`${'accordion_section_' + section.uid}`}>
         <button
           type="button"
-          tabIndex={index}
-          aria-expanded={activeSections[section.uid]}
+          id={`accordion_button_${section.uid}`}
+          aria-controls={`accordion_section_${section.uid}`}
+          aria-expanded={activeSections[section.uid] ? 'true' : 'false'}
           className={activeSections[section.uid] ? 'active' : ''}
           onClick={() => onClickButton(section.uid)}
         >

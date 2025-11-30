@@ -1,48 +1,43 @@
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [
-      {
-        "uid": "",
-        "kind": "control",
-        "widget": "repeater",
-        "path": "users",
-        "defaultValue": [
-          {
-            "firstName": "John",
-            "lastName": "Doe"
-          },
-          {
-            "firstName": "Jane",
-            "lastName": "Doe"
-          }
-        ],
-        "props": {
-          "addLabel": "Add new developer",
-          "removeLabel": "Remove developer",
-          "template": {
-            "uid": "",
-            "kind": "layout",
-            "widget": "stack",
-            "children": [
-              {
-                "uid": "",
-                "kind": "control",
-                "widget": "textinput",
-                "path": "users.items.firstName"
-              },
-              {
-                "uid": "",
-                "kind": "control",
-                "widget": "textinput",
-                "path": "users.items.lastName"
-              }
-            ]
-          }
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "repeater",
+      "path": "users",
+      "defaultValue": [
+        {
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        {
+          "firstName": "Jane",
+          "lastName": "Doe"
+        }
+      ],
+      "props": {
+        "addLabel": "Add new developer",
+        "removeLabel": "Remove developer",
+        "template": {
+          "uid": "",
+          "kind": "layout",
+          "widget": "stack",
+          "children": [
+            {
+              "uid": "",
+              "kind": "control",
+              "widget": "textinput",
+              "path": "users.items.firstName"
+            },
+            {
+              "uid": "",
+              "kind": "control",
+              "widget": "textinput",
+              "path": "users.items.lastName"
+            }
+          ]
         }
       }
-    ]
-  }
+    }
+  ]
 }

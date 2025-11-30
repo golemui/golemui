@@ -2,7 +2,7 @@
   .gui-tabs {
     margin: var(--gui-space-gap) 0;
 
-    a[role='tab'] {
+    button[role='tab'] {
       display: inline-block;
       padding: var(--gui-padding);
       border: 1px solid var(--gui-color-border);

@@ -1,47 +1,42 @@
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [
-      {
-        "uid": "",
-        "kind": "control",
-        "widget": "repeater",
-        "path": "users",
-        "defaultValue": [
-          {
-            "firstName": "John",
-            "lastName": "Doe"
-          },
-          {
-            "firstName": "Jane",
-            "lastName": "Doe"
-          }
-        ],
-        "props": {
-          "limit": 2,
-          "template": {
-            "uid": "",
-            "kind": "layout",
-            "widget": "stack",
-            "children": [
-              {
-                "uid": "",
-                "kind": "control",
-                "widget": "textinput",
-                "path": "users.items.firstName"
-              },
-              {
-                "uid": "",
-                "kind": "control",
-                "widget": "textinput",
-                "path": "users.items.lastName"
-              }
-            ]
-          }
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "repeater",
+      "path": "users",
+      "defaultValue": [
+        {
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        {
+          "firstName": "Jane",
+          "lastName": "Doe"
+        }
+      ],
+      "props": {
+        "limit": 2,
+        "template": {
+          "uid": "",
+          "kind": "layout",
+          "widget": "stack",
+          "children": [
+            {
+              "uid": "",
+              "kind": "control",
+              "widget": "textinput",
+              "path": "users.items.firstName"
+            },
+            {
+              "uid": "",
+              "kind": "control",
+              "widget": "textinput",
+              "path": "users.items.lastName"
+            }
+          ]
         }
       }
-    ]
-  }
+    }
+  ]
 }

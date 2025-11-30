@@ -1,19 +1,14 @@
 {
-  "form": {
-    "uid": "",
-    "kind": "layout",
-    "widget": "stack",
-    "children": [
-      {
-        "uid": "",
-        "kind": "control",
-        "widget": "textinput",
-        "path": "listName",
-        "label": "First Name",
-        "props": {
-          "placeholder": "Enter your first name"
-        }
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "textinput",
+      "path": "listName",
+      "label": "First Name",
+      "props": {
+        "placeholder": "Enter your first name"
       }
-    ]
-  }
+    }
+  ]
 }

@@ -64,11 +64,10 @@ export class CheckboxElement extends LitElement implements Core.WithField {
           checked=${this.adapter.templateData.value ?? nothing}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
-          @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-readonly=${this.adapter.templateData.readonly || nothing}
-          aria-checked=${this.adapter.templateData.value ? true : nothing}
+          @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
+          @blur="${() => this.adapter.onBlur()}"
         />
       </div>
 

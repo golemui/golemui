@@ -5,8 +5,9 @@
     <div class="gui-accordion__section">
       <button
         type="button"
-        [tabindex]="$index"
-        [attr.aria-expanded]="activeSections[section.uid]"
+        [id]="'accordion_button_' + section.uid"
+        [attr.aria-controls]="'accordion_section_' + section.uid"
+        [attr.aria-expanded]="activeSections[section.uid] ? 'true' : 'false'"
         [class.active]="activeSections[section.uid]"
         (click)="onClickButton(section.uid)"
       >
@@ -14,7 +15,12 @@
       </button>
 
       @if (activeSections[section.uid]) {
-        <section class="gui-field" role="region">
+        <section
+          class="gui-field"
+          role="region"
+          [id]="'accordion_section_' + section.uid"
+          [attr.aria-labelledby]="'accordion_button_' + section.uid"
+        >
           <ng-container guiField [field]="getChild(section.uid)" />
         </section>
       }
