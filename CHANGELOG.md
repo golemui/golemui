@@ -1,3 +1,20 @@
+## 0.5.0 (2025-11-30)
+
+### 🚀 Features
+
+- add keyboard navigation to tabs component ([ec0ea15](https://github.com/golemui/formforge/commit/ec0ea15))
+- add aria to validation messages ([e9e1c7a](https://github.com/golemui/formforge/commit/e9e1c7a))
+- **aria:** add aria to validator messages ([91935a3](https://github.com/golemui/formforge/commit/91935a3))
+
+### 🩹 Fixes
+
+- add field uid to tabs ids and aria ([ae4ae07](https://github.com/golemui/formforge/commit/ae4ae07))
+- **lit:** use html instead of innerHTML ([6628654](https://github.com/golemui/formforge/commit/6628654))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.4.0 (2025-11-30)
 
 ### 🚀 Features

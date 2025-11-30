@@ -1,3 +1,13 @@
+## 0.5.0 (2025-11-30)
+
+### 🚀 Features
+
+- add keyboard navigation to tabs component ([ec0ea15](https://github.com/golemui/formforge/commit/ec0ea15))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.4.0 (2025-11-30)
 
 ### 🚀 Features
