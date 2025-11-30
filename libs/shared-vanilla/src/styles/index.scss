@@ -4,10 +4,14 @@
 // Form container
 @use 'form';
 
+// Global field styles
+@use 'field';
+
 // Control Fields
 @use 'textinput';
 @use 'repeater';
 @use 'checkbox';
+@use 'select';
 
 // Layout Fields
 @use 'stack';

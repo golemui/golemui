@@ -3,6 +3,7 @@ import { defineForm } from '@golemui/core';
 export const kitchenSink = defineForm({
   states: {
     limitReached: '$form.users?.length === 5',
+    hasSubregion: `!!$form.subregion`,
   },
   form: [
     {
@@ -26,17 +27,61 @@ export const kitchenSink = defineForm({
           { label: 'Repeater Component', uid: 'tab3' },
           { label: 'Checkbox Component', uid: 'tab4' },
           { label: 'Accordion Layout', uid: 'tab5' },
+          { label: 'Textinput Component', uid: 'tab6' },
+          { label: 'Select Component', uid: 'tab7' },
         ],
       },
       children: [
         {
           uid: 'tab1',
-          kind: 'display',
-          widget: 'alert',
-          props: {
-            text: 'Some fields need your attention',
-            level: 'warning',
-          },
+          kind: 'layout',
+          widget: 'stack',
+          children: [
+            {
+              uid: '',
+              kind: 'display',
+              widget: 'alert',
+              props: {
+                text: 'Some fields need your attention',
+                level: 'warning',
+              },
+            },
+            {
+              uid: '',
+              kind: 'display',
+              widget: 'alert',
+              props: {
+                text: 'Some fields need your attention',
+                level: 'success',
+              },
+            },
+            {
+              uid: '',
+              kind: 'display',
+              widget: 'alert',
+              props: {
+                text: 'Some fields need your attention',
+                level: 'error',
+              },
+            },
+            {
+              uid: '',
+              kind: 'display',
+              widget: 'alert',
+              props: {
+                text: 'Some fields need your attention',
+                level: 'info',
+              },
+            },
+            {
+              uid: '',
+              kind: 'display',
+              widget: 'alert',
+              props: {
+                text: 'Some fields need your attention',
+              },
+            },
+          ],
         },
         {
           uid: 'tab2',
@@ -110,8 +155,27 @@ export const kitchenSink = defineForm({
               widget: 'checkbox',
               label: 'Create new account?',
               path: 'isNewUser',
+              props: {},
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'checkbox',
+              label: 'Create new account?',
+              path: 'isNewUser',
               props: {
                 checkboxPosition: 'left',
+                hint: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium.',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'checkbox',
+              label: 'Create new account?',
+              path: 'isNewUser',
+              props: {
+                hint: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium.',
               },
             },
           ],
@@ -188,6 +252,124 @@ export const kitchenSink = defineForm({
                   path: 'shoppingCart.billingState',
                 },
               ],
+            },
+          ],
+        },
+        {
+          uid: 'tab6',
+          kind: 'layout',
+          widget: 'stack',
+          children: [
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'textinput',
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'textinput',
+              props: {
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'textinput',
+              props: {
+                hint: 'This is a hint',
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'textinput',
+              props: {
+                icon: 'material-icons material-icons-phone_callback',
+                hint: 'This is a hint',
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'textinput',
+              props: {
+                icon: 'material-icons material-icons-phone_callback',
+                iconPosition: 'right',
+                hint: 'This is a hint',
+                placeholder: 'Please enter your phone number',
+              },
+            },
+          ],
+        },
+        {
+          uid: 'tab7',
+          kind: 'layout',
+          widget: 'stack',
+          children: [
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'greeting',
+              label: 'Greeting',
+              readonly: true,
+              props: {
+                icon: 'material-icons material-icons-phone_callback',
+                hint: 'This is a hint',
+                options: ['hello', 'bye'],
+                placeholder: 'Please, select an option',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'wrongGreeting',
+              props: {
+                icon: 'material-icons material-icons-phone_callback',
+                iconPosition: 'right',
+                hint: 'This is a hint',
+                options: ['hello', 'bye'],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'greetingIndex',
+              props: {
+                options: [
+                  { label: 'hello.1', value: 1 },
+                  { label: 'bye.2', value: 2 },
+                ],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'subregion',
+              label: 'Country subregion',
+              on: {
+                load: 'getSubregions',
+                change: 'getCountries',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'country',
+              include: { in: ['hasSubregion'] },
             },
           ],
         },

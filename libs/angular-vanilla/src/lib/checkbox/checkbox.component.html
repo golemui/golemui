@@ -1,14 +1,17 @@
 @let templateData = adapter.templateData();
 
-<label [for]="field.uid">{{
-  templateData.label + (templateData.validator?.required ? ' *' : '')
-}}</label>
+<label [for]="field.uid">
+  {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
+  @if (templateData.hint) {
+  <div class="gui-field-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
+  }
+</label>
 
 <div class="gui-field gui-field--horizontal">
   <input
     type="checkbox"
     [id]="field.uid"
-    [value]="templateData.value ?? false"
+    [checked]="templateData.value ? true : undefined"
     [disabled]="templateData.disabled"
     [attr.aria-readonly]="templateData.readonly"
     [attr.aria-required]="templateData.validator?.required"

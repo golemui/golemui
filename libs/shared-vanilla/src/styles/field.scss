@@ -1,0 +1,32 @@
+.gui-form {
+  .gui-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    column-gap: var(--gui-space-gap--inner);
+    row-gap: var(--gui-space-gap--inner);
+
+    &.gui-field--horizontal {
+      flex-direction: row;
+    }
+
+    &-icon {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &--right {
+        right: 0;
+      }
+    }
+
+    &-hint {
+      font-size: var(--gui-font-size--small);
+      color: var(--gui-color-fg--secondary);
+    }
+  }
+}

@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+// Custom icons
+.material-icons {
+  font-family: 'Material Icons';
+  font-size: medium;
+
+  &-phone_callback::before {
+    content: 'phone_callback';
+  }
+
+  &-alternate_email::before {
+    content: 'alternate_email';
+  }
+}
