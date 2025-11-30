@@ -4,7 +4,7 @@
 <label [for]="field.uid">
   {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
   @if (templateData.hint) {
-    <div class="gui-textinput__hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
+    <div class="gui-field-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
   }
 </label>
 <div class="gui-field">
@@ -28,8 +28,9 @@
 
   @if (templateData.icon) {
     <span
-      class="gui-textinput__icon"
-      [class]="{ 'gui-textinput__icon-right': templateData.iconPosition === 'right' }"
+      class="gui-field-icon"
+      [class.gui-field-icon--right]="templateData.iconPosition === 'right'"
+      [ngClass]="templateData.icon"
     ></span>
   }
 </div>

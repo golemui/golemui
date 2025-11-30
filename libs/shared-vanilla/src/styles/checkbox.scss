@@ -1,7 +1,7 @@
 .gui-form {
   .gui-checkbox {
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 0.5rem;
 
     &.gui-checkbox--left {
@@ -19,6 +19,7 @@
       border-radius: var(--gui-checkbox-radius);
       accent-color: var(--gui-color-primary);
       appearance: none;
+      margin-top: 1px;
 
       &::before {
         content: '';

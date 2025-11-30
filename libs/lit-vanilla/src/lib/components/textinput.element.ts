@@ -40,7 +40,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     // Hint
     const hint = this.adapter.templateData.hint
-      ? html`<div class="gui-textinput__hint" id=${`${this.field.uid}_hint`}>
+      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
           ${this.adapter.templateData.hint}
         </div>`
       : html``;
@@ -57,8 +57,8 @@ export class TextinputElement extends LitElement implements Core.WithField {
         this.adapter.templateData.iconPosition === 'right';
 
       const classes = {
-        'gui-textinput__icon': true,
-        'gui-textinput__icon--right': this.adapter.templateData.iconPosition === 'right',
+        'gui-field-icon': true,
+        'gui-field-icon--right': this.adapter.templateData.iconPosition === 'right',
         [this.adapter.templateData.icon]: true,
       };
       icon = html`<span class=${classMap(classes)}></span>`;

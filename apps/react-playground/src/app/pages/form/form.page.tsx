@@ -1,6 +1,6 @@
 import styles from './form.page.module.scss';
 
-import { allowedNames, loggerMiddleware, signin, signinData } from '@golemui/apps-shared';
+import { allowedNames, kitchenSink, loggerMiddleware, signinData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
@@ -19,7 +19,7 @@ const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = signin;
+const formDef = kitchenSink;
 const formData = signinData;
 const middlewares = [
   Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
