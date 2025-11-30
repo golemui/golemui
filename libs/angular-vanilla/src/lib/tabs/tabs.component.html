@@ -7,8 +7,8 @@
       type="button"
       role="tab"
       [tabindex]="tab.uid === activeTab ? null : -1"
-      [id]="'tab_' + i"
-      [attr.aria-controls]="'tabpanel_' + i"
+      [id]="'tab_' + field.uid + '_' + i"
+      [attr.aria-controls]="'tabpanel_' + field.uid + '_' + i"
       [attr.aria-selected]="tab.uid === activeTab ? 'true' : 'false'"
       [class.active]="tab.uid === activeTab"
       (click)="onClickTab(tab.uid)"
@@ -24,8 +24,8 @@
     <section
       role="tabpanel"
       tabindex="0"
-      [id]="'tabpanel_' + i"
-      [attr.aria-labelledby]="'tab_' + i"
+      [id]="'tabpanel_' + field.uid + '_' + i"
+      [attr.aria-labelledby]="'tab_' + field.uid + '_' + i"
     >
       <ng-container guiField [field]="child" />
     </section>

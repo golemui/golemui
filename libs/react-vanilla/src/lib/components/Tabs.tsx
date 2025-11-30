@@ -43,15 +43,15 @@ export function Tabs(fieldInstance: Core.WithField) {
     return props.tabs.map((tab, index) => {
       return (
         <button
-          key={`tab_${tab.uid}`}
+          key={`tab_${field.uid}_${tab.uid}`}
           ref={(el) => {
             tabRefs.current[index] = el!;
           }}
           type="button"
           role="tab"
           tabIndex={tab.uid === activeTab ? undefined : -1}
-          id={`tab_${index}`}
-          aria-controls={`tabpanel_${index}`}
+          id={`tab_${field.uid}_${index}`}
+          aria-controls={`tabpanel_${field.uid}_${index}`}
           aria-selected={tab.uid === activeTab ? 'true' : 'false'}
           className={`${tab.uid === activeTab ? 'active' : ''}`}
           onClick={() => setActiveTab(tab.uid)}
@@ -68,11 +68,11 @@ export function Tabs(fieldInstance: Core.WithField) {
       .filter((field) => field.uid === activeTab)
       .map((field, index) => (
         <section
-          key={`tabpanel_${field.uid}`}
+          key={`tabpanel_${field.uid}_${field.uid}`}
           role="tabpanel"
           tabIndex={0}
-          id={`tabpanel_${index}`}
-          aria-labelledby={`tab_${index}`}
+          id={`tabpanel_${field.uid}_${index}`}
+          aria-labelledby={`tab_${field.uid}_${index}`}
         >
           <FieldRenderer key={field.uid} field={field} />
         </section>

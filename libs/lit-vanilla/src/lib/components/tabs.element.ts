@@ -97,8 +97,8 @@ export class TabsElement extends LitElement implements Core.WithField {
                   type="button"
                   role="tab"
                   tabindex=${tab.uid === this.activeTab ? nothing : -1}
-                  id=${`tab_${index}`}
-                  aria-controls=${`tabpanel_${index}`}
+                  id=${`tab_${this.field.uid}_${index}`}
+                  aria-controls=${`tabpanel_${this.field.uid}_${index}`}
                   aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
                   class=${classMap({ active: tab.uid === this.activeTab })}
                   @click=${() => this.onClickTab(tab.uid)}
@@ -117,8 +117,8 @@ export class TabsElement extends LitElement implements Core.WithField {
           html`<section
             role="tabpanel"
             tabindex="0"
-            id=${`tabpanel_${index}`}
-            aria-labeledby=${`tab_${index}`}
+            id=${`tabpanel_${this.field.uid}_${index}`}
+            aria-labeledby=${`tab_${this.field.uid}_${index}`}
           >
             <gui-field .field=${section}></gui-field>
           </section>`,
