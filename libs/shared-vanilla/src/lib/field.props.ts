@@ -14,14 +14,15 @@ export type TextinputProps = {
 };
 
 export type NumberinputProps = {
-  hint?: string;
   placeholder?: string;
+  hint?: string;
   icon?: string;
   iconPosition?: 'left' | 'right';
 };
 
 export type CheckboxProps = {
   checkboxPosition?: 'left' | 'right';
+  hint?: string;
 };
 
 export type AlertProps = {
@@ -42,6 +43,9 @@ export type Option = {
 };
 
 export type SelectProps = {
+  hint?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
   options: Option[];
   placeholder?: string;
   labelField?: string;

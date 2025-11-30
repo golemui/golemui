@@ -37,6 +37,13 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
+    // Hint
+    const hint = this.adapter.templateData.hint
+      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
+          ${this.adapter.templateData.hint}
+        </div>`
+      : html``;
+
     if (this.adapter.templateData.checkboxPosition === 'left') {
       this.classList.add('gui-checkbox--left');
     } else if (this.classList.contains('gui-checkbox--left')) {
@@ -47,17 +54,19 @@ export class CheckboxElement extends LitElement implements Core.WithField {
       <label for=${this.field.uid}>
         ${this.adapter.templateData.label +
         (this.adapter.templateData.validator?.required ? ' *' : '')}
+        ${hint}
       </label>
 
-      <div class="gui-field">
+      <div class="gui-field gui-field--horizontal">
         <input
           type="checkbox"
           id=${this.field.uid}
+          checked=${this.adapter.templateData.value ?? nothing}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-readonly=${this.adapter.templateData.readonly || nothing}
-          @click="${() => this.valueChanged(event)}"
+          @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
         />
       </div>

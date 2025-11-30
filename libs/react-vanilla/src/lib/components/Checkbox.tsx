@@ -26,12 +26,20 @@ export function Checkbox(fieldInstance: Core.WithField) {
     [onValueChanged, isReadonly],
   );
 
+  const hint = props.hint;
   const checkboxPosition = props.checkboxPosition;
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
     <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
-      <label htmlFor={uid}>{label + (validator?.required ? ' *' : '')}</label>
+      <label htmlFor={uid}>
+        {label + (validator?.required ? ' *' : '')}
+        {hint && (
+          <div className="gui-field-hint" id={`${uid}_hint`}>
+            {hint}
+          </div>
+        )}
+      </label>
 
       <div className="gui-field gui-field--horizontal">
         <input

@@ -1,13 +1,18 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-field">
-  @if (templateData.label) {
-    <label [for]="field.uid">{{
-      templateData.label + (templateData.validator?.required ? ' *' : '')
-    }}</label>
+<label [for]="field.uid">
+  {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
+  @if (templateData.hint) {
+    <div class="gui-field-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
   }
+</label>
+<div class="gui-field">
   <select
     [id]="field.uid"
+    [class]="{
+      'gui-select--icon': templateData.icon,
+      'gui-select--icon-right': templateData.iconPosition === 'right',
+    }"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled || templateData.readonly"
     [attr.aria-readonly]="templateData.disabled || templateData.readonly"
@@ -31,4 +36,12 @@
       }
     }
   </select>
+
+  @if (templateData.icon) {
+    <span
+      class="gui-field-icon"
+      [class.gui-field-icon--right]="templateData.iconPosition === 'right'"
+      [ngClass]="templateData.icon"
+    ></span>
+  }
 </div>

@@ -1,6 +1,24 @@
 .gui-form {
-  .gui-textinput {
+  .gui-select {
     display: block;
+
+    .gui-field {
+      &-icon--right {
+        right: 2.5rem;
+      }
+      &::after {
+        content: '';
+        border: solid;
+        border-width: 0 2px 2px 0;
+        height: 0.5rem;
+        pointer-events: none;
+        position: absolute;
+        right: 1.2rem;
+        top: 50%;
+        width: 0.5rem;
+        transform: translateY(-60%) rotate(45deg);
+      }
+    }
 
     label {
       display: flex;
@@ -10,7 +28,8 @@
       font-weight: 500;
     }
 
-    input {
+    select {
+      appearance: none;
       padding: var(--gui-padding);
       border: 1px solid var(--gui-color-border);
       border-radius: var(--gui-radius);
@@ -34,11 +53,11 @@
         }
       }
 
-      &.gui-textinput--icon {
+      &.gui-select--icon {
         padding-left: 2.5rem;
       }
 
-      &.gui-textinput--icon-right {
+      &.gui-select--icon-right {
         padding-left: var(--gui-space-gap);
         padding-right: var(--gui-icon-space-gap);
       }

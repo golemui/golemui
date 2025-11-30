@@ -37,7 +37,7 @@ export function TextInput(fieldInstance: Core.WithField) {
       <label htmlFor={uid}>
         {label + (validator?.required ? ' *' : '')}
         {hint && (
-          <div className="gui-textinput__hint" id={`${uid}_hint`}>
+          <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
           </div>
         )}
@@ -60,7 +60,7 @@ export function TextInput(fieldInstance: Core.WithField) {
         />
         {icon && (
           <span
-            className={`${icon} gui-textinput__icon ${iconPosition === 'right' ? 'gui-textinput__icon--right' : ''}`}
+            className={`${icon} gui-field-icon ${iconPosition === 'right' ? 'gui-field-icon--right' : ''}`}
           ></span>
         )}
       </div>
