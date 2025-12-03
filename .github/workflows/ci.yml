@@ -30,6 +30,7 @@ jobs:
 
       - run: cd docs/template && npm i
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: npx nx run-many -t lint test build --no-cloud
