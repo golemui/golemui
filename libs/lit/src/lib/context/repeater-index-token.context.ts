@@ -1,7 +1,7 @@
 import { createContext } from '@lit/context';
 
 export const repeaterIndexTokenContext =
-  createContext<RepeaterIndexTokenContext>('ffRepeaterIndexContext');
+  createContext<RepeaterIndexTokenContext>('guiRepeaterIndexContext');
 
 export class RepeaterIndexTokenContext {
   index = -1;

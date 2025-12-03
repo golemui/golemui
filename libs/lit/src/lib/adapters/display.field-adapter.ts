@@ -2,7 +2,8 @@ import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const displayFieldContext = createContext<DisplayFieldAdapter<any>>('ffDisplayFieldAdapter');
+export const displayFieldContext =
+  createContext<DisplayFieldAdapter<any>>('guiDisplayFieldAdapter');
 
 export class DisplayFieldAdapter<
   ExtraProps extends Record<string, any>,

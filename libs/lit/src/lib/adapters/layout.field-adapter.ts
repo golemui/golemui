@@ -3,7 +3,7 @@ import { createContext } from '@lit/context';
 import { combineLatest, map, of, takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const layoutContext = createContext<LayoutFieldAdapter<any>>('ffLayoutFieldAdapter');
+export const layoutContext = createContext<LayoutFieldAdapter<any>>('guiLayoutFieldAdapter');
 
 export class LayoutFieldAdapter<
   ExtraProps extends Record<string, any>,
