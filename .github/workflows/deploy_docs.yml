@@ -32,8 +32,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build template
+        run: cd docs/template && npm i && npm run build
+
       - name: Build documentation
-        run: ./build-docs.sh
+        run: cd docs && npm i && npm run build
 
       - name: Add CNAME file
         run: echo "golemui.com" > dist/docs/CNAME
