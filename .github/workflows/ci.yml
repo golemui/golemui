@@ -26,6 +26,10 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
+      - run: cd docs && npm i
+
+      - run: cd docs/template && npm i
+
       - run: npx nx run-many -t lint test build --no-cloud
 
       # Remove this line since it's Nx Cloud specific
