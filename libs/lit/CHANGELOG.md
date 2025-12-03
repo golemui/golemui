@@ -1,3 +1,13 @@
+## 0.6.0 (2025-12-03)
+
+### 🚀 Features
+
+- **lit:** Add select component ([b81344e](https://github.com/golemui/formforge/commit/b81344e))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.5.0 (2025-11-30)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.
