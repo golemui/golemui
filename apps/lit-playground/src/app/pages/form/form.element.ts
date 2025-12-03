@@ -42,10 +42,15 @@ export class FormElement extends LitElement {
   }
 
   protected onFormEvent(event: CustomEvent<Core.FormEvent>) {
-    const evt = event.detail;
-    console.groupCollapsed(`onFormEvent('${evt.name}')`);
-    console.log(evt.data);
-    console.groupEnd();
+    const eventHandler = eventHandlers[event.detail.name as keyof typeof eventHandlers];
+    if (eventHandler) {
+      console.log(`✅ onFormEvent('${event.detail.name}')`);
+      eventHandler(event.detail);
+    } else {
+      console.groupCollapsed(`⚠️ Unhandled - onFormEvent('${event.detail.name}')`);
+      console.log(event.detail.data);
+      console.groupEnd();
+    }
     Promise.resolve().then(() => this.requestUpdate());
   }
 
@@ -68,3 +73,27 @@ export class FormElement extends LitElement {
     `;
   }
 }
+
+const eventHandlers = {
+  async getSubregions(event: Core.FormEvent) {
+    const response = await fetch('/data/subregions.json');
+    const subregions = await response.json();
+    event.callback({
+      type: 'OVERRIDE_FIELD_PROP',
+      payload: { path: 'subregion', prop: 'options', value: subregions },
+    });
+  },
+  async getCountries(event: Core.FormEvent) {
+    const response = await fetch('/data/countries.json');
+    const countries = await response.json();
+    const subregion = event.data['subregion'] as string;
+    event.callback({
+      type: 'OVERRIDE_FIELD_PROP',
+      payload: {
+        path: 'country',
+        prop: 'options',
+        value: countries[subregion.toLowerCase()],
+      },
+    });
+  },
+};
