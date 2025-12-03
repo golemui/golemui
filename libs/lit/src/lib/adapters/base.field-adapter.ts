@@ -52,10 +52,10 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
             {} as ExtraProps,
           );
 
-          templateData = {
+          this.setTemplateData({
             ...templateData,
             ...updatedProps,
-          };
+          });
         }
       });
   }
