@@ -29,6 +29,8 @@ jobs:
       - run: cd docs && npm i
 
       - run: cd docs/template && npm i
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: npx nx run-many -t lint test build --no-cloud
 
