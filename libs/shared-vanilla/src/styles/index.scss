@@ -8,10 +8,11 @@
 @use 'field';
 
 // Control Fields
-@use 'textinput';
-@use 'repeater';
 @use 'checkbox';
+@use 'number';
+@use 'repeater';
 @use 'select';
+@use 'textinput';
 
 // Layout Fields
 @use 'stack';

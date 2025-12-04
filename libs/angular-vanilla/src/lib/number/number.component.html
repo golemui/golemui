@@ -1,0 +1,47 @@
+@let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<label [for]="field.uid">
+  {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
+  @if (templateData.hint) {
+    <div class="gui-field-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
+  }
+</label>
+<div class="gui-field">
+  <input
+    type="number"
+    inputmode="numeric"
+    [id]="field.uid"
+    [class]="{
+      'gui-number--icon': templateData.icon,
+      'gui-number--icon-right': templateData.iconPosition === 'right',
+    }"
+    [value]="templateData.value ?? ''"
+    [disabled]="templateData.disabled"
+    [readOnly]="templateData.readonly"
+    [attr.placeholder]="templateData.placeholder"
+    [attr.step]="templateData.step"
+    (input)="valueChanged($event)"
+    (blur)="adapter.onBlur()"
+    [attr.aria-invalid]="showErrors"
+    [attr.aria-errormessage]="showErrors ? field.uid + '_errors' : undefined"
+    [attr.aria-required]="templateData.validator?.required"
+    [attr.aria-describedby]="templateData.hint ? field.uid + '_hint' : undefined"
+  />
+
+  @if (templateData.icon) {
+    <span
+      class="gui-field-icon"
+      [class.gui-field-icon--right]="templateData.iconPosition === 'right'"
+      [ngClass]="templateData.icon"
+    ></span>
+  }
+</div>
+
+@if (showErrors) {
+  <ul class="gui-validator" [id]="field.uid + '_errors'">
+    @for (error of templateData.errors; track $index) {
+      <li class="gui-validator__error" role="status">{{ error }}</li>
+    }
+  </ul>
+}
