@@ -86,12 +86,6 @@ export class NumberElement extends LitElement implements Core.WithField {
           value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
-          min=${typeof this.adapter.templateData.min === 'number'
-            ? this.adapter.templateData.min
-            : nothing}
-          max=${typeof this.adapter.templateData.max === 'number'
-            ? this.adapter.templateData.max
-            : nothing}
           step=${typeof this.adapter.templateData.step === 'number'
             ? this.adapter.templateData.step
             : nothing}

@@ -8,7 +8,6 @@ import numberJson from '../../../../../public/template/components/number/number.
 import numberPlaceholderJson from '../../../../../public/template/components/number/number-placeholder.json?raw';
 import numberHintJson from '../../../../../public/template/components/number/number-hint.json?raw';
 import numberIconJson from '../../../../../public/template/components/number/number-icon.json?raw';
-import numberMinMaxJson from '../../../../../public/template/components/number/number-min-max.json?raw';
 import numberStepJson from '../../../../../public/template/components/number/number-step.json?raw';
 import numberAnatomyHtml from '../../../../../public/template/components/number/number-anatomy.html?raw';
 export const configJson = 'number.json';
@@ -27,15 +26,13 @@ Number components are [Control Fields](/components-reference/control-fields/over
 
 Use this `props` to customize your Number component.
 
-| prop           | type   | value                                                                                  |
-| -------------- | ------ | -------------------------------------------------------------------------------------- |
-| `placeholder`  | string | A placeholder text to display when the input number has no value                       |
-| `hint`         | string | A description to display below the input number label                                  |
-| `icon`         | string | A css class to display an icon                                                         |
-| `iconPosition` | string | The icon position, possible values are `right` or `left`                               |
-| `min`          | number | Minimum value, this will block the user to set a value below this using the arrow keys |
-| `max`          | number | Maximum value, this will block the user to set a value above this using the arrow keys |
-| `step`         | number | Step value to jump on each keystroke using the arrow keys                              |
+| prop           | type   | value                                                            |
+| -------------- | ------ | ---------------------------------------------------------------- |
+| `placeholder`  | string | A placeholder text to display when the input number has no value |
+| `hint`         | string | A description to display below the input number label            |
+| `icon`         | string | A css class to display an icon                                   |
+| `iconPosition` | string | The icon position, possible values are `right` or `left`         |
+| `step`         | number | Step value to jump on each keystroke using the arrow keys        |
 
 ### Placeholder
 
@@ -68,18 +65,6 @@ Use the property `icon` to add an icon to the `number`. The value of `icon` repr
 <iframe
   src="/template/index.html?form=components/number/number-icon.json"
   title="Number with icon"
-  width="100%"
-  style="height: 208px"
-></iframe>
-
-### Min and Max
-
-Use the properties `min` and `max` to set a minimum and maximum value. This will add the `min` and `max` html attributes to the input, blocking the user to set a value below or above this using the arrow keys. However, if you want to display a validation error you have to add a numeric `validator`.
-
-<Code code={numberMinMaxJson} lang="js" title={configJson} />
-<iframe
-  src="/template/index.html?form=components/number/number-min-max.json"
-  title="Number with minimum and maximum values"
   width="100%"
   style="height: 208px"
 ></iframe>

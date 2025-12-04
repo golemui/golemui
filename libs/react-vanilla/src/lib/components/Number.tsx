@@ -28,8 +28,6 @@ export function NumberInput(fieldInstance: Core.WithField) {
 
   const hint = props.hint;
   const placeholder = props.placeholder;
-  const min = props.min;
-  const max = props.max;
   const step = props.step;
   const icon = props.icon;
   const iconPosition = props.iconPosition;
@@ -54,8 +52,6 @@ export function NumberInput(fieldInstance: Core.WithField) {
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}
-          min={min}
-          max={max}
           step={step}
           placeholder={placeholder ?? undefined}
           onInput={handleChange}

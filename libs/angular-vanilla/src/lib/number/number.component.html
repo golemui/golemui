@@ -20,8 +20,6 @@
     [disabled]="templateData.disabled"
     [readOnly]="templateData.readonly"
     [attr.placeholder]="templateData.placeholder"
-    [attr.min]="templateData.min"
-    [attr.max]="templateData.max"
     [attr.step]="templateData.step"
     (input)="valueChanged($event)"
     (blur)="adapter.onBlur()"
