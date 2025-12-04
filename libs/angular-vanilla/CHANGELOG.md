@@ -1,3 +1,17 @@
+## 0.7.0 (2025-12-04)
+
+### 🚀 Features
+
+- add number control input ([773ac61](https://github.com/golemui/formforge/commit/773ac61))
+
+### 🩹 Fixes
+
+- remove min and max properties ([7d61d68](https://github.com/golemui/formforge/commit/7d61d68))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.6.0 (2025-12-03)
 
 This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
