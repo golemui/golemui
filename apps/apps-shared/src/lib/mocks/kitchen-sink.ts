@@ -435,8 +435,6 @@ export const kitchenSink = defineForm({
               props: {
                 placeholder: 'Please enter your height in meters (min 0 and max 2.5)',
                 step: 0.01,
-                min: 0,
-                max: 2.5,
               },
               validator: { type: 'number', minimum: 0, maximum: 2.5 },
             },
