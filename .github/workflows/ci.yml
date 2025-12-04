@@ -23,8 +23,15 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci --legacy-peer-deps
+
+      - run: cd docs && npm i
+
+      - run: cd docs/template && npm i
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: npx nx run-many -t lint test build --no-cloud
 
