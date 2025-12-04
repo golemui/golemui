@@ -12,10 +12,10 @@ export function Stack(fieldInstance: Core.WithField) {
     return children.map((field) => <FieldRenderer key={field.uid} field={field} />);
   }, [children]);
 
-  const direction = props.direction === 'horizontal' ? 'gui-field--horizontal' : '';
+  const direction = props.direction === 'horizontal' ? 'gui-stack__field--horizontal' : '';
   return (
     <div className="gui-stack">
-      <div className={`gui-field ${direction}`} id={uid}>
+      <div className={`gui-stack__field ${direction}`} id={uid}>
         {renderFields()}
       </div>
     </div>

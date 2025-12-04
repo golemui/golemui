@@ -84,7 +84,7 @@ export function Tabs(fieldInstance: Core.WithField) {
       <nav className={`gui-field gui-field--horizontal`} role="tablist" id={uid}>
         {renderTabs()}
       </nav>
-      <section role="tabpanel">{renderFields()}</section>
+      {renderFields()}
     </div>
   );
 }

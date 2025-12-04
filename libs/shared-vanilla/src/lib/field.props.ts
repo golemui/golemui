@@ -18,6 +18,9 @@ export type NumberinputProps = {
   hint?: string;
   icon?: string;
   iconPosition?: 'left' | 'right';
+  min?: number;
+  max?: number;
+  step?: number;
 };
 
 export type CheckboxProps = {

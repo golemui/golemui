@@ -1,0 +1,29 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "number",
+      "path": "number",
+      "label": "Phone Number",
+      "props": {
+        "icon": "material-icons material-icons-phone_callback",
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "number",
+      "path": "number",
+      "label": "Phone Number",
+      "props": {
+        "icon": "material-icons material-icons-phone_callback",
+        "iconPosition": "right",
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    }
+  ]
+}

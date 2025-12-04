@@ -1,8 +1,8 @@
 @let templateData = adapter.templateData();
 
 <div
-  class="gui-field"
-  [class.gui-field--horizontal]="templateData.direction === 'horizontal'"
+  class="gui-stack__field"
+  [class.gui-stack__field--horizontal]="templateData.direction === 'horizontal'"
   [id]="field.uid"
 >
   @for (child of templateData.children; track child.uid) {

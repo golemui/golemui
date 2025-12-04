@@ -3,5 +3,13 @@
     display: flex;
     flex-direction: column;
     margin: var(--gui-space-gap) 0;
+
+    .gui-stack__field {
+      display: flex;
+      flex-direction: column;
+      margin: var(--gui-space-gap) 0;
+      column-gap: var(--gui-stack-space-gap);
+      row-gap: var(--gui-stack-space-gap);
+    }
   }
 }

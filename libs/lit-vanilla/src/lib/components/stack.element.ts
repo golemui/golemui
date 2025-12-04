@@ -42,7 +42,9 @@ export class StackElement extends LitElement implements Core.WithField {
 
     return html`
       <div
-        class=${classes.horizontal ? 'gui-field gui-field--horizontal' : 'gui-field'}
+        class=${classes.horizontal
+          ? 'gui-stack__field gui-stack__field--horizontal'
+          : 'gui-stack__field'}
         id=${this.field?.uid}
       >
         ${repeat(
