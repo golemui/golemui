@@ -1,4 +1,5 @@
 import * as Core from '@golemui/core';
+import { OptionValue } from './components/select';
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -39,7 +40,7 @@ export type RepeaterProps = {
 
 export type Option = {
   label: string;
-  value: unknown;
+  value: OptionValue;
 };
 
 export type SelectProps = {

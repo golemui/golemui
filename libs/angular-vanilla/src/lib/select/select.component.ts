@@ -2,7 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { createOptionMapper, isOption, isProtoOption, SelectProps } from '@golemui/shared-vanilla';
+import {
+  createOptionMapper,
+  isOption,
+  isOptionValue,
+  isProtoOption,
+  OptionValue,
+  SelectProps,
+} from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
@@ -29,10 +36,10 @@ export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
       if (Array.isArray(opts) && opts.length > 0) {
         if (isOption(opts[0])) {
           // nothing to do
-        } else if (Core.isLiteral(opts[0])) {
+        } else if (isOptionValue(opts[0])) {
           this.adapter.templateData.update((current) => ({
             ...current,
-            options: (current.options as unknown as Core.LiteralValue[]).map((opt) => ({
+            options: (current.options as unknown as OptionValue[]).map((opt) => ({
               label: opt.toString(),
               value: opt,
             })),

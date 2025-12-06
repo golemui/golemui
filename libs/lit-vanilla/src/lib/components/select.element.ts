@@ -1,12 +1,19 @@
-import { customElement, property } from 'lit/decorators.js';
-import { html, LitElement, nothing } from 'lit';
 import * as Core from '@golemui/core';
-import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
-import { createOptionMapper, isOption, isProtoOption, SelectProps } from '@golemui/shared-vanilla';
-import { Subscription } from 'rxjs';
-import { classMap } from 'lit/directives/class-map.js';
+import {
+  createOptionMapper,
+  isOption,
+  isOptionValue,
+  isProtoOption,
+  OptionValue,
+  SelectProps,
+} from '@golemui/shared-vanilla';
+import { consume, provide } from '@lit/context';
+import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { Subscription } from 'rxjs';
 
 @customElement('gui-select')
 export class SelectElement extends LitElement implements Core.WithField {
@@ -44,15 +51,13 @@ export class SelectElement extends LitElement implements Core.WithField {
     if (Array.isArray(opts) && opts.length > 0) {
       if (isOption(opts[0])) {
         // nothing to do
-      } else if (Core.isLiteral(opts[0])) {
+      } else if (isOptionValue(opts[0])) {
         this.adapter.templateData = {
           ...this.adapter.templateData,
-          options: (this.adapter.templateData.options as unknown as Core.LiteralValue[]).map(
-            (opt) => ({
-              label: opt.toString(),
-              value: opt,
-            }),
-          ),
+          options: (this.adapter.templateData.options as unknown as OptionValue[]).map((opt) => ({
+            label: opt.toString(),
+            value: opt,
+          })),
         };
       } else if (isProtoOption(opts[0], this.field.props as SelectProps)) {
         const optionMapper = createOptionMapper(opts[0], this.field.props as SelectProps);

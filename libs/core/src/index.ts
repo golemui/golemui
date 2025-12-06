@@ -24,4 +24,3 @@ export * from './lib/utils/object';
 export * from './lib/utils/random';
 export * from './lib/utils/repeater';
 export * from './lib/utils/types';
-export * from './lib/utils/value';
