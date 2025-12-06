@@ -7,6 +7,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<React.ComponentType<Core.Wit
   // CONTROLS
   textinput: async () => (await import('./components/TextInput')).TextInput,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
+  select: async () => (await import('./components/Select')).Select,
 
   // REPEATER
   repeater: async () => (await import('./components/Repeater')).Repeater,
