@@ -4,11 +4,12 @@ description: A Textinput component to allow user to enter string chains
 ---
 
 import { Code } from '@astrojs/starlight/components';
-import textinputJson from '../../../../../public/docs-template/components/textinput/textinput.json?raw';
-import textinputPlaceholderJson from '../../../../../public/docs-template/components/textinput/textinput-placeholder.json?raw';
-import textinputHintJson from '../../../../../public/docs-template/components/textinput/textinput-hint.json?raw';
-import textinputIconJson from '../../../../../public/docs-template/components/textinput/textinput-icon.json?raw';
-import textinputAnatomyHtml from '../../../../../public/docs-template/components/textinput/textinput-anatomy.html?raw';
+import textinputJson from '../../../../../public/template/components/textinput/textinput.json?raw';
+import textinputPlaceholderJson
+from '../../../../../public/template/components/textinput/textinput-placeholder.json?raw';
+import textinputHintJson from '../../../../../public/template/components/textinput/textinput-hint.json?raw';
+import textinputIconJson from '../../../../../public/template/components/textinput/textinput-icon.json?raw';
+import textinputAnatomyHtml from '../../../../../public/template/components/textinput/textinput-anatomy.html?raw';
 export const configJson = 'textinput.json';
 export const anatomy = 'textinput.html';
 
@@ -16,7 +17,7 @@ Textinput components are [Control Fields](/components-reference/control-fields/o
 
 <Code code={textinputJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/textinput/textinput.json"
+  src="/template/index.html?form=components/textinput/textinput.json"
   title="Textinput example"
   width="100%"
 ></iframe>
@@ -38,7 +39,7 @@ Use the property `placeholder` to add a placeholder.
 
 <Code code={textinputPlaceholderJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/textinput/textinput-placeholder.json"
+  src="/template/index.html?form=components/textinput/textinput-placeholder.json"
   title="Textinput with placeholder"
   width="100%"
 ></iframe>
@@ -49,7 +50,7 @@ Use the property `hint` to add a description.
 
 <Code code={textinputHintJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/textinput/textinput-hint.json"
+  src="/template/index.html?form=components/textinput/textinput-hint.json"
   title="Textinput with hint"
   width="100%"
   style="height: 161px"
@@ -61,7 +62,7 @@ Use the property `icon` to add an icon to the `textinput`. The value of `icon` r
 
 <Code code={textinputIconJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/textinput/textinput-icon.json"
+  src="/template/index.html?form=components/textinput/textinput-icon.json"
   title="Textinput with icon"
   width="100%"
   style="height: 208px"

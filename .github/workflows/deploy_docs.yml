@@ -28,12 +28,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Build template
+        run: cd docs/template && npm i && npm run build
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Build documentation
-        run: ./build-docs.sh
+        run: cd docs && npm i && npm run build
 
       - name: Add CNAME file
         run: echo "golemui.com" > dist/docs/CNAME

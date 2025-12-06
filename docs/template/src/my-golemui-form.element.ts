@@ -1,14 +1,12 @@
-import './form.element.scss';
 import '@golemui/lit';
 import { customElement, property } from 'lit/decorators.js';
 import { html, LitElement } from 'lit';
 import * as Vanilla from '@golemui/lit-vanilla';
 import * as Core from '@golemui/core';
-import { allowedNames } from '../validators/allowed-names.validator';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 
-@customElement('lit-form')
-export class FormElement extends LitElement {
+@customElement('my-golemui-form')
+export class MyGolemUIFormElement extends LitElement {
   @property() declare formDef: Record<string, any>;
   @property() declare formData: Record<string, any>;
 
@@ -16,9 +14,7 @@ export class FormElement extends LitElement {
     ...Vanilla.vanillaFieldLoaders,
   };
 
-  validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
-    allowedNames,
-  });
+  validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators();
 
   override createRenderRoot() {
     return this;
@@ -56,5 +52,11 @@ export class FormElement extends LitElement {
         </div>
       `;
     }
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'my-golemui-form': MyGolemUIFormElement;
   }
 }

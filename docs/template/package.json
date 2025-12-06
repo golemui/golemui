@@ -1,0 +1,23 @@
+{
+  "name": "docs-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build --base=/template",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@golemui/core": "^0.5.0",
+    "@golemui/lit": "^0.5.0",
+    "@golemui/lit-vanilla": "^0.5.0",
+    "@golemui/shared-vanilla": "^0.5.0",
+    "@golemui/validators-vanilla": "^0.5.0",
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4"
+  }
+}

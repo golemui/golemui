@@ -55,7 +55,7 @@ You can add more validators, triggering multiple errors if one or more of the re
 Let's give it a try!
 
 <iframe
-  src="/docs-template/index.html?form=docs-template/validators/string-validators.json"
+  src="/template/index.html?form=validators/string-validators.json"
   title="Custom Validator example"
   width="100%"
   style="height: 200px"
@@ -66,9 +66,6 @@ Let's give it a try!
 To create custom validators, implement functions that follow the `CustomValidatorSchemaFn` interface. For example, let's create a validator that allows us to enter only certain names:
 
 ```ts
-import { CustomValidatorSchemaFn } from '@golemui/core';
-import * as z from 'zod/mini';
-
 export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
     z.superRefine((val, ctx) => {
@@ -170,7 +167,7 @@ Finally, declare your validator:
 Type something different from `John` and `Jane` to trigger the validation error.
 
 <iframe
-  src="/docs-template/index.html?form=docs-template/validators/custom-validators.json"
+  src="/template/index.html?form=validators/custom-validators.json"
   title="Custom Validator example"
   width="100%"
 ></iframe>

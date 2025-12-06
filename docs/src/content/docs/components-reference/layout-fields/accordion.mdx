@@ -4,10 +4,12 @@ description: An Accordion component to display collapsable information and conte
 ---
 
 import { Code } from '@astrojs/starlight/components';
-import accordionJson from '../../../../../public/docs-template/components/accordion/accordion.json?raw';
-import accordionSingleOpenJson from '../../../../../public/docs-template/components/accordion/accordion-single-open.json?raw';
-import accordionDefaultOpenJson from '../../../../../public/docs-template/components/accordion/accordion-default-open.json?raw';
-import accordionAnatomyHtml from '../../../../../public/docs-template/components/accordion/accordion-anatomy.html?raw';
+import accordionJson from '../../../../../public/template/components/accordion/accordion.json?raw';
+import accordionSingleOpenJson
+from '../../../../../public/template/components/accordion/accordion-single-open.json?raw';
+import accordionDefaultOpenJson
+from '../../../../../public/template/components/accordion/accordion-default-open.json?raw';
+import accordionAnatomyHtml from '../../../../../public/template/components/accordion/accordion-anatomy.html?raw';
 export const configJson = 'accordion.json';
 export const anatomy = 'accordion.html';
 
@@ -15,7 +17,7 @@ Accordion components are [Layout Fields](/components-reference/layout-fields/ove
 
 <Code code={accordionJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/accordion/accordion.json"
+  src="/template/index.html?form=components/accordion/accordion.json"
   title="Accordion example"
   width="100%"
   style="height: 570px;"
@@ -37,7 +39,7 @@ Use the property `singleOpen` to display only one section. When `true` Accordion
 
 <Code code={accordionSingleOpenJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/accordion/accordion-single-open.json"
+  src="/template/index.html?form=components/accordion/accordion-single-open.json"
   title="Accordion with single open"
   width="100%"
   style="height: 340px;"
@@ -49,7 +51,7 @@ Use the property `defaultOpen` to open one or more sections on start.
 
 <Code code={accordionDefaultOpenJson} lang="js" title={configJson} />
 <iframe
-  src="/docs-template/index.html?form=docs-template/components/accordion/accordion-default-open.json"
+  src="/template/index.html?form=components/accordion/accordion-default-open.json"
   title="Accordion with default open"
   width="100%"
   style="height: 570px;"

@@ -20,7 +20,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab7',
+        defaultOpen: 'tab8',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -29,6 +29,7 @@ export const kitchenSink = defineForm({
           { label: 'Accordion Layout', uid: 'tab5' },
           { label: 'Textinput Component', uid: 'tab6' },
           { label: 'Select Component', uid: 'tab7' },
+          { label: 'Number Component', uid: 'tab8' },
         ],
       },
       children: [
@@ -370,6 +371,72 @@ export const kitchenSink = defineForm({
               widget: 'select',
               path: 'selects.country',
               include: { in: ['hasSubregion'] },
+            },
+          ],
+        },
+        {
+          uid: 'tab8',
+          kind: 'layout',
+          widget: 'stack',
+          children: [
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'number',
+              path: 'number',
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'number',
+              path: 'number',
+              props: {
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'number',
+              path: 'number',
+              props: {
+                hint: 'This is a hint',
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'number',
+              path: 'number',
+              props: {
+                icon: 'material-icons material-icons-phone_callback',
+                hint: 'This is a hint',
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'number',
+              path: 'number',
+              props: {
+                icon: 'material-icons material-icons-phone_callback',
+                iconPosition: 'right',
+                hint: 'This is a hint',
+                placeholder: 'Please enter your phone number',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'number',
+              path: 'height',
+              props: {
+                placeholder: 'Please enter your height in meters (min 0 and max 2.5)',
+                step: 0.01,
+              },
+              validator: { type: 'number', minimum: 0, maximum: 2.5 },
             },
           ],
         },

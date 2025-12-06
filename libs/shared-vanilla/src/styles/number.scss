@@ -1,21 +1,33 @@
 .gui-form {
-  .gui-select {
+  .gui-number {
     display: block;
 
     .gui-field {
       &-icon--right {
         right: 2.5rem;
       }
+      &::before {
+        content: '';
+        border: solid;
+        border-width: 0 2px 2px 0;
+        pointer-events: none;
+        position: absolute;
+        right: 1rem;
+        top: 40%;
+        width: 0.25rem;
+        height: 0.25rem;
+        transform: translateY(-60%) rotate(225deg);
+      }
       &::after {
         content: '';
         border: solid;
         border-width: 0 2px 2px 0;
-        height: 0.5rem;
         pointer-events: none;
         position: absolute;
-        right: 1.2rem;
-        top: 47%;
-        width: 0.5rem;
+        right: 1rem;
+        top: 60%;
+        width: 0.25rem;
+        height: 0.25rem;
         transform: translateY(-60%) rotate(45deg);
       }
     }
@@ -28,8 +40,7 @@
       font-weight: 500;
     }
 
-    select {
-      appearance: none;
+    input {
       padding: var(--gui-padding);
       border: 1px solid var(--gui-color-border);
       border-radius: var(--gui-radius);
@@ -53,14 +64,25 @@
         }
       }
 
-      &.gui-select--icon {
+      &.gui-number--icon {
         padding-left: 2.5rem;
       }
 
-      &.gui-select--icon-right {
+      &.gui-number--icon-right {
         padding-left: var(--gui-space-gap);
         padding-right: var(--gui-icon-space-gap);
       }
+    }
+
+    /* For Chrome/Edge and Safari */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      appearance: none;
+    }
+
+    /* For Firefox */
+    input[type="number"] {
+      appearance: textfield;
     }
   }
 }
