@@ -1,17 +1,14 @@
-import styles from './form.page.module.scss';
-
-import { allowedNames, kitchenSink, loggerMiddleware, signinData } from '@golemui/apps-shared';
+import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import * as Vanilla from '@golemui/react-vanilla';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
+import styles from './form.page.module.scss';
 
-function onFormEvent(event: Core.FormEvent) {
-  console.groupCollapsed(`onFormEvent('${event.name}')`);
-  console.log(event.data);
-  console.groupEnd();
+async function onFormEvent(event: Core.FormEvent) {
+  AppsShared.onFormEvent(event);
 }
 
 const vanillaFieldLoaders = {
@@ -19,14 +16,14 @@ const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = kitchenSink;
-const formData = signinData;
+const formDef = AppsShared.kitchenSink;
+const formData = AppsShared.kitchenSinkData;
 const middlewares = [
   Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
-  loggerMiddleware,
+  AppsShared.loggerMiddleware,
 ];
 const validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
-  allowedNames,
+  allowedNames: AppsShared.allowedNames,
 });
 
 export function FormPage() {

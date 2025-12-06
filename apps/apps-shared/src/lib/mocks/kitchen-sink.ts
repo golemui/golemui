@@ -2,8 +2,8 @@ import { defineForm } from '@golemui/core';
 
 export const kitchenSink = defineForm({
   states: {
-    limitReached: '$form.users?.length === 5',
-    hasSubregion: `!!$form.subregion`,
+    limitReached: '$form.repeaters.users?.length === 5',
+    hasSubregion: `!!$form.selects.subregion`,
   },
   form: [
     {
@@ -115,7 +115,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'repeater',
-              path: 'users',
+              path: 'repeaters.users',
               props: {
                 addLabel: 'Add new developer',
                 'addLabel.limitReached': "Limit Reached, you can't add more",
@@ -130,13 +130,13 @@ export const kitchenSink = defineForm({
                       uid: '',
                       kind: 'control',
                       widget: 'textinput',
-                      path: 'users.items.firstName',
+                      path: 'repeaters.users.items.firstName',
                     },
                     {
                       uid: '',
                       kind: 'control',
                       widget: 'textinput',
-                      path: 'users.items.lastName',
+                      path: 'repeaters.users.items.lastName',
                     },
                   ],
                 },
@@ -319,7 +319,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'greeting',
+              path: 'selects.greeting',
               label: 'Greeting',
               readonly: true,
               props: {
@@ -333,7 +333,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'wrongGreeting',
+              path: 'selects.wrongGreeting',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
@@ -345,7 +345,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'greetingIndex',
+              path: 'selects.greetingIndex',
               props: {
                 options: [
                   { label: 'hello.1', value: 1 },
@@ -357,7 +357,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'subregion',
+              path: 'selects.subregion',
               label: 'Country subregion',
               on: {
                 load: 'getSubregions',
@@ -368,7 +368,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'country',
+              path: 'selects.country',
               include: { in: ['hasSubregion'] },
             },
           ],
@@ -389,21 +389,28 @@ export const kitchenSink = defineForm({
 
 export const kitchenSinkData = {
   listName: 'Development Team',
-  users: [
-    {
-      firstName: 'Alice',
-      lastName: 'Johnson',
-    },
-    {
-      firstName: 'Bob',
-      lastName: 'Smith',
-    },
-    {
-      firstName: 'Charlie',
-    },
-    {
-      firstName: 'Diana',
-      lastName: 'Rodriguez',
-    },
-  ],
+  selects: {
+    greeting: 'bye',
+    wrongGreeting: 'aaaaaa',
+    greetingIndex: 2,
+  },
+  repeaters: {
+    users: [
+      {
+        firstName: 'Alice',
+        lastName: 'Johnson',
+      },
+      {
+        firstName: 'Bob',
+        lastName: 'Smith',
+      },
+      {
+        firstName: 'Charlie',
+      },
+      {
+        firstName: 'Diana',
+        lastName: 'Rodriguez',
+      },
+    ],
+  },
 };
