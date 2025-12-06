@@ -20,7 +20,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab8',
+        defaultOpen: 'tab7',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -325,7 +325,7 @@ export const kitchenSink = defineForm({
               readonly: true,
               props: {
                 icon: 'material-icons material-icons-phone_callback',
-                hint: 'This is a hint',
+                hint: '"bye" should be selected',
                 options: ['hello', 'bye'],
                 placeholder: 'Please, select an option',
               },
@@ -338,9 +338,10 @@ export const kitchenSink = defineForm({
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
-                hint: 'This is a hint',
+                hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options',
                 options: ['hello', 'bye'],
               },
+              validator: { type: 'string', required: true },
             },
             {
               uid: '',
@@ -348,6 +349,7 @@ export const kitchenSink = defineForm({
               widget: 'select',
               path: 'selects.greetingIndex',
               props: {
+                hint: '"bye.2" should be selected',
                 options: [
                   { label: 'hello.1', value: 1 },
                   { label: 'bye.2', value: 2 },
@@ -360,6 +362,7 @@ export const kitchenSink = defineForm({
               widget: 'select',
               path: 'selects.subregion',
               label: 'Country subregion',
+              props: { hint: 'The disabled  "Select an Option" option should be selected' },
               on: {
                 load: 'getSubregions',
                 change: 'getCountries',
