@@ -13,6 +13,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
   checkbox: async () => (await import('./checkbox/checkbox.component')).CheckboxComponent,
   number: async () => (await import('./number/number.component')).NumberComponent,
   select: async () => (await import('./select/select.component')).SelectComponent,
+  radiogroup: async () => (await import('./radiogroup/radiogroup.component')).RadiogroupComponent,
 
   // LAYOUTS
   stack: async () => (await import('./stack/stack.component')).StackComponent,

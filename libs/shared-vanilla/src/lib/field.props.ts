@@ -53,6 +53,14 @@ export type SelectProps = {
   valueField?: string;
 };
 
+export type RadiogroupProps = {
+  valueType?: 'string' | 'number' | 'boolean';
+  hint?: string;
+  options: Option[];
+  labelField?: string;
+  valueField?: string;
+};
+
 export type StackProps = {
   direction?: 'horizontal' | 'vertical';
 };

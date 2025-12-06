@@ -20,7 +20,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab8',
+        defaultOpen: 'tab9',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -30,6 +30,7 @@ export const kitchenSink = defineForm({
           { label: 'Textinput Component', uid: 'tab6' },
           { label: 'Select Component', uid: 'tab7' },
           { label: 'Number Component', uid: 'tab8' },
+          { label: 'Radiogroup Component', uid: 'tab9' },
         ],
       },
       children: [
@@ -437,6 +438,66 @@ export const kitchenSink = defineForm({
                 step: 0.01,
               },
               validator: { type: 'number', minimum: 0, maximum: 2.5 },
+            },
+          ],
+        },
+        {
+          uid: 'tab9',
+          kind: 'layout',
+          widget: 'stack',
+          children: [
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'greeting',
+              label: 'Greeting',
+              readonly: true,
+              props: {
+                hint: 'This is a hint',
+                options: ['hello', 'bye'],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'wrongGreeting',
+              props: {
+                hint: 'This is a hint',
+                options: ['hello', 'bye'],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'greetingIndex',
+              props: {
+                valueType: 'number',
+                options: [
+                  { label: 'hello.1', value: 1 },
+                  { label: 'bye.2', value: 2 },
+                ],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'subregion',
+              label: 'Country subregion',
+              on: {
+                load: 'getSubregions',
+                change: 'getCountries',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'country',
+              include: { in: ['hasSubregion'] },
             },
           ],
         },
