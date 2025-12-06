@@ -163,7 +163,7 @@ export const kitchenSink = defineForm({
               kind: 'control',
               widget: 'checkbox',
               label: 'Create new account?',
-              path: 'isNewUser',
+              path: 'isNewUserLeft',
               props: {
                 checkboxPosition: 'left',
                 hint: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium.',
@@ -174,7 +174,7 @@ export const kitchenSink = defineForm({
               kind: 'control',
               widget: 'checkbox',
               label: 'Create new account?',
-              path: 'isNewUser',
+              path: 'isNewUserHint',
               props: {
                 hint: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium.',
               },
@@ -271,7 +271,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputPhone',
               props: {
                 placeholder: 'Please enter your phone number',
               },
@@ -280,7 +280,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputWithHint',
               props: {
                 hint: 'This is a hint',
                 placeholder: 'Please enter your phone number',
@@ -290,7 +290,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputWithIcon',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 hint: 'This is a hint',
@@ -301,7 +301,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputIconRight',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
@@ -389,7 +389,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberPhone',
               props: {
                 placeholder: 'Please enter your phone number',
               },
@@ -398,7 +398,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberWithHint',
               props: {
                 hint: 'This is a hint',
                 placeholder: 'Please enter your phone number',
@@ -408,7 +408,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberIcon',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 hint: 'This is a hint',
@@ -419,7 +419,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberIconRight',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
