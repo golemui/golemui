@@ -104,7 +104,7 @@ export class SelectElement extends LitElement implements Core.WithField {
     const options = this.optionsLoading
       ? html`<option disabled selected>Loading...</option>`
       : html`
-          <option value="" disabled selected>
+          <option value="" disabled selected=${this.hasMatchingValue ? nothing : ''}>
             ${this.adapter.templateData.placeholder ?? 'Select an option'}
           </option>
           ${repeat(
@@ -113,9 +113,9 @@ export class SelectElement extends LitElement implements Core.WithField {
             (opt: any) =>
               html`<option
                 value=${opt.value}
-                selected=${(this.hasMatchingValue &&
-                  opt.value === this.adapter.templateData.value) ??
-                nothing}
+                selected=${this.hasMatchingValue && opt.value === this.adapter.templateData.value
+                  ? ''
+                  : nothing}
               >
                 ${opt.label}
               </option>`,
@@ -139,10 +139,9 @@ export class SelectElement extends LitElement implements Core.WithField {
           type="text"
           id=${this.field.uid}
           class=${classMap(selectIcon)}
-          value=${this.adapter.templateData.value ?? ''}
+          .value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
-          placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event as Event)}"
           @blur="${() => this.adapter.onBlur()}"
           aria-invalid=${showErrors || nothing}

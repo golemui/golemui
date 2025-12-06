@@ -1,4 +1,4 @@
-import { allowedNames, kitchenSink, loggerMiddleware, signinData } from '@golemui/apps-shared';
+import { allowedNames, kitchenSink, loggerMiddleware, selectsData } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit';
 import * as Vanilla from '@golemui/lit-vanilla';
@@ -15,7 +15,7 @@ export class FormElement extends LitElement {
     loggerMiddleware,
   ];
   formDef = kitchenSink;
-  formData = signinData;
+  formData = selectsData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
