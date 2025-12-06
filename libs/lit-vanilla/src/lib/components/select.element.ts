@@ -141,11 +141,11 @@ export class SelectElement extends LitElement implements Core.WithField {
           class=${classMap(selectIcon)}
           .value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
           @input="${() => this.valueChanged(event as Event)}"
           @blur="${() => this.adapter.onBlur()}"
           aria-invalid=${showErrors || nothing}
-          aria-errormessage=${`${this.field.uid}-error`}
+          aria-readonly=${this.adapter.templateData.readonly || nothing}
+          aria-errormessage=${`${this.field.uid}_errors`}
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         >
@@ -155,12 +155,9 @@ export class SelectElement extends LitElement implements Core.WithField {
       </div>
 
       ${showErrors
-        ? html`<ul class="gui-validator">
+        ? html`<ul class="gui-validator" id=${`${this.field.uid}_errors`}>
             ${this.adapter.templateData.errors?.map(
-              (error: any) =>
-                html`<li class="gui-validator__error" role="status" id=${`${this.field.uid}-error`}>
-                  ${error}
-                </li>`,
+              (error: any) => html`<li class="gui-validator__error" role="status">${error}</li>`,
             )}
           </ul>`
         : ''}
