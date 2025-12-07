@@ -1,3 +1,13 @@
+## 0.7.1 (2025-12-07)
+
+### 🩹 Fixes
+
+- add error messages to lit and angular selects ([2c3e86b](https://github.com/golemui/formforge/commit/2c3e86b))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.7.0 (2025-12-04)
 
 ### 🚀 Features
