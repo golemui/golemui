@@ -70,8 +70,8 @@ export function createOptionMapper(
     }
     const o = item as Record<string, unknown>;
     return {
-      label: resolvedLabelField ? String(o[resolvedLabelField]) : '',
-      value: resolvedValueField ? String(o[resolvedValueField]) : '',
+      label: resolvedLabelField ? (o[resolvedLabelField] as string) : '',
+      value: resolvedValueField ? (o[resolvedValueField] as string) : '',
     };
   };
 }

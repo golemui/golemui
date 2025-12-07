@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { cn, useControlField } from '@golemui/react';
 import {
   createOptionMapper,
   isOption,
@@ -11,6 +11,7 @@ import {
 } from '@golemui/shared-vanilla';
 import { useCallback, useEffect, useState } from 'react';
 import '../styles.scss';
+import { Errors } from './shared/Errors';
 
 export function Select(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
@@ -68,6 +69,8 @@ export function Select(fieldInstance: Core.WithField) {
     }
   }, [props, value]);
 
+  const showErrors = isTouched && errors && errors.length > 0;
+
   return (
     <div className="gui-select">
       <label htmlFor={uid}>
@@ -81,10 +84,17 @@ export function Select(fieldInstance: Core.WithField) {
       <div className="gui-field">
         <select
           id={uid}
-          className={`${icon ? 'gui-select--icon' : ''} ${iconPosition === 'right' ? 'gui-select--icon-right' : ''}`}
+          className={cn({
+            'gui-select--icon': !!icon,
+            'gui-select--icon-right': iconPosition === 'right',
+          })}
           value={safeValue ?? ''}
           disabled={isDisabled || isReadonly}
+          aria-invalid={showErrors}
           aria-readonly={isDisabled || isReadonly}
+          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
+          aria-required={validator?.required}
+          aria-describedby={hint ? `${uid}_hint` : undefined}
           onChange={handleChange}
           onBlur={onBlur}
         >
@@ -107,10 +117,13 @@ export function Select(fieldInstance: Core.WithField) {
 
         {icon && (
           <span
-            className={`${icon} gui-field-icon ${iconPosition === 'right' ? 'gui-field-icon--right' : ''}`}
+            className={cn(icon, 'gui-field-icon', {
+              'gui-field-icon--right': iconPosition === 'right',
+            })}
           ></span>
         )}
       </div>
+      {showErrors && <Errors errors={errors} uid={uid} />}
     </div>
   );
 }
