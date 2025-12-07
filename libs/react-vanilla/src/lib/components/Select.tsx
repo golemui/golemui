@@ -44,29 +44,27 @@ export function Select(fieldInstance: Core.WithField) {
   const [safeValue, setSafeValue] = useState<string | undefined>();
 
   useEffect(() => {
-    const opts = props.options;
+    let opts = props.options;
     if (Array.isArray(opts) && opts.length > 0) {
       if (isOption(opts[0])) {
-        setOptions(opts);
+        // Nothing to do here, It's an option already
       } else if (isOptionValue(opts[0])) {
         // It's a flat array: string[] | number[]
-        setOptions(
-          (opts as unknown as OptionValue[]).map((opt) => ({
-            label: opt.toString(),
-            value: opt,
-          })),
-        );
+        opts = (opts as unknown as OptionValue[]).map((opt) => ({
+          label: opt.toString(),
+          value: opt,
+        }));
       } else if (isProtoOption(opts[0], props as SelectProps)) {
         const optionMapper: (item: unknown) => Option = createOptionMapper(opts[0], props);
-        setOptions(opts.map(optionMapper));
+        opts = opts.map(optionMapper);
       } else {
         throw new Error('Invalid option shape');
       }
+      setOptions(opts);
       // If value is not one of your real options, map it back to "" so that the placeholder becomes selected.
-      const selection = value;
-      const matching = opts.find(({ value }) => value === selection) !== undefined;
+      const matching = opts.find((opt) => opt.value === value) !== undefined;
       setHasMatchingValue(matching);
-      setSafeValue(matching ? selection : '');
+      setSafeValue(matching ? value : '');
     }
   }, [props, value]);
 
