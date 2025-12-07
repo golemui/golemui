@@ -30,8 +30,10 @@ export const cn = (...cns: Cn[]): string => {
   let str = '';
   for (const item of cns) {
     const classNames = cnInternal(item);
-    if (classNames && classNames.trim().length > 0) {
-      if (str !== '') str += ' ';
+    if (classNames.trim().length > 0) {
+      if (str !== '') {
+        str += ' ';
+      }
       str += classNames;
     }
   }
@@ -39,19 +41,30 @@ export const cn = (...cns: Cn[]): string => {
 };
 
 const cnInternal = (cns: Cn): string => {
-  if (cns === undefined || cns === null) return '';
+  if (cns === undefined || cns === null) {
+    return '';
+  }
 
-  if (typeof cns === 'string') return cns;
+  if (typeof cns === 'string') {
+    return cns;
+  }
 
-  if (typeof cns === 'boolean') return '';
+  if (typeof cns === 'boolean') {
+    return '';
+  }
 
   if (Array.isArray(cns)) {
-    const parts: string[] = [];
+    let str = '';
     for (const item of cns) {
       const classNames = cnInternal(item);
-      if (classNames) parts.push(classNames);
+      if (classNames.trim().length > 0) {
+        if (str !== '') {
+          str += ' ';
+        }
+        str += classNames;
+      }
     }
-    return parts.join(' ');
+    return str;
   }
 
   if (typeof cns === 'object') {
