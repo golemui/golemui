@@ -1,3 +1,15 @@
+## 0.8.0 (2025-12-07)
+
+### 🩹 Fixes
+
+- **react:** improve cn() function ([e06ef12](https://github.com/golemui/formforge/commit/e06ef12))
+- **react:** improve cn() function ([41f982a](https://github.com/golemui/formforge/commit/41f982a))
+- **react:** Update useExtraProps to use propsUpdaterByCurrentState ([9b14098](https://github.com/golemui/formforge/commit/9b14098))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.7.1 (2025-12-07)
 
 This was a version bump only for react to align it with other projects, there were no code changes.

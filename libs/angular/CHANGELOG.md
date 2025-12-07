@@ -1,3 +1,13 @@
+## 0.8.0 (2025-12-07)
+
+### 🩹 Fixes
+
+- **core:** fix the VALIDATE_ALL action ([8697b1e](https://github.com/golemui/formforge/commit/8697b1e))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.7.1 (2025-12-07)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.

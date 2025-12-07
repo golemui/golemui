@@ -1,3 +1,14 @@
+## 0.8.0 (2025-12-07)
+
+### 🩹 Fixes
+
+- **react:** Add errors to the select component ([3b169f2](https://github.com/golemui/formforge/commit/3b169f2))
+- select's Option type refactor ([11c0fef](https://github.com/golemui/formforge/commit/11c0fef))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.7.1 (2025-12-07)
 
 This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.

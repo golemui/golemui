@@ -1,3 +1,15 @@
+## 0.8.0 (2025-12-07)
+
+### 🩹 Fixes
+
+- **lit:** fix select disabled state ([4c17542](https://github.com/golemui/formforge/commit/4c17542))
+- select's Option type refactor ([11c0fef](https://github.com/golemui/formforge/commit/11c0fef))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.7.1 (2025-12-07)
 
 ### 🩹 Fixes
