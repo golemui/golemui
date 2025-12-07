@@ -2,6 +2,15 @@
 import { cn } from './cn';
 
 describe('cn', () => {
+  it('examples tests', () => {
+    expect(cn('px-2', 'py-1')).toBe('px-2 py-1');
+    expect(cn('px-2', false, undefined)).toBe('px-2');
+    expect(cn(['px-2', true && 'py-1'])).toBe('px-2 py-1');
+    expect(cn({ 'px-2': true, 'py-1': false })).toBe('px-2');
+    expect(cn('px-2', { 'py-1': true }, ['text-lg'])).toBe('px-2 py-1 text-lg');
+    expect(cn(['foo', { bar: true, nope: undefined }, ['baz']])).toBe('foo bar baz');
+  });
+
   it('keeps object keys with truthy values', () => {
     expect(cn({ a: true, b: false, d: null, e: undefined })).toBe('a');
   });
@@ -61,7 +70,7 @@ describe('cn', () => {
     expect(cn({})).toBe('');
     expect(cn({ foo: true })).toBe('foo');
     expect(cn({ foo: true, bar: false })).toBe('foo');
-    expect(cn({ foo: 'hiya', bar: true })).toBe('foo bar');
+    expect(cn({ foo: true, bar: true })).toBe('foo bar');
     expect(cn({ foo: true, bar: false, baz: true })).toBe('foo baz');
     expect(cn({ '-foo': true, '--bar': true })).toBe('-foo --bar');
   });
@@ -70,7 +79,7 @@ describe('cn', () => {
     expect(cn({}, {})).toBe('');
     expect(cn({ foo: true }, { bar: true })).toBe('foo bar');
     expect(cn({ foo: true }, undefined, { baz: true, bat: false })).toBe('foo baz');
-    expect(cn({ foo: true }, {}, {}, { bar: 'a' }, { baz: null, bat: true })).toBe('foo bar bat');
+    expect(cn({ foo: true }, {}, {}, { bar: true }, { baz: null, bat: true })).toBe('foo bar bat');
   });
 
   it('arrays', () => {
@@ -80,16 +89,23 @@ describe('cn', () => {
     expect(cn(['foo', false && 'bar', true && 'baz'])).toBe('foo baz');
   });
 
+  it('arrays (nested)', () => {
+    expect(cn([[[]]])).toBe('');
+    expect(cn([[['foo']]])).toBe('foo');
+    expect(cn([true, [['foo']]])).toBe('foo');
+    expect(cn(['foo', ['bar', ['', [['baz']]]]])).toBe('foo bar baz');
+  });
+
   it('arrays (variadic)', () => {
     expect(cn([], [])).toBe('');
     expect(cn(['foo'], ['bar'])).toBe('foo bar');
     expect(cn(['foo'], null, ['baz', ''], true, '', [])).toBe('foo baz');
   });
 
-  it('arrays (no `push` escape)', () => {
-    expect(cn({ push: true })).toBe('push');
-    expect(cn({ pop: true })).toBe('pop');
-    expect(cn({ push: true })).toBe('push');
-    expect(cn('hello', { world: true, push: true }), 'hello world push');
+  it('arrays with objects', () => {
+    expect(cn([{ baz: true }])).toBe('baz');
+    expect(cn(['foo', { bar: true, nope: undefined }, false, { baz: true }, ['ok']])).toBe(
+      'foo bar baz ok',
+    );
   });
 });

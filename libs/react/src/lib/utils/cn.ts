@@ -17,13 +17,14 @@
  * cn(['px-2', true && 'py-1']) // 'px-2 py-1'
  * cn({ 'px-2': true, 'py-1': false }) // 'px-2'
  * cn('px-2', { 'py-1': true }, ['text-lg']) // 'px-2 py-1 text-lg'
+ * cn(['foo', { bar: true, nope: undefined }, ['baz']]) // 'foo bar baz'
  *
  * @note This is an adaptation of https://github.com/lukeed/clsx
  */
 
 export type CnValue = string | boolean | undefined | null;
-export type CnRecord = Record<string, CnValue>;
-export type CnArray = CnValue[];
+export type CnRecord = Record<string, boolean | undefined | null>;
+export type CnArray = Cn[];
 export type Cn = CnRecord | CnValue | CnArray;
 
 export const cn = (...cns: Cn[]): string => {
