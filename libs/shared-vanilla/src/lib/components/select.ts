@@ -1,5 +1,18 @@
 import { Option } from '../field.props';
 
+/**
+ * Checks whether a value is a valid option value
+ */
+export function isOptionValue(value: unknown): value is OptionValue {
+  const t = typeof value;
+  return t === 'string' || t === 'number';
+}
+
+export type OptionValue = string | number;
+
+/**
+ * Checks wether a value is a fully compliant Option (with label and value fields)
+ */
 export const isOption = (opt: unknown): opt is Option =>
   opt !== null &&
   typeof opt === 'object' &&
@@ -57,8 +70,8 @@ export function createOptionMapper(
     }
     const o = item as Record<string, unknown>;
     return {
-      label: resolvedLabelField ? String(o[resolvedLabelField]) : '',
-      value: resolvedValueField ? String(o[resolvedValueField]) : '',
+      label: resolvedLabelField ? (o[resolvedLabelField] as string) : '',
+      value: resolvedValueField ? (o[resolvedValueField] as string) : '',
     };
   };
 }

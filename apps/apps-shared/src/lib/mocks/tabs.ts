@@ -187,7 +187,7 @@ export const tabs = defineForm({
       widget: 'button',
       label: 'Create',
       on: {
-        click: 'createList',
+        click: 'submit',
       },
     },
   ],

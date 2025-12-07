@@ -70,11 +70,9 @@ export type State = {
   error: FormStoreError;
   /**
    * Indicates whether the user has interacted with the form.
-   * Set to true when a blur event occurs on any form control.
+   * Set to true when a validateOn-type event occurs on any form control.
    */
   touched: boolean;
-  // TODO: remove
-  dummy: 'dummy';
 };
 
 export const createInitialState = (): State => ({
@@ -97,7 +95,6 @@ export const createInitialState = (): State => ({
   data: {},
   error: { kind: 'none' },
   touched: false,
-  dummy: 'dummy',
 });
 
 export type MiddlewareAPI<S, A> = {

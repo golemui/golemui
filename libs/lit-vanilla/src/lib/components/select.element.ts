@@ -1,12 +1,19 @@
-import { customElement, property } from 'lit/decorators.js';
-import { html, LitElement, nothing } from 'lit';
 import * as Core from '@golemui/core';
-import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
-import { createOptionMapper, isOption, isProtoOption, SelectProps } from '@golemui/shared-vanilla';
-import { Subscription } from 'rxjs';
-import { classMap } from 'lit/directives/class-map.js';
+import {
+  createOptionMapper,
+  isOption,
+  isOptionValue,
+  isProtoOption,
+  OptionValue,
+  SelectProps,
+} from '@golemui/shared-vanilla';
+import { consume, provide } from '@lit/context';
+import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { Subscription } from 'rxjs';
 
 @customElement('gui-select')
 export class SelectElement extends LitElement implements Core.WithField {
@@ -44,15 +51,13 @@ export class SelectElement extends LitElement implements Core.WithField {
     if (Array.isArray(opts) && opts.length > 0) {
       if (isOption(opts[0])) {
         // nothing to do
-      } else if (Core.isLiteral(opts[0])) {
+      } else if (isOptionValue(opts[0])) {
         this.adapter.templateData = {
           ...this.adapter.templateData,
-          options: (this.adapter.templateData.options as unknown as Core.LiteralValue[]).map(
-            (opt) => ({
-              label: opt.toString(),
-              value: opt,
-            }),
-          ),
+          options: (this.adapter.templateData.options as unknown as OptionValue[]).map((opt) => ({
+            label: opt.toString(),
+            value: opt,
+          })),
         };
       } else if (isProtoOption(opts[0], this.field.props as SelectProps)) {
         const optionMapper = createOptionMapper(opts[0], this.field.props as SelectProps);
@@ -104,7 +109,7 @@ export class SelectElement extends LitElement implements Core.WithField {
     const options = this.optionsLoading
       ? html`<option disabled selected>Loading...</option>`
       : html`
-          <option value="" disabled selected>
+          <option value="" disabled selected=${this.hasMatchingValue ? nothing : ''}>
             ${this.adapter.templateData.placeholder ?? 'Select an option'}
           </option>
           ${repeat(
@@ -113,9 +118,9 @@ export class SelectElement extends LitElement implements Core.WithField {
             (opt: any) =>
               html`<option
                 value=${opt.value}
-                selected=${(this.hasMatchingValue &&
-                  opt.value === this.adapter.templateData.value) ??
-                nothing}
+                selected=${this.hasMatchingValue && opt.value === this.adapter.templateData.value
+                  ? ''
+                  : nothing}
               >
                 ${opt.label}
               </option>`,
@@ -139,14 +144,15 @@ export class SelectElement extends LitElement implements Core.WithField {
           type="text"
           id=${this.field.uid}
           class=${classMap(selectIcon)}
-          value=${this.adapter.templateData.value ?? ''}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
-          placeholder=${this.adapter.templateData.placeholder || nothing}
+          .value=${this.adapter.templateData.value ?? ''}
+          ?disabled=${this.adapter.templateData.disabled ||
+          this.adapter.templateData.readonly ||
+          nothing}
           @input="${() => this.valueChanged(event as Event)}"
           @blur="${() => this.adapter.onBlur()}"
           aria-invalid=${showErrors || nothing}
-          aria-errormessage=${`${this.field.uid}-error`}
+          aria-readonly=${this.adapter.templateData.readonly || nothing}
+          aria-errormessage=${`${this.field.uid}_errors`}
           aria-required=${this.adapter.templateData.validator?.required || nothing}
           aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         >
@@ -156,12 +162,9 @@ export class SelectElement extends LitElement implements Core.WithField {
       </div>
 
       ${showErrors
-        ? html`<ul class="gui-validator">
+        ? html`<ul class="gui-validator" id=${`${this.field.uid}_errors`}>
             ${this.adapter.templateData.errors?.map(
-              (error: any) =>
-                html`<li class="gui-validator__error" role="status" id=${`${this.field.uid}-error`}>
-                  ${error}
-                </li>`,
+              (error: any) => html`<li class="gui-validator__error" role="status">${error}</li>`,
             )}
           </ul>`
         : ''}

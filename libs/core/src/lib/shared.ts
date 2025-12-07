@@ -53,11 +53,11 @@ export type EventName = string;
  */
 export type EventHandlerCallback = OVERRIDE_FIELD_PROP;
 
-export type FormEvent = {
+export type FormEvent<T = any> = {
   /** The name of the form field that dispatched the event. */
   name: EventName;
   /** The form's data at the moment the event was dispatched. */
-  data: Record<string, unknown>;
+  data: Record<string, T>;
   /** Actions that the client can execute to interact with the forms engine from the application scope */
   callback: (action: EventHandlerCallback) => void;
 };
