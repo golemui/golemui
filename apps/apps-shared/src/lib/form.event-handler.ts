@@ -25,7 +25,6 @@ const eventHandlers = {
     const response = await fetch('/data/countries.json');
     const countries = await response.json();
     const subregion = event.data['selects'].subregion as string;
-    console.log('subregion', subregion);
     event.callback({
       type: 'OVERRIDE_FIELD_PROP',
       payload: {
