@@ -145,7 +145,9 @@ export class SelectElement extends LitElement implements Core.WithField {
           id=${this.field.uid}
           class=${classMap(selectIcon)}
           .value=${this.adapter.templateData.value ?? ''}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
+          ?disabled=${this.adapter.templateData.disabled ||
+          this.adapter.templateData.readonly ||
+          nothing}
           @input="${() => this.valueChanged(event as Event)}"
           @blur="${() => this.adapter.onBlur()}"
           aria-invalid=${showErrors || nothing}
