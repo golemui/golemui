@@ -110,8 +110,8 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
                   aria-required=${this.adapter.templateData.validator?.required || nothing}
                   aria-errormessage=${showErrors ? `${this.field.uid}_errors` : nothing}
                   aria-describedby=${hint ? `${this.field.uid}_hint` : nothing}
-                  @change=${this.updateOptions}
-                  @blur=${this.adapter.onBlur()}
+                  @input="${() => this.valueChanged(event)}"
+                  @blur="${() => this.adapter.onBlur()}"
                 />
                 ${opt.label}
               </label>`,
@@ -142,11 +142,11 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
     `;
   }
 
-  valueChanged(event: Event) {
+  valueChanged(event: Event | undefined) {
     if (this.adapter.templateData.readonly) {
-      event.preventDefault();
+      event?.preventDefault();
     } else {
-      const target = event.target as HTMLInputElement;
+      const target = event?.target as HTMLInputElement;
       switch (this.adapter.templateData.valueType) {
         case 'boolean':
           this.adapter.valueChanged(target.value === 'true');

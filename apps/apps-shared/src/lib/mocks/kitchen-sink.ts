@@ -3,7 +3,8 @@ import { defineForm } from '@golemui/core';
 export const kitchenSink = defineForm({
   states: {
     limitReached: '$form.repeaters.users?.length === 5',
-    hasSubregion: `!!$form.selects.subregion`,
+    hasSubregionSelect: `!!$form.selects.subregion`,
+    hasSubregionRadiogroup: `!!$form.radiogroups.subregion`,
   },
   form: [
     {
@@ -20,7 +21,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab7',
+        defaultOpen: 'tab9',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -30,6 +31,7 @@ export const kitchenSink = defineForm({
           { label: 'Textinput Component', uid: 'tab6' },
           { label: 'Select Component', uid: 'tab7' },
           { label: 'Number Component', uid: 'tab8' },
+          { label: 'Radiogroup Component', uid: 'tab9' },
         ],
       },
       children: [
@@ -384,7 +386,7 @@ export const kitchenSink = defineForm({
               kind: 'control',
               widget: 'select',
               path: 'selects.country',
-              include: { in: ['hasSubregion'] },
+              include: { in: ['hasSubregionSelect'] },
             },
           ],
         },
@@ -454,6 +456,79 @@ export const kitchenSink = defineForm({
             },
           ],
         },
+        {
+          uid: 'tab9',
+          kind: 'layout',
+          widget: 'stack',
+          children: [
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'radiogroups.greeting',
+              label: 'Greeting',
+              readonly: true,
+              props: {
+                hint: '"bye" should be selected',
+                options: ['hello', 'bye'],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'radiogroups.wrongGreeting',
+              props: {
+                hint: 'No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
+                options: ['hello', 'bye'],
+              },
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'radiogroups.requiredUnselected',
+              props: {
+                hint: 'No option should be selected, and a validation error should be displayed because the field is required',
+                options: ['hello', 'bye'],
+              },
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'radiogroups.greetingIndex',
+              props: {
+                hint: '"bye.2" should be selected',
+                options: [
+                  { label: 'hello.1', value: 1 },
+                  { label: 'bye.2', value: 2 },
+                ],
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'radiogroups.subregion',
+              label: 'Country subregion',
+              props: { hint: 'No option should be selected' },
+              on: {
+                load: 'getSubregions',
+                change: 'getCountries',
+              },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'radiogroup',
+              path: 'radiogroups.country',
+              include: { in: ['hasSubregionRadiogroup'] },
+            },
+          ],
+        },
       ],
     },
     {
@@ -471,6 +546,11 @@ export const kitchenSink = defineForm({
 export const kitchenSinkData = {
   listName: 'Development Team',
   selects: {
+    greeting: 'bye',
+    wrongGreeting: 'aaaaaa',
+    greetingIndex: 2,
+  },
+  radiogroups: {
     greeting: 'bye',
     wrongGreeting: 'aaaaaa',
     greetingIndex: 2,
