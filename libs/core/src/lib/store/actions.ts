@@ -25,15 +25,21 @@ export type REMOVE_FIELD = {
   payload: { uid: Uid };
 };
 
+// TODO: rename all _FIELD_ to _CONTROL_ when the field has a path (it's a control)
+/**
+ * Sets the default value for a single form field.
+ */
+export type SET_FIELD_INITIAL_DATA = {
+  type: 'SET_FIELD_INITIAL_DATA';
+  payload: { path: DotPath; data: any };
+};
+
 /**
  * Sets the data for a single form field.
  */
 export type SET_FIELD_DATA = {
   type: 'SET_FIELD_DATA';
   payload: { path: DotPath; data: any };
-  // FIXME: this only work for the first time we set data. Subsequeent set data won't overwrite
-  // This controls if we overwrite data or not on form init (defaultValue vs initial set data)
-  updateIf: (currentValue: any) => boolean;
 };
 
 /**
@@ -85,6 +91,7 @@ export type Action =
   | SET_DATA
   | ADD_FIELD
   | REMOVE_FIELD
+  | SET_FIELD_INITIAL_DATA
   | SET_FIELD_DATA
   | OVERRIDE_FIELD_PROP
   | SET_ERROR

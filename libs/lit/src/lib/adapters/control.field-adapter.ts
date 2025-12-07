@@ -20,8 +20,7 @@ export class ControlFieldAdapter<
 
     // Set field data
     this.context.store.dispatch({
-      type: 'SET_FIELD_DATA',
-      updateIf: (oldValue) => oldValue === undefined,
+      type: 'SET_FIELD_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
 
@@ -81,7 +80,6 @@ export class ControlFieldAdapter<
   valueChanged<T>(value: T) {
     this.context.store.dispatch({
       type: 'SET_FIELD_DATA',
-      updateIf: () => true,
       payload: { path: this.field.path, data: value },
     });
     this.context.emitEvent('change', this.field);

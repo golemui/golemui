@@ -23,8 +23,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
       payload: { field },
     });
     formContext.store.dispatch({
-      type: 'SET_FIELD_DATA',
-      updateIf: (oldValue) => oldValue === undefined,
+      type: 'SET_FIELD_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
     setLabel(calculateLabel(field));
@@ -103,7 +102,6 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     (newValue: T) => {
       formContext.store.dispatch({
         type: 'SET_FIELD_DATA',
-        updateIf: () => true,
         payload: { path: field.path, data: newValue },
       });
       formContext.emitEvent('change', field);
