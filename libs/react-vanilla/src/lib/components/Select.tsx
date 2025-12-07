@@ -41,12 +41,13 @@ export function Select(fieldInstance: Core.WithField) {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [hasMatchingValue, setHasMatchingValue] = useState(false);
   const [options, setOptions] = useState<Option[]>([]);
+  const [safeValue, setSafeValue] = useState<string | undefined>();
 
   useEffect(() => {
     const opts = props.options;
     if (Array.isArray(opts) && opts.length > 0) {
       if (isOption(opts[0])) {
-        // nothing to do
+        setOptions(opts);
       } else if (isOptionValue(opts[0])) {
         // It's a flat array: string[] | number[]
         setOptions(
@@ -61,8 +62,11 @@ export function Select(fieldInstance: Core.WithField) {
       } else {
         throw new Error('Invalid option shape');
       }
+      // If value is not one of your real options, map it back to "" so that the placeholder becomes selected.
       const selection = value;
-      setHasMatchingValue(opts.find(({ value }) => value === selection) !== undefined);
+      const matching = opts.find(({ value }) => value === selection) !== undefined;
+      setHasMatchingValue(matching);
+      setSafeValue(matching ? selection : '');
     }
   }, [props, value]);
 
@@ -80,7 +84,7 @@ export function Select(fieldInstance: Core.WithField) {
         <select
           id={uid}
           className={`${icon ? 'gui-select--icon' : ''} ${iconPosition === 'right' ? 'gui-select--icon-right' : ''}`}
-          value={value ?? ''}
+          value={safeValue ?? ''}
           disabled={isDisabled || isReadonly}
           aria-readonly={isDisabled || isReadonly}
           onChange={handleChange}
