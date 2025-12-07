@@ -1,8 +1,8 @@
-import { Flags } from '../form-field';
+import { isControlField } from '../form-field';
 import { ValidatorFn } from '../form-validator';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import { pipe } from '../utils/function';
+import * as Fn from '../utils/function';
 import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
@@ -16,7 +16,7 @@ export const reducer =
         return Reducers.initialize(state, action);
 
       case 'SET_DATA':
-        return pipe(
+        return Fn.pipe(
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
@@ -24,7 +24,7 @@ export const reducer =
         );
 
       case 'ADD_FIELD':
-        return pipe(
+        return Fn.pipe(
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
@@ -35,7 +35,7 @@ export const reducer =
         return Reducers.removeField(state, action);
 
       case 'SET_FIELD_DATA':
-        return pipe(
+        return Fn.pipe(
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
@@ -43,7 +43,7 @@ export const reducer =
         );
 
       case 'OVERRIDE_FIELD_PROP':
-        return pipe(
+        return Fn.pipe(
           Reducers.overrideFieldProp(state, action),
           Reducers.calculateCurrentState,
           Reducers.applyCurrentState,
@@ -55,18 +55,23 @@ export const reducer =
         return Reducers.setError(state, action);
 
       case 'VALIDATE_ALL': {
-        const newState: State = {
-          ...state,
-          fieldFlags: Object.keys(state.fields).reduce(
-            (fieldFlags, key) => {
-              const fieldFlag = state.fieldFlags[key] || {};
-              fieldFlags[key] = { ...fieldFlag, touched: true } as Flags;
-              return fieldFlags;
-            },
-            {} as State['fieldFlags'],
-          ),
-        };
-        return pipe(newState, Reducers.validateAll(validators));
+        return Fn.pipe(
+          {
+            ...state,
+            touched: true,
+            touchedControls: Object.keys(state.fields).reduce(
+              (touchedControls, key) => {
+                const field = state.fields[key];
+                if (isControlField(field)) {
+                  touchedControls[field.path] = true;
+                }
+                return touchedControls;
+              },
+              {} as State['touchedControls'],
+            ),
+          },
+          Reducers.validateAll(validators),
+        );
       }
 
       case 'ATTEMPT_VALIDATION': {
@@ -77,7 +82,7 @@ export const reducer =
           reason === validateOn ||
           (validateOn as string[]).includes(reason);
         if (shouldValidate) {
-          return pipe(
+          return Fn.pipe(
             {
               ...state,
               touched: true,

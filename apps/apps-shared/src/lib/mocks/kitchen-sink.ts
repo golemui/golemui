@@ -462,7 +462,7 @@ export const kitchenSink = defineForm({
       widget: 'button',
       label: 'Create',
       on: {
-        click: 'createList',
+        click: 'submit',
       },
     },
   ],

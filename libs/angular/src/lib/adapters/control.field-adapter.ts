@@ -57,7 +57,7 @@ export class ControlFieldAdapter<
         }));
       });
 
-    // Listen to the fieldFlags stream (`touched`, `disabled` and `readonly` flags)
+    // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
       .subscribe((fieldFlags) => {
