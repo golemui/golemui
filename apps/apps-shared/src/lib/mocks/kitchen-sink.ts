@@ -338,7 +338,18 @@ export const kitchenSink = defineForm({
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
-                hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options',
+                hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
+                options: ['hello', 'bye'],
+              },
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'selects.requiredUnselected',
+              props: {
+                hint: 'The disabled  "Select an Option" option should be selected, and a validation error should be displayed because the field is required',
                 options: ['hello', 'bye'],
               },
               validator: { type: 'string', required: true },
