@@ -1,0 +1,168 @@
+import { customElement, property } from 'lit/decorators.js';
+import { html, LitElement, nothing } from 'lit';
+import * as Core from '@golemui/core';
+import { consume, provide } from '@lit/context';
+import * as Lit from '@golemui/lit';
+import {
+  createOptionMapper,
+  isOption,
+  isProtoOption,
+  RadiogroupProps,
+} from '@golemui/shared-vanilla';
+import { Subscription } from 'rxjs';
+import { repeat } from 'lit-html/directives/repeat.js';
+
+@customElement('gui-radiogroup')
+export class RadiogroupElement extends LitElement implements Core.WithField {
+  field!: Core.ControlField<string>;
+
+  @consume({ context: Lit.formContext })
+  @property({ attribute: false })
+  formContext!: Lit.LitFormContext<any>;
+
+  @provide({ context: Lit.controlContext })
+  adapter = new Lit.ControlFieldAdapter<string, RadiogroupProps>();
+
+  protected optionsLoading = false;
+  protected hasMatchingValue = false;
+
+  subscriptions: Subscription[] = [];
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-radiogroup');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
+  }
+
+  private updateOptions() {
+    const opts = this.adapter.templateData.options;
+    if (Array.isArray(opts) && opts.length > 0) {
+      if (isOption(opts[0])) {
+        // nothing to do
+      } else if (Core.isLiteral(opts[0])) {
+        this.adapter.templateData = {
+          ...this.adapter.templateData,
+          options: (this.adapter.templateData.options as unknown as Core.LiteralValue[]).map(
+            (opt) => ({
+              label: opt.toString(),
+              value: opt,
+            }),
+          ),
+        };
+      } else if (isProtoOption(opts[0], this.field.props as RadiogroupProps)) {
+        const optionMapper = createOptionMapper(opts[0], this.field.props as RadiogroupProps);
+        this.adapter.templateData = {
+          ...this.adapter.templateData,
+          options: this.adapter.templateData.options.map(optionMapper),
+        };
+      } else {
+        throw new Error('Invalid option shape');
+      }
+      const selection = this.adapter.templateData.value;
+      this.hasMatchingValue =
+        this.adapter.templateData.options.find(({ value }) => value === selection) !== undefined;
+    }
+  }
+
+  override render() {
+    super.render();
+
+    this.updateOptions();
+
+    // Hint
+    const hint = this.adapter.templateData.hint
+      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
+          ${this.adapter.templateData.hint}
+        </div>`
+      : html``;
+
+    const options = this.optionsLoading
+      ? html`<span>Loading...</span>`
+      : html`
+          ${repeat(
+            this.adapter.templateData.options || [],
+            (opt: any) => opt?.value,
+            (opt: any, index) =>
+              html`<label for=${`${this.field.uid}_${index}`}>
+                <input
+                  type="radio"
+                  id=${`${this.field.uid}_${index}`}
+                  name=${this.field.uid}
+                  value=${opt.value}
+                  checked=${(this.hasMatchingValue &&
+                    opt.value === this.adapter.templateData.value) ||
+                  nothing}
+                  disabled=${this.adapter.templateData.disabled ||
+                  this.adapter.templateData.readonly
+                    ? ''
+                    : nothing}
+                  aria-readonly=${this.adapter.templateData.disabled ||
+                  this.adapter.templateData.readonly}
+                  aria-required=${this.adapter.templateData.validator?.required || nothing}
+                  aria-errormessage=${showErrors ? `${this.field.uid}_errors` : nothing}
+                  aria-describedby=${hint ? `${this.field.uid}_hint` : nothing}
+                  @change=${this.updateOptions}
+                  @blur=${this.adapter.onBlur()}
+                />
+                ${opt.label}
+              </label>`,
+          )}
+        `;
+
+    const showErrors =
+      this.adapter.templateData.touched &&
+      this.adapter.templateData.errors &&
+      this.adapter.templateData.errors.length > 0;
+
+    return html`
+      <label class="gui-field__label" for=${this.field.uid}>
+        ${this.adapter.templateData.label +
+        (this.adapter.templateData.validator?.required ? ' *' : '')}
+        ${hint}
+      </label>
+
+      <div class="gui-field">${options}</div>
+
+      ${showErrors
+        ? html`<ul class="gui-validator" id=${`${this.field.uid}_errors`}>
+            ${this.adapter.templateData.errors?.map(
+              (error: any) => html`<li class="gui-validator__error" role="status">${error}</li>`,
+            )}
+          </ul>`
+        : ''}
+    `;
+  }
+
+  valueChanged(event: Event) {
+    if (this.adapter.templateData.readonly) {
+      event.preventDefault();
+    } else {
+      const target = event.target as HTMLInputElement;
+      switch (this.adapter.templateData.valueType) {
+        case 'boolean':
+          this.adapter.valueChanged(target.value === 'true');
+          break;
+        case 'number':
+          this.adapter.valueChanged(Number(target.value));
+          break;
+        default:
+          this.adapter.valueChanged(target.value);
+      }
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
+  }
+}

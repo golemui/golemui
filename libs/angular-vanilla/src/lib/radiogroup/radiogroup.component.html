@@ -1,4 +1,5 @@
 @let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <label [for]="field.uid" class="gui-field__label">
   {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
@@ -28,3 +29,11 @@
     }
   }
 </div>
+
+@if (showErrors) {
+  <ul class="gui-validator" [id]="field.uid + '_errors'">
+    @for (error of templateData.errors; track $index) {
+      <li class="gui-validator__error" role="status">{{ error }}</li>
+    }
+  </ul>
+}
