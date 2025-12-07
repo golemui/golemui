@@ -1,3 +1,7 @@
+## 0.7.1 (2025-12-07)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
 ## 0.7.0 (2025-12-04)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
