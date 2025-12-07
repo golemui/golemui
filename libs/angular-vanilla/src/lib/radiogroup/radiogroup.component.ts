@@ -5,7 +5,9 @@ import * as Core from '@golemui/core';
 import {
   createOptionMapper,
   isOption,
+  isOptionValue,
   isProtoOption,
+  OptionValue,
   RadiogroupProps,
 } from '@golemui/shared-vanilla';
 
@@ -34,10 +36,10 @@ export class RadiogroupComponent implements OnInit, OnDestroy, Core.WithField {
       if (Array.isArray(opts) && opts.length > 0) {
         if (isOption(opts[0])) {
           // nothing to do
-        } else if (Core.isLiteral(opts[0])) {
+        } else if (isOptionValue(opts[0])) {
           this.adapter.templateData.update((current) => ({
             ...current,
-            options: (current.options as unknown as Core.LiteralValue[]).map((opt) => ({
+            options: (current.options as unknown as OptionValue[]).map((opt) => ({
               label: opt.toString(),
               value: opt,
             })),

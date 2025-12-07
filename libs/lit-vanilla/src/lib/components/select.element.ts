@@ -14,6 +14,8 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
+import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { GUIAriaController } from '../controllers/aria.controller';
 
 @customElement('gui-select')
 export class SelectElement extends LitElement implements Core.WithField {
@@ -28,6 +30,14 @@ export class SelectElement extends LitElement implements Core.WithField {
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
+
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`select[id="${this.field.uid}"]`),
+    getState: () => ({
+      uid: this.field.uid,
+      templateData: this.adapter.templateData,
+    }),
+  });
 
   subscriptions: Subscription[] = [];
 
@@ -79,32 +89,8 @@ export class SelectElement extends LitElement implements Core.WithField {
 
     this.updateOptions();
 
-    // Hint
-    const hint = this.adapter.templateData.hint
-      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
-          ${this.adapter.templateData.hint}
-        </div>`
-      : html``;
-
     // Icon
-    const selectIcon: { [key: string]: boolean } = {
-      'gui-select--icon': false,
-      'gui-select--icon-right': false,
-    };
-    let icon;
-    if (this.adapter.templateData.icon) {
-      selectIcon['gui-select--icon'] = true;
-      selectIcon['gui-select--icon-right'] = this.adapter.templateData.iconPosition === 'right';
-
-      const classes = {
-        'gui-field-icon': true,
-        'gui-field-icon--right': this.adapter.templateData.iconPosition === 'right',
-        [this.adapter.templateData.icon]: true,
-      };
-      icon = html`<span class=${classMap(classes)}></span>`;
-    } else {
-      icon = html``;
-    }
+    const selectIcon = addIcon('select', this.adapter.templateData);
 
     const options = this.optionsLoading
       ? html`<option disabled selected>Loading...</option>`
@@ -127,47 +113,27 @@ export class SelectElement extends LitElement implements Core.WithField {
           )}
         `;
 
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
-
     return html`
-      <label for=${this.field.uid}>
-        ${this.adapter.templateData.label +
-        (this.adapter.templateData.validator?.required ? ' *' : '')}
-        ${hint}
-      </label>
+      ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">
         <select
           type="text"
           id=${this.field.uid}
-          class=${classMap(selectIcon)}
+          class=${classMap(selectIcon.fieldClasses)}
           .value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled ||
           this.adapter.templateData.readonly ||
           nothing}
           @input="${() => this.valueChanged(event as Event)}"
           @blur="${() => this.adapter.onBlur()}"
-          aria-invalid=${showErrors || nothing}
-          aria-readonly=${this.adapter.templateData.readonly || nothing}
-          aria-errormessage=${`${this.field.uid}_errors`}
-          aria-required=${this.adapter.templateData.validator?.required || nothing}
-          aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         >
           ${options}
         </select>
-        ${icon}
+        ${selectIcon.html}
       </div>
 
-      ${showErrors
-        ? html`<ul class="gui-validator" id=${`${this.field.uid}_errors`}>
-            ${this.adapter.templateData.errors?.map(
-              (error: any) => html`<li class="gui-validator__error" role="status">${error}</li>`,
-            )}
-          </ul>`
-        : ''}
+      ${addErrors(this.field.uid, this.adapter.templateData)}
     `;
   }
 

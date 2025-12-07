@@ -13,6 +13,8 @@ import {
 } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { addErrors, addLabel } from '../utils/templates';
 
 @customElement('gui-radiogroup')
 export class RadiogroupElement extends LitElement implements Core.WithField {
@@ -27,6 +29,14 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
+
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`input[name="${this.field.uid}"]`),
+    getState: () => ({
+      uid: this.field.uid,
+      templateData: this.adapter.templateData,
+    }),
+  });
 
   subscriptions: Subscription[] = [];
 
@@ -78,13 +88,6 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
 
     this.updateOptions();
 
-    // Hint
-    const hint = this.adapter.templateData.hint
-      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
-          ${this.adapter.templateData.hint}
-        </div>`
-      : html``;
-
     const options = this.optionsLoading
       ? html`<span>Loading...</span>`
       : html`
@@ -98,18 +101,13 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
                   id=${`${this.field.uid}_${index}`}
                   name=${this.field.uid}
                   value=${opt.value}
-                  checked=${(this.hasMatchingValue &&
-                    opt.value === this.adapter.templateData.value) ||
-                  nothing}
+                  checked=${this.hasMatchingValue && opt.value === this.adapter.templateData.value
+                    ? ''
+                    : nothing}
                   disabled=${this.adapter.templateData.disabled ||
                   this.adapter.templateData.readonly
                     ? ''
                     : nothing}
-                  aria-readonly=${this.adapter.templateData.disabled ||
-                  this.adapter.templateData.readonly}
-                  aria-required=${this.adapter.templateData.validator?.required || nothing}
-                  aria-errormessage=${showErrors ? `${this.field.uid}_errors` : nothing}
-                  aria-describedby=${hint ? `${this.field.uid}_hint` : nothing}
                   @input="${() => this.valueChanged(event)}"
                   @blur="${() => this.adapter.onBlur()}"
                 />
@@ -118,27 +116,12 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
           )}
         `;
 
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
-
     return html`
-      <label class="gui-field__label" for=${this.field.uid}>
-        ${this.adapter.templateData.label +
-        (this.adapter.templateData.validator?.required ? ' *' : '')}
-        ${hint}
-      </label>
+      ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">${options}</div>
 
-      ${showErrors
-        ? html`<ul class="gui-validator" id=${`${this.field.uid}_errors`}>
-            ${this.adapter.templateData.errors?.map(
-              (error: any) => html`<li class="gui-validator__error" role="status">${error}</li>`,
-            )}
-          </ul>`
-        : ''}
+      ${addErrors(this.field.uid, this.adapter.templateData)}
     `;
   }
 

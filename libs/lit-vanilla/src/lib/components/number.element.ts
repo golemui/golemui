@@ -6,6 +6,8 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-number')
 export class NumberElement extends LitElement implements Core.WithField {
@@ -17,6 +19,14 @@ export class NumberElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<number, NumberinputProps>();
+
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
+    getState: () => ({
+      uid: this.field.uid,
+      templateData: this.adapter.templateData,
+    }),
+  });
 
   subscriptions: Subscription[] = [];
 
@@ -38,51 +48,17 @@ export class NumberElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    // Hint
-    const hint = this.adapter.templateData.hint
-      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
-          ${this.adapter.templateData.hint}
-        </div>`
-      : html``;
-
-    // Icon
-    const numberIcon: { [key: string]: boolean } = {
-      'gui-number--icon': false,
-      'gui-number--icon-right': false,
-    };
-    let icon;
-    if (this.adapter.templateData.icon) {
-      numberIcon['gui-number--icon'] = true;
-      numberIcon['gui-number--icon-right'] = this.adapter.templateData.iconPosition === 'right';
-
-      const classes = {
-        'gui-field-icon': true,
-        'gui-field-icon--right': this.adapter.templateData.iconPosition === 'right',
-        [this.adapter.templateData.icon]: true,
-      };
-      icon = html`<span class=${classMap(classes)}></span>`;
-    } else {
-      icon = html``;
-    }
-
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
+    const numberIcon = addIcon('number', this.adapter.templateData);
 
     return html`
-      <label for=${this.field.uid}>
-        ${this.adapter.templateData.label +
-        (this.adapter.templateData.validator?.required ? ' *' : '')}
-        ${hint}
-      </label>
+      ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">
         <input
           type="number"
           inputmode="numeric"
           id=${this.field.uid}
-          class=${classMap(numberIcon)}
+          class=${classMap(numberIcon.fieldClasses)}
           value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
@@ -92,24 +68,11 @@ export class NumberElement extends LitElement implements Core.WithField {
           placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
-          aria-invalid=${showErrors || nothing}
-          aria-errormessage=${`${this.field.uid}-error`}
-          aria-required=${this.adapter.templateData.validator?.required || nothing}
-          aria-describedby=${this.adapter.templateData.hint ? `${this.field.uid}_hint` : nothing}
         />
-        ${icon}
+        ${numberIcon.html}
       </div>
 
-      ${showErrors
-        ? html`<ul class="gui-validator">
-            ${this.adapter.templateData.errors?.map(
-              (error: any) =>
-                html`<li class="gui-validator__error" role="status" id=${`${this.field.uid}-error`}>
-                  ${error}
-                </li>`,
-            )}
-          </ul>`
-        : ''}
+      ${addErrors(this.field.uid, this.adapter.templateData)}
     `;
   }
 

@@ -5,6 +5,8 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
+import { addErrors, addLabel } from '../utils/templates';
+import { GUIAriaController } from '../controllers/aria.controller';
 
 @customElement('gui-checkbox')
 export class CheckboxElement extends LitElement implements Core.WithField {
@@ -16,6 +18,14 @@ export class CheckboxElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<string, CheckboxProps>();
+
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
+    getState: () => ({
+      uid: this.field.uid,
+      templateData: this.adapter.templateData,
+    }),
+  });
 
   subscriptions: Subscription[] = [];
 
@@ -51,11 +61,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
     }
 
     return html`
-      <label for=${this.field.uid}>
-        ${this.adapter.templateData.label +
-        (this.adapter.templateData.validator?.required ? ' *' : '')}
-        ${hint}
-      </label>
+      ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field gui-field--horizontal">
         <input
@@ -64,18 +70,12 @@ export class CheckboxElement extends LitElement implements Core.WithField {
           checked=${this.adapter.templateData.value ?? nothing}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
-          aria-required=${this.adapter.templateData.validator?.required || nothing}
-          aria-readonly=${this.adapter.templateData.readonly || nothing}
           @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
         />
       </div>
 
-      ${this.adapter.templateData.errors && this.adapter.templateData.errors.length > 0
-        ? html`<ul>
-            ${this.adapter.templateData.errors.map((error) => html`<li>${error}</li>`)}
-          </ul>`
-        : ''}
+      ${addErrors(this.field.uid, this.adapter.templateData)}
     `;
   }
 
