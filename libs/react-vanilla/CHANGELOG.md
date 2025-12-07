@@ -1,3 +1,20 @@
+## 0.8.0 (2025-12-07)
+
+### 🚀 Features
+
+- **react-vanilla:** select component implementation ([f655f96](https://github.com/golemui/formforge/commit/f655f96))
+
+### 🩹 Fixes
+
+- **react:** Add errors to the select component ([3b169f2](https://github.com/golemui/formforge/commit/3b169f2))
+- **react:** fix errors key ([2b9610f](https://github.com/golemui/formforge/commit/2b9610f))
+- **react:** fix options state handling ([9580335](https://github.com/golemui/formforge/commit/9580335))
+- **react:** make default selection aware of non matching values ([e533d46](https://github.com/golemui/formforge/commit/e533d46))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.7.1 (2025-12-07)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

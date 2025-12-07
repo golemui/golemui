@@ -1,3 +1,30 @@
+## 0.8.0 (2025-12-07)
+
+### 🚀 Features
+
+- **react-vanilla:** select component implementation ([f655f96](https://github.com/golemui/formforge/commit/f655f96))
+
+### 🩹 Fixes
+
+- select's Option type refactor ([11c0fef](https://github.com/golemui/formforge/commit/11c0fef))
+- make kitchen sink paths unique ([0e9dd28](https://github.com/golemui/formforge/commit/0e9dd28))
+- create a propsUpdaterByCurrentState abstraction for all frameworks ([4b61116](https://github.com/golemui/formforge/commit/4b61116))
+- **angular:** fix angular selected option state ([0997fda](https://github.com/golemui/formforge/commit/0997fda))
+- **core:** fix the VALIDATE_ALL action ([8697b1e](https://github.com/golemui/formforge/commit/8697b1e))
+- **lit:** fix select disabled state ([4c17542](https://github.com/golemui/formforge/commit/4c17542))
+- **react:** Update useExtraProps to use propsUpdaterByCurrentState ([9b14098](https://github.com/golemui/formforge/commit/9b14098))
+- **react:** make default selection aware of non matching values ([e533d46](https://github.com/golemui/formforge/commit/e533d46))
+- **react:** fix options state handling ([9580335](https://github.com/golemui/formforge/commit/9580335))
+- **react:** improve cn() function ([41f982a](https://github.com/golemui/formforge/commit/41f982a))
+- **react:** improve cn() function ([e06ef12](https://github.com/golemui/formforge/commit/e06ef12))
+- **react:** fix errors key ([2b9610f](https://github.com/golemui/formforge/commit/2b9610f))
+- **react:** Add errors to the select component ([3b169f2](https://github.com/golemui/formforge/commit/3b169f2))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.7.1 (2025-12-07)
 
 ### 🩹 Fixes
