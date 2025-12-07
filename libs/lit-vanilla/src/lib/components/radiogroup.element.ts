@@ -6,7 +6,9 @@ import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
   isOption,
+  isOptionValue,
   isProtoOption,
+  OptionValue,
   RadiogroupProps,
 } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
@@ -48,15 +50,13 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
     if (Array.isArray(opts) && opts.length > 0) {
       if (isOption(opts[0])) {
         // nothing to do
-      } else if (Core.isLiteral(opts[0])) {
+      } else if (isOptionValue(opts[0])) {
         this.adapter.templateData = {
           ...this.adapter.templateData,
-          options: (this.adapter.templateData.options as unknown as Core.LiteralValue[]).map(
-            (opt) => ({
-              label: opt.toString(),
-              value: opt,
-            }),
-          ),
+          options: (this.adapter.templateData.options as unknown as OptionValue[]).map((opt) => ({
+            label: opt.toString(),
+            value: opt,
+          })),
         };
       } else if (isProtoOption(opts[0], this.field.props as RadiogroupProps)) {
         const optionMapper = createOptionMapper(opts[0], this.field.props as RadiogroupProps);
