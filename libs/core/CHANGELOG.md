@@ -1,3 +1,15 @@
+## 0.8.0 (2025-12-07)
+
+### 🩹 Fixes
+
+- **core:** fix the VALIDATE_ALL action ([8697b1e](https://github.com/golemui/formforge/commit/8697b1e))
+- create a propsUpdaterByCurrentState abstraction for all frameworks ([4b61116](https://github.com/golemui/formforge/commit/4b61116))
+- select's Option type refactor ([11c0fef](https://github.com/golemui/formforge/commit/11c0fef))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.7.1 (2025-12-07)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

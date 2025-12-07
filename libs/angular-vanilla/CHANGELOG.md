@@ -1,3 +1,15 @@
+## 0.8.0 (2025-12-07)
+
+### 🩹 Fixes
+
+- **angular:** fix angular selected option state ([0997fda](https://github.com/golemui/formforge/commit/0997fda))
+- select's Option type refactor ([11c0fef](https://github.com/golemui/formforge/commit/11c0fef))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.7.1 (2025-12-07)
 
 ### 🩹 Fixes
