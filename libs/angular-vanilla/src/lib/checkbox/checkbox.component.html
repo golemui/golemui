@@ -3,7 +3,7 @@
 <label [for]="field.uid">
   {{ templateData.label + (templateData.validator?.required ? ' *' : '') }}
   @if (templateData.hint) {
-  <div class="gui-field-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
+    <div class="gui-field-hint" [attr.id]="field.uid + '_hint'">{{ templateData.hint }}</div>
   }
 </label>
 

@@ -2,8 +2,8 @@ import { defineForm } from '@golemui/core';
 
 export const kitchenSink = defineForm({
   states: {
-    limitReached: '$form.users?.length === 5',
-    hasSubregion: `!!$form.subregion`,
+    limitReached: '$form.repeaters.users?.length === 5',
+    hasSubregion: `!!$form.selects.subregion`,
   },
   form: [
     {
@@ -20,7 +20,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab8',
+        defaultOpen: 'tab7',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -116,7 +116,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'repeater',
-              path: 'users',
+              path: 'repeaters.users',
               props: {
                 addLabel: 'Add new developer',
                 'addLabel.limitReached': "Limit Reached, you can't add more",
@@ -131,13 +131,13 @@ export const kitchenSink = defineForm({
                       uid: '',
                       kind: 'control',
                       widget: 'textinput',
-                      path: 'users.items.firstName',
+                      path: 'repeaters.users.items.firstName',
                     },
                     {
                       uid: '',
                       kind: 'control',
                       widget: 'textinput',
-                      path: 'users.items.lastName',
+                      path: 'repeaters.users.items.lastName',
                     },
                   ],
                 },
@@ -163,7 +163,7 @@ export const kitchenSink = defineForm({
               kind: 'control',
               widget: 'checkbox',
               label: 'Create new account?',
-              path: 'isNewUser',
+              path: 'isNewUserLeft',
               props: {
                 checkboxPosition: 'left',
                 hint: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium.',
@@ -174,7 +174,7 @@ export const kitchenSink = defineForm({
               kind: 'control',
               widget: 'checkbox',
               label: 'Create new account?',
-              path: 'isNewUser',
+              path: 'isNewUserHint',
               props: {
                 hint: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium.',
               },
@@ -271,7 +271,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputPhone',
               props: {
                 placeholder: 'Please enter your phone number',
               },
@@ -280,7 +280,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputWithHint',
               props: {
                 hint: 'This is a hint',
                 placeholder: 'Please enter your phone number',
@@ -290,7 +290,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputWithIcon',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 hint: 'This is a hint',
@@ -301,7 +301,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'textinput',
-              path: 'textinput',
+              path: 'textinputIconRight',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
@@ -320,12 +320,12 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'greeting',
+              path: 'selects.greeting',
               label: 'Greeting',
               readonly: true,
               props: {
                 icon: 'material-icons material-icons-phone_callback',
-                hint: 'This is a hint',
+                hint: '"bye" should be selected',
                 options: ['hello', 'bye'],
                 placeholder: 'Please, select an option',
               },
@@ -334,20 +334,33 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'wrongGreeting',
+              path: 'selects.wrongGreeting',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
-                hint: 'This is a hint',
+                hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
                 options: ['hello', 'bye'],
               },
+              validator: { type: 'string', required: true },
             },
             {
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'greetingIndex',
+              path: 'selects.requiredUnselected',
               props: {
+                hint: 'The disabled  "Select an Option" option should be selected, and a validation error should be displayed because the field is required',
+                options: ['hello', 'bye'],
+              },
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: '',
+              kind: 'control',
+              widget: 'select',
+              path: 'selects.greetingIndex',
+              props: {
+                hint: '"bye.2" should be selected',
                 options: [
                   { label: 'hello.1', value: 1 },
                   { label: 'bye.2', value: 2 },
@@ -358,8 +371,9 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'subregion',
+              path: 'selects.subregion',
               label: 'Country subregion',
+              props: { hint: 'The disabled  "Select an Option" option should be selected' },
               on: {
                 load: 'getSubregions',
                 change: 'getCountries',
@@ -369,7 +383,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'select',
-              path: 'country',
+              path: 'selects.country',
               include: { in: ['hasSubregion'] },
             },
           ],
@@ -389,7 +403,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberPhone',
               props: {
                 placeholder: 'Please enter your phone number',
               },
@@ -398,7 +412,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberWithHint',
               props: {
                 hint: 'This is a hint',
                 placeholder: 'Please enter your phone number',
@@ -408,7 +422,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberIcon',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 hint: 'This is a hint',
@@ -419,7 +433,7 @@ export const kitchenSink = defineForm({
               uid: '',
               kind: 'control',
               widget: 'number',
-              path: 'number',
+              path: 'numberIconRight',
               props: {
                 icon: 'material-icons material-icons-phone_callback',
                 iconPosition: 'right',
@@ -448,7 +462,7 @@ export const kitchenSink = defineForm({
       widget: 'button',
       label: 'Create',
       on: {
-        click: 'createList',
+        click: 'submit',
       },
     },
   ],
@@ -456,21 +470,28 @@ export const kitchenSink = defineForm({
 
 export const kitchenSinkData = {
   listName: 'Development Team',
-  users: [
-    {
-      firstName: 'Alice',
-      lastName: 'Johnson',
-    },
-    {
-      firstName: 'Bob',
-      lastName: 'Smith',
-    },
-    {
-      firstName: 'Charlie',
-    },
-    {
-      firstName: 'Diana',
-      lastName: 'Rodriguez',
-    },
-  ],
+  selects: {
+    greeting: 'bye',
+    wrongGreeting: 'aaaaaa',
+    greetingIndex: 2,
+  },
+  repeaters: {
+    users: [
+      {
+        firstName: 'Alice',
+        lastName: 'Johnson',
+      },
+      {
+        firstName: 'Bob',
+        lastName: 'Smith',
+      },
+      {
+        firstName: 'Charlie',
+      },
+      {
+        firstName: 'Diana',
+        lastName: 'Rodriguez',
+      },
+    ],
+  },
 };

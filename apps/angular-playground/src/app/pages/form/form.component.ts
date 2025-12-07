@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
-import { allowedNames, kitchenSink, loggerMiddleware, selectsData } from '@golemui/apps-shared';
+import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
@@ -18,10 +18,10 @@ export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
   protected middlewares = [
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
-    loggerMiddleware,
+    AppsShared.loggerMiddleware,
   ];
-  protected formDef = kitchenSink;
-  protected formData = selectsData;
+  protected formDef = AppsShared.kitchenSink;
+  protected formData = AppsShared.kitchenSinkData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
@@ -30,7 +30,7 @@ export class AppFormPage {
 
   protected validators: Core.ValidatorFn<ValidatorsVanilla.Validator> =
     ValidatorsVanilla.initValidators({
-      allowedNames,
+      allowedNames: AppsShared.allowedNames,
     });
 
   protected error = '';
@@ -48,38 +48,6 @@ export class AppFormPage {
   }
 
   protected async onFormEvent(event: Core.FormEvent) {
-    const eventHandler = eventHandlers[event.name as keyof typeof eventHandlers];
-    if (eventHandler) {
-      console.log(`✅ onFormEvent('${event.name}')`);
-      eventHandler(event);
-    } else {
-      console.groupCollapsed(`⚠️ Unhandled - onFormEvent('${event.name}')`);
-      console.log(event.data);
-      console.groupEnd();
-    }
+    await AppsShared.onFormEvent(event);
   }
 }
-
-const eventHandlers = {
-  async getSubregions(event: Core.FormEvent) {
-    const response = await fetch('/data/subregions.json');
-    const subregions = await response.json();
-    event.callback({
-      type: 'OVERRIDE_FIELD_PROP',
-      payload: { path: 'subregion', prop: 'options', value: subregions },
-    });
-  },
-  async getCountries(event: Core.FormEvent) {
-    const response = await fetch('/data/countries.json');
-    const countries = await response.json();
-    const subregion = event.data['subregion'] as string;
-    event.callback({
-      type: 'OVERRIDE_FIELD_PROP',
-      payload: {
-        path: 'country',
-        prop: 'options',
-        value: countries[subregion.toLowerCase()],
-      },
-    });
-  },
-};

@@ -3,6 +3,7 @@ import type * as justin from './types/subscript__justin';
 
 type _ = justin;
 
+export * from './lib/base.field-adapter';
 export * from './lib/form';
 export * from './lib/form-field';
 export * from './lib/form-store';
@@ -24,4 +25,3 @@ export * from './lib/utils/object';
 export * from './lib/utils/random';
 export * from './lib/utils/repeater';
 export * from './lib/utils/types';
-export * from './lib/utils/value';
