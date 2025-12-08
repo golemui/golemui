@@ -62,7 +62,7 @@ export function RadioGroup(fieldInstance: Core.WithField) {
         throw new Error('Invalid option shape');
       }
       setOptions(opts);
-      // If value is not one of your real options, map it back to "" so that the placeholder becomes selected.
+
       const matching = opts.find((opt) => opt.value === value) !== undefined;
       setHasMatchingValue(matching);
     }
