@@ -11,7 +11,7 @@ export const radiogroup = (): any => ({
       label: 'Greeting',
       readonly: true,
       props: {
-        hint: '"bye" should be selected',
+        hint: 'This radiogroup is disabled and "bye" should be selected',
         options: ['hello', 'bye'],
       },
     },

@@ -15,6 +15,15 @@ export const checkbox = (): any => ({
       uid: '',
       kind: 'control',
       widget: 'checkbox',
+      label: 'Disabled checkbox',
+      path: 'isDisabled',
+      disabled: true,
+      props: {},
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUserLeft',
       props: {

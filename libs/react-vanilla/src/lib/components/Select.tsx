@@ -76,7 +76,7 @@ export function Select(fieldInstance: Core.WithField) {
 
   return (
     <div className="gui-select">
-      <label htmlFor={uid}>
+      <label className="gui-label" htmlFor={uid}>
         {label + (validator?.required ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>

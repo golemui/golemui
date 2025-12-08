@@ -13,6 +13,13 @@ export const number = (): any => ({
       uid: '',
       kind: 'control',
       widget: 'number',
+      path: 'numberDisabled',
+      disabled: true,
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'number',
       path: 'numberPhone',
       props: {
         placeholder: 'Please enter your phone number',

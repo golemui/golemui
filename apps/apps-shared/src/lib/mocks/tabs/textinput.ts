@@ -13,6 +13,13 @@ export const textinput = (): any => ({
       uid: '',
       kind: 'control',
       widget: 'textinput',
+      path: 'textinputDisabled',
+      disabled: true,
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'textinput',
       path: 'textinputPhone',
       props: {
         placeholder: 'Please enter your phone number',

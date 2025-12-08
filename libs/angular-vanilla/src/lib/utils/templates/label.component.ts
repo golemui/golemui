@@ -11,6 +11,9 @@ import * as Core from '@golemui/core';
       <div class="gui-field-hint" [id]="uid() + '_hint'">{{ templateData().hint }}</div>
     }
     <ng-content></ng-content>`,
+  host: {
+    class: 'gui-label',
+  },
 })
 export class LabelComponent<T, ExtraProps extends { hint?: string }> {
   uid = input.required<string>();
