@@ -13,25 +13,40 @@ export const onFormEvent = async (event: Core.FormEvent) => {
 };
 
 const eventHandlers = {
-  async getSubregions(event: Core.FormEvent) {
-    const response = await fetch('/data/subregions.json');
-    const subregions = await response.json();
-    event.callback({
-      type: 'OVERRIDE_FIELD_PROP',
-      payload: { path: 'selects.subregion', prop: 'options', value: subregions },
-    });
+  async getSubregionsForSelect(event: Core.FormEvent) {
+    getSubregions(event, 'selects.subregion');
   },
-  async getCountries(event: Core.FormEvent) {
-    const response = await fetch('/data/countries.json');
-    const countries = await response.json();
+  async getCountriesForSelect(event: Core.FormEvent) {
     const subregion = event.data['selects'].subregion as string;
-    event.callback({
-      type: 'OVERRIDE_FIELD_PROP',
-      payload: {
-        path: 'selects.country',
-        prop: 'options',
-        value: countries[subregion.toLowerCase()],
-      },
-    });
+    getCountries(event, subregion, 'selects.country');
+  },
+  async getSubregionsForRadio(event: Core.FormEvent) {
+    getSubregions(event, 'radiogroups.subregion');
+  },
+  async getCountriesForRadio(event: Core.FormEvent) {
+    const subregion = event.data['radiogroups'].subregion as string;
+    getCountries(event, subregion, 'radiogroups.country');
   },
 };
+
+async function getSubregions(event: Core.FormEvent, path: Core.DotPath) {
+  const response = await fetch('/data/subregions.json');
+  const subregions = await response.json();
+  event.callback({
+    type: 'OVERRIDE_FIELD_PROP',
+    payload: { path, prop: 'options', value: subregions },
+  });
+}
+
+async function getCountries(event: Core.FormEvent, subregion: string, path: Core.DotPath) {
+  const response = await fetch('/data/countries.json');
+  const countries = await response.json();
+  event.callback({
+    type: 'OVERRIDE_FIELD_PROP',
+    payload: {
+      path,
+      prop: 'options',
+      value: countries[subregion.toLowerCase()],
+    },
+  });
+}

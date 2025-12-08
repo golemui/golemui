@@ -27,7 +27,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 })
 export class RadiogroupComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, RadiogroupProps> = inject(
+  protected adapter: Angular.ControlFieldAdapter<OptionValue, RadiogroupProps> = inject(
     Angular.ControlFieldAdapter,
   );
   protected optionsLoading = false;

@@ -58,8 +58,8 @@ export const radiogroup = (): any => ({
       label: 'Country subregion',
       props: { hint: 'No option should be selected' },
       on: {
-        load: 'getSubregions',
-        change: 'getCountries',
+        load: 'getSubregionsForRadio',
+        change: 'getCountriesForRadio',
       },
     },
     {
