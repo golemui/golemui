@@ -1,3 +1,7 @@
+## 0.9.0 (2025-12-08)
+
+This was a version bump only for react-vanilla to align it with other projects, there were no code changes.
+
 ## 0.8.0 (2025-12-07)
 
 ### 🚀 Features

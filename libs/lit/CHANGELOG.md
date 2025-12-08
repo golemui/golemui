@@ -1,3 +1,13 @@
+## 0.9.0 (2025-12-08)
+
+### 🚀 Features
+
+- **core:** introduce SET_FIELD_INITIAL_DATA action and update related logic ([f6c2e89](https://github.com/golemui/formforge/commit/f6c2e89))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.8.0 (2025-12-07)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.
