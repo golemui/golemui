@@ -1,3 +1,24 @@
+## 0.10.0 (2025-12-08)
+
+### 🚀 Features
+
+- add angular radiogroup component ([211db60](https://github.com/golemui/formforge/commit/211db60))
+- **lit:** add radiogroup lit element component ([447037b](https://github.com/golemui/formforge/commit/447037b))
+- **react:** add RadioGroup component and update Select component to use OptionValue ([dd1689c](https://github.com/golemui/formforge/commit/dd1689c))
+
+### 🩹 Fixes
+
+- infer option value types before sending data ([5669a16](https://github.com/golemui/formforge/commit/5669a16))
+- update adapter type to use OptionValue for RadiogroupComponent ([e07d12f](https://github.com/golemui/formforge/commit/e07d12f))
+- remove outdated comment ([da63ca1](https://github.com/golemui/formforge/commit/da63ca1))
+- add required attribute instead of aria-required ([4808e9a](https://github.com/golemui/formforge/commit/4808e9a))
+- **lit:** use new implementation for updateOptions in radiogroup ([c50aa7d](https://github.com/golemui/formforge/commit/c50aa7d))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.9.0 (2025-12-08)
 
 ### 🚀 Features

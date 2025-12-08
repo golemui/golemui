@@ -1,3 +1,19 @@
+## 0.10.0 (2025-12-08)
+
+### 🚀 Features
+
+- **react:** add RadioGroup component and update Select component to use OptionValue ([dd1689c](https://github.com/golemui/formforge/commit/dd1689c))
+
+### 🩹 Fixes
+
+- add required attribute instead of aria-required ([4808e9a](https://github.com/golemui/formforge/commit/4808e9a))
+- remove outdated comment ([da63ca1](https://github.com/golemui/formforge/commit/da63ca1))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.9.0 (2025-12-08)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

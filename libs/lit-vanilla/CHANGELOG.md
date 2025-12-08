@@ -1,3 +1,19 @@
+## 0.10.0 (2025-12-08)
+
+### 🚀 Features
+
+- **lit:** add radiogroup lit element component ([447037b](https://github.com/golemui/formforge/commit/447037b))
+
+### 🩹 Fixes
+
+- add required attribute instead of aria-required ([4808e9a](https://github.com/golemui/formforge/commit/4808e9a))
+- infer option value types before sending data ([5669a16](https://github.com/golemui/formforge/commit/5669a16))
+- **lit:** use new implementation for updateOptions in radiogroup ([c50aa7d](https://github.com/golemui/formforge/commit/c50aa7d))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.9.0 (2025-12-08)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.

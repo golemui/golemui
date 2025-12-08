@@ -1,3 +1,17 @@
+## 0.10.0 (2025-12-08)
+
+### 🚀 Features
+
+- add angular radiogroup component ([211db60](https://github.com/golemui/formforge/commit/211db60))
+
+### 🩹 Fixes
+
+- add required attribute instead of aria-required ([4808e9a](https://github.com/golemui/formforge/commit/4808e9a))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.9.0 (2025-12-08)
 
 This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
