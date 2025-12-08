@@ -34,6 +34,7 @@ export const reducer =
       case 'REMOVE_FIELD':
         return Reducers.removeField(state, action);
 
+      case 'SET_FIELD_INITIAL_DATA':
       case 'SET_FIELD_DATA':
         return Fn.pipe(
           Reducers.setFieldData(state, action),
