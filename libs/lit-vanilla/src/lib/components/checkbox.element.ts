@@ -47,13 +47,6 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    // Hint
-    const hint = this.adapter.templateData.hint
-      ? html`<div class="gui-field-hint" id=${`${this.field.uid}_hint`}>
-          ${this.adapter.templateData.hint}
-        </div>`
-      : html``;
-
     if (this.adapter.templateData.checkboxPosition === 'left') {
       this.classList.add('gui-checkbox--left');
     } else if (this.classList.contains('gui-checkbox--left')) {
