@@ -1,3 +1,13 @@
+## 0.11.0 (2025-12-08)
+
+### 🚀 Features
+
+- add disabled styles, simplify styling ([7a72c70](https://github.com/golemui/formforge/commit/7a72c70))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.10.0 (2025-12-08)
 
 ### 🚀 Features
