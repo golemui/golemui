@@ -32,7 +32,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
 
   return (
     <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
-      <label htmlFor={uid}>
+      <label className="gui-label" htmlFor={uid}>
         {label + (validator?.required ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>

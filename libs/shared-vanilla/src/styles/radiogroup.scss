@@ -2,14 +2,6 @@
   .gui-radiogroup {
     display: block;
 
-    .gui-field__label {
-      display: flex;
-      flex-direction: column;
-      gap: var(--gui-space-gap--inner);
-      margin-bottom: var(--gui-space-gap--inner);
-      font-weight: 500;
-    }
-
     .gui-field {
       label {
         display: grid;
@@ -22,12 +14,7 @@
         width: 0.5em;
         height: 0.5em;
         padding: 0.6em;
-        border: 1px solid var(--gui-color-border);
         border-radius: 50%;
-        color: var(--gui-color-fg);
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
 
         appearance: none;
         margin: 0;
@@ -48,20 +35,6 @@
 
         &:checked::before {
           transform: scale(1);
-        }
-
-        &:focus {
-          outline: none;
-          border-color: var(--gui-color-primary);
-          box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-primary) 25%, transparent);
-        }
-
-        &[aria-invalid='true'] {
-          border-color: var(--gui-color-error);
-
-          &:focus {
-            box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
-          }
         }
       }
     }

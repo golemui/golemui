@@ -72,7 +72,7 @@ export function RadioGroup(fieldInstance: Core.WithField) {
 
   return (
     <div className="gui-radiogroup">
-      <label htmlFor={uid} className="gui-field__label">
+      <label htmlFor={uid} className="gui-label">
         {label + (validator?.required ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
