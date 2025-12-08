@@ -1,6 +1,6 @@
 import { inject, WritableSignal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
 export abstract class BaseFieldAdapter<F extends Core.FormField> {
@@ -19,37 +19,17 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
   protected propsUpdaterByCurrentState<ExtraProps extends Record<string, any>>(
     templateData: WritableSignal<ExtraProps>,
   ) {
-    const getFieldOverrides$ = Core.fieldPropOverridesByUid$(this.field.uid);
-    combineLatest([
-      Core.currentStates(this.context.store.state$),
-      getFieldOverrides$(this.context.store.state$),
-    ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([_, fieldOverrides]) => {
-        const props = { ...this.field.props, ...fieldOverrides };
-        if (props !== undefined) {
-          type ExtraProps = Record<string, any>;
-          // we dont want 'label.register', we only want the base keys 'label' (even if they are not set)
-          const uniquePropsWithoutState = Array.from(
-            new Set(Object.keys(props).map((prop) => prop.split('.')[0])).keys(),
-          );
-          const updatedProps = uniquePropsWithoutState.reduce(
-            (templateData, key: keyof ExtraProps) => {
-              templateData[key] = this.context.getPropertyValueByCurrentState(
-                key as string,
-                props,
-              ) as any;
-              return templateData;
-            },
-            {} as ExtraProps,
-          );
-
-          templateData.update((current) => ({
-            ...current,
-            ...updatedProps,
-          }));
-        }
-      });
+    Core.propsUpdaterByCurrentState({
+      field: this.field,
+      context: this.context,
+      updaterFn: (updatedProps) => {
+        templateData.update((current) => ({
+          ...current,
+          ...updatedProps,
+        }));
+      },
+      destroy$: this.destroy$,
+    });
   }
 
   destroy() {
