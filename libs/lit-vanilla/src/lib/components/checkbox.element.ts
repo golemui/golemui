@@ -5,7 +5,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addLabel } from '../utils/templates';
+import { addLabel } from '../utils/templates';
 import { GUIAriaController } from '../controllers/aria.controller';
 
 @customElement('gui-checkbox')
@@ -54,7 +54,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
     }
 
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
+      ${addLabel(this.field.uid, this.adapter.templateData, true)}
 
       <div class="gui-field gui-field--horizontal">
         <input
@@ -67,8 +67,6 @@ export class CheckboxElement extends LitElement implements Core.WithField {
           @blur="${() => this.adapter.onBlur()}"
         />
       </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
     `;
   }
 

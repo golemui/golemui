@@ -39,6 +39,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
             {hint}
           </div>
         )}
+        {showErrors && <Errors errors={errors} uid={uid} />}
       </label>
 
       <div className="gui-field gui-field--horizontal">
@@ -52,7 +53,6 @@ export function Checkbox(fieldInstance: Core.WithField) {
           onBlur={onBlur}
         />
       </div>
-      {showErrors && <Errors errors={errors} uid={uid} />}
     </div>
   );
 }

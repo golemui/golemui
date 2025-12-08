@@ -44,23 +44,22 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
     }
 
     const { uid, templateData } = this.getState();
-    const { touched, errors, readonly, hint, validator } = templateData;
+    const { touched, errors, readonly, disabled, hint } = templateData;
     const showErrors = touched && errors && errors.length > 0;
 
     elements.forEach((element) => {
-      const toggleAttr = (attr: string, value: string | boolean | undefined | null) => {
+      const toggleAttr = (attr: string, value: string | null) => {
         if (value) {
-          element.setAttribute(attr, value === true ? 'true' : String(value));
+          element.setAttribute(attr, value);
         } else {
           element.removeAttribute(attr);
         }
       };
 
       toggleAttr('aria-describedby', hint ? `${uid}_hint` : null);
-      toggleAttr('aria-required', validator?.required);
-      toggleAttr('aria-invalid', showErrors);
+      toggleAttr('aria-invalid', showErrors ? 'true' : null);
       toggleAttr('aria-errormessage', showErrors ? `${uid}_errors` : null);
-      toggleAttr('aria-readonly', readonly);
+      toggleAttr('aria-readonly', disabled || readonly ? 'true' : null);
     });
   }
 }

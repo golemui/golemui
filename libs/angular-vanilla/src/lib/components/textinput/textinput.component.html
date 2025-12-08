@@ -1,0 +1,32 @@
+@let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
+
+<div class="gui-field">
+  <input
+    type="text"
+    guiAria
+    [uid]="field.uid"
+    [templateData]="templateData"
+    [id]="field.uid"
+    [class]="{
+      'gui-textinput--icon': templateData.icon,
+      'gui-textinput--icon-right': templateData.iconPosition === 'right',
+    }"
+    [value]="templateData.value ?? ''"
+    [disabled]="templateData.disabled"
+    [readOnly]="templateData.readonly"
+    [attr.placeholder]="templateData.placeholder"
+    (input)="valueChanged($event)"
+    (blur)="adapter.onBlur()"
+  />
+
+  @if (templateData.icon) {
+    <span gui-icon [templateData]="templateData"></span>
+  }
+</div>
+
+@if (showErrors) {
+  <ul gui-errors [uid]="field.uid" [templateData]="templateData"></ul>
+}

@@ -1,14 +1,15 @@
 import * as Core from '@golemui/core';
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 
 export const addLabel = <T, ExtraProps extends { hint?: string }>(
   uid: string,
   templateData: Core.ControlTemplateData<T> & ExtraProps,
+  withErrors = false,
 ) => {
   return html`<label class="gui-field__label" for=${uid}>
     ${templateData.label + (templateData.validator?.required ? ' *' : '')}
-    ${addHint(uid, templateData)}
+    ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
   </label>`;
 };
 
