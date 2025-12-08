@@ -8,6 +8,10 @@ export function isOptionValue(value: unknown): value is OptionValue {
   return t === 'string' || t === 'number';
 }
 
+export function inferOptionValue(value: string, options: Option[]): OptionValue {
+  return options.find((op) => op.value.toString() === value)?.value as OptionValue;
+}
+
 export type OptionValue = string | number;
 
 /**

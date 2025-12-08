@@ -7,8 +7,9 @@ export const vanillaFieldLoaders: Core.FieldLoaders<React.ComponentType<Core.Wit
   // CONTROLS
   textinput: async () => (await import('./components/TextInput')).TextInput,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
-  select: async () => (await import('./components/Select')).Select,
   number: async () => (await import('./components/Number')).NumberInput,
+  select: async () => (await import('./components/Select')).Select,
+  radiogroup: async () => (await import('./components/RadioGroup')).RadioGroup,
 
   // REPEATER
   repeater: async () => (await import('./components/Repeater')).Repeater,

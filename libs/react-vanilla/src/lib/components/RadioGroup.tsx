@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { cn, useControlField } from '@golemui/react';
+import { useControlField } from '@golemui/react';
 import {
   createOptionMapper,
   inferOptionValue,
@@ -8,13 +8,14 @@ import {
   isProtoOption,
   Option,
   OptionValue,
+  RadiogroupProps,
   SelectProps,
 } from '@golemui/shared-vanilla';
 import { useCallback, useEffect, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
 
-export function Select(fieldInstance: Core.WithField) {
+export function RadioGroup(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
   const {
     uid,
@@ -28,20 +29,16 @@ export function Select(fieldInstance: Core.WithField) {
     props,
     onValueChanged,
     onBlur,
-  } = useControlField<OptionValue, SelectProps>(field);
+  } = useControlField<OptionValue, RadiogroupProps>(field);
 
   const hint = props.hint;
-  const placeholder = props.placeholder;
-  const icon = props.icon;
-  const iconPosition = props.iconPosition;
 
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [hasMatchingValue, setHasMatchingValue] = useState(false);
   const [options, setOptions] = useState<Option[]>([]);
-  const [safeValue, setSafeValue] = useState<OptionValue | undefined>();
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       onValueChanged(inferOptionValue(e.target.value, options));
     },
     [onValueChanged, options],
@@ -65,18 +62,17 @@ export function Select(fieldInstance: Core.WithField) {
         throw new Error('Invalid option shape');
       }
       setOptions(opts);
-      // If value is not one of your real options, map it back to "" so that the placeholder becomes selected.
+
       const matching = opts.find((opt) => opt.value === value) !== undefined;
       setHasMatchingValue(matching);
-      setSafeValue(matching ? value : '');
     }
   }, [props, value]);
 
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-select">
-      <label htmlFor={uid}>
+    <div className="gui-radiogroup">
+      <label htmlFor={uid} className="gui-field__label">
         {label + (validator?.required ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
@@ -85,46 +81,25 @@ export function Select(fieldInstance: Core.WithField) {
         )}
       </label>
       <div className="gui-field">
-        <select
-          id={uid}
-          className={cn({
-            'gui-select--icon': !!icon,
-            'gui-select--icon-right': iconPosition === 'right',
-          })}
-          required={validator?.required}
-          value={safeValue ?? ''}
-          disabled={isDisabled || isReadonly}
-          aria-invalid={showErrors}
-          aria-readonly={isDisabled || isReadonly}
-          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={validator?.required}
-          aria-describedby={hint ? `${uid}_hint` : undefined}
-          onChange={handleChange}
-          onBlur={onBlur}
-        >
-          {optionsLoading ? (
-            <option value="">Loading...</option>
-          ) : (
-            <>
-              <option value="" disabled key="select-an-option">
-                {placeholder ?? 'Select an option'}
-              </option>
-
-              {(options || []).map((opt) => (
-                <option value={opt.value} key={`k-${opt.value}`}>
-                  {opt.label}
-                </option>
-              ))}
-            </>
-          )}
-        </select>
-
-        {icon && (
-          <span
-            className={cn(icon, 'gui-field-icon', {
-              'gui-field-icon--right': iconPosition === 'right',
-            })}
-          ></span>
+        {optionsLoading ? (
+          <span>Loading...</span>
+        ) : (
+          (options || []).map((opt, index) => (
+            <label htmlFor={`${uid}_${index}`} key={`k-${opt.value}`}>
+              <input
+                type="radio"
+                id={`${uid}_${index}`}
+                name={uid}
+                required={validator?.required}
+                value={opt.value}
+                checked={hasMatchingValue && opt.value === value}
+                disabled={isDisabled || isReadonly}
+                onChange={handleChange}
+                onBlur={onBlur}
+              />
+              {opt.label}
+            </label>
+          ))
         )}
       </div>
       {showErrors && <Errors errors={errors} uid={uid} />}

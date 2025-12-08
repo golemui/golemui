@@ -1,4 +1,7 @@
+import { customElement, property } from 'lit/decorators.js';
+import { html, LitElement, nothing } from 'lit';
 import * as Core from '@golemui/core';
+import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
@@ -7,19 +10,15 @@ import {
   isOptionValue,
   isProtoOption,
   OptionValue,
-  SelectProps,
+  RadiogroupProps,
 } from '@golemui/shared-vanilla';
-import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
-import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { repeat } from 'lit-html/directives/repeat.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { addErrors, addLabel } from '../utils/templates';
 
-@customElement('gui-select')
-export class SelectElement extends LitElement implements Core.WithField {
+@customElement('gui-radiogroup')
+export class RadiogroupElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
   @consume({ context: Lit.formContext })
@@ -27,13 +26,13 @@ export class SelectElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, SelectProps>();
+  adapter = new Lit.ControlFieldAdapter<string, RadiogroupProps>();
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`select[id="${this.field.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[name="${this.field.uid}"]`),
     getState: () => ({
       uid: this.field.uid,
       templateData: this.adapter.templateData,
@@ -48,7 +47,7 @@ export class SelectElement extends LitElement implements Core.WithField {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-select');
+    this.classList.add('gui-radiogroup');
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
 
@@ -70,8 +69,8 @@ export class SelectElement extends LitElement implements Core.WithField {
             value: opt,
           })),
         };
-      } else if (isProtoOption(opts[0], this.field.props as SelectProps)) {
-        const optionMapper = createOptionMapper(opts[0], this.field.props as SelectProps);
+      } else if (isProtoOption(opts[0], this.field.props as RadiogroupProps)) {
+        const optionMapper = createOptionMapper(opts[0], this.field.props as RadiogroupProps);
         this.adapter.templateData = {
           ...this.adapter.templateData,
           options: this.adapter.templateData.options.map(optionMapper),
@@ -90,60 +89,49 @@ export class SelectElement extends LitElement implements Core.WithField {
 
     this.updateOptions();
 
-    // Icon
-    const selectIcon = addIcon('select', this.adapter.templateData);
-
     const options = this.optionsLoading
-      ? html`<option disabled selected>Loading...</option>`
+      ? html`<span>Loading...</span>`
       : html`
-          <option value="" disabled selected=${this.hasMatchingValue ? nothing : ''}>
-            ${this.adapter.templateData.placeholder ?? 'Select an option'}
-          </option>
           ${repeat(
             this.adapter.templateData.options || [],
             (opt: any) => opt?.value,
-            (opt: any) =>
-              html`<option
-                value=${opt.value}
-                selected=${this.hasMatchingValue && opt.value === this.adapter.templateData.value
-                  ? ''
-                  : nothing}
-              >
+            (opt: any, index) =>
+              html`<label for=${`${this.field.uid}_${index}`}>
+                <input
+                  type="radio"
+                  id=${`${this.field.uid}_${index}`}
+                  name=${this.field.uid}
+                  required=${this.adapter.templateData.validator?.required ? '' : nothing}
+                  value=${opt.value}
+                  checked=${this.hasMatchingValue && opt.value === this.adapter.templateData.value
+                    ? ''
+                    : nothing}
+                  disabled=${this.adapter.templateData.disabled ||
+                  this.adapter.templateData.readonly
+                    ? ''
+                    : nothing}
+                  @input="${() => this.valueChanged(event)}"
+                  @blur="${() => this.adapter.onBlur()}"
+                />
                 ${opt.label}
-              </option>`,
+              </label>`,
           )}
         `;
 
     return html`
       ${addLabel(this.field.uid, this.adapter.templateData)}
 
-      <div class="gui-field">
-        <select
-          type="text"
-          id=${this.field.uid}
-          class=${classMap(selectIcon.fieldClasses)}
-          required=${this.adapter.templateData.validator?.required ? '' : nothing}
-          .value=${this.adapter.templateData.value ?? ''}
-          ?disabled=${this.adapter.templateData.disabled ||
-          this.adapter.templateData.readonly ||
-          nothing}
-          @input="${() => this.valueChanged(event as Event)}"
-          @blur="${() => this.adapter.onBlur()}"
-        >
-          ${options}
-        </select>
-        ${selectIcon.html}
-      </div>
+      <div class="gui-field">${options}</div>
 
       ${addErrors(this.field.uid, this.adapter.templateData)}
     `;
   }
 
-  valueChanged(event: Event) {
+  valueChanged(event: Event | undefined) {
     if (this.adapter.templateData.readonly) {
-      event.preventDefault();
+      event?.preventDefault();
     } else {
-      const target = event.target as HTMLSelectElement;
+      const target = event?.target as HTMLInputElement;
       this.adapter.valueChanged(inferOptionValue(target.value, this.adapter.templateData.options));
     }
   }
