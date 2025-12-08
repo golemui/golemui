@@ -71,8 +71,8 @@ export const selects = defineForm({
       path: 'subregion',
       label: 'Country subregion',
       on: {
-        load: 'getSubregions',
-        change: 'getCountries',
+        load: 'getSubregionsForSelect',
+        change: 'getCountriesForSelect',
       },
     },
     {

@@ -377,8 +377,8 @@ export const kitchenSink = defineForm({
               label: 'Country subregion',
               props: { hint: 'The disabled  "Select an Option" option should be selected' },
               on: {
-                load: 'getSubregions',
-                change: 'getCountries',
+                load: 'getSubregionsForSelect',
+                change: 'getCountriesForSelect',
               },
             },
             {
@@ -516,8 +516,8 @@ export const kitchenSink = defineForm({
               label: 'Country subregion',
               props: { hint: 'No option should be selected' },
               on: {
-                load: 'getSubregions',
-                change: 'getCountries',
+                load: 'getSubregionsForRadio',
+                change: 'getCountriesForRadio',
               },
             },
             {
