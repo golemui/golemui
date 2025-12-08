@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
+  inferOptionValue,
   isOption,
   isOptionValue,
   isProtoOption,
@@ -142,7 +143,7 @@ export class SelectElement extends LitElement implements Core.WithField {
       event.preventDefault();
     } else {
       const target = event.target as HTMLSelectElement;
-      this.adapter.valueChanged(target.value);
+      this.adapter.valueChanged(inferOptionValue(target.value, this.adapter.templateData.options));
     }
   }
 

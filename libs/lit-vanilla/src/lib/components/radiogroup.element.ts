@@ -5,6 +5,7 @@ import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
+  inferOptionValue,
   isOption,
   isOptionValue,
   isProtoOption,
@@ -130,16 +131,7 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
       event?.preventDefault();
     } else {
       const target = event?.target as HTMLInputElement;
-      switch (this.adapter.templateData.valueType) {
-        case 'boolean':
-          this.adapter.valueChanged(target.value === 'true');
-          break;
-        case 'number':
-          this.adapter.valueChanged(Number(target.value));
-          break;
-        default:
-          this.adapter.valueChanged(target.value);
-      }
+      this.adapter.valueChanged(inferOptionValue(target.value, this.adapter.templateData.options));
     }
   }
 

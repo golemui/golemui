@@ -4,6 +4,7 @@ import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import {
   createOptionMapper,
+  inferOptionValue,
   isOption,
   isOptionValue,
   isProtoOption,
@@ -74,16 +75,9 @@ export class RadiogroupComponent implements OnInit, OnDestroy, Core.WithField {
       event.preventDefault();
     } else {
       const target = event.target as HTMLInputElement;
-      switch (this.adapter.templateData().valueType) {
-        case 'boolean':
-          this.adapter.valueChanged(target.value === 'true');
-          break;
-        case 'number':
-          this.adapter.valueChanged(Number(target.value));
-          break;
-        default:
-          this.adapter.valueChanged(target.value);
-      }
+      this.adapter.valueChanged(
+        inferOptionValue(target.value, this.adapter.templateData().options),
+      );
     }
   }
 }
