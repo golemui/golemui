@@ -16,6 +16,7 @@
           [templateData]="templateData"
           [id]="field.uid + '_' + i"
           [name]="field.uid"
+          [required]="templateData.validator?.required"
           [value]="opt.value"
           [checked]="hasMatchingValue && opt.value === templateData.value"
           [disabled]="templateData.disabled || templateData.readonly"

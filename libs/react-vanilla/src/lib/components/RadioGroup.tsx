@@ -90,6 +90,7 @@ export function RadioGroup(fieldInstance: Core.WithField) {
                 type="radio"
                 id={`${uid}_${index}`}
                 name={uid}
+                required={validator?.required}
                 value={opt.value}
                 checked={hasMatchingValue && opt.value === value}
                 disabled={isDisabled || isReadonly}

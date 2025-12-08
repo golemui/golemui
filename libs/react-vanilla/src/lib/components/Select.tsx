@@ -91,6 +91,7 @@ export function Select(fieldInstance: Core.WithField) {
             'gui-select--icon': !!icon,
             'gui-select--icon-right': iconPosition === 'right',
           })}
+          required={validator?.required}
           value={safeValue ?? ''}
           disabled={isDisabled || isReadonly}
           aria-invalid={showErrors}

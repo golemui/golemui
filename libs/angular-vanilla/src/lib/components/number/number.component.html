@@ -15,6 +15,7 @@
       'gui-number--icon': templateData.icon,
       'gui-number--icon-right': templateData.iconPosition === 'right',
     }"
+    [required]="templateData.validator?.required"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"
     [readOnly]="templateData.readonly"

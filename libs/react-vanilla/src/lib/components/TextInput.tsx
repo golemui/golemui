@@ -47,6 +47,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           type="text"
           id={uid}
           className={`${icon ? 'gui-textinput--icon' : ''} ${iconPosition === 'right' ? 'gui-textinput--icon-right' : ''}`}
+          required={validator?.required}
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}

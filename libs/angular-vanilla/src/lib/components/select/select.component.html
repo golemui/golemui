@@ -13,7 +13,7 @@
       'gui-select--icon': templateData.icon,
       'gui-select--icon-right': templateData.iconPosition === 'right',
     }"
-    [attr.required]="templateData.validator?.required"
+    [required]="templateData.validator?.required"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled || templateData.readonly"
     (change)="valueChanged($event)"

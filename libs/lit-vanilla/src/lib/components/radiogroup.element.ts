@@ -101,6 +101,7 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
                   type="radio"
                   id=${`${this.field.uid}_${index}`}
                   name=${this.field.uid}
+                  required=${this.adapter.templateData.validator?.required ? '' : nothing}
                   value=${opt.value}
                   checked=${this.hasMatchingValue && opt.value === this.adapter.templateData.value
                     ? ''

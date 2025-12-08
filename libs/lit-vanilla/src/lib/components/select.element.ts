@@ -122,6 +122,7 @@ export class SelectElement extends LitElement implements Core.WithField {
           type="text"
           id=${this.field.uid}
           class=${classMap(selectIcon.fieldClasses)}
+          required=${this.adapter.templateData.validator?.required ? '' : nothing}
           .value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled ||
           this.adapter.templateData.readonly ||
