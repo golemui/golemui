@@ -62,8 +62,8 @@ export const select = (): any => ({
       label: 'Country subregion',
       props: { hint: 'The disabled  "Select an Option" option should be selected' },
       on: {
-        load: 'getSubregions',
-        change: 'getCountries',
+        load: 'getSubregionsForSelect',
+        change: 'getCountriesForSelect',
       },
     },
     {
