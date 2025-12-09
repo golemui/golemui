@@ -7,12 +7,12 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/demos/react-demo',
-  server:{
-    port: 4200,
+  server: {
+    port: 8090,
     host: 'localhost',
   },
-  preview:{
-    port: 4200,
+  preview: {
+    port: 8090,
     host: 'localhost',
   },
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
@@ -38,6 +38,6 @@ export default defineConfig(() => ({
     coverage: {
       reportsDirectory: '../../coverage/demos/react-demo',
       provider: 'v8' as const,
-    }
+    },
   },
 }));
