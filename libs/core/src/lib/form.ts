@@ -1,6 +1,6 @@
-import { FormField, LayoutField, LayoutFieldSchema } from './form-field';
+import * as jd from 'ts.data.json';
+import { FormField, LayoutField, layoutFieldDecoder } from './form-field';
 import { ReactiveExpression, UiState } from './shared';
-import { object, optional, record, string } from 'zod/mini';
 
 // --------------------------------
 //
@@ -39,7 +39,10 @@ export function defineForm<States extends Record<string, ReactiveExpression>>(co
 //
 // --------------------------------
 
-export const FormSchema = object({
-  states: optional(record(string(), string())),
-  form: LayoutFieldSchema,
-});
+export const formDefDecoder = jd.object(
+  {
+    states: jd.optional(jd.record(jd.string(), 'states')),
+    form: layoutFieldDecoder,
+  },
+  'FormDef',
+);

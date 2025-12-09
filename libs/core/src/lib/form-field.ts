@@ -1,22 +1,7 @@
+import * as jd from 'ts.data.json';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
-import {
-  any,
-  array,
-  boolean,
-  extend,
-  lazy,
-  literal,
-  looseObject,
-  object,
-  optional,
-  pipe,
-  string,
-  transform,
-  union,
-  ZodMiniType,
-} from 'zod/mini';
 
 // --------------------------------
 //
@@ -54,7 +39,9 @@ export type BaseField<StateKeys extends UiState = never> = {
   widget: FieldWidget;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
+  // TODO: this shouldn't go here
   disabled?: boolean | { when: ReactiveExpression };
+  // TODO: this shouldn't go here
   readonly?: boolean | { when: ReactiveExpression };
 
   // <dev-note>
@@ -151,96 +138,130 @@ export const isLayoutField = <StateKeys extends string>(
 
 // --------------------------------
 //
-// Schema
+// Json Decoder
 //
 // --------------------------------
 
-const InWhenSchema = union([
-  object({
-    in: array(string()),
-  }),
-  object({
-    when: string(),
-  }),
-]);
+const inDecoder = jd.object({ in: jd.array(jd.string(), 'In[]') }, 'In');
+type In = jd.FromDecoder<typeof inDecoder>;
 
-const InWhenBoolSchema = union([
-  boolean(),
-  object({
-    in: array(string()),
-  }),
-  object({
-    when: string(),
-  }),
-]);
+const whenDecoder = jd.object({ when: jd.string() }, 'When');
+type When = jd.FromDecoder<typeof whenDecoder>;
 
-const ExcludeSchema = union([
-  object({
-    from: array(string()),
-  }),
-  object({
-    when: string(),
-  }),
-]);
+// include
+const includeDecoder = jd.oneOf<In | When>([inDecoder, whenDecoder], 'In | When');
 
-const OnSchema = looseObject({
-  load: optional(string()),
-  click: optional(string()),
-  change: optional(string()),
-});
+const fromDecoder = jd.object({ from: jd.array(jd.string(), 'From[]') }, 'From');
+type From = jd.FromDecoder<typeof fromDecoder>;
 
-// TODO: add types ZodMiniType<Field>
-const DisplayFieldSchema = looseObject({
-  kind: literal('display'),
-  uid: pipe(
-    optional(string()),
-    transform((s) => s || shortUUID()),
+// exclude
+const excludeDecoder = jd.oneOf<From | When>([fromDecoder, whenDecoder], 'Exclude');
+
+// disable / readonly
+const boolWhenDecoder = jd.oneOf<boolean | When>([jd.boolean(), whenDecoder], 'Bool | When');
+
+const onDecoder = jd.object(
+  {
+    load: jd.optional(jd.string()),
+    click: jd.optional(jd.string()),
+    change: jd.optional(jd.string()),
+  },
+  'On',
+);
+
+const uidDecoder = jd.optional(jd.string()).map((s) => s || shortUUID());
+
+const displayFieldDecoder = jd.object<DisplayField<string>>(
+  {
+    kind: jd.literal('display'),
+    uid: uidDecoder,
+    widget: jd.string(),
+    include: jd.optional(includeDecoder),
+    exclude: jd.optional(excludeDecoder),
+    disabled: jd.optional(boolWhenDecoder),
+    readonly: jd.optional(boolWhenDecoder),
+    props: jd.optional(jd.succeed()),
+  },
+  'DisplayField',
+);
+
+const interactiveFieldDecoder = jd.object<InteractiveField<string>>(
+  {
+    kind: jd.literal('interactive'),
+    uid: uidDecoder,
+    widget: jd.string(),
+    include: jd.optional(includeDecoder),
+    exclude: jd.optional(excludeDecoder),
+    disabled: jd.optional(boolWhenDecoder),
+    readonly: jd.optional(boolWhenDecoder),
+    label: jd.string(),
+    on: jd.optional(onDecoder),
+    props: jd.optional(jd.succeed()),
+  },
+  'InteractiveField',
+);
+
+const controlFieldDecoder = jd
+  .object<ControlField<any, string>>(
+    {
+      kind: jd.literal('control'),
+      uid: uidDecoder,
+      widget: jd.string(),
+      include: jd.optional(includeDecoder),
+      exclude: jd.optional(excludeDecoder),
+      disabled: jd.optional(boolWhenDecoder),
+      readonly: jd.optional(boolWhenDecoder),
+      on: jd.optional(onDecoder),
+      props: jd.optional(jd.succeed()),
+      label: jd.optional(jd.string()),
+      path: jd.string(),
+      defaultValue: jd.optional(jd.succeed()),
+      validator: jd.optional(jd.succeed()),
+    },
+    'ControlField',
+  )
+  .map((ctrl) => {
+    const transformed = { ...ctrl };
+    if (!ctrl.uid) {
+      transformed.uid = `${ctrl.path}-${ctrl.widget}`;
+    }
+    // TODO: no type safety in this block
+    if (ctrl.widget === 'repeater') {
+      const props = ctrl['props'] as Record<string, any>;
+      props['template'] = layoutFieldDecoder.parse(props['template']);
+    }
+    return transformed;
+  });
+
+export const layoutFieldDecoder = jd.lazy(() =>
+  jd.object<LayoutField<string>>(
+    {
+      kind: jd.literal('layout'),
+      uid: uidDecoder,
+      widget: jd.string(),
+      include: jd.optional(includeDecoder),
+      exclude: jd.optional(excludeDecoder),
+      disabled: jd.optional(boolWhenDecoder),
+      readonly: jd.optional(boolWhenDecoder),
+      props: jd.optional(jd.succeed()),
+      children: jd.array(formFieldDecoder, 'FormField[]'),
+    },
+    'LayoutField',
   ),
-  widget: string(),
-  include: optional(InWhenSchema),
-  exclude: optional(ExcludeSchema),
-  enabled: optional(InWhenBoolSchema),
-  on: optional(OnSchema),
-});
+);
 
-export const InteractiveFieldSchema = extend(DisplayFieldSchema, {
-  kind: literal('interactive'),
-  label: optional(string()),
-  on: optional(OnSchema),
-});
-
-export const ControlFieldSchema = <S extends ZodMiniType>(defaultValueSchema: S) =>
-  pipe(
-    extend(DisplayFieldSchema, {
-      kind: literal('control'),
-      path: string(),
-      label: optional(string()),
-      required: optional(InWhenBoolSchema),
-      readonly: optional(InWhenBoolSchema),
-      defaultValue: optional(defaultValueSchema),
-    }),
-    transform((ctrl) => {
-      const transformed = { ...ctrl };
-      if (!ctrl.uid) {
-        transformed.uid = `${ctrl.path}-${ctrl.widget}`;
-      }
-      // TODO: no type safety in this block
-      if (ctrl.widget === 'repeater') {
-        const props = ctrl['props'] as Record<string, any>;
-        props['template'] = LayoutFieldSchema.parse(props['template']);
-      }
-      return transformed;
-    }),
-  );
-
-export const LayoutFieldSchema = extend(DisplayFieldSchema, {
-  kind: literal('layout'),
-  children: lazy(() => array(AllFieldSchema)),
-});
-
-const AllFieldSchema: ZodMiniType = union([
-  LayoutFieldSchema,
-  ControlFieldSchema(any()),
-  DisplayFieldSchema,
-  InteractiveFieldSchema,
-]);
+type FormFieldDecoder = jd.Decoder<
+  DisplayField<string> | InteractiveField<string> | ControlField<any, string> | LayoutField<string>
+>;
+const formFieldDecoder = jd.lazy(
+  (): FormFieldDecoder =>
+    jd.oneOf<
+      | DisplayField<string>
+      | InteractiveField<string>
+      | ControlField<any, string>
+      | LayoutField<string>
+    >(
+      [displayFieldDecoder, interactiveFieldDecoder, controlFieldDecoder, layoutFieldDecoder],
+      'FormField',
+    ),
+);
