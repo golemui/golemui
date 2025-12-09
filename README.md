@@ -9,3 +9,7 @@
 - Build documentation examples `./build-docs.sh`
 - `cd docs`
 - `npm i && npm run dev`
+
+## Demos
+
+- React Demo `npx nx run react-demo:serve`. Open http://localhost:8090/
