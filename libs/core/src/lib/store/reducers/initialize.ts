@@ -38,18 +38,18 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     };
   }
 
-  const { error, success, data } = Form.FormSchema.safeParse(formDef);
+  const result = Form.formDefDecoder.decode(formDef);
 
-  if (success) {
+  if (result.isOk()) {
     return {
       ...initialState,
-      formDef: data as Form.Form,
-      flatForm: flattenForm([data.form] as Field.FormField[]),
+      formDef: result.value as Form.Form,
+      flatForm: flattenForm([result.value.form] as Field.FormField[]),
     };
   }
 
   return {
     ...initialState,
-    error: { kind: 'fatal', error: error.message },
+    error: { kind: 'fatal', error: result.error },
   };
 };
