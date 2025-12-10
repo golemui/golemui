@@ -20,38 +20,8 @@
       }
     }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: var(--gui-space-gap--inner);
-      margin-bottom: var(--gui-space-gap--inner);
-      font-weight: 500;
-    }
-
     select {
       appearance: none;
-      padding: var(--gui-padding);
-      border: 1px solid var(--gui-color-border);
-      border-radius: var(--gui-radius);
-      background: var(--gui-color-bg);
-      color: var(--gui-color-fg);
-      transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
-
-      &:focus {
-        outline: none;
-        border-color: var(--gui-color-primary);
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-primary) 25%, transparent);
-      }
-
-      &[aria-invalid='true'] {
-        border-color: var(--gui-color-error);
-
-        &:focus {
-          box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
-        }
-      }
 
       &.gui-select--icon {
         padding-left: 2.5rem;

@@ -11,11 +11,11 @@
 
     input[type='checkbox'] {
       display: grid;
+      padding: 0;
       cursor: pointer;
       place-content: center;
       width: 1rem;
       height: 1rem;
-      border: 1px solid var(--gui-color-border);
       border-radius: var(--gui-checkbox-radius);
       accent-color: var(--gui-color-primary);
       appearance: none;
@@ -36,14 +36,6 @@
 
       &:checked::before {
         transform: scale(1);
-      }
-
-      &[aria-invalid='true'] {
-        border-color: var(--gui-color-error);
-
-        &:focus {
-          box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
-        }
       }
     }
 
