@@ -1,4 +1,4 @@
-import { combineLatest, Observable, takeUntil } from 'rxjs';
+import { combineLatest, Observable, startWith, takeUntil } from 'rxjs';
 import { FormContext } from './context';
 import { FormField } from './form-field';
 import { currentStates, fieldPropOverridesByUid$ } from './store/selectors';
@@ -27,7 +27,10 @@ export const propsUpdaterByCurrentState = <
   destroy$: Observable<any>;
 }) => {
   const getFieldOverrides$ = fieldPropOverridesByUid$(field.uid);
-  combineLatest([currentStates(context.store.state$), getFieldOverrides$(context.store.state$)])
+  combineLatest([
+    currentStates(context.store.state$),
+    getFieldOverrides$(context.store.state$).pipe(startWith(null)),
+  ])
     .pipe(takeUntil(destroy$))
     .subscribe(([_, fieldOverrides]) => {
       const props = { ...field.props, ...fieldOverrides };

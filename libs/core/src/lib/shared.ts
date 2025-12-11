@@ -13,6 +13,11 @@ export type UiState = string;
 export type ReactiveExpression = string;
 
 /**
+ * A ReactiveFunction is a function that is evaluated and then substituted by the produced value.
+ */
+export type ReactiveFunction = string;
+
+/**
  * The path to a json object
  */
 export type DotPath = string;
