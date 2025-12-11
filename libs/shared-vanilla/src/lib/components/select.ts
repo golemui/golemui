@@ -15,7 +15,7 @@ export function inferOptionValue(value: string, options: Option[]): OptionValue 
 export type OptionValue = string | number;
 
 /**
- * Checks wether a value is a fully compliant Option (with label and value fields)
+ * Checks whether a value is a fully compliant Option (with label and value fields)
  */
 export const isOption = (opt: unknown): opt is Option =>
   opt !== null &&

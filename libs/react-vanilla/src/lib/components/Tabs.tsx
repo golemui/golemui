@@ -1,13 +1,34 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, useLayoutField } from '@golemui/react';
-import { TabsProps } from '@golemui/shared-vanilla';
-import React, { useCallback, useRef, useState } from 'react';
+import { cn, FieldRenderer, useLayoutField } from '@golemui/react';
+import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
   const { uid, children, props } = useLayoutField<TabsProps>(field);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
+  const startSentinelRef = useRef<HTMLLIElement>(null);
+  const endSentinelRef = useRef<HTMLLIElement>(null);
+  const [isStartVisible, setIsStartVisible] = useState(false);
+  const [isEndVisible, setIsEndVisible] = useState(false);
   const [activeTab, setActiveTab] = useState(props.defaultOpen ?? props.tabs[0].uid);
+
+  useEffect(() => {
+    const startSentinel = startSentinelRef.current;
+    const endSentinel = endSentinelRef.current;
+
+    const startObserver = createIntersectionObserver(startSentinel!, (isIntersecting) =>
+      setIsStartVisible(isIntersecting),
+    );
+    const endObserver = createIntersectionObserver(endSentinel!, (isIntersecting) =>
+      setIsEndVisible(isIntersecting),
+    );
+
+    return () => {
+      startObserver.disconnect();
+      endObserver.disconnect();
+    };
+  }, []);
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     const currentIndex = props.tabs.findIndex((tab) => tab.uid === activeTab);
@@ -56,6 +77,9 @@ export function Tabs(fieldInstance: Core.WithField) {
           className={`${tab.uid === activeTab ? 'active' : ''}`}
           onClick={() => setActiveTab(tab.uid)}
           onKeyDown={(event: React.KeyboardEvent) => onKeyDown(event)}
+          onFocus={(event: React.FocusEvent) => {
+            event.target.scrollIntoView();
+          }}
         >
           {tab.label}
         </button>
@@ -81,8 +105,21 @@ export function Tabs(fieldInstance: Core.WithField) {
 
   return (
     <div className="gui-tabs">
-      <nav className={`gui-field gui-field--horizontal`} role="tablist" id={uid}>
-        {renderTabs()}
+      <nav
+        className={cn({
+          'gui-field': true,
+          'gui-field--horizontal': true,
+          'gui-tabs--start-shadow': !isStartVisible,
+          'gui-tabs--end-shadow': !isEndVisible,
+        })}
+        role="tablist"
+        id={uid}
+      >
+        <ul>
+          <li role="presentation" ref={startSentinelRef} className="gui-sentinel"></li>
+          {renderTabs()}
+          <li role="presentation" ref={endSentinelRef} className="gui-sentinel"></li>
+        </ul>
       </nav>
       {renderFields()}
     </div>

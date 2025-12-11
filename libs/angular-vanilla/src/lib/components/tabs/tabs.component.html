@@ -1,26 +1,38 @@
 @let templateData = adapter.templateData();
 
-<nav class="gui-field gui-field--horizontal" role="tablist" [id]="field.uid">
-  @for (tab of templateData.tabs; track tab.uid; let i = $index) {
-    <button
-      #tabButtonRef
-      type="button"
-      role="tab"
-      [tabindex]="tab.uid === activeTab ? null : -1"
-      [id]="'tab_' + field.uid + '_' + i"
-      [attr.aria-controls]="'tabpanel_' + field.uid + '_' + i"
-      [attr.aria-selected]="tab.uid === activeTab ? 'true' : 'false'"
-      [class.active]="tab.uid === activeTab"
-      (click)="onClickTab(tab.uid)"
-      (keydown)="onKeyDown($event)"
-    >
-      {{ tab.label }}
-    </button>
-  }
+<nav
+  class="gui-field gui-field--horizontal"
+  [class.gui-tabs--start-shadow]="!isStartVisible()"
+  [class.gui-tabs--end-shadow]="!isEndVisible()"
+  role="tablist"
+  [id]="field.uid">
+  <ul>
+    <li role="presentation" #startSentinel class="gui-sentinel"></li>
+    @for (tab of templateData.tabs; track tab.uid; let i = $index) {
+      <li>
+        <button
+          #tabButtonRef
+          type="button"
+          role="tab"
+          [tabindex]="tab.uid === activeTab() ? null : -1"
+          [id]="'tab_' + field.uid + '_' + i"
+          [attr.aria-controls]="'tabpanel_' + field.uid + '_' + i"
+          [attr.aria-selected]="tab.uid === activeTab() ? 'true' : 'false'"
+          [class.active]="tab.uid === activeTab()"
+          (click)="onClickTab(tab.uid)"
+          (keydown)="onKeyDown($event)"
+          (focus)="onFocus($event)"
+        >
+          {{ tab.label }}
+        </button>
+      </li>
+    }
+    <li role="presentation" #endSentinel class="gui-sentinel"></li>
+  </ul>
 </nav>
 
 @for (child of templateData.children; track child.uid; let i = $index) {
-  @if (child.uid === activeTab) {
+  @if (child.uid === activeTab()) {
     <section
       role="tabpanel"
       tabindex="0"
