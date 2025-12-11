@@ -1,3 +1,13 @@
+## 0.13.0 (2025-12-11)
+
+### 🚀 Features
+
+- **core:** add callback functions ([33f0d85](https://github.com/golemui/formforge/commit/33f0d85))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.12.0 (2025-12-11)
 
 ### 🚀 Features
