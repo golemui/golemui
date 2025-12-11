@@ -1,3 +1,13 @@
+## 0.12.0 (2025-12-11)
+
+### 🚀 Features
+
+- add scroll to tabs component ([e19d353](https://github.com/golemui/formforge/commit/e19d353))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.11.0 (2025-12-08)
 
 ### 🚀 Features
