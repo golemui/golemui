@@ -16,8 +16,8 @@ const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = AppsShared.callbacks;
-const formData = AppsShared.callbacksData;
+const formDef = AppsShared.kitchenSink;
+const formData = AppsShared.kitchenSinkData;
 const middlewares = [
   Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
   AppsShared.loggerMiddleware,
