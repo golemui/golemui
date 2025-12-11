@@ -1,16 +1,22 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { TabsProps } from '@golemui/shared-vanilla';
+import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property, queryAll } from 'lit/decorators.js';
+import { customElement, property, query, queryAll, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-tabs')
 export class TabsElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
+
+  @query('#start-sentinel') startSentinel!: HTMLElement;
+  @query('#end-sentinel') endSentinel!: HTMLElement;
+
+  @state() isStartVisible!: boolean;
+  @state() isEndVisible!: boolean;
 
   @queryAll('button[role="tab"]')
   tabButtons!: HTMLButtonElement[];
@@ -25,6 +31,9 @@ export class TabsElement extends LitElement implements Core.WithField {
   adapter = new Lit.LayoutFieldAdapter<TabsProps>();
 
   subscriptions: Subscription[] = [];
+
+  private startObserver?: IntersectionObserver;
+  private endObserver?: IntersectionObserver;
 
   override createRenderRoot() {
     return this;
@@ -42,6 +51,17 @@ export class TabsElement extends LitElement implements Core.WithField {
       this.adapter.templateDataChanged$.subscribe(() => {
         this.requestUpdate();
       }),
+    );
+  }
+
+  protected override firstUpdated(_changedProperties: PropertyValues) {
+    this.startObserver = createIntersectionObserver(
+      this.startSentinel,
+      (isIntersecting) => (this.isStartVisible = isIntersecting),
+    );
+    this.endObserver = createIntersectionObserver(
+      this.endSentinel,
+      (isIntersecting) => (this.isEndVisible = isIntersecting),
     );
   }
 
@@ -88,27 +108,42 @@ export class TabsElement extends LitElement implements Core.WithField {
       (section: any) => section.uid === this.activeTab,
     );
 
-    return html`<nav class="gui-field gui-field--horizontal" role="tablist" id=${this.field.uid}>
-        ${this.adapter.templateData.tabs
-          ? repeat(
-              this.adapter.templateData.tabs,
-              (tab, index) => html`
-                <button
-                  type="button"
-                  role="tab"
-                  tabindex=${tab.uid === this.activeTab ? nothing : -1}
-                  id=${`tab_${this.field.uid}_${index}`}
-                  aria-controls=${`tabpanel_${this.field.uid}_${index}`}
-                  aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
-                  class=${classMap({ active: tab.uid === this.activeTab })}
-                  @click=${() => this.onClickTab(tab.uid)}
-                  @keydown=${(event: KeyboardEvent) => this.onKeyDown(event)}
-                >
-                  ${tab.label}
-                </button>
-              `,
-            )
-          : nothing}
+    const navClasses = {
+      'gui-field': true,
+      'gui-field--horizontal': true,
+      'gui-tabs--start-shadow': !this.isStartVisible,
+      'gui-tabs--end-shadow': !this.isEndVisible,
+    };
+
+    return html`<nav class=${classMap(navClasses)} role="tablist" id=${this.field.uid}>
+        <ul>
+          <li role="presentation" id="start-sentinel" class="gui-sentinel"></li>
+          ${this.adapter.templateData.tabs
+            ? repeat(
+                this.adapter.templateData.tabs,
+                (tab, index) => html`
+                  <li>
+                    <button
+                      type="button"
+                      role="tab"
+                      tabindex=${tab.uid === this.activeTab ? nothing : -1}
+                      id=${`tab_${this.field.uid}_${index}`}
+                      aria-controls=${`tabpanel_${this.field.uid}_${index}`}
+                      aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
+                      class=${classMap({ active: tab.uid === this.activeTab })}
+                      @click=${() => this.onClickTab(tab.uid)}
+                      @keydown=${(event: KeyboardEvent) => this.onKeyDown(event)}
+                      @focus=${(event: FocusEvent) =>
+                        (event.target as HTMLButtonElement).scrollIntoView()}
+                    >
+                      ${tab.label}
+                    </button>
+                  </li>
+                `,
+              )
+            : nothing}
+          <li role="presentation" id="end-sentinel" class="gui-sentinel"></li>
+        </ul>
       </nav>
       ${repeat(
         [activeSection],
@@ -129,5 +164,7 @@ export class TabsElement extends LitElement implements Core.WithField {
     super.disconnectedCallback();
     this.adapter.destroy();
     this.subscriptions.forEach((s) => s.unsubscribe());
+    this.startObserver?.disconnect();
+    this.endObserver?.disconnect();
   }
 }

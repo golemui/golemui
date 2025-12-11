@@ -1,8 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, OnDestroy, OnInit, viewChildren } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  viewChild,
+  viewChildren,
+} from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { TabsProps } from '@golemui/shared-vanilla';
+import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
@@ -16,44 +25,64 @@ import { TabsProps } from '@golemui/shared-vanilla';
 })
 export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
   tabButtons = viewChildren<ElementRef>('tabButtonRef');
+  startSentinel = viewChild.required<ElementRef>('startSentinel');
+  endSentinel = viewChild.required<ElementRef>('endSentinel');
   field!: Core.LayoutField;
-  activeTab = '';
+
+  activeTab = signal('');
+  isStartVisible = signal(false);
+  isEndVisible = signal(false);
 
   protected adapter: Angular.LayoutFieldAdapter<TabsProps> = inject(Angular.LayoutFieldAdapter);
+  private startObserver: IntersectionObserver | undefined;
+  private endObserver: IntersectionObserver | undefined;
 
   ngOnInit(): void {
     const props: TabsProps = this.field.props as TabsProps;
     this.adapter.init(this.field);
-    this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
+    this.activeTab.set(props.defaultOpen ?? props.tabs[0].uid);
+
+    this.startObserver = createIntersectionObserver(
+      this.startSentinel().nativeElement,
+      (isIntersecting: boolean) => this.isStartVisible.set(isIntersecting),
+    );
+    this.endObserver = createIntersectionObserver(
+      this.endSentinel().nativeElement,
+      (isIntersecting: boolean) => this.isEndVisible.set(isIntersecting),
+    );
   }
 
   onClickTab(uid: string) {
-    this.activeTab = uid;
+    this.activeTab.set(uid);
+  }
+
+  onFocus(event: FocusEvent) {
+    (event.target as Element).scrollIntoView();
   }
 
   onKeyDown($event: KeyboardEvent) {
     const tabs = (this.field.props as TabsProps).tabs;
-    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
+    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
 
     switch ($event.key) {
       case 'ArrowLeft':
         if (currentIndex > 0) {
-          this.activeTab = tabs[currentIndex - 1].uid;
+          this.activeTab.set(tabs[currentIndex - 1].uid);
           this.tabButtons()[currentIndex - 1].nativeElement.focus();
         }
         break;
       case 'ArrowRight':
         if (currentIndex < tabs.length - 1) {
-          this.activeTab = tabs[currentIndex + 1].uid;
+          this.activeTab.set(tabs[currentIndex + 1].uid);
           this.tabButtons()[currentIndex + 1].nativeElement.focus();
         }
         break;
       case 'Home':
-        this.activeTab = tabs[0].uid;
+        this.activeTab.set(tabs[0].uid);
         this.tabButtons()[0].nativeElement.focus();
         break;
       case 'End':
-        this.activeTab = tabs[tabs.length - 1].uid;
+        this.activeTab.set(tabs[tabs.length - 1].uid);
         this.tabButtons()[tabs.length - 1].nativeElement.focus();
         break;
       default:
@@ -63,5 +92,7 @@ export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
 
   ngOnDestroy(): void {
     this.adapter.destroy();
+    this.startObserver?.disconnect();
+    this.endObserver?.disconnect();
   }
 }
