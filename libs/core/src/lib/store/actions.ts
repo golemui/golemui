@@ -50,6 +50,14 @@ export type OVERRIDE_FIELD_PROP = {
   payload: { path: DotPath; prop: string; value: any };
 };
 
+/**
+ * Overrides a property in a form field's `props` object.
+ */
+export type OVERRIDE_FIELD_PROP_BY_FUNCTION = {
+  type: 'OVERRIDE_FIELD_PROP_BY_FUNCTION';
+  payload: { uid: string; prop: string; value: any };
+};
+
 export type SET_ERROR = {
   type: 'SET_ERROR';
   payload: { error: FormStoreError };

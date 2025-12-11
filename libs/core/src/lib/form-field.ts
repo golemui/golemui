@@ -1,5 +1,5 @@
 import * as jd from 'ts.data.json';
-import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
+import { DotPath, ReactiveExpression, ReactiveFunction, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 
@@ -58,7 +58,7 @@ export type BaseField<StateKeys extends UiState = never> = {
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: Record<string, any>;
+  props?: Record<string, string | boolean | number | any[] | ((form: any) => any) | object>;
 };
 
 export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
@@ -83,7 +83,7 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
      * - If `label` is an empty string, no label will be displayed.
      * - Otherwise, the provided label will be rendered.
      */
-    label?: ReactiveExpression | string;
+    label?: ReactiveExpression | ReactiveFunction | string;
     on?: On<StateKeys>;
     defaultValue?: T;
     validator?: any;
@@ -213,7 +213,7 @@ const controlFieldDecoder = jd
       readonly: jd.optional(boolWhenDecoder),
       on: jd.optional(onDecoder),
       props: jd.optional(jd.succeed()),
-      label: jd.optional(jd.string()),
+      label: jd.optional(jd.succeed()),
       path: jd.string(),
       defaultValue: jd.optional(jd.succeed()),
       validator: jd.optional(jd.succeed()),

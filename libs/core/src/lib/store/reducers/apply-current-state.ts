@@ -1,8 +1,34 @@
 import * as Field from '../../form-field';
 import { State } from '../model';
 
+export const executeCurrentFunctions = (state: State, obj: any) => {
+  Object.keys(obj).forEach((uid) => {
+    Object.keys(obj[uid]).forEach((key) => {
+      if (key !== 'props') {
+        const result = obj[uid][key](state);
+        const control = state.flatForm.find((f) => f.uid === uid);
+        if (control) {
+          (control as any)[key] = result;
+        }
+      }
+    });
+
+    if (obj[uid].props) {
+      Object.keys(obj[uid].props).forEach((prop) => {
+        const result = obj[uid].props[prop](state);
+        const control = state.flatForm.find((f) => f.uid === uid);
+        if (control?.props) {
+          control.props[prop] = result;
+        }
+      });
+    }
+  });
+};
+
 // TODO: Should we allow include.in and exclude.from at the same time?
 export const applyCurrentState = (state: State): State => {
+  executeCurrentFunctions(state, state.currentFunctions);
+
   const fieldFlags = calculateFieldFlags(state);
 
   return {

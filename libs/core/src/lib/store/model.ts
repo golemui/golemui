@@ -42,6 +42,10 @@ export type State = {
    */
   currentStates: string[];
   /**
+   * List of functions computed for the current form state.
+   */
+  currentFunctions: Record<string, (form: any) => any>;
+  /**
    * Tracks fields whose components have been rendered.
    * A field is added when its component mounts and removed when it unmounts.
    */
@@ -87,6 +91,7 @@ export const createInitialState = (): State => ({
   flatForm: [],
   formMeta: {},
   currentStates: [],
+  currentFunctions: {},
   fields: {},
   validations: {},
   fieldFlags: {},

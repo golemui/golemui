@@ -1,6 +1,6 @@
 import * as jd from 'ts.data.json';
 import { FormField, LayoutField, layoutFieldDecoder } from './form-field';
-import { ReactiveExpression, UiState } from './shared';
+import { ReactiveExpression, ReactiveFunction, UiState } from './shared';
 
 // --------------------------------
 //
@@ -9,6 +9,7 @@ import { ReactiveExpression, UiState } from './shared';
 // --------------------------------
 
 export type Form<StateKeys extends UiState = never> = {
+  functions?: Record<StateKeys, ReactiveFunction>;
   states?: Record<StateKeys, ReactiveExpression>;
   form: LayoutField<StateKeys>;
 };
@@ -20,8 +21,8 @@ export type Form<StateKeys extends UiState = never> = {
  */
 export function defineForm<States extends Record<string, ReactiveExpression>>(config: {
   states?: States;
-  form: FormField<Extract<keyof States, string>>[]; // this Extract<> removes number and symbol from the indexed type
-}): Form<Extract<keyof States, string>> {
+  form: FormField<Extract<keyof States, string | ReactiveFunction>>[]; // this Extract<> removes number and symbol from the indexed type
+}): Form<Extract<keyof States, string | ReactiveFunction>> {
   return {
     ...config,
     form: {

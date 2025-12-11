@@ -20,3 +20,15 @@ export const overrideFieldProp = (
     fieldPropOverrides: { [control.uid]: { ...propOverrides, [payload.prop]: payload.value } },
   };
 };
+
+export const overrideFieldPropByFunction = (
+  state: State,
+  { payload }: Actions.OVERRIDE_FIELD_PROP_BY_FUNCTION,
+): any => {
+  const control = Object.values(state.fields).find((field) => field.uid === payload.uid);
+  if (!control) {
+    console.warn(`Control "${payload.uid}" not found`);
+    return null;
+  }
+  return { [payload.prop]: payload.value };
+};
