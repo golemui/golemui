@@ -1,9 +1,10 @@
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import * as Lit from '@golemui/lit';
 import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import './heading.element.scss';
+import { Subscription } from 'rxjs';
 
 type OwnWidgetProps = {
   text: string;
@@ -20,6 +21,8 @@ export class HeadingElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.displayFieldContext })
   adapter: Lit.DisplayFieldAdapter<OwnWidgetProps> = new Lit.DisplayFieldAdapter();
 
+  subscriptions: Subscription[] = [];
+
   override createRenderRoot() {
     return this;
   }
@@ -28,6 +31,10 @@ export class HeadingElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.adapter.context = this.formContext;
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
   }
 
   override render() {
@@ -60,5 +67,6 @@ export class HeadingElement extends LitElement implements Core.WithField {
 
   disconnectedCallback() {
     this.adapter.destroy();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
