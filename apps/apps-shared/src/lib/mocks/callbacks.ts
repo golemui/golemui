@@ -18,7 +18,6 @@ export const callbacks = defineForm({
           widget: 'heading',
           props: {
             text: (form: any) => {
-              console.log(form);
               return form.data.registerMode ? 'Register' : 'Login';
             },
           },
@@ -30,7 +29,6 @@ export const callbacks = defineForm({
       kind: 'control',
       widget: 'checkbox',
       label: ((form: any) => {
-        console.log(form);
         return form.data.registerMode ? 'Change to Login' : 'Change to Register';
       }) as any,
       props: {
