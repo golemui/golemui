@@ -14,8 +14,8 @@ export class FormElement extends LitElement {
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
     AppsShared.loggerMiddleware,
   ];
-  formDef = AppsShared.kitchenSink;
-  formData = AppsShared.kitchenSinkData;
+  formDef = AppsShared.callbacks;
+  formData = AppsShared.callbacksData;
   vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
