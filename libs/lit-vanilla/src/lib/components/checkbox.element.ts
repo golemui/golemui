@@ -10,14 +10,14 @@ import { GUIAriaController } from '../controllers/aria.controller';
 
 @customElement('gui-checkbox')
 export class CheckboxElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+  field!: Core.ControlField<boolean>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, CheckboxProps>();
+  adapter = new Lit.ControlFieldAdapter<boolean, CheckboxProps>();
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
@@ -60,8 +60,8 @@ export class CheckboxElement extends LitElement implements Core.WithField {
         <input
           type="checkbox"
           id=${this.field.uid}
-          checked=${this.adapter.templateData.value ?? nothing}
-          required=${this.adapter.templateData.validator?.required ? '' : nothing}
+          ?checked=${this.adapter.templateData.value}
+          ?required=${this.adapter.templateData.validator?.required}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
           @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
