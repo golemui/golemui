@@ -1,21 +1,27 @@
 import * as Field from '../../form-field';
+import { FormField } from '../../form-field';
 import { State } from '../model';
+import { FormFunction, FormFunctionTree } from '../../shared';
 
-export const executeCurrentFunctions = (state: State, obj: any) => {
-  Object.keys(obj).forEach((uid) => {
-    Object.keys(obj[uid]).forEach((key) => {
-      if (key !== 'props') {
-        const result = obj[uid][key](state);
+export const executeCurrentFunctions = (state: State, fields: Record<string, FormFunctionTree>) => {
+  Object.keys(fields).forEach((uid) => {
+    const field = fields[uid] as FormFunctionTree;
+
+    Object.keys(field).forEach((key) => {
+      if (typeof field[key] === 'function') {
+        const func = field[key] as FormFunction;
+        const result = func(state);
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control) {
-          (control as any)[key] = result;
+          control[key as keyof FormField<string>] = result;
         }
       }
     });
 
-    if (obj[uid].props) {
-      Object.keys(obj[uid].props).forEach((prop) => {
-        const result = obj[uid].props[prop](state);
+    if (field.props) {
+      Object.keys(field.props).forEach((prop) => {
+        const func = field.props[prop] as FormFunction;
+        const result = func(state);
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control?.props) {
           control.props[prop] = result;

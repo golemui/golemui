@@ -27,6 +27,12 @@ export type DotPath = string;
  */
 export type Uid = string;
 
+export type FormFunction = (form: any) => any;
+export interface FormFunctionTree {
+  [key: string]: FormFunctionTree | FormFunction;
+  props: FormFunctionTree;
+}
+
 /**
  * Defines when field validation should run.
  * - `'eager'` validates on `'change'`, `'blur'` and `'submit'`.

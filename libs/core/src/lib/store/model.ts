@@ -1,7 +1,7 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as Form from '../form';
 import * as Field from '../form-field';
-import { DotPath, Uid, UiState } from '../shared';
+import { DotPath, FormFunctionTree, Uid, UiState } from '../shared';
 
 export type FormStoreError =
   | { kind: 'none' }
@@ -44,7 +44,7 @@ export type State = {
   /**
    * List of functions computed for the current form state.
    */
-  currentFunctions: Record<string, (form: any) => any>;
+  currentFunctions: Record<Uid, FormFunctionTree>;
   /**
    * Tracks fields whose components have been rendered.
    * A field is added when its component mounts and removed when it unmounts.
