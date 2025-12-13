@@ -41,7 +41,7 @@ export type LooseUnion<T extends string> = T | (string & {});
  *   code: 'POSITIVE_ONLY'
  * };
  */
-export type LooseObject<T extends object> = T & Record<string, any>;
+export type LooseObject<T extends object, V = any> = T & Record<string, V>;
 
 /**
  * Prettify<T> - Flattens and displays complex TypeScript types in a readable format.

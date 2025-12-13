@@ -55,7 +55,7 @@ export class FormContext<ComponentType> {
     // More than one event can be emitted if more than one currentstate matches
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
-        const eventName: EventName | undefined = field.on?.[`${eventType}.${currentState}`];
+        const eventName = field.on?.[`${eventType}.${currentState}`] as EventName | undefined;
         this.attemptValidation(eventType, eventName, field);
         if (eventName) {
           this.events$.next({
@@ -68,7 +68,7 @@ export class FormContext<ComponentType> {
         }
       });
     } else {
-      const eventName: EventName | undefined = field.on?.[eventType];
+      const eventName = field.on?.[eventType] as EventName | undefined;
       this.attemptValidation(eventType, eventName, field);
       if (eventName) {
         this.events$.next({

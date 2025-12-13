@@ -1,6 +1,6 @@
 import { FormField } from './form-field';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
-import { ImmutableRecord } from './utils/types';
+import { ImmutableRecord, LooseObject } from './utils/types';
 
 /**
  * The UI state name.
@@ -32,10 +32,13 @@ export type ReactiveFieldFunction<T> = <FormData extends Record<string, any>>(
   api: FieldFunctionParams<FormData>,
 ) => T;
 
-export interface ReactiveFieldFunctionTree {
-  [key: string]: ReactiveFieldFunctionTree | ReactiveFieldFunction<any>;
-  props: ReactiveFieldFunctionTree;
-}
+export type ReactiveFieldFunctionTree = LooseObject<
+  {
+    props?: Record<string, ReactiveFieldFunction<any>>;
+    on?: Record<string, ReactiveFieldFunction<any>>;
+  },
+  ReactiveFieldFunction<any>
+>;
 
 /**
  * Defines when field validation should run.

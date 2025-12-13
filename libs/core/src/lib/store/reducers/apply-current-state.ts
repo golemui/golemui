@@ -14,6 +14,7 @@ export const executeCurrentFieldFunctions = (
       if (typeof field[key] === 'function') {
         const func = field[key] as ReactiveFieldFunction<any>;
         const result = func({ $form: state.data });
+        // TODO: Mutate State.fields in any case
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control) {
           control[key as keyof FormField<string>] = result;
@@ -23,11 +24,24 @@ export const executeCurrentFieldFunctions = (
 
     if (field.props) {
       Object.keys(field.props).forEach((prop) => {
-        const func = field.props[prop] as ReactiveFieldFunction<any>;
+        const func = field.props?.[prop] as ReactiveFieldFunction<any>;
         const result = func({ $form: state.data });
+        // TODO: Mutate State.fields in any case
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control?.props) {
           control.props = { ...control.props, [prop]: result };
+        }
+      });
+    }
+
+    if (field.on) {
+      Object.keys(field.on).forEach((prop) => {
+        const func = field.on?.[prop] as ReactiveFieldFunction<any>;
+        const result = func({ $form: state.data });
+        // TODO: Mutate State.fields in any case
+        const control = state.flatForm.find((f) => f.uid === uid) as { on?: Field.On<string> };
+        if (control?.on) {
+          control.on = { ...control.on, [prop]: result };
         }
       });
     }
