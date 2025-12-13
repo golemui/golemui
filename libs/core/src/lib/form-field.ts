@@ -19,6 +19,8 @@ export type Flags = {
 export type FieldWidget = string;
 // export type FieldWidget = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 
+type ReactiveFieldValue<T> = ReactiveExpression | ReactiveFieldFunction<string> | T;
+
 /**
  * An event expression is basically a way to change the current UI state: `currentState = 'loading'` or send an event `loadData` for the forms engine runtime to process.
  */
@@ -26,9 +28,9 @@ type EventExpression = string;
 
 export type On<StateKeys extends UiState = never> = AllSuffixable<
   {
-    load?: EventExpression;
-    click?: EventExpression;
-    change?: EventExpression;
+    load?: ReactiveFieldValue<EventExpression>;
+    click?: ReactiveFieldValue<EventExpression>;
+    change?: ReactiveFieldValue<EventExpression>;
   },
   StateKeys
 >;
@@ -76,7 +78,7 @@ export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
 export type InteractiveField<StateKeys extends UiState = never> = SomeSuffixable<
   BaseField<StateKeys> & {
     kind: 'interactive';
-    label?: ReactiveExpression | ReactiveFieldFunction<string> | string;
+    label?: ReactiveFieldValue<string>;
     on?: On<StateKeys>;
   },
   'disabled' | 'label',
@@ -93,10 +95,10 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
      * - If `label` is an empty string, no label will be displayed.
      * - Otherwise, the provided label will be rendered.
      */
-    label?: ReactiveExpression | ReactiveFieldFunction<string> | string;
+    label?: ReactiveFieldValue<string>;
     on?: On<StateKeys>;
     defaultValue?: T;
-    validator?: any;
+    validator?: ReactiveFieldValue<object>; // `object` should be `V` (the validator type)
   },
   'disabled' | 'label' | 'validator',
   StateKeys
@@ -170,15 +172,7 @@ const excludeDecoder = jd.oneOf<From | When>([fromDecoder, whenDecoder], 'Exclud
 // disable / readonly
 const boolWhenDecoder = jd.oneOf<boolean | When>([jd.boolean(), whenDecoder], 'Bool | When');
 
-const onDecoder = jd.object(
-  {
-    load: jd.optional(jd.string()),
-    click: jd.optional(jd.string()),
-    change: jd.optional(jd.string()),
-  },
-  'On',
-);
-
+// all fields that support states can potentially be a ReactiveFieldFunction
 const fieldFnDecoder: jd.Decoder<ReactiveFieldFunction<any>> = new jd.Decoder((json: unknown) => {
   const jsonTypeof = typeof json;
   if (jsonTypeof === 'function') {
@@ -189,6 +183,15 @@ const fieldFnDecoder: jd.Decoder<ReactiveFieldFunction<any>> = new jd.Decoder((j
 });
 const decodeFieldOrFn = <T>(decoder: jd.Decoder<T>) =>
   jd.oneOf<T | ReactiveFieldFunction<any>>([decoder, fieldFnDecoder], '');
+
+const onDecoder = jd.object(
+  {
+    load: decodeFieldOrFn(jd.optional(jd.string())),
+    click: decodeFieldOrFn(jd.optional(jd.string())),
+    change: decodeFieldOrFn(jd.optional(jd.string())),
+  },
+  'On',
+);
 
 const uidDecoder = jd.optional(jd.string()).map((s) => s || shortUUID());
 
@@ -237,7 +240,7 @@ const controlFieldDecoder = jd
       label: decodeFieldOrFn(jd.optional(jd.string())),
       path: jd.string(),
       defaultValue: jd.optional(jd.succeed()),
-      validator: jd.optional(jd.succeed()),
+      validator: decodeFieldOrFn(jd.optional(jd.succeed())),
     },
     'ControlField',
   )
