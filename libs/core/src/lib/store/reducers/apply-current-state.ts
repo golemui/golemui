@@ -24,7 +24,7 @@ export const executeCurrentFunctions = (state: State, fields: Record<string, For
         const result = func(state);
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control?.props) {
-          control.props[prop] = result;
+          control.props = { ...control.props, [prop]: result };
         }
       });
     }
