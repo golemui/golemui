@@ -32,7 +32,7 @@ export type ReactiveFieldFunction<T> = <FormData extends Record<string, any>>(
   api: FieldFunctionParams<FormData>,
 ) => T;
 
-export type ReactiveFieldFunctionTree = LooseObject<
+export type ReactiveFormField = LooseObject<
   {
     props?: Record<string, ReactiveFieldFunction<any>>;
     on?: Record<string, ReactiveFieldFunction<any>>;

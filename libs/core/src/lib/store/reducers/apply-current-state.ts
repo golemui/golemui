@@ -1,14 +1,14 @@
 import * as Field from '../../form-field';
 import { FormField } from '../../form-field';
-import { ReactiveFieldFunction, ReactiveFieldFunctionTree } from '../../shared';
+import { ReactiveFieldFunction, ReactiveFormField } from '../../shared';
 import { FormStoreError, State } from '../model';
 
 export const executeCurrentFieldFunctions = (
   state: State,
-  fields: Record<string, ReactiveFieldFunctionTree>,
+  fields: Record<string, ReactiveFormField>,
 ) => {
   Object.keys(fields).forEach((uid) => {
-    const field = fields[uid] as ReactiveFieldFunctionTree;
+    const field = fields[uid] as ReactiveFormField;
 
     Object.keys(field).forEach((key) => {
       if (typeof field[key] === 'function') {
