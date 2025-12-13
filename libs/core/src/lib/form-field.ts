@@ -179,6 +179,17 @@ const onDecoder = jd.object(
   'On',
 );
 
+const fieldFnDecoder: jd.Decoder<ReactiveFieldFunction<any>> = new jd.Decoder((json: unknown) => {
+  const jsonTypeof = typeof json;
+  if (jsonTypeof === 'function') {
+    return jd.ok(json as ReactiveFieldFunction<any>);
+  } else {
+    return jd.err(`Expected a function, got '${jsonTypeof}'`);
+  }
+});
+const decodeFieldOrFn = <T>(decoder: jd.Decoder<T>) =>
+  jd.oneOf<T | ReactiveFieldFunction<any>>([decoder, fieldFnDecoder], '');
+
 const uidDecoder = jd.optional(jd.string()).map((s) => s || shortUUID());
 
 const displayFieldDecoder = jd.object<DisplayField<string>>(
@@ -204,7 +215,7 @@ const interactiveFieldDecoder = jd.object<InteractiveField<string>>(
     exclude: jd.optional(excludeDecoder),
     disabled: jd.optional(boolWhenDecoder),
     readonly: jd.optional(boolWhenDecoder),
-    label: jd.succeed(), // TODO: Remove succeed here, added to pass decoder with callback functions
+    label: decodeFieldOrFn(jd.string()),
     on: jd.optional(onDecoder),
     props: jd.optional(jd.succeed()),
   },
@@ -223,7 +234,7 @@ const controlFieldDecoder = jd
       readonly: jd.optional(boolWhenDecoder),
       on: jd.optional(onDecoder),
       props: jd.optional(jd.succeed()),
-      label: jd.optional(jd.succeed()), // TODO: Remove succeed here, added to pass decoder with callback functions
+      label: decodeFieldOrFn(jd.optional(jd.string())),
       path: jd.string(),
       defaultValue: jd.optional(jd.succeed()),
       validator: jd.optional(jd.succeed()),

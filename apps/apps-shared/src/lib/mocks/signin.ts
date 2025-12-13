@@ -143,7 +143,7 @@ export const signin = defineForm({
       kind: 'interactive',
       widget: 'button',
       label: ({ $form }) => {
-        return $form['registerMode'] ? 'Login' : 'Register';
+        return $form['registerMode'] ? 'Register' : 'Login';
       },
       //label: 'Login',
       //'label.register': 'Register',
