@@ -74,7 +74,11 @@ export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
 >;
 
 export type InteractiveField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & { kind: 'interactive'; label: string; on?: On<StateKeys> },
+  BaseField<StateKeys> & {
+    kind: 'interactive';
+    label?: ReactiveExpression | ReactiveFieldFunction<string> | string;
+    on?: On<StateKeys>;
+  },
   'disabled' | 'label',
   StateKeys
 >;
@@ -200,7 +204,7 @@ const interactiveFieldDecoder = jd.object<InteractiveField<string>>(
     exclude: jd.optional(excludeDecoder),
     disabled: jd.optional(boolWhenDecoder),
     readonly: jd.optional(boolWhenDecoder),
-    label: jd.string(),
+    label: jd.succeed(), // TODO: Remove succeed here, added to pass decoder with callback functions
     on: jd.optional(onDecoder),
     props: jd.optional(jd.succeed()),
   },

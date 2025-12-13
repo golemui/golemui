@@ -13,12 +13,13 @@ export const reducer =
   (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
-        return Fn.pipe(Reducers.initialize(state, action), Reducers.calculateCurrentFunctions);
+        return Reducers.initialize(state, action);
 
       case 'SET_DATA':
         return Fn.pipe(
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
+          Reducers.calculateCurrentFunctions,
           Reducers.applyCurrentState,
           // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
@@ -27,6 +28,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
+          Reducers.calculateCurrentFunctions,
           Reducers.applyCurrentState,
           // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
@@ -39,6 +41,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
+          Reducers.calculateCurrentFunctions,
           Reducers.applyCurrentState,
           // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
@@ -47,6 +50,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.overrideFieldProp(state, action),
           Reducers.calculateCurrentState,
+          Reducers.calculateCurrentFunctions,
           Reducers.applyCurrentState,
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
