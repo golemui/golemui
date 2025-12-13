@@ -20,8 +20,8 @@ export class AppFormPage {
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
     AppsShared.loggerMiddleware,
   ];
-  protected formDef = AppsShared.signin;
-  protected formData = AppsShared.signinData;
+  protected formDef = AppsShared.callbacks;
+  protected formData = AppsShared.callbacksData;
   protected vanillaFieldLoaders = {
     ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
