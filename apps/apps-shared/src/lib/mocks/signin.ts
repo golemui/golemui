@@ -142,8 +142,11 @@ export const signin = defineForm({
       uid: '',
       kind: 'interactive',
       widget: 'button',
-      label: 'Login',
-      'label.register': 'Register',
+      label: ({ $form }) => {
+        return $form['registerMode'] ? 'Login' : 'Register';
+      },
+      //label: 'Login',
+      //'label.register': 'Register',
       disabled: false,
       'disabled.register': true,
       'disabled.register:minor:canSubmit': false,
