@@ -1,16 +1,21 @@
 import * as Field from '../../form-field';
 import { FormField } from '../../form-field';
-import { State } from '../model';
+import { FormStoreError, State } from '../model';
 import { FormFunction, FormFunctionTree } from '../../shared';
+import { GUIApi } from '../../context/api';
 
-export const executeCurrentFunctions = (state: State, fields: Record<string, FormFunctionTree>) => {
+export const executeCurrentFunctions = (
+  state: State,
+  fields: Record<string, FormFunctionTree>,
+  api: GUIApi,
+) => {
   Object.keys(fields).forEach((uid) => {
     const field = fields[uid] as FormFunctionTree;
 
     Object.keys(field).forEach((key) => {
       if (typeof field[key] === 'function') {
         const func = field[key] as FormFunction;
-        const result = func(state);
+        const result = func(api);
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control) {
           control[key as keyof FormField<string>] = result;
@@ -21,7 +26,7 @@ export const executeCurrentFunctions = (state: State, fields: Record<string, For
     if (field.props) {
       Object.keys(field.props).forEach((prop) => {
         const func = field.props[prop] as FormFunction;
-        const result = func(state);
+        const result = func(api);
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control?.props) {
           control.props = { ...control.props, [prop]: result };
@@ -32,14 +37,21 @@ export const executeCurrentFunctions = (state: State, fields: Record<string, For
 };
 
 // TODO: Should we allow include.in and exclude.from at the same time?
-export const applyCurrentState = (state: State): State => {
-  executeCurrentFunctions(state, state.currentFunctions);
+export const applyCurrentState = (state: State, api: GUIApi): State => {
+  let formStoreError: FormStoreError = { kind: 'none' };
+  api.state = state;
+  try {
+    executeCurrentFunctions(state, state.currentFunctions, api);
+  } catch (e) {
+    formStoreError = { kind: 'fatal', error: (e as Error).message };
+  }
 
   const fieldFlags = calculateFieldFlags(state);
 
   return {
     ...state,
     fieldFlags,
+    error: formStoreError,
   };
 };
 

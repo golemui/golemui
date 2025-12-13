@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core';
+import { defineForm, GUIApi } from '@golemui/core';
 
 export const callbacksData = { registerMode: false };
 
@@ -17,7 +17,7 @@ export const callbacks = defineForm({
           kind: 'display',
           widget: 'heading',
           props: {
-            text: (form: any) => {
+            text: (form: GUIApi) => {
               return form.data.registerMode ? 'Register' : 'Login';
             },
           },
@@ -28,7 +28,7 @@ export const callbacks = defineForm({
       uid: '',
       kind: 'control',
       widget: 'checkbox',
-      label: ((form: any) => {
+      label: ((form: GUIApi) => {
         return form.data.registerMode ? 'Change to Login' : 'Change to Register';
       }) as any,
       props: {

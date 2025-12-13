@@ -7,9 +7,18 @@ import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
 import { isControlTouched, reduceIf } from './reducers/utils';
+import { GUIApi } from '../context/api';
 
 export const reducer =
-  ({ validators, validateOn }: { validators: ValidatorFn<any>; validateOn: ValidateOn }) =>
+  ({
+    validators,
+    validateOn,
+    api,
+  }: {
+    validators: ValidatorFn<any>;
+    validateOn: ValidateOn;
+    api: GUIApi;
+  }) =>
   (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
@@ -19,7 +28,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.applyCurrentState,
+          (nextState) => Reducers.applyCurrentState(nextState, api),
           // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
 
@@ -27,7 +36,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
-          Reducers.applyCurrentState,
+          (nextState) => Reducers.applyCurrentState(nextState, api),
           // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
 
@@ -39,7 +48,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.applyCurrentState,
+          (nextState) => Reducers.applyCurrentState(nextState, api),
           // reduceIf(isControlTouched, Reducers.validateAll(validators)),
         );
 
@@ -47,7 +56,7 @@ export const reducer =
         return Fn.pipe(
           Reducers.overrideFieldProp(state, action),
           Reducers.calculateCurrentState,
-          Reducers.applyCurrentState,
+          (nextState) => Reducers.applyCurrentState(nextState, api),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );
