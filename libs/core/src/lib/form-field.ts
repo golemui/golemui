@@ -1,5 +1,5 @@
 import * as jd from 'ts.data.json';
-import { DotPath, ReactiveExpression, ReactiveFunction, Uid, UiState } from './shared';
+import { DotPath, ReactiveExpression, ReactiveFieldFunction, Uid, UiState } from './shared';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 
@@ -54,11 +54,17 @@ export type BaseField<StateKeys extends UiState = never> = {
   // </ dev-note>
 
   // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
+
+  // TODO: Fix the type. `props` should only accept functions or Json serializable values.
+  // TODO: ReactiveFieldFunction<any> should be ReactiveFieldFunction<MyFormDataType>
   /**
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: Record<string, string | boolean | number | any[] | ((form: any) => any) | object>;
+  props?: Record<
+    string,
+    string | boolean | number | any[] | Record<string, any> | ReactiveFieldFunction<any>
+  >;
 };
 
 export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
@@ -83,7 +89,7 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
      * - If `label` is an empty string, no label will be displayed.
      * - Otherwise, the provided label will be rendered.
      */
-    label?: ReactiveExpression | ReactiveFunction | string;
+    label?: ReactiveExpression | ReactiveFieldFunction<string> | string;
     on?: On<StateKeys>;
     defaultValue?: T;
     validator?: any;

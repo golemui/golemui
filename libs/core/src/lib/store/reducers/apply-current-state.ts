@@ -1,21 +1,19 @@
 import * as Field from '../../form-field';
 import { FormField } from '../../form-field';
+import { ReactiveFieldFunction, ReactiveFieldFunctionTree } from '../../shared';
 import { FormStoreError, State } from '../model';
-import { FormFunction, FormFunctionTree } from '../../shared';
-import { GUIApi } from '../../context/api';
 
-export const executeCurrentFunctions = (
+export const executeCurrentFieldFunctions = (
   state: State,
-  fields: Record<string, FormFunctionTree>,
-  api: GUIApi,
+  fields: Record<string, ReactiveFieldFunctionTree>,
 ) => {
   Object.keys(fields).forEach((uid) => {
-    const field = fields[uid] as FormFunctionTree;
+    const field = fields[uid] as ReactiveFieldFunctionTree;
 
     Object.keys(field).forEach((key) => {
       if (typeof field[key] === 'function') {
-        const func = field[key] as FormFunction;
-        const result = func(api);
+        const func = field[key] as ReactiveFieldFunction<any>;
+        const result = func({ $form: state.data });
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control) {
           control[key as keyof FormField<string>] = result;
@@ -25,8 +23,8 @@ export const executeCurrentFunctions = (
 
     if (field.props) {
       Object.keys(field.props).forEach((prop) => {
-        const func = field.props[prop] as FormFunction;
-        const result = func(api);
+        const func = field.props[prop] as ReactiveFieldFunction<any>;
+        const result = func({ $form: state.data });
         const control = state.flatForm.find((f) => f.uid === uid);
         if (control?.props) {
           control.props = { ...control.props, [prop]: result };
@@ -37,11 +35,10 @@ export const executeCurrentFunctions = (
 };
 
 // TODO: Should we allow include.in and exclude.from at the same time?
-export const applyCurrentState = (state: State, api: GUIApi): State => {
+export const applyCurrentState = (state: State): State => {
   let formStoreError: FormStoreError = { kind: 'none' };
-  api.state = state;
   try {
-    executeCurrentFunctions(state, state.currentFunctions, api);
+    executeCurrentFieldFunctions(state, state.currentFieldFunctions);
   } catch (e) {
     formStoreError = { kind: 'fatal', error: (e as Error).message };
   }

@@ -1,5 +1,5 @@
-import { FormStoreError, State } from '../model';
 import { FormField } from '../../form-field';
+import { FormStoreError, State } from '../model';
 
 const extractFunctionsByUid = (fields: FormField<string>[]) => {
   const flatRegistry: any = {};
@@ -36,5 +36,9 @@ const extractFunctionsByUid = (fields: FormField<string>[]) => {
 export const calculateCurrentFunctions = (state: State): State => {
   const currentFunctions: any = extractFunctionsByUid(state.flatForm);
   const error: FormStoreError = { kind: 'none' };
-  return { ...state, currentFunctions: { ...state.currentFunctions, ...currentFunctions }, error };
+  return {
+    ...state,
+    currentFieldFunctions: { ...state.currentFieldFunctions, ...currentFunctions },
+    error,
+  };
 };

@@ -1,7 +1,7 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as Form from '../form';
 import * as Field from '../form-field';
-import { DotPath, FormFunctionTree, Uid, UiState } from '../shared';
+import { DotPath, ReactiveFieldFunctionTree, Uid, UiState } from '../shared';
 
 export type FormStoreError =
   | { kind: 'none' }
@@ -42,9 +42,9 @@ export type State = {
    */
   currentStates: string[];
   /**
-   * List of functions computed for the current form state.
+   * List of field functions computed for the current form state.
    */
-  currentFunctions: Record<Uid, FormFunctionTree>;
+  currentFieldFunctions: Record<Uid, ReactiveFieldFunctionTree>;
   /**
    * Tracks fields whose components have been rendered.
    * A field is added when its component mounts and removed when it unmounts.
@@ -91,7 +91,7 @@ export const createInitialState = (): State => ({
   flatForm: [],
   formMeta: {},
   currentStates: [],
-  currentFunctions: {},
+  currentFieldFunctions: {},
   fields: {},
   validations: {},
   fieldFlags: {},

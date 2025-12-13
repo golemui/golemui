@@ -64,3 +64,27 @@ export type LooseObject<T extends object> = T & Record<string, any>;
 export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
+
+/**
+ * Recursively makes all properties of a type deeply immutable and read-only.
+ *
+ * @template T - The type to make immutable
+ * @returns A type where:
+ * - Arrays are converted to readonly arrays with immutable elements
+ * - Objects have all properties converted to readonly with immutable values
+ * - Primitive types remain unchanged
+ *
+ * @example
+ * ```typescript
+ * type User = { name: string; age: number; tags: string[] };
+ * type ImmutableUser = ImmutableRecord<User>;
+ * // Result: { readonly name: string; readonly age: number; readonly tags: readonly string[] }
+ * ```
+ */
+export type ImmutableRecord<T> = T;
+// TODO: use this one
+export type _ImmutableRecord<T> = T extends (infer R)[]
+  ? ReadonlyArray<ImmutableRecord<R>>
+  : T extends object
+    ? { readonly [P in keyof T]: ImmutableRecord<T[P]> }
+    : T;
