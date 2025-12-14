@@ -6,5 +6,6 @@ export default defineConfig({
       framework: 'cypress-ct-lit' as any,
       bundler: 'vite',
     },
+    screenshotsFolder: '../../dist/cypress/libs/lit-vanilla/screenshots/',
   },
 });
