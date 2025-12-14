@@ -1,6 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import '@golemui/lit';
 import '@golemui/lit-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { html, LitElement } from 'lit';
