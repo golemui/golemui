@@ -1,8 +1,6 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import '@golemui/lit';
-import * as Vanilla from '@golemui/lit-vanilla';
-import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import '@golemui/lit-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
@@ -10,20 +8,16 @@ import './form.element.scss';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  middlewares = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
-    AppsShared.loggerMiddleware,
-  ];
-  formDef = AppsShared.callbacks;
-  formData = AppsShared.callbacksData;
+  formDef = AppsShared.kitchenSink;
+  formData = AppsShared.kitchenSinkData;
   vanillaFieldLoaders = {
-    ...Vanilla.vanillaFieldLoaders,
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
-  validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
+  middlewares = [AppsShared.loggerMiddleware];
+  validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
-  });
+  };
 
   error = '';
 
@@ -59,7 +53,7 @@ export class FormElement extends LitElement {
           .validators=${this.validators}
           validateOn="eager"
           @formError=${this.onFormError}
-          @event=${this.onFormEvent}
+          @formEvent=${this.onFormEvent}
         ></gui-form>
       </div>
     `;

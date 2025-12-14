@@ -1,3 +1,21 @@
+## 0.14.0 (2025-12-14)
+
+### 🚀 Features
+
+- **angular:** add vanilla form component ([bdcd364](https://github.com/golemui/formforge/commit/bdcd364))
+- **lit:** add form vanilla component ([3f4fde2](https://github.com/golemui/formforge/commit/3f4fde2))
+- **react:** add vanilla form component ([7e97da7](https://github.com/golemui/formforge/commit/7e97da7))
+
+### 🩹 Fixes
+
+- unify vanilla apis ([efd0a00](https://github.com/golemui/formforge/commit/efd0a00))
+- add validators-vanilla as a dependency for the component library ([f0ef637](https://github.com/golemui/formforge/commit/f0ef637))
+- **react:** fix react tabs list layout ([dc8f757](https://github.com/golemui/formforge/commit/dc8f757))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.13.0 (2025-12-11)
 
 ### 🚀 Features

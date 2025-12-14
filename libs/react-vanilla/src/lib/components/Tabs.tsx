@@ -63,26 +63,28 @@ export function Tabs(fieldInstance: Core.WithField) {
   const renderTabs = useCallback(() => {
     return props.tabs.map((tab, index) => {
       return (
-        <button
-          key={`tab_${field.uid}_${tab.uid}`}
-          ref={(el) => {
-            tabRefs.current[index] = el!;
-          }}
-          type="button"
-          role="tab"
-          tabIndex={tab.uid === activeTab ? undefined : -1}
-          id={`tab_${field.uid}_${index}`}
-          aria-controls={`tabpanel_${field.uid}_${index}`}
-          aria-selected={tab.uid === activeTab ? 'true' : 'false'}
-          className={`${tab.uid === activeTab ? 'active' : ''}`}
-          onClick={() => setActiveTab(tab.uid)}
-          onKeyDown={(event: React.KeyboardEvent) => onKeyDown(event)}
-          onFocus={(event: React.FocusEvent) => {
-            event.target.scrollIntoView();
-          }}
-        >
-          {tab.label}
-        </button>
+        <li>
+          <button
+            key={`tab_${field.uid}_${tab.uid}`}
+            ref={(el) => {
+              tabRefs.current[index] = el!;
+            }}
+            type="button"
+            role="tab"
+            tabIndex={tab.uid === activeTab ? undefined : -1}
+            id={`tab_${field.uid}_${index}`}
+            aria-controls={`tabpanel_${field.uid}_${index}`}
+            aria-selected={tab.uid === activeTab ? 'true' : 'false'}
+            className={`${tab.uid === activeTab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.uid)}
+            onKeyDown={(event: React.KeyboardEvent) => onKeyDown(event)}
+            onFocus={(event: React.FocusEvent) => {
+              event.target.scrollIntoView();
+            }}
+          >
+            {tab.label}
+          </button>
+        </li>
       );
     });
   }, [props, activeTab]);

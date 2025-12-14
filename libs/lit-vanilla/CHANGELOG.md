@@ -1,3 +1,17 @@
+## 0.14.0 (2025-12-14)
+
+### 🚀 Features
+
+- **lit:** add form vanilla component ([3f4fde2](https://github.com/golemui/formforge/commit/3f4fde2))
+
+### 🩹 Fixes
+
+- add validators-vanilla as a dependency for the component library ([f0ef637](https://github.com/golemui/formforge/commit/f0ef637))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.13.0 (2025-12-11)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.

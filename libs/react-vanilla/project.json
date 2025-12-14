@@ -26,6 +26,15 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "component-test": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "libs/react-vanilla/cypress.config.ts",
+        "testingType": "component",
+        "devServerTarget": "react-vanilla:build",
+        "skipServe": true
+      }
     }
   }
 }

@@ -8,26 +8,26 @@ type JsonObject = Record<string, any>;
 
 export interface FormComponentProps {
   formDef: JsonStringified | JsonObject;
-  fieldLoader: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
+  fieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
   validators: Core.ValidatorFn<any>;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
   formName?: string;
-  onFormEvent?: (event: Core.FormEvent) => void;
-  onFormError?: (error: Core.FormStoreError) => void;
+  formEvent?: (event: Core.FormEvent) => void;
+  formError?: (error: Core.FormStoreError) => void;
 }
 
 export function FormComponent({
   formDef,
-  fieldLoader,
+  fieldLoaders,
   middlewares,
   validators,
   validateOn,
   data,
   formName,
-  onFormError,
-  onFormEvent,
+  formError,
+  formEvent,
 }: FormComponentProps) {
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithField>>>(
     new Core.FormContext(),
@@ -37,26 +37,26 @@ export function FormComponent({
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {
-    formContextRef.current.initialize(fieldLoader, middlewares, validators, validateOn || 'eager');
-  }, [fieldLoader, middlewares, validators, validateOn]);
+    formContextRef.current.initialize(fieldLoaders, middlewares, validators, validateOn || 'eager');
+  }, [fieldLoaders, middlewares, validators, validateOn]);
 
   // ERRORS
   useEffect(() => {
     const sub = Core.formErrors(formContextRef.current.store.state$).subscribe((error) =>
-      onFormError?.(error),
+      formError?.(error),
     );
     return () => {
       sub.unsubscribe();
     };
-  }, [onFormError]);
+  }, [formError]);
 
   // EVENTS
   useEffect(() => {
-    const sub = formContextRef.current.events$.subscribe((event) => onFormEvent?.(event));
+    const sub = formContextRef.current.events$.subscribe((event) => formEvent?.(event));
     return () => {
       sub.unsubscribe();
     };
-  }, [onFormEvent]);
+  }, [formEvent]);
 
   // FORM ENTRY POINT
   useEffect(() => {
