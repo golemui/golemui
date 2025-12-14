@@ -38,6 +38,9 @@ jobs:
 
       - run: npx nx run-many -t lint test build --no-cloud
 
+      - name: Cypress component testing
+        run: nx affected --target=component-test
+
       # Remove this line since it's Nx Cloud specific
       # - run: npx nx fix-ci
       #   if: always()
