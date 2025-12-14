@@ -19,7 +19,7 @@ export type Flags = {
 export type FieldWidget = string;
 // export type FieldWidget = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 
-type ReactiveFieldValue<T> = ReactiveExpression | ReactiveFieldFunction<string> | T;
+type ReactiveFieldValue<T> = ReactiveExpression | ReactiveFieldFunction<T> | T;
 
 /**
  * An event expression is basically a way to change the current UI state: `currentState = 'loading'` or send an event `loadData` for the forms engine runtime to process.
