@@ -3,10 +3,7 @@ import { FormField } from '../../form-field';
 import { ReactiveFieldFunction, ReactiveFormField } from '../../shared';
 import { FormStoreError, State } from '../model';
 
-export const executeCurrentFieldFunctions = (
-  state: State,
-  fields: Record<string, ReactiveFormField>,
-) => {
+const executeCurrentFieldFunctions = (state: State, fields: Record<string, ReactiveFormField>) => {
   Object.keys(fields).forEach((uid) => {
     const field = fields[uid] as ReactiveFormField;
 
