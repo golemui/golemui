@@ -7,7 +7,7 @@ import * as Angular from '@golemui/angular';
 const mountAngular = (formDef: Record<string, any>) => {
   mount(FormComponent, {
     imports: [CommonModule, Angular.FormCoreComponent],
-    componentProperties: { formDef },
+    componentProperties: { formDef: formDef },
   });
 };
 
