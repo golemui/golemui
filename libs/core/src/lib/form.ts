@@ -1,6 +1,6 @@
 import * as jd from 'ts.data.json';
 import { FormField, LayoutField, layoutFieldDecoder } from './form-field';
-import { ReactiveExpression, ReactiveFieldFunction, UiState } from './shared';
+import { ReactiveExpression, UiState } from './shared';
 
 // --------------------------------
 //
@@ -9,8 +9,6 @@ import { ReactiveExpression, ReactiveFieldFunction, UiState } from './shared';
 // --------------------------------
 
 export type Form<StateKeys extends UiState = never> = {
-  // TODO: what is this for??
-  functions?: Record<StateKeys, ReactiveFieldFunction<any>>;
   states?: Record<StateKeys, ReactiveExpression>;
   form: LayoutField<StateKeys>;
 };
