@@ -1,0 +1,10 @@
+<gui-core-form
+  [formDef]="formDef()"
+  [data]="data()"
+  [fieldLoaders]="customFieldLoaders()"
+  [middlewares]="customMiddlewares()"
+  [validators]="customValidators()"
+  [validateOn]="validateOn()"
+  (formError)="formError.emit($event)"
+  (formEvent)="formEvent.emit($event)"
+></gui-core-form>

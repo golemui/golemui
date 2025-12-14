@@ -11,7 +11,7 @@ import { ComponentType } from 'react';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
-  fieldLoader?: Core.FieldLoaders<ComponentType<Core.WithField>>;
+  fieldLoaders?: Core.FieldLoaders<ComponentType<Core.WithField>>;
   validators?: CustomValidatorSchemas;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
@@ -24,14 +24,14 @@ export interface ReactFormComponentProps {
 export const FormComponent = ({
   formDef,
   data = undefined,
-  fieldLoader = {},
+  fieldLoaders = {},
   validators = {},
   middlewares = [],
   validateOn = 'eager',
   formError = undefined,
   formEvent = undefined,
 }: ReactFormComponentProps) => {
-  const customFieldLoaders = { ...vanillaFieldLoaders, ...fieldLoader };
+  const customFieldLoaders = { ...vanillaFieldLoaders, ...fieldLoaders };
   const customValidators = initValidators({ ...validators });
   const customMiddlewares = [
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
@@ -41,7 +41,7 @@ export const FormComponent = ({
     <React.FormComponent
       formDef={formDef}
       data={data}
-      fieldLoader={customFieldLoaders}
+      fieldLoaders={customFieldLoaders}
       middlewares={customMiddlewares}
       validators={customValidators}
       validateOn={validateOn}
