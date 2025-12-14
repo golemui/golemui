@@ -1,3 +1,17 @@
+## 0.14.0 (2025-12-14)
+
+### 🚀 Features
+
+- **angular:** add vanilla form component ([bdcd364](https://github.com/golemui/formforge/commit/bdcd364))
+
+### 🩹 Fixes
+
+- add validators-vanilla as a dependency for the component library ([f0ef637](https://github.com/golemui/formforge/commit/f0ef637))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.13.0 (2025-12-11)
 
 This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
