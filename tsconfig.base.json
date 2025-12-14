@@ -24,7 +24,8 @@
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/react-vanilla": ["libs/react-vanilla/src/index.ts"],
       "@golemui/shared-vanilla": ["libs/shared-vanilla/src/index.ts"],
-      "@golemui/validators-vanilla": ["libs/validators-vanilla/src/index.ts"]
+      "@golemui/validators-vanilla": ["libs/validators-vanilla/src/index.ts"],
+      "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

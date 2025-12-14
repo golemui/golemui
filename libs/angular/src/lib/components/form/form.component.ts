@@ -22,7 +22,7 @@ type I18n = Record<string, any>;
 const defaultI18n: I18n = {};
 
 @Component({
-  selector: 'gui-form',
+  selector: 'gui-core-form',
   standalone: true,
   templateUrl: './form.component.html',
   imports: [CommonModule, FieldDirective],
@@ -32,7 +32,7 @@ const defaultI18n: I18n = {};
     class: 'gui-form',
   },
 })
-export class FormComponent implements OnInit {
+export class FormCoreComponent implements OnInit {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
   fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
@@ -45,7 +45,7 @@ export class FormComponent implements OnInit {
 
   // OUTPUTS
   protected formError = output<Core.FormStoreError>();
-  protected event = output<Core.FormEvent>();
+  protected formEvent = output<Core.FormEvent>();
 
   // INJECTS
   protected context: AngularFormContext<Type<Core.WithField>> = inject(AngularFormContext);
@@ -68,7 +68,7 @@ export class FormComponent implements OnInit {
 
     this.context.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => this.event.emit(event));
+      .subscribe((event) => this.formEvent.emit(event));
 
     this.context.store.dispatch({
       type: 'INITIALIZE',
