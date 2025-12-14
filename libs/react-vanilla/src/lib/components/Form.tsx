@@ -17,8 +17,8 @@ export interface ReactFormComponentProps {
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
   formName?: string;
-  onFormEvent?: (event: Core.FormEvent) => void;
-  onFormError?: (error: Core.FormStoreError) => void;
+  formEvent?: (event: Core.FormEvent) => void;
+  formError?: (error: Core.FormStoreError) => void;
 }
 
 export const FormComponent = ({
@@ -28,8 +28,8 @@ export const FormComponent = ({
   validators = {},
   middlewares = [],
   validateOn = 'eager',
-  onFormError = undefined,
-  onFormEvent = undefined,
+  formError = undefined,
+  formEvent = undefined,
 }: ReactFormComponentProps) => {
   const customFieldLoaders = { ...vanillaFieldLoaders, ...fieldLoader };
   const customValidators = initValidators({ ...validators });
@@ -38,17 +38,15 @@ export const FormComponent = ({
     ...middlewares,
   ];
   return (
-    <div>
-      <React.FormComponent
-        formDef={formDef}
-        data={data}
-        fieldLoader={customFieldLoaders}
-        middlewares={customMiddlewares}
-        validators={customValidators}
-        validateOn={validateOn}
-        onFormError={onFormError}
-        onFormEvent={onFormEvent}
-      />
-    </div>
+    <React.FormComponent
+      formDef={formDef}
+      data={data}
+      fieldLoader={customFieldLoaders}
+      middlewares={customMiddlewares}
+      validators={customValidators}
+      validateOn={validateOn}
+      formError={formError}
+      formEvent={formEvent}
+    />
   );
 };

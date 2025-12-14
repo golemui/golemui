@@ -10,12 +10,13 @@ async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
+const formDef = AppsShared.kitchenSink;
+const formData = AppsShared.kitchenSinkData;
+
 const vanillaFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = AppsShared.kitchenSink;
-const formData = AppsShared.kitchenSinkData;
 const middlewares = [AppsShared.loggerMiddleware];
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
@@ -38,12 +39,12 @@ export function FormPage() {
       <FormComponent
         formDef={formDef}
         data={formData}
-        fieldLoader={vanillaFieldLoaders}
+        fieldLoaders={vanillaFieldLoaders}
         middlewares={middlewares}
         validators={validators}
         validateOn="eager"
-        onFormError={onFormError}
-        onFormEvent={onFormEvent}
+        formError={onFormError}
+        formEvent={onFormEvent}
       />
     </div>
   );

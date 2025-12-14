@@ -26,7 +26,7 @@ export class FormElement extends LitElement {
   subscriptions: Subscription[] = [];
 
   static FORM_ERROR_EVENT = 'formError';
-  static FORM_EVENT = 'event';
+  static FORM_EVENT = 'formEvent';
 
   override connectedCallback() {
     super.connectedCallback();
