@@ -1,7 +1,11 @@
 import * as Core from '@golemui/core';
+import { VanillaWidget } from '@golemui/shared-vanilla';
 
-export const vanillaFieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>> = {
-  // BUTTON
+export const vanillaFieldLoaders: Core.FieldLoaders<
+  React.ComponentType<Core.WithField>,
+  VanillaWidget
+> = {
+  // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,
 
   // CONTROLS
@@ -19,6 +23,6 @@ export const vanillaFieldLoaders: Core.FieldLoaders<React.ComponentType<Core.Wit
   tabs: async () => (await import('./components/Tabs')).Tabs,
   accordion: async () => (await import('./components/Accordion')).Accordion,
 
-  // FIELDS
+  // DISPLAY
   alert: async () => (await import('./components/Alert')).Alert,
 };
