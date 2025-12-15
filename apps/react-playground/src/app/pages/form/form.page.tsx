@@ -1,6 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import * as React from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
@@ -13,7 +12,7 @@ async function onFormEvent(event: Core.FormEvent) {
 const formDef = AppsShared.kitchenSink;
 const formData = AppsShared.kitchenSinkData;
 
-const vanillaFieldLoaders = {
+const customFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
@@ -39,7 +38,7 @@ export function FormPage() {
       <FormComponent
         formDef={formDef}
         data={formData}
-        fieldLoaders={vanillaFieldLoaders}
+        fieldLoaders={customFieldLoaders}
         middlewares={middlewares}
         validators={validators}
         validateOn="eager"
