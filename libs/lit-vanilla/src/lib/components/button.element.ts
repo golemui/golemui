@@ -39,6 +39,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
         <button
           type="button"
           id=${this.field.uid}
+          data-cy=${`${this.field.uid}_button`}
           @click=${() => this.adapter.click()}
           disabled=${this.adapter.templateData.disabled === true ? true : nothing}
         >

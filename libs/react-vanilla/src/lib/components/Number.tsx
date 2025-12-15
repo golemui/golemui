@@ -48,6 +48,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
           type="number"
           inputMode="numeric"
           id={uid}
+          data-cy={`${uid}_number`}
           className={`${icon ? 'gui-number--icon' : ''} ${iconPosition === 'right' ? 'gui-number--icon-right' : ''}`}
           required={validator?.required}
           value={value ?? ''}

@@ -1,5 +1,5 @@
 import { mount } from 'cypress/angular';
-import { runAlertComponentTests } from '@golemui/ui-testing';
+import { runAlertComponentTests, runValidatorsComponentTests } from '@golemui/ui-testing';
 import { FormComponent } from './lib/components/form/form.component';
 import { CommonModule } from '@angular/common';
 import * as Angular from '@golemui/angular';
@@ -12,3 +12,4 @@ const mountAngular = (formDef: Record<string, any>) => {
 };
 
 runAlertComponentTests(mountAngular);
+runValidatorsComponentTests(mountAngular);
