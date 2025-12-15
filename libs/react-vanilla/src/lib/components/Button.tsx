@@ -9,7 +9,13 @@ export function Button(fieldInstance: Core.WithField) {
   return (
     <div className="gui-button">
       <div className="gui-field">
-        <button type="button" id={uid} onClick={onClick} disabled={isDisabled}>
+        <button
+          type="button"
+          id={uid}
+          data-cy={`${uid}_button`}
+          onClick={onClick}
+          disabled={isDisabled}
+        >
           {label}
         </button>
       </div>

@@ -46,6 +46,7 @@ export function TextInput(fieldInstance: Core.WithField) {
         <input
           type="text"
           id={uid}
+          data-cy={`${uid}_textinput`}
           className={`${icon ? 'gui-textinput--icon' : ''} ${iconPosition === 'right' ? 'gui-textinput--icon-right' : ''}`}
           required={validator?.required}
           value={value ?? ''}
