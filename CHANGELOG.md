@@ -1,3 +1,14 @@
+## 0.14.2 (2025-12-16)
+
+### 🩹 Fixes
+
+- minor refactors and fixes ([b413896](https://github.com/golemui/formforge/commit/b413896))
+- enhance type safety for vanilla loaders ([879042a](https://github.com/golemui/formforge/commit/879042a))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.1 (2025-12-15)
 
 ### 🩹 Fixes
