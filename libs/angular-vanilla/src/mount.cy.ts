@@ -1,15 +1,15 @@
-import { mount } from 'cypress/angular';
-import { runAlertComponentTests, runValidatorsComponentTests } from '@golemui/ui-testing';
-import { FormComponent } from './lib/components/form/form.component';
 import { CommonModule } from '@angular/common';
 import * as Angular from '@golemui/angular';
+import { Form } from '@golemui/core';
+import { mountAndTest } from '@golemui/ui-testing';
+import { mount } from 'cypress/angular';
+import { FormComponent } from './lib/components/form/form.component';
 
-const mountAngular = (formDef: Record<string, any>) => {
+const mountAngular = (formDef: Form<string>) => {
   mount(FormComponent, {
     imports: [CommonModule, Angular.FormCoreComponent],
-    componentProperties: { formDef: formDef },
+    componentProperties: { formDef },
   });
 };
 
-runAlertComponentTests(mountAngular);
-runValidatorsComponentTests(mountAngular);
+mountAndTest(mountAngular);
