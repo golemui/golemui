@@ -17,7 +17,7 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
     });
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState(this.templateData);
+    this.propsUpdaterByCurrentState();
 
     // Listen to the fieldFlags stream (`disabled` flag)
     this.context.store.state$
