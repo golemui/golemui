@@ -1,3 +1,13 @@
+## 0.14.1 (2025-12-15)
+
+### 🩹 Fixes
+
+- reverse exclusiveMaximum validator ([fabf4a1](https://github.com/golemui/formforge/commit/fabf4a1))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.14.0 (2025-12-14)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
