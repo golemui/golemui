@@ -1,3 +1,13 @@
+## 0.14.3 (2025-12-16)
+
+### 🩹 Fixes
+
+- **lit:** fix lit change detection ([124b9fe](https://github.com/golemui/formforge/commit/124b9fe))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.14.2 (2025-12-16)
 
 ### 🩹 Fixes

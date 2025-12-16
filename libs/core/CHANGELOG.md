@@ -1,3 +1,7 @@
+## 0.14.3 (2025-12-16)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
 ## 0.14.2 (2025-12-16)
 
 ### 🩹 Fixes
