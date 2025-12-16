@@ -5,9 +5,9 @@ import { LitFormContext } from '../context/form.context';
 
 export abstract class BaseFieldAdapter<F extends Core.FormField> {
   context!: LitFormContext<WithField>;
+  templateData: any = {};
   protected destroy$ = new Subject<void>();
   protected field!: F;
-  protected templateData: any = {};
 
   templateDataChanged$ = new Subject<void>();
 
@@ -24,17 +24,12 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
   }
 
   // Listen to the form states stream and keep all `props` in sync with the current state
-  protected propsUpdaterByCurrentState<ExtraProps extends Record<string, any>>(
-    templateData: ExtraProps,
-  ) {
+  protected propsUpdaterByCurrentState() {
     Core.propsUpdaterByCurrentState({
       field: this.field,
       context: this.context,
       updaterFn: (updatedProps) => {
-        this.setTemplateData({
-          ...templateData,
-          ...updatedProps,
-        });
+        this.setTemplateData(updatedProps);
       },
       destroy$: this.destroy$,
     });

@@ -19,6 +19,6 @@ export class DisplayFieldAdapter<
     });
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState(this.templateData);
+    this.propsUpdaterByCurrentState();
   }
 }
