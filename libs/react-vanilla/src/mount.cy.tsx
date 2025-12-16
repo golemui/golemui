@@ -1,10 +1,10 @@
+import { Form } from '@golemui/core';
+import { mountAndTest } from '@golemui/ui-testing';
 import { mount } from 'cypress/react';
-import { runAlertComponentTests, runValidatorsComponentTests } from '@golemui/ui-testing';
 import { FormComponent } from './lib/components/Form';
 
-const mountReact = (formDef: Record<string, any>) => {
+const mountReact = (formDef: Form<string>) => {
   mount(<FormComponent formDef={formDef} />);
 };
 
-runAlertComponentTests(mountReact);
-runValidatorsComponentTests(mountReact);
+mountAndTest(mountReact);

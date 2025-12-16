@@ -1,117 +1,122 @@
-export const runValidatorsComponentTests = (mountFn: (formDef: Record<string, any>) => void) => {
+import * as Core from '@golemui/core';
+import { MountComponentFn } from '../utils';
+
+export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
   describe('Validators', () => {
     beforeEach(() => {
-      mountFn({
-        form: [
-          {
-            uid: 'requiredString',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'requiredString',
-            validator: { type: 'string', required: true },
-          },
-          {
-            uid: 'minLength',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'minLength',
-            validator: { type: 'string', minLength: 3 },
-          },
-          {
-            uid: 'maxLength',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'maxLength',
-            validator: { type: 'string', maxLength: 6 },
-          },
-          {
-            uid: 'pattern',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'pattern',
-            validator: { type: 'string', pattern: 'CD' },
-          },
-          {
-            uid: 'enumString',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'enumString',
-            validator: { type: 'string', enum: 'golemui' },
-          },
-          {
-            uid: 'const',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'const',
-            validator: { type: 'string', const: 'golemui' },
-          },
-          {
-            uid: 'format',
-            kind: 'control',
-            widget: 'textinput',
-            path: 'format',
-            validator: { type: 'string', format: 'email' },
-          },
-          {
-            uid: 'requiredNumber',
-            kind: 'control',
-            widget: 'number',
-            path: 'requiredNumber',
-            validator: { type: 'number', required: true },
-          },
-          {
-            uid: 'min',
-            kind: 'control',
-            widget: 'number',
-            path: 'min',
-            validator: { type: 'number', minimum: 1 },
-          },
-          {
-            uid: 'max',
-            kind: 'control',
-            widget: 'number',
-            path: 'max',
-            validator: { type: 'number', maximum: 100 },
-          },
-          {
-            uid: 'exclusiveMinimum',
-            kind: 'control',
-            widget: 'number',
-            path: 'exclusiveMinimum',
-            validator: { type: 'number', exclusiveMinimum: 100 },
-          },
-          {
-            uid: 'exclusiveMaximum',
-            kind: 'control',
-            widget: 'number',
-            path: 'exclusiveMaximum',
-            validator: { type: 'number', exclusiveMaximum: 100 },
-          },
-          {
-            uid: 'multipleOf',
-            kind: 'control',
-            widget: 'number',
-            path: 'multipleOf',
-            validator: { type: 'number', multipleOf: 5 },
-          },
-          {
-            uid: 'boolean',
-            kind: 'control',
-            widget: 'checkbox',
-            path: 'boolean',
-            validator: { type: 'boolean', const: true },
-          },
-          {
-            uid: 'testButton',
-            kind: 'interactive',
-            widget: 'button',
-            label: 'Test',
-            on: {
-              click: 'submit',
+      mountFn(
+        Core.defineForm({
+          form: [
+            {
+              uid: 'requiredString',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'requiredString',
+              validator: { type: 'string', required: true },
             },
-          },
-        ],
-      });
+            {
+              uid: 'minLength',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'minLength',
+              validator: { type: 'string', minLength: 3 },
+            },
+            {
+              uid: 'maxLength',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'maxLength',
+              validator: { type: 'string', maxLength: 6 },
+            },
+            {
+              uid: 'pattern',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'pattern',
+              validator: { type: 'string', pattern: 'CD' },
+            },
+            {
+              uid: 'enumString',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'enumString',
+              validator: { type: 'string', enum: 'golemui' },
+            },
+            {
+              uid: 'const',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'const',
+              validator: { type: 'string', const: 'golemui' },
+            },
+            {
+              uid: 'format',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'format',
+              validator: { type: 'string', format: 'email' },
+            },
+            {
+              uid: 'requiredNumber',
+              kind: 'control',
+              widget: 'number',
+              path: 'requiredNumber',
+              validator: { type: 'number', required: true },
+            },
+            {
+              uid: 'min',
+              kind: 'control',
+              widget: 'number',
+              path: 'min',
+              validator: { type: 'number', minimum: 1 },
+            },
+            {
+              uid: 'max',
+              kind: 'control',
+              widget: 'number',
+              path: 'max',
+              validator: { type: 'number', maximum: 100 },
+            },
+            {
+              uid: 'exclusiveMinimum',
+              kind: 'control',
+              widget: 'number',
+              path: 'exclusiveMinimum',
+              validator: { type: 'number', exclusiveMinimum: 100 },
+            },
+            {
+              uid: 'exclusiveMaximum',
+              kind: 'control',
+              widget: 'number',
+              path: 'exclusiveMaximum',
+              validator: { type: 'number', exclusiveMaximum: 100 },
+            },
+            {
+              uid: 'multipleOf',
+              kind: 'control',
+              widget: 'number',
+              path: 'multipleOf',
+              validator: { type: 'number', multipleOf: 5 },
+            },
+            {
+              uid: 'boolean',
+              kind: 'control',
+              widget: 'checkbox',
+              path: 'boolean',
+              validator: { type: 'boolean', const: true },
+            },
+            {
+              uid: 'testButton',
+              kind: 'interactive',
+              widget: 'button',
+              label: 'Test',
+              on: {
+                click: 'submit',
+              },
+            },
+          ],
+        }),
+      );
     });
 
     context('String validators', () => {
