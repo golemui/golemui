@@ -1,3 +1,16 @@
+## 0.14.4 (2025-12-17)
+
+### 🩹 Fixes
+
+- add support for suffixed properties in all decoders ([b10b5aa](https://github.com/golemui/formforge/commit/b10b5aa))
+- improve objectWithSuffix docs ([6b70689](https://github.com/golemui/formforge/commit/6b70689))
+- improve the objectWithSuffix decoder ([3464e4b](https://github.com/golemui/formforge/commit/3464e4b))
+- create an objectWithSuffix decoder ([298da7d](https://github.com/golemui/formforge/commit/298da7d))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.3 (2025-12-16)
 
 This was a version bump only for core to align it with other projects, there were no code changes.
