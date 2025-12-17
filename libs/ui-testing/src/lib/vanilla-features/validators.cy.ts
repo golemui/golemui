@@ -3,124 +3,30 @@ import { MountComponentFn } from '../utils';
 
 export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
   describe('Validators', () => {
-    beforeEach(() => {
-      mountFn(
-        Core.defineForm({
-          form: [
-            {
-              uid: 'requiredString',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'requiredString',
-              validator: { type: 'string', required: true },
-            },
-            {
-              uid: 'minLength',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'minLength',
-              validator: { type: 'string', minLength: 3 },
-            },
-            {
-              uid: 'maxLength',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'maxLength',
-              validator: { type: 'string', maxLength: 6 },
-            },
-            {
-              uid: 'pattern',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'pattern',
-              validator: { type: 'string', pattern: 'CD' },
-            },
-            {
-              uid: 'enumString',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'enumString',
-              validator: { type: 'string', enum: 'golemui' },
-            },
-            {
-              uid: 'const',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'const',
-              validator: { type: 'string', const: 'golemui' },
-            },
-            {
-              uid: 'format',
-              kind: 'control',
-              widget: 'textinput',
-              path: 'format',
-              validator: { type: 'string', format: 'email' },
-            },
-            {
-              uid: 'requiredNumber',
-              kind: 'control',
-              widget: 'number',
-              path: 'requiredNumber',
-              validator: { type: 'number', required: true },
-            },
-            {
-              uid: 'min',
-              kind: 'control',
-              widget: 'number',
-              path: 'min',
-              validator: { type: 'number', minimum: 1 },
-            },
-            {
-              uid: 'max',
-              kind: 'control',
-              widget: 'number',
-              path: 'max',
-              validator: { type: 'number', maximum: 100 },
-            },
-            {
-              uid: 'exclusiveMinimum',
-              kind: 'control',
-              widget: 'number',
-              path: 'exclusiveMinimum',
-              validator: { type: 'number', exclusiveMinimum: 100 },
-            },
-            {
-              uid: 'exclusiveMaximum',
-              kind: 'control',
-              widget: 'number',
-              path: 'exclusiveMaximum',
-              validator: { type: 'number', exclusiveMaximum: 100 },
-            },
-            {
-              uid: 'multipleOf',
-              kind: 'control',
-              widget: 'number',
-              path: 'multipleOf',
-              validator: { type: 'number', multipleOf: 5 },
-            },
-            {
-              uid: 'boolean',
-              kind: 'control',
-              widget: 'checkbox',
-              path: 'boolean',
-              validator: { type: 'boolean', const: true },
-            },
-            {
-              uid: 'testButton',
-              kind: 'interactive',
-              widget: 'button',
-              label: 'Test',
-              on: {
-                click: 'submit',
-              },
-            },
-          ],
-        }),
-      );
-    });
-
     context('String validators', () => {
       it('should display an error validating required strings on submit', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'requiredString',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'requiredString',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredString_validator-error"]').contains(
@@ -130,6 +36,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       // TODO: Fix string validator to validate empty strings as invalid
       it.skip('should display an error validating required strings', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'requiredString',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'requiredString',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="requiredString_validator-input"]').type('a{backspace}');
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredString_validator-error"]').contains(
@@ -138,6 +66,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating minLength', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'minLength',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'minLength',
+                validator: { type: 'string', minLength: 3 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="minLength_textinput"]').type('abc');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="minLength_validator-errors"]').should('not.exist');
@@ -153,6 +103,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating maxLength', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'maxLength',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'maxLength',
+                validator: { type: 'string', maxLength: 6 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="maxLength_textinput"]').type('abcdef');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="maxLength_validator-errors"]').should('not.exist');
@@ -168,6 +140,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating pattern', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="pattern_textinput"]').type('abCDef');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="pattern_validator-errors"]').should('not.exist');
@@ -183,6 +177,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating enum', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'enumString',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'enumString',
+                validator: { type: 'string', enum: 'golemui' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="enumString_textinput"]').type('golem');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="enumString_validator-errors"]').should('not.exist');
@@ -196,6 +212,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating const', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'const',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'const',
+                validator: { type: 'string', const: 'golemui' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="const_textinput"]').type('golemui');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="const_validator-errors"]').should('not.exist');
@@ -209,6 +247,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating format', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'format',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'format',
+                validator: { type: 'string', format: 'email' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="format_textinput"]').type('contact@golemui.com');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="format_validator-errors"]').should('not.exist');
@@ -224,6 +284,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
     context('Number validators', () => {
       it('should display an error validating required numbers on submit', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'requiredNumber',
+                kind: 'control',
+                widget: 'number',
+                path: 'requiredNumber',
+                validator: { type: 'number', required: true },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredNumber_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredNumber_validator-error"]').contains(
@@ -232,6 +314,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating required numbers', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'requiredNumber',
+                kind: 'control',
+                widget: 'number',
+                path: 'requiredNumber',
+                validator: { type: 'number', required: true },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="requiredNumber_number"]').type('1{backspace}');
         cy.get('[data-cy="requiredNumber_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredNumber_validator-error"]').contains(
@@ -243,6 +347,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating min number', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'min',
+                kind: 'control',
+                widget: 'number',
+                path: 'min',
+                validator: { type: 'number', minimum: 1 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="min_number"]').type('1');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="min_validator-errors"]').should('not.exist');
@@ -254,6 +380,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating max number', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'max',
+                kind: 'control',
+                widget: 'number',
+                path: 'max',
+                validator: { type: 'number', maximum: 100 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="max_number"]').type('100');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="max_validator-errors"]').should('not.exist');
@@ -265,6 +413,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating exclusive minimum number', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'exclusiveMinimum',
+                kind: 'control',
+                widget: 'number',
+                path: 'exclusiveMinimum',
+                validator: { type: 'number', exclusiveMinimum: 100 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="exclusiveMinimum_number"]').type('101');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="exclusiveMinimum_validator-errors"]').should('not.exist');
@@ -276,6 +446,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating exclusive maximum number', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'exclusiveMaximum',
+                kind: 'control',
+                widget: 'number',
+                path: 'exclusiveMaximum',
+                validator: { type: 'number', exclusiveMaximum: 100 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="exclusiveMaximum_number"]').type('99');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="exclusiveMaximum_validator-errors"]').should('not.exist');
@@ -287,6 +479,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating multipleOf number', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'multipleOf',
+                kind: 'control',
+                widget: 'number',
+                path: 'multipleOf',
+                validator: { type: 'number', multipleOf: 5 },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="multipleOf_number"]').type('10');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="multipleOf_validator-errors"]').should('not.exist');
@@ -300,6 +514,28 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
     context('Boolean validators', () => {
       it('should display an error validating boolean const', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'boolean',
+                kind: 'control',
+                widget: 'checkbox',
+                path: 'boolean',
+                validator: { type: 'boolean', const: true },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        );
         cy.get('[data-cy="boolean_checkbox"]').click();
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="boolean_validator-errors"]').should('not.exist');
