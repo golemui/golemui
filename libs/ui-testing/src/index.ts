@@ -4,9 +4,11 @@ import { runAlertComponentTests } from './lib/vanilla-features/alert.cy';
 import { runValidatorsComponentTests } from './lib/vanilla-features/validators.cy';
 import { runIncludeExcludeComponentTests } from './lib/core-features/include-exclude.cy';
 import { runMiddlewaresComponentTests } from './lib/core-features/middlewares.cy';
+import { runFieldLoadersComponentTests } from './lib/core-features/field-loaders.cy';
 
 export function mountAndTest(mountFn: MountComponentFn) {
   const coreTests = [
+    runFieldLoadersComponentTests,
     runMiddlewaresComponentTests,
     runIncludeExcludeComponentTests,
     runValidatorsComponentTests,

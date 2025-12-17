@@ -9,7 +9,18 @@ const mountReact = (
   middlewares: Middleware<State, Action>[] = [],
   validators: CustomValidatorSchemas = {},
 ) => {
-  mount(<FormComponent formDef={formDef} middlewares={middlewares} validators={validators} />);
+  const fieldLoaders = {
+    heading: async () =>
+      (await import('../cypress/components/heading/heading.component')).HeadingComponent,
+  };
+  mount(
+    <FormComponent
+      formDef={formDef}
+      middlewares={middlewares}
+      validators={validators}
+      fieldLoaders={fieldLoaders}
+    />,
+  );
 };
 
 mountAndTest(mountReact);
