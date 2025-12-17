@@ -1,5 +1,7 @@
 import * as Core from '@golemui/core';
 import { MountComponentFn } from '../utils';
+import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import * as AppsShared from '@golemui/apps-shared';
 
 export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
   describe('Validators', () => {
@@ -543,6 +545,49 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="boolean_checkbox"]').click();
         cy.get('[data-cy="boolean_validator-errors"]').should('exist');
         cy.get('[data-cy="boolean_validator-error"]').contains('Invalid input');
+      });
+    });
+
+    context('Custom validators', () => {
+      const validators: ValidatorsVanilla.CustomValidatorSchemas = {
+        allowedNames: AppsShared.allowedNames,
+      };
+
+      it('should display an error validating a custom validator', () => {
+        mountFn(
+          Core.defineForm({
+            form: [
+              {
+                uid: 'allowedNamesCustomValidator',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'allowedNamesCustomValidator',
+                validator: { type: 'custom', allowedNames: ['golemui'] },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+          [],
+          validators,
+        );
+
+        cy.get('[data-cy="allowedNamesCustomValidator_textinput"]').type('a');
+        cy.get('[data-cy="allowedNamesCustomValidator_validator-errors"]').should('exist');
+        cy.get('[data-cy="allowedNamesCustomValidator_validator-error"]').contains(
+          'Name "a" not in "golemui"',
+        );
+
+        cy.get('[data-cy="allowedNamesCustomValidator_textinput"]').clear();
+        cy.get('[data-cy="allowedNamesCustomValidator_textinput"]').type('golemui');
+        cy.get('[data-cy="allowedNamesCustomValidator_validator-errors"]').should('not.exist');
       });
     });
   });
