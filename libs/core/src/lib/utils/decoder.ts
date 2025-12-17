@@ -3,7 +3,7 @@ import * as jd from 'ts.data.json';
 export type KeySpec<A> = Record<
   string,
   {
-    suffixed: boolean;
+    suffixed?: boolean;
     decoder: jd.Decoder<A>;
   }
 >;

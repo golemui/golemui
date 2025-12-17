@@ -1,5 +1,6 @@
 import * as jd from 'ts.data.json';
 import { DotPath, ReactiveExpression, Uid, UiState } from './shared';
+import { objectWithSuffix } from './utils/decoder';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 
@@ -160,11 +161,11 @@ const excludeDecoder = jd.oneOf<From | When>([fromDecoder, whenDecoder], 'Exclud
 // disable / readonly
 const boolWhenDecoder = jd.oneOf<boolean | When>([jd.boolean(), whenDecoder], 'Bool | When');
 
-const onDecoder = jd.object(
+const onDecoder = objectWithSuffix(
   {
-    load: jd.optional(jd.string()),
-    click: jd.optional(jd.string()),
-    change: jd.optional(jd.string()),
+    load: { suffixed: true, decoder: jd.optional(jd.string()) },
+    click: { suffixed: true, decoder: jd.optional(jd.string()) },
+    change: { suffixed: true, decoder: jd.optional(jd.string()) },
   },
   'On',
 );
@@ -185,53 +186,51 @@ const displayFieldDecoder = jd.object<DisplayField<string>>(
   'DisplayField',
 );
 
-const interactiveFieldDecoder = jd.object<InteractiveField<string>>(
+const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
   {
-    kind: jd.literal('interactive'),
-    uid: uidDecoder,
-    widget: jd.string(),
-    include: jd.optional(includeDecoder),
-    exclude: jd.optional(excludeDecoder),
-    disabled: jd.optional(boolWhenDecoder),
-    readonly: jd.optional(boolWhenDecoder),
-    label: jd.string(),
-    on: jd.optional(onDecoder),
-    props: jd.optional(jd.succeed()),
+    kind: { decoder: jd.literal('interactive') },
+    uid: { decoder: uidDecoder },
+    widget: { decoder: jd.string() },
+    include: { decoder: jd.optional(includeDecoder) },
+    exclude: { decoder: jd.optional(excludeDecoder) },
+    disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
+    label: { suffixed: true, decoder: jd.string() },
+    readonly: { decoder: jd.optional(boolWhenDecoder) },
+    on: { decoder: jd.optional(onDecoder) },
+    props: { decoder: jd.optional(jd.succeed()) },
   },
   'InteractiveField',
 );
 
-const controlFieldDecoder = jd
-  .object<ControlField<any, string>>(
-    {
-      kind: jd.literal('control'),
-      uid: uidDecoder,
-      widget: jd.string(),
-      include: jd.optional(includeDecoder),
-      exclude: jd.optional(excludeDecoder),
-      disabled: jd.optional(boolWhenDecoder),
-      readonly: jd.optional(boolWhenDecoder),
-      on: jd.optional(onDecoder),
-      props: jd.optional(jd.succeed()),
-      label: jd.optional(jd.string()),
-      path: jd.string(),
-      defaultValue: jd.optional(jd.succeed()),
-      validator: jd.optional(jd.succeed()),
-    },
-    'ControlField',
-  )
-  .map((ctrl) => {
-    const transformed = { ...ctrl };
-    if (!ctrl.uid) {
-      transformed.uid = `${ctrl.path}-${ctrl.widget}`;
-    }
-    // TODO: no type safety in this block
-    if (ctrl.widget === 'repeater') {
-      const props = ctrl['props'] as Record<string, any>;
-      props['template'] = layoutFieldDecoder.parse(props['template']);
-    }
-    return transformed;
-  });
+const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
+  {
+    kind: { decoder: jd.literal('control') },
+    uid: { decoder: uidDecoder },
+    widget: { decoder: jd.string() },
+    include: { decoder: jd.optional(includeDecoder) },
+    exclude: { decoder: jd.optional(excludeDecoder) },
+    disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
+    readonly: { decoder: jd.optional(boolWhenDecoder) },
+    on: { decoder: jd.optional(onDecoder) },
+    props: { decoder: jd.optional(jd.succeed()) },
+    label: { suffixed: true, decoder: jd.optional(jd.string()) },
+    path: { decoder: jd.string() },
+    defaultValue: { decoder: jd.optional(jd.succeed()) },
+    validator: { suffixed: true, decoder: jd.optional(jd.succeed()) },
+  },
+  'ControlField',
+).map((ctrl) => {
+  const transformed = { ...ctrl };
+  if (!ctrl.uid) {
+    transformed.uid = `${ctrl.path}-${ctrl.widget}`;
+  }
+  // TODO: no type safety in this block
+  if (ctrl.widget === 'repeater') {
+    const props = ctrl['props'] as Record<string, any>;
+    props['template'] = layoutFieldDecoder.parse(props['template']);
+  }
+  return transformed;
+});
 
 export const layoutFieldDecoder = jd.lazy(() =>
   jd.object<LayoutField<string>>(
