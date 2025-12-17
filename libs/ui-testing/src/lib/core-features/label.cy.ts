@@ -28,13 +28,13 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           cy.get(`label[for="${uid}"]`).contains(label);
         });
 
-        it.skip(`${widget} should have a 'label.register'`, () => {
+        it(`${widget} should have a 'label.register'`, () => {
           const uid = `${widget}-uid`;
           const label = `${widget} label`;
           mountFn(
             Core.defineForm({
               states: {
-                register: '$form.a === undefined',
+                register: 'true',
               },
               form: [
                 {
@@ -74,13 +74,13 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
         cy.get(`[data-cy="${uid}_button"]`).contains(label);
       });
 
-      it.skip(`button should have a 'label.register'`, () => {
+      it(`button should have a 'label.register'`, () => {
         const uid = '123';
         const label = `button label`;
         mountFn(
           Core.defineForm({
             states: {
-              register: '$form.a === undefined',
+              register: 'true',
             },
             form: [
               {
