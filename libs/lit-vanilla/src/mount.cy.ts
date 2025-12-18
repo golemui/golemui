@@ -9,11 +9,16 @@ const mountLit = (
   middlewares: Middleware<State, Action>[] = [],
   validators: CustomValidatorSchemas = {},
 ) => {
+  const fieldLoaders = {
+    heading: async () =>
+      (await import('../cypress/components/heading/heading.element')).HeadingElement,
+  };
   cy.mount(
     html`<gui-form
       .formDef=${formDef}
       .middlewares=${middlewares}
       .validators=${validators}
+      .fieldLoaders=${fieldLoaders}
     ></gui-form>`,
   );
 };
