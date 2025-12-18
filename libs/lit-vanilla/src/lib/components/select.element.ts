@@ -15,8 +15,8 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-select')
 export class SelectElement extends LitElement implements Core.WithField {
@@ -121,6 +121,7 @@ export class SelectElement extends LitElement implements Core.WithField {
         <select
           type="text"
           id=${this.field.uid}
+          data-cy=${`${this.field.uid}_select`}
           class=${classMap(selectIcon.fieldClasses)}
           required=${this.adapter.templateData.validator?.required ? '' : nothing}
           .value=${this.adapter.templateData.value ?? ''}

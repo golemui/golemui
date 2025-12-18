@@ -17,4 +17,9 @@ export const vanillaWidgets = [
   ...interactiveWidgets,
 ];
 
+export type VanillaControlWidget = (typeof controlWidgets)[number];
+export type VanillaLayoutWidget = (typeof layoutWidgets)[number];
+export type VanillaDisplayWidget = (typeof displayWidgets)[number];
+export type VanillaInteractiveWidget = (typeof interactiveWidgets)[number];
+
 export type VanillaWidget = (typeof vanillaWidgets)[number];
