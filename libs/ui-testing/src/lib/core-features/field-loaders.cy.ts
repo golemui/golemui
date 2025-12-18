@@ -4,8 +4,9 @@ import * as Core from '@golemui/core';
 export const runFieldLoadersComponentTests = (mountFn: MountComponentFn) => {
   describe('Field Loaders', () => {
     it('Should load a custom component', () => {
-      mountFn(
-        Core.defineForm({
+      mountFn({
+        withCustomComponent: true,
+        formDef: Core.defineForm({
           form: [
             {
               uid: '',
@@ -18,7 +19,7 @@ export const runFieldLoadersComponentTests = (mountFn: MountComponentFn) => {
             },
           ],
         }),
-      );
+      });
 
       cy.get('[data-cy="heading"]').should('exist');
     });

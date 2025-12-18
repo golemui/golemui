@@ -7,8 +7,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
   describe('Validators', () => {
     context('String validators', () => {
       it('should display an error validating required strings on submit', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'requiredString',
@@ -28,7 +28,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredString_validator-error"]').contains(
@@ -38,8 +38,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       // TODO: Fix string validator to validate empty strings as invalid
       it.skip('should display an error validating required strings', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'requiredString',
@@ -59,7 +59,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="requiredString_validator-input"]').type('a{backspace}');
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredString_validator-error"]').contains(
@@ -68,8 +68,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating minLength', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'minLength',
@@ -89,7 +89,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="minLength_textinput"]').type('abc');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="minLength_validator-errors"]').should('not.exist');
@@ -105,8 +105,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating maxLength', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'maxLength',
@@ -126,7 +126,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="maxLength_textinput"]').type('abcdef');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="maxLength_validator-errors"]').should('not.exist');
@@ -142,8 +142,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating pattern', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -163,7 +163,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="pattern_textinput"]').type('abCDef');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="pattern_validator-errors"]').should('not.exist');
@@ -179,8 +179,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating enum', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'enumString',
@@ -200,7 +200,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="enumString_textinput"]').type('golem');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="enumString_validator-errors"]').should('not.exist');
@@ -214,8 +214,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating const', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'const',
@@ -235,7 +235,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="const_textinput"]').type('golemui');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="const_validator-errors"]').should('not.exist');
@@ -249,8 +249,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating format', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'format',
@@ -270,7 +270,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="format_textinput"]').type('contact@golemui.com');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="format_validator-errors"]').should('not.exist');
@@ -286,8 +286,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
     context('Number validators', () => {
       it('should display an error validating required numbers on submit', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'requiredNumber',
@@ -307,7 +307,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredNumber_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredNumber_validator-error"]').contains(
@@ -316,8 +316,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating required numbers', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'requiredNumber',
@@ -337,7 +337,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="requiredNumber_number"]').type('1{backspace}');
         cy.get('[data-cy="requiredNumber_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredNumber_validator-error"]').contains(
@@ -349,8 +349,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating min number', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'min',
@@ -370,7 +370,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="min_number"]').type('1');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="min_validator-errors"]').should('not.exist');
@@ -382,8 +382,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating max number', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'max',
@@ -403,7 +403,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="max_number"]').type('100');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="max_validator-errors"]').should('not.exist');
@@ -415,8 +415,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating exclusive minimum number', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'exclusiveMinimum',
@@ -436,7 +436,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="exclusiveMinimum_number"]').type('101');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="exclusiveMinimum_validator-errors"]').should('not.exist');
@@ -448,8 +448,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating exclusive maximum number', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'exclusiveMaximum',
@@ -469,7 +469,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="exclusiveMaximum_number"]').type('99');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="exclusiveMaximum_validator-errors"]').should('not.exist');
@@ -481,8 +481,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it('should display an error validating multipleOf number', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'multipleOf',
@@ -502,7 +502,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="multipleOf_number"]').type('10');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="multipleOf_validator-errors"]').should('not.exist');
@@ -516,8 +516,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
     context('Boolean validators', () => {
       it('should display an error validating boolean const', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'boolean',
@@ -537,7 +537,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get('[data-cy="boolean_checkbox"]').click();
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="boolean_validator-errors"]').should('not.exist');
@@ -554,8 +554,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       };
 
       it('should display an error validating a custom validator', () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid: 'allowedNamesCustomValidator',
@@ -575,9 +575,8 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-          [],
-          validators,
-        );
+          validators: validators,
+        });
 
         cy.get('[data-cy="allowedNamesCustomValidator_textinput"]').type('a');
         cy.get('[data-cy="allowedNamesCustomValidator_validator-errors"]').should('exist');
