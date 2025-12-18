@@ -18,8 +18,8 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
             ? `[data-cy="${uid}_${widget}_0"]`
             : `[data-cy="${uid}_${widget}"]`;
         it(`${widget} should not be disabled by default`, () => {
-          mountFn(
-            Core.defineForm({
+          mountFn({
+            formDef: Core.defineForm({
               form: [
                 {
                   uid,
@@ -30,14 +30,14 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
                 },
               ],
             }),
-          );
+          });
           cy.get(selector).should('not.have.attr', 'disabled');
         });
 
         it(`${widget} should not be disabled when set to false`, () => {
           const uid = `${widget}-uid`;
-          mountFn(
-            Core.defineForm({
+          mountFn({
+            formDef: Core.defineForm({
               form: [
                 {
                   uid,
@@ -49,14 +49,14 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
                 },
               ],
             }),
-          );
+          });
           cy.get(selector).should('not.have.attr', 'disabled');
         });
 
         it(`${widget} should be disabled when set to true`, () => {
           const uid = `${widget}-uid`;
-          mountFn(
-            Core.defineForm({
+          mountFn({
+            formDef: Core.defineForm({
               form: [
                 {
                   uid,
@@ -68,14 +68,14 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
                 },
               ],
             }),
-          );
+          });
           cy.get(selector).should('have.attr', 'disabled');
         });
 
         it(`${widget} should be disabled via a state`, () => {
           const uid = `${widget}-uid`;
-          mountFn(
-            Core.defineForm({
+          mountFn({
+            formDef: Core.defineForm({
               states: {
                 register: 'true',
               },
@@ -91,7 +91,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
                 },
               ],
             }),
-          );
+          });
           cy.get(selector).should('have.attr', 'disabled');
         });
       });
@@ -100,8 +100,8 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
     context('interactive fields', () => {
       it(`button should not be disabled by default`, () => {
         const uid = `button-uid`;
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid,
@@ -111,14 +111,14 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get(`[data-cy="${uid}_button"]`).should('not.have.attr', 'disabled');
       });
 
       it(`button should not be disabled when set to false`, () => {
         const uid = `button-uid`;
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid,
@@ -129,14 +129,14 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get(`[data-cy="${uid}_button"]`).should('not.have.attr', 'disabled');
       });
 
       it(`button should be disabled when set to true`, () => {
         const uid = `button-uid`;
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid,
@@ -147,14 +147,14 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get(`[data-cy="${uid}_button"]`).should('have.attr', 'disabled');
       });
 
       it(`button should be disabled via a state`, () => {
         const uid = `button-uid`;
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               register: 'true',
             },
@@ -169,7 +169,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get(`[data-cy="${uid}_button"]`).should('have.attr', 'disabled');
       });
     });
