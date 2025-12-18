@@ -98,79 +98,81 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
     });
 
     context('interactive fields', () => {
-      it(`button should not be disabled by default`, () => {
-        const uid = `button-uid`;
-        mountFn({
-          formDef: Core.defineForm({
-            form: [
-              {
-                uid,
-                kind: 'interactive',
-                widget: 'button',
-                label: 'Send',
-              },
-            ],
-          }),
+      context('button', () => {
+        it(`button should not be disabled by default`, () => {
+          const uid = `button-uid`;
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid,
+                  kind: 'interactive',
+                  widget: 'button',
+                  label: 'Send',
+                },
+              ],
+            }),
+          });
+          cy.get(`[data-cy="${uid}_button"]`).should('not.have.attr', 'disabled');
         });
-        cy.get(`[data-cy="${uid}_button"]`).should('not.have.attr', 'disabled');
-      });
 
-      it(`button should not be disabled when set to false`, () => {
-        const uid = `button-uid`;
-        mountFn({
-          formDef: Core.defineForm({
-            form: [
-              {
-                uid,
-                kind: 'interactive',
-                widget: 'button',
-                label: 'Send',
-                disabled: false,
-              },
-            ],
-          }),
+        it(`button should not be disabled when set to false`, () => {
+          const uid = `button-uid`;
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid,
+                  kind: 'interactive',
+                  widget: 'button',
+                  label: 'Send',
+                  disabled: false,
+                },
+              ],
+            }),
+          });
+          cy.get(`[data-cy="${uid}_button"]`).should('not.have.attr', 'disabled');
         });
-        cy.get(`[data-cy="${uid}_button"]`).should('not.have.attr', 'disabled');
-      });
 
-      it(`button should be disabled when set to true`, () => {
-        const uid = `button-uid`;
-        mountFn({
-          formDef: Core.defineForm({
-            form: [
-              {
-                uid,
-                kind: 'interactive',
-                widget: 'button',
-                label: 'Send',
-                disabled: true,
-              },
-            ],
-          }),
+        it(`button should be disabled when set to true`, () => {
+          const uid = `button-uid`;
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid,
+                  kind: 'interactive',
+                  widget: 'button',
+                  label: 'Send',
+                  disabled: true,
+                },
+              ],
+            }),
+          });
+          cy.get(`[data-cy="${uid}_button"]`).should('have.attr', 'disabled');
         });
-        cy.get(`[data-cy="${uid}_button"]`).should('have.attr', 'disabled');
-      });
 
-      it(`button should be disabled via a state`, () => {
-        const uid = `button-uid`;
-        mountFn({
-          formDef: Core.defineForm({
-            states: {
-              register: 'true',
-            },
-            form: [
-              {
-                uid,
-                kind: 'interactive',
-                widget: 'button',
-                label: 'Send',
-                disabled: false,
-                'disabled.register': true,
+        it(`button should be disabled via a state`, () => {
+          const uid = `button-uid`;
+          mountFn({
+            formDef: Core.defineForm({
+              states: {
+                register: 'true',
               },
-            ],
-          }),
+              form: [
+                {
+                  uid,
+                  kind: 'interactive',
+                  widget: 'button',
+                  label: 'Send',
+                  disabled: false,
+                  'disabled.register': true,
+                },
+              ],
+            }),
+          });
+          cy.get(`[data-cy="${uid}_button"]`).should('have.attr', 'disabled');
         });
-        cy.get(`[data-cy="${uid}_button"]`).should('have.attr', 'disabled');
       });
     });
   });
