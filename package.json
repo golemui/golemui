@@ -9,7 +9,7 @@
     "test:angular": "nx run angular-vanilla:component-test --watch",
     "test:lit": "nx run lit-vanilla:component-test --watch",
     "test:react": "nx run react-vanilla:component-test --watch",
-    "test:all": "nx affected --target=component-test",
+    "test:all": "nx run-many --target=component-test",
     "build:docs": "./build-docs.sh --skip-install && cd docs && npm run build",
     "build:libs": "npx nx run-many --target=build --projects=libs/*",
     "build:styles": "npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/shared-vanilla/lib/styles/index.css",

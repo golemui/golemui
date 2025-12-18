@@ -5,8 +5,8 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
   describe('Include/Exclude fields with boolean values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               check1: '$form.check1 === true',
               'check1:check2': '$form.check2 === true',
@@ -38,7 +38,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
 
         cy.get('[data-cy="check1_check2_textinput"]').should('not.exist');
         cy.get('[data-cy="check1_checkbox"]').click();
@@ -48,8 +48,8 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it(`control fields should hide/show with exclude from`, () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               check1: '$form.check1 === true',
               'check1:check2': '$form.check2 === true',
@@ -81,7 +81,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
 
         cy.get('[data-cy="check1_check2_textinput"]').should('exist');
         cy.get('[data-cy="check1_checkbox"]').click();
@@ -95,8 +95,8 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
   describe('Include/Exclude fields with number values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               number1: '$form.number1 > 10',
               'number1:number2': '$form.number2 < 10',
@@ -128,7 +128,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
 
         cy.get('[data-cy="number1_number2_textinput"]').should('not.exist');
         cy.get('[data-cy="number1_number"]').type('11');
@@ -138,8 +138,8 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it(`control fields should hide/show with exclude from`, () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               number1: '$form.number1 > 10',
               'number1:number2': '$form.number2 < 10',
@@ -171,7 +171,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
 
         cy.get('[data-cy="number1_number2_textinput"]').should('exist');
         cy.get('[data-cy="number1_number"]').type('11');
@@ -185,8 +185,8 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
   describe('Include/Exclude fields with string values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               textinput1: '$form.textinput1 === "abc"',
               'textinput1:textinput2': '$form.textinput2 === "def"',
@@ -218,7 +218,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
 
         cy.get('[data-cy="textinput1_textinput2_textinput"]').should('not.exist');
         cy.get('[data-cy="textinput1_textinput"]').type('abc');
@@ -228,8 +228,8 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
       });
 
       it(`control fields should hide/show with exclude from`, () => {
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               textinput1: `$form.textinput1 === 'abc'`,
               'textinput1:textinput2': `$form.textinput2 === 'def'`,
@@ -261,7 +261,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
 
         cy.get('[data-cy="textinput1_textinput2_textinput"]').should('exist');
         cy.get('[data-cy="textinput1_textinput"]').type('abc');

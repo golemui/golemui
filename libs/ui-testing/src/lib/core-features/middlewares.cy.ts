@@ -10,8 +10,8 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
         next(action);
       const spyMiddleware1 = cy.spy(middleware1).as('middleware1');
       const spyMiddleware2 = cy.spy(middleware2).as('middleware2');
-      mountFn(
-        Core.defineForm({
+      mountFn({
+        formDef: Core.defineForm({
           form: [
             {
               uid: 'check1',
@@ -23,8 +23,8 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
             },
           ],
         }),
-        [spyMiddleware1, spyMiddleware2],
-      );
+        middlewares: [spyMiddleware1, spyMiddleware2],
+      });
 
       cy.get('@middleware1').should('be.called');
       cy.get('@middleware2').should('be.called');
@@ -40,8 +40,8 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
         next(action);
       const spyMiddleware1 = cy.spy(middleware1).as('middleware1');
       const spyMiddleware2 = cy.spy(middleware2).as('middleware2');
-      mountFn(
-        Core.defineForm({
+      mountFn({
+        formDef: Core.defineForm({
           form: [
             {
               uid: 'check1',
@@ -53,8 +53,8 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
             },
           ],
         }),
-        [spyMiddleware1, spyMiddleware2],
-      );
+        middlewares: [spyMiddleware1, spyMiddleware2],
+      });
 
       cy.get('[data-cy="check1_checkbox"]').click();
       cy.get('@middleware1').should('be.called');
