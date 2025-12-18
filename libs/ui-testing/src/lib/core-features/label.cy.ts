@@ -11,8 +11,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
         it(`${widget} should have a label`, () => {
           const uid = `${widget}-uid`;
           const label = `${widget} label`;
-          mountFn(
-            Core.defineForm({
+          mountFn({
+            formDef: Core.defineForm({
               form: [
                 {
                   uid,
@@ -23,7 +23,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
                 },
               ],
             }),
-          );
+          });
           cy.get(`label[for="${uid}"]`).should('exist');
           cy.get(`label[for="${uid}"]`).contains(label);
         });
@@ -31,8 +31,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
         it(`${widget} should have a 'label.register'`, () => {
           const uid = `${widget}-uid`;
           const label = `${widget} label`;
-          mountFn(
-            Core.defineForm({
+          mountFn({
+            formDef: Core.defineForm({
               states: {
                 register: 'true',
               },
@@ -47,7 +47,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
                 },
               ],
             }),
-          );
+          });
           cy.get(`label[for="${uid}"]`).should('exist');
           cy.get(`label[for="${uid}"]`).contains(label);
         });
@@ -58,8 +58,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
       it(`button should have a label`, () => {
         const uid = '123';
         const label = `button label`;
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             form: [
               {
                 uid,
@@ -69,7 +69,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get(`[data-cy="${uid}_button"]`).should('exist');
         cy.get(`[data-cy="${uid}_button"]`).contains(label);
       });
@@ -77,8 +77,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
       it(`button should have a 'label.register'`, () => {
         const uid = '123';
         const label = `button label`;
-        mountFn(
-          Core.defineForm({
+        mountFn({
+          formDef: Core.defineForm({
             states: {
               register: 'true',
             },
@@ -92,7 +92,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               },
             ],
           }),
-        );
+        });
         cy.get(`[data-cy="${uid}_button"]`).should('exist');
         cy.get(`[data-cy="${uid}_button"]`).contains(label);
       });

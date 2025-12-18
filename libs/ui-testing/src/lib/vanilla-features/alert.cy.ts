@@ -4,8 +4,8 @@ import { MountComponentFn } from '../utils';
 export const runAlertComponentTests = (mountFn: MountComponentFn) => {
   describe('Alert Component', () => {
     beforeEach(() => {
-      mountFn(
-        Core.defineForm({
+      mountFn({
+        formDef: Core.defineForm({
           form: [
             {
               uid: '',
@@ -18,7 +18,7 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
             },
           ],
         }),
-      );
+      });
     });
 
     it('should display a warning alert', () => {
