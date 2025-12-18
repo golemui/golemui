@@ -1,3 +1,13 @@
+## 0.14.7 (2025-12-18)
+
+### 🩹 Fixes
+
+- **angular:** fix the disabled test ([85c8f1b](https://github.com/golemui/formforge/commit/85c8f1b))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.6 (2025-12-18)
 
 This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.

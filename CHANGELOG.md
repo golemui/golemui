@@ -1,3 +1,15 @@
+## 0.14.7 (2025-12-18)
+
+### 🩹 Fixes
+
+- **angular:** fix the disabled test ([85c8f1b](https://github.com/golemui/formforge/commit/85c8f1b))
+- **lit:** fix the disabled test ([a646ffc](https://github.com/golemui/formforge/commit/a646ffc))
+- **react:** fix the disabled test ([d8503ba](https://github.com/golemui/formforge/commit/d8503ba))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.6 (2025-12-18)
 
 This was a version bump only, there were no code changes.

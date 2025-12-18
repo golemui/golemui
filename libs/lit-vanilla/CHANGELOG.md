@@ -1,3 +1,13 @@
+## 0.14.7 (2025-12-18)
+
+### 🩹 Fixes
+
+- **lit:** fix the disabled test ([a646ffc](https://github.com/golemui/formforge/commit/a646ffc))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.6 (2025-12-18)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.
