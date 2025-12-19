@@ -11,7 +11,7 @@
     "test:react": "nx run react-vanilla:component-test --watch",
     "test:all": "nx run-many --target=component-test",
     "test:affected": "nx affected --target=component-test",
-    "lint:affected": "nx affected -t lint test build --no-cloud",
+    "lint:affected": "nx affected -t lint test --no-cloud",
     "build:docs": "./build-docs.sh --skip-install && cd docs && npm run build",
     "build:libs": "npx nx run-many --target=build --projects=libs/*",
     "build:styles": "npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/shared-vanilla/lib/styles/index.css",
