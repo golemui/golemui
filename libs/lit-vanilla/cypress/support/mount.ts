@@ -30,6 +30,7 @@ export const mountFramework = (options: MountOptions) => {
   cy.mount(
     html`<gui-form
       .formDef=${options.formDef}
+      .data=${options.data}
       .middlewares=${options.middlewares ?? []}
       .validators=${options.validators}
       .fieldLoaders=${fieldLoaders}

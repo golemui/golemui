@@ -1,7 +1,20 @@
 import * as Core from '@golemui/core';
 import { MountComponentFn } from '../utils';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
-import * as AppsShared from '@golemui/apps-shared';
+import * as z from 'zod/mini';
+
+export const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
+  z.string().check(
+    z.superRefine((val, ctx) => {
+      if (names.includes(val) === false) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,
+          input: val,
+        });
+      }
+    }),
+  );
 
 export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
   describe('Validators', () => {
@@ -550,7 +563,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
     context('Custom validators', () => {
       const validators: ValidatorsVanilla.CustomValidatorSchemas = {
-        allowedNames: AppsShared.allowedNames,
+        allowedNames: allowedNames,
       };
 
       it('should display an error validating a custom validator', () => {

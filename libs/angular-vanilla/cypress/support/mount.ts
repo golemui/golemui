@@ -36,6 +36,7 @@ export const mountFramework = (options: MountOptions) => {
     imports: [CommonModule, FormCoreComponent],
     componentProperties: {
       formDef: options.formDef,
+      data: options.data,
       fieldLoaders: fieldLoaders,
       middlewares: options.middlewares ?? [],
       validators: options.validators,

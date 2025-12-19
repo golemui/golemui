@@ -4,6 +4,7 @@ import { CustomValidatorSchemas } from '@golemui/validators-vanilla';
 
 export interface MountOptions<StateKeys extends Core.UiState = string> {
   formDef: Core.Form<StateKeys>;
+  data?: Record<string, any>;
   middlewares?: Middleware<State, Action>[];
   validators?: CustomValidatorSchemas;
   formEvent?: (event: Core.FormEvent) => void | Promise<void>;
