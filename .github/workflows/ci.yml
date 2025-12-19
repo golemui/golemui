@@ -33,4 +33,4 @@ jobs:
       - run: npm run lint:affected
 
       - name: Cypress component testing
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" npx nx affected --target=component-test --parallel=3 --browser chrome
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" npx nx affected --target=component-test --parallel=2 --browser chrome
