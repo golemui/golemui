@@ -6,6 +6,8 @@ export interface MountOptions<StateKeys extends Core.UiState = string> {
   formDef: Core.Form<StateKeys>;
   middlewares?: Middleware<State, Action>[];
   validators?: CustomValidatorSchemas;
+  formEvent?: (event: Core.FormEvent) => void | Promise<void>;
+  formError?: (error: Core.FormStoreError) => void | Promise<void>;
   withCustomComponent?: boolean;
 }
 

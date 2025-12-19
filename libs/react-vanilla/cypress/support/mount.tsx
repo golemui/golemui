@@ -11,12 +11,19 @@ export const mountFramework = (options: MountOptions) => {
           (await import('../components/heading/heading.component')).HeadingComponent,
       }
     : {};
+
+  const handleFormEvent = options.formEvent ? options.formEvent : cy.spy().as('formEvent');
+
+  const handleFormError = options.formError ? options.formError : cy.spy().as('formError');
+
   mount(
     <FormComponent
       formDef={options.formDef}
       middlewares={options.middlewares ?? []}
       validators={options.validators}
       fieldLoaders={fieldLoaders}
+      formEvent={handleFormEvent}
+      formError={handleFormError}
     />,
   );
 };
