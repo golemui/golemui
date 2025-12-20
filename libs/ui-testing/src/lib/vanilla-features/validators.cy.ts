@@ -3,7 +3,7 @@ import { MountComponentFn } from '../utils';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as z from 'zod/mini';
 
-export const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
+const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
     z.superRefine((val, ctx) => {
       if (names.includes(val) === false) {
@@ -600,6 +600,237 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="allowedNamesCustomValidator_textinput"]').clear();
         cy.get('[data-cy="allowedNamesCustomValidator_textinput"]').type('golemui');
         cy.get('[data-cy="allowedNamesCustomValidator_validator-errors"]').should('not.exist');
+      });
+    });
+
+    context('Property validateOn', () => {
+      it('should validate on blur', () => {
+        mountFn({
+          validateOn: 'blur',
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                defaultValue: 'ab',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+
+        // Validate message doesn't trigger on change
+        cy.get('[data-cy="pattern_textinput"]').type('ab');
+        cy.get('[data-cy="pattern_validator-errors"]').should('not.exist');
+
+        // Validate message triggers on blur
+        cy.get('[data-cy="pattern_textinput"]').blur();
+        cy.get('[data-cy="pattern_validator-errors"]').should('exist');
+
+        cy.get('[data-cy="pattern_validator-error"]').contains(
+          'Invalid string: must match pattern /CD/',
+        );
+      });
+
+      it('should validate on change', () => {
+        mountFn({
+          validateOn: 'change',
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                defaultValue: 'ab',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+
+        // Validate message doesn't trigger on blur
+        cy.get('[data-cy="pattern_textinput"]').focus();
+        cy.get('[data-cy="pattern_textinput"]').blur();
+        cy.get('[data-cy="pattern_validator-errors"]').should('not.exist');
+
+        // Validate message triggers on change
+        cy.get('[data-cy="pattern_textinput"]').type('c');
+        cy.get('[data-cy="pattern_validator-errors"]').should('exist');
+
+        cy.get('[data-cy="pattern_validator-error"]').contains(
+          'Invalid string: must match pattern /CD/',
+        );
+      });
+
+      it('should validate on submit', () => {
+        mountFn({
+          validateOn: 'submit',
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                defaultValue: 'ab',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+
+        // Validate message doesn't trigger on blur
+        cy.get('[data-cy="pattern_textinput"]').focus();
+        cy.get('[data-cy="pattern_textinput"]').blur();
+        cy.get('[data-cy="pattern_validator-errors"]').should('not.exist');
+
+        // Validate message doesn't trigger on change
+        cy.get('[data-cy="pattern_textinput"]').type('ab');
+        cy.get('[data-cy="pattern_validator-errors"]').should('not.exist');
+
+        // Validate message triggers on submit
+        cy.get('[data-cy="testButton_button"]').click();
+        cy.get('[data-cy="pattern_validator-errors"]').should('exist');
+
+        cy.get('[data-cy="pattern_validator-error"]').contains(
+          'Invalid string: must match pattern /CD/',
+        );
+      });
+
+      it('should validate eager on blur', () => {
+        mountFn({
+          validateOn: 'eager',
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                defaultValue: 'ab',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+
+        // Validate message triggers on blur
+        cy.get('[data-cy="pattern_textinput"]').focus();
+        cy.get('[data-cy="pattern_textinput"]').blur();
+        cy.get('[data-cy="pattern_validator-errors"]').should('exist');
+
+        cy.get('[data-cy="pattern_validator-error"]').contains(
+          'Invalid string: must match pattern /CD/',
+        );
+      });
+
+      it('should validate eager on change', () => {
+        mountFn({
+          validateOn: 'eager',
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                defaultValue: 'ab',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+
+        // Validate message triggers on change
+        cy.get('[data-cy="pattern_textinput"]').type('c');
+        cy.get('[data-cy="pattern_validator-errors"]').should('exist');
+
+        cy.get('[data-cy="pattern_validator-error"]').contains(
+          'Invalid string: must match pattern /CD/',
+        );
+      });
+
+      it('should validate eager on submit', () => {
+        mountFn({
+          validateOn: 'eager',
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'pattern',
+                kind: 'control',
+                widget: 'textinput',
+                path: 'pattern',
+                defaultValue: 'ab',
+                validator: { type: 'string', pattern: 'CD' },
+              },
+              {
+                uid: 'testButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+
+        // Validate message triggers on submit
+        cy.get('[data-cy="testButton_button"]').click();
+        cy.get('[data-cy="pattern_validator-errors"]').should('exist');
+
+        cy.get('[data-cy="pattern_validator-error"]').contains(
+          'Invalid string: must match pattern /CD/',
+        );
       });
     });
   });

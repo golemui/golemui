@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { Action, Middleware, State } from '@golemui/core';
+import { Action, Middleware, State, ValidateOn } from '@golemui/core';
 import { CustomValidatorSchemas } from '@golemui/validators-vanilla';
 
 export interface MountOptions<StateKeys extends Core.UiState = string> {
@@ -9,6 +9,7 @@ export interface MountOptions<StateKeys extends Core.UiState = string> {
   validators?: CustomValidatorSchemas;
   formEvent?: (event: Core.FormEvent) => void | Promise<void>;
   formError?: (error: Core.FormStoreError) => void | Promise<void>;
+  validateOn?: ValidateOn;
   withCustomComponent?: boolean;
 }
 

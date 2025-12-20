@@ -22,6 +22,7 @@ export const mountFramework = (options: MountOptions) => {
       data={options.data}
       middlewares={options.middlewares ?? []}
       validators={options.validators}
+      validateOn={options.validateOn ?? 'eager'}
       fieldLoaders={fieldLoaders}
       formEvent={handleFormEvent}
       formError={handleFormError}
