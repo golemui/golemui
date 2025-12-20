@@ -12,7 +12,7 @@ async function onFormEvent(event: Core.FormEvent) {
 const formDef = AppsShared.kitchenSink;
 const formData = AppsShared.kitchenSinkData;
 
-const vanillaFieldLoaders = {
+const customFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
@@ -38,7 +38,7 @@ export function FormPage() {
       <FormComponent
         formDef={formDef}
         data={formData}
-        fieldLoaders={vanillaFieldLoaders}
+        fieldLoaders={customFieldLoaders}
         middlewares={middlewares}
         validators={validators}
         validateOn="eager"

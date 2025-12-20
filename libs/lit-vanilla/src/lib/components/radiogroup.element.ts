@@ -1,7 +1,4 @@
-import { customElement, property } from 'lit/decorators.js';
-import { html, LitElement, nothing } from 'lit';
 import * as Core from '@golemui/core';
-import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
@@ -12,8 +9,11 @@ import {
   OptionValue,
   RadiogroupProps,
 } from '@golemui/shared-vanilla';
-import { Subscription } from 'rxjs';
+import { consume, provide } from '@lit/context';
+import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property } from 'lit/decorators.js';
+import { Subscription } from 'rxjs';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel } from '../utils/templates';
 
@@ -100,6 +100,7 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
                 <input
                   type="radio"
                   id=${`${this.field.uid}_${index}`}
+                  data-cy=${`${this.field.uid}_radiogroup_${index}`}
                   name=${this.field.uid}
                   required=${this.adapter.templateData.validator?.required ? '' : nothing}
                   value=${opt.value}

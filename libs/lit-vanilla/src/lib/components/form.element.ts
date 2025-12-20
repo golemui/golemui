@@ -1,9 +1,6 @@
 import * as Core from '@golemui/core';
 import { FieldLoaders, WithField } from '@golemui/core';
 import '@golemui/lit';
-import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { vanillaFieldLoaders } from '../field.loaders';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import {
   CustomValidatorSchemas,
@@ -11,10 +8,10 @@ import {
   jsonSchemaValidators,
   Validator,
 } from '@golemui/validators-vanilla';
-
-interface Type<T> {
-  new (...args: any[]): T;
-}
+import { html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { vanillaFieldLoaders } from '../field.loaders';
+import { Type } from '../utils/types';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
@@ -61,7 +58,7 @@ export class FormElement extends LitElement {
         .fieldLoaders=${this.customFieldLoaders}
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
-        validateOn="eager"
+        .validateOn=${this.validateOn ?? 'eager'}
       ></gui-core-form>
     `;
   }

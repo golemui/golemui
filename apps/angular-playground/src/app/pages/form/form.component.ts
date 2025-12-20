@@ -18,7 +18,7 @@ export class AppFormPage {
   protected formData = AppsShared.kitchenSinkData;
 
   protected middlewares = [AppsShared.loggerMiddleware];
-  protected vanillaFieldLoaders = {
+  protected customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
   };

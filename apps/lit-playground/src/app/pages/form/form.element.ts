@@ -10,7 +10,7 @@ import './form.element.scss';
 export class FormElement extends LitElement {
   formDef = AppsShared.kitchenSink;
   formData = AppsShared.kitchenSinkData;
-  vanillaFieldLoaders = {
+  customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
   };
@@ -48,10 +48,10 @@ export class FormElement extends LitElement {
         <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
-          .fieldLoaders=${this.vanillaFieldLoaders}
+          .fieldLoaders=${this.customFieldLoaders}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
-          validateOn="eager"
+          .validateOn=${'eager'}
           @formError=${this.onFormError}
           @formEvent=${this.onFormEvent}
         ></gui-form>

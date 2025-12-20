@@ -60,8 +60,9 @@ export class CheckboxElement extends LitElement implements Core.WithField {
         <input
           type="checkbox"
           id=${this.field.uid}
-          ?checked=${this.adapter.templateData.value}
-          ?required=${this.adapter.templateData.validator?.required}
+          data-cy=${`${this.field.uid}_checkbox`}
+          checked=${this.adapter.templateData.value ?? nothing}
+          required=${this.adapter.templateData.validator?.required ? '' : nothing}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
           @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"

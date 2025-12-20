@@ -1,3 +1,54 @@
+## 0.14.9 (2025-12-20)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.14.8 (2025-12-20)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.14.7 (2025-12-18)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.14.6 (2025-12-18)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.14.5 (2025-12-17)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.14.4 (2025-12-17)
+
+### 🩹 Fixes
+
+- add support for suffixed properties in all decoders ([b10b5aa](https://github.com/golemui/formforge/commit/b10b5aa))
+- improve objectWithSuffix docs ([6b70689](https://github.com/golemui/formforge/commit/6b70689))
+- improve the objectWithSuffix decoder ([3464e4b](https://github.com/golemui/formforge/commit/3464e4b))
+- create an objectWithSuffix decoder ([298da7d](https://github.com/golemui/formforge/commit/298da7d))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.14.3 (2025-12-16)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
+## 0.14.2 (2025-12-16)
+
+### 🩹 Fixes
+
+- enhance type safety for vanilla loaders ([879042a](https://github.com/golemui/formforge/commit/879042a))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.14.1 (2025-12-15)
+
+This was a version bump only for core to align it with other projects, there were no code changes.
+
 ## 0.14.0 (2025-12-14)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

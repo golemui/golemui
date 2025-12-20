@@ -1,8 +1,9 @@
 import { Type } from '@angular/core';
 import * as Core from '@golemui/core';
+import { VanillaWidget } from '@golemui/shared-vanilla';
 
-export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
-  // BUTTON
+export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, VanillaWidget> = {
+  // INTERACTIVE FIELDS
   button: async () => (await import('./components/button/button.component')).ButtonComponent,
 
   // REPEATER
@@ -25,6 +26,6 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = {
   accordion: async () =>
     (await import('./components/accordion/accordion.component')).AccordionComponent,
 
-  // FIELDS
+  // DISPLAY FIELDS
   alert: async () => (await import('./components/alert/alert.component')).AlertComponent,
 };

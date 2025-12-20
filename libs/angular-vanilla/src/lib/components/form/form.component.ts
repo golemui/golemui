@@ -33,6 +33,6 @@ export class FormComponent {
     ...this.middlewares(),
   ]);
 
-  protected formError = output<Core.FormStoreError>();
-  protected formEvent = output<Core.FormEvent>();
+  formError = output<Core.FormStoreError>();
+  formEvent = output<Core.FormEvent>();
 }

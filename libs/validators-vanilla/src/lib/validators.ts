@@ -202,7 +202,7 @@ function fromNumberValidator(v: NumberValidator) {
 
     if (v.exclusiveMaximum !== undefined) {
       const t = v.exclusiveMaximum;
-      schema = schema.check(refine((n) => n > t));
+      schema = schema.check(refine((n) => n < t));
     }
 
     if (v.multipleOf !== undefined) {

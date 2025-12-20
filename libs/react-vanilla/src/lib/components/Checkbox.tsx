@@ -46,6 +46,8 @@ export function Checkbox(fieldInstance: Core.WithField) {
         <input
           type="checkbox"
           id={uid}
+          data-cy={`${uid}_checkbox`}
+          checked={value ?? false}
           required={validator?.required}
           disabled={isDisabled}
           readOnly={isReadonly}

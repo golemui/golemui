@@ -7,6 +7,7 @@
   <select
     guiAria
     [uid]="field.uid"
+    [attr.data-cy]="field.uid + '_select'"
     [templateData]="templateData"
     [id]="field.uid"
     [class]="{

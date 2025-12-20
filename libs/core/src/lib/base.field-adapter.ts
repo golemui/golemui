@@ -29,7 +29,7 @@ export const propsUpdaterByCurrentState = <
   const getFieldOverrides$ = fieldPropOverridesByUid$(field.uid);
   combineLatest([
     currentStates(context.store.state$),
-    getFieldOverrides$(context.store.state$).pipe(startWith(null)),
+    getFieldOverrides$(context.store.state$).pipe(startWith({})),
   ])
     .pipe(takeUntil(destroy$))
     .subscribe(([_, fieldOverrides]) => {

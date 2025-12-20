@@ -58,6 +58,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
         <input
           type="text"
           id=${this.field.uid}
+          data-cy=${`${this.field.uid}_textinput`}
           class=${classMap(textinputIcon.fieldClasses)}
           required=${this.adapter.templateData.validator?.required ? '' : nothing}
           value=${this.adapter.templateData.value ?? ''}

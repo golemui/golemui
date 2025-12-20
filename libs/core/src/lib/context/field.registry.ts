@@ -1,7 +1,14 @@
 import { FormField } from '../form-field';
 
-type Registry<ComponentType> = Record<FormField['widget'], ComponentType>;
-export type FieldLoaders<ComponentType> = Record<FormField['widget'], () => Promise<ComponentType>>;
+type Registry<ComponentType, Widget extends string = FormField['widget']> = Record<
+  Widget,
+  ComponentType
+>;
+
+export type FieldLoaders<ComponentType, Widget extends string = FormField['widget']> = Record<
+  Widget,
+  () => Promise<ComponentType>
+>;
 
 export class FieldRegistry<ComponentType> {
   private registry: Registry<ComponentType> = {};

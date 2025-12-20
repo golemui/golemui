@@ -1,3 +1,45 @@
+## 0.14.9 (2025-12-20)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.8 (2025-12-20)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.7 (2025-12-18)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.6 (2025-12-18)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.5 (2025-12-17)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.4 (2025-12-17)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.3 (2025-12-16)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.2 (2025-12-16)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
+## 0.14.1 (2025-12-15)
+
+### 🩹 Fixes
+
+- reverse exclusiveMaximum validator ([fabf4a1](https://github.com/golemui/formforge/commit/fabf4a1))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.14.0 (2025-12-14)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.

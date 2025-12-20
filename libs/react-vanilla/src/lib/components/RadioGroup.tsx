@@ -89,6 +89,7 @@ export function RadioGroup(fieldInstance: Core.WithField) {
               <input
                 type="radio"
                 id={`${uid}_${index}`}
+                data-cy={`${uid}_radiogroup_${index}`}
                 name={uid}
                 required={validator?.required}
                 value={opt.value}
