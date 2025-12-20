@@ -1,3 +1,7 @@
+## 0.14.10 (2025-12-20)
+
+This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
+
 ## 0.14.9 (2025-12-20)
 
 ### 🩹 Fixes
