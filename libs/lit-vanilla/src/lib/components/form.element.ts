@@ -58,7 +58,7 @@ export class FormElement extends LitElement {
         .fieldLoaders=${this.customFieldLoaders}
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
-        validateOn="eager"
+        .validateOn=${this.validateOn ?? 'eager'}
       ></gui-core-form>
     `;
   }

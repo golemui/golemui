@@ -51,7 +51,7 @@ export class FormElement extends LitElement {
           .fieldLoaders=${this.customFieldLoaders}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
-          validateOn="eager"
+          .validateOn=${'eager'}
           @formError=${this.onFormError}
           @formEvent=${this.onFormEvent}
         ></gui-form>
