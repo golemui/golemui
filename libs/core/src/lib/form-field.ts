@@ -173,11 +173,23 @@ const excludeDecoder = jd.oneOf<From | When>([fromDecoder, whenDecoder], 'Exclud
 // disable / readonly
 const boolWhenDecoder = jd.oneOf<boolean | When>([jd.boolean(), whenDecoder], 'Bool | When');
 
+// all fields that support states can potentially be a ReactiveFieldFunction
+const fieldFnDecoder: jd.Decoder<ReactiveFieldFunction<any>> = new jd.Decoder((json: unknown) => {
+  const jsonTypeof = typeof json;
+  if (jsonTypeof === 'function') {
+    return jd.ok(json as ReactiveFieldFunction<any>);
+  } else {
+    return jd.err(`Expected a function, got '${jsonTypeof}'`);
+  }
+});
+const decodeFieldOrFn = <T>(decoder: jd.Decoder<T>) =>
+  jd.oneOf<T | ReactiveFieldFunction<any>>([decoder, fieldFnDecoder], '');
+
 const onDecoder = objectWithSuffix(
   {
-    load: { suffixed: true, decoder: jd.optional(jd.string()) },
-    click: { suffixed: true, decoder: jd.optional(jd.string()) },
-    change: { suffixed: true, decoder: jd.optional(jd.string()) },
+    load: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
+    click: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
+    change: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
   },
   'On',
 );
@@ -206,7 +218,7 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    label: { suffixed: true, decoder: jd.string() },
+    label: { suffixed: true, decoder: decodeFieldOrFn(jd.string()) },
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
@@ -222,13 +234,14 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
+    // TODO: shoudn't readonly have suffix support?
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
-    label: { suffixed: true, decoder: jd.optional(jd.string()) },
+    label: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
     path: { decoder: jd.string() },
     defaultValue: { decoder: jd.optional(jd.succeed()) },
-    validator: { suffixed: true, decoder: jd.optional(jd.succeed()) },
+    validator: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.succeed())) },
   },
   'ControlField',
 ).map((ctrl) => {
