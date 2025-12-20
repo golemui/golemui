@@ -1,3 +1,13 @@
+## 0.14.9 (2025-12-20)
+
+### 🩹 Fixes
+
+- **lit:** Fix validateOn property in lit form ([2fd03f5](https://github.com/golemui/formforge/commit/2fd03f5))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.14.8 (2025-12-20)
 
 This was a version bump only for angular-vanilla to align it with other projects, there were no code changes.
