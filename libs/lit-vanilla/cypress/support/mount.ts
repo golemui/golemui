@@ -10,12 +10,32 @@ export const mountFramework = (options: MountOptions) => {
         heading: async () => (await import('../components/heading/heading.element')).HeadingElement,
       }
     : {};
+
+  const handleFormEvent = (e: CustomEvent<Core.FormEvent>) => {
+    if (options.formEvent) {
+      options.formEvent(e.detail);
+    } else {
+      cy.spy().as('formEvent')(e.detail);
+    }
+  };
+
+  const handleFormError = (e: CustomEvent<Core.FormStoreError>) => {
+    if (options.formError) {
+      options.formError(e.detail);
+    } else {
+      cy.spy().as('formError')(e.detail);
+    }
+  };
+
   cy.mount(
     html`<gui-form
       .formDef=${options.formDef}
+      .data=${options.data}
       .middlewares=${options.middlewares ?? []}
       .validators=${options.validators}
       .fieldLoaders=${fieldLoaders}
+      @formEvent=${handleFormEvent}
+      @formError=${handleFormError}
     ></gui-form>`,
   );
 };
