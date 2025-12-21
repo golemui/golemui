@@ -56,7 +56,6 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
               label: 'Country subregion',
               on: {
                 load: 'getSubregionsForSelect',
-                change: 'getCountriesForSelect',
               },
             },
           ],
@@ -131,6 +130,55 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="regionSelect_select"]').select('asia');
       cy.get('@formEventHandler').should('have.been.called');
       cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
+    });
+
+    it('Should execute form events on click', () => {
+      const mockRegions: any = ['Spain', 'France', 'Italy'];
+
+      const formEventHandler = cy.stub().as('formEventHandler');
+      formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        if (event.name === 'getRegionsForSelect') {
+          await new Promise((r) => setTimeout(r, 50));
+
+          if (event.callback) {
+            event.callback({
+              type: 'OVERRIDE_FIELD_PROP',
+              payload: {
+                path: 'region',
+                prop: 'options',
+                value: mockRegions,
+              },
+            });
+          }
+        }
+      });
+
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'regionSelect',
+              kind: 'control',
+              widget: 'select',
+              path: 'region',
+            },
+            {
+              uid: 'loadCountriesButton',
+              kind: 'interactive',
+              widget: 'button',
+              label: 'Load Countries',
+              on: {
+                click: 'getRegionsForSelect',
+              },
+            },
+          ],
+        }),
+        formEvent: formEventHandler,
+      });
+
+      cy.get('[data-cy="loadCountriesButton_button"]').click();
+      cy.get('@formEventHandler').should('have.been.called');
+      cy.get('[data-cy="regionSelect_select"] option').should('have.length', 4);
     });
   });
 };
