@@ -20,7 +20,7 @@
 
     &:has(input:disabled),
     &:has(textarea:disabled),
-    &:has(select:disabled), {
+    &:has(select:disabled) {
       cursor: not-allowed;
       opacity: 0.75;
     }
@@ -30,7 +30,9 @@
       cursor: not-allowed;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea {
       padding: var(--gui-padding);
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);

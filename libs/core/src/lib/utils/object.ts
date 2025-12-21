@@ -198,6 +198,7 @@ export const deleteKey = (object: Record<string, any>, key: string) => {
   return object;
 };
 
+// FIXME: This should into account function cloning, because now we have reactive functions
 /**
  * Cheap JSON.stringify-based clone object utility
  */

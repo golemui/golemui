@@ -70,10 +70,10 @@ function expandStateExpressions(states: Record<string, string>): Record<string, 
 
   /**
    * Helper function to get all parent state keys for a given state key
-   * @param {string} stateKey - The state key to get parent chain for
-   * @returns {string[]} Array of parent state keys from root to current state
+   * @param stateKey - The state key to get parent chain for
+   * @returns Array of parent state keys from root to current state
    */
-  function getParentChain(stateKey: string) {
+  function getParentChain(stateKey: string): string[] {
     const parts = stateKey.split(':');
     const chain = [];
 
