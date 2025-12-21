@@ -1,3 +1,13 @@
+## 0.14.11 (2025-12-21)
+
+### 🩹 Fixes
+
+- **lit:** fix checkbox attributes and property bindings ([0ed1beb](https://github.com/golemui/formforge/commit/0ed1beb))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.14.10 (2025-12-20)
 
 This was a version bump only for lit-vanilla to align it with other projects, there were no code changes.
