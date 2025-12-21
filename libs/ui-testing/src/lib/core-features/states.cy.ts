@@ -408,6 +408,71 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         cy.get('@formEventHandler').should('have.been.called');
         cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
       });
+
+      it('Should execute form events on click with a state', () => {
+        const mockRegions: any = ['Spain', 'France', 'Italy'];
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getRegionsForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'region',
+                  prop: 'options',
+                  value: mockRegions,
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doClick: '$form.onClick === true',
+            },
+            form: [
+              {
+                uid: 'onClick',
+                kind: 'control',
+                widget: 'checkbox',
+                label: 'Execute on click',
+                path: 'onClick',
+                props: {},
+              },
+              {
+                uid: 'regionSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'region',
+              },
+              {
+                uid: 'loadCountriesButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Load Countries',
+                on: {
+                  'click.doClick': 'getRegionsForSelect',
+                },
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="loadCountriesButton_button"]').click();
+        cy.get('@formEventHandler').should('not.have.been.called');
+
+        cy.get('[data-cy="onClick_checkbox"]').click();
+
+        cy.get('[data-cy="loadCountriesButton_button"]').click();
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="regionSelect_select"] option').should('have.length', 4);
+      });
     });
 
     context('Events with number values', () => {
@@ -542,6 +607,71 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         cy.get('@formEventHandler').should('have.been.called');
         cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
       });
+
+      it('Should execute form events on click with a state', () => {
+        const mockRegions: any = ['Spain', 'France', 'Italy'];
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getRegionsForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'region',
+                  prop: 'options',
+                  value: mockRegions,
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doClick: '$form.onClick === 10',
+            },
+            form: [
+              {
+                uid: 'onClick',
+                kind: 'control',
+                widget: 'number',
+                label: 'Execute on click',
+                path: 'onClick',
+                props: {},
+              },
+              {
+                uid: 'regionSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'region',
+              },
+              {
+                uid: 'loadCountriesButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Load Countries',
+                on: {
+                  'click.doClick': 'getRegionsForSelect',
+                },
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="loadCountriesButton_button"]').click();
+        cy.get('@formEventHandler').should('not.have.been.called');
+
+        cy.get('[data-cy="onClick_number"]').type('10');
+
+        cy.get('[data-cy="loadCountriesButton_button"]').click();
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="regionSelect_select"] option').should('have.length', 4);
+      });
     });
 
     context('Events with string values', () => {
@@ -675,6 +805,71 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="regionSelect_select"]').select('asia');
         cy.get('@formEventHandler').should('have.been.called');
         cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
+      });
+
+      it('Should execute form events on click with a state', () => {
+        const mockRegions: any = ['Spain', 'France', 'Italy'];
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getRegionsForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'region',
+                  prop: 'options',
+                  value: mockRegions,
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doClick: '$form.onClick === "abc"',
+            },
+            form: [
+              {
+                uid: 'onClick',
+                kind: 'control',
+                widget: 'textinput',
+                label: 'Execute on click',
+                path: 'onClick',
+                props: {},
+              },
+              {
+                uid: 'regionSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'region',
+              },
+              {
+                uid: 'loadCountriesButton',
+                kind: 'interactive',
+                widget: 'button',
+                label: 'Load Countries',
+                on: {
+                  'click.doClick': 'getRegionsForSelect',
+                },
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="loadCountriesButton_button"]').click();
+        cy.get('@formEventHandler').should('not.have.been.called');
+
+        cy.get('[data-cy="onClick_textinput"]').type('abc');
+
+        cy.get('[data-cy="loadCountriesButton_button"]').click();
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="regionSelect_select"] option').should('have.length', 4);
       });
     });
   });
