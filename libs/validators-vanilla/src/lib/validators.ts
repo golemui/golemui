@@ -1,5 +1,11 @@
+import {
+  isStandardValidateSuccess,
+  LooseObject,
+  standardValidate,
+  ValidatorFn,
+} from '@golemui/core';
 import { StandardSchemaV1 } from '@standard-schema/spec';
-import { LooseObject } from './utils';
+import { iso } from 'zod';
 import {
   any,
   boolean,
@@ -24,8 +30,6 @@ import {
   ZodMiniOptional,
   ZodMiniType,
 } from 'zod/mini';
-import { iso } from 'zod';
-import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '@golemui/core';
 
 // --------------------------------
 //
@@ -198,7 +202,7 @@ function fromNumberValidator(v: NumberValidator) {
 
     if (v.exclusiveMaximum !== undefined) {
       const t = v.exclusiveMaximum;
-      schema = schema.check(refine((n) => n > t));
+      schema = schema.check(refine((n) => n < t));
     }
 
     if (v.multipleOf !== undefined) {

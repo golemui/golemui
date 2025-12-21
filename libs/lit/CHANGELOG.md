@@ -1,3 +1,69 @@
+## 0.14.10 (2025-12-20)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.9 (2025-12-20)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.8 (2025-12-20)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.7 (2025-12-18)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.6 (2025-12-18)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.5 (2025-12-17)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.4 (2025-12-17)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.3 (2025-12-16)
+
+### 🩹 Fixes
+
+- **lit:** fix lit change detection ([124b9fe](https://github.com/golemui/formforge/commit/124b9fe))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.14.2 (2025-12-16)
+
+### 🩹 Fixes
+
+- minor refactors and fixes ([b413896](https://github.com/golemui/formforge/commit/b413896))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.14.1 (2025-12-15)
+
+This was a version bump only for lit to align it with other projects, there were no code changes.
+
+## 0.14.0 (2025-12-14)
+
+### 🚀 Features
+
+- **lit:** add form vanilla component ([3f4fde2](https://github.com/golemui/formforge/commit/3f4fde2))
+
+### 🩹 Fixes
+
+- unify vanilla apis ([efd0a00](https://github.com/golemui/formforge/commit/efd0a00))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.13.0 (2025-12-11)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

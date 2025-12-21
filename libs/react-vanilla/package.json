@@ -25,6 +25,7 @@
     "react-dom": ">=18.0.0",
     "@golemui/react": "*",
     "@golemui/core": "*",
-    "@golemui/shared-vanilla": "*"
+    "@golemui/shared-vanilla": "*",
+    "@golemui/validators-vanilla": "*"
   }
 }

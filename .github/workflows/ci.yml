@@ -25,19 +25,12 @@ jobs:
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
+      - uses: nrwl/nx-set-shas@v4
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Build template
-        run: cd docs/template && npm i && npm run build
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm run lint:affected
 
-      - name: Build documentation
-        run: cd docs && npm i && npm run build
-
-      - run: npx nx run-many -t lint test build --no-cloud
-
-      # Remove this line since it's Nx Cloud specific
-      # - run: npx nx fix-ci
-      #   if: always()
+      - name: Cypress component testing
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" npx nx affected --target=component-test --parallel=1 --browser chrome

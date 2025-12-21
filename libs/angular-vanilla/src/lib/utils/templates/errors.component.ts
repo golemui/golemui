@@ -7,7 +7,9 @@ import * as Core from '@golemui/core';
   selector: '[gui-errors]',
   imports: [CommonModule],
   template: `@for (error of templateData().errors; track $index) {
-    <li class="gui-validator__error" role="status">{{ error }}</li>
+    <li class="gui-validator__error" role="status" [attr.data-cy]="uid() + '_validator-error'">
+      {{ error }}
+    </li>
   }`,
   host: {
     '[attr.id]': 'uid() + "_errors"',

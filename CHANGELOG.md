@@ -1,3 +1,103 @@
+## 0.14.10 (2025-12-20)
+
+This was a version bump only, there were no code changes.
+
+## 0.14.9 (2025-12-20)
+
+### 🩹 Fixes
+
+- **lit:** Fix validateOn property in lit form ([2fd03f5](https://github.com/golemui/formforge/commit/2fd03f5))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.14.8 (2025-12-20)
+
+This was a version bump only, there were no code changes.
+
+## 0.14.7 (2025-12-18)
+
+### 🩹 Fixes
+
+- **angular:** fix the disabled test ([85c8f1b](https://github.com/golemui/formforge/commit/85c8f1b))
+- **lit:** fix the disabled test ([a646ffc](https://github.com/golemui/formforge/commit/a646ffc))
+- **react:** fix the disabled test ([d8503ba](https://github.com/golemui/formforge/commit/d8503ba))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.14.6 (2025-12-18)
+
+This was a version bump only, there were no code changes.
+
+## 0.14.5 (2025-12-17)
+
+This was a version bump only, there were no code changes.
+
+## 0.14.4 (2025-12-17)
+
+### 🩹 Fixes
+
+- create an objectWithSuffix decoder ([298da7d](https://github.com/golemui/formforge/commit/298da7d))
+- improve the objectWithSuffix decoder ([3464e4b](https://github.com/golemui/formforge/commit/3464e4b))
+- improve objectWithSuffix docs ([6b70689](https://github.com/golemui/formforge/commit/6b70689))
+- add support for suffixed properties in all decoders ([b10b5aa](https://github.com/golemui/formforge/commit/b10b5aa))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.14.3 (2025-12-16)
+
+### 🩹 Fixes
+
+- **lit:** fix lit change detection ([124b9fe](https://github.com/golemui/formforge/commit/124b9fe))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.14.2 (2025-12-16)
+
+### 🩹 Fixes
+
+- minor refactors and fixes ([b413896](https://github.com/golemui/formforge/commit/b413896))
+- enhance type safety for vanilla loaders ([879042a](https://github.com/golemui/formforge/commit/879042a))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.14.1 (2025-12-15)
+
+### 🩹 Fixes
+
+- reverse exclusiveMaximum validator ([fabf4a1](https://github.com/golemui/formforge/commit/fabf4a1))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.14.0 (2025-12-14)
+
+### 🚀 Features
+
+- **angular:** add vanilla form component ([bdcd364](https://github.com/golemui/formforge/commit/bdcd364))
+- **lit:** add form vanilla component ([3f4fde2](https://github.com/golemui/formforge/commit/3f4fde2))
+- **react:** add vanilla form component ([7e97da7](https://github.com/golemui/formforge/commit/7e97da7))
+
+### 🩹 Fixes
+
+- unify vanilla apis ([efd0a00](https://github.com/golemui/formforge/commit/efd0a00))
+- add validators-vanilla as a dependency for the component library ([f0ef637](https://github.com/golemui/formforge/commit/f0ef637))
+- **react:** fix react tabs list layout ([dc8f757](https://github.com/golemui/formforge/commit/dc8f757))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.13.0 (2025-12-11)
 
 ### 🚀 Features

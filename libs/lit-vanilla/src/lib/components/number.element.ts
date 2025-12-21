@@ -58,6 +58,7 @@ export class NumberElement extends LitElement implements Core.WithField {
           type="number"
           inputmode="numeric"
           id=${this.field.uid}
+          data-cy=${`${this.field.uid}_number`}
           class=${classMap(numberIcon.fieldClasses)}
           required=${this.adapter.templateData.validator?.required ? '' : nothing}
           value=${this.adapter.templateData.value ?? ''}

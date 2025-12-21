@@ -6,11 +6,11 @@
   <gui-form
     [formDef]="formDef"
     [data]="formData"
-    [fieldLoaders]="vanillaFieldLoaders"
+    [fieldLoaders]="customFieldLoaders"
     [middlewares]="middlewares"
     [validators]="validators"
     [validateOn]="'eager'"
     (formError)="onFormError($event)"
-    (event)="onFormEvent($event)"
+    (formEvent)="onFormEvent($event)"
   ></gui-form>
 </div>

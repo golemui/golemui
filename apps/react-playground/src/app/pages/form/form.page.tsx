@@ -1,8 +1,6 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import * as React from '@golemui/react';
-import * as Vanilla from '@golemui/react-vanilla';
-import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
+import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
 import styles from './form.page.module.scss';
@@ -11,20 +9,17 @@ async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const vanillaFieldLoaders = {
-  ...Vanilla.vanillaFieldLoaders,
+const formDef = AppsShared.kitchenSink;
+const formData = AppsShared.kitchenSinkData;
+
+const customFieldLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const formDef = AppsShared.callbacks;
-const formData = AppsShared.callbacksData;
-const middlewares = [
-  Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
-  AppsShared.loggerMiddleware,
-];
-const validators: Core.ValidatorFn<ValidatorsVanilla.Validator> = ValidatorsVanilla.initValidators({
+const middlewares = [AppsShared.loggerMiddleware];
+const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
-});
+};
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -40,15 +35,15 @@ export function FormPage() {
   return (
     <div>
       {error ? <p className={styles.error}>{error}</p> : null}
-      <React.FormComponent
+      <FormComponent
         formDef={formDef}
         data={formData}
-        fieldLoader={vanillaFieldLoaders}
+        fieldLoaders={customFieldLoaders}
         middlewares={middlewares}
         validators={validators}
         validateOn="eager"
-        onFormError={onFormError}
-        onFormEvent={onFormEvent}
+        formError={onFormError}
+        formEvent={onFormEvent}
       />
     </div>
   );

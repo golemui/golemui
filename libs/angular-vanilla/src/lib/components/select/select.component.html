@@ -7,6 +7,7 @@
   <select
     guiAria
     [uid]="field.uid"
+    [attr.data-cy]="field.uid + '_select'"
     [templateData]="templateData"
     [id]="field.uid"
     [class]="{
@@ -29,7 +30,7 @@
       @for (opt of templateData.options; track opt.value) {
         <option
           [value]="opt.value"
-          [attr.selected]="(hasMatchingValue && opt.value === templateData.value) ? '' : null"
+          [attr.selected]="hasMatchingValue && opt.value === templateData.value ? '' : null"
         >
           {{ opt.label }}
         </option>

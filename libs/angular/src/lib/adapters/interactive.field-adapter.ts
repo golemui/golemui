@@ -11,7 +11,8 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
     this.field = field;
     this.templateData.update((current) => ({
       ...current,
-      label: this.field.label,
+      // TODO: this shouldn't be required
+      label: typeof this.field.label === 'string' ? this.field.label : undefined,
     }));
 
     this.addFieldToTheStore(field);

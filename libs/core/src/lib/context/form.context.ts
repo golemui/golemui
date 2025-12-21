@@ -6,14 +6,12 @@ import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../share
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
 import { FieldLoaders, FieldRegistry } from './field.registry';
-import { GUIApi } from './api';
 
 export class FormContext<ComponentType> {
   fieldRegistry = new FieldRegistry<ComponentType>();
   store: FormStore = {} as FormStore;
   events$ = new Subject<FormEvent>();
   uuid = crypto.randomUUID();
-  api: GUIApi = new GUIApi();
 
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
@@ -22,7 +20,7 @@ export class FormContext<ComponentType> {
     validateOn: ValidateOn,
   ) {
     this.fieldRegistry.setFieldLoaders(fieldLoaders);
-    this.store = createFormStore(middlewares, validators, validateOn, this.api);
+    this.store = createFormStore(middlewares, validators, validateOn);
   }
 
   // TODO: There's an almost duplicate of this in the validate-all reducer
@@ -57,7 +55,7 @@ export class FormContext<ComponentType> {
     // More than one event can be emitted if more than one currentstate matches
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
-        const eventName: EventName | undefined = field.on?.[`${eventType}.${currentState}`];
+        const eventName = field.on?.[`${eventType}.${currentState}`] as EventName | undefined;
         this.attemptValidation(eventType, eventName, field);
         if (eventName) {
           this.events$.next({
@@ -70,7 +68,7 @@ export class FormContext<ComponentType> {
         }
       });
     } else {
-      const eventName: EventName | undefined = field.on?.[eventType];
+      const eventName = field.on?.[eventType] as EventName | undefined;
       this.attemptValidation(eventType, eventName, field);
       if (eventName) {
         this.events$.next({

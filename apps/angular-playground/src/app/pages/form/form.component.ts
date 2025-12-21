@@ -1,37 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import * as Angular from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
 
 @Component({
-  imports: [CommonModule, Angular.FormComponent],
+  imports: [CommonModule, Vanilla.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected middlewares = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(ValidatorsVanilla.jsonSchemaValidators)),
-    AppsShared.loggerMiddleware,
-  ];
-  protected formDef = AppsShared.callbacks;
-  protected formData = AppsShared.callbacksData;
-  protected vanillaFieldLoaders = {
-    ...Vanilla.vanillaFieldLoaders,
+  protected formDef = AppsShared.kitchenSink;
+  protected formData = AppsShared.kitchenSinkData;
+
+  protected middlewares = [AppsShared.loggerMiddleware];
+  protected customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
   };
-
-  protected validators: Core.ValidatorFn<ValidatorsVanilla.Validator> =
-    ValidatorsVanilla.initValidators({
-      allowedNames: AppsShared.allowedNames,
-    });
+  protected validators: ValidatorsVanilla.CustomValidatorSchemas = {
+    allowedNames: AppsShared.allowedNames,
+  };
 
   protected error = '';
 

@@ -1,4 +1,4 @@
-import { defineForm, GUIApi } from '@golemui/core';
+import { defineForm } from '@golemui/core';
 
 export const callbacksData = { registerMode: false };
 
@@ -17,8 +17,8 @@ export const callbacks = defineForm({
           kind: 'display',
           widget: 'heading',
           props: {
-            text: (form: GUIApi) => {
-              return form.data.registerMode ? 'Register' : 'Login';
+            text: ({ $form }) => {
+              return $form['registerMode'] ? 'Register' : 'Login';
             },
           },
         },
@@ -27,14 +27,50 @@ export const callbacks = defineForm({
     {
       uid: '',
       kind: 'control',
-      widget: 'checkbox',
-      label: ((form: GUIApi) => {
-        return form.data.registerMode ? 'Change to Login' : 'Change to Register';
-      }) as any,
-      props: {
-        checkboxPosition: 'left',
+      widget: 'textinput',
+      path: 'user.name',
+      label: ({ $form }) => {
+        return $form['registerMode'] ? 'Name in Register' : 'Name in Login';
       },
+      validator: ({ $form }) => {
+        return $form['registerMode']
+          ? { type: 'string', required: true }
+          : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
+      },
+      // validator: { type: 'string', required: true },
+      // 'validator.register': { type: 'custom', allowedNames: ['Joan', 'Raul'] },
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'checkbox',
       path: 'registerMode',
+      label: ({ $form }) => {
+        return $form['registerMode'] ? 'Change to Login' : 'Change to Register';
+      },
+      props: {
+        checkboxPosition: ({ $form }) => {
+          return $form['registerMode'] ? 'left' : 'right';
+        },
+      },
+      on: {
+        change: ({ $form }) => {
+          return $form['registerMode'] ? 'registerOnHandler' : 'loginOnHandler';
+        },
+      },
+    },
+    {
+      uid: '',
+      kind: 'interactive',
+      widget: 'button',
+      label: ({ $form }) => {
+        return $form['registerMode'] ? 'Register' : 'Login';
+      },
+      on: {
+        click: ({ $form }) => {
+          return $form['registerMode'] ? 'handleRegister' : 'handleLogin';
+        },
+      },
     },
   ],
 });

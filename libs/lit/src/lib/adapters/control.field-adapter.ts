@@ -10,13 +10,13 @@ export class ControlFieldAdapter<
   T,
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.ControlField<T>> {
-  override templateData = {} as Core.ControlTemplateData<T> & ExtraProps;
+  declare templateData: Core.ControlTemplateData<T> & ExtraProps;
 
   init(field: Core.ControlField<T>) {
     this.field = field;
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState(this.templateData);
+    this.propsUpdaterByCurrentState();
 
     // Set field data
     this.context.store.dispatch({

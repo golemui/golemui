@@ -24,6 +24,7 @@
     "@golemui/lit": "*",
     "@golemui/core": "*",
     "@golemui/shared-vanilla": "*",
+    "@golemui/validators-vanilla": "*",
     "@lit/context": "^1.1.6",
     "lit-html": "^3.3.1",
     "lit": "^3.3.1",
