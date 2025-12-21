@@ -56,7 +56,6 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
               label: 'Country subregion',
               on: {
                 load: 'getSubregionsForSelect',
-                change: 'getCountriesForSelect',
               },
             },
           ],

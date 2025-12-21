@@ -274,5 +274,408 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="textinput1_textinput2_validator-errors"]').should('not.exist');
       });
     });
+
+    context('Events with boolean values', () => {
+      it('Should execute form events on load with a state', () => {
+        const mockSubregions = ['Europe', 'Asia', 'Americas'];
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getSubregionsForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'subregion',
+                  prop: 'options',
+                  value: mockSubregions,
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doLoad: '$form.onLoad === true',
+            },
+            form: [
+              {
+                uid: 'onLoad',
+                kind: 'control',
+                widget: 'checkbox',
+                label: 'Execute on load',
+                path: 'onLoad',
+                defaultValue: true,
+                props: {},
+              },
+              {
+                uid: 'eventSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'subregion',
+                label: 'Country subregion',
+                on: {
+                  'load.doLoad': 'getSubregionsForSelect',
+                },
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="eventSelect_select"] option').should('have.length', 4);
+      });
+
+      it('Should execute form events on change with a state', () => {
+        const mockCountries: any = {
+          europe: ['Spain', 'France', 'Italy'],
+          asia: ['China', 'India', 'Japan'],
+          americas: ['USA', 'Canada', 'Mexico'],
+        };
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getCountriesForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'country',
+                  prop: 'options',
+                  value: mockCountries[event.data['region']],
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doChange: '$form.onChange === true',
+            },
+            form: [
+              {
+                uid: 'onChange',
+                kind: 'control',
+                widget: 'checkbox',
+                label: 'Execute on change',
+                path: 'onChange',
+                defaultValue: false,
+                props: {},
+              },
+              {
+                uid: 'regionSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'region',
+                props: {
+                  options: [
+                    { label: 'Europe', value: 'europe' },
+                    { label: 'Asia', value: 'asia' },
+                    { label: 'Americas', value: 'americas' },
+                  ],
+                },
+                on: {
+                  'change.doChange': 'getCountriesForSelect',
+                },
+              },
+              {
+                uid: 'countrySelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'country',
+                label: 'Country',
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="regionSelect_select"]').select('europe');
+        cy.get('@formEventHandler').should('not.have.been.called');
+
+        cy.get('[data-cy="onChange_checkbox"]').click();
+
+        cy.get('[data-cy="regionSelect_select"]').select('asia');
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
+      });
+    });
+
+    context('Events with number values', () => {
+      it('Should execute form events on load with a state', () => {
+        const mockSubregions = ['Europe', 'Asia', 'Americas'];
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getSubregionsForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'subregion',
+                  prop: 'options',
+                  value: mockSubregions,
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doLoad: '$form.onLoad === 10',
+            },
+            form: [
+              {
+                uid: 'onLoad',
+                kind: 'control',
+                widget: 'number',
+                label: 'Execute on load',
+                path: 'onLoad',
+                defaultValue: 10,
+                props: {},
+              },
+              {
+                uid: 'eventSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'subregion',
+                label: 'Country subregion',
+                on: {
+                  'load.doLoad': 'getSubregionsForSelect',
+                },
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="eventSelect_select"] option').should('have.length', 4);
+      });
+
+      it('Should execute form events on change with a state', () => {
+        const mockCountries: any = {
+          europe: ['Spain', 'France', 'Italy'],
+          asia: ['China', 'India', 'Japan'],
+          americas: ['USA', 'Canada', 'Mexico'],
+        };
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getCountriesForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'country',
+                  prop: 'options',
+                  value: mockCountries[event.data['region']],
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doChange: '$form.onChange === 10',
+            },
+            form: [
+              {
+                uid: 'onChange',
+                kind: 'control',
+                widget: 'number',
+                label: 'Execute on change',
+                path: 'onChange',
+                props: {},
+              },
+              {
+                uid: 'regionSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'region',
+                props: {
+                  options: [
+                    { label: 'Europe', value: 'europe' },
+                    { label: 'Asia', value: 'asia' },
+                    { label: 'Americas', value: 'americas' },
+                  ],
+                },
+                on: {
+                  'change.doChange': 'getCountriesForSelect',
+                },
+              },
+              {
+                uid: 'countrySelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'country',
+                label: 'Country',
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="regionSelect_select"]').select('europe');
+        cy.get('@formEventHandler').should('not.have.been.called');
+
+        cy.get('[data-cy="onChange_number"]').type('10');
+
+        cy.get('[data-cy="regionSelect_select"]').select('asia');
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
+      });
+    });
+
+    context('Events with string values', () => {
+      it('Should execute form events on load with a state', () => {
+        const mockSubregions = ['Europe', 'Asia', 'Americas'];
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getSubregionsForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'subregion',
+                  prop: 'options',
+                  value: mockSubregions,
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doLoad: '$form.onLoad === "abc"',
+            },
+            form: [
+              {
+                uid: 'onLoad',
+                kind: 'control',
+                widget: 'textinput',
+                label: 'Execute on load',
+                path: 'onLoad',
+                defaultValue: 'abc',
+                props: {},
+              },
+              {
+                uid: 'eventSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'subregion',
+                label: 'Country subregion',
+                on: {
+                  'load.doLoad': 'getSubregionsForSelect',
+                },
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="eventSelect_select"] option').should('have.length', 4);
+      });
+
+      it('Should execute form events on change with a state', () => {
+        const mockCountries: any = {
+          europe: ['Spain', 'France', 'Italy'],
+          asia: ['China', 'India', 'Japan'],
+          americas: ['USA', 'Canada', 'Mexico'],
+        };
+
+        const formEventHandler = cy.stub().as('formEventHandler');
+        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+          if (event.name === 'getCountriesForSelect') {
+            await new Promise((r) => setTimeout(r, 50));
+
+            if (event.callback) {
+              event.callback({
+                type: 'OVERRIDE_FIELD_PROP',
+                payload: {
+                  path: 'country',
+                  prop: 'options',
+                  value: mockCountries[event.data['region']],
+                },
+              });
+            }
+          }
+        });
+
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              doChange: '$form.onChange === "abc"',
+            },
+            form: [
+              {
+                uid: 'onChange',
+                kind: 'control',
+                widget: 'textinput',
+                label: 'Execute on change',
+                path: 'onChange',
+                props: {},
+              },
+              {
+                uid: 'regionSelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'region',
+                props: {
+                  options: [
+                    { label: 'Europe', value: 'europe' },
+                    { label: 'Asia', value: 'asia' },
+                    { label: 'Americas', value: 'americas' },
+                  ],
+                },
+                on: {
+                  'change.doChange': 'getCountriesForSelect',
+                },
+              },
+              {
+                uid: 'countrySelect',
+                kind: 'control',
+                widget: 'select',
+                path: 'country',
+                label: 'Country',
+              },
+            ],
+          }),
+          formEvent: formEventHandler,
+        });
+
+        cy.get('[data-cy="regionSelect_select"]').select('europe');
+        cy.get('@formEventHandler').should('not.have.been.called');
+
+        cy.get('[data-cy="onChange_textinput"]').type('abc');
+
+        cy.get('[data-cy="regionSelect_select"]').select('asia');
+        cy.get('@formEventHandler').should('have.been.called');
+        cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
+      });
+    });
   });
 };
