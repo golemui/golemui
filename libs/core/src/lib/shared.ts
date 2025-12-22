@@ -28,7 +28,7 @@ export type FieldFunctionParams<FormData> = { $form: ImmutableRecord<FormData> }
 /**
  * A ReactiveFieldFunction is a field function that is evaluated and then substituted by the produced value.
  */
-export type ReactiveFieldFunction<T> = <FormData extends Record<string, any>>(
+export type ReactiveFieldFunction<T, FormData extends Record<string, any> = any> = (
   api: FieldFunctionParams<FormData>,
 ) => T;
 

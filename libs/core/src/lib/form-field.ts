@@ -20,23 +20,32 @@ export type Flags = {
 export type FieldWidget = string;
 // export type FieldWidget = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 
-type ReactiveFieldValue<T> = ReactiveExpression | ReactiveFieldFunction<T> | T;
+type ReactiveFieldValue<T, FormData extends Record<string, any> = any> =
+  | ReactiveExpression
+  | ReactiveFieldFunction<T, FormData>
+  | T;
 
 /**
  * An event expression is basically a way to change the current UI state: `currentState = 'loading'` or send an event `loadData` for the forms engine runtime to process.
  */
 type EventExpression = string;
 
-export type On<StateKeys extends UiState = never> = AllSuffixable<
+export type On<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = AllSuffixable<
   {
-    load?: ReactiveFieldValue<EventExpression>;
-    click?: ReactiveFieldValue<EventExpression>;
-    change?: ReactiveFieldValue<EventExpression>;
+    load?: ReactiveFieldValue<EventExpression, FormData>;
+    click?: ReactiveFieldValue<EventExpression, FormData>;
+    change?: ReactiveFieldValue<EventExpression, FormData>;
   },
   StateKeys
 >;
 
-export type BaseField<StateKeys extends UiState = never> = {
+export type BaseField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = {
   // kind: 'display' | 'interactive' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
@@ -66,28 +75,34 @@ export type BaseField<StateKeys extends UiState = never> = {
    */
   props?: Record<
     string,
-    string | boolean | number | any[] | Record<string, any> | ReactiveFieldFunction<any>
+    string | boolean | number | any[] | Record<string, any> | ReactiveFieldFunction<any, FormData>
   >;
 };
 
-export type DisplayField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & { kind: 'display' },
-  never,
-  StateKeys
->;
+export type DisplayField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = SomeSuffixable<BaseField<StateKeys, FormData> & { kind: 'display' }, never, StateKeys>;
 
-export type InteractiveField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & {
+export type InteractiveField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = SomeSuffixable<
+  BaseField<StateKeys, FormData> & {
     kind: 'interactive';
-    label?: ReactiveFieldValue<string>;
-    on?: On<StateKeys>;
+    label?: ReactiveFieldValue<string, FormData>;
+    on?: On<StateKeys, FormData>;
   },
   'disabled' | 'label',
   StateKeys
 >;
 
-export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & {
+export type ControlField<
+  T,
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = SomeSuffixable<
+  BaseField<StateKeys, FormData> & {
     kind: 'control';
     path: DotPath;
     /**
@@ -96,24 +111,27 @@ export type ControlField<T, StateKeys extends UiState = never> = SomeSuffixable<
      * - If `label` is an empty string, no label will be displayed.
      * - Otherwise, the provided label will be rendered.
      */
-    label?: ReactiveFieldValue<string>;
-    on?: On<StateKeys>;
+    label?: ReactiveFieldValue<string, FormData>;
+    on?: On<StateKeys, FormData>;
     defaultValue?: T;
-    validator?: ReactiveFieldValue<object>; // `object` should be `V` (the validator type)
+    validator?: ReactiveFieldValue<object, FormData>; // `object` should be `V` (the validator type)
   },
   'disabled' | 'label' | 'validator',
   StateKeys
 >;
 
-export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
-  BaseField<StateKeys> & {
+export type LayoutField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = SomeSuffixable<
+  BaseField<StateKeys, FormData> & {
     kind: 'layout';
     // TODO: this should be FormField, but types cannot reference themselves. Keep in sync!
     children: (
-      | DisplayField<StateKeys>
-      | ControlField<any, StateKeys>
-      | LayoutField<StateKeys>
-      | InteractiveField<StateKeys>
+      | DisplayField<StateKeys, FormData>
+      | ControlField<any, StateKeys, FormData>
+      | LayoutField<StateKeys, FormData>
+      | InteractiveField<StateKeys, FormData>
     )[];
   },
   never,
@@ -121,11 +139,14 @@ export type LayoutField<StateKeys extends UiState = never> = SomeSuffixable<
 >;
 
 // TODO: when updating, update LayoutField['children'] too!
-export type FormField<StateKeys extends UiState = never> =
-  | DisplayField<StateKeys>
-  | ControlField<any, StateKeys>
-  | LayoutField<StateKeys>
-  | InteractiveField<StateKeys>;
+export type FormField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> =
+  | DisplayField<StateKeys, FormData>
+  | ControlField<any, StateKeys, FormData>
+  | LayoutField<StateKeys, FormData>
+  | InteractiveField<StateKeys, FormData>;
 
 // --------------------------------
 //
@@ -133,21 +154,31 @@ export type FormField<StateKeys extends UiState = never> =
 //
 // --------------------------------
 
-export const isDisplayField = <StateKeys extends string>(
-  field: FormField<StateKeys>,
-): field is DisplayField<StateKeys> => field.kind === 'display';
+export const isDisplayField = <
+  StateKeys extends string,
+  FormData extends Record<string, any> = any,
+>(
+  field: FormField<StateKeys, FormData>,
+): field is DisplayField<StateKeys, FormData> => field.kind === 'display';
 
-export const isInteractiveField = <StateKeys extends string>(
-  field: FormField<StateKeys>,
-): field is InteractiveField<StateKeys> => field.kind === 'interactive';
+export const isInteractiveField = <
+  StateKeys extends string,
+  FormData extends Record<string, any> = any,
+>(
+  field: FormField<StateKeys, FormData>,
+): field is InteractiveField<StateKeys, FormData> => field.kind === 'interactive';
 
-export const isControlField = <T, StateKeys extends string>(
-  field: FormField<StateKeys>,
-): field is ControlField<T, StateKeys> => field.kind === 'control';
+export const isControlField = <
+  T,
+  StateKeys extends string,
+  FormData extends Record<string, any> = any,
+>(
+  field: FormField<StateKeys, FormData>,
+): field is ControlField<T, StateKeys, FormData> => field.kind === 'control';
 
-export const isLayoutField = <StateKeys extends string>(
-  field: FormField<StateKeys>,
-): field is LayoutField<StateKeys> => field.kind === 'layout';
+export const isLayoutField = <StateKeys extends string, FormData extends Record<string, any> = any>(
+  field: FormField<StateKeys, FormData>,
+): field is LayoutField<StateKeys, FormData> => field.kind === 'layout';
 
 // --------------------------------
 //
