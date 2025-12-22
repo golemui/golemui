@@ -1,8 +1,13 @@
 import { defineForm } from '@golemui/core';
 
-export const callbacksData = { registerMode: false };
+type FormData = {
+  registerMode: boolean;
+  user: { name: string };
+};
 
-export const callbacks = defineForm({
+export const reactiveFunctionsData: FormData = { registerMode: false };
+
+export const reactiveFunctions = defineForm<FormData>({
   states: {
     register: '$form.registerMode === true',
   },
@@ -18,7 +23,7 @@ export const callbacks = defineForm({
           widget: 'heading',
           props: {
             text: ({ $form }) => {
-              return $form['registerMode'] ? 'Register' : 'Login';
+              return $form.registerMode ? 'Register' : 'Login';
             },
           },
         },
@@ -30,10 +35,10 @@ export const callbacks = defineForm({
       widget: 'textinput',
       path: 'user.name',
       label: ({ $form }) => {
-        return $form['registerMode'] ? 'Name in Register' : 'Name in Login';
+        return $form.registerMode ? 'Name in Register' : 'Name in Login';
       },
       validator: ({ $form }) => {
-        return $form['registerMode']
+        return $form.registerMode
           ? { type: 'string', required: true }
           : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
       },
@@ -46,16 +51,16 @@ export const callbacks = defineForm({
       widget: 'checkbox',
       path: 'registerMode',
       label: ({ $form }) => {
-        return $form['registerMode'] ? 'Change to Login' : 'Change to Register';
+        return $form.registerMode ? 'Change to Login' : 'Change to Register';
       },
       props: {
         checkboxPosition: ({ $form }) => {
-          return $form['registerMode'] ? 'left' : 'right';
+          return $form.registerMode ? 'left' : 'right';
         },
       },
       on: {
         change: ({ $form }) => {
-          return $form['registerMode'] ? 'registerOnHandler' : 'loginOnHandler';
+          return $form.registerMode ? 'registerOnHandler' : 'loginOnHandler';
         },
       },
     },
@@ -64,11 +69,11 @@ export const callbacks = defineForm({
       kind: 'interactive',
       widget: 'button',
       label: ({ $form }) => {
-        return $form['registerMode'] ? 'Register' : 'Login';
+        return $form.registerMode ? 'Register' : 'Login';
       },
       on: {
         click: ({ $form }) => {
-          return $form['registerMode'] ? 'handleRegister' : 'handleLogin';
+          return $form.registerMode ? 'handleRegister' : 'handleLogin';
         },
       },
     },
