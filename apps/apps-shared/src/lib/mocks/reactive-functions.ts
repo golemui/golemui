@@ -2,7 +2,7 @@ import { defineForm } from '@golemui/core';
 
 type FormData = {
   registerMode: boolean;
-  user: { name: string };
+  user?: { name: string };
 };
 
 export const reactiveFunctionsData: FormData = { registerMode: false };
@@ -23,7 +23,10 @@ export const reactiveFunctions = defineForm<FormData>({
           widget: 'heading',
           props: {
             text: ({ $form }) => {
-              return $form.registerMode ? 'Register' : 'Login';
+              if ($form.user?.name && !$form.registerMode) {
+                return `Hello ${$form.user.name}`;
+              }
+              return 'Register';
             },
           },
         },
@@ -42,8 +45,6 @@ export const reactiveFunctions = defineForm<FormData>({
           ? { type: 'string', required: true }
           : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
       },
-      // validator: { type: 'string', required: true },
-      // 'validator.register': { type: 'custom', allowedNames: ['Joan', 'Raul'] },
     },
     {
       uid: '',
