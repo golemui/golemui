@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { AccordionProps } from '@golemui/shared-vanilla';
+import { AccordionEventDetail, AccordionProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -49,6 +49,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
     }
 
     this.activeSections[uid] = !this.activeSections[uid];
+    this.adapter.change<AccordionEventDetail>(this.activeSections);
     this.requestUpdate();
   }
 

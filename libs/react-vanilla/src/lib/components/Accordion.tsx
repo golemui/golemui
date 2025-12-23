@@ -5,28 +5,27 @@ import { useCallback, useState } from 'react';
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, props } = useLayoutField<AccordionProps>(field);
+  const { uid, children, props, onChange } = useLayoutField<AccordionProps>(field);
   const [activeSections, setActiveSections] = useState(props.defaultOpen ?? {});
 
   const onClickButton = useCallback(
     (uid: string) => {
-      setActiveSections((state) => {
-        const newState = { ...state };
+      const newState = { ...activeSections };
 
-        if (props.singleOpen) {
-          Object.keys(newState)
-            .filter((sectionUid) => sectionUid !== uid)
-            .forEach((sectionUid) => {
-              newState[sectionUid] = sectionUid === uid ? !newState[sectionUid] : false;
-            });
-        }
+      if (props.singleOpen) {
+        Object.keys(newState)
+          .filter((sectionUid) => sectionUid !== uid)
+          .forEach((sectionUid) => {
+            newState[sectionUid] = sectionUid === uid ? !newState[sectionUid] : false;
+          });
+      }
 
-        newState[uid] = !newState[uid];
+      newState[uid] = !newState[uid];
 
-        return newState;
-      });
+      setActiveSections(newState);
+      onChange(newState);
     },
-    [props.singleOpen],
+    [props.singleOpen, activeSections, onChange],
   );
 
   const renderContent = useCallback(

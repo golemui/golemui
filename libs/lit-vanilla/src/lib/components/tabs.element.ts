@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
+import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
@@ -67,6 +67,7 @@ export class TabsElement extends LitElement implements Core.WithField {
 
   onClickTab(uid: string) {
     this.activeTab = uid;
+    this.adapter.change<TabsEventDetail>(uid);
     this.requestUpdate();
   }
 
