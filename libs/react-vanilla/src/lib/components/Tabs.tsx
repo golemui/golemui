@@ -77,6 +77,7 @@ export function Tabs(fieldInstance: Core.WithField) {
             type="button"
             role="tab"
             tabIndex={tab.uid === activeTab ? undefined : -1}
+            data-cy={`tab_${field.uid}_${index}`}
             id={`tab_${field.uid}_${index}`}
             aria-controls={`tabpanel_${field.uid}_${index}`}
             aria-selected={tab.uid === activeTab ? 'true' : 'false'}
@@ -95,20 +96,23 @@ export function Tabs(fieldInstance: Core.WithField) {
   }, [props, activeTab]);
 
   const renderFields = useCallback(() => {
+    const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);
+
     return children
       .filter((field) => field.uid === activeTab)
-      .map((field, index) => (
+      .map((section) => (
         <section
-          key={`tabpanel_${field.uid}_${field.uid}`}
+          key={`tabpanel_${field.uid}_${section.uid}`}
           role="tabpanel"
           tabIndex={0}
-          id={`tabpanel_${field.uid}_${index}`}
-          aria-labelledby={`tab_${field.uid}_${index}`}
+          data-cy={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          id={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          aria-labelledby={`tab_${field.uid}_${activeSectionIndex}`}
         >
-          <FieldRenderer key={field.uid} field={field} />
+          <FieldRenderer key={section.uid} field={section} />
         </section>
       ));
-  }, [children, activeTab]);
+  }, [children, activeTab, field]);
 
   return (
     <div className="gui-tabs">
