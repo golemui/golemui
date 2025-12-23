@@ -16,20 +16,22 @@ export class ControlFieldAdapter<
     this.field = field;
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState(this.templateData);
+    this.propsUpdater(this.templateData, (obj) => {
+      const label =
+        obj.label === undefined
+          ? Core.toLabel(this.field.path)
+          : obj.label === ''
+            ? undefined
+            : obj.label;
+      obj.label = label;
+      return obj;
+    });
 
     // Set field data
     this.context.store.dispatch({
       type: 'SET_FIELD_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
-
-    // Set the initial control `label` and merge `props`
-    this.templateData.update((current) => ({
-      ...current,
-      label: this.calculateLabel(),
-      ...this.field.props,
-    }));
 
     // Set the initial templateData, including the controls's data value
     this.context.store.state$
@@ -56,34 +58,6 @@ export class ControlFieldAdapter<
         }));
       });
 
-    // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
-      .subscribe((fieldFlags) => {
-        this.templateData.update((current) => ({
-          ...current,
-          disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-          readonly: fieldFlags?.readonly ?? (field.readonly as boolean),
-        }));
-      });
-
-    // Listen to the form states stream and keep the `label` property in sync with the current state
-    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.templateData.update((current) => ({
-        ...current,
-        label:
-          this.context.getPropertyValueByCurrentState('label', this.field) ?? this.calculateLabel(),
-      }));
-    });
-
-    // Listen to the form states stream and keep the `validator` property in sync with the current state
-    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.templateData.update((current) => ({
-        ...current,
-        validator: this.context.getPropertyValueByCurrentState('validator', this.field),
-      }));
-    });
-
     this.context.emitEvent('load', this.field);
   }
 
@@ -100,13 +74,5 @@ export class ControlFieldAdapter<
       type: 'ATTEMPT_VALIDATION',
       payload: { reason: 'blur', path: this.field.path },
     });
-  }
-
-  private calculateLabel() {
-    return this.field.label === undefined
-      ? Core.toLabel(this.field.path)
-      : this.field.label === ''
-        ? undefined
-        : this.field.label;
   }
 }

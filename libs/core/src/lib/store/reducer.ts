@@ -19,18 +19,16 @@ export const reducer =
         return Fn.pipe(
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
         );
 
       case 'ADD_FIELD':
         return Fn.pipe(
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
         );
 
       case 'REMOVE_FIELD':
@@ -41,17 +39,16 @@ export const reducer =
         return Fn.pipe(
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
         );
 
       case 'OVERRIDE_FIELD_PROP':
         return Fn.pipe(
           Reducers.overrideFieldProp(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );

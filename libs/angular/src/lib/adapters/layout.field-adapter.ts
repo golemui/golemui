@@ -41,6 +41,6 @@ export class LayoutFieldAdapter<
       });
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState(this.templateData);
+    this.propsUpdater(this.templateData);
   }
 }

@@ -16,7 +16,7 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
     }));
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState(this.templateData);
+    this.propsUpdater(this.templateData);
 
     // Listen to the fieldFlags stream (`disabled` flag)
     this.context.store.state$
@@ -27,14 +27,6 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
           disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
         }));
       });
-
-    // Listen to the form states stream and keep the `label` property in sync with the current state
-    this.context.store.state$.pipe(takeUntil(this.destroy$), Core.currentStates).subscribe(() => {
-      this.templateData.update((current) => ({
-        ...current,
-        label: this.context.getPropertyValueByCurrentState('label', this.field),
-      }));
-    });
 
     this.context.emitEvent('load', this.field);
   }
