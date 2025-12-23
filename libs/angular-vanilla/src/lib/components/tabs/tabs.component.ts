@@ -54,7 +54,7 @@ export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
 
   onClickTab(uid: string) {
     this.activeTab.set(uid);
-    this.adapter.change<TabsEventDetail>({ detail: uid });
+    this.adapter.change<TabsEventDetail>(uid);
   }
 
   onFocus(event: FocusEvent) {

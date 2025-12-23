@@ -1,7 +1,3 @@
-export type TabsEventDetail = {
-  detail: string;
-};
+export type TabsEventDetail = string;
 
-export type AccordionEventDetail = {
-  detail: { [key: string]: boolean };
-};
+export type AccordionEventDetail = { [key: string]: boolean };

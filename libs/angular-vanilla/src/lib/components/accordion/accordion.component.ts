@@ -40,7 +40,7 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
 
     this.activeSections[uid] = !this.activeSections[uid];
 
-    this.adapter.change<AccordionEventDetail>({ detail: this.activeSections });
+    this.adapter.change<AccordionEventDetail>(this.activeSections);
   }
 
   getChild(uid: string) {
