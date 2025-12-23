@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { AccordionProps } from '@golemui/shared-vanilla';
+import { AccordionEventDetail, AccordionProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
@@ -39,6 +39,8 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
     }
 
     this.activeSections[uid] = !this.activeSections[uid];
+
+    this.adapter.change<AccordionEventDetail>({ detail: this.activeSections });
   }
 
   getChild(uid: string) {

@@ -126,6 +126,7 @@ export type LayoutField<
 > = SomeSuffixable<
   BaseField<StateKeys, FormData> & {
     kind: 'layout';
+    on?: On<StateKeys, FormData>;
     // TODO: this should be FormField, but types cannot reference themselves. Keep in sync!
     children: (
       | DisplayField<StateKeys, FormData>
@@ -288,23 +289,6 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
   return transformed;
 });
 
-export const layoutFieldDecoder = jd.lazy(() =>
-  jd.object<LayoutField<string>>(
-    {
-      kind: jd.literal('layout'),
-      uid: uidDecoder,
-      widget: jd.string(),
-      include: jd.optional(includeDecoder),
-      exclude: jd.optional(excludeDecoder),
-      disabled: jd.optional(boolWhenDecoder),
-      readonly: jd.optional(boolWhenDecoder),
-      props: jd.optional(jd.succeed()),
-      children: jd.array(formFieldDecoder, 'FormField[]'),
-    },
-    'LayoutField',
-  ),
-);
-
 type FormFieldDecoder = jd.Decoder<
   DisplayField<string> | InteractiveField<string> | ControlField<any, string> | LayoutField<string>
 >;
@@ -319,4 +303,21 @@ const formFieldDecoder = jd.lazy(
       [displayFieldDecoder, interactiveFieldDecoder, controlFieldDecoder, layoutFieldDecoder],
       'FormField',
     ),
+);
+
+export const layoutFieldDecoder = objectWithSuffix<LayoutField<string>>(
+  {
+    kind: { decoder: jd.literal('layout') },
+    uid: { decoder: uidDecoder },
+    widget: { decoder: jd.string() },
+    include: { decoder: jd.optional(includeDecoder) },
+    exclude: { decoder: jd.optional(excludeDecoder) },
+    disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
+    // TODO: shoudn't readonly have suffix support?
+    readonly: { decoder: jd.optional(boolWhenDecoder) },
+    props: { decoder: jd.optional(jd.succeed()) },
+    on: { decoder: jd.optional(onDecoder) },
+    children: { decoder: jd.array(formFieldDecoder, 'FormField[]') },
+  },
+  'LayoutField',
 );

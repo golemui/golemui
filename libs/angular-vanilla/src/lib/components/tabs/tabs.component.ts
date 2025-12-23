@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
+import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
@@ -54,6 +54,7 @@ export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
 
   onClickTab(uid: string) {
     this.activeTab.set(uid);
+    this.adapter.change<TabsEventDetail>({ detail: uid });
   }
 
   onFocus(event: FocusEvent) {

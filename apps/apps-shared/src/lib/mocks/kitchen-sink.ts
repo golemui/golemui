@@ -43,6 +43,7 @@ export const kitchenSink = defineForm({
           { label: 'Radiogroup Component', uid: 'tab9' },
         ],
       },
+      on: { change: 'onTabEvent' },
       children: [
         alert(),
         stack(),

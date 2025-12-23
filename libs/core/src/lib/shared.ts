@@ -76,6 +76,8 @@ export type FormEvent<T = any> = {
   name: EventName;
   /** The form's data at the moment the event was dispatched. */
   data: Record<string, T>;
+  /** The detail provided by the field at the moment the event was dispatched. */
+  detail?: any;
   /** Actions that the client can execute to interact with the forms engine from the application scope */
   callback: (action: EventHandlerCallback) => void;
 };
