@@ -1,0 +1,72 @@
+.gui-form {
+  .gui-toggle {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+
+    &.gui-toggle--left {
+      flex-direction: row-reverse;
+      align-self: flex-start;
+    }
+
+    /* The toggle - the box around the slider */
+    .toggle {
+      font-size: 17px;
+      position: relative;
+      display: inline-block;
+      width: 3.5em;
+      height: 2em;
+
+      /* Hide default HTML checkbox */
+      input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:checked + .slider {
+          background-color: #007bff;
+          border: 1px solid #007bff;
+        }
+
+        &:focus + .slider {
+          box-shadow: 0 0 1px #007bff;
+        }
+
+        &:checked + .slider:before {
+          transform: translateX(1.4em);
+          background-color: #fff;
+        }
+      }
+    }
+
+    /* The slider */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #fff;
+      border: 1px solid #adb5bd;
+      transition: .4s;
+      border-radius: 30px;
+
+      &:before {
+        position: absolute;
+        content: "";
+        height: 1.4em;
+        width: 1.4em;
+        border-radius: 20px;
+        left: 0.27em;
+        bottom: 0.25em;
+        background-color: #adb5bd;
+        transition: .4s;
+      }
+    }
+
+    label {
+      cursor: pointer;
+    }
+  }
+}
