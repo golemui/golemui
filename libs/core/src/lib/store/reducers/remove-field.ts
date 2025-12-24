@@ -11,14 +11,11 @@ export function removeField(state: State, action: REMOVE_FIELD): State {
     fieldFlags: {
       ...deleteKey(state.fieldFlags, action.payload.uid),
     },
-    fields: {
-      ...deleteKey(state.fields, action.payload.uid),
+    calculatedFields: {
+      ...deleteKey(state.calculatedFields, action.payload.uid),
     },
     fieldPropOverrides: {
       ...deleteKey(state.fieldPropOverrides, action.payload.uid),
-    },
-    calculatedFields: {
-      ...deleteKey(state.calculatedFields, action.payload.uid),
     },
     touchedControls: {
       ...Fn.pipe(state.touchedControls, (ctrls) => {

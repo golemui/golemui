@@ -38,7 +38,7 @@ function unsuffixedUniqueKeys(keys: string[]): string[] {
 }
 
 function calculateProps(state: State) {
-  return Object.keys(state.flatForm).reduce(
+  return Object.keys(state.calculatedFields).reduce(
     (acc, uid) => {
       if (state.fieldFlags[uid] !== undefined && state.fieldFlags[uid].hidden) {
         return acc;

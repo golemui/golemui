@@ -32,7 +32,12 @@ export const reducer =
         );
 
       case 'REMOVE_FIELD':
-        return Reducers.removeField(state, action);
+        return Fn.pipe(
+          Reducers.removeField(state, action),
+          Reducers.calculateCurrentState,
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
+        );
 
       case 'SET_FIELD_INITIAL_DATA':
       case 'SET_FIELD_DATA':
@@ -61,9 +66,9 @@ export const reducer =
           {
             ...state,
             touched: true,
-            touchedControls: Object.keys(state.fields).reduce(
+            touchedControls: Object.keys(state.calculatedFields).reduce(
               (touchedControls, key) => {
-                const field = state.fields[key];
+                const field = state.calculatedFields[key];
                 if (isControlField(field)) {
                   touchedControls[field.path] = true;
                 }

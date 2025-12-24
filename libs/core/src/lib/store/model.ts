@@ -42,11 +42,7 @@ export type State = {
   /**
    * Tracks fields whose components have been rendered.
    * A field is added when its component mounts and removed when it unmounts.
-   */
-  fields: Record<Uid, Field.FormField<string>>;
-
-  /**
-   * Same as fields, but with all its properties already calculated, based on current state and functions executed
+   * The field has all its properties already calculated, based on current state and functions executed
    */
   calculatedFields: Record<Uid, Field.FormField<string>>;
 
@@ -95,7 +91,6 @@ export const createInitialState = (): State => ({
   flatForm: {},
   currentStates: [],
   calculatedFields: {},
-  fields: {},
   validations: {},
   fieldFlags: {},
   touchedControls: {},

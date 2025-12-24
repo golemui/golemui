@@ -7,7 +7,7 @@ export const overrideFieldProp = (
   state: State,
   { payload }: Actions.OVERRIDE_FIELD_PROP,
 ): State => {
-  const control = Object.values(state.fields).find(
+  const control = Object.values(state.calculatedFields).find(
     (field) => isControlField(field) && field.path === payload.path,
   );
   if (!control) {

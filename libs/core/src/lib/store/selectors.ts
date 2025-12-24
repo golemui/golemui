@@ -42,24 +42,6 @@ export const validationByPath$ = (path: DotPath) =>
 
 // --------------------------------
 //
-// FIELDS
-//
-// --------------------------------
-
-const selectFields = pipe(
-  map((store: State) => store.fields),
-  distinctUntilChanged(),
-);
-
-export const fieldsByUid$ = (uid: Uid) =>
-  pipe(
-    selectFields,
-    map((fields) => fields[uid]),
-    distinctUntilChanged(),
-  );
-
-// --------------------------------
-//
 // CALCULATED FIELDS
 //
 // --------------------------------
