@@ -1,5 +1,5 @@
 export const toggle = (): any => ({
-  uid: 'tab4',
+  uid: 'tab10',
   kind: 'layout',
   widget: 'stack',
   children: [

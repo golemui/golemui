@@ -3,11 +3,16 @@
 
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData">
   @if (showErrors) {
-    <ul gui-errors [uid]="field.uid" [templateData]="templateData" [attr.data-cy]="field.uid + '_validator-errors'"></ul>
+    <ul
+      gui-errors
+      [uid]="field.uid"
+      [templateData]="templateData"
+      [attr.data-cy]="field.uid + '_validator-errors'"
+    ></ul>
   }
 </label>
 
-<div class="gui-field gui-field--horizontal">
+<div class="gui-field gui-field--horizontal gui-toggle--switch">
   <input
     type="checkbox"
     guiAria
@@ -18,9 +23,10 @@
     [required]="templateData.validator?.required"
     [value]="templateData.value ?? false"
     [checked]="templateData.value ? true : undefined"
+    (click)="!templateData.readonly && valueChanged($event)"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
-    (click)="!templateData.readonly && valueChanged($event)"
-    (blur)="adapter.onBlur()"
   />
+
+  <span class="gui-toggle--slider" role="presentation"></span>
 </div>
