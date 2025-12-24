@@ -8,6 +8,7 @@ export const onFormEvent = async (event: Core.FormEvent) => {
   } else {
     console.groupCollapsed(`⚠️ Unhandled - onFormEvent('${event.name}')`);
     console.log(event.data);
+    console.log(event.detail);
     console.groupEnd();
   }
 };

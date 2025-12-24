@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { ControlField, InteractiveField, On } from '../form-field';
+import { ControlField, InteractiveField, LayoutField, On } from '../form-field';
 import { createFormStore, FormStore } from '../form-store';
 import { ValidatorFn } from '../form-validator';
 import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
@@ -25,7 +25,8 @@ export class FormContext<ComponentType> {
 
   emitEvent(
     eventType: keyof On<string>,
-    field: ControlField<any, string> | InteractiveField<string>,
+    field: ControlField<any, string> | InteractiveField<string> | LayoutField<string>,
+    detail?: any,
   ) {
     const currentStates = this.store.getState().currentStates;
     const matchedStates = currentStates.filter((currentState) => {
@@ -41,6 +42,7 @@ export class FormContext<ComponentType> {
           this.events$.next({
             name: eventName,
             data: this.store.getState().data,
+            detail: detail ?? undefined,
             callback: (action: EventHandlerCallback) => {
               this.store.dispatch(action);
             },
@@ -54,6 +56,7 @@ export class FormContext<ComponentType> {
         this.events$.next({
           name: eventName,
           data: this.store.getState().data,
+          detail: detail,
           callback: (action: EventHandlerCallback) => {
             this.store.dispatch(action);
           },
@@ -65,17 +68,21 @@ export class FormContext<ComponentType> {
   attemptValidation(
     eventType: keyof On<string>,
     eventName: EventName | undefined,
-    field: ControlField<any, string> | InteractiveField<string>,
+    field: ControlField<any, string> | InteractiveField<string> | LayoutField<string>,
   ) {
-    if (eventType === 'change') {
-      this.store.dispatch({
-        type: 'ATTEMPT_VALIDATION',
-        payload: { reason: 'change', path: (field as ControlField<any, string>).path },
-      });
-    } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
-      this.store.dispatch({
-        type: 'VALIDATE_ALL',
-      });
+    // TODO: Remove this if field.kind !== 'layout', find a way to avoid attempt validations with layouts
+    // We don't validate layouts
+    if (field.kind !== 'layout') {
+      if (eventType === 'change') {
+        this.store.dispatch({
+          type: 'ATTEMPT_VALIDATION',
+          payload: { reason: 'change', path: (field as ControlField<any, string>).path },
+        });
+      } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
+        this.store.dispatch({
+          type: 'VALIDATE_ALL',
+        });
+      }
     }
   }
 }

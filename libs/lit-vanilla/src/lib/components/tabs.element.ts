@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
+import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
@@ -67,6 +67,7 @@ export class TabsElement extends LitElement implements Core.WithField {
 
   onClickTab(uid: string) {
     this.activeTab = uid;
+    this.adapter.change<TabsEventDetail>(uid);
     this.requestUpdate();
   }
 
@@ -107,6 +108,9 @@ export class TabsElement extends LitElement implements Core.WithField {
     const activeSection = this.adapter.templateData.children.find(
       (section: any) => section.uid === this.activeTab,
     );
+    const activeSectionIndex = this.adapter.templateData.children.findIndex(
+      (section: any) => section.uid === this.activeTab,
+    );
 
     const navClasses = {
       'gui-field': true,
@@ -127,6 +131,7 @@ export class TabsElement extends LitElement implements Core.WithField {
                       type="button"
                       role="tab"
                       tabindex=${tab.uid === this.activeTab ? nothing : -1}
+                      data-cy=${`tab_${this.field.uid}_${index}`}
                       id=${`tab_${this.field.uid}_${index}`}
                       aria-controls=${`tabpanel_${this.field.uid}_${index}`}
                       aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
@@ -148,12 +153,13 @@ export class TabsElement extends LitElement implements Core.WithField {
       ${repeat(
         [activeSection],
         (section) => section?.uid,
-        (section, index) =>
+        (section) =>
           html`<section
             role="tabpanel"
             tabindex="0"
-            id=${`tabpanel_${this.field.uid}_${index}`}
-            aria-labeledby=${`tab_${this.field.uid}_${index}`}
+            data-cy=${`tabpanel_${this.field.uid}_${activeSectionIndex}`}
+            id=${`tabpanel_${this.field.uid}_${activeSectionIndex}`}
+            aria-labeledby=${`tab_${this.field.uid}_${activeSectionIndex}`}
           >
             <gui-field .field=${section}></gui-field>
           </section>`,

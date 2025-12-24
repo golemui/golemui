@@ -132,6 +132,65 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="countrySelect_select"] option').eq(1).contains('China');
     });
 
+    it('Should execute form events on change with detail', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'tabsComponent',
+              kind: 'layout',
+              widget: 'tabs',
+              props: {
+                defaultOpen: 'tab1',
+                tabs: [
+                  { label: 'Alert Component', uid: 'tab1' },
+                  { label: 'Stack Layout', uid: 'tab2' },
+                ],
+              },
+              on: { change: 'onTabEvent' },
+              children: [
+                {
+                  uid: 'tab1',
+                  kind: 'display',
+                  widget: 'alert',
+                  props: {
+                    text: 'Some fields need your attention 1',
+                    level: 'warning',
+                  },
+                },
+                {
+                  uid: 'tab2',
+                  kind: 'display',
+                  widget: 'alert',
+                  props: {
+                    text: 'Some fields need your attention 2',
+                    level: 'warning',
+                  },
+                },
+              ],
+            },
+          ],
+        }),
+        formEvent: formEventHandler,
+      });
+
+      cy.get('[data-cy="tab_tabsComponent_1"]').click();
+      cy.get('@formEventHandler').should('have.been.calledWithMatch', {
+        name: 'onTabEvent',
+        detail: 'tab2',
+      });
+      cy.get('[data-cy="tabpanel_tabsComponent_1"]').should('exist');
+
+      cy.get('[data-cy="tab_tabsComponent_0"]').click();
+      cy.get('@formEventHandler').should('have.been.calledWithMatch', {
+        name: 'onTabEvent',
+        detail: 'tab1',
+      });
+      cy.get('[data-cy="tabpanel_tabsComponent_0"]').should('exist');
+    });
+
     it('Should execute form events on click', () => {
       const mockRegions: any = ['Spain', 'France', 'Italy'];
 

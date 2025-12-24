@@ -15,6 +15,7 @@
           #tabButtonRef
           type="button"
           role="tab"
+          [attr.data-cy]="'tab_' + field.uid + '_' + i"
           [tabindex]="tab.uid === activeTab() ? null : -1"
           [id]="'tab_' + field.uid + '_' + i"
           [attr.aria-controls]="'tabpanel_' + field.uid + '_' + i"
@@ -37,6 +38,7 @@
     <section
       role="tabpanel"
       tabindex="0"
+      [attr.data-cy]="'tabpanel_' + field.uid + '_' + i"
       [id]="'tabpanel_' + field.uid + '_' + i"
       [attr.aria-labelledby]="'tab_' + field.uid + '_' + i"
     >

@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, props } = useLayoutField<TabsProps>(field);
+  const { uid, children, props, onChange } = useLayoutField<TabsProps>(field);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
   const startSentinelRef = useRef<HTMLLIElement>(null);
   const endSentinelRef = useRef<HTMLLIElement>(null);
@@ -30,6 +30,11 @@ export function Tabs(fieldInstance: Core.WithField) {
     };
   }, []);
 
+  const handleTabChange = (uid: string) => {
+    setActiveTab(uid);
+    onChange(uid);
+  };
+
   const onKeyDown = (event: React.KeyboardEvent) => {
     const currentIndex = props.tabs.findIndex((tab) => tab.uid === activeTab);
     const tabButtons = tabRefs.current;
@@ -37,22 +42,22 @@ export function Tabs(fieldInstance: Core.WithField) {
     switch (event.key) {
       case 'ArrowLeft':
         if (currentIndex > 0) {
-          setActiveTab(props.tabs[currentIndex - 1].uid);
+          handleTabChange(props.tabs[currentIndex - 1].uid);
           tabButtons[currentIndex - 1]?.focus();
         }
         break;
       case 'ArrowRight':
         if (currentIndex < props.tabs.length - 1) {
-          setActiveTab(props.tabs[currentIndex + 1].uid);
+          handleTabChange(props.tabs[currentIndex + 1].uid);
           tabButtons[currentIndex + 1]?.focus();
         }
         break;
       case 'Home':
-        setActiveTab(props.tabs[0].uid);
+        handleTabChange(props.tabs[0].uid);
         tabButtons[0]?.focus();
         break;
       case 'End':
-        setActiveTab(props.tabs[props.tabs.length - 1].uid);
+        handleTabChange(props.tabs[props.tabs.length - 1].uid);
         tabButtons[props.tabs.length - 1]?.focus();
         break;
       default:
@@ -72,11 +77,12 @@ export function Tabs(fieldInstance: Core.WithField) {
             type="button"
             role="tab"
             tabIndex={tab.uid === activeTab ? undefined : -1}
+            data-cy={`tab_${field.uid}_${index}`}
             id={`tab_${field.uid}_${index}`}
             aria-controls={`tabpanel_${field.uid}_${index}`}
             aria-selected={tab.uid === activeTab ? 'true' : 'false'}
             className={`${tab.uid === activeTab ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.uid)}
+            onClick={() => handleTabChange(tab.uid)}
             onKeyDown={(event: React.KeyboardEvent) => onKeyDown(event)}
             onFocus={(event: React.FocusEvent) => {
               event.target.scrollIntoView();
@@ -90,20 +96,23 @@ export function Tabs(fieldInstance: Core.WithField) {
   }, [props, activeTab]);
 
   const renderFields = useCallback(() => {
+    const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);
+
     return children
       .filter((field) => field.uid === activeTab)
-      .map((field, index) => (
+      .map((section) => (
         <section
-          key={`tabpanel_${field.uid}_${field.uid}`}
+          key={`tabpanel_${field.uid}_${section.uid}`}
           role="tabpanel"
           tabIndex={0}
-          id={`tabpanel_${field.uid}_${index}`}
-          aria-labelledby={`tab_${field.uid}_${index}`}
+          data-cy={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          id={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          aria-labelledby={`tab_${field.uid}_${activeSectionIndex}`}
         >
-          <FieldRenderer key={field.uid} field={field} />
+          <FieldRenderer key={section.uid} field={section} />
         </section>
       ));
-  }, [children, activeTab]);
+  }, [children, activeTab, field]);
 
   return (
     <div className="gui-tabs">
