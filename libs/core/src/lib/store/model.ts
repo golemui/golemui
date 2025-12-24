@@ -29,11 +29,10 @@ export type State = {
   formDef: Form.Form<string>;
 
   /**
-   * Flattened version of `formDef`.
-   * Useful for performing certain operations more efficiently.
-   * // TODO: Is this safe? What about sigle source of truth? this might be problematic if fields get out of sync (keep an eye on this)
+   * Flattened representation of `formDef` as a map from UID to field definition.
+   * Enables more efficient lookup and processing in downstream operations.
    */
-  flatForm: Field.FormField<string>[];
+  flatForm: Record<Uid, Field.FormField<string>>;
 
   /**
    * List of states computed for the current form state.
@@ -93,7 +92,7 @@ export const createInitialState = (): State => ({
       children: [],
     },
   }) as Form.Form,
-  flatForm: [],
+  flatForm: {},
   currentStates: [],
   calculatedFields: {},
   fields: {},

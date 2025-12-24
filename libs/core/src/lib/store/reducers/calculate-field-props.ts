@@ -38,9 +38,13 @@ function unsuffixedUniqueKeys(keys: string[]): string[] {
 }
 
 function calculateProps(state: State) {
-  return Object.keys(state.fields).reduce(
+  return Object.keys(state.flatForm).reduce(
     (acc, uid) => {
-      const computed = mkComputed(state.fields[uid], state.calculatedFields[uid] || {});
+      if (state.fieldFlags[uid] !== undefined && state.fieldFlags[uid].hidden) {
+        return acc;
+      }
+
+      const computed = mkComputed(state.flatForm[uid], state.calculatedFields[uid] || {});
 
       // TODO: Optimize: we know in advanced which suffixable core properties exist
       // Field core properties
@@ -49,6 +53,7 @@ function calculateProps(state: State) {
         .forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
+            fieldPropOverrides: state.fieldPropOverrides,
             computed,
             property: prop as CoreProp,
             $form: state.data,
@@ -56,9 +61,15 @@ function calculateProps(state: State) {
         });
 
       // Field "props" properties
-      unsuffixedUniqueKeys(Object.keys(computed.original.props || {})).forEach((prop) => {
+      const props = {
+        ...(computed.original.props || {}),
+        // We may have overridden properties that aren't set on the original object, so we need to account for them
+        ...state.fieldPropOverrides[computed.original.uid],
+      };
+      unsuffixedUniqueKeys(Object.keys(props)).forEach((prop) => {
         calculateProperty({
           currentStates: state.currentStates,
+          fieldPropOverrides: state.fieldPropOverrides,
           computed,
           property: 'props',
           subProp: prop,
@@ -71,6 +82,7 @@ function calculateProps(state: State) {
         unsuffixedUniqueKeys(Object.keys(computed.original.on || {})).forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
+            fieldPropOverrides: state.fieldPropOverrides,
             computed,
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
@@ -81,7 +93,6 @@ function calculateProps(state: State) {
 
       // If there are no changes we can keep the old field reference to avoid unnecessary rerendering
       acc[uid] = computed.changed ? computed.newComputation : computed.oldComputation;
-      console.log(acc[uid]);
       return acc;
     },
     {} as State['calculatedFields'],
@@ -98,16 +109,18 @@ function calculateProps(state: State) {
  */
 function calculateProperty<F extends FormField<string>>({
   currentStates,
+  fieldPropOverrides,
   computed,
   property,
   subProp,
   $form,
 }: {
   currentStates: string[];
+  fieldPropOverrides: State['fieldPropOverrides'];
   computed: Computed<F>;
   property: CoreProp;
   subProp?: string;
-  $form: Record<string, any>;
+  $form: State['data'];
 }) {
   // TODO: Does this assumption holds?
   // Longer props are more relevant because "register" vs "register:adult" vs "register:adult:termsAccepted"
@@ -138,6 +151,15 @@ function calculateProperty<F extends FormField<string>>({
     set(computed.newComputation, dotPath, propValue({ $form }));
   } else {
     set(computed.newComputation, dotPath, propValue);
+  }
+
+  if (
+    property === 'props' &&
+    subProp &&
+    fieldPropOverrides[computed.original.uid] &&
+    fieldPropOverrides[computed.original.uid][subProp] !== undefined
+  ) {
+    set(computed.newComputation, dotPath, fieldPropOverrides[computed.original.uid][subProp]);
   }
 
   // TODO: this only takes into account primitives, what happens with objects and arrays that are structurally equivalent?

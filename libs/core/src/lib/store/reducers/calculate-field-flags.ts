@@ -9,7 +9,7 @@ export const calculateFieldFlags = (state: State): State => {
 };
 
 function calculateFlags(state: State): State['fieldFlags'] {
-  return state.flatForm
+  return Object.values(state.flatForm)
     .filter((field) => {
       if (field.include && 'in' in field.include) {
         return true;
