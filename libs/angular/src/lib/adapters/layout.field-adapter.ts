@@ -43,4 +43,8 @@ export class LayoutFieldAdapter<
     this.addFieldToTheStore(field);
     this.propsUpdaterByCurrentState(this.templateData);
   }
+
+  change<T>(detail?: T) {
+    this.context.emitEvent('change', this.field, detail);
+  }
 }

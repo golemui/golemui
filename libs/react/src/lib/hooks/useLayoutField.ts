@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { combineLatest, map, of } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 import { useExtraProps } from './internal/useExtraProps';
@@ -46,9 +46,17 @@ export function useLayoutField<ExtraProps extends Record<string, any>>(field: Co
     };
   }, [formContext, field]);
 
+  const onChange = useCallback(
+    (detail: any) => {
+      formContext.emitEvent('change', field, detail);
+    },
+    [field, formContext],
+  );
+
   return {
     uid,
     children,
     props,
+    onChange,
   };
 }

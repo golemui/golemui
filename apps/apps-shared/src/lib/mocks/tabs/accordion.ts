@@ -13,6 +13,7 @@ export const accordion = (): any => ({
       { label: 'Billing Address', uid: 'section3' },
     ],
   },
+  on: { change: 'onAccordionEvent' },
   children: [
     {
       uid: 'section1',
