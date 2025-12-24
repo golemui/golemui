@@ -16,16 +16,16 @@
   <input
     type="checkbox"
     guiAria
-    [attr.data-cy]="field.uid + '_switch'"
     [uid]="field.uid"
     [templateData]="templateData"
-    [id]="field.uid"
-    [required]="templateData.validator?.required"
     [value]="templateData.value ?? false"
+    [id]="field.uid"
+    [attr.data-cy]="field.uid + '_switch'"
     [checked]="templateData.value ? true : undefined"
-    (click)="!templateData.readonly && valueChanged($event)"
+    [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
+    (click)="!templateData.readonly && valueChanged($event)"
   />
 
   <span class="gui-toggle--slider" role="presentation"></span>
