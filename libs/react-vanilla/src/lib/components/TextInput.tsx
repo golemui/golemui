@@ -34,7 +34,7 @@ export function TextInput(fieldInstance: Core.WithField) {
 
   return (
     <div className="gui-textinput">
-      <label className="gui-label" htmlFor={uid}>
+      <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
         {label + (validator?.required ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>

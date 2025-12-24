@@ -7,7 +7,7 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
   templateData: Core.ControlTemplateData<T> & ExtraProps,
   withErrors = false,
 ) => {
-  return html`<label class="gui-label" for=${uid}>
+  return html`<label class="gui-label" for=${uid} data-cy=${`${uid}_label`}>
     ${templateData.label + (templateData.validator?.required ? ' *' : '')}
     ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
   </label>`;

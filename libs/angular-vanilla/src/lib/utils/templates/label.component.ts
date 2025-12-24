@@ -13,6 +13,7 @@ import * as Core from '@golemui/core';
     <ng-content></ng-content>`,
   host: {
     class: 'gui-label',
+    '[attr.data-cy]': 'uid() + "_label"',
   },
 })
 export class LabelComponent<T, ExtraProps extends { hint?: string }> {
