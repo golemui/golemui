@@ -1,5 +1,6 @@
 export const controlWidgets = [
   'textinput',
+  'toggle',
   'checkbox',
   'number',
   'select',

@@ -1,0 +1,83 @@
+.gui-form {
+  .gui-toggle {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+
+    &.gui-toggle--left {
+      flex-direction: row-reverse;
+      align-self: flex-start;
+    }
+
+    /* The toggle - the box around the slider */
+    .gui-toggle--switch {
+      position: relative;
+      display: inline-block;
+      width: var(--gui-toggle-width);
+      height: var(--gui-toggle-height);
+      min-width: var(--gui-toggle-width);
+      min-height: var(--gui-toggle-height);
+
+      /* Hide default HTML checkbox */
+      input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        z-index: 2;
+        cursor: pointer;
+        margin: 0;
+
+        &:disabled + .gui-toggle--slider {
+          background-color: var(--gui-color-bg-disabled);
+        }
+
+        &:checked + .gui-toggle--slider {
+          background-color: var(--gui-color-primary);
+          border: 1px solid var(--gui-color-primary);
+        }
+
+        &:focus + .gui-toggle--slider {
+          box-shadow: 0 0 1px var(--gui-color-primary);
+        }
+
+        &:checked + .gui-toggle--slider:before {
+          transform: translateX(var(--gui-toggle-slider-transform));
+          background-color: var(--gui-color-bg);
+        }
+      }
+
+      /* The slider */
+      .gui-toggle--slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--gui-color-bg);
+        border: 1px solid var(--gui-color-default);
+        transition: 0.4s;
+        border-radius: 30px;
+
+        &:before {
+          position: absolute;
+          content: '';
+          width: var(--gui-toggle-slider-width);
+          height: var(--gui-toggle-slider-height);
+          border-radius: 20px;
+          left: 2px;
+          top: 1px;
+          background-color: var(--gui-color-default);
+          transition: 0.4s;
+        }
+      }
+    }
+
+    label {
+      cursor: pointer;
+    }
+  }
+}
