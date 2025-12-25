@@ -8,6 +8,7 @@ import { textinput } from './tabs/textinput';
 import { select } from './tabs/select';
 import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
+import { toggle } from './tabs/toggle';
 
 export const kitchenSink = defineForm({
   states: {
@@ -30,7 +31,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab9',
+        defaultOpen: 'tab10',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -41,6 +42,7 @@ export const kitchenSink = defineForm({
           { label: 'Select Component', uid: 'tab7' },
           { label: 'Number Component', uid: 'tab8' },
           { label: 'Radiogroup Component', uid: 'tab9' },
+          { label: 'Toggle Component', uid: 'tab10' },
         ],
       },
       on: { change: 'onTabEvent' },
@@ -54,6 +56,7 @@ export const kitchenSink = defineForm({
         select(),
         number(),
         radiogroup(),
+        toggle(),
       ],
     },
     {

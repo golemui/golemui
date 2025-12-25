@@ -27,6 +27,11 @@ export type CheckboxProps = {
   hint?: string;
 };
 
+export type ToggleProps = {
+  togglePosition?: 'left' | 'right';
+  hint?: string;
+};
+
 export type AlertProps = {
   text: string;
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
