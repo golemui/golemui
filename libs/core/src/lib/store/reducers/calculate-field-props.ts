@@ -7,27 +7,28 @@ export const calculateFieldProps = (state: State): State => {
 };
 
 /**
- * Represents the result of a derived or computed calculation.
+ * Represents a form field whose value is derived from a computation
+ * and evaluated against its previous derived state.
  *
- * A `Computed<T>` wraps a calculated value together with metadata indicating
- * whether the value differs from its previous version based on a structural
- * comparison performed during the computation.
+ * A `DerivedField<T>` captures the source field, the previous derived value,
+ * the newly derived value, and whether a structural change occurred between
+ * derivations.
  */
-type Computed<F extends FormField<string>> = {
-  /** The original value to compare to */
-  original: Readonly<F>;
-  /** The previous computed (derived) value */
-  oldComputation: Readonly<F>;
-  /** The computed (derived) value */
-  newComputation: F;
-  /** Keep track of the structural equality between old and new  */
+type DerivedField<F extends FormField<string>> = {
+  /** The source field from which the derived value is computed */
+  source: Readonly<F>;
+  /** The previously derived value */
+  previous: Readonly<F>;
+  /** The newly derived value */
+  current: F;
+  /** Indicates whether the newly derived value changed structurally */
   changed: boolean;
 };
 
-const mkComputed = <F extends FormField<string>>(original: F, oldComputation: F): Computed<F> => ({
-  original,
-  oldComputation,
-  newComputation: {} as F,
+const mkDerivedField = <F extends FormField<string>>(source: F, previous: F): DerivedField<F> => ({
+  source,
+  previous,
+  current: {} as F,
   changed: false,
 });
 
@@ -44,17 +45,17 @@ function calculateProps(state: State) {
         return acc;
       }
 
-      const computed = mkComputed(state.flatForm[uid], state.calculatedFields[uid] || {});
+      const derivedField = mkDerivedField(state.flatForm[uid], state.calculatedFields[uid] || {});
 
       // TODO: Optimize: we know in advanced which suffixable core properties exist
       // Field core properties
-      unsuffixedUniqueKeys(Object.keys(computed.original))
+      unsuffixedUniqueKeys(Object.keys(derivedField.source))
         .filter((prop) => prop !== 'props' && prop !== 'on')
         .forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
             fieldPropOverrides: state.fieldPropOverrides,
-            computed,
+            derivedField,
             property: prop as CoreProp,
             $form: state.data,
           });
@@ -62,15 +63,15 @@ function calculateProps(state: State) {
 
       // Field "props" properties
       const props = {
-        ...(computed.original.props || {}),
+        ...(derivedField.source.props || {}),
         // We may have overridden properties that aren't set on the original object, so we need to account for them
-        ...state.fieldPropOverrides[computed.original.uid],
+        ...state.fieldPropOverrides[derivedField.source.uid],
       };
       unsuffixedUniqueKeys(Object.keys(props)).forEach((prop) => {
         calculateProperty({
           currentStates: state.currentStates,
           fieldPropOverrides: state.fieldPropOverrides,
-          computed,
+          derivedField,
           property: 'props',
           subProp: prop,
           $form: state.data,
@@ -78,12 +79,12 @@ function calculateProps(state: State) {
       });
 
       // Field "on" properties
-      if (isControlField(computed.original) || isInteractiveField(computed.original)) {
-        unsuffixedUniqueKeys(Object.keys(computed.original.on || {})).forEach((prop) => {
+      if (isControlField(derivedField.source) || isInteractiveField(derivedField.source)) {
+        unsuffixedUniqueKeys(Object.keys(derivedField.source.on || {})).forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
             fieldPropOverrides: state.fieldPropOverrides,
-            computed,
+            derivedField,
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
             $form: state.data,
@@ -92,7 +93,7 @@ function calculateProps(state: State) {
       }
 
       // If there are no changes we can keep the old field reference to avoid unnecessary rerendering
-      acc[uid] = computed.changed ? computed.newComputation : computed.oldComputation;
+      acc[uid] = derivedField.changed ? derivedField.current : derivedField.previous;
       return acc;
     },
     {} as State['calculatedFields'],
@@ -110,14 +111,14 @@ function calculateProps(state: State) {
 function calculateProperty<F extends FormField<string>>({
   currentStates,
   fieldPropOverrides,
-  computed,
+  derivedField,
   property,
   subProp,
   $form,
 }: {
   currentStates: string[];
   fieldPropOverrides: State['fieldPropOverrides'];
-  computed: Computed<F>;
+  derivedField: DerivedField<F>;
   property: CoreProp;
   subProp?: string;
   $form: State['data'];
@@ -128,8 +129,8 @@ function calculateProperty<F extends FormField<string>>({
     .sort((a, b) => b.length - a.length)
     .find((currentState) => {
       const currentStateValue = subProp
-        ? computed.original?.[property as 'props' /* | 'on' */]?.[`${subProp}.${currentState}`]
-        : computed.original[`${property}.${currentState}` as CoreProp];
+        ? derivedField.source?.[property as 'props' /* | 'on' */]?.[`${subProp}.${currentState}`]
+        : derivedField.source[`${property}.${currentState}` as CoreProp];
       return currentStateValue !== undefined;
     });
 
@@ -137,33 +138,33 @@ function calculateProperty<F extends FormField<string>>({
   // if no matching state is found, we use the property as is, without suffix
   if (matchedState === undefined) {
     propValue = subProp
-      ? computed.original[property as 'props']?.[subProp]
-      : computed.original[property];
+      ? derivedField.source[property as 'props']?.[subProp]
+      : derivedField.source[property];
   } else {
     propValue = subProp
-      ? computed.original[property as 'props' /* | 'on */]?.[`${subProp}.${matchedState}`]
-      : computed.original[`${property}.${matchedState}` as CoreProp];
+      ? derivedField.source[property as 'props' /* | 'on */]?.[`${subProp}.${matchedState}`]
+      : derivedField.source[`${property}.${matchedState}` as CoreProp];
   }
 
   const dotPath = subProp ? `${property}.${subProp}` : property;
 
   if (typeof propValue === 'function') {
-    set(computed.newComputation, dotPath, propValue({ $form }));
+    set(derivedField.current, dotPath, propValue({ $form }));
   } else {
-    set(computed.newComputation, dotPath, propValue);
+    set(derivedField.current, dotPath, propValue);
   }
 
   if (
     property === 'props' &&
     subProp &&
-    fieldPropOverrides[computed.original.uid] &&
-    fieldPropOverrides[computed.original.uid][subProp] !== undefined
+    fieldPropOverrides[derivedField.source.uid] &&
+    fieldPropOverrides[derivedField.source.uid][subProp] !== undefined
   ) {
-    set(computed.newComputation, dotPath, fieldPropOverrides[computed.original.uid][subProp]);
+    set(derivedField.current, dotPath, fieldPropOverrides[derivedField.source.uid][subProp]);
   }
 
   // TODO: this only takes into account primitives, what happens with objects and arrays that are structurally equivalent?
-  if (get(computed.oldComputation, dotPath) !== get(computed.newComputation, dotPath)) {
-    computed.changed = true;
+  if (get(derivedField.previous, dotPath) !== get(derivedField.current, dotPath)) {
+    derivedField.changed = true;
   }
 }
