@@ -14,6 +14,13 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type TextareaProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  counterMode?: 'remaining' | 'current';
+};
+
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;

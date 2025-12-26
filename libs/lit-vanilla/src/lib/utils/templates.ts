@@ -59,7 +59,7 @@ export const addErrors = <T, ExtraProps extends { hint?: string }>(
     ? html`<ul class="gui-validator" id=${`${uid}_errors`} data-cy=${`${uid}_validator-errors`}>
         ${templateData.errors?.map(
           (error: any) =>
-            html`<li class="gui-validator__error" role="status" data-cy=${`${uid}_validator-error`}>
+            html`<li class="gui-validator__error" role="alert" data-cy=${`${uid}_validator-error`}>
               ${error}
             </li>`,
         )}

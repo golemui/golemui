@@ -9,6 +9,7 @@ import { select } from './tabs/select';
 import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
 import { toggle } from './tabs/toggle';
+import { textarea } from './tabs/textarea';
 
 export const kitchenSink = defineForm({
   states: {
@@ -31,18 +32,19 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab10',
+        defaultOpen: 'tab11',
         tabs: [
-          { label: 'Alert Component', uid: 'tab1' },
-          { label: 'Stack Layout', uid: 'tab2' },
-          { label: 'Repeater Component', uid: 'tab3' },
-          { label: 'Checkbox Component', uid: 'tab4' },
-          { label: 'Accordion Layout', uid: 'tab5' },
-          { label: 'Textinput Component', uid: 'tab6' },
-          { label: 'Select Component', uid: 'tab7' },
-          { label: 'Number Component', uid: 'tab8' },
-          { label: 'Radiogroup Component', uid: 'tab9' },
-          { label: 'Toggle Component', uid: 'tab10' },
+          { label: 'Alert', uid: 'tab1' },
+          { label: 'Stack', uid: 'tab2' },
+          { label: 'Repeater', uid: 'tab3' },
+          { label: 'Checkbox', uid: 'tab4' },
+          { label: 'Accordion', uid: 'tab5' },
+          { label: 'Textinput', uid: 'tab6' },
+          { label: 'Select', uid: 'tab7' },
+          { label: 'Number', uid: 'tab8' },
+          { label: 'Radiogroup', uid: 'tab9' },
+          { label: 'Toggle', uid: 'tab10' },
+          { label: 'Textarea', uid: 'tab11' },
         ],
       },
       on: { change: 'onTabEvent' },
@@ -57,6 +59,7 @@ export const kitchenSink = defineForm({
         number(),
         radiogroup(),
         toggle(),
+        textarea(),
       ],
     },
     {
