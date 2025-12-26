@@ -6,12 +6,12 @@ import { State } from '../model';
 
 // TODO: should we remove data as well?
 export function removeField(state: State, action: REMOVE_FIELD): State {
-  const field = state.calculatedFields[action.payload.uid].source;
   return {
     ...state,
     fieldFlags: {
       ...deleteKey(state.fieldFlags, action.payload.uid),
     },
+    // TODO: has this already been removed in calculate-field-props??? Do we need this at all?
     calculatedFields: {
       ...deleteKey(state.calculatedFields, action.payload.uid),
     },
@@ -19,11 +19,13 @@ export function removeField(state: State, action: REMOVE_FIELD): State {
       ...deleteKey(state.fieldPropOverrides, action.payload.uid),
     },
     touchedControls: {
-      ...Fn.pipe(state.touchedControls, (ctrls) => {
-        if (isControlField(field)) {
-          return deleteKey(state.touchedControls, field.path);
+      ...Fn.pipe(state.touchedControls, (touchedControls) => {
+        // TODO: this doesn't account for repeater items
+        const field = state.flatForm[action.payload.uid];
+        if (field && isControlField(field)) {
+          return deleteKey(touchedControls, field.path);
         }
-        return ctrls;
+        return touchedControls;
       }),
     },
   };

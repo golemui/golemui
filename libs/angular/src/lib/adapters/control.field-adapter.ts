@@ -19,7 +19,7 @@ export class ControlFieldAdapter<
     this.propsUpdater(this.templateData, (obj) => {
       const label =
         obj.label === undefined
-          ? Core.toLabel(this.field.path)
+          ? Core.toLabel(obj['path'])
           : obj.label === ''
             ? undefined
             : obj.label;

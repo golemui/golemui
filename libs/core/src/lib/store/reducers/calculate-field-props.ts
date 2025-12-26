@@ -1,4 +1,10 @@
-import { FormField, isControlField, isInteractiveField } from '../../form-field';
+import {
+  FormField,
+  isControlField,
+  isInteractiveField,
+  isLayoutField,
+  LayoutField,
+} from '../../form-field';
 import { get, set } from '../../utils/object';
 import { DerivedField, State } from '../model';
 
@@ -75,6 +81,27 @@ function calculateProps(state: State) {
             $form: state.data,
           });
         });
+      }
+
+      // Layout "children" property
+      if (isLayoutField(derivedField.source)) {
+        const prevChildren = (derivedField.previous as LayoutField<string>).children;
+        // Apply flags and reflect structural equality changes
+        const { changed, current } = derivedField.source.children.reduce(
+          (acc, cur, index) => {
+            if (!state.fieldFlags[cur.uid] || state.fieldFlags[cur.uid].hidden !== true) {
+              acc.current.push(cur);
+            }
+            if (!prevChildren || !prevChildren[index] || prevChildren[index].uid !== cur.uid) {
+              acc.changed = true;
+            }
+            return acc;
+          },
+          { changed: false, current: [] as LayoutField<string>['children'] },
+        );
+
+        (derivedField as DerivedField<any>).current = current;
+        derivedField.changed = changed;
       }
 
       // If there are no changes we can keep the old field reference to avoid unnecessary rerendering
