@@ -7,33 +7,28 @@ import { Errors } from './shared/Errors';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const {
-    uid,
-    validator,
-    errors,
-    value,
-    isDisabled,
-    isReadonly,
-    label,
-    onValueChanged,
-    onBlur,
-    props,
-    isTouched,
-  } = useControlField<boolean, CheckboxProps>(field);
+  const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useControlField<
+    boolean,
+    CheckboxProps
+  >(field);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => !isReadonly && onValueChanged(e.target.checked),
-    [onValueChanged, isReadonly],
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      !templateData.readonly && onValueChanged(e.target.checked),
+    [onValueChanged, templateData.readonly],
   );
 
-  const hint = props.hint;
-  const checkboxPosition = props.checkboxPosition;
+  const hint = templateData.hint;
+  const checkboxPosition = templateData.checkboxPosition;
   const showErrors = isTouched && errors && errors.length > 0;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
 
   return (
     <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
       <label className="gui-label" htmlFor={uid}>
-        {label + (validator?.required ? ' *' : '')}
+        {templateData.label + (isRequired ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
@@ -48,7 +43,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
           id={uid}
           data-cy={`${uid}_checkbox`}
           checked={value ?? false}
-          required={validator?.required}
+          required={isRequired}
           disabled={isDisabled}
           readOnly={isReadonly}
           aria-readonly={isReadonly}

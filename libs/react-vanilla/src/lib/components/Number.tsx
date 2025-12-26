@@ -7,36 +7,30 @@ import { Errors } from './shared/Errors';
 
 export function NumberInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<number>;
-  const {
-    uid,
-    validator,
-    errors,
-    value,
-    isDisabled,
-    isReadonly,
-    isTouched,
-    label,
-    props,
-    onValueChanged,
-    onBlur,
-  } = useControlField<number, NumberinputProps>(field);
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+    number,
+    NumberinputProps
+  >(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.valueAsNumber),
     [onValueChanged],
   );
 
-  const hint = props.hint;
-  const placeholder = props.placeholder;
-  const step = props.step;
-  const icon = props.icon;
-  const iconPosition = props.iconPosition;
+  const hint = templateData.hint;
+  const placeholder = templateData.placeholder;
+  const step = templateData.step;
+  const icon = templateData.icon;
+  const iconPosition = templateData.iconPosition;
   const showErrors = isTouched && errors && errors.length > 0;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
 
   return (
     <div className="gui-number">
       <label className="gui-label" htmlFor={uid}>
-        {label + (validator?.required ? ' *' : '')}
+        {templateData.label + (isRequired ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
@@ -50,7 +44,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
           id={uid}
           data-cy={`${uid}_number`}
           className={`${icon ? 'gui-number--icon' : ''} ${iconPosition === 'right' ? 'gui-number--icon-right' : ''}`}
-          required={validator?.required}
+          required={isRequired}
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}
@@ -60,7 +54,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
           onBlur={onBlur}
           aria-invalid={showErrors}
           aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={validator?.required}
+          aria-required={isRequired}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
         {icon && (

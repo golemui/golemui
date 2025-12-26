@@ -6,13 +6,13 @@ import '../styles.scss';
 
 export function Stack(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, props } = useLayoutField<StackProps>(field);
+  const { uid, children, templateData } = useLayoutField<StackProps>(field);
 
   const renderFields = useCallback(() => {
     return children.map((field) => <FieldRenderer key={field.uid} field={field} />);
   }, [children]);
 
-  const direction = props.direction === 'horizontal' ? 'gui-stack__field--horizontal' : '';
+  const direction = templateData.direction === 'horizontal' ? 'gui-stack__field--horizontal' : '';
   return (
     <div className="gui-stack">
       <div className={`gui-stack__field ${direction}`} id={uid}>
