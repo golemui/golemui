@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
-import { combineLatest, map, of, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 export const layoutContext = createContext<LayoutFieldAdapter<any>>('guiLayoutFieldAdapter');
@@ -18,19 +18,10 @@ export class LayoutFieldAdapter<
       ...this.field.props,
     });
 
-    const fieldFlagsSelector = this.context.store.state$.pipe(Core.selectFieldFlags);
-
-    // Listen to the fieldFlags stream and filter the layout's `children` based on their `hidden` flag
-    combineLatest([of(field.children), fieldFlagsSelector])
-      .pipe(
-        takeUntil(this.destroy$),
-        map(([children]) => {
-          const fieldFlags = this.context.store.getState().fieldFlags;
-          return children.filter(
-            (child) => fieldFlags[child.uid] === undefined || !fieldFlags[child.uid].hidden,
-          );
-        }),
-      )
+    // Listen to the layout's `hidden`-flag-filtered children stream
+    this.context.store.state$
+      .pipe(Core.calculatedLayoutChildrenByUid$(this.field.uid))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
         this.setTemplateData({
           children,
@@ -38,7 +29,7 @@ export class LayoutFieldAdapter<
       });
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState();
+    this.templateDataUpdater();
   }
 
   change<T>(detail?: T) {
