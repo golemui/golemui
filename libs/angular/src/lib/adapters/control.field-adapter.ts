@@ -16,7 +16,7 @@ export class ControlFieldAdapter<
     this.field = field;
 
     this.addFieldToTheStore(field);
-    this.propsUpdater(this.templateData, (obj) => {
+    this.templateDataUpdater(this.templateData, (obj) => {
       const label =
         obj.label === undefined
           ? Core.toLabel(obj['path'])

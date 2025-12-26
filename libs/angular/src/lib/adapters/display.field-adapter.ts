@@ -18,6 +18,6 @@ export class DisplayFieldAdapter<
     }));
 
     this.addFieldToTheStore(field);
-    this.propsUpdater(this.templateData);
+    this.templateDataUpdater(this.templateData);
   }
 }

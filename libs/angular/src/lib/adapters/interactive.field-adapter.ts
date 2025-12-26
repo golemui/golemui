@@ -11,12 +11,11 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
     this.field = field;
     this.templateData.update((current) => ({
       ...current,
-      // TODO: this shouldn't be required
-      label: typeof this.field.label === 'string' ? this.field.label : undefined,
+      label: this.field.label as string,
     }));
 
     this.addFieldToTheStore(field);
-    this.propsUpdater(this.templateData);
+    this.templateDataUpdater(this.templateData);
 
     // Listen to the fieldFlags stream (`disabled` flag)
     this.context.store.state$

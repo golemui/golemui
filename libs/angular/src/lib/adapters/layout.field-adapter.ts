@@ -25,7 +25,6 @@ export class LayoutFieldAdapter<
       .pipe(Core.calculatedLayoutChildrenByUid$(this.field.uid))
       .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
-        console.log(this.field.uid, children);
         this.templateData.update((current) => ({
           ...current,
           children,
@@ -33,7 +32,7 @@ export class LayoutFieldAdapter<
       });
 
     this.addFieldToTheStore(field);
-    this.propsUpdater(this.templateData);
+    this.templateDataUpdater(this.templateData);
   }
 
   change<T>(detail?: T) {
