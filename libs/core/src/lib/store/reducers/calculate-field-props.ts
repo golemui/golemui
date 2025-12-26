@@ -1,28 +1,9 @@
 import { FormField, isControlField, isInteractiveField } from '../../form-field';
 import { get, set } from '../../utils/object';
-import { State } from '../model';
+import { DerivedField, State } from '../model';
 
 export const calculateFieldProps = (state: State): State => {
   return { ...state, calculatedFields: calculateProps(state) };
-};
-
-/**
- * Represents a form field whose value is derived from a computation
- * and evaluated against its previous derived state.
- *
- * A `DerivedField<T>` captures the source field, the previous derived value,
- * the newly derived value, and whether a structural change occurred between
- * derivations.
- */
-type DerivedField<F extends FormField<string>> = {
-  /** The source field from which the derived value is computed */
-  source: Readonly<F>;
-  /** The previously derived value */
-  previous: Readonly<F>;
-  /** The newly derived value */
-  current: F;
-  /** Indicates whether the newly derived value changed structurally */
-  changed: boolean;
 };
 
 const mkDerivedField = <F extends FormField<string>>(source: F, previous: F): DerivedField<F> => ({
@@ -45,7 +26,11 @@ function calculateProps(state: State) {
         return acc;
       }
 
-      const derivedField = mkDerivedField(state.flatForm[uid], state.calculatedFields[uid] || {});
+      const originalDerivedField = state.calculatedFields[uid];
+      const derivedField = mkDerivedField(
+        originalDerivedField.source,
+        originalDerivedField.previous,
+      );
 
       // TODO: Optimize: we know in advanced which suffixable core properties exist
       // Field core properties
@@ -93,7 +78,8 @@ function calculateProps(state: State) {
       }
 
       // If there are no changes we can keep the old field reference to avoid unnecessary rerendering
-      acc[uid] = derivedField.changed ? derivedField.current : derivedField.previous;
+      acc[uid] = derivedField.changed ? derivedField : originalDerivedField;
+      delete acc[uid].changed;
       return acc;
     },
     {} as State['calculatedFields'],

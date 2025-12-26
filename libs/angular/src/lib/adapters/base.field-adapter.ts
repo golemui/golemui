@@ -1,6 +1,6 @@
 import { inject, WritableSignal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
 export abstract class BaseFieldAdapter<F extends Core.FormField> {
@@ -21,11 +21,7 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
     postUpdate: (obj: ExtraProps) => ExtraProps = (obj) => obj,
   ) {
     this.context.store.state$
-      .pipe(
-        takeUntil(this.destroy$),
-        Core.calculatedFieldsByUid$(this.field.uid),
-        filter((calculatedField) => calculatedField !== undefined),
-      )
+      .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid))
       .subscribe((calculatedField) => {
         // TODO: refine this
         templateData.update((current) => {

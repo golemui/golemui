@@ -68,7 +68,7 @@ export const reducer =
             touched: true,
             touchedControls: Object.keys(state.calculatedFields).reduce(
               (touchedControls, key) => {
-                const field = state.calculatedFields[key];
+                const field = state.calculatedFields[key].source;
                 if (isControlField(field)) {
                   touchedControls[field.path] = true;
                 }

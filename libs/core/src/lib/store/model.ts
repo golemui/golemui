@@ -20,6 +20,25 @@ export type ValidationState = {
   status: null | { errors: string[] };
 };
 
+/**
+ * Represents a form field whose value is derived from a computation
+ * and evaluated against its previous derived state.
+ *
+ * A `DerivedField<T>` captures the source field, the previous derived value,
+ * the newly derived value, and whether a structural change occurred between
+ * derivations.
+ */
+export type DerivedField<F extends Field.FormField<string>> = {
+  /** The source field from which the derived value is computed */
+  source: Readonly<F>;
+  /** The previously derived value */
+  previous: Readonly<F>;
+  /** The newly derived value */
+  current: F;
+  /** Indicates whether the newly derived value changed structurally */
+  changed?: boolean;
+};
+
 export type State = {
   formName: string;
 
@@ -42,9 +61,8 @@ export type State = {
   /**
    * Tracks fields whose components have been rendered.
    * A field is added when its component mounts and removed when it unmounts.
-   * The field has all its properties already calculated, based on current state and functions executed
    */
-  calculatedFields: Record<Uid, Field.FormField<string>>;
+  calculatedFields: Record<Uid, DerivedField<Field.FormField<string>>>;
 
   /**
    * Tracks field validation status.

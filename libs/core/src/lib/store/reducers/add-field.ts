@@ -8,10 +8,10 @@ export function addField(state: State, action: ADD_FIELD): State {
     calculatedFields: {
       ...state.calculatedFields,
       [action.payload.field.uid]: {
-        uid: action.payload.field.uid,
-        kind: action.payload.field.kind,
-        widget: action.payload.field.widget,
-      } as FormField<string, any>,
+        source: action.payload.field,
+        current: {} as FormField<string, any>,
+        previous: {} as FormField<string, any>,
+      },
     },
   };
 }

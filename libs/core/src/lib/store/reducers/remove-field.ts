@@ -6,6 +6,7 @@ import { State } from '../model';
 
 // TODO: should we remove data as well?
 export function removeField(state: State, action: REMOVE_FIELD): State {
+  const field = state.calculatedFields[action.payload.uid].source;
   return {
     ...state,
     fieldFlags: {
@@ -19,7 +20,6 @@ export function removeField(state: State, action: REMOVE_FIELD): State {
     },
     touchedControls: {
       ...Fn.pipe(state.touchedControls, (ctrls) => {
-        const field = state.flatForm[action.payload.uid];
         if (isControlField(field)) {
           return deleteKey(state.touchedControls, field.path);
         }

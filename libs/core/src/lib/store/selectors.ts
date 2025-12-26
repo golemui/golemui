@@ -55,6 +55,8 @@ export const calculatedFieldsByUid$ = (uid: Uid) =>
   pipe(
     selectCalculatedFields,
     map((calculatedFields) => calculatedFields[uid]),
+    filter((derivedField) => derivedField !== undefined),
+    map((derivedField) => derivedField.current),
     distinctUntilChanged(),
   );
 
@@ -93,38 +95,6 @@ export const touchedControlsByPath$ = (path: DotPath) =>
     map((touchedControls) => touchedControls[path]),
     distinctUntilChanged(),
   );
-
-// --------------------------------
-//
-// FIELD PROP OVERRIDES
-//
-// --------------------------------
-
-export const selectFieldPropOverrides = pipe(
-  map((store: State) => store.fieldPropOverrides),
-  distinctUntilChanged(),
-);
-
-export const fieldPropOverridesByUid$ = (uid: Uid) =>
-  pipe(
-    selectFieldPropOverrides,
-    map((fieldPropOverrides) => fieldPropOverrides[uid]),
-    filter((fieldPropOverrides) => fieldPropOverrides !== undefined),
-    distinctUntilChanged(),
-  );
-
-// --------------------------------
-//
-// CURRENT STATES
-//
-// --------------------------------
-
-const selectCurrentStates = pipe(
-  map((store: State) => store.currentStates),
-  distinctUntilChanged(),
-);
-
-export const currentStates = (store: Observable<State>) => store.pipe(selectCurrentStates);
 
 // --------------------------------
 //
