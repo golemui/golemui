@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { combineLatest, map, of, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
@@ -20,20 +20,12 @@ export class LayoutFieldAdapter<
       ...this.field.props,
     }));
 
-    const fieldFlagsSelector = this.context.store.state$.pipe(Core.selectFieldFlags);
-
-    // Listen to the fieldFlags stream and filter the layout's `children` based on their `hidden` flag
-    combineLatest([of(field.children), fieldFlagsSelector])
-      .pipe(
-        takeUntil(this.destroy$),
-        map(([children]) => {
-          const fieldFlags = this.context.store.getState().fieldFlags;
-          return children.filter(
-            (child) => fieldFlags[child.uid] === undefined || !fieldFlags[child.uid].hidden,
-          );
-        }),
-      )
+    // Listen to the layout's `hidden`-flag-filtered children stream
+    this.context.store.state$
+      .pipe(Core.calculatedLayoutChildrenByUid$(this.field.uid))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
+        console.log(this.field.uid, children);
         this.templateData.update((current) => ({
           ...current,
           children,

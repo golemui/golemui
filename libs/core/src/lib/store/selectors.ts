@@ -1,4 +1,5 @@
 import { distinctUntilChanged, filter, map, Observable, pipe } from 'rxjs';
+import { LayoutField } from '../form-field';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
 import { State } from './model';
@@ -57,6 +58,21 @@ export const calculatedFieldsByUid$ = (uid: Uid) =>
     map((calculatedFields) => calculatedFields[uid]),
     filter((derivedField) => derivedField !== undefined),
     map((derivedField) => derivedField.current),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
+// LAYOUT CHILDREN
+//
+// --------------------------------
+
+export const calculatedLayoutChildrenByUid$ = (uid: Uid) =>
+  pipe(
+    selectCalculatedFields,
+    map((calculatedFields) => calculatedFields[uid]),
+    filter((derivedField) => derivedField !== undefined),
+    map((derivedField) => (derivedField.current as LayoutField).children),
     distinctUntilChanged(),
   );
 

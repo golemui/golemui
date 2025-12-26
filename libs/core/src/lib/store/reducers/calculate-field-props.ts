@@ -35,7 +35,8 @@ function calculateProps(state: State) {
       const originalDerivedField = state.calculatedFields[uid];
       const derivedField = mkDerivedField(
         originalDerivedField.source,
-        originalDerivedField.previous,
+        // previous is the new current
+        originalDerivedField.current,
       );
 
       // TODO: Optimize: we know in advanced which suffixable core properties exist
@@ -85,23 +86,21 @@ function calculateProps(state: State) {
 
       // Layout "children" property
       if (isLayoutField(derivedField.source)) {
-        const prevChildren = (derivedField.previous as LayoutField<string>).children;
-        // Apply flags and reflect structural equality changes
-        const { changed, current } = derivedField.source.children.reduce(
-          (acc, cur, index) => {
-            if (!state.fieldFlags[cur.uid] || state.fieldFlags[cur.uid].hidden !== true) {
-              acc.current.push(cur);
-            }
-            if (!prevChildren || !prevChildren[index] || prevChildren[index].uid !== cur.uid) {
-              acc.changed = true;
-            }
-            return acc;
-          },
-          { changed: false, current: [] as LayoutField<string>['children'] },
+        const prevChildren = (derivedField.previous as LayoutField<string>).children || [];
+
+        // Calculate visible children based on current flags
+        const children = derivedField.source.children.filter(
+          (child) => !state.fieldFlags[child.uid] || state.fieldFlags[child.uid].hidden !== true,
         );
 
-        (derivedField as DerivedField<any>).current = current;
-        derivedField.changed = changed;
+        (derivedField as DerivedField<LayoutField<string>>).current.children = children;
+
+        // Reflect structural equality changes
+        derivedField.changed =
+          prevChildren.length !== children.length ||
+          !children.every(
+            (_, index) => prevChildren[index] && prevChildren[index].uid === children[index].uid,
+          );
       }
 
       // If there are no changes we can keep the old field reference to avoid unnecessary rerendering
