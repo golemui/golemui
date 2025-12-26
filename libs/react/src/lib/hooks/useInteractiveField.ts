@@ -1,19 +1,17 @@
 import * as Core from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
-import { useExtraProps } from './internal/useExtraProps';
+import { useTemplateData } from './internal/useExtraProps';
 
 export function useInteractiveField<ExtraProps extends Record<string, any>>(
-  field: Core.InteractiveField,
+  field: Core.InteractiveField<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const [label, setLabel] = useState<string | undefined>(undefined);
   const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
-  const props = useExtraProps<ExtraProps>(field);
+  const templateData = useTemplateData<Core.InteractiveField<string>, ExtraProps>(field);
 
   useEffect(() => {
-    setLabel(field.label);
     setUid(field.uid);
   }, [field]);
 
@@ -34,13 +32,6 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
   }, [field, formContext.store]);
 
   useEffect(() => {
-    const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
-      setLabel(formContext.getPropertyValueByCurrentState('label', field));
-    });
-    return () => sub.unsubscribe();
-  }, [field, formContext]);
-
-  useEffect(() => {
     formContext.emitEvent('load', field);
   }, [formContext, field]);
 
@@ -59,8 +50,7 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
 
   return {
     uid,
-    label,
-    props,
+    templateData,
     isDisabled,
     onClick,
   };

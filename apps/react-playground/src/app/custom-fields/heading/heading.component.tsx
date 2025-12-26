@@ -10,11 +10,11 @@ type OwnWidgetProps = {
 
 export function HeadingComponent(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.DisplayField;
-  const { uid, props } = useDisplayField<OwnWidgetProps>(field);
+  const { uid, templateData } = useDisplayField<OwnWidgetProps>(field);
 
   return (
     <div className="gui-field" id={uid}>
-      <DynamicHeading level={props.level || 1}>{props.text}</DynamicHeading>
+      <DynamicHeading level={templateData.level || 1}>{templateData.text}</DynamicHeading>
     </div>
   );
 }
