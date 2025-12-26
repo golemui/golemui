@@ -20,9 +20,11 @@ export const textarea = (): any => ({
       uid: '',
       kind: 'control',
       widget: 'textarea',
-      path: 'textareaPhone',
+      path: 'textareaAutoGrow',
       props: {
-        placeholder: 'Please enter your phone number',
+        placeholder: 'This textarea will grow automatically when you type in it.',
+        autoGrow: true,
+        minimumHeight: 80,
       },
     },
     {
@@ -45,6 +47,7 @@ export const textarea = (): any => ({
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
         counterMode: 'current',
+        minimumHeight: 80,
       },
       validator: { type: 'string', maxLength: 10, required: true },
     },

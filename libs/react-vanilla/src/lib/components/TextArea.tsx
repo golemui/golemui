@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { useControlField } from '@golemui/react';
 import { TextareaProps } from '@golemui/shared-vanilla';
-import { useCallback } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
 
@@ -17,10 +17,10 @@ function Counter({
   const val = value?.length ?? 0;
   return (
     <div
-      className={`gui-textarea--counter ${val > validator.maxLength ? 'gui-textarea--counter__error' : ''}`}
+      className={`gui-textarea--counter ${val > validator?.maxLength ? 'gui-textarea--counter__error' : ''}`}
     >
-      <span>{counterMode === 'current' ? val : validator.maxLength - val}</span>
-      <span> / {validator.maxLength}</span>
+      <span>{counterMode === 'current' ? val : validator?.maxLength - val}</span>
+      <span> / {validator?.maxLength}</span>
     </div>
   );
 }
@@ -41,16 +41,24 @@ export function TextArea(fieldInstance: Core.WithField) {
     onBlur,
   } = useControlField<string, TextareaProps>(field);
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => onValueChanged(e.target.value),
     [onValueChanged],
   );
-
   const hint = props.hint;
   const placeholder = props.placeholder;
   const icon = props.icon;
   const counterMode = props.counterMode;
   const showErrors = isTouched && errors && errors.length > 0;
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea && props.autoGrow) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.max(props.minimumHeight ?? 120, textarea.scrollHeight)}px`;
+    }
+  }, [value, props]);
 
   return (
     <div className="gui-textarea">
@@ -65,8 +73,14 @@ export function TextArea(fieldInstance: Core.WithField) {
       <div className="gui-field">
         <textarea
           id={uid}
+          ref={textareaRef}
           data-cy={`${uid}_textarea`}
           className={`${icon ? 'gui-textarea--icon' : ''}`}
+          style={{
+            height: `${props.minimumHeight ?? 120}px`,
+            minHeight: `${props.minimumHeight ?? 120}px`,
+            resize: props.autoGrow ? 'none' : 'vertical',
+          }}
           required={validator?.required}
           value={value ?? ''}
           disabled={isDisabled}

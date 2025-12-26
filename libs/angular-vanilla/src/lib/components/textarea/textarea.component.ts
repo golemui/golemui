@@ -19,6 +19,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 })
 export class TextareaComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
+
   protected adapter: Angular.ControlFieldAdapter<string, TextareaProps> = inject(
     Angular.ControlFieldAdapter,
   );
@@ -32,7 +33,13 @@ export class TextareaComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   valueChanged(event: Event) {
-    const target = event.target as HTMLInputElement;
+    const target = event.target as HTMLTextAreaElement;
+
+    if (this.adapter.templateData().autoGrow) {
+      target.style.height = 'auto';
+      target.style.height = `${Math.max(this.adapter.templateData().minimumHeight ?? 120, target.scrollHeight)}px`;
+    }
+
     this.adapter.valueChanged(target.value);
   }
 }

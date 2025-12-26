@@ -13,6 +13,9 @@
     [class]="{
       'gui-textarea--icon': templateData.icon,
     }"
+    [style.height.px]="templateData.minimumHeight ?? 120"
+    [style.min-height.px]="templateData.minimumHeight ?? 120"
+    [style.resize]="templateData.autoGrow ? 'none' : 'vertical'"
     [required]="templateData.validator?.required"
     [value]="templateData.value ?? ''"
     [disabled]="templateData.disabled"

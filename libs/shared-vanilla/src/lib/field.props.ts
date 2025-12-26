@@ -19,6 +19,8 @@ export type TextareaProps = {
   placeholder?: string;
   icon?: string;
   counterMode?: 'remaining' | 'current';
+  minimumHeight?: number;
+  autoGrow?: boolean;
 };
 
 export type NumberinputProps = {

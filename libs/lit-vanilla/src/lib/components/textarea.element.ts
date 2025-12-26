@@ -98,8 +98,11 @@ export class TextareaElement extends LitElement implements Core.WithField {
           id=${this.field.uid}
           data-cy=${`${this.field.uid}_textarea`}
           class=${classMap(fieldClasses)}
+          style=${{
+            height: `${this.adapter.templateData.minimumHeight ?? 120}px`,
+            'min-height': `${this.adapter.templateData.minimumHeight ?? 120}px`,
+          }}
           required=${this.adapter.templateData.validator?.required ? '' : nothing}
-          value=${this.adapter.templateData.value ?? ''}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
           placeholder=${this.adapter.templateData.placeholder || nothing}
@@ -118,6 +121,12 @@ export class TextareaElement extends LitElement implements Core.WithField {
 
   valueChanged(event: Event | undefined) {
     const target = event?.target as HTMLInputElement;
+
+    if (this.adapter.templateData.autoGrow) {
+      target.style.height = 'auto';
+      target.style.height = `${Math.max(this.adapter.templateData.minimumHeight ?? 120, target.scrollHeight)}px`;
+    }
+
     this.adapter.valueChanged(target.value);
   }
 
