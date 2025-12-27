@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { WithField } from '@golemui/core';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { LitFormContext } from '../context/form.context';
 
 export abstract class BaseFieldAdapter<F extends Core.FormField> {
@@ -23,16 +23,19 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
     });
   }
 
-  // Listen to the form states stream and keep all `props` in sync with the current state
-  protected propsUpdaterByCurrentState() {
-    Core.propsUpdaterByCurrentState({
-      field: this.field,
-      context: this.context,
-      updaterFn: (updatedProps) => {
-        this.setTemplateData(updatedProps);
-      },
-      destroy$: this.destroy$,
-    });
+  // Listen to the calculated props stream and keep all field props merged in a flattened object
+  protected templateDataUpdater(postUpdate: (obj: any) => any = (obj) => obj) {
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid))
+      .subscribe((calculatedField) => {
+        this.setTemplateData(
+          postUpdate({
+            ...calculatedField,
+            ...calculatedField.props,
+            ...(calculatedField as Core.InteractiveField<string>).on,
+          }),
+        );
+      });
   }
 
   destroy() {

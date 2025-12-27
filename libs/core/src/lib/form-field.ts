@@ -12,9 +12,6 @@ import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 
 export type Flags = {
   hidden?: boolean;
-  disabled?: boolean;
-  required?: boolean;
-  readonly?: boolean;
 };
 
 export type FieldWidget = string;

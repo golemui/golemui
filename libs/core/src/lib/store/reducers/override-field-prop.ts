@@ -7,16 +7,18 @@ export const overrideFieldProp = (
   state: State,
   { payload }: Actions.OVERRIDE_FIELD_PROP,
 ): State => {
-  const control = Object.values(state.fields).find(
-    (field) => isControlField(field) && field.path === payload.path,
+  const control = Object.values(state.calculatedFields).find(
+    ({ source }) => isControlField(source) && source.path === payload.path,
   );
   if (!control) {
     console.warn(`Control "${payload.path}" not found`);
     return state;
   }
-  const propOverrides = state.fieldPropOverrides[control.uid] || {};
+  const propOverrides = state.fieldPropOverrides[control.source.uid] || {};
   return {
     ...state,
-    fieldPropOverrides: { [control.uid]: { ...propOverrides, [payload.prop]: payload.value } },
+    fieldPropOverrides: {
+      [control.source.uid]: { ...propOverrides, [payload.prop]: payload.value },
+    },
   };
 };

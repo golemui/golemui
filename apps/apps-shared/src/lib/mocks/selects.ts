@@ -8,7 +8,7 @@ export const selectsData = {
 
 export const selects = defineForm({
   states: {
-    hasSubregion: `!!$form.subregion`,
+    hasSubregion: `!!$form.selects?.subregion`,
   },
   form: [
     {
@@ -68,7 +68,7 @@ export const selects = defineForm({
       uid: '',
       kind: 'control',
       widget: 'select',
-      path: 'subregion',
+      path: 'selects.subregion',
       label: 'Country subregion',
       on: {
         load: 'getSubregionsForSelect',
@@ -79,7 +79,7 @@ export const selects = defineForm({
       uid: '',
       kind: 'control',
       widget: 'select',
-      path: 'country',
+      path: 'selects.country',
       include: { in: ['hasSubregion'] },
     },
     {

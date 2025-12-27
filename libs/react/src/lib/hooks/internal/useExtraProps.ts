@@ -1,29 +1,40 @@
 import * as Core from '@golemui/core';
 import { useEffect, useState } from 'react';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { useReactFormContext } from '../../ReactFormContext';
 
-export function useExtraProps<ExtraProps extends Record<string, any>>(
-  field: Core.FormField<string>,
+export type WithFlattenedProps<
+  F extends Core.FormField<string>,
+  ExtraProps extends Core.FormField<string>['props'],
+> = F & ExtraProps & Core.On;
+
+export function useTemplateData<
+  F extends Core.FormField<string>,
+  ExtraProps extends Core.FormField<string>['props'],
+>(
+  field: F,
+  postUpdate?: (obj: WithFlattenedProps<F, ExtraProps>) => WithFlattenedProps<F, ExtraProps>,
 ) {
-  const [props, setProps] = useState<ExtraProps>((field.props || {}) as ExtraProps);
+  // TODO: this should be [templateData, setTemplateData]
+  const [props, setProps] = useState<WithFlattenedProps<F, ExtraProps>>(
+    (field.props || {}) as WithFlattenedProps<F, ExtraProps>,
+  );
   const { formContext } = useReactFormContext();
 
   useEffect(() => {
     const destroy$ = new Subject<void>();
-    Core.propsUpdaterByCurrentState({
-      field,
-      context: formContext,
-      updaterFn: (updatedProps) => {
-        setProps({
-          ...(field.props as ExtraProps),
-          ...updatedProps,
-        });
-      },
-      destroy$,
-    });
+    formContext.store.state$
+      .pipe(takeUntil(destroy$), Core.calculatedFieldsByUid$(field.uid))
+      .subscribe((calculatedField) => {
+        const templateData = {
+          ...calculatedField,
+          ...calculatedField.props,
+          ...(calculatedField as Core.On),
+        } as WithFlattenedProps<F, ExtraProps>;
+        setProps(postUpdate ? postUpdate(templateData) : templateData);
+      });
     return () => destroy$.next();
-  }, [field, formContext]);
+  }, [field, formContext, postUpdate]);
 
   return props;
 }

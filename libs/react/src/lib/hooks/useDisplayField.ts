@@ -1,12 +1,14 @@
 import * as Core from '@golemui/core';
 import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
-import { useExtraProps } from './internal/useExtraProps';
+import { useTemplateData } from './internal/useExtraProps';
 
-export function useDisplayField<ExtraProps extends Record<string, any>>(field: Core.DisplayField) {
+export function useDisplayField<ExtraProps extends Record<string, any>>(
+  field: Core.DisplayField<string>,
+) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const props = useExtraProps<ExtraProps>(field);
+  const templateData = useTemplateData<Core.DisplayField<string>, ExtraProps>(field);
 
   useEffect(() => {
     setUid(field.uid);
@@ -29,6 +31,6 @@ export function useDisplayField<ExtraProps extends Record<string, any>>(field: C
   }, [formContext, field]);
   return {
     uid,
-    props,
+    templateData,
   };
 }

@@ -6,7 +6,7 @@ import '../styles.scss';
 
 export function Repeater(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;
-  const { uid, value, label, onValueChanged, props } = useControlField<
+  const { uid, value, onValueChanged, templateData } = useControlField<
     Record<string, unknown>[],
     RepeaterProps
   >(field);
@@ -33,28 +33,32 @@ export function Repeater(fieldInstance: Core.WithField) {
       return (
         <RepeaterIndexContext.Provider value={index} key={`${uid}-${index}`}>
           <div className={'card'}>
-            <FieldRenderer key={`${uid}-${index}`} field={props.template} repeaterIndex={index} />
+            <FieldRenderer
+              key={`${uid}-${index}`}
+              field={templateData.template}
+              repeaterIndex={index}
+            />
             <button type="button" className="gui-button" onClick={() => removeItem(value, index)}>
-              {props.removeLabel ?? 'Remove'}
+              {templateData.removeLabel ?? 'Remove'}
             </button>
           </div>
         </RepeaterIndexContext.Provider>
       );
     });
-  }, [props, value, uid, removeItem]);
+  }, [templateData, value, uid, removeItem]);
 
   return (
     <div className="gui-repeater">
       <div id={uid}>
-        {label && <h2 key={`${uid}-title`}>{label}</h2>}
+        {templateData.label && <h2 key={`${uid}-title`}>{templateData.label as string}</h2>}
         {renderFields()}
         <button
           type="button"
           className="gui-button"
           onClick={() => addItem(value || [])}
-          disabled={props.limit ? props.limit === (value?.length ?? 0) : false}
+          disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
         >
-          {props.addLabel ?? 'Add'}
+          {templateData.addLabel ?? 'Add'}
         </button>
       </div>
     </div>

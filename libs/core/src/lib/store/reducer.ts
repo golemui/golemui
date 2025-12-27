@@ -19,39 +19,41 @@ export const reducer =
         return Fn.pipe(
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
         );
 
       case 'ADD_FIELD':
         return Fn.pipe(
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
         );
 
       case 'REMOVE_FIELD':
-        return Reducers.removeField(state, action);
+        return Fn.pipe(
+          Reducers.removeField(state, action),
+          Reducers.calculateCurrentState,
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
+        );
 
       case 'SET_FIELD_INITIAL_DATA':
       case 'SET_FIELD_DATA':
         return Fn.pipe(
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
-          // reduceIf(isControlTouched, Reducers.validateAll(validators)),
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
         );
 
       case 'OVERRIDE_FIELD_PROP':
         return Fn.pipe(
           Reducers.overrideFieldProp(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateCurrentFunctions,
-          Reducers.applyCurrentState,
+          Reducers.calculateFieldFlags,
+          Reducers.calculateFieldProps,
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );
@@ -64,9 +66,9 @@ export const reducer =
           {
             ...state,
             touched: true,
-            touchedControls: Object.keys(state.fields).reduce(
+            touchedControls: Object.keys(state.calculatedFields).reduce(
               (touchedControls, key) => {
-                const field = state.fields[key];
+                const field = state.calculatedFields[key].source;
                 if (isControlField(field)) {
                   touchedControls[field.path] = true;
                 }

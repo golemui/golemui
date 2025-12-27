@@ -1,4 +1,5 @@
 import { distinctUntilChanged, filter, map, Observable, pipe } from 'rxjs';
+import { LayoutField } from '../form-field';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
 import { State } from './model';
@@ -42,19 +43,36 @@ export const validationByPath$ = (path: DotPath) =>
 
 // --------------------------------
 //
-// FIELDS
+// CALCULATED FIELDS
 //
 // --------------------------------
 
-const selectFields = pipe(
-  map((store: State) => store.fields),
+const selectCalculatedFields = pipe(
+  map((store: State) => store.calculatedFields),
   distinctUntilChanged(),
 );
 
-export const fieldsByUid$ = (uid: Uid) =>
+export const calculatedFieldsByUid$ = (uid: Uid) =>
   pipe(
-    selectFields,
-    map((fields) => fields[uid]),
+    selectCalculatedFields,
+    map((calculatedFields) => calculatedFields[uid]),
+    filter((derivedField) => derivedField !== undefined),
+    map((derivedField) => derivedField.current),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
+// LAYOUT CHILDREN
+//
+// --------------------------------
+
+export const calculatedLayoutChildrenByUid$ = (uid: Uid) =>
+  pipe(
+    selectCalculatedFields,
+    map((calculatedFields) => calculatedFields[uid]),
+    filter((derivedField) => derivedField !== undefined),
+    map((derivedField) => (derivedField.current as LayoutField).children),
     distinctUntilChanged(),
   );
 
@@ -93,38 +111,6 @@ export const touchedControlsByPath$ = (path: DotPath) =>
     map((touchedControls) => touchedControls[path]),
     distinctUntilChanged(),
   );
-
-// --------------------------------
-//
-// FIELD PROP OVERRIDES
-//
-// --------------------------------
-
-export const selectFieldPropOverrides = pipe(
-  map((store: State) => store.fieldPropOverrides),
-  distinctUntilChanged(),
-);
-
-export const fieldPropOverridesByUid$ = (uid: Uid) =>
-  pipe(
-    selectFieldPropOverrides,
-    map((fieldPropOverrides) => fieldPropOverrides[uid]),
-    filter((fieldPropOverrides) => fieldPropOverrides !== undefined),
-    distinctUntilChanged(),
-  );
-
-// --------------------------------
-//
-// CURRENT STATES
-//
-// --------------------------------
-
-const selectCurrentStates = pipe(
-  map((store: State) => store.currentStates),
-  distinctUntilChanged(),
-);
-
-export const currentStates = (store: Observable<State>) => store.pipe(selectCurrentStates);
 
 // --------------------------------
 //

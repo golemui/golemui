@@ -1,21 +1,35 @@
 import * as Core from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
-import { useExtraProps } from './internal/useExtraProps';
+import { useTemplateData, WithFlattenedProps } from './internal/useExtraProps';
 
 export function useControlField<T, ExtraProps extends Record<string, any>>(
   field: Core.ControlField<T, string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const [label, setLabel] = useState<string | undefined>(undefined);
   const [value, setValue] = useState<T | undefined>(undefined);
-  const [validator, setValidator] = useState<Core.Validator | undefined>(undefined);
   const [errors, setErrors] = useState<string[]>([]);
-  const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
-  const [isReadonly, setIsReadonly] = useState<boolean | undefined>(undefined);
   const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
-  const props = useExtraProps<ExtraProps>(field);
+
+  const calculateLabel = useCallback(
+    (obj: WithFlattenedProps<Core.ControlField<T, string>, ExtraProps>) => {
+      const label =
+        obj.label === undefined
+          ? Core.toLabel(obj['path'])
+          : obj.label === ''
+            ? undefined
+            : obj.label;
+      obj.label = label;
+      return obj;
+    },
+    [],
+  );
+
+  const templateData = useTemplateData<Core.ControlField<T, string>, ExtraProps>(
+    field,
+    calculateLabel,
+  );
 
   useEffect(() => {
     formContext.store.dispatch({
@@ -26,7 +40,6 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
       type: 'SET_FIELD_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
-    setLabel(calculateLabel(field));
     setUid(field.uid);
   }, [field, formContext.store]);
 
@@ -57,33 +70,6 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
       });
     return () => sub.unsubscribe();
   }, [field, formContext.store]);
-
-  // Listen to the fieldFlags stream (`disabled` and `readonly` flags)
-  useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(Core.fieldFlagsByUid$(field.uid))
-      .subscribe((fieldFlags) => {
-        setIsDisabled(fieldFlags?.disabled ?? (field.disabled as boolean));
-        setIsReadonly(fieldFlags?.readonly ?? (field.readonly as boolean));
-      });
-    return () => sub.unsubscribe();
-  }, [field, formContext.store]);
-
-  // Listen to the form states stream and keep the `label` property in sync with the current state
-  useEffect(() => {
-    const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
-      setLabel(formContext.getPropertyValueByCurrentState('label', field) ?? calculateLabel(field));
-    });
-    return () => sub.unsubscribe();
-  }, [field, formContext]);
-
-  // Listen to the form states stream and keep the `validator` property in sync with the current state
-  useEffect(() => {
-    const sub = formContext.store.state$.pipe(Core.currentStates).subscribe(() => {
-      setValidator(formContext.getPropertyValueByCurrentState('validator', field));
-    });
-    return () => sub.unsubscribe();
-  }, [field, formContext]);
 
   useEffect(() => {
     formContext.emitEvent('load', field);
@@ -118,23 +104,11 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
 
   return {
     uid,
-    label,
     value,
-    props,
-    validator,
+    templateData,
     errors,
-    isDisabled,
-    isReadonly,
     isTouched,
     onValueChanged,
     onBlur,
   };
-}
-
-function calculateLabel<T>(field: Core.ControlField<T, string>) {
-  return field.label === undefined
-    ? Core.toLabel(field.path)
-    : field.label === ''
-      ? undefined
-      : field.label;
 }

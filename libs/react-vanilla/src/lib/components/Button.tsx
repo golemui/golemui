@@ -4,7 +4,8 @@ import '../styles.scss';
 
 export function Button(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.InteractiveField;
-  const { uid, isDisabled, label, onClick } = useInteractiveField(field);
+  const { uid, templateData, onClick } = useInteractiveField(field);
+  const isDisabled = templateData.disabled as boolean;
 
   return (
     <div className="gui-button">
@@ -16,7 +17,7 @@ export function Button(fieldInstance: Core.WithField) {
           onClick={onClick}
           disabled={isDisabled}
         >
-          {label}
+          {templateData.label as string}
         </button>
       </div>
     </div>

@@ -16,24 +16,15 @@ import { Errors } from './shared/Errors';
 
 export function Select(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const {
-    uid,
-    validator,
-    errors,
-    value,
-    isDisabled,
-    isReadonly,
-    isTouched,
-    label,
-    props,
-    onValueChanged,
-    onBlur,
-  } = useControlField<OptionValue, SelectProps>(field);
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+    OptionValue,
+    SelectProps
+  >(field);
 
-  const hint = props.hint;
-  const placeholder = props.placeholder;
-  const icon = props.icon;
-  const iconPosition = props.iconPosition;
+  const hint = templateData.hint;
+  const placeholder = templateData.placeholder;
+  const icon = templateData.icon;
+  const iconPosition = templateData.iconPosition;
 
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [hasMatchingValue, setHasMatchingValue] = useState(false);
@@ -48,7 +39,7 @@ export function Select(fieldInstance: Core.WithField) {
   );
 
   useEffect(() => {
-    let opts = props.options;
+    let opts = templateData.options;
     if (Array.isArray(opts) && opts.length > 0) {
       if (isOption(opts[0])) {
         // Nothing to do here, It's an option already
@@ -58,8 +49,8 @@ export function Select(fieldInstance: Core.WithField) {
           label: opt.toString(),
           value: opt,
         }));
-      } else if (isProtoOption(opts[0], props as SelectProps)) {
-        const optionMapper: (item: unknown) => Option = createOptionMapper(opts[0], props);
+      } else if (isProtoOption(opts[0], templateData as SelectProps)) {
+        const optionMapper: (item: unknown) => Option = createOptionMapper(opts[0], templateData);
         opts = opts.map(optionMapper);
       } else {
         throw new Error('Invalid option shape');
@@ -70,14 +61,17 @@ export function Select(fieldInstance: Core.WithField) {
       setHasMatchingValue(matching);
       setSafeValue(matching ? value : '');
     }
-  }, [props, value]);
+  }, [templateData, value]);
 
   const showErrors = isTouched && errors && errors.length > 0;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
 
   return (
     <div className="gui-select">
       <label className="gui-label" htmlFor={uid}>
-        {label + (validator?.required ? ' *' : '')}
+        {templateData.label + (isRequired ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
@@ -92,13 +86,13 @@ export function Select(fieldInstance: Core.WithField) {
             'gui-select--icon-right': iconPosition === 'right',
           })}
           data-cy={`${uid}_select`}
-          required={validator?.required}
+          required={isRequired}
           value={safeValue ?? ''}
           disabled={isDisabled || isReadonly}
           aria-invalid={showErrors}
           aria-readonly={isDisabled || isReadonly}
           aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={validator?.required}
+          aria-required={isRequired}
           aria-describedby={hint ? `${uid}_hint` : undefined}
           onChange={handleChange}
           onBlur={onBlur}

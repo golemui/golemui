@@ -1,6 +1,6 @@
 import { inject, WritableSignal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
 export abstract class BaseFieldAdapter<F extends Core.FormField> {
@@ -15,21 +15,24 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
     });
   }
 
-  // Listen to the form states stream and keep all `props` in sync with the current state
-  protected propsUpdaterByCurrentState<ExtraProps extends Record<string, any>>(
-    templateData: WritableSignal<ExtraProps>,
+  // TODO: we may want to not flatten everything to avoid name collisions
+  // Listen to the calculated props stream and keep all field props merged in a flattened object
+  protected templateDataUpdater<TemplateData extends Record<string, any>>(
+    templateData: WritableSignal<TemplateData>,
+    postUpdate: (obj: TemplateData) => TemplateData = (obj) => obj,
   ) {
-    Core.propsUpdaterByCurrentState({
-      field: this.field,
-      context: this.context,
-      updaterFn: (updatedProps) => {
-        templateData.update((current) => ({
-          ...current,
-          ...updatedProps,
-        }));
-      },
-      destroy$: this.destroy$,
-    });
+    this.context.store.state$
+      .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid))
+      .subscribe((calculatedField) => {
+        templateData.update((current) => {
+          return postUpdate({
+            ...current,
+            ...calculatedField,
+            ...calculatedField.props,
+            ...(calculatedField as Core.InteractiveField).on,
+          });
+        });
+      });
   }
 
   destroy() {
