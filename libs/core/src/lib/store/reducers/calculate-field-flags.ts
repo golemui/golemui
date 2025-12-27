@@ -1,4 +1,3 @@
-import * as Field from '../../form-field';
 import { State } from '../model';
 
 export const calculateFieldFlags = (state: State): State => {
@@ -40,66 +39,8 @@ function calculateFlags(state: State): State['fieldFlags'] {
           );
         }
 
-        // Only process fields that are visible
-        if (!flags[field.uid].hidden) {
-          // disabled
-          if (Field.isControlField(field) || Field.isInteractiveField(field)) {
-            setFlag({
-              property: 'disabled',
-              field,
-              flags,
-              currentStates: state.currentStates,
-            });
-          }
-
-          // required
-          if (Field.isControlField(field)) {
-            setFlag({
-              property: 'required',
-              field,
-              flags,
-              currentStates: state.currentStates,
-            });
-          }
-
-          // readonly
-          if (Field.isControlField(field)) {
-            setFlag({
-              property: 'readonly',
-              field,
-              flags,
-              currentStates: state.currentStates,
-            });
-          }
-        }
         return flags;
       },
       {} as State['fieldFlags'],
     );
-}
-
-// FIXME: No type safety at all!!
-function setFlag({
-  currentStates,
-  field,
-  property,
-  flags,
-}: {
-  currentStates: string[];
-  field: Record<string, any>;
-  property: string;
-  flags: Record<string, Record<string, any>>;
-}) {
-  const matchedState = currentStates
-    .sort((a, b) => b.length - a.length)
-    .find((currentState) => {
-      const currentStateValue = field[`${property}.${currentState}`];
-      return currentStateValue !== undefined;
-    });
-  // if the property is explicitly set on any of the current states, it wins.
-  if (matchedState !== undefined) {
-    flags[field['uid']][property] = field[`${property}.${matchedState}`];
-  } else {
-    flags[field['uid']][property] = field[property];
-  }
 }

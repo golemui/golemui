@@ -8,7 +8,6 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const [isDisabled, setIsDisabled] = useState<boolean | undefined>(undefined);
   const templateData = useTemplateData<Core.InteractiveField<string>, ExtraProps>(field);
 
   useEffect(() => {
@@ -20,15 +19,6 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
       type: 'ADD_FIELD',
       payload: { field },
     });
-  }, [field, formContext.store]);
-
-  useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(Core.fieldFlagsByUid$(field.uid))
-      .subscribe((fieldFlags) => {
-        setIsDisabled(fieldFlags?.disabled ?? (field.disabled as boolean));
-      });
-    return () => sub.unsubscribe();
   }, [field, formContext.store]);
 
   useEffect(() => {
@@ -51,7 +41,6 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
   return {
     uid,
     templateData,
-    isDisabled,
     onClick,
   };
 }

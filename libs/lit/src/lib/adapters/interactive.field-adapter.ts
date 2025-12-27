@@ -1,6 +1,5 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
-import { takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 export const interactiveContext = createContext<InteractiveFieldAdapter>(
@@ -18,15 +17,6 @@ export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveFi
 
     this.addFieldToTheStore(field);
     this.templateDataUpdater();
-
-    // Listen to the fieldFlags stream (`disabled` flag)
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.fieldFlagsByUid$(field.uid))
-      .subscribe((fieldFlags) => {
-        this.setTemplateData({
-          disabled: fieldFlags?.disabled ?? (field.disabled as boolean),
-        });
-      });
 
     this.context.emitEvent('load', this.field);
   }
