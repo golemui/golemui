@@ -1,3 +1,7 @@
+## 0.15.1 (2025-12-27)
+
+This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.
+
 ## 0.15.0 (2025-12-27)
 
 ### 🚀 Features

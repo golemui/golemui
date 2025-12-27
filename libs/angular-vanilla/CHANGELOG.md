@@ -1,3 +1,13 @@
+## 0.15.1 (2025-12-27)
+
+### 🩹 Fixes
+
+- scroll to default tab on first render of tabs ([91e6de7](https://github.com/golemui/formforge/commit/91e6de7))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.15.0 (2025-12-27)
 
 ### 🚀 Features
