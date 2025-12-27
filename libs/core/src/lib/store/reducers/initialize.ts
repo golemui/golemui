@@ -44,7 +44,13 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     return {
       ...initialState,
       formDef: result.value as Form.Form,
-      flatForm: flattenForm([result.value.form] as Field.FormField[]),
+      flatForm: flattenForm([result.value.form] as Field.FormField[]).reduce(
+        (acc, cur) => {
+          acc[cur.uid] = cur;
+          return acc;
+        },
+        {} as State['flatForm'],
+      ),
     };
   }
 

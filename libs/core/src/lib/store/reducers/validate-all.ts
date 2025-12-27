@@ -7,7 +7,10 @@ import { State, ValidationState } from '../model';
 export const validateAll =
   (validators: ValidatorFn<any>) =>
   (state: State): State => {
-    const controls = state.flatForm.filter(isControlField) as ControlField<unknown>[];
+    // TODO: we are not accounting for repeater fields here
+    const controls = Object.values(state.flatForm).filter(
+      isControlField,
+    ) as ControlField<unknown>[];
     const oldValidations = state.validations;
 
     return {

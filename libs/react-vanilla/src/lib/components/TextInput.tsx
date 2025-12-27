@@ -7,35 +7,29 @@ import { Errors } from './shared/Errors';
 
 export function TextInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const {
-    uid,
-    validator,
-    errors,
-    value,
-    isDisabled,
-    isReadonly,
-    isTouched,
-    label,
-    props,
-    onValueChanged,
-    onBlur,
-  } = useControlField<string, TextinputProps>(field);
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+    string,
+    TextinputProps
+  >(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.value),
     [onValueChanged],
   );
 
-  const hint = props.hint;
-  const placeholder = props.placeholder;
-  const icon = props.icon;
-  const iconPosition = props.iconPosition;
+  const hint = templateData.hint;
+  const placeholder = templateData.placeholder;
+  const icon = templateData.icon;
+  const iconPosition = templateData.iconPosition;
   const showErrors = isTouched && errors && errors.length > 0;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
 
   return (
     <div className="gui-textinput">
-      <label className="gui-label" htmlFor={uid}>
-        {label + (validator?.required ? ' *' : '')}
+      <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
+        {templateData.label + (isRequired ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
@@ -48,7 +42,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           id={uid}
           data-cy={`${uid}_textinput`}
           className={`${icon ? 'gui-textinput--icon' : ''} ${iconPosition === 'right' ? 'gui-textinput--icon-right' : ''}`}
-          required={validator?.required}
+          required={isRequired}
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}
@@ -57,7 +51,7 @@ export function TextInput(fieldInstance: Core.WithField) {
           onBlur={onBlur}
           aria-invalid={showErrors}
           aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={validator?.required}
+          aria-required={isRequired}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         />
         {icon && (

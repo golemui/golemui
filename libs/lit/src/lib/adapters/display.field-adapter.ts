@@ -8,7 +8,7 @@ export const displayFieldContext =
 export class DisplayFieldAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.DisplayField> {
-  override templateData = {} as ExtraProps;
+  override templateData = {} as Core.DisplayField & ExtraProps;
 
   init(field: Core.DisplayField) {
     this.field = field;
@@ -19,6 +19,6 @@ export class DisplayFieldAdapter<
     });
 
     this.addFieldToTheStore(field);
-    this.propsUpdaterByCurrentState();
+    this.templateDataUpdater();
   }
 }

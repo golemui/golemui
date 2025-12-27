@@ -23,26 +23,6 @@ export class FormContext<ComponentType> {
     this.store = createFormStore(middlewares, validators, validateOn);
   }
 
-  // TODO: There's an almost duplicate of this in the validate-all reducer
-  // FIXME: Not type safety
-  getPropertyValueByCurrentState<T>(property: string, obj: Record<string, any>): T | undefined {
-    const currentStates = this.store.getState().currentStates;
-    const matchedStates = currentStates.filter((currentState) => {
-      return obj[`${property}.${currentState}`] !== undefined;
-    });
-    if (matchedStates.length > 0) {
-      const selectedState = matchedStates
-        // longer state names take precedence because they match more. e.g. `a.b.c` > `a.b`
-        .sort((a, b) => b.length - a.length)
-        .find((currentState) => {
-          return obj[`${property}.${currentState}`] !== undefined;
-        });
-      return obj[`${property}.${selectedState}`] ?? obj[property];
-    } else {
-      return obj[property];
-    }
-  }
-
   emitEvent(
     eventType: keyof On<string>,
     field: ControlField<any, string> | InteractiveField<string> | LayoutField<string>,

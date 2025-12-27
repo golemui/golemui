@@ -7,33 +7,27 @@ import { Errors } from './shared/Errors';
 
 export function Toggle(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
-  const {
-    uid,
-    validator,
-    errors,
-    value,
-    isDisabled,
-    isReadonly,
-    label,
-    onValueChanged,
-    onBlur,
-    props,
-    isTouched,
-  } = useControlField<boolean, ToggleProps>(field);
+  const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useControlField<
+    boolean,
+    ToggleProps
+  >(field);
+
+  const hint = templateData.hint;
+  const togglePosition = templateData.togglePosition;
+  const showErrors = isTouched && errors && errors.length > 0;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => !isReadonly && onValueChanged(e.target.checked),
     [onValueChanged, isReadonly],
   );
 
-  const hint = props.hint;
-  const togglePosition = props.togglePosition;
-  const showErrors = isTouched && errors && errors.length > 0;
-
   return (
     <div className={`gui-toggle ${togglePosition === 'left' ? 'gui-toggle--left' : ''}`}>
       <label className="gui-label" htmlFor={uid}>
-        {label + (validator?.required ? ' *' : '')}
+        {templateData.label + (isRequired ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
@@ -48,7 +42,7 @@ export function Toggle(fieldInstance: Core.WithField) {
           id={uid}
           data-cy={`${uid}_toggle`}
           checked={value ?? false}
-          required={validator?.required}
+          required={isRequired}
           disabled={isDisabled}
           readOnly={isReadonly}
           aria-readonly={isReadonly}

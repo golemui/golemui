@@ -5,13 +5,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Tabs(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, props, onChange } = useLayoutField<TabsProps>(field);
+  const { uid, children, templateData, onChange } = useLayoutField<TabsProps>(field);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
   const startSentinelRef = useRef<HTMLLIElement>(null);
   const endSentinelRef = useRef<HTMLLIElement>(null);
   const [isStartVisible, setIsStartVisible] = useState(false);
   const [isEndVisible, setIsEndVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState(props.defaultOpen ?? props.tabs[0].uid);
+  const [activeTab, setActiveTab] = useState(templateData.defaultOpen ?? templateData.tabs[0].uid);
 
   useEffect(() => {
     const startSentinel = startSentinelRef.current;
@@ -36,29 +36,29 @@ export function Tabs(fieldInstance: Core.WithField) {
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
-    const currentIndex = props.tabs.findIndex((tab) => tab.uid === activeTab);
+    const currentIndex = templateData.tabs.findIndex((tab) => tab.uid === activeTab);
     const tabButtons = tabRefs.current;
 
     switch (event.key) {
       case 'ArrowLeft':
         if (currentIndex > 0) {
-          handleTabChange(props.tabs[currentIndex - 1].uid);
+          handleTabChange(templateData.tabs[currentIndex - 1].uid);
           tabButtons[currentIndex - 1]?.focus();
         }
         break;
       case 'ArrowRight':
-        if (currentIndex < props.tabs.length - 1) {
-          handleTabChange(props.tabs[currentIndex + 1].uid);
+        if (currentIndex < templateData.tabs.length - 1) {
+          handleTabChange(templateData.tabs[currentIndex + 1].uid);
           tabButtons[currentIndex + 1]?.focus();
         }
         break;
       case 'Home':
-        handleTabChange(props.tabs[0].uid);
+        handleTabChange(templateData.tabs[0].uid);
         tabButtons[0]?.focus();
         break;
       case 'End':
-        handleTabChange(props.tabs[props.tabs.length - 1].uid);
-        tabButtons[props.tabs.length - 1]?.focus();
+        handleTabChange(templateData.tabs[templateData.tabs.length - 1].uid);
+        tabButtons[templateData.tabs.length - 1]?.focus();
         break;
       default:
         return;
@@ -66,7 +66,7 @@ export function Tabs(fieldInstance: Core.WithField) {
   };
 
   const renderTabs = useCallback(() => {
-    return props.tabs.map((tab, index) => {
+    return templateData.tabs.map((tab, index) => {
       return (
         <li>
           <button
@@ -93,7 +93,7 @@ export function Tabs(fieldInstance: Core.WithField) {
         </li>
       );
     });
-  }, [props, activeTab]);
+  }, [templateData, activeTab, field]);
 
   const renderFields = useCallback(() => {
     const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);

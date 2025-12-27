@@ -5,14 +5,14 @@ import { useCallback, useState } from 'react';
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
-  const { uid, children, props, onChange } = useLayoutField<AccordionProps>(field);
-  const [activeSections, setActiveSections] = useState(props.defaultOpen ?? {});
+  const { uid, children, templateData, onChange } = useLayoutField<AccordionProps>(field);
+  const [activeSections, setActiveSections] = useState(templateData.defaultOpen ?? {});
 
   const onClickButton = useCallback(
     (uid: string) => {
       const newState = { ...activeSections };
 
-      if (props.singleOpen) {
+      if (templateData.singleOpen) {
         Object.keys(newState)
           .filter((sectionUid) => sectionUid !== uid)
           .forEach((sectionUid) => {
@@ -25,7 +25,7 @@ export function Accordion(fieldInstance: Core.WithField) {
       setActiveSections(newState);
       onChange(newState);
     },
-    [props.singleOpen, activeSections, onChange],
+    [templateData.singleOpen, activeSections, onChange],
   );
 
   const renderContent = useCallback(
@@ -48,7 +48,7 @@ export function Accordion(fieldInstance: Core.WithField) {
   );
 
   const renderAccordion = useCallback(() => {
-    return props.sections.map((section, index) => (
+    return templateData.sections.map((section, index) => (
       <div className="gui-accordion__section" key={`${'accordion_section_' + section.uid}`}>
         <button
           type="button"
@@ -65,7 +65,7 @@ export function Accordion(fieldInstance: Core.WithField) {
         {renderContent(section.uid)}
       </div>
     ));
-  }, [props, activeSections, onClickButton, renderContent]);
+  }, [templateData, activeSections, onClickButton, renderContent]);
 
   return (
     <div className="gui-accordion">
