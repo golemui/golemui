@@ -63,6 +63,11 @@ export class TabsElement extends LitElement implements Core.WithField {
       this.endSentinel,
       (isIntersecting) => (this.isEndVisible = isIntersecting),
     );
+
+    // Scroll into view the active tab, just in case it's out of view
+    const tabs = (this.field.props as TabsProps).tabs;
+    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
+    this.tabButtons[currentIndex].scrollIntoView();
   }
 
   onClickTab(uid: string) {
@@ -159,7 +164,7 @@ export class TabsElement extends LitElement implements Core.WithField {
             tabindex="0"
             data-cy=${`tabpanel_${this.field.uid}_${activeSectionIndex}`}
             id=${`tabpanel_${this.field.uid}_${activeSectionIndex}`}
-            aria-labeledby=${`tab_${this.field.uid}_${activeSectionIndex}`}
+            aria-labelledby=${`tab_${this.field.uid}_${activeSectionIndex}`}
           >
             <gui-field .field=${section}></gui-field>
           </section>`,

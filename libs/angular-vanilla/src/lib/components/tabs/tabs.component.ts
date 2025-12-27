@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   inject,
@@ -23,7 +24,7 @@ import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui
     class: 'gui-tabs',
   },
 })
-export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
+export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithField {
   tabButtons = viewChildren<ElementRef>('tabButtonRef');
   startSentinel = viewChild.required<ElementRef>('startSentinel');
   endSentinel = viewChild.required<ElementRef>('endSentinel');
@@ -50,6 +51,13 @@ export class TabsComponent implements OnInit, OnDestroy, Core.WithField {
       this.endSentinel().nativeElement,
       (isIntersecting: boolean) => this.isEndVisible.set(isIntersecting),
     );
+  }
+
+  ngAfterViewInit() {
+    // Scroll into view the active tab, just in case it's out of view
+    const tabs = (this.field.props as TabsProps).tabs;
+    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
+    this.tabButtons()[currentIndex].nativeElement.scrollIntoView();
   }
 
   onClickTab(uid: string) {
