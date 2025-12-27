@@ -30,47 +30,58 @@ export function Tabs(fieldInstance: Core.WithField) {
     };
   }, []);
 
-  const handleTabChange = (uid: string) => {
-    setActiveTab(uid);
-    onChange(uid);
-  };
+  useEffect(() => {
+    const tabs = templateData.tabs;
+    const currentIndex = tabs.findIndex((tab) => tab.uid === activeTab);
+    tabRefs.current[currentIndex].scrollIntoView();
+  }, []);
 
-  const onKeyDown = (event: React.KeyboardEvent) => {
-    const currentIndex = templateData.tabs.findIndex((tab) => tab.uid === activeTab);
-    const tabButtons = tabRefs.current;
+  const handleTabChange = useCallback(
+    (uid: string) => {
+      setActiveTab(uid);
+      onChange(uid);
+    },
+    [onChange],
+  );
 
-    switch (event.key) {
-      case 'ArrowLeft':
-        if (currentIndex > 0) {
-          handleTabChange(templateData.tabs[currentIndex - 1].uid);
-          tabButtons[currentIndex - 1]?.focus();
-        }
-        break;
-      case 'ArrowRight':
-        if (currentIndex < templateData.tabs.length - 1) {
-          handleTabChange(templateData.tabs[currentIndex + 1].uid);
-          tabButtons[currentIndex + 1]?.focus();
-        }
-        break;
-      case 'Home':
-        handleTabChange(templateData.tabs[0].uid);
-        tabButtons[0]?.focus();
-        break;
-      case 'End':
-        handleTabChange(templateData.tabs[templateData.tabs.length - 1].uid);
-        tabButtons[templateData.tabs.length - 1]?.focus();
-        break;
-      default:
-        return;
-    }
-  };
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      const currentIndex = templateData.tabs.findIndex((tab) => tab.uid === activeTab);
+      const tabButtons = tabRefs.current;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          if (currentIndex > 0) {
+            handleTabChange(templateData.tabs[currentIndex - 1].uid);
+            tabButtons[currentIndex - 1]?.focus();
+          }
+          break;
+        case 'ArrowRight':
+          if (currentIndex < templateData.tabs.length - 1) {
+            handleTabChange(templateData.tabs[currentIndex + 1].uid);
+            tabButtons[currentIndex + 1]?.focus();
+          }
+          break;
+        case 'Home':
+          handleTabChange(templateData.tabs[0].uid);
+          tabButtons[0]?.focus();
+          break;
+        case 'End':
+          handleTabChange(templateData.tabs[templateData.tabs.length - 1].uid);
+          tabButtons[templateData.tabs.length - 1]?.focus();
+          break;
+        default:
+          return;
+      }
+    },
+    [activeTab, templateData.tabs, handleTabChange],
+  );
 
   const renderTabs = useCallback(() => {
     return templateData.tabs.map((tab, index) => {
       return (
-        <li>
+        <li key={`tab_${field.uid}_${tab.uid}`}>
           <button
-            key={`tab_${field.uid}_${tab.uid}`}
             ref={(el) => {
               tabRefs.current[index] = el!;
             }}
@@ -93,7 +104,7 @@ export function Tabs(fieldInstance: Core.WithField) {
         </li>
       );
     });
-  }, [templateData, activeTab, field]);
+  }, [templateData, activeTab, field, tabRefs, handleTabChange, onKeyDown]);
 
   const renderFields = useCallback(() => {
     const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);
