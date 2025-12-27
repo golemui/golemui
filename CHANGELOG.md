@@ -1,3 +1,53 @@
+## 0.15.0 (2025-12-27)
+
+### 🚀 Features
+
+- add callback functions ([763af97](https://github.com/golemui/formforge/commit/763af97))
+- **angular:** add toggle switch ([3512859](https://github.com/golemui/formforge/commit/3512859))
+- **angular:** add toggle styles ([c02206c](https://github.com/golemui/formforge/commit/c02206c))
+- **core:** Add public api for callback functions ([37968cc](https://github.com/golemui/formforge/commit/37968cc))
+- **core:** add generic support to defineForm for type inference ([9b7521f](https://github.com/golemui/formforge/commit/9b7521f))
+- **core:** add support for custom events ([a1ac0b4](https://github.com/golemui/formforge/commit/a1ac0b4))
+- **lit:** add toggle component to lit ([b832b4f](https://github.com/golemui/formforge/commit/b832b4f))
+- **lit:** add toggle component to react ([bfe61bd](https://github.com/golemui/formforge/commit/bfe61bd))
+
+### 🩹 Fixes
+
+- types and renaming - remove GUIApi and replace with the FieldFunctionParams type - Enhance type safety a little bit - rename to things to use FieldFunctions in the name ([0b6b12f](https://github.com/golemui/formforge/commit/0b6b12f))
+- interactive field label with function ([f865e59](https://github.com/golemui/formforge/commit/f865e59))
+- interactive field label with function ([d22cc23](https://github.com/golemui/formforge/commit/d22cc23))
+- expand ReactiveFieldFunction support ([14f1861](https://github.com/golemui/formforge/commit/14f1861))
+- expand ReactiveFieldFunction support ([ec344b9](https://github.com/golemui/formforge/commit/ec344b9))
+- expand ReactiveFieldFunction support to events ([9478304](https://github.com/golemui/formforge/commit/9478304))
+- correct type definition for ReactiveFieldValue. Use generic type ([15573a9](https://github.com/golemui/formforge/commit/15573a9))
+- make private ([fc4914d](https://github.com/golemui/formforge/commit/fc4914d))
+- simplify reactivity by cetralising calculations in one place ([c9d37ac](https://github.com/golemui/formforge/commit/c9d37ac))
+- lazy loading of options ([89b17c4](https://github.com/golemui/formforge/commit/89b17c4))
+- removing fields infinite loop ([3cc0230](https://github.com/golemui/formforge/commit/3cc0230))
+- selects mock ([5c9ebe2](https://github.com/golemui/formforge/commit/5c9ebe2))
+- repeater item removal ([1eb3c76](https://github.com/golemui/formforge/commit/1eb3c76))
+- layout children includeIn ([f02189c](https://github.com/golemui/formforge/commit/f02189c))
+- layout children calculations ([ea957ae](https://github.com/golemui/formforge/commit/ea957ae))
+- use templateDataUpdater ([f49301a](https://github.com/golemui/formforge/commit/f49301a))
+- remove unnecessary field flags ([da74dc3](https://github.com/golemui/formforge/commit/da74dc3))
+- **code:** fix label decoder ([5782cee](https://github.com/golemui/formforge/commit/5782cee))
+- **core:** add back the decodeFieldOrFn decoder in form-field ([a9b805b](https://github.com/golemui/formforge/commit/a9b805b))
+- **core:** Enforce type in validateAll ([8a88461](https://github.com/golemui/formforge/commit/8a88461))
+- **lit:** fix checkbox required and checked attributes ([e250f03](https://github.com/golemui/formforge/commit/e250f03))
+- **lit:** fix required and checked in checkbox ([acebd93](https://github.com/golemui/formforge/commit/acebd93))
+- **lit:** set proper index to tabs and sections ([571e02f](https://github.com/golemui/formforge/commit/571e02f))
+- **lit:** update adapters to use the new reactivity ([7e2dd8c](https://github.com/golemui/formforge/commit/7e2dd8c))
+- **react:** fix react callback functions with props ([a11c181](https://github.com/golemui/formforge/commit/a11c181))
+- **react:** set proper index to tabs and sections ([7bac55c](https://github.com/golemui/formforge/commit/7bac55c))
+- **react:** adapt hooks to the new reactivity ([e57fa1d](https://github.com/golemui/formforge/commit/e57fa1d))
+- **react-vanilla:** adapt components to the updated hooks ([463b7ea](https://github.com/golemui/formforge/commit/463b7ea))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- mudscientist
+- Raul Jimenez @Elecash
+
 ## 0.14.11 (2025-12-21)
 
 ### 🩹 Fixes

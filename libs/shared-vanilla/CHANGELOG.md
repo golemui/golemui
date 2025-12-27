@@ -1,3 +1,15 @@
+## 0.15.0 (2025-12-27)
+
+### 🚀 Features
+
+- **angular:** add toggle styles ([c02206c](https://github.com/golemui/formforge/commit/c02206c))
+- **angular:** add toggle switch ([3512859](https://github.com/golemui/formforge/commit/3512859))
+- **core:** add support for custom events ([a1ac0b4](https://github.com/golemui/formforge/commit/a1ac0b4))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.14.11 (2025-12-21)
 
 This was a version bump only for shared-vanilla to align it with other projects, there were no code changes.

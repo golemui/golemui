@@ -1,3 +1,36 @@
+## 0.15.0 (2025-12-27)
+
+### 🚀 Features
+
+- **core:** add support for custom events ([a1ac0b4](https://github.com/golemui/formforge/commit/a1ac0b4))
+- **core:** add generic support to defineForm for type inference ([9b7521f](https://github.com/golemui/formforge/commit/9b7521f))
+- **core:** Add public api for callback functions ([37968cc](https://github.com/golemui/formforge/commit/37968cc))
+- add callback functions ([763af97](https://github.com/golemui/formforge/commit/763af97))
+
+### 🩹 Fixes
+
+- remove unnecessary field flags ([da74dc3](https://github.com/golemui/formforge/commit/da74dc3))
+- layout children calculations ([ea957ae](https://github.com/golemui/formforge/commit/ea957ae))
+- layout children includeIn ([f02189c](https://github.com/golemui/formforge/commit/f02189c))
+- repeater item removal ([1eb3c76](https://github.com/golemui/formforge/commit/1eb3c76))
+- removing fields infinite loop ([3cc0230](https://github.com/golemui/formforge/commit/3cc0230))
+- lazy loading of options ([89b17c4](https://github.com/golemui/formforge/commit/89b17c4))
+- simplify reactivity by cetralising calculations in one place ([c9d37ac](https://github.com/golemui/formforge/commit/c9d37ac))
+- **core:** Enforce type in validateAll ([8a88461](https://github.com/golemui/formforge/commit/8a88461))
+- **core:** add back the decodeFieldOrFn decoder in form-field ([a9b805b](https://github.com/golemui/formforge/commit/a9b805b))
+- correct type definition for ReactiveFieldValue. Use generic type ([15573a9](https://github.com/golemui/formforge/commit/15573a9))
+- expand ReactiveFieldFunction support to events ([9478304](https://github.com/golemui/formforge/commit/9478304))
+- expand ReactiveFieldFunction support ([ec344b9](https://github.com/golemui/formforge/commit/ec344b9))
+- **code:** fix label decoder ([5782cee](https://github.com/golemui/formforge/commit/5782cee))
+- interactive field label with function ([f865e59](https://github.com/golemui/formforge/commit/f865e59))
+- types and renaming - remove GUIApi and replace with the FieldFunctionParams type - Enhance type safety a little bit - rename to things to use FieldFunctions in the name ([0b6b12f](https://github.com/golemui/formforge/commit/0b6b12f))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- mudscientist
+- Raul Jimenez @Elecash
+
 ## 0.14.11 (2025-12-21)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

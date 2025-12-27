@@ -1,3 +1,13 @@
+## 0.15.0 (2025-12-27)
+
+### 🩹 Fixes
+
+- expand ReactiveFieldFunction support to events ([9478304](https://github.com/golemui/formforge/commit/9478304))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.11 (2025-12-21)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.

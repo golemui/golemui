@@ -1,3 +1,20 @@
+## 0.15.0 (2025-12-27)
+
+### 🚀 Features
+
+- **lit:** add toggle component to lit ([b832b4f](https://github.com/golemui/formforge/commit/b832b4f))
+
+### 🩹 Fixes
+
+- **lit:** set proper index to tabs and sections ([571e02f](https://github.com/golemui/formforge/commit/571e02f))
+- **lit:** fix required and checked in checkbox ([acebd93](https://github.com/golemui/formforge/commit/acebd93))
+- **lit:** fix checkbox required and checked attributes ([e250f03](https://github.com/golemui/formforge/commit/e250f03))
+
+### ❤️ Thank You
+
+- mudscientist
+- Raul Jimenez @Elecash
+
 ## 0.14.11 (2025-12-21)
 
 ### 🩹 Fixes

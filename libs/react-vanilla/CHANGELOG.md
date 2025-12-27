@@ -1,3 +1,20 @@
+## 0.15.0 (2025-12-27)
+
+### 🚀 Features
+
+- **lit:** add toggle component to react ([bfe61bd](https://github.com/golemui/formforge/commit/bfe61bd))
+
+### 🩹 Fixes
+
+- remove unnecessary field flags ([da74dc3](https://github.com/golemui/formforge/commit/da74dc3))
+- **react-vanilla:** adapt components to the updated hooks ([463b7ea](https://github.com/golemui/formforge/commit/463b7ea))
+- **react:** set proper index to tabs and sections ([7bac55c](https://github.com/golemui/formforge/commit/7bac55c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.14.11 (2025-12-21)
 
 This was a version bump only for react-vanilla to align it with other projects, there were no code changes.

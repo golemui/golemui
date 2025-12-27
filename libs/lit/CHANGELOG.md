@@ -1,3 +1,14 @@
+## 0.15.0 (2025-12-27)
+
+### 🩹 Fixes
+
+- remove unnecessary field flags ([da74dc3](https://github.com/golemui/formforge/commit/da74dc3))
+- **lit:** update adapters to use the new reactivity ([7e2dd8c](https://github.com/golemui/formforge/commit/7e2dd8c))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.14.11 (2025-12-21)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

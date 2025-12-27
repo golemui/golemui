@@ -1,3 +1,24 @@
+## 0.15.0 (2025-12-27)
+
+### 🚀 Features
+
+- **core:** add support for custom events ([a1ac0b4](https://github.com/golemui/formforge/commit/a1ac0b4))
+
+### 🩹 Fixes
+
+- remove unnecessary field flags ([da74dc3](https://github.com/golemui/formforge/commit/da74dc3))
+- use templateDataUpdater ([f49301a](https://github.com/golemui/formforge/commit/f49301a))
+- layout children calculations ([ea957ae](https://github.com/golemui/formforge/commit/ea957ae))
+- layout children includeIn ([f02189c](https://github.com/golemui/formforge/commit/f02189c))
+- repeater item removal ([1eb3c76](https://github.com/golemui/formforge/commit/1eb3c76))
+- simplify reactivity by cetralising calculations in one place ([c9d37ac](https://github.com/golemui/formforge/commit/c9d37ac))
+- interactive field label with function ([f865e59](https://github.com/golemui/formforge/commit/f865e59))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.14.11 (2025-12-21)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.
