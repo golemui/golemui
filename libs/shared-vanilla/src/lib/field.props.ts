@@ -14,6 +14,18 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type CalendarProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  prevMonthIcon?: string;
+  nextMonthIcon?: string;
+  expanded?: boolean;
+  dayFormat?: 'numeric' | '2-digit';
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
