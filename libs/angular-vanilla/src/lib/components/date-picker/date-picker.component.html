@@ -1,0 +1,102 @@
+@let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
+
+<div
+  class="gui-field"
+  tabindex="0"
+  role="button"
+  (click)="openCalendar()"
+  [attr.aria-expanded]="templateData.expanded || isCalendarOpen()"
+>
+  <div class="gui-date-input" [class]="{ 'gui-calendar--icon': templateData.icon }">
+    @for (part of dateParts(); track $index) {
+      @switch (part.type) {
+        @case ('day') {
+          <input
+            #dayInput
+            type="number"
+            guiAria
+            min="1"
+            max="31"
+            [attr.data-cy]="field.uid + '_day'"
+            [uid]="field.uid"
+            [templateData]="templateData"
+            [id]="field.uid + '_day'"
+            [required]="templateData.validator?.required"
+            [value]="currentDay()"
+            [disabled]="templateData.disabled"
+            [readOnly]="templateData.readonly"
+            placeholder="dd"
+            (change)="valueChanged()"
+            (focus)="openCalendar()"
+            (blur)="adapter.onBlur()"
+          />
+        }
+        @case ('month') {
+          <input
+            #monthInput
+            type="number"
+            guiAria
+            min="1"
+            max="12"
+            [attr.data-cy]="field.uid + '_month'"
+            [uid]="field.uid"
+            [templateData]="templateData"
+            [id]="field.uid + '_month'"
+            [required]="templateData.validator?.required"
+            [value]="currentMonth()"
+            [disabled]="templateData.disabled"
+            [readOnly]="templateData.readonly"
+            placeholder="mm"
+            (change)="valueChanged()"
+            (focus)="openCalendar()"
+            (blur)="adapter.onBlur()"
+          />
+        }
+        @case ('year') {
+          <input
+            #yearInput
+            type="number"
+            guiAria
+            min="1"
+            [attr.data-cy]="field.uid + '_year'"
+            [uid]="field.uid"
+            [templateData]="templateData"
+            [id]="field.uid + '_year'"
+            class="gui-year-input__year"
+            [required]="templateData.validator?.required"
+            [value]="currentYear()"
+            [disabled]="templateData.disabled"
+            [readOnly]="templateData.readonly"
+            placeholder="yyyy"
+            (change)="valueChanged()"
+            (focus)="openCalendar()"
+            (blur)="adapter.onBlur()"
+          />
+        }
+        @case ('literal') {
+          <span>{{part.value}}</span>
+        }
+      }
+    }
+  </div>
+
+  @if (templateData.icon) {
+    <span gui-icon [templateData]="templateData"></span>
+  }
+</div>
+
+@if (templateData.expanded || isCalendarOpen()) {
+  <gui-calendar-picker [adapter]="adapter"></gui-calendar-picker>
+}
+
+@if (showErrors) {
+  <ul
+    gui-errors
+    [uid]="field.uid"
+    [templateData]="templateData"
+    [attr.data-cy]="field.uid + '_validator-errors'"
+  ></ul>
+}

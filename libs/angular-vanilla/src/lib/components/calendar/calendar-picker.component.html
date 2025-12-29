@@ -1,0 +1,64 @@
+@let templateData = adapter().templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<div class="gui-calendar__container">
+  <header class="gui-calendar__header">
+    <button
+      type="button"
+      class="gui-button gui-calendar__month-button"
+      (click)="prevMonth($event)"
+    >
+      @if (templateData.prevMonthIcon) {
+        <span class="gui-calendar__month-button-icon" [class]="templateData.prevMonthIcon"></span>
+      } @else {
+        <span
+          class="gui-calendar__month-button-icon gui-calendar__month-button-icon--prev"
+        ></span>
+      }
+    </button>
+    <h2>{{ monthName() }}</h2>
+    <button
+      type="button"
+      class="gui-button gui-calendar__month-button"
+      (click)="nextMonth($event)"
+    >
+      @if (templateData.nextMonthIcon) {
+        <span class="gui-calendar__month-button-icon" [class]="templateData.nextMonthIcon"></span>
+      } @else {
+        <span
+          class="gui-calendar__month-button-icon gui-calendar__month-button-icon--next"
+        ></span>
+      }
+    </button>
+  </header>
+
+  <div class="gui-calendar__days-grid">
+    @for (weekday of getWeekDays(); track $index) {
+      <span class="gui-calendar__weekday">{{ weekday }}</span>
+    }
+
+    @for (day of daysInMonth(); track day.date) {
+      <button
+        type="button"
+        class="gui-calendar__day-button"
+        [class.other-month]="!day.isCurrentMonth"
+        [class.today]="day.isToday"
+        [class.selected]="day.isSelected"
+        [disabled]="!day.isCurrentMonth"
+        (click)="clickDay($event, day)"
+      >
+        {{ day.dayLabel }}
+      </button>
+    }
+  </div>
+</div>
+
+
+@if (showErrors) {
+  <ul
+    gui-errors
+    [uid]="field.uid"
+    [templateData]="templateData"
+    [attr.data-cy]="field.uid + '_validator-errors'"
+  ></ul>
+}

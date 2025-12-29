@@ -14,5 +14,16 @@ export const calendar = (): any => ({
         nextMonthIcon: 'material-icons material-icons-chevron_right',
       },
     },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'datePicker',
+      path: 'datePicker',
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+        prevMonthIcon: 'material-icons material-icons-chevron_left',
+        nextMonthIcon: 'material-icons material-icons-chevron_right',
+      },
+    },
   ],
 });
