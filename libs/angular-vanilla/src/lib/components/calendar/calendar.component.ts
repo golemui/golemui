@@ -51,12 +51,22 @@ export class CalendarComponent implements OnInit, OnDestroy, Core.WithField {
   availableLocales = navigator.languages || [navigator.language];
   // availableLocales = ['en', ...navigator.languages]; // Test sunday as start
   // availableLocales = ['fa', ...navigator.languages]; // Test saturday as start
+  // availableLocales = ['ja-JP', ...navigator.languages]; // Test YYYY/MM/DD
+  // availableLocales = ['de-DE', ...navigator.languages]; // Test DD.MM.YYYY
   localeId = this.availableLocales.find((key) => weekInfoData[key]) || 'en';
   locale = weekInfoData[this.localeId];
   weekDays = this.getOrderedWeekDays(this.locale.firstDay);
 
   readonly isCalendarOpen = signal(false);
   readonly currentDate = signal<Date>(new Date());
+
+  readonly dateParts = computed(() => {
+    return Intl.DateTimeFormat(this.localeId, {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    }).formatToParts(new Date());
+  });
 
   readonly currentDay = computed(() => {
     const val = this.adapter.templateData().value;

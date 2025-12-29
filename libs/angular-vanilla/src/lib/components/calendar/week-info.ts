@@ -247,6 +247,7 @@ export const weekInfoData: Record<string, WeekInfo> = {
   'en-ZW': { firstDay: 7, weekend: [6, 7], minimalDays: 1 },
   eo: { firstDay: 1, weekend: [6, 7], minimalDays: 1 },
   es: { firstDay: 1, weekend: [6, 7], minimalDays: 4 },
+  'es-ES': { firstDay: 1, weekend: [6, 7], minimalDays: 4 },
   'es-419': { firstDay: 1, weekend: [6, 7], minimalDays: 1 },
   'es-AR': { firstDay: 1, weekend: [6, 7], minimalDays: 1 },
   'es-BO': { firstDay: 1, weekend: [6, 7], minimalDays: 1 },
