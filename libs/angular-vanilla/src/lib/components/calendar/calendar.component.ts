@@ -49,7 +49,7 @@ export class CalendarComponent implements OnInit, OnDestroy, Core.WithField {
   protected elementRef: ElementRef<HTMLElement> = inject(ElementRef);
 
   // TODO: Get localeId from i18n feature
-  localeId = 'es';
+  localeId = 'ja';
   locale = weekInfoData[this.localeId];
   weekDays = this.getOrderedWeekDays(this.locale.firstDay);
 
@@ -67,19 +67,25 @@ export class CalendarComponent implements OnInit, OnDestroy, Core.WithField {
   readonly currentDay = computed(() => {
     const val = this.adapter.templateData().value;
     return val
-      ? Intl.DateTimeFormat(this.localeId, { day: '2-digit' }).format(new Date(val as string))
+      ? Intl.DateTimeFormat(this.localeId, { day: '2-digit' })
+          .formatToParts(new Date(val as string))
+          .find((p) => p.type === 'day')?.value
       : null;
   });
   readonly currentMonth = computed(() => {
     const val = this.adapter.templateData().value;
     return val
-      ? Intl.DateTimeFormat(this.localeId, { month: '2-digit' }).format(new Date(val as string))
+      ? Intl.DateTimeFormat(this.localeId, { month: '2-digit' })
+          .formatToParts(new Date(val as string))
+          .find((p) => p.type === 'month')?.value
       : null;
   });
   readonly currentYear = computed(() => {
     const val = this.adapter.templateData().value;
     return val
-      ? Intl.DateTimeFormat(this.localeId, { year: 'numeric' }).format(new Date(val as string))
+      ? Intl.DateTimeFormat(this.localeId, { year: 'numeric' })
+          .formatToParts(new Date(val as string))
+          .find((p) => p.type === 'year')?.value
       : null;
   });
 
