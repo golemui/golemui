@@ -121,7 +121,7 @@
     </header>
 
     <div class="gui-calendar__days-grid">
-      @for (weekday of getWeekDays(); track weekday) {
+      @for (weekday of getWeekDays(); track $index) {
         <span class="gui-calendar__weekday">{{ weekday }}</span>
       }
 

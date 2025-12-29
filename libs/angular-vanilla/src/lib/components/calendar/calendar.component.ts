@@ -48,12 +48,8 @@ export class CalendarComponent implements OnInit, OnDestroy, Core.WithField {
   );
   protected elementRef: ElementRef<HTMLElement> = inject(ElementRef);
 
-  availableLocales = navigator.languages || [navigator.language];
-  // availableLocales = ['en', ...navigator.languages]; // Test sunday as start
-  // availableLocales = ['fa', ...navigator.languages]; // Test saturday as start
-  // availableLocales = ['ja-JP', ...navigator.languages]; // Test YYYY/MM/DD
-  // availableLocales = ['de-DE', ...navigator.languages]; // Test DD.MM.YYYY
-  localeId = this.availableLocales.find((key) => weekInfoData[key]) || 'en';
+  // TODO: Get localeId from i18n feature
+  localeId = 'es';
   locale = weekInfoData[this.localeId];
   weekDays = this.getOrderedWeekDays(this.locale.firstDay);
 
