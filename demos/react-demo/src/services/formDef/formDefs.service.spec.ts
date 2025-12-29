@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import formDefsService, { FormDefs } from './formDefs.service';
-import { FormDefFacade, FormDefTuple } from './formDef.domain';
+import { FormDefFacade } from './formDef.domain';
 
 describe('FormDefs - Integration Tests', () => {
   const service: FormDefs = formDefsService;
