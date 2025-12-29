@@ -13,7 +13,7 @@ import {
   FormDefFacade,
   FormDefFacadeLike,
   FormDefTuple,
-} from './formDefFacade.domain';
+} from '../formDef.domain';
 
 type FormField<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
   | DisplayField<StateKeys, FormData>
@@ -21,11 +21,11 @@ type FormField<StateKeys extends UiState = never, FormData extends Record<string
   | LayoutField<StateKeys, FormData>
   | InteractiveField<StateKeys, FormData>;
 
-export class FormMapperService {
+export class FormDefMapper {
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     formDefFacade: FormDefFacade<FormData>,
   ): Form<StateKeys, FormData> {
-    const formTuples = formDefFacade.map((item) => this.mapFormDefsToFormTuples(item));
+    const formTuples = this.extractTuples(formDefFacade);
 
     const formFields: FormField<StateKeys, FormData>[] = formTuples.flatMap((item) =>
       this.mapTupleToFormFields(item),
@@ -136,7 +136,16 @@ export class FormMapperService {
       label: 'test',
     };
   }
+
+  private extractTuples<FormData extends Record<string, any> = any>(
+    formDefFacade: FormDefFacade<FormData>,
+  ): FormDefTuple<FormData>[] {
+    if (!Array.isArray(formDefFacade)) {
+      return [['data_inputs', formDefFacade]];
+    }
+    return formDefFacade.map((item) => this.mapFormDefsToFormTuples(item));
+  }
 }
 
-const formMapperService = new FormMapperService();
+const formMapperService = new FormDefMapper();
 export default formMapperService;

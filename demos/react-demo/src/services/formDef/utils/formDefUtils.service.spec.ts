@@ -1,15 +1,17 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { FormDefFacadeFactory } from './formDefFacadeFactory.service';
+import { FormDefUtils } from './formDefUtils.service';
 
 describe('KeysMergerService', () => {
-  let service: FormDefFacadeFactory;
+  let service: FormDefUtils;
 
   beforeEach(() => {
-    service = new FormDefFacadeFactory();
+    service = new FormDefUtils();
   });
 
   it('should throw an error when both keys are null', () => {
-    expect(() => service.mergeKeys(null, null)).toThrow('Both keysLeff and keysRight cannot be null');
+    expect(() => service.mergeKeys(null, null)).toThrow(
+      'Both keysLeft and keysRight cannot be null',
+    );
   });
 
   it('should return keysRight when only keysLeff is null', () => {
