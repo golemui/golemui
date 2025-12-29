@@ -1,17 +1,35 @@
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 
-export type DataInputDef = {
+export interface DataInputDef {
   // whatever a field definition is for you
   type: 'text' | 'number';
-  validator?: ValidatorsVanilla.StringValidator;
-};
+}
+
+export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
+
+export interface NumberDataInputDef extends DataInputDef {
+  type: 'number';
+  validator?: NumberDataInputValidator;
+}
+
+export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
+
+export interface TextDataInputDef extends DataInputDef {
+  type: 'text';
+  validator?: TextDataInputValidator;
+}
+
+export type OneOfDataInputDefs = TextDataInputDef | NumberDataInputDef;
+export type ValidShortcutType = 'string' | 'number';
+
 export type DataInputDefsByKey<T extends Record<string, any>> = Partial<
-  Record<keyof T, DataInputDef>
+  Record<keyof T, OneOfDataInputDefs | ValidShortcutType>
 >;
 
 export interface ControllerDef {
   type: 'button';
   label: string;
+  disabled?: boolean;
   on: {
     click: string;
   };
@@ -24,7 +42,7 @@ export type ControllerDefParams = {
 
 export type ControllerDefCallback = (params: ControllerDefParams) => ControllerDef;
 
-export type ControllersDefFacade = OneOrMany<ControllerDef> | ControllerDefCallback;
+export type ControllersDefFacade = OneOrMany<ControllerDef | ControllerDefCallback>;
 
 export type OneOrMany<T> = T | T[];
 

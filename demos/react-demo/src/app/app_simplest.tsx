@@ -1,5 +1,5 @@
 import * as React from '@golemui/react';
-import GolemForm from '../wrappers/golemForm.component';
+import DemoFormDisplay from '../components/DemoFormDisplay';
 
 export interface FormData {
   name: string;
@@ -9,14 +9,14 @@ export interface FormData {
 
 export function App_simplest() {
   return (
-    <div>
-      <GolemForm<FormData>
+    <>
+      <DemoFormDisplay<FormData>
+        title="1. Form data."
+        description="Form driven from form data with a hint. Note that the field name has a validator!"
         formDef={{
           name: {
             type: 'text',
             validator: {
-              type: 'string',
-              required: true,
               minLength: 3,
             },
           },
@@ -27,7 +27,21 @@ export function App_simplest() {
           height: 1.8,
         }}
       />
-    </div>
+      <DemoFormDisplay<FormData>
+        title="2. Form def shortcuts."
+        description="Form driven from formDef shortcuts, note that age has a validator"
+        formDef={{
+          name: 'string',
+          age: {
+            type: 'number',
+            validator: {
+              minimum: 18,
+            },
+          },
+          height: 'number',
+        }}
+      />
+    </>
   );
 }
 

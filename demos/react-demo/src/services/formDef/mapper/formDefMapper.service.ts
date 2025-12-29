@@ -7,13 +7,18 @@ import {
   UiState,
 } from '@golemui/core';
 import {
+  ControllerDef,
+  ControllerDefCallback,
   ControllersDefFacade,
-  DataInputDef,
   DataInputDefsByKey,
   FormDefFacade,
   FormDefFacadeLike,
   FormDefTuple,
+  NumberDataInputDef,
+  OneOfDataInputDefs,
+  TextDataInputDef,
 } from '../formDef.domain';
+import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
 
 type FormField<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
   | DisplayField<StateKeys, FormData>
@@ -22,6 +27,8 @@ type FormField<StateKeys extends UiState = never, FormData extends Record<string
   | InteractiveField<StateKeys, FormData>;
 
 export class FormDefMapper {
+  constructor(private readonly sensibleDefaults: SensibleDefaults) {}
+
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     formDefFacade: FormDefFacade<FormData>,
   ): Form<StateKeys, FormData> {
@@ -53,7 +60,7 @@ export class FormDefMapper {
       case 'data_inputs':
         return this.dataInputMapper(item[1]);
       case 'controllers':
-        return this.interactiveInputMapper(item[1]);
+        return this.controllerDefsMapper(item[1]);
       default:
         throw new Error(`Unsupported form element type "${typeRaw}"`);
     }
@@ -73,68 +80,83 @@ export class FormDefMapper {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(dataInput: DataInputDefsByKey<FormData>): ControlField<any, StateKeys, FormData>[] {
-    return Object.entries(dataInput).map(([key, fieldDef]) => {
-      if (!fieldDef) {
+    return Object.entries(dataInput).map(([key, fieldDefRaw]) => {
+      if (!fieldDefRaw) {
         throw new Error(`Definition for field "${key}" is missing`);
       }
+
+      const fieldDef: OneOfDataInputDefs =
+        typeof fieldDefRaw === 'string'
+          ? this.sensibleDefaults.explodeShortcut(fieldDefRaw)
+          : fieldDefRaw;
       switch (fieldDef.type) {
         case 'text':
           return this.textFieldDefMapper(key, fieldDef);
         case 'number':
           return this.numberFieldDefMapper(key, fieldDef);
         default:
-          throw new Error(`Unsupported field type "${fieldDef.type}"`);
+          throw new Error(`Unsupported field type "${(fieldDefRaw as OneOfDataInputDefs).type}"`);
       }
     });
-  }
-
-  private interactiveInputMapper<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(interactiveDefRaw: ControllersDefFacade): InteractiveField<StateKeys, FormData>[] {
-    const interactiveDefs = Array.isArray(interactiveDefRaw)
-      ? interactiveDefRaw
-      : [interactiveDefRaw];
-    return interactiveDefs.map((controllerDef) => this.interactiveDefMapper(controllerDef));
   }
 
   private textFieldDefMapper<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: DataInputDef): ControlField<any, StateKeys, FormData> {
+  >(key: string, fieldDef: TextDataInputDef): ControlField<any, StateKeys, FormData> {
     return {
       uid: '',
       kind: 'control', // data
       widget: 'textinput',
       path: key,
-      validator: fieldDef.validator,
+      validator: {
+        type: 'string',
+        ...fieldDef.validator,
+      },
     };
   }
 
   private numberFieldDefMapper<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: any): ControlField<any, StateKeys, FormData> {
+  >(key: string, fieldDef: NumberDataInputDef): ControlField<any, StateKeys, FormData> {
     return {
       uid: '',
       kind: 'control', // data
       widget: 'number',
       path: key,
-      validator: fieldDef.validator,
+      validator: {
+        type: 'number',
+        ...fieldDef.validator,
+      },
     };
   }
 
-  private interactiveDefMapper<
+  private controllerDefsMapper<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(interactiveDef: ControllersDefFacade): InteractiveField<StateKeys, FormData> {
-    return {
-      uid: '',
-      kind: 'interactive', // data
-      widget: 'button',
-      disabled: true,
-      label: 'test',
-    };
+  >(controllersDefRaw: ControllersDefFacade): InteractiveField<StateKeys, FormData>[] {
+    const interactiveDefs: (ControllerDef | ControllerDefCallback)[] = Array.isArray(
+      controllersDefRaw,
+    )
+      ? controllersDefRaw
+      : [controllersDefRaw];
+
+    return interactiveDefs.map<InteractiveField<StateKeys, FormData>>((interactiveDefRaw) => {
+      if (typeof interactiveDefs === 'function') {
+        throw new Error('Controller callbacks are not supported yet');
+      }
+
+      const interactiveDef = interactiveDefRaw as ControllerDef;
+
+      return {
+        uid: '',
+        kind: 'interactive', // data
+        widget: 'button',
+        disabled: interactiveDef.disabled,
+        label: 'test',
+      };
+    });
   }
 
   private extractTuples<FormData extends Record<string, any> = any>(
@@ -147,5 +169,5 @@ export class FormDefMapper {
   }
 }
 
-const formMapperService = new FormDefMapper();
+const formMapperService = new FormDefMapper(sensibleDefaults);
 export default formMapperService;

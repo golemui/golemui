@@ -1,6 +1,22 @@
-import { DataInputDef } from '../formDef.domain';
+import {
+  DataInputDef,
+  OneOfDataInputDefs,
+  TextDataInputDef,
+  ValidShortcutType,
+} from '../formDef.domain';
 
 export class SensibleDefaults {
+  public explodeShortcut(fieldDefRaw: ValidShortcutType): OneOfDataInputDefs {
+    switch (fieldDefRaw) {
+      case 'string':
+        return this.createDefaultStringDataInput();
+      case 'number':
+        return this.createDefaultNumberDataInput();
+      default:
+        throw new Error(`Unsupported shortcut "${fieldDefRaw}"`);
+    }
+  }
+
   public createDataInputDefinition(formDataValue: any): DataInputDef {
     let fieldDef: DataInputDef | undefined;
     const typeOfFormData = typeof formDataValue;
@@ -17,7 +33,7 @@ export class SensibleDefaults {
     return fieldDef;
   }
 
-  public createDefaultStringDataInput(): DataInputDef {
+  public createDefaultStringDataInput(): TextDataInputDef {
     return { type: 'text' };
   }
 
