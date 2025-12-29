@@ -46,12 +46,12 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     Angular.ControlFieldAdapter,
   );
   protected elementRef: ElementRef<HTMLElement> = inject(ElementRef);
+  currentDate = new Date();
 
   // TODO: Get localeId from i18n feature
   localeId = 'es';
 
   readonly isCalendarOpen = signal(false);
-  readonly currentDate = signal<Date>(new Date());
 
   readonly dateParts = computed(() => {
     return Intl.DateTimeFormat(this.localeId, {
@@ -123,7 +123,7 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
       const month = this.monthInput().nativeElement.valueAsNumber;
       const year = this.yearInput().nativeElement.valueAsNumber;
       const currentDate = new Date(year, month - 1, day);
-      this.currentDate.update(() => currentDate);
+      this.currentDate = currentDate;
       this.adapter.valueChanged(currentDate.toISOString());
     }
   }

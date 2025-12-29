@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { CalendarProps } from '@golemui/shared-vanilla';
@@ -23,13 +23,12 @@ export interface CalendarDay {
 export class CalendarPickerComponent implements Core.WithField {
   field!: Core.ControlField<string>;
   adapter = input.required<Angular.ControlFieldAdapter<string, CalendarProps>>();
+  currentDate = model.required<Date>();
 
   // TODO: Get localeId from i18n feature
   localeId = 'es';
   locale = weekInfoData[this.localeId];
   weekDays = this.getOrderedWeekDays(this.locale.firstDay);
-
-  readonly currentDate = signal<Date>(new Date());
 
   readonly monthName = computed(() => {
     const current = this.currentDate();

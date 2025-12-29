@@ -89,7 +89,7 @@
 </div>
 
 @if (templateData.expanded || isCalendarOpen()) {
-  <gui-calendar-picker [adapter]="adapter"></gui-calendar-picker>
+  <gui-calendar-picker [adapter]="adapter" [currentDate]="currentDate"></gui-calendar-picker>
 }
 
 @if (showErrors) {

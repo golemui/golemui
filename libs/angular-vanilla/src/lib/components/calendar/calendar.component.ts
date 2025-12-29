@@ -22,6 +22,7 @@ export class CalendarComponent implements OnInit, OnDestroy, Core.WithField {
   protected adapter: Angular.ControlFieldAdapter<string, CalendarProps> = inject(
     Angular.ControlFieldAdapter,
   );
+  currentDate = new Date();
 
   ngOnInit(): void {
     this.adapter.init(this.field);

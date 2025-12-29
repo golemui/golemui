@@ -3,7 +3,7 @@
 
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
-<gui-calendar-picker [adapter]="adapter"></gui-calendar-picker>
+<gui-calendar-picker [adapter]="adapter" [currentDate]="currentDate"></gui-calendar-picker>
 
 @if (showErrors) {
   <ul
