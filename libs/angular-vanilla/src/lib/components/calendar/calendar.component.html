@@ -17,6 +17,7 @@
       type="number"
       guiAria
       min="1"
+      max="31"
       [attr.data-cy]="field.uid + '_day'"
       [uid]="field.uid"
       [templateData]="templateData"
@@ -36,6 +37,7 @@
       type="number"
       guiAria
       min="1"
+      max="12"
       [attr.data-cy]="field.uid + '_month'"
       [uid]="field.uid"
       [templateData]="templateData"
@@ -115,6 +117,7 @@
 
       @for (day of daysInMonth(); track day.date) {
         <button
+          type="button"
           class="gui-calendar__day-button"
           [class.other-month]="!day.isCurrentMonth"
           [class.today]="day.isToday"
