@@ -32,10 +32,5 @@
 </div>
 
 @if (showErrors) {
-  <ul
-    gui-errors
-    [uid]="field.uid"
-    [templateData]="templateData"
-    [attr.data-cy]="field.uid + '_validator-errors'"
-  ></ul>
+  <ul gui-errors [uid]="field.uid" [templateData]="templateData" [attr.data-cy]="field.uid + '_validator-errors'"></ul>
 }

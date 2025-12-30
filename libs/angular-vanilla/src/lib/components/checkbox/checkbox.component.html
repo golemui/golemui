@@ -3,12 +3,7 @@
 
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData">
   @if (showErrors) {
-    <ul
-      gui-errors
-      [uid]="field.uid"
-      [templateData]="templateData"
-      [attr.data-cy]="field.uid + '_validator-errors'"
-    ></ul>
+    <ul gui-errors [uid]="field.uid" [templateData]="templateData" [attr.data-cy]="field.uid + '_validator-errors'"></ul>
   }
 </label>
 

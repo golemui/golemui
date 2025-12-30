@@ -1,13 +1,7 @@
 @let templateData = adapter.templateData();
 
 <div class="gui-field">
-  <button
-    type="button"
-    [id]="field.uid"
-    (click)="onClick()"
-    [disabled]="templateData.disabled"
-    [attr.data-cy]="field.uid + '_button'"
-  >
+  <button type="button" [id]="field.uid" (click)="onClick()" [disabled]="templateData.disabled" [attr.data-cy]="field.uid + '_button'">
     {{ templateData.label }}
   </button>
 </div>
