@@ -18,7 +18,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
   warnings,
 }: DemoFormDisplayProps<T>) {
   // Custom serializer that converts functions to string representation
-  const serializeFormDef = (obj: any, indent: number = 0): string => {
+  const serializeFormDef = (obj: any, indent = 0): string => {
     const indentStr = '  '.repeat(indent);
     const nextIndentStr = '  '.repeat(indent + 1);
 
