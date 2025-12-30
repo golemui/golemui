@@ -18,10 +18,7 @@ export interface GolemFormProps<T extends Record<string, any>> {
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
-  const config = formDefs.processFacade<never, FormData>(
-    props.formDef ?? null,
-    props.formData ?? null,
-  );
+  const config = formDefs.processFacade<never, FormData>(props.formDef ?? null);
   console.log(`GolemForm`, config);
   return (
     <FormComponent

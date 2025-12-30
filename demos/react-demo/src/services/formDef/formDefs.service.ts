@@ -12,12 +12,12 @@ import formDefParser, { FormDefParser } from './parser/formDefParser.service';
  * of the {@link Form} interface.
  *
  * The transformation involves two steps:
- * 1. **Hydration**: Enriches the facade with sensible defaults by inferring values from
- *    the form data. This step may be skipped if a complete facade is provided.
+ * 1. **Hydration**: Enriches the facade with sensible defaults. This step may be skipped
+ *    if a complete facade is provided.
  * 2. **Mapping**: Converts the hydrated facade into a fully typed Form instance that
  *    the framework can use.
  *
- * Users can provide any combination of full, partial, or no facade and/or form data.
+ * Users can provide a full, partial, or no facade.
  * The result is a fully defined and typed Form<STATE_KEYS, FORM_DATA>.
  */
 export class FormDefs {
@@ -29,19 +29,16 @@ export class FormDefs {
 
   processFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA> | null,
-    formDataRaw: FORM_DATA | null,
   ): Form<STATE_KEYS, FORM_DATA> {
-    const formDefFacade = this.hydrate(formDefRaw, formDataRaw);
+    const formDefFacade = this.hydrate(formDefRaw);
     return this.formMapperService.map<STATE_KEYS, FORM_DATA>(formDefFacade);
   }
 
   hydrate<FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA> | null,
-    formDataRaw: FORM_DATA | null,
   ) {
     const fieldDefsByKey = this.formDefParser.extractDataInputDefs(formDefRaw);
-    const uncompressed = this.formDefFacadeFactory.create<FORM_DATA>(fieldDefsByKey, formDataRaw);
-
+    const uncompressed = this.formDefFacadeFactory.create<FORM_DATA>(fieldDefsByKey);
     return this.compress(uncompressed);
   }
 

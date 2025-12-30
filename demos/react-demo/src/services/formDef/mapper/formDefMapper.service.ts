@@ -16,6 +16,7 @@ import {
   FormDefTuple,
   NumberDataInputDef,
   OneOfDataInputDefs,
+  OneOfDataInputDefsParams,
   TextDataInputDef,
 } from '../formDef.domain';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
@@ -88,7 +89,11 @@ export class FormDefMapper {
       const fieldDef: OneOfDataInputDefs =
         typeof fieldDefRaw === 'string'
           ? this.sensibleDefaults.explodeShortcut(fieldDefRaw)
-          : fieldDefRaw;
+          : typeof fieldDefRaw === 'object'
+            ? fieldDefRaw
+            : (fieldDefRaw as (params: OneOfDataInputDefsParams) => OneOfDataInputDefs)({
+                error: false,
+              });
       switch (fieldDef.type) {
         case 'text':
           return this.textFieldDefMapper(key, fieldDef);
@@ -154,7 +159,7 @@ export class FormDefMapper {
         kind: 'interactive', // data
         widget: 'button',
         disabled: interactiveDef.disabled,
-        label: 'test',
+        label: 'Submit',
       };
     });
   }

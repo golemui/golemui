@@ -3,6 +3,7 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 export interface DataInputDef {
   // whatever a field definition is for you
   type: 'text' | 'number';
+  placeholder?: string;
 }
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
@@ -22,8 +23,17 @@ export interface TextDataInputDef extends DataInputDef {
 export type OneOfDataInputDefs = TextDataInputDef | NumberDataInputDef;
 export type ValidShortcutType = 'string' | 'number';
 
+export interface OneOfDataInputDefsParams {
+  error?: boolean;
+}
+
 export type DataInputDefsByKey<T extends Record<string, any>> = Partial<
-  Record<keyof T, OneOfDataInputDefs | ValidShortcutType>
+  Record<
+    keyof T,
+    | OneOfDataInputDefs
+    | ValidShortcutType
+    | ((params: OneOfDataInputDefsParams) => OneOfDataInputDefs)
+  >
 >;
 
 export interface ControllerDef {
