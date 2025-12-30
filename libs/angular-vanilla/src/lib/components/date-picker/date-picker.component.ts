@@ -8,6 +8,7 @@ import {
   OnInit,
   signal,
   viewChild,
+  viewChildren,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
@@ -40,6 +41,7 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   dayInput = viewChild.required<ElementRef<HTMLInputElement>>('dayInput');
   monthInput = viewChild.required<ElementRef<HTMLInputElement>>('monthInput');
   yearInput = viewChild.required<ElementRef<HTMLInputElement>>('yearInput');
+  inputs = viewChildren<ElementRef<HTMLInputElement>>('dateInput');
 
   field!: Core.ControlField<string>;
   protected adapter: Angular.ControlFieldAdapter<string, CalendarProps> = inject(
@@ -99,6 +101,24 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
 
   ngOnDestroy(): void {
     this.adapter.destroy();
+  }
+
+  keyUp(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+    const inputIndex = this.inputs().findIndex((ref) => ref.nativeElement === input);
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        if (inputIndex > 0) {
+          this.inputs()[inputIndex - 1].nativeElement.focus();
+        }
+        break;
+      case 'ArrowRight':
+        if (inputIndex < this.inputs().length - 1) {
+          this.inputs()[inputIndex + 1].nativeElement.focus();
+        }
+        break;
+    }
   }
 
   openCalendar() {
