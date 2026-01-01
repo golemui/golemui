@@ -5,8 +5,9 @@
   <header class="gui-calendar__header">
     <button
       type="button"
+      tabindex="0"
       class="gui-button gui-calendar__month-button"
-      (click)="prevMonth($event)"
+      (click)="clickPrevMonth($event)"
     >
       @if (templateData.prevMonthIcon) {
         <span class="gui-calendar__month-button-icon" [class]="templateData.prevMonthIcon"></span>
@@ -19,8 +20,9 @@
     <h2>{{ monthName() }}</h2>
     <button
       type="button"
+      tabindex="0"
       class="gui-button gui-calendar__month-button"
-      (click)="nextMonth($event)"
+      (click)="clickNextMonth($event)"
     >
       @if (templateData.nextMonthIcon) {
         <span class="gui-calendar__month-button-icon" [class]="templateData.nextMonthIcon"></span>
@@ -37,15 +39,18 @@
       <span class="gui-calendar__weekday">{{ weekday }}</span>
     }
 
-    @for (day of daysInMonth(); track day.date) {
+    @for (day of daysInMonth(); track day.date; let index = $index) {
       <button
+        #dayButtonRef
         type="button"
         class="gui-calendar__day-button"
+        [attr.tabindex]="day.isFocusable ? 0 : -1"
         [class.other-month]="!day.isCurrentMonth"
         [class.today]="day.isToday"
         [class.selected]="day.isSelected"
         [disabled]="!day.isCurrentMonth"
-        (click)="clickDay($event, day)"
+        (click)="clickDay(index, day)"
+        (keydown)="onKeyDown($event, day)"
       >
         {{ day.dayLabel }}
       </button>
