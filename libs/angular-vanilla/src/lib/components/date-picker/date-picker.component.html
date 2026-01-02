@@ -7,10 +7,16 @@
   class="gui-field"
   tabindex="0"
   role="button"
-  (click)="openCalendar()"
   [attr.aria-expanded]="templateData.expanded || isCalendarOpen()"
+  (click)="openCalendar()"
 >
-  <div class="gui-date-input" [class]="{ 'gui-calendar--icon': templateData.icon }">
+  <div
+    guiAria
+    [uid]="field.uid"
+    [templateData]="templateData"
+    class="gui-date-input"
+    [class]="{ 'gui-calendar--icon': templateData.icon }"
+  >
     @for (part of dateParts(); track $index) {
       @switch (part.type) {
         @case ('day') {
@@ -75,7 +81,7 @@
             inputmode="numeric"
             maxlength="4"
             guiAria
-            min="0"
+            min="1000"
             max="9999"
             [attr.tabindex]="$index === 0 ? '0' : '-1'"
             [attr.data-cy]="field.uid + '_year'"

@@ -24,6 +24,7 @@ export const calendar = (): any => ({
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
       },
+      validator: { type: 'string', format: 'date-time' },
     },
   ],
 });

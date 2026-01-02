@@ -58,8 +58,7 @@
   </div>
 </div>
 
-
-@if (showErrors) {
+@if (showErrors && field) {
   <ul
     gui-errors
     [uid]="field.uid"

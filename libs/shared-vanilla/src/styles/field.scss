@@ -32,7 +32,8 @@
 
     input,
     select,
-    textarea {
+    textarea,
+    .gui-date-input {
       padding: var(--gui-padding);
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);

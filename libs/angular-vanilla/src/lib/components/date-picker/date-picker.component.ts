@@ -68,7 +68,7 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   maxMonth = 12;
   minMonth = 1;
   maxYear = 9999;
-  minYear = 0;
+  minYear = 1000;
   maxDay = (month: number, year: number) => {
     if (month === 2) {
       const isLeapYear = new Date(year, 1, 29).getDate() === 29;
@@ -178,6 +178,8 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     if (!isNaN(val) && val > 0) {
       const length = type === 'year' ? 4 : 2;
       input.value = val.toString().padStart(length, '0');
+    } else {
+      this.adapter.valueChanged('');
     }
 
     this.adapter.onBlur();
