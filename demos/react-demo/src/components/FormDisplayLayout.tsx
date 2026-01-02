@@ -28,6 +28,14 @@ export function FormDisplayLayout<T extends Record<string, any>>({
 
   const serialized = formDef ? serializeFormDefForDisplay(formDef) : '';
 
+  const handleConfigProcessed = React.useCallback((config: any) => {
+    setProcessedConfig((prev) => {
+      // Only update if it's actually different to prevent infinite loops
+      if (prev === config) return prev;
+      return config;
+    });
+  }, []);
+
   const handleOpenInNewTab = () => {
     if (!formKey) return;
     const url = new URL(window.location.href);
@@ -60,7 +68,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
               <GolemForm<T>
                 formDef={formDef}
                 formData={formData}
-                onConfigProcessed={setProcessedConfig}
+                onConfigProcessed={handleConfigProcessed}
               />
             </div>
           )}
