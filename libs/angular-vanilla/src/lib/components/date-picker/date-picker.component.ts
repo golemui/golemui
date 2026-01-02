@@ -130,13 +130,15 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     const inputIndex = this.inputs().findIndex((ref) => ref.nativeElement === input);
     switch (event.key) {
       case 'ArrowUp': {
-        input.value = String(parseInt(input.value, 10) + 1).padStart(input.maxLength, '0');
+        const value = isNaN(parseInt(input.value, 10) + 1) ? 1 : parseInt(input.value, 10) + 1;
+        input.value = String(value).padStart(input.maxLength, '0');
         input.select();
         this.valueChanged();
         break;
       }
       case 'ArrowDown': {
-        input.value = String(parseInt(input.value, 10) - 1).padStart(input.maxLength, '0');
+        const value = isNaN(parseInt(input.value, 10) - 1) ? 1 : parseInt(input.value, 10) - 1;
+        input.value = String(value).padStart(input.maxLength, '0');
         input.select();
         this.valueChanged();
         break;
