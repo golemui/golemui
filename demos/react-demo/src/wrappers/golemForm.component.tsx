@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
@@ -49,7 +49,7 @@ export function GolemForm<FormData extends Record<string, any> = any>(
   }
 
   // Call the callback with the processed config
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.onConfigProcessed) {
       props.onConfigProcessed(config);
     }

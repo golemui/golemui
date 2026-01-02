@@ -17,7 +17,7 @@ export function serializeFormDefForDisplay(obj: any, indent = 0): string {
     const funcStr = obj.toString();
     return funcStr
       .split('\n')
-      .map((line, i) => (i === 0 ? line : nextIndentStr + line))
+      .map((line: string, i: number) => (i === 0 ? line : nextIndentStr + line))
       .join('\n');
   }
 
@@ -27,7 +27,7 @@ export function serializeFormDefForDisplay(obj: any, indent = 0): string {
     try {
       const items = obj.map((item) => nextIndentStr + serializeFormDefForDisplay(item, indent + 1));
       return '[\n' + items.join(',\n') + '\n' + indentStr + ']';
-    } catch (error) {
+    } catch (_error) {
       return '[Circular Reference or Serialization Error]';
     }
   }
@@ -44,7 +44,7 @@ export function serializeFormDefForDisplay(obj: any, indent = 0): string {
       });
 
       return '{\n' + items.join(',\n') + '\n' + indentStr + '}';
-    } catch (error) {
+    } catch (_error) {
       return '{Circular Reference or Serialization Error}';
     }
   }
