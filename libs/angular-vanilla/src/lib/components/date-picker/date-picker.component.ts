@@ -43,6 +43,8 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   yearInput = viewChild.required<ElementRef<HTMLInputElement>>('yearInput');
   inputs = viewChildren<ElementRef<HTMLInputElement>>('dateInput');
 
+  invalidDate = signal(false);
+
   field!: Core.ControlField<string>;
   protected adapter: Angular.ControlFieldAdapter<string, CalendarProps> = inject(
     Angular.ControlFieldAdapter,
@@ -63,30 +65,20 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     }).formatToParts(new Date());
   });
 
-  readonly currentDay = computed(() => {
-    const val = this.adapter.templateData().value;
-    return val
-      ? Intl.DateTimeFormat(this.localeId, { day: '2-digit' })
-          .formatToParts(new Date(val as string))
-          .find((p) => p.type === 'day')?.value
-      : null;
-  });
-  readonly currentMonth = computed(() => {
-    const val = this.adapter.templateData().value;
-    return val
-      ? Intl.DateTimeFormat(this.localeId, { month: '2-digit' })
-          .formatToParts(new Date(val as string))
-          .find((p) => p.type === 'month')?.value
-      : null;
-  });
-  readonly currentYear = computed(() => {
-    const val = this.adapter.templateData().value;
-    return val
-      ? Intl.DateTimeFormat(this.localeId, { year: 'numeric' })
-          .formatToParts(new Date(val as string))
-          .find((p) => p.type === 'year')?.value
-      : null;
-  });
+  maxMonth = 12;
+  minMonth = 1;
+  maxYear = 9999;
+  minYear = 0;
+  maxDay = (month: number, year: number) => {
+    if (month === 2) {
+      const isLeapYear = new Date(year, 1, 29).getDate() === 29;
+      return isLeapYear || !year ? 29 : 28;
+    } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+      return 30;
+    }
+    return 31;
+  };
+  minDay = 1;
 
   onDocumentClick(event: MouseEvent) {
     const targetElement = event.target as HTMLElement;
@@ -103,25 +95,73 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     this.adapter.destroy();
   }
 
+  keyDown(event: KeyboardEvent) {
+    const allowedKeys = [
+      'Backspace',
+      'Tab',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'Delete',
+      'Enter',
+    ];
+
+    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) {
+      return;
+    }
+
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
   keyUp(event: KeyboardEvent) {
     const input = event.target as HTMLInputElement;
-    const inputIndex = this.inputs().findIndex((ref) => ref.nativeElement === input);
 
+    // We jump to the next input when we type max digits
+    if (input.value.length === input.maxLength && /^[0-9]$/.test(event.key)) {
+      const inputIndex = this.inputs().findIndex((ref) => ref.nativeElement === input);
+      if (inputIndex < this.inputs().length - 1) {
+        this.inputs()[inputIndex + 1].nativeElement.focus();
+      }
+    }
+
+    const inputIndex = this.inputs().findIndex((ref) => ref.nativeElement === input);
     switch (event.key) {
+      case 'ArrowUp': {
+        input.value = String(parseInt(input.value, 10) + 1).padStart(input.maxLength, '0');
+        input.select();
+        this.valueChanged();
+        break;
+      }
+      case 'ArrowDown': {
+        input.value = String(parseInt(input.value, 10) - 1).padStart(input.maxLength, '0');
+        input.select();
+        this.valueChanged();
+        break;
+      }
       case 'ArrowLeft':
         if (inputIndex > 0) {
-          this.inputs()[inputIndex - 1].nativeElement.focus();
+          const nextInput = this.inputs()[inputIndex - 1].nativeElement;
+          nextInput.focus();
+          nextInput.select();
         }
         break;
       case 'ArrowRight':
         if (inputIndex < this.inputs().length - 1) {
-          this.inputs()[inputIndex + 1].nativeElement.focus();
+          const nextInput = this.inputs()[inputIndex + 1].nativeElement;
+          nextInput.focus();
+          nextInput.select();
         }
         break;
     }
   }
 
-  openCalendar() {
+  openCalendar(event?: FocusEvent) {
+    if (event) {
+      (event.currentTarget as HTMLInputElement).select();
+    }
     this.isCalendarOpen.set(true);
   }
 
@@ -129,20 +169,58 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     this.isCalendarOpen.set(false);
   }
 
-  isDateCompleted() {
-    return (
-      this.dayInput().nativeElement.valueAsNumber > 0 &&
-      this.monthInput().nativeElement.valueAsNumber > 0 &&
-      this.yearInput().nativeElement.valueAsNumber > 3
-    );
+  onInputBlur(event: FocusEvent, type: 'day' | 'month' | 'year') {
+    const input = event.target as HTMLInputElement;
+    const val = parseInt(input.value, 10);
+
+    if (!isNaN(val) && val > 0) {
+      const length = type === 'year' ? 4 : 2;
+      input.value = val.toString().padStart(length, '0');
+    }
+
+    this.adapter.onBlur();
   }
 
   valueChanged() {
-    if (this.isDateCompleted()) {
-      const day = this.dayInput().nativeElement.valueAsNumber;
-      const month = this.monthInput().nativeElement.valueAsNumber;
-      const year = this.yearInput().nativeElement.valueAsNumber;
-      const currentDate = new Date(year, month - 1, day);
+    let dayVal = parseInt(this.dayInput().nativeElement.value, 10);
+    let monthVal = parseInt(this.monthInput().nativeElement.value, 10);
+    let yearVal = parseInt(this.yearInput().nativeElement.value, 10);
+
+    if (yearVal > this.maxYear) {
+      yearVal = this.maxYear;
+      this.yearInput().nativeElement.value = yearVal.toString().padStart(4, '0');
+    }
+    if (yearVal < this.minYear) {
+      yearVal = this.minYear;
+      this.yearInput().nativeElement.value = yearVal.toString().padStart(4, '0');
+    }
+
+    if (monthVal > this.maxMonth) {
+      monthVal = this.maxMonth;
+      this.monthInput().nativeElement.value = monthVal.toString().padStart(2, '0');
+    }
+    if (monthVal < this.minMonth) {
+      monthVal = this.minMonth;
+      this.monthInput().nativeElement.value = monthVal.toString().padStart(2, '0');
+    }
+
+    const maxDay = this.maxDay(monthVal, yearVal);
+    if (dayVal > maxDay) {
+      dayVal = maxDay;
+      this.dayInput().nativeElement.value = dayVal.toString().padStart(2, '0');
+    }
+    if (dayVal < this.minDay) {
+      dayVal = this.minDay;
+      this.dayInput().nativeElement.value = dayVal.toString().padStart(2, '0');
+    }
+
+    const isDayValid = !isNaN(dayVal) && dayVal > 0 && dayVal <= maxDay;
+    const isMonthValid = !isNaN(monthVal) && monthVal > 0;
+    const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
+
+    if (isDayValid && isMonthValid && isYearValid) {
+      this.invalidDate.set(false);
+      const currentDate = new Date(yearVal, monthVal - 1, dayVal);
       this.currentDate = currentDate;
       this.adapter.valueChanged(currentDate.toISOString());
     }

@@ -17,7 +17,9 @@
           <input
             #dateInput
             #dayInput
-            type="number"
+            type="text"
+            inputmode="numeric"
+            maxlength="2"
             guiAria
             min="1"
             max="31"
@@ -27,21 +29,24 @@
             [templateData]="templateData"
             [id]="field.uid + '_day'"
             [required]="templateData.validator?.required"
-            [value]="currentDay()"
+            [value]="'DD'"
             [disabled]="templateData.disabled"
             [readOnly]="templateData.readonly"
             placeholder="dd"
+            (keydown)="keyDown($event)"
             (keyup)="keyUp($event)"
             (change)="valueChanged()"
-            (focus)="openCalendar()"
-            (blur)="adapter.onBlur()"
+            (focus)="openCalendar($event)"
+            (blur)="onInputBlur($event, 'day')"
           />
         }
         @case ('month') {
           <input
             #dateInput
             #monthInput
-            type="number"
+            type="text"
+            inputmode="numeric"
+            maxlength="2"
             guiAria
             min="1"
             max="12"
@@ -51,23 +56,27 @@
             [templateData]="templateData"
             [id]="field.uid + '_month'"
             [required]="templateData.validator?.required"
-            [value]="currentMonth()"
+            [value]="'MM'"
             [disabled]="templateData.disabled"
             [readOnly]="templateData.readonly"
             placeholder="mm"
+            (keydown)="keyDown($event)"
             (keyup)="keyUp($event)"
             (change)="valueChanged()"
-            (focus)="openCalendar()"
-            (blur)="adapter.onBlur()"
+            (focus)="openCalendar($event)"
+            (blur)="onInputBlur($event, 'month')"
           />
         }
         @case ('year') {
           <input
             #dateInput
             #yearInput
-            type="number"
+            type="text"
+            inputmode="numeric"
+            maxlength="4"
             guiAria
-            min="1"
+            min="0"
+            max="9999"
             [attr.tabindex]="$index === 0 ? '0' : '-1'"
             [attr.data-cy]="field.uid + '_year'"
             [uid]="field.uid"
@@ -75,18 +84,19 @@
             [id]="field.uid + '_year'"
             class="gui-year-input__year"
             [required]="templateData.validator?.required"
-            [value]="currentYear()"
+            [value]="'YYYY'"
             [disabled]="templateData.disabled"
             [readOnly]="templateData.readonly"
             placeholder="yyyy"
+            (keydown)="keyDown($event)"
             (keyup)="keyUp($event)"
             (change)="valueChanged()"
-            (focus)="openCalendar()"
-            (blur)="adapter.onBlur()"
+            (focus)="openCalendar($event)"
+            (blur)="onInputBlur($event, 'year')"
           />
         }
         @case ('literal') {
-          <span>{{part.value}}</span>
+          <span>{{ part.value }}</span>
         }
       }
     }
