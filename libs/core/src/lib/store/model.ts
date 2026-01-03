@@ -116,13 +116,30 @@ export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string
 
 export type ValidationState = {
   /**
-   * Cache of calculated schemas
+   * Cache of validation schemas, keyed by UIState.
    */
   validators: Record<UiState, StandardSchemaV1>;
+
   /**
-   * Current status
+   * Current validation status for the active UI state.
+   * When `null`, there are no validation issues.
    */
-  status: null | { errors: string[] };
+  status: null | {
+    /**
+     * Validation issues produced automatically by the configured schema
+     * validators (e.g. zod). This array is fully managed by the validation
+     * engine and should not be mutated directly.
+     */
+    issues: string[];
+
+    /**
+     * Validation issues injected imperatively via the public API.
+     *
+     * These issues are not derived from the schema validators and are intended
+     * for contextual validations that cannot be expressed declaratively.
+     */
+    injectedIssues?: string[];
+  };
 };
 
 /**

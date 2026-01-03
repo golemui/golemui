@@ -55,7 +55,7 @@ export const validateAll =
 
             newValidations[control.path].status = isStandardValidateSuccess(result)
               ? null
-              : { errors: result.issues.map((issue) => issue.message) };
+              : { issues: result.issues.map((issue) => issue.message) };
           } else {
             // If there's no validator, the field is valid
             newValidations[control.path].status = null;
@@ -64,6 +64,13 @@ export const validateAll =
           if (newValidations[control.path] !== oldValidations[control.path]) {
             // Make it a new reference so the stream emits
             newValidations[control.path] = { ...newValidations[control.path] };
+          }
+
+          // If there were `injectedIssues`, let's add them back
+          const oldInjectedIssues = oldValidations[control.path]?.status?.injectedIssues;
+          if (Array.isArray(oldInjectedIssues) && oldInjectedIssues.length > 0) {
+            newValidations[control.path].status ??= { issues: [] };
+            newValidations[control.path].status!.injectedIssues = oldInjectedIssues;
           }
 
           return newValidations;

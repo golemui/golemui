@@ -43,7 +43,10 @@ export class ControlFieldAdapter<
       .pipe(takeUntil(this.destroy$), Core.validationByPath$(field.path))
       .subscribe((validation) => {
         this.setTemplateData({
-          errors: validation?.status?.errors || [],
+          errors: [
+            ...(validation?.status?.issues ?? []),
+            ...(validation?.status?.injectedIssues ?? []),
+          ],
         });
       });
 

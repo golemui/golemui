@@ -56,7 +56,10 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     const sub = formContext.store.state$
       .pipe(Core.validationByPath$(field.path))
       .subscribe((validation) => {
-        setErrors(validation?.status?.errors || []);
+        setErrors([
+          ...(validation?.status?.issues ?? []),
+          ...(validation?.status?.injectedIssues ?? []),
+        ]);
       });
     return () => sub.unsubscribe();
   }, [field, formContext.store]);
