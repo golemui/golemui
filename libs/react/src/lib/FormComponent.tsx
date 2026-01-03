@@ -15,7 +15,7 @@ export interface FormComponentProps {
   data?: Record<string, any>;
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
-  formError?: (error: Core.FormStoreError) => void;
+  formHealth?: (error: Core.FormHealth) => void;
 }
 
 export function FormComponent({
@@ -26,7 +26,7 @@ export function FormComponent({
   validateOn,
   data,
   formName,
-  formError,
+  formHealth,
   formEvent,
 }: FormComponentProps) {
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithField>>>(
@@ -40,15 +40,15 @@ export function FormComponent({
     formContextRef.current.initialize(fieldLoaders, middlewares, validators, validateOn || 'eager');
   }, [fieldLoaders, middlewares, validators, validateOn]);
 
-  // ERRORS
+  // FORM HEALTH
   useEffect(() => {
-    const sub = Core.formErrors(formContextRef.current.store.state$).subscribe((error) =>
-      formError?.(error),
+    const sub = Core.formHealth(formContextRef.current.store.state$).subscribe((health) =>
+      formHealth?.(health),
     );
     return () => {
       sub.unsubscribe();
     };
-  }, [formError]);
+  }, [formHealth]);
 
   // EVENTS
   useEffect(() => {
