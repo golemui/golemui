@@ -78,6 +78,13 @@ export class ControlFieldAdapter<
     this.context.emitEvent('change', this.field);
   }
 
+  injectValidationIssues(issues: string[] | null) {
+    this.context.store.dispatch({
+      type: 'INJECT_VALIDATION_ISSUES',
+      payload: { path: this.field.path, issues },
+    });
+  }
+
   onBlur() {
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',

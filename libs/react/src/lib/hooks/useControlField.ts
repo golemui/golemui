@@ -101,16 +101,15 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     [field, formContext],
   );
 
-  /*const injectValidationIssue = useCallback(
-    (issues: string | string[] | null) => {
+  const injectValidationIssues = useCallback(
+    (issues: string[] | null) => {
       formContext.store.dispatch({
         type: 'INJECT_VALIDATION_ISSUES',
         payload: { path: field.path, issues },
       });
-      formContext.emitEvent('change', field);
     },
     [field, formContext],
-  );*/
+  );
 
   const onBlur = useCallback(() => {
     formContext.store.dispatch({
@@ -127,6 +126,6 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     isTouched,
     onValueChanged,
     onBlur,
-    //injectValidationIssue,
+    injectValidationIssues,
   };
 }
