@@ -27,13 +27,16 @@ export class FieldDirective implements OnInit {
   async ngOnInit() {
     try {
       this.createComponent(await this.formContext.fieldRegistry.loadField(this.field().widget));
-    } catch {
+    } catch (err: unknown) {
+      const error = err as Error;
       this.formContext.store.dispatch({
-        type: 'SET_ERROR',
+        type: 'SET_FORM_HEALTH',
         payload: {
-          error: {
-            kind: 'fatal',
-            error: `Field "${this.field().widget}" could not be loaded`,
+          formHealth: {
+            status: 'errored',
+            message: `Field "${this.field().widget}" could not be loaded`,
+            name: error.name,
+            stack: error.stack,
           },
         },
       });

@@ -6,6 +6,6 @@ export * from './initialize';
 export * from './override-field-prop';
 export * from './remove-field';
 export * from './set-data';
-export * from './set-error';
 export * from './set-field-data';
+export * from './set-form-health';
 export * from './validate-all';

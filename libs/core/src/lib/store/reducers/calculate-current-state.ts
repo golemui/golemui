@@ -1,5 +1,5 @@
 import { compile, parse } from 'subscript/justin';
-import { FormStoreError, State } from '../model';
+import { FormHealth, State } from '../model';
 
 export const calculateCurrentState = (state: State): State => {
   let stateExpressions = state.formDef.states;
@@ -9,7 +9,7 @@ export const calculateCurrentState = (state: State): State => {
   stateExpressions = expandStateExpressions(stateExpressions);
 
   let currentStates: string[] = [];
-  let error: FormStoreError = { kind: 'none' };
+  let formHealth: FormHealth = { status: 'ok' };
   try {
     // TODO: Security. See: https://github.com/dy/subscript/issues/25
     // TODO: Cache compiled expressions
@@ -33,10 +33,16 @@ export const calculateCurrentState = (state: State): State => {
       })
       .filter((stateName) => stateName !== undefined);
   } catch (err: unknown) {
-    error = { kind: 'fatal', error: (err as Error).message };
+    const error = err as Error;
+    formHealth = {
+      status: 'errored',
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+    };
   }
 
-  return { ...state, currentStates, error };
+  return { ...state, currentStates, formHealth };
 };
 
 /**

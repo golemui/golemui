@@ -58,8 +58,8 @@ export const reducer =
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );
 
-      case 'SET_ERROR':
-        return Reducers.setError(state, action);
+      case 'SET_FORM_HEALTH':
+        return Reducers.setFormHealth(state, action);
 
       case 'VALIDATE_ALL': {
         return Fn.pipe(
