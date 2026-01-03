@@ -75,6 +75,7 @@ export const kitchenSink = defineForm({
 });
 
 export const kitchenSinkData = {
+  calendar: '2026-01-13T23:00:00.000Z',
   listName: 'Development Team',
   selects: {
     greeting: 'bye',

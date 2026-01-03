@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, input, model } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, input } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { CalendarProps, GuiCalendarPickerControl } from '@golemui/shared-vanilla';
@@ -16,7 +16,7 @@ export class CalendarPickerComponent implements Core.WithField {
   calendarRef!: GuiCalendarPickerControl;
   field!: Core.ControlField<string>;
   adapter = input.required<Angular.ControlFieldAdapter<string, CalendarProps>>();
-  currentDate = model.required<Date>();
+  currentDate = input.required<Date>();
 
   onChangeDate(event: Event) {
     this.adapter().valueChanged((event as CustomEvent).detail.value);

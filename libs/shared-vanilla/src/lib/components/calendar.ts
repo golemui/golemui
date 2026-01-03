@@ -230,7 +230,7 @@ export class GuiCalendarPickerControl extends HTMLElement {
 
   private getOrderedWeekDays(firstDayFromJSON: number): number[] {
     const startDayIndex = firstDayFromJSON % 7;
-    const baseWeek = [0, 1, 2, 3, 4, 5, 6]; // 0=Dom ... 6=Sab
+    const baseWeek = [0, 1, 2, 3, 4, 5, 6]; // 0=Sun, 1=Mon, etc
     return [...baseWeek.slice(startDayIndex), ...baseWeek.slice(0, startDayIndex)];
   }
 
@@ -346,3 +346,9 @@ export class GuiCalendarPickerControl extends HTMLElement {
 }
 
 customElements.define('gui-calendar-picker-control', GuiCalendarPickerControl);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-calendar-picker-control': GuiCalendarPickerControl;
+  }
+}
