@@ -7,7 +7,7 @@
   class="gui-field"
   tabindex="0"
   role="button"
-  [attr.aria-expanded]="templateData.expanded || isCalendarOpen()"
+  [attr.aria-expanded]="isCalendarOpen()"
   (click)="openCalendar()"
 >
   <div
@@ -113,7 +113,7 @@
   }
 </div>
 
-@if (templateData.expanded || isCalendarOpen()) {
+@if (isCalendarOpen()) {
   <gui-calendar-picker [adapter]="adapter" [currentDate]="currentDate"></gui-calendar-picker>
 }
 

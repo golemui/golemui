@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { CalendarProps } from '@golemui/shared-vanilla';
+import { DatePickerProps } from '@golemui/shared-vanilla';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { GuiAriaDirective } from '../../directives/aria.directive';
 import { IconComponent } from '../../utils/templates/icon.component';
@@ -46,7 +46,7 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   invalidDate = signal(false);
 
   field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, CalendarProps> = inject(
+  protected adapter: Angular.ControlFieldAdapter<string, DatePickerProps> = inject(
     Angular.ControlFieldAdapter,
   );
   protected elementRef: ElementRef<HTMLElement> = inject(ElementRef);

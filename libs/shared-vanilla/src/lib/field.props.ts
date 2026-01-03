@@ -16,11 +16,19 @@ export type TextinputProps = {
 
 export type CalendarProps = {
   hint?: string;
+  prevMonthIcon?: string;
+  nextMonthIcon?: string;
+  dayFormat?: 'numeric' | '2-digit';
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
+export type DatePickerProps = {
+  hint?: string;
   placeholder?: string;
   icon?: string;
   prevMonthIcon?: string;
   nextMonthIcon?: string;
-  expanded?: boolean;
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';

@@ -1,62 +1,14 @@
 @let templateData = adapter().templateData();
 @let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-<div class="gui-calendar__container">
-  <header class="gui-calendar__header">
-    <button
-      type="button"
-      tabindex="0"
-      class="gui-button gui-calendar__month-button"
-      (click)="clickPrevMonth($event)"
-    >
-      @if (templateData.prevMonthIcon) {
-        <span class="gui-calendar__month-button-icon" [class]="templateData.prevMonthIcon"></span>
-      } @else {
-        <span
-          class="gui-calendar__month-button-icon gui-calendar__month-button-icon--prev"
-        ></span>
-      }
-    </button>
-    <h2>{{ monthName() }}</h2>
-    <button
-      type="button"
-      tabindex="0"
-      class="gui-button gui-calendar__month-button"
-      (click)="clickNextMonth($event)"
-    >
-      @if (templateData.nextMonthIcon) {
-        <span class="gui-calendar__month-button-icon" [class]="templateData.nextMonthIcon"></span>
-      } @else {
-        <span
-          class="gui-calendar__month-button-icon gui-calendar__month-button-icon--next"
-        ></span>
-      }
-    </button>
-  </header>
-
-  <div class="gui-calendar__days-grid">
-    @for (weekday of getWeekDays(); track $index) {
-      <span class="gui-calendar__weekday">{{ weekday }}</span>
-    }
-
-    @for (day of daysInMonth(); track day.date; let index = $index) {
-      <button
-        #dayButtonRef
-        type="button"
-        class="gui-calendar__day-button"
-        [attr.tabindex]="day.isFocusable ? 0 : -1"
-        [class.other-month]="!day.isCurrentMonth"
-        [class.today]="day.isToday"
-        [class.selected]="day.isSelected"
-        [disabled]="!day.isCurrentMonth"
-        (click)="clickDay(index, day)"
-        (keydown)="onKeyDown($event, day)"
-      >
-        {{ day.dayLabel }}
-      </button>
-    }
-  </div>
-</div>
+<gui-calendar-picker-control
+  [attr.prevMonthIcon]="templateData.prevMonthIcon"
+  [attr.nextMonthIcon]="templateData.nextMonthIcon"
+  [attr.dayFormat]="templateData.dayFormat"
+  [attr.weekdayFormat]="templateData.weekdayFormat"
+  [attr.monthFormat]="templateData.monthFormat"
+  (change)="onChangeDate($event)"
+></gui-calendar-picker-control>
 
 @if (showErrors && field) {
   <ul
