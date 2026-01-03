@@ -36,8 +36,17 @@ export type State = {
 
   /**
    * Tracks field validation status.
+   * These validations are derived from the schema validators expressed declaratively.
    */
   validations: Record<DotPath, ValidationState>;
+
+  /**
+   * Validation issues injected imperatively via the public API.
+   *
+   * These issues are not derived from the schema validators and are intended
+   * for contextual validations that cannot be expressed declaratively.
+   */
+  injectedValidations: Record<DotPath, string[] | null>;
 
   /**
    * Tracks fields with state expressions.
@@ -84,6 +93,7 @@ export const createInitialState = (): State => ({
   currentStates: [],
   calculatedFields: {},
   validations: {},
+  injectedValidations: {},
   fieldFlags: {},
   touchedControls: {},
   fieldPropOverrides: {},
@@ -131,14 +141,6 @@ export type ValidationState = {
      * engine and should not be mutated directly.
      */
     issues: string[];
-
-    /**
-     * Validation issues injected imperatively via the public API.
-     *
-     * These issues are not derived from the schema validators and are intended
-     * for contextual validations that cannot be expressed declaratively.
-     */
-    injectedIssues?: string[];
   };
 };
 

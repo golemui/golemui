@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
+import { combineLatest } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData, WithFlattenedProps } from './internal/useExtraProps';
 
@@ -53,14 +54,16 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
 
   // Listen to the validation stream for this control
   useEffect(() => {
-    const sub = formContext.store.state$
-      .pipe(Core.validationByPath$(field.path))
-      .subscribe((validation) => {
-        setErrors([
-          ...(validation?.status?.issues ?? []),
-          ...(validation?.status?.injectedIssues ?? []),
-        ]);
-      });
+    const validation$ = formContext.store.state$.pipe(Core.validationByPath$(field.path));
+    const injectedValidation$ = formContext.store.state$.pipe(
+      Core.injectedValidationByPath$(field.path),
+    );
+
+    const sub = combineLatest([validation$, injectedValidation$]).subscribe(
+      ([validation, injectedValidation]) => {
+        setErrors([...(validation?.status?.issues ?? []), ...(injectedValidation ?? [])]);
+      },
+    );
     return () => sub.unsubscribe();
   }, [field, formContext.store]);
 
@@ -98,6 +101,17 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     [field, formContext],
   );
 
+  /*const injectValidationIssue = useCallback(
+    (issues: string | string[] | null) => {
+      formContext.store.dispatch({
+        type: 'INJECT_VALIDATION_ISSUES',
+        payload: { path: field.path, issues },
+      });
+      formContext.emitEvent('change', field);
+    },
+    [field, formContext],
+  );*/
+
   const onBlur = useCallback(() => {
     formContext.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
@@ -113,5 +127,6 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     isTouched,
     onValueChanged,
     onBlur,
+    //injectValidationIssue,
   };
 }

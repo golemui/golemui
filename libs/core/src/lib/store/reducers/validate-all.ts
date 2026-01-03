@@ -66,13 +66,6 @@ export const validateAll =
             newValidations[control.path] = { ...newValidations[control.path] };
           }
 
-          // If there were `injectedIssues`, let's add them back
-          const oldInjectedIssues = oldValidations[control.path]?.status?.injectedIssues;
-          if (Array.isArray(oldInjectedIssues) && oldInjectedIssues.length > 0) {
-            newValidations[control.path].status ??= { issues: [] };
-            newValidations[control.path].status!.injectedIssues = oldInjectedIssues;
-          }
-
           return newValidations;
         },
         {} as State['validations'],

@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { takeUntil } from 'rxjs';
+import { combineLatest, takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
@@ -39,17 +39,23 @@ export class ControlFieldAdapter<
       .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
     // Listen to the validation stream for this control
-    this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.validationByPath$(field.path))
-      .subscribe((validation) => {
+    const validation$ = this.context.store.state$.pipe(
+      takeUntil(this.destroy$),
+      Core.validationByPath$(field.path),
+    );
+    const injectedValidation$ = this.context.store.state$.pipe(
+      takeUntil(this.destroy$),
+      Core.injectedValidationByPath$(field.path),
+    );
+
+    combineLatest([validation$, injectedValidation$]).subscribe(
+      ([validation, injectedValidation]) => {
         this.templateData.update((current) => ({
           ...current,
-          errors: [
-            ...(validation?.status?.issues ?? []),
-            ...(validation?.status?.injectedIssues ?? []),
-          ],
+          errors: [...(validation?.status?.issues ?? []), ...(injectedValidation ?? [])],
         }));
-      });
+      },
+    );
 
     // Listen to the touchedControls stream for this control
     this.context.store.state$
