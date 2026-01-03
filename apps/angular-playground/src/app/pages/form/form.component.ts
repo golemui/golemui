@@ -34,7 +34,7 @@ export class AppFormPage {
 
   protected onFormHealth(formHealth: Core.FormHealth) {
     if (formHealth.status === 'errored') {
-      this.error = `${formHealth.name}: ${formHealth.message}`;
+      this.error = formHealth.message;
     }
   }
 

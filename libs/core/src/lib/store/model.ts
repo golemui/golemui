@@ -112,9 +112,7 @@ export type Middleware<S, A> = (
  * When in an errored state, the form is considered non-operational
  * until the error is cleared.
  */
-export type FormHealth =
-  | { status: 'ok' }
-  | { status: 'errored'; message: string; name?: string; stack?: string };
+export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
 
 export type ValidationState = {
   /**

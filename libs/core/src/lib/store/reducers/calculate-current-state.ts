@@ -33,12 +33,9 @@ export const calculateCurrentState = (state: State): State => {
       })
       .filter((stateName) => stateName !== undefined);
   } catch (err: unknown) {
-    const error = err as Error;
     formHealth = {
       status: 'errored',
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
+      message: (err as Error).message,
     };
   }
 

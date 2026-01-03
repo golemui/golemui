@@ -16,12 +16,9 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     try {
       formDef = JSON.parse(formDef);
     } catch (err: unknown) {
-      const error = err as Error;
       formHealth = {
         status: 'errored',
-        message: error.message,
-        name: error.name,
-        stack: error.stack,
+        message: (err as Error).message,
       };
     }
     if (formHealth.status === 'errored') {
@@ -60,14 +57,11 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     };
   }
 
-  const error = new Error(result.error);
   return {
     ...initialState,
     formHealth: {
       status: 'errored',
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
+      message: result.error,
     },
   };
 };
