@@ -1,0 +1,25 @@
+@let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<div class="gui-field" data-cy="customdate">
+  <input
+    type="text"
+    guiAria
+    [attr.data-cy]="field.uid + '_customdate'"
+    [id]="field.uid"
+    [value]="templateData.value || ''"
+    placeholder="dd-mm-yyyy"
+    (input)="valueChanged($event)"
+    (blur)="adapter.onBlur()"
+  />
+</div>
+
+@if (showErrors) {
+  <ul [attr.data-cy]="field.uid + '_validator-errors'">
+    @for (error of templateData.errors; track $index) {
+      <li [attr.data-cy]="field.uid + '_validator-error'">
+        {{ error }}
+      </li>
+    }
+  </ul>
+}

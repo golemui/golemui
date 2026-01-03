@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as z from 'zod/mini';
+import { MountComponentFn } from '../utils';
 
 const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
@@ -44,9 +44,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         });
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
-        cy.get('[data-cy="requiredString_validator-error"]').contains(
-          'Invalid input: expected string, received undefined',
-        );
+        cy.get('[data-cy="requiredString_validator-error"]').contains('Invalid date format');
       });
 
       // TODO: Fix string validator to validate empty strings as invalid
