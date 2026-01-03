@@ -1,3 +1,13 @@
+## 0.15.2 (2026-01-03)
+
+### 🩹 Fixes
+
+- **lit:** rename formError to formHealth ([f57b6ec](https://github.com/golemui/formforge/commit/f57b6ec))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.1 (2025-12-27)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

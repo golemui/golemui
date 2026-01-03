@@ -1,3 +1,16 @@
+## 0.15.2 (2026-01-03)
+
+### 🩹 Fixes
+
+- rename form error to form health ([5f2ed5e](https://github.com/golemui/formforge/commit/5f2ed5e))
+- **cypress:** rename formError to formHealth ([0aee3df](https://github.com/golemui/formforge/commit/0aee3df))
+- **lit:** rename formError to formHealth ([f57b6ec](https://github.com/golemui/formforge/commit/f57b6ec))
+- **react:** rename formError to formHealth ([3eba8ac](https://github.com/golemui/formforge/commit/3eba8ac))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.1 (2025-12-27)
 
 ### 🩹 Fixes
