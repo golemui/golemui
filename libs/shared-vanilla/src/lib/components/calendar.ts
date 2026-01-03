@@ -115,16 +115,16 @@ export class GuiCalendarPickerControl extends HTMLElement {
           ${days
             .map(
               (day) => `
-            <button
-              type="button"
-              class="gui-calendar__day-button ${day.isToday ? 'today' : ''} ${day.isSelected ? 'selected' : ''}"
-              tabindex="${day.isFocusable ? 0 : -1}"
-              ${!day.isCurrentMonth ? 'disabled' : ''}
-              data-date="${day.date.toISOString()}"
-            >
-              ${day.dayLabel}
-            </button>
-          `,
+                <button
+                  type="button"
+                  class="gui-calendar__day-button ${day.isToday ? 'today' : ''} ${day.isSelected ? 'selected' : ''}"
+                  tabindex="${day.isFocusable ? 0 : -1}"
+                  ${!day.isCurrentMonth ? 'disabled' : ''}
+                  data-date="${day.date.toISOString()}"
+                >
+                  ${day.dayLabel}
+                </button>
+              `,
             )
             .join('')}
         </div>
