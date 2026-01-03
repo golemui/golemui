@@ -25,12 +25,10 @@ export class FormElement extends LitElement {
     return this;
   }
 
-  protected onFormError(event: CustomEvent<Core.FormStoreError>) {
-    const error = event.detail;
-    if (error.kind === 'validation') {
-      this.error = 'Validation errors: ' + error.errors;
-    } else if (error.kind === 'fatal') {
-      this.error = 'Fatal error: ' + error.error;
+  protected onFormHealth(event: CustomEvent<Core.FormHealth>) {
+    const health = event.detail;
+    if (health.status === 'errored') {
+      this.error = health.message;
     }
     Promise.resolve().then(() => this.requestUpdate());
   }
@@ -52,7 +50,7 @@ export class FormElement extends LitElement {
           .middlewares=${this.middlewares}
           .validators=${this.validators}
           .validateOn=${'eager'}
-          @formError=${this.onFormError}
+          @formHealth=${this.onFormHealth}
           @formEvent=${this.onFormEvent}
         ></gui-form>
       </div>

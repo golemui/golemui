@@ -1,5 +1,5 @@
-import { MountComponentFn } from '../utils';
 import * as Core from '@golemui/core';
+import { MountComponentFn } from '../utils';
 
 export const runEventsComponentTests = (mountFn: MountComponentFn) => {
   describe('Events', () => {
@@ -18,10 +18,10 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
         }),
       });
 
-      cy.get('@formError').should('have.been.calledWith', {
-        kind: 'fatal',
-        error: 'Field "asdf" could not be loaded',
-      });
+      cy.get('@formHealth').should('have.been.calledWith', {
+        status: 'errored',
+        message: 'Field "asdf" could not be loaded',
+      } satisfies Core.FormHealth);
     });
 
     it('Should execute form events on load', () => {

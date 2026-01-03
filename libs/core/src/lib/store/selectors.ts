@@ -114,13 +114,13 @@ export const touchedControlsByPath$ = (path: DotPath) =>
 
 // --------------------------------
 //
-// ERRORS
+// FORM HEALTH
 //
 // --------------------------------
 
-const selectErrors = pipe(
-  map((store: State) => store.error),
+const selectFormHealth = pipe(
+  map((store: State) => store.formHealth),
   distinctUntilChanged(),
 );
 
-export const formErrors = (store: Observable<State>) => store.pipe(selectErrors);
+export const formHealth = (store: Observable<State>) => store.pipe(selectFormHealth);

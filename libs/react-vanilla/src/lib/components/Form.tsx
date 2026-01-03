@@ -1,13 +1,13 @@
 import * as Core from '@golemui/core';
-import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import * as React from '@golemui/react';
+import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import {
   CustomValidatorSchemas,
   initValidators,
   jsonSchemaValidators,
 } from '@golemui/validators-vanilla';
-import { vanillaFieldLoaders } from '../field.loaders';
 import { ComponentType } from 'react';
+import { vanillaFieldLoaders } from '../field.loaders';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
@@ -18,7 +18,7 @@ export interface ReactFormComponentProps {
   data?: Record<string, any>;
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
-  formError?: (error: Core.FormStoreError) => void;
+  formHealth?: (formHealth: Core.FormHealth) => void;
 }
 
 export const FormComponent = ({
@@ -28,7 +28,7 @@ export const FormComponent = ({
   validators = {},
   middlewares = [],
   validateOn = 'eager',
-  formError = undefined,
+  formHealth = undefined,
   formEvent = undefined,
 }: ReactFormComponentProps) => {
   const customFieldLoaders = { ...vanillaFieldLoaders, ...fieldLoaders };
@@ -45,7 +45,7 @@ export const FormComponent = ({
       middlewares={customMiddlewares}
       validators={customValidators}
       validateOn={validateOn}
-      formError={formError}
+      formHealth={formHealth}
       formEvent={formEvent}
     />
   );

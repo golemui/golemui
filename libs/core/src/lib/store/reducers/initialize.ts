@@ -2,7 +2,7 @@ import * as Form from '../../form';
 import * as Field from '../../form-field';
 import { flattenForm } from '../../utils/form';
 import * as Actions from '../actions';
-import { createInitialState, FormStoreError, State } from '../model';
+import { createInitialState, FormHealth, State } from '../model';
 
 export const initialize = (_: State, action: Actions.INITIALIZE): State => {
   const initialState = {
@@ -10,16 +10,19 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
     formName: action.payload.formName,
   };
   let formDef = action.payload.formDef;
-  let formStoreError: FormStoreError = { kind: 'none' };
+  let formHealth: FormHealth = { status: 'ok' };
 
   if (typeof formDef === 'string') {
     try {
       formDef = JSON.parse(formDef);
-    } catch {
-      formStoreError = { kind: 'fatal', error: 'Invalid JSON form schema' };
+    } catch (err: unknown) {
+      formHealth = {
+        status: 'errored',
+        message: (err as Error).message,
+      };
     }
-    if (formStoreError.kind === 'fatal') {
-      return { ...initialState, error: formStoreError };
+    if (formHealth.status === 'errored') {
+      return { ...initialState, formHealth };
     }
   }
 
@@ -56,6 +59,9 @@ export const initialize = (_: State, action: Actions.INITIALIZE): State => {
 
   return {
     ...initialState,
-    error: { kind: 'fatal', error: result.error },
+    formHealth: {
+      status: 'errored',
+      message: result.error,
+    },
   };
 };
