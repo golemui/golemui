@@ -286,7 +286,9 @@ export class GuiCalendarPickerControl extends HTMLElement {
 
     if (!target.classList.contains('gui-calendar__day-button')) return;
 
-    const days = Array.from(this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'));
+    const days = Array.from(this.querySelectorAll<HTMLElement>('.gui-calendar__day-button')).filter(
+      (d) => !d.hasAttribute('disabled'),
+    );
     const currentIndex = days.indexOf(target);
 
     let nextIndex = currentIndex;
@@ -316,13 +318,17 @@ export class GuiCalendarPickerControl extends HTMLElement {
       if (nextIndex < 0) {
         this.updateMonth(-1);
         requestAnimationFrame(() => {
-          const newDays = this.querySelectorAll<HTMLElement>('.gui-calendar__day-button');
+          const newDays = Array.from(
+            this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'),
+          ).filter((d) => !d.hasAttribute('disabled'));
           newDays[newDays.length + nextIndex]?.focus();
         });
       } else if (nextIndex >= days.length) {
         this.updateMonth(1);
         requestAnimationFrame(() => {
-          const newDays = this.querySelectorAll<HTMLElement>('.gui-calendar__day-button');
+          const newDays = Array.from(
+            this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'),
+          ).filter((d) => !d.hasAttribute('disabled'));
           newDays[nextIndex - days.length]?.focus();
         });
       } else {
