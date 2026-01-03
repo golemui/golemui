@@ -25,7 +25,7 @@ export class FormElement extends LitElement {
   state: State | undefined;
   subscriptions: Subscription[] = [];
 
-  static FORM_ERROR_EVENT = 'formError';
+  static FORM_HEALTH_EVENT = 'formHealth';
   static FORM_EVENT = 'formEvent';
 
   override connectedCallback() {
@@ -35,14 +35,17 @@ export class FormElement extends LitElement {
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
-      Core.formErrors(this.context.store.state$).subscribe((error) => {
+      Core.formHealth(this.context.store.state$).subscribe((health) => {
         this.dispatchEvent(
-          new CustomEvent(FormElement.FORM_ERROR_EVENT, { detail: error, bubbles: true }),
+          new CustomEvent<Core.FormHealth>(FormElement.FORM_HEALTH_EVENT, {
+            detail: health,
+            bubbles: true,
+          }),
         );
       }),
       this.context.events$.subscribe((event) =>
         this.dispatchEvent(
-          new CustomEvent(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
+          new CustomEvent<Core.FormEvent>(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
         ),
       ),
     );

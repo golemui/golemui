@@ -1,7 +1,7 @@
-import { LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
 import * as Core from '@golemui/core';
 import { consume, ContextProvider, provide } from '@lit/context';
+import { LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
 import { formContext, LitFormContext } from '../context/form.context';
 import {
   RepeaterIndexTokenContext,
@@ -41,10 +41,10 @@ export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>
       } catch (err) {
         console.error(`Field "${this.field.widget}" could not be loaded`, err);
         this.dispatchEvent(
-          new CustomEvent('formError', {
+          new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
-              kind: 'fatal',
-              error: `Field "${this.field.widget}" could not be loaded`,
+              status: 'errored',
+              message: `Field "${this.field.widget}" could not be loaded`,
             },
             bubbles: true,
             composed: true,

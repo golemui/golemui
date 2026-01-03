@@ -31,11 +31,11 @@ function FieldRenderer(props: Props) {
         }
       } catch {
         formContext.store.dispatch({
-          type: 'SET_ERROR',
+          type: 'SET_FORM_HEALTH',
           payload: {
-            error: {
-              kind: 'fatal',
-              error: `Field "${props.field.widget}" could not be loaded`,
+            formHealth: {
+              status: 'errored',
+              message: `Field "${props.field.widget}" could not be loaded`,
             },
           },
         });
