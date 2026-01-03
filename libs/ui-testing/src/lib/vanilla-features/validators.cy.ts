@@ -44,7 +44,9 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         });
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
-        cy.get('[data-cy="requiredString_validator-error"]').contains('Invalid date format');
+        cy.get('[data-cy="requiredString_validator-error"]').contains(
+          'Invalid input: expected string, received undefined',
+        );
       });
 
       // TODO: Fix string validator to validate empty strings as invalid
