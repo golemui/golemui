@@ -125,6 +125,7 @@ export type Middleware<S, A> = (
 export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
 
 export type ValidationState = {
+  // TODO: we are not caching anymore, so we don't need this anymore, only status is required. Remove and simplify.
   /**
    * Cache of validation schemas, keyed by UIState.
    */

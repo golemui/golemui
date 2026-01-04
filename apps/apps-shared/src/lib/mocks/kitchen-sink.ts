@@ -1,15 +1,15 @@
 import { defineForm } from '@golemui/core';
-import { alert } from './tabs/alert';
-import { stack } from './tabs/stack';
-import { repeater } from './tabs/repeater';
-import { checkbox } from './tabs/checkbox';
 import { accordion } from './tabs/accordion';
-import { textinput } from './tabs/textinput';
-import { select } from './tabs/select';
+import { alert } from './tabs/alert';
+import { checkbox } from './tabs/checkbox';
 import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
-import { toggle } from './tabs/toggle';
+import { repeater } from './tabs/repeater';
+import { select } from './tabs/select';
+import { stack } from './tabs/stack';
 import { textarea } from './tabs/textarea';
+import { textinput } from './tabs/textinput';
+import { toggle } from './tabs/toggle';
 
 export const kitchenSink = defineForm({
   states: {
@@ -93,7 +93,7 @@ export const kitchenSinkData = {
         lastName: 'Johnson',
       },
       {
-        firstName: 'Bob',
+        firstName: '',
         lastName: 'Smith',
       },
       {

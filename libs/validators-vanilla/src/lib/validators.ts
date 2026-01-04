@@ -148,7 +148,7 @@ function fromStringValidator(v: StringValidator) {
 
     if (v.required === true) {
       // TODO: Harcoded error message. Bad for i18n
-      schema = schema.check(refine((val) => val.length > 8, { error: 'This field is required' }));
+      schema = schema.check(refine((val) => val.length > 0, { error: 'This field is required' }));
     }
 
     if (typeof v.minLength === 'number') {

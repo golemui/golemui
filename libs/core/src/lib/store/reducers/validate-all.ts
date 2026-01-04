@@ -8,7 +8,6 @@ import { State, ValidationState } from '../model';
 export const validateAll =
   (validators: ValidatorFn<any>) =>
   (state: State): State => {
-    // TODO: are we accounting for repeater fields here??
     const controls = filterMap(Object.values(state.calculatedFields), ({ current }) =>
       isControlField(current) ? current : SKIP,
     );

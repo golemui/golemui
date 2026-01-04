@@ -23,6 +23,7 @@ export const repeater = (): any => ({
               kind: 'control',
               widget: 'textinput',
               path: 'repeaters.users.items.firstName',
+              validator: { type: 'string', required: true },
             },
             {
               uid: '',

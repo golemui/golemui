@@ -28,5 +28,6 @@ export function removeField(state: State, action: REMOVE_FIELD): State {
         return touchedControls;
       }),
     },
+    // TODO: clear field from injectedValidations
   };
 }
