@@ -59,7 +59,7 @@ export type ValidateOn = 'eager' | 'change' | 'blur' | 'submit' | ('change' | 'b
 /**
  * The bare minimum validation required for ny validation implementation
  */
-export type Validator = { required?: boolean };
+export type Validator<V = any> = V;
 
 /**
  * Represents a form event payload.
