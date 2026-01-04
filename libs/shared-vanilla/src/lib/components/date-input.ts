@@ -16,6 +16,18 @@ export class GuiDateControl extends LitElement {
   @state() private _month = '';
   @state() private _year = '';
 
+  private readonly MIN_DAY = 1;
+  private readonly MAX_DAY = (month: number, year: number) => {
+    if (month === 2) {
+      const isLeapYear = new Date(year, 1, 29).getDate() === 29;
+      return isLeapYear || !year ? 29 : 28;
+    } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+      return 30;
+    }
+    return 31;
+  };
+  private readonly MIN_MONTH = 1;
+  private readonly MAX_MONTH = 12;
   private readonly MIN_YEAR = 1000;
   private readonly MAX_YEAR = 9999;
 
@@ -55,11 +67,11 @@ export class GuiDateControl extends LitElement {
 
             switch (part.type) {
               case 'day':
-                return this.renderInput('day', 'dd', 2, tabIndex);
+                return this.renderInput('day', 'dd', 2, tabIndex, this._day);
               case 'month':
-                return this.renderInput('month', 'mm', 2, tabIndex);
+                return this.renderInput('month', 'mm', 2, tabIndex, this._month);
               case 'year':
-                return this.renderInput('year', 'yyyy', 4, tabIndex);
+                return this.renderInput('year', 'yyyy', 4, tabIndex, this._year);
               case 'literal':
                 return html`<span class="gui-date-input__separator">${part.value}</span>`;
               default:
@@ -77,12 +89,8 @@ export class GuiDateControl extends LitElement {
     placeholder: string,
     maxLen: number,
     tabIndex: number,
+    val: string,
   ) {
-    let val = '';
-    if (type === 'day') val = this._day;
-    else if (type === 'month') val = this._month;
-    else if (type === 'year') val = this._year;
-
     return html`
       <input
         type="text"
@@ -96,7 +104,8 @@ export class GuiDateControl extends LitElement {
         ?readonly="${this.readonly}"
         .value="${live(val)}"
         @keydown="${this.handleKeyDown}"
-        @keyup="${this.handleKeyUp}"
+        @keyup="${(e: KeyboardEvent) => this.handleKeyUp(e, type)}"
+        @focus="${this.handleFocus}"
         @blur="${(e: FocusEvent) => this.handleBlur(e, type)}"
         @change="${(e: Event) => this.handleChange(e, type)}"
       />
@@ -143,30 +152,51 @@ export class GuiDateControl extends LitElement {
     }
   }
 
-  private handleKeyUp(event: KeyboardEvent) {
+  private handleFocus(event: FocusEvent) {
+    this.dispatchEvent(new CustomEvent('focus', { detail: event }));
+  }
+
+  private handleKeyUp(event: KeyboardEvent, type: 'day' | 'month' | 'year') {
     const input = event.target as HTMLInputElement;
     const inputs = Array.from(this.querySelectorAll('input'));
     const index = inputs.indexOf(input);
 
-    if (input.value.length === input.maxLength && /^[0-9]$/.test(event.key)) {
-      if (index < inputs.length - 1) inputs[index + 1].focus();
+    // We jump to the next input when the input is filled
+    if (
+      input.value.length === input.maxLength &&
+      index < inputs.length - 1 &&
+      /^[0-9]$/.test(event.key)
+    ) {
+      inputs[index + 1].focus();
     }
 
     switch (event.key) {
-      case 'ArrowUp':
-        this.incrementValue(input, 1);
+      case 'ArrowUp': {
+        const value = isNaN(parseInt(input.value, 10) + 1) ? 1 : parseInt(input.value, 10) + 1;
+        if (type === 'year') this._year = value.toString().padStart(4, '0');
+        if (type === 'month') this._month = value.toString().padStart(2, '0');
+        if (type === 'day') this._day = value.toString().padStart(2, '0');
+        input.select();
+        this.validateAndEmit();
         break;
-      case 'ArrowDown':
-        this.incrementValue(input, -1);
+      }
+      case 'ArrowDown': {
+        const value = isNaN(parseInt(input.value, 10) - 1) ? 1 : parseInt(input.value, 10) - 1;
+        if (type === 'year') this._year = value.toString().padStart(4, '0');
+        if (type === 'month') this._month = value.toString().padStart(2, '0');
+        if (type === 'day') this._day = value.toString().padStart(2, '0');
+        input.select();
+        this.validateAndEmit();
         break;
+      }
       case 'ArrowLeft':
-        if (input.selectionStart === 0 && index > 0) {
+        if (index > 0) {
           inputs[index - 1].focus();
           inputs[index - 1].select();
         }
         break;
       case 'ArrowRight':
-        if (input.selectionStart === input.value.length && index < inputs.length - 1) {
+        if (index < inputs.length - 1) {
           inputs[index + 1].focus();
           inputs[index + 1].select();
         }
@@ -180,9 +210,17 @@ export class GuiDateControl extends LitElement {
     const input = event.target as HTMLInputElement;
     const val = input.value.replace(/[^0-9]/g, '');
 
-    if (type === 'day') this._day = val;
-    if (type === 'month') this._month = val;
-    if (type === 'year') this._year = val;
+    switch (type) {
+      case 'day':
+        this._day = val;
+        break;
+      case 'month':
+        this._month = val;
+        break;
+      case 'year':
+        this._year = val;
+        break;
+    }
 
     this.validateAndEmit();
   }
@@ -193,74 +231,64 @@ export class GuiDateControl extends LitElement {
 
     if (!isNaN(val) && val > 0) {
       const length = type === 'year' ? 4 : 2;
-      const padded = val.toString().padStart(length, '0');
-
-      if (type === 'day') this._day = padded;
-      if (type === 'month') this._month = padded;
-      if (type === 'year') this._year = padded;
-
-      input.value = padded;
+      input.value = val.toString().padStart(length, '0');
     } else {
-      if (input.value === '') {
-        this.dispatchEvent(new CustomEvent('change', { detail: { value: null } }));
-      }
+      this.dispatchEvent(new CustomEvent('change', { detail: { value: null } }));
     }
 
-    this.validateAndEmit();
-  }
-
-  private incrementValue(input: HTMLInputElement, delta: number) {
-    let val = parseInt(input.value, 10);
-    if (isNaN(val)) val = delta > 0 ? 0 : 2;
-
-    val += delta;
-    input.value = val.toString().padStart(input.maxLength, '0');
-    input.dispatchEvent(new Event('input'));
-    input.select();
+    this.dispatchEvent(new CustomEvent('blur'));
   }
 
   private validateAndEmit() {
-    const d = parseInt(this._day, 10);
-    const m = parseInt(this._month, 10);
-    const y = parseInt(this._year, 10);
+    let yearVal = parseInt(this._year, 10);
+    let monthVal = parseInt(this._month, 10);
+    let dayVal = parseInt(this._day, 10);
 
-    if (isNaN(d) || isNaN(m) || isNaN(y)) return;
-    if (this._year.length < 4) return;
-
-    const finalY = Math.max(this.MIN_YEAR, Math.min(this.MAX_YEAR, y));
-    const finalM = Math.max(1, Math.min(12, m));
-    const maxDays = this.getMaxDays(finalM, finalY);
-    const finalD = Math.max(1, Math.min(maxDays, d));
-
-    if (finalD !== d || finalM !== m || finalY !== y) {
-      this._day = finalD.toString().padStart(2, '0');
-      this._month = finalM.toString().padStart(2, '0');
-      this._year = finalY.toString().padStart(4, '0');
-      this.requestUpdate();
+    if (yearVal > this.MAX_YEAR) {
+      yearVal = this.MAX_YEAR;
+      this._year = yearVal.toString().padStart(4, '0');
+    }
+    if (yearVal < this.MIN_YEAR) {
+      yearVal = this.MIN_YEAR;
+      this._year = yearVal.toString().padStart(4, '0');
     }
 
-    const date = new Date(finalY, finalM - 1, finalD);
-    date.setHours(12, 0, 0, 0);
-    const iso = date.toISOString();
+    if (monthVal > this.MAX_MONTH) {
+      monthVal = this.MAX_MONTH;
+      this._month = monthVal.toString().padStart(2, '0');
+    }
+    if (monthVal < this.MIN_MONTH) {
+      monthVal = this.MIN_MONTH;
+      this._month = monthVal.toString().padStart(2, '0');
+    }
 
-    if (this.value !== iso) {
-      this.value = iso;
+    const maxDay = this.MAX_DAY(monthVal, yearVal);
+    if (dayVal > maxDay) {
+      dayVal = maxDay;
+      this._day = dayVal.toString().padStart(2, '0');
+    }
+    if (dayVal < this.MIN_DAY) {
+      dayVal = this.MIN_DAY;
+      this._day = dayVal.toString().padStart(2, '0');
+    }
+
+    const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
+    const isMonthValid = !isNaN(monthVal) && monthVal > 0;
+    const isDayValid = !isNaN(dayVal) && dayVal > 0 && dayVal <= maxDay;
+
+    if (isDayValid && isMonthValid && isYearValid) {
+      const currentDate = new Date(yearVal, monthVal - 1, dayVal);
+      this.value = currentDate.toISOString();
+
       this.dispatchEvent(
         new CustomEvent('change', {
-          detail: { value: iso },
+          detail: { value: this.value },
           bubbles: true,
           composed: true,
         }),
       );
     }
-  }
 
-  private getMaxDays(month: number, year: number): number {
-    if (month === 2) {
-      const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-      return isLeapYear ? 29 : 28;
-    }
-    if ([4, 6, 9, 11].includes(month)) return 30;
-    return 31;
+    this.requestUpdate();
   }
 }
