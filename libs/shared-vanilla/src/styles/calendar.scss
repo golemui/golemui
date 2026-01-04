@@ -88,7 +88,7 @@
 
     .gui-calendar__days-grid {
       display: grid;
-      grid-template-columns: repeat(7, 1fr); /* 7 columnas iguales */
+      grid-template-columns: repeat(7, 1fr);
       gap: 1px;
     }
   }

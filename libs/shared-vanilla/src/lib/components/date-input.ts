@@ -54,11 +54,7 @@ export class GuiDateControl extends LitElement {
     };
 
     return html`
-      <div
-        class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}"
-        role="group"
-        @click="${this.focusFirstInput}"
-      >
+      <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}" role="group">
         ${repeat(
           parts,
           (part: any) => part.type,
@@ -125,12 +121,6 @@ export class GuiDateControl extends LitElement {
       this._month = (date.getMonth() + 1).toString().padStart(2, '0');
       this._year = date.getFullYear().toString();
     }
-  }
-
-  private focusFirstInput() {
-    if (this.disabled) return;
-    const first = this.querySelector('input');
-    first?.focus();
   }
 
   private handleKeyDown(event: KeyboardEvent) {

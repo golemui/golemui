@@ -17,6 +17,16 @@ export const calendar = (): any => ({
     {
       uid: '',
       kind: 'control',
+      widget: 'dateInput',
+      path: 'dateInput',
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+      },
+      validator: { type: 'string', format: 'date-time' },
+    },
+    {
+      uid: '',
+      kind: 'control',
       widget: 'datePicker',
       path: 'datePicker',
       props: {

@@ -15,6 +15,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
     (await import('./components/textinput/textinput.component')).TextinputComponent,
   calendar: async () =>
     (await import('./components/calendar/calendar.component')).CalendarComponent,
+  dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,
   datePicker: async () =>
     (await import('./components/date-picker/date-picker.component')).DatePickerComponent,
   toggle: async () => (await import('./components/toggle/toggle.component')).ToggleComponent,
