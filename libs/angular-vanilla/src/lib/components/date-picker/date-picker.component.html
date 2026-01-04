@@ -10,111 +10,23 @@
   [attr.aria-expanded]="isCalendarOpen()"
   (click)="openCalendar()"
 >
-  <div
-    guiAria
-    [uid]="field.uid"
-    [templateData]="templateData"
-    class="gui-date-input"
-    [class]="{ 'gui-calendar--icon': templateData.icon }"
-  >
-    @for (part of dateParts(); track $index) {
-      @switch (part.type) {
-        @case ('day') {
-          <input
-            #dateInput
-            #dayInput
-            type="text"
-            inputmode="numeric"
-            maxlength="2"
-            guiAria
-            min="1"
-            max="31"
-            [attr.tabindex]="$index === 0 ? '0' : '-1'"
-            [attr.data-cy]="field.uid + '_day'"
-            [uid]="field.uid"
-            [templateData]="templateData"
-            [id]="field.uid + '_day'"
-            [required]="templateData.validator?.required"
-            [value]="'DD'"
-            [disabled]="templateData.disabled"
-            [readOnly]="templateData.readonly"
-            placeholder="dd"
-            (keydown)="keyDown($event)"
-            (keyup)="keyUp($event)"
-            (change)="valueChanged()"
-            (focus)="openCalendar($event)"
-            (blur)="onInputBlur($event, 'day')"
-          />
-        }
-        @case ('month') {
-          <input
-            #dateInput
-            #monthInput
-            type="text"
-            inputmode="numeric"
-            maxlength="2"
-            guiAria
-            min="1"
-            max="12"
-            [attr.tabindex]="$index === 0 ? '0' : '-1'"
-            [attr.data-cy]="field.uid + '_month'"
-            [uid]="field.uid"
-            [templateData]="templateData"
-            [id]="field.uid + '_month'"
-            [required]="templateData.validator?.required"
-            [value]="'MM'"
-            [disabled]="templateData.disabled"
-            [readOnly]="templateData.readonly"
-            placeholder="mm"
-            (keydown)="keyDown($event)"
-            (keyup)="keyUp($event)"
-            (change)="valueChanged()"
-            (focus)="openCalendar($event)"
-            (blur)="onInputBlur($event, 'month')"
-          />
-        }
-        @case ('year') {
-          <input
-            #dateInput
-            #yearInput
-            type="text"
-            inputmode="numeric"
-            maxlength="4"
-            guiAria
-            min="1000"
-            max="9999"
-            [attr.tabindex]="$index === 0 ? '0' : '-1'"
-            [attr.data-cy]="field.uid + '_year'"
-            [uid]="field.uid"
-            [templateData]="templateData"
-            [id]="field.uid + '_year'"
-            class="gui-year-input__year"
-            [required]="templateData.validator?.required"
-            [value]="'YYYY'"
-            [disabled]="templateData.disabled"
-            [readOnly]="templateData.readonly"
-            placeholder="yyyy"
-            (keydown)="keyDown($event)"
-            (keyup)="keyUp($event)"
-            (change)="valueChanged()"
-            (focus)="openCalendar($event)"
-            (blur)="onInputBlur($event, 'year')"
-          />
-        }
-        @case ('literal') {
-          <span>{{ part.value }}</span>
-        }
-      }
-    }
-  </div>
-
-  @if (templateData.icon) {
-    <span gui-icon [templateData]="templateData"></span>
-  }
+  <gui-date-control
+    [value]="templateData.value"
+    [icon]="templateData.icon"
+    (change)="onChangeDate($event)"
+  ></gui-date-control>
 </div>
 
 @if (isCalendarOpen()) {
-  <gui-calendar-picker [adapter]="adapter" [currentDate]="currentDate"></gui-calendar-picker>
+  <gui-calendar-control
+    [value]="templateData.value"
+    [prevMonthIcon]="templateData.prevMonthIcon"
+    [nextMonthIcon]="templateData.nextMonthIcon"
+    [dayFormat]="templateData.dayFormat"
+    [weekdayFormat]="templateData.weekdayFormat"
+    [monthFormat]="templateData.monthFormat"
+    (change)="onChangeDate($event)"
+  ></gui-calendar-control>
 }
 
 @if (showErrors) {

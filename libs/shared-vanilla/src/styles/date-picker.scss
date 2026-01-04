@@ -1,3 +1,11 @@
+gui-date-control {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  column-gap: var(--gui-space-gap--inner);
+  row-gap: var(--gui-space-gap--inner);
+}
+
 .gui-form {
   .gui-date-picker {
     display: block;
