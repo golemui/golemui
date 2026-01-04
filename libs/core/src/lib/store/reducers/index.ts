@@ -3,6 +3,7 @@ export * from './calculate-current-state';
 export * from './calculate-field-flags';
 export * from './calculate-field-props';
 export * from './initialize';
+export * from './inject-validation-issues';
 export * from './override-field-prop';
 export * from './remove-field';
 export * from './set-data';

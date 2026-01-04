@@ -102,6 +102,10 @@ export const reducer =
         return state;
       }
 
+      case 'INJECT_VALIDATION_ISSUES': {
+        return Reducers.injectValidationIssues(state, action);
+      }
+
       default: {
         return assertNever(action);
       }

@@ -8,6 +8,7 @@ export * from './lib/core-features/label.cy';
 export * from './lib/core-features/middlewares.cy';
 export * from './lib/core-features/reactive-functions.cy';
 export * from './lib/core-features/states.cy';
+export * from './lib/core-features/validator-injection.cy';
 
 // Vanilla features and components
 export * from './lib/vanilla-features/alert.cy';

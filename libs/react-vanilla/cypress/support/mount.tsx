@@ -9,6 +9,7 @@ export const mountFramework = (options: MountOptions) => {
     ? {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,
+        customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
       }
     : {};
 

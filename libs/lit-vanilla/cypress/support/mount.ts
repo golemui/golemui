@@ -8,6 +8,8 @@ export const mountFramework = (options: MountOptions) => {
   const fieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = options.withCustomComponent
     ? {
         heading: async () => (await import('../components/heading/heading.element')).HeadingElement,
+        customdate: async () =>
+          (await import('../components/custom-date/customdate.element')).CustomdateElement,
       }
     : {};
 

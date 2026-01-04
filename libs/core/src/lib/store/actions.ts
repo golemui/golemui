@@ -86,6 +86,11 @@ export type VALIDATE_ALL = {
   type: 'VALIDATE_ALL';
 };
 
+export type INJECT_VALIDATION_ISSUES = {
+  type: 'INJECT_VALIDATION_ISSUES';
+  payload: { issues: string[] | null; path: DotPath };
+};
+
 export type Action =
   | INITIALIZE
   | SET_DATA
@@ -95,5 +100,6 @@ export type Action =
   | SET_FIELD_DATA
   | OVERRIDE_FIELD_PROP
   | SET_FORM_HEALTH
+  | INJECT_VALIDATION_ISSUES
   | ATTEMPT_VALIDATION
   | VALIDATE_ALL;

@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as z from 'zod/mini';
+import { MountComponentFn } from '../utils';
 
 const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
