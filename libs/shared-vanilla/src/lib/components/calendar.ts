@@ -120,6 +120,7 @@ export class GuiCalendarPickerControl extends HTMLElement {
                   class="gui-calendar__day-button ${day.isToday ? 'today' : ''} ${day.isSelected ? 'selected' : ''}"
                   tabindex="${day.isFocusable ? 0 : -1}"
                   ${!day.isCurrentMonth ? 'disabled' : ''}
+                  data-action="day"
                   data-date="${day.date.toISOString()}"
                 >
                   ${day.dayLabel}
@@ -136,6 +137,91 @@ export class GuiCalendarPickerControl extends HTMLElement {
     if (this._abortController) {
       this._abortController.abort();
       this._abortController = null;
+    }
+  }
+
+  private handleClick(event: Event) {
+    const target = event.target as HTMLElement;
+
+    const actionBtn = target.closest('[data-action]');
+
+    if (!actionBtn) return;
+
+    const action = (actionBtn as HTMLElement).dataset['action'];
+    switch (action) {
+      case 'prev': {
+        this.prevMonth();
+        break;
+      }
+      case 'next': {
+        this.nextMonth();
+        break;
+      }
+      case 'day': {
+        const dateStr = (actionBtn as HTMLElement).dataset['date'];
+        if (dateStr) {
+          this.selectDate(dateStr);
+          this.focusDate(dateStr);
+        }
+        break;
+      }
+    }
+  }
+
+  private handleKeydown(event: Event) {
+    const e = event as KeyboardEvent;
+    const target = e.target as HTMLElement;
+
+    if (!target.classList.contains('gui-calendar__day-button')) return;
+
+    const days = Array.from(this.querySelectorAll<HTMLElement>('.gui-calendar__day-button')).filter(
+      (d) => !d.hasAttribute('disabled'),
+    );
+    const currentIndex = days.indexOf(target);
+
+    let nextIndex = currentIndex;
+    let doFocus = false;
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        doFocus = true;
+        nextIndex = currentIndex - 1;
+        break;
+      case 'ArrowRight':
+        doFocus = true;
+        nextIndex = currentIndex + 1;
+        break;
+      case 'ArrowUp':
+        doFocus = true;
+        nextIndex = currentIndex - 7;
+        break;
+      case 'ArrowDown':
+        doFocus = true;
+        nextIndex = currentIndex + 7;
+        break;
+    }
+
+    if (doFocus) {
+      e.preventDefault();
+      if (nextIndex < 0) {
+        this.prevMonth();
+        requestAnimationFrame(() => {
+          const newDays = Array.from(
+            this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'),
+          ).filter((d) => !d.hasAttribute('disabled'));
+          newDays[newDays.length + nextIndex]?.focus();
+        });
+      } else if (nextIndex >= days.length) {
+        this.nextMonth();
+        requestAnimationFrame(() => {
+          const newDays = Array.from(
+            this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'),
+          ).filter((d) => !d.hasAttribute('disabled'));
+          newDays[nextIndex - days.length]?.focus();
+        });
+      } else {
+        days[nextIndex].focus();
+      }
     }
   }
 
@@ -205,10 +291,12 @@ export class GuiCalendarPickerControl extends HTMLElement {
       if (firstCurrent) firstCurrent.isFocusable = true;
     }
 
-    // We remove the 6th week if it contains only days of the next month
-    const lastWeek = days.slice(-7);
-    if (lastWeek.every((day) => !day.isCurrentMonth)) {
-      days = days.slice(0, -7);
+    // We remove the 6th and 5th week if it contains only days of the next month
+    for (let i = 0; i < 2; i++) {
+      const lastWeek = days.slice(-7);
+      if (lastWeek.every((day) => !day.isCurrentMonth)) {
+        days = days.slice(0, -7);
+      }
     }
 
     return days;
@@ -253,88 +341,16 @@ export class GuiCalendarPickerControl extends HTMLElement {
     );
   }
 
-  private updateMonth(delta: number) {
+  private prevMonth() {
     const d = this._currentDate;
-    this._currentDate = new Date(d.getFullYear(), d.getMonth() + delta, 1);
+    this._currentDate = new Date(d.getFullYear(), d.getMonth() - 1, 1);
     this.render();
   }
 
-  private handleClick(event: Event) {
-    const target = event.target as HTMLElement;
-
-    const actionBtn = target.closest('[data-action]');
-    if (actionBtn) {
-      const action = (actionBtn as HTMLElement).dataset['action'];
-      if (action === 'prev') this.updateMonth(-1);
-      if (action === 'next') this.updateMonth(1);
-      return;
-    }
-
-    const dayBtn = target.closest('.gui-calendar__day-button');
-    if (dayBtn && !(dayBtn as HTMLButtonElement).disabled) {
-      const dateStr = (dayBtn as HTMLElement).dataset['date'];
-      if (dateStr) {
-        this.selectDate(dateStr);
-        this.focusDate(dateStr);
-      }
-    }
-  }
-
-  private handleKeydown(event: Event) {
-    const e = event as KeyboardEvent;
-    const target = e.target as HTMLElement;
-
-    if (!target.classList.contains('gui-calendar__day-button')) return;
-
-    const days = Array.from(this.querySelectorAll<HTMLElement>('.gui-calendar__day-button')).filter(
-      (d) => !d.hasAttribute('disabled'),
-    );
-    const currentIndex = days.indexOf(target);
-
-    let nextIndex = currentIndex;
-    let doFocus = false;
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        doFocus = true;
-        nextIndex = currentIndex - 1;
-        break;
-      case 'ArrowRight':
-        doFocus = true;
-        nextIndex = currentIndex + 1;
-        break;
-      case 'ArrowUp':
-        doFocus = true;
-        nextIndex = currentIndex - 7;
-        break;
-      case 'ArrowDown':
-        doFocus = true;
-        nextIndex = currentIndex + 7;
-        break;
-    }
-
-    if (doFocus) {
-      e.preventDefault();
-      if (nextIndex < 0) {
-        this.updateMonth(-1);
-        requestAnimationFrame(() => {
-          const newDays = Array.from(
-            this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'),
-          ).filter((d) => !d.hasAttribute('disabled'));
-          newDays[newDays.length + nextIndex]?.focus();
-        });
-      } else if (nextIndex >= days.length) {
-        this.updateMonth(1);
-        requestAnimationFrame(() => {
-          const newDays = Array.from(
-            this.querySelectorAll<HTMLElement>('.gui-calendar__day-button'),
-          ).filter((d) => !d.hasAttribute('disabled'));
-          newDays[nextIndex - days.length]?.focus();
-        });
-      } else {
-        days[nextIndex].focus();
-      }
-    }
+  private nextMonth() {
+    const d = this._currentDate;
+    this._currentDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    this.render();
   }
 
   private selectDate(isoDate: string) {
