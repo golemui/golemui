@@ -6,7 +6,7 @@ import { MountComponentFn } from '../utils';
 const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
     z.superRefine((val, ctx) => {
-      if (names.includes(val) === false) {
+      if (val && names.includes(val) === false) {
         ctx.addIssue({
           code: 'custom',
           message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,

@@ -61,7 +61,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
 
     const sub = combineLatest([validation$, injectedValidation$]).subscribe(
       ([validation, injectedValidation]) => {
-        setErrors([...(validation?.status?.issues ?? []), ...(injectedValidation ?? [])]);
+        setErrors([...(validation ?? []), ...(injectedValidation ?? [])]);
       },
     );
     return () => sub.unsubscribe();
