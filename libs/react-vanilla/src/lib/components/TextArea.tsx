@@ -27,43 +27,37 @@ function Counter({
 
 export function TextArea(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const {
-    uid,
-    validator,
-    errors,
-    value,
-    isDisabled,
-    isReadonly,
-    isTouched,
-    label,
-    props,
-    onValueChanged,
-    onBlur,
-  } = useControlField<string, TextareaProps>(field);
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+    string,
+    TextareaProps
+  >(field);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => onValueChanged(e.target.value),
     [onValueChanged],
   );
-  const hint = props.hint;
-  const placeholder = props.placeholder;
-  const icon = props.icon;
-  const counterMode = props.counterMode;
+  const hint = templateData.hint;
+  const placeholder = templateData.placeholder;
+  const icon = templateData.icon;
   const showErrors = isTouched && errors && errors.length > 0;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
+  const counterMode = templateData.counterMode;
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
-    if (textarea && props.autoGrow) {
+    if (textarea && templateData.autoGrow) {
       textarea.style.height = 'auto';
-      textarea.style.height = `${Math.max(props.minimumHeight ?? 120, textarea.scrollHeight)}px`;
+      textarea.style.height = `${Math.max(templateData.minimumHeight ?? 120, textarea.scrollHeight)}px`;
     }
-  }, [value, props]);
+  }, [templateData]);
 
   return (
     <div className="gui-textarea">
-      <label className="gui-label" htmlFor={uid}>
-        {label + (validator?.required ? ' *' : '')}
+      <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
+        {templateData.label + (isRequired ? ' *' : '')}
         {hint && (
           <div className="gui-field-hint" id={`${uid}_hint`}>
             {hint}
@@ -77,11 +71,11 @@ export function TextArea(fieldInstance: Core.WithField) {
           data-cy={`${uid}_textarea`}
           className={`${icon ? 'gui-textarea--icon' : ''}`}
           style={{
-            height: `${props.minimumHeight ?? 120}px`,
-            minHeight: `${props.minimumHeight ?? 120}px`,
-            resize: props.autoGrow ? 'none' : 'vertical',
+            height: `${templateData.minimumHeight ?? 120}px`,
+            minHeight: `${templateData.minimumHeight ?? 120}px`,
+            resize: templateData.autoGrow ? 'none' : 'vertical',
           }}
-          required={validator?.required}
+          required={isRequired}
           value={value ?? ''}
           disabled={isDisabled}
           readOnly={isReadonly}
@@ -90,7 +84,7 @@ export function TextArea(fieldInstance: Core.WithField) {
           onBlur={onBlur}
           aria-invalid={showErrors}
           aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={validator?.required}
+          aria-required={isRequired}
           aria-describedby={hint ? `${uid}_hint` : undefined}
         ></textarea>
         {icon && <span className={`${icon} gui-field-icon gui-field-icon--right`}></span>}
@@ -99,7 +93,9 @@ export function TextArea(fieldInstance: Core.WithField) {
       <div className="gui-textarea--validation">
         <div>{showErrors && <Errors errors={errors} uid={uid} />}</div>
         <div>
-          {counterMode && <Counter value={value} validator={validator} counterMode={counterMode} />}
+          {counterMode && (
+            <Counter value={value} validator={templateData.validator} counterMode={counterMode} />
+          )}
         </div>
       </div>
     </div>
