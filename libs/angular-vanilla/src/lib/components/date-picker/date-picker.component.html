@@ -20,6 +20,7 @@
     [value]="templateData.value"
     [icon]="templateData.icon"
     (change)="onChangeDate($event)"
+    (inputError)="onInputError($event)"
     (focus)="openCalendar()"
     (blur)="adapter.onBlur()"
   ></gui-date-control>

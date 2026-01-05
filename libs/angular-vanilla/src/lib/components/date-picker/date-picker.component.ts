@@ -58,11 +58,12 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   onChangeDate(event: Event) {
+    this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged((event as CustomEvent).detail.value);
   }
 
-  ngOnDestroy(): void {
-    this.adapter.destroy();
+  onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 
   openCalendar() {
@@ -71,5 +72,9 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
 
   closeCalendar() {
     this.isCalendarOpen.set(false);
+  }
+
+  ngOnDestroy(): void {
+    this.adapter.destroy();
   }
 }
