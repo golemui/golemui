@@ -38,7 +38,7 @@ export const validationByPath$ = (path: DotPath) =>
   pipe(
     selectValidations,
     map((validations) => validations[path]),
-    distinctUntilChanged((prev, current) => prev?.status !== current?.status),
+    distinctUntilChanged(),
   );
 
 // --------------------------------

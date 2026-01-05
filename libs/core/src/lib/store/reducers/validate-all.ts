@@ -1,9 +1,9 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import { ControlField, isControlField } from '../../form-field';
 import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '../../form-validator';
-import { filterMap, SKIP } from '../../utils/array';
+import { filterMap, SKIP, zipEvery } from '../../utils/array';
 import { get } from '../../utils/object';
-import { State, ValidationState } from '../model';
+import { State, ValidationStatus } from '../model';
 
 export const validateAll =
   (validators: ValidatorFn<any>) =>
@@ -18,16 +18,11 @@ export const validateAll =
       ...state,
       validations: controls.reduce(
         (
-          newValidations: Record<string, ValidationState>,
+          newValidations: Record<string, ValidationStatus>,
           control: ControlField<unknown, string>,
-        ): Record<string, ValidationState> => {
-          // Keep the previously cached schemas
-          newValidations[control.path] =
-            oldValidations[control.path] ||
-            ({
-              validators: {},
-              status: null,
-            } satisfies ValidationState);
+        ): Record<string, ValidationStatus> => {
+          // By default the field is valid
+          newValidations[control.path] = null;
 
           if (control.validator) {
             const schema: StandardSchemaV1<unknown> = validators(control.validator);
@@ -37,17 +32,25 @@ export const validateAll =
               controlValue,
             ) as StandardSchemaV1.Result<unknown>;
 
-            newValidations[control.path].status = isStandardValidateSuccess(result)
+            newValidations[control.path] = isStandardValidateSuccess(result)
               ? null
-              : { issues: result.issues.map((issue) => issue.message) };
-          } else {
-            // If there's no validator, the field is valid
-            newValidations[control.path].status = null;
+              : result.issues.map((issue) => issue.message);
           }
 
-          if (newValidations[control.path] !== oldValidations[control.path]) {
-            // Make it a new reference so the stream emits
-            newValidations[control.path] = { ...newValidations[control.path] };
+          if (
+            Array.isArray(newValidations[control.path]) &&
+            Array.isArray(oldValidations[control.path])
+          ) {
+            // Check if they are structurally different, if they are, keep the old string[] ref to avoid change detection
+            if (
+              zipEvery(
+                newValidations[control.path] as string[],
+                oldValidations[control.path] as string[],
+                (a, b) => a === b,
+              )
+            ) {
+              newValidations[control.path] = oldValidations[control.path];
+            }
           }
 
           return newValidations;

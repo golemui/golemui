@@ -1,7 +1,6 @@
-import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as Form from '../form';
 import * as Field from '../form-field';
-import { DotPath, Uid, UiState } from '../shared';
+import { DotPath, Uid } from '../shared';
 
 // ------------------------------
 //
@@ -35,18 +34,21 @@ export type State = {
   calculatedFields: Record<Uid, DerivedField<Field.FormField<string>>>;
 
   /**
-   * Tracks field validation status.
-   * These validations are derived from the schema validators expressed declaratively.
+   * Validations statuses derived from the schema validators expressed declaratively.
+   *
+   * These validation statuses are produced automatically by the configured schema
+   * validators (e.g. zod), and are fully managed by the validation engine and should
+   * not be mutated directly.
    */
-  validations: Record<DotPath, ValidationState>;
+  validations: Record<DotPath, ValidationStatus>;
 
   /**
-   * Validation issues injected imperatively via the public API.
+   * Validation statuses injected imperatively via the public API.
    *
-   * These issues are not derived from the schema validators and are intended
+   * These validation statuses are not derived from the schema validators and are intended
    * for contextual validations that cannot be expressed declaratively.
    */
-  injectedValidations: Record<DotPath, string[] | null>;
+  injectedValidations: Record<DotPath, ValidationStatus>;
 
   /**
    * Tracks fields with state expressions.
@@ -124,26 +126,11 @@ export type Middleware<S, A> = (
  */
 export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
 
-export type ValidationState = {
-  // TODO: we are not caching anymore, so we don't need this anymore, only status is required. Remove and simplify.
-  /**
-   * Cache of validation schemas, keyed by UIState.
-   */
-  validators: Record<UiState, StandardSchemaV1>;
-
-  /**
-   * Current validation status for the active UI state.
-   * When `null`, there are no validation issues.
-   */
-  status: null | {
-    /**
-     * Validation issues produced automatically by the configured schema
-     * validators (e.g. zod). This array is fully managed by the validation
-     * engine and should not be mutated directly.
-     */
-    issues: string[];
-  };
-};
+/**
+ * Represents a generic validation status.
+ * Either `null` (there are no validation issues) or an array of issues.
+ */
+export type ValidationStatus = null | string[];
 
 /**
  * Represents a form field whose value is derived from a computation

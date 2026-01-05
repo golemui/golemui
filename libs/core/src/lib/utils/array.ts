@@ -45,3 +45,49 @@ export function filterMap<T, U>(
 
   return result;
 }
+
+/**
+ * Compares two arrays for structural equality by applying a predicate
+ * to each pair of elements.
+ *
+ * The function:
+ * - Fails fast if array lengths differ
+ * - Iterates in a single pass
+ * - Short-circuits immediately when the predicate returns `false`
+ *
+ * @param a - First array.
+ * @param b - Second array.
+ * @param predicate - A function invoked for each pair of elements.
+ * It must return `true` if the elements are considered equal, or `false`
+ * to terminate early and indicate inequality.
+ *
+ * @returns `true` if arrays are structurally equal according to the
+ * predicate; otherwise `false`.
+ *
+ * @example
+ * ```ts
+ * const equal = zipEvery(
+ *   [1, 2, 3],
+ *   [1, 2, 3],
+ *   (a, b) => a === b
+ * );
+ * // true
+ * ```
+ */
+export function zipEvery<A, B>(
+  a: readonly A[],
+  b: readonly B[],
+  predicate: (aValue: A, bValue: B, index: number, a: readonly A[], b: readonly B[]) => boolean,
+): boolean {
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  for (let i = 0; i < a.length; i++) {
+    if (!predicate(a[i], b[i], i, a, b)) {
+      return false;
+    }
+  }
+
+  return true;
+}
