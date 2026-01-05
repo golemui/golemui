@@ -4,8 +4,12 @@
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
 <div
+  role="button"
+  tabindex="0"
   class="gui-field"
   [attr.aria-expanded]="isCalendarOpen()"
+  (keyup.space)="openCalendar()"
+  (keyup.enter)="openCalendar()"
   (click)="openCalendar()"
 >
   <gui-date-control

@@ -88,8 +88,11 @@ export class DatePickerElement extends LitElement implements Core.WithField {
       ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div
+        role="button"
+        tabindex="0"
         class="gui-field"
         aria-expanded=${this.isCalendarOpen}
+        @keyup=${() => this.onKeyUp(event)}
         @click=${() => this.openCalendar()}
       >
         <gui-date-control
@@ -124,6 +127,12 @@ export class DatePickerElement extends LitElement implements Core.WithField {
 
   onInputError(event: Event | undefined) {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+  }
+
+  onKeyUp(event: KeyboardEvent | undefined) {
+    if (event?.key === 'Enter' || event?.key === ' ') {
+      this.openCalendar();
+    }
   }
 
   openCalendar() {

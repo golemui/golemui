@@ -53,6 +53,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
     },
     [onValueChanged, onBlur, injectValidationIssues],
   );
+
   const handleCalendarRef = useCallback(
     (node: HTMLElement | null) => {
       const target = node as any;
@@ -120,7 +121,18 @@ export function DatePicker(fieldInstance: Core.WithField) {
           </div>
         )}
       </label>
-      <div className="gui-field" onClick={openCalendar} aria-expanded={isCalendarOpen}>
+      <div
+        role="button"
+        tabIndex={0}
+        className="gui-field"
+        onClick={openCalendar}
+        onKeyUp={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            openCalendar();
+          }
+        }}
+        aria-expanded={isCalendarOpen}
+      >
         <gui-date-control
           ref={handleDateRef}
           uid={uid}
