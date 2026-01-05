@@ -174,12 +174,12 @@ export class GuiDateControl extends LitElement {
     const index = inputs.indexOf(input);
 
     // We jump to the next input when the input is filled
-    if (
-      input.value.length === input.maxLength &&
-      index < inputs.length - 1 &&
-      /^[0-9]$/.test(event.key)
-    ) {
-      inputs[index + 1].focus();
+    if (input.value.length === input.maxLength && /^[0-9]$/.test(event.key)) {
+      if (index === inputs.length - 1) {
+        inputs[0].focus();
+      } else {
+        inputs[index + 1].focus();
+      }
     }
 
     switch (event.key) {
