@@ -1,7 +1,7 @@
-import { Component, computed, input, output, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import * as Core from '@golemui/core';
+import { Component, computed, input, output, Type } from '@angular/core';
 import * as Angular from '@golemui/angular';
+import * as Core from '@golemui/core';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import {
   CustomValidatorSchemas,
@@ -33,6 +33,6 @@ export class FormComponent {
     ...this.middlewares(),
   ]);
 
-  formError = output<Core.FormStoreError>();
+  formHealth = output<Core.FormHealth>();
   formEvent = output<Core.FormEvent>();
 }

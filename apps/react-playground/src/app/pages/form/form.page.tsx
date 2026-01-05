@@ -24,11 +24,9 @@ const validators: ValidatorsVanilla.CustomValidatorSchemas = {
 export function FormPage() {
   const [error, setError] = useState('');
 
-  function onFormError(storeError: Core.FormStoreError) {
-    if (storeError.kind === 'validation') {
-      setError('Validation errors: ' + storeError.errors);
-    } else if (storeError.kind === 'fatal') {
-      setError('Fatal error: ' + storeError.error);
+  function onFormHealth(formHealth: Core.FormHealth) {
+    if (formHealth.status === 'errored') {
+      setError(formHealth.message);
     }
   }
 
@@ -42,7 +40,7 @@ export function FormPage() {
         middlewares={middlewares}
         validators={validators}
         validateOn="eager"
-        formError={onFormError}
+        formHealth={onFormHealth}
         formEvent={onFormEvent}
       />
     </div>

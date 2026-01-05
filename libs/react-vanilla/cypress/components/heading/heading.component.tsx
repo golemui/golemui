@@ -1,7 +1,6 @@
 import * as Core from '@golemui/core';
 import { useDisplayField } from '@golemui/react';
 import { createElement, PropsWithChildren } from 'react';
-import styles from './heading.component.module.scss';
 
 type OwnWidgetProps = {
   text: string;
@@ -22,7 +21,7 @@ export function HeadingComponent(fieldInstance: Core.WithField) {
 function DynamicHeading({ level, children }: PropsWithChildren<{ level: number }>) {
   const HeadingTag = `h${level}`;
 
-  return createElement(HeadingTag, { className: styles.heading }, children);
+  return createElement(HeadingTag, { className: 'heading' }, children);
 }
 
 export default HeadingComponent;

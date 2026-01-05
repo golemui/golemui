@@ -13,6 +13,8 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
   // CONTROLS
   textinput: async () =>
     (await import('./components/textinput/textinput.component')).TextinputComponent,
+  textarea: async () =>
+    (await import('./components/textarea/textarea.component')).TextareaComponent,
   calendar: async () =>
     (await import('./components/calendar/calendar.component')).CalendarComponent,
   dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,

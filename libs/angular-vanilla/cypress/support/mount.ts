@@ -1,9 +1,9 @@
-import { MountOptions } from '@golemui/ui-testing';
-import * as Core from '@golemui/core';
-import { EventEmitter, Type } from '@angular/core';
-import { createOutputSpy, mount } from 'cypress/angular';
 import { CommonModule } from '@angular/common';
+import { EventEmitter, Type } from '@angular/core';
 import { FormCoreComponent } from '@golemui/angular';
+import * as Core from '@golemui/core';
+import { MountOptions } from '@golemui/ui-testing';
+import { createOutputSpy, mount } from 'cypress/angular';
 import { FormComponent } from '../../src/lib/components/form/form.component';
 
 export const mountFramework = (options: MountOptions) => {
@@ -11,6 +11,8 @@ export const mountFramework = (options: MountOptions) => {
     ? {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,
+        customdate: async () =>
+          (await import('../components/custom-date/custom-date.component')).CustomdateComponent,
       }
     : {};
 
@@ -23,13 +25,13 @@ export const mountFramework = (options: MountOptions) => {
     formEventOutput = createOutputSpy('formEvent');
   }
 
-  let formErrorOutput;
-  if (options.formError) {
-    const emitter = new EventEmitter<Core.FormStoreError>();
-    emitter.subscribe((e) => options.formError!(e));
-    formErrorOutput = emitter;
+  let formHealthOutput;
+  if (options.formHealth) {
+    const emitter = new EventEmitter<Core.FormHealth>();
+    emitter.subscribe((e) => options.formHealth!(e));
+    formHealthOutput = emitter;
   } else {
-    formErrorOutput = createOutputSpy('formError');
+    formHealthOutput = createOutputSpy('formHealth');
   }
 
   mount(FormComponent, {
@@ -41,7 +43,7 @@ export const mountFramework = (options: MountOptions) => {
       middlewares: options.middlewares ?? [],
       validators: options.validators,
       validateOn: options.validateOn ?? 'eager',
-      formError: formErrorOutput,
+      formHealth: formHealthOutput,
       formEvent: formEventOutput,
     },
   });

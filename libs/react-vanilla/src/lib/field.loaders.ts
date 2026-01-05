@@ -10,6 +10,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
 
   // CONTROLS
   textinput: async () => (await import('./components/TextInput')).TextInput,
+  textarea: async () => (await import('./components/TextArea')).TextArea,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
   toggle: async () => (await import('./components/Toggle')).Toggle,
   number: async () => (await import('./components/Number')).NumberInput,

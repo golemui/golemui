@@ -3,6 +3,7 @@ export const controlWidgets = [
   'dateInput',
   'datePicker',
   'textinput',
+  'textarea',
   'toggle',
   'checkbox',
   'number',

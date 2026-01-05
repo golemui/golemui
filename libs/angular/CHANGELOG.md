@@ -1,3 +1,13 @@
+## 0.15.2 (2026-01-03)
+
+### 🩹 Fixes
+
+- rename form error to form health ([5f2ed5e](https://github.com/golemui/formforge/commit/5f2ed5e))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.1 (2025-12-27)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.

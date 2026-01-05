@@ -14,6 +14,15 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type TextareaProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  counterMode?: 'remaining' | 'current';
+  minimumHeight?: number;
+  autoGrow?: boolean;
+};
+
 export type CalendarProps = {
   hint?: string;
   prevMonthIcon?: string;

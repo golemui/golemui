@@ -26,7 +26,11 @@
     }
 
     label input[disabled],
-    label:has(input:disabled) {
+    label:has(input:disabled),
+    label textarea[disabled],
+    label:has(textarea:disabled),
+    label select[disabled],
+    label:has(select:disabled) {
       cursor: not-allowed;
     }
 
@@ -34,6 +38,7 @@
     select,
     textarea,
     .gui-date-input {
+      font-family: var(--gui-font-family);
       padding: var(--gui-padding);
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);

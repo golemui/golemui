@@ -1,5 +1,5 @@
 export const calendar = (): any => ({
-  uid: 'tab11',
+  uid: 'tab12',
   kind: 'layout',
   widget: 'stack',
   children: [

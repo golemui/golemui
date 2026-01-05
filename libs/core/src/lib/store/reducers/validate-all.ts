@@ -55,7 +55,7 @@ export const validateAll =
 
             newValidations[control.path].status = isStandardValidateSuccess(result)
               ? null
-              : { errors: result.issues.map((issue) => issue.message) };
+              : { issues: result.issues.map((issue) => issue.message) };
           } else {
             // If there's no validator, the field is valid
             newValidations[control.path].status = null;
