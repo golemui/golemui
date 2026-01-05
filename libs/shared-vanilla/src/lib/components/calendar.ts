@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { weekInfoData } from './week-info';
+import { GUIAriaController } from '../controllers';
 
 export interface CalendarDay {
   date: Date;
@@ -15,7 +16,6 @@ export interface CalendarDay {
 
 @customElement('gui-calendar-control')
 export class GuiCalendarControl extends LitElement {
-  @property({ type: String }) value: string | null = null;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon = '';
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon = '';
@@ -23,7 +23,31 @@ export class GuiCalendarControl extends LitElement {
   @property() weekdayFormat = 'narrow';
   @property() monthFormat = 'long';
 
+  @property({ type: String }) value: string | null = null;
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: Boolean }) touched = false;
+  @property({ type: Array }) errors = [];
+  @property({ type: Boolean }) hasError = false;
+  @property({ type: Boolean }) disabled = false;
+  @property({ type: Boolean }) readonly = false;
+  @property({ type: String }) icon = '';
+
   @state() private _currentDate: Date = new Date();
+
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readonly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
 
   override createRenderRoot() {
     return this;
@@ -42,7 +66,7 @@ export class GuiCalendarControl extends LitElement {
     const weekDays: string[] = this.getWeekdayLabels();
 
     return html`
-      <div class="gui-calendar__container">
+      <div class="gui-calendar-input">
         <header class="gui-calendar__header">
           <button
             type="button"

@@ -32,7 +32,12 @@ export class DateComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   onChangeDate(event: Event) {
+    this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged((event as CustomEvent).detail.value);
+  }
+
+  onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 
   ngOnDestroy(): void {

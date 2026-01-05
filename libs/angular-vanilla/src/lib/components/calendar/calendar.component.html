@@ -3,15 +3,25 @@
 
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
-<gui-calendar-control
-  [value]="templateData.value"
-  [prevMonthIcon]="templateData.prevMonthIcon"
-  [nextMonthIcon]="templateData.nextMonthIcon"
-  [dayFormat]="templateData.dayFormat"
-  [weekdayFormat]="templateData.weekdayFormat"
-  [monthFormat]="templateData.monthFormat"
-  (change)="onChangeDate($event)"
-></gui-calendar-control>
+<div class="gui-field">
+  <gui-calendar-control
+    [uid]="field.uid"
+    [hint]="templateData.hint"
+    [value]="templateData.value"
+    [touched]="templateData.touched"
+    [errors]="templateData.errors"
+    [hasError]="showErrors"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [value]="templateData.value"
+    [prevMonthIcon]="templateData.prevMonthIcon"
+    [nextMonthIcon]="templateData.nextMonthIcon"
+    [dayFormat]="templateData.dayFormat"
+    [weekdayFormat]="templateData.weekdayFormat"
+    [monthFormat]="templateData.monthFormat"
+    (change)="onChangeDate($event)"
+  ></gui-calendar-control>
+</div>
 
 @if (showErrors) {
   <ul

@@ -13,6 +13,7 @@ export const calendar = (): any => ({
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
       },
+      validator: { type: 'string', required: true, format: 'date-time' },
     },
     {
       uid: '',
@@ -22,7 +23,7 @@ export const calendar = (): any => ({
       props: {
         icon: 'material-icons material-icons-calendar_month',
       },
-      validator: { type: 'string', format: 'date-time' },
+      validator: { type: 'string', required: true, format: 'date-time' },
     },
     {
       uid: '',
@@ -34,7 +35,7 @@ export const calendar = (): any => ({
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
       },
-      validator: { type: 'string', format: 'date-time' },
+      validator: { type: 'string', required: true, format: 'date-time' },
     },
   ],
 });

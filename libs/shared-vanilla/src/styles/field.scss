@@ -37,7 +37,8 @@
     input,
     select,
     textarea,
-    .gui-date-input {
+    .gui-date-input,
+    .gui-calendar-input {
       font-family: var(--gui-font-family);
       padding: var(--gui-padding);
       border-radius: var(--gui-radius);

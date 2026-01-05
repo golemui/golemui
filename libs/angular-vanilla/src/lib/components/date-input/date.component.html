@@ -3,15 +3,19 @@
 
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
-<div
-  class="gui-field"
-  tabindex="0"
-  role="button"
->
+<div class="gui-field">
   <gui-date-control
+    [uid]="field.uid"
+    [hint]="templateData.hint"
+    [touched]="templateData.touched"
+    [errors]="templateData.errors"
+    [hasError]="showErrors"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
     [value]="templateData.value"
     [icon]="templateData.icon"
     (change)="onChangeDate($event)"
+    (inputError)="onInputError($event)"
     (blur)="adapter.onBlur()"
   ></gui-date-control>
 </div>

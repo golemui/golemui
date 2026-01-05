@@ -3,21 +3,29 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { GUIAriaController } from '../controllers';
 
 @customElement('gui-date-control')
 export class GuiDateControl extends LitElement {
-  @property({ type: String }) value: string | null = null;
+  @property({ type: String }) icon = '';
+
+  @property({ type: String }) value: string | undefined = undefined;
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: Boolean }) touched = false;
+  @property({ type: Array }) errors = [];
+  @property({ type: Boolean }) hasError = false;
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean }) readonly = false;
-  @property({ type: String }) icon = '';
 
   @state() private _day = '';
   @state() private _month = '';
   @state() private _year = '';
 
   private readonly MIN_DAY = 1;
-  private readonly MAX_DAY = (month: number, year: number) => {
+  private readonly MAX_DAY = 31;
+  private readonly MAX_VALID_DAY = (month: number, year: number) => {
     if (month === 2) {
       const isLeapYear = new Date(year, 1, 29).getDate() === 29;
       return isLeapYear || !year ? 29 : 28;
@@ -31,13 +39,27 @@ export class GuiDateControl extends LitElement {
   private readonly MIN_YEAR = 1000;
   private readonly MAX_YEAR = 9999;
 
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`.gui-date-input`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readonly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
   override createRenderRoot() {
     return this;
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
-      this.parseValue(this.value);
+      this.parseValue(this.value ?? '');
     }
   }
 
@@ -252,9 +274,8 @@ export class GuiDateControl extends LitElement {
       this._month = monthVal.toString().padStart(2, '0');
     }
 
-    const maxDay = this.MAX_DAY(monthVal, yearVal);
-    if (dayVal > maxDay) {
-      dayVal = maxDay;
+    if (dayVal > this.MAX_DAY) {
+      dayVal = this.MAX_DAY;
       this._day = dayVal.toString().padStart(2, '0');
     }
     if (dayVal < this.MIN_DAY) {
@@ -264,19 +285,33 @@ export class GuiDateControl extends LitElement {
 
     const isYearValid = !isNaN(yearVal) && String(yearVal).length === 4;
     const isMonthValid = !isNaN(monthVal) && monthVal > 0;
-    const isDayValid = !isNaN(dayVal) && dayVal > 0 && dayVal <= maxDay;
+    const isDayValid = !isNaN(dayVal) && dayVal > 0;
 
     if (isDayValid && isMonthValid && isYearValid) {
-      const currentDate = new Date(yearVal, monthVal - 1, dayVal);
-      this.value = currentDate.toISOString();
+      const maxValidDay = this.MAX_VALID_DAY(monthVal, yearVal);
+      // Date is complete but invalid
+      if (dayVal > maxValidDay) {
+        // TODO: add property for i18n error messages
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: {
+              message:
+                'Invalid date: day is greater than the maximum valid day for the month and year.',
+            },
+            bubbles: true,
+          }),
+        );
+      } else {
+        const currentDate = new Date(yearVal, monthVal - 1, dayVal);
+        this.value = currentDate.toISOString();
 
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+        this.dispatchEvent(
+          new CustomEvent('change', {
+            detail: { value: this.value },
+            bubbles: true,
+          }),
+        );
+      }
     }
 
     this.requestUpdate();

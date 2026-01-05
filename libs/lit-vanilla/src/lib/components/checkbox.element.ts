@@ -1,12 +1,11 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { CheckboxProps } from '@golemui/shared-vanilla';
+import { CheckboxProps, GUIAriaController } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addLabel } from '../utils/templates';
-import { GUIAriaController } from '../controllers/aria.controller';
 
 @customElement('gui-checkbox')
 export class CheckboxElement extends LitElement implements Core.WithField {

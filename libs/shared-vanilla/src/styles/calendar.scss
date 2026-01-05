@@ -1,9 +1,10 @@
 .gui-form {
+  .gui-date-picker,
   .gui-calendar {
     display: block;
 
     // Month Calendar
-    .gui-calendar__container {
+    .gui-calendar-input {
       width: 300px;
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);
