@@ -9,6 +9,9 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
   button: async () => (await import('./components/Button')).Button,
 
   // CONTROLS
+  calendar: async () => (await import('./components/Calendar')).Calendar,
+  dateInput: async () => (await import('./components/DateInput')).DateInput,
+  datePicker: async () => (await import('./components/DatePicker')).DatePicker,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,

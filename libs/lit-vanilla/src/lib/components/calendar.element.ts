@@ -54,8 +54,8 @@ export class CalendarElement extends LitElement implements Core.WithField {
           .touched=${this.adapter.templateData.touched}
           .errors=${this.adapter.templateData.errors}
           .hasError=${showErrors}
-          .disabled=${this.adapter.templateData.disabled}
-          .readonly=${this.adapter.templateData.readonly}
+          ?disabled=${this.adapter.templateData.disabled}
+          ?readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
           .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
           .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
