@@ -1,3 +1,17 @@
+## 0.16.0 (2026-01-05)
+
+### 🚀 Features
+
+- Add support for injectedIssues to the current validation pipeline ([d7de030](https://github.com/golemui/formforge/commit/d7de030))
+
+### 🩹 Fixes
+
+- **react:** update validator handling ([cb875bf](https://github.com/golemui/formforge/commit/cb875bf))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.2 (2026-01-03)
 
 ### 🩹 Fixes
