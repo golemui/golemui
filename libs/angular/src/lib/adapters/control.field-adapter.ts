@@ -52,7 +52,7 @@ export class ControlFieldAdapter<
       ([validation, injectedValidation]) => {
         this.templateData.update((current) => ({
           ...current,
-          errors: [...(validation?.status?.issues ?? []), ...(injectedValidation ?? [])],
+          errors: [...(validation ?? []), ...(injectedValidation ?? [])],
         }));
       },
     );

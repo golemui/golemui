@@ -1,3 +1,15 @@
+## 0.16.0 (2026-01-05)
+
+### 🩹 Fixes
+
+- **vanilla-validators:** empty string when field is required is a validation error ([84d7458](https://github.com/golemui/formforge/commit/84d7458))
+- **vanilla-validators:** add correct check for string length ([28babd9](https://github.com/golemui/formforge/commit/28babd9))
+- **vanilla-validators:** empty string when field is required is a validation error ([0ba6bbd](https://github.com/golemui/formforge/commit/0ba6bbd))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.2 (2026-01-03)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.

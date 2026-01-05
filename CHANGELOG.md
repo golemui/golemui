@@ -1,3 +1,26 @@
+## 0.16.0 (2026-01-05)
+
+### 🚀 Features
+
+- add textarea component ([bd8499a](https://github.com/golemui/formforge/commit/bd8499a))
+- add minimumHeight and autoGrow to textarea ([9bc9c3b](https://github.com/golemui/formforge/commit/9bc9c3b))
+- Add support for injectedIssues to the current validation pipeline ([d7de030](https://github.com/golemui/formforge/commit/d7de030))
+
+### 🩹 Fixes
+
+- **core:** use calculatedFields to take advantage of recent optimizations ([c37b86b](https://github.com/golemui/formforge/commit/c37b86b))
+- **lit:** update validator handling ([4302b8f](https://github.com/golemui/formforge/commit/4302b8f))
+- **react:** update validator handling ([cb875bf](https://github.com/golemui/formforge/commit/cb875bf))
+- **validators:** fix validators ([66847ae](https://github.com/golemui/formforge/commit/66847ae))
+- **vanilla-validators:** empty string when field is required is a validation error ([0ba6bbd](https://github.com/golemui/formforge/commit/0ba6bbd))
+- **vanilla-validators:** add correct check for string length ([28babd9](https://github.com/golemui/formforge/commit/28babd9))
+- **vanilla-validators:** empty string when field is required is a validation error ([84d7458](https://github.com/golemui/formforge/commit/84d7458))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.15.2 (2026-01-03)
 
 ### 🩹 Fixes
