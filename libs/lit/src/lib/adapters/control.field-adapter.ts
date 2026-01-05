@@ -51,7 +51,7 @@ export class ControlFieldAdapter<
     combineLatest([validation$, injectedValidation$]).subscribe(
       ([validation, injectedValidation]) => {
         this.setTemplateData({
-          errors: [...(validation?.status?.issues ?? []), ...(injectedValidation ?? [])],
+          errors: [...(validation ?? []), ...(injectedValidation ?? [])],
         });
       },
     );
