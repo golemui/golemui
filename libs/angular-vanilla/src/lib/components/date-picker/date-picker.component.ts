@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
@@ -31,8 +32,10 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   protected adapter: Angular.ControlFieldAdapter<string, DatePickerProps> = inject(
     Angular.ControlFieldAdapter,
   );
-  protected elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   currentDate = new Date();
+
+  dateControl = viewChild<ElementRef>('dateControlRef');
+  calendarControl = viewChild<ElementRef>('calendarControlRef');
 
   // TODO: Get localeId from i18n feature
   localeId = 'es';
@@ -41,7 +44,11 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
 
   onDocumentClick(event: MouseEvent) {
     const targetElement = event.target as HTMLElement;
-    if (targetElement && !this.elementRef.nativeElement.contains(targetElement)) {
+    if (
+      targetElement &&
+      !this.dateControl()?.nativeElement.contains(targetElement) &&
+      !this.calendarControl()?.nativeElement.contains(targetElement)
+    ) {
       this.closeCalendar();
     }
   }

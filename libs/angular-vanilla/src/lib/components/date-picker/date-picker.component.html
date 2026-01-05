@@ -5,12 +5,11 @@
 
 <div
   class="gui-field"
-  tabindex="0"
-  role="button"
   [attr.aria-expanded]="isCalendarOpen()"
   (click)="openCalendar()"
 >
   <gui-date-control
+    #dateControlRef
     [uid]="field.uid"
     [hint]="templateData.hint"
     [touched]="templateData.touched"
@@ -27,6 +26,7 @@
 
   @if (isCalendarOpen()) {
     <gui-calendar-control
+      #calendarControlRef
       [uid]="field.uid"
       [hint]="templateData.hint"
       [value]="templateData.value"
