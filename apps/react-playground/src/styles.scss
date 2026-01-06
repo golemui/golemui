@@ -13,4 +13,18 @@
   &-alternate_email::before {
     content: 'alternate_email';
   }
+
+  &-calendar_month::before {
+    content: 'calendar_month';
+  }
+
+  &-chevron_right::before {
+    content: 'chevron_right';
+    font-size: 1.8rem;
+  }
+
+  &-chevron_left::before {
+    content: 'chevron_left';
+    font-size: 1.8rem;
+  }
 }

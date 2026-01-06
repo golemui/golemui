@@ -1,4 +1,7 @@
 export const controlWidgets = [
+  'calendar',
+  'dateInput',
+  'datePicker',
   'textinput',
   'textarea',
   'toggle',

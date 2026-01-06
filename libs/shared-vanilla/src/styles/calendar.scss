@@ -1,0 +1,100 @@
+gui-calendar-control {
+  width: fit-content;
+}
+
+.gui-form {
+  .gui-date-picker,
+  .gui-calendar {
+    display: block;
+
+    // Month Calendar
+    .gui-calendar-input {
+      width: 300px;
+      border-radius: var(--gui-radius);
+      background: var(--gui-color-bg);
+      border: 1px solid var(--gui-color-border);
+      padding: var(--gui-padding);
+      z-index: 10;
+    }
+
+    .gui-calendar__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .gui-calendar__weekday {
+      text-align: center;
+    }
+
+    .gui-calendar__month-button {
+      padding: 0.25rem;
+      border-radius: 100%;
+
+      &-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 32px;
+        height: 32px;
+      }
+
+      &-icon--prev::before {
+        content: '';
+        width: 0.5rem;
+        height: 0.5rem;
+        margin-left: 2px;
+        border: solid;
+        border-width: 0 2px 2px 0;
+        pointer-events: none;
+        right: 29%;
+        top: 33%;
+        transform: translateY(0%) rotate(135deg);
+      }
+      &-icon--next::before {
+        content: '';
+        width: 0.5rem;
+        height: 0.5rem;
+        margin-right: 2px;
+        border: solid;
+        border-width: 0 2px 2px 0;
+        pointer-events: none;
+        transform: translateY(0%) rotate(-45deg);
+      }
+    }
+
+    .gui-calendar__day-button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--gui-color-fg);
+      padding: var(--gui-padding);
+      border-radius: var(--gui-radius);
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid var(--gui-color-border);
+        background-color: var(--gui-color-fg--secondary);
+      }
+
+      &.today {
+        border-color: var(--gui-color-primary--dark);
+        border-width: 2px;
+      }
+
+      &.selected {
+        background-color: var(--gui-color-primary);
+      }
+
+      &[disabled] {
+        background-color: var(--gui-color-bg-disabled);
+        cursor: not-allowed;
+      }
+    }
+
+    .gui-calendar__days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+    }
+  }
+}

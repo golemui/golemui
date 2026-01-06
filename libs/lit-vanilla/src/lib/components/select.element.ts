@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
+  GUIAriaController,
   inferOptionValue,
   isOption,
   isOptionValue,
@@ -15,7 +16,6 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-select')

@@ -1,12 +1,11 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { ToggleProps } from '@golemui/shared-vanilla';
+import { GUIAriaController, ToggleProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addLabel } from '../utils/templates';
-import { GUIAriaController } from '../controllers/aria.controller';
 
 @customElement('gui-toggle')
 export class ToggleElement extends LitElement implements Core.WithField {

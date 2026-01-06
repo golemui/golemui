@@ -23,6 +23,26 @@ export type TextareaProps = {
   autoGrow?: boolean;
 };
 
+export type CalendarProps = {
+  hint?: string;
+  prevMonthIcon?: string;
+  nextMonthIcon?: string;
+  dayFormat?: 'numeric' | '2-digit';
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
+export type DatePickerProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  prevMonthIcon?: string;
+  nextMonthIcon?: string;
+  dayFormat?: 'numeric' | '2-digit';
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;

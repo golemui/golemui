@@ -1,0 +1,61 @@
+@let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
+
+<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
+
+<div
+  role="button"
+  tabindex="0"
+  class="gui-field"
+  [attr.aria-expanded]="isCalendarOpen()"
+  (keyup.space)="openCalendar()"
+  (keyup.enter)="openCalendar()"
+  (click)="openCalendar()"
+>
+  <gui-date-control
+    #dateControlRef
+    [uid]="field.uid"
+    [hint]="templateData.hint"
+    [touched]="templateData.touched"
+    [errors]="templateData.errors"
+    [hasError]="showErrors"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [value]="templateData.value"
+    [icon]="templateData.icon"
+    (change)="onChangeDate($event)"
+    (inputError)="onInputError($event)"
+    (focus)="openCalendar()"
+    (blur)="adapter.onBlur()"
+  ></gui-date-control>
+
+  @if (isCalendarOpen()) {
+    <gui-calendar-control
+      #calendarControlRef
+      [uid]="field.uid"
+      [hint]="templateData.hint"
+      [value]="templateData.value"
+      [touched]="templateData.touched"
+      [errors]="templateData.errors"
+      [hasError]="showErrors"
+      [disabled]="templateData.disabled"
+      [readonly]="templateData.readonly"
+      [value]="templateData.value"
+      [prevMonthIcon]="templateData.prevMonthIcon"
+      [nextMonthIcon]="templateData.nextMonthIcon"
+      [dayFormat]="templateData.dayFormat"
+      [weekdayFormat]="templateData.weekdayFormat"
+      [monthFormat]="templateData.monthFormat"
+      (change)="onChangeDate($event)"
+    ></gui-calendar-control>
+  }
+</div>
+
+@if (showErrors) {
+  <ul
+    gui-errors
+    [uid]="field.uid"
+    [templateData]="templateData"
+    [attr.data-cy]="field.uid + '_validator-errors'"
+  ></ul>
+}

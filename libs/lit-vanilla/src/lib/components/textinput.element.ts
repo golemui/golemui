@@ -1,12 +1,11 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { TextinputProps } from '@golemui/shared-vanilla';
+import { GUIAriaController, TextinputProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-textinput')
