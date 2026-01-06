@@ -14,7 +14,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      !templateData.readonly && onValueChanged(e.target.checked),
+      !templateData.readonly && onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged, templateData.readonly],
   );
 
@@ -38,15 +38,14 @@ export function Checkbox(fieldInstance: Core.WithField) {
       </label>
 
       <div className="gui-field gui-field--horizontal">
-        <input
-          type="checkbox"
-          id={uid}
-          data-cy={`${uid}_checkbox`}
-          checked={value ?? false}
-          required={isRequired}
+        <gui-checkbox-control
+          uid={uid}
+          hint={hint}
+          touched={isTouched}
+          errors={errors}
           disabled={isDisabled}
           readOnly={isReadonly}
-          aria-readonly={isReadonly}
+          value={value}
           onChange={handleChange}
           onBlur={onBlur}
         />

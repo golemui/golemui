@@ -7,17 +7,16 @@ import { GUIAriaController } from '../controllers';
 
 @customElement('gui-date-control')
 export class GuiDateControl extends LitElement {
-  @property({ type: String }) icon = '';
-
-  @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
-  @property({ type: Boolean }) hasError = false;
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean }) readonly = false;
+  @property({ type: String }) value: string | undefined = undefined;
+
+  @property({ type: String }) icon = '';
 
   @state() private _day = '';
   @state() private _month = '';

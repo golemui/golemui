@@ -8,19 +8,16 @@
 </label>
 
 <div class="gui-field gui-field--horizontal">
-  <input
+  <gui-checkbox-control
     type="checkbox"
-    guiAria
-    [attr.data-cy]="field.uid + '_checkbox'"
     [uid]="field.uid"
-    [templateData]="templateData"
-    [id]="field.uid"
-    [required]="templateData.validator?.required"
-    [value]="templateData.value ?? false"
-    [checked]="templateData.value ? true : undefined"
+    [hint]="templateData.hint"
+    [touched]="templateData.touched"
+    [errors]="templateData.errors"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
-    (click)="!templateData.readonly && valueChanged($event)"
+    [value]="templateData.value"
+    (change)="!templateData.readonly && valueChanged($event)"
     (blur)="adapter.onBlur()"
-  />
+  ></gui-checkbox-control>
 </div>

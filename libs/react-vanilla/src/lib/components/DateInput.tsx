@@ -68,7 +68,6 @@ export function DateInput(fieldInstance: Core.WithField) {
           hint={hint}
           touched={isTouched}
           errors={errors}
-          hasError={showErrors}
           disabled={isDisabled}
           readonly={isReadonly}
           value={value}

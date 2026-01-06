@@ -16,22 +16,21 @@ export interface CalendarDay {
 
 @customElement('gui-calendar-control')
 export class GuiCalendarControl extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: Boolean }) touched = false;
+  @property({ type: Array }) errors = [];
+  @property({ type: Boolean }) disabled = false;
+  @property({ type: Boolean }) readonly = false;
+  @property({ type: String }) value: string | null = null;
+
+  @property({ type: String }) icon = '';
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon = '';
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon = '';
   @property() dayFormat = 'numeric';
   @property() weekdayFormat = 'narrow';
   @property() monthFormat = 'long';
-
-  @property({ type: String }) value: string | null = null;
-  @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
-  @property({ type: Boolean }) hasError = false;
-  @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
-  @property({ type: String }) icon = '';
 
   @state() private _currentDate: Date = new Date();
 
