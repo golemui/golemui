@@ -13,7 +13,8 @@ export function NumberInput(fieldInstance: Core.WithField) {
   >(field);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.valueAsNumber),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -38,25 +39,21 @@ export function NumberInput(fieldInstance: Core.WithField) {
         )}
       </label>
       <div className="gui-field">
-        <input
-          type="number"
-          inputMode="numeric"
-          id={uid}
-          data-cy={`${uid}_number`}
-          className={`${icon ? 'gui-number--icon' : ''} ${iconPosition === 'right' ? 'gui-number--icon-right' : ''}`}
-          required={isRequired}
-          value={value ?? ''}
+        <gui-number-control
+          uid={uid}
+          hint={hint}
+          touched={isTouched}
+          errors={errors}
           disabled={isDisabled}
           readOnly={isReadonly}
+          value={value}
           step={step}
+          icon={icon}
+          iconPosition={iconPosition}
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
           onBlur={onBlur}
-          aria-invalid={showErrors}
-          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={isRequired}
-          aria-describedby={hint ? `${uid}_hint` : undefined}
-        />
+        ></gui-number-control>
         {icon && (
           <span
             className={`${icon} gui-field-icon ${iconPosition === 'right' ? 'gui-field-icon--right' : ''}`}
