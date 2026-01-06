@@ -3,7 +3,7 @@ import * as Core from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
-export abstract class BaseFieldAdapter<F extends Core.FormField> {
+export abstract class BaseFieldAdapter<F extends Core.NonFunctionField> {
   protected context = inject(AngularFormContext);
   protected destroy$ = new Subject<void>();
   protected field!: F;

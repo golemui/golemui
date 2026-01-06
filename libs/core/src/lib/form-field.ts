@@ -130,14 +130,15 @@ export type LayoutField<
       | ControlField<any, StateKeys, FormData>
       | LayoutField<StateKeys, FormData>
       | InteractiveField<StateKeys, FormData>
+      | FunctionField<StateKeys, FormData>
     )[];
   },
   never,
   StateKeys
 >;
 
-// TODO: when updating, update LayoutField['children'] too!
-export type FormField<
+// ⚠️ When updating, update LayoutField['children'] too!
+export type NonFunctionField<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 > =
@@ -145,6 +146,21 @@ export type FormField<
   | ControlField<any, StateKeys, FormData>
   | LayoutField<StateKeys, FormData>
   | InteractiveField<StateKeys, FormData>;
+
+// TODO: we should remove StateKeys because FunctionField don't support states
+export type FunctionField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = {
+  uid?: Uid;
+  widget?: string;
+  (formData?: FormData): NonFunctionField<StateKeys, FormData>;
+};
+
+export type FormField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = NonFunctionField<StateKeys, FormData> | FunctionField<StateKeys, FormData>;
 
 // --------------------------------
 //
@@ -157,14 +173,16 @@ export const isDisplayField = <
   FormData extends Record<string, any> = any,
 >(
   field: FormField<StateKeys, FormData>,
-): field is DisplayField<StateKeys, FormData> => field.kind === 'display';
+): field is DisplayField<StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'display';
 
 export const isInteractiveField = <
   StateKeys extends string,
   FormData extends Record<string, any> = any,
 >(
   field: FormField<StateKeys, FormData>,
-): field is InteractiveField<StateKeys, FormData> => field.kind === 'interactive';
+): field is InteractiveField<StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'interactive';
 
 export const isControlField = <
   T,
@@ -172,11 +190,20 @@ export const isControlField = <
   FormData extends Record<string, any> = any,
 >(
   field: FormField<StateKeys, FormData>,
-): field is ControlField<T, StateKeys, FormData> => field.kind === 'control';
+): field is ControlField<T, StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'control';
 
 export const isLayoutField = <StateKeys extends string, FormData extends Record<string, any> = any>(
   field: FormField<StateKeys, FormData>,
-): field is LayoutField<StateKeys, FormData> => field.kind === 'layout';
+): field is LayoutField<StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'layout';
+
+export const isFunctionField = <
+  StateKeys extends string,
+  FormData extends Record<string, any> = any,
+>(
+  field: FormField<StateKeys, FormData>,
+): field is FunctionField<StateKeys, FormData> => typeof field === 'function';
 
 // --------------------------------
 //
@@ -255,6 +282,19 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
   'InteractiveField',
 );
 
+const functionFieldDecoder: jd.Decoder<FunctionField<string>> = new jd.Decoder((json: unknown) => {
+  const jsonTypeof = typeof json;
+  if (jsonTypeof === 'function') {
+    const fnField = json as FunctionField<string>;
+    const field = fnField(undefined);
+    fnField.uid = field.uid ?? shortUUID();
+    fnField.widget = field.widget;
+    return jd.ok(fnField);
+  } else {
+    return jd.err(`Expected a function, got '${jsonTypeof}'`);
+  }
+});
+
 const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
   {
     kind: { decoder: jd.literal('control') },
@@ -287,7 +327,11 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
 });
 
 type FormFieldDecoder = jd.Decoder<
-  DisplayField<string> | InteractiveField<string> | ControlField<any, string> | LayoutField<string>
+  | DisplayField<string>
+  | InteractiveField<string>
+  | ControlField<any, string>
+  | LayoutField<string>
+  | FunctionField<string>
 >;
 const formFieldDecoder = jd.lazy(
   (): FormFieldDecoder =>
@@ -296,8 +340,15 @@ const formFieldDecoder = jd.lazy(
       | InteractiveField<string>
       | ControlField<any, string>
       | LayoutField<string>
+      | FunctionField<string>
     >(
-      [displayFieldDecoder, interactiveFieldDecoder, controlFieldDecoder, layoutFieldDecoder],
+      [
+        functionFieldDecoder,
+        controlFieldDecoder,
+        layoutFieldDecoder,
+        displayFieldDecoder,
+        interactiveFieldDecoder,
+      ],
       'FormField',
     ),
 );

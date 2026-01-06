@@ -142,11 +142,11 @@ export type ValidationStatus = null | string[];
  */
 export type DerivedField<F extends Field.FormField<string>> = {
   /** The source field from which the derived value is computed */
-  source: Readonly<F>;
+  source: F;
   /** The previously derived value */
-  previous: Readonly<F>;
+  previous: Exclude<F, Field.FunctionField<string>>;
   /** The newly derived value */
-  current: F;
+  current: Exclude<F, Field.FunctionField<string>>;
   /** Indicates whether the newly derived value changed structurally */
   changed?: boolean;
 };

@@ -1,4 +1,4 @@
-import { FormField } from './form-field';
+import { NonFunctionField } from './form-field';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 import { ImmutableRecord, LooseObject } from './utils/types';
 
@@ -102,5 +102,5 @@ export type ControlTemplateData<T, V = any> = {
  * Layout adapter templateData
  */
 export type LayoutTemplateData = {
-  children: FormField<string>[];
+  children: NonFunctionField<string>[];
 };

@@ -46,6 +46,13 @@ export const reactiveFunctions = defineForm<FormData>({
           : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
       },
     },
+    ($form) => ({
+      uid: '',
+      kind: 'control',
+      widget: 'textinput',
+      path: 'user.name2',
+      label: 'user.name is: ' + $form?.user?.name,
+    }),
     {
       uid: '',
       kind: 'control',

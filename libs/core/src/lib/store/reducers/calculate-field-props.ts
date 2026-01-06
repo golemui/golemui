@@ -1,9 +1,12 @@
 import {
   FormField,
+  FunctionField,
   isControlField,
+  isFunctionField,
   isInteractiveField,
   isLayoutField,
   LayoutField,
+  NonFunctionField,
 } from '../../form-field';
 import { get, set } from '../../utils/object';
 import { DerivedField, State } from '../model';
@@ -12,14 +15,17 @@ export const calculateFieldProps = (state: State): State => {
   return { ...state, calculatedFields: calculateProps(state) };
 };
 
-const mkDerivedField = <F extends FormField<string>>(source: F, previous: F): DerivedField<F> => ({
+const mkDerivedField = <F extends FormField<string>>(
+  source: F,
+  previous: Exclude<F, FunctionField<string>>,
+): DerivedField<F> => ({
   source,
   previous,
-  current: {} as F,
+  current: {} as Exclude<F, FunctionField<string>>,
   changed: false,
 });
 
-type CoreProp = keyof FormField;
+type CoreProp = keyof NonFunctionField;
 
 function unsuffixedUniqueKeys(keys: string[]): string[] {
   return Array.from(new Set(keys.map((k) => k.split('.')[0])));
@@ -33,15 +39,21 @@ function calculateProps(state: State) {
       }
 
       const originalDerivedField = state.calculatedFields[uid];
+      const originalSource = originalDerivedField.source;
+
+      if (isFunctionField(originalSource)) {
+        return acc;
+      }
+
       const derivedField = mkDerivedField(
-        originalDerivedField.source,
+        originalSource,
         // previous is the new current
         originalDerivedField.current,
       );
 
       // TODO: Optimize: we know in advanced which suffixable core properties exist
       // Field core properties
-      unsuffixedUniqueKeys(Object.keys(derivedField.source))
+      unsuffixedUniqueKeys(Object.keys(originalSource))
         .filter((prop) => prop !== 'props' && prop !== 'on')
         .forEach((prop) => {
           calculateProperty({
@@ -55,9 +67,9 @@ function calculateProps(state: State) {
 
       // Field "props" properties
       const props = {
-        ...(derivedField.source.props || {}),
+        ...(originalSource.props || {}),
         // We may have overridden properties that aren't set on the original object, so we need to account for them
-        ...state.fieldPropOverrides[derivedField.source.uid],
+        ...state.fieldPropOverrides[originalSource.uid],
       };
       unsuffixedUniqueKeys(Object.keys(props)).forEach((prop) => {
         calculateProperty({
@@ -71,8 +83,8 @@ function calculateProps(state: State) {
       });
 
       // Field "on" properties
-      if (isControlField(derivedField.source) || isInteractiveField(derivedField.source)) {
-        unsuffixedUniqueKeys(Object.keys(derivedField.source.on || {})).forEach((prop) => {
+      if (isControlField(originalSource) || isInteractiveField(originalSource)) {
+        unsuffixedUniqueKeys(Object.keys(originalSource.on || {})).forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
             fieldPropOverrides: state.fieldPropOverrides,
@@ -85,13 +97,16 @@ function calculateProps(state: State) {
       }
 
       // Layout "children" property
-      if (isLayoutField(derivedField.source)) {
+      if (isLayoutField(originalSource)) {
         const prevChildren = (derivedField.previous as LayoutField<string>).children || [];
 
         // Calculate visible children based on current flags
-        const children = derivedField.source.children.filter(
-          (child) => !state.fieldFlags[child.uid] || state.fieldFlags[child.uid].hidden !== true,
-        );
+        const children = originalSource.children.filter((child) => {
+          if (isFunctionField(child)) {
+            child = child(state.data);
+          }
+          return !state.fieldFlags[child.uid] || state.fieldFlags[child.uid].hidden !== true;
+        });
 
         (derivedField as DerivedField<LayoutField<string>>).current.children = children;
 
@@ -120,7 +135,7 @@ function calculateProps(state: State) {
  * determine if a change has occurred. This allows to decide later on whether
  * a new object reference should be created (for ref equality change detection)
  */
-function calculateProperty<F extends FormField<string>>({
+function calculateProperty<F extends NonFunctionField<string>>({
   currentStates,
   fieldPropOverrides,
   derivedField,

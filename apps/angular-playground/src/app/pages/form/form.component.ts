@@ -14,8 +14,8 @@ import { APP_CONFIG } from '../../../environments/environment.model';
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected formDef = AppsShared.kitchenSink;
-  protected formData = AppsShared.kitchenSinkData;
+  protected formDef = AppsShared.reactiveFunctions;
+  protected formData = AppsShared.reactiveFunctionsData;
 
   protected middlewares = [AppsShared.loggerMiddleware];
   protected customFieldLoaders = {

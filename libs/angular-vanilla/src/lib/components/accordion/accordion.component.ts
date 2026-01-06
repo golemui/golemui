@@ -44,7 +44,9 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   getChild(uid: string) {
-    return this.field.children.find((section) => section.uid === uid) as Core.FormField<string>;
+    return this.field.children.find(
+      (section) => section.uid === uid,
+    ) as Core.NonFunctionField<string>;
   }
 
   ngOnDestroy(): void {
