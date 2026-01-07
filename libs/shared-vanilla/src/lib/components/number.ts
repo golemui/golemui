@@ -2,17 +2,20 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
+import { NumberinputProps } from '../field.props';
 
 @customElement('gui-number')
 export class NumberControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean }) readonly = false;
-  @property({ type: String }) value: string | undefined = undefined;
+  @property({ type: Number }) value: number | undefined = undefined;
 
   @property({ type: Number }) step: number | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
@@ -37,29 +40,61 @@ export class NumberControl extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+  }
+
   override render() {
     super.render();
+
+    const templateData: ControlTemplateData<number> & NumberinputProps = {
+      uid: this.uid,
+      label: this.label,
+      hint: this.hint,
+      touched: this.touched,
+      errors: this.errors,
+      disabled: this.disabled,
+      readonly: this.readonly,
+      value: this.value,
+      step: this.step,
+      icon: this.icon,
+      iconPosition: this.iconPosition,
+      placeholder: this.placeholder,
+    };
 
     const fieldClasses: { [key: string]: boolean } = {
       [`gui-number--icon`]: !!this.icon,
       [`gui-number--icon-right`]: this.iconPosition === 'right',
     };
 
+    const numberClasses = {
+      'gui-field-icon': true,
+      'gui-field-icon--right': this.iconPosition === 'right',
+      [this.icon as string]: true,
+    };
+
     return html`
-      <input
-        type="number"
-        inputmode="numeric"
-        id=${this.uid}
-        data-cy=${`${this.uid}_number`}
-        class=${classMap(fieldClasses)}
-        value=${this.value}
-        ?disabled=${this.disabled || nothing}
-        ?readonly=${this.readonly || nothing}
-        step=${typeof this.step === 'number' ? this.step : nothing}
-        placeholder=${this.placeholder || nothing}
-        @input="${() => this.valueChanged(event)}"
-        @blur="${() => this.onBlur()}"
-      />
+      ${addLabel(this.uid as string, templateData)}
+
+      <div class="gui-field">
+        <input
+          type="number"
+          inputmode="numeric"
+          id=${this.uid}
+          data-cy=${`${this.uid}_number`}
+          class=${classMap(fieldClasses)}
+          value=${this.value}
+          ?disabled=${this.disabled || nothing}
+          ?readonly=${this.readonly || nothing}
+          step=${typeof this.step === 'number' ? this.step : nothing}
+          placeholder=${this.placeholder || nothing}
+          @input="${() => this.valueChanged(event)}"
+          @blur="${() => this.onBlur()}"
+        />
+        ${this.icon ? html`<div class=${classMap(numberClasses)}></div>` : nothing}
+      </div>
+
+      ${addErrors(this.uid as string, templateData)}
     `;
   }
 

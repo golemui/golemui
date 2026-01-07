@@ -4,9 +4,7 @@ import { NumberinputProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addLabel } from '../utils/templates';
 
 @customElement('gui-number-control')
 export class NumberElement extends LitElement implements Core.WithField {
@@ -39,39 +37,25 @@ export class NumberElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    const numberClasses = {
-      'gui-field-icon': true,
-      'gui-field-icon--right': this.adapter.templateData.iconPosition === 'right',
-      [this.adapter.templateData.icon as string]: true,
-    };
-
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
-
-      <div class="gui-field">
-        <gui-number
-          .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint}
-          ?touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
-          .value=${this.adapter.templateData.value ?? ''}
-          .step=${typeof this.adapter.templateData.step === 'number'
-            ? this.adapter.templateData.step
-            : nothing}
-          .icon=${this.adapter.templateData.icon}
-          .iconPosition=${this.adapter.templateData.iconPosition}
-          .placeholder=${this.adapter.templateData.placeholder || nothing}
-          @input="${() => this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
-        ></gui-number>
-        ${this.adapter.templateData.icon
-          ? html`<div class=${classMap(numberClasses)}></div>`
+      <gui-number
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label}
+        .hint=${this.adapter.templateData.hint}
+        ?touched=${this.adapter.templateData.touched}
+        .errors=${this.adapter.templateData.errors}
+        ?disabled=${this.adapter.templateData.disabled || nothing}
+        ?readonly=${this.adapter.templateData.readonly || nothing}
+        .value=${this.adapter.templateData.value ?? ''}
+        .step=${typeof this.adapter.templateData.step === 'number'
+          ? this.adapter.templateData.step
           : nothing}
-      </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+        .icon=${this.adapter.templateData.icon}
+        .iconPosition=${this.adapter.templateData.iconPosition}
+        .placeholder=${this.adapter.templateData.placeholder || nothing}
+        @input="${() => this.valueChanged(event)}"
+        @blur="${() => this.adapter.onBlur()}"
+      ></gui-number>
     `;
   }
 

@@ -1,60 +1,54 @@
 gui-number {
-  display: flex;
+  display: block;
 
-  input[type='number'] {
-    width: 100%;
-
-    /* For Firefox */
-    appearance: textfield;
-
-    /* For Chrome/Edge and Safari */
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      appearance: none;
+  .gui-field {
+    &::before {
+      content: '';
+      border: solid;
+      border-width: 0 2px 2px 0;
+      pointer-events: none;
+      position: absolute;
+      right: 1rem;
+      top: 40%;
+      width: 0.25rem;
+      height: 0.25rem;
+      transform: translateY(-60%) rotate(225deg);
+    }
+    &::after {
+      content: '';
+      border: solid;
+      border-width: 0 2px 2px 0;
+      pointer-events: none;
+      position: absolute;
+      right: 1rem;
+      top: 60%;
+      width: 0.25rem;
+      height: 0.25rem;
+      transform: translateY(-60%) rotate(45deg);
     }
 
-    &.gui-number--icon {
-      padding-left: 2.5rem;
-    }
-
-    &.gui-number--icon-right {
-      padding-left: var(--gui-space-gap);
-      padding-right: var(--gui-icon-space-gap);
-    }
-  }
-
-  &::before {
-    content: '';
-    border: solid;
-    border-width: 0 2px 2px 0;
-    pointer-events: none;
-    position: absolute;
-    right: 1rem;
-    top: 40%;
-    width: 0.25rem;
-    height: 0.25rem;
-    transform: translateY(-60%) rotate(225deg);
-  }
-  &::after {
-    content: '';
-    border: solid;
-    border-width: 0 2px 2px 0;
-    pointer-events: none;
-    position: absolute;
-    right: 1rem;
-    top: 60%;
-    width: 0.25rem;
-    height: 0.25rem;
-    transform: translateY(-60%) rotate(45deg);
-  }
-}
-
-.gui-form {
-  .gui-number {
-    display: block;
-
-    .gui-field-icon--right {
+    &-icon--right {
       right: 2.5rem;
+    }
+
+    input[type='number'] {
+      /* For Firefox */
+      appearance: textfield;
+
+      /* For Chrome/Edge and Safari */
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        appearance: none;
+      }
+
+      &.gui-number--icon {
+        padding-left: 2.5rem;
+      }
+
+      &.gui-number--icon-right {
+        padding-left: var(--gui-space-gap);
+        padding-right: var(--gui-icon-space-gap);
+      }
     }
   }
 }
