@@ -18,7 +18,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
-@customElement('gui-select')
+@customElement('gui-select-control')
 export class SelectElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 

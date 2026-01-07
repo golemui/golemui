@@ -6,7 +6,7 @@ import { AlertProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'gui-alert',
+  selector: 'gui-alert-display',
   imports: [CommonModule],
   providers: [Angular.DisplayFieldAdapter],
   templateUrl: './alert.component.html',

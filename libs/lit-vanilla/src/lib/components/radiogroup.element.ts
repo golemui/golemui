@@ -17,7 +17,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addLabel } from '../utils/templates';
 
-@customElement('gui-radiogroup')
+@customElement('gui-radiogroup-control')
 export class RadiogroupElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 

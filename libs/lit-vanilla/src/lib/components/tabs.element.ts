@@ -8,7 +8,7 @@ import { customElement, property, query, queryAll, state } from 'lit/decorators.
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-tabs')
+@customElement('gui-tabs-layout')
 export class TabsElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
 

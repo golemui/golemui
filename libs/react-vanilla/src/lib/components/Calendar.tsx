@@ -49,7 +49,7 @@ export function Calendar(fieldInstance: Core.WithField) {
         )}
       </label>
       <div className="gui-field">
-        <gui-calendar-control
+        <gui-calendar
           ref={handleRef}
           uid={uid}
           hint={hint}

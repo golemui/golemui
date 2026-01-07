@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addLabel } from '../utils/templates';
 
-@customElement('gui-checkbox')
+@customElement('gui-checkbox-control')
 export class CheckboxElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<boolean>;
 
@@ -48,7 +48,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
       ${addLabel(this.field.uid, this.adapter.templateData, true)}
 
       <div class="gui-field gui-field--horizontal">
-        <gui-checkbox-control
+        <gui-checkbox
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint ?? nothing}
           .touched=${this.adapter.templateData.touched}
@@ -58,7 +58,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
           .value=${this.adapter.templateData.value}
           @change="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
-        ></gui-checkbox-control>
+        ></gui-checkbox>
       </div>
     `;
   }

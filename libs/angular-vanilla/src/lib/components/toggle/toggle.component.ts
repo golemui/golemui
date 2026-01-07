@@ -9,7 +9,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 
 @Component({
   standalone: true,
-  selector: 'gui-toggle',
+  selector: 'gui-toggle-control',
   imports: [CommonModule, LabelComponent, ErrorsComponent, GuiAriaDirective],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './toggle.component.html',

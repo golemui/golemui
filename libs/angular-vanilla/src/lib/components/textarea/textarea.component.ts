@@ -9,7 +9,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 
 @Component({
   standalone: true,
-  selector: 'gui-textarea',
+  selector: 'gui-textarea-control',
   imports: [CommonModule, LabelComponent, ErrorsComponent, GuiAriaDirective],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './textarea.component.html',

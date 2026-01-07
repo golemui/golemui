@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-date-picker')
+@customElement('gui-date-picker-control')
 export class DatePickerElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -65,7 +65,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
       this.adapter.templateData.errors.length > 0;
 
     const calendar = this.isCalendarOpen
-      ? html`<gui-calendar-control
+      ? html`<gui-calendar
           id="calendar-control"
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint}
@@ -81,7 +81,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}
           @change=${() => this.valueChanged(event)}
-        ></gui-calendar-control>`
+        ></gui-calendar>`
       : nothing;
 
     return html`
@@ -95,7 +95,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
         @keyup=${() => this.onKeyUp(event)}
         @click=${() => this.openCalendar()}
       >
-        <gui-date-control
+        <gui-date
           id="date-control"
           class=${classMap(datePickerIcon.fieldClasses)}
           .uid=${this.field.uid}
@@ -111,7 +111,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           @blur=${() => this.adapter.onBlur()}
           @focus=${() => this.openCalendar()}
           @change=${() => this.valueChanged(event)}
-        ></gui-date-control>
+        ></gui-date>
 
         ${calendar}
       </div>
@@ -129,8 +129,9 @@ export class DatePickerElement extends LitElement implements Core.WithField {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 
-  onKeyUp(event: KeyboardEvent | undefined) {
-    if (event?.key === 'Enter' || event?.key === ' ') {
+  onKeyUp(event: Event | undefined) {
+    const evt = event as KeyboardEvent;
+    if (evt?.key === 'Enter' || evt?.key === ' ') {
       this.openCalendar();
     }
   }

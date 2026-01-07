@@ -17,7 +17,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 
 @Component({
   standalone: true,
-  selector: 'gui-radiogroup',
+  selector: 'gui-radiogroup-control',
   imports: [CommonModule, ErrorsComponent, LabelComponent, GuiAriaDirective],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './radiogroup.component.html',

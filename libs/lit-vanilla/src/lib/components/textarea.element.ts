@@ -8,7 +8,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addLabel } from '../utils/templates';
 
-@customElement('gui-textarea')
+@customElement('gui-textarea-control')
 export class TextareaElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 

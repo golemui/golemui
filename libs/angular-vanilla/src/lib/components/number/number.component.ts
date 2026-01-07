@@ -9,7 +9,7 @@ import { IconComponent } from '../../utils/templates/icon.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-number',
+  selector: 'gui-number-control',
   imports: [CommonModule, LabelComponent, ErrorsComponent, IconComponent],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './number.component.html',

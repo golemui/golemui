@@ -10,7 +10,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 
 @Component({
   standalone: true,
-  selector: 'gui-textinput',
+  selector: 'gui-textinput-control',
   imports: [CommonModule, LabelComponent, ErrorsComponent, IconComponent, GuiAriaDirective],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './textinput.component.html',

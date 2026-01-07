@@ -2,12 +2,12 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { RepeaterProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { LitElement, html, nothing } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-repeater')
+@customElement('gui-repeater-control')
 export class RepeaterElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<Record<string, unknown>[]>;
 

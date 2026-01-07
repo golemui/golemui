@@ -133,7 +133,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
         }}
         aria-expanded={isCalendarOpen}
       >
-        <gui-date-control
+        <gui-date
           ref={handleDateRef}
           uid={uid}
           hint={hint}
@@ -147,7 +147,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
         />
 
         {isCalendarOpen && (
-          <gui-calendar-control
+          <gui-calendar
             ref={handleCalendarRef}
             uid={uid}
             hint={hint}

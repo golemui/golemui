@@ -8,7 +8,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addLabel } from '../utils/templates';
 
-@customElement('gui-number')
+@customElement('gui-number-control')
 export class NumberElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<number>;
 
@@ -49,7 +49,7 @@ export class NumberElement extends LitElement implements Core.WithField {
       ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">
-        <gui-number-control
+        <gui-number
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint}
           ?touched=${this.adapter.templateData.touched}
@@ -65,7 +65,7 @@ export class NumberElement extends LitElement implements Core.WithField {
           .placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
-        ></gui-number-control>
+        ></gui-number>
         ${this.adapter.templateData.icon
           ? html`<div class=${classMap(numberClasses)}></div>`
           : nothing}

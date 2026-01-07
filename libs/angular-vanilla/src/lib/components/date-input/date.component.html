@@ -4,7 +4,7 @@
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
 <div class="gui-field">
-  <gui-date-control
+  <gui-date
     [uid]="field.uid"
     [hint]="templateData.hint"
     [touched]="templateData.touched"
@@ -17,7 +17,7 @@
     (change)="onChangeDate($event)"
     (inputError)="onInputError($event)"
     (blur)="adapter.onBlur()"
-  ></gui-date-control>
+  ></gui-date>
 </div>
 
 @if (showErrors) {

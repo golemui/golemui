@@ -18,7 +18,7 @@ import { GuiAriaDirective } from '../../directives/aria.directive';
 
 @Component({
   standalone: true,
-  selector: 'gui-select',
+  selector: 'gui-select-control',
   imports: [CommonModule, LabelComponent, ErrorsComponent, IconComponent, GuiAriaDirective],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './select.component.html',

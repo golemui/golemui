@@ -8,7 +8,7 @@ import { ErrorsComponent } from '../../utils/templates/errors.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-checkbox',
+  selector: 'gui-checkbox-control',
   imports: [CommonModule, LabelComponent, ErrorsComponent],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './checkbox.component.html',

@@ -8,7 +8,7 @@
 </label>
 
 <div class="gui-field gui-field--horizontal">
-  <gui-checkbox-control
+  <gui-checkbox
     type="checkbox"
     [uid]="field.uid"
     [hint]="templateData.hint"
@@ -19,5 +19,5 @@
     [value]="templateData.value"
     (change)="!templateData.readonly && valueChanged($event)"
     (blur)="adapter.onBlur()"
-  ></gui-checkbox-control>
+  ></gui-checkbox>
 </div>

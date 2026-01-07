@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 
-@customElement('gui-accordion')
+@customElement('gui-accordion-layout')
 export class AccordionElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
   activeSections: { [key: string]: boolean } = {};

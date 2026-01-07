@@ -12,7 +12,7 @@
   (keyup.enter)="openCalendar()"
   (click)="openCalendar()"
 >
-  <gui-date-control
+  <gui-date
     #dateControlRef
     [uid]="field.uid"
     [hint]="templateData.hint"
@@ -27,10 +27,10 @@
     (inputError)="onInputError($event)"
     (focus)="openCalendar()"
     (blur)="adapter.onBlur()"
-  ></gui-date-control>
+  ></gui-date>
 
   @if (isCalendarOpen()) {
-    <gui-calendar-control
+    <gui-calendar
       #calendarControlRef
       [uid]="field.uid"
       [hint]="templateData.hint"
@@ -47,7 +47,7 @@
       [weekdayFormat]="templateData.weekdayFormat"
       [monthFormat]="templateData.monthFormat"
       (change)="onChangeDate($event)"
-    ></gui-calendar-control>
+    ></gui-calendar>
   }
 </div>
 

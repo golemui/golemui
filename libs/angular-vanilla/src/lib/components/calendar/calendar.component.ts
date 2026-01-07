@@ -8,7 +8,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-calendar',
+  selector: 'gui-calendar-control',
   imports: [CommonModule, ErrorsComponent, LabelComponent],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './calendar.component.html',

@@ -38,7 +38,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
       </label>
 
       <div className="gui-field gui-field--horizontal">
-        <gui-checkbox-control
+        <gui-checkbox
           uid={uid}
           hint={hint}
           touched={isTouched}

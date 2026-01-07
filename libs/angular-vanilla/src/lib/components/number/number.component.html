@@ -4,7 +4,7 @@
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
 <div class="gui-field">
-  <gui-number-control
+  <gui-number
     [uid]="field.uid"
     [hint]="templateData.hint"
     [touched]="templateData.touched"
@@ -18,7 +18,7 @@
     [placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
     (blur)="adapter.onBlur()"
-  ></gui-number-control>
+  ></gui-number>
 
   @if (templateData.icon) {
     <span gui-icon [templateData]="templateData"></span>

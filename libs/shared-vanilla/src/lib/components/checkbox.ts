@@ -2,7 +2,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-@customElement('gui-checkbox-control')
+@customElement('gui-checkbox')
 export class GuiCheckboxControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;

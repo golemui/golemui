@@ -62,7 +62,7 @@ export function DateInput(fieldInstance: Core.WithField) {
         )}
       </label>
       <div className="gui-field">
-        <gui-date-control
+        <gui-date
           ref={handleRef}
           uid={uid}
           hint={hint}

@@ -6,7 +6,7 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'gui-repeater',
+  selector: 'gui-repeater-control',
   imports: [CommonModule, Angular.RepeaterFieldDirective],
   providers: [Angular.ControlFieldAdapter, Angular.RepeaterFieldDirective],
   templateUrl: './repeater.component.html',

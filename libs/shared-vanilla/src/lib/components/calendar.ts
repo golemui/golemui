@@ -14,7 +14,7 @@ export interface CalendarDay {
   isFocusable: boolean;
 }
 
-@customElement('gui-calendar-control')
+@customElement('gui-calendar')
 export class GuiCalendarControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;

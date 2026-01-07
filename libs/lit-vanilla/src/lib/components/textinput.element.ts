@@ -8,7 +8,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
-@customElement('gui-textinput')
+@customElement('gui-textinput-control')
 export class TextinputElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 

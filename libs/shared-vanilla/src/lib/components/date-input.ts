@@ -5,7 +5,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 
-@customElement('gui-date-control')
+@customElement('gui-date')
 export class GuiDateControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;

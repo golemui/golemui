@@ -5,7 +5,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-button')
+@customElement('gui-button-interactive')
 export class ButtonElement extends LitElement implements Core.WithField {
   field!: Core.InteractiveField;
 

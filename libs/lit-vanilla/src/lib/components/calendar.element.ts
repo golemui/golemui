@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addLabel } from '../utils/templates';
 
-@customElement('gui-calendar')
+@customElement('gui-calendar-control')
 export class CalendarElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -48,7 +48,7 @@ export class CalendarElement extends LitElement implements Core.WithField {
       ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">
-        <gui-calendar-control
+        <gui-calendar
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint}
           .touched=${this.adapter.templateData.touched}
@@ -63,7 +63,7 @@ export class CalendarElement extends LitElement implements Core.WithField {
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}
           @change=${() => this.valueChanged(event)}
-        ></gui-calendar-control>
+        ></gui-calendar>
       </div>
 
       ${addErrors(this.field.uid, this.adapter.templateData)}

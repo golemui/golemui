@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addLabel } from '../utils/templates';
 
-@customElement('gui-toggle')
+@customElement('gui-toggle-control')
 export class ToggleElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<boolean>;
 

@@ -39,7 +39,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
         )}
       </label>
       <div className="gui-field">
-        <gui-number-control
+        <gui-number
           uid={uid}
           hint={hint}
           touched={isTouched}
@@ -53,7 +53,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
           onBlur={onBlur}
-        ></gui-number-control>
+        ></gui-number>
         {icon && (
           <span
             className={`${icon} gui-field-icon ${iconPosition === 'right' ? 'gui-field-icon--right' : ''}`}

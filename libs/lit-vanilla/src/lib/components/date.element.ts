@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-date')
+@customElement('gui-date-control')
 export class DateElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -41,18 +41,12 @@ export class DateElement extends LitElement implements Core.WithField {
 
     // Icon
     const dateIcon = addIcon('date', this.adapter.templateData);
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
-
-    console.log('show errors', showErrors, this.adapter.templateData.errors);
 
     return html`
       ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">
-        <gui-date-control
+        <gui-date
           class=${classMap(dateIcon.fieldClasses)}
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint ?? nothing}
@@ -65,7 +59,7 @@ export class DateElement extends LitElement implements Core.WithField {
           @inputError=${() => this.onInputError(event)}
           @blur=${() => this.adapter.onBlur()}
           @change=${() => this.valueChanged(event)}
-        ></gui-date-control>
+        ></gui-date>
       </div>
 
       ${addErrors(this.field.uid, this.adapter.templateData)}

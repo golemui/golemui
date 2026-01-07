@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 
-@customElement('gui-stack')
+@customElement('gui-stack-layout')
 export class StackElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
 

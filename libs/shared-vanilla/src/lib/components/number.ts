@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 
-@customElement('gui-number-control')
+@customElement('gui-number')
 export class NumberControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
