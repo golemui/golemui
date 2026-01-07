@@ -13,7 +13,8 @@ export function TextInput(fieldInstance: Core.WithField) {
   >(field);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.value),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
   );
 
@@ -37,23 +38,20 @@ export function TextInput(fieldInstance: Core.WithField) {
         )}
       </label>
       <div className="gui-field">
-        <input
-          type="text"
-          id={uid}
-          data-cy={`${uid}_textinput`}
-          className={`${icon ? 'gui-textinput--icon' : ''} ${iconPosition === 'right' ? 'gui-textinput--icon-right' : ''}`}
-          required={isRequired}
-          value={value ?? ''}
+        <gui-textinput
+          uid={uid}
+          hint={hint}
+          touched={isTouched}
+          errors={errors}
           disabled={isDisabled}
           readOnly={isReadonly}
+          value={value}
+          icon={icon}
+          iconPosition={iconPosition}
           placeholder={placeholder ?? undefined}
           onInput={handleChange}
           onBlur={onBlur}
-          aria-invalid={showErrors}
-          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={isRequired}
-          aria-describedby={hint ? `${uid}_hint` : undefined}
-        />
+        ></gui-textinput>
         {icon && (
           <span
             className={`${icon} gui-field-icon ${iconPosition === 'right' ? 'gui-field-icon--right' : ''}`}

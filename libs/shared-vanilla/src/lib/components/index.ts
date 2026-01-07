@@ -4,4 +4,5 @@ export * from './date-input';
 export * from './number';
 export * from './select';
 export * from './tabs';
+export * from './textinput';
 export * from './week-info';

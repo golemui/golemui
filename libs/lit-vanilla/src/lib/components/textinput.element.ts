@@ -1,10 +1,9 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { GUIAriaController, TextinputProps } from '@golemui/shared-vanilla';
+import { TextinputProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addIcon, addLabel } from '../utils/templates';
 
@@ -18,14 +17,6 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<string, TextinputProps>();
-
-  private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
-    getState: () => ({
-      uid: this.field.uid,
-      templateData: this.adapter.templateData,
-    }),
-  });
 
   subscriptions: Subscription[] = [];
 
@@ -54,19 +45,20 @@ export class TextinputElement extends LitElement implements Core.WithField {
       ${addLabel(this.field.uid, this.adapter.templateData)}
 
       <div class="gui-field">
-        <input
-          type="text"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_textinput`}
-          class=${classMap(textinputIcon.fieldClasses)}
-          required=${this.adapter.templateData.validator?.required ? '' : nothing}
-          value=${this.adapter.templateData.value ?? ''}
+        <gui-textinput
+          .uid=${this.field.uid}
+          .hint=${this.adapter.templateData.hint}
+          ?touched=${this.adapter.templateData.touched}
+          .errors=${this.adapter.templateData.errors}
           ?disabled=${this.adapter.templateData.disabled || nothing}
           ?readonly=${this.adapter.templateData.readonly || nothing}
-          placeholder=${this.adapter.templateData.placeholder || nothing}
+          .value=${this.adapter.templateData.value ?? ''}
+          .icon=${this.adapter.templateData.icon}
+          .iconPosition=${this.adapter.templateData.iconPosition}
+          .placeholder=${this.adapter.templateData.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
           @blur="${() => this.adapter.onBlur()}"
-        />
+        ></gui-textinput>
         ${textinputIcon.html}
       </div>
 
@@ -75,8 +67,8 @@ export class TextinputElement extends LitElement implements Core.WithField {
   }
 
   valueChanged(event: Event | undefined) {
-    const target = event?.target as HTMLInputElement;
-    this.adapter.valueChanged(target.value);
+    const value = (event as CustomEvent).detail.value;
+    this.adapter.valueChanged(value);
   }
 
   override disconnectedCallback() {

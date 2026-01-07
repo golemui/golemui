@@ -1,16 +1,22 @@
+gui-textinput {
+  display: flex;
+
+  input[type='text'] {
+    width: 100%;
+
+    &.gui-textinput--icon {
+      padding-left: 2.5rem;
+    }
+
+    &.gui-textinput--icon-right {
+      padding-left: var(--gui-space-gap);
+      padding-right: var(--gui-icon-space-gap);
+    }
+  }
+}
+
 .gui-form {
   .gui-textinput {
     display: block;
-
-    input {
-      &.gui-textinput--icon {
-        padding-left: 2.5rem;
-      }
-
-      &.gui-textinput--icon-right {
-        padding-left: var(--gui-space-gap);
-        padding-right: var(--gui-icon-space-gap);
-      }
-    }
   }
 }

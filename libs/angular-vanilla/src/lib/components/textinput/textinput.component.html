@@ -4,25 +4,20 @@
 <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
 
 <div class="gui-field">
-  <input
-    type="text"
-    guiAria
-    [attr.data-cy]="field.uid + '_textinput'"
+  <gui-textinput
     [uid]="field.uid"
-    [templateData]="templateData"
-    [id]="field.uid"
-    [class]="{
-      'gui-textinput--icon': templateData.icon,
-      'gui-textinput--icon-right': templateData.iconPosition === 'right',
-    }"
-    [required]="templateData.validator?.required"
-    [value]="templateData.value ?? ''"
+    [hint]="templateData.hint"
+    [touched]="templateData.touched"
+    [errors]="templateData.errors"
     [disabled]="templateData.disabled"
     [readOnly]="templateData.readonly"
-    [attr.placeholder]="templateData.placeholder"
+    [value]="templateData.value ?? ''"
+    [icon]="templateData.icon"
+    [iconPosition]="templateData.iconPosition"
+    [placeholder]="templateData.placeholder"
     (input)="valueChanged($event)"
     (blur)="adapter.onBlur()"
-  />
+  ></gui-textinput>
 
   @if (templateData.icon) {
     <span gui-icon [templateData]="templateData"></span>
