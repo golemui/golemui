@@ -48,7 +48,7 @@ export class TextinputControl extends LitElement {
       <input
         type="text"
         id=${this.uid}
-        data-cy=${`${this.uid}_text`}
+        data-cy=${`${this.uid}_textinput`}
         class=${classMap(fieldClasses)}
         value=${this.value}
         ?disabled=${this.disabled || nothing}
