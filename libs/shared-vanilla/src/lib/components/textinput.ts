@@ -2,10 +2,13 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
+import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
+import { TextinputProps } from '../field.props';
 
 @customElement('gui-textinput')
 export class TextinputControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
@@ -39,24 +42,48 @@ export class TextinputControl extends LitElement {
   override render() {
     super.render();
 
+    const templateData: ControlTemplateData<string> & TextinputProps = {
+      uid: this.uid,
+      label: this.label,
+      hint: this.hint,
+      touched: this.touched,
+      errors: this.errors,
+      disabled: this.disabled,
+      readonly: this.readonly,
+      value: this.value,
+      icon: this.icon,
+      iconPosition: this.iconPosition,
+      placeholder: this.placeholder,
+    };
+
+    // Icon
+    const textinputIcon = addIcon('textinput', templateData);
+
     const fieldClasses: { [key: string]: boolean } = {
       [`gui-textinput--icon`]: !!this.icon,
       [`gui-textinput--icon-right`]: this.iconPosition === 'right',
     };
 
     return html`
-      <input
-        type="text"
-        id=${this.uid}
-        data-cy=${`${this.uid}_textinput`}
-        class=${classMap(fieldClasses)}
-        value=${this.value}
-        ?disabled=${this.disabled || nothing}
-        ?readonly=${this.readonly || nothing}
-        placeholder=${this.placeholder || nothing}
-        @input="${() => this.valueChanged(event)}"
-        @blur="${() => this.onBlur()}"
-      />
+      ${addLabel(this.uid as string, templateData)}
+
+      <div class="gui-field">
+        <input
+          type="text"
+          id=${this.uid}
+          data-cy=${`${this.uid}_textinput`}
+          class=${classMap(fieldClasses)}
+          value=${this.value}
+          ?disabled=${this.disabled || nothing}
+          ?readonly=${this.readonly || nothing}
+          placeholder=${this.placeholder || nothing}
+          @input="${() => this.valueChanged(event)}"
+          @blur="${() => this.onBlur()}"
+        />
+        ${textinputIcon.html}
+      </div>
+
+      ${addErrors(this.uid as string, templateData)}
     `;
   }
 

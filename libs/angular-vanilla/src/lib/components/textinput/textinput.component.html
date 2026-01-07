@@ -1,29 +1,17 @@
 @let templateData = adapter.templateData();
-@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
-
-<div class="gui-field">
-  <gui-textinput
-    [uid]="field.uid"
-    [hint]="templateData.hint"
-    [touched]="templateData.touched"
-    [errors]="templateData.errors"
-    [disabled]="templateData.disabled"
-    [readOnly]="templateData.readonly"
-    [value]="templateData.value ?? ''"
-    [icon]="templateData.icon"
-    [iconPosition]="templateData.iconPosition"
-    [placeholder]="templateData.placeholder"
-    (input)="valueChanged($event)"
-    (blur)="adapter.onBlur()"
-  ></gui-textinput>
-
-  @if (templateData.icon) {
-    <span gui-icon [templateData]="templateData"></span>
-  }
-</div>
-
-@if (showErrors) {
-  <ul gui-errors [uid]="field.uid" [templateData]="templateData" [attr.data-cy]="field.uid + '_validator-errors'"></ul>
-}
+<gui-textinput
+  [uid]="field.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [touched]="templateData.touched"
+  [errors]="templateData.errors"
+  [disabled]="templateData.disabled"
+  [readOnly]="templateData.readonly"
+  [value]="templateData.value ?? ''"
+  [icon]="templateData.icon"
+  [iconPosition]="templateData.iconPosition"
+  [placeholder]="templateData.placeholder"
+  (input)="valueChanged($event)"
+  (blur)="adapter.onBlur()"
+></gui-textinput>

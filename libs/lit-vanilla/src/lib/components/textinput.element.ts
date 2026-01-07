@@ -5,7 +5,6 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
 
 @customElement('gui-textinput-control')
 export class TextinputElement extends LitElement implements Core.WithField {
@@ -38,31 +37,22 @@ export class TextinputElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    // Icon
-    const textinputIcon = addIcon('textinput', this.adapter.templateData);
-
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
-
-      <div class="gui-field">
-        <gui-textinput
-          .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint}
-          ?touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
-          .value=${this.adapter.templateData.value ?? ''}
-          .icon=${this.adapter.templateData.icon}
-          .iconPosition=${this.adapter.templateData.iconPosition}
-          .placeholder=${this.adapter.templateData.placeholder || nothing}
-          @input="${() => this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
-        ></gui-textinput>
-        ${textinputIcon.html}
-      </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      <gui-textinput
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label}
+        .hint=${this.adapter.templateData.hint}
+        ?touched=${this.adapter.templateData.touched}
+        .errors=${this.adapter.templateData.errors}
+        ?disabled=${this.adapter.templateData.disabled || nothing}
+        ?readonly=${this.adapter.templateData.readonly || nothing}
+        .value=${this.adapter.templateData.value ?? ''}
+        .icon=${this.adapter.templateData.icon}
+        .iconPosition=${this.adapter.templateData.iconPosition}
+        .placeholder=${this.adapter.templateData.placeholder || nothing}
+        @input="${() => this.valueChanged(event)}"
+        @blur="${() => this.adapter.onBlur()}"
+      ></gui-textinput>
     `;
   }
 
