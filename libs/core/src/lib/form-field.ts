@@ -287,7 +287,7 @@ const functionFieldDecoder: jd.Decoder<FunctionField<string>> = new jd.Decoder((
   if (jsonTypeof === 'function') {
     const fnField = json as FunctionField<string>;
     const field = fnField(undefined);
-    fnField.uid = field.uid ?? shortUUID();
+    fnField.uid = field.uid || shortUUID();
     fnField.widget = field.widget;
     return jd.ok(fnField);
   } else {
