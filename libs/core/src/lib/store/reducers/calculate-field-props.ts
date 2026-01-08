@@ -42,6 +42,11 @@ function calculateProps(state: State) {
       const originalSource = originalDerivedField.source;
 
       if (isFunctionField(originalSource)) {
+        originalDerivedField.previous = originalDerivedField.current;
+        originalDerivedField.current = originalSource(state.data);
+        originalDerivedField.current.uid = originalSource.uid!;
+        // TODO: structural comparison to avoid change detection
+        acc[uid] = { ...originalDerivedField };
         return acc;
       }
 

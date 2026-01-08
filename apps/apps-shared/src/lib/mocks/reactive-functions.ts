@@ -14,23 +14,16 @@ export const reactiveFunctions = defineForm<FormData>({
   form: [
     {
       uid: '',
-      kind: 'layout',
-      widget: 'stack',
-      children: [
-        {
-          uid: '',
-          kind: 'display',
-          widget: 'heading',
-          props: {
-            text: ({ $form }) => {
-              if ($form.user?.name && !$form.registerMode) {
-                return `Hello ${$form.user.name}`;
-              }
-              return 'Register';
-            },
-          },
+      kind: 'display',
+      widget: 'heading',
+      props: {
+        text: ({ $form }) => {
+          if ($form.user?.name && !$form.registerMode) {
+            return `Hello ${$form.user.name}`;
+          }
+          return 'Register';
         },
-      ],
+      },
     },
     {
       uid: '',
@@ -50,8 +43,8 @@ export const reactiveFunctions = defineForm<FormData>({
       uid: '',
       kind: 'control',
       widget: 'textinput',
-      path: 'user.name2',
-      label: 'user.name is: ' + $form?.user?.name,
+      path: 'user.lastName',
+      label: $form?.user?.name ? `${$form.user.name}'s last name` : 'Last Name',
     }),
     {
       uid: '',
