@@ -1,3 +1,31 @@
+## 0.16.0 (2026-01-05)
+
+### 🚀 Features
+
+- Add support for injectedIssues to the current validation pipeline ([d7de030](https://github.com/golemui/formforge/commit/d7de030))
+- add textarea component ([bd8499a](https://github.com/golemui/formforge/commit/bd8499a))
+
+### 🩹 Fixes
+
+- **validators:** fix validators ([66847ae](https://github.com/golemui/formforge/commit/66847ae))
+- **vanilla-validators:** add correct check for string length ([28babd9](https://github.com/golemui/formforge/commit/28babd9))
+- **core:** use calculatedFields to take advantage of recent optimizations ([c37b86b](https://github.com/golemui/formforge/commit/c37b86b))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
+## 0.15.2 (2026-01-03)
+
+### 🩹 Fixes
+
+- rename form error to form health ([5f2ed5e](https://github.com/golemui/formforge/commit/5f2ed5e))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.1 (2025-12-27)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

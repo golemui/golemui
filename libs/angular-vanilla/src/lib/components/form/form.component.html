@@ -5,6 +5,6 @@
   [middlewares]="customMiddlewares()"
   [validators]="customValidators()"
   [validateOn]="validateOn()"
-  (formError)="formError.emit($event)"
+  (formHealth)="formHealth.emit($event)"
   (formEvent)="formEvent.emit($event)"
 ></gui-core-form>

@@ -4,7 +4,7 @@ export function Errors({ errors, uid }: { errors: string[]; uid: string }) {
       {errors.map((error, index) => (
         <li
           className="gui-validator__error"
-          role="status"
+          role="alert"
           key={index}
           data-cy={`${uid}_validator-error`}
         >

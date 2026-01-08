@@ -1,13 +1,15 @@
-import { MountOptions } from '@golemui/ui-testing';
 import * as Core from '@golemui/core';
-import { Type } from '../../src/lib/utils/types';
+import { MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
 import '../../src/lib/components/form.element';
+import { Type } from '../../src/lib/utils/types';
 
 export const mountFramework = (options: MountOptions) => {
   const fieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = options.withCustomComponent
     ? {
         heading: async () => (await import('../components/heading/heading.element')).HeadingElement,
+        customdate: async () =>
+          (await import('../components/custom-date/customdate.element')).CustomdateElement,
       }
     : {};
 
@@ -19,11 +21,11 @@ export const mountFramework = (options: MountOptions) => {
     }
   };
 
-  const handleFormError = (e: CustomEvent<Core.FormStoreError>) => {
-    if (options.formError) {
-      options.formError(e.detail);
+  const handleFormHealth = (e: CustomEvent<Core.FormHealth>) => {
+    if (options.formHealth) {
+      options.formHealth(e.detail);
     } else {
-      cy.spy().as('formError')(e.detail);
+      cy.spy().as('formHealth')(e.detail);
     }
   };
 
@@ -36,7 +38,7 @@ export const mountFramework = (options: MountOptions) => {
       .validateOn=${options.validateOn ?? 'eager'}
       .fieldLoaders=${fieldLoaders}
       @formEvent=${handleFormEvent}
-      @formError=${handleFormError}
+      @formHealth=${handleFormHealth}
     ></gui-form>`,
   );
 };

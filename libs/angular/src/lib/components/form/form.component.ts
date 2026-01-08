@@ -44,7 +44,7 @@ export class FormCoreComponent implements OnInit {
   validateOn = input<Core.ValidateOn>('eager');
 
   // OUTPUTS
-  protected formError = output<Core.FormStoreError>();
+  protected formHealth = output<Core.FormHealth>();
   protected formEvent = output<Core.FormEvent>();
 
   // INJECTS
@@ -62,9 +62,9 @@ export class FormCoreComponent implements OnInit {
       this.validateOn(),
     );
 
-    Core.formErrors(this.context.store.state$)
+    Core.formHealth(this.context.store.state$)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((error) => this.formError.emit(error));
+      .subscribe((health) => this.formHealth.emit(health));
 
     this.context.events$
       .pipe(takeUntilDestroyed(this.destroyRef))

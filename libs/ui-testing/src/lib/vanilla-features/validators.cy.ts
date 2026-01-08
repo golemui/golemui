@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as z from 'zod/mini';
+import { MountComponentFn } from '../utils';
 
 const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
     z.superRefine((val, ctx) => {
-      if (names.includes(val) === false) {
+      if (val && names.includes(val) === false) {
         ctx.addIssue({
           code: 'custom',
           message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,
@@ -49,8 +49,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         );
       });
 
-      // TODO: Fix string validator to validate empty strings as invalid
-      it.skip('should display an error validating required strings', () => {
+      it('should display an error validating required strings', () => {
         mountFn({
           formDef: Core.defineForm({
             form: [
@@ -73,11 +72,10 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
             ],
           }),
         });
-        cy.get('[data-cy="requiredString_validator-input"]').type('a{backspace}');
+        cy.get('[data-cy="requiredString_textinput"]').type('a{backspace}');
+        cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredString_validator-errors"]').should('exist');
-        cy.get('[data-cy="requiredString_validator-error"]').contains(
-          `Invalid input: expected string, received ''`,
-        );
+        cy.get('[data-cy="requiredString_validator-error"]').contains('This field is required');
       });
 
       it('should display an error validating minLength', () => {

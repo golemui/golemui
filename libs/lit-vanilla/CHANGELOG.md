@@ -1,3 +1,24 @@
+## 0.16.0 (2026-01-05)
+
+### 🚀 Features
+
+- add minimumHeight and autoGrow to textarea ([9bc9c3b](https://github.com/golemui/formforge/commit/9bc9c3b))
+- add textarea component ([bd8499a](https://github.com/golemui/formforge/commit/bd8499a))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
+## 0.15.2 (2026-01-03)
+
+### 🩹 Fixes
+
+- **cypress:** rename formError to formHealth ([0aee3df](https://github.com/golemui/formforge/commit/0aee3df))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.1 (2025-12-27)
 
 ### 🩹 Fixes

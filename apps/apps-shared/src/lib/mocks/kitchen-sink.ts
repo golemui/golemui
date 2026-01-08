@@ -1,14 +1,16 @@
 import { defineForm } from '@golemui/core';
-import { alert } from './tabs/alert';
-import { stack } from './tabs/stack';
-import { repeater } from './tabs/repeater';
-import { checkbox } from './tabs/checkbox';
 import { accordion } from './tabs/accordion';
-import { textinput } from './tabs/textinput';
-import { select } from './tabs/select';
+import { alert } from './tabs/alert';
+import { checkbox } from './tabs/checkbox';
 import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
+import { repeater } from './tabs/repeater';
+import { select } from './tabs/select';
+import { stack } from './tabs/stack';
+import { textarea } from './tabs/textarea';
+import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
+import { calendar } from './tabs/calendar';
 
 export const kitchenSink = defineForm({
   states: {
@@ -31,7 +33,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab10',
+        defaultOpen: 'tab12',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -43,6 +45,8 @@ export const kitchenSink = defineForm({
           { label: 'Number Component', uid: 'tab8' },
           { label: 'Radiogroup Component', uid: 'tab9' },
           { label: 'Toggle Component', uid: 'tab10' },
+          { label: 'Textarea Component', uid: 'tab11' },
+          { label: 'Calendar Component', uid: 'tab12' },
         ],
       },
       on: { change: 'onTabEvent' },
@@ -57,6 +61,8 @@ export const kitchenSink = defineForm({
         number(),
         radiogroup(),
         toggle(),
+        textarea(),
+        calendar(),
       ],
     },
     {
@@ -90,7 +96,7 @@ export const kitchenSinkData = {
         lastName: 'Johnson',
       },
       {
-        firstName: 'Bob',
+        firstName: '',
         lastName: 'Smith',
       },
       {

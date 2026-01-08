@@ -1,7 +1,7 @@
-import { MountOptions } from '@golemui/ui-testing';
 import * as Core from '@golemui/core';
-import { ComponentType } from 'react';
+import { MountOptions } from '@golemui/ui-testing';
 import { mount } from 'cypress/react';
+import { ComponentType } from 'react';
 import { FormComponent } from '../../src/lib/components/Form';
 
 export const mountFramework = (options: MountOptions) => {
@@ -9,12 +9,13 @@ export const mountFramework = (options: MountOptions) => {
     ? {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,
+        customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
       }
     : {};
 
   const handleFormEvent = options.formEvent ? options.formEvent : cy.spy().as('formEvent');
 
-  const handleFormError = options.formError ? options.formError : cy.spy().as('formError');
+  const handleFormHealth = options.formHealth ? options.formHealth : cy.spy().as('formHealth');
 
   mount(
     <FormComponent
@@ -25,7 +26,7 @@ export const mountFramework = (options: MountOptions) => {
       validateOn={options.validateOn ?? 'eager'}
       fieldLoaders={fieldLoaders}
       formEvent={handleFormEvent}
-      formError={handleFormError}
+      formHealth={handleFormHealth}
     />,
   );
 };

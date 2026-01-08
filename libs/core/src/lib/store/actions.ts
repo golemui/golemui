@@ -1,6 +1,6 @@
 import { FormField } from '../form-field';
 import { DotPath, Uid, ValidateOn } from '../shared';
-import { FormStoreError } from './model';
+import { FormHealth } from './model';
 
 export type INITIALIZE = {
   type: 'INITIALIZE';
@@ -50,9 +50,9 @@ export type OVERRIDE_FIELD_PROP = {
   payload: { path: DotPath; prop: string; value: any };
 };
 
-export type SET_ERROR = {
-  type: 'SET_ERROR';
-  payload: { error: FormStoreError };
+export type SET_FORM_HEALTH = {
+  type: 'SET_FORM_HEALTH';
+  payload: { formHealth: FormHealth };
 };
 
 /**
@@ -86,6 +86,11 @@ export type VALIDATE_ALL = {
   type: 'VALIDATE_ALL';
 };
 
+export type INJECT_VALIDATION_ISSUES = {
+  type: 'INJECT_VALIDATION_ISSUES';
+  payload: { issues: string[] | null; path: DotPath };
+};
+
 export type Action =
   | INITIALIZE
   | SET_DATA
@@ -94,6 +99,7 @@ export type Action =
   | SET_FIELD_INITIAL_DATA
   | SET_FIELD_DATA
   | OVERRIDE_FIELD_PROP
-  | SET_ERROR
+  | SET_FORM_HEALTH
+  | INJECT_VALIDATION_ISSUES
   | ATTEMPT_VALIDATION
   | VALIDATE_ALL;

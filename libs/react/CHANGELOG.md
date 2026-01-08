@@ -1,3 +1,28 @@
+## 0.16.0 (2026-01-05)
+
+### 🚀 Features
+
+- Add support for injectedIssues to the current validation pipeline ([d7de030](https://github.com/golemui/formforge/commit/d7de030))
+
+### 🩹 Fixes
+
+- **react:** update validator handling ([cb875bf](https://github.com/golemui/formforge/commit/cb875bf))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
+## 0.15.2 (2026-01-03)
+
+### 🩹 Fixes
+
+- **lit:** rename formError to formHealth ([f57b6ec](https://github.com/golemui/formforge/commit/f57b6ec))
+- **react:** rename formError to formHealth ([3eba8ac](https://github.com/golemui/formforge/commit/3eba8ac))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.15.1 (2025-12-27)
 
 This was a version bump only for react to align it with other projects, there were no code changes.

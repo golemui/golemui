@@ -1,43 +1,12 @@
-import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as Form from '../form';
 import * as Field from '../form-field';
-import { DotPath, Uid, UiState } from '../shared';
+import { DotPath, Uid } from '../shared';
 
-export type FormStoreError =
-  | { kind: 'none' }
-  | { kind: 'fatal'; error: string | string[] }
-  // TODO: Is this still needed since we have proper validators now?
-  | { kind: 'validation'; errors: string[] };
-
-export type ValidationState = {
-  /**
-   * Cache of calculated schemas
-   */
-  validators: Record<UiState, StandardSchemaV1>;
-  /**
-   * Current status
-   */
-  status: null | { errors: string[] };
-};
-
-/**
- * Represents a form field whose value is derived from a computation
- * and evaluated against its previous derived state.
- *
- * A `DerivedField<T>` captures the source field, the previous derived value,
- * the newly derived value, and whether a structural change occurred between
- * derivations.
- */
-export type DerivedField<F extends Field.FormField<string>> = {
-  /** The source field from which the derived value is computed */
-  source: Readonly<F>;
-  /** The previously derived value */
-  previous: Readonly<F>;
-  /** The newly derived value */
-  current: F;
-  /** Indicates whether the newly derived value changed structurally */
-  changed?: boolean;
-};
+// ------------------------------
+//
+// Store state
+//
+// ------------------------------
 
 export type State = {
   formName: string;
@@ -65,9 +34,21 @@ export type State = {
   calculatedFields: Record<Uid, DerivedField<Field.FormField<string>>>;
 
   /**
-   * Tracks field validation status.
+   * Validations statuses derived from the schema validators expressed declaratively.
+   *
+   * These validation statuses are produced automatically by the configured schema
+   * validators (e.g. zod), and are fully managed by the validation engine and should
+   * not be mutated directly.
    */
-  validations: Record<DotPath, ValidationState>;
+  validations: Record<DotPath, ValidationStatus>;
+
+  /**
+   * Validation statuses injected imperatively via the public API.
+   *
+   * These validation statuses are not derived from the schema validators and are intended
+   * for contextual validations that cannot be expressed declaratively.
+   */
+  injectedValidations: Record<DotPath, ValidationStatus>;
 
   /**
    * Tracks fields with state expressions.
@@ -88,7 +69,11 @@ export type State = {
 
   data: Record<string, any>;
 
-  error: FormStoreError;
+  /**
+   * This reflects whether the form is currently functioning normally
+   * or is in an errored state.
+   */
+  formHealth: FormHealth;
 
   /**
    * Indicates whether the user has interacted with the form.
@@ -110,13 +95,20 @@ export const createInitialState = (): State => ({
   currentStates: [],
   calculatedFields: {},
   validations: {},
+  injectedValidations: {},
   fieldFlags: {},
   touchedControls: {},
   fieldPropOverrides: {},
   data: {},
-  error: { kind: 'none' },
+  formHealth: { status: 'ok' },
   touched: false,
 });
+
+// ------------------------------
+//
+// TYPES
+//
+// ------------------------------
 
 export type MiddlewareAPI<S, A> = {
   getState: () => S;
@@ -126,3 +118,35 @@ export type MiddlewareAPI<S, A> = {
 export type Middleware<S, A> = (
   api: MiddlewareAPI<S, A>,
 ) => (next: (action: A) => void) => (action: A) => void;
+
+/**
+ * Represents the current operational state of the form.
+ * When in an errored state, the form is considered non-operational
+ * until the error is cleared.
+ */
+export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
+
+/**
+ * Represents a generic validation status.
+ * Either `null` (there are no validation issues) or an array of issues.
+ */
+export type ValidationStatus = null | string[];
+
+/**
+ * Represents a form field whose value is derived from a computation
+ * and evaluated against its previous derived state.
+ *
+ * A `DerivedField<T>` captures the source field, the previous derived value,
+ * the newly derived value, and whether a structural change occurred between
+ * derivations.
+ */
+export type DerivedField<F extends Field.FormField<string>> = {
+  /** The source field from which the derived value is computed */
+  source: Readonly<F>;
+  /** The previously derived value */
+  previous: Readonly<F>;
+  /** The newly derived value */
+  current: F;
+  /** Indicates whether the newly derived value changed structurally */
+  changed?: boolean;
+};

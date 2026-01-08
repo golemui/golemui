@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import {
   createOptionMapper,
+  GUIAriaController,
   inferOptionValue,
   isOption,
   isOptionValue,
@@ -14,7 +15,6 @@ import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel } from '../utils/templates';
 
 @customElement('gui-radiogroup')

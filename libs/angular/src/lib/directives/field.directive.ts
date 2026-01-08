@@ -29,11 +29,11 @@ export class FieldDirective implements OnInit {
       this.createComponent(await this.formContext.fieldRegistry.loadField(this.field().widget));
     } catch {
       this.formContext.store.dispatch({
-        type: 'SET_ERROR',
+        type: 'SET_FORM_HEALTH',
         payload: {
-          error: {
-            kind: 'fatal',
-            error: `Field "${this.field().widget}" could not be loaded`,
+          formHealth: {
+            status: 'errored',
+            message: `Field "${this.field().widget}" could not be loaded`,
           },
         },
       });

@@ -13,8 +13,8 @@ export class AppElement extends LitElement {
 
   connectedCallback() {
     this.innerHTML = `
-      <header><h1>golemui</h1></header>
-      <main class="container">
+      <header class="header"><h1>golemui</h1></header>
+      <main class="main">
         <lit-form></lit-form>
       </main>
     `;

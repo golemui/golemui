@@ -1,4 +1,4 @@
-import { distinctUntilChanged, filter, map, Observable, pipe } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, pipe, startWith } from 'rxjs';
 import { LayoutField } from '../form-field';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
@@ -38,7 +38,28 @@ export const validationByPath$ = (path: DotPath) =>
   pipe(
     selectValidations,
     map((validations) => validations[path]),
-    distinctUntilChanged((prev, current) => prev?.status !== current?.status),
+    distinctUntilChanged(),
+  );
+
+// --------------------------------
+//
+// INJECTED VALIDATIONS
+//
+// --------------------------------
+
+const selectInjectedValidations = pipe(
+  filter((store: State) => store.touched === true),
+  map((store) => store.injectedValidations),
+  distinctUntilChanged(),
+);
+
+export const injectedValidationByPath$ = (path: DotPath) =>
+  pipe(
+    selectInjectedValidations,
+    map((validations) => validations[path]),
+    distinctUntilChanged(),
+    // we want to make sure combineLatest([validation$, injectedValidation$]) triggers
+    startWith(null),
   );
 
 // --------------------------------
@@ -114,13 +135,13 @@ export const touchedControlsByPath$ = (path: DotPath) =>
 
 // --------------------------------
 //
-// ERRORS
+// FORM HEALTH
 //
 // --------------------------------
 
-const selectErrors = pipe(
-  map((store: State) => store.error),
+const selectFormHealth = pipe(
+  map((store: State) => store.formHealth),
   distinctUntilChanged(),
 );
 
-export const formErrors = (store: Observable<State>) => store.pipe(selectErrors);
+export const formHealth = (store: Observable<State>) => store.pipe(selectFormHealth);

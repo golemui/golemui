@@ -8,12 +8,16 @@
 @use 'field';
 
 // Control Fields
+@use 'calendar';
 @use 'checkbox';
+@use 'date';
+@use 'date-picker';
 @use 'number';
 @use 'repeater';
 @use 'radiogroup';
 @use 'select';
 @use 'textinput';
+@use 'textarea';
 @use 'toggle';
 
 // Layout Fields
