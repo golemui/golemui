@@ -1,19 +1,18 @@
 import {
   createOptionMapper,
-  GUIAriaController,
   inferOptionValue,
   isOption,
   isOptionValue,
   isProtoOption,
-  Option,
   OptionValue,
-  RadiogroupProps,
-} from '@golemui/shared-vanilla';
+} from './select';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
+import { Option, RadiogroupProps } from '../field.props';
+import { GUIAriaController } from '../controllers';
 
 @customElement('gui-radiogroup')
 export class RadiogroupElement extends LitElement {
