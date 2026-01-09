@@ -59,10 +59,6 @@ export class DatePickerElement extends LitElement implements Core.WithField {
 
     // Icon
     const datePickerIcon = addIcon('datePicker', this.adapter.templateData);
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
 
     const calendar = this.isCalendarOpen
       ? html`<gui-calendar

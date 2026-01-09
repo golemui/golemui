@@ -32,6 +32,11 @@ export type CalendarProps = {
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
 };
 
+export type DateinputProps = {
+  hint?: string;
+  icon?: string;
+};
+
 export type DatePickerProps = {
   hint?: string;
   placeholder?: string;

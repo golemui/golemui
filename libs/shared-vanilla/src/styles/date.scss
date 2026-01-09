@@ -1,33 +1,31 @@
-.gui-form {
-  .gui-date {
-    display: block;
+gui-date {
+  display: block;
 
-    .gui-date-input {
-      input[type='text'] {
-        font-family: monospace;
-        border: 0;
-        padding: 0;
-        background: transparent;
-        border-radius: 0;
-        width: 24px;
-        text-align: center;
+  .gui-date-input {
+    input[type='text'] {
+      font-family: monospace;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+      width: 24px;
+      text-align: center;
 
-        &.gui-year-input__year {
-          width: 40px;
-        }
-
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          appearance: none;
-          margin: 0;
-        }
+      &.gui-year-input__year {
+        width: 40px;
       }
 
-      &.gui-calendar--icon {
-        padding-left: 2.5rem;
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
       }
+    }
+
+    &.gui-calendar--icon {
+      padding-left: 2.5rem;
     }
   }
 }

@@ -5,7 +5,7 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addIcon } from '../utils/templates';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-date-control')
@@ -43,26 +43,21 @@ export class DateElement extends LitElement implements Core.WithField {
     const dateIcon = addIcon('date', this.adapter.templateData);
 
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
-
-      <div class="gui-field">
-        <gui-date
-          class=${classMap(dateIcon.fieldClasses)}
-          .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint ?? nothing}
-          .touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          ?disabled=${this.adapter.templateData.disabled ?? nothing}
-          ?readonly=${this.adapter.templateData.readonly ?? nothing}
-          .value=${this.adapter.templateData.value}
-          .icon=${this.adapter.templateData.icon ?? nothing}
-          @inputError=${() => this.onInputError(event)}
-          @blur=${() => this.adapter.onBlur()}
-          @change=${() => this.valueChanged(event)}
-        ></gui-date>
-      </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      <gui-date
+        class=${classMap(dateIcon.fieldClasses)}
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label ?? nothing}
+        .hint=${this.adapter.templateData.hint ?? nothing}
+        .touched=${this.adapter.templateData.touched}
+        .errors=${this.adapter.templateData.errors}
+        ?disabled=${this.adapter.templateData.disabled ?? nothing}
+        ?readonly=${this.adapter.templateData.readonly ?? nothing}
+        .value=${this.adapter.templateData.value}
+        .icon=${this.adapter.templateData.icon ?? nothing}
+        @inputError=${() => this.onInputError(event)}
+        @blur=${() => this.adapter.onBlur()}
+        @change=${() => this.valueChanged(event)}
+      ></gui-date>
     `;
   }
 
