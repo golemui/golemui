@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { OptionValue } from './components/select';
+import { OptionValue } from './components';
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -96,6 +96,11 @@ export type SelectProps = {
 export type RadiogroupProps = {
   hint?: string;
   options: Option[];
+  labelField?: string;
+  valueField?: string;
+};
+
+export type OneOfProps = {
   labelField?: string;
   valueField?: string;
 };

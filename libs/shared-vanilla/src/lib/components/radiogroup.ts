@@ -1,21 +1,14 @@
-import {
-  createOptionMapper,
-  inferOptionValue,
-  isOption,
-  isOptionValue,
-  isProtoOption,
-  OptionValue,
-} from './select';
+import { inferOptionValue, updateOptions } from './one-of';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { Option, RadiogroupProps } from '../field.props';
+import { OneOfProps, Option, RadiogroupProps } from '../field.props';
 import { GUIAriaController } from '../controllers';
 
 @customElement('gui-radiogroup')
-export class RadiogroupElement extends LitElement {
+export class RadiogroupControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -53,29 +46,6 @@ export class RadiogroupElement extends LitElement {
     return this;
   }
 
-  private updateOptions() {
-    const opts = this.options;
-    const props = { labelField: this.labelField, valueField: this.valueField } as RadiogroupProps;
-
-    if (Array.isArray(opts) && opts.length > 0) {
-      if (isOption(opts[0])) {
-        // nothing to do
-      } else if (isOptionValue(opts[0])) {
-        this.options = (this.options as unknown as OptionValue[]).map((opt) => ({
-          label: opt.toString(),
-          value: opt,
-        }));
-      } else if (isProtoOption(opts[0], props)) {
-        const optionMapper = createOptionMapper(opts[0], props);
-        this.options = this.options.map(optionMapper);
-      } else {
-        throw new Error('Invalid option shape');
-      }
-      const selection = this.value;
-      this.hasMatchingValue = this.options.find(({ value }) => value === selection) !== undefined;
-    }
-  }
-
   override render() {
     super.render();
 
@@ -93,7 +63,14 @@ export class RadiogroupElement extends LitElement {
       valueField: this.valueField,
     };
 
-    this.updateOptions();
+    this.options = updateOptions(this.options, {
+      labelField: this.labelField,
+      valueField: this.valueField,
+    } as OneOfProps);
+    const selection = this.value;
+    this.hasMatchingValue = this.options?.length
+      ? this.options.find(({ value }) => value === selection) !== undefined
+      : false;
 
     const options = this.optionsLoading
       ? html`<span>Loading...</span>`

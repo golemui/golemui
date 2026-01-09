@@ -4,6 +4,7 @@ export * from './date-input';
 export * from './number';
 export * from './radiogroup';
 export * from './select';
+export * from './one-of';
 export * from './tabs';
 export * from './textinput';
 export * from './week-info';

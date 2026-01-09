@@ -1,48 +1,20 @@
 @let templateData = adapter.templateData();
-@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
-
-<div class="gui-field">
-  <select
-    guiAria
-    [uid]="field.uid"
-    [attr.data-cy]="field.uid + '_select'"
-    [templateData]="templateData"
-    [id]="field.uid"
-    [class]="{
-      'gui-select--icon': templateData.icon,
-      'gui-select--icon-right': templateData.iconPosition === 'right',
-    }"
-    [required]="templateData.validator?.required"
-    [value]="templateData.value ?? ''"
-    [disabled]="templateData.disabled || templateData.readonly"
-    (change)="valueChanged($event)"
-    (blur)="adapter.onBlur()"
-  >
-    @if (optionsLoading === true) {
-      <option [value]="">Loading...</option>
-    } @else {
-      <option value="" [attr.selected]="!hasMatchingValue ? '' : null" disabled>
-        {{ templateData.placeholder ?? 'Select an option' }}
-      </option>
-
-      @for (opt of templateData.options; track opt.value) {
-        <option
-          [value]="opt.value"
-          [attr.selected]="hasMatchingValue && opt.value === templateData.value ? '' : null"
-        >
-          {{ opt.label }}
-        </option>
-      }
-    }
-  </select>
-
-  @if (templateData.icon) {
-    <span gui-icon [templateData]="templateData"></span>
-  }
-</div>
-
-@if (showErrors) {
-  <ul gui-errors [uid]="field.uid" [templateData]="templateData"></ul>
-}
+<gui-select
+  [uid]="field.uid"
+  [label]="templateData.label"
+  [touched]="templateData.touched"
+  [errors]="templateData.errors"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [hint]="templateData.hint"
+  [icon]="templateData.icon"
+  [iconPosition]="templateData.iconPosition"
+  [placeholder]="templateData.placeholder"
+  [options]="templateData.options"
+  [labelField]="templateData.labelField"
+  [valueField]="templateData.valueField"
+  (change)="valueChanged($event)"
+  (blur)="adapter.onBlur()"
+></gui-select>
