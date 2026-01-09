@@ -2,7 +2,6 @@ import { inferOptionValue, updateOptions } from './one-of';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
 import { OneOfProps, Option, SelectProps } from '../field.props';
 import { GUIAriaController } from '../controllers';
@@ -43,8 +42,6 @@ export class GuiSelectControl extends LitElement {
       },
     }),
   });
-
-  subscriptions: Subscription[] = [];
 
   override createRenderRoot() {
     return this;
