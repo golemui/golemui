@@ -1,32 +1,15 @@
 @let templateData = adapter.templateData();
-@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData">
-  @if (showErrors) {
-    <ul
-      gui-errors
-      [uid]="field.uid"
-      [templateData]="templateData"
-      [attr.data-cy]="field.uid + '_validator-errors'"
-    ></ul>
-  }
-</label>
-
-<div class="gui-field gui-field--horizontal gui-toggle--switch">
-  <input
-    type="checkbox"
-    guiAria
-    [uid]="field.uid"
-    [templateData]="templateData"
-    [value]="templateData.value ?? false"
-    [id]="field.uid"
-    [attr.data-cy]="field.uid + '_switch'"
-    [checked]="templateData.value ? true : undefined"
-    [required]="templateData.validator?.required"
-    [disabled]="templateData.disabled"
-    [readonly]="templateData.readonly"
-    (click)="!templateData.readonly && valueChanged($event)"
-  />
-
-  <span class="gui-toggle--slider" role="presentation"></span>
-</div>
+<gui-toggle
+  [uid]="field.uid"
+  [label]="templateData.label"
+  [touched]="templateData.touched"
+  [errors]="templateData.errors"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [hint]="templateData.hint"
+  [togglePosition]="templateData.togglePosition"
+  (change)="valueChanged($event)"
+  (blur)="adapter.onBlur()"
+></gui-toggle>

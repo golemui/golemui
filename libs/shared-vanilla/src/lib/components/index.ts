@@ -8,4 +8,5 @@ export * from './one-of';
 export * from './tabs';
 export * from './textarea';
 export * from './textinput';
+export * from './toggle';
 export * from './week-info';

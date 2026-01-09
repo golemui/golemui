@@ -6,7 +6,7 @@ import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
 import { NumberinputProps } from '../field.props';
 
 @customElement('gui-number')
-export class NumberControl extends LitElement {
+export class GuiNumberControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;

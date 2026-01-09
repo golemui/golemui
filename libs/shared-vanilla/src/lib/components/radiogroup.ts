@@ -8,7 +8,7 @@ import { OneOfProps, Option, RadiogroupProps } from '../field.props';
 import { GUIAriaController } from '../controllers';
 
 @customElement('gui-radiogroup')
-export class RadiogroupControl extends LitElement {
+export class GuiRadiogroupControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';

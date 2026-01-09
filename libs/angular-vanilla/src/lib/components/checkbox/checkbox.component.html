@@ -10,6 +10,6 @@
   [value]="templateData.value"
   [hint]="templateData.hint"
   [checkboxPosition]="templateData.checkboxPosition"
-  (change)="!templateData.readonly && valueChanged($event)"
+  (change)="valueChanged($event)"
   (blur)="adapter.onBlur()"
 ></gui-checkbox>

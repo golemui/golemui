@@ -7,7 +7,7 @@ import { TextareaProps } from '../field.props';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 @customElement('gui-textarea')
-export class TextareaControl extends LitElement {
+export class GuiTextareaControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';

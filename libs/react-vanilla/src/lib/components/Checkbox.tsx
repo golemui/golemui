@@ -13,8 +13,8 @@ export function Checkbox(fieldInstance: Core.WithField) {
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      !templateData.readonly && onValueChanged((e.nativeEvent as CustomEvent).detail.value),
-    [onValueChanged, templateData.readonly],
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    [onValueChanged],
   );
 
   const label = templateData.label;

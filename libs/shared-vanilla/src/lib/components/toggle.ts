@@ -1,12 +1,11 @@
+import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { GUIAriaController } from '../controllers/aria.controller';
-import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { TextinputProps } from '../field.props';
+import { addLabel, ControlTemplateData } from '../utils/templates';
+import { ToggleProps } from '../field.props';
 
-@customElement('gui-textinput')
-export class GuiTextinputControl extends LitElement {
+@customElement('gui-toggle')
+export class GuiToggleControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -17,12 +16,10 @@ export class GuiTextinputControl extends LitElement {
   @property({ type: String }) value: string | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' = 'left';
-  @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) togglePosition: 'left' | 'right' = 'right';
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`span[role="presentation"]`),
     getState: () => ({
       uid: this.uid as string,
       templateData: {
@@ -42,7 +39,7 @@ export class GuiTextinputControl extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & TextinputProps = {
+    const templateData: ControlTemplateData<string> & ToggleProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -51,39 +48,32 @@ export class GuiTextinputControl extends LitElement {
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
-      icon: this.icon,
-      iconPosition: this.iconPosition,
-      placeholder: this.placeholder,
+      togglePosition: this.togglePosition,
     };
 
-    // Icon
-    const textinputIcon = addIcon('textinput', templateData);
-
-    const fieldClasses: { [key: string]: boolean } = {
-      [`gui-textinput--icon`]: !!this.icon,
-      [`gui-textinput--icon-right`]: this.iconPosition === 'right',
-    };
+    if (templateData.togglePosition === 'left') {
+      this.classList.add('gui-toggle--left');
+    } else if (this.classList.contains('gui-toggle--left')) {
+      this.classList.remove('gui-toggle--left');
+    }
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid as string, templateData, true)}
 
-      <div class="gui-field">
+      <div class="gui-field gui-field--horizontal gui-toggle--switch">
         <input
-          type="text"
+          type="checkbox"
           id=${this.uid}
-          data-cy=${`${this.uid}_textinput`}
-          class=${classMap(fieldClasses)}
-          value=${this.value}
-          ?disabled=${this.disabled || nothing}
-          ?readonly=${this.readOnly || nothing}
-          placeholder=${this.placeholder || nothing}
-          @input="${() => this.valueChanged(event)}"
-          @blur="${() => this.onBlur()}"
+          data-cy=${`${this.uid}_toggle`}
+          ?checked=${templateData.value}
+          ?required=${templateData.validator?.required}
+          ?disabled=${templateData.disabled || nothing}
+          ?readonly=${templateData.readonly || nothing}
+          @change="${() => !templateData.readonly && this.valueChanged(event)}"
         />
-        ${textinputIcon.html}
-      </div>
 
-      ${addErrors(this.uid as string, templateData)}
+        <span class="gui-toggle--slider" role="presentation"></span>
+      </div>
     `;
   }
 
@@ -91,8 +81,8 @@ export class GuiTextinputControl extends LitElement {
     event?.stopPropagation();
     const target = event?.target as HTMLInputElement;
     this.dispatchEvent(
-      new CustomEvent('input', {
-        detail: { value: target.value },
+      new CustomEvent('change', {
+        detail: { value: target.checked },
         bubbles: true,
         composed: true,
       }),

@@ -9,7 +9,7 @@ import { GUIAriaController } from '../controllers';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-select')
-export class SelectControl extends LitElement {
+export class GuiSelectControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';

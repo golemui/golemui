@@ -1,11 +1,10 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { GUIAriaController, ToggleProps } from '@golemui/shared-vanilla';
+import { ToggleProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addLabel } from '../utils/templates';
 
 @customElement('gui-toggle-control')
 export class ToggleElement extends LitElement implements Core.WithField {
@@ -17,14 +16,6 @@ export class ToggleElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<boolean, ToggleProps>();
-
-  private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
-    getState: () => ({
-      uid: this.field.uid,
-      templateData: this.adapter.templateData,
-    }),
-  });
 
   subscriptions: Subscription[] = [];
 
@@ -46,35 +37,26 @@ export class ToggleElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    if (this.adapter.templateData.togglePosition === 'left') {
-      this.classList.add('gui-toggle--left');
-    } else if (this.classList.contains('gui-toggle--left')) {
-      this.classList.remove('gui-toggle--left');
-    }
-
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData, true)}
-
-      <div class="gui-field gui-field--horizontal gui-toggle--switch">
-        <input
-          type="checkbox"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_toggle`}
-          ?checked=${this.adapter.templateData.value}
-          ?required=${this.adapter.templateData.validator?.required}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
-          @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
-        />
-
-        <span class="gui-toggle--slider" role="presentation"></span>
-      </div>
+      <gui-toggle
+        .uid=${this.field.uid}
+        .label=${this.field.label}
+        .touched=${this.adapter.templateData.touched}
+        .errors=${this.adapter.templateData.errors}
+        ?disabled=${this.adapter.templateData.disabled ?? nothing}
+        ?readonly=${this.adapter.templateData.readonly ?? nothing}
+        .value=${this.adapter.templateData.value}
+        .hint=${this.adapter.templateData.hint ?? nothing}
+        .togglePosition=${this.adapter.templateData.togglePosition ?? nothing}
+        @change="${() => this.valueChanged(event)}"
+        @blur="${() => this.adapter.onBlur()}"
+      ></gui-toggle>
     `;
   }
 
   valueChanged(event: Event | undefined) {
-    const target = event?.target as HTMLInputElement;
-    this.adapter.valueChanged(target.checked);
+    const value = (event as CustomEvent)?.detail.value;
+    this.adapter.valueChanged(value);
   }
 
   override disconnectedCallback() {
