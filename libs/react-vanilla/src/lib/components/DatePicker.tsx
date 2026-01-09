@@ -152,8 +152,6 @@ export function DatePicker(fieldInstance: Core.WithField) {
             uid={uid}
             hint={hint}
             touched={isTouched}
-            errors={errors}
-            hasError={showErrors}
             disabled={isDisabled}
             readonly={isReadonly}
             value={value}

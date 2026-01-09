@@ -70,8 +70,6 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint}
           .touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          .hasError=${showErrors}
           .disabled=${this.adapter.templateData.disabled}
           .readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
@@ -102,7 +100,6 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           .hint=${this.adapter.templateData.hint ?? nothing}
           .touched=${this.adapter.templateData.touched}
           .errors=${this.adapter.templateData.errors}
-          .hasError=${showErrors}
           ?disabled=${this.adapter.templateData.disabled ?? nothing}
           ?readonly=${this.adapter.templateData.readonly ?? nothing}
           .value=${this.adapter.templateData.value}

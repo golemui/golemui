@@ -5,7 +5,6 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addLabel } from '../utils/templates';
 
 @customElement('gui-calendar-control')
 export class CalendarElement extends LitElement implements Core.WithField {
@@ -45,28 +44,23 @@ export class CalendarElement extends LitElement implements Core.WithField {
       this.adapter.templateData.errors.length > 0;
 
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
-
-      <div class="gui-field">
-        <gui-calendar
-          .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint}
-          .touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          .hasError=${showErrors}
-          ?disabled=${this.adapter.templateData.disabled}
-          ?readonly=${this.adapter.templateData.readonly}
-          .value=${this.adapter.templateData.value}
-          .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
-          .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
-          .dayFormat=${this.adapter.templateData.dayFormat}
-          .weekdayFormat=${this.adapter.templateData.weekdayFormat}
-          .monthFormat=${this.adapter.templateData.monthFormat}
-          @change=${() => this.valueChanged(event)}
-        ></gui-calendar>
-      </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      <gui-calendar
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label}
+        .hint=${this.adapter.templateData.hint}
+        .touched=${this.adapter.templateData.touched}
+        .errors=${this.adapter.templateData.errors}
+        .hasError=${showErrors}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
+        .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
+        .dayFormat=${this.adapter.templateData.dayFormat}
+        .weekdayFormat=${this.adapter.templateData.weekdayFormat}
+        .monthFormat=${this.adapter.templateData.monthFormat}
+        @change=${() => this.valueChanged(event)}
+      ></gui-calendar>
     `;
   }
 

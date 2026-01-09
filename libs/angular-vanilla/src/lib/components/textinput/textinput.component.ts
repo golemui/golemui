@@ -3,14 +3,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { TextinputProps } from '@golemui/shared-vanilla';
-import { LabelComponent } from '../../utils/templates/label.component';
-import { ErrorsComponent } from '../../utils/templates/errors.component';
-import { IconComponent } from '../../utils/templates/icon.component';
 
 @Component({
   standalone: true,
   selector: 'gui-textinput-control',
-  imports: [CommonModule, LabelComponent, ErrorsComponent, IconComponent],
+  imports: [CommonModule],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './textinput.component.html',
   host: {

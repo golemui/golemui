@@ -1,12 +1,8 @@
 gui-calendar {
+  display: block;
   width: fit-content;
-}
 
-.gui-form {
-  .gui-date-picker,
-  .gui-calendar {
-    display: block;
-
+  .gui-field {
     // Month Calendar
     .gui-calendar-input {
       width: 300px;
@@ -27,7 +23,7 @@ gui-calendar {
       text-align: center;
     }
 
-    .gui-calendar__month-button {
+    button.gui-button.gui-calendar__month-button {
       padding: 0.25rem;
       border-radius: 100%;
 

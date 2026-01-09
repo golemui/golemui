@@ -3,14 +3,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { NumberinputProps } from '@golemui/shared-vanilla';
-import { ErrorsComponent } from '../../utils/templates/errors.component';
-import { LabelComponent } from '../../utils/templates/label.component';
-import { IconComponent } from '../../utils/templates/icon.component';
 
 @Component({
   standalone: true,
   selector: 'gui-number-control',
-  imports: [CommonModule, LabelComponent, ErrorsComponent, IconComponent],
+  imports: [CommonModule],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './number.component.html',
   host: {
