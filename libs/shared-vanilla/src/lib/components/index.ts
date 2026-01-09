@@ -6,5 +6,6 @@ export * from './radiogroup';
 export * from './select';
 export * from './one-of';
 export * from './tabs';
+export * from './textarea';
 export * from './textinput';
 export * from './week-info';

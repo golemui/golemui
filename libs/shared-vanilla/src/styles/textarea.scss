@@ -1,27 +1,25 @@
-.gui-form {
-  .gui-textarea {
-    display: block;
+gui-textarea {
+  display: block;
 
-    textarea {
-      &.gui-textarea--icon {
-        padding-left: var(--gui-space-gap);
-        padding-right: var(--gui-icon-space-gap);
-      }
+  textarea {
+    &.gui-textarea--icon {
+      padding-left: var(--gui-space-gap);
+      padding-right: var(--gui-icon-space-gap);
     }
+  }
 
-    .gui-textarea--validation {
-      display: flex;
-      justify-content: space-between;
-    }
+  .gui-textarea--validation {
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .gui-textarea--counter {
-      font-size: var(--gui-font-size--small);
-      margin-top: var(--gui-space-gap--inner);
-      padding: 0;
+  .gui-textarea--counter {
+    font-size: var(--gui-font-size--small);
+    margin-top: var(--gui-space-gap--inner);
+    padding: 0;
 
-      &__error {
-        color: var(--gui-color-error);
-      }
+    &__error {
+      color: var(--gui-color-error);
     }
   }
 }
