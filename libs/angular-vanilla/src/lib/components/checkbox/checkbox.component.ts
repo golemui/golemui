@@ -3,18 +3,15 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { CheckboxProps } from '@golemui/shared-vanilla';
-import { LabelComponent } from '../../utils/templates/label.component';
-import { ErrorsComponent } from '../../utils/templates/errors.component';
 
 @Component({
   standalone: true,
   selector: 'gui-checkbox-control',
-  imports: [CommonModule, LabelComponent, ErrorsComponent],
+  imports: [CommonModule],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './checkbox.component.html',
   host: {
     class: 'gui-checkbox',
-    '[class.gui-checkbox--left]': 'adapter.templateData().checkboxPosition === "left"',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

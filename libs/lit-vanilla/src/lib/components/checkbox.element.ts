@@ -5,7 +5,6 @@ import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addLabel } from '../utils/templates';
 
 @customElement('gui-checkbox-control')
 export class CheckboxElement extends LitElement implements Core.WithField {
@@ -38,28 +37,20 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    if (this.adapter.templateData.checkboxPosition === 'left') {
-      this.classList.add('gui-checkbox--left');
-    } else if (this.classList.contains('gui-checkbox--left')) {
-      this.classList.remove('gui-checkbox--left');
-    }
-
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData, true)}
-
-      <div class="gui-field gui-field--horizontal">
-        <gui-checkbox
-          .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint ?? nothing}
-          .touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          ?disabled=${this.adapter.templateData.disabled ?? nothing}
-          ?readonly=${this.adapter.templateData.readonly ?? nothing}
-          .value=${this.adapter.templateData.value}
-          @change="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
-        ></gui-checkbox>
-      </div>
+      <gui-checkbox
+        .uid=${this.field.uid}
+        .label=${this.field.label}
+        .touched=${this.adapter.templateData.touched}
+        .errors=${this.adapter.templateData.errors}
+        ?disabled=${this.adapter.templateData.disabled ?? nothing}
+        ?readonly=${this.adapter.templateData.readonly ?? nothing}
+        .value=${this.adapter.templateData.value}
+        .hint=${this.adapter.templateData.hint ?? nothing}
+        .checkboxPosition=${this.adapter.templateData.checkboxPosition ?? nothing}
+        @change="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
+        @blur="${() => this.adapter.onBlur()}"
+      ></gui-checkbox>
     `;
   }
 
