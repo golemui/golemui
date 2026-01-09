@@ -2,6 +2,7 @@ export * from './calendar';
 export * from './checkbox';
 export * from './date-input';
 export * from './number';
+export * from './radiogroup';
 export * from './select';
 export * from './tabs';
 export * from './textinput';

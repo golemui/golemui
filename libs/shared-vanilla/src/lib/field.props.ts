@@ -94,7 +94,6 @@ export type SelectProps = {
 };
 
 export type RadiogroupProps = {
-  valueType?: 'string' | 'number' | 'boolean';
   hint?: string;
   options: Option[];
   labelField?: string;

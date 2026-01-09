@@ -9,14 +9,14 @@ import { TextinputProps } from '../field.props';
 export class TextinputControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
   @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: String }) value: string | undefined = undefined;
 
+  @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) iconPosition: 'left' | 'right' = 'left';
   @property({ type: String }) placeholder: string | undefined = undefined;
@@ -28,7 +28,7 @@ export class TextinputControl extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readonly,
+        readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
       },
@@ -49,7 +49,7 @@ export class TextinputControl extends LitElement {
       touched: this.touched,
       errors: this.errors,
       disabled: this.disabled,
-      readonly: this.readonly,
+      readonly: this.readOnly,
       value: this.value,
       icon: this.icon,
       iconPosition: this.iconPosition,
@@ -75,7 +75,7 @@ export class TextinputControl extends LitElement {
           class=${classMap(fieldClasses)}
           value=${this.value}
           ?disabled=${this.disabled || nothing}
-          ?readonly=${this.readonly || nothing}
+          ?readonly=${this.readOnly || nothing}
           placeholder=${this.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
           @blur="${() => this.onBlur()}"

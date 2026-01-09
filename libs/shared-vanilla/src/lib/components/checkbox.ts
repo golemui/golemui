@@ -12,7 +12,7 @@ export class GuiCheckboxControl extends LitElement {
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
   @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: String }) value: string | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
@@ -25,7 +25,7 @@ export class GuiCheckboxControl extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readonly,
+        readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
       },
@@ -46,7 +46,7 @@ export class GuiCheckboxControl extends LitElement {
       touched: this.touched,
       errors: this.errors,
       disabled: this.disabled,
-      readonly: this.readonly,
+      readonly: this.readOnly,
       value: this.value,
       checkboxPosition: this.checkboxPosition,
     };
@@ -67,8 +67,8 @@ export class GuiCheckboxControl extends LitElement {
           data-cy=${`${this.uid}_checkbox`}
           ?checked=${this.value}
           ?disabled=${this.disabled || nothing}
-          ?readonly=${this.readonly || nothing}
-          @change="${() => !this.readonly && this.valueChanged(event)}"
+          ?readonly=${this.readOnly || nothing}
+          @change="${() => !this.readOnly && this.valueChanged(event)}"
           @blur="${() => this.onBlur()}"
         />
       </div>

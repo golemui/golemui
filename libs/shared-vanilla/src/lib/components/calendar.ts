@@ -25,7 +25,7 @@ export class GuiCalendarControl extends LitElement {
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
   @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: String }) value: string | undefined = undefined;
 
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon = '';
@@ -43,7 +43,7 @@ export class GuiCalendarControl extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readonly,
+        readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
       },
@@ -72,7 +72,7 @@ export class GuiCalendarControl extends LitElement {
       touched: this.touched,
       errors: this.errors,
       disabled: this.disabled,
-      readonly: this.readonly,
+      readonly: this.readOnly,
       value: this.value,
       prevMonthIcon: this.prevMonthIcon,
       nextMonthIcon: this.nextMonthIcon,

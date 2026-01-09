@@ -15,7 +15,7 @@ export class GuiDateControl extends LitElement {
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
   @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: Boolean }) required = false;
   @property({ type: String }) value: string | undefined = undefined;
 
@@ -49,7 +49,7 @@ export class GuiDateControl extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readonly,
+        readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
       },
@@ -73,7 +73,7 @@ export class GuiDateControl extends LitElement {
       touched: this.touched,
       errors: this.errors,
       disabled: this.disabled,
-      readonly: this.readonly,
+      readonly: this.readOnly,
       value: this.value,
       icon: this.icon,
       hint: this.hint,
@@ -140,7 +140,7 @@ export class GuiDateControl extends LitElement {
         placeholder="${placeholder}"
         tabindex="${tabIndex}"
         ?disabled="${this.disabled}"
-        ?readonly="${this.readonly}"
+        ?readonly="${this.readOnly}"
         .value="${live(val)}"
         @keydown="${this.handleKeyDown}"
         @keyup="${(e: KeyboardEvent) => this.handleKeyUp(e, type)}"

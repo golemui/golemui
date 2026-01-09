@@ -14,7 +14,7 @@ export class NumberControl extends LitElement {
   @property({ type: Boolean }) touched = false;
   @property({ type: Array }) errors = [];
   @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: Number }) value: number | undefined = undefined;
 
   @property({ type: Number }) step: number | undefined = undefined;
@@ -29,7 +29,7 @@ export class NumberControl extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readonly,
+        readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
       },
@@ -54,7 +54,7 @@ export class NumberControl extends LitElement {
       touched: this.touched,
       errors: this.errors,
       disabled: this.disabled,
-      readonly: this.readonly,
+      readonly: this.readOnly,
       value: this.value,
       step: this.step,
       icon: this.icon,
@@ -85,7 +85,7 @@ export class NumberControl extends LitElement {
           class=${classMap(fieldClasses)}
           value=${this.value}
           ?disabled=${this.disabled || nothing}
-          ?readonly=${this.readonly || nothing}
+          ?readonly=${this.readOnly || nothing}
           step=${typeof this.step === 'number' ? this.step : nothing}
           placeholder=${this.placeholder || nothing}
           @input="${() => this.valueChanged(event)}"
