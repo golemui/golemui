@@ -1,5 +1,5 @@
 import * as jd from 'ts.data.json';
-import { DotPath, ReactiveExpression, ReactiveFieldFunction, Uid, UiState } from './shared';
+import { DotPath, FieldPropertyFunction, ReactiveExpression, Uid, UiState } from './shared';
 import { objectWithSuffix } from './utils/decoder';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
@@ -19,7 +19,7 @@ export type FieldWidget = string;
 
 type ReactiveFieldValue<T, FormData extends Record<string, any> = any> =
   | ReactiveExpression
-  | ReactiveFieldFunction<T, FormData>
+  | FieldPropertyFunction<T, FormData>
   | T;
 
 /**
@@ -65,14 +65,14 @@ export type BaseField<
   // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
 
   // TODO: Fix the type. `props` should only accept functions or Json serializable values.
-  // TODO: ReactiveFieldFunction<any> should be ReactiveFieldFunction<MyFormDataType>
+  // TODO: FieldPropertyFunction<any> should be FieldPropertyFunction<MyFormDataType>
   /**
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
   props?: Record<
     string,
-    string | boolean | number | any[] | Record<string, any> | ReactiveFieldFunction<any, FormData>
+    string | boolean | number | any[] | Record<string, any> | FieldPropertyFunction<any, FormData>
   >;
 };
 
@@ -229,23 +229,25 @@ const excludeDecoder = jd.oneOf<From | When>([fromDecoder, whenDecoder], 'Exclud
 // disable / readonly
 const boolWhenDecoder = jd.oneOf<boolean | When>([jd.boolean(), whenDecoder], 'Bool | When');
 
-// all fields that support states can potentially be a ReactiveFieldFunction
-const fieldFnDecoder: jd.Decoder<ReactiveFieldFunction<any>> = new jd.Decoder((json: unknown) => {
-  const jsonTypeof = typeof json;
-  if (jsonTypeof === 'function') {
-    return jd.ok(json as ReactiveFieldFunction<any>);
-  } else {
-    return jd.err(`Expected a function, got '${jsonTypeof}'`);
-  }
-});
-const decodeFieldOrFn = <T>(decoder: jd.Decoder<T>) =>
-  jd.oneOf<T | ReactiveFieldFunction<any>>([decoder, fieldFnDecoder], '');
+// all field properties that support states can potentially be a FieldPropertyFunction
+const fieldPropFnDecoder: jd.Decoder<FieldPropertyFunction<any>> = new jd.Decoder(
+  (json: unknown) => {
+    const jsonTypeof = typeof json;
+    if (jsonTypeof === 'function') {
+      return jd.ok(json as FieldPropertyFunction<any>);
+    } else {
+      return jd.err(`Expected a function, got '${jsonTypeof}'`);
+    }
+  },
+);
+const decodeFieldPropOrfieldPropFn = <T>(decoder: jd.Decoder<T>) =>
+  jd.oneOf<T | FieldPropertyFunction<any>>([decoder, fieldPropFnDecoder], '');
 
 const onDecoder = objectWithSuffix(
   {
-    load: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
-    click: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
-    change: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
+    load: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
+    click: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
+    change: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
   },
   'On',
 );
@@ -274,7 +276,7 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    label: { suffixed: true, decoder: decodeFieldOrFn(jd.string()) },
+    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.string()) },
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
@@ -307,10 +309,10 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
-    label: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
+    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
     path: { decoder: jd.string() },
     defaultValue: { decoder: jd.optional(jd.succeed()) },
-    validator: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.succeed())) },
+    validator: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.succeed())) },
   },
   'ControlField',
 ).map((ctrl) => {
