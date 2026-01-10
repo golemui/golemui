@@ -10,10 +10,10 @@ export class GuiCheckboxControl extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
+  @property({ type: Array }) errors: string[] = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
-  @property({ type: String }) value: string | undefined = undefined;
+  @property({ type: String }) value: boolean | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) checkboxPosition: 'left' | 'right' = 'right';
@@ -39,7 +39,7 @@ export class GuiCheckboxControl extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & CheckboxProps = {
+    const templateData: ControlTemplateData<boolean> & CheckboxProps = {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
@@ -94,5 +94,11 @@ export class GuiCheckboxControl extends LitElement {
         composed: true,
       }),
     );
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-checkbox': GuiCheckboxControl;
   }
 }

@@ -43,7 +43,7 @@ export function DateInput(fieldInstance: Core.WithField) {
     [onValueChanged, onBlur, injectValidationIssues],
   );
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const icon = templateData.icon;
   const isDisabled = templateData.disabled as boolean;
@@ -59,7 +59,7 @@ export function DateInput(fieldInstance: Core.WithField) {
         touched={isTouched}
         errors={errors}
         disabled={isDisabled}
-        readonly={isReadonly}
+        readOnly={isReadonly}
         value={value}
         icon={icon}
       />

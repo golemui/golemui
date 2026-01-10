@@ -11,7 +11,7 @@ export function Toggle(fieldInstance: Core.WithField) {
     ToggleProps
   >(field);
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const togglePosition = templateData.togglePosition;
   const isDisabled = templateData.disabled as boolean;

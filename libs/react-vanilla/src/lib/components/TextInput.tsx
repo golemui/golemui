@@ -17,7 +17,7 @@ export function TextInput(fieldInstance: Core.WithField) {
     [onValueChanged],
   );
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;

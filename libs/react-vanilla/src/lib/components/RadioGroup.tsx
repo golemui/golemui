@@ -11,7 +11,7 @@ export function RadioGroup(fieldInstance: Core.WithField) {
     RadiogroupProps
   >(field);
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const options = templateData.options;
   const labelField = templateData.labelField;
@@ -20,7 +20,7 @@ export function RadioGroup(fieldInstance: Core.WithField) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
       onValueChanged((e.nativeEvent as CustomEvent).detail.value),
-    [onValueChanged, options],
+    [onValueChanged],
   );
 
   const isDisabled = templateData.disabled as boolean;

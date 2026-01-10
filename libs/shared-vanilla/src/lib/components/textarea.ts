@@ -12,7 +12,7 @@ export class GuiTextareaControl extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
+  @property({ type: Array }) errors: string[] = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: String }) value: string | undefined = undefined;
@@ -168,5 +168,11 @@ export class GuiTextareaControl extends LitElement {
         composed: true,
       }),
     );
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-textarea': GuiTextareaControl;
   }
 }

@@ -140,7 +140,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
           touched={isTouched}
           errors={errors}
           disabled={isDisabled}
-          readonly={isReadonly}
+          readOnly={isReadonly}
           value={value}
           icon={icon}
         />
@@ -152,7 +152,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
             hint={hint}
             touched={isTouched}
             disabled={isDisabled}
-            readonly={isReadonly}
+            readOnly={isReadonly}
             value={value}
             prevMonthIcon={prevMonthIcon}
             nextMonthIcon={nextMonthIcon}

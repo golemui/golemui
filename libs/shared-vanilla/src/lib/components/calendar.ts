@@ -23,7 +23,7 @@ export class GuiCalendarControl extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
+  @property({ type: Array }) errors: string[] = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: String }) value: string | undefined = undefined;
@@ -340,5 +340,11 @@ export class GuiCalendarControl extends LitElement {
     } else {
       buttons[nextIndex]?.focus();
     }
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-calendar': GuiCalendarControl;
   }
 }

@@ -1,4 +1,4 @@
-import { inferOptionValue, updateOptions } from './one-of';
+import { inferOptionValue, OptionValue, updateOptions } from './one-of';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
@@ -13,10 +13,10 @@ export class GuiSelectControl extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
+  @property({ type: Array }) errors: string[] = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
-  @property({ type: String }) value: string | undefined = undefined;
+  @property({ type: String }) value: OptionValue | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
@@ -50,7 +50,7 @@ export class GuiSelectControl extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<string> & SelectProps = {
+    const templateData: ControlTemplateData<OptionValue> & SelectProps = {
       uid: this.uid,
       label: this.label,
       touched: this.touched,
@@ -141,5 +141,11 @@ export class GuiSelectControl extends LitElement {
         composed: true,
       }),
     );
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-select': GuiSelectControl;
   }
 }

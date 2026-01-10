@@ -26,7 +26,7 @@ export function Calendar(fieldInstance: Core.WithField) {
     [onValueChanged],
   );
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const prevMonthIcon = templateData.prevMonthIcon;
   const nextMonthIcon = templateData.nextMonthIcon;
@@ -46,7 +46,7 @@ export function Calendar(fieldInstance: Core.WithField) {
         touched={isTouched}
         errors={errors}
         disabled={isDisabled}
-        readonly={isReadonly}
+        readOnly={isReadonly}
         value={value}
         prevMonthIcon={prevMonthIcon}
         nextMonthIcon={nextMonthIcon}

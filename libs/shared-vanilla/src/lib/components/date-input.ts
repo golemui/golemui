@@ -13,7 +13,7 @@ export class GuiDateControl extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
   @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
+  @property({ type: Array }) errors: string[] = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: Boolean }) required = false;
@@ -336,5 +336,11 @@ export class GuiDateControl extends LitElement {
     }
 
     this.requestUpdate();
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-date': GuiDateControl;
   }
 }

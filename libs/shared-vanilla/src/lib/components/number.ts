@@ -119,3 +119,9 @@ export class GuiNumberControl extends LitElement {
     );
   }
 }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-number': GuiNumberControl;
+  }
+}

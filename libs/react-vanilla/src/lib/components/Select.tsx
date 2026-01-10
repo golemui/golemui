@@ -12,7 +12,7 @@ export function Select(fieldInstance: Core.WithField) {
   >(field);
 
   const options = templateData.options;
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;

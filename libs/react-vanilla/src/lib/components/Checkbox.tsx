@@ -17,7 +17,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
     [onValueChanged],
   );
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const checkboxPosition = templateData.checkboxPosition;
   const isDisabled = templateData.disabled as boolean;
