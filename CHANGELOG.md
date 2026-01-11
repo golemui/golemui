@@ -1,3 +1,16 @@
+## 0.17.0 (2026-01-11)
+
+### 🚀 Features
+
+- add calendar component ([f591a87](https://github.com/golemui/formforge/commit/f591a87))
+- add date picker ([df58e2c](https://github.com/golemui/formforge/commit/df58e2c))
+- add web component checkbox ([9f391ff](https://github.com/golemui/formforge/commit/9f391ff))
+- add web component number ([e8f91f1](https://github.com/golemui/formforge/commit/e8f91f1))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.16.0 (2026-01-05)
 
 ### 🚀 Features
