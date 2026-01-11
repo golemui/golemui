@@ -39,6 +39,7 @@ function calculateProps(state: State) {
       }
 
       const originalDerivedField = state.calculatedFields[uid];
+      console.log(originalDerivedField);
       const originalSource = originalDerivedField.source;
 
       if (isFunctionField(originalSource)) {
@@ -47,7 +48,7 @@ function calculateProps(state: State) {
           $form: state.data,
           errors: originalSource.path ? state.validations[originalSource.path] : undefined,
         });
-        originalDerivedField.current.uid = originalSource.uid!;
+        originalDerivedField.current.uid = uid;
         // TODO: structural comparison to avoid change detection
         acc[uid] = { ...originalDerivedField };
         return acc;

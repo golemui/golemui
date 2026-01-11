@@ -9,7 +9,9 @@ export function Stack(fieldInstance: Core.WithField) {
   const { uid, children, templateData } = useLayoutField<StackProps>(field);
 
   const renderFields = useCallback(() => {
-    return children.map((field) => <FieldRenderer key={field.uid} field={field} />);
+    return children.map((field) => (
+      <FieldRenderer key={field.uid} field={field as Core.NonFunctionField<string>} />
+    ));
   }, [children]);
 
   const direction = templateData.direction === 'horizontal' ? 'gui-stack__field--horizontal' : '';

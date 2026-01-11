@@ -120,7 +120,7 @@ export function Tabs(fieldInstance: Core.WithField) {
           id={`tabpanel_${field.uid}_${activeSectionIndex}`}
           aria-labelledby={`tab_${field.uid}_${activeSectionIndex}`}
         >
-          <FieldRenderer key={section.uid} field={section} />
+          <FieldRenderer key={section.uid} field={section as Core.NonFunctionField<string>} />
         </section>
       ));
   }, [children, activeTab, field]);

@@ -4,13 +4,13 @@ import { Subject, takeUntil } from 'rxjs';
 import { useReactFormContext } from '../../ReactFormContext';
 
 export type WithFlattenedProps<
-  F extends Core.FormField<string>,
-  ExtraProps extends Core.FormField<string>['props'],
+  F extends Core.NonFunctionField<string>,
+  ExtraProps extends Core.NonFunctionField<string>['props'],
 > = F & ExtraProps & Core.On;
 
 export function useTemplateData<
-  F extends Core.FormField<string>,
-  ExtraProps extends Core.FormField<string>['props'],
+  F extends Core.NonFunctionField<string>,
+  ExtraProps extends Core.NonFunctionField<string>['props'],
 >(
   field: F,
   postUpdate?: (obj: WithFlattenedProps<F, ExtraProps>) => WithFlattenedProps<F, ExtraProps>,
@@ -29,7 +29,7 @@ export function useTemplateData<
         const templateData = {
           ...calculatedField,
           ...calculatedField.props,
-          ...(calculatedField as Core.On),
+          ...(calculatedField as Core.InteractiveField).on,
         } as WithFlattenedProps<F, ExtraProps>;
         setProps(postUpdate ? postUpdate(templateData) : templateData);
       });

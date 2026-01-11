@@ -12,19 +12,20 @@ export const reactiveFunctions = defineForm<FormData>({
     register: '$form.registerMode === true',
   },
   form: [
-    {
-      uid: '',
-      kind: 'display',
-      widget: 'heading',
-      props: {
-        text: ({ $form }) => {
-          if ($form.user?.name && !$form.registerMode) {
-            return `Hello ${$form.user.name}`;
-          }
-          return 'Register';
-        },
-      },
-    },
+    // TODO: why `props.text` as a functino fails in React????
+    // {
+    //   uid: '',
+    //   kind: 'display',
+    //   widget: 'heading',
+    //   props: {
+    //     text: ({ $form }) => {
+    //       if ($form.user?.name && !$form.registerMode) {
+    //         return `Hello ${$form.user.name}`;
+    //       }
+    //       return 'Register';
+    //     },
+    //   },
+    // },
     {
       uid: '',
       kind: 'control',

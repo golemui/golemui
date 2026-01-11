@@ -30,7 +30,9 @@ export function Accordion(fieldInstance: Core.WithField) {
 
   const renderContent = useCallback(
     (uid: string) => {
-      const child = children.find((section) => section.uid === uid) as Core.FormField<string>;
+      const child = children.find(
+        (section) => section.uid === uid,
+      ) as Core.NonFunctionField<string>;
       const isActiveSection = activeSections[uid];
 
       return isActiveSection && child ? (

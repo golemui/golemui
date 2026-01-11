@@ -9,8 +9,8 @@ async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const formDef = AppsShared.kitchenSink;
-const formData = AppsShared.kitchenSinkData;
+const formDef = AppsShared.reactiveFunctions;
+const formData = AppsShared.reactiveFunctionsData;
 
 const customFieldLoaders = {
   heading: async () =>

@@ -8,8 +8,8 @@ import './form.element.scss';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef = AppsShared.kitchenSink;
-  formData = AppsShared.kitchenSinkData;
+  formDef = AppsShared.reactiveFunctions;
+  formData = AppsShared.reactiveFunctionsData;
   customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
