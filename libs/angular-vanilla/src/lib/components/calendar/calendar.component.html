@@ -1,33 +1,20 @@
 @let templateData = adapter.templateData();
-@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
-<label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
-
-<div class="gui-field">
-  <gui-calendar-control
-    [uid]="field.uid"
-    [hint]="templateData.hint"
-    [value]="templateData.value"
-    [touched]="templateData.touched"
-    [errors]="templateData.errors"
-    [hasError]="showErrors"
-    [disabled]="templateData.disabled"
-    [readonly]="templateData.readonly"
-    [value]="templateData.value"
-    [prevMonthIcon]="templateData.prevMonthIcon"
-    [nextMonthIcon]="templateData.nextMonthIcon"
-    [dayFormat]="templateData.dayFormat"
-    [weekdayFormat]="templateData.weekdayFormat"
-    [monthFormat]="templateData.monthFormat"
-    (change)="onChangeDate($event)"
-  ></gui-calendar-control>
-</div>
-
-@if (showErrors) {
-  <ul
-    gui-errors
-    [uid]="field.uid"
-    [templateData]="templateData"
-    [attr.data-cy]="field.uid + '_validator-errors'"
-  ></ul>
-}
+<gui-calendar
+  [uid]="field.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [value]="templateData.value"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [prevMonthIcon]="templateData.prevMonthIcon"
+  [nextMonthIcon]="templateData.nextMonthIcon"
+  [dayFormat]="templateData.dayFormat"
+  [weekdayFormat]="templateData.weekdayFormat"
+  [monthFormat]="templateData.monthFormat"
+  (change)="onChangeDate($event)"
+></gui-calendar>

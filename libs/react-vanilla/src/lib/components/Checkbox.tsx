@@ -3,7 +3,6 @@ import { useControlField } from '@golemui/react';
 import { CheckboxProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { Errors } from './shared/Errors';
 
 export function Checkbox(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<boolean>;
@@ -14,43 +13,33 @@ export function Checkbox(fieldInstance: Core.WithField) {
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      !templateData.readonly && onValueChanged(e.target.checked),
-    [onValueChanged, templateData.readonly],
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    [onValueChanged],
   );
 
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const checkboxPosition = templateData.checkboxPosition;
-  const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className={`gui-checkbox ${checkboxPosition === 'left' ? 'gui-checkbox--left' : ''}`}>
-      <label className="gui-label" htmlFor={uid}>
-        {templateData.label + (isRequired ? ' *' : '')}
-        {hint && (
-          <div className="gui-field-hint" id={`${uid}_hint`}>
-            {hint}
-          </div>
-        )}
-        {showErrors && <Errors errors={errors} uid={uid} />}
-      </label>
-
-      <div className="gui-field gui-field--horizontal">
-        <input
-          type="checkbox"
-          id={uid}
-          data-cy={`${uid}_checkbox`}
-          checked={value ?? false}
-          required={isRequired}
-          disabled={isDisabled}
-          readOnly={isReadonly}
-          aria-readonly={isReadonly}
-          onChange={handleChange}
-          onBlur={onBlur}
-        />
-      </div>
+    <div className={`gui-checkbox`}>
+      <gui-checkbox
+        uid={uid}
+        label={label}
+        errors={errors}
+        touched={isTouched}
+        required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadonly}
+        value={value}
+        hint={hint}
+        checkboxPosition={checkboxPosition}
+        onChange={handleChange}
+        onBlur={onBlur}
+      />
     </div>
   );
 }

@@ -107,9 +107,9 @@ export function DatePicker(fieldInstance: Core.WithField) {
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
   const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-date-picker">
@@ -133,29 +133,28 @@ export function DatePicker(fieldInstance: Core.WithField) {
         }}
         aria-expanded={isCalendarOpen}
       >
-        <gui-date-control
+        <gui-date
           ref={handleDateRef}
           uid={uid}
           hint={hint}
-          touched={isTouched}
           errors={errors}
-          hasError={showErrors}
+          touched={isTouched}
+          required={isRequired}
           disabled={isDisabled}
-          readonly={isReadonly}
+          readOnly={isReadonly}
           value={value}
           icon={icon}
         />
 
         {isCalendarOpen && (
-          <gui-calendar-control
+          <gui-calendar
             ref={handleCalendarRef}
             uid={uid}
             hint={hint}
             touched={isTouched}
-            errors={errors}
-            hasError={showErrors}
+            required={isRequired}
             disabled={isDisabled}
-            readonly={isReadonly}
+            readOnly={isReadonly}
             value={value}
             prevMonthIcon={prevMonthIcon}
             nextMonthIcon={nextMonthIcon}

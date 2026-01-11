@@ -14,7 +14,7 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
-    @property({ type: Object }) field!: Core.FormField<string>;
+    @property({ type: Object }) field!: Core.FormField<string> | undefined;
     @property({ type: Number }) repeaterIndex: number | undefined;
 
     @consume({ context: repeaterIndexTokenContext, subscribe: true })

@@ -33,7 +33,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab12',
+        defaultOpen: 'tab10',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },

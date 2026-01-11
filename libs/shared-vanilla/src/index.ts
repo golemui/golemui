@@ -1,3 +1,5 @@
+import './lib/react-integration';
+
 export * from './lib/components';
 export * from './lib/controllers';
 export * from './lib/field.factory';

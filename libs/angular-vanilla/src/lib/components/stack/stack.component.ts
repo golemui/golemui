@@ -6,7 +6,7 @@ import { StackProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'gui-stack',
+  selector: 'gui-stack-layout',
   imports: [CommonModule, Angular.FieldDirective],
   providers: [Angular.LayoutFieldAdapter],
   templateUrl: './stack.component.html',

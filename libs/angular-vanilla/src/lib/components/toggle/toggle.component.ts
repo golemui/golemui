@@ -1,22 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { ToggleProps } from '@golemui/shared-vanilla';
-import { LabelComponent } from '../../utils/templates/label.component';
-import { ErrorsComponent } from '../../utils/templates/errors.component';
-import { GuiAriaDirective } from '../../directives/aria.directive';
 
 @Component({
   standalone: true,
-  selector: 'gui-toggle',
-  imports: [CommonModule, LabelComponent, ErrorsComponent, GuiAriaDirective],
+  selector: 'gui-toggle-control',
+  imports: [CommonModule],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './toggle.component.html',
   host: {
     class: 'gui-toggle',
-    '[class.gui-toggle--left]': 'adapter.templateData().togglePosition === "left"',
   },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ToggleComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
@@ -33,7 +30,7 @@ export class ToggleComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   valueChanged(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.adapter.valueChanged(target.checked);
+    const value = (event as CustomEvent).detail.value;
+    this.adapter.valueChanged(value);
   }
 }

@@ -2,13 +2,13 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { DatePickerProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
+import { addIcon } from '../utils/templates';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-date')
+@customElement('gui-date-control')
 export class DateElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -41,35 +41,24 @@ export class DateElement extends LitElement implements Core.WithField {
 
     // Icon
     const dateIcon = addIcon('date', this.adapter.templateData);
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
-
-    console.log('show errors', showErrors, this.adapter.templateData.errors);
 
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
-
-      <div class="gui-field">
-        <gui-date-control
-          class=${classMap(dateIcon.fieldClasses)}
-          .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint ?? nothing}
-          .touched=${this.adapter.templateData.touched}
-          .errors=${this.adapter.templateData.errors}
-          .hasError=${showErrors}
-          ?disabled=${this.adapter.templateData.disabled ?? nothing}
-          ?readonly=${this.adapter.templateData.readonly ?? nothing}
-          .value=${this.adapter.templateData.value}
-          .icon=${this.adapter.templateData.icon ?? nothing}
-          @inputError=${() => this.onInputError(event)}
-          @blur=${() => this.adapter.onBlur()}
-          @change=${() => this.valueChanged(event)}
-        ></gui-date-control>
-      </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      <gui-date
+        class=${classMap(dateIcon.fieldClasses)}
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label as string}
+        .hint=${this.adapter.templateData.hint}
+        .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .icon=${this.adapter.templateData.icon}
+        @inputError=${() => this.onInputError(event)}
+        @blur=${() => this.adapter.onBlur()}
+        @change=${() => this.valueChanged(event)}
+      ></gui-date>
     `;
   }
 

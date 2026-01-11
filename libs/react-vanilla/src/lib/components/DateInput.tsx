@@ -3,7 +3,6 @@ import { useControlField } from '@golemui/react';
 import { DatePickerProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { Errors } from './shared/Errors';
 
 export function DateInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
@@ -44,38 +43,28 @@ export function DateInput(fieldInstance: Core.WithField) {
     [onValueChanged, onBlur, injectValidationIssues],
   );
 
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const icon = templateData.icon;
-  const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-date">
-      <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
-        {templateData.label + (isRequired ? ' *' : '')}
-        {hint && (
-          <div className="gui-field-hint" id={`${uid}_hint`}>
-            {hint}
-          </div>
-        )}
-      </label>
-      <div className="gui-field">
-        <gui-date-control
-          ref={handleRef}
-          uid={uid}
-          hint={hint}
-          touched={isTouched}
-          errors={errors}
-          hasError={showErrors}
-          disabled={isDisabled}
-          readonly={isReadonly}
-          value={value}
-          icon={icon}
-        />
-      </div>
-      {showErrors && <Errors errors={errors} uid={uid} />}
+      <gui-date
+        ref={handleRef}
+        uid={uid}
+        label={label}
+        hint={hint}
+        errors={errors}
+        touched={isTouched}
+        required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadonly}
+        value={value}
+        icon={icon}
+      />
     </div>
   );
 }
