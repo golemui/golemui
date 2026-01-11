@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { NumberinputProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
@@ -44,15 +44,13 @@ export class NumberElement extends LitElement implements Core.WithField {
         .hint=${this.adapter.templateData.hint}
         ?touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
-        ?disabled=${this.adapter.templateData.disabled || nothing}
-        ?readonly=${this.adapter.templateData.readonly || nothing}
-        .value=${this.adapter.templateData.value ?? ''}
-        .step=${typeof this.adapter.templateData.step === 'number'
-          ? this.adapter.templateData.step
-          : nothing}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .step=${this.adapter.templateData.step}
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
-        .placeholder=${this.adapter.templateData.placeholder || nothing}
+        .placeholder=${this.adapter.templateData.placeholder}
         @input="${() => this.valueChanged(event)}"
         @blur="${() => this.adapter.onBlur()}"
       ></gui-number>

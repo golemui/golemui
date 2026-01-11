@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { DatePickerProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { addIcon } from '../utils/templates';
@@ -46,14 +46,14 @@ export class DateElement extends LitElement implements Core.WithField {
       <gui-date
         class=${classMap(dateIcon.fieldClasses)}
         .uid=${this.field.uid}
-        .label=${this.adapter.templateData.label ?? nothing}
-        .hint=${this.adapter.templateData.hint ?? nothing}
+        .label=${this.adapter.templateData.label as string}
+        .hint=${this.adapter.templateData.hint}
         .touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
-        ?disabled=${this.adapter.templateData.disabled ?? nothing}
-        ?readonly=${this.adapter.templateData.readonly ?? nothing}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
-        .icon=${this.adapter.templateData.icon ?? nothing}
+        .icon=${this.adapter.templateData.icon}
         @inputError=${() => this.onInputError(event)}
         @blur=${() => this.adapter.onBlur()}
         @change=${() => this.valueChanged(event)}

@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { TextareaProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
@@ -43,11 +43,11 @@ export class TextareaElement extends LitElement implements Core.WithField {
         .label=${this.adapter.templateData.label}
         ?touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
-        ?disabled=${this.adapter.templateData.disabled || nothing}
-        ?readonly=${this.adapter.templateData.readonly || nothing}
-        .value=${this.adapter.templateData.value ?? ''}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
-        .placeholder=${this.adapter.templateData.placeholder || nothing}
+        .placeholder=${this.adapter.templateData.placeholder}
         .icon=${this.adapter.templateData.icon}
         .counterMode=${this.adapter.templateData.counterMode}
         .minimumHeight=${this.adapter.templateData.minimumHeight}

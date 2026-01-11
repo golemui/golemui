@@ -76,10 +76,10 @@ export class RepeaterElement extends LitElement implements Core.WithField {
           type="button"
           class="gui-button"
           @click=${() => this.addItem()}
-          disabled=${this.adapter.templateData.limit &&
-          this.adapter.templateData.limit === this.adapter.templateData.value?.length
-            ? true
-            : nothing}
+          ?disabled=${!!(
+            this.adapter.templateData.limit &&
+            this.adapter.templateData.limit === this.adapter.templateData.value?.length
+          )}
         >
           ${this.adapter.templateData.addLabel ?? 'Add'}
         </button>

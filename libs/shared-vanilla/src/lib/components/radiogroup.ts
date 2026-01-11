@@ -11,10 +11,10 @@ export class GuiRadiogroupControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors: string[] = [];
-  @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: OptionValue | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;

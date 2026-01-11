@@ -37,12 +37,6 @@ export class CalendarElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    // Icon
-    const showErrors =
-      this.adapter.templateData.touched &&
-      this.adapter.templateData.errors &&
-      this.adapter.templateData.errors.length > 0;
-
     return html`
       <gui-calendar
         .uid=${this.field.uid}
@@ -50,7 +44,6 @@ export class CalendarElement extends LitElement implements Core.WithField {
         .hint=${this.adapter.templateData.hint}
         .touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
-        .hasError=${showErrors}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}

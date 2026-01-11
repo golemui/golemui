@@ -12,14 +12,13 @@ export class GuiDateControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors: string[] = [];
-  @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
-  @property({ type: Boolean }) required = false;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String }) icon = '';
+  @property({ type: String }) icon: string | undefined = '';
   @property({ type: String }) hint: string | undefined = undefined;
 
   @state() private _day = '';
@@ -87,7 +86,7 @@ export class GuiDateControl extends LitElement {
 
     const iconClassMap = {
       'gui-field-icon': true,
-      [this.icon]: true,
+      [this.icon as string]: true,
     };
 
     return html`

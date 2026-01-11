@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { RadiogroupProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
@@ -16,9 +16,6 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<string, RadiogroupProps>();
-
-  protected optionsLoading = false;
-  protected hasMatchingValue = false;
 
   subscriptions: Subscription[] = [];
 
@@ -46,13 +43,13 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
         .label=${this.adapter.templateData.label}
         ?touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
-        ?disabled=${this.adapter.templateData.disabled || nothing}
-        ?readonly=${this.adapter.templateData.readonly || nothing}
-        .value=${this.adapter.templateData.value ?? ''}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
         .options=${this.adapter.templateData.options}
-        .labelField=${this.adapter.templateData.labelField || nothing}
-        .valueField=${this.adapter.templateData.valueField || nothing}
+        .labelField=${this.adapter.templateData.labelField}
+        .valueField=${this.adapter.templateData.valueField}
         @change="${() => this.valueChanged(event)}"
         @blur="${() => this.adapter.onBlur()}"
       ></gui-radiogroup>

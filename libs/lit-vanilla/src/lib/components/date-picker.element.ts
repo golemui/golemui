@@ -66,8 +66,8 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint}
           .touched=${this.adapter.templateData.touched}
-          .disabled=${this.adapter.templateData.disabled}
-          .readonly=${this.adapter.templateData.readonly}
+          ?disabled=${this.adapter.templateData.disabled}
+          ?readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
           .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
           .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
@@ -93,13 +93,13 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           id="date-control"
           class=${classMap(datePickerIcon.fieldClasses)}
           .uid=${this.field.uid}
-          .hint=${this.adapter.templateData.hint ?? nothing}
+          .hint=${this.adapter.templateData.hint}
           .touched=${this.adapter.templateData.touched}
           .errors=${this.adapter.templateData.errors}
-          ?disabled=${this.adapter.templateData.disabled ?? nothing}
-          ?readonly=${this.adapter.templateData.readonly ?? nothing}
+          ?disabled=${this.adapter.templateData.disabled}
+          ?readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
-          .icon=${this.adapter.templateData.icon ?? nothing}
+          .icon=${this.adapter.templateData.icon}
           @inputError=${() => this.onInputError(event)}
           @blur=${() => this.adapter.onBlur()}
           @focus=${() => this.openCalendar()}

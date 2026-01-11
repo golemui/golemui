@@ -11,10 +11,10 @@ export class GuiTextareaControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors: string[] = [];
-  @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: string | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
@@ -26,7 +26,7 @@ export class GuiTextareaControl extends LitElement {
     | undefined;
   @property({ type: Number, attribute: 'minimumheight' }) minimumHeight: number | undefined =
     undefined;
-  @property({ type: Boolean, attribute: 'autogrow' }) autoGrow = false;
+  @property({ type: Boolean, attribute: 'autogrow' }) autoGrow: boolean | undefined = false;
   @property({ type: Number, attribute: 'maxlength' }) maxLength: number | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {

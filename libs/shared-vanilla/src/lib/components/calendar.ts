@@ -22,17 +22,17 @@ export class GuiCalendarControl extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors: string[] = [];
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly = false;
   @property({ type: String }) value: string | undefined = undefined;
 
-  @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon = '';
-  @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon = '';
-  @property() dayFormat: 'numeric' | '2-digit' = 'numeric';
-  @property() weekdayFormat: 'short' | 'long' | 'narrow' = 'narrow';
-  @property() monthFormat: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' = 'long';
+  @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
+  @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  @property() dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
+  @property() weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
+  @property() monthFormat: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' | undefined = 'long';
 
   @state() private _currentDate: Date = new Date();
 
@@ -93,8 +93,8 @@ export class GuiCalendarControl extends LitElement {
               @click="${this.prevMonth}"
             >
               ${this.prevMonthIcon
-                ? html`<span class="gui-calendar__month-button-icon ${this.prevMonthIcon}"></span>`
-                : html`<span
+        ? html`<span class="gui-calendar__month-button-icon ${this.prevMonthIcon}"></span>`
+        : html`<span
                     class="gui-calendar__month-button-icon gui-calendar__month-button-icon--prev"
                   ></span>`}
             </button>
@@ -107,8 +107,8 @@ export class GuiCalendarControl extends LitElement {
               @click="${this.nextMonth}"
             >
               ${this.nextMonthIcon
-                ? html`<span class="gui-calendar__month-button-icon ${this.nextMonthIcon}"></span>`
-                : html`<span
+        ? html`<span class="gui-calendar__month-button-icon ${this.nextMonthIcon}"></span>`
+        : html`<span
                     class="gui-calendar__month-button-icon gui-calendar__month-button-icon--next"
                   ></span>`}
             </button>
@@ -116,23 +116,23 @@ export class GuiCalendarControl extends LitElement {
 
           <div class="gui-calendar__days-grid">
             ${repeat(
-              weekDays,
-              (weekday: any) => weekday,
-              (weekday: any) => html`<span class="gui-calendar__weekday">${weekday}</span>`,
-            )}
+          weekDays,
+          (weekday: any) => weekday,
+          (weekday: any) => html`<span class="gui-calendar__weekday">${weekday}</span>`,
+        )}
             ${repeat(
-              days,
-              (day: any) => day.date.toISOString(),
-              (day: any) => {
-                {
-                  const classes = {
-                    'gui-calendar__day-button': true,
-                    today: day.isToday,
-                    selected: day.isSelected,
-                    'other-month': !day.isCurrentMonth,
-                  };
+          days,
+          (day: any) => day.date.toISOString(),
+          (day: any) => {
+            {
+              const classes = {
+                'gui-calendar__day-button': true,
+                today: day.isToday,
+                selected: day.isSelected,
+                'other-month': !day.isCurrentMonth,
+              };
 
-                  return html`
+              return html`
                     <button
                       type="button"
                       class="${classMap(classes)}"
@@ -145,9 +145,9 @@ export class GuiCalendarControl extends LitElement {
                       ${day.dayLabel}
                     </button>
                   `;
-                }
-              },
-            )}
+            }
+          },
+        )}
           </div>
         </div>
       </div>
@@ -345,6 +345,8 @@ export class GuiCalendarControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-calendar': GuiCalendarControl;
+    'gui-calendar': {
+      touched: boolean;
+    };
   }
 }

@@ -6,6 +6,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-accordion-layout')
 export class AccordionElement extends LitElement implements Core.WithField {
@@ -81,9 +82,9 @@ export class AccordionElement extends LitElement implements Core.WithField {
                 return html`<div class="gui-accordion__section">
                   <button
                     type="button"
-                    class=${{
+                    class=${classMap({
                       active: this.activeSections[section.uid],
-                    }}
+                    })}
                     id=${`accordion_button_${section.uid}`}
                     aria-controls=${`accordion_section_${section.uid}`}
                     aria-expanded=${this.activeSections[section.uid] ? 'true' : 'false'}
