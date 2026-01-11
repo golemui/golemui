@@ -41,8 +41,9 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
       <gui-radiogroup
         .uid=${this.field.uid}
         .label=${this.adapter.templateData.label}
-        ?touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
@@ -50,8 +51,8 @@ export class RadiogroupElement extends LitElement implements Core.WithField {
         .options=${this.adapter.templateData.options}
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
-        @change="${() => this.valueChanged(event)}"
-        @blur="${() => this.adapter.onBlur()}"
+        @change=${() => this.valueChanged(event)}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-radiogroup>
     `;
   }

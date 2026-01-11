@@ -16,24 +16,27 @@ export function TextArea(fieldInstance: Core.WithField) {
       onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
   );
+
   const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;
   const maxLength = (templateData.validator as Core.Validator)?.maxLength;
-  const isDisabled = templateData.disabled as boolean;
-  const isReadonly = templateData.readonly as boolean;
   const counterMode = templateData.counterMode;
   const autoGrow = templateData.autoGrow;
   const minimumHeight = templateData.minimumHeight;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-textarea">
       <gui-textarea
         uid={uid}
         label={label}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}

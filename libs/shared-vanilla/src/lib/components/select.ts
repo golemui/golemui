@@ -12,8 +12,9 @@ export class GuiSelectControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: OptionValue | undefined = undefined;
@@ -53,8 +54,9 @@ export class GuiSelectControl extends LitElement {
     const templateData: ControlTemplateData<OptionValue> & SelectProps = {
       uid: this.uid,
       label: this.label,
-      touched: this.touched,
       errors: this.errors,
+      touched: this.touched,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -106,9 +108,10 @@ export class GuiSelectControl extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_select`}
           class=${classMap(selectIcon.fieldClasses)}
-          ?disabled=${templateData.disabled || templateData.readonly || nothing}
-          @change="${() => this.valueChanged(event as Event)}"
-          @blur="${() => this.onBlur()}"
+          ?required=${templateData.required}
+          ?disabled=${templateData.disabled || templateData.readonly}
+          @change=${() => this.valueChanged(event as Event)}
+          @blur=${() => this.onBlur()}
         >
           ${options}
         </select>

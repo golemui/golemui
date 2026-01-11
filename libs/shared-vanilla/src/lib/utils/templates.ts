@@ -10,16 +10,23 @@ export type ControlTemplateData<T, V = any> = {
   disabled?: boolean;
   readonly?: boolean;
   touched?: boolean;
+  required?: boolean;
 };
 
 export const addLabel = <T, ExtraProps extends { hint?: string }>(
   uid: string,
   templateData: ControlTemplateData<T> & ExtraProps,
   withErrors = false,
+  type: string | undefined = undefined,
 ) => {
-  return html`<label class="gui-label" for=${uid} data-cy=${`${uid}_label`}>
-    ${templateData.label + (templateData.validator?.required ? ' *' : '')}
-    ${addHint(uid, templateData)} ${withErrors ? addErrors(uid, templateData) : nothing}
+  return html`<label
+    class="gui-label"
+    for=${uid}
+    data-cy=${`${uid}_label`}
+    id=${type ? `${uid}_${type}_label` : nothing}
+  >
+    ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
+    ${withErrors ? addErrors(uid, templateData) : nothing}
   </label>`;
 };
 

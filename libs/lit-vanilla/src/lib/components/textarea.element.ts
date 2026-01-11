@@ -41,8 +41,9 @@ export class TextareaElement extends LitElement implements Core.WithField {
       <gui-textarea
         .uid=${this.field.uid}
         .label=${this.adapter.templateData.label}
-        ?touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
@@ -53,8 +54,8 @@ export class TextareaElement extends LitElement implements Core.WithField {
         .minimumHeight=${this.adapter.templateData.minimumHeight}
         .autoGrow=${this.adapter.templateData.autoGrow}
         .maxLength=${this.adapter.templateData.validator?.maxLength}
-        @input="${() => this.valueChanged(event)}"
-        @blur="${() => this.adapter.onBlur()}"
+        @input=${() => this.valueChanged(event)}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-textarea>
     `;
   }

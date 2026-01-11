@@ -11,6 +11,12 @@ export function Select(fieldInstance: Core.WithField) {
     SelectProps
   >(field);
 
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) =>
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    [onValueChanged],
+  );
+
   const options = templateData.options;
   const label = templateData.label as string;
   const hint = templateData.hint;
@@ -19,23 +25,18 @@ export function Select(fieldInstance: Core.WithField) {
   const iconPosition = templateData.iconPosition;
   const valueField = templateData.valueField;
   const labelField = templateData.labelField;
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) =>
-      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
-    [onValueChanged],
-  );
-
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-select">
       <gui-select
         uid={uid}
         label={label}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}

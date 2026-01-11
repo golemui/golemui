@@ -48,8 +48,9 @@ export class DateElement extends LitElement implements Core.WithField {
         .uid=${this.field.uid}
         .label=${this.adapter.templateData.label as string}
         .hint=${this.adapter.templateData.hint}
-        .touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}

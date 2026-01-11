@@ -48,6 +48,7 @@ export function DateInput(fieldInstance: Core.WithField) {
   const icon = templateData.icon;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-date">
@@ -56,8 +57,9 @@ export function DateInput(fieldInstance: Core.WithField) {
         uid={uid}
         label={label}
         hint={hint}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}

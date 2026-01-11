@@ -11,25 +11,27 @@ export function Toggle(fieldInstance: Core.WithField) {
     ToggleProps
   >(field);
 
-  const label = templateData.label as string;
-  const hint = templateData.hint;
-  const togglePosition = templateData.togglePosition;
-  const isDisabled = templateData.disabled as boolean;
-  const isReadonly = templateData.readonly as boolean;
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
       onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
   );
 
+  const label = templateData.label as string;
+  const hint = templateData.hint;
+  const togglePosition = templateData.togglePosition;
+  const isDisabled = templateData.disabled as boolean;
+  const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+
   return (
     <div className={`gui-toggle`}>
       <gui-toggle
         uid={uid}
         label={label}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}

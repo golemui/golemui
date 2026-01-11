@@ -11,8 +11,9 @@ export class GuiTextareaControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: string | undefined = undefined;
@@ -53,8 +54,9 @@ export class GuiTextareaControl extends LitElement {
     const templateData: ControlTemplateData<string> & TextareaProps = {
       uid: this.uid,
       label: this.label,
-      touched: this.touched,
       errors: this.errors,
+      touched: this.touched,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -132,12 +134,12 @@ export class GuiTextareaControl extends LitElement {
           data-cy=${`${this.uid}_textarea`}
           class=${classMap(fieldClasses)}
           style=${styleMap(autoGrowStyles)}
-          required=${templateData.validator?.required ? '' : nothing}
-          ?disabled=${templateData.disabled || nothing}
-          ?readonly=${templateData.readonly || nothing}
+          ?required=${templateData.required}
+          ?disabled=${templateData.disabled}
+          ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}
-          @input="${() => this.valueChanged(event)}"
-          @blur="${() => this.onBlur()}"
+          @input=${() => this.valueChanged(event)}
+          @blur=${() => this.onBlur()}
         ></textarea>
         ${textareaIcon}
       </div>

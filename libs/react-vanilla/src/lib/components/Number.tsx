@@ -17,7 +17,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
     [onValueChanged],
   );
 
-  const label = templateData.label;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const step = templateData.step;
@@ -25,6 +25,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
   const iconPosition = templateData.iconPosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-number">
@@ -32,8 +33,9 @@ export function NumberInput(fieldInstance: Core.WithField) {
         uid={uid}
         label={label}
         hint={hint}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}

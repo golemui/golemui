@@ -41,15 +41,16 @@ export class CheckboxElement extends LitElement implements Core.WithField {
       <gui-checkbox
         .uid=${this.field.uid}
         .label=${this.adapter.templateData.label}
-        .touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
         .checkboxPosition=${this.adapter.templateData.checkboxPosition}
-        @change="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
-        @blur="${() => this.adapter.onBlur()}"
+        @change=${() => !this.adapter.templateData.readonly && this.valueChanged(event)}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-checkbox>
     `;
   }

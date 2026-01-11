@@ -3,8 +3,9 @@
 <gui-select
   [uid]="field.uid"
   [label]="templateData.label"
-  [touched]="templateData.touched"
   [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
   [disabled]="templateData.disabled"
   [readonly]="templateData.readonly"
   [value]="templateData.value"

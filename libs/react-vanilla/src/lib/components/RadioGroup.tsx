@@ -11,28 +11,29 @@ export function RadioGroup(fieldInstance: Core.WithField) {
     RadiogroupProps
   >(field);
 
-  const label = templateData.label as string;
-  const hint = templateData.hint;
-  const options = templateData.options;
-  const labelField = templateData.labelField;
-  const valueField = templateData.valueField;
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
       onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
   );
 
+  const label = templateData.label as string;
+  const hint = templateData.hint;
+  const options = templateData.options;
+  const labelField = templateData.labelField;
+  const valueField = templateData.valueField;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-radiogroup">
       <gui-radiogroup
         uid={uid}
         label={label}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}

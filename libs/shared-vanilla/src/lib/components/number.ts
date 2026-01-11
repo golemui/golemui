@@ -11,8 +11,9 @@ export class GuiNumberControl extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: Number }) value: number | undefined = undefined;
@@ -51,8 +52,9 @@ export class GuiNumberControl extends LitElement {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
-      touched: this.touched,
       errors: this.errors,
+      touched: this.touched,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -84,12 +86,13 @@ export class GuiNumberControl extends LitElement {
           data-cy=${`${this.uid}_number`}
           class=${classMap(fieldClasses)}
           value=${this.value}
-          ?disabled=${this.disabled || nothing}
-          ?readonly=${this.readOnly || nothing}
+          ?required=${this.required}
+          ?disabled=${this.disabled}
+          ?readonly=${this.readOnly}
           step=${typeof this.step === 'number' ? this.step : nothing}
           placeholder=${this.placeholder || nothing}
-          @input="${() => this.valueChanged(event)}"
-          @blur="${() => this.onBlur()}"
+          @input=${() => this.valueChanged(event)}
+          @blur=${() => this.onBlur()}
         />
         ${this.icon ? html`<div class=${classMap(numberClasses)}></div>` : nothing}
       </div>

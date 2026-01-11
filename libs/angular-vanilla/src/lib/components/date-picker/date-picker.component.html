@@ -16,8 +16,9 @@
     #dateControlRef
     [uid]="field.uid"
     [hint]="templateData.hint"
-    [touched]="templateData.touched"
     [errors]="templateData.errors"
+    [touched]="templateData.touched"
+    [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
     [value]="templateData.value"
@@ -34,6 +35,7 @@
       [uid]="field.uid"
       [hint]="templateData.hint"
       [touched]="templateData.touched"
+      [required]="templateData.validator?.required"
       [disabled]="templateData.disabled"
       [readonly]="templateData.readonly"
       [value]="templateData.value"

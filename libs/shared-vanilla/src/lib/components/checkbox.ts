@@ -1,5 +1,5 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addLabel, ControlTemplateData } from '../utils/templates';
 import { CheckboxProps } from '../field.props';
@@ -9,8 +9,9 @@ export class GuiCheckboxControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = undefined;
+  @property({ type: Boolean }) required: boolean | undefined = undefined;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: boolean | undefined = undefined;
@@ -43,8 +44,9 @@ export class GuiCheckboxControl extends LitElement {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
-      touched: this.touched,
       errors: this.errors,
+      touched: this.touched,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -66,10 +68,11 @@ export class GuiCheckboxControl extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_checkbox`}
           ?checked=${this.value}
-          ?disabled=${this.disabled || nothing}
-          ?readonly=${this.readOnly || nothing}
-          @change="${() => !this.readOnly && this.valueChanged(event)}"
-          @blur="${() => this.onBlur()}"
+          ?required=${this.required}
+          ?disabled=${this.disabled}
+          ?readonly=${this.readOnly}
+          @change=${() => !this.readOnly && this.valueChanged(event)}
+          @blur=${() => this.onBlur()}
         />
       </div>
     `;

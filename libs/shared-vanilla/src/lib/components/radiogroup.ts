@@ -1,5 +1,5 @@
 import { inferOptionValue, OptionValue, updateOptions } from './one-of';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
@@ -11,8 +11,9 @@ export class GuiRadiogroupControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: OptionValue | undefined = undefined;
@@ -49,8 +50,9 @@ export class GuiRadiogroupControl extends LitElement {
     const templateData: ControlTemplateData<OptionValue> & RadiogroupProps = {
       uid: this.uid,
       label: this.label,
-      touched: this.touched,
       errors: this.errors,
+      touched: this.touched,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -83,12 +85,11 @@ export class GuiRadiogroupControl extends LitElement {
                   data-cy=${`${this.uid}_radiogroup_${index}`}
                   name=${this.uid}
                   value=${opt.value}
-                  checked=${this.hasMatchingValue && opt.value === templateData.value
-                    ? ''
-                    : nothing}
-                  disabled=${templateData.disabled || templateData.readonly ? '' : nothing}
-                  @change="${() => this.valueChanged(event)}"
-                  @blur="${() => this.onBlur()}"
+                  ?checked=${this.hasMatchingValue && opt.value === templateData.value}
+                  ?required=${templateData.required}
+                  ?disabled=${templateData.disabled || templateData.readonly}
+                  @change=${() => this.valueChanged(event)}
+                  @blur=${() => this.onBlur()}
                 />
                 ${opt.label}
               </label>`,

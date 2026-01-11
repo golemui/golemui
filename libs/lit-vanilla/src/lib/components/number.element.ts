@@ -42,8 +42,9 @@ export class NumberElement extends LitElement implements Core.WithField {
         .uid=${this.field.uid}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
-        ?touched=${this.adapter.templateData.touched}
         .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
         ?disabled=${this.adapter.templateData.disabled}
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
@@ -51,8 +52,8 @@ export class NumberElement extends LitElement implements Core.WithField {
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
         .placeholder=${this.adapter.templateData.placeholder}
-        @input="${() => this.valueChanged(event)}"
-        @blur="${() => this.adapter.onBlur()}"
+        @input=${() => this.valueChanged(event)}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-number>
     `;
   }

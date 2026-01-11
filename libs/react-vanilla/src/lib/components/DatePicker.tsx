@@ -107,9 +107,9 @@ export function DatePicker(fieldInstance: Core.WithField) {
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
   const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-date-picker">
@@ -137,8 +137,9 @@ export function DatePicker(fieldInstance: Core.WithField) {
           ref={handleDateRef}
           uid={uid}
           hint={hint}
-          touched={isTouched}
           errors={errors}
+          touched={isTouched}
+          required={isRequired}
           disabled={isDisabled}
           readOnly={isReadonly}
           value={value}
@@ -151,6 +152,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
             uid={uid}
             hint={hint}
             touched={isTouched}
+            required={isRequired}
             disabled={isDisabled}
             readOnly={isReadonly}
             value={value}

@@ -12,8 +12,9 @@ export class GuiDateControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: string | undefined = undefined;
@@ -69,8 +70,8 @@ export class GuiDateControl extends LitElement {
     const templateData: ControlTemplateData<string> & DateinputProps = {
       uid: this.uid,
       label: this.label,
-      touched: this.touched,
       errors: this.errors,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -134,18 +135,19 @@ export class GuiDateControl extends LitElement {
         type="text"
         inputmode="numeric"
         class="gui-date-input__part ${type === 'year' ? 'gui-year-input__year' : ''}"
-        data-type="${type}"
-        maxlength="${maxLen}"
-        placeholder="${placeholder}"
-        tabindex="${tabIndex}"
-        ?disabled="${this.disabled}"
-        ?readonly="${this.readOnly}"
-        .value="${live(val)}"
-        @keydown="${this.handleKeyDown}"
-        @keyup="${(e: KeyboardEvent) => this.handleKeyUp(e, type)}"
-        @focus="${this.handleFocus}"
-        @blur="${(e: FocusEvent) => this.handleBlur(e, type)}"
-        @change="${(e: Event) => this.handleChange(e, type)}"
+        data-type=${type}
+        maxlength=${maxLen}
+        placeholder=${placeholder}
+        tabindex=${tabIndex}
+        ?required=${this.required}
+        ?disabled=${this.disabled}
+        ?readonly=${this.readOnly}
+        .value=${live(val)}
+        @keydown=${this.handleKeyDown}
+        @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}
+        @focus=${this.handleFocus}
+        @blur=${(e: FocusEvent) => this.handleBlur(e, type)}
+        @change=${(e: Event) => this.handleChange(e, type)}
       />
     `;
   }

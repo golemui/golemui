@@ -1,5 +1,5 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addLabel, ControlTemplateData } from '../utils/templates';
 import { ToggleProps } from '../field.props';
@@ -9,8 +9,9 @@ export class GuiToggleControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: boolean | undefined = undefined;
@@ -43,8 +44,9 @@ export class GuiToggleControl extends LitElement {
       uid: this.uid,
       label: this.label,
       hint: this.hint,
-      touched: this.touched,
       errors: this.errors,
+      touched: this.touched,
+      required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
@@ -66,9 +68,9 @@ export class GuiToggleControl extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_toggle`}
           ?checked=${templateData.value}
-          ?required=${templateData.validator?.required}
-          ?disabled=${templateData.disabled || nothing}
-          ?readonly=${templateData.readonly || nothing}
+          ?required=${templateData.required}
+          ?disabled=${templateData.disabled}
+          ?readonly=${templateData.readonly}
           @change="${() => !templateData.readonly && this.valueChanged(event)}"
         />
 

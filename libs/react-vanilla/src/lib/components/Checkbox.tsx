@@ -22,14 +22,16 @@ export function Checkbox(fieldInstance: Core.WithField) {
   const checkboxPosition = templateData.checkboxPosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className={`gui-checkbox`}>
       <gui-checkbox
         uid={uid}
         label={label}
-        touched={isTouched}
         errors={errors}
+        touched={isTouched}
+        required={isRequired}
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}
