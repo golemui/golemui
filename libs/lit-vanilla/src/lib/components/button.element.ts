@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-button')
+@customElement('gui-button-interactive')
 export class ButtonElement extends LitElement implements Core.WithField {
   field!: Core.InteractiveField;
 
@@ -41,7 +41,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
           id=${this.field.uid}
           data-cy=${`${this.field.uid}_button`}
           @click=${() => this.adapter.click()}
-          disabled=${this.adapter.templateData.disabled === true ? true : nothing}
+          ?disabled=${this.adapter.templateData.disabled === true}
         >
           ${this.adapter.templateData.label}
         </button>

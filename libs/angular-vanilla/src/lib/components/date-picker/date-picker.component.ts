@@ -17,7 +17,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-date-picker',
+  selector: 'gui-date-picker-control',
   imports: [CommonModule, ErrorsComponent, LabelComponent],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './date-picker.component.html',

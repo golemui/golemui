@@ -20,7 +20,7 @@ export class FormElement extends LitElement {
   @property({ type: Array }) fieldLoaders: FieldLoaders<Type<WithField>> = {};
   @property({ attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
-  @property({ type: Object }) validateOn: Core.ValidateOn = 'eager';
+  @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
 
   protected customFieldLoaders: FieldLoaders<Type<WithField>> = {
     ...vanillaFieldLoaders,

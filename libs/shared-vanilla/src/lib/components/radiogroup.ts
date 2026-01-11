@@ -1,14 +1,13 @@
 import { inferOptionValue, OptionValue, updateOptions } from './one-of';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
-import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { OneOfProps, Option, SelectProps } from '../field.props';
+import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
+import { OneOfProps, Option, RadiogroupProps } from '../field.props';
 import { GUIAriaController } from '../controllers';
-import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-select')
-export class GuiSelectControl extends LitElement {
+@customElement('gui-radiogroup')
+export class GuiRadiogroupControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -20,10 +19,7 @@ export class GuiSelectControl extends LitElement {
   @property({ type: String }) value: OptionValue | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) options: Option[] = [];
-  @property({ type: String }) placeholder: string | undefined = undefined;
   @property({ type: String }) labelField: string | undefined = undefined;
   @property({ type: String }) valueField: string | undefined = undefined;
 
@@ -31,7 +27,7 @@ export class GuiSelectControl extends LitElement {
   protected hasMatchingValue = false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`select[id="${this.uid}"]`),
+    getTargets: () => this.querySelectorAll(`input[name="${this.uid}"]`),
     getState: () => ({
       uid: this.uid as string,
       templateData: {
@@ -51,7 +47,7 @@ export class GuiSelectControl extends LitElement {
   override render() {
     super.render();
 
-    const templateData: ControlTemplateData<OptionValue> & SelectProps = {
+    const templateData: ControlTemplateData<OptionValue> & RadiogroupProps = {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
@@ -61,62 +57,49 @@ export class GuiSelectControl extends LitElement {
       readonly: this.readOnly,
       value: this.value,
       hint: this.hint,
-      icon: this.icon,
-      iconPosition: this.iconPosition,
       options: this.options,
-      placeholder: this.placeholder,
       labelField: this.labelField,
       valueField: this.valueField,
     };
-
-    // Icon
-    const selectIcon = addIcon('select', templateData);
 
     this.options = updateOptions(this.options, {
       labelField: this.labelField,
       valueField: this.valueField,
     } as OneOfProps);
-
+    const selection = this.value;
     this.hasMatchingValue = this.options?.length
-      ? this.options.find(({ value }) => value === this.value) !== undefined
+      ? this.options.find(({ value }) => value === selection) !== undefined
       : false;
 
     const options = this.optionsLoading
       ? html`<span>Loading...</span>`
       : html`
-          <option value="" disabled selected=${this.hasMatchingValue ? nothing : ''}>
-            ${this.placeholder ?? 'Select an option'}
-          </option>
           ${repeat(
             this.options || [],
             (opt: any) => opt?.value,
-            (opt: any) =>
-              html`<option
-                value=${opt.value}
-                selected=${this.hasMatchingValue && opt.value === this.value ? '' : nothing}
-              >
+            (opt: any, index) =>
+              html`<label for=${`${this.uid}_${index}`}>
+                <input
+                  type="radio"
+                  id=${`${this.uid}_${index}`}
+                  data-cy=${`${this.uid}_radiogroup_${index}`}
+                  name=${this.uid}
+                  value=${opt.value}
+                  ?checked=${this.hasMatchingValue && opt.value === templateData.value}
+                  ?required=${templateData.required}
+                  ?disabled=${templateData.disabled || templateData.readonly}
+                  @change=${() => this.valueChanged(event)}
+                  @blur=${() => this.onBlur()}
+                />
                 ${opt.label}
-              </option>`,
+              </label>`,
           )}
         `;
 
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
-        <select
-          id=${this.uid}
-          data-cy=${`${this.uid}_select`}
-          class=${classMap(selectIcon.fieldClasses)}
-          ?required=${templateData.required}
-          ?disabled=${templateData.disabled || templateData.readonly}
-          @change=${() => this.valueChanged(event as Event)}
-          @blur=${() => this.onBlur()}
-        >
-          ${options}
-        </select>
-        ${selectIcon.html}
-      </div>
+      <div class="gui-field">${options}</div>
 
       ${addErrors(this.uid as string, templateData)}
     `;
@@ -149,6 +132,6 @@ export class GuiSelectControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-select': GuiSelectControl;
+    'gui-radiogroup': GuiRadiogroupControl;
   }
 }

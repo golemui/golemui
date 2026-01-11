@@ -3,7 +3,6 @@ import { useControlField } from '@golemui/react';
 import { NumberinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
-import { Errors } from './shared/Errors';
 
 export function NumberInput(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<number>;
@@ -13,57 +12,40 @@ export function NumberInput(fieldInstance: Core.WithField) {
   >(field);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onValueChanged(e.target.valueAsNumber),
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
   );
 
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const step = templateData.step;
   const icon = templateData.icon;
   const iconPosition = templateData.iconPosition;
-  const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-number">
-      <label className="gui-label" htmlFor={uid}>
-        {templateData.label + (isRequired ? ' *' : '')}
-        {hint && (
-          <div className="gui-field-hint" id={`${uid}_hint`}>
-            {hint}
-          </div>
-        )}
-      </label>
-      <div className="gui-field">
-        <input
-          type="number"
-          inputMode="numeric"
-          id={uid}
-          data-cy={`${uid}_number`}
-          className={`${icon ? 'gui-number--icon' : ''} ${iconPosition === 'right' ? 'gui-number--icon-right' : ''}`}
-          required={isRequired}
-          value={value ?? ''}
-          disabled={isDisabled}
-          readOnly={isReadonly}
-          step={step}
-          placeholder={placeholder ?? undefined}
-          onInput={handleChange}
-          onBlur={onBlur}
-          aria-invalid={showErrors}
-          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={isRequired}
-          aria-describedby={hint ? `${uid}_hint` : undefined}
-        />
-        {icon && (
-          <span
-            className={`${icon} gui-field-icon ${iconPosition === 'right' ? 'gui-field-icon--right' : ''}`}
-          ></span>
-        )}
-      </div>
-      {showErrors && <Errors errors={errors} uid={uid} />}
+      <gui-number
+        uid={uid}
+        label={label}
+        hint={hint}
+        errors={errors}
+        touched={isTouched}
+        required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadonly}
+        value={value}
+        step={step}
+        icon={icon}
+        iconPosition={iconPosition}
+        placeholder={placeholder ?? undefined}
+        onInput={handleChange}
+        onBlur={onBlur}
+      ></gui-number>
     </div>
   );
 }

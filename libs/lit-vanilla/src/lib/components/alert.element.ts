@@ -6,7 +6,7 @@ import * as Lit from '@golemui/lit';
 import { AlertProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-alert')
+@customElement('gui-alert-display')
 export class AlertElement extends LitElement implements Core.WithField {
   field!: Core.DisplayField;
 

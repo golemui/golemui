@@ -5,7 +5,7 @@ import * as Core from '@golemui/core';
 
 @Component({
   standalone: true,
-  selector: 'gui-button',
+  selector: 'gui-button-interactive',
   imports: [CommonModule],
   providers: [Angular.InteractiveFieldAdapter],
   templateUrl: './button.component.html',

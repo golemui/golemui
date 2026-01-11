@@ -16,7 +16,7 @@ import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui
 
 @Component({
   standalone: true,
-  selector: 'gui-tabs',
+  selector: 'gui-tabs-layout',
   imports: [CommonModule, Angular.FieldDirective],
   providers: [Angular.LayoutFieldAdapter],
   templateUrl: './tabs.component.html',

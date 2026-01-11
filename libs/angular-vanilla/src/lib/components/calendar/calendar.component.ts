@@ -3,13 +3,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { CalendarProps } from '@golemui/shared-vanilla';
-import { ErrorsComponent } from '../../utils/templates/errors.component';
-import { LabelComponent } from '../../utils/templates/label.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-calendar',
-  imports: [CommonModule, ErrorsComponent, LabelComponent],
+  selector: 'gui-calendar-control',
+  imports: [CommonModule],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './calendar.component.html',
   host: {

@@ -1,19 +1,8 @@
 import * as Core from '@golemui/core';
 import { useControlField } from '@golemui/react';
-import {
-  createOptionMapper,
-  inferOptionValue,
-  isOption,
-  isOptionValue,
-  isProtoOption,
-  Option,
-  OptionValue,
-  RadiogroupProps,
-  SelectProps,
-} from '@golemui/shared-vanilla';
-import { useCallback, useEffect, useState } from 'react';
+import { OptionValue, RadiogroupProps } from '@golemui/shared-vanilla';
+import { useCallback } from 'react';
 import '../styles.scss';
-import { Errors } from './shared/Errors';
 
 export function RadioGroup(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
@@ -22,82 +11,39 @@ export function RadioGroup(fieldInstance: Core.WithField) {
     RadiogroupProps
   >(field);
 
-  const hint = templateData.hint;
-
-  const [optionsLoading, setOptionsLoading] = useState(false);
-  const [hasMatchingValue, setHasMatchingValue] = useState(false);
-  const [options, setOptions] = useState<Option[]>([]);
-
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      onValueChanged(inferOptionValue(e.target.value, options));
-    },
-    [onValueChanged, options],
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    [onValueChanged],
   );
 
-  useEffect(() => {
-    let opts = templateData.options;
-    if (Array.isArray(opts) && opts.length > 0) {
-      if (isOption(opts[0])) {
-        // Nothing to do here, It's an option already
-      } else if (isOptionValue(opts[0])) {
-        // It's a flat array: string[] | number[]
-        opts = (opts as unknown as OptionValue[]).map((opt) => ({
-          label: opt.toString(),
-          value: opt,
-        }));
-      } else if (isProtoOption(opts[0], templateData as SelectProps)) {
-        const optionMapper: (item: unknown) => Option = createOptionMapper(opts[0], templateData);
-        opts = opts.map(optionMapper);
-      } else {
-        throw new Error('Invalid option shape');
-      }
-      setOptions(opts);
-
-      const matching = opts.find((opt) => opt.value === value) !== undefined;
-      setHasMatchingValue(matching);
-    }
-  }, [templateData, value]);
-
-  const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const label = templateData.label as string;
+  const hint = templateData.hint;
+  const options = templateData.options;
+  const labelField = templateData.labelField;
+  const valueField = templateData.valueField;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-radiogroup">
-      <label htmlFor={uid} className="gui-label">
-        {templateData.label + (isRequired ? ' *' : '')}
-        {hint && (
-          <div className="gui-field-hint" id={`${uid}_hint`}>
-            {hint}
-          </div>
-        )}
-      </label>
-      <div className="gui-field">
-        {optionsLoading ? (
-          <span>Loading...</span>
-        ) : (
-          (options || []).map((opt, index) => (
-            <label htmlFor={`${uid}_${index}`} key={`k-${opt.value}`}>
-              <input
-                type="radio"
-                id={`${uid}_${index}`}
-                data-cy={`${uid}_radiogroup_${index}`}
-                name={uid}
-                required={isRequired}
-                value={opt.value}
-                checked={hasMatchingValue && opt.value === value}
-                disabled={isDisabled || isReadonly}
-                onChange={handleChange}
-                onBlur={onBlur}
-              />
-              {opt.label}
-            </label>
-          ))
-        )}
-      </div>
-      {showErrors && <Errors errors={errors} uid={uid} />}
+      <gui-radiogroup
+        uid={uid}
+        label={label}
+        errors={errors}
+        touched={isTouched}
+        required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadonly}
+        value={value}
+        hint={hint}
+        options={options}
+        labelField={labelField}
+        valueField={valueField}
+        onChange={handleChange}
+        onBlur={onBlur}
+      ></gui-radiogroup>
     </div>
   );
 }

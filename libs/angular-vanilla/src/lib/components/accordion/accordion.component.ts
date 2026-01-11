@@ -6,7 +6,7 @@ import { AccordionEventDetail, AccordionProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'gui-accordion',
+  selector: 'gui-accordion-layout',
   imports: [CommonModule, Angular.FieldDirective],
   providers: [Angular.LayoutFieldAdapter],
   templateUrl: './accordion.component.html',
