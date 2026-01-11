@@ -43,7 +43,10 @@ function calculateProps(state: State) {
 
       if (isFunctionField(originalSource)) {
         originalDerivedField.previous = originalDerivedField.current;
-        originalDerivedField.current = originalSource(state.data);
+        originalDerivedField.current = originalSource({
+          $form: state.data,
+          errors: originalSource.path ? state.validations[originalSource.path] : undefined,
+        });
         originalDerivedField.current.uid = originalSource.uid!;
         // TODO: structural comparison to avoid change detection
         acc[uid] = { ...originalDerivedField };
@@ -108,7 +111,10 @@ function calculateProps(state: State) {
         // Calculate visible children based on current flags
         const children = originalSource.children.filter((child) => {
           if (isFunctionField(child)) {
-            child = child(state.data);
+            child = child({
+              $form: state.data,
+              errors: child.path ? state.validations[child.path] : undefined,
+            });
           }
           return !state.fieldFlags[child.uid] || state.fieldFlags[child.uid].hidden !== true;
         });

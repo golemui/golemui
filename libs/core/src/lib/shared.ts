@@ -23,6 +23,12 @@ export type DotPath = string;
  */
 export type Uid = string;
 
+/**
+ * Represents a generic validation status.
+ * Either `null` (there are no validation issues) or an array of issues.
+ */
+export type ValidationStatus = null | string[];
+
 export type FieldPropertyFunctionParams<FormData> = { $form: ImmutableRecord<FormData> };
 
 /**
@@ -39,6 +45,11 @@ export type ReactiveFormField = LooseObject<
   },
   FieldPropertyFunction<any>
 >;
+
+export type FunctionFieldParams<FormData> = {
+  $form: ImmutableRecord<FormData>;
+  errors?: ValidationStatus;
+};
 
 /**
  * Defines when field validation should run.

@@ -39,12 +39,20 @@ export const reactiveFunctions = defineForm<FormData>({
           : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
       },
     },
-    ($form) => ({
+    (api) => ({
       uid: '',
       kind: 'control',
       widget: 'textinput',
       path: 'user.lastName',
-      label: $form?.user?.name ? `${$form.user.name}'s last name` : 'Last Name',
+      label: api?.errors
+        ? 'ERRORS!!!!!!!'
+        : api?.$form?.user?.name
+          ? `${api.$form.user.name}'s last name`
+          : 'Last Name',
+      validator: {
+        type: 'string',
+        minLength: 3,
+      },
     }),
     {
       uid: '',

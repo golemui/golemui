@@ -16,7 +16,10 @@ function calculateFlags(state: State): State['fieldFlags'] {
       // TODO: use filterMap
       .map((field) => {
         if (isFunctionField(field)) {
-          const field_ = field(state.data);
+          const field_ = field({
+            $form: state.data,
+            errors: field.path ? state.validations[field.path] : undefined,
+          });
           field_.uid = field.uid!;
           return field_;
         }

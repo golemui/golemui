@@ -1,6 +1,6 @@
 import * as Form from '../form';
 import * as Field from '../form-field';
-import { DotPath, Uid } from '../shared';
+import { DotPath, Uid, ValidationStatus } from '../shared';
 
 // ------------------------------
 //
@@ -125,12 +125,6 @@ export type Middleware<S, A> = (
  * until the error is cleared.
  */
 export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
-
-/**
- * Represents a generic validation status.
- * Either `null` (there are no validation issues) or an array of issues.
- */
-export type ValidationStatus = null | string[];
 
 /**
  * Represents a form field whose value is derived from a computation

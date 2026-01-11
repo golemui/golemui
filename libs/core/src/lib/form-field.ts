@@ -1,5 +1,12 @@
 import * as jd from 'ts.data.json';
-import { DotPath, FieldPropertyFunction, ReactiveExpression, Uid, UiState } from './shared';
+import {
+  DotPath,
+  FieldPropertyFunction,
+  FunctionFieldParams,
+  ReactiveExpression,
+  Uid,
+  UiState,
+} from './shared';
 import { objectWithSuffix } from './utils/decoder';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
@@ -154,7 +161,12 @@ export type FunctionField<
 > = {
   uid?: Uid;
   widget?: string;
-  (formData?: FormData): NonFunctionField<StateKeys, FormData>;
+  path?: string; // when this is a control, this will have a path, otherwise undefined
+  /**
+   * Function that calculates the field definition.
+   * Function Fields are called at least once with `undefined`.
+   */
+  (api?: FunctionFieldParams<FormData>): NonFunctionField<StateKeys, FormData>;
 };
 
 export type FormField<
@@ -291,6 +303,7 @@ const functionFieldDecoder: jd.Decoder<FunctionField<string>> = new jd.Decoder((
     const field = fnField(undefined);
     fnField.uid = field.uid || shortUUID();
     fnField.widget = field.widget;
+    fnField.path = (field as ControlField<unknown>).path; // this could be undefined, and it's ok.
     return jd.ok(fnField);
   } else {
     return jd.err(`Expected a function, got '${jsonTypeof}'`);
