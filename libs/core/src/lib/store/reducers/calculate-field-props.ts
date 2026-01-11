@@ -39,7 +39,6 @@ function calculateProps(state: State) {
       }
 
       const originalDerivedField = state.calculatedFields[uid];
-      console.log(originalDerivedField);
       const originalSource = originalDerivedField.source;
 
       if (isFunctionField(originalSource)) {

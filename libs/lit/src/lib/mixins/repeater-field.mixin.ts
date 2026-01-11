@@ -29,7 +29,7 @@ export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>
       if (!this.field) return;
 
       try {
-        const component = await this.formContext.fieldRegistry.loadField(this.field.widget);
+        const component = await this.formContext.fieldRegistry.loadField(this.field.widget!);
         const element = new component();
 
         this.repeaterIndexToken.index = repeaterIndex;

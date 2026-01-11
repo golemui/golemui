@@ -26,7 +26,7 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
   // Listen to the calculated props stream and keep all field props merged in a flattened object
   protected templateDataUpdater(postUpdate: (obj: any) => any = (obj) => obj) {
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid))
+      .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid!))
       .subscribe((calculatedField) => {
         this.setTemplateData(
           postUpdate({
@@ -41,7 +41,7 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
   destroy() {
     this.context.store.dispatch({
       type: 'REMOVE_FIELD',
-      payload: { uid: this.field.uid },
+      payload: { uid: this.field.uid! },
     });
     this.destroy$.next();
   }

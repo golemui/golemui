@@ -30,7 +30,7 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
       if (!this.field) return;
 
       try {
-        const component = await this.formContext.fieldRegistry.loadField(this.field.widget);
+        const component = await this.formContext.fieldRegistry.loadField(this.field.widget!);
         const element = new component();
 
         const index = this.repeaterIndex ?? this.repeaterIndexToken?.index;
