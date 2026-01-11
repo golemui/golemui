@@ -4,7 +4,7 @@ import { useReactFormContext } from './ReactFormContext';
 import { useRepeaterIndex } from './RepeaterIndexContext';
 
 type Props = {
-  field: Core.FormField<string>;
+  field: Core.NonFunctionField<string>;
   repeaterIndex?: number;
 };
 
@@ -13,7 +13,8 @@ type FieldComponent = React.ComponentType<Core.WithField>;
 function FieldRenderer(props: Props) {
   const { formContext } = useReactFormContext();
   const [Component, setComponent] = useState<FieldComponent | null>(null);
-  const [field, setField] = useState(props.field);
+  // We have to `() => props.field` because when `props.field` is a Field Function we don't want React interprets it as a lazy initializer e.g. `useState(() => initialState)`
+  const [field, setField] = useState(() => props.field);
   const isMounted = useRef(true);
   const repeaterIndexFromContext = useRepeaterIndex();
   const repeaterIndex = props.repeaterIndex ?? repeaterIndexFromContext;

@@ -1,10 +1,10 @@
-import { FormField, isControlField } from '../form-field';
+import { isControlField, NonFunctionField } from '../form-field';
 import { DotPath, Uid } from '../shared';
 
 export function makeRepeaterItemConfig(
-  field: FormField<string>,
+  field: NonFunctionField<string>,
   repeaterIndex: number,
-): FormField<string> {
+): NonFunctionField<string> {
   const uid = toRepeaterItemUid(field.uid, repeaterIndex);
   if (isControlField(field)) {
     return {

@@ -14,11 +14,11 @@ export const overrideFieldProp = (
     console.warn(`Control "${payload.path}" not found`);
     return state;
   }
-  const propOverrides = state.fieldPropOverrides[control.source.uid] || {};
+  const propOverrides = state.fieldPropOverrides[control.source.uid!] || {};
   return {
     ...state,
     fieldPropOverrides: {
-      [control.source.uid]: { ...propOverrides, [payload.prop]: payload.value },
+      [control.source.uid!]: { ...propOverrides, [payload.prop]: payload.value },
     },
   };
 };
