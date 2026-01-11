@@ -70,7 +70,7 @@ export type RepeaterProps = {
   addLabel?: string;
   removeLabel?: string;
   limit?: number;
-  template: Core.NonFunctionField<string>;
+  template: Core.LayoutField<string>;
 };
 
 export type Option = {
