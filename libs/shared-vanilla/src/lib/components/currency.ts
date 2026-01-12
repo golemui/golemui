@@ -1,0 +1,223 @@
+import { html, LitElement, nothing, PropertyValues } from 'lit';
+import { customElement, property, query, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { GUIAriaController } from '../controllers';
+import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
+import { CurrencyProps } from '../field.props';
+
+@customElement('gui-currency')
+export class GuiCurrencyControl extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  @property({ type: String }) value: number | undefined = undefined;
+
+  @property({ type: String }) currency: string | undefined = 'EUR';
+  @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) icon: string | undefined = undefined;
+  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
+  @property({ type: String }) placeholder: string | undefined = undefined;
+
+  @state() private displayValue = '';
+
+  @query('input') inputElement!: HTMLInputElement;
+
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override willUpdate(changedProperties: PropertyValues) {
+    if (changedProperties.has('value')) {
+      if (document.activeElement !== this.inputElement) {
+        this.displayValue = this.formatCurrency(this.value);
+      }
+    }
+  }
+
+  override render() {
+    super.render();
+
+    const templateData: ControlTemplateData<number> & CurrencyProps = {
+      uid: this.uid,
+      label: this.label,
+      hint: this.hint,
+      errors: this.errors,
+      touched: this.touched,
+      required: this.required,
+      disabled: this.disabled,
+      readonly: this.readOnly,
+      value: this.value,
+      icon: this.icon,
+      iconPosition: this.iconPosition,
+      placeholder: this.placeholder,
+    };
+
+    // Icon
+    const currencyIcon = addIcon('currency', templateData);
+
+    const fieldClasses: { [key: string]: boolean } = {
+      [`gui-currency--icon`]: !!this.icon,
+      [`gui-currency--icon-right`]: this.iconPosition === 'right',
+    };
+
+    return html`
+      ${addLabel(this.uid as string, templateData)}
+
+      <div class="gui-field">
+        <input
+          type="text"
+          id=${this.uid}
+          data-cy=${`${this.uid}_currency`}
+          class=${classMap(fieldClasses)}
+          .value=${this.displayValue}
+          ?required=${this.disabled}
+          ?disabled=${this.disabled}
+          ?readonly=${this.readOnly}
+          placeholder=${this.placeholder || nothing}
+          @beforeinput=${this.handleBeforeInput}
+          @input=${this.handleInput}
+          @focus=${this.handleFocus}
+          @blur=${this.handleBlur}
+        />
+        ${currencyIcon.html}
+      </div>
+
+      ${addErrors(this.uid as string, templateData)}
+    `;
+  }
+
+  private handleBeforeInput(event: InputEvent) {
+    if (!event.data && !event.inputType.startsWith('insert')) return;
+    if (event.inputType === 'deleteContentBackward' || event.inputType === 'deleteContentForward') {
+      return;
+    }
+
+    const data = event.data;
+    if (!data) return;
+
+    const { decimal } = this.separators;
+
+    if (data === '-') {
+      const cursorStart = this.inputElement.selectionStart;
+      const currentValue = this.inputElement.value;
+      const isReplacing = (this.inputElement.selectionEnd || 0) - (cursorStart || 0) > 0;
+
+      if (cursorStart !== 0 || (currentValue.includes('-') && !isReplacing)) {
+        event.preventDefault();
+      }
+      return;
+    }
+
+    const allowedPattern = new RegExp(`[0-9\\${decimal}]`);
+
+    if (!allowedPattern.test(data)) {
+      event.preventDefault();
+      return;
+    }
+
+    if (data === decimal && this.inputElement.value.includes(decimal)) {
+      event.preventDefault();
+    }
+  }
+
+  private handleInput(event: Event) {
+    event.stopPropagation();
+    const input = event.target as HTMLInputElement;
+    const { decimal, group } = this.separators;
+
+    this.displayValue = input.value;
+
+    let rawValueString = input.value.split(group).join('').replace(decimal, '.');
+
+    if (rawValueString === `-.`) rawValueString = '-0.';
+
+    const numericValue = parseFloat(rawValueString);
+
+    if (!isNaN(numericValue)) {
+      this.value = numericValue;
+      this.dispatchEvent(
+        new CustomEvent('input', {
+          detail: { value: this.value },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    } else if (input.value === '') {
+      this.value = undefined;
+      this.dispatchEvent(
+        new CustomEvent('input', {
+          detail: { value: null },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
+  }
+
+  private handleFocus() {
+    if (this.value !== undefined && this.value !== null) {
+      const { decimal } = this.separators;
+      this.displayValue = this.value.toString().replace('.', decimal);
+    }
+  }
+
+  private handleBlur() {
+    this.displayValue = this.formatCurrency(this.value);
+
+    this.dispatchEvent(
+      new CustomEvent('blur', {
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private formatCurrency(value: number | undefined): string {
+    if (value === undefined || value === null || isNaN(value)) return '';
+
+    try {
+      return new Intl.NumberFormat(this.localeId, {
+        style: 'currency',
+        currency: this.currency,
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      }).format(value);
+    } catch (e) {
+      console.warn('Invalid locale or currency', e);
+      return value.toString();
+    }
+  }
+
+  private get separators() {
+    const example = new Intl.NumberFormat(this.localeId).format(1111.1);
+    return {
+      group: example.replace(/1/g, '').replace(/\d/g, '')[0] || ',',
+      decimal: example.replace(/1/g, '').replace(/\d/g, '').slice(-1) || '.',
+    };
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-currency': GuiCurrencyControl;
+  }
+}

@@ -14,6 +14,14 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type CurrencyProps = {
+  decimals?: number;
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+};
+
 export type TextareaProps = {
   hint?: string;
   placeholder?: string;

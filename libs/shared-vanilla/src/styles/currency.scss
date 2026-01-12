@@ -1,0 +1,16 @@
+gui-currency {
+  display: block;
+
+  .gui-field {
+    input[type='text'] {
+      &.gui-currency--icon {
+        padding-left: 2.5rem;
+      }
+
+      &.gui-currency--icon-right {
+        padding-left: var(--gui-space-gap);
+        padding-right: var(--gui-icon-space-gap);
+      }
+    }
+  }
+}

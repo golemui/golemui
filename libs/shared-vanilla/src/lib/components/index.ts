@@ -1,5 +1,6 @@
 export * from './calendar';
 export * from './checkbox';
+export * from './currency';
 export * from './date-input';
 export * from './number';
 export * from './radiogroup';

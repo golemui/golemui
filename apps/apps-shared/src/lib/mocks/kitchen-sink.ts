@@ -11,6 +11,7 @@ import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
 import { calendar } from './tabs/calendar';
+import { currency } from './tabs/currency';
 
 export const kitchenSink = defineForm({
   states: {
@@ -33,7 +34,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab10',
+        defaultOpen: 'tab13',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -47,6 +48,7 @@ export const kitchenSink = defineForm({
           { label: 'Toggle Component', uid: 'tab10' },
           { label: 'Textarea Component', uid: 'tab11' },
           { label: 'Calendar Component', uid: 'tab12' },
+          { label: 'Currency Component', uid: 'tab13' },
         ],
       },
       on: { change: 'onTabEvent' },
@@ -63,6 +65,7 @@ export const kitchenSink = defineForm({
         toggle(),
         textarea(),
         calendar(),
+        currency(),
       ],
     },
     {
