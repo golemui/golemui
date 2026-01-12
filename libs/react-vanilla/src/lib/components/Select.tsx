@@ -1,18 +1,8 @@
 import * as Core from '@golemui/core';
-import { cn, useControlField } from '@golemui/react';
-import {
-  createOptionMapper,
-  inferOptionValue,
-  isOption,
-  isOptionValue,
-  isProtoOption,
-  Option,
-  OptionValue,
-  SelectProps,
-} from '@golemui/shared-vanilla';
-import { useCallback, useEffect, useState } from 'react';
+import { useControlField } from '@golemui/react';
+import { OptionValue, SelectProps } from '@golemui/shared-vanilla';
+import { useCallback } from 'react';
 import '../styles.scss';
-import { Errors } from './shared/Errors';
 
 export function Select(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
@@ -21,108 +11,45 @@ export function Select(fieldInstance: Core.WithField) {
     SelectProps
   >(field);
 
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) =>
+      onValueChanged((e.nativeEvent as CustomEvent).detail.value),
+    [onValueChanged],
+  );
+
+  const options = templateData.options;
+  const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;
   const iconPosition = templateData.iconPosition;
-
-  const [optionsLoading, setOptionsLoading] = useState(false);
-  const [hasMatchingValue, setHasMatchingValue] = useState(false);
-  const [options, setOptions] = useState<Option[]>([]);
-  const [safeValue, setSafeValue] = useState<OptionValue | undefined>();
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onValueChanged(inferOptionValue(e.target.value, options));
-    },
-    [onValueChanged, options],
-  );
-
-  useEffect(() => {
-    let opts = templateData.options;
-    if (Array.isArray(opts) && opts.length > 0) {
-      if (isOption(opts[0])) {
-        // Nothing to do here, It's an option already
-      } else if (isOptionValue(opts[0])) {
-        // It's a flat array: string[] | number[]
-        opts = (opts as unknown as OptionValue[]).map((opt) => ({
-          label: opt.toString(),
-          value: opt,
-        }));
-      } else if (isProtoOption(opts[0], templateData as SelectProps)) {
-        const optionMapper: (item: unknown) => Option = createOptionMapper(opts[0], templateData);
-        opts = opts.map(optionMapper);
-      } else {
-        throw new Error('Invalid option shape');
-      }
-      setOptions(opts);
-      // If value is not one of your real options, map it back to "" so that the placeholder becomes selected.
-      const matching = opts.find((opt) => opt.value === value) !== undefined;
-      setHasMatchingValue(matching);
-      setSafeValue(matching ? value : '');
-    }
-  }, [templateData, value]);
-
-  const showErrors = isTouched && errors && errors.length > 0;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const valueField = templateData.valueField;
+  const labelField = templateData.labelField;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
     <div className="gui-select">
-      <label className="gui-label" htmlFor={uid}>
-        {templateData.label + (isRequired ? ' *' : '')}
-        {hint && (
-          <div className="gui-field-hint" id={`${uid}_hint`}>
-            {hint}
-          </div>
-        )}
-      </label>
-      <div className="gui-field">
-        <select
-          id={uid}
-          className={cn({
-            'gui-select--icon': !!icon,
-            'gui-select--icon-right': iconPosition === 'right',
-          })}
-          data-cy={`${uid}_select`}
-          required={isRequired}
-          value={safeValue ?? ''}
-          disabled={isDisabled || isReadonly}
-          aria-invalid={showErrors}
-          aria-readonly={isDisabled || isReadonly}
-          aria-errormessage={showErrors ? `${uid}_errors` : undefined}
-          aria-required={isRequired}
-          aria-describedby={hint ? `${uid}_hint` : undefined}
-          onChange={handleChange}
-          onBlur={onBlur}
-        >
-          {optionsLoading ? (
-            <option value="">Loading...</option>
-          ) : (
-            <>
-              <option value="" disabled key="select-an-option">
-                {placeholder ?? 'Select an option'}
-              </option>
-
-              {(options || []).map((opt) => (
-                <option value={opt.value} key={`k-${opt.value}`}>
-                  {opt.label}
-                </option>
-              ))}
-            </>
-          )}
-        </select>
-
-        {icon && (
-          <span
-            className={cn(icon, 'gui-field-icon', {
-              'gui-field-icon--right': iconPosition === 'right',
-            })}
-          ></span>
-        )}
-      </div>
-      {showErrors && <Errors errors={errors} uid={uid} />}
+      <gui-select
+        uid={uid}
+        label={label}
+        errors={errors}
+        touched={isTouched}
+        required={isRequired}
+        disabled={isDisabled}
+        readOnly={isReadonly}
+        value={value}
+        hint={hint}
+        placeholder={placeholder}
+        icon={icon}
+        iconPosition={iconPosition}
+        options={options}
+        labelField={labelField}
+        valueField={valueField}
+        onChange={handleChange}
+        onBlur={onBlur}
+      ></gui-select>
     </div>
   );
 }

@@ -7,8 +7,9 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, query, queryAll, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
 
-@customElement('gui-tabs')
+@customElement('gui-tabs-layout')
 export class TabsElement extends LitElement implements Core.WithField {
   field!: Core.LayoutField;
 
@@ -135,7 +136,7 @@ export class TabsElement extends LitElement implements Core.WithField {
                     <button
                       type="button"
                       role="tab"
-                      tabindex=${tab.uid === this.activeTab ? nothing : -1}
+                      tabindex=${ifDefined(tab.uid === this.activeTab ? undefined : -1)}
                       data-cy=${`tab_${this.field.uid}_${index}`}
                       id=${`tab_${this.field.uid}_${index}`}
                       aria-controls=${`tabpanel_${this.field.uid}_${index}`}

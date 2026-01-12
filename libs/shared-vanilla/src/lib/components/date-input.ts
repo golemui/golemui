@@ -4,20 +4,23 @@ import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
+import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
+import { DateinputProps } from '../field.props';
 
-@customElement('gui-date-control')
+@customElement('gui-date')
 export class GuiDateControl extends LitElement {
-  @property({ type: String }) icon = '';
-
-  @property({ type: String }) value: string | undefined = undefined;
   @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
-  @property({ type: Boolean }) touched = false;
-  @property({ type: Array }) errors = [];
-  @property({ type: Boolean }) hasError = false;
-  @property({ type: Boolean }) disabled = false;
-  @property({ type: Boolean }) readonly = false;
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  @property({ type: String }) value: string | undefined = undefined;
+
+  @property({ type: String }) icon: string | undefined = '';
+  @property({ type: String }) hint: string | undefined = undefined;
 
   @state() private _day = '';
   @state() private _month = '';
@@ -46,7 +49,7 @@ export class GuiDateControl extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readonly,
+        readonly: this.readOnly,
         disabled: this.disabled,
         touched: this.touched,
       },
@@ -64,6 +67,18 @@ export class GuiDateControl extends LitElement {
   }
 
   override render() {
+    const templateData: ControlTemplateData<string> & DateinputProps = {
+      uid: this.uid,
+      label: this.label,
+      errors: this.errors,
+      required: this.required,
+      disabled: this.disabled,
+      readonly: this.readOnly,
+      value: this.value,
+      icon: this.icon,
+      hint: this.hint,
+    };
+
     const parts = new Intl.DateTimeFormat(this.localeId, {
       year: 'numeric',
       month: 'numeric',
@@ -72,33 +87,39 @@ export class GuiDateControl extends LitElement {
 
     const iconClassMap = {
       'gui-field-icon': true,
-      [this.icon]: true,
+      [this.icon as string]: true,
     };
 
     return html`
-      <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}" role="group">
-        ${repeat(
-          parts,
-          (part: any) => part.type,
-          (part: any, index: number) => {
-            const tabIndex = index === 0 ? 0 : -1;
+      ${this.label ? addLabel(this.uid as string, templateData) : nothing}
 
-            switch (part.type) {
-              case 'day':
-                return this.renderInput('day', 'dd', 2, tabIndex, this._day);
-              case 'month':
-                return this.renderInput('month', 'mm', 2, tabIndex, this._month);
-              case 'year':
-                return this.renderInput('year', 'yyyy', 4, tabIndex, this._year);
-              case 'literal':
-                return html`<span class="gui-date-input__separator">${part.value}</span>`;
-              default:
-                return '';
-            }
-          },
-        )}
+      <div class="gui-field">
+        <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}" role="group">
+          ${repeat(
+            parts,
+            (part: any) => part.type,
+            (part: any, index: number) => {
+              const tabIndex = index === 0 ? 0 : -1;
+
+              switch (part.type) {
+                case 'day':
+                  return this.renderInput('day', 'dd', 2, tabIndex, this._day);
+                case 'month':
+                  return this.renderInput('month', 'mm', 2, tabIndex, this._month);
+                case 'year':
+                  return this.renderInput('year', 'yyyy', 4, tabIndex, this._year);
+                case 'literal':
+                  return html`<span class="gui-date-input__separator">${part.value}</span>`;
+                default:
+                  return '';
+              }
+            },
+          )}
+        </div>
+        ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
       </div>
-      ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
+
+      ${this.errors?.length ? addErrors(this.uid as string, templateData) : nothing}
     `;
   }
 
@@ -114,18 +135,19 @@ export class GuiDateControl extends LitElement {
         type="text"
         inputmode="numeric"
         class="gui-date-input__part ${type === 'year' ? 'gui-year-input__year' : ''}"
-        data-type="${type}"
-        maxlength="${maxLen}"
-        placeholder="${placeholder}"
-        tabindex="${tabIndex}"
-        ?disabled="${this.disabled}"
-        ?readonly="${this.readonly}"
-        .value="${live(val)}"
-        @keydown="${this.handleKeyDown}"
-        @keyup="${(e: KeyboardEvent) => this.handleKeyUp(e, type)}"
-        @focus="${this.handleFocus}"
-        @blur="${(e: FocusEvent) => this.handleBlur(e, type)}"
-        @change="${(e: Event) => this.handleChange(e, type)}"
+        data-type=${type}
+        maxlength=${maxLen}
+        placeholder=${placeholder}
+        tabindex=${tabIndex}
+        ?required=${this.required}
+        ?disabled=${this.disabled}
+        ?readonly=${this.readOnly}
+        .value=${live(val)}
+        @keydown=${this.handleKeyDown}
+        @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}
+        @focus=${this.handleFocus}
+        @blur=${(e: FocusEvent) => this.handleBlur(e, type)}
+        @change=${(e: Event) => this.handleChange(e, type)}
       />
     `;
   }
@@ -315,5 +337,11 @@ export class GuiDateControl extends LitElement {
     }
 
     this.requestUpdate();
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-date': GuiDateControl;
   }
 }

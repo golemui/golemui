@@ -1,9 +1,10 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import { ControlField, isControlField } from '../../form-field';
 import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '../../form-validator';
+import { ValidationStatus } from '../../shared';
 import { filterMap, SKIP, zipEvery } from '../../utils/array';
 import { get } from '../../utils/object';
-import { State, ValidationStatus } from '../model';
+import { State } from '../model';
 
 export const validateAll =
   (validators: ValidatorFn<any>) =>

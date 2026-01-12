@@ -1,13 +1,12 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { CheckboxProps, GUIAriaController } from '@golemui/shared-vanilla';
+import { CheckboxProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addLabel } from '../utils/templates';
 
-@customElement('gui-checkbox')
+@customElement('gui-checkbox-control')
 export class CheckboxElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<boolean>;
 
@@ -17,14 +16,6 @@ export class CheckboxElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<boolean, CheckboxProps>();
-
-  private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
-    getState: () => ({
-      uid: this.field.uid,
-      templateData: this.adapter.templateData,
-    }),
-  });
 
   subscriptions: Subscription[] = [];
 
@@ -46,34 +37,27 @@ export class CheckboxElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    if (this.adapter.templateData.checkboxPosition === 'left') {
-      this.classList.add('gui-checkbox--left');
-    } else if (this.classList.contains('gui-checkbox--left')) {
-      this.classList.remove('gui-checkbox--left');
-    }
-
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData, true)}
-
-      <div class="gui-field gui-field--horizontal">
-        <input
-          type="checkbox"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_checkbox`}
-          ?checked=${this.adapter.templateData.value}
-          ?required=${this.adapter.templateData.validator?.required}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
-          @click="${() => !this.adapter.templateData.readonly && this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
-        />
-      </div>
+      <gui-checkbox
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label}
+        .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .hint=${this.adapter.templateData.hint}
+        .checkboxPosition=${this.adapter.templateData.checkboxPosition}
+        @change=${() => !this.adapter.templateData.readonly && this.valueChanged(event)}
+        @blur=${() => this.adapter.onBlur()}
+      ></gui-checkbox>
     `;
   }
 
   valueChanged(event: Event | undefined) {
-    const target = event?.target as HTMLInputElement;
-    this.adapter.valueChanged(target.checked);
+    const value = (event as CustomEvent)?.detail.value;
+    this.adapter.valueChanged(value);
   }
 
   override disconnectedCallback() {

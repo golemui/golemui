@@ -1,14 +1,14 @@
-import { FormField } from '../form-field';
+import { NonFunctionField } from '../form-field';
 
-type Registry<ComponentType, Widget extends string = FormField['widget']> = Record<
+type Registry<ComponentType, Widget extends string = NonFunctionField['widget']> = Record<
   Widget,
   ComponentType
 >;
 
-export type FieldLoaders<ComponentType, Widget extends string = FormField['widget']> = Record<
-  Widget,
-  () => Promise<ComponentType>
->;
+export type FieldLoaders<
+  ComponentType,
+  Widget extends string = NonFunctionField['widget'],
+> = Record<Widget, () => Promise<ComponentType>>;
 
 export class FieldRegistry<ComponentType> {
   private registry: Registry<ComponentType> = {};
@@ -27,7 +27,7 @@ export class FieldRegistry<ComponentType> {
     this._ready = true;
   }
 
-  async loadField(widget: FormField['widget']): Promise<ComponentType> {
+  async loadField(widget: NonFunctionField['widget']): Promise<ComponentType> {
     return this.registry[widget] ?? (this.registry[widget] = await this.fieldLoaders[widget]());
   }
 }

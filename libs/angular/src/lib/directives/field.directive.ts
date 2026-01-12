@@ -17,7 +17,7 @@ import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
   standalone: true,
 })
 export class FieldDirective implements OnInit {
-  field = input.required<Core.FormField<string>>();
+  field = input.required<Core.NonFunctionField<string>>();
   private repeaterIndexToken = inject(REPEATER_INDEX_TOKEN);
 
   private formContext: AngularFormContext<Type<Core.WithField>> = inject(AngularFormContext);

@@ -1,8 +1,8 @@
-.gui-form {
-  .gui-textinput {
-    display: block;
+gui-textinput {
+  display: block;
 
-    input {
+  .gui-field {
+    input[type='text'] {
       &.gui-textinput--icon {
         padding-left: 2.5rem;
       }

@@ -1,4 +1,4 @@
-import { FormField } from './form-field';
+import { NonFunctionField } from './form-field';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 import { ImmutableRecord, LooseObject } from './utils/types';
 
@@ -23,22 +23,33 @@ export type DotPath = string;
  */
 export type Uid = string;
 
-export type FieldFunctionParams<FormData> = { $form: ImmutableRecord<FormData> };
+/**
+ * Represents a generic validation status.
+ * Either `null` (there are no validation issues) or an array of issues.
+ */
+export type ValidationStatus = null | string[];
+
+export type FieldPropertyFunctionParams<FormData> = { $form: ImmutableRecord<FormData> };
 
 /**
- * A ReactiveFieldFunction is a field function that is evaluated and then substituted by the produced value.
+ * A FieldPropertyFunction is a field function that is evaluated and then substituted by the produced value.
  */
-export type ReactiveFieldFunction<T, FormData extends Record<string, any> = any> = (
-  api: FieldFunctionParams<FormData>,
+export type FieldPropertyFunction<T, FormData extends Record<string, any> = any> = (
+  api: FieldPropertyFunctionParams<FormData>,
 ) => T;
 
 export type ReactiveFormField = LooseObject<
   {
-    props?: Record<string, ReactiveFieldFunction<any>>;
-    on?: Record<string, ReactiveFieldFunction<any>>;
+    props?: Record<string, FieldPropertyFunction<any>>;
+    on?: Record<string, FieldPropertyFunction<any>>;
   },
-  ReactiveFieldFunction<any>
+  FieldPropertyFunction<any>
 >;
+
+export type FunctionFieldParams<FormData> = {
+  $form: ImmutableRecord<FormData>;
+  errors?: ValidationStatus;
+};
 
 /**
  * Defines when field validation should run.
@@ -102,5 +113,5 @@ export type ControlTemplateData<T, V = any> = {
  * Layout adapter templateData
  */
 export type LayoutTemplateData = {
-  children: FormField<string>[];
+  children: NonFunctionField<string>[];
 };

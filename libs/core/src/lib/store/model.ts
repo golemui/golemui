@@ -1,6 +1,6 @@
 import * as Form from '../form';
 import * as Field from '../form-field';
-import { DotPath, Uid } from '../shared';
+import { DotPath, Uid, ValidationStatus } from '../shared';
 
 // ------------------------------
 //
@@ -127,12 +127,6 @@ export type Middleware<S, A> = (
 export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
 
 /**
- * Represents a generic validation status.
- * Either `null` (there are no validation issues) or an array of issues.
- */
-export type ValidationStatus = null | string[];
-
-/**
  * Represents a form field whose value is derived from a computation
  * and evaluated against its previous derived state.
  *
@@ -142,11 +136,11 @@ export type ValidationStatus = null | string[];
  */
 export type DerivedField<F extends Field.FormField<string>> = {
   /** The source field from which the derived value is computed */
-  source: Readonly<F>;
+  source: F;
   /** The previously derived value */
-  previous: Readonly<F>;
+  previous: Exclude<F, Field.FunctionField<string>>;
   /** The newly derived value */
-  current: F;
+  current: Exclude<F, Field.FunctionField<string>>;
   /** Indicates whether the newly derived value changed structurally */
   changed?: boolean;
 };

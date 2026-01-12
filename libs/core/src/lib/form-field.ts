@@ -1,5 +1,12 @@
 import * as jd from 'ts.data.json';
-import { DotPath, ReactiveExpression, ReactiveFieldFunction, Uid, UiState } from './shared';
+import {
+  DotPath,
+  FieldPropertyFunction,
+  FunctionFieldParams,
+  ReactiveExpression,
+  Uid,
+  UiState,
+} from './shared';
 import { objectWithSuffix } from './utils/decoder';
 import { shortUUID } from './utils/random';
 import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
@@ -19,7 +26,7 @@ export type FieldWidget = string;
 
 type ReactiveFieldValue<T, FormData extends Record<string, any> = any> =
   | ReactiveExpression
-  | ReactiveFieldFunction<T, FormData>
+  | FieldPropertyFunction<T, FormData>
   | T;
 
 /**
@@ -65,14 +72,14 @@ export type BaseField<
   // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
 
   // TODO: Fix the type. `props` should only accept functions or Json serializable values.
-  // TODO: ReactiveFieldFunction<any> should be ReactiveFieldFunction<MyFormDataType>
+  // TODO: FieldPropertyFunction<any> should be FieldPropertyFunction<MyFormDataType>
   /**
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
   props?: Record<
     string,
-    string | boolean | number | any[] | Record<string, any> | ReactiveFieldFunction<any, FormData>
+    string | boolean | number | any[] | Record<string, any> | FieldPropertyFunction<any, FormData>
   >;
 };
 
@@ -130,14 +137,15 @@ export type LayoutField<
       | ControlField<any, StateKeys, FormData>
       | LayoutField<StateKeys, FormData>
       | InteractiveField<StateKeys, FormData>
+      | FunctionField<StateKeys, FormData>
     )[];
   },
   never,
   StateKeys
 >;
 
-// TODO: when updating, update LayoutField['children'] too!
-export type FormField<
+// ⚠️ When updating, update LayoutField['children'] too!
+export type NonFunctionField<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 > =
@@ -145,6 +153,26 @@ export type FormField<
   | ControlField<any, StateKeys, FormData>
   | LayoutField<StateKeys, FormData>
   | InteractiveField<StateKeys, FormData>;
+
+// TODO: we should remove StateKeys because FunctionField don't support states
+export type FunctionField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = {
+  uid?: Uid;
+  widget?: string;
+  path?: string; // when this is a control, this will have a path, otherwise undefined
+  /**
+   * Function that calculates the field definition.
+   * Function Fields are called at least once with `undefined`.
+   */
+  (api?: FunctionFieldParams<FormData>): NonFunctionField<StateKeys, FormData>;
+};
+
+export type FormField<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> = NonFunctionField<StateKeys, FormData> | FunctionField<StateKeys, FormData>;
 
 // --------------------------------
 //
@@ -157,14 +185,16 @@ export const isDisplayField = <
   FormData extends Record<string, any> = any,
 >(
   field: FormField<StateKeys, FormData>,
-): field is DisplayField<StateKeys, FormData> => field.kind === 'display';
+): field is DisplayField<StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'display';
 
 export const isInteractiveField = <
   StateKeys extends string,
   FormData extends Record<string, any> = any,
 >(
   field: FormField<StateKeys, FormData>,
-): field is InteractiveField<StateKeys, FormData> => field.kind === 'interactive';
+): field is InteractiveField<StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'interactive';
 
 export const isControlField = <
   T,
@@ -172,11 +202,20 @@ export const isControlField = <
   FormData extends Record<string, any> = any,
 >(
   field: FormField<StateKeys, FormData>,
-): field is ControlField<T, StateKeys, FormData> => field.kind === 'control';
+): field is ControlField<T, StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'control';
 
 export const isLayoutField = <StateKeys extends string, FormData extends Record<string, any> = any>(
   field: FormField<StateKeys, FormData>,
-): field is LayoutField<StateKeys, FormData> => field.kind === 'layout';
+): field is LayoutField<StateKeys, FormData> =>
+  typeof field !== 'function' && field.kind === 'layout';
+
+export const isFunctionField = <
+  StateKeys extends string,
+  FormData extends Record<string, any> = any,
+>(
+  field: FormField<StateKeys, FormData>,
+): field is FunctionField<StateKeys, FormData> => typeof field === 'function';
 
 // --------------------------------
 //
@@ -202,23 +241,25 @@ const excludeDecoder = jd.oneOf<From | When>([fromDecoder, whenDecoder], 'Exclud
 // disable / readonly
 const boolWhenDecoder = jd.oneOf<boolean | When>([jd.boolean(), whenDecoder], 'Bool | When');
 
-// all fields that support states can potentially be a ReactiveFieldFunction
-const fieldFnDecoder: jd.Decoder<ReactiveFieldFunction<any>> = new jd.Decoder((json: unknown) => {
-  const jsonTypeof = typeof json;
-  if (jsonTypeof === 'function') {
-    return jd.ok(json as ReactiveFieldFunction<any>);
-  } else {
-    return jd.err(`Expected a function, got '${jsonTypeof}'`);
-  }
-});
-const decodeFieldOrFn = <T>(decoder: jd.Decoder<T>) =>
-  jd.oneOf<T | ReactiveFieldFunction<any>>([decoder, fieldFnDecoder], '');
+// all field properties that support states can potentially be a FieldPropertyFunction
+const fieldPropFnDecoder: jd.Decoder<FieldPropertyFunction<any>> = new jd.Decoder(
+  (json: unknown) => {
+    const jsonTypeof = typeof json;
+    if (jsonTypeof === 'function') {
+      return jd.ok(json as FieldPropertyFunction<any>);
+    } else {
+      return jd.err(`Expected a function, got '${jsonTypeof}'`);
+    }
+  },
+);
+const decodeFieldPropOrfieldPropFn = <T>(decoder: jd.Decoder<T>) =>
+  jd.oneOf<T | FieldPropertyFunction<any>>([decoder, fieldPropFnDecoder], '');
 
 const onDecoder = objectWithSuffix(
   {
-    load: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
-    click: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
-    change: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
+    load: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
+    click: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
+    change: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
   },
   'On',
 );
@@ -247,13 +288,27 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    label: { suffixed: true, decoder: decodeFieldOrFn(jd.string()) },
+    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.string()) },
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
   },
   'InteractiveField',
 );
+
+const functionFieldDecoder: jd.Decoder<FunctionField<string>> = new jd.Decoder((json: unknown) => {
+  const jsonTypeof = typeof json;
+  if (jsonTypeof === 'function') {
+    const fnField = json as FunctionField<string>;
+    const field = fnField(undefined);
+    fnField.uid = field.uid || shortUUID();
+    fnField.widget = field.widget;
+    fnField.path = (field as ControlField<unknown>).path; // this could be undefined, and it's ok.
+    return jd.ok(fnField);
+  } else {
+    return jd.err(`Expected a function, got '${jsonTypeof}'`);
+  }
+});
 
 const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
   {
@@ -267,10 +322,10 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
-    label: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.string())) },
+    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
     path: { decoder: jd.string() },
     defaultValue: { decoder: jd.optional(jd.succeed()) },
-    validator: { suffixed: true, decoder: decodeFieldOrFn(jd.optional(jd.succeed())) },
+    validator: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.succeed())) },
   },
   'ControlField',
 ).map((ctrl) => {
@@ -287,7 +342,11 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
 });
 
 type FormFieldDecoder = jd.Decoder<
-  DisplayField<string> | InteractiveField<string> | ControlField<any, string> | LayoutField<string>
+  | DisplayField<string>
+  | InteractiveField<string>
+  | ControlField<any, string>
+  | LayoutField<string>
+  | FunctionField<string>
 >;
 const formFieldDecoder = jd.lazy(
   (): FormFieldDecoder =>
@@ -296,8 +355,15 @@ const formFieldDecoder = jd.lazy(
       | InteractiveField<string>
       | ControlField<any, string>
       | LayoutField<string>
+      | FunctionField<string>
     >(
-      [displayFieldDecoder, interactiveFieldDecoder, controlFieldDecoder, layoutFieldDecoder],
+      [
+        functionFieldDecoder,
+        controlFieldDecoder,
+        layoutFieldDecoder,
+        displayFieldDecoder,
+        interactiveFieldDecoder,
+      ],
       'FormField',
     ),
 );

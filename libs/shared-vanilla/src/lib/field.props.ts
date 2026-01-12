@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { OptionValue } from './components/select';
+import { OptionValue } from './components';
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -21,6 +21,7 @@ export type TextareaProps = {
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
+  maxLength?: number;
 };
 
 export type CalendarProps = {
@@ -30,6 +31,11 @@ export type CalendarProps = {
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
+export type DateinputProps = {
+  hint?: string;
+  icon?: string;
 };
 
 export type DatePickerProps = {
@@ -70,7 +76,7 @@ export type RepeaterProps = {
   addLabel?: string;
   removeLabel?: string;
   limit?: number;
-  template: Core.FormField<string>;
+  template: Core.LayoutField<string>;
 };
 
 export type Option = {
@@ -89,9 +95,13 @@ export type SelectProps = {
 };
 
 export type RadiogroupProps = {
-  valueType?: 'string' | 'number' | 'boolean';
   hint?: string;
   options: Option[];
+  labelField?: string;
+  valueField?: string;
+};
+
+export type OneOfProps = {
   labelField?: string;
   valueField?: string;
 };

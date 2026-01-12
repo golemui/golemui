@@ -1,14 +1,12 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { GUIAriaController, TextinputProps } from '@golemui/shared-vanilla';
+import { TextinputProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { addErrors, addIcon, addLabel } from '../utils/templates';
 
-@customElement('gui-textinput')
+@customElement('gui-textinput-control')
 export class TextinputElement extends LitElement implements Core.WithField {
   field!: Core.ControlField<string>;
 
@@ -18,14 +16,6 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<string, TextinputProps>();
-
-  private ariaController = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`input[id="${this.field.uid}"]`),
-    getState: () => ({
-      uid: this.field.uid,
-      templateData: this.adapter.templateData,
-    }),
-  });
 
   subscriptions: Subscription[] = [];
 
@@ -47,36 +37,29 @@ export class TextinputElement extends LitElement implements Core.WithField {
   override render() {
     super.render();
 
-    // Icon
-    const textinputIcon = addIcon('textinput', this.adapter.templateData);
-
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
-
-      <div class="gui-field">
-        <input
-          type="text"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_textinput`}
-          class=${classMap(textinputIcon.fieldClasses)}
-          required=${this.adapter.templateData.validator?.required ? '' : nothing}
-          value=${this.adapter.templateData.value ?? ''}
-          ?disabled=${this.adapter.templateData.disabled || nothing}
-          ?readonly=${this.adapter.templateData.readonly || nothing}
-          placeholder=${this.adapter.templateData.placeholder || nothing}
-          @input="${() => this.valueChanged(event)}"
-          @blur="${() => this.adapter.onBlur()}"
-        />
-        ${textinputIcon.html}
-      </div>
-
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      <gui-textinput
+        .uid=${this.field.uid}
+        .label=${this.adapter.templateData.label}
+        .hint=${this.adapter.templateData.hint}
+        .errors=${this.adapter.templateData.errors}
+        ?touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .icon=${this.adapter.templateData.icon}
+        .iconPosition=${this.adapter.templateData.iconPosition}
+        .placeholder=${this.adapter.templateData.placeholder}
+        @input=${() => this.valueChanged(event)}
+        @blur=${() => this.adapter.onBlur()}
+      ></gui-textinput>
     `;
   }
 
   valueChanged(event: Event | undefined) {
-    const target = event?.target as HTMLInputElement;
-    this.adapter.valueChanged(target.value);
+    const value = (event as CustomEvent).detail.value;
+    this.adapter.valueChanged(value);
   }
 
   override disconnectedCallback() {

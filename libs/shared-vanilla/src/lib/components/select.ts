@@ -1,81 +1,154 @@
-import { Option } from '../field.props';
+import { inferOptionValue, OptionValue, updateOptions } from './one-of';
+import { html, LitElement, nothing } from 'lit';
+import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property } from 'lit/decorators.js';
+import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
+import { OneOfProps, Option, SelectProps } from '../field.props';
+import { GUIAriaController } from '../controllers';
+import { classMap } from 'lit/directives/class-map.js';
 
-/**
- * Checks whether a value is a valid option value
- */
-export function isOptionValue(value: unknown): value is OptionValue {
-  const t = typeof value;
-  return t === 'string' || t === 'number';
-}
+@customElement('gui-select')
+export class GuiSelectControl extends LitElement {
+  @property({ type: String }) uid: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) required: boolean | undefined = false;
+  @property({ type: Boolean }) disabled: boolean | undefined = false;
+  @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
+  @property({ type: String }) value: OptionValue | undefined = undefined;
 
-export function inferOptionValue(value: string, options: Option[]): OptionValue {
-  return options.find((op) => op.value.toString() === value)?.value as OptionValue;
-}
+  @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) icon: string | undefined = undefined;
+  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
+  @property({ type: String }) options: Option[] = [];
+  @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) labelField: string | undefined = undefined;
+  @property({ type: String }) valueField: string | undefined = undefined;
 
-export type OptionValue = string | number;
+  protected optionsLoading = false;
+  protected hasMatchingValue = false;
 
-/**
- * Checks whether a value is a fully compliant Option (with label and value fields)
- */
-export const isOption = (opt: unknown): opt is Option =>
-  opt !== null &&
-  typeof opt === 'object' &&
-  Object.prototype.hasOwnProperty.call(opt, 'label') &&
-  Object.prototype.hasOwnProperty.call(opt, 'value');
+  private ariaController = new GUIAriaController(this, {
+    getTargets: () => this.querySelectorAll(`select[id="${this.uid}"]`),
+    getState: () => ({
+      uid: this.uid as string,
+      templateData: {
+        hint: this.hint,
+        errors: this.errors,
+        readonly: this.readOnly,
+        disabled: this.disabled,
+        touched: this.touched,
+      },
+    }),
+  });
 
-/** Checks if an object can be converted into an actual Option */
-export const isProtoOption = (
-  opt: unknown,
-  { labelField, valueField }: { labelField?: string; valueField?: string },
-): opt is Record<string, unknown> => {
-  if (opt === null || typeof opt !== 'object') {
-    return false;
-  }
-  const obj = opt as Record<string, unknown>;
-
-  const hasLabel = labelField ? Object.prototype.hasOwnProperty.call(obj, labelField) : false;
-  const hasValue = valueField ? Object.prototype.hasOwnProperty.call(obj, valueField) : false;
-
-  if (labelField && !hasLabel) {
-    // labelField is provided but hasLabel is false → invalid
-    return false;
-  } else if (valueField && !hasValue) {
-    // valueField is provided but hasValue is false → invalid
-    return false;
-  }
-  return true;
-};
-
-/** Returns a mapper function that converts objects into { label, value } */
-export function createOptionMapper(
-  opt: unknown,
-  { labelField, valueField }: { labelField?: string; valueField?: string },
-) {
-  if (opt === null || typeof opt !== 'object') {
-    throw new Error('Provided value is not an object');
+  override createRenderRoot() {
+    return this;
   }
 
-  const obj = opt as Record<string, unknown>;
+  override render() {
+    super.render();
 
-  // Resolve fields: only keep those that exist on the object
-  const resolvedLabelField =
-    labelField && Object.prototype.hasOwnProperty.call(obj, labelField) ? labelField : undefined;
-  const resolvedValueField =
-    valueField && Object.prototype.hasOwnProperty.call(obj, valueField) ? valueField : undefined;
-
-  if (!resolvedLabelField && !resolvedValueField) {
-    throw new Error('Neither labelField nor valueField exists on the object');
-  }
-
-  // Return the mapping function
-  return (item: unknown): Option => {
-    if (item === null || typeof item !== 'object') {
-      throw new Error('Item is not an object');
-    }
-    const o = item as Record<string, unknown>;
-    return {
-      label: resolvedLabelField ? (o[resolvedLabelField] as string) : '',
-      value: resolvedValueField ? (o[resolvedValueField] as string) : '',
+    const templateData: ControlTemplateData<OptionValue> & SelectProps = {
+      uid: this.uid,
+      label: this.label,
+      errors: this.errors,
+      touched: this.touched,
+      required: this.required,
+      disabled: this.disabled,
+      readonly: this.readOnly,
+      value: this.value,
+      hint: this.hint,
+      icon: this.icon,
+      iconPosition: this.iconPosition,
+      options: this.options,
+      placeholder: this.placeholder,
+      labelField: this.labelField,
+      valueField: this.valueField,
     };
-  };
+
+    // Icon
+    const selectIcon = addIcon('select', templateData);
+
+    this.options = updateOptions(this.options, {
+      labelField: this.labelField,
+      valueField: this.valueField,
+    } as OneOfProps);
+
+    this.hasMatchingValue = this.options?.length
+      ? this.options.find(({ value }) => value === this.value) !== undefined
+      : false;
+
+    const options = this.optionsLoading
+      ? html`<span>Loading...</span>`
+      : html`
+          <option value="" disabled selected=${this.hasMatchingValue ? nothing : ''}>
+            ${this.placeholder ?? 'Select an option'}
+          </option>
+          ${repeat(
+            this.options || [],
+            (opt: any) => opt?.value,
+            (opt: any) =>
+              html`<option
+                value=${opt.value}
+                selected=${this.hasMatchingValue && opt.value === this.value ? '' : nothing}
+              >
+                ${opt.label}
+              </option>`,
+          )}
+        `;
+
+    return html`
+      ${addLabel(this.uid as string, templateData)}
+
+      <div class="gui-field">
+        <select
+          id=${this.uid}
+          data-cy=${`${this.uid}_select`}
+          class=${classMap(selectIcon.fieldClasses)}
+          ?required=${templateData.required}
+          ?disabled=${templateData.disabled || templateData.readonly}
+          @change=${() => this.valueChanged(event as Event)}
+          @blur=${() => this.onBlur()}
+        >
+          ${options}
+        </select>
+        ${selectIcon.html}
+      </div>
+
+      ${addErrors(this.uid as string, templateData)}
+    `;
+  }
+
+  valueChanged(event: Event | undefined) {
+    event?.stopPropagation();
+
+    if (!this.readOnly) {
+      const target = event?.target as HTMLInputElement;
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { value: inferOptionValue(target.value, this.options) },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
+  }
+
+  onBlur() {
+    this.dispatchEvent(
+      new CustomEvent('blur', {
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'gui-select': GuiSelectControl;
+  }
 }

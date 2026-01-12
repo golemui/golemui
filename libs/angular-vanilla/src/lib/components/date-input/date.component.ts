@@ -3,13 +3,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { DatePickerProps } from '@golemui/shared-vanilla';
-import { ErrorsComponent } from '../../utils/templates/errors.component';
-import { LabelComponent } from '../../utils/templates/label.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-date',
-  imports: [CommonModule, ErrorsComponent, LabelComponent],
+  selector: 'gui-date-control',
+  imports: [CommonModule],
   providers: [Angular.ControlFieldAdapter],
   templateUrl: './date.component.html',
   host: {

@@ -6,7 +6,19 @@
     "moduleResolution": "node",
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "types": ["node"],
+    "plugins": [
+      {
+        "name": "ts-lit-plugin",
+        "strict": true,
+        "rules": {
+          "no-unknown-tag-name": "error",
+          "no-unknown-attribute": "error",
+          "no-unknown-property": "error",
+          "no-incompatible-type": "error"
+        }
+      }
+    ]
   },
   "include": [
     "src/**/*.ts",
