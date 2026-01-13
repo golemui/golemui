@@ -1,0 +1,48 @@
+gui-currency {
+  display: block;
+
+  .gui-field {
+    position: relative;
+
+    .gui-currency__format-value {
+      position: absolute;
+      background: var(--gui-color-bg);
+      font-size: var(--gui-font-size);
+      top: 13px;
+      left: 13px;
+
+      transition: all 0.2s ease-in-out;
+
+      &.gui-currency__format-value--icon {
+        left: calc(2.5rem);
+      }
+    }
+
+    input[type='text'] {
+      color: transparent;
+
+      &.gui-currency--icon {
+        padding-left: 2.5rem;
+      }
+
+      &.gui-currency--icon-right {
+        padding-left: var(--gui-space-gap);
+        padding-right: var(--gui-icon-space-gap);
+      }
+
+      &:focus {
+        color: var(--gui-color-fg);
+      }
+
+      &:focus + .gui-currency__format-value {
+        font-size: var(--gui-font-size--small);
+        top: -9px;
+        padding: 2px;
+      }
+
+      &:focus[aria-invalid="true"] + .gui-currency__format-value {
+        color: var(--gui-color-error);
+      }
+    }
+  }
+}
