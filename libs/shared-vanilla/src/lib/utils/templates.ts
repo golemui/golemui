@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit-html/directives/style-map.js';
 
 export type ControlTemplateData<T, V = any> = {
   uid?: string;
@@ -24,6 +25,7 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
     for=${uid}
     data-cy=${`${uid}_label`}
     id=${type ? `${uid}_${type}_label` : nothing}
+    style=${styleMap({ display: templateData.label ? 'block' : 'none' })}
   >
     ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
     ${withErrors ? addErrors(uid, templateData) : nothing}
