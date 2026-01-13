@@ -82,6 +82,7 @@ export const kitchenSink = defineForm({
 
 export const kitchenSinkData = {
   listName: 'Development Team',
+  currency: 1000000,
   selects: {
     greeting: 'bye',
     wrongGreeting: 'aaaaaa',

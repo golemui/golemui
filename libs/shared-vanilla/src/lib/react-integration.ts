@@ -8,6 +8,7 @@ import { GuiNumberControl } from './components/number';
 import { GuiRadiogroupControl } from './components/radiogroup';
 import { GuiTextareaControl } from './components/textarea';
 import { GuiToggleControl } from './components/toggle';
+import { GuiCurrencyControl } from './components/currency';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -15,6 +16,8 @@ declare global {
     interface IntrinsicElements {
       'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTextinputControl>;
+      'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiCurrencyControl>;
       'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCheckboxControl>;
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

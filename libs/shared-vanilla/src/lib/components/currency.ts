@@ -15,7 +15,7 @@ export class GuiCurrencyControl extends LitElement {
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
-  @property({ type: String }) value: number | undefined = undefined;
+  @property({ type: String }) value: number | null | undefined = undefined;
 
   @property({ type: String }) currency: string | undefined = undefined;
   @property({ type: String }) maximumFractionDigits: number | undefined = undefined;
@@ -67,7 +67,7 @@ export class GuiCurrencyControl extends LitElement {
       required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
-      value: this.value,
+      value: this.value as number,
       currency: this.currency,
       maximumFractionDigits: this.maximumFractionDigits,
       minimumFractionDigits: this.minimumFractionDigits,
@@ -95,7 +95,7 @@ export class GuiCurrencyControl extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
-          .value=${this.value}
+          .value=${this.value ?? ''}
           ?required=${this.disabled}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -158,33 +158,20 @@ export class GuiCurrencyControl extends LitElement {
     const input = event.target as HTMLInputElement;
     const { decimal, group } = this.separators;
 
-    this.displayValue = this.formatCurrency(this.value);
-
     let rawValueString = input.value.split(group).join('').replace(decimal, '.');
 
     if (rawValueString === `-.`) rawValueString = '-0.';
 
-    const numericValue = parseFloat(rawValueString);
+    this.value = isNaN(parseFloat(rawValueString)) ? null : parseFloat(rawValueString);
+    this.displayValue = this.formatCurrency(this.value);
 
-    if (!isNaN(numericValue)) {
-      this.value = numericValue;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    } else if (input.value === '') {
-      this.value = undefined;
-      this.dispatchEvent(
-        new CustomEvent('input', {
-          detail: { value: null },
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
+    this.dispatchEvent(
+      new CustomEvent('input', {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private handleFocus() {
@@ -202,8 +189,8 @@ export class GuiCurrencyControl extends LitElement {
     );
   }
 
-  private formatCurrency(value: string | number | undefined): string {
-    if (value === '' || value === undefined || isNaN(value as number)) return '';
+  private formatCurrency(value: string | number | undefined | null): string {
+    if (value === '' || value === undefined || value === null || isNaN(value as number)) return '';
 
     try {
       return new Intl.NumberFormat(this.localeId, {

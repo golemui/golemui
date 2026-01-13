@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   GuiCalendarControl,
   GuiCheckboxControl,
+  GuiCurrencyControl,
   GuiDateControl,
   GuiNumberControl,
   GuiRadiogroupControl,
@@ -17,6 +18,8 @@ declare module 'react' {
     interface IntrinsicElements {
       'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTextinputControl>;
+      'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiCurrencyControl>;
       'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCheckboxControl>;
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
