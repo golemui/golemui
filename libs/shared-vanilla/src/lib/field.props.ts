@@ -15,7 +15,9 @@ export type TextinputProps = {
 };
 
 export type CurrencyProps = {
-  decimals?: number;
+  currency?: string;
+  maximumFractionDigits?: number;
+  minimumFractionDigits?: number;
   hint?: string;
   placeholder?: string;
   icon?: string;

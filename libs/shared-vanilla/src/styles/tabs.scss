@@ -95,15 +95,30 @@
       &:first-child {
         margin-left: 0;
       }
+
+      &:focus {
+        outline: var(--gui-color-fg) solid 1px;
+        border: var(--gui-color-fg) solid 1px;
+
+        &.active {
+          border-bottom-color: var(--gui-color-bg);
+        }
+      }
     }
 
     section[role='tabpanel'] {
-      margin-top: -1px;
       padding: var(--gui-padding);
       border: 1px solid var(--gui-color-border);
+      border-top: 0;
       border-radius: 0 0 var(--gui-radius) var(--gui-radius);
       background: var(--gui-color-bg);
       color: var(--gui-color-fg);
+
+      &:focus {
+        outline: 0;
+        border: var(--gui-color-fg) solid 1px;
+        box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+      }
     }
   }
 }

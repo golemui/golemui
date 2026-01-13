@@ -17,13 +17,15 @@ export class GuiCurrencyControl extends LitElement {
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: number | undefined = undefined;
 
-  @property({ type: String }) currency: string | undefined = 'EUR';
+  @property({ type: String }) currency: string | undefined = undefined;
+  @property({ type: String }) maximumFractionDigits: number | undefined = undefined;
+  @property({ type: String }) minimumFractionDigits: number | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) placeholder: string | undefined = undefined;
 
-  @state() private displayValue = '';
+  @state() private displayValue: string | undefined;
 
   @query('input') inputElement!: HTMLInputElement;
 
@@ -66,10 +68,15 @@ export class GuiCurrencyControl extends LitElement {
       disabled: this.disabled,
       readonly: this.readOnly,
       value: this.value,
+      currency: this.currency,
+      maximumFractionDigits: this.maximumFractionDigits,
+      minimumFractionDigits: this.minimumFractionDigits,
       icon: this.icon,
       iconPosition: this.iconPosition,
       placeholder: this.placeholder,
     };
+
+    this.displayValue = this.formatCurrency(this.value);
 
     // Icon
     const currencyIcon = addIcon('currency', templateData);
@@ -88,7 +95,7 @@ export class GuiCurrencyControl extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
-          .value=${this.displayValue}
+          .value=${this.value}
           ?required=${this.disabled}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
@@ -98,6 +105,13 @@ export class GuiCurrencyControl extends LitElement {
           @focus=${this.handleFocus}
           @blur=${this.handleBlur}
         />
+        <label
+          for=${this.uid}
+          class="gui-currency__format-value ${this.icon && this.iconPosition !== 'right'
+            ? 'gui-currency__format-value--icon'
+            : ''}"
+          >${this.displayValue}</label
+        >
         ${currencyIcon.html}
       </div>
 
@@ -144,7 +158,7 @@ export class GuiCurrencyControl extends LitElement {
     const input = event.target as HTMLInputElement;
     const { decimal, group } = this.separators;
 
-    this.displayValue = input.value;
+    this.displayValue = this.formatCurrency(this.value);
 
     let rawValueString = input.value.split(group).join('').replace(decimal, '.');
 
@@ -174,10 +188,7 @@ export class GuiCurrencyControl extends LitElement {
   }
 
   private handleFocus() {
-    if (this.value !== undefined && this.value !== null) {
-      const { decimal } = this.separators;
-      this.displayValue = this.value.toString().replace('.', decimal);
-    }
+    this.displayValue = this.formatCurrency(this.value);
   }
 
   private handleBlur() {
@@ -191,16 +202,17 @@ export class GuiCurrencyControl extends LitElement {
     );
   }
 
-  private formatCurrency(value: number | undefined): string {
-    if (value === undefined || value === null || isNaN(value)) return '';
+  private formatCurrency(value: string | number | undefined): string {
+    if (value === '' || value === undefined || isNaN(value as number)) return '';
 
     try {
       return new Intl.NumberFormat(this.localeId, {
         style: 'currency',
-        currency: this.currency,
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-      }).format(value);
+        currency: this.currency ?? 'USD',
+        maximumFractionDigits:
+          this.maximumFractionDigits ?? Math.max(this.minimumFractionDigits ?? 2, 2),
+        minimumFractionDigits: this.minimumFractionDigits ?? 2,
+      }).format(value as number);
     } catch (e) {
       console.warn('Invalid locale or currency', e);
       return value.toString();

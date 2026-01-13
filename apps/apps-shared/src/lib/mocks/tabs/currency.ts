@@ -20,19 +20,20 @@ export const currency = (): any => ({
       uid: '',
       kind: 'control',
       widget: 'currency',
-      path: 'currencyPhone',
+      path: 'currencyMaximumFractionDigits',
       props: {
-        placeholder: 'Please enter your phone number',
+        placeholder: 'maximum 2 digits after the decimal point',
+        maximumFractionDigits: 2,
       },
     },
     {
       uid: '',
       kind: 'control',
       widget: 'currency',
-      path: 'currencyWithHint',
+      path: 'currencyMinimumFractionDigits',
       props: {
-        hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
+        placeholder: 'minimum 4 digits after the decimal point',
+        minimumFractionDigits: 4,
       },
     },
     {
@@ -43,21 +44,22 @@ export const currency = (): any => ({
       props: {
         icon: 'material-icons material-icons-phone_callback',
         hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
+        placeholder: 'Please enter price in USD',
       },
     },
     {
       uid: '',
       kind: 'control',
       widget: 'currency',
-      path: 'currencyIconRight',
+      path: 'currencyIconRightWithEUR',
       props: {
+        currency: 'EUR',
         icon: 'material-icons material-icons-phone_callback',
         iconPosition: 'right',
         hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
+        placeholder: 'Please enter price in EUR',
       },
-      validator: { type: 'number', required: true },
+      validator: { type: 'number', required: true, minimum: 100 },
     },
   ],
 });
