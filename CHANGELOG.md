@@ -1,3 +1,26 @@
+## 0.18.0 (2026-01-13)
+
+### 🚀 Features
+
+- function fields POC ([290f611](https://github.com/golemui/formforge/commit/290f611))
+- add currency component ([b2a06ba](https://github.com/golemui/formforge/commit/b2a06ba))
+- add optional labels to all inputs ([a75359a](https://github.com/golemui/formforge/commit/a75359a))
+- add currency field ([232ab3a](https://github.com/golemui/formforge/commit/232ab3a))
+
+### 🩹 Fixes
+
+- repeater props type ([6983792](https://github.com/golemui/formforge/commit/6983792))
+- add support for validation errors in field functions ([b88d5f9](https://github.com/golemui/formforge/commit/b88d5f9))
+- **core:** functionFieldDecoder should set uid properly ([e65df04](https://github.com/golemui/formforge/commit/e65df04))
+- **core:** function fields working ([706713a](https://github.com/golemui/formforge/commit/706713a))
+- **lit:** lit uid fixes ([5973338](https://github.com/golemui/formforge/commit/5973338))
+- **react:** fix Field Function support ([09f86fa](https://github.com/golemui/formforge/commit/09f86fa))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.17.0 (2026-01-11)
 
 ### 🚀 Features

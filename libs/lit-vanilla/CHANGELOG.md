@@ -1,3 +1,13 @@
+## 0.18.0 (2026-01-13)
+
+### 🚀 Features
+
+- add currency field ([232ab3a](https://github.com/golemui/formforge/commit/232ab3a))
+
+### ❤️ Thank You
+
+- Raul Jimenez @Elecash
+
 ## 0.17.0 (2026-01-11)
 
 ### 🚀 Features
