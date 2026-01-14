@@ -1,17 +1,18 @@
 export const controlWidgets = [
   'calendar',
+  'checkbox',
   'dateInput',
   'datePicker',
-  'textinput',
-  'textarea',
-  'toggle',
-  'checkbox',
+  'list',
   'number',
-  'select',
   'radiogroup',
   'repeater',
+  'select',
+  'textarea',
+  'textinput',
+  'toggle',
 ] as const;
-export const layoutWidgets = ['stack', 'tabs', 'accordion'] as const;
+export const layoutWidgets = ['accordion', 'stack', 'tabs'] as const;
 export const displayWidgets = ['alert'] as const;
 export const interactiveWidgets = ['button'] as const;
 

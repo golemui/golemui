@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { combineLatest, takeUntil } from 'rxjs';
+import { AngularItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
@@ -83,6 +84,20 @@ export class ControlFieldAdapter<
       type: 'INJECT_VALIDATION_ISSUES',
       payload: { path: this.field.path, issues },
     });
+  }
+
+  /**
+   * This is a helper to get the item renderer from the context
+   */
+  getItemRenderer<T extends Core.ItemRenderItemData>(
+    itemRendererKey: string | undefined,
+    defaultItemRenderer: AngularItemRenderer<T>,
+  ): AngularItemRenderer<T> {
+    if (!itemRendererKey) {
+      return defaultItemRenderer;
+    }
+    const itemRenderers = this.context.itemRenderers as Record<string, AngularItemRenderer<T>>;
+    return itemRenderers[itemRendererKey];
   }
 
   onBlur() {

@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { AngularItemRenderer } from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
+import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
@@ -14,8 +16,8 @@ import { APP_CONFIG } from '../../../environments/environment.model';
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected formDef = AppsShared.reactiveFunctions;
-  protected formData = AppsShared.reactiveFunctionsData;
+  protected formDef = AppsShared.tests;
+  protected formData = AppsShared.testsData;
 
   protected middlewares = [AppsShared.loggerMiddleware];
   protected customFieldLoaders = {
@@ -24,6 +26,9 @@ export class AppFormPage {
   };
   protected validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
+  };
+  protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
+    complexListItemRenderer: ComplexListItemRenderer,
   };
 
   protected error = '';

@@ -94,6 +94,21 @@ export type SelectProps = {
   valueField?: string;
 };
 
+export type ListItem<T> = {
+  data: T;
+  value: OptionValue;
+};
+
+export type ListProps<T> = {
+  hint?: string;
+  items: ListItem<T>[];
+  valueField?: string;
+  /**
+   * Should match with one of the provided itemRenderer keys
+   */
+  itemRenderer?: string;
+};
+
 export type RadiogroupProps = {
   hint?: string;
   options: Option[];

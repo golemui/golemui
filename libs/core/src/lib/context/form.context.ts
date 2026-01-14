@@ -5,6 +5,7 @@ import { ValidatorFn } from '../form-validator';
 import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
+import { ItemRenderer } from '../utils/item-renderer';
 import { FieldLoaders, FieldRegistry } from './field.registry';
 
 export class FormContext<ComponentType> {
@@ -12,14 +13,17 @@ export class FormContext<ComponentType> {
   store: FormStore = {} as FormStore;
   events$ = new Subject<FormEvent>();
   uuid = crypto.randomUUID();
+  itemRenderers: Record<string, ItemRenderer> = {};
 
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
     middlewares: Middleware<State, Action>[] = [],
     validators: ValidatorFn<any>,
     validateOn: ValidateOn,
+    itemRenderers: Record<string, ItemRenderer>,
   ) {
     this.fieldRegistry.setFieldLoaders(fieldLoaders);
+    this.itemRenderers = itemRenderers;
     this.store = createFormStore(middlewares, validators, validateOn);
   }
 

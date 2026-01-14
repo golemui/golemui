@@ -27,6 +27,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
   select: async () => (await import('./components/select/select.component')).SelectComponent,
   radiogroup: async () =>
     (await import('./components/radiogroup/radiogroup.component')).RadiogroupComponent,
+  list: async () => (await import('./components/list/list.component')).ListComponent,
 
   // LAYOUTS
   stack: async () => (await import('./components/stack/stack.component')).StackComponent,

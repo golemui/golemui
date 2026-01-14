@@ -1,0 +1,36 @@
+@let templateData = adapter.templateData();
+@let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
+
+<gui-list
+  [uid]="field.uid"
+  [label]="templateData.label"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value ?? ''"
+  [hint]="templateData.hint"
+  [valueField]="templateData.valueField"
+  (change)="valueChanged($event)"
+  (blur)="adapter.onBlur()"
+>
+  <ul>
+    @for (item of templateData.items; track $index) {
+      <li>
+        <ng-container
+          *ngComponentOutlet="
+            itemRenderer;
+            inputs: {
+              item,
+              value: item,
+              disabled: false,
+              selected: false,
+            }
+          "
+        >
+        </ng-container>
+      </li>
+    }
+  </ul>
+</gui-list>

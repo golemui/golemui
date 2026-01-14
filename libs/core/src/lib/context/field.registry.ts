@@ -11,6 +11,7 @@ export type FieldLoaders<
 > = Record<Widget, () => Promise<ComponentType>>;
 
 export class FieldRegistry<ComponentType> {
+  // TODO: this should be shared across all FieldRegistry instances
   private registry: Registry<ComponentType> = {};
   private fieldLoaders: FieldLoaders<ComponentType> = {};
 
