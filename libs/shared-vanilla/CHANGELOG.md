@@ -1,3 +1,21 @@
+## 0.18.0 (2026-01-13)
+
+### 🚀 Features
+
+- add currency field ([232ab3a](https://github.com/golemui/formforge/commit/232ab3a))
+- add optional labels to all inputs ([a75359a](https://github.com/golemui/formforge/commit/a75359a))
+- add currency component ([b2a06ba](https://github.com/golemui/formforge/commit/b2a06ba))
+- function fields POC ([290f611](https://github.com/golemui/formforge/commit/290f611))
+
+### 🩹 Fixes
+
+- repeater props type ([6983792](https://github.com/golemui/formforge/commit/6983792))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.17.0 (2026-01-11)
 
 ### 🚀 Features

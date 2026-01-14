@@ -1,3 +1,21 @@
+## 0.18.0 (2026-01-13)
+
+### 🚀 Features
+
+- function fields POC ([290f611](https://github.com/golemui/formforge/commit/290f611))
+
+### 🩹 Fixes
+
+- **lit:** lit uid fixes ([5973338](https://github.com/golemui/formforge/commit/5973338))
+- **react:** fix Field Function support ([09f86fa](https://github.com/golemui/formforge/commit/09f86fa))
+- add support for validation errors in field functions ([b88d5f9](https://github.com/golemui/formforge/commit/b88d5f9))
+- **core:** function fields working ([706713a](https://github.com/golemui/formforge/commit/706713a))
+- **core:** functionFieldDecoder should set uid properly ([e65df04](https://github.com/golemui/formforge/commit/e65df04))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.17.0 (2026-01-11)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

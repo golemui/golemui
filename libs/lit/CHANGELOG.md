@@ -1,3 +1,13 @@
+## 0.18.0 (2026-01-13)
+
+### 🩹 Fixes
+
+- **lit:** lit uid fixes ([5973338](https://github.com/golemui/formforge/commit/5973338))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.17.0 (2026-01-11)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.

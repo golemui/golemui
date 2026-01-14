@@ -14,6 +14,16 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type CurrencyProps = {
+  currency?: string;
+  maximumFractionDigits?: number;
+  minimumFractionDigits?: number;
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+};
+
 export type TextareaProps = {
   hint?: string;
   placeholder?: string;
