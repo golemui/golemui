@@ -2,7 +2,7 @@ import { defineForm } from '@golemui/core';
 
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 
-export const testsData = {};
+export const testsData = { 'complex-renderer': 'one' };
 
 export const tests = defineForm({
   states: {
@@ -18,6 +18,7 @@ export const tests = defineForm({
         itemHeight: 20,
         items: thousandsOfItems,
       },
+      validator: { type: 'string', required: true },
     },
     {
       uid: '',
@@ -62,7 +63,7 @@ export const tests = defineForm({
       label: 'Login',
       'label.register': 'Register',
       on: {
-        click: 'handleLogin',
+        click: 'submit',
         'click.register': 'handleRegister',
       },
     },

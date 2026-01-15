@@ -36,6 +36,7 @@
   input,
   select,
   textarea,
+  gui-list,
   .gui-date-input,
   .gui-calendar-input {
     font-family: var(--gui-font-family);
@@ -66,6 +67,10 @@
       background-color: var(--gui-color-bg-disabled);
       pointer-events: none;
     }
+  }
+
+  gui-list {
+    padding: 0;
   }
 
   &-icon {

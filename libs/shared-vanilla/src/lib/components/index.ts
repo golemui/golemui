@@ -2,6 +2,8 @@ export * from './calendar';
 export * from './checkbox';
 export * from './currency';
 export * from './date-input';
+export * from './errors';
+export * from './label';
 export * from './list';
 export * from './number';
 export * from './one-of';

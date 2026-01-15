@@ -1,33 +1,46 @@
 @let templateData = adapter.templateData();
 @let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
 
-<gui-list
+<gui-label
+  [ariaTarget]="listRef"
   [uid]="field.uid"
   [label]="templateData.label"
+  [hint]="templateData.hint"
   [errors]="templateData.errors"
   [touched]="templateData.touched"
   [required]="templateData.validator?.required"
-  [disabled]="templateData.disabled"
-  [readonly]="templateData.readonly"
-  [value]="templateData.value ?? ''"
-  [hint]="templateData.hint"
-  [valueField]="templateData.valueField"
-  [items]="templateData.items"
-  [itemHeight]="templateData.itemHeight"
-  [height]="templateData.height"
-  (gui-list-update-items)="onUpdateItems($event)"
-  (gui-list-range-change)="onRangeChange($event)"
->
-  @for (item of visibleItems(); track $index) {
-    <div
-      role="listitem"
-      class="gui-list__item-wrapper"
-      [style.height.px]="templateData.itemHeight"
-      (keydown)="valueChanged(item)"
-      (click)="valueChanged(item)"
-    >
-      <ng-container
-        *ngComponentOutlet="
+></gui-label>
+
+<div class="gui-field">
+  <gui-list
+    #listRef
+    [id]="field.uid"
+    [uid]="field.uid"
+    [label]="templateData.label"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
+    [required]="templateData.validator?.required"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [value]="templateData.value ?? ''"
+    [hint]="templateData.hint"
+    [valueField]="templateData.valueField"
+    [items]="templateData.items"
+    [itemHeight]="templateData.itemHeight"
+    [height]="templateData.height"
+    (gui-list-update-items)="onUpdateItems($event)"
+    (gui-list-range-change)="onRangeChange($event)"
+  >
+    @for (item of visibleItems(); track $index) {
+      <div
+        role="listitem"
+        class="gui-list__item-wrapper"
+        [style.height.px]="templateData.itemHeight"
+        (keydown)="valueChanged(item)"
+        (click)="valueChanged(item)"
+      >
+        <ng-container
+          *ngComponentOutlet="
           itemRenderer;
           inputs: {
             template: item.template,
@@ -37,8 +50,15 @@
             index: $index,
           }
         "
-      >
-      </ng-container>
-    </div>
-  }
-</gui-list>
+        >
+        </ng-container>
+      </div>
+    }
+  </gui-list>
+</div>
+
+<gui-errors
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+></gui-errors>
