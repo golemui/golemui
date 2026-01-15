@@ -17,9 +17,10 @@ export class GuiListControl extends LitElement {
   @property({ type: String }) valueField = 'value';
   @property({ type: Array }) items: ListItem<unknown>[] = [];
 
-  @property({ type: Number }) itemHeight = 40;
-  @property({ type: Number }) buffer = 5;
-  @property({ type: String }) height = '300px';
+  @property({ type: Number }) itemHeight: number | undefined = undefined;
+  @property({ type: Number }) height: number | undefined = undefined;
+
+  buffer = 5;
 
   @state() private _items: ListItem<any>[] = [];
   @state() private _scrollTop = 0;
@@ -47,13 +48,15 @@ export class GuiListControl extends LitElement {
   }
 
   override render() {
-    const totalHeight = this.items.length * this.itemHeight;
+    const height = this.height ?? 300;
+    const itemHeight = this.itemHeight ?? 40;
+    const totalHeight = this.items.length * itemHeight;
     const { offsetY } = this.calculateRange();
 
     return html`
       <div
         class="gui-list-scroll-viewport"
-        style="height: ${this.height}; overflow-y: auto; position: relative; display: block;"
+        style="height: ${height}px; overflow-y: auto; position: relative; display: block;"
         @scroll="${this.onScroll}"
       >
         <div
@@ -108,14 +111,15 @@ export class GuiListControl extends LitElement {
   }
 
   private calculateRange() {
+    const itemHeight = this.itemHeight ?? 40;
     const totalItems = this.items.length;
-    const visibleCount = Math.ceil(this._viewportHeight / this.itemHeight);
-    const startNode = Math.floor(this._scrollTop / this.itemHeight);
+    const visibleCount = Math.ceil(this._viewportHeight / itemHeight);
+    const startNode = Math.floor(this._scrollTop / itemHeight);
 
     const startIndex = Math.max(0, startNode - this.buffer);
     const endIndex = Math.min(totalItems, startNode + visibleCount + this.buffer);
 
-    const offsetY = startIndex * this.itemHeight;
+    const offsetY = startIndex * itemHeight;
 
     return { startIndex, endIndex, offsetY };
   }

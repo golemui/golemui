@@ -15,6 +15,7 @@ export const tests = defineForm({
       widget: 'list',
       path: 'default-renderer',
       props: {
+        itemHeight: 20,
         items: thousandsOfItems,
       },
     },
@@ -24,11 +25,17 @@ export const tests = defineForm({
       widget: 'list',
       path: 'complex-renderer',
       props: {
+        height: 150,
+        itemHeight: 60,
         valueField: 'value',
         itemRenderer: 'complexListItemRenderer',
         items: [
           { value: 'one', title: 'This is One', description: 'Blah blah blah Lorem Ipsum' },
           { value: 'two', title: 'Two this is', description: 'Ok, blah blah Ipsum Lorem' },
+          { value: 'three', title: 'Three this is', description: 'Lorem Ipsum blah blah blah' },
+          { value: 'four', title: 'Four this is', description: 'bluh bluh bluh' },
+          { value: 'five', title: 'Five this is', description: 'bleh bleh' },
+          { value: 'six', title: 'Six this is', description: 'blih blih blih' },
         ],
       },
     },

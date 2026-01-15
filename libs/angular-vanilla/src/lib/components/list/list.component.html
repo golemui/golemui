@@ -13,8 +13,8 @@
   [hint]="templateData.hint"
   [valueField]="templateData.valueField"
   [items]="templateData.items"
-  [itemHeight]="itemHeight"
-  [buffer]="buffer"
+  [itemHeight]="templateData.itemHeight"
+  [height]="templateData.height"
   (gui-list-update-items)="onUpdateItems($event)"
   (gui-list-range-change)="onRangeChange($event)"
 >
@@ -22,7 +22,7 @@
     <div
       role="listitem"
       class="gui-list__item-wrapper"
-      [style.height.px]="itemHeight"
+      [style.height.px]="templateData.itemHeight"
       (keydown)="valueChanged(item)"
       (click)="valueChanged(item)"
     >
@@ -34,6 +34,7 @@
             value: item.value,
             disabled: false,
             selected: templateData.value === item.value,
+            index: $index,
           }
         "
       >

@@ -31,11 +31,7 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
     Angular.ControlFieldAdapter,
   );
 
-  protected selection = signal<OptionValue | undefined>(undefined);
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
-
-  protected itemHeight = 40;
-  protected buffer = 5;
 
   private currentRange = signal({ start: 0, end: 10 });
   private listItems = signal<ListItem<any>[]>([]);

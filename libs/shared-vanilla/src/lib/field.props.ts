@@ -113,6 +113,8 @@ export type ListProps<T> = {
   hint?: string;
   items: ListItem<T>[];
   valueField?: string;
+  height?: number;
+  itemHeight?: number;
   /**
    * Should match with one of the provided itemRenderer keys
    */

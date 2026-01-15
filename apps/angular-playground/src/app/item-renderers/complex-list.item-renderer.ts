@@ -17,10 +17,17 @@ type ComplexItem = {
     }
 
     .my-custom-class {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
       padding: 0 12px;
       cursor: pointer;
+      height: 100%;
     }
 
+    .odd {
+      background-color: dimgray;
+    }
     .disabled {
       color: gray;
     }
@@ -30,7 +37,12 @@ type ComplexItem = {
       font-weight: bold;
     }
   `,
-  template: `<div class="my-custom-class" [class.disabled]="disabled" [class.selected]="selected">
+  template: `<div
+    class="my-custom-class"
+    [class.disabled]="disabled"
+    [class.selected]="selected"
+    [class.odd]="index % 2"
+  >
     <h2>{{ template.title }}</h2>
     <p>{{ template.description }}</p>
   </div>`,
