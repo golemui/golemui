@@ -1,5 +1,7 @@
 import { defineForm } from '@golemui/core';
 
+const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
+
 export const testsData = {};
 
 export const tests = defineForm({
@@ -13,7 +15,7 @@ export const tests = defineForm({
       widget: 'list',
       path: 'default-renderer',
       props: {
-        items: ['one', 'two'],
+        items: thousandsOfItems,
       },
     },
     {

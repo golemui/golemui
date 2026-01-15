@@ -12,25 +12,32 @@
   [value]="templateData.value ?? ''"
   [hint]="templateData.hint"
   [valueField]="templateData.valueField"
-  (change)="valueChanged($event)"
-  (blur)="adapter.onBlur()"
+  [items]="templateData.items"
+  [itemHeight]="itemHeight"
+  [buffer]="buffer"
+  (gui-list-update-items)="onUpdateItems($event)"
+  (gui-list-range-change)="onRangeChange($event)"
 >
-  <ul>
-    @for (item of templateData.items; track $index) {
-      <li>
-        <ng-container
-          *ngComponentOutlet="
-            itemRenderer;
-            inputs: {
-              item,
-              value: item,
-              disabled: false,
-              selected: false,
-            }
-          "
-        >
-        </ng-container>
-      </li>
-    }
-  </ul>
+  @for (item of visibleItems(); track $index) {
+    <div
+      role="listitem"
+      class="gui-list__item-wrapper"
+      [style.height.px]="itemHeight"
+      (keydown)="valueChanged(item)"
+      (click)="valueChanged(item)"
+    >
+      <ng-container
+        *ngComponentOutlet="
+          itemRenderer;
+          inputs: {
+            template: item.template,
+            value: item.value,
+            disabled: false,
+            selected: templateData.value === item.value,
+          }
+        "
+      >
+      </ng-container>
+    </div>
+  }
 </gui-list>

@@ -1,6 +1,7 @@
 import { CommonModule, NgComponentOutlet } from '@angular/common';
 import {
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
   OnDestroy,
@@ -9,7 +10,7 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { ListProps, OptionValue } from '@golemui/shared-vanilla';
+import { ListItem, ListProps, OptionValue } from '@golemui/shared-vanilla';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
 
 @Component({
@@ -25,11 +26,26 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
 })
 export class ListComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
+
   protected adapter: Angular.ControlFieldAdapter<OptionValue, ListProps<unknown>> = inject(
     Angular.ControlFieldAdapter,
   );
+
   protected selection = signal<OptionValue | undefined>(undefined);
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
+
+  protected itemHeight = 40;
+  protected buffer = 5;
+
+  private currentRange = signal({ start: 0, end: 10 });
+  private listItems = signal<ListItem<any>[]>([]);
+
+  protected visibleItems = computed(() => {
+    const items = this.listItems() || [];
+    const { start, end } = this.currentRange();
+
+    return items.slice(start, end);
+  });
 
   ngOnInit(): void {
     this.adapter.init(this.field);
@@ -39,8 +55,18 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
     this.adapter.destroy();
   }
 
-  protected valueChanged(event: Event) {
-    const value = (event as CustomEvent).detail.value;
-    this.adapter.valueChanged(value);
+  protected valueChanged(event: ListItem<any>) {
+    const item = event;
+    this.adapter.valueChanged(item.value);
+  }
+
+  protected onUpdateItems(event: Event) {
+    const items = (event as CustomEvent).detail;
+    this.listItems.set([...items]);
+  }
+
+  protected onRangeChange(event: Event) {
+    const { startIndex, endIndex } = (event as CustomEvent).detail;
+    this.currentRange.set({ start: startIndex, end: endIndex });
   }
 }

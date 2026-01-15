@@ -4,7 +4,7 @@ export type ItemRenderItemData = string | Record<string, unknown>;
  * The ItemRenderer Data Contract
  */
 export interface ItemRenderContext<T extends ItemRenderItemData> {
-  item: T;
+  template: T;
   /**
    * @see OptionValue
    */

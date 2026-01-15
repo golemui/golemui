@@ -105,7 +105,7 @@ export type SelectProps = {
 };
 
 export type ListItem<T> = {
-  data: T;
+  template: T;
   value: OptionValue;
 };
 
