@@ -29,9 +29,9 @@
     [itemHeight]="templateData.itemHeight"
     [height]="templateData.height"
     (change)="valueChanged($event)"
-    (gui-list-update-items)="onUpdateItems($event)"
-    (gui-list-range-change)="onRangeChange($event)"
-    (gui-list-focus-change)="onFocusChange($event)"
+    (gui-update-items)="onUpdateItems($event)"
+    (gui-range-change)="onRangeChange($event)"
+    (gui-focus-change)="onFocusChange($event)"
   >
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;

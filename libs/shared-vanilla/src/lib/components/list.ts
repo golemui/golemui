@@ -20,15 +20,14 @@ export class GuiListControl extends LitElement {
   @property({ type: Number }) itemHeight: number | undefined = undefined;
   @property({ type: Number }) height: number | undefined = undefined;
 
-  buffer = 5;
-
   @state() private _items: ListItem<any>[] = [];
   @state() private _scrollTop = 0;
   @state() private _viewportHeight = 0;
-
   @state() private _focusedIndex = -1;
 
   @query('.gui-list__scroll-viewport') private viewportElement!: HTMLElement;
+
+  private buffer = 5;
 
   override willUpdate(changedProperties: PropertyValues) {
     super.willUpdate(changedProperties);
@@ -64,6 +63,8 @@ export class GuiListControl extends LitElement {
         style="height: ${height}px; overflow-y: auto; position: relative; display: block;"
         @scroll="${this.onScroll}"
         @keydown="${this.onKeyDown}"
+        @focus="${this.onFocus}"
+        @blur="${this.onBlur}"
         aria-required=${this.required}
         aria-disabled=${this.disabled || this.readOnly ? 'true' : 'false'}
         aria-labelledby=${`${this.uid}_label`}
@@ -83,6 +84,10 @@ export class GuiListControl extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  public focusItemAtIndex(index: number) {
+    this._focusedIndex = index;
   }
 
   private onKeyDown(e: KeyboardEvent) {
@@ -132,8 +137,39 @@ export class GuiListControl extends LitElement {
     }
   }
 
-  public focusItemAtIndex(index: number) {
-    this._focusedIndex = index;
+  private onFocus() {
+    if (!this.value || !this.items.length) return;
+
+    const selectedIndex = this.items.findIndex((item) => {
+      const itemValue = this.valueField ? item[this.valueField as keyof ListItem<any>] : item;
+      return itemValue === this.value;
+    });
+
+    this._focusedIndex = selectedIndex;
+
+    this.dispatchEvent(
+      new CustomEvent('gui-focus-change', {
+        detail: { index: selectedIndex },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private onBlur(e: FocusEvent) {
+    if (e.relatedTarget && this.contains(e.relatedTarget as Node)) {
+      return;
+    }
+
+    this._focusedIndex = -1;
+
+    this.dispatchEvent(
+      new CustomEvent('gui-focus-change', {
+        detail: { index: -1 },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private scrollToIndex(index: number) {
@@ -170,7 +206,7 @@ export class GuiListControl extends LitElement {
     this.scrollToIndex(index);
 
     this.dispatchEvent(
-      new CustomEvent('gui-list-focus-change', {
+      new CustomEvent('gui-focus-change', {
         detail: { index },
         bubbles: true,
         composed: true,
@@ -182,7 +218,7 @@ export class GuiListControl extends LitElement {
     this._items = updateListItems(this.items, { valueField: this.valueField } as ListProps<any>);
 
     this.dispatchEvent(
-      new CustomEvent('gui-list-update-items', {
+      new CustomEvent('gui-update-items', {
         detail: this._items,
         bubbles: true,
         composed: true,
@@ -194,7 +230,7 @@ export class GuiListControl extends LitElement {
     const { startIndex, endIndex } = this.calculateRange();
 
     this.dispatchEvent(
-      new CustomEvent('gui-list-range-change', {
+      new CustomEvent('gui-range-change', {
         detail: { startIndex, endIndex },
         bubbles: true,
         composed: true,
