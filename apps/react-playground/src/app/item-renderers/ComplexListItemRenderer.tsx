@@ -1,6 +1,7 @@
 import React from 'react';
 import { ListItemRendererProps } from '@golemui/react-vanilla';
 import './complex-list-item-renderer.scss';
+import { cn } from '@golemui/react';
 
 type ComplexItem = {
   title: string;
@@ -14,18 +15,16 @@ export function ComplexListItemRenderer({
   disabled,
   focused,
 }: ListItemRendererProps<ComplexItem>) {
-  const classes = [
-    'my-custom-class',
-    disabled ? 'disabled' : '',
-    selected ? 'selected' : '',
-    focused ? 'focused' : '',
-    index % 2 === 0 ? 'odd' : '',
-  ]
-    .filter((c) => c.length > 0)
-    .join(' ');
+  const classes = {
+    'my-custom-class': true,
+    disabled: disabled,
+    selected: selected,
+    focused: focused,
+    odd: index % 2 === 0,
+  };
 
   return (
-    <div role="option" className={classes} aria-selected={selected} aria-disabled={disabled}>
+    <div role="option" className={cn(classes)} aria-selected={selected} aria-disabled={disabled}>
       <h2>{template?.title}</h2>
       <p>{template?.description}</p>
     </div>
