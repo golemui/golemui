@@ -26,7 +26,9 @@ export class GuiListControl extends LitElement {
   @state() private _scrollTop = 0;
   @state() private _viewportHeight = 0;
 
-  @query('.gui-list-scroll-viewport') private viewportElement!: HTMLElement;
+  @state() private _focusedIndex = -1;
+
+  @query('.gui-list__scroll-viewport') private viewportElement!: HTMLElement;
 
   override willUpdate(changedProperties: PropertyValues) {
     super.willUpdate(changedProperties);
@@ -52,26 +54,128 @@ export class GuiListControl extends LitElement {
     const itemHeight = this.itemHeight ?? 40;
     const totalHeight = this.items.length * itemHeight;
     const { offsetY } = this.calculateRange();
+    const activeId = this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : undefined;
 
     return html`
       <div
-        class="gui-list-scroll-viewport"
+        role="listbox"
+        tabindex=${this.disabled ? -1 : 0}
+        class="gui-list__scroll-viewport"
         style="height: ${height}px; overflow-y: auto; position: relative; display: block;"
         @scroll="${this.onScroll}"
+        @keydown="${this.onKeyDown}"
+        aria-required=${this.required}
+        aria-disabled=${this.disabled || this.readOnly ? 'true' : 'false'}
+        aria-labelledby=${`${this.uid}_label`}
+        aria-describedby=${`${this.uid}_hint`}
+        aria-activedescendant="${activeId || ''}"
       >
         <div
-          class="gui-list-spacer"
+          class="gui-list__spacer"
           style="height: ${totalHeight}px; width: 1px; opacity: 0; pointer-events: none;"
         ></div>
 
         <div
-          class="gui-list-content"
+          class="gui-list__content"
           style="transform: translateY(${offsetY}px); position: absolute; top: 0; left: 0; width: 100%;"
         >
           <slot></slot>
         </div>
       </div>
     `;
+  }
+
+  private onKeyDown(e: KeyboardEvent) {
+    if (this.disabled || this.readOnly) return;
+
+    const itemHeight = this.itemHeight ?? 40;
+    const visibleCount = Math.ceil(this._viewportHeight / itemHeight);
+    const maxIndex = this.items.length - 1;
+    let handled = false;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        this.setFocusedIndex(Math.min(this._focusedIndex + 1, maxIndex));
+        handled = true;
+        break;
+      case 'ArrowUp':
+        this.setFocusedIndex(Math.max(this._focusedIndex - 1, 0));
+        handled = true;
+        break;
+      case 'PageDown':
+        this.setFocusedIndex(Math.min(this._focusedIndex + visibleCount, maxIndex));
+        handled = true;
+        break;
+      case 'PageUp':
+        this.setFocusedIndex(Math.max(this._focusedIndex - visibleCount, 0));
+        handled = true;
+        break;
+      case 'Home':
+        this.setFocusedIndex(0);
+        handled = true;
+        break;
+      case 'End':
+        this.setFocusedIndex(maxIndex);
+        handled = true;
+        break;
+      case 'Enter':
+      case ' ':
+        if (this._focusedIndex >= 0 && this.items[this._focusedIndex]) {
+          this.selectItem(this.items[this._focusedIndex]);
+        }
+        handled = true;
+        break;
+    }
+
+    if (handled) {
+      e.preventDefault();
+    }
+  }
+
+  public focusItemAtIndex(index: number) {
+    this._focusedIndex = index;
+  }
+
+  private scrollToIndex(index: number) {
+    const itemHeight = this.itemHeight ?? 40;
+    const viewportHeight = this.height ?? 300;
+
+    const itemTop = index * itemHeight;
+    const itemBottom = itemTop + itemHeight;
+
+    const scrollTop = this.viewportElement.scrollTop;
+    const scrollBottom = scrollTop + viewportHeight;
+
+    if (itemTop < scrollTop) {
+      this.viewportElement.scrollTop = itemTop;
+    } else if (itemBottom > scrollBottom) {
+      this.viewportElement.scrollTop = itemBottom - viewportHeight;
+    }
+  }
+
+  private selectItem(item: ListItem<any>) {
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: this.valueField ? item[this.valueField as keyof ListItem<any>] : item },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private setFocusedIndex(index: number) {
+    if (index < 0 || index >= this.items.length) return;
+
+    this._focusedIndex = index;
+    this.scrollToIndex(index);
+
+    this.dispatchEvent(
+      new CustomEvent('gui-list-focus-change', {
+        detail: { index },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private updateItems() {

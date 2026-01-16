@@ -36,12 +36,19 @@ type ComplexItem = {
       background-color: lightgray;
       font-weight: bold;
     }
+    .focused {
+      border: 2px solid black;
+    }
   `,
   template: `<div
+    role="option"
     class="my-custom-class"
     [class.disabled]="disabled"
     [class.selected]="selected"
+    [class.focused]="focused"
     [class.odd]="index % 2"
+    [attr.aria-selected]="selected"
+    [attr.aria-disabled]="disabled"
   >
     <h2>{{ template.title }}</h2>
     <p>{{ template.description }}</p>
@@ -53,4 +60,5 @@ export class ComplexListItemRenderer implements ItemRenderContext<ComplexItem> {
   @Input({ required: true }) index!: number;
   @Input() selected?: boolean;
   @Input() disabled?: boolean;
+  @Input() focused?: boolean;
 }

@@ -28,8 +28,17 @@ gui-list {
     cursor: pointer;
     padding: 0 12px;
 
+    &-disabled {
+      cursor: not-allowed;
+      background-color: var(--gui-color-bg-disabled);
+    }
+
     &-selected {
       background-color: var(--gui-color-primary);
+    }
+
+    &-focused {
+      border: 1px solid var(--gui-color-primary);
     }
 
     &:hover {

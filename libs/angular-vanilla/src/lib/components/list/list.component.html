@@ -28,16 +28,22 @@
     [items]="templateData.items"
     [itemHeight]="templateData.itemHeight"
     [height]="templateData.height"
+    (change)="valueChanged($event)"
     (gui-list-update-items)="onUpdateItems($event)"
     (gui-list-range-change)="onRangeChange($event)"
+    (gui-list-focus-change)="onFocusChange($event)"
   >
     @for (item of visibleItems(); track $index) {
+      @let absoluteIndex = currentRange().start + $index;
+
       <div
-        role="listitem"
+        role="option"
+        tabindex="-1"
         class="gui-list__item-wrapper"
+        [id]="field.uid + '-item-' + absoluteIndex"
         [style.height.px]="templateData.itemHeight"
-        (keydown)="valueChanged(item)"
-        (click)="valueChanged(item)"
+        [attr.aria-selected]="templateData.value === item.value"
+        (click)="onClickItem(item, absoluteIndex, listRef)"
       >
         <ng-container
           *ngComponentOutlet="
@@ -47,6 +53,7 @@
             value: item.value,
             disabled: false,
             selected: templateData.value === item.value,
+            focused: focusedIndex() === absoluteIndex,
             index: $index,
           }
         "

@@ -24,7 +24,7 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
     class="gui-label"
     for=${uid}
     data-cy=${`${uid}_label`}
-    id=${type ? `${uid}_${type}_label` : nothing}
+    id=${type ? `${uid}_${type}_label` : `${uid}_label`}
     style=${styleMap({ display: templateData.label ? 'block' : 'none' })}
   >
     ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}

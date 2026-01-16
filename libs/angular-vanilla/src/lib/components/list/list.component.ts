@@ -33,8 +33,9 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
 
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
 
-  private currentRange = signal({ start: 0, end: 10 });
-  private listItems = signal<ListItem<any>[]>([]);
+  protected currentRange = signal({ start: 0, end: 10 });
+  protected listItems = signal<ListItem<any>[]>([]);
+  protected focusedIndex = signal<number>(-1);
 
   protected visibleItems = computed(() => {
     const items = this.listItems() || [];
@@ -51,9 +52,24 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
     this.adapter.destroy();
   }
 
-  protected valueChanged(event: ListItem<any>) {
-    const item = event;
-    this.adapter.valueChanged(item.value);
+  protected onClickItem(item: any, index: number, listRef: any) {
+    this.setValue(item.value);
+    this.focusedIndex.set(index);
+    listRef.focusItemAtIndex(index);
+  }
+
+  protected valueChanged(event: Event) {
+    const value = (event as CustomEvent).detail.value;
+    this.setValue(value);
+  }
+
+  protected setValue(value: OptionValue) {
+    this.adapter.valueChanged(value);
+  }
+
+  protected onFocusChange(event: Event) {
+    const index = (event as CustomEvent).detail.index;
+    this.focusedIndex.set(index);
   }
 
   protected onUpdateItems(event: Event) {

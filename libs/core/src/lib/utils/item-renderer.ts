@@ -12,6 +12,7 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
   index: number;
   selected?: boolean;
   disabled?: boolean;
+  focused?: boolean;
 }
 
 export type ItemRendererFn<T extends ItemRenderItemData = ItemRenderItemData, R = unknown> = (

@@ -16,6 +16,7 @@ export const tests = defineForm({
       path: 'default-renderer',
       props: {
         itemHeight: 20,
+        hint: 'Virtual scroll list with 1000 items.',
         items: thousandsOfItems,
       },
       validator: { type: 'string', required: true },
