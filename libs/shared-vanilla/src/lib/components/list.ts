@@ -51,7 +51,7 @@ export class GuiListControl extends LitElement {
   override render() {
     const height = this.height ?? 300;
     const itemHeight = this.itemHeight ?? 40;
-    const totalHeight = this.items.length * itemHeight;
+    const totalHeight = (this.items?.length ?? 0) * itemHeight;
     const { offsetY } = this.calculateRange();
     const activeId = this._focusedIndex >= 0 ? `${this.uid}-item-${this._focusedIndex}` : undefined;
 
@@ -252,7 +252,7 @@ export class GuiListControl extends LitElement {
 
   private calculateRange() {
     const itemHeight = this.itemHeight ?? 40;
-    const totalItems = this.items.length;
+    const totalItems = this.items?.length ?? 0;
     const visibleCount = Math.ceil(this._viewportHeight / itemHeight);
     const startNode = Math.floor(this._scrollTop / itemHeight);
 

@@ -74,7 +74,7 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
 
   protected onUpdateItems(event: Event) {
     const items = (event as CustomEvent).detail;
-    this.listItems.set([...items]);
+    this.listItems.set(items ? [...items] : []);
   }
 
   protected onRangeChange(event: Event) {
