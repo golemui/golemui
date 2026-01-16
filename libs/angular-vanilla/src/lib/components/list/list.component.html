@@ -36,6 +36,7 @@
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;
 
+      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
       <div
         role="option"
         tabindex="-1"
