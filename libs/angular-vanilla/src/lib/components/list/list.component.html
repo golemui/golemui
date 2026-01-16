@@ -2,7 +2,7 @@
 @let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
 
 <gui-label
-  [ariaTarget]="listRef"
+  [for]="listRef"
   [uid]="field.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"
@@ -28,6 +28,7 @@
     [items]="templateData.items"
     [itemHeight]="templateData.itemHeight"
     [height]="templateData.height"
+    (blur)="adapter.onBlur()"
     (change)="valueChanged($event)"
     (gui-update-items)="onUpdateItems($event)"
     (gui-range-change)="onRangeChange($event)"
@@ -68,5 +69,4 @@
 <gui-errors
   [errors]="templateData.errors"
   [touched]="templateData.touched"
-  [required]="templateData.validator?.required"
 ></gui-errors>

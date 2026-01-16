@@ -13,6 +13,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
   currency: async () => (await import('./components/Currency')).Currency,
   dateInput: async () => (await import('./components/DateInput')).DateInput,
   datePicker: async () => (await import('./components/DatePicker')).DatePicker,
+  list: async () => (await import('./components/List')).List,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,

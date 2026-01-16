@@ -14,7 +14,7 @@ export class GuiListControl extends LitElement {
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: OptionValue | undefined = undefined;
-  @property({ type: String }) valueField = 'value';
+  @property({ type: String }) valueField: string | undefined = undefined;
   @property({ type: Array }) items: ListItem<unknown>[] = [];
 
   @property({ type: Number }) itemHeight: number | undefined = undefined;
@@ -64,7 +64,7 @@ export class GuiListControl extends LitElement {
         @scroll="${this.onScroll}"
         @keydown="${this.onKeyDown}"
         @focus="${this.onFocus}"
-        @blur="${this.onBlur}"
+        @focusout="${this.onFocusOut}"
         aria-required=${this.required}
         aria-disabled=${this.disabled || this.readOnly ? 'true' : 'false'}
         aria-labelledby=${`${this.uid}_label`}
@@ -124,12 +124,15 @@ export class GuiListControl extends LitElement {
         handled = true;
         break;
       case 'Enter':
-      case ' ':
-        if (this._focusedIndex >= 0 && this.items[this._focusedIndex]) {
+      case ' ': {
+        const value = this.items[this._focusedIndex];
+        const hasValue = value !== undefined && value !== null;
+        if (this._focusedIndex >= 0 && hasValue) {
           this.selectItem(this.items[this._focusedIndex]);
         }
         handled = true;
         break;
+      }
     }
 
     if (handled) {
@@ -156,7 +159,7 @@ export class GuiListControl extends LitElement {
     );
   }
 
-  private onBlur(e: FocusEvent) {
+  private onFocusOut(e: FocusEvent) {
     if (e.relatedTarget && this.contains(e.relatedTarget as Node)) {
       return;
     }
@@ -170,6 +173,8 @@ export class GuiListControl extends LitElement {
         composed: true,
       }),
     );
+
+    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
   }
 
   private scrollToIndex(index: number) {
