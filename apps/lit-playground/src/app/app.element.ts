@@ -1,7 +1,7 @@
-import './pages/form/form.element';
-import './app.element.scss';
 import { LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import './app.element.scss';
+import './pages/form/form.element';
 
 @customElement('lit-root')
 export class AppElement extends LitElement {
@@ -13,7 +13,7 @@ export class AppElement extends LitElement {
 
   connectedCallback() {
     this.innerHTML = `
-      <header class="header"><h1>golemui</h1></header>
+      <header class="header"><h1>GolemUI Lit</h1></header>
       <main class="main">
         <lit-form></lit-form>
       </main>
