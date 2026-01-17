@@ -1,4 +1,5 @@
 import { NonFunctionField } from './form-field';
+import { I18nTranslator } from './i18n';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 import { ImmutableRecord, LooseObject } from './utils/types';
 
@@ -29,7 +30,10 @@ export type Uid = string;
  */
 export type ValidationStatus = null | string[];
 
-export type FieldPropertyFunctionParams<FormData> = { $form: ImmutableRecord<FormData> };
+export type FieldPropertyFunctionParams<FormData> = {
+  $form: ImmutableRecord<FormData>;
+  translate?: I18nTranslator['translate'];
+};
 
 /**
  * A FieldPropertyFunction is a field function that is evaluated and then substituted by the produced value.
@@ -49,6 +53,7 @@ export type ReactiveFormField = LooseObject<
 export type FunctionFieldParams<FormData> = {
   $form: ImmutableRecord<FormData>;
   errors?: ValidationStatus;
+  translate?: I18nTranslator['translate'];
 };
 
 /**

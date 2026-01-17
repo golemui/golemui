@@ -33,6 +33,8 @@ export const validateAll =
               controlValue,
             ) as StandardSchemaV1.Result<unknown>;
 
+            console.log(result);
+
             newValidations[control.path] = isStandardValidateSuccess(result)
               ? null
               : result.issues.map((issue) => issue.message);

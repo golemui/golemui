@@ -1,5 +1,6 @@
 import { isControlField } from '../form-field';
 import { ValidatorFn } from '../form-validator';
+import { I18nTranslator } from '../i18n';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import * as Fn from '../utils/function';
@@ -9,7 +10,15 @@ import * as Reducers from './reducers';
 import { isControlTouched, reduceIf } from './reducers/utils';
 
 export const reducer =
-  ({ validators, validateOn }: { validators: ValidatorFn<any>; validateOn: ValidateOn }) =>
+  ({
+    validators,
+    validateOn,
+    localization,
+  }: {
+    validators: ValidatorFn<any>;
+    validateOn: ValidateOn;
+    localization: I18nTranslator;
+  }) =>
   (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
@@ -20,7 +29,7 @@ export const reducer =
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps,
+          Reducers.calculateFieldProps(localization),
         );
 
       case 'ADD_FIELD':
@@ -28,7 +37,7 @@ export const reducer =
           Reducers.addField(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps,
+          Reducers.calculateFieldProps(localization),
         );
 
       case 'REMOVE_FIELD':
@@ -36,7 +45,7 @@ export const reducer =
           Reducers.removeField(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps,
+          Reducers.calculateFieldProps(localization),
         );
 
       case 'SET_FIELD_INITIAL_DATA':
@@ -45,7 +54,7 @@ export const reducer =
           Reducers.setFieldData(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps,
+          Reducers.calculateFieldProps(localization),
         );
 
       case 'OVERRIDE_FIELD_PROP':
@@ -53,7 +62,7 @@ export const reducer =
           Reducers.overrideFieldProp(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps,
+          Reducers.calculateFieldProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );
