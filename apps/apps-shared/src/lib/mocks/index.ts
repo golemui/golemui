@@ -5,4 +5,5 @@ export * from './selects';
 export * from './signin';
 export * from './tabs';
 export * from './tests';
+export * from './translations';
 export * from './users';

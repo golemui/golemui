@@ -43,6 +43,7 @@ export class FormCoreComponent implements OnInit {
   formName = input(Core.shortUUID());
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
+  localization = input<Core.I18nTranslator>();
 
   // OUTPUTS
   protected formHealth = output<Core.FormHealth>();
@@ -62,6 +63,7 @@ export class FormCoreComponent implements OnInit {
       this.validators(),
       this.validateOn(),
       this.itemRenderers(),
+      this.localization(),
     );
 
     Core.formHealth(this.context.store.state$)

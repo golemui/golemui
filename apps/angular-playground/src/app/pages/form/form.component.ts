@@ -6,6 +6,7 @@ import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
+import { i18nTranslator } from '../../i18n/i18n';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 
 @Component({
@@ -16,8 +17,8 @@ import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected formDef = AppsShared.tests;
-  protected formData = AppsShared.testsData;
+  protected formDef = AppsShared.translationsForm;
+  protected formData = AppsShared.translationsFormData;
 
   protected middlewares = [AppsShared.loggerMiddleware];
   protected customFieldLoaders = {
@@ -30,6 +31,7 @@ export class AppFormPage {
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
     complexListItemRenderer: ComplexListItemRenderer,
   };
+  protected localization: Core.I18nTranslator = i18nTranslator;
 
   protected error = '';
 
