@@ -2,7 +2,7 @@
 @let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
 
 <gui-label
-  [for]="listRef"
+  [targetElement]="listElementRef().nativeElement"
   [uid]="field.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"
@@ -16,14 +16,12 @@
     #listRef
     [id]="field.uid"
     [uid]="field.uid"
-    [label]="templateData.label"
     [errors]="templateData.errors"
     [touched]="templateData.touched"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
     [value]="templateData.value ?? ''"
-    [hint]="templateData.hint"
     [valueField]="templateData.valueField"
     [items]="templateData.items"
     [itemHeight]="templateData.itemHeight"

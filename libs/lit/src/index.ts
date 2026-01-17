@@ -7,5 +7,8 @@ export * from './lib/adapters/layout.field-adapter';
 export * from './lib/components/field/field.element';
 export * from './lib/components/field/repeater-field.element';
 export * from './lib/components/form/form.element';
+export * from './lib/components/item-renderers/item-renderer';
 export * from './lib/context/form.context';
 export * from './lib/context/repeater-index-token.context';
+
+export * from './lib/utils/type';

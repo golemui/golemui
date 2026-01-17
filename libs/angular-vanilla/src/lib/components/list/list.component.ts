@@ -3,10 +3,12 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
   inject,
   OnDestroy,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
@@ -32,6 +34,8 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
   );
 
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
+
+  protected listElementRef = viewChild.required<ElementRef>('listRef');
 
   protected currentRange = signal({ start: 0, end: 10 });
   protected listItems = signal<ListItem<any>[]>([]);

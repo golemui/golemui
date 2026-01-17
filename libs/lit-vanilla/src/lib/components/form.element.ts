@@ -11,14 +11,15 @@ import {
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { vanillaFieldLoaders } from '../field.loaders';
-import { Type } from '../utils/types';
+import { LitItemRenderer, Type } from '@golemui/lit';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
   @property({ type: Object }) formDef!: string | Record<string, any>;
   @property({ type: Object }) data: any = {};
-  @property({ type: Array }) fieldLoaders: FieldLoaders<Type<WithField>> = {};
-  @property({ attribute: false }) validators: CustomValidatorSchemas = {};
+  @property({ type: Object }) fieldLoaders: FieldLoaders<Type<WithField>> = {};
+  @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
+  @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
 
@@ -56,6 +57,7 @@ export class FormElement extends LitElement {
         .formDef=${this.formDef}
         .data=${this.data}
         .fieldLoaders=${this.customFieldLoaders}
+        .itemRenderers=${this.itemRenderers}
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
         .validateOn=${this.validateOn ?? 'eager'}

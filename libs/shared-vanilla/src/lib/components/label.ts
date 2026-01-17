@@ -5,7 +5,7 @@ import { GUIAriaController } from '../controllers';
 
 @customElement('gui-label')
 export class GuiLabel extends LitElement {
-  @property({ type: Object }) for: HTMLElement | undefined = undefined;
+  @property({ type: Object }) targetElement: HTMLElement | undefined = undefined;
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
@@ -16,7 +16,7 @@ export class GuiLabel extends LitElement {
   @property({ type: Boolean }) touched: boolean | undefined = false;
 
   private ariaController = new GUIAriaController(this, {
-    getTargets: () => [this.for as HTMLElement],
+    getTargets: () => [this.targetElement as HTMLElement],
     getState: () => ({
       uid: this.uid as string,
       templateData: {

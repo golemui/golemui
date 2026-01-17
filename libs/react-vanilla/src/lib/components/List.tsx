@@ -100,7 +100,7 @@ export function List(fieldInstance: Core.WithField) {
   return (
     <div className="gui-list">
       <gui-label
-        for={listRef.current || undefined}
+        targetElement={listRef.current || undefined}
         uid={uid}
         label={label}
         hint={templateData.hint}
@@ -114,7 +114,6 @@ export function List(fieldInstance: Core.WithField) {
           ref={listRef}
           id={uid}
           uid={uid}
-          label={label}
           items={templateData.items}
           value={value ?? ''}
           valueField={templateData.valueField}

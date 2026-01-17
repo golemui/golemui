@@ -7,8 +7,6 @@ import { updateListItems } from './list-items';
 @customElement('gui-list')
 export class GuiListControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
-  @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;

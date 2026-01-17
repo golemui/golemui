@@ -5,14 +5,18 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';
+import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef = AppsShared.reactiveFunctions;
-  formData = AppsShared.reactiveFunctionsData;
+  formDef = AppsShared.tests;
+  formData = AppsShared.testsData;
   customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
+  };
+  itemRenderers = {
+    complexListItemRenderer: complexListItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
   validators: ValidatorsVanilla.CustomValidatorSchemas = {
@@ -47,6 +51,7 @@ export class FormElement extends LitElement {
           .formDef=${this.formDef}
           .data=${this.formData}
           .fieldLoaders=${this.customFieldLoaders}
+          .itemRenderers=${this.itemRenderers}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
           .validateOn=${'eager'}
