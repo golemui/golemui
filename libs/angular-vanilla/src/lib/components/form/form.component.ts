@@ -22,6 +22,7 @@ export class FormComponent {
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   validators = input<CustomValidatorSchemas>({});
   validateOn = input<Core.ValidateOn>('eager');
+  itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
 
   protected customFieldLoaders = computed(() => ({
     ...vanillaFieldLoaders,

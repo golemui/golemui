@@ -42,6 +42,7 @@ export class FormCoreComponent implements OnInit {
   i18n = input<I18n>(defaultI18n);
   formName = input(Core.shortUUID());
   validateOn = input<Core.ValidateOn>('eager');
+  itemRenderers = input<Record<string, Core.ItemRenderer>>({});
 
   // OUTPUTS
   protected formHealth = output<Core.FormHealth>();
@@ -60,6 +61,7 @@ export class FormCoreComponent implements OnInit {
       this.middlewares(),
       this.validators(),
       this.validateOn(),
+      this.itemRenderers(),
     );
 
     Core.formHealth(this.context.store.state$)
