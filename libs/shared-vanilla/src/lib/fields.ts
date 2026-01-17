@@ -4,6 +4,7 @@ export const controlWidgets = [
   'currency',
   'dateInput',
   'datePicker',
+  'dropdown',
   'list',
   'number',
   'radiogroup',
