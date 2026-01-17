@@ -17,6 +17,7 @@ export function List(fieldInstance: Core.WithField) {
     ListProps<unknown>
   >(field);
 
+  // React catches bubbling blur events meanwhile Lit and Angular don't, we prevent double blur events here
   const handleBlur = useCallback(
     (e: React.FocusEvent) => {
       if (listRef.current && e.relatedTarget && listRef.current.contains(e.relatedTarget as Node)) {
