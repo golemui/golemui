@@ -84,8 +84,24 @@ export class GuiListControl extends LitElement {
     `;
   }
 
+  override focus(options?: FocusOptions) {
+    if (this.viewportElement) {
+      this.viewportElement.focus(options);
+    } else {
+      super.focus(options);
+    }
+  }
+
   public focusItemAtIndex(index: number) {
     this._focusedIndex = index;
+  }
+
+  public scrollToSelectedIndex() {
+    const selectedIndex = this.items.findIndex((item) => {
+      const itemValue = this.valueField ? item[this.valueField as keyof ListItem<any>] : item;
+      return itemValue === this.value;
+    });
+    this.scrollToIndex(selectedIndex);
   }
 
   private onKeyDown(e: KeyboardEvent) {
@@ -146,7 +162,9 @@ export class GuiListControl extends LitElement {
       return itemValue === this.value;
     });
 
+    console.log('selectedIndex', selectedIndex);
     this._focusedIndex = selectedIndex;
+    this.scrollToIndex(selectedIndex);
 
     this.dispatchEvent(
       new CustomEvent('gui-focus-change', {

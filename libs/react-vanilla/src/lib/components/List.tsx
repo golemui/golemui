@@ -81,6 +81,8 @@ export function List(fieldInstance: Core.WithField) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
+      if (templateData.disabled) return;
+
       onValueChanged(item.value);
       setFocusedIndex(index);
 
@@ -93,8 +95,8 @@ export function List(fieldInstance: Core.WithField) {
 
   const ItemRenderer = (useItemRenderer(templateData.itemRenderer as string) ||
     DefaultListItemRenderer) as React.ComponentType<ListItemRendererProps<any>>;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
   const label = templateData.label as string;
+  const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
 
@@ -115,15 +117,15 @@ export function List(fieldInstance: Core.WithField) {
           ref={listRef}
           id={uid}
           uid={uid}
-          items={templateData.items}
           value={value ?? ''}
           valueField={templateData.valueField}
+          items={templateData.items}
           itemHeight={templateData.itemHeight}
           height={templateData.height}
+          required={isRequired}
+          touched={isTouched}
           disabled={isDisabled}
           readOnly={isReadOnly}
-          touched={isTouched}
-          required={isRequired}
           onBlur={handleBlur}
         >
           {visibleItems.map((item, index) => {
@@ -138,8 +140,9 @@ export function List(fieldInstance: Core.WithField) {
                 tabIndex={-1}
                 id={`${uid}-item-${absoluteIndex}`}
                 className="gui-list__item-wrapper"
-                style={{ height: `${templateData.itemHeight}px` }}
+                style={{ height: `${templateData.itemHeight || 40}px` }}
                 aria-selected={isSelected}
+                aria-disabled={isDisabled ? 'true' : 'false'}
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer

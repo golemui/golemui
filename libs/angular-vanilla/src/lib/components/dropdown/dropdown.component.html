@@ -2,7 +2,7 @@
 @let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
 
 <gui-label
-  [targetElement]="listElementRef().nativeElement"
+  [targetElement]="[inputRef, listRef]"
   [uid]="field.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"
@@ -12,25 +12,42 @@
 ></gui-label>
 
 <div class="gui-field">
-  <gui-list
-    #listRef
+
+  <input
+    #inputRef
+    type="text"
     [id]="field.uid"
-    [uid]="field.uid"
-    [errors]="templateData.errors"
-    [touched]="templateData.touched"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
+    [placeholder]="templateData.placeholder ?? ''"
+    [value]="templateData.value ?? ''"
+    (keydown)="onInputKeyDown($event)"
+    (input)="onInput($event)"
+    (focus)="onInputFocus()"
+    (focusout)="onFocusOutInput($event)"
+  />
+  <gui-list
+    #listRef
+    [id]="field.uid + '-list'"
+    [uid]="field.uid"
     [value]="templateData.value ?? ''"
     [valueField]="templateData.valueField"
-    [items]="templateData.items"
+    [items]="displayItems()"
     [itemHeight]="templateData.itemHeight"
     [height]="templateData.height"
-    (blur)="adapter.onBlur()"
-    (change)="valueChanged($event)"
+    [required]="templateData.validator?.required"
+    [touched]="templateData.touched"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [hidden]="!isListVisible()"
     (gui-update-items)="onUpdateItems($event)"
     (gui-range-change)="onRangeChange($event)"
     (gui-focus-change)="onFocusChange($event)"
+    (blur)="onListBlur()"
+    (focus)="onInputFocus()"
+    (focusout)="onFocusOutInput($event)"
+    (change)="onValueChange($event)"
   >
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;
@@ -43,21 +60,20 @@
         [id]="field.uid + '-item-' + absoluteIndex"
         [style.height.px]="templateData.itemHeight || 40"
         [attr.aria-selected]="templateData.value === item.value"
-        [attr.aria-disabled]="templateData.disabled"
-        (click)="onClickItem(item, absoluteIndex, listRef)"
+        (click)="onClickItem(item, absoluteIndex)"
       >
         <ng-container
           *ngComponentOutlet="
-          itemRenderer;
-          inputs: {
-            template: item.template,
-            value: item.value,
-            disabled: templateData.disabled,
-            selected: templateData.value === item.value,
-            focused: focusedIndex() === absoluteIndex,
-            index: $index,
-          }
-        "
+            itemRenderer;
+            inputs: {
+              template: item.template,
+              value: item.value,
+              disabled: templateData.disabled,
+              selected: templateData.value === item.value,
+              focused: focusedIndex() === absoluteIndex,
+              index: absoluteIndex,
+            }
+          "
         >
         </ng-container>
       </div>
