@@ -39,14 +39,14 @@ export const translationsForm = defineForm({
           key: 'alert.login',
           default: 'Hello {{name}}. Please, login (default)',
           params: {
-            name: 'user.name',
+            name: '$form.user.name',
           },
         },
         'text.register': {
           key: 'alert.register',
           default: 'Hello {{name}}. You can Register now (default)',
           params: {
-            name: 'user.name',
+            name: '$form.user.name',
           },
         },
         'level.register': 'success',

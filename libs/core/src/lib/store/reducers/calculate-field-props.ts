@@ -237,16 +237,18 @@ function calculateProperty<F extends NonFunctionField<string>>({
  */
 const resolveI18nParams = (
   params: I18nParams | undefined,
-  $form: State['data'],
+  // TODO: if we also target $error and $meta this should be State not State['data']
+  data: State['data'],
 ): I18nParams | undefined => {
   if (!params) {
     return params;
   }
   return Object.keys(params).reduce((acc, key) => {
     const path = String(params[key]);
-    // TODO: Add support for $form, $error, $meta prefixes in path.
     if (isPotentialDotPath(path)) {
-      acc[key] = get($form, path);
+      // TODO: temporary while we accomodate other prefixes
+      const pathWithout$form = path.replace('$form.', '');
+      acc[key] = get(data, pathWithout$form) || path;
     } else {
       acc[key] = path;
     }
