@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
+import FieldErrorBoundary from './FieldErrorBoundary';
 import FieldRenderer from './FieldRenderer';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 
@@ -10,6 +11,7 @@ export interface FormComponentProps {
   formDef: JsonStringified | JsonObject;
   fieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
   itemRenderers: Record<string, Core.ItemRenderer>;
+  localization?: Core.I18nTranslator;
   validators: Core.ValidatorFn<any>;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
@@ -23,6 +25,7 @@ export function FormComponent({
   formDef,
   fieldLoaders,
   itemRenderers,
+  localization,
   middlewares,
   validators,
   validateOn,
@@ -45,8 +48,9 @@ export function FormComponent({
       validators,
       validateOn || 'eager',
       itemRenderers,
+      localization,
     );
-  }, [fieldLoaders, middlewares, validators, validateOn, itemRenderers]);
+  }, [fieldLoaders, middlewares, validators, validateOn, itemRenderers, localization]);
 
   // FORM HEALTH
   useEffect(() => {
@@ -103,7 +107,9 @@ export function FormComponent({
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
         <form id={formNameRef.current}>
-          <FieldRenderer field={formLayoutField} />
+          <FieldErrorBoundary field={formLayoutField}>
+            <FieldRenderer field={formLayoutField} />
+          </FieldErrorBoundary>
         </form>
       </div>
     </ReactFormContextProvider>

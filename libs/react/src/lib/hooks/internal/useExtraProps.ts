@@ -17,7 +17,7 @@ export function useTemplateData<
 ) {
   // TODO: this should be [templateData, setTemplateData]
   const [props, setProps] = useState<WithFlattenedProps<F, ExtraProps>>(
-    (field.props || {}) as WithFlattenedProps<F, ExtraProps>,
+    {} as WithFlattenedProps<F, ExtraProps>,
   );
   const { formContext } = useReactFormContext();
 

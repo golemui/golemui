@@ -14,6 +14,7 @@ export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
   fieldLoaders?: Core.FieldLoaders<ComponentType<Core.WithField>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
+  localization?: Core.I18nTranslator;
   validators?: CustomValidatorSchemas;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
@@ -28,6 +29,7 @@ export const FormComponent = ({
   data = undefined,
   fieldLoaders = {},
   itemRenderers = {},
+  localization,
   validators = {},
   middlewares = [],
   validateOn = 'eager',
@@ -48,6 +50,7 @@ export const FormComponent = ({
       fieldLoaders={customFieldLoaders}
       middlewares={customMiddlewares}
       itemRenderers={customItemRenderers}
+      localization={localization}
       validators={customValidators}
       validateOn={validateOn}
       formHealth={formHealth}
