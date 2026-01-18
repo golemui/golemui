@@ -6,7 +6,6 @@ import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { APP_CONFIG } from '../../../environments/environment.model';
-import { i18nTranslator } from '../../i18n/i18n';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 
 @Component({
@@ -31,7 +30,7 @@ export class AppFormPage {
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
     complexListItemRenderer: ComplexListItemRenderer,
   };
-  protected localization: Core.I18nTranslator = i18nTranslator;
+  protected localization: Core.I18nTranslator = AppsShared.i18nTranslator;
 
   protected error = '';
 

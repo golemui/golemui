@@ -1,6 +1,6 @@
 import { defineForm } from '@golemui/core';
 
-export const translationsFormData = { user: { id: 'ASDFGHJKL4567' } };
+export const translationsFormData = { user: { id: 'ASDFGHJKL4567', name: 'Mr. Pump' } };
 
 export const translationsForm = defineForm({
   states: {
@@ -44,7 +44,10 @@ export const translationsForm = defineForm({
         },
         'text.register': {
           key: 'alert.register',
-          default: 'You can Register now (default)',
+          default: 'Hello {{name}}. You can Register now (default)',
+          params: {
+            name: 'user.name',
+          },
         },
         'level.register': 'success',
       },
