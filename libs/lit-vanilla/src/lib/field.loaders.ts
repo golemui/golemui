@@ -11,6 +11,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,
+  dropdown: async () => (await import('./components/dropdown.element')).DropdownElement,
   list: async () => (await import('./components/list.element')).ListElement,
   textinput: async () => (await import('./components/textinput.element')).TextinputElement,
   textarea: async () => (await import('./components/textarea.element')).TextareaElement,

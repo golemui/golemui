@@ -109,6 +109,19 @@ export type ListItem<T> = {
   value: OptionValue;
 };
 
+export type DropdownProps<T> = {
+  placeholder?: string;
+  hint?: string;
+  items: ListItem<T>[];
+  valueField?: string;
+  height?: number;
+  itemHeight?: number;
+  /**
+   * Should match with one of the provided itemRenderer keys
+   */
+  itemRenderer?: string;
+};
+
 export type ListProps<T> = {
   hint?: string;
   items: ListItem<T>[];
