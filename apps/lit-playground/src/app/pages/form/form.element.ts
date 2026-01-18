@@ -9,8 +9,8 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef = AppsShared.tests;
-  formData = AppsShared.testsData;
+  formDef = AppsShared.kitchenSink;
+  formData = AppsShared.kitchenSinkData;
   customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,

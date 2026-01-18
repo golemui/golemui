@@ -41,8 +41,9 @@
         tabindex="-1"
         class="gui-list__item-wrapper"
         [id]="field.uid + '-item-' + absoluteIndex"
-        [style.height.px]="templateData.itemHeight"
+        [style.height.px]="templateData.itemHeight || 40"
         [attr.aria-selected]="templateData.value === item.value"
+        [attr.aria-disabled]="templateData.disabled"
         (click)="onClickItem(item, absoluteIndex, listRef)"
       >
         <ng-container
@@ -51,7 +52,7 @@
           inputs: {
             template: item.template,
             value: item.value,
-            disabled: false,
+            disabled: templateData.disabled,
             selected: templateData.value === item.value,
             focused: focusedIndex() === absoluteIndex,
             index: $index,

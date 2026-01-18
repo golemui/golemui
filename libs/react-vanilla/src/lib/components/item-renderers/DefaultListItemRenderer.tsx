@@ -10,7 +10,7 @@ export function DefaultListItemRenderer({
 }: ListItemRendererProps<OptionValue>) {
   const classes = [
     'gui-list__item',
-    disabled ? 'disabled' : '',
+    disabled ? 'gui-list__item-disabled' : '',
     selected ? 'gui-list__item-selected' : '',
     focused ? 'gui-list__item-focused' : '',
   ]
