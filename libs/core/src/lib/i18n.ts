@@ -1,4 +1,6 @@
-export type I18nParams = Record<string, string | number>;
+import { DotPath } from './shared';
+
+export type I18nParams = Record<string, string | number | DotPath>;
 
 export type TranslationKey = string;
 

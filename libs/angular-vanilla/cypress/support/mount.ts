@@ -43,6 +43,7 @@ export const mountFramework = (options: MountOptions) => {
       middlewares: options.middlewares ?? [],
       validators: options.validators,
       validateOn: options.validateOn ?? 'eager',
+      localization: options.localization,
       formHealth: formHealthOutput,
       formEvent: formEventOutput,
     },
