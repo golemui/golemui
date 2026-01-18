@@ -25,12 +25,22 @@ export const translationsForm = defineForm({
     },
     {
       uid: '',
+      kind: 'control',
+      label: 'Name',
+      widget: 'textinput',
+      path: 'user.name',
+    },
+    {
+      uid: '',
       kind: 'display',
       widget: 'alert',
       props: {
         text: {
           key: 'alert.login',
-          default: 'Please, login (default)',
+          default: 'Hello {{name}}. Please, login (default)',
+          params: {
+            name: 'user.name',
+          },
         },
         'text.register': {
           key: 'alert.register',

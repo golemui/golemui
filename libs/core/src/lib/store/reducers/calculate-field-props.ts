@@ -8,7 +8,8 @@ import {
   LayoutField,
   NonFunctionField,
 } from '../../form-field';
-import { I18nTranslator, isTranslationConfig } from '../../i18n';
+import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
+import { isPotentialDotPath } from '../../utils/dot-path';
 import { get, set } from '../../utils/object';
 import { DerivedField, State } from '../model';
 
@@ -200,7 +201,11 @@ function calculateProperty<F extends NonFunctionField<string>>({
   } else {
     // TODO: is this too naive? it only checks for the existence of `{key: string;}`
     if (isTranslationConfig(propValue)) {
-      propValue = localization.translate(propValue.key, propValue.params, propValue.default);
+      propValue = localization.translate(
+        propValue.key,
+        resolveI18nParams(propValue.params, $form),
+        propValue.default,
+      );
     }
     set(derivedField.current, dotPath, propValue);
   }
@@ -219,3 +224,32 @@ function calculateProperty<F extends NonFunctionField<string>>({
     derivedField.changed = true;
   }
 }
+
+/**
+ * Resolves i18n interpolation parameters to concrete values.
+ *
+ * Each parameter value may either be a literal (string or number) or a
+ * property path that is looked up in the provided form state.
+ * References are replaced with their resolved values, while literal
+ * values are passed through unchanged.
+ *
+ * If `params` is `undefined`, the function returns `undefined`.
+ */
+const resolveI18nParams = (
+  params: I18nParams | undefined,
+  $form: State['data'],
+): I18nParams | undefined => {
+  if (!params) {
+    return params;
+  }
+  return Object.keys(params).reduce((acc, key) => {
+    const path = String(params[key]);
+    // TODO: Add support for $form, $error, $meta prefixes in path.
+    if (isPotentialDotPath(path)) {
+      acc[key] = get($form, path);
+    } else {
+      acc[key] = path;
+    }
+    return acc;
+  }, {} as I18nParams);
+};

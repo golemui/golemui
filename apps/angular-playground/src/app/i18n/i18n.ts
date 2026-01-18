@@ -6,10 +6,10 @@ i18next.init({
   lng: 'es',
   resources: {
     en: {
-      translation: { alert: { register: 'Register', login: 'Login' } },
+      translation: { alert: { register: 'Register', login: 'Login {{name}}' } },
     },
     es: {
-      translation: { alert: { register: 'Regístrate', login: 'Entra' } },
+      translation: { alert: { register: 'Regístrate', login: 'Entra {{name}}' } },
     },
   },
 });
