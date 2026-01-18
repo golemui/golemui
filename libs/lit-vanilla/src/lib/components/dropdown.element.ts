@@ -106,11 +106,25 @@ export class DropdownElement extends LitElement implements Core.WithField {
     this._inputRef.value = e.detail.value;
   }
 
-  private _onKeyDown(event: Event) {
-    if ((event as KeyboardEvent).key === 'ArrowDown') {
-      event.preventDefault();
-      this._listRef.focus();
-      this._listRef.scrollToSelectedIndex();
+  private async _onKeyDown(event: Event) {
+    const key = (event as KeyboardEvent).key;
+
+    switch (key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this._isListVisible = true;
+        await this.updateComplete;
+        this._listRef.focus();
+        this._listRef.scrollToSelectedIndex();
+        break;
+      case 'Enter':
+        if (!this._inputRef.value) {
+          // Field is empty and enter pressed, we clear the selection
+          this.adapter.valueChanged(null);
+          this._isListVisible = false;
+          this._isFiltering = false;
+        }
+        break;
     }
   }
 
@@ -121,8 +135,8 @@ export class DropdownElement extends LitElement implements Core.WithField {
     if (filterValue) {
       const filteredItems = templateData.items.filter((item: any) =>
         templateData.valueField
-          ? item[templateData.valueField].toString().includes(filterValue)
-          : item.toString().includes(filterValue),
+          ? item[templateData.valueField].toString().toLowerCase().includes(filterValue)
+          : item.toString().toLowerCase().includes(filterValue),
       );
       this._isFiltering = true;
       this._filteredItems = [...filteredItems];
@@ -185,6 +199,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
           type="text"
           id=${this.field.uid}
           data-cy=${`${this.field.uid}_textinput`}
+          .value=${templateData.value ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}

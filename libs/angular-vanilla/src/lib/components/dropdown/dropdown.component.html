@@ -1,0 +1,87 @@
+@let templateData = adapter.templateData();
+@let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
+
+<gui-label
+  [targetElement]="[inputRef, listRef]"
+  [uid]="field.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+></gui-label>
+
+<div class="gui-field">
+
+  <input
+    #inputRef
+    type="text"
+    [id]="field.uid"
+    [required]="templateData.validator?.required"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [placeholder]="templateData.placeholder ?? ''"
+    [value]="templateData.value ?? ''"
+    (keydown)="onInputKeyDown($event)"
+    (input)="onInput($event)"
+    (focus)="onInputFocus()"
+    (focusout)="onFocusOutInput($event)"
+  />
+  <gui-list
+    #listRef
+    [id]="field.uid + '-list'"
+    [uid]="field.uid"
+    [value]="templateData.value ?? ''"
+    [valueField]="templateData.valueField"
+    [items]="displayItems()"
+    [itemHeight]="templateData.itemHeight"
+    [height]="templateData.height"
+    [required]="templateData.validator?.required"
+    [touched]="templateData.touched"
+    [disabled]="templateData.disabled"
+    [readonly]="templateData.readonly"
+    [hidden]="!isListVisible()"
+    (gui-update-items)="onUpdateItems($event)"
+    (gui-range-change)="onRangeChange($event)"
+    (gui-focus-change)="onFocusChange($event)"
+    (blur)="onListBlur()"
+    (focus)="onInputFocus()"
+    (focusout)="onFocusOutInput($event)"
+    (change)="onValueChange($event)"
+  >
+    @for (item of visibleItems(); track $index) {
+      @let absoluteIndex = currentRange().start + $index;
+
+      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+      <div
+        role="option"
+        tabindex="-1"
+        class="gui-list__item-wrapper"
+        [id]="field.uid + '-item-' + absoluteIndex"
+        [style.height.px]="templateData.itemHeight || 40"
+        [attr.aria-selected]="templateData.value === item.value"
+        (click)="onClickItem(item, absoluteIndex)"
+      >
+        <ng-container
+          *ngComponentOutlet="
+            itemRenderer;
+            inputs: {
+              template: item.template,
+              value: item.value,
+              disabled: templateData.disabled,
+              selected: templateData.value === item.value,
+              focused: focusedIndex() === absoluteIndex,
+              index: absoluteIndex,
+            }
+          "
+        >
+        </ng-container>
+      </div>
+    }
+  </gui-list>
+</div>
+
+<gui-errors
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+></gui-errors>
