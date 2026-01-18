@@ -22,6 +22,7 @@ export class FormElement extends LitElement {
   @property({ type: String }) formName = Core.shortUUID();
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
+  @property({ type: Object }) localization?: Core.I18nTranslator;
 
   state: State | undefined;
   subscriptions: Subscription[] = [];
@@ -38,6 +39,7 @@ export class FormElement extends LitElement {
       this.validators,
       this.validateOn,
       this.itemRenderers,
+      this.localization
     );
 
     this.subscriptions.push(
