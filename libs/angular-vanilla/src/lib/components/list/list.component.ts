@@ -57,6 +57,8 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   protected onClickItem(item: any, index: number, listRef: any) {
+    if (this.adapter.templateData().disabled) return;
+
     this.setValue(item.value);
     this.focusedIndex.set(index);
     listRef.focusItemAtIndex(index);

@@ -19,6 +19,12 @@ gui-list {
 
   .gui-list__item-wrapper {
     background-color: transparent;
+
+    &[aria-disabled="true"] {
+      background-color: var(--gui-color-bg-disabled);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 
   .gui-list__item {

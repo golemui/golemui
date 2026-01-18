@@ -11,8 +11,8 @@ async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const formDef = AppsShared.tests;
-const formData = AppsShared.testsData;
+const formDef = AppsShared.kitchenSink;
+const formData = AppsShared.kitchenSinkData;
 
 const customFieldLoaders = {
   heading: async () =>

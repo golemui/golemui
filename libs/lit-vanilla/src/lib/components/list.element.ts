@@ -66,6 +66,8 @@ export class ListElement extends LitElement implements Core.WithField {
   }
 
   private _onClickItem(item: ListItem<any>, index: number) {
+    if (this.adapter.templateData.disabled) return;
+
     this.adapter.valueChanged(item.value);
 
     this._focusedIndex = index;
@@ -124,6 +126,7 @@ export class ListElement extends LitElement implements Core.WithField {
                 id="${this.field.uid}-item-${absoluteIndex}"
                 style="height: ${data.itemHeight || 40}px"
                 aria-selected=${isSelected ? 'true' : 'false'}
+                aria-disabled=${data.disabled ? 'true' : 'false'}
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({

@@ -81,6 +81,8 @@ export function List(fieldInstance: Core.WithField) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
+      if (templateData.disabled) return;
+
       onValueChanged(item.value);
       setFocusedIndex(index);
 
@@ -138,8 +140,9 @@ export function List(fieldInstance: Core.WithField) {
                 tabIndex={-1}
                 id={`${uid}-item-${absoluteIndex}`}
                 className="gui-list__item-wrapper"
-                style={{ height: `${templateData.itemHeight}px` }}
+                style={{ height: `${templateData.itemHeight || 40}px` }}
                 aria-selected={isSelected}
+                aria-disabled={isDisabled ? 'true' : 'false'}
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
