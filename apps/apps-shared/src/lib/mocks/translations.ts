@@ -9,6 +9,50 @@ export const translationsForm = defineForm({
   form: [
     {
       uid: '',
+      kind: 'control',
+      widget: 'datePicker',
+      path: 'datePicker',
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+        prevMonthIcon: 'material-icons material-icons-chevron_left',
+        nextMonthIcon: 'material-icons material-icons-chevron_right',
+      },
+      validator: { type: 'string', required: true, format: 'date-time' },
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'dateInput',
+      path: 'dateInput',
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+      },
+      validator: { type: 'string', required: true, format: 'date-time' },
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'calendar',
+      path: 'calendar',
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+        prevMonthIcon: 'material-icons material-icons-chevron_left',
+        nextMonthIcon: 'material-icons material-icons-chevron_right',
+      },
+      validator: { type: 'string', required: true, format: 'date-time' },
+    },
+    {
+      uid: '',
+      kind: 'control',
+      widget: 'currency',
+      path: 'currencyMaximumFractionDigits',
+      props: {
+        placeholder: 'maximum 2 digits after the decimal point',
+        maximumFractionDigits: 2,
+      },
+    },
+    {
+      uid: '',
       kind: 'display',
       widget: 'heading',
       props: {
