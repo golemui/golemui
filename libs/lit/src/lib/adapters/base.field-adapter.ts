@@ -24,17 +24,15 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
   }
 
   // Listen to the calculated props stream and keep all field props merged in a flattened object
-  protected templateDataUpdater(postUpdate: (obj: any) => any = (obj) => obj) {
+  protected templateDataUpdater() {
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid!))
       .subscribe((calculatedField) => {
-        this.setTemplateData(
-          postUpdate({
-            ...calculatedField,
-            ...calculatedField.props,
-            ...(calculatedField as Core.InteractiveField<string>).on,
-          }),
-        );
+        this.setTemplateData({
+          ...calculatedField,
+          ...calculatedField.props,
+          ...(calculatedField as Core.InteractiveField<string>).on,
+        });
       });
   }
 

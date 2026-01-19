@@ -6,7 +6,9 @@ import * as Core from '@golemui/core';
   standalone: true,
   selector: '[gui-label]',
   imports: [CommonModule],
-  template: `{{ templateData().label + (templateData().validator?.required ? ' *' : '') }}
+  template: `@if (templateData().label) {
+      {{ templateData().label + (templateData().validator?.required ? ' *' : '') }}
+    }
     @if (templateData().hint) {
       <div class="gui-field-hint" [id]="uid() + '_hint'">{{ templateData().hint }}</div>
     }
