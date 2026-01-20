@@ -54,14 +54,14 @@ export class SelectElement extends LitElement implements Core.WithField {
         .options=${this.adapter.templateData.options}
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
-        @change=${() => this.valueChanged(event)}
+        @change=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-select>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    const value = (event as CustomEvent).detail.value;
+  valueChanged(event: CustomEvent) {
+    const value = event.detail.value;
     this.adapter.valueChanged(value);
   }
 

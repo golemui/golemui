@@ -71,7 +71,7 @@ export class GuiToggleControl extends LitElement {
           ?required=${templateData.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
-          @change="${() => !templateData.readonly && this.valueChanged(event)}"
+          @change=${this.valueChanged}
         />
 
         <span class="gui-toggle--slider" role="presentation"></span>
@@ -81,14 +81,17 @@ export class GuiToggleControl extends LitElement {
 
   valueChanged(event: Event | undefined) {
     event?.stopPropagation();
-    const target = event?.target as HTMLInputElement;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: target.checked },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+
+    if (!this.readOnly) {
+      const target = event?.target as HTMLInputElement;
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { value: target.checked },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   onBlur() {

@@ -88,8 +88,8 @@ export class GuiRadiogroupControl extends LitElement {
                   ?checked=${this.hasMatchingValue && opt.value === templateData.value}
                   ?required=${templateData.required}
                   ?disabled=${templateData.disabled || templateData.readonly}
-                  @change=${() => this.valueChanged(event)}
-                  @blur=${() => this.onBlur()}
+                  @change=${this.valueChanged}
+                  @blur=${this.onBlur}
                 />
                 ${opt.label}
               </label>`,
@@ -105,11 +105,11 @@ export class GuiRadiogroupControl extends LitElement {
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    event?.stopPropagation();
+  valueChanged(event: Event) {
+    event.stopPropagation();
 
     if (!this.readOnly) {
-      const target = event?.target as HTMLInputElement;
+      const target = event.target as HTMLInputElement;
       this.dispatchEvent(
         new CustomEvent('change', {
           detail: { value: inferOptionValue(target.value, this.options) },

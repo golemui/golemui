@@ -86,6 +86,8 @@ export class DropdownElement extends LitElement implements Core.WithField {
   }
 
   private _onClickItem(item: ListItem<any>, index: number) {
+    if (this.adapter.templateData.readonly) return;
+
     const templateData = this.adapter.templateData;
     this.adapter.valueChanged(item.value);
 
@@ -204,10 +206,10 @@ export class DropdownElement extends LitElement implements Core.WithField {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder ?? ''}
-          @keydown=${(event: KeyboardEvent) => this._onKeyDown(event)}
-          @input=${(event: InputEvent) => this._filterItems(event)}
-          @focusout=${(e: FocusEvent) => this._onFocusOutInput(e)}
-          @focus=${() => this._onFocus()}
+          @keydown=${this._onKeyDown}
+          @input=${this._filterItems}
+          @focusout=${this._onFocusOutInput}
+          @focus=${this._onFocus}
         />
 
         <gui-list
@@ -226,9 +228,9 @@ export class DropdownElement extends LitElement implements Core.WithField {
           @gui-range-change=${this._onRangeChange}
           @gui-update-items=${this._onUpdateItems}
           @gui-focus-change=${this._onFocusChange}
-          @focus=${() => this._onFocus()}
-          @blur=${() => this._onBlur()}
-          @change=${(e: CustomEvent) => this._onValueChange(e)}
+          @focus=${this._onFocus}
+          @blur=${this._onBlur}
+          @change=${this._onValueChange}
         >
           ${visibleItems.map((item, index) => {
             const absoluteIndex = this._range.start + index;

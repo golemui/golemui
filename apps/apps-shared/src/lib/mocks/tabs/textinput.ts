@@ -15,6 +15,7 @@ export const textinput = (): any => ({
       widget: 'textinput',
       path: 'textinputDisabled',
       disabled: true,
+      readonly: true,
     },
     {
       uid: '',

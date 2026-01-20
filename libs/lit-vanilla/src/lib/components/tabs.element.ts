@@ -143,7 +143,7 @@ export class TabsElement extends LitElement implements Core.WithField {
                       aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
                       class=${classMap({ active: tab.uid === this.activeTab })}
                       @click=${() => this.onClickTab(tab.uid)}
-                      @keydown=${(event: KeyboardEvent) => this.onKeyDown(event)}
+                      @keydown=${this.onKeyDown}
                       @focus=${(event: FocusEvent) =>
                         (event.target as HTMLButtonElement).scrollIntoView()}
                     >

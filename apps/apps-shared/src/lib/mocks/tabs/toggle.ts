@@ -18,6 +18,7 @@ export const toggle = (): any => ({
       label: 'Disabled toggle',
       path: 'isDisabled',
       disabled: true,
+      readonly: true,
       props: {},
     },
     {

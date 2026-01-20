@@ -49,14 +49,14 @@ export class CheckboxElement extends LitElement implements Core.WithField {
         .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
         .checkboxPosition=${this.adapter.templateData.checkboxPosition}
-        @change=${() => !this.adapter.templateData.readonly && this.valueChanged(event)}
+        @change=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-checkbox>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    const value = (event as CustomEvent)?.detail.value;
+  valueChanged(event: CustomEvent) {
+    const value = event.detail.value;
     this.adapter.valueChanged(value);
   }
 
