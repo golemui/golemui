@@ -12,7 +12,7 @@ export function createFormStore(
   validateOn: ValidateOn,
   localization: I18nTranslator,
 ): FormStore {
-  const subject = new BehaviorSubject<State>(createInitialState());
+  const subject = new BehaviorSubject<State>(createInitialState(localization.lang));
   const state$ = subject.asObservable().pipe(distinctUntilChanged());
   const reducerFn = reducer({ validators, validateOn, localization });
 

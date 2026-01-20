@@ -4,9 +4,9 @@ import { flattenForm } from '../../utils/form';
 import * as Actions from '../actions';
 import { createInitialState, FormHealth, State } from '../model';
 
-export const initialize = (_: State, action: Actions.INITIALIZE): State => {
+export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State => {
   const initialState = {
-    ...createInitialState(),
+    ...createInitialState(lang),
     formName: action.payload.formName,
   };
   let formDef = action.payload.formDef;

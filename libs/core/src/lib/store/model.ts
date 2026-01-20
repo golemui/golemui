@@ -80,9 +80,14 @@ export type State = {
    * Set to true when a validateOn-type event occurs on any form control.
    */
   touched: boolean;
+
+  /**
+   * The BCP 47 language tag of the current locale (e.g., 'en-US', 'es', 'fr-CA').
+   */
+  lang: string;
 };
 
-export const createInitialState = (): State => ({
+export const createInitialState = (lang: string): State => ({
   formName: '',
   formDef: Form.formDefDecoder.parse({
     form: {
@@ -102,6 +107,7 @@ export const createInitialState = (): State => ({
   data: {},
   formHealth: { status: 'ok' },
   touched: false,
+  lang,
 });
 
 // ------------------------------

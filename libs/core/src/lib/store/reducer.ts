@@ -32,6 +32,12 @@ export const reducer =
           Reducers.calculateFieldProps(localization),
         );
 
+      case 'SET_LANGUAGE':
+        return Fn.pipe(
+          Reducers.setLanguage(state, action),
+          Reducers.calculateFieldProps(localization),
+        );
+
       case 'ADD_FIELD':
         return Fn.pipe(
           Reducers.addField(state, action),

@@ -15,6 +15,7 @@ export class FormContext<ComponentType> {
   events$ = new Subject<FormEvent>();
   uuid = crypto.randomUUID();
   itemRenderers: Record<string, ItemRenderer> = {};
+  localization!: I18nTranslator;
 
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
@@ -22,8 +23,9 @@ export class FormContext<ComponentType> {
     validators: ValidatorFn<any>,
     validateOn: ValidateOn,
     itemRenderers: Record<string, ItemRenderer>,
-    localization: I18nTranslator = identityTranslator,
+    localization: I18nTranslator = identityTranslator(),
   ) {
+    this.localization = localization;
     this.fieldRegistry.setFieldLoaders(fieldLoaders);
     this.itemRenderers = itemRenderers;
     this.store = createFormStore(middlewares, validators, validateOn, localization);

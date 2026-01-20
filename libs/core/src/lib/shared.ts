@@ -102,6 +102,7 @@ export type FormEvent<T = any> = {
  * Control adapter templateData
  */
 export type ControlTemplateData<T, V = any> = {
+  lang?: string;
   label?: string;
   value?: T;
   /**
@@ -118,5 +119,22 @@ export type ControlTemplateData<T, V = any> = {
  * Layout adapter templateData
  */
 export type LayoutTemplateData = {
+  lang?: string;
   children: NonFunctionField<string>[];
+};
+
+/**
+ * Display field adapter templateData
+ */
+export type DisplayFieldTemplateData = {
+  lang?: string;
+};
+
+/**
+ * Interactive field adapter templateData
+ */
+export type InteractiveFieldTemplateData = {
+  lang?: string;
+  label?: string;
+  disabled?: boolean;
 };
