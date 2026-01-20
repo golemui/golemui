@@ -11,6 +11,7 @@ export interface MountOptions<StateKeys extends Core.UiState = string> {
   formHealth?: (error: Core.FormHealth) => void | Promise<void>;
   validateOn?: ValidateOn;
   withCustomComponent?: boolean;
+  localization?: Core.I18nTranslator;
 }
 
 export type MountComponentFn<StateKeys extends Core.UiState = string> = (

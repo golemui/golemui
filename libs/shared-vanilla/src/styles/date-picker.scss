@@ -20,6 +20,12 @@
       &[aria-expanded='true']::after {
         transform: translateY(-50%) rotate(-135deg);
       }
+
+      gui-calendar {
+        position: absolute;
+        top: 100%;
+        z-index: 10;
+      }
     }
 
     .gui-date-input {
@@ -58,7 +64,6 @@
       background: var(--gui-color-bg);
       border: 1px solid var(--gui-color-border);
       padding: var(--gui-padding);
-      z-index: 10;
     }
 
     .gui-calendar__header {

@@ -31,12 +31,6 @@
 }
 
 // List Item Renderer
-h2,
-p {
-  margin: 0;
-  padding: 0;
-}
-
 .my-custom-class {
   display: flex;
   flex-direction: column;
@@ -44,6 +38,12 @@ p {
   padding: 0 12px;
   cursor: pointer;
   height: 100%;
+
+  h2,
+  p {
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .odd {

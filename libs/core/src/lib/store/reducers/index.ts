@@ -9,4 +9,5 @@ export * from './remove-field';
 export * from './set-data';
 export * from './set-field-data';
 export * from './set-form-health';
+export * from './set-language';
 export * from './validate-all';

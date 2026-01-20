@@ -9,7 +9,7 @@ import { CurrencyProps } from '../field.props';
 export class GuiCurrencyControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Boolean }) required: boolean | undefined = false;
@@ -200,7 +200,7 @@ export class GuiCurrencyControl extends LitElement {
     if (value === '' || value === undefined || value === null || isNaN(value as number)) return '';
 
     try {
-      return new Intl.NumberFormat(this.localeId, {
+      return new Intl.NumberFormat(this.localeId ?? 'en', {
         style: 'currency',
         currency: this.currency ?? 'USD',
         maximumFractionDigits:
@@ -214,7 +214,7 @@ export class GuiCurrencyControl extends LitElement {
   }
 
   private get separators() {
-    const example = new Intl.NumberFormat(this.localeId).format(1111.1);
+    const example = new Intl.NumberFormat(this.localeId ?? 'en').format(1111.1);
     return {
       group: example.replace(/1/g, '').replace(/\d/g, '')[0] || ',',
       decimal: example.replace(/1/g, '').replace(/\d/g, '').slice(-1) || '.',

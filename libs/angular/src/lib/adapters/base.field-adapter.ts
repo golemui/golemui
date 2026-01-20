@@ -28,7 +28,7 @@ export abstract class BaseFieldAdapter<F extends Core.NonFunctionField> {
             ...current,
             ...calculatedField,
             ...calculatedField.props,
-            ...(calculatedField as Core.InteractiveField).on,
+            lang: this.context.store.getState().lang,
           };
         });
       });

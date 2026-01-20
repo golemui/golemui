@@ -61,18 +61,24 @@ export function DatePicker(fieldInstance: Core.WithField) {
         injectValidationIssues(null);
         onValueChanged(e.detail.value);
       };
+      const blurHandler = (e: CustomEvent) => {
+        onBlur();
+        setIsCalendarOpen(false);
+      };
 
       calendarControlRef.current = node;
 
       if (node) {
+        target.addEventListener('blur', blurHandler);
         target.addEventListener('change', changeHandler);
       }
 
       return () => {
-        target.removeEventListener('change', changeHandler);
+        target.addEventListener('blur', blurHandler);
+        target.addEventListener('change', changeHandler);
       };
     },
-    [onValueChanged, injectValidationIssues],
+    [onValueChanged, injectValidationIssues, onBlur],
   );
 
   useEffect(() => {
@@ -110,6 +116,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
+  const lang = templateData.lang;
 
   return (
     <div className="gui-date-picker">
@@ -139,6 +146,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
           ref={handleDateRef}
           uid={uid}
           hint={hint}
+          showErrors={false}
           errors={errors}
           touched={isTouched}
           required={isRequired}
@@ -146,6 +154,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
           readOnly={isReadonly}
           value={value}
           icon={icon}
+          localeId={lang}
         />
 
         {isCalendarOpen && (
@@ -163,6 +172,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
             dayFormat={dayFormat}
             weekdayFormat={weekdayFormat}
             monthFormat={monthFormat}
+            localeId={lang}
           />
         )}
       </div>

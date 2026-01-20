@@ -1,16 +1,25 @@
 import * as Core from '@golemui/core';
 import { FieldRenderer, useLayoutField } from '@golemui/react';
 import { AccordionProps } from '@golemui/shared-vanilla';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+const empty = {};
 
 export function Accordion(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.LayoutField;
   const { uid, children, templateData, onChange } = useLayoutField<AccordionProps>(field);
-  const [activeSections, setActiveSections] = useState(templateData.defaultOpen ?? {});
+  const [activeSections, setActiveSections] =
+    useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
+
+  useEffect(() => {
+    if (activeSections === empty && templateData.defaultOpen) {
+      setActiveSections(templateData.defaultOpen || {});
+    }
+  }, [activeSections, templateData]);
 
   const onClickButton = useCallback(
     (uid: string) => {
-      const newState = { ...activeSections };
+      const newState: typeof activeSections = { ...activeSections };
 
       if (templateData.singleOpen) {
         Object.keys(newState)
@@ -34,7 +43,6 @@ export function Accordion(fieldInstance: Core.WithField) {
         (section) => section.uid === uid,
       ) as Core.NonFunctionField<string>;
       const isActiveSection = activeSections[uid];
-
       return isActiveSection && child ? (
         <section
           className="gui-field"
@@ -50,7 +58,8 @@ export function Accordion(fieldInstance: Core.WithField) {
   );
 
   const renderAccordion = useCallback(() => {
-    return templateData.sections.map((section, index) => (
+    const sections = templateData.sections || [];
+    return sections.map((section, index) => (
       <div className="gui-accordion__section" key={`${'accordion_section_' + section.uid}`}>
         <button
           type="button"
@@ -67,7 +76,7 @@ export function Accordion(fieldInstance: Core.WithField) {
         {renderContent(section.uid)}
       </div>
     ));
-  }, [templateData, activeSections, onClickButton, renderContent]);
+  }, [templateData.sections, activeSections, onClickButton, renderContent]);
 
   return (
     <div className="gui-accordion">

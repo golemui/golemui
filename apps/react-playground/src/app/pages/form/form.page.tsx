@@ -1,18 +1,19 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
+import { ReactItemRenderer } from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
-import styles from './form.page.module.scss';
-import { ReactItemRenderer } from '@golemui/react';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
+import styles from './form.page.module.scss';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const formDef = AppsShared.kitchenSink;
-const formData = AppsShared.kitchenSinkData;
+const formDef = AppsShared.translationsForm;
+const formData = AppsShared.translationsFormData;
+const localization = AppsShared.i18nTranslator;
 
 const customFieldLoaders = {
   heading: async () =>
@@ -44,6 +45,7 @@ export function FormPage() {
         fieldLoaders={customFieldLoaders}
         middlewares={middlewares}
         itemRenderers={itemRenderers}
+        localization={localization}
         validators={validators}
         validateOn="eager"
         formHealth={onFormHealth}

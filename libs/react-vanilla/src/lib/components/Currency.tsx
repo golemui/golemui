@@ -28,6 +28,7 @@ export function Currency(fieldInstance: Core.WithField) {
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
+  const lang = templateData.lang;
 
   return (
     <div className="gui-textinput">
@@ -47,6 +48,7 @@ export function Currency(fieldInstance: Core.WithField) {
         icon={icon}
         iconPosition={iconPosition}
         placeholder={placeholder ?? undefined}
+        localeId={lang}
         onInput={handleChange}
         onBlur={onBlur}
       ></gui-currency>

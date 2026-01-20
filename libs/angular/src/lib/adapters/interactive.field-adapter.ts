@@ -4,7 +4,7 @@ import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
 export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveField> {
-  templateData = signal<{ label?: string; disabled?: boolean }>({});
+  templateData = signal<Core.InteractiveFieldTemplateData>({} as Core.InteractiveFieldTemplateData);
 
   init(field: Core.InteractiveField) {
     this.field = field;

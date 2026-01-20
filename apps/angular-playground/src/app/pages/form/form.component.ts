@@ -16,8 +16,8 @@ import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected formDef = AppsShared.kitchenSink;
-  protected formData = AppsShared.kitchenSinkData;
+  protected formDef = AppsShared.translationsForm;
+  protected formData = AppsShared.translationsFormData;
 
   protected middlewares = [AppsShared.loggerMiddleware];
   protected customFieldLoaders = {
@@ -30,6 +30,7 @@ export class AppFormPage {
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
     complexListItemRenderer: ComplexListItemRenderer,
   };
+  protected localization: Core.I18nTranslator = AppsShared.i18nTranslator;
 
   protected error = '';
 

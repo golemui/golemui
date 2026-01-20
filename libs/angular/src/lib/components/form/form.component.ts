@@ -5,6 +5,7 @@ import {
   DestroyRef,
   inject,
   input,
+  OnDestroy,
   OnInit,
   output,
   Type,
@@ -17,10 +18,6 @@ import { FieldDirective } from '../../directives/field.directive';
 type JsonStringified = string;
 type JsonObject = Record<string, any>;
 
-type I18n = Record<string, any>;
-// TODO: Implement i18n
-const defaultI18n: I18n = {};
-
 @Component({
   selector: 'gui-core-form',
   standalone: true,
@@ -32,17 +29,17 @@ const defaultI18n: I18n = {};
     class: 'gui-form',
   },
 })
-export class FormCoreComponent implements OnInit {
+export class FormCoreComponent implements OnInit, OnDestroy {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
   fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
   validators = input.required<Core.ValidatorFn<any>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
-  i18n = input<I18n>(defaultI18n);
   formName = input(Core.shortUUID());
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
+  localization = input<Core.I18nTranslator>();
 
   // OUTPUTS
   protected formHealth = output<Core.FormHealth>();
@@ -53,6 +50,7 @@ export class FormCoreComponent implements OnInit {
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);
+  private unsubscribeI18n: () => void = () => undefined;
 
   // LIFE CYCLE
   ngOnInit(): void {
@@ -62,6 +60,7 @@ export class FormCoreComponent implements OnInit {
       this.validators(),
       this.validateOn(),
       this.itemRenderers(),
+      this.localization(),
     );
 
     Core.formHealth(this.context.store.state$)
@@ -86,5 +85,18 @@ export class FormCoreComponent implements OnInit {
         data: this.data(),
       },
     });
+
+    this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
+      this.context.store.dispatch({
+        type: 'SET_LANGUAGE',
+        payload: {
+          lang,
+        },
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeI18n();
   }
 }

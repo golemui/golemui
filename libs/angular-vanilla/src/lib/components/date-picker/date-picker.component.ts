@@ -66,6 +66,11 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 
+  onBlurCalendar() {
+    this.adapter.onBlur();
+    this.closeCalendar();
+  }
+
   openCalendar() {
     this.isCalendarOpen.set(true);
   }
