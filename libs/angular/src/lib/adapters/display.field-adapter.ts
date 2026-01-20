@@ -6,7 +6,9 @@ import { BaseFieldAdapter } from './base.field-adapter';
 export class DisplayFieldAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.DisplayField> {
-  templateData = signal<ExtraProps>({} as ExtraProps);
+  templateData = signal<Core.DisplayFieldTemplateData & ExtraProps>(
+    {} as Core.DisplayFieldTemplateData & ExtraProps,
+  );
 
   init(field: Core.DisplayField) {
     this.field = field;
