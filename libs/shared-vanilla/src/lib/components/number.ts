@@ -91,8 +91,8 @@ export class GuiNumberControl extends LitElement {
           ?readonly=${this.readOnly}
           step=${typeof this.step === 'number' ? this.step : nothing}
           placeholder=${this.placeholder || nothing}
-          @input=${() => this.valueChanged(event)}
-          @blur=${() => this.onBlur()}
+          @input=${this.valueChanged}
+          @blur=${this.onBlur}
         />
         ${this.icon ? html`<div class=${classMap(numberClasses)}></div>` : nothing}
       </div>
@@ -101,16 +101,19 @@ export class GuiNumberControl extends LitElement {
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    event?.stopPropagation();
-    const target = event?.target as HTMLInputElement;
-    this.dispatchEvent(
-      new CustomEvent('input', {
-        detail: { value: target.valueAsNumber },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  valueChanged(event: InputEvent) {
+    event.stopPropagation();
+
+    if (!this.readOnly) {
+      const target = event.target as HTMLInputElement;
+      this.dispatchEvent(
+        new CustomEvent('input', {
+          detail: { value: target.valueAsNumber },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   onBlur() {

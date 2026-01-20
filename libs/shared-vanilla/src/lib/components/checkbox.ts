@@ -71,23 +71,26 @@ export class GuiCheckboxControl extends LitElement {
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
-          @change=${() => !this.readOnly && this.valueChanged(event)}
-          @blur=${() => this.onBlur()}
+          @change=${this.valueChanged}
+          @blur=${this.onBlur}
         />
       </div>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    event?.stopPropagation();
-    const target = event?.target as HTMLInputElement;
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: target.checked },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  valueChanged(event: Event) {
+    event.stopPropagation();
+
+    if (!this.readOnly) {
+      const target = event.target as HTMLInputElement;
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { value: target.checked },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   onBlur() {

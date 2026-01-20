@@ -54,12 +54,12 @@ export class CalendarElement extends LitElement implements Core.WithField {
         .weekdayFormat=${this.adapter.templateData.weekdayFormat}
         .monthFormat=${this.adapter.templateData.monthFormat}
         .localeId=${this.adapter.templateData.lang!}
-        @change=${() => this.valueChanged(event)}
+        @change=${this.valueChanged}
       ></gui-calendar>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
+  valueChanged(event: InputEvent) {
     const target = event?.target as HTMLInputElement;
     this.adapter.valueChanged(target.value);
   }

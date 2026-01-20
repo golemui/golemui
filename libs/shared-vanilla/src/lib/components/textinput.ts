@@ -80,8 +80,8 @@ export class GuiTextinputControl extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
-          @input=${() => this.valueChanged(event)}
-          @blur=${() => this.onBlur()}
+          @input=${this.valueChanged}
+          @blur=${this.onBlur}
         />
         ${textinputIcon.html}
       </div>
@@ -90,16 +90,19 @@ export class GuiTextinputControl extends LitElement {
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    event?.stopPropagation();
-    const target = event?.target as HTMLInputElement;
-    this.dispatchEvent(
-      new CustomEvent('input', {
-        detail: { value: target.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  valueChanged(event: InputEvent) {
+    event.stopPropagation();
+
+    if (!this.readOnly) {
+      const target = event.target as HTMLInputElement;
+      this.dispatchEvent(
+        new CustomEvent('input', {
+          detail: { value: target.value },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   onBlur() {

@@ -54,14 +54,14 @@ export class TextareaElement extends LitElement implements Core.WithField {
         .minimumHeight=${this.adapter.templateData.minimumHeight}
         .autoGrow=${this.adapter.templateData.autoGrow}
         .maxLength=${this.adapter.templateData.validator?.maxLength}
-        @input=${() => this.valueChanged(event)}
+        @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-textarea>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    const value = (event as CustomEvent).detail.value;
+  valueChanged(event: CustomEvent) {
+    const value = event.detail.value;
     this.adapter.valueChanged(value);
   }
 

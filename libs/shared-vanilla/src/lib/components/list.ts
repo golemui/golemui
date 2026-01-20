@@ -162,7 +162,6 @@ export class GuiListControl extends LitElement {
       return itemValue === this.value;
     });
 
-    console.log('selectedIndex', selectedIndex);
     this._focusedIndex = selectedIndex;
     this.scrollToIndex(selectedIndex);
 

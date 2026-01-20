@@ -15,6 +15,7 @@ export const number = (): any => ({
       widget: 'number',
       path: 'numberDisabled',
       disabled: true,
+      readonly: true,
     },
     {
       uid: '',
