@@ -11,7 +11,7 @@ export function Tabs(fieldInstance: Core.WithField) {
   const endSentinelRef = useRef<HTMLLIElement>(null);
   const [isStartVisible, setIsStartVisible] = useState(false);
   const [isEndVisible, setIsEndVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState(templateData.defaultOpen ?? templateData.tabs[0].uid);
+  const [activeTab, setActiveTab] = useState(templateData.defaultOpen);
 
   useEffect(() => {
     const startSentinel = startSentinelRef.current;
@@ -31,10 +31,18 @@ export function Tabs(fieldInstance: Core.WithField) {
   }, []);
 
   useEffect(() => {
-    const tabs = templateData.tabs;
+    if (activeTab === undefined && templateData.tabs?.length > 0) {
+      setActiveTab(templateData.tabs[0].uid);
+    }
+  }, [templateData.tabs, activeTab]);
+
+  useEffect(() => {
+    const tabs = templateData.tabs || [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === activeTab);
-    tabRefs.current[currentIndex].scrollIntoView();
-  }, []);
+    if (currentIndex > -1) {
+      tabRefs.current[currentIndex].scrollIntoView();
+    }
+  }, [activeTab, templateData.tabs]);
 
   const handleTabChange = useCallback(
     (uid: string) => {
@@ -78,7 +86,8 @@ export function Tabs(fieldInstance: Core.WithField) {
   );
 
   const renderTabs = useCallback(() => {
-    return templateData.tabs.map((tab, index) => {
+    const tabs = templateData.tabs || [];
+    return tabs.map((tab, index) => {
       return (
         <li key={`tab_${field.uid}_${tab.uid}`}>
           <button
