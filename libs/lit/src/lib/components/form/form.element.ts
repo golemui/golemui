@@ -26,6 +26,7 @@ export class FormElement extends LitElement {
 
   state: State | undefined;
   subscriptions: Subscription[] = [];
+  private unsubscribeI18n: () => void = () => undefined;
 
   static FORM_HEALTH_EVENT = 'formHealth';
   static FORM_EVENT = 'formEvent';
@@ -39,7 +40,7 @@ export class FormElement extends LitElement {
       this.validators,
       this.validateOn,
       this.itemRenderers,
-      this.localization
+      this.localization,
     );
 
     this.subscriptions.push(
@@ -68,6 +69,15 @@ export class FormElement extends LitElement {
       type: 'SET_DATA',
       payload: { data: this.data },
     });
+
+    this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
+      this.context.store.dispatch({
+        type: 'SET_LANGUAGE',
+        payload: {
+          lang,
+        },
+      });
+    });
   }
 
   override createRenderRoot() {
@@ -91,5 +101,6 @@ export class FormElement extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.unsubscribeI18n();
   }
 }

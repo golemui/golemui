@@ -53,6 +53,7 @@ export class CalendarElement extends LitElement implements Core.WithField {
         .dayFormat=${this.adapter.templateData.dayFormat}
         .weekdayFormat=${this.adapter.templateData.weekdayFormat}
         .monthFormat=${this.adapter.templateData.monthFormat}
+        .localeId=${this.adapter.templateData.lang!}
         @change=${() => this.valueChanged(event)}
       ></gui-calendar>
     `;

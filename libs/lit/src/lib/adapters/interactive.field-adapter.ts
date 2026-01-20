@@ -7,7 +7,7 @@ export const interactiveContext = createContext<InteractiveFieldAdapter>(
 );
 
 export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveField> {
-  override templateData: { label?: string; disabled?: boolean } = {};
+  override templateData = {} as Core.InteractiveFieldTemplateData;
 
   init(field: Core.InteractiveField) {
     this.field = field;
