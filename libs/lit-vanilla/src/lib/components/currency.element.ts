@@ -54,6 +54,7 @@ export class CurrencyElement extends LitElement implements Core.WithField {
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
         .placeholder=${this.adapter.templateData.placeholder}
+        .localeId=${this.adapter.templateData.lang}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-currency>

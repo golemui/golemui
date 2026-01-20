@@ -10,6 +10,12 @@ export const translationsForm = defineForm({
     {
       uid: '',
       kind: 'control',
+      widget: 'currency',
+      path: 'currency',
+    },
+    {
+      uid: '',
+      kind: 'control',
       widget: 'datePicker',
       path: 'datePicker',
       props: {
