@@ -21,7 +21,7 @@ export class GuiCalendarControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
   @property({ type: Boolean }) touched: boolean | undefined = undefined;
   @property({ type: Boolean }) required: boolean | undefined = false;
@@ -96,6 +96,7 @@ export class GuiCalendarControl extends LitElement {
             <button
               type="button"
               class="gui-button gui-calendar__month-button"
+              @focusout=${this.onFocusOut}
               @click=${this.prevMonth}
             >
               ${this.prevMonthIcon
@@ -110,6 +111,7 @@ export class GuiCalendarControl extends LitElement {
             <button
               type="button"
               class="gui-button gui-calendar__month-button"
+              @focusout=${this.onFocusOut}
               @click=${this.nextMonth}
             >
               ${this.nextMonthIcon
@@ -146,6 +148,7 @@ export class GuiCalendarControl extends LitElement {
                       ?disabled=${!day.isCurrentMonth}
                       data-date=${day.date.toISOString()}
                       @click=${() => this.selectDate(day)}
+                      @focusout=${this.onFocusOut}
                       @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
                     >
                       ${day.dayLabel}
@@ -218,7 +221,7 @@ export class GuiCalendarControl extends LitElement {
   }
 
   private get weekDaysOrder(): number[] {
-    const localeData = weekInfoData[this.localeId] || { firstDay: 0 };
+    const localeData = weekInfoData[this.localeId ?? 'en'] || { firstDay: 0 };
     return this.getOrderedWeekDays(localeData.firstDay);
   }
 
@@ -270,6 +273,14 @@ export class GuiCalendarControl extends LitElement {
   private nextMonth() {
     const d = this._currentDate;
     this._currentDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  }
+
+  private onFocusOut(e: FocusEvent) {
+    if (e.relatedTarget && this.contains(e.relatedTarget as Node)) {
+      return;
+    }
+
+    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
   }
 
   private selectDate(day: CalendarDay) {

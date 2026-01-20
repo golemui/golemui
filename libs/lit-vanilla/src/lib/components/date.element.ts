@@ -54,6 +54,7 @@ export class DateElement extends LitElement implements Core.WithField {
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
+        .localeId=${this.adapter.templateData.lang}
         @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
         @change=${this.valueChanged}

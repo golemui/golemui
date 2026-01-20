@@ -6,7 +6,7 @@ import '../styles.scss';
 
 export function Calendar(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged } = useControlField<
+  const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useControlField<
     string,
     CalendarProps
   >(field);
@@ -15,15 +15,20 @@ export function Calendar(fieldInstance: Core.WithField) {
     (node: HTMLElement | null) => {
       const target = node as any;
       const changeHandler = (e: CustomEvent) => onValueChanged(e.detail.value);
+      const blurHandler = (e: CustomEvent) => {
+        onBlur();
+      };
       if (node) {
+        target.addEventListener('blur', blurHandler);
         target.addEventListener('change', changeHandler);
       }
 
       return () => {
+        target.removeEventListener('blur', blurHandler);
         target.removeEventListener('change', changeHandler);
       };
     },
-    [onValueChanged],
+    [onValueChanged, onBlur],
   );
 
   const label = templateData.label as string;
