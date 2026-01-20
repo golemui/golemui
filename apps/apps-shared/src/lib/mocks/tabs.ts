@@ -1,6 +1,7 @@
 import { defineForm } from '@golemui/core';
+import { Mock } from './types';
 
-export const tabs = defineForm({
+const form = defineForm({
   states: {
     limitReached: '$form.users.length === 5',
   },
@@ -193,7 +194,7 @@ export const tabs = defineForm({
   ],
 });
 
-export const tabsData = {
+const data = {
   listName: 'Development Team',
   users: [
     {
@@ -212,4 +213,15 @@ export const tabsData = {
       lastName: 'Rodriguez',
     },
   ],
+};
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const tabs: Mock = {
+  data,
+  form,
+  resources,
 };

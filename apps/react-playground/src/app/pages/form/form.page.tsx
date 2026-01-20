@@ -3,6 +3,7 @@ import * as Core from '@golemui/core';
 import { ReactItemRenderer } from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import i18next from 'i18next';
 import { useState } from 'react';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import styles from './form.page.module.scss';
@@ -11,9 +12,16 @@ async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const formDef = AppsShared.translationsForm;
-const formData = AppsShared.translationsFormData;
-const localization = AppsShared.i18nTranslator;
+const mock = AppsShared.translations;
+const formDef = mock.form;
+const formData = mock.data;
+const localization = AppsShared.initializeI18n(mock.resources);
+const languages = AppsShared.commonLanguages
+  .filter(({ code }) => Object.keys(mock.resources).includes(code))
+  .map(({ code, label, flag }) => ({
+    value: code,
+    label: `${flag} ${label}`,
+  }));
 
 const customFieldLoaders = {
   heading: async () =>
@@ -38,6 +46,7 @@ export function FormPage() {
 
   return (
     <div>
+      {languages.length > 0 ? <LanguagePicker /> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
       <FormComponent
         formDef={formDef}
@@ -51,6 +60,25 @@ export function FormPage() {
         formHealth={onFormHealth}
         formEvent={onFormEvent}
       />
+    </div>
+  );
+}
+
+function onLanguageChanged(event: React.ChangeEvent<HTMLSelectElement>) {
+  const code = (event.nativeEvent as CustomEvent<{ value: string }>).detail.value;
+  i18next.changeLanguage(code);
+}
+
+function LanguagePicker() {
+  return (
+    <div>
+      <gui-select
+        label="Language picker"
+        uid="language"
+        value="en"
+        options={languages}
+        onChange={onLanguageChanged}
+      ></gui-select>
     </div>
   );
 }

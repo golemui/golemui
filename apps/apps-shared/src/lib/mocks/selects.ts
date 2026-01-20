@@ -1,12 +1,13 @@
 import { defineForm } from '@golemui/core';
+import { Mock } from './types';
 
-export const selectsData = {
+const data = {
   greeting: 'bye',
   wrongGreeting: 'aaaaaa',
   greetingIndex: 2,
 };
 
-export const selects = defineForm({
+const form = defineForm({
   states: {
     hasSubregion: `!!$form.selects?.subregion`,
   },
@@ -95,3 +96,14 @@ export const selects = defineForm({
     },
   ],
 });
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const selects: Mock = {
+  data,
+  form,
+  resources,
+};

@@ -1,7 +1,11 @@
 import { defineForm } from '@golemui/core';
 import { accordion } from './tabs/accordion';
 import { alert } from './tabs/alert';
+import { calendar } from './tabs/calendar';
 import { checkbox } from './tabs/checkbox';
+import { currency } from './tabs/currency';
+import { dropdown } from './tabs/dropdown';
+import { list } from './tabs/list';
 import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
 import { repeater } from './tabs/repeater';
@@ -10,12 +14,9 @@ import { stack } from './tabs/stack';
 import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
-import { calendar } from './tabs/calendar';
-import { currency } from './tabs/currency';
-import { list } from './tabs/list';
-import { dropdown } from './tabs/dropdown';
+import { Mock } from './types';
 
-export const kitchenSink = defineForm({
+const form = defineForm({
   states: {
     limitReached: '$form.repeaters.users?.length === 5',
     hasSubregionSelect: `!!$form.selects.subregion`,
@@ -86,7 +87,7 @@ export const kitchenSink = defineForm({
   ],
 });
 
-export const kitchenSinkData = {
+const data = {
   listName: 'Development Team',
   currency: 1000000,
   dropdowns: {
@@ -128,4 +129,15 @@ export const kitchenSinkData = {
       },
     ],
   },
+};
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const kitchenSink: Mock = {
+  data,
+  form,
+  resources,
 };

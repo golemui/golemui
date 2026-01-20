@@ -1,8 +1,9 @@
 import { defineForm } from '@golemui/core';
+import { Mock } from './types';
 
-export const signinData = { user: { id: 'ASDFGHJKL4567' } };
+const data = { user: { id: 'ASDFGHJKL4567' } };
 
-export const signin = defineForm({
+const form = defineForm({
   states: {
     register: '$form.registerMode === true',
     'register:tall': '$form.user.height > 180',
@@ -155,3 +156,14 @@ export const signin = defineForm({
     },
   ],
 });
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const signin: Mock = {
+  data,
+  form,
+  resources,
+};
