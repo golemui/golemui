@@ -535,6 +535,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
                 kind: 'control',
                 widget: 'checkbox',
                 path: 'boolean',
+                label: 'Boolean',
                 validator: { type: 'boolean', const: true },
               },
               {

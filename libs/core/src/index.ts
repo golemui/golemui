@@ -20,7 +20,6 @@ export * from './lib/middleware';
 export * from './lib/i18n';
 export * from './lib/item-renderer';
 export * from './lib/utils/debug';
-export * from './lib/utils/dot-path';
 export * from './lib/utils/function';
 export * from './lib/utils/object';
 export * from './lib/utils/random';

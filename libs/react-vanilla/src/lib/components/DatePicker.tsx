@@ -113,14 +113,16 @@ export function DatePicker(fieldInstance: Core.WithField) {
 
   return (
     <div className="gui-date-picker">
-      <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
-        {templateData.label + (isRequired ? ' *' : '')}
-        {hint && (
-          <div className="gui-field-hint" id={`${uid}_hint`}>
-            {hint}
-          </div>
-        )}
-      </label>
+      {templateData.label && (
+        <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
+          {templateData.label + (isRequired ? ' *' : '')}
+          {hint && (
+            <div className="gui-field-hint" id={`${uid}_hint`}>
+              {hint}
+            </div>
+          )}
+        </label>
+      )}
       <div
         role="button"
         tabIndex={0}

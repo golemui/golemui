@@ -1,11 +1,10 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { DatePickerProps } from '@golemui/shared-vanilla';
+import { addIcon, DatePickerProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { addIcon } from '../utils/templates';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-date-control')
