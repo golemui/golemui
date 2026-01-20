@@ -70,6 +70,8 @@ export function Dropdown(fieldInstance: Core.WithField) {
 
   const handleClickItem = useCallback(
     (item: ListItem<any>, index: number) => {
+      if (templateData.readonly) return;
+
       handleValueChange(item.value);
       setFocusedIndex(index);
 

@@ -77,6 +77,12 @@ export class ListElement extends LitElement implements Core.WithField {
     }
   }
 
+  private _valueChanged(e: CustomEvent) {
+    if (!this.adapter.templateData.readonly) {
+      this.adapter.valueChanged(e.detail.value);
+    }
+  }
+
   override render() {
     const data = this.adapter.templateData;
     const visibleItems = this._listItems.slice(this._range.start, this._range.end);
@@ -111,7 +117,7 @@ export class ListElement extends LitElement implements Core.WithField {
           @gui-update-items=${this._onUpdateItems}
           @gui-focus-change=${this._onFocusChange}
           @blur=${() => this.adapter.onBlur()}
-          @change=${(e: CustomEvent) => this.adapter.valueChanged(e.detail.value)}
+          @change=${this._valueChanged}
         >
           ${visibleItems.map((item, index) => {
             const absoluteIndex = this._range.start + index;

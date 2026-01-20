@@ -71,6 +71,7 @@ export class GuiDateControl extends LitElement {
       uid: this.uid,
       label: this.label,
       errors: this.errors,
+      touched: this.touched,
       required: this.required,
       disabled: this.disabled,
       readonly: this.readOnly,
@@ -179,7 +180,7 @@ export class GuiDateControl extends LitElement {
       'Enter',
     ];
 
-    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) return;
+    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey || this.readOnly) return;
 
     if (!/^[0-9]$/.test(event.key)) {
       event.preventDefault();
@@ -191,6 +192,8 @@ export class GuiDateControl extends LitElement {
   }
 
   private handleKeyUp(event: KeyboardEvent, type: 'day' | 'month' | 'year') {
+    if (this.readOnly) return;
+
     const input = event.target as HTMLInputElement;
     const inputs = Array.from(this.querySelectorAll('input'));
     const index = inputs.indexOf(input);
@@ -240,6 +243,8 @@ export class GuiDateControl extends LitElement {
 
   private handleChange(event: Event, type: 'day' | 'month' | 'year') {
     event.stopImmediatePropagation();
+
+    if (this.readOnly) return;
 
     const input = event.target as HTMLInputElement;
     const val = input.value.replace(/[^0-9]/g, '');

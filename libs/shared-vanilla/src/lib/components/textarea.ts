@@ -138,8 +138,8 @@ export class GuiTextareaControl extends LitElement {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}
-          @input=${() => this.valueChanged(event)}
-          @blur=${() => this.onBlur()}
+          @input=${this.valueChanged}
+          @blur=${this.onBlur}
         ></textarea>
         ${textareaIcon}
       </div>
@@ -151,16 +151,19 @@ export class GuiTextareaControl extends LitElement {
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    event?.stopPropagation();
-    const target = event?.target as HTMLInputElement;
-    this.dispatchEvent(
-      new CustomEvent('input', {
-        detail: { value: target.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+  valueChanged(event: InputEvent) {
+    event.stopPropagation();
+
+    if (!this.readOnly) {
+      const target = event.target as HTMLInputElement;
+      this.dispatchEvent(
+        new CustomEvent('input', {
+          detail: { value: target.value },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   onBlur() {

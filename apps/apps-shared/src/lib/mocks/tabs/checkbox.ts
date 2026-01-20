@@ -18,6 +18,7 @@ export const checkbox = (): any => ({
       label: 'Disabled checkbox',
       path: 'isDisabled',
       disabled: true,
+      readonly: true,
       props: {},
     },
     {

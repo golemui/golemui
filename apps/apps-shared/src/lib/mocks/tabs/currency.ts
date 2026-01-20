@@ -15,6 +15,7 @@ export const currency = (): any => ({
       widget: 'currency',
       path: 'currencyDisabled',
       disabled: true,
+      readonly: true,
     },
     {
       uid: '',

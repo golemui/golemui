@@ -54,20 +54,20 @@ export class DateElement extends LitElement implements Core.WithField {
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
-        @inputError=${() => this.onInputError(event)}
+        @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
-        @change=${() => this.valueChanged(event)}
+        @change=${this.valueChanged}
       ></gui-date>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
+  valueChanged(event: CustomEvent) {
     this.adapter.injectValidationIssues(null);
-    this.adapter.valueChanged((event as CustomEvent).detail.value);
+    this.adapter.valueChanged(event.detail.value);
   }
 
-  onInputError(event: Event | undefined) {
-    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
   }
 
   override disconnectedCallback() {

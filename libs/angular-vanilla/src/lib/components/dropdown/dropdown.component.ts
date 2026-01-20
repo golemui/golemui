@@ -158,6 +158,8 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
   protected onClickItem(item: any, index: number) {
     const templateData = this.adapter.templateData();
 
+    if (templateData.readonly) return;
+
     this.adapter.valueChanged(item.value);
 
     this.focusedIndex.set(index);

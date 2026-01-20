@@ -36,6 +36,7 @@ export const list = (): any => ({
       path: 'lists.disabledList',
       label: 'Disabled list',
       disabled: true,
+      readonly: true,
       props: {
         height: 100,
         items: thousandsOfItems,

@@ -74,7 +74,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           .dayFormat=${this.adapter.templateData.dayFormat}
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}
-          @change=${() => this.valueChanged(event)}
+          @change=${this.valueChanged}
         ></gui-calendar>`
       : nothing;
 
@@ -101,10 +101,10 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           ?readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
           .icon=${this.adapter.templateData.icon}
-          @inputError=${() => this.onInputError(event)}
+          @inputError=${this.onInputError}
           @blur=${() => this.adapter.onBlur()}
-          @focus=${() => this.openCalendar()}
-          @change=${() => this.valueChanged(event)}
+          @focus=${this.openCalendar}
+          @change=${this.valueChanged}
         ></gui-date>
 
         ${calendar}
@@ -114,13 +114,13 @@ export class DatePickerElement extends LitElement implements Core.WithField {
     `;
   }
 
-  valueChanged(event: Event | undefined) {
+  valueChanged(event: CustomEvent) {
     this.adapter.injectValidationIssues(null);
-    this.adapter.valueChanged((event as CustomEvent).detail.value);
+    this.adapter.valueChanged(event.detail.value);
   }
 
-  onInputError(event: Event | undefined) {
-    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
   }
 
   onKeyUp(event: Event | undefined) {
