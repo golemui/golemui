@@ -15,6 +15,7 @@ export const textarea = (): any => ({
       widget: 'textarea',
       path: 'textareaDisabled',
       disabled: true,
+      readonly: true,
     },
     {
       uid: '',

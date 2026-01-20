@@ -49,14 +49,14 @@ export class ToggleElement extends LitElement implements Core.WithField {
         .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
         .togglePosition=${this.adapter.templateData.togglePosition}
-        @change=${() => this.valueChanged(event)}
+        @change=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-toggle>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    const value = (event as CustomEvent)?.detail.value;
+  valueChanged(event: CustomEvent) {
+    const value = event.detail.value;
     this.adapter.valueChanged(value);
   }
 

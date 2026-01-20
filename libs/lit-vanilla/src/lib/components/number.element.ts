@@ -52,14 +52,14 @@ export class NumberElement extends LitElement implements Core.WithField {
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
         .placeholder=${this.adapter.templateData.placeholder}
-        @input=${() => this.valueChanged(event)}
+        @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-number>
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    const value = (event as CustomEvent).detail.value;
+  valueChanged(event: CustomEvent) {
+    const value = event.detail.value;
     this.adapter.valueChanged(value);
   }
 

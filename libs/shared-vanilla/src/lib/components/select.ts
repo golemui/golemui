@@ -110,8 +110,8 @@ export class GuiSelectControl extends LitElement {
           class=${classMap(selectIcon.fieldClasses)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled || templateData.readonly}
-          @change=${() => this.valueChanged(event as Event)}
-          @blur=${() => this.onBlur()}
+          @change=${this.valueChanged}
+          @blur=${this.onBlur}
         >
           ${options}
         </select>
@@ -122,11 +122,11 @@ export class GuiSelectControl extends LitElement {
     `;
   }
 
-  valueChanged(event: Event | undefined) {
-    event?.stopPropagation();
+  valueChanged(event: Event) {
+    event.stopPropagation();
 
     if (!this.readOnly) {
-      const target = event?.target as HTMLInputElement;
+      const target = event.target as HTMLInputElement;
       this.dispatchEvent(
         new CustomEvent('change', {
           detail: { value: inferOptionValue(target.value, this.options) },

@@ -121,7 +121,11 @@ export class GuiCurrencyControl extends LitElement {
 
   private handleBeforeInput(event: InputEvent) {
     if (!event.data && !event.inputType.startsWith('insert')) return;
-    if (event.inputType === 'deleteContentBackward' || event.inputType === 'deleteContentForward') {
+    if (
+      event.inputType === 'deleteContentBackward' ||
+      event.inputType === 'deleteContentForward' ||
+      this.readOnly
+    ) {
       return;
     }
 
@@ -153,25 +157,28 @@ export class GuiCurrencyControl extends LitElement {
     }
   }
 
-  private handleInput(event: Event) {
+  private handleInput(event: InputEvent) {
     event.stopPropagation();
-    const input = event.target as HTMLInputElement;
-    const { decimal, group } = this.separators;
 
-    let rawValueString = input.value.split(group).join('').replace(decimal, '.');
+    if (!this.readOnly) {
+      const input = event.target as HTMLInputElement;
+      const { decimal, group } = this.separators;
 
-    if (rawValueString === `-.`) rawValueString = '-0.';
+      let rawValueString = input.value.split(group).join('').replace(decimal, '.');
 
-    this.value = isNaN(parseFloat(rawValueString)) ? null : parseFloat(rawValueString);
-    this.displayValue = this.formatCurrency(this.value);
+      if (rawValueString === `-.`) rawValueString = '-0.';
 
-    this.dispatchEvent(
-      new CustomEvent('input', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+      this.value = isNaN(parseFloat(rawValueString)) ? null : parseFloat(rawValueString);
+      this.displayValue = this.formatCurrency(this.value);
+
+      this.dispatchEvent(
+        new CustomEvent('input', {
+          detail: { value: this.value },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   private handleFocus() {

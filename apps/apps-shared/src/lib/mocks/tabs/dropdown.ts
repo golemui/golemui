@@ -36,6 +36,7 @@ export const dropdown = (): any => ({
       path: 'dropdowns.disabledList',
       label: 'Disabled list',
       disabled: true,
+      readonly: true,
       props: {
         height: 100,
         items: thousandsOfItems,
