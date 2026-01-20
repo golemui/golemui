@@ -33,6 +33,7 @@ export function Calendar(fieldInstance: Core.WithField) {
   const dayFormat = templateData.dayFormat;
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
+  const lang = templateData.lang;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -55,6 +56,7 @@ export function Calendar(fieldInstance: Core.WithField) {
         dayFormat={dayFormat}
         weekdayFormat={weekdayFormat}
         monthFormat={monthFormat}
+        localeId={lang}
       />
     </div>
   );

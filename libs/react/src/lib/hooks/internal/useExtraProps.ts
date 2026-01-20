@@ -6,7 +6,7 @@ import { useReactFormContext } from '../../ReactFormContext';
 export type WithFlattenedProps<
   F extends Core.NonFunctionField<string>,
   ExtraProps extends Core.NonFunctionField<string>['props'],
-> = F & ExtraProps & Core.On;
+> = F & ExtraProps & { lang: string };
 
 export function useTemplateData<
   F extends Core.NonFunctionField<string>,
@@ -26,8 +26,8 @@ export function useTemplateData<
         const templateData = {
           ...calculatedField,
           ...calculatedField.props,
-          ...(calculatedField as Core.InteractiveField).on,
-        } as WithFlattenedProps<F, ExtraProps>;
+          lang: formContext.store.getState().lang,
+        } as unknown as WithFlattenedProps<F, ExtraProps>;
         setProps(templateData);
       });
     return () => destroy$.next();

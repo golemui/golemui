@@ -99,6 +99,21 @@ export function FormComponent({
     });
   }, [data]);
 
+  // I18n
+  useEffect(() => {
+    const sub = formContextRef.current.localization.subscribe((lang) => {
+      formContextRef.current.store.dispatch({
+        type: 'SET_LANGUAGE',
+        payload: {
+          lang,
+        },
+      });
+    });
+    return () => {
+      sub();
+    };
+  }, []);
+
   if (!formLayoutField) {
     return null;
   }
