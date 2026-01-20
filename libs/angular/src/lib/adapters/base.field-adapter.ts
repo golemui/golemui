@@ -19,18 +19,17 @@ export abstract class BaseFieldAdapter<F extends Core.NonFunctionField> {
   // Listen to the calculated props stream and keep all field props merged in a flattened object
   protected templateDataUpdater<TemplateData extends Record<string, any>>(
     templateData: WritableSignal<TemplateData>,
-    postUpdate: (obj: TemplateData) => TemplateData = (obj) => obj,
   ) {
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.calculatedFieldsByUid$(this.field.uid))
       .subscribe((calculatedField) => {
         templateData.update((current) => {
-          return postUpdate({
+          return {
             ...current,
             ...calculatedField,
             ...calculatedField.props,
             ...(calculatedField as Core.InteractiveField).on,
-          });
+          };
         });
       });
   }

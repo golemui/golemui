@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { combineLatest } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
-import { useTemplateData, WithFlattenedProps } from './internal/useExtraProps';
+import { useTemplateData } from './internal/useExtraProps';
 
 export function useControlField<T, ExtraProps extends Record<string, any>>(
   field: Core.ControlField<T, string>,
@@ -13,24 +13,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
 
-  const calculateLabel = useCallback(
-    (obj: WithFlattenedProps<Core.ControlField<T, string>, ExtraProps>) => {
-      const label =
-        obj.label === undefined
-          ? Core.toLabel(obj['path'])
-          : obj.label === ''
-            ? undefined
-            : obj.label;
-      obj.label = label;
-      return obj;
-    },
-    [],
-  );
-
-  const templateData = useTemplateData<Core.ControlField<T, string>, ExtraProps>(
-    field,
-    calculateLabel,
-  );
+  const templateData = useTemplateData<Core.ControlField<T, string>, ExtraProps>(field);
 
   useEffect(() => {
     formContext.store.dispatch({

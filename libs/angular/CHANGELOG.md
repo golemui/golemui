@@ -1,3 +1,13 @@
+## 0.18.0 (2026-01-13)
+
+### 🚀 Features
+
+- function fields POC ([290f611](https://github.com/golemui/formforge/commit/290f611))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.17.0 (2026-01-11)
 
 This was a version bump only for angular to align it with other projects, there were no code changes.

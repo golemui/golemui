@@ -1,3 +1,7 @@
+## 0.18.0 (2026-01-13)
+
+This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.
+
 ## 0.17.0 (2026-01-11)
 
 This was a version bump only for validators-vanilla to align it with other projects, there were no code changes.

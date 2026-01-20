@@ -11,6 +11,9 @@ import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
 import { calendar } from './tabs/calendar';
+import { currency } from './tabs/currency';
+import { list } from './tabs/list';
+import { dropdown } from './tabs/dropdown';
 
 export const kitchenSink = defineForm({
   states: {
@@ -33,7 +36,7 @@ export const kitchenSink = defineForm({
       kind: 'layout',
       widget: 'tabs',
       props: {
-        defaultOpen: 'tab10',
+        defaultOpen: 'tab15',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -47,6 +50,9 @@ export const kitchenSink = defineForm({
           { label: 'Toggle Component', uid: 'tab10' },
           { label: 'Textarea Component', uid: 'tab11' },
           { label: 'Calendar Component', uid: 'tab12' },
+          { label: 'Currency Component', uid: 'tab13' },
+          { label: 'List Component', uid: 'tab14' },
+          { label: 'Dropdown Component', uid: 'tab15' },
         ],
       },
       on: { change: 'onTabEvent' },
@@ -63,6 +69,9 @@ export const kitchenSink = defineForm({
         toggle(),
         textarea(),
         calendar(),
+        currency(),
+        list(),
+        dropdown(),
       ],
     },
     {
@@ -79,6 +88,17 @@ export const kitchenSink = defineForm({
 
 export const kitchenSinkData = {
   listName: 'Development Team',
+  currency: 1000000,
+  dropdowns: {
+    defaultListRenderer: 0,
+    disabledList: 0,
+    customItemRenderer: 'one',
+  },
+  lists: {
+    defaultListRenderer: 0,
+    disabledList: 0,
+    customItemRenderer: 'one',
+  },
   selects: {
     greeting: 'bye',
     wrongGreeting: 'aaaaaa',

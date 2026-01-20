@@ -10,8 +10,11 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar')).Calendar,
+  currency: async () => (await import('./components/Currency')).Currency,
   dateInput: async () => (await import('./components/DateInput')).DateInput,
   datePicker: async () => (await import('./components/DatePicker')).DatePicker,
+  dropdown: async () => (await import('./components/Dropdown')).Dropdown,
+  list: async () => (await import('./components/List')).List,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,

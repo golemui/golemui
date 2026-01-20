@@ -18,9 +18,10 @@ export class FormElement extends LitElement {
   @property({ type: Object }) fieldLoaders!: FieldLoaders<WithField>;
   @property({ attribute: false }) validators!: Core.ValidatorFn<any>;
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
-  @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) data: any = {};
   @property({ type: String }) formName = Core.shortUUID();
+  @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
+  @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
 
   state: State | undefined;
   subscriptions: Subscription[] = [];
@@ -31,7 +32,13 @@ export class FormElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-form');
-    this.context.initialize(this.fieldLoaders, this.middlewares, this.validators, this.validateOn);
+    this.context.initialize(
+      this.fieldLoaders,
+      this.middlewares,
+      this.validators,
+      this.validateOn,
+      this.itemRenderers,
+    );
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),

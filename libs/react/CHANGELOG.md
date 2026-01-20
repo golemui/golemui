@@ -1,3 +1,13 @@
+## 0.18.0 (2026-01-13)
+
+### 🩹 Fixes
+
+- **react:** fix Field Function support ([09f86fa](https://github.com/golemui/formforge/commit/09f86fa))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.17.0 (2026-01-11)
 
 This was a version bump only for react to align it with other projects, there were no code changes.

@@ -14,6 +14,16 @@ export type TextinputProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type CurrencyProps = {
+  currency?: string;
+  maximumFractionDigits?: number;
+  minimumFractionDigits?: number;
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+};
+
 export type TextareaProps = {
   hint?: string;
   placeholder?: string;
@@ -92,6 +102,36 @@ export type SelectProps = {
   placeholder?: string;
   labelField?: string;
   valueField?: string;
+};
+
+export type ListItem<T> = {
+  template: T;
+  value: OptionValue;
+};
+
+export type DropdownProps<T> = {
+  placeholder?: string;
+  hint?: string;
+  items: ListItem<T>[];
+  valueField?: string;
+  height?: number;
+  itemHeight?: number;
+  /**
+   * Should match with one of the provided itemRenderer keys
+   */
+  itemRenderer?: string;
+};
+
+export type ListProps<T> = {
+  hint?: string;
+  items: ListItem<T>[];
+  valueField?: string;
+  height?: number;
+  itemHeight?: number;
+  /**
+   * Should match with one of the provided itemRenderer keys
+   */
+  itemRenderer?: string;
 };
 
 export type RadiogroupProps = {

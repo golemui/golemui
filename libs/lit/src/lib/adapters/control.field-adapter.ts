@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { combineLatest, takeUntil } from 'rxjs';
 import { BaseFieldAdapter } from './base.field-adapter';
+import { LitItemRenderer } from '../components/item-renderers/item-renderer';
 
 export const controlContext =
   createContext<ControlFieldAdapter<any, any>>('guiControlFieldAdapter');
@@ -16,16 +17,7 @@ export class ControlFieldAdapter<
     this.field = field;
 
     this.addFieldToTheStore(field);
-    this.templateDataUpdater((obj) => {
-      const label =
-        obj.label === undefined
-          ? Core.toLabel(obj['path'])
-          : obj.label === ''
-            ? undefined
-            : obj.label;
-      obj.label = label;
-      return obj;
-    });
+    this.templateDataUpdater();
 
     // Set field data
     this.context.store.dispatch({
@@ -77,6 +69,20 @@ export class ControlFieldAdapter<
       type: 'INJECT_VALIDATION_ISSUES',
       payload: { path: this.field.path, issues },
     });
+  }
+
+  /**
+   * This is a helper to get the item renderer from the context
+   */
+  getItemRenderer<T extends Core.ItemRenderItemData>(
+    itemRendererKey: string | undefined,
+    defaultItemRenderer: LitItemRenderer<T>,
+  ): LitItemRenderer<T> {
+    if (!itemRendererKey) {
+      return defaultItemRenderer;
+    }
+    const itemRenderers = this.context.itemRenderers as Record<string, LitItemRenderer<T>>;
+    return itemRenderers[itemRendererKey];
   }
 
   onBlur() {

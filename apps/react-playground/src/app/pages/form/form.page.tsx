@@ -4,13 +4,15 @@ import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import { useState } from 'react';
 import styles from './form.page.module.scss';
+import { ReactItemRenderer } from '@golemui/react';
+import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const formDef = AppsShared.reactiveFunctions;
-const formData = AppsShared.reactiveFunctionsData;
+const formDef = AppsShared.kitchenSink;
+const formData = AppsShared.kitchenSinkData;
 
 const customFieldLoaders = {
   heading: async () =>
@@ -19,6 +21,9 @@ const customFieldLoaders = {
 const middlewares = [AppsShared.loggerMiddleware];
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
+};
+const itemRenderers: Record<string, ReactItemRenderer<any>> = {
+  complexListItemRenderer: ComplexListItemRenderer,
 };
 
 export function FormPage() {
@@ -38,6 +43,7 @@ export function FormPage() {
         data={formData}
         fieldLoaders={customFieldLoaders}
         middlewares={middlewares}
+        itemRenderers={itemRenderers}
         validators={validators}
         validateOn="eager"
         formHealth={onFormHealth}

@@ -19,15 +19,17 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
   withErrors = false,
   type: string | undefined = undefined,
 ) => {
-  return html`<label
-    class="gui-label"
-    for=${uid}
-    data-cy=${`${uid}_label`}
-    id=${type ? `${uid}_${type}_label` : nothing}
-  >
-    ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
-    ${withErrors ? addErrors(uid, templateData) : nothing}
-  </label>`;
+  return templateData.label
+    ? html`<label
+        class="gui-label"
+        for=${uid}
+        data-cy=${`${uid}_label`}
+        id=${type ? `${uid}_${type}_label` : `${uid}_label`}
+      >
+        ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
+        ${withErrors ? addErrors(uid, templateData) : nothing}
+      </label>`
+    : nothing;
 };
 
 export const addHint = <T, ExtraProps extends { hint?: string }>(

@@ -36,9 +36,11 @@
   input,
   select,
   textarea,
+  gui-list,
   .gui-date-input,
   .gui-calendar-input {
     font-family: var(--gui-font-family);
+    font-size: var(--gui-font-size);
     padding: var(--gui-padding);
     border-radius: var(--gui-radius);
     background: var(--gui-color-bg);
@@ -48,10 +50,15 @@
       border-color 0.2s,
       box-shadow 0.2s;
 
+    &:focus {
+      outline: var(--gui-color-fg) solid 1px;
+    }
+
     &[aria-invalid='true'] {
       border-color: var(--gui-color-error);
 
       &:focus {
+        outline: var(--gui-color-error) solid 1px;
         box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
       }
     }
@@ -60,6 +67,10 @@
       background-color: var(--gui-color-bg-disabled);
       pointer-events: none;
     }
+  }
+
+  gui-list {
+    padding: 0;
   }
 
   &-icon {

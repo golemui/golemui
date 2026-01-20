@@ -1,0 +1,54 @@
+.gui-default-list-item-renderer {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+gui-list {
+  display: block;
+  background-color: var(--gui-color-bg);
+  border: 1px solid var(--gui-color-border);
+  border-radius: var(--gui-radius);
+  overflow: hidden;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .gui-list__item-wrapper {
+    background-color: transparent;
+
+    &[aria-disabled="true"] {
+      background-color: var(--gui-color-bg-disabled);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  .gui-list__item {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    cursor: pointer;
+    padding: 0 12px;
+
+    &-disabled {
+      cursor: not-allowed;
+      background-color: var(--gui-color-bg-disabled);
+    }
+
+    &-selected {
+      background-color: var(--gui-color-primary);
+    }
+
+    &-focused {
+      border: 1px solid var(--gui-color-primary);
+    }
+
+    &:hover {
+      background-color: var(--gui-color-primary--dark);
+    }
+  }
+}

@@ -1,3 +1,15 @@
+## 0.18.0 (2026-01-13)
+
+### 🚀 Features
+
+- add currency component ([b2a06ba](https://github.com/golemui/formforge/commit/b2a06ba))
+- function fields POC ([290f611](https://github.com/golemui/formforge/commit/290f611))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.17.0 (2026-01-11)
 
 ### 🚀 Features

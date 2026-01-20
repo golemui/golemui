@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import * as React from '@golemui/react';
+import { ReactItemRenderer } from '@golemui/react';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import {
   CustomValidatorSchemas,
@@ -12,6 +13,7 @@ import { vanillaFieldLoaders } from '../field.loaders';
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
   fieldLoaders?: Core.FieldLoaders<ComponentType<Core.WithField>>;
+  itemRenderers?: Record<string, ReactItemRenderer<any>>;
   validators?: CustomValidatorSchemas;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
@@ -25,6 +27,7 @@ export const FormComponent = ({
   formDef,
   data = undefined,
   fieldLoaders = {},
+  itemRenderers = {},
   validators = {},
   middlewares = [],
   validateOn = 'eager',
@@ -32,6 +35,7 @@ export const FormComponent = ({
   formEvent = undefined,
 }: ReactFormComponentProps) => {
   const customFieldLoaders = { ...vanillaFieldLoaders, ...fieldLoaders };
+  const customItemRenderers = { ...itemRenderers };
   const customValidators = initValidators({ ...validators });
   const customMiddlewares = [
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
@@ -43,6 +47,7 @@ export const FormComponent = ({
       data={data}
       fieldLoaders={customFieldLoaders}
       middlewares={customMiddlewares}
+      itemRenderers={customItemRenderers}
       validators={customValidators}
       validateOn={validateOn}
       formHealth={formHealth}

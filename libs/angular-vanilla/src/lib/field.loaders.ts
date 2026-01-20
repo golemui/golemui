@@ -13,6 +13,8 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
   // CONTROLS
   textinput: async () =>
     (await import('./components/textinput/textinput.component')).TextinputComponent,
+  currency: async () =>
+    (await import('./components/currency/currency.component')).CurrencyComponent,
   textarea: async () =>
     (await import('./components/textarea/textarea.component')).TextareaComponent,
   calendar: async () =>
@@ -20,6 +22,8 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
   dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,
   datePicker: async () =>
     (await import('./components/date-picker/date-picker.component')).DatePickerComponent,
+  dropdown: async () =>
+    (await import('./components/dropdown/dropdown.component')).DropdownComponent,
   toggle: async () => (await import('./components/toggle/toggle.component')).ToggleComponent,
   checkbox: async () =>
     (await import('./components/checkbox/checkbox.component')).CheckboxComponent,
@@ -27,6 +31,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
   select: async () => (await import('./components/select/select.component')).SelectComponent,
   radiogroup: async () =>
     (await import('./components/radiogroup/radiogroup.component')).RadiogroupComponent,
+  list: async () => (await import('./components/list/list.component')).ListComponent,
 
   // LAYOUTS
   stack: async () => (await import('./components/stack/stack.component')).StackComponent,

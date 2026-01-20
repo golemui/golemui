@@ -11,10 +11,7 @@ export type WithFlattenedProps<
 export function useTemplateData<
   F extends Core.NonFunctionField<string>,
   ExtraProps extends Core.NonFunctionField<string>['props'],
->(
-  field: F,
-  postUpdate?: (obj: WithFlattenedProps<F, ExtraProps>) => WithFlattenedProps<F, ExtraProps>,
-) {
+>(field: F) {
   // TODO: this should be [templateData, setTemplateData]
   const [props, setProps] = useState<WithFlattenedProps<F, ExtraProps>>(
     (field.props || {}) as WithFlattenedProps<F, ExtraProps>,
@@ -31,10 +28,10 @@ export function useTemplateData<
           ...calculatedField.props,
           ...(calculatedField as Core.InteractiveField).on,
         } as WithFlattenedProps<F, ExtraProps>;
-        setProps(postUpdate ? postUpdate(templateData) : templateData);
+        setProps(templateData);
       });
     return () => destroy$.next();
-  }, [field, formContext, postUpdate]);
+  }, [field, formContext]);
 
   return props;
 }

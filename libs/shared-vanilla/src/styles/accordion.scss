@@ -9,10 +9,6 @@
     .gui-accordion__section {
       display: flex;
       flex-direction: column;
-
-      &:not(:first-child) {
-        margin-top: -1px;
-      }
     }
 
     .gui-accordion__icon {
@@ -46,6 +42,12 @@
 
       &[aria-expanded='true'] .gui-accordion__icon {
         transform: translateY(-50%) rotate(-135deg);
+      }
+
+      &:focus {
+        outline: 0;
+        border: var(--gui-color-fg) solid 1px;
+        box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
       }
     }
 
