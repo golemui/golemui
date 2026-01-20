@@ -37,7 +37,11 @@ export class DataInputsMapper {
 
     const useLabels = !formConfig?.suppressAutomaticLabels;
     const labelsDecorator = useLabels ? SHOW_LABELS_DEFAULT : SUPPRESS_LABELS_DEFAULT;
-    const labelsFieldDef = labelsDecorator({ fieldKey: key, currentDef: baseFieldDef, baseDef: baseFieldDef });
+    const labelsFieldDef = labelsDecorator({
+      fieldKey: key,
+      currentDef: baseFieldDef,
+      baseDef: baseFieldDef,
+    });
     const withLabels = this.objectUtils.deepMerge(baseFieldDef, labelsFieldDef);
 
     if (formConfig?.defaultFieldDef == null) {
@@ -46,7 +50,12 @@ export class DataInputsMapper {
 
     const defaultDef =
       typeof formConfig.defaultFieldDef === 'function'
-        ? this.createDefaultFieldDefFromFn(formConfig.defaultFieldDef, withLabels, baseFieldDef, key)
+        ? this.createDefaultFieldDefFromFn(
+            formConfig.defaultFieldDef,
+            withLabels,
+            baseFieldDef,
+            key,
+          )
         : formConfig.defaultFieldDef;
 
     console.log(`about to merge`, baseFieldDef, defaultDef);
@@ -63,7 +72,7 @@ export class DataInputsMapper {
     const params: DefaultFieldDefParams = {
       fieldKey,
       currentDef,
-      baseDef
+      baseDef,
     };
     return fn(params);
   }
@@ -103,7 +112,7 @@ export class DataInputsMapper {
       kind: 'control',
       widget: 'textinput',
       path: key,
-      ...( fieldDef.label != null ? {label: fieldDef.label}: {} ),
+      ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
         placeholder: fieldDef.placeholder ?? '',
       },

@@ -7,10 +7,12 @@ export interface FormDemoDefinition<T extends Record<string, any> = any> {
   formDef: FormDefFacade<T>;
   formData?: T;
   warnings?: string[];
-  formConfig?: FormConfig<T>
+  formConfig?: FormConfig<T>;
 }
 
-export type FormRegistryEntry<T extends Record<string, any> = any> = FormDemoDefinition<T> & { key: string };
+export type FormRegistryEntry<T extends Record<string, any> = any> = FormDemoDefinition<T> & {
+  key: string;
+};
 
 class FormRegistry {
   private forms: FormRegistryEntry[] = [];
@@ -23,7 +25,7 @@ class FormRegistry {
   }
 
   get<T extends Record<string, any> = any>(key: string): FormRegistryEntry<T> | undefined {
-    return this.forms.find(form => form.key === key) as FormRegistryEntry<T> | undefined;
+    return this.forms.find((form) => form.key === key) as FormRegistryEntry<T> | undefined;
   }
 
   getAll(): FormRegistryEntry[] {
@@ -31,7 +33,7 @@ class FormRegistry {
   }
 
   getAllKeys(): string[] {
-    return this.forms.map(form => form.key);
+    return this.forms.map((form) => form.key);
   }
 }
 

@@ -5,6 +5,7 @@ import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
 import { FormDefFacade } from '../services/formDef/formDef.domain';
+import { FormConfig } from '../services/formDef/fomConfig.domain';
 import formDefs from '../services/formDef/formDefs.service';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
@@ -26,9 +27,6 @@ const golemLogMiddleware: Core.Middleware<Core.State, Core.Action> =
     if (import.meta.env.DEV) {
       const nextState = getState();
       console.log('Next state:', nextState);
-      if (nextState.error && nextState.error.kind !== 'none') {
-        console.error('Form Error:', nextState.error);
-      }
       console.groupEnd();
     }
   };
@@ -37,14 +35,15 @@ export interface GolemFormProps<T extends Record<string, any>> {
   formDef?: FormDefFacade<T>;
   formData?: T;
   onConfigProcessed?: (config: any) => void;
+  formConfig?: FormConfig<T>;
 }
 
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
   const config = useMemo(
-    () => formDefs.processFacade<never, FormData>(props.formDef ?? null),
-    [props.formDef]
+    () => formDefs.processFacade<never, FormData>(props.formDef ?? null, props.formConfig),
+    [props.formDef, props.formConfig],
   );
 
   useEffect(() => {
@@ -58,7 +57,6 @@ export function GolemForm<FormData extends Record<string, any> = any>(
     if (props.onConfigProcessed) {
       props.onConfigProcessed(config);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
   return (
@@ -69,11 +67,6 @@ export function GolemForm<FormData extends Record<string, any> = any>(
       middlewares={import.meta.env.DEV ? [golemLogMiddleware] : []}
       formEvent={(event) => {
         alert(JSON.stringify(event, null, 2));
-      }}
-      formError={(error) => {
-        if (import.meta.env.DEV && error.kind !== 'none') {
-          console.error('GolemForm Store Error:', error);
-        }
       }}
     />
   );

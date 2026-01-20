@@ -2,6 +2,8 @@ import {
   ControlField,
   DisplayField,
   Form,
+  FunctionField,
+  FunctionFieldParams,
   InteractiveField,
   LayoutField,
   UiState,
@@ -12,14 +14,10 @@ import {
   ControllersDefFacade,
   DataInputDefsByKey,
   FormDefFacade,
-  FormDefFacadeLike,
   FormDefTuple,
-  NumberDataInputDef,
-  OneOfDataInputDefs,
-  OneOfDataInputDefsParams,
-  TextDataInputDef,
 } from '../formDef.domain';
-import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
+import { FormConfig } from '../fomConfig.domain';
+import dataInputsMapper, { DataInputsMapper } from './dataInputsMapper.service';
 
 type FormField<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
   | DisplayField<StateKeys, FormData>
@@ -28,16 +26,16 @@ type FormField<StateKeys extends UiState = never, FormData extends Record<string
   | InteractiveField<StateKeys, FormData>;
 
 export class FormDefMapper {
-  constructor(private readonly sensibleDefaults: SensibleDefaults) {}
+  constructor(private readonly dataInputsMapper: DataInputsMapper) {}
 
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     formDefFacade: FormDefFacade<FormData>,
+    formConfig?: FormConfig<FormData>,
   ): Form<StateKeys, FormData> {
     const formTuples = this.extractTuples(formDefFacade);
 
-    const formFields: FormField<StateKeys, FormData>[] = formTuples.flatMap((item) =>
-      this.mapTupleToFormFields(item),
-    );
+    const formFields: (FormField<StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] =
+      formTuples.flatMap((item) => this.mapTupleToFormFields(item, formConfig));
 
     return {
       form: {
@@ -55,11 +53,14 @@ export class FormDefMapper {
   private mapTupleToFormFields<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(item: FormDefTuple<FormData>): FormField<StateKeys, FormData>[] {
+  >(
+    item: FormDefTuple<FormData>,
+    formConfig?: FormConfig<FormData>,
+  ): (FormField<StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] {
     const typeRaw = item[0];
     switch (typeRaw) {
       case 'data_inputs':
-        return this.dataInputMapper(item[1]);
+        return this.dataInputMapper(item[1], formConfig);
       case 'controllers':
         return this.controllerDefsMapper(item[1]);
       default:
@@ -68,7 +69,7 @@ export class FormDefMapper {
   }
 
   private mapFormDefsToFormTuples<FormData extends Record<string, any> = any>(
-    item: FormDefFacadeLike<FormData>,
+    item: FormDefTuple<FormData>,
   ): FormDefTuple<FormData> {
     if (Array.isArray(item)) {
       return item;
@@ -80,61 +81,34 @@ export class FormDefMapper {
   private dataInputMapper<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(dataInput: DataInputDefsByKey<FormData>): ControlField<any, StateKeys, FormData>[] {
+  >(
+    dataInput: DataInputDefsByKey<FormData>,
+    formConfig?: FormConfig<FormData>,
+  ): (ControlField<any, StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] {
     return Object.entries(dataInput).map(([key, fieldDefRaw]) => {
       if (!fieldDefRaw) {
         throw new Error(`Definition for field "${key}" is missing`);
       }
 
-      const fieldDef: OneOfDataInputDefs =
-        typeof fieldDefRaw === 'string'
-          ? this.sensibleDefaults.explodeShortcut(fieldDefRaw)
-          : typeof fieldDefRaw === 'object'
-            ? fieldDefRaw
-            : (fieldDefRaw as (params: OneOfDataInputDefsParams) => OneOfDataInputDefs)({
-                error: false,
-              });
-      switch (fieldDef.type) {
-        case 'text':
-          return this.textFieldDefMapper(key, fieldDef);
-        case 'number':
-          return this.numberFieldDefMapper(key, fieldDef);
-        default:
-          throw new Error(`Unsupported field type "${(fieldDefRaw as OneOfDataInputDefs).type}"`);
+      if (typeof fieldDefRaw === 'function') {
+        return ((params: FunctionFieldParams<FormData>) => {
+          const hasErrors = params == null || params.errors == null || params.errors.length === 0;
+          const hotMapping = fieldDefRaw({ error: hasErrors });
+          const mapControlField = this.dataInputsMapper.mapControlField<StateKeys, FormData>(
+            key,
+            hotMapping,
+            formConfig,
+          );
+          console.log(`mapControlField`, mapControlField);
+          return mapControlField;
+        }) as FunctionField<StateKeys, FormData>;
       }
+      return this.dataInputsMapper.mapControlField<StateKeys, FormData>(
+        key,
+        fieldDefRaw,
+        formConfig,
+      );
     });
-  }
-
-  private textFieldDefMapper<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: TextDataInputDef): ControlField<any, StateKeys, FormData> {
-    return {
-      uid: '',
-      kind: 'control', // data
-      widget: 'textinput',
-      path: key,
-      validator: {
-        type: 'string',
-        ...fieldDef.validator,
-      },
-    };
-  }
-
-  private numberFieldDefMapper<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: NumberDataInputDef): ControlField<any, StateKeys, FormData> {
-    return {
-      uid: '',
-      kind: 'control', // data
-      widget: 'number',
-      path: key,
-      validator: {
-        type: 'number',
-        ...fieldDef.validator,
-      },
-    };
   }
 
   private controllerDefsMapper<
@@ -174,5 +148,5 @@ export class FormDefMapper {
   }
 }
 
-const formMapperService = new FormDefMapper(sensibleDefaults);
+const formMapperService = new FormDefMapper(dataInputsMapper);
 export default formMapperService;

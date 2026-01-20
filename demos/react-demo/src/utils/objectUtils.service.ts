@@ -18,7 +18,12 @@ export class ObjectUtils {
     }
 
     // If either is not an object (primitive, array, etc.), right takes precedence
-    if (typeof left !== 'object' || typeof right !== 'object' || Array.isArray(left) || Array.isArray(right)) {
+    if (
+      typeof left !== 'object' ||
+      typeof right !== 'object' ||
+      Array.isArray(left) ||
+      Array.isArray(right)
+    ) {
       return right;
     }
 
@@ -27,8 +32,14 @@ export class ObjectUtils {
 
     for (const key in right) {
       if (right.hasOwnProperty(key)) {
-        if (typeof right[key] === 'object' && !Array.isArray(right[key]) && right[key] !== null &&
-            typeof left[key] === 'object' && !Array.isArray(left[key]) && left[key] !== null) {
+        if (
+          typeof right[key] === 'object' &&
+          !Array.isArray(right[key]) &&
+          right[key] !== null &&
+          typeof left[key] === 'object' &&
+          !Array.isArray(left[key]) &&
+          left[key] !== null
+        ) {
           // Recursively merge nested objects
           result[key] = this.deepMerge(left[key], right[key]);
         } else {

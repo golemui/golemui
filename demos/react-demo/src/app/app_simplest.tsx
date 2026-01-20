@@ -1,6 +1,15 @@
 import * as React from '@golemui/react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
-import formRegistry from '../services/formRegistry';
+import {
+  simplestDemo,
+  withValidatorDemo,
+  shortcutsAndObjectsDemo,
+  simpleDynamicDemo,
+} from './demos';
+import formRegistry from './formRegistry.domain';
+import { formConfigSimplest } from './demos/05_formConfig';
+import { formConfigShortcut } from './demos/06_formConfigShortcut';
+import { formConfigMixed } from './demos/07_formConfigMixed';
 
 export interface FormData {
   name: string;
@@ -9,67 +18,15 @@ export interface FormData {
 }
 
 // Register all forms
-formRegistry.register({
-  key: 'simplest',
-  title: '0. Simplest Form data.',
-  description: 'Shortcuts for everything',
-  formDef: {
-    name: 'string',
-    age: 'number',
-    height: 'number',
-  },
-});
-
-formRegistry.register({
-  key: 'with-validator',
-  title: '1. Form data with a validator.',
-  description: 'Form data with a single validator.!',
-  formDef: {
-    name: {
-      type: 'text',
-      validator: {
-        minLength: 3,
-      },
-    },
-  },
-});
-
-formRegistry.register({
-  key: 'shortcuts-and-objects',
-  title: '2. Combining shortcuts and js definition objects.',
-  description: 'Form driven from formDef shortcuts, note that age has a validator',
-  warnings: ['TBI: Placeholder property and other HTML props in core'],
-  formDef: {
-    name: 'string',
-    age: {
-      type: 'number',
-      placeholder: 'age < 18',
-      validator: {
-        minimum: 18,
-      },
-    },
-    height: 'number',
-  },
-});
-
-formRegistry.register({
-  key: 'simple-dynamic',
-  title: '3. Simple dynamic.',
-  description: 'Form driven from formDef shortcuts, note that age has a validator',
-  warnings: ['TBI: Dynamic properties'],
-  formDef: {
-    name: 'string',
-    age: ({ error }) => ({
-      label: error ? 'Try again your Age!' : 'Age',
-      type: 'number',
-      placeholder: 'age < 18',
-      validator: {
-        minimum: 18,
-      },
-    }),
-    height: 'number',
-  },
-});
+formRegistry.registerAll([
+  simplestDemo,
+  withValidatorDemo,
+  shortcutsAndObjectsDemo,
+  simpleDynamicDemo,
+  formConfigSimplest,
+  formConfigShortcut,
+  formConfigMixed,
+]);
 
 export function App_simplest() {
   // Check if URL has formKey parameter
@@ -80,15 +37,17 @@ export function App_simplest() {
   if (formKey) {
     const entry = formRegistry.get<FormData>(formKey);
     if (entry) {
+      const index = formRegistry.getAll().findIndex((e) => e.key === entry.key);
       return (
         <DemoFormDisplay<FormData>
-          title={entry.title}
+          title={`${index + 1}. ${entry.title}`}
           description={entry.description}
           formDef={entry.formDef}
           formData={entry.formData}
           warnings={entry.warnings}
           formKey={entry.key}
           showingSingleForm={true}
+          formConfig={entry.formConfig}
         />
       );
     }
@@ -104,16 +63,17 @@ export function App_simplest() {
   // Show all forms if no formKey parameter
   return (
     <>
-      {formRegistry.getAll().map((entry) => (
+      {formRegistry.getAll().map((entry, index) => (
         <DemoFormDisplay<FormData>
           key={entry.key}
-          title={entry.title}
+          title={`${index + 1}. ${entry.title}`}
           description={entry.description}
           formDef={entry.formDef}
           formData={entry.formData}
           warnings={entry.warnings}
           formKey={entry.key}
           showingSingleForm={false}
+          formConfig={entry.formConfig}
         />
       ))}
     </>

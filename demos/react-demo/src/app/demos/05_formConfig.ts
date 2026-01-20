@@ -2,9 +2,10 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 
 export const formConfigSimplest: FormDemoDefinition = {
   title: 'Form Config',
-  description: 'Form driven form formConfig making all labels blank, it also uses a shortcut that decorates the field under the hood',
+  description:
+    'Form driven form formConfig making all labels blank, it also uses a shortcut that decorates the field under the hood',
   formConfig: {
-    defaultFieldDef: ({fieldKey}) => ({
+    defaultFieldDef: ({ fieldKey }) => ({
       label: '',
       placeholder: `${fieldKey}`,
     }),

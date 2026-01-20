@@ -4,6 +4,7 @@ export interface DataInputDef {
   // whatever a field definition is for you
   type: 'text' | 'number';
   placeholder?: string;
+  label?: string | null;
 }
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
@@ -27,13 +28,13 @@ export interface OneOfDataInputDefsParams {
   error?: boolean;
 }
 
+export type ValidInputDef =
+  | OneOfDataInputDefs
+  | ValidShortcutType
+  | ((params: OneOfDataInputDefsParams) => OneOfDataInputDefs);
+
 export type DataInputDefsByKey<T extends Record<string, any>> = Partial<
-  Record<
-    keyof T,
-    | OneOfDataInputDefs
-    | ValidShortcutType
-    | ((params: OneOfDataInputDefsParams) => OneOfDataInputDefs)
-  >
+  Record<keyof T, ValidInputDef>
 >;
 
 export interface ControllerDef {
@@ -60,10 +61,6 @@ export type FormDefTuple<FORM_DATA extends Record<string, any>> =
   | ['data_inputs', DataInputDefsByKey<FORM_DATA>]
   | ['controllers', ControllersDefFacade];
 
-export type FormDefFacadeLike<T extends Record<string, any>> =
-  | FormDefTuple<T>
-  | DataInputDefsByKey<T>;
-
 export type FormDefFacade<T extends Record<string, any>> =
-  | FormDefFacadeLike<T>[]
+  | FormDefTuple<T>[]
   | DataInputDefsByKey<T>;

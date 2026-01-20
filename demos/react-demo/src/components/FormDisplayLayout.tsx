@@ -1,6 +1,7 @@
 import * as React from 'react';
 import GolemForm from '../wrappers/golemForm.component';
 import { FormDefFacade } from '../services/formDef/formDef.domain';
+import { FormConfig } from '../services/formDef/fomConfig.domain';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 
@@ -12,6 +13,7 @@ export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
+  formConfig?: FormConfig<T>;
 }
 
 export function FormDisplayLayout<T extends Record<string, any>>({
@@ -22,14 +24,16 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   warnings,
   formKey,
   showingSingleForm = false,
+  formConfig,
 }: FormDisplayLayoutProps<T>) {
   const [processedConfig, setProcessedConfig] = React.useState<any>(null);
   const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
 
   const serialized = formDef ? serializeFormDefForDisplay(formDef) : '';
+  const serializedFormConfig = formConfig ? serializeFormDefForDisplay(formConfig) : '';
 
   const handleConfigProcessed = React.useCallback((config: any) => {
-    setProcessedConfig((prev) => {
+    setProcessedConfig((prev: any) => {
       // Only update if it's actually different to prevent infinite loops
       if (prev === config) return prev;
       return config;
@@ -69,12 +73,13 @@ export function FormDisplayLayout<T extends Record<string, any>>({
                 formDef={formDef}
                 formData={formData}
                 onConfigProcessed={handleConfigProcessed}
+                formConfig={formConfig}
               />
             </div>
           )}
         </div>
 
-        {/* Right Column: formDef + Warnings */}
+        {/* Right Column: formDef + formConfig + Warnings */}
         {formDef && (
           <div className={styles.rightColumn}>
             <div>
@@ -83,6 +88,15 @@ export function FormDisplayLayout<T extends Record<string, any>>({
                 <code>{serialized}</code>
               </pre>
             </div>
+
+            {formConfig && (
+              <div>
+                <h4 className={styles.sectionTitle}>formConfig</h4>
+                <pre className={styles.codeBlock}>
+                  <code>{serializedFormConfig}</code>
+                </pre>
+              </div>
+            )}
 
             {warnings && warnings.length > 0 && (
               <div className={styles.warningsContainer}>

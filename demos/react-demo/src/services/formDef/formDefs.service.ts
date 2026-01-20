@@ -2,6 +2,7 @@ import { Form, UiState } from '@golemui/core';
 import formDefFacadeFactory, { FormDefFacadeFactory } from './facade/formDefFacadeFactory.service';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
 import { FormDefFacade } from './formDef.domain';
+import { FormConfig } from './fomConfig.domain';
 import formDefParser, { FormDefParser } from './parser/formDefParser.service';
 
 /**
@@ -29,9 +30,10 @@ export class FormDefs {
 
   processFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA> | null,
+    formConfig?: FormConfig<FORM_DATA>,
   ): Form<STATE_KEYS, FORM_DATA> {
     const formDefFacade = this.hydrate(formDefRaw);
-    return this.formMapperService.map<STATE_KEYS, FORM_DATA>(formDefFacade);
+    return this.formMapperService.map<STATE_KEYS, FORM_DATA>(formDefFacade, formConfig);
   }
 
   hydrate<FORM_DATA extends Record<string, any> = any>(

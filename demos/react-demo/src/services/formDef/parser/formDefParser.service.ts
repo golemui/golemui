@@ -1,10 +1,4 @@
-import {
-  DataInputDef,
-  DataInputDefsByKey,
-  FormDefFacade,
-  FormDefFacadeLike,
-  FormDefTuple,
-} from '../formDef.domain';
+import { DataInputDef, DataInputDefsByKey, FormDefFacade, FormDefTuple } from '../formDef.domain';
 
 const NO_INPUT_DEFS: Record<string, any> = {};
 
@@ -22,8 +16,7 @@ export class FormDefParser {
       ]);
     }
 
-    const formDefRaw: FormDefFacadeLike<FormData>[] =
-      formDefFacade as FormDefFacadeLike<FormData>[];
+    const formDefRaw: FormDefTuple<FormData>[] = formDefFacade as FormDefTuple<FormData>[];
 
     const result: Record<string, DataInputDef> = {};
     formDefRaw.forEach((tuple) => {

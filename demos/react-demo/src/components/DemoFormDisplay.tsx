@@ -1,5 +1,6 @@
 import * as React from '@golemui/react';
 import { FormDefFacade } from '../services/formDef/formDef.domain';
+import { FormConfig } from '../services/formDef/fomConfig.domain';
 import { FormDisplayLayout } from './FormDisplayLayout';
 
 interface DemoFormDisplayProps<T extends Record<string, any>> {
@@ -10,6 +11,7 @@ interface DemoFormDisplayProps<T extends Record<string, any>> {
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
+  formConfig?: FormConfig<T>;
 }
 
 export function DemoFormDisplay<T extends Record<string, any>>({
@@ -20,6 +22,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
   warnings,
   formKey,
   showingSingleForm = false,
+  formConfig,
 }: DemoFormDisplayProps<T>) {
   return (
     <FormDisplayLayout<T>
@@ -30,6 +33,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
       warnings={warnings}
       formKey={formKey}
       showingSingleForm={showingSingleForm}
+      formConfig={formConfig}
     />
   );
 }

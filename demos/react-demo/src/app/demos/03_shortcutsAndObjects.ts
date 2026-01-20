@@ -1,6 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
 
-
 export const shortcutsAndObjectsDemo: FormDemoDefinition = {
   title: 'Shortcuts and Objects',
   description: 'Form driven from formDef shortcuts, note that age has a validator',
