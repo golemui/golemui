@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { Mock } from './types';
+import { Example } from './types';
 
 const data = { 'complex-renderer': 'one', 'dropdown-complex-renderer': 'two' };
 
@@ -58,7 +58,7 @@ const form = defineForm({
  */
 const resources = {};
 
-export const tests: Mock = {
+export const tests: Example = {
   data,
   form,
   resources,

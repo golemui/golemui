@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { Mock } from './types';
+import { Example } from './types';
 
 const data = {
   details: {
@@ -268,7 +268,7 @@ const resources = {
   },
 };
 
-export const translations: Mock = {
+export const translations: Example = {
   data,
   form,
   resources,

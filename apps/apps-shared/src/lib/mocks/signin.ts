@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { Mock } from './types';
+import { Example } from './types';
 
 const data = { user: { id: 'ASDFGHJKL4567' } };
 
@@ -162,7 +162,7 @@ const form = defineForm({
  */
 const resources = {};
 
-export const signin: Mock = {
+export const signin: Example = {
   data,
   form,
   resources,

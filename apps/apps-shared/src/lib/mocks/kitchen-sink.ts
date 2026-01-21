@@ -14,7 +14,7 @@ import { stack } from './tabs/stack';
 import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
-import { Mock } from './types';
+import { Example } from './types';
 
 const form = defineForm({
   states: {
@@ -136,7 +136,7 @@ const data = {
  */
 const resources = {};
 
-export const kitchenSink: Mock = {
+export const kitchenSink: Example = {
   data,
   form,
   resources,

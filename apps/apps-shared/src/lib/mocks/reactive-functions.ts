@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { Mock } from './types';
+import { Example } from './types';
 
 type FormData = {
   registerMode: boolean;
@@ -96,7 +96,7 @@ const form = defineForm<FormData>({
  */
 const resources = {};
 
-export const reactiveFunctions: Mock = {
+export const reactiveFunctions: Example = {
   data,
   form,
   resources,

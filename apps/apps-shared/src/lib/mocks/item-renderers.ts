@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { Mock } from './types';
+import { Example } from './types';
 
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -109,7 +109,7 @@ const form = defineForm({
  */
 const resources = {};
 
-export const itemRenderers: Mock = {
+export const itemRenderers: Example = {
   data,
   form,
   resources,
