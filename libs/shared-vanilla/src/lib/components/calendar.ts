@@ -125,7 +125,7 @@ export class GuiCalendarControl extends LitElement {
           <div class="gui-calendar__days-grid">
             ${repeat(
               weekDays,
-              (weekday: any) => weekday,
+              (weekday: any, index: number) => index,
               (weekday: any) => html`<span class="gui-calendar__weekday">${weekday}</span>`,
             )}
             ${repeat(
