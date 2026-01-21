@@ -48,16 +48,16 @@
       >
         <ng-container
           *ngComponentOutlet="
-          itemRenderer;
-          inputs: {
-            template: item.template,
-            value: item.value,
-            disabled: templateData.disabled,
-            selected: templateData.value === item.value,
-            focused: focusedIndex() === absoluteIndex,
-            index: $index,
-          }
-        "
+            itemRenderer;
+            inputs: {
+              template: item.template,
+              value: item.value,
+              disabled: templateData.disabled,
+              selected: templateData.value === item.value,
+              focused: focusedIndex() === absoluteIndex,
+              index: $index,
+            }
+          "
         >
         </ng-container>
       </div>
@@ -65,7 +65,4 @@
   </gui-list>
 </div>
 
-<gui-errors
-  [errors]="templateData.errors"
-  [touched]="templateData.touched"
-></gui-errors>
+<gui-errors [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>

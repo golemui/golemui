@@ -40,7 +40,7 @@ gui-currency {
         padding: 2px;
       }
 
-      &:focus[aria-invalid="true"] + .gui-currency__format-value {
+      &:focus[aria-invalid='true'] + .gui-currency__format-value {
         color: var(--gui-color-error);
       }
     }

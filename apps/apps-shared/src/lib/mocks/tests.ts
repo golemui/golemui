@@ -1,8 +1,9 @@
 import { defineForm } from '@golemui/core';
+import { Example } from './types';
 
-export const testsData = { 'complex-renderer': 'one', 'dropdown-complex-renderer': 'two' };
+const data = { 'complex-renderer': 'one', 'dropdown-complex-renderer': 'two' };
 
-export const tests = defineForm({
+const form = defineForm({
   states: {
     register: '$form.registerMode === true',
   },
@@ -51,3 +52,14 @@ export const tests = defineForm({
     },
   ],
 });
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const tests: Example = {
+  data,
+  form,
+  resources,
+};

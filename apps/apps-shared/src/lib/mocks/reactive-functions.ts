@@ -1,13 +1,14 @@
 import { defineForm } from '@golemui/core';
+import { Example } from './types';
 
 type FormData = {
   registerMode: boolean;
   user?: { name: string };
 };
 
-export const reactiveFunctionsData: FormData = { registerMode: false };
+const data: FormData = { registerMode: false };
 
-export const reactiveFunctions = defineForm<FormData>({
+const form = defineForm<FormData>({
   states: {
     register: '$form.registerMode === true',
   },
@@ -89,3 +90,14 @@ export const reactiveFunctions = defineForm<FormData>({
     },
   ],
 });
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const reactiveFunctions: Example = {
+  data,
+  form,
+  resources,
+};
