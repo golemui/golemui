@@ -25,6 +25,18 @@ export class DatePickerElement extends LitElement implements Core.WithField {
 
   subscriptions: Subscription[] = [];
 
+  onDocumentClick = (event: MouseEvent) => {
+    if (!this.isCalendarOpen) return;
+
+    const path = event.composedPath();
+    const clickedInsideDate = this.dateControl && path.includes(this.dateControl);
+    const clickedInsideCalendar = this.calendarControl && path.includes(this.calendarControl);
+
+    if (!clickedInsideDate && !clickedInsideCalendar) {
+      this.closeCalendar();
+    }
+  };
+
   override createRenderRoot() {
     return this;
   }
@@ -41,17 +53,17 @@ export class DatePickerElement extends LitElement implements Core.WithField {
     );
   }
 
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this.isCalendarOpen) return;
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
 
-    const path = event.composedPath();
-    const clickedInsideDate = this.dateControl && path.includes(this.dateControl);
-    const clickedInsideCalendar = this.calendarControl && path.includes(this.calendarControl);
+    const size = this.adapter.templateData.size;
 
-    if (!clickedInsideDate && !clickedInsideCalendar) {
-      this.closeCalendar();
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
     }
-  };
+  }
 
   override render() {
     super.render();

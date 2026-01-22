@@ -55,6 +55,18 @@ export class TabsElement extends LitElement implements Core.WithField {
     );
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   protected override firstUpdated(_changedProperties: PropertyValues) {
     this.startObserver = createIntersectionObserver(
       this.startSentinel,
@@ -69,43 +81,6 @@ export class TabsElement extends LitElement implements Core.WithField {
     const tabs = (this.field.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
     this.tabButtons[currentIndex].scrollIntoView();
-  }
-
-  onClickTab(uid: string) {
-    this.activeTab = uid;
-    this.adapter.change<TabsEventDetail>(uid);
-    this.requestUpdate();
-  }
-
-  onKeyDown(event: KeyboardEvent) {
-    const tabs = (this.field.props as TabsProps).tabs;
-    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
-    const tabButtons = Array.from(this.tabButtons);
-
-    switch (event.key) {
-      case 'ArrowLeft':
-        if (currentIndex > 0) {
-          this.activeTab = tabs[currentIndex - 1].uid;
-          tabButtons[currentIndex - 1].focus();
-        }
-        break;
-      case 'ArrowRight':
-        if (currentIndex < tabs.length - 1) {
-          this.activeTab = tabs[currentIndex + 1].uid;
-          tabButtons[currentIndex + 1].focus();
-        }
-        break;
-      case 'Home':
-        this.activeTab = tabs[0].uid;
-        tabButtons[0].focus();
-        break;
-      case 'End':
-        this.activeTab = tabs[tabs.length - 1].uid;
-        tabButtons[tabs.length - 1].focus();
-        break;
-      default:
-        return;
-    }
   }
 
   override render() {
@@ -178,5 +153,42 @@ export class TabsElement extends LitElement implements Core.WithField {
     this.subscriptions.forEach((s) => s.unsubscribe());
     this.startObserver?.disconnect();
     this.endObserver?.disconnect();
+  }
+
+  private onClickTab(uid: string) {
+    this.activeTab = uid;
+    this.adapter.change<TabsEventDetail>(uid);
+    this.requestUpdate();
+  }
+
+  private onKeyDown(event: KeyboardEvent) {
+    const tabs = (this.field.props as TabsProps).tabs;
+    const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
+    const tabButtons = Array.from(this.tabButtons);
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        if (currentIndex > 0) {
+          this.activeTab = tabs[currentIndex - 1].uid;
+          tabButtons[currentIndex - 1].focus();
+        }
+        break;
+      case 'ArrowRight':
+        if (currentIndex < tabs.length - 1) {
+          this.activeTab = tabs[currentIndex + 1].uid;
+          tabButtons[currentIndex + 1].focus();
+        }
+        break;
+      case 'Home':
+        this.activeTab = tabs[0].uid;
+        tabButtons[0].focus();
+        break;
+      case 'End':
+        this.activeTab = tabs[tabs.length - 1].uid;
+        tabButtons[tabs.length - 1].focus();
+        break;
+      default:
+        return;
+    }
   }
 }
