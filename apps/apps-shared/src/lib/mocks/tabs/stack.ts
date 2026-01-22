@@ -12,12 +12,14 @@ export const stack = (): any => ({
       kind: 'control',
       widget: 'textinput',
       path: 'listName',
+      size: 1,
     },
     {
       uid: '',
       kind: 'control',
       widget: 'textinput',
       path: 'listOwner',
+      size: 2,
     },
   ],
 });

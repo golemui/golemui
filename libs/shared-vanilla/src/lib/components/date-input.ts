@@ -11,8 +11,9 @@ import { DateinputProps } from '../field.props';
 export class GuiDateControl extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
-  @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
+  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
   @property({ type: Array }) errors: string[] | undefined = [];
+  @property({ type: Boolean }) showErrors: boolean | undefined = true;
   @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Boolean }) required: boolean | undefined = false;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
@@ -80,7 +81,7 @@ export class GuiDateControl extends LitElement {
       hint: this.hint,
     };
 
-    const parts = new Intl.DateTimeFormat(this.localeId, {
+    const parts = new Intl.DateTimeFormat(this.localeId ?? 'en', {
       year: 'numeric',
       month: 'numeric',
       day: 'numeric',
@@ -120,7 +121,9 @@ export class GuiDateControl extends LitElement {
         ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
       </div>
 
-      ${this.errors?.length ? addErrors(this.uid as string, templateData) : nothing}
+      ${this.showErrors && this.errors?.length
+        ? addErrors(this.uid as string, templateData)
+        : nothing}
     `;
   }
 

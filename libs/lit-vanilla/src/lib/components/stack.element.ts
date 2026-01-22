@@ -35,6 +35,18 @@ export class StackElement extends LitElement implements Core.WithField {
     );
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override render() {
     const classes = {
       horizontal: this.adapter.templateData.direction === 'horizontal',

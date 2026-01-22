@@ -25,6 +25,18 @@ export class DatePickerElement extends LitElement implements Core.WithField {
 
   subscriptions: Subscription[] = [];
 
+  onDocumentClick = (event: MouseEvent) => {
+    if (!this.isCalendarOpen) return;
+
+    const path = event.composedPath();
+    const clickedInsideDate = this.dateControl && path.includes(this.dateControl);
+    const clickedInsideCalendar = this.calendarControl && path.includes(this.calendarControl);
+
+    if (!clickedInsideDate && !clickedInsideCalendar) {
+      this.closeCalendar();
+    }
+  };
+
   override createRenderRoot() {
     return this;
   }
@@ -41,17 +53,17 @@ export class DatePickerElement extends LitElement implements Core.WithField {
     );
   }
 
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this.isCalendarOpen) return;
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
 
-    const path = event.composedPath();
-    const clickedInsideDate = this.dateControl && path.includes(this.dateControl);
-    const clickedInsideCalendar = this.calendarControl && path.includes(this.calendarControl);
+    const size = this.adapter.templateData.size;
 
-    if (!clickedInsideDate && !clickedInsideCalendar) {
-      this.closeCalendar();
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
     }
-  };
+  }
 
   override render() {
     super.render();
@@ -74,6 +86,8 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           .dayFormat=${this.adapter.templateData.dayFormat}
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}
+          .localeId=${this.adapter.templateData.lang}
+          @blur=${this.onBlurCalendar}
           @change=${this.valueChanged}
         ></gui-calendar>`
       : nothing;
@@ -94,6 +108,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           class=${classMap(datePickerIcon.fieldClasses)}
           .uid=${this.field.uid}
           .hint=${this.adapter.templateData.hint}
+          .showErrors=${false}
           .errors=${this.adapter.templateData.errors}
           ?touched=${this.adapter.templateData.touched}
           ?required=${this.adapter.templateData.validator?.required}
@@ -101,6 +116,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
           ?readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
           .icon=${this.adapter.templateData.icon}
+          .localeId=${this.adapter.templateData.lang}
           @inputError=${this.onInputError}
           @blur=${() => this.adapter.onBlur()}
           @focus=${this.openCalendar}
@@ -117,6 +133,11 @@ export class DatePickerElement extends LitElement implements Core.WithField {
   valueChanged(event: CustomEvent) {
     this.adapter.injectValidationIssues(null);
     this.adapter.valueChanged(event.detail.value);
+  }
+
+  onBlurCalendar() {
+    this.adapter.onBlur();
+    this.closeCalendar();
   }
 
   onInputError(event: CustomEvent) {

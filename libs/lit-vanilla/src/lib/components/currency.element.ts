@@ -34,6 +34,18 @@ export class CurrencyElement extends LitElement implements Core.WithField {
     );
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override render() {
     super.render();
 
@@ -54,6 +66,7 @@ export class CurrencyElement extends LitElement implements Core.WithField {
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
         .placeholder=${this.adapter.templateData.placeholder}
+        .localeId=${this.adapter.templateData.lang}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-currency>

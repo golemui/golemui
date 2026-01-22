@@ -1,0 +1,47 @@
+export interface LanguageOption {
+  code: string;
+  label: string;
+  flag?: string;
+}
+
+export const commonLanguages: LanguageOption[] = [
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'es', label: 'Spanish', flag: '🇪🇸' },
+  { code: 'fr', label: 'French', flag: '🇫🇷' },
+  { code: 'de', label: 'German', flag: '🇩🇪' },
+  { code: 'it', label: 'Italian', flag: '🇮🇹' },
+  { code: 'pt', label: 'Portuguese', flag: '🇵🇹' },
+  { code: 'pt-BR', label: 'Portuguese (Brazil)', flag: '🇧🇷' },
+  { code: 'nl', label: 'Dutch', flag: '🇳🇱' },
+  { code: 'sv', label: 'Swedish', flag: '🇸🇪' },
+  { code: 'no', label: 'Norwegian', flag: '🇳🇴' },
+  { code: 'da', label: 'Danish', flag: '🇩🇰' },
+  { code: 'fi', label: 'Finnish', flag: '🇫🇮' },
+  { code: 'pl', label: 'Polish', flag: '🇵🇱' },
+  { code: 'cs', label: 'Czech', flag: '🇨🇿' },
+  { code: 'sk', label: 'Slovak', flag: '🇸🇰' },
+  { code: 'hu', label: 'Hungarian', flag: '🇭🇺' },
+  { code: 'ro', label: 'Romanian', flag: '🇷🇴' },
+  { code: 'bg', label: 'Bulgarian', flag: '🇧🇬' },
+  { code: 'el', label: 'Greek', flag: '🇬🇷' },
+  { code: 'tr', label: 'Turkish', flag: '🇹🇷' },
+  { code: 'ru', label: 'Russian', flag: '🇷🇺' },
+  { code: 'uk', label: 'Ukrainian', flag: '🇺🇦' },
+  { code: 'ar', label: 'Arabic', flag: '🇸🇦' },
+  { code: 'he', label: 'Hebrew', flag: '🇮🇱' },
+  { code: 'fa', label: 'Persian (Farsi)', flag: '🇮🇷' },
+  { code: 'hi', label: 'Hindi', flag: '🇮🇳' },
+  { code: 'bn', label: 'Bengali', flag: '🇧🇩' },
+  { code: 'ta', label: 'Tamil', flag: '🇮🇳' },
+  { code: 'te', label: 'Telugu', flag: '🇮🇳' },
+  { code: 'ur', label: 'Urdu', flag: '🇵🇰' },
+  { code: 'th', label: 'Thai', flag: '🇹🇭' },
+  { code: 'vi', label: 'Vietnamese', flag: '🇻🇳' },
+  { code: 'id', label: 'Indonesian', flag: '🇮🇩' },
+  { code: 'ms', label: 'Malay', flag: '🇲🇾' },
+  { code: 'fil', label: 'Filipino', flag: '🇵🇭' },
+  { code: 'ja', label: 'Japanese', flag: '🇯🇵' },
+  { code: 'ko', label: 'Korean', flag: '🇰🇷' },
+  { code: 'zh', label: 'Chinese', flag: '🇨🇳' },
+  { code: 'zh-TW', label: 'Chinese (Traditional)', flag: '🇹🇼' },
+];

@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
+import FieldErrorBoundary from './FieldErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';
 import { useRepeaterIndex } from './RepeaterIndexContext';
 
@@ -53,7 +54,11 @@ function FieldRenderer(props: Props) {
     return null;
   }
 
-  return <Component field={field} />;
+  return (
+    <FieldErrorBoundary field={field}>
+      <Component field={field} />
+    </FieldErrorBoundary>
+  );
 }
 
 export default FieldRenderer;

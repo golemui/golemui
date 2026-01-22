@@ -1,4 +1,5 @@
 import * as jd from 'ts.data.json';
+import { Localizable, TranslationConfig } from './i18n';
 import {
   DotPath,
   FieldPropertyFunction,
@@ -53,6 +54,7 @@ export type BaseField<
   // kind: 'display' | 'interactive' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
+  size?: number;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
   // TODO: this shouldn't go here
@@ -79,7 +81,13 @@ export type BaseField<
    */
   props?: Record<
     string,
-    string | boolean | number | any[] | Record<string, any> | FieldPropertyFunction<any, FormData>
+    | string
+    | boolean
+    | number
+    | any[]
+    | Localizable
+    | Record<string, any>
+    | FieldPropertyFunction<any, FormData>
   >;
 };
 
@@ -94,7 +102,7 @@ export type InteractiveField<
 > = SomeSuffixable<
   BaseField<StateKeys, FormData> & {
     kind: 'interactive';
-    label?: ReactiveFieldValue<string, FormData>;
+    label?: ReactiveFieldValue<Localizable, FormData>;
     on?: On<StateKeys, FormData>;
   },
   'disabled' | 'label',
@@ -115,12 +123,12 @@ export type ControlField<
      * - If `label` is an empty string, no label will be displayed.
      * - Otherwise, the provided label will be rendered.
      */
-    label?: ReactiveFieldValue<string, FormData>;
+    label?: ReactiveFieldValue<Localizable, FormData>;
     on?: On<StateKeys, FormData>;
     defaultValue?: T;
     validator?: ReactiveFieldValue<object, FormData>; // `object` should be `V` (the validator type)
   },
-  'disabled' | 'label' | 'validator',
+  'disabled' | 'label' | 'validator' | 'size',
   StateKeys
 >;
 
@@ -140,7 +148,7 @@ export type LayoutField<
       | FunctionField<StateKeys, FormData>
     )[];
   },
-  never,
+  'size',
   StateKeys
 >;
 
@@ -264,6 +272,19 @@ const onDecoder = objectWithSuffix(
   'On',
 );
 
+const translationConfigDecoder = jd.object<TranslationConfig>(
+  {
+    key: jd.string(),
+    default: jd.optional(jd.string()),
+    params: jd.succeed(),
+  },
+  'TranslationConfig',
+);
+const localizableDecoder = jd.oneOf<Localizable>(
+  [jd.string(), translationConfigDecoder],
+  'Localizable',
+);
+
 const uidDecoder = jd.optional(jd.string()).map((s) => s || shortUUID());
 
 const displayFieldDecoder = jd.object<DisplayField<string>>(
@@ -271,6 +292,7 @@ const displayFieldDecoder = jd.object<DisplayField<string>>(
     kind: jd.literal('display'),
     uid: uidDecoder,
     widget: jd.string(),
+    size: jd.optional(jd.number()),
     include: jd.optional(includeDecoder),
     exclude: jd.optional(excludeDecoder),
     disabled: jd.optional(boolWhenDecoder),
@@ -285,10 +307,11 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     kind: { decoder: jd.literal('interactive') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.string()) },
+    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(localizableDecoder) },
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
@@ -315,6 +338,7 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     kind: { decoder: jd.literal('control') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
@@ -322,7 +346,10 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     readonly: { decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
-    label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
+    label: {
+      suffixed: true,
+      decoder: decodeFieldPropOrfieldPropFn(jd.optional(localizableDecoder)),
+    },
     path: { decoder: jd.string() },
     defaultValue: { decoder: jd.optional(jd.succeed()) },
     validator: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.succeed())) },
@@ -373,6 +400,7 @@ export const layoutFieldDecoder = objectWithSuffix<LayoutField<string>>(
     kind: { decoder: jd.literal('layout') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },

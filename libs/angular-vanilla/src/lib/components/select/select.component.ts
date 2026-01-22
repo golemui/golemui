@@ -12,6 +12,7 @@ import { SelectProps } from '@golemui/shared-vanilla';
   templateUrl: './select.component.html',
   host: {
     class: 'gui-select',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

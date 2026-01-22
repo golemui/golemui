@@ -1,6 +1,7 @@
 import { defineForm } from '@golemui/core';
+import { Example } from './types';
 
-export const users = defineForm({
+const form = defineForm({
   states: {
     itsFive: '$form.something === "5"',
   },
@@ -41,7 +42,7 @@ export const users = defineForm({
   ],
 });
 
-export const usersData = {
+const data = {
   listName: 'Development Team',
   users: [
     {
@@ -60,4 +61,15 @@ export const usersData = {
       lastName: 'Rodriguez',
     },
   ],
+};
+
+/**
+ * i18next Resource Bundle
+ */
+const resources = {};
+
+export const users: Example = {
+  data,
+  form,
+  resources,
 };

@@ -31,7 +31,7 @@ export abstract class BaseFieldAdapter<F extends Core.FormField> {
         this.setTemplateData({
           ...calculatedField,
           ...calculatedField.props,
-          ...(calculatedField as Core.InteractiveField<string>).on,
+          lang: this.context.store.getState().lang,
         });
       });
   }

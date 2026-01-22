@@ -24,6 +24,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
   host: {
     class: 'gui-date-picker',
     '(document:click)': 'onDocumentClick($event)',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -64,6 +65,11 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
 
   onInputError(event: Event) {
     this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+  }
+
+  onBlurCalendar() {
+    this.adapter.onBlur();
+    this.closeCalendar();
   }
 
   openCalendar() {

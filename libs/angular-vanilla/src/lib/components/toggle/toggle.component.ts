@@ -12,6 +12,7 @@ import { ToggleProps } from '@golemui/shared-vanilla';
   templateUrl: './toggle.component.html',
   host: {
     class: 'gui-toggle',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

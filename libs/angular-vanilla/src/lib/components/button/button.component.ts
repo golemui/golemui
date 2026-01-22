@@ -11,6 +11,7 @@ import * as Core from '@golemui/core';
   templateUrl: './button.component.html',
   host: {
     class: 'gui-button',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {

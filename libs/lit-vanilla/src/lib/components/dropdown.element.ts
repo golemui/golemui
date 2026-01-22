@@ -30,6 +30,18 @@ export class DropdownElement extends LitElement implements Core.WithField {
   @query('input') private _inputRef!: any;
   @query('gui-list') private _listRef!: any;
 
+  onDocumentClick = (event: MouseEvent) => {
+    if (!this._isListVisible) return;
+
+    const path = event.composedPath();
+    const clickedInsideInput = this._inputRef && path.includes(this._inputRef);
+    const clickedInsideList = this._listRef && path.includes(this._listRef);
+
+    if (!clickedInsideInput && !clickedInsideList) {
+      this._isListVisible = false;
+    }
+  };
+
   override createRenderRoot() {
     return this;
   }
@@ -55,17 +67,17 @@ export class DropdownElement extends LitElement implements Core.WithField {
     );
   }
 
-  onDocumentClick = (event: MouseEvent) => {
-    if (!this._isListVisible) return;
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
 
-    const path = event.composedPath();
-    const clickedInsideInput = this._inputRef && path.includes(this._inputRef);
-    const clickedInsideList = this._listRef && path.includes(this._listRef);
+    const size = this.adapter.templateData.size;
 
-    if (!clickedInsideInput && !clickedInsideList) {
-      this._isListVisible = false;
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
     }
-  };
+  }
 
   override disconnectedCallback() {
     super.disconnectedCallback();

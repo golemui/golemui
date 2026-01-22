@@ -15,6 +15,19 @@ export type SET_DATA = {
   payload: { data: Record<string, any> };
 };
 
+/**
+ * Sets the i18n language
+ */
+export type SET_LANGUAGE = {
+  type: 'SET_LANGUAGE';
+  payload: {
+    /**
+     * The BCP 47 language tag of the current locale (e.g., 'en-US', 'es', 'fr-CA').
+     */
+    lang: string;
+  };
+};
+
 export type ADD_FIELD = {
   type: 'ADD_FIELD';
   payload: { field: FormField<string> };
@@ -93,6 +106,7 @@ export type INJECT_VALIDATION_ISSUES = {
 
 export type Action =
   | INITIALIZE
+  | SET_LANGUAGE
   | SET_DATA
   | ADD_FIELD
   | REMOVE_FIELD

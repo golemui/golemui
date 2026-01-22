@@ -12,6 +12,7 @@ import { StackProps } from '@golemui/shared-vanilla';
   templateUrl: './stack.component.html',
   host: {
     class: 'gui-stack',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class StackComponent implements OnInit, OnDestroy, Core.WithField {

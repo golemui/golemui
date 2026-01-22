@@ -2,10 +2,11 @@ import { Subject } from 'rxjs';
 import { ControlField, InteractiveField, LayoutField, On } from '../form-field';
 import { createFormStore, FormStore } from '../form-store';
 import { ValidatorFn } from '../form-validator';
+import { I18nTranslator, identityTranslator } from '../i18n';
+import { ItemRenderer } from '../item-renderer';
 import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
 import { Action } from '../store/actions';
 import { Middleware, State } from '../store/model';
-import { ItemRenderer } from '../utils/item-renderer';
 import { FieldLoaders, FieldRegistry } from './field.registry';
 
 export class FormContext<ComponentType> {
@@ -14,6 +15,7 @@ export class FormContext<ComponentType> {
   events$ = new Subject<FormEvent>();
   uuid = crypto.randomUUID();
   itemRenderers: Record<string, ItemRenderer> = {};
+  localization!: I18nTranslator;
 
   initialize(
     fieldLoaders: FieldLoaders<ComponentType>,
@@ -21,10 +23,12 @@ export class FormContext<ComponentType> {
     validators: ValidatorFn<any>,
     validateOn: ValidateOn,
     itemRenderers: Record<string, ItemRenderer>,
+    localization: I18nTranslator = identityTranslator(),
   ) {
+    this.localization = localization;
     this.fieldRegistry.setFieldLoaders(fieldLoaders);
     this.itemRenderers = itemRenderers;
-    this.store = createFormStore(middlewares, validators, validateOn);
+    this.store = createFormStore(middlewares, validators, validateOn, localization);
   }
 
   emitEvent(

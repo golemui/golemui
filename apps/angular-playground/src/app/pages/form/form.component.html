@@ -1,4 +1,18 @@
 <div>
+  @if (languages.length > 0) {
+    <div>
+      <gui-select
+        label="Language picker"
+        uid="language"
+        value="en"
+        [options]="languages"
+        labelField="label"
+        valueField="code"
+        (change)="onLanguageChanged($event)"
+      ></gui-select>
+    </div>
+  }
+
   @if (error) {
     <p class="error">{{ error }}</p>
   }
@@ -10,6 +24,7 @@
     [middlewares]="middlewares"
     [validators]="validators"
     [itemRenderers]="itemRenderers"
+    [localization]="localization"
     [validateOn]="'eager'"
     (formHealth)="onFormHealth($event)"
     (formEvent)="onFormEvent($event)"

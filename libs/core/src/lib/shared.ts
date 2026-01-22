@@ -1,4 +1,5 @@
 import { NonFunctionField } from './form-field';
+import { I18nTranslator } from './i18n';
 import { OVERRIDE_FIELD_PROP } from './store/actions';
 import { ImmutableRecord, LooseObject } from './utils/types';
 
@@ -29,7 +30,10 @@ export type Uid = string;
  */
 export type ValidationStatus = null | string[];
 
-export type FieldPropertyFunctionParams<FormData> = { $form: ImmutableRecord<FormData> };
+export type FieldPropertyFunctionParams<FormData> = {
+  $form: ImmutableRecord<FormData>;
+  translate?: I18nTranslator['translate'];
+};
 
 /**
  * A FieldPropertyFunction is a field function that is evaluated and then substituted by the produced value.
@@ -49,6 +53,7 @@ export type ReactiveFormField = LooseObject<
 export type FunctionFieldParams<FormData> = {
   $form: ImmutableRecord<FormData>;
   errors?: ValidationStatus;
+  translate?: I18nTranslator['translate'];
 };
 
 /**
@@ -97,8 +102,16 @@ export type FormEvent<T = any> = {
  * Control adapter templateData
  */
 export type ControlTemplateData<T, V = any> = {
+  lang?: string;
   label?: string;
   value?: T;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
   /**
    * validation errors
    */
@@ -113,5 +126,43 @@ export type ControlTemplateData<T, V = any> = {
  * Layout adapter templateData
  */
 export type LayoutTemplateData = {
+  lang?: string;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
   children: NonFunctionField<string>[];
+};
+
+/**
+ * Display field adapter templateData
+ */
+export type DisplayFieldTemplateData = {
+  lang?: string;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
+};
+
+/**
+ * Interactive field adapter templateData
+ */
+export type InteractiveFieldTemplateData = {
+  lang?: string;
+  label?: string;
+  disabled?: boolean;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
 };

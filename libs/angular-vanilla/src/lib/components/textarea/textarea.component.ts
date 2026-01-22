@@ -12,6 +12,7 @@ import { TextareaProps } from '@golemui/shared-vanilla';
   templateUrl: './textarea.component.html',
   host: {
     class: 'gui-textarea',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

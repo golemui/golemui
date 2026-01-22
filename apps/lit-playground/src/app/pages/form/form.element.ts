@@ -2,15 +2,25 @@ import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './form.element.scss';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
+import './form.element.scss';
+
+const mock = AppsShared.translations;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef = AppsShared.kitchenSink;
-  formData = AppsShared.kitchenSinkData;
+  formDef = mock.form;
+  formData = mock.data;
+  localization = AppsShared.initializeI18n(mock.resources);
+  languages = AppsShared.commonLanguages
+    .filter(({ code }) => Object.keys(mock.resources).includes(code))
+    .map(({ code, label, flag }) => ({
+      value: code,
+      label: `${flag} ${label}`,
+    }));
   customFieldLoaders = {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.element')).HeadingElement,
@@ -42,9 +52,27 @@ export class FormElement extends LitElement {
     Promise.resolve().then(() => this.requestUpdate());
   }
 
+  protected onLanguageChanged(event: CustomEvent<{ value: string }>) {
+    const code = event.detail.value;
+    i18next.changeLanguage(code);
+  }
+
+  private languagePicker() {
+    return html`<div>
+      <gui-select
+        label="Language picker"
+        uid="language"
+        value="en"
+        .options=${this.languages}
+        @change=${this.onLanguageChanged}
+      ></gui-select>
+    </div>`;
+  }
+
   render() {
     return html`
       <div>
+        ${this.languages.length > 0 ? this.languagePicker() : null}
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
         <gui-form
@@ -52,6 +80,7 @@ export class FormElement extends LitElement {
           .data=${this.formData}
           .fieldLoaders=${this.customFieldLoaders}
           .itemRenderers=${this.itemRenderers}
+          .localization=${this.localization}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
           .validateOn=${'eager'}

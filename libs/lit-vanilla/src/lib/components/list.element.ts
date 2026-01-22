@@ -53,33 +53,15 @@ export class ListElement extends LitElement implements Core.WithField {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
-  private _onRangeChange(e: CustomEvent) {
-    this._range = { start: e.detail.startIndex, end: e.detail.endIndex };
-  }
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
 
-  private _onUpdateItems(e: CustomEvent) {
-    this._listItems = e.detail || [];
-  }
+    const size = this.adapter.templateData.size;
 
-  private _onFocusChange(e: CustomEvent) {
-    this._focusedIndex = e.detail.index;
-  }
-
-  private _onClickItem(item: ListItem<any>, index: number) {
-    if (this.adapter.templateData.disabled) return;
-
-    this.adapter.valueChanged(item.value);
-
-    this._focusedIndex = index;
-
-    if (this._guiListRef && typeof this._guiListRef.focusItemAtIndex === 'function') {
-      this._guiListRef.focusItemAtIndex(index);
-    }
-  }
-
-  private _valueChanged(e: CustomEvent) {
-    if (!this.adapter.templateData.readonly) {
-      this.adapter.valueChanged(e.detail.value);
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
     }
   }
 
@@ -151,5 +133,35 @@ export class ListElement extends LitElement implements Core.WithField {
 
       <gui-errors .errors=${data.errors} .touched=${data.touched}></gui-errors>
     `;
+  }
+
+  private _onRangeChange(e: CustomEvent) {
+    this._range = { start: e.detail.startIndex, end: e.detail.endIndex };
+  }
+
+  private _onUpdateItems(e: CustomEvent) {
+    this._listItems = e.detail || [];
+  }
+
+  private _onFocusChange(e: CustomEvent) {
+    this._focusedIndex = e.detail.index;
+  }
+
+  private _onClickItem(item: ListItem<any>, index: number) {
+    if (this.adapter.templateData.disabled) return;
+
+    this.adapter.valueChanged(item.value);
+
+    this._focusedIndex = index;
+
+    if (this._guiListRef && typeof this._guiListRef.focusItemAtIndex === 'function') {
+      this._guiListRef.focusItemAtIndex(index);
+    }
+  }
+
+  private _valueChanged(e: CustomEvent) {
+    if (!this.adapter.templateData.readonly) {
+      this.adapter.valueChanged(e.detail.value);
+    }
   }
 }

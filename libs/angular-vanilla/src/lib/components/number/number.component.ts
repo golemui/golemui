@@ -12,6 +12,7 @@ import { NumberinputProps } from '@golemui/shared-vanilla';
   templateUrl: './number.component.html',
   host: {
     class: 'gui-number',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

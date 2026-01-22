@@ -17,12 +17,13 @@ import { vanillaFieldLoaders } from '../../field.loaders';
 })
 export class FormComponent {
   formDef = input.required<string | Record<string, any>>();
+  fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>({});
   data = input<Record<string, any>>({});
-  fieldLoaders = input<Core.FieldLoaders<Type<Core.WithField>>>({});
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   validators = input<CustomValidatorSchemas>({});
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
+  localization = input<Core.I18nTranslator>();
 
   protected customFieldLoaders = computed(() => ({
     ...vanillaFieldLoaders,

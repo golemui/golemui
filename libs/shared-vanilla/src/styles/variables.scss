@@ -57,6 +57,11 @@
   --gui-toggle-slider-width: 16px;
   --gui-toggle-slider-height: 16px;
   --gui-toggle-slider-transform: 16px;
+
+  /* Calendar */
+  --gui-calendar-width: 300px;
+  --gui-calendar-change-month-button-width: 36px;
+  --gui-calendar-change-month-button-height: 36px;
 }
 
 @media (prefers-color-scheme: dark) {

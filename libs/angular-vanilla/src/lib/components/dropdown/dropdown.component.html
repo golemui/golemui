@@ -12,7 +12,6 @@
 ></gui-label>
 
 <div class="gui-field">
-
   <input
     #inputRef
     type="text"
@@ -81,7 +80,4 @@
   </gui-list>
 </div>
 
-<gui-errors
-  [errors]="templateData.errors"
-  [touched]="templateData.touched"
-></gui-errors>
+<gui-errors [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>

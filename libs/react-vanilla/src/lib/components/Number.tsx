@@ -28,7 +28,7 @@ export function NumberInput(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-number">
+    <div className="gui-number" style={{ flex: templateData.size }}>
       <gui-number
         uid={uid}
         label={label}

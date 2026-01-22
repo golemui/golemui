@@ -8,12 +8,16 @@ import {
   LayoutField,
   NonFunctionField,
 } from '../../form-field';
+import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
+import { isPotentialDotPath } from '../../utils/dot-path';
 import { get, set } from '../../utils/object';
 import { DerivedField, State } from '../model';
 
-export const calculateFieldProps = (state: State): State => {
-  return { ...state, calculatedFields: calculateProps(state) };
-};
+export const calculateFieldProps =
+  (localization: I18nTranslator) =>
+  (state: State): State => {
+    return { ...state, calculatedFields: calculateProps(state, localization) };
+  };
 
 const mkDerivedField = <F extends FormField<string>>(
   source: F,
@@ -31,7 +35,7 @@ function unsuffixedUniqueKeys(keys: string[]): string[] {
   return Array.from(new Set(keys.map((k) => k.split('.')[0])));
 }
 
-function calculateProps(state: State) {
+function calculateProps(state: State, localization: I18nTranslator) {
   return Object.keys(state.calculatedFields).reduce(
     (acc, uid) => {
       if (state.fieldFlags[uid] !== undefined && state.fieldFlags[uid].hidden) {
@@ -46,6 +50,7 @@ function calculateProps(state: State) {
         originalDerivedField.current = originalSource({
           $form: state.data,
           errors: originalSource.path ? state.validations[originalSource.path] : undefined,
+          translate: localization.translate,
         });
         originalDerivedField.current.uid = uid;
         // TODO: structural comparison to avoid change detection
@@ -70,6 +75,7 @@ function calculateProps(state: State) {
             derivedField,
             property: prop as CoreProp,
             $form: state.data,
+            localization,
           });
         });
 
@@ -87,6 +93,7 @@ function calculateProps(state: State) {
           property: 'props',
           subProp: prop,
           $form: state.data,
+          localization,
         });
       });
 
@@ -100,6 +107,7 @@ function calculateProps(state: State) {
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
             $form: state.data,
+            localization,
           });
         });
       }
@@ -153,6 +161,7 @@ function calculateProperty<F extends NonFunctionField<string>>({
   property,
   subProp,
   $form,
+  localization,
 }: {
   currentStates: string[];
   fieldPropOverrides: State['fieldPropOverrides'];
@@ -160,6 +169,7 @@ function calculateProperty<F extends NonFunctionField<string>>({
   property: CoreProp;
   subProp?: string;
   $form: State['data'];
+  localization: I18nTranslator;
 }) {
   // TODO: Does this assumption holds?
   // Longer props are more relevant because "register" vs "register:adult" vs "register:adult:termsAccepted"
@@ -187,8 +197,16 @@ function calculateProperty<F extends NonFunctionField<string>>({
   const dotPath = subProp ? `${property}.${subProp}` : property;
 
   if (typeof propValue === 'function') {
-    set(derivedField.current, dotPath, propValue({ $form }));
+    set(derivedField.current, dotPath, propValue({ $form, translate: localization.translate }));
   } else {
+    // TODO: is this too naive? it only checks for the existence of `{key: string;}`
+    if (isTranslationConfig(propValue)) {
+      propValue = localization.translate(
+        propValue.key,
+        resolveI18nParams(propValue.params, $form),
+        propValue.default,
+      );
+    }
     set(derivedField.current, dotPath, propValue);
   }
 
@@ -206,3 +224,34 @@ function calculateProperty<F extends NonFunctionField<string>>({
     derivedField.changed = true;
   }
 }
+
+/**
+ * Resolves i18n interpolation parameters to concrete values.
+ *
+ * Each parameter value may either be a literal (string or number) or a
+ * property path that is looked up in the provided form state.
+ * References are replaced with their resolved values, while literal
+ * values are passed through unchanged.
+ *
+ * If `params` is `undefined`, the function returns `undefined`.
+ */
+const resolveI18nParams = (
+  params: I18nParams | undefined,
+  // TODO: if we also target $error and $meta this should be State not State['data']
+  data: State['data'],
+): I18nParams | undefined => {
+  if (!params) {
+    return params;
+  }
+  return Object.keys(params).reduce((acc, key) => {
+    const path = String(params[key]);
+    if (isPotentialDotPath(path)) {
+      // TODO: temporary while we accomodate other prefixes
+      const pathWithout$form = path.replace('$form.', '');
+      acc[key] = get(data, pathWithout$form) || path;
+    } else {
+      acc[key] = path;
+    }
+    return acc;
+  }, {} as I18nParams);
+};
