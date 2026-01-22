@@ -12,6 +12,7 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
   templateUrl: './repeater.component.html',
   host: {
     class: 'gui-repeater',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {

@@ -12,6 +12,7 @@ import { TextinputProps } from '@golemui/shared-vanilla';
   templateUrl: './textinput.component.html',
   host: {
     class: 'gui-textinput',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

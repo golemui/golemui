@@ -23,6 +23,7 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
   templateUrl: './list.component.html',
   host: {
     class: 'gui-list',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

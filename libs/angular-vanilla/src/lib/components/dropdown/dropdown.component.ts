@@ -29,6 +29,7 @@ interface GuiListElement extends HTMLElement {
   templateUrl: './dropdown.component.html',
   host: {
     class: 'gui-dropdown',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

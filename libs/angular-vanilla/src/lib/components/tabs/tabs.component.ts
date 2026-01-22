@@ -22,6 +22,7 @@ import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithField {
