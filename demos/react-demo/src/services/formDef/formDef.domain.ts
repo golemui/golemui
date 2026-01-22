@@ -22,15 +22,18 @@ export interface TextDataInputDef extends DataInputDef {
 }
 
 export type OneOfDataInputDefs = TextDataInputDef | NumberDataInputDef;
-export type ValidShortcutType = 'string' | 'number';
+export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
 export interface OneOfDataInputDefsParams {
   error?: boolean;
 }
 
 export type ValidInputDef =
-  | OneOfDataInputDefs
+  | ExplodedValidInputDef
   | ValidShortcutType
+
+export type ExplodedValidInputDef =
+  | OneOfDataInputDefs
   | ((params: OneOfDataInputDefsParams) => OneOfDataInputDefs);
 
 export type DataInputDefsByKey<T extends Record<string, any>> = Partial<
@@ -57,10 +60,25 @@ export type ControllersDefFacade = OneOrMany<ControllerDef | ControllerDefCallba
 
 export type OneOrMany<T> = T | T[];
 
+export type DataInputsTuple<FORM_DATA extends Record<string, any>> = [
+  'data_inputs',
+  DataInputDefsByKey<FORM_DATA>,
+];
+
 export type FormDefTuple<FORM_DATA extends Record<string, any>> =
-  | ['data_inputs', DataInputDefsByKey<FORM_DATA>]
+  | ['layout', FormDefTuple<FORM_DATA>[]]
+  | DataInputsTuple<FORM_DATA>
   | ['controllers', ControllersDefFacade];
 
+export interface HorizontalLayoutShortcut<T extends Record<string, any>> {
+  _horizontalLayout: FormDefFacade<T>;
+}
+
+export type ValidDxElement<T extends Record<string, any>> = (
+  | DataInputDefsByKey<T>
+  | HorizontalLayoutShortcut<T>
+);
+
 export type FormDefFacade<T extends Record<string, any>> =
-  | FormDefTuple<T>[]
-  | DataInputDefsByKey<T>;
+  | DataInputDefsByKey<T>
+  | ValidDxElement<T> [];

@@ -13,7 +13,7 @@ export const formConfigMixed: FormDemoDefinition = {
   formDef: {
     name: 'string',
     age: ({ error }: any) => ({
-      label: !error ? 'Age must be at least 18' : 'Age',
+      label: error ? 'Age must be at least 18' : 'Age',
       type: 'number',
       placeholder: 'age >= 18',
       validator: {

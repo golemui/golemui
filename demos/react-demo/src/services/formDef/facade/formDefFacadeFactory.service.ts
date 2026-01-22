@@ -1,13 +1,18 @@
 import { KeyOf } from 'zod/v4/core/util';
-import { DataInputDef, DataInputDefsByKey, FormDefFacade, FormDefTuple } from '../formDef.domain';
+import {
+  DataInputDef,
+  DataInputDefsByKey,
+  ExplodedValidInputDef,
+  FormDefTuple,
+} from '../formDef.domain';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
 
-export class FormDefFacadeFactory {
+export class FormDefTupleFactory {
   constructor(private readonly sensibleDefaults: SensibleDefaults) {}
 
   public create<FORM_DATA extends Record<string, any> = any>(
-    dataInputDefsByKey: Record<string, DataInputDef>,
-  ): FormDefFacade<FORM_DATA> {
+    dataInputDefsByKey: Record<string, ExplodedValidInputDef>,
+  ): FormDefTuple<FORM_DATA>[] {
     const fieldDefKeys: string[] = Object.keys(dataInputDefsByKey);
     if (fieldDefKeys.length === 0) {
       throw new Error('Form definition cannot be null');
@@ -25,7 +30,7 @@ export class FormDefFacadeFactory {
   }
 
   private extractFieldDef<FORM_DATA extends Record<string, any> = any>(
-    dataInputDefsByKey: Record<string, DataInputDef>,
+    dataInputDefsByKey: Record<string, ExplodedValidInputDef>,
     key: keyof FORM_DATA,
   ): DataInputDef {
     const fieldDefForKey = dataInputDefsByKey?.[key as KeyOf<FORM_DATA>];
@@ -47,5 +52,5 @@ export class FormDefFacadeFactory {
     return ['data_inputs', dataInput];
   }
 }
-const formDefFacadeFactory = new FormDefFacadeFactory(sensibleDefaults);
-export default formDefFacadeFactory;
+const formDefTupleFactory = new FormDefTupleFactory(sensibleDefaults);
+export default formDefTupleFactory;

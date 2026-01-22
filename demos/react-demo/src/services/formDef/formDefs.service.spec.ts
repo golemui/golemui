@@ -11,7 +11,7 @@ describe('FormDefs - Integration Tests', () => {
         ['data_inputs', { name: { type: 'text' } }],
       ];
 
-      const result = service.hydrate(formDefRaw);
+      const result = service.convertIntoTuples(formDefRaw);
 
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
@@ -26,7 +26,7 @@ describe('FormDefs - Integration Tests', () => {
         ['data_inputs', { name: { type: 'text' }, email: { type: 'text' } }],
       ];
 
-      const result = service.hydrate(formDefRaw);
+      const result = service.convertIntoTuples(formDefRaw);
 
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
@@ -37,7 +37,7 @@ describe('FormDefs - Integration Tests', () => {
     });
 
     it('should throw error when formDefRaw is null', () => {
-      expect(() => service.hydrate(null)).toThrow('Form definition cannot be null');
+      expect(() => service.convertIntoTuples(null)).toThrow('Form definition cannot be null');
     });
 
     it('should handle complex form definitions with multiple data_inputs tuples', () => {
@@ -46,7 +46,7 @@ describe('FormDefs - Integration Tests', () => {
         ['data_inputs', { age: { type: 'number' } }],
       ];
 
-      const result = service.hydrate(formDefRaw);
+      const result = service.convertIntoTuples(formDefRaw);
 
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
@@ -66,7 +66,7 @@ describe('FormDefs - Integration Tests', () => {
     it('should handle DataInputDefsByKey format (object instead of tuple array)', () => {
       const formDefRaw = { name: { type: 'text' as const }, age: { type: 'number' as const } };
 
-      const result = service.hydrate(formDefRaw);
+      const result = service.convertIntoTuples(formDefRaw);
 
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);

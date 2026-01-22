@@ -1,9 +1,26 @@
 import { Form, UiState } from '@golemui/core';
-import formDefFacadeFactory, { FormDefFacadeFactory } from './facade/formDefFacadeFactory.service';
+import formDefTupleFactory, { FormDefTupleFactory } from './facade/formDefFacadeFactory.service';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
-import { FormDefFacade } from './formDef.domain';
+import {
+  DataInputDef,
+  DataInputDefsByKey,
+  DataInputsTuple,
+  FormDefFacade,
+  FormDefTuple,
+  HorizontalLayoutShortcut,
+  OneOfDataInputDefs,
+  OneOfDataInputDefsParams,
+  ValidInputDef,
+  ValidShortcutType,
+} from './formDef.domain';
 import { FormConfig } from './fomConfig.domain';
-import formDefParser, { FormDefParser } from './parser/formDefParser.service';
+import sensibleDefaultsService, { SensibleDefaults } from './default/sensibleDefaults.service';
+
+function isHorizontalLayoutShortcut<T extends Record<string, any>>(
+  element: unknown,
+): element is HorizontalLayoutShortcut<T> {
+  return typeof element === 'object' && element !== null && '_horizontalLayout' in element;
+}
 
 /**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
@@ -13,70 +30,86 @@ import formDefParser, { FormDefParser } from './parser/formDefParser.service';
  * of the {@link Form} interface.
  *
  * The transformation involves two steps:
- * 1. **Hydration**: Enriches the facade with sensible defaults. This step may be skipped
- *    if a complete facade is provided.
- * 2. **Mapping**: Converts the hydrated facade into a fully typed Form instance that
+ * 1. **Tuplification**: Enriches the facade with sensible defaults and converts it into a
+ *    list of tuples that can be consumed by the mapper.
+ * 2. **Mapping**: Converts the hydrated tuples into a fully typed Form instance that
  *    the framework can use.
  *
- * Users can provide a full, partial, or no facade.
  * The result is a fully defined and typed Form<STATE_KEYS, FORM_DATA>.
  */
 export class FormDefs {
   constructor(
-    private readonly formDefFacadeFactory: FormDefFacadeFactory,
+    private readonly formDefTupleFactory: FormDefTupleFactory,
     private readonly formMapperService: FormDefMapper,
-    private readonly formDefParser: FormDefParser,
+    private readonly sensibleDefaults: SensibleDefaults,
   ) {}
 
   processFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
-    formDefRaw: FormDefFacade<FORM_DATA> | null,
+    formDefRaw: FormDefFacade<FORM_DATA>,
     formConfig?: FormConfig<FORM_DATA>,
   ): Form<STATE_KEYS, FORM_DATA> {
-    const formDefFacade = this.hydrate(formDefRaw);
-    return this.formMapperService.map<STATE_KEYS, FORM_DATA>(formDefFacade, formConfig);
+    const tuples = this.convertIntoTuples(formDefRaw);
+    return this.formMapperService.map<STATE_KEYS, FORM_DATA>(tuples, formConfig);
   }
 
-  hydrate<FORM_DATA extends Record<string, any> = any>(
-    formDefRaw: FormDefFacade<FORM_DATA> | null,
-  ) {
-    const fieldDefsByKey = this.formDefParser.extractDataInputDefs(formDefRaw);
-    const uncompressed = this.formDefFacadeFactory.create<FORM_DATA>(fieldDefsByKey);
-    return this.compress(uncompressed);
+  convertIntoTuples<FORM_DATA extends Record<string, any> = any>(
+    formDefRaw: FormDefFacade<FORM_DATA>,
+  ): FormDefTuple<FORM_DATA>[] {
+    const tuples = this.createTuples(formDefRaw);
+
+    return [...tuples, ['controllers', [this.sensibleDefaults.createDefaultSubmitButton()]]];
   }
 
-  private compress<FORM_DATA extends Record<string, any> = any>(
-    uncompressed: FormDefFacade<FORM_DATA>,
-  ): FormDefFacade<FORM_DATA> {
-    if (!Array.isArray(uncompressed)) {
-      return uncompressed;
-    }
-
-    const compressed: FormDefFacade<FORM_DATA> = [];
-    let currentDataInputs: any = {};
-
-    for (const tuple of uncompressed) {
-      if (Array.isArray(tuple) && tuple[0] === 'data_inputs') {
-        // Merge data_inputs into the current accumulator
-        currentDataInputs = { ...currentDataInputs, ...tuple[1] };
-      } else {
-        // If we have accumulated data_inputs, push them first
-        if (Object.keys(currentDataInputs).length > 0) {
-          compressed.push(['data_inputs', currentDataInputs]);
-          currentDataInputs = {};
+  private createTuples<FORM_DATA extends Record<string, any> = any>(
+    formDefRaw: FormDefFacade<FORM_DATA>,
+  ): FormDefTuple<FORM_DATA>[] {
+    if (Array.isArray(formDefRaw)) {
+      return formDefRaw.map((element) => {
+        if (isHorizontalLayoutShortcut<FORM_DATA>(element)) {
+          return [`layout`, this.createTuples(element._horizontalLayout)];
+        } else {
+          const asDataInputDefsByKey = element as DataInputDefsByKey<FORM_DATA>;
+          return this.createDataInputsTuple(asDataInputDefsByKey);
         }
-        // Push the non-data_inputs tuple
-        compressed.push(tuple);
+      });
+    } else {
+      return [this.createDataInputsTuple(formDefRaw as DataInputDefsByKey<FORM_DATA>)];
+    }
+  }
+
+  private createDataInputsTuple<FORM_DATA extends Record<string, any> = any>(
+    formDefRaw: DataInputDefsByKey<FORM_DATA>,
+  ): DataInputsTuple<FORM_DATA> {
+    const fieldDefsByKey = this.explodeKeyShortcuts(formDefRaw as DataInputDefsByKey<FORM_DATA>);
+
+    return ['data_inputs', fieldDefsByKey];
+  }
+
+  private explodeKeyShortcuts<FORM_DATA extends Record<string, any> = any>(
+    formDefRaw: DataInputDefsByKey<FORM_DATA>,
+  ): DataInputDefsByKey<FORM_DATA> {
+    const fieldDefsByKey: DataInputDefsByKey<FORM_DATA> = {};
+    const asDataInputDefsByKey = formDefRaw as DataInputDefsByKey<FORM_DATA>;
+    const mutableFieldDefsByKey = fieldDefsByKey as Record<string, ValidInputDef>;
+    Object.keys(asDataInputDefsByKey).forEach((key) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const dataInputDef: ValidInputDef = asDataInputDefsByKey[key]!;
+      const typeOfDataInputDef = typeof dataInputDef;
+      if (typeOfDataInputDef === 'function') {
+        mutableFieldDefsByKey[key] = dataInputDef as (
+          params: OneOfDataInputDefsParams,
+        ) => OneOfDataInputDefs;
+      } else if (typeOfDataInputDef === 'string') {
+        mutableFieldDefsByKey[key] = this.sensibleDefaults.explodeShortcut(
+          dataInputDef as ValidShortcutType,
+        );
+      } else if (typeOfDataInputDef === 'object') {
+        mutableFieldDefsByKey[key] = dataInputDef as DataInputDef;
       }
-    }
-
-    // Don't forget any remaining data_inputs
-    if (Object.keys(currentDataInputs).length > 0) {
-      compressed.push(['data_inputs', currentDataInputs]);
-    }
-
-    return compressed;
+    });
+    return fieldDefsByKey;
   }
 }
 
-const formDefs = new FormDefs(formDefFacadeFactory, formMapperService, formDefParser);
+const formDefs = new FormDefs(formDefTupleFactory, formMapperService, sensibleDefaultsService);
 export default formDefs;

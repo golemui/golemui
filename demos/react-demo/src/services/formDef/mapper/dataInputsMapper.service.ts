@@ -9,10 +9,7 @@ import { ControlField, UiState } from '@golemui/core';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 
-const SUPPRESS_LABELS_DEFAULT: DefaultFieldDefFn = ({ fieldKey, currentDef }) => {
-  if (currentDef.label != null) {
-    return currentDef;
-  }
+const SUPPRESS_LABELS_DEFAULT: DefaultFieldDefFn = ({ fieldKey }) => {
   return {
     label: null,
     placeholder: `${fieldKey}`,
@@ -35,14 +32,19 @@ export class DataInputsMapper {
   ): ControlField<any, StateKeys, FormData> {
     const baseFieldDef: OneOfDataInputDefs = this.explodeShortcutIfNeeded(fieldDefRaw);
 
-    const useLabels = !formConfig?.suppressAutomaticLabels;
-    const labelsDecorator = useLabels ? SHOW_LABELS_DEFAULT : SUPPRESS_LABELS_DEFAULT;
-    const labelsFieldDef = labelsDecorator({
-      fieldKey: key,
-      currentDef: baseFieldDef,
-      baseDef: baseFieldDef,
-    });
-    const withLabels = this.objectUtils.deepMerge(baseFieldDef, labelsFieldDef);
+    let withLabels: any;
+    if (baseFieldDef.label != null) {
+      withLabels = baseFieldDef;
+    } else {
+      const useLabels = !formConfig?.suppressAutomaticLabels;
+      const labelsDecorator = useLabels ? SHOW_LABELS_DEFAULT : SUPPRESS_LABELS_DEFAULT;
+      const labelsFieldDef = labelsDecorator({
+        fieldKey: key,
+        currentDef: baseFieldDef,
+        baseDef: baseFieldDef,
+      });
+      withLabels = this.objectUtils.deepMerge(baseFieldDef, labelsFieldDef);
+    }
 
     if (formConfig?.defaultFieldDef == null) {
       return this.mapToControlField<StateKeys, FormData>(key, withLabels);

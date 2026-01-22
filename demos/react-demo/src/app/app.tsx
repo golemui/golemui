@@ -10,6 +10,7 @@ import formRegistry from './formRegistry.domain';
 import { formConfigSimplest } from './demos/05_formConfig';
 import { formConfigShortcut } from './demos/06_formConfigShortcut';
 import { formConfigMixed } from './demos/07_formConfigMixed';
+import { mixingLayouts } from './demos/08_MixingLayouts';
 
 export interface FormData {
   name: string;
@@ -26,9 +27,10 @@ formRegistry.registerAll([
   formConfigSimplest,
   formConfigShortcut,
   formConfigMixed,
+  mixingLayouts,
 ]);
 
-export function App_simplest() {
+export function App() {
   // Check if URL has formKey parameter
   const params = new URLSearchParams(window.location.search);
   const formKey = params.get('formKey');
@@ -80,4 +82,4 @@ export function App_simplest() {
   );
 }
 
-export default App_simplest;
+export default App;

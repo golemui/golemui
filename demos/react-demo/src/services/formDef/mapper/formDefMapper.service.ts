@@ -13,7 +13,6 @@ import {
   ControllerDefCallback,
   ControllersDefFacade,
   DataInputDefsByKey,
-  FormDefFacade,
   FormDefTuple,
 } from '../formDef.domain';
 import { FormConfig } from '../fomConfig.domain';
@@ -29,23 +28,38 @@ export class FormDefMapper {
   constructor(private readonly dataInputsMapper: DataInputsMapper) {}
 
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-    formDefFacade: FormDefFacade<FormData>,
+    formTuples: FormDefTuple<FormData>[],
     formConfig?: FormConfig<FormData>,
   ): Form<StateKeys, FormData> {
-    const formTuples = this.extractTuples(formDefFacade);
+    // const formTuples = this.extractTuples(formDefFacade);
 
     const formFields: (FormField<StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] =
       formTuples.flatMap((item) => this.mapTupleToFormFields(item, formConfig));
-
     return {
-      form: {
-        uid: '',
-        children: formFields,
-        kind: 'layout',
-        widget: 'stack',
-        props: {
-          direction: 'horizontal',
-        },
+      form: this.createLayout(formFields),
+    };
+  }
+
+  private createLayout<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    children: (
+      | DisplayField<StateKeys, FormData>
+      | ControlField<any, StateKeys, FormData>
+      | LayoutField<StateKeys, FormData>
+      | InteractiveField<StateKeys, FormData>
+      | FunctionField<StateKeys, FormData>
+    )[],
+    direction: 'vertical' | 'horizontal' = 'vertical',
+  ): LayoutField<StateKeys, FormData> {
+    return {
+      uid: '',
+      children,
+      kind: 'layout',
+      widget: 'stack',
+      props: {
+        direction: direction,
       },
     };
   }
@@ -56,26 +70,30 @@ export class FormDefMapper {
   >(
     item: FormDefTuple<FormData>,
     formConfig?: FormConfig<FormData>,
-  ): (FormField<StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] {
+  ): (
+    | FormField<StateKeys, FormData>
+    | FunctionField<StateKeys, FormData>
+    | LayoutField<StateKeys, FormData>
+  )[] {
     const typeRaw = item[0];
     switch (typeRaw) {
       case 'data_inputs':
         return this.dataInputMapper(item[1], formConfig);
       case 'controllers':
         return this.controllerDefsMapper(item[1]);
+      case 'layout':
+        return [this.layoutMapper(item[1])];
       default:
         throw new Error(`Unsupported form element type "${typeRaw}"`);
     }
   }
 
-  private mapFormDefsToFormTuples<FormData extends Record<string, any> = any>(
-    item: FormDefTuple<FormData>,
-  ): FormDefTuple<FormData> {
-    if (Array.isArray(item)) {
-      return item;
-    } else {
-      return ['data_inputs', item];
-    }
+  private layoutMapper<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(itemElement: FormDefTuple<FormData>[]): LayoutField<StateKeys, FormData> {
+    const children = itemElement.flatMap((item) => this.mapTupleToFormFields(item));
+    return this.createLayout(children, 'horizontal');
   }
 
   private dataInputMapper<
@@ -92,7 +110,7 @@ export class FormDefMapper {
 
       if (typeof fieldDefRaw === 'function') {
         return ((params: FunctionFieldParams<FormData>) => {
-          const hasErrors = params == null || params.errors == null || params.errors.length === 0;
+          const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
           const hotMapping = fieldDefRaw({ error: hasErrors });
           const mapControlField = this.dataInputsMapper.mapControlField<StateKeys, FormData>(
             key,
@@ -136,15 +154,6 @@ export class FormDefMapper {
         label: 'Submit',
       };
     });
-  }
-
-  private extractTuples<FormData extends Record<string, any> = any>(
-    formDefFacade: FormDefFacade<FormData>,
-  ): FormDefTuple<FormData>[] {
-    if (!Array.isArray(formDefFacade)) {
-      return [['data_inputs', formDefFacade]];
-    }
-    return formDefFacade.map((item) => this.mapFormDefsToFormTuples(item));
   }
 }
 
