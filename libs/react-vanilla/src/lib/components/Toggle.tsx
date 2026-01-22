@@ -25,7 +25,7 @@ export function Toggle(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className={`gui-toggle`}>
+    <div className={`gui-toggle`} style={{ flex: templateData.size }}>
       <gui-toggle
         uid={uid}
         label={label}

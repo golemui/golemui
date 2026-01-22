@@ -135,7 +135,7 @@ export function Tabs(fieldInstance: Core.WithField) {
   }, [children, activeTab, field]);
 
   return (
-    <div className="gui-tabs">
+    <div className="gui-tabs" style={{ flex: templateData.size }}>
       <nav
         className={cn({
           'gui-field': true,

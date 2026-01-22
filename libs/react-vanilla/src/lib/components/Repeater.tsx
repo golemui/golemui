@@ -48,7 +48,7 @@ export function Repeater(fieldInstance: Core.WithField) {
   }, [templateData, value, uid, removeItem]);
 
   return (
-    <div className="gui-repeater">
+    <div className="gui-repeater" style={{ flex: templateData.size }}>
       <div id={uid}>
         {templateData.label && <h2 key={`${uid}-title`}>{templateData.label as string}</h2>}
         {renderFields()}

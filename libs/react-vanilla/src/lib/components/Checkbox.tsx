@@ -25,7 +25,7 @@ export function Checkbox(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className={`gui-checkbox`}>
+    <div className={`gui-checkbox`} style={{ flex: templateData.size }}>
       <gui-checkbox
         uid={uid}
         label={label}

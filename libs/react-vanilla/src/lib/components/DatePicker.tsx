@@ -119,7 +119,7 @@ export function DatePicker(fieldInstance: Core.WithField) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-date-picker">
+    <div className="gui-date-picker" style={{ flex: templateData.size }}>
       {templateData.label && (
         <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
           {templateData.label + (isRequired ? ' *' : '')}

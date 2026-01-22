@@ -219,7 +219,7 @@ export function Dropdown(fieldInstance: Core.WithField) {
   const isReadOnly = templateData.readonly as boolean;
 
   return (
-    <div className="gui-dropdown">
+    <div className="gui-dropdown" style={{ flex: templateData.size }}>
       <gui-label
         ref={labelRef}
         uid={uid}

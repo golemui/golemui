@@ -8,7 +8,7 @@ export function Button(fieldInstance: Core.WithField) {
   const isDisabled = templateData.disabled as boolean;
 
   return (
-    <div className="gui-button">
+    <div className="gui-button" style={{ flex: templateData.size }}>
       <div className="gui-field">
         <button
           type="button"
