@@ -12,6 +12,7 @@ import { OptionValue, RadiogroupProps } from '@golemui/shared-vanilla';
   templateUrl: './radiogroup.component.html',
   host: {
     class: 'gui-radiogroup',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

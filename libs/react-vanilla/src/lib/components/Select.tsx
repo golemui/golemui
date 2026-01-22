@@ -30,7 +30,7 @@ export function Select(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-select">
+    <div className="gui-select" style={{ flex: templateData.size }}>
       <gui-select
         uid={uid}
         label={label}

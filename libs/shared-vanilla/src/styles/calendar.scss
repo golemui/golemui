@@ -5,7 +5,7 @@ gui-calendar {
   .gui-field {
     // Month Calendar
     .gui-calendar-input {
-      width: 300px;
+      width: var(--gui-calendar-width);
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);
       border: 1px solid var(--gui-color-border);
@@ -25,16 +25,18 @@ gui-calendar {
     button.gui-button.gui-calendar__month-button {
       padding: 0.25rem;
       border-radius: 100%;
+      width: var(--gui-calendar-change-month-button-width);
+      height: var(--gui-calendar-change-month-button-height);
+    }
 
-      &-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 32px;
-        height: 32px;
-      }
+    .gui-calendar__month-button-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: calc(var(--gui-calendar-change-month-button-width) - 8px);
+      height: calc(var(--gui-calendar-change-month-button-height) - 8px);
 
-      &-icon--prev::before {
+      &--prev::before {
         content: '';
         width: 0.5rem;
         height: 0.5rem;
@@ -46,7 +48,7 @@ gui-calendar {
         top: 33%;
         transform: translateY(0%) rotate(135deg);
       }
-      &-icon--next::before {
+      &--next::before {
         content: '';
         width: 0.5rem;
         height: 0.5rem;

@@ -12,6 +12,7 @@ import { CheckboxProps } from '@golemui/shared-vanilla';
   templateUrl: './checkbox.component.html',
   host: {
     class: 'gui-checkbox',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

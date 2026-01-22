@@ -35,16 +35,16 @@ export class RepeaterElement extends LitElement implements Core.WithField {
     );
   }
 
-  addItem() {
-    this.adapter.valueChanged([...(this.adapter.templateData.value ?? []), {}]);
-    this.requestUpdate();
-  }
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
 
-  removeItem(index: number) {
-    const arr = [...(this.adapter.templateData.value ?? [])];
-    arr.splice(index, 1);
-    this.adapter.valueChanged(arr);
-    this.requestUpdate();
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
   }
 
   override render() {
@@ -91,5 +91,17 @@ export class RepeaterElement extends LitElement implements Core.WithField {
     super.disconnectedCallback();
     this.adapter.destroy();
     this.subscriptions.forEach((s) => s.unsubscribe());
+  }
+
+  private addItem() {
+    this.adapter.valueChanged([...(this.adapter.templateData.value ?? []), {}]);
+    this.requestUpdate();
+  }
+
+  private removeItem(index: number) {
+    const arr = [...(this.adapter.templateData.value ?? [])];
+    arr.splice(index, 1);
+    this.adapter.valueChanged(arr);
+    this.requestUpdate();
   }
 }

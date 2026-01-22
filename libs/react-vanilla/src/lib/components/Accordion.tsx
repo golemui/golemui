@@ -76,10 +76,10 @@ export function Accordion(fieldInstance: Core.WithField) {
         {renderContent(section.uid)}
       </div>
     ));
-  }, [templateData.sections, activeSections, onClickButton, renderContent]);
+  }, [templateData.sections, activeSections, renderContent, onClickButton]);
 
   return (
-    <div className="gui-accordion">
+    <div className="gui-accordion" style={{ flex: templateData.size }}>
       <div className="gui-field" id={uid}>
         {renderAccordion()}
       </div>

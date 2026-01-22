@@ -31,7 +31,7 @@ export function Currency(fieldInstance: Core.WithField) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-textinput">
+    <div className="gui-currency" style={{ flex: templateData.size }}>
       <gui-currency
         uid={uid}
         label={label}

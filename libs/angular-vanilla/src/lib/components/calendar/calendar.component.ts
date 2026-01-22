@@ -12,6 +12,7 @@ import { CalendarProps } from '@golemui/shared-vanilla';
   templateUrl: './calendar.component.html',
   host: {
     class: 'gui-calendar',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

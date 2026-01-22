@@ -54,6 +54,7 @@ export type BaseField<
   // kind: 'display' | 'interactive' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
+  size?: number;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
   // TODO: this shouldn't go here
@@ -127,7 +128,7 @@ export type ControlField<
     defaultValue?: T;
     validator?: ReactiveFieldValue<object, FormData>; // `object` should be `V` (the validator type)
   },
-  'disabled' | 'label' | 'validator',
+  'disabled' | 'label' | 'validator' | 'size',
   StateKeys
 >;
 
@@ -147,7 +148,7 @@ export type LayoutField<
       | FunctionField<StateKeys, FormData>
     )[];
   },
-  never,
+  'size',
   StateKeys
 >;
 
@@ -291,6 +292,7 @@ const displayFieldDecoder = jd.object<DisplayField<string>>(
     kind: jd.literal('display'),
     uid: uidDecoder,
     widget: jd.string(),
+    size: jd.optional(jd.number()),
     include: jd.optional(includeDecoder),
     exclude: jd.optional(excludeDecoder),
     disabled: jd.optional(boolWhenDecoder),
@@ -305,6 +307,7 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     kind: { decoder: jd.literal('interactive') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
@@ -335,6 +338,7 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     kind: { decoder: jd.literal('control') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
@@ -396,6 +400,7 @@ export const layoutFieldDecoder = objectWithSuffix<LayoutField<string>>(
     kind: { decoder: jd.literal('layout') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },

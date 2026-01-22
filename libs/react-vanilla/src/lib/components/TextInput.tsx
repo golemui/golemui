@@ -27,7 +27,7 @@ export function TextInput(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-textinput">
+    <div className="gui-textinput" style={{ flex: templateData.size }}>
       <gui-textinput
         uid={uid}
         label={label}

@@ -58,6 +58,18 @@ export class AccordionElement extends LitElement implements Core.WithField {
     return this.field.children.find((section) => section.uid === uid) as Core.FormField<string>;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override render() {
     if (!this.adapter.templateData) return html``;
 

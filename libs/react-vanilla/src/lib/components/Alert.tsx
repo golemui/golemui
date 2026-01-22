@@ -7,7 +7,7 @@ export function Alert(fieldInstance: Core.WithField) {
   const { uid, templateData } = useDisplayField<AlertProps>(field);
 
   return (
-    <div className="gui-alert">
+    <div className="gui-alert" style={{ flex: templateData.size }}>
       <div className="gui-field" id={uid}>
         <div
           role="alert"

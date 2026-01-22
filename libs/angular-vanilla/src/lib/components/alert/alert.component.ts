@@ -12,6 +12,7 @@ import { AlertProps } from '@golemui/shared-vanilla';
   templateUrl: './alert.component.html',
   host: {
     class: 'gui-alert',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class AlertComponent implements OnInit, OnDestroy, Core.WithField {

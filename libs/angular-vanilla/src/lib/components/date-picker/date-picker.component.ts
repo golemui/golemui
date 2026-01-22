@@ -24,6 +24,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
   host: {
     class: 'gui-date-picker',
     '(document:click)': 'onDocumentClick($event)',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

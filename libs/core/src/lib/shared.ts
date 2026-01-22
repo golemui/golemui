@@ -106,6 +106,13 @@ export type ControlTemplateData<T, V = any> = {
   label?: string;
   value?: T;
   /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
+  /**
    * validation errors
    */
   errors?: string[];
@@ -120,6 +127,13 @@ export type ControlTemplateData<T, V = any> = {
  */
 export type LayoutTemplateData = {
   lang?: string;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
   children: NonFunctionField<string>[];
 };
 
@@ -128,6 +142,13 @@ export type LayoutTemplateData = {
  */
 export type DisplayFieldTemplateData = {
   lang?: string;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
 };
 
 /**
@@ -137,4 +158,11 @@ export type InteractiveFieldTemplateData = {
   lang?: string;
   label?: string;
   disabled?: boolean;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
+  size?: number;
 };

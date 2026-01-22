@@ -12,6 +12,7 @@
   flex-direction: column;
   column-gap: var(--gui-space-gap--inner);
   row-gap: var(--gui-space-gap--inner);
+  flex: 1;
 
   &.gui-field--horizontal {
     flex-direction: row;
