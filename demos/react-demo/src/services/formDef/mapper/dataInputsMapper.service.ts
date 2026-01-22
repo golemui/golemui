@@ -1,21 +1,16 @@
-import {
-  NumberDataInputDef,
-  OneOfDataInputDefs,
-  TextDataInputDef,
-  ValidInputDef,
-} from '../formDef.domain';
+import { NumberDataInputDef, OneOfDataInputDefs, TextDataInputDef, ValidInputDef, } from '../formDef.domain';
 import { DefaultFieldDefFn, DefaultFieldDefParams, FormConfig } from '../fomConfig.domain';
 import { ControlField, UiState } from '@golemui/core';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 
-const SUPPRESS_LABELS_DEFAULT: DefaultFieldDefFn = ({ fieldKey }) => {
+const LABEL_EMPTY_PLACEHOLDER_WITH_KEY: DefaultFieldDefFn = ({ fieldKey }) => {
   return {
     label: null,
     placeholder: `${fieldKey}`,
   };
 };
-const SHOW_LABELS_DEFAULT: DefaultFieldDefFn = ({ fieldKey }) => ({
+const USE_FIELD_KEY_AS_LABEL: DefaultFieldDefFn = ({ fieldKey }) => ({
   label: fieldKey,
 });
 
@@ -27,42 +22,89 @@ export class DataInputsMapper {
 
   mapControlField<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     key: string,
-    fieldDefRaw: ValidInputDef,
+    baseFieldDef: OneOfDataInputDefs,
     formConfig?: FormConfig<FormData>,
   ): ControlField<any, StateKeys, FormData> {
-    const baseFieldDef: OneOfDataInputDefs = this.explodeShortcutIfNeeded(fieldDefRaw);
-
-    let withLabels: any;
-    if (baseFieldDef.label != null) {
-      withLabels = baseFieldDef;
-    } else {
-      const useLabels = !formConfig?.suppressAutomaticLabels;
-      const labelsDecorator = useLabels ? SHOW_LABELS_DEFAULT : SUPPRESS_LABELS_DEFAULT;
-      const labelsFieldDef = labelsDecorator({
-        fieldKey: key,
-        currentDef: baseFieldDef,
-        baseDef: baseFieldDef,
-      });
-      withLabels = this.objectUtils.deepMerge(baseFieldDef, labelsFieldDef);
+    let withTagsFieldDef = baseFieldDef;
+    let rolledUpConfig = formConfig;
+    if (baseFieldDef?.tags && baseFieldDef.tags.length > 0) {
+      baseFieldDef.tags.forEach((tag) => {
+        const tagConfig = rolledUpConfig?.tags?.[tag];
+        rolledUpConfig = this.objectUtils.deepMerge(rolledUpConfig, tagConfig);
+        if (tagConfig == null) {
+          throw new Error(`Tag "${tag}" is not defined in the form config!`);
+        }
+        const fieldDefWithTagRemoved = {
+          ...baseFieldDef,
+          tags: baseFieldDef!.tags!.filter((t) => t !== tag),
+        }
+        const fieldDefForTag = this.applyFormConfig(key, fieldDefWithTagRemoved, rolledUpConfig);
+        withTagsFieldDef = this.objectUtils.deepMerge<OneOfDataInputDefs>(withTagsFieldDef, fieldDefForTag);
+      })
     }
 
-    if (formConfig?.defaultFieldDef == null) {
-      return this.mapToControlField<StateKeys, FormData>(key, withLabels);
-    }
+    const withFormConfig = this.applyFormConfig(key, withTagsFieldDef, rolledUpConfig);
+    const merged = this.objectUtils.deepMerge<OneOfDataInputDefs>(withTagsFieldDef, withFormConfig);
 
-    const defaultDef =
-      typeof formConfig.defaultFieldDef === 'function'
+    return this.mapToControlField<StateKeys, FormData>(key, merged);
+  }
+
+  private applyFormConfig<FormData extends Record<string, any> = any>(
+    key: string,
+    baseFieldDef: OneOfDataInputDefs,
+    formConfig: FormConfig<FormData> | undefined,
+  ): Partial<OneOfDataInputDefs> | null {
+    const labelInfo = this.extractLabelDecorator(key, baseFieldDef, formConfig);
+    const withLabels = this.objectUtils.deepMerge<OneOfDataInputDefs>(baseFieldDef, labelInfo);
+
+    const defaultFieldDecorator = this.extractDefaultFieldDefDecorator(key, withLabels, formConfig);
+    const withLabelsAndDefaultFieldDecorator = this.objectUtils.deepMerge<OneOfDataInputDefs>(
+      withLabels,
+      defaultFieldDecorator,
+    );
+    return withLabelsAndDefaultFieldDecorator;
+  }
+
+  private extractDefaultFieldDefDecorator<FormData extends Record<string, any> = any>(
+    key: string,
+    baseFieldDef: OneOfDataInputDefs,
+    formConfig?: FormConfig<FormData>,
+  ): Partial<OneOfDataInputDefs> | null {
+    if (formConfig?.defaultFieldDef != null) {
+      return typeof formConfig.defaultFieldDef === 'function'
         ? this.createDefaultFieldDefFromFn(
             formConfig.defaultFieldDef,
-            withLabels,
+            baseFieldDef,
             baseFieldDef,
             key,
           )
         : formConfig.defaultFieldDef;
+    } else {
+      return null;
+    }
+  }
 
-    console.log(`about to merge`, baseFieldDef, defaultDef);
-    const combinedDef = this.objectUtils.deepMerge<OneOfDataInputDefs>(withLabels, defaultDef);
-    return this.mapToControlField<StateKeys, FormData>(key, combinedDef);
+  private extractLabelDecorator<FormData extends Record<string, any> = any>(
+    key: string,
+    baseFieldDef: OneOfDataInputDefs,
+    formConfig?: FormConfig<FormData>,
+  ): Partial<OneOfDataInputDefs> | null {
+    if (baseFieldDef.label != null) {
+      // No need to decorate the label, the user is being specific about it.
+      return null;
+    }
+
+    // From now on the user has NOT specified a label, so let's decorate the definition based on suppressAutomaticLabels
+    const useLabels = !formConfig?.suppressAutomaticLabels;
+    //IF suppressAutomaticLabels:true => We add the placeholder as key
+    //IF suppressAutomaticLabels:false [DEFAULT] => We make the label match the key
+    const labelsDecorator = useLabels ? USE_FIELD_KEY_AS_LABEL : LABEL_EMPTY_PLACEHOLDER_WITH_KEY;
+
+    return labelsDecorator({
+      fieldKey: key,
+      currentDef: baseFieldDef,
+      baseDef: baseFieldDef,
+    });
   }
 
   private createDefaultFieldDefFromFn(
@@ -85,7 +127,7 @@ export class DataInputsMapper {
     }
 
     if (typeof fieldDefRaw === 'object') {
-      return fieldDefRaw;
+      return fieldDefRaw as OneOfDataInputDefs;
     }
 
     throw new Error(`Now we need to add support for dynamic field definitions!`);

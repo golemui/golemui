@@ -2,15 +2,16 @@ import { Form, UiState } from '@golemui/core';
 import formDefTupleFactory, { FormDefTupleFactory } from './facade/formDefFacadeFactory.service';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
 import {
-  DataInputDef,
   DataInputDefsByKey,
-  DataInputsTuple,
   FormDefFacade,
   FormDefTuple,
   HorizontalLayoutShortcut,
+  InputTags,
   OneOfDataInputDefs,
-  OneOfDataInputDefsParams,
-  ValidInputDef,
+  OneOfDataInputDefsCallback,
+  ProcessedDataInputDefsByKey,
+  ProcessedDataInputsTuple,
+  ProcessedValidInputDef,
   ValidShortcutType,
 } from './formDef.domain';
 import { FormConfig } from './fomConfig.domain';
@@ -79,35 +80,43 @@ export class FormDefs {
 
   private createDataInputsTuple<FORM_DATA extends Record<string, any> = any>(
     formDefRaw: DataInputDefsByKey<FORM_DATA>,
-  ): DataInputsTuple<FORM_DATA> {
+  ): ProcessedDataInputsTuple<FORM_DATA> {
     const fieldDefsByKey = this.explodeKeyShortcuts(formDefRaw as DataInputDefsByKey<FORM_DATA>);
-
     return ['data_inputs', fieldDefsByKey];
   }
 
   private explodeKeyShortcuts<FORM_DATA extends Record<string, any> = any>(
     formDefRaw: DataInputDefsByKey<FORM_DATA>,
-  ): DataInputDefsByKey<FORM_DATA> {
-    const fieldDefsByKey: DataInputDefsByKey<FORM_DATA> = {};
+  ): ProcessedDataInputDefsByKey<FORM_DATA> {
+    const fieldDefsByKey: Partial<Record<keyof FORM_DATA, ProcessedValidInputDef>> = {};
     const asDataInputDefsByKey = formDefRaw as DataInputDefsByKey<FORM_DATA>;
-    const mutableFieldDefsByKey = fieldDefsByKey as Record<string, ValidInputDef>;
-    Object.keys(asDataInputDefsByKey).forEach((key) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const dataInputDef: ValidInputDef = asDataInputDefsByKey[key]!;
-      const typeOfDataInputDef = typeof dataInputDef;
-      if (typeOfDataInputDef === 'function') {
-        mutableFieldDefsByKey[key] = dataInputDef as (
-          params: OneOfDataInputDefsParams,
-        ) => OneOfDataInputDefs;
-      } else if (typeOfDataInputDef === 'string') {
-        mutableFieldDefsByKey[key] = this.sensibleDefaults.explodeShortcut(
-          dataInputDef as ValidShortcutType,
-        );
-      } else if (typeOfDataInputDef === 'object') {
-        mutableFieldDefsByKey[key] = dataInputDef as DataInputDef;
+    Object.entries(asDataInputDefsByKey).forEach(([key, dataInputDef]) => {
+      if (!dataInputDef) {
+        throw new Error(`Unexpected undefined value for field key: ${key}`);
+      }
+
+      if (typeof dataInputDef === 'function') {
+        fieldDefsByKey[key as keyof FORM_DATA] = dataInputDef as OneOfDataInputDefsCallback;
+      } else if (typeof dataInputDef === 'string') {
+        fieldDefsByKey[key as keyof FORM_DATA] =
+          this.sensibleDefaults.explodeShortcut(dataInputDef);
+      } else if (Array.isArray(dataInputDef)) {
+        fieldDefsByKey[key as keyof FORM_DATA] = this.processTags(dataInputDef);
+      } else {
+        fieldDefsByKey[key as keyof FORM_DATA] = dataInputDef as OneOfDataInputDefs;
       }
     });
     return fieldDefsByKey;
+  }
+
+  private processTags(dataInputDef: InputTags): OneOfDataInputDefs {
+    const shortcut: ValidShortcutType = dataInputDef[0];
+    const shortcutInputDef = this.sensibleDefaults.explodeShortcut(shortcut);
+
+    return {
+      ...shortcutInputDef,
+      tags: dataInputDef.slice(1),
+    };
   }
 }
 

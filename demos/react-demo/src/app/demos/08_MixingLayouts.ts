@@ -12,7 +12,7 @@ export const mixingLayouts: FormDemoDefinition = {
     {
       _horizontalLayout: [
         {
-          children: 'number', cars: 'number',
+          married: 'number', withChildren: 'number',
         },
       ],
     },
@@ -20,5 +20,4 @@ export const mixingLayouts: FormDemoDefinition = {
       occupation: 'string',
     },
   ],
-  warnings: ['stack in horizontal mode not working yet']
 };

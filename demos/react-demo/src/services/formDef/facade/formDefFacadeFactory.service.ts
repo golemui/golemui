@@ -2,7 +2,7 @@ import { KeyOf } from 'zod/v4/core/util';
 import {
   DataInputDef,
   DataInputDefsByKey,
-  ExplodedValidInputDef,
+  ProcessedValidInputDef,
   FormDefTuple,
 } from '../formDef.domain';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
@@ -11,7 +11,7 @@ export class FormDefTupleFactory {
   constructor(private readonly sensibleDefaults: SensibleDefaults) {}
 
   public create<FORM_DATA extends Record<string, any> = any>(
-    dataInputDefsByKey: Record<string, ExplodedValidInputDef>,
+    dataInputDefsByKey: Record<string, ProcessedValidInputDef>,
   ): FormDefTuple<FORM_DATA>[] {
     const fieldDefKeys: string[] = Object.keys(dataInputDefsByKey);
     if (fieldDefKeys.length === 0) {
@@ -30,7 +30,7 @@ export class FormDefTupleFactory {
   }
 
   private extractFieldDef<FORM_DATA extends Record<string, any> = any>(
-    dataInputDefsByKey: Record<string, ExplodedValidInputDef>,
+    dataInputDefsByKey: Record<string, ProcessedValidInputDef>,
     key: keyof FORM_DATA,
   ): DataInputDef {
     const fieldDefForKey = dataInputDefsByKey?.[key as KeyOf<FORM_DATA>];

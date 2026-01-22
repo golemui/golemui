@@ -6,7 +6,7 @@ export class ObjectUtils {
    * @param right - The object whose properties take precedence
    * @returns A new merged object
    */
-  deepMerge<T = any>(left: any, right: any): T {
+  deepMerge<T = any>(left: any, right?: any): T {
     // If right is null/undefined, return left
     if (right === null || right === undefined) {
       return left;

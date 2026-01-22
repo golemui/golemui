@@ -21,23 +21,29 @@ export interface TextDataInputDef extends DataInputDef {
   validator?: TextDataInputValidator;
 }
 
-export type OneOfDataInputDefs = TextDataInputDef | NumberDataInputDef;
+export interface BaseDataInputDef {
+  tags?: string[];
+}
+
+export type OneOfDataInputDefs = (TextDataInputDef | NumberDataInputDef) & BaseDataInputDef;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
 export interface OneOfDataInputDefsParams {
   error?: boolean;
 }
 
-export type ValidInputDef =
-  | ExplodedValidInputDef
-  | ValidShortcutType
+export type InputTags = [ValidShortcutType, ...string[]];
+export type ValidInputDef = ProcessedValidInputDef | ValidShortcutType | InputTags;
 
-export type ExplodedValidInputDef =
-  | OneOfDataInputDefs
-  | ((params: OneOfDataInputDefsParams) => OneOfDataInputDefs);
+export type OneOfDataInputDefsCallback = (params: OneOfDataInputDefsParams) => OneOfDataInputDefs;
+export type ProcessedValidInputDef = OneOfDataInputDefs | OneOfDataInputDefsCallback;
 
 export type DataInputDefsByKey<T extends Record<string, any>> = Partial<
   Record<keyof T, ValidInputDef>
+>;
+
+export type ProcessedDataInputDefsByKey<T extends Record<string, any>> = Partial<
+  Record<keyof T, ProcessedValidInputDef>
 >;
 
 export interface ControllerDef {
@@ -65,9 +71,14 @@ export type DataInputsTuple<FORM_DATA extends Record<string, any>> = [
   DataInputDefsByKey<FORM_DATA>,
 ];
 
+export type ProcessedDataInputsTuple<FORM_DATA extends Record<string, any>> = [
+  'data_inputs',
+  ProcessedDataInputDefsByKey<FORM_DATA>,
+];
+
 export type FormDefTuple<FORM_DATA extends Record<string, any>> =
   | ['layout', FormDefTuple<FORM_DATA>[]]
-  | DataInputsTuple<FORM_DATA>
+  | ProcessedDataInputsTuple<FORM_DATA>
   | ['controllers', ControllersDefFacade];
 
 export interface HorizontalLayoutShortcut<T extends Record<string, any>> {

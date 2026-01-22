@@ -12,8 +12,8 @@ import {
   ControllerDef,
   ControllerDefCallback,
   ControllersDefFacade,
-  DataInputDefsByKey,
   FormDefTuple,
+  ProcessedDataInputDefsByKey,
 } from '../formDef.domain';
 import { FormConfig } from '../fomConfig.domain';
 import dataInputsMapper, { DataInputsMapper } from './dataInputsMapper.service';
@@ -100,7 +100,7 @@ export class FormDefMapper {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    dataInput: DataInputDefsByKey<FormData>,
+    dataInput: ProcessedDataInputDefsByKey<FormData>,
     formConfig?: FormConfig<FormData>,
   ): (ControlField<any, StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] {
     return Object.entries(dataInput).map(([key, fieldDefRaw]) => {

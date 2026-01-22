@@ -1,16 +1,18 @@
 import * as React from '@golemui/react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
 import {
-  simplestDemo,
-  withValidatorDemo,
   shortcutsAndObjectsDemo,
   simpleDynamicDemo,
+  simplestDemo,
+  withValidatorDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
 import { formConfigSimplest } from './demos/05_formConfig';
 import { formConfigShortcut } from './demos/06_formConfigShortcut';
 import { formConfigMixed } from './demos/07_formConfigMixed';
+import { simplestTagging } from './demos/09_tagging';
 import { mixingLayouts } from './demos/08_MixingLayouts';
+import { allBasicFunctionality } from './demos/10_allBasicFuncitonality';
 
 export interface FormData {
   name: string;
@@ -28,6 +30,8 @@ formRegistry.registerAll([
   formConfigShortcut,
   formConfigMixed,
   mixingLayouts,
+  simplestTagging,
+  allBasicFunctionality,
 ]);
 
 export function App() {
