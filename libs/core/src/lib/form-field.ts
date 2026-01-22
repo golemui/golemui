@@ -170,7 +170,6 @@ export type FunctionField<
   uid?: Uid;
   widget?: string;
   path?: string; // when this is a control, this will have a path, otherwise undefined
-  size?: number;
   /**
    * Function that calculates the field definition.
    * Function Fields are called at least once with `undefined`.
@@ -327,7 +326,6 @@ const functionFieldDecoder: jd.Decoder<FunctionField<string>> = new jd.Decoder((
     const field = fnField(undefined);
     fnField.uid = field.uid || shortUUID();
     fnField.widget = field.widget;
-    fnField.size = field.size;
     fnField.path = (field as ControlField<unknown>).path; // this could be undefined, and it's ok.
     return jd.ok(fnField);
   } else {
