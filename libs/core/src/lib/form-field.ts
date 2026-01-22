@@ -54,6 +54,7 @@ export type BaseField<
   // kind: 'display' | 'interactive' | 'control' | 'layout';
   uid: Uid;
   widget: FieldWidget;
+  size?: number;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
   // TODO: this shouldn't go here
@@ -127,7 +128,7 @@ export type ControlField<
     defaultValue?: T;
     validator?: ReactiveFieldValue<object, FormData>; // `object` should be `V` (the validator type)
   },
-  'disabled' | 'label' | 'validator',
+  'disabled' | 'label' | 'validator' | 'size',
   StateKeys
 >;
 
@@ -147,7 +148,7 @@ export type LayoutField<
       | FunctionField<StateKeys, FormData>
     )[];
   },
-  never,
+  'size',
   StateKeys
 >;
 
@@ -169,6 +170,7 @@ export type FunctionField<
   uid?: Uid;
   widget?: string;
   path?: string; // when this is a control, this will have a path, otherwise undefined
+  size?: number;
   /**
    * Function that calculates the field definition.
    * Function Fields are called at least once with `undefined`.
@@ -291,6 +293,7 @@ const displayFieldDecoder = jd.object<DisplayField<string>>(
     kind: jd.literal('display'),
     uid: uidDecoder,
     widget: jd.string(),
+    size: jd.optional(jd.number()),
     include: jd.optional(includeDecoder),
     exclude: jd.optional(excludeDecoder),
     disabled: jd.optional(boolWhenDecoder),
@@ -305,6 +308,7 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     kind: { decoder: jd.literal('interactive') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
@@ -323,6 +327,7 @@ const functionFieldDecoder: jd.Decoder<FunctionField<string>> = new jd.Decoder((
     const field = fnField(undefined);
     fnField.uid = field.uid || shortUUID();
     fnField.widget = field.widget;
+    fnField.size = field.size;
     fnField.path = (field as ControlField<unknown>).path; // this could be undefined, and it's ok.
     return jd.ok(fnField);
   } else {
@@ -335,6 +340,7 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     kind: { decoder: jd.literal('control') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
@@ -396,6 +402,7 @@ export const layoutFieldDecoder = objectWithSuffix<LayoutField<string>>(
     kind: { decoder: jd.literal('layout') },
     uid: { decoder: uidDecoder },
     widget: { decoder: jd.string() },
+    size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },

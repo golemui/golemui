@@ -105,6 +105,7 @@ export type ControlTemplateData<T, V = any> = {
   lang?: string;
   label?: string;
   value?: T;
+  size?: number;
   /**
    * validation errors
    */
@@ -120,6 +121,7 @@ export type ControlTemplateData<T, V = any> = {
  */
 export type LayoutTemplateData = {
   lang?: string;
+  size?: number;
   children: NonFunctionField<string>[];
 };
 
@@ -128,6 +130,7 @@ export type LayoutTemplateData = {
  */
 export type DisplayFieldTemplateData = {
   lang?: string;
+  size?: number;
 };
 
 /**
@@ -137,4 +140,5 @@ export type InteractiveFieldTemplateData = {
   lang?: string;
   label?: string;
   disabled?: boolean;
+  size?: number;
 };

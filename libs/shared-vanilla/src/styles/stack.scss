@@ -10,6 +10,10 @@
       margin: var(--gui-space-gap) 0;
       column-gap: var(--gui-stack-space-gap);
       row-gap: var(--gui-stack-space-gap);
+
+      &--horizontal {
+        flex-direction: row;
+      }
     }
   }
 }
