@@ -16,16 +16,17 @@ export class DropdownElement extends LitElement implements Core.WithField {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, DropdownProps<any>>();
+  adapter = new Lit.ControlFieldAdapter<string, DropdownProps<never>>();
 
   subscriptions: Subscription[] = [];
 
   @state() private _range = { start: 0, end: 10 };
-  @state() private _filteredItems: ListItem<any>[] = [];
-  @state() private _listItems: ListItem<any>[] = [];
+  @state() private _filteredItems: ListItem<never>[] = [];
+  @state() private _listItems: ListItem<never>[] = [];
   @state() private _focusedIndex = -1;
   @state() private _isFiltering = false;
   @state() private _isListVisible = false;
+  @state() private _selectedItem: ListItem<never> | undefined = undefined;
 
   @query('input') private _inputRef!: any;
   @query('gui-list') private _listRef!: any;
@@ -97,13 +98,14 @@ export class DropdownElement extends LitElement implements Core.WithField {
     this._focusedIndex = e.detail.index;
   }
 
-  private _onClickItem(item: ListItem<any>, index: number) {
+  private _onClickItem(item: ListItem<never>, index: number) {
     if (this.adapter.templateData.readonly) return;
 
     const templateData = this.adapter.templateData;
     this.adapter.valueChanged(item.value);
 
     this._focusedIndex = index;
+    this._selectedItem = item;
     this._isFiltering = false;
     this._isListVisible = false;
 
@@ -116,8 +118,12 @@ export class DropdownElement extends LitElement implements Core.WithField {
   }
 
   private _onValueChange(e: CustomEvent) {
-    this.adapter.valueChanged(e.detail.value);
-    this._inputRef.value = e.detail.value;
+    const value = e.detail.value;
+    this.adapter.valueChanged(value);
+    this.adapter.filterChanged('');
+    this._selectedItem = this._listItems.find((item) => item.value === value);
+    this._isFiltering = false;
+    this._isListVisible = false;
   }
 
   private async _onKeyDown(event: Event) {
@@ -145,14 +151,37 @@ export class DropdownElement extends LitElement implements Core.WithField {
   private _filterItems(event: InputEvent) {
     const templateData = this.adapter.templateData;
     const filterValue = (event.target as HTMLInputElement).value;
+    const asyncFiltering = !!this.field.on?.filter;
 
-    if (filterValue) {
-      const filteredItems = templateData.items.filter((item: any) =>
-        templateData.valueField
-          ? item[templateData.valueField].toString().toLowerCase().includes(filterValue)
-          : item.toString().toLowerCase().includes(filterValue),
-      );
+    this.adapter.filterChanged(filterValue);
+
+    if (filterValue && !asyncFiltering) {
       this._isFiltering = true;
+      this._isListVisible = true;
+
+      const searchFields =
+        templateData.searchFields ??
+        ([templateData.labelField, templateData.valueField].filter((field) => !!field) as string[]);
+      const hasSearchFields = searchFields.length > 0;
+      const items = templateData.items || [];
+      const filteredItems = items.filter((item: any) => {
+        const keys = Object.keys(item);
+
+        // If it's a primitive value, we search by value
+        const isPrimitiveValue = !keys.length;
+        if (isPrimitiveValue) {
+          return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+        }
+
+        // Otherwise, we search by object
+        const reduceFunc = (acc: boolean, prop: string) =>
+          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
+
+        return hasSearchFields
+          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
+          : keys.reduce(reduceFunc, false);
+      });
+
       this._filteredItems = [...filteredItems];
     } else {
       this._isFiltering = false;
@@ -197,6 +226,13 @@ export class DropdownElement extends LitElement implements Core.WithField {
       defaultListItemRenderer,
     );
 
+    const referenceField = templateData.labelField ?? templateData.valueField;
+    const selectedItemValue = referenceField
+      ? this._selectedItem?.template[referenceField]
+      : this._selectedItem?.template;
+
+    const asyncFiltering = !!this.field.on?.filter;
+
     return html`
       <gui-label
         .targetElement=${[this._listRef, this._inputRef]}
@@ -213,7 +249,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
           type="text"
           id=${this.field.uid}
           data-cy=${`${this.field.uid}_textinput`}
-          .value=${templateData.value ?? ''}
+          .value=${selectedItemValue ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
@@ -228,8 +264,8 @@ export class DropdownElement extends LitElement implements Core.WithField {
           id=${this.field.uid}
           .uid=${this.field.uid}
           .value=${templateData.value ?? ''}
-          .valueField=${templateData.valueField}
-          .items=${this._isFiltering ? this._filteredItems : templateData.items}
+          .valueField=${templateData.valueField as string}
+          .items=${this._isFiltering && !asyncFiltering ? this._filteredItems : templateData.items}
           .itemHeight=${templateData.itemHeight}
           .height=${templateData.height}
           ?required=${templateData.validator?.required}

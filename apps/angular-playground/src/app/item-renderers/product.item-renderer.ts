@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ItemRenderContext } from '@golemui/core';
 
-type ComplexItem = {
+type ProductItem = {
   product: string;
   description: string;
   price: number;
@@ -17,7 +17,7 @@ type ComplexItem = {
       padding: 0;
     }
 
-    .my-custom-class {
+    .product-renderer {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -44,7 +44,7 @@ type ComplexItem = {
   `,
   template: `<div
     role="option"
-    class="my-custom-class"
+    class="product-renderer"
     [class.disabled]="disabled"
     [class.selected]="selected"
     [class.focused]="focused"
@@ -61,8 +61,8 @@ type ComplexItem = {
     </div>
   </div>`,
 })
-export class ProductItemRenderer implements ItemRenderContext<ComplexItem> {
-  @Input({ required: true }) template!: ComplexItem;
+export class ProductItemRenderer implements ItemRenderContext<ProductItem> {
+  @Input({ required: true }) template!: ProductItem;
   @Input({ required: true }) value!: string | number;
   @Input({ required: true }) index!: number;
   @Input() selected?: boolean;

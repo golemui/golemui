@@ -7,8 +7,9 @@ import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import './form.element.scss';
+import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const mock = AppsShared.translations;
+const mock = AppsShared.kitchenSink;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -27,6 +28,7 @@ export class FormElement extends LitElement {
   };
   itemRenderers = {
     complexListItemRenderer: complexListItemRenderer,
+    productItemRenderer: productItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
   validators: ValidatorsVanilla.CustomValidatorSchemas = {

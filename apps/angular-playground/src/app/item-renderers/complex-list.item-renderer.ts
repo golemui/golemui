@@ -16,7 +16,7 @@ type ComplexItem = {
       padding: 0;
     }
 
-    .my-custom-class {
+    .product-renderer {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
@@ -26,7 +26,7 @@ type ComplexItem = {
     }
 
     .odd {
-      background-color: dimgray;
+      background-color: #3b3e47;
     }
     .disabled {
       color: gray;
@@ -42,7 +42,7 @@ type ComplexItem = {
   `,
   template: `<div
     role="option"
-    class="my-custom-class"
+    class="product-renderer"
     [class.disabled]="disabled"
     [class.selected]="selected"
     [class.focused]="focused"
