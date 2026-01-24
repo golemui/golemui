@@ -113,7 +113,12 @@ export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
   items: ListItem<T>[];
-  valueField?: string;
+  /**
+   * Property field used to display in the input when an item option is selected
+   */
+  labelField?: keyof T;
+  valueField?: keyof T;
+  searchFields?: (keyof T)[];
   height?: number;
   itemHeight?: number;
   /**
