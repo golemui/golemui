@@ -82,6 +82,11 @@ export type AlertProps = {
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
 
+export type RendererProps<FwkCmp = any> = {
+  //render: () => FwkCmp;
+  render: FwkCmp;
+};
+
 export type RepeaterProps = {
   addLabel?: string;
   removeLabel?: string;

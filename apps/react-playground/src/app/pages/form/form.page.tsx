@@ -7,12 +7,13 @@ import i18next from 'i18next';
 import { useState } from 'react';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import styles from './form.page.module.scss';
+import { translations } from '../../translations';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = AppsShared.translations;
+const mock = translations;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);

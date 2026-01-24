@@ -15,7 +15,7 @@ export const controlWidgets = [
   'toggle',
 ] as const;
 export const layoutWidgets = ['accordion', 'stack', 'tabs'] as const;
-export const displayWidgets = ['alert'] as const;
+export const displayWidgets = ['alert', 'renderer'] as const;
 export const interactiveWidgets = ['button'] as const;
 
 export const vanillaWidgets = [
