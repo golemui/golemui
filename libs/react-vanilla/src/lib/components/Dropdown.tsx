@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Core from '@golemui/core';
-import { useControlField, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
+import { useControlField, useDebounceCallback, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
 import { DropdownProps, ListItem, OptionValue } from '@golemui/shared-vanilla';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';
@@ -178,44 +178,67 @@ export function Dropdown(fieldInstance: Core.WithField) {
     }
   };
 
+  const filterItems = useCallback(
+    (filterValue: string) => {
+      const asyncFiltering = !!field.on?.filter;
+
+      onFilter(filterValue);
+
+      if (filterValue && !asyncFiltering) {
+        setIsFiltering(true);
+        setIsListVisible(true);
+
+        const searchFields =
+          templateData.searchFields ??
+          ([templateData.labelField, templateData.valueField].filter(
+            (field) => !!field,
+          ) as string[]);
+        const hasSearchFields = searchFields.length > 0;
+        const items = templateData.items || [];
+        const filteredItems = items.filter((item: any) => {
+          const keys = Object.keys(item);
+
+          // If it's a primitive value, we search by value
+          const isPrimitiveValue = !keys.length;
+          if (isPrimitiveValue) {
+            return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+          }
+
+          // Otherwise, we search by object
+          const reduceFunc = (acc: boolean, prop: string) =>
+            acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
+
+          return hasSearchFields
+            ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
+            : keys.reduce(reduceFunc, false);
+        });
+
+        setFilteredItems(filteredItems);
+      } else {
+        setIsFiltering(false);
+        setFilteredItems([...(templateData.items || [])]);
+      }
+    },
+    [
+      field.on?.filter,
+      onFilter,
+      templateData.items,
+      templateData.labelField,
+      templateData.searchFields,
+      templateData.valueField,
+    ],
+  );
+
+  const debouncedFilter = useDebounceCallback(filterItems, templateData.inputDebounce ?? 500);
+
   const handleInputFilter = (event: React.FormEvent<HTMLInputElement>) => {
     const filterValue = (event.target as HTMLInputElement).value;
-    const asyncFiltering = !!field.on?.filter;
 
-    onFilter(filterValue);
-
-    if (filterValue && !asyncFiltering) {
-      setIsFiltering(true);
+    if (!isListVisible) {
       setIsListVisible(true);
-
-      const searchFields =
-        templateData.searchFields ??
-        ([templateData.labelField, templateData.valueField].filter((field) => !!field) as string[]);
-      const hasSearchFields = searchFields.length > 0;
-      const items = templateData.items || [];
-      const filteredItems = items.filter((item: any) => {
-        const keys = Object.keys(item);
-
-        // If it's a primitive value, we search by value
-        const isPrimitiveValue = !keys.length;
-        if (isPrimitiveValue) {
-          return item.toString().toLowerCase().includes(filterValue.toLowerCase());
-        }
-
-        // Otherwise, we search by object
-        const reduceFunc = (acc: boolean, prop: string) =>
-          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
-
-        return hasSearchFields
-          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
-          : keys.reduce(reduceFunc, false);
-      });
-
-      setFilteredItems(filteredItems);
-    } else {
-      setIsFiltering(false);
-      setFilteredItems([...(templateData.items || [])]);
     }
+
+    debouncedFilter(filterValue);
   };
 
   const handleInputFocus = () => {
