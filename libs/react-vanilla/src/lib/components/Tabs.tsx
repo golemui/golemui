@@ -37,6 +37,12 @@ export function Tabs(fieldInstance: Core.WithField) {
   }, [templateData.tabs, activeTab]);
 
   useEffect(() => {
+    if (templateData.defaultOpen) {
+      setActiveTab(templateData.defaultOpen);
+    }
+  }, [templateData.defaultOpen]);
+
+  useEffect(() => {
     const tabs = templateData.tabs || [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === activeTab);
     if (currentIndex > -1) {
