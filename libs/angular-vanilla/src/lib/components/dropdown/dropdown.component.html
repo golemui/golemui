@@ -20,7 +20,7 @@
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
     [placeholder]="templateData.placeholder ?? ''"
-    [value]="templateData.value ?? ''"
+    [value]="selectedItemValue() ?? ''"
     (keydown)="onInputKeyDown($event)"
     (input)="onInput($event)"
     (focus)="onInputFocus()"

@@ -36,7 +36,7 @@ interface GuiListElement extends HTMLElement {
 export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
   field!: Core.ControlField<string>;
 
-  protected adapter: Angular.ControlFieldAdapter<string, DropdownProps<any>> = inject(
+  protected adapter: Angular.ControlFieldAdapter<string, DropdownProps<never>> = inject(
     Angular.ControlFieldAdapter,
   );
   private el = inject(ElementRef);
@@ -47,16 +47,21 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
 
   protected currentRange = signal({ start: 0, end: 10 });
-  protected listItems = signal<ListItem<any>[]>([]);
+  protected listItems = signal<ListItem<never>[]>([]);
   protected focusedIndex = signal<number>(-1);
   protected isListVisible = signal(false);
   protected isFiltering = signal(false);
 
-  protected filteredItems = signal<ListItem<any>[]>([]);
+  protected selectedItem = signal<ListItem<never> | undefined>(undefined);
+  protected filteredItems = signal<ListItem<never>[]>([]);
+
+  protected asyncFiltering = computed(() => {
+    return !!this.field.on?.filter;
+  });
 
   protected displayItems = computed(() => {
     const data = this.adapter.templateData();
-    if (this.isFiltering()) {
+    if (this.isFiltering() && !this.asyncFiltering()) {
       return this.filteredItems();
     }
     return data.items || [];
@@ -66,6 +71,14 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
     const items = this.listItems();
     const { start, end } = this.currentRange();
     return items.slice(start, end);
+  });
+
+  protected selectedItemValue = computed(() => {
+    const data = this.adapter.templateData();
+    const referenceField = data.labelField ?? data.valueField;
+    return referenceField
+      ? this.selectedItem()?.template[referenceField]
+      : this.selectedItem()?.template;
   });
 
   ngOnInit(): void {
@@ -126,19 +139,34 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
     const filterValue = (event.target as HTMLInputElement).value;
     const templateData = this.adapter.templateData();
 
-    if (filterValue) {
+    this.adapter.filterChanged(filterValue);
+
+    if (filterValue && !this.asyncFiltering()) {
       this.isFiltering.set(true);
       this.isListVisible.set(true);
 
+      const searchFields =
+        templateData.searchFields ??
+        ([templateData.labelField, templateData.valueField].filter((field) => !!field) as string[]);
+      const hasSearchFields = searchFields.length > 0;
       const items = templateData.items || [];
-      const filtered = items.filter((item: any) =>
-        templateData.valueField
-          ? item[templateData.valueField]
-              .toString()
-              .toLowerCase()
-              .includes(filterValue.toLowerCase())
-          : item.toString().toLowerCase().includes(filterValue.toLowerCase()),
-      );
+      const filtered = items.filter((item: any) => {
+        const keys = Object.keys(item);
+
+        // If it's a primitive value, we search by value
+        const isPrimitiveValue = !keys.length;
+        if (isPrimitiveValue) {
+          return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+        }
+
+        // Otherwise, we search by object
+        const reduceFunc = (acc: boolean, prop: string) =>
+          acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
+
+        return hasSearchFields
+          ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
+          : keys.reduce(reduceFunc, false);
+      });
       this.filteredItems.set(filtered);
     } else {
       this.isFiltering.set(false);
@@ -156,22 +184,18 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
     this.closeList();
   }
 
-  protected onClickItem(item: any, index: number) {
+  protected onClickItem(item: ListItem<never>, index: number) {
     const templateData = this.adapter.templateData();
 
     if (templateData.readonly) return;
 
     this.adapter.valueChanged(item.value);
+    this.adapter.filterChanged('');
 
     this.focusedIndex.set(index);
+    this.selectedItem.set(item);
     this.isFiltering.set(false);
     this.isListVisible.set(false);
-
-    if (this.inputRef) {
-      this.inputRef.nativeElement.value = templateData.valueField
-        ? item.template[templateData.valueField]
-        : item.template;
-    }
 
     if (this.listRef?.nativeElement) {
       this.listRef.nativeElement.focusItemAtIndex(index);
@@ -200,6 +224,8 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
   protected onValueChange(event: Event) {
     const value = (event as CustomEvent).detail.value;
     this.adapter.valueChanged(value);
+    this.adapter.filterChanged('');
+    this.selectedItem.set(this.listItems().find((item) => item.value === value));
     this.isListVisible.set(false);
     this.isFiltering.set(false);
   }
