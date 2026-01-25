@@ -15,6 +15,7 @@ import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { DropdownProps, ListItem } from '@golemui/shared-vanilla';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 
 interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
@@ -81,11 +82,23 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
       : this.selectedItem()?.template;
   });
 
+  protected debouncer = new Subject<string>();
+  protected subscriptions: Subscription[] = [];
+
   ngOnInit(): void {
     this.adapter.init(this.field);
+
+    this.subscriptions.push(
+      this.debouncer
+        .pipe(debounceTime(this.adapter.templateData().inputDebounce ?? 500))
+        .subscribe((value: string) => {
+          this.inputValue(value);
+        }),
+    );
   }
 
   ngOnDestroy(): void {
+    this.subscriptions.forEach((s) => s.unsubscribe());
     this.adapter.destroy();
   }
 
@@ -137,6 +150,10 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
 
   protected onInput(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.debouncer.next(filterValue);
+  }
+
+  protected inputValue(filterValue: string) {
     const templateData = this.adapter.templateData();
 
     this.adapter.filterChanged(filterValue);

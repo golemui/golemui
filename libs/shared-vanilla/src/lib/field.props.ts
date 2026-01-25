@@ -125,6 +125,10 @@ export type DropdownProps<T> = {
    * Should match with one of the provided itemRenderer keys
    */
   itemRenderer?: string;
+  /**
+   * Time in milliseconds to wait on each keystroke to trigger the input event. Default: 500
+   */
+  inputDebounce?: number;
 };
 
 export type ListProps<T> = {

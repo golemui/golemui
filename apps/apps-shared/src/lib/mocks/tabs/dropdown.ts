@@ -18,6 +18,7 @@ export const dropdown = (): any => ({
         asyncFiltering: true,
         labelField: 'product',
         valueField: 'id',
+        inputDebounce: 300,
         items: [],
         hint: 'Search as you type with server side filtering',
       },

@@ -4,7 +4,7 @@ import { DropdownProps, ListItem } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-dropdown-control')
@@ -18,6 +18,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
   @provide({ context: Lit.controlContext })
   adapter = new Lit.ControlFieldAdapter<string, DropdownProps<never>>();
 
+  debouncer = new Subject<string>();
   subscriptions: Subscription[] = [];
 
   @state() private _range = { start: 0, end: 10 };
@@ -65,6 +66,11 @@ export class DropdownElement extends LitElement implements Core.WithField {
         }
         this.requestUpdate();
       }),
+      this.debouncer
+        .pipe(debounceTime(this.adapter.templateData.inputDebounce ?? 500))
+        .subscribe((value: string) => {
+          this._filterItems(value);
+        }),
     );
   }
 
@@ -148,9 +154,13 @@ export class DropdownElement extends LitElement implements Core.WithField {
     }
   }
 
-  private _filterItems(event: InputEvent) {
-    const templateData = this.adapter.templateData;
+  private _onInput(event: InputEvent) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.debouncer.next(filterValue);
+  }
+
+  private _filterItems(filterValue: string) {
+    const templateData = this.adapter.templateData;
     const asyncFiltering = !!this.field.on?.filter;
 
     this.adapter.filterChanged(filterValue);
@@ -255,7 +265,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder ?? ''}
           @keydown=${this._onKeyDown}
-          @input=${this._filterItems}
+          @input=${this._onInput}
           @focusout=${this._onFocusOutInput}
           @focus=${this._onFocus}
         />
