@@ -1,9 +1,9 @@
 import { KeyOf } from 'zod/v4/core/util';
 import {
   DataInputDef,
-  DataInputDefsByKey,
-  ProcessedValidInputDef,
   FormDefTuple,
+  ProcessedDataInputDefsByKey,
+  ProcessedValidInputDef,
 } from '../formDef.domain';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
 
@@ -45,9 +45,9 @@ export class FormDefTupleFactory {
     key: keyof FORM_DATA,
     fieldDef: DataInputDef,
   ): FormDefTuple<FORM_DATA> {
-    const dataInput: DataInputDefsByKey<FORM_DATA> = {
+    const dataInput: ProcessedDataInputDefsByKey<FORM_DATA> = {
       [key]: fieldDef,
-    } as DataInputDefsByKey<FORM_DATA>;
+    } as ProcessedDataInputDefsByKey<FORM_DATA>;
 
     return ['data_inputs', dataInput];
   }

@@ -12,5 +12,6 @@ export type DefaultFieldDefLike = Partial<OneOfDataInputDefs> | DefaultFieldDefF
 export interface FormConfig<T extends Record<string, any> = any> {
   defaultFieldDef?: DefaultFieldDefLike;
   suppressAutomaticLabels?: boolean;
-  tags?: Record<string, FormConfig<T>>
+  tags?: Record<string, FormConfig<T>>;
+  onSubmit?: (data: T) => void;
 }

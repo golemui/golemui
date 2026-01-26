@@ -53,6 +53,7 @@ export class SensibleDefaults {
   public createDefaultSubmitButton(): any {
     return {
       type: 'button',
+      widget: 'button',
       label: 'Submit',
       on: { click: 'submit' },
     };

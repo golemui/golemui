@@ -2,9 +2,11 @@ import { Form, UiState } from '@golemui/core';
 import formDefTupleFactory, { FormDefTupleFactory } from './facade/formDefFacadeFactory.service';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
 import {
+  ControllerDef,
   DataInputDefsByKey,
   FormDefFacade,
   FormDefTuple,
+  FormEvents,
   HorizontalLayoutShortcut,
   InputTags,
   OneOfDataInputDefs,
@@ -12,6 +14,8 @@ import {
   ProcessedDataInputDefsByKey,
   ProcessedDataInputsTuple,
   ProcessedValidInputDef,
+  SubmitButtonDefinition,
+  SubmitButtonShortcut,
   ValidShortcutType,
 } from './formDef.domain';
 import { FormConfig } from './fomConfig.domain';
@@ -21,6 +25,29 @@ function isHorizontalLayoutShortcut<T extends Record<string, any>>(
   element: unknown,
 ): element is HorizontalLayoutShortcut<T> {
   return typeof element === 'object' && element !== null && '_horizontalLayout' in element;
+}
+
+function isDataInputDefByKeys<T extends Record<string, any>>(
+  element: unknown,
+): element is DataInputDefsByKey<T> {
+  return typeof element === 'object' && element !== null;
+}
+
+function isSubmitButtonShortcut(element: unknown): element is SubmitButtonShortcut {
+  return typeof element === 'string' && element === '_submitButton';
+}
+
+function isSubmitButtonDefinition(element: unknown): element is SubmitButtonDefinition {
+  return (
+    Array.isArray(element) &&
+    element.length === 2 &&
+    typeof element[0] === 'string' &&
+    element[0] === '_submitButton'
+  );
+}
+
+function isSubmitButtonLike(element: unknown): element is SubmitButtonDefinition {
+  return isSubmitButtonShortcut(element) || isSubmitButtonDefinition(element);
 }
 
 /**
@@ -48,16 +75,23 @@ export class FormDefs {
   processFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA>,
     formConfig?: FormConfig<FORM_DATA>,
-  ): Form<STATE_KEYS, FORM_DATA> {
+  ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
     const tuples = this.convertIntoTuples(formDefRaw);
-    return this.formMapperService.map<STATE_KEYS, FORM_DATA>(tuples, formConfig);
+    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(tuples, formConfig);
+    if (formConfig?.onSubmit != null) {
+      return [fwFormDef, (e) => formConfig.onSubmit!(e.data as FORM_DATA)];
+    }
+
+    return fwFormDef;
   }
 
   convertIntoTuples<FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA>,
   ): FormDefTuple<FORM_DATA>[] {
     const tuples = this.createTuples(formDefRaw);
-
+    if (tuples.filter((it) => it[0] === 'controllers').length > 0) {
+      return [...tuples];
+    }
     return [...tuples, ['controllers', [this.sensibleDefaults.createDefaultSubmitButton()]]];
   }
 
@@ -68,13 +102,45 @@ export class FormDefs {
       return formDefRaw.map((element) => {
         if (isHorizontalLayoutShortcut<FORM_DATA>(element)) {
           return [`layout`, this.createTuples(element._horizontalLayout)];
+        } else if (isSubmitButtonLike(element)) {
+          const defaultSubmitButton = this.sensibleDefaults.createDefaultSubmitButton();
+          if (isSubmitButtonShortcut(element)) {
+            return [`controllers`, [defaultSubmitButton]];
+          } else if (isSubmitButtonDefinition(element)) {
+            if (typeof element[1] === 'function') {
+              const wrappedDefaultCallback: (params: any) => Partial<ControllerDef> = (params) => {
+                const elementElement: (params: any) => Partial<ControllerDef> = element[1] as (
+                  params: any,
+                ) => Partial<ControllerDef>;
+                return {
+                  ...defaultSubmitButton,
+                  ...elementElement(params),
+                };
+              };
+              return [`controllers`, [wrappedDefaultCallback]];
+            }
+            return [
+              `controllers`,
+              [
+                {
+                  ...defaultSubmitButton,
+                  ...element[1],
+                },
+              ],
+            ];
+          } else {
+            throw new Error(`Unexpected submit button definition ${element}`);
+          }
+        } else if (isDataInputDefByKeys<FORM_DATA>(element)) {
+          return this.createDataInputsTuple(element);
         } else {
-          const asDataInputDefsByKey = element as DataInputDefsByKey<FORM_DATA>;
-          return this.createDataInputsTuple(asDataInputDefsByKey);
+          throw new Error(`Unexpected form definition element ${element}`);
         }
       });
-    } else {
+    } else if (typeof formDefRaw === 'object' && formDefRaw !== null) {
       return [this.createDataInputsTuple(formDefRaw as DataInputDefsByKey<FORM_DATA>)];
+    } else {
+      throw new Error(`Unsupported form definition type ${typeof formDefRaw}`);
     }
   }
 

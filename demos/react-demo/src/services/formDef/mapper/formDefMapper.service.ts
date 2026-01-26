@@ -110,6 +110,7 @@ export class FormDefMapper {
 
       if (typeof fieldDefRaw === 'function') {
         return ((params: FunctionFieldParams<FormData>) => {
+          console.log(`dataInputMapper dynamic definition`, params);
           const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
           const hotMapping = fieldDefRaw({ error: hasErrors });
           const mapControlField = this.dataInputsMapper.mapControlField<StateKeys, FormData>(
@@ -132,28 +133,44 @@ export class FormDefMapper {
   private controllerDefsMapper<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(controllersDefRaw: ControllersDefFacade): InteractiveField<StateKeys, FormData>[] {
+  >(
+    controllersDefRaw: ControllersDefFacade,
+  ): (FunctionField<StateKeys, FormData> | InteractiveField<StateKeys, FormData>)[] {
     const interactiveDefs: (ControllerDef | ControllerDefCallback)[] = Array.isArray(
       controllersDefRaw,
     )
       ? controllersDefRaw
       : [controllersDefRaw];
 
-    return interactiveDefs.map<InteractiveField<StateKeys, FormData>>((interactiveDefRaw) => {
-      if (typeof interactiveDefs === 'function') {
-        throw new Error('Controller callbacks are not supported yet');
-      }
+    return interactiveDefs.map<
+      FunctionField<StateKeys, FormData> | InteractiveField<StateKeys, FormData>
+    >(
+      (
+        interactiveDefRaw,
+      ): FunctionField<StateKeys, FormData> | InteractiveField<StateKeys, FormData> => {
+        if (typeof interactiveDefRaw === 'function') {
+          return ((params: FunctionFieldParams<FormData>) => {
+            console.log(`controller dynamic definition`, params);
+            const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
+            const controllerDefCall = interactiveDefRaw as ControllerDefCallback;
+            const result = controllerDefCall({ error: hasErrors});
+            console.log(`controllerDefCall`, result);
+            return result;
+          }) as FunctionField<StateKeys, FormData>;
+        }
 
-      const interactiveDef = interactiveDefRaw as ControllerDef;
+        const interactiveDef = interactiveDefRaw as ControllerDef;
 
-      return {
-        uid: '',
-        kind: 'interactive', // data
-        widget: 'button',
-        disabled: interactiveDef.disabled,
-        label: 'Submit',
-      };
-    });
+        return {
+          uid: '',
+          kind: 'interactive', // data
+          widget: 'button',
+          disabled: interactiveDef.disabled,
+          label: interactiveDef.label,
+          ...(interactiveDef.on != null ? { on: interactiveDef.on } : {}),
+        };
+      },
+    );
   }
 }
 

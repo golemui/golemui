@@ -14,6 +14,8 @@ import { simplestTagging } from './demos/09_tagging';
 import { mixingLayouts } from './demos/08_MixingLayouts';
 import { allBasicFunctionality } from './demos/10_allBasicFuncitonality';
 import { manyTypes } from './demos/01_addingManyTypes';
+import { formDemoDefinition } from './demos/11_submitButton';
+import { configureDynamicButton } from './demos/12_submitButtonDynamic';
 
 export interface FormData {
   name: string;
@@ -34,6 +36,8 @@ formRegistry.registerAll([
   simplestTagging,
   allBasicFunctionality,
   manyTypes,
+  formDemoDefinition,
+  configureDynamicButton,
 ]);
 
 export function App() {

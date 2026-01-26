@@ -1,4 +1,5 @@
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import * as Core from '@golemui/core';
 
 export interface DataInputDef {
   // whatever a field definition is for you
@@ -33,14 +34,14 @@ export interface BaseDataInputDef {
 export type OneOfDataInputDefs = (TextDataInputDef | NumberDataInputDef | BooleanDataInputDef) & BaseDataInputDef;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
-export interface OneOfDataInputDefsParams {
+export interface DynamicDefParams {
   error?: boolean;
 }
 
 export type InputTags = [ValidShortcutType, ...string[]];
 export type ValidInputDef = ProcessedValidInputDef | ValidShortcutType | InputTags;
 
-export type OneOfDataInputDefsCallback = (params: OneOfDataInputDefsParams) => OneOfDataInputDefs;
+export type OneOfDataInputDefsCallback = (params: DynamicDefParams) => OneOfDataInputDefs;
 export type ProcessedValidInputDef = OneOfDataInputDefs | OneOfDataInputDefsCallback;
 
 export type DataInputDefsByKey<T extends Record<string, any>> = Partial<
@@ -60,22 +61,12 @@ export interface ControllerDef {
   };
 }
 
-export type ControllerDefParams = {
-  errors: string[];
-  touched: boolean;
-};
 
-export type ControllerDefCallback = (params: ControllerDefParams) => ControllerDef;
+export type ControllerDefCallback = (params: DynamicDefParams) => Partial<ControllerDef>;
 
 export type ControllersDefFacade = OneOrMany<ControllerDef | ControllerDefCallback>;
 
 export type OneOrMany<T> = T | T[];
-
-export type DataInputsTuple<FORM_DATA extends Record<string, any>> = [
-  'data_inputs',
-  DataInputDefsByKey<FORM_DATA>,
-];
-
 export type ProcessedDataInputsTuple<FORM_DATA extends Record<string, any>> = [
   'data_inputs',
   ProcessedDataInputDefsByKey<FORM_DATA>,
@@ -90,11 +81,19 @@ export interface HorizontalLayoutShortcut<T extends Record<string, any>> {
   _horizontalLayout: FormDefFacade<T>;
 }
 
-export type ValidDxElement<T extends Record<string, any>> = (
+export type SubmitButtonDefinition = ['_submitButton', Partial<ControllerDef> | ControllerDefCallback];
+
+
+export type SubmitButtonShortcut = '_submitButton';
+export type SubmitButtonLike = SubmitButtonShortcut | SubmitButtonDefinition;
+
+export type ValidDxElement<T extends Record<string, any>> =
   | DataInputDefsByKey<T>
   | HorizontalLayoutShortcut<T>
-);
+  | SubmitButtonLike;
 
 export type FormDefFacade<T extends Record<string, any>> =
   | DataInputDefsByKey<T>
   | ValidDxElement<T> [];
+
+export type FormEvents = (event: Core.FormEvent) => void;

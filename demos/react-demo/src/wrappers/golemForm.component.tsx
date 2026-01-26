@@ -4,7 +4,7 @@ import * as React from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
-import { FormDefFacade } from '../services/formDef/formDef.domain';
+import { FormDefFacade, FormEvents } from '../services/formDef/formDef.domain';
 import { FormConfig } from '../services/formDef/fomConfig.domain';
 import formDefs from '../services/formDef/formDefs.service';
 
@@ -32,7 +32,7 @@ const golemLogMiddleware: Core.Middleware<Core.State, Core.Action> =
   };
 
 export interface GolemFormProps<T extends Record<string, any>> {
-  formDef?: FormDefFacade<T>;
+  formDef: FormDefFacade<T>;
   formData?: T;
   onConfigProcessed?: (config: any) => void;
   formConfig?: FormConfig<T>;
@@ -41,33 +41,39 @@ export interface GolemFormProps<T extends Record<string, any>> {
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
-  const config = useMemo(
-    () => formDefs.processFacade<never, FormData>(props.formDef ?? null, props.formConfig),
+  const fwFormDefRaw = useMemo(
+    () => formDefs.processFacade<never, FormData>(props.formDef, props.formConfig),
     [props.formDef, props.formConfig],
   );
 
+  const fwFormDef = Array.isArray(fwFormDefRaw) ? fwFormDefRaw[0] : fwFormDefRaw;
+
+  const fwFormEvents: FormEvents = Array.isArray(fwFormDefRaw)
+    ? fwFormDefRaw[1]
+    : (event: any) => {
+        console.log(JSON.stringify(event, null, 2));
+      };
+
   useEffect(() => {
     if (import.meta.env.DEV) {
-      console.log(`GolemForm`, config);
+      console.log(`GolemForm`, fwFormDef);
     }
-  }, [config]);
+  }, [fwFormDef]);
 
   // Call the callback with the processed config
   useEffect(() => {
     if (props.onConfigProcessed) {
-      props.onConfigProcessed(config);
+      props.onConfigProcessed(fwFormDef);
     }
-  }, [config]);
+  }, [fwFormDef]);
 
   return (
     <FormComponent
-      formDef={config}
+      formDef={fwFormDef}
       data={props.formData as Record<string, string>}
       validators={validators}
       middlewares={import.meta.env.DEV ? [golemLogMiddleware] : []}
-      formEvent={(event) => {
-        alert(JSON.stringify(event, null, 2));
-      }}
+      formEvent={fwFormEvents}
     />
   );
 }
