@@ -6,15 +6,15 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { useState } from 'react';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
-import styles from './form.page.module.scss';
-import { translations } from '../../translations';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
+import { rendererMock } from '../../renderer-mock';
+import styles from './form.page.module.scss';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = translations;
+const mock = rendererMock;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);

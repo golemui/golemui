@@ -82,9 +82,12 @@ export type AlertProps = {
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
 
-export type RendererProps<FwkCmp = any> = {
-  //render: () => FwkCmp;
-  render: FwkCmp;
+/**
+ * Non-serializable component props. Used to render the provided component.
+ * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>
+ */
+export type RendererProps<ComponentType = unknown> = {
+  render: ComponentType;
 };
 
 export type RepeaterProps = {
