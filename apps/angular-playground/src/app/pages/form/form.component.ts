@@ -9,8 +9,9 @@ import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
+import { rendererMock } from '../../renderer-mock';
 
-const mock = AppsShared.kitchenSink;
+const mock = rendererMock;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
