@@ -7,12 +7,13 @@ import i18next from 'i18next';
 import { useState } from 'react';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import styles from './form.page.module.scss';
+import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = AppsShared.translations;
+const mock = AppsShared.kitchenSink;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);
@@ -33,6 +34,7 @@ const validators: ValidatorsVanilla.CustomValidatorSchemas = {
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   complexListItemRenderer: ComplexListItemRenderer,
+  productItemRenderer: ProductItemRenderer,
 };
 
 export function FormPage() {

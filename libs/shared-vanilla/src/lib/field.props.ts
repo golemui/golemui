@@ -113,13 +113,22 @@ export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
   items: ListItem<T>[];
-  valueField?: string;
+  /**
+   * Property field used to display in the input when an item option is selected
+   */
+  labelField?: keyof T;
+  valueField?: keyof T;
+  searchFields?: (keyof T)[];
   height?: number;
   itemHeight?: number;
   /**
    * Should match with one of the provided itemRenderer keys
    */
   itemRenderer?: string;
+  /**
+   * Time in milliseconds to wait on each keystroke to trigger the input event. Default: 500
+   */
+  inputDebounce?: number;
 };
 
 export type ListProps<T> = {

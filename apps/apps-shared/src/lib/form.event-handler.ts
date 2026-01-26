@@ -28,6 +28,9 @@ const eventHandlers = {
     const subregion = event.data['radiogroups'].subregion as string;
     getCountries(event, subregion, 'radiogroups.country');
   },
+  async searchProductForDropdown(event: Core.FormEvent) {
+    getProducts(event, event.detail, 'dropdowns.searchAsYouType');
+  },
 };
 
 async function getSubregions(event: Core.FormEvent, path: Core.DotPath) {
@@ -50,4 +53,22 @@ async function getCountries(event: Core.FormEvent, subregion: string, path: Core
       value: countries[subregion.toLowerCase()],
     },
   });
+}
+
+async function getProducts(event: Core.FormEvent, filter: string, path: Core.DotPath) {
+  const response = await fetch('/data/products.json');
+  const products = await response.json();
+  setTimeout(() => {
+    const filteredProducts = filter
+      ? products.filter((p: any) => JSON.stringify(p).includes(filter)).slice(0, 10)
+      : products.slice(0, 10);
+    event.callback({
+      type: 'OVERRIDE_FIELD_PROP',
+      payload: {
+        path,
+        prop: 'items',
+        value: filteredProducts,
+      },
+    });
+  }, 500);
 }

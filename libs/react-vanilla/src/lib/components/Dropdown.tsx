@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Core from '@golemui/core';
-import { useControlField, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
+import { useControlField, useDebounceCallback, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
 import { DropdownProps, ListItem, OptionValue } from '@golemui/shared-vanilla';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';
@@ -17,17 +17,16 @@ interface GuiLabelElement extends HTMLElement {
 export function Dropdown(fieldInstance: Core.WithField) {
   const field = fieldInstance.field as Core.ControlField<string | null>;
 
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
-    string | number | null,
-    DropdownProps<unknown>
-  >(field);
+  const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
+    useControlField<string | number | null, DropdownProps<never>>(field);
 
   const [range, setRange] = useState({ start: 0, end: 10 });
-  const [listItems, setListItems] = useState<ListItem<any>[]>([]);
-  const [filteredItems, setFilteredItems] = useState<ListItem<any>[]>([]);
+  const [listItems, setListItems] = useState<ListItem<never>[]>([]);
+  const [filteredItems, setFilteredItems] = useState<ListItem<never>[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isListVisible, setIsListVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ListItem<never> | undefined>(undefined);
 
   const listRef = useRef<GuiListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,17 +68,21 @@ export function Dropdown(fieldInstance: Core.WithField) {
   );
 
   const handleClickItem = useCallback(
-    (item: ListItem<any>, index: number) => {
+    (item: ListItem<never>, index: number) => {
       if (templateData.readonly) return;
 
       handleValueChange(item.value);
+      onFilter('');
       setFocusedIndex(index);
+      setSelectedItem(item);
+      setIsFiltering(false);
+      setIsListVisible(false);
 
       if (listRef.current) {
         listRef.current.focusItemAtIndex(index);
       }
     },
-    [handleValueChange],
+    [handleValueChange, onFilter, templateData.readonly],
   );
 
   useEffect(() => {
@@ -104,6 +107,9 @@ export function Dropdown(fieldInstance: Core.WithField) {
     const handleChange = (e: Event) => {
       const val = (e as CustomEvent).detail.value;
       handleValueChange(val);
+      setSelectedItem(listItems.find((item) => item.value === val));
+      setIsFiltering(false);
+      setIsListVisible(false);
     };
 
     element.addEventListener('gui-range-change', handleRangeChange);
@@ -117,7 +123,7 @@ export function Dropdown(fieldInstance: Core.WithField) {
       element.removeEventListener('gui-focus-change', handleFocusChange);
       element.removeEventListener('change', handleChange);
     };
-  }, [handleValueChange, onValueChanged]);
+  }, [handleValueChange, listItems, onValueChanged]);
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
@@ -135,6 +141,12 @@ export function Dropdown(fieldInstance: Core.WithField) {
     document.addEventListener('click', handleDocumentClick);
     return () => document.removeEventListener('click', handleDocumentClick);
   }, [closeList, isListVisible]);
+
+  useEffect(() => {
+    const referenceField = templateData.labelField ?? templateData.valueField;
+    const val = referenceField ? selectedItem?.template[referenceField] : selectedItem?.template;
+    inputRef.current!.value = val ?? '';
+  }, [selectedItem, templateData.labelField, templateData.valueField]);
 
   useEffect(() => {
     if (labelRef.current && inputRef.current && listRef.current) {
@@ -166,27 +178,67 @@ export function Dropdown(fieldInstance: Core.WithField) {
     }
   };
 
+  const filterItems = useCallback(
+    (filterValue: string) => {
+      const asyncFiltering = !!field.on?.filter;
+
+      onFilter(filterValue);
+
+      if (filterValue && !asyncFiltering) {
+        setIsFiltering(true);
+        setIsListVisible(true);
+
+        const searchFields =
+          templateData.searchFields ??
+          ([templateData.labelField, templateData.valueField].filter(
+            (field) => !!field,
+          ) as string[]);
+        const hasSearchFields = searchFields.length > 0;
+        const items = templateData.items || [];
+        const filteredItems = items.filter((item: any) => {
+          const keys = Object.keys(item);
+
+          // If it's a primitive value, we search by value
+          const isPrimitiveValue = !keys.length;
+          if (isPrimitiveValue) {
+            return item.toString().toLowerCase().includes(filterValue.toLowerCase());
+          }
+
+          // Otherwise, we search by object
+          const reduceFunc = (acc: boolean, prop: string) =>
+            acc || item[prop].toString().toLowerCase().includes(filterValue.toLowerCase());
+
+          return hasSearchFields
+            ? keys.filter((prop: string) => searchFields.includes(prop)).reduce(reduceFunc, false)
+            : keys.reduce(reduceFunc, false);
+        });
+
+        setFilteredItems(filteredItems);
+      } else {
+        setIsFiltering(false);
+        setFilteredItems([...(templateData.items || [])]);
+      }
+    },
+    [
+      field.on?.filter,
+      onFilter,
+      templateData.items,
+      templateData.labelField,
+      templateData.searchFields,
+      templateData.valueField,
+    ],
+  );
+
+  const debouncedFilter = useDebounceCallback(filterItems, templateData.inputDebounce ?? 500);
+
   const handleInputFilter = (event: React.FormEvent<HTMLInputElement>) => {
     const filterValue = (event.target as HTMLInputElement).value;
 
-    if (filterValue) {
-      const items = templateData.items || [];
-      const filtered = items.filter((item: any) =>
-        templateData.valueField
-          ? item[templateData.valueField]
-              .toString()
-              .toLowerCase()
-              .includes(filterValue.toLowerCase())
-          : item.toString().toLowerCase().includes(filterValue.toLowerCase()),
-      );
-
-      setFilteredItems(filtered);
-      setIsFiltering(true);
+    if (!isListVisible) {
       setIsListVisible(true);
-    } else {
-      setIsFiltering(false);
-      setFilteredItems([...(templateData.items || [])]);
     }
+
+    debouncedFilter(filterValue);
   };
 
   const handleInputFocus = () => {
@@ -217,6 +269,7 @@ export function Dropdown(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
+  const asyncFiltering = !!field.on?.filter;
 
   return (
     <div className="gui-dropdown" style={{ flex: templateData.size }}>
@@ -252,8 +305,8 @@ export function Dropdown(fieldInstance: Core.WithField) {
           id={`${uid}-list`}
           uid={uid}
           value={value ?? ''}
-          valueField={templateData.valueField}
-          items={isFiltering ? filteredItems : templateData.items}
+          valueField={templateData.valueField as string}
+          items={isFiltering && !asyncFiltering ? filteredItems : templateData.items}
           itemHeight={templateData.itemHeight}
           height={templateData.height}
           required={isRequired}

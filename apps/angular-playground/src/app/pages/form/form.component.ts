@@ -8,8 +8,9 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
+import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const mock = AppsShared.translations;
+const mock = AppsShared.kitchenSink;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
@@ -40,6 +41,7 @@ export class AppFormPage {
   };
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
     complexListItemRenderer: ComplexListItemRenderer,
+    productItemRenderer: ProductItemRenderer,
   };
 
   protected error = '';
