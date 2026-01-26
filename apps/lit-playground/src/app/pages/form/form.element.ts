@@ -6,10 +6,11 @@ import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
-import './form.element.scss';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
+import { rendererMock } from '../../renderer-mock';
+import './form.element.scss';
 
-const mock = AppsShared.kitchenSink;
+const mock = rendererMock;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
