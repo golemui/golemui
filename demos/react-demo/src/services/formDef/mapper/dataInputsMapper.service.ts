@@ -1,4 +1,10 @@
-import { NumberDataInputDef, OneOfDataInputDefs, TextDataInputDef, ValidInputDef, } from '../formDef.domain';
+import {
+  BooleanDataInputDef,
+  NumberDataInputDef,
+  OneOfDataInputDefs,
+  TextDataInputDef,
+  ValidInputDef,
+} from '../formDef.domain';
 import { DefaultFieldDefFn, DefaultFieldDefParams, FormConfig } from '../fomConfig.domain';
 import { ControlField, UiState } from '@golemui/core';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
@@ -37,10 +43,13 @@ export class DataInputsMapper {
         const fieldDefWithTagRemoved = {
           ...baseFieldDef,
           tags: baseFieldDef!.tags!.filter((t) => t !== tag),
-        }
+        };
         const fieldDefForTag = this.applyFormConfig(key, fieldDefWithTagRemoved, rolledUpConfig);
-        withTagsFieldDef = this.objectUtils.deepMerge<OneOfDataInputDefs>(withTagsFieldDef, fieldDefForTag);
-      })
+        withTagsFieldDef = this.objectUtils.deepMerge<OneOfDataInputDefs>(
+          withTagsFieldDef,
+          fieldDefForTag,
+        );
+      });
     }
 
     const withFormConfig = this.applyFormConfig(key, withTagsFieldDef, rolledUpConfig);
@@ -142,9 +151,26 @@ export class DataInputsMapper {
         return this.mapTextFieldDef(key, fieldDef);
       case 'number':
         return this.mapNumberFieldDef(key, fieldDef);
+      case 'boolean':
+        return this.mapBooleanFieldDef(key, fieldDef);
       default:
         throw new Error(`Unsupported field type "${(fieldDef as OneOfDataInputDefs).type}"`);
     }
+  }
+  private mapBooleanFieldDef<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(key: string, fieldDef: BooleanDataInputDef): ControlField<any, StateKeys, FormData> {
+    return {
+      uid: '',
+      kind: 'control',
+      widget: 'toggle',
+      path: key,
+      ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
+      props: {
+        placeholder: fieldDef.placeholder ?? '',
+      },
+    };
   }
 
   private mapTextFieldDef<

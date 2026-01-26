@@ -2,7 +2,7 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 
 export interface DataInputDef {
   // whatever a field definition is for you
-  type: 'text' | 'number';
+  type: 'text' | 'number' | 'boolean';
   placeholder?: string;
   label?: string | null;
 }
@@ -21,11 +21,16 @@ export interface TextDataInputDef extends DataInputDef {
   validator?: TextDataInputValidator;
 }
 
+export interface BooleanDataInputDef extends DataInputDef {
+  type: 'boolean';
+}
+
+
 export interface BaseDataInputDef {
   tags?: string[];
 }
 
-export type OneOfDataInputDefs = (TextDataInputDef | NumberDataInputDef) & BaseDataInputDef;
+export type OneOfDataInputDefs = (TextDataInputDef | NumberDataInputDef | BooleanDataInputDef) & BaseDataInputDef;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
 export interface OneOfDataInputDefsParams {

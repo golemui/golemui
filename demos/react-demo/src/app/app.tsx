@@ -13,6 +13,7 @@ import { formConfigMixed } from './demos/07_formConfigMixed';
 import { simplestTagging } from './demos/09_tagging';
 import { mixingLayouts } from './demos/08_MixingLayouts';
 import { allBasicFunctionality } from './demos/10_allBasicFuncitonality';
+import { manyTypes } from './demos/01_addingManyTypes';
 
 export interface FormData {
   name: string;
@@ -32,6 +33,7 @@ formRegistry.registerAll([
   mixingLayouts,
   simplestTagging,
   allBasicFunctionality,
+  manyTypes,
 ]);
 
 export function App() {

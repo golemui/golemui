@@ -12,6 +12,8 @@ export class SensibleDefaults {
         return this.createDefaultStringDataInput();
       case 'number':
         return this.createDefaultNumberDataInput();
+      case 'boolean':
+        return this.createDefaultBooleanDataInput();
       default:
         throw new Error(`Unsupported shortcut "${fieldDefRaw}"`);
     }
@@ -27,6 +29,9 @@ export class SensibleDefaults {
       case 'number':
         fieldDef = this.createDefaultNumberDataInput();
         break;
+      case 'boolean':
+        fieldDef = this.createDefaultBooleanDataInput();
+        break;
       default:
         throw new Error(`Unsupported form data type "${typeOfFormData}"`);
     }
@@ -39,6 +44,10 @@ export class SensibleDefaults {
 
   public createDefaultNumberDataInput(): DataInputDef {
     return { type: 'number' };
+  }
+
+  public createDefaultBooleanDataInput(): DataInputDef {
+    return { type: 'boolean' };
   }
 
   public createDefaultSubmitButton(): any {
