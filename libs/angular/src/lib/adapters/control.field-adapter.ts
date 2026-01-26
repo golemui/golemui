@@ -70,6 +70,10 @@ export class ControlFieldAdapter<
     this.context.emitEvent('change', this.field);
   }
 
+  filterChanged<T>(value: T) {
+    this.context.emitEvent('filter', this.field, value);
+  }
+
   injectValidationIssues(issues: string[] | null) {
     this.context.store.dispatch({
       type: 'INJECT_VALIDATION_ISSUES',

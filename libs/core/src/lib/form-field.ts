@@ -43,6 +43,7 @@ export type On<
     load?: ReactiveFieldValue<EventExpression, FormData>;
     click?: ReactiveFieldValue<EventExpression, FormData>;
     change?: ReactiveFieldValue<EventExpression, FormData>;
+    filter?: ReactiveFieldValue<EventExpression, FormData>;
   },
   StateKeys
 >;
@@ -268,6 +269,7 @@ const onDecoder = objectWithSuffix(
     load: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
     click: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
     change: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
+    filter: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(jd.optional(jd.string())) },
   },
   'On',
 );

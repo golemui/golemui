@@ -84,6 +84,13 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     [field, formContext],
   );
 
+  const onFilter = useCallback(
+    (newValue: T) => {
+      formContext.emitEvent('filter', field, newValue);
+    },
+    [field, formContext],
+  );
+
   const injectValidationIssues = useCallback(
     (issues: string[] | null) => {
       formContext.store.dispatch({
@@ -108,6 +115,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
     errors,
     isTouched,
     onValueChanged,
+    onFilter,
     onBlur,
     injectValidationIssues,
   };

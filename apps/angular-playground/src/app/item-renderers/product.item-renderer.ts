@@ -1,13 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { ItemRenderContext } from '@golemui/core';
 
-type ComplexItem = {
-  title: string;
+type ProductItem = {
+  product: string;
   description: string;
+  price: number;
 };
 
 @Component({
-  selector: 'app-complex-list-item-renderer',
+  selector: 'app-product-item-renderer',
   standalone: true,
   styles: `
     h2,
@@ -18,8 +19,9 @@ type ComplexItem = {
 
     .product-renderer {
       display: flex;
-      flex-direction: column;
-      justify-content: space-around;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
       padding: 0 12px;
       cursor: pointer;
       height: 100%;
@@ -50,12 +52,17 @@ type ComplexItem = {
     [attr.aria-selected]="selected"
     [attr.aria-disabled]="disabled"
   >
-    <h2>{{ template.title }}</h2>
-    <p>{{ template.description }}</p>
+    <div>
+      <h2>{{ template.product }}</h2>
+      <p>{{ template.description }}</p>
+    </div>
+    <div>
+      <p>{{ template.price }}</p>
+    </div>
   </div>`,
 })
-export class ComplexListItemRenderer implements ItemRenderContext<ComplexItem> {
-  @Input({ required: true }) template!: ComplexItem;
+export class ProductItemRenderer implements ItemRenderContext<ProductItem> {
+  @Input({ required: true }) template!: ProductItem;
   @Input({ required: true }) value!: string | number;
   @Input({ required: true }) index!: number;
   @Input() selected?: boolean;

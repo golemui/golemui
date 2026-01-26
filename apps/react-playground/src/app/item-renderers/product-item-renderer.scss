@@ -1,7 +1,8 @@
-.my-custom-class {
+.product {
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 12px;
   cursor: pointer;
   height: 100%;

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import styles from './form.page.module.scss';
 import { translations } from '../../translations';
+import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
@@ -34,6 +35,7 @@ const validators: ValidatorsVanilla.CustomValidatorSchemas = {
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   complexListItemRenderer: ComplexListItemRenderer,
+  productItemRenderer: ProductItemRenderer,
 };
 
 export function FormPage() {
