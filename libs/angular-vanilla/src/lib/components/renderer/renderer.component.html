@@ -1,0 +1,5 @@
+@let templateData = adapter.templateData();
+
+<div class="gui-field" [id]="field.uid">
+  <ng-container *ngComponentOutlet="templateData.render.component; inputs: { api: templateData.render.api }" ></ng-container>
+</div>

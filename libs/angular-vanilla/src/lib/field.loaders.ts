@@ -41,4 +41,6 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
 
   // DISPLAY FIELDS
   alert: async () => (await import('./components/alert/alert.component')).AlertComponent,
+  renderer: async () =>
+    (await import('./components/renderer/renderer.component')).RendererComponent,
 };

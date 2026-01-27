@@ -33,4 +33,5 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
 
   // DISPLAY
   alert: async () => (await import('./components/Alert')).Alert,
+  renderer: async () => (await import('./components/Renderer')).Renderer,
 };

@@ -1,4 +1,5 @@
 import * as Core from '@golemui/core';
+import { FieldPropertyFunctionParams } from '@golemui/core';
 import { OptionValue } from './components';
 
 export type AccordionProps = {
@@ -80,6 +81,22 @@ export type ToggleProps = {
 export type AlertProps = {
   text: string;
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
+};
+
+/**
+ * Non-serializable component props. Used to render the provided component.
+ * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>
+ */
+export type RendererProps<ComponentType = unknown> = {
+  render: ComponentType;
+};
+
+/**
+ * Non-serializable component props for Angular. Used to render the provided component.
+ * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>
+ */
+export type ComponentRendererProps<ComponentType = unknown> = {
+  render: { component: ComponentType; api: FieldPropertyFunctionParams<any> };
 };
 
 export type RepeaterProps = {

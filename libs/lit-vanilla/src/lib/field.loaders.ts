@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/shared-vanilla';
 import { Type } from '@golemui/lit';
+import { VanillaWidget } from '@golemui/shared-vanilla';
 
 export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, VanillaWidget> = {
   // INTERACTIVE
@@ -31,4 +31,5 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
 
   // DISPLAY
   alert: async () => (await import('./components/alert.element')).AlertElement,
+  renderer: async () => (await import('./components/renderer.element')).RendererElement,
 };
