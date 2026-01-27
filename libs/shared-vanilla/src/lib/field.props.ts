@@ -44,6 +44,15 @@ export type CalendarProps = {
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
 };
 
+export type RangeCalendarProps = {
+  hint?: string;
+  prevMonthIcon?: string;
+  nextMonthIcon?: string;
+  dayFormat?: 'numeric' | '2-digit';
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
 export type DateinputProps = {
   hint?: string;
   icon?: string;

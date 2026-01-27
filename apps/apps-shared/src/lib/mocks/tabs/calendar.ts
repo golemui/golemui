@@ -6,6 +6,21 @@ export const calendar = (): any => ({
     {
       uid: '',
       kind: 'control',
+      widget: 'rangeCalendar',
+      path: 'rangeCalendar',
+      defaultValue: [
+        { start: '2026-01-13T00:00:00.000Z', end: '2026-01-16T00:00:00.000Z' },
+        { start: '2026-01-20T00:00:00.000Z' },
+      ],
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+        prevMonthIcon: 'material-icons material-icons-chevron_left',
+        nextMonthIcon: 'material-icons material-icons-chevron_right',
+      },
+    },
+    {
+      uid: '',
+      kind: 'control',
       widget: 'calendar',
       path: 'calendar',
       props: {

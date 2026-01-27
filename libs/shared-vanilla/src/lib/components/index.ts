@@ -8,6 +8,7 @@ export * from './list';
 export * from './number';
 export * from './one-of';
 export * from './radiogroup';
+export * from './range-calendar';
 export * from './select';
 export * from './tabs';
 export * from './textarea';
