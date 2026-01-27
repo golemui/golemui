@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { defineForm } from '@golemui/core';
+import { Component, input } from '@angular/core';
+import { defineForm, FieldPropertyFunctionParams } from '@golemui/core';
 
 const data = {
   details: {
@@ -8,9 +8,11 @@ const data = {
 };
 
 @Component({
-  template: `<h1>JAJA</h1>`,
+  template: `<h1>Client Name: {{ api().$form.details?.clientName || 'unknown' }}</h1>`,
 })
-class SampleComponent {}
+class SampleComponent {
+  api = input.required<FieldPropertyFunctionParams<any>>();
+}
 
 const form = defineForm({
   form: [
@@ -19,8 +21,8 @@ const form = defineForm({
       kind: 'display',
       widget: 'renderer',
       props: {
-        render: () => {
-          return SampleComponent;
+        render: (api: FieldPropertyFunctionParams<any>) => {
+          return { component: SampleComponent, api: api };
         },
       },
     },
