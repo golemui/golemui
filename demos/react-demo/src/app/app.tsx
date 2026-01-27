@@ -13,9 +13,9 @@ import { formConfigMixed } from './demos/07_formConfigMixed';
 import { simplestTagging } from './demos/09_tagging';
 import { mixingLayouts } from './demos/08_MixingLayouts';
 import { allBasicFunctionality } from './demos/10_allBasicFuncitonality';
-import { manyTypes } from './demos/01_addingManyTypes';
-import { formDemoDefinition } from './demos/11_submitButton';
-import { configureDynamicButton } from './demos/12_submitButtonDynamic';
+import { manyTypes } from './demos/11_addingManyTypes';
+import { formDemoDefinition } from './demos/12_submitButton';
+import { configureDynamicButton } from './demos/13_submitButtonDynamic';
 
 export interface FormData {
   name: string;
@@ -32,8 +32,8 @@ formRegistry.registerAll([
   formConfigSimplest,
   formConfigShortcut,
   formConfigMixed,
-  mixingLayouts,
   simplestTagging,
+  mixingLayouts,
   allBasicFunctionality,
   manyTypes,
   formDemoDefinition,

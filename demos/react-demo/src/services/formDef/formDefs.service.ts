@@ -24,7 +24,12 @@ import sensibleDefaultsService, { SensibleDefaults } from './default/sensibleDef
 function isHorizontalLayoutShortcut<T extends Record<string, any>>(
   element: unknown,
 ): element is HorizontalLayoutShortcut<T> {
-  return typeof element === 'object' && element !== null && '_horizontalLayout' in element;
+  return (
+    Array.isArray(element) &&
+    element.length === 2 &&
+    typeof element[0] === 'string' &&
+    element[0] === '_horizontalLayout'
+  );
 }
 
 function isDataInputDefByKeys<T extends Record<string, any>>(
@@ -98,50 +103,44 @@ export class FormDefs {
   private createTuples<FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA>,
   ): FormDefTuple<FORM_DATA>[] {
-    if (Array.isArray(formDefRaw)) {
-      return formDefRaw.map((element) => {
-        if (isHorizontalLayoutShortcut<FORM_DATA>(element)) {
-          return [`layout`, this.createTuples(element._horizontalLayout)];
-        } else if (isSubmitButtonLike(element)) {
-          const defaultSubmitButton = this.sensibleDefaults.createDefaultSubmitButton();
-          if (isSubmitButtonShortcut(element)) {
-            return [`controllers`, [defaultSubmitButton]];
-          } else if (isSubmitButtonDefinition(element)) {
-            if (typeof element[1] === 'function') {
-              const wrappedDefaultCallback: (params: any) => Partial<ControllerDef> = (params) => {
-                const elementElement: (params: any) => Partial<ControllerDef> = element[1] as (
-                  params: any,
-                ) => Partial<ControllerDef>;
-                return {
-                  ...defaultSubmitButton,
-                  ...elementElement(params),
-                };
+    return formDefRaw.map((element) => {
+      if (isHorizontalLayoutShortcut<FORM_DATA>(element)) {
+        return [`layout`, this.createTuples(element [1])];
+      } else if (isSubmitButtonLike(element)) {
+        const defaultSubmitButton = this.sensibleDefaults.createDefaultSubmitButton();
+        if (isSubmitButtonShortcut(element)) {
+          return [`controllers`, [defaultSubmitButton]];
+        } else if (isSubmitButtonDefinition(element)) {
+          if (typeof element[1] === 'function') {
+            const wrappedDefaultCallback: (params: any) => Partial<ControllerDef> = (params) => {
+              const elementElement: (params: any) => Partial<ControllerDef> = element[1] as (
+                params: any,
+              ) => Partial<ControllerDef>;
+              return {
+                ...defaultSubmitButton,
+                ...elementElement(params),
               };
-              return [`controllers`, [wrappedDefaultCallback]];
-            }
-            return [
-              `controllers`,
-              [
-                {
-                  ...defaultSubmitButton,
-                  ...element[1],
-                },
-              ],
-            ];
-          } else {
-            throw new Error(`Unexpected submit button definition ${element}`);
+            };
+            return [`controllers`, [wrappedDefaultCallback]];
           }
-        } else if (isDataInputDefByKeys<FORM_DATA>(element)) {
-          return this.createDataInputsTuple(element);
+          return [
+            `controllers`,
+            [
+              {
+                ...defaultSubmitButton,
+                ...element[1],
+              },
+            ],
+          ];
         } else {
-          throw new Error(`Unexpected form definition element ${element}`);
+          throw new Error(`Unexpected submit button definition ${element}`);
         }
-      });
-    } else if (typeof formDefRaw === 'object' && formDefRaw !== null) {
-      return [this.createDataInputsTuple(formDefRaw as DataInputDefsByKey<FORM_DATA>)];
-    } else {
-      throw new Error(`Unsupported form definition type ${typeof formDefRaw}`);
-    }
+      } else if (isDataInputDefByKeys<FORM_DATA>(element)) {
+        return this.createDataInputsTuple(element);
+      } else {
+        throw new Error(`Unexpected form definition element ${element}`);
+      }
+    });
   }
 
   private createDataInputsTuple<FORM_DATA extends Record<string, any> = any>(

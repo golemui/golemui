@@ -77,10 +77,7 @@ export type FormDefTuple<FORM_DATA extends Record<string, any>> =
   | ProcessedDataInputsTuple<FORM_DATA>
   | ['controllers', ControllersDefFacade];
 
-export interface HorizontalLayoutShortcut<T extends Record<string, any>> {
-  _horizontalLayout: FormDefFacade<T>;
-}
-
+export type HorizontalLayoutShortcut<T extends Record<string, any>> = ['_horizontalLayout', FormDefFacade<T>];
 export type SubmitButtonDefinition = ['_submitButton', Partial<ControllerDef> | ControllerDefCallback];
 
 
@@ -93,7 +90,6 @@ export type ValidDxElement<T extends Record<string, any>> =
   | SubmitButtonLike;
 
 export type FormDefFacade<T extends Record<string, any>> =
-  | DataInputDefsByKey<T>
   | ValidDxElement<T> [];
 
 export type FormEvents = (event: Core.FormEvent) => void;

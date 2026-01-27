@@ -9,13 +9,13 @@ export const mixingLayouts: FormDemoDefinition = {
       age: 'number',
       height: 'number',
     },
-    {
-      _horizontalLayout: [
+    [
+      '_horizontalLayout', [
         {
           married: 'number', withChildren: 'number',
         },
       ],
-    },
+    ],
     {
       occupation: 'string',
     },

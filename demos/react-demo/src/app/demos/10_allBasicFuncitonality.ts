@@ -16,14 +16,14 @@ export const allBasicFunctionality: FormDemoDefinition = {
       }),
       height: ['number', 'no_label', 'special'],
     },
-    {
-      _horizontalLayout: [
+    [
+      '_horizontalLayout', [
         {
           married: 'number',
           withChildren: 'number',
         },
       ],
-    },
+    ],
     {
       occupation: 'string',
     },

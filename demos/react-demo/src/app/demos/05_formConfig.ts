@@ -10,9 +10,9 @@ export const formConfigSimplest: FormDemoDefinition = {
       placeholder: `${fieldKey}`,
     }),
   },
-  formDef: {
+  formDef: [{
     name: 'string',
     age: 'number',
     height: 'number',
-  },
+  }],
 };

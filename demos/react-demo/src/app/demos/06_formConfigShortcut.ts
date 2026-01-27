@@ -6,9 +6,9 @@ export const formConfigShortcut: FormDemoDefinition = {
   formConfig: {
     suppressAutomaticLabels: true,
   },
-  formDef: {
+  formDef: [{
     name: 'string',
     age: 'number',
     height: 'number',
-  },
+  }],
 };
