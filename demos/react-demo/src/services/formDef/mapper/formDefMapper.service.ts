@@ -8,15 +8,11 @@ import {
   LayoutField,
   UiState,
 } from '@golemui/core';
-import {
-  ControllerDef,
-  ControllerDefCallback,
-  ControllersDefFacade,
-  FormDefTuple,
-  ProcessedDataInputDefsByKey,
-} from '../formDef.domain';
+import { ControllerDef, OneOfDataInputDefs } from '../formDef.domain';
 import { FormConfig } from '../fomConfig.domain';
-import dataInputsMapper, { DataInputsMapper } from './dataInputsMapper.service';
+import formItemsMapper, { FormItemsMapper } from './dataInputsMapper.service';
+import dxUnrollingService, { DxUnrollingService } from '../dx/dxUnrolling.service';
+import { UnrolledController, UnrolledField, ValidUnrolledElement } from '../dx/dx.domain';
 
 type FormField<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
   | DisplayField<StateKeys, FormData>
@@ -24,20 +20,39 @@ type FormField<StateKeys extends UiState = never, FormData extends Record<string
   | LayoutField<StateKeys, FormData>
   | InteractiveField<StateKeys, FormData>;
 
+export interface ReadyToMapToGolemFormItem {
+  unrolledElement: UnrolledField | UnrolledController;
+  value: OneOfDataInputDefs | ControllerDef;
+  isCallback: boolean;
+}
+
 export class FormDefMapper {
-  constructor(private readonly dataInputsMapper: DataInputsMapper) {}
+  constructor(
+    private readonly formItemsMapper: FormItemsMapper,
+    private readonly dxUnrollingService: DxUnrollingService,
+  ) {}
 
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-    formTuples: FormDefTuple<FormData>[],
+    unrolledResults: ValidUnrolledElement[],
     formConfig?: FormConfig<FormData>,
   ): Form<StateKeys, FormData> {
-    // const formTuples = this.extractTuples(formDefFacade);
-
-    const formFields: (FormField<StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] =
-      formTuples.flatMap((item) => this.mapTupleToFormFields(item, formConfig));
+    const formFields = this.doMap(unrolledResults, formConfig);
     return {
       form: this.createLayout(formFields),
     };
+  }
+
+  private doMap<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    unrolledResults: ValidUnrolledElement[],
+    formConfig: FormConfig<FormData> | undefined,
+  ): (
+    | DisplayField<StateKeys, FormData>
+    | ControlField<any, StateKeys, FormData>
+    | LayoutField<StateKeys, FormData>
+    | InteractiveField<StateKeys, FormData>
+    | FunctionField<StateKeys, FormData>
+  )[] {
+    return unrolledResults.flatMap((item) => this.mapToFormFields(item, formConfig));
   }
 
   private createLayout<
@@ -64,115 +79,68 @@ export class FormDefMapper {
     };
   }
 
-  private mapTupleToFormFields<
+  private mapToFormFields<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    item: FormDefTuple<FormData>,
+    unrolledElement: ValidUnrolledElement,
     formConfig?: FormConfig<FormData>,
   ): (
     | FormField<StateKeys, FormData>
     | FunctionField<StateKeys, FormData>
     | LayoutField<StateKeys, FormData>
   )[] {
-    const typeRaw = item[0];
-    switch (typeRaw) {
-      case 'data_inputs':
-        return this.dataInputMapper(item[1], formConfig);
-      case 'controllers':
-        return this.controllerDefsMapper(item[1]);
-      case 'layout':
-        return [this.layoutMapper(item[1])];
-      default:
-        throw new Error(`Unsupported form element type "${typeRaw}"`);
+    if (this.dxUnrollingService.isUnrolledLayout(unrolledElement)) {
+      const children: (
+        | FormField<StateKeys, FormData>
+        | FunctionField<StateKeys, FormData>
+        | LayoutField<StateKeys, FormData>
+      )[] = this.doMap(unrolledElement.children, formConfig);
+      return [this.createLayout(children, unrolledElement.layoutKey)];
     }
-  }
-
-  private layoutMapper<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(itemElement: FormDefTuple<FormData>[]): LayoutField<StateKeys, FormData> {
-    const children = itemElement.flatMap((item) => this.mapTupleToFormFields(item));
-    return this.createLayout(children, 'horizontal');
-  }
-
-  private dataInputMapper<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
-    dataInput: ProcessedDataInputDefsByKey<FormData>,
-    formConfig?: FormConfig<FormData>,
-  ): (ControlField<any, StateKeys, FormData> | FunctionField<StateKeys, FormData>)[] {
-    return Object.entries(dataInput).map(([key, fieldDefRaw]) => {
-      if (!fieldDefRaw) {
-        throw new Error(`Definition for field "${key}" is missing`);
-      }
-
-      if (typeof fieldDefRaw === 'function') {
-        return ((params: FunctionFieldParams<FormData>) => {
-          console.log(`dataInputMapper dynamic definition`, params);
-          const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
-          const hotMapping = fieldDefRaw({ error: hasErrors });
-          const mapControlField = this.dataInputsMapper.mapControlField<StateKeys, FormData>(
-            key,
-            hotMapping,
-            formConfig,
-          );
-          console.log(`mapControlField`, mapControlField);
-          return mapControlField;
-        }) as FunctionField<StateKeys, FormData>;
-      }
-      return this.dataInputsMapper.mapControlField<StateKeys, FormData>(
-        key,
-        fieldDefRaw,
-        formConfig,
-      );
-    });
-  }
-
-  private controllerDefsMapper<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
-    controllersDefRaw: ControllersDefFacade,
-  ): (FunctionField<StateKeys, FormData> | InteractiveField<StateKeys, FormData>)[] {
-    const interactiveDefs: (ControllerDef | ControllerDefCallback)[] = Array.isArray(
-      controllersDefRaw,
-    )
-      ? controllersDefRaw
-      : [controllersDefRaw];
-
-    return interactiveDefs.map<
-      FunctionField<StateKeys, FormData> | InteractiveField<StateKeys, FormData>
-    >(
-      (
-        interactiveDefRaw,
-      ): FunctionField<StateKeys, FormData> | InteractiveField<StateKeys, FormData> => {
-        if (typeof interactiveDefRaw === 'function') {
+    if (dxUnrollingService.isUnrolledItems(unrolledElement)) {
+      return unrolledElement.items.map((itemElement) => {
+        const itemDef = itemElement.value;
+        if (typeof itemDef === 'function') {
           return ((params: FunctionFieldParams<FormData>) => {
-            console.log(`controller dynamic definition`, params);
+            console.log(`item dynamic definition`, params);
             const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
-            const controllerDefCall = interactiveDefRaw as ControllerDefCallback;
-            const result = controllerDefCall({ error: hasErrors});
-            console.log(`controllerDefCall`, result);
-            return result;
+            const hotMapping = itemDef({ error: hasErrors });
+            const mapControlField = this.mapToFormItem(
+              {
+                unrolledElement: itemElement,
+                value: hotMapping,
+                isCallback: true,
+              },
+              formConfig,
+            );
+            console.log(`item final config`, mapControlField);
+            return mapControlField;
           }) as FunctionField<StateKeys, FormData>;
         }
+        return this.mapToFormItem(
+          {
+            unrolledElement: itemElement,
+            value: itemElement.value as OneOfDataInputDefs | ControllerDef,
+            isCallback: true,
+          },
+          formConfig,
+        );
+      });
+    }
+    throw new Error(`Unexpected error`);
+  }
 
-        const interactiveDef = interactiveDefRaw as ControllerDef;
-
-        return {
-          uid: '',
-          kind: 'interactive', // data
-          widget: 'button',
-          disabled: interactiveDef.disabled,
-          label: interactiveDef.label,
-          ...(interactiveDef.on != null ? { on: interactiveDef.on } : {}),
-        };
-      },
-    );
+  private mapToFormItem<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    toMap: ReadyToMapToGolemFormItem,
+    formConfig?: FormConfig<FormData>,
+  ): FormField<StateKeys, FormData> {
+    return this.formItemsMapper.mapItem(toMap, formConfig);
   }
 }
 
-const formMapperService = new FormDefMapper(dataInputsMapper);
+const formMapperService = new FormDefMapper(formItemsMapper, dxUnrollingService);
 export default formMapperService;

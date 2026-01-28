@@ -1,59 +1,9 @@
 import { Form, UiState } from '@golemui/core';
-import formDefTupleFactory, { FormDefTupleFactory } from './facade/formDefFacadeFactory.service';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
-import {
-  ControllerDef,
-  DataInputDefsByKey,
-  FormDefFacade,
-  FormDefTuple,
-  FormEvents,
-  HorizontalLayoutShortcut,
-  InputTags,
-  OneOfDataInputDefs,
-  OneOfDataInputDefsCallback,
-  ProcessedDataInputDefsByKey,
-  ProcessedDataInputsTuple,
-  ProcessedValidInputDef,
-  SubmitButtonDefinition,
-  SubmitButtonShortcut,
-  ValidShortcutType,
-} from './formDef.domain';
+import { FormDefFacade, FormEvents, ValidDxElement } from './formDef.domain';
 import { FormConfig } from './fomConfig.domain';
-import sensibleDefaultsService, { SensibleDefaults } from './default/sensibleDefaults.service';
-
-function isHorizontalLayoutShortcut<T extends Record<string, any>>(
-  element: unknown,
-): element is HorizontalLayoutShortcut<T> {
-  return (
-    Array.isArray(element) &&
-    element.length === 2 &&
-    typeof element[0] === 'string' &&
-    element[0] === '_horizontalLayout'
-  );
-}
-
-function isDataInputDefByKeys<T extends Record<string, any>>(
-  element: unknown,
-): element is DataInputDefsByKey<T> {
-  return typeof element === 'object' && element !== null;
-}
-
-function isSubmitButtonShortcut(element: unknown): element is SubmitButtonShortcut {
-  return typeof element === 'string' && element === '_submitButton';
-}
-
-function isSubmitButtonDefinition(element: unknown): element is SubmitButtonDefinition {
-  return (
-    Array.isArray(element) &&
-    element.length === 2 &&
-    typeof element[0] === 'string' &&
-    element[0] === '_submitButton'
-  );
-}
-
-function isSubmitButtonLike(element: unknown): element is SubmitButtonDefinition {
-  return isSubmitButtonShortcut(element) || isSubmitButtonDefinition(element);
-}
+import dxElementService, { DxElementService,   } from './dx/dxElement.service';
+import { UnrolledLayout, ValidUnrolledElement } from './dx/dx.domain';
 
 /**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
@@ -72,118 +22,53 @@ function isSubmitButtonLike(element: unknown): element is SubmitButtonDefinition
  */
 export class FormDefs {
   constructor(
-    private readonly formDefTupleFactory: FormDefTupleFactory,
     private readonly formMapperService: FormDefMapper,
-    private readonly sensibleDefaults: SensibleDefaults,
+    private readonly dxElementService: DxElementService,
   ) {}
 
   processFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA>,
     formConfig?: FormConfig<FORM_DATA>,
   ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
-    const tuples = this.convertIntoTuples(formDefRaw);
-    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(tuples, formConfig);
+    const unrolled = this.unrollDxElements(formDefRaw);
+
+    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(unrolled, formConfig);
     if (formConfig?.onSubmit != null) {
-      return [fwFormDef, (e) => formConfig.onSubmit!(e.data as FORM_DATA)];
+      throw new Error('Not implemented yet');
     }
 
     return fwFormDef;
   }
 
-  convertIntoTuples<FORM_DATA extends Record<string, any> = any>(
+  private unrollDxElements<FORM_DATA extends Record<string, any> = any>(
     formDefRaw: FormDefFacade<FORM_DATA>,
-  ): FormDefTuple<FORM_DATA>[] {
-    const tuples = this.createTuples(formDefRaw);
-    if (tuples.filter((it) => it[0] === 'controllers').length > 0) {
-      return [...tuples];
-    }
-    return [...tuples, ['controllers', [this.sensibleDefaults.createDefaultSubmitButton()]]];
-  }
-
-  private createTuples<FORM_DATA extends Record<string, any> = any>(
-    formDefRaw: FormDefFacade<FORM_DATA>,
-  ): FormDefTuple<FORM_DATA>[] {
+  ): ValidUnrolledElement[] {
     return formDefRaw.map((element) => {
-      if (isHorizontalLayoutShortcut<FORM_DATA>(element)) {
-        return [`layout`, this.createTuples(element [1])];
-      } else if (isSubmitButtonLike(element)) {
-        const defaultSubmitButton = this.sensibleDefaults.createDefaultSubmitButton();
-        if (isSubmitButtonShortcut(element)) {
-          return [`controllers`, [defaultSubmitButton]];
-        } else if (isSubmitButtonDefinition(element)) {
-          if (typeof element[1] === 'function') {
-            const wrappedDefaultCallback: (params: any) => Partial<ControllerDef> = (params) => {
-              const elementElement: (params: any) => Partial<ControllerDef> = element[1] as (
-                params: any,
-              ) => Partial<ControllerDef>;
-              return {
-                ...defaultSubmitButton,
-                ...elementElement(params),
-              };
-            };
-            return [`controllers`, [wrappedDefaultCallback]];
-          }
-          return [
-            `controllers`,
-            [
-              {
-                ...defaultSubmitButton,
-                ...element[1],
-              },
-            ],
-          ];
-        } else {
-          throw new Error(`Unexpected submit button definition ${element}`);
-        }
-      } else if (isDataInputDefByKeys<FORM_DATA>(element)) {
-        return this.createDataInputsTuple(element);
-      } else {
-        throw new Error(`Unexpected form definition element ${element}`);
-      }
+      return this.unrollDxElement(element);
     });
   }
 
-  private createDataInputsTuple<FORM_DATA extends Record<string, any> = any>(
-    formDefRaw: DataInputDefsByKey<FORM_DATA>,
-  ): ProcessedDataInputsTuple<FORM_DATA> {
-    const fieldDefsByKey = this.explodeKeyShortcuts(formDefRaw as DataInputDefsByKey<FORM_DATA>);
-    return ['data_inputs', fieldDefsByKey];
-  }
-
-  private explodeKeyShortcuts<FORM_DATA extends Record<string, any> = any>(
-    formDefRaw: DataInputDefsByKey<FORM_DATA>,
-  ): ProcessedDataInputDefsByKey<FORM_DATA> {
-    const fieldDefsByKey: Partial<Record<keyof FORM_DATA, ProcessedValidInputDef>> = {};
-    const asDataInputDefsByKey = formDefRaw as DataInputDefsByKey<FORM_DATA>;
-    Object.entries(asDataInputDefsByKey).forEach(([key, dataInputDef]) => {
-      if (!dataInputDef) {
-        throw new Error(`Unexpected undefined value for field key: ${key}`);
-      }
-
-      if (typeof dataInputDef === 'function') {
-        fieldDefsByKey[key as keyof FORM_DATA] = dataInputDef as OneOfDataInputDefsCallback;
-      } else if (typeof dataInputDef === 'string') {
-        fieldDefsByKey[key as keyof FORM_DATA] =
-          this.sensibleDefaults.explodeShortcut(dataInputDef);
-      } else if (Array.isArray(dataInputDef)) {
-        fieldDefsByKey[key as keyof FORM_DATA] = this.processTags(dataInputDef);
-      } else {
-        fieldDefsByKey[key as keyof FORM_DATA] = dataInputDef as OneOfDataInputDefs;
-      }
-    });
-    return fieldDefsByKey;
-  }
-
-  private processTags(dataInputDef: InputTags): OneOfDataInputDefs {
-    const shortcut: ValidShortcutType = dataInputDef[0];
-    const shortcutInputDef = this.sensibleDefaults.explodeShortcut(shortcut);
-
-    return {
-      ...shortcutInputDef,
-      tags: dataInputDef.slice(1),
-    };
+  private unrollDxElement<FORM_DATA extends Record<string, any> = any>(
+    element: ValidDxElement<FORM_DATA>,
+  ): ValidUnrolledElement {
+    const result = this.dxElementService.assertIsValidDXElementAndUnroll(element);
+    if (this.dxElementService.isLayout(result)) {
+      const asFacade = result.payload[1] as FormDefFacade<FORM_DATA>;
+      const children = this.unrollDxElements(asFacade);
+      return {
+        type: 'layout',
+        children,
+        layoutKey: result.descriptor.orientation,
+        tags: [],
+        source: result,
+      } as UnrolledLayout;
+    }
+    return result;
   }
 }
 
-const formDefs = new FormDefs(formDefTupleFactory, formMapperService, sensibleDefaultsService);
+const formDefs = new FormDefs(
+  formMapperService,
+  dxElementService,
+);
 export default formDefs;

@@ -43,11 +43,11 @@ export class SensibleDefaults {
   }
 
   public createDefaultNumberDataInput(): DataInputDef {
-    return { type: 'number' };
+    return { type: 'number'};
   }
 
   public createDefaultBooleanDataInput(): DataInputDef {
-    return { type: 'boolean' };
+    return { type: 'boolean'};
   }
 
   public createDefaultSubmitButton(): any {

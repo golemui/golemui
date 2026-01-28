@@ -1,14 +1,15 @@
 import {
   BooleanDataInputDef,
+  ControllerDef,
   NumberDataInputDef,
   OneOfDataInputDefs,
   TextDataInputDef,
-  ValidInputDef,
 } from '../formDef.domain';
 import { DefaultFieldDefFn, DefaultFieldDefParams, FormConfig } from '../fomConfig.domain';
 import { ControlField, UiState } from '@golemui/core';
-import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
+import { ReadyToMapToGolemFormItem } from './formDefMapper.service';
+import { UnrolledField } from '../dx/dx.domain';
 
 const LABEL_EMPTY_PLACEHOLDER_WITH_KEY: DefaultFieldDefFn = ({ fieldKey }) => {
   return {
@@ -20,58 +21,83 @@ const USE_FIELD_KEY_AS_LABEL: DefaultFieldDefFn = ({ fieldKey }) => ({
   label: fieldKey,
 });
 
-export class DataInputsMapper {
-  constructor(
-    private readonly sensibleDefaults: SensibleDefaults,
-    private readonly objectUtils: ObjectUtils,
-  ) {}
+export class FormItemsMapper {
+  constructor(private readonly objectUtils: ObjectUtils) {}
 
-  mapControlField<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-    key: string,
-    baseFieldDef: OneOfDataInputDefs,
+  mapItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    item: ReadyToMapToGolemFormItem,
     formConfig?: FormConfig<FormData>,
   ): ControlField<any, StateKeys, FormData> {
-    let withTagsFieldDef = baseFieldDef;
     let rolledUpConfig = formConfig;
-    if (baseFieldDef?.tags && baseFieldDef.tags.length > 0) {
-      baseFieldDef.tags.forEach((tag) => {
+    const rolledUpReadyToImport: ReadyToMapToGolemFormItem = {
+      ...item,
+    };
+    if (item.unrolledElement?.tags && item.unrolledElement.tags.length > 0) {
+      item.unrolledElement.tags.forEach((tag) => {
         const tagConfig = rolledUpConfig?.tags?.[tag];
         rolledUpConfig = this.objectUtils.deepMerge(rolledUpConfig, tagConfig);
         if (tagConfig == null) {
           throw new Error(`Tag "${tag}" is not defined in the form config!`);
         }
-        const fieldDefWithTagRemoved = {
-          ...baseFieldDef,
-          tags: baseFieldDef!.tags!.filter((t) => t !== tag),
+        const fieldDefWithTagRemoved: ReadyToMapToGolemFormItem = {
+          unrolledElement: {
+            ...item.unrolledElement,
+            tags: item.unrolledElement.tags.filter((t) => t !== tag),
+          },
+          isCallback: item.isCallback,
+          value: item.value,
         };
-        const fieldDefForTag = this.applyFormConfig(key, fieldDefWithTagRemoved, rolledUpConfig);
-        withTagsFieldDef = this.objectUtils.deepMerge<OneOfDataInputDefs>(
-          withTagsFieldDef,
-          fieldDefForTag,
-        );
+        const fieldDefForTag = this.applyFormConfig(fieldDefWithTagRemoved, rolledUpConfig);
+        rolledUpReadyToImport.value = this.objectUtils.deepMerge<
+          OneOfDataInputDefs | ControllerDef
+        >(rolledUpReadyToImport.value, fieldDefForTag);
       });
     }
 
-    const withFormConfig = this.applyFormConfig(key, withTagsFieldDef, rolledUpConfig);
-    const merged = this.objectUtils.deepMerge<OneOfDataInputDefs>(withTagsFieldDef, withFormConfig);
+    const withBaseConfig = this.applyFormConfig(rolledUpReadyToImport, rolledUpConfig);
+    const merged = this.objectUtils.deepMerge<OneOfDataInputDefs | ControllerDef>(
+      withBaseConfig.value,
+      rolledUpReadyToImport.value,
+    );
 
-    return this.mapToControlField<StateKeys, FormData>(key, merged);
+    if (rolledUpReadyToImport.unrolledElement.type === 'controller') {
+      throw new Error(`Not able to process controllers yet!`);
+    }
+    return this.mapToControlField<StateKeys, FormData>(
+      (rolledUpReadyToImport.unrolledElement as UnrolledField).key,
+      merged as OneOfDataInputDefs,
+    );
   }
 
   private applyFormConfig<FormData extends Record<string, any> = any>(
+    item: ReadyToMapToGolemFormItem,
+    formConfig: FormConfig<FormData> | undefined,
+  ): ReadyToMapToGolemFormItem {
+    if (item.unrolledElement.type === 'field') {
+      return {
+        ...item,
+        value: this.applyFormConfigToField(
+          item.unrolledElement.key,
+          item.unrolledElement.value as OneOfDataInputDefs,
+          formConfig,
+        ),
+      };
+    }
+
+    throw new Error(`Not able to process tags for controllers yet!`);
+  }
+
+  private applyFormConfigToField<FormData extends Record<string, any> = any>(
     key: string,
     baseFieldDef: OneOfDataInputDefs,
     formConfig: FormConfig<FormData> | undefined,
-  ): Partial<OneOfDataInputDefs> | null {
+  ): OneOfDataInputDefs {
     const labelInfo = this.extractLabelDecorator(key, baseFieldDef, formConfig);
     const withLabels = this.objectUtils.deepMerge<OneOfDataInputDefs>(baseFieldDef, labelInfo);
 
     const defaultFieldDecorator = this.extractDefaultFieldDefDecorator(key, withLabels, formConfig);
-    const withLabelsAndDefaultFieldDecorator = this.objectUtils.deepMerge<OneOfDataInputDefs>(
-      withLabels,
-      defaultFieldDecorator,
-    );
-    return withLabelsAndDefaultFieldDecorator;
+
+    return this.objectUtils.deepMerge<OneOfDataInputDefs>(withLabels, defaultFieldDecorator);
   }
 
   private extractDefaultFieldDefDecorator<FormData extends Record<string, any> = any>(
@@ -129,19 +155,6 @@ export class DataInputsMapper {
     };
     return fn(params);
   }
-
-  private explodeShortcutIfNeeded(fieldDefRaw: ValidInputDef): OneOfDataInputDefs {
-    if (typeof fieldDefRaw === 'string') {
-      return this.sensibleDefaults.explodeShortcut(fieldDefRaw);
-    }
-
-    if (typeof fieldDefRaw === 'object') {
-      return fieldDefRaw as OneOfDataInputDefs;
-    }
-
-    throw new Error(`Now we need to add support for dynamic field definitions!`);
-  }
-
   private mapToControlField<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
@@ -214,5 +227,5 @@ export class DataInputsMapper {
   }
 }
 
-const dataInputsMapper = new DataInputsMapper(sensibleDefaults, objectUtils);
-export default dataInputsMapper;
+const formItemsMapper = new FormItemsMapper(objectUtils);
+export default formItemsMapper;
