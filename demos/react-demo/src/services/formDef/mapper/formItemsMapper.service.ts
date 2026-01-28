@@ -6,7 +6,7 @@ import {
   TextDataInputDef,
 } from '../formDef.domain';
 import { DefaultFieldDefFn, DefaultFieldDefParams, FormConfig } from '../fomConfig.domain';
-import { ControlField, UiState } from '@golemui/core';
+import { ControlField, InteractiveField, UiState } from '@golemui/core';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import { ReadyToMapToGolemFormItem } from './formDefMapper.service';
 import { UnrolledField } from '../dx/dx.domain';
@@ -27,7 +27,7 @@ export class FormItemsMapper {
   mapItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     item: ReadyToMapToGolemFormItem,
     formConfig?: FormConfig<FormData>,
-  ): ControlField<any, StateKeys, FormData> {
+  ): ControlField<any, StateKeys, FormData> | InteractiveField<StateKeys, FormData> {
     let rolledUpConfig = formConfig;
     const rolledUpReadyToImport: ReadyToMapToGolemFormItem = {
       ...item,
@@ -46,11 +46,12 @@ export class FormItemsMapper {
           },
           isCallback: item.isCallback,
           value: item.value,
+          type: item.type,
         };
         const fieldDefForTag = this.applyFormConfig(fieldDefWithTagRemoved, rolledUpConfig);
         rolledUpReadyToImport.value = this.objectUtils.deepMerge<
           OneOfDataInputDefs | ControllerDef
-        >(rolledUpReadyToImport.value, fieldDefForTag);
+        >(rolledUpReadyToImport.value, fieldDefForTag.value);
       });
     }
 
@@ -60,8 +61,8 @@ export class FormItemsMapper {
       rolledUpReadyToImport.value,
     );
 
-    if (rolledUpReadyToImport.unrolledElement.type === 'controller') {
-      throw new Error(`Not able to process controllers yet!`);
+    if (rolledUpReadyToImport.type === 'controller') {
+      return this.mapInteractiveField(rolledUpReadyToImport.value as ControllerDef);
     }
     return this.mapToControlField<StateKeys, FormData>(
       (rolledUpReadyToImport.unrolledElement as UnrolledField).key,
@@ -84,7 +85,8 @@ export class FormItemsMapper {
       };
     }
 
-    throw new Error(`Not able to process tags for controllers yet!`);
+    console.warn(`eventually there will be configuration for controls, so far this is ignored`);
+    return item;
   }
 
   private applyFormConfigToField<FormData extends Record<string, any> = any>(
@@ -223,6 +225,19 @@ export class FormItemsMapper {
         type: 'number',
         ...fieldDef.validator,
       },
+    };
+  }
+
+  private mapInteractiveField<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(controllerDef: ControllerDef): InteractiveField<StateKeys, FormData> {
+    return {
+      uid: '',
+      kind: 'interactive', // data
+      widget: 'button',
+      disabled: controllerDef.disabled,
+      label: 'Submit',
     };
   }
 }

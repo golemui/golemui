@@ -1,5 +1,10 @@
 import { ControllerDef, DataInputDefsByKey } from '../../formDef.domain';
-import { ParsedDxShortcut, UnrolledControllers, UnrolledFields } from '../dx.domain';
+import {
+  ParsedDxShortcut,
+  SUBMIT_BUTTON_SHORTCUT,
+  UnrolledControllers,
+  UnrolledFields,
+} from '../dx.domain';
 import sensibleDefaults, { SensibleDefaults } from '../../default/sensibleDefaults.service';
 import inputDefsByKeyService, { InputDefsByKeyService } from './helpers/inputDefsByKey.service';
 
@@ -17,13 +22,20 @@ export class DxWiringService {
   }
 
   wireSubmitButton(
-    payload: null | ControllerDef | (() => ControllerDef),
-    source: ParsedDxShortcut<null | ControllerDef | (() => ControllerDef)>,
+    payload: SUBMIT_BUTTON_SHORTCUT | ControllerDef | (() => ControllerDef),
+    source: ParsedDxShortcut<SUBMIT_BUTTON_SHORTCUT | ControllerDef | (() => ControllerDef)>,
   ): UnrolledControllers {
+    const baseValue = payload === '_submitButton' ? this.sensibleDefaults.createDefaultSubmitButton() : payload;
     return {
       type: 'controllers',
       source,
-      items: [payload == null ? this.sensibleDefaults.createDefaultSubmitButton() : payload],
+      items: [
+        {
+          type: 'controller',
+          tags: [],
+          value: baseValue,
+        },
+      ],
     };
   }
 }

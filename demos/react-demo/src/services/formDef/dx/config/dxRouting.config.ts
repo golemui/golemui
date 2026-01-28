@@ -1,4 +1,10 @@
-import { DxShortcutDescriptor, LayoutDxShortcutDescriptor, ParsedDxShortcut, ValidShortcutNames } from '../dx.domain';
+import {
+  DxShortcutDescriptor,
+  LayoutDxShortcutDescriptor,
+  ParsedDxShortcut,
+  SUBMIT_BUTTON_SHORTCUT,
+  ValidShortcutNames,
+} from '../dx.domain';
 import { ControllerDef, DataInputDefsByKey } from '../../formDef.domain';
 
 export const REGISTERED_DX_SHORTCUTS: Record<ValidShortcutNames, DxShortcutDescriptor> = {
@@ -22,7 +28,7 @@ export const REGISTERED_DX_SHORTCUTS: Record<ValidShortcutNames, DxShortcutDescr
     produces: 'controllers',
     wiring: (
       dxWiringService,
-      source: ParsedDxShortcut<null | ControllerDef | (() => ControllerDef)>,
+      source: ParsedDxShortcut<SUBMIT_BUTTON_SHORTCUT | ControllerDef | (() => ControllerDef)>,
     ) => {
       return dxWiringService.wireSubmitButton(source.payload, source);
     },

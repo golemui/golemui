@@ -10,7 +10,7 @@ import {
 } from '@golemui/core';
 import { ControllerDef, OneOfDataInputDefs } from '../formDef.domain';
 import { FormConfig } from '../fomConfig.domain';
-import formItemsMapper, { FormItemsMapper } from './dataInputsMapper.service';
+import formItemsMapper, { FormItemsMapper } from './formItemsMapper.service';
 import dxUnrollingService, { DxUnrollingService } from '../dx/dxUnrolling.service';
 import { UnrolledController, UnrolledField, ValidUnrolledElement } from '../dx/dx.domain';
 
@@ -21,6 +21,7 @@ type FormField<StateKeys extends UiState = never, FormData extends Record<string
   | InteractiveField<StateKeys, FormData>;
 
 export interface ReadyToMapToGolemFormItem {
+  type: 'controller' | 'field';
   unrolledElement: UnrolledField | UnrolledController;
   value: OneOfDataInputDefs | ControllerDef;
   isCallback: boolean;
@@ -111,6 +112,7 @@ export class FormDefMapper {
                 unrolledElement: itemElement,
                 value: hotMapping,
                 isCallback: true,
+                type: unrolledElement.type === 'controllers' ? 'controller' : 'field',
               },
               formConfig,
             );
@@ -123,6 +125,7 @@ export class FormDefMapper {
             unrolledElement: itemElement,
             value: itemElement.value as OneOfDataInputDefs | ControllerDef,
             isCallback: true,
+            type: unrolledElement.type === 'controllers' ? 'controller' : 'field',
           },
           formConfig,
         );

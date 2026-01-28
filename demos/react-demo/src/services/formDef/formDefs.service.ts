@@ -34,7 +34,7 @@ export class FormDefs {
 
     const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(unrolled, formConfig);
     if (formConfig?.onSubmit != null) {
-      throw new Error('Not implemented yet');
+      return [fwFormDef, formConfig.onSubmit as any] as [Form<STATE_KEYS, FORM_DATA>, FormEvents];
     }
 
     return fwFormDef;
