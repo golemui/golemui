@@ -238,6 +238,7 @@ export class FormItemsMapper {
       widget: 'button',
       disabled: controllerDef.disabled,
       label: 'Submit',
+      on: controllerDef.on
     };
   }
 }

@@ -31,8 +31,12 @@ export class FormDefs {
     formConfig?: FormConfig<FORM_DATA>,
   ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
     const unrolled = this.unrollDxElements(formDefRaw);
+    let withAutoSubmit: ValidUnrolledElement[] = unrolled;
+    if (unrolled.filter(it=>it.type==='controllers').length===0) {
+      withAutoSubmit = [...unrolled, this.unrollDxElement('_submitButton')]
+    }
 
-    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(unrolled, formConfig);
+    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(withAutoSubmit, formConfig);
     if (formConfig?.onSubmit != null) {
       return [fwFormDef, formConfig.onSubmit as any] as [Form<STATE_KEYS, FORM_DATA>, FormEvents];
     }
