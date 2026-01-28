@@ -2,9 +2,16 @@ import { html, LitElement, nothing, PropertyValues, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { weekInfoData } from './week-info';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel } from '../utils/templates';
+import {
+  getMonthName,
+  getWeekdayLabels,
+  isSameDay,
+  isToday,
+  toISODateString,
+  weekDaysOrder,
+} from '../utils/date';
 
 export interface DateRange {
   start: string;
@@ -71,14 +78,14 @@ export class GuiRangeCalendarControl extends LitElement {
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
       if (this.value && this.value.length > 0) {
-        // this._currentDate = new Date(this.value[0].start);
+        this._currentDate = new Date(this.value[0].start);
       }
     }
   }
 
   override render() {
     const days: RangeCalendarDay[] = this.getDaysInMonth();
-    const weekDays: string[] = this.getWeekdayLabels();
+    const weekDays: string[] = getWeekdayLabels(this.localeId);
 
     const templateData: any = {
       uid: this.uid,
@@ -107,7 +114,7 @@ export class GuiRangeCalendarControl extends LitElement {
               ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
             </button>
 
-            <h2>${this.getMonthName()}</h2>
+            <h2>${getMonthName(this.localeId, this._currentDate)}</h2>
 
             <button
               type="button"
@@ -178,34 +185,34 @@ export class GuiRangeCalendarControl extends LitElement {
 
     const firstDayOfMonth = new Date(year, month, 1);
     const dayOfWeek = firstDayOfMonth.getDay();
-    const gridStartDay = this.weekDaysOrder[0];
+    const gridStartDay = weekDaysOrder(this.localeId)[0];
     const offset = (dayOfWeek - gridStartDay + 7) % 7;
 
     const startDate = new Date(firstDayOfMonth);
     startDate.setDate(firstDayOfMonth.getDate() - offset);
 
-    const days: RangeCalendarDay[] = [];
-    let hasFocusable = false;
+    let isDayFocusable = false;
+    let days: RangeCalendarDay[] = [];
 
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
 
       const isCurrentMonth = date.getMonth() === month;
-      const isToday = this.isToday(date);
+      const isTodayDate = isToday(date);
       const { isRangeStart, isRangeEnd, isInRange, isSelecting } = this.checkDateStatus(date);
 
-      const isAnchor = this._anchorDate ? this.isSameDay(date, this._anchorDate) : false;
+      const isAnchor = this._anchorDate ? isSameDay(date, this._anchorDate) : false;
 
       const isFocusable =
-        (isRangeStart || isAnchor || (isToday && !this.value?.length)) && isCurrentMonth;
-      if (isFocusable) hasFocusable = true;
+        (isRangeStart || isAnchor || (isTodayDate && !this.value?.length)) && isCurrentMonth;
+      if (isFocusable) isDayFocusable = true;
 
       days.push({
         date,
         dayLabel: new Intl.DateTimeFormat(this.localeId, { day: 'numeric' }).format(date),
         isCurrentMonth,
-        isToday,
+        isToday: isTodayDate,
         isRangeStart,
         isRangeEnd,
         isInRange,
@@ -216,9 +223,17 @@ export class GuiRangeCalendarControl extends LitElement {
       });
     }
 
-    if (!hasFocusable) {
+    if (!isDayFocusable) {
       const fallback = days.find((d) => d.isCurrentMonth);
       if (fallback) fallback.isFocusable = true;
+    }
+
+    // We remove the 6th and 5th week if it only contains days of the next month
+    for (let i = 0; i < 2; i++) {
+      const lastWeek = days.slice(-7);
+      if (lastWeek.every((day) => !day.isCurrentMonth)) {
+        days = days.slice(0, -7);
+      }
     }
 
     return days;
@@ -244,7 +259,7 @@ export class GuiRangeCalendarControl extends LitElement {
       for (const range of this.value) {
         const start = new Date(range.start);
 
-        if (this.isSameDay(date, start)) {
+        if (isSameDay(date, start)) {
           isRangeStart = true;
           isRangeEnd = !range.end;
         }
@@ -252,7 +267,7 @@ export class GuiRangeCalendarControl extends LitElement {
         if (range.end) {
           const end = new Date(range.end);
 
-          if (this.isSameDay(date, end)) {
+          if (isSameDay(date, end)) {
             isRangeEnd = true;
           }
 
@@ -299,10 +314,10 @@ export class GuiRangeCalendarControl extends LitElement {
       endDate = this._anchorDate;
     }
 
-    const isSingleDay = this.isSameDay(startDate, endDate);
+    const isSingleDay = isSameDay(startDate, endDate);
     const newRange: DateRange = {
-      start: startDate.toISOString(),
-      ...(isSingleDay ? {} : { end: endDate.toISOString() }),
+      start: toISODateString(startDate),
+      ...(isSingleDay ? {} : { end: toISODateString(endDate) }),
     };
 
     this.value = [...this.value!, newRange];
@@ -386,19 +401,6 @@ export class GuiRangeCalendarControl extends LitElement {
     );
   }
 
-  private isSameDay(d1: Date, d2: Date): boolean {
-    return (
-      d1.getDate() === d2.getDate() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getFullYear() === d2.getFullYear()
-    );
-  }
-
-  private isToday(date: Date): boolean {
-    const today = new Date();
-    return this.isSameDay(date, today);
-  }
-
   private prevMonth() {
     const d = this._currentDate;
     this._currentDate = new Date(d.getFullYear(), d.getMonth() - 1, 1);
@@ -407,31 +409,6 @@ export class GuiRangeCalendarControl extends LitElement {
   private nextMonth() {
     const d = this._currentDate;
     this._currentDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
-  }
-
-  private getMonthName(): string {
-    return new Intl.DateTimeFormat(this.localeId, { month: 'long' }).format(this._currentDate);
-  }
-
-  private get weekDaysOrder(): number[] {
-    const localeData = weekInfoData[this.localeId ?? 'en'] || { firstDay: 0 };
-    return this.getOrderedWeekDays(localeData.firstDay);
-  }
-
-  private getOrderedWeekDays(firstDay: number): number[] {
-    const base = [0, 1, 2, 3, 4, 5, 6];
-    const start = firstDay % 7;
-    return [...base.slice(start), ...base.slice(0, start)];
-  }
-
-  private getWeekdayLabels(): string[] {
-    const formatter = new Intl.DateTimeFormat(this.localeId, { weekday: 'narrow' });
-    const sundayRef = new Date(2025, 10, 30); // Un domingo conocido
-    return this.weekDaysOrder.map((dayCode) => {
-      const d = new Date(sundayRef);
-      d.setDate(sundayRef.getDate() + dayCode);
-      return formatter.format(d);
-    });
   }
 
   private onMouseOver(day: RangeCalendarDay) {

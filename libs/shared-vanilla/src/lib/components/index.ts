@@ -14,4 +14,4 @@ export * from './tabs';
 export * from './textarea';
 export * from './textinput';
 export * from './toggle';
-export * from './week-info';
+export * from '../utils/week-info';

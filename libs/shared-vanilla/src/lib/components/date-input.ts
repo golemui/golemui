@@ -6,6 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
 import { DateinputProps } from '../field.props';
+import { toISODateString } from '../utils/date';
 
 @customElement('gui-date')
 export class GuiDateControl extends LitElement {
@@ -333,7 +334,7 @@ export class GuiDateControl extends LitElement {
         );
       } else {
         const currentDate = new Date(yearVal, monthVal - 1, dayVal);
-        this.value = currentDate.toISOString();
+        this.value = toISODateString(currentDate);
 
         this.dispatchEvent(
           new CustomEvent('change', {

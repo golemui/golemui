@@ -2,10 +2,17 @@ import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { weekInfoData } from './week-info';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
 import { CalendarProps } from '../field.props';
+import {
+  getMonthName,
+  getWeekdayLabels,
+  isSameDay,
+  isToday,
+  toISODateString,
+  weekDaysOrder,
+} from '../utils/date';
 
 export interface CalendarDay {
   date: Date;
@@ -65,7 +72,7 @@ export class GuiCalendarControl extends LitElement {
 
   override render() {
     const days: CalendarDay[] = this.getDaysInMonth();
-    const weekDays: string[] = this.getWeekdayLabels();
+    const weekDays: string[] = getWeekdayLabels(this.localeId);
     const templateData: ControlTemplateData<string> & CalendarProps = {
       uid: this.uid,
       label: this.label,
@@ -106,7 +113,7 @@ export class GuiCalendarControl extends LitElement {
                   ></span>`}
             </button>
 
-            <h2>${this.getMonthName()}</h2>
+            <h2>${getMonthName(this.localeId, this._currentDate)}</h2>
 
             <button
               type="button"
@@ -171,7 +178,7 @@ export class GuiCalendarControl extends LitElement {
 
     const firstDayOfMonth = new Date(year, month, 1);
     const dayOfWeek = firstDayOfMonth.getDay();
-    const gridStartDay = this.weekDaysOrder[0];
+    const gridStartDay = weekDaysOrder(this.localeId)[0];
     const offset = (dayOfWeek - gridStartDay + 7) % 7;
 
     const startDate = new Date(firstDayOfMonth);
@@ -186,7 +193,7 @@ export class GuiCalendarControl extends LitElement {
 
       const isCurrentMonth = date.getMonth() === month;
       const isSelected = this.isSelected(date);
-      const isToday = this.isToday(date);
+      const isTodayDate = isToday(date);
       const isFocusable = isSelected && isCurrentMonth;
 
       if (isFocusable) isDayFocusable = true;
@@ -195,7 +202,7 @@ export class GuiCalendarControl extends LitElement {
         date: date,
         dayLabel: new Intl.DateTimeFormat(this.localeId, { day: 'numeric' }).format(date),
         isCurrentMonth,
-        isToday,
+        isToday: isTodayDate,
         isSelected,
         isFocusable,
       });
@@ -220,49 +227,10 @@ export class GuiCalendarControl extends LitElement {
     return days;
   }
 
-  private get weekDaysOrder(): number[] {
-    const localeData = weekInfoData[this.localeId ?? 'en'] || { firstDay: 0 };
-    return this.getOrderedWeekDays(localeData.firstDay);
-  }
-
-  private getOrderedWeekDays(firstDay: number): number[] {
-    const base = [0, 1, 2, 3, 4, 5, 6];
-    const start = firstDay % 7;
-    return [...base.slice(start), ...base.slice(0, start)];
-  }
-
-  private getWeekdayLabels(): string[] {
-    const formatter = new Intl.DateTimeFormat(this.localeId, { weekday: 'narrow' });
-    // Anchor Sunday date
-    const sundayRef = new Date(2025, 10, 30);
-    return this.weekDaysOrder.map((dayCode) => {
-      const d = new Date(sundayRef);
-      d.setDate(sundayRef.getDate() + dayCode);
-      return formatter.format(d);
-    });
-  }
-
-  private getMonthName(): string {
-    return new Intl.DateTimeFormat(this.localeId, { month: 'long' }).format(this._currentDate);
-  }
-
-  private isToday(date: Date): boolean {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  }
-
   private isSelected(date: Date): boolean {
     if (!this.value) return false;
     const s = new Date(this.value);
-    return (
-      date.getDate() === s.getDate() &&
-      date.getMonth() === s.getMonth() &&
-      date.getFullYear() === s.getFullYear()
-    );
+    return isSameDay(date, s);
   }
 
   private prevMonth() {
@@ -286,7 +254,8 @@ export class GuiCalendarControl extends LitElement {
   private selectDate(day: CalendarDay) {
     if (!day.isCurrentMonth) return;
 
-    const isoDate = day.date.toISOString();
+    const isoDate = toISODateString(day.date);
+
     this.value = isoDate;
 
     this.dispatchEvent(
