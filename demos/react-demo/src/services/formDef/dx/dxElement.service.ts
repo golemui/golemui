@@ -72,7 +72,7 @@ export class DxElementService {
           descriptor,
           actualType: 'array',
           shortcut,
-          payload: element,
+          payload: element[1] as any,
           tags: [],
         };
       }
@@ -86,10 +86,33 @@ export class DxElementService {
             descriptor,
             actualType,
             shortcut,
-            payload: element,
+            payload: element[1] as any,
             tags: [],
           };
         }
+      }
+    }
+
+    // Handle DxShortcutFinal format: [[shortcutName, tags[]], [config objects]]
+    if (
+      Array.isArray(element) &&
+      element.length === 2 &&
+      Array.isArray(element[0]) &&
+      element[0].length >= 1 &&
+      typeof element[0][0] === 'string' &&
+      Array.isArray(element[1])
+    ) {
+      const shortcut = element[0][0] as ValidShortcutNames;
+      const descriptor = REGISTERED_DX_SHORTCUTS[shortcut];
+      if (descriptor) {
+        const tags = element[0].slice(1) as string[];
+        return {
+          descriptor,
+          actualType: 'standard',
+          shortcut,
+          payload: element[1] as any,
+          tags,
+        };
       }
     }
 

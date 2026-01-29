@@ -1,21 +1,25 @@
 import {
   FormDefFacade,
-  ProcessedValidControllerDef,
-  ProcessedValidInputDef,
+
 } from '../formDef.domain';
 import { DxWiringService } from './config/dxWiring.service';
+import { ProcessedValidControllerDef, ProcessedDxField } from './gui/guiFields.impl';
 
+export type GROUP_SHORTCUT = '_group';
 export type HORIZONTAL_LAYOUT_SHORTCUT = '_horizontalLayout';
+export type BUTTON_SHORTCUT = '_button';
 export type SUBMIT_BUTTON_SHORTCUT = '_submitButton';
 export type ValidShortcutNames =
   | HORIZONTAL_LAYOUT_SHORTCUT
   | SUBMIT_BUTTON_SHORTCUT
+  | BUTTON_SHORTCUT
   | '_inputDefsByKey'; // There is no constant name for this as is a special key, the user does not use a tuple syntax but passes an object with keys
 export type DxShortcutType =
   | 'array' //This would be a string, or an array of [key, ...tags]
   | 'empty' //This would be a string, or an array of [key, ...tags]
   | 'object' //The user is giving us some properties for a field or controller
-  | 'callback'; //The user is giving a callback that resolves to some properties for a field or controller
+  | 'callback' //The user is giving a callback that resolves to some properties for a field or controller
+  | 'standard'; //DxShortcutFinal format: [[shortcutName, tags[]], [config objects]]
 type DxShortcutFamily = 'layout' | 'controllers' | 'fields';
 
 export interface DxShortcutDescriptor {
@@ -34,7 +38,7 @@ export interface ParsedDxShortcut<PAYLOAD> {
   actualType: DxShortcutType;
   shortcut: ValidShortcutNames;
   payload: PAYLOAD;
-  tags: [];
+  tags: string[];
 }
 
 export interface LayoutDxShortcut<PAYLOAD extends Record<string, any>>
@@ -49,14 +53,14 @@ export interface UnrolledElements {
 
 export interface BaseUnrolledItem {
   type: 'field' | 'controller';
-  value: ProcessedValidInputDef | ProcessedValidControllerDef;
+  value: ProcessedDxField | ProcessedValidControllerDef;
   tags: string[];
 }
 
 export interface UnrolledField extends BaseUnrolledItem {
   type: 'field';
   key: string;
-  value: ProcessedValidInputDef;
+  value: ProcessedDxField;
 }
 
 export interface UnrolledController extends BaseUnrolledItem {

@@ -38,6 +38,7 @@ formRegistry.registerAll([
   manyTypes,
   formDemoDefinition,
   configureDynamicButton,
+  // manyButtons,
 ]);
 
 export function App() {

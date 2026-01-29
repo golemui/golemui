@@ -124,7 +124,7 @@ export class FormDefMapper {
           {
             unrolledElement: itemElement,
             value: itemElement.value as OneOfDataInputDefs | ControllerDef,
-            isCallback: true,
+            isCallback: false,
             type: unrolledElement.type === 'controllers' ? 'controller' : 'field',
           },
           formConfig,

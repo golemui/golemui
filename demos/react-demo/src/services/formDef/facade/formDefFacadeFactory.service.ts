@@ -2,16 +2,16 @@ import { KeyOf } from 'zod/v4/core/util';
 import {
   DataInputDef,
   FormDefTuple,
-  ProcessedDataInputDefsByKey,
-  ProcessedValidInputDef,
+
 } from '../formDef.domain';
 import sensibleDefaults, { SensibleDefaults } from '../default/sensibleDefaults.service';
+import { ProcessedDxFieldsByKey, ProcessedDxField } from '../dx/gui/guiFields.impl';
 
 export class FormDefTupleFactory {
   constructor(private readonly sensibleDefaults: SensibleDefaults) {}
 
   public create<FORM_DATA extends Record<string, any> = any>(
-    dataInputDefsByKey: Record<string, ProcessedValidInputDef>,
+    dataInputDefsByKey: Record<string, ProcessedDxField>,
   ): FormDefTuple<FORM_DATA>[] {
     const fieldDefKeys: string[] = Object.keys(dataInputDefsByKey);
     if (fieldDefKeys.length === 0) {
@@ -30,7 +30,7 @@ export class FormDefTupleFactory {
   }
 
   private extractFieldDef<FORM_DATA extends Record<string, any> = any>(
-    dataInputDefsByKey: Record<string, ProcessedValidInputDef>,
+    dataInputDefsByKey: Record<string, ProcessedDxField>,
     key: keyof FORM_DATA,
   ): DataInputDef {
     const fieldDefForKey = dataInputDefsByKey?.[key as KeyOf<FORM_DATA>];
@@ -45,9 +45,9 @@ export class FormDefTupleFactory {
     key: keyof FORM_DATA,
     fieldDef: DataInputDef,
   ): FormDefTuple<FORM_DATA> {
-    const dataInput: ProcessedDataInputDefsByKey<FORM_DATA> = {
+    const dataInput: ProcessedDxFieldsByKey<FORM_DATA> = {
       [key]: fieldDef,
-    } as ProcessedDataInputDefsByKey<FORM_DATA>;
+    } as ProcessedDxFieldsByKey<FORM_DATA>;
 
     return ['data_inputs', dataInput];
   }

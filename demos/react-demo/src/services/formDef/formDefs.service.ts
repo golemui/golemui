@@ -57,7 +57,7 @@ export class FormDefs {
   ): ValidUnrolledElement {
     const result = this.dxElementService.assertIsValidDXElementAndUnroll(element);
     if (this.dxElementService.isLayout(result)) {
-      const asFacade = result.payload[1] as FormDefFacade<FORM_DATA>;
+      const asFacade = result.payload as FormDefFacade<FORM_DATA>;
       const children = this.unrollDxElements(asFacade);
       return {
         type: 'layout',

@@ -237,7 +237,7 @@ export class FormItemsMapper {
       kind: 'interactive', // data
       widget: 'button',
       disabled: controllerDef.disabled,
-      label: 'Submit',
+      label: controllerDef.label,
       on: controllerDef.on
     };
   }
