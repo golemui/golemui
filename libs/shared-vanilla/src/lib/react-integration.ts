@@ -12,7 +12,7 @@ import { GuiCurrencyControl } from './components/currency';
 import { GuiListControl } from './components/list';
 import { GuiLabel } from './components/label';
 import { GuiErrors } from './components/errors';
-import { GuiRangeCalendarControl } from '@golemui/shared-vanilla';
+import { GuiRangeCalendarControl } from './components/range-calendar';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
