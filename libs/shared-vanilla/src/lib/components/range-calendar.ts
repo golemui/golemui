@@ -181,13 +181,9 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
       endDate = this._anchorDate;
     }
 
-    const isSingleDay = isSameDay(startDate, endDate);
-    const newRange: DateRange = {
-      start: toISODateString(startDate),
-      ...(isSingleDay ? {} : { end: toISODateString(endDate) }),
-    };
-
-    this.value = [...this.value!, newRange];
+    // Calculate ranges based on disabled days
+    const newRanges = this.calculateValidRanges(startDate, endDate);
+    this.value = [...(this.value || []), ...newRanges];
 
     this._isSelecting = false;
     this._nextDate = null;
@@ -200,6 +196,70 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
         composed: true,
       }),
     );
+  }
+
+  /**
+   * Calculates and returns an array of valid date ranges between the given start date and end date.
+   * A date range is considered valid if no dates within the range are disabled.
+   *
+   * @param {Date} startDate - The starting date for the range calculation.
+   * @param {Date} endDate - The ending date for the range calculation.
+   * @return {DateRange[]} An array of valid date ranges where each range defines consecutive, non-disabled dates.
+   */
+  private calculateValidRanges(startDate: Date, endDate: Date): DateRange[] {
+    const validRanges: DateRange[] = [];
+    const iterator = new Date(startDate);
+    const endLimit = new Date(endDate);
+
+    iterator.setHours(0, 0, 0, 0);
+    endLimit.setHours(0, 0, 0, 0);
+
+    let currentRangeStart: Date | null = null;
+
+    while (iterator <= endLimit) {
+      const disabled = this.isDisabled(iterator);
+
+      if (!disabled) {
+        // It's a valid date, start range
+        if (!currentRangeStart) {
+          currentRangeStart = new Date(iterator);
+        }
+      } else {
+        // It's a disabled date, and we have an open range, so we close it
+        if (currentRangeStart) {
+          const rangeEnd = new Date(iterator);
+          rangeEnd.setDate(iterator.getDate() - 1);
+
+          validRanges.push(this.createRangeObject(currentRangeStart, rangeEnd));
+          currentRangeStart = null;
+        }
+      }
+
+      // Move to next date
+      iterator.setDate(iterator.getDate() + 1);
+    }
+
+    // Close range
+    if (currentRangeStart) {
+      validRanges.push(this.createRangeObject(currentRangeStart, endDate));
+    }
+
+    return validRanges;
+  }
+
+  /**
+   * Creates a range object representing a single date or a date range.
+   *
+   * @param {Date} start - The start date of the range.
+   * @param {Date} end - The end date of the range.
+   * @return {DateRange} An object containing the start date and optionally the end date if it differs from the start date.
+   */
+  private createRangeObject(start: Date, end: Date): DateRange {
+    const sStr = toISODateString(start);
+    const eStr = toISODateString(end);
+
+    // It's one date or a range of dates
+    return sStr === eStr ? { start: sStr } : { start: sStr, end: eStr };
   }
 
   private onMouseOver(day: RangeCalendarDay) {
