@@ -22,6 +22,7 @@ export const vanillaFieldLoaders: Core.FieldLoaders<
   number: async () => (await import('./components/Number')).NumberInput,
   select: async () => (await import('./components/Select')).Select,
   radiogroup: async () => (await import('./components/RadioGroup')).RadioGroup,
+  rangeCalendar: async () => (await import('./components/RangeCalendar')).RangeCalendar,
 
   // REPEATER
   repeater: async () => (await import('./components/Repeater')).Repeater,
