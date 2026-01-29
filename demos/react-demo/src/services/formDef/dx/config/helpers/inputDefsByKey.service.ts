@@ -77,7 +77,6 @@ export class InputDefsByKeyService {
       result.push({
         key,
         value,
-        tags: [],
         type: 'field',
       });
     });

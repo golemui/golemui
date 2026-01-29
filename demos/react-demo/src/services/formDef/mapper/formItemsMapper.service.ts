@@ -1,6 +1,7 @@
 import {
   BooleanDataInputDef,
   ControllerDef,
+  GolemFormItem,
   NumberDataInputDef,
   OneOfDataInputDefs,
   TextDataInputDef,
@@ -32,20 +33,22 @@ export class FormItemsMapper {
     const rolledUpReadyToImport: ReadyToMapToGolemFormItem = {
       ...item,
     };
-    if (item.unrolledElement?.tags && item.unrolledElement.tags.length > 0) {
-      item.unrolledElement.tags.forEach((tag) => {
+    const value: GolemFormItem = item.value;
+    if (value?.tags && value.tags.length > 0) {
+      const valueTags = value.tags as string[];
+      valueTags.forEach((tag) => {
         const tagConfig = rolledUpConfig?.tags?.[tag];
         rolledUpConfig = this.objectUtils.deepMerge(rolledUpConfig, tagConfig);
         if (tagConfig == null) {
           throw new Error(`Tag "${tag}" is not defined in the form config!`);
         }
         const fieldDefWithTagRemoved: ReadyToMapToGolemFormItem = {
-          unrolledElement: {
-            ...item.unrolledElement,
-            tags: item.unrolledElement.tags.filter((t) => t !== tag),
-          },
+          unrolledElement: item.unrolledElement,
           isCallback: item.isCallback,
-          value: item.value,
+          value: {
+            ...item.value,
+            tags: valueTags.filter((t) => t !== tag),
+          },
           type: item.type,
         };
         const fieldDefForTag = this.applyFormConfig(fieldDefWithTagRemoved, rolledUpConfig);

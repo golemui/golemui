@@ -1,4 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
+import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
 
 export const formConfigShortcut: FormDemoDefinition = {
   title: 'Form Config',
@@ -6,9 +7,10 @@ export const formConfigShortcut: FormDemoDefinition = {
   formConfig: {
     suppressAutomaticLabels: true,
   },
-  formDef: [{
-    name: 'string',
-    age: 'number',
-    height: 'number',
-  }],
+  formDef: ()=>
+    _guiFields({
+      name: 'string',
+      age: 'number',
+      height: 'number',
+    }),
 };

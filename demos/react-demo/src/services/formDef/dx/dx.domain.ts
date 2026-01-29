@@ -54,7 +54,6 @@ export interface UnrolledElements {
 export interface BaseUnrolledItem {
   type: 'field' | 'controller';
   value: ProcessedDxField | ProcessedValidControllerDef;
-  tags: string[];
 }
 
 export interface UnrolledField extends BaseUnrolledItem {

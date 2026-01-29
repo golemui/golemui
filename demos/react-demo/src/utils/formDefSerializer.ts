@@ -13,12 +13,8 @@ export function serializeFormDefForDisplay(obj: any, indent = 0): string {
   if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
 
   if (typeof obj === 'function') {
-    // Format function on multiple lines with proper indentation
-    const funcStr = obj.toString();
-    return funcStr
-      .split('\n')
-      .map((line: string, i: number) => (i === 0 ? line : nextIndentStr + line))
-      .join('\n');
+    // Just show [Function] placeholder instead of full function code
+    return '[Function]';
   }
 
   if (Array.isArray(obj)) {

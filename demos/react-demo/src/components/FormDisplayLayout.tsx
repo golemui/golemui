@@ -8,7 +8,7 @@ import styles from './FormDisplayLayout.module.css';
 export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: FormDefFacade<T>;
+  formDef?: FormDefFacade<T> | (() => FormDefFacade<T>);
   formData?: T;
   warnings?: string[];
   formKey?: string;
@@ -29,7 +29,20 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   const [processedConfig, setProcessedConfig] = React.useState<any>(null);
   const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
 
-  const serialized = formDef ? serializeFormDefForDisplay(formDef) : '';
+  // Check if formDef is a function to get source code with helper functions
+  const isFormDefFunction = typeof formDef === 'function';
+  const resolvedFormDef = React.useMemo(
+    () => (isFormDefFunction ? (formDef as () => FormDefFacade<T>)() : formDef),
+    [formDef, isFormDefFunction]
+  );
+
+  // For display: show function source if it's a function, otherwise serialize the value
+  // If it's a function, strip the "() => " wrapper from the beginning
+  const serialized = formDef
+    ? (isFormDefFunction
+        ? (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
+        : serializeFormDefForDisplay(formDef))
+    : '';
   const serializedFormConfig = formConfig ? serializeFormDefForDisplay(formConfig) : '';
 
   const handleConfigProcessed = React.useCallback((config: any) => {
@@ -66,11 +79,11 @@ export function FormDisplayLayout<T extends Record<string, any>>({
             <p className={styles.description}>{description}</p>
           </div>
 
-          {formDef && (
+          {resolvedFormDef && (
             <div className={styles.formSection}>
               <h4 className={styles.sectionTitle}>Form</h4>
               <GolemForm<T>
-                formDef={formDef}
+                formDef={resolvedFormDef}
                 formData={formData}
                 onConfigProcessed={handleConfigProcessed}
                 formConfig={formConfig}
@@ -80,7 +93,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
         </div>
 
         {/* Right Column: formDef + formConfig + Warnings */}
-        {formDef && (
+        {resolvedFormDef && (
           <div className={styles.rightColumn}>
             <div>
               <h4 className={styles.sectionTitle}>formDef</h4>

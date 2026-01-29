@@ -4,11 +4,11 @@ import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
 export const simplestDemo: FormDemoDefinition = {
   title: 'Simplest Form',
   description: 'Shortcuts for everything',
-  formDef: [
+  formDef: () =>
     _guiFields({
       name: 'string',
       age: 'number',
       height: 'number',
     })
-  ],
+  ,
 };

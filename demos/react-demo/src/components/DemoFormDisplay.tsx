@@ -7,7 +7,7 @@ import { FormDisplayLayout } from './FormDisplayLayout';
 interface DemoFormDisplayProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: FormDefFacade<T>;
+  formDef?: FormDefFacade<T> | (() => FormDefFacade<T>);
   formData?: T;
   warnings?: string[];
   formKey?: string;

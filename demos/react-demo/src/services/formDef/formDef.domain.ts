@@ -6,11 +6,7 @@ import {
   HORIZONTAL_LAYOUT_SHORTCUT,
   SUBMIT_BUTTON_SHORTCUT,
 } from './dx/dx.domain';
-import {
-  DxFieldsByKey,
-  FieldsShortcut,
-  ProcessedDxFieldsByKey,
-} from './dx/gui/guiFields.impl';
+import { FieldsShortcut, ProcessedDxFieldsByKey } from './dx/gui/guiFields.impl';
 
 export interface DataInputDef extends GolemFormItem {
   type: 'text' | 'number' | 'boolean';
@@ -92,9 +88,8 @@ export type DxShortcutPartial<NAME extends string, CONFIG_OBJECT, PARAMS> = [
 
 export type DxShortcutFinal<NAME extends string, CONFIG_OBJECT> = [
   [NAME, ...string[]],
-  CONFIG_OBJECT [],
+  CONFIG_OBJECT[],
 ];
-
 
 export type DxShortcutSimple<NAME extends string> = NAME;
 export type DxShortcutPartialOrSimple<NAME extends string, CONFIG_OBJECT, PARAMS> =
@@ -126,8 +121,8 @@ export type ValidDxShortcuts<T extends Record<string, any>> =
   | FieldsShortcut
   | ButtonShortcut;
 
-export type ValidDxElement<T extends Record<string, any>> = DxFieldsByKey<T> | ValidDxShortcuts<T>;
+export type ValidDxElement<T extends Record<string, any>> = ValidDxShortcuts<T>;
 
-export type FormDefFacade<T extends Record<string, any>> = ValidDxElement<T>[];
+export type FormDefFacade<T extends Record<string, any>> = ValidDxElement<T>[] | FieldsShortcut;
 
 export type FormEvents = (event: Core.FormEvent) => void;

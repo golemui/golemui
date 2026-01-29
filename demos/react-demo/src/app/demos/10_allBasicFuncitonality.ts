@@ -1,10 +1,11 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
+import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
 
 export const allBasicFunctionality: FormDemoDefinition = {
   title: 'All Basic Functionality',
   description: 'Shortcuts, full definitions, layouts, tags...',
-  formDef: [
-    {
+  formDef: ()=>[
+    _guiFields({
       name: ['string', 'no_label'],
       age: ({ error }: any) => ({
         label: error ? 'Age must be at least 18' : 'Age',
@@ -15,18 +16,18 @@ export const allBasicFunctionality: FormDemoDefinition = {
         },
       }),
       height: ['number', 'no_label', 'special'],
-    },
+    }),
     [
       '_horizontalLayout', [
-        {
+        _guiFields({
           married: 'number',
           withChildren: 'number',
-        },
+        }),
       ],
     ],
-    {
+    _guiFields({
       occupation: 'string',
-    },
+    }),
   ],
   formConfig: {
     tags: {

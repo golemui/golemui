@@ -1,4 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
+import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
 
 export const formConfigMixed: FormDemoDefinition = {
   title: 'Form Config Mixed',
@@ -10,7 +11,7 @@ export const formConfigMixed: FormDemoDefinition = {
       return { placeholder: fieldKey + ' placeholder' };
     },
   },
-  formDef: [{
+  formDef: ()=>_guiFields({
     name: 'string',
     age: ({ error }: any) => ({
       label: error ? 'Age must be at least 18' : 'Age',
@@ -21,5 +22,5 @@ export const formConfigMixed: FormDemoDefinition = {
       },
     }),
     height: 'number',
-  }],
+  })
 };

@@ -1,4 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
+import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
 
 export const formConfigSimplest: FormDemoDefinition = {
   title: 'Form Config',
@@ -10,9 +11,10 @@ export const formConfigSimplest: FormDemoDefinition = {
       placeholder: `${fieldKey}`,
     }),
   },
-  formDef: [{
-    name: 'string',
-    age: 'number',
-    height: 'number',
-  }],
+  formDef: ()=>
+    _guiFields({
+      name: 'string',
+      age: 'number',
+      height: 'number',
+    }),
 };

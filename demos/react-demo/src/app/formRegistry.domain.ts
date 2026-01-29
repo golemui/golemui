@@ -4,7 +4,7 @@ import { FormDefFacade } from '../services/formDef/formDef.domain';
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;
   description: string;
-  formDef: FormDefFacade<T>;
+  formDef: FormDefFacade<T> | (() => FormDefFacade<T>);
   formData?: T;
   warnings?: string[];
   formConfig?: FormConfig<T>;
