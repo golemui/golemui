@@ -183,7 +183,8 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
 
     // Calculate ranges based on disabled days
     const newRanges = this.calculateValidRanges(startDate, endDate);
-    this.value = [...(this.value || []), ...newRanges];
+    const combinedRanges = [...(this.value || []), ...newRanges];
+    this.value = this.mergeDateRanges(combinedRanges);
 
     this._isSelecting = false;
     this._nextDate = null;
@@ -196,6 +197,48 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
         composed: true,
       }),
     );
+  }
+
+  /**
+   * Merges overlapping or adjacent date ranges into a single range.
+   *
+   * @param {DateRange[]} ranges - An array of date range objects, where each object contains a start date and an optional end date. If no end date is specified, the start date is used as the range.
+   * @return {DateRange[]} An array of merged date ranges, sorted by their start dates.
+   */
+  private mergeDateRanges(ranges: DateRange[]): DateRange[] {
+    if (!ranges.length) return [];
+
+    // Sort dates by "start"
+    const sorted = ranges
+      .map((r) => ({
+        start: new Date(r.start).getTime(),
+        end: new Date(r.end ?? r.start).getTime(),
+      }))
+      .sort((a, b) => a.start - b.start);
+
+    const merged = sorted.reduce(
+      (acc, next) => {
+        const current = acc[acc.length - 1];
+
+        // We ignore the first element
+        if (current) {
+          const currentEndDate = new Date(current.end);
+          currentEndDate.setDate(currentEndDate.getDate() + 1);
+
+          // Dates are overlapping, so we extend the "end"
+          if (next.start <= currentEndDate.getTime()) {
+            current.end = Math.max(current.end, next.end);
+            return acc;
+          }
+        }
+
+        return [...acc, next];
+      },
+      [] as { start: number; end: number }[],
+    );
+
+    // Return a DateRange[]
+    return merged.map((m) => this.createRangeObject(new Date(m.start), new Date(m.end)));
   }
 
   /**
