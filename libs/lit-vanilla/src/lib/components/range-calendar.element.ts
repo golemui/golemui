@@ -53,6 +53,9 @@ export class RangeCalendarElement extends LitElement implements Core.WithField {
         .dayFormat=${this.adapter.templateData.dayFormat}
         .weekdayFormat=${this.adapter.templateData.weekdayFormat}
         .monthFormat=${this.adapter.templateData.monthFormat}
+        .minDate=${this.adapter.templateData.minDate}
+        .maxDate=${this.adapter.templateData.maxDate}
+        .disabledRanges=${this.adapter.templateData.disabledRanges}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
       ></gui-range-calendar>

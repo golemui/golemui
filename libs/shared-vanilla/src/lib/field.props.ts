@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import { FieldPropertyFunctionParams } from '@golemui/core';
 import { OptionValue } from './components';
+import { DateRange } from './utils/date';
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -42,6 +43,9 @@ export type CalendarProps = {
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  minDate?: string;
+  maxDate?: string;
+  disabledRanges?: DateRange[];
 };
 
 export type RangeCalendarProps = {
@@ -51,6 +55,9 @@ export type RangeCalendarProps = {
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  minDate?: string;
+  maxDate?: string;
+  disabledRanges?: DateRange[];
 };
 
 export type DateinputProps = {

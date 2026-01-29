@@ -1,5 +1,10 @@
 import { weekInfoData } from './week-info';
 
+export interface DateRange {
+  start: string;
+  end?: string;
+}
+
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
  *
