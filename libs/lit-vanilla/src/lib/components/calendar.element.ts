@@ -56,6 +56,7 @@ export class CalendarElement extends LitElement implements Core.WithField {
         .minDate=${this.adapter.templateData.minDate}
         .maxDate=${this.adapter.templateData.maxDate}
         .disabledRanges=${this.adapter.templateData.disabledRanges}
+        .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
       ></gui-calendar>

@@ -109,6 +109,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
 
     const templateData = this.adapter.templateData;
     this.adapter.valueChanged(item.value);
+    this.adapter.filterChanged('');
 
     this._focusedIndex = index;
     this._selectedItem = item;

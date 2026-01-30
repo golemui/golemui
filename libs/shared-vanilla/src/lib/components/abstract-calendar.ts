@@ -44,14 +44,15 @@ export abstract class AbstractCalendar extends LitElement {
   @property({ type: String }) minDate: string | undefined = undefined;
   @property({ type: String }) maxDate: string | undefined = undefined;
   @property({ type: Array }) disabledRanges: DateRange[] | undefined = undefined;
+  @property({ type: Number }) numberOfMonths: number | undefined = 1;
 
   @state() _currentDate: Date = new Date();
 
-  protected abstract getDaysInMonth(): AbstractCalendarDay[];
+  protected abstract getDaysInMonth(offset: number): AbstractCalendarDay[];
   protected abstract renderDay(day: AbstractCalendarDay): TemplateResult;
-  protected abstract selectDate(day: AbstractCalendarDay, event?: MouseEvent): void;
+  protected abstract selectDate(day: AbstractCalendarDay, event?: MouseEvent | KeyboardEvent): void;
 
-  protected ariaController = new GUIAriaController(this, {
+  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
       uid: this.uid as string,
@@ -66,8 +67,6 @@ export abstract class AbstractCalendar extends LitElement {
   });
 
   override render() {
-    const days = this.getDaysInMonth();
-    const weekDays = getWeekdayLabels(this.localeId);
     const templateData: any = {
       uid: this.uid,
       label: this.label,
@@ -76,6 +75,8 @@ export abstract class AbstractCalendar extends LitElement {
       touched: this.touched,
       required: this.required,
     };
+
+    const monthsToRender = Array.from({ length: this.numberOfMonths ?? 1 }, (_, i) => i);
 
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, 'calendar') : nothing}
@@ -86,44 +87,68 @@ export abstract class AbstractCalendar extends LitElement {
           aria-required=${this.required}
           aria-labelledby=${this.label ? `${this.uid}_calendar_label` : nothing}
         >
-          <header class="gui-calendar__header">
+          <div class="gui-calendar__container">
             <button
               type="button"
-              class="gui-button gui-calendar__month-button"
+              class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
               ?disabled=${!this.canGoPrev()}
               @click=${this.prevMonth}
             >
               ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
             </button>
 
-            <h2>${getMonthName(this.localeId, this._currentDate)}</h2>
+            <div
+              class="gui-calendar__months-grid"
+              style="grid-template-columns: repeat(${Math.min(this.numberOfMonths ?? 1, 3)}, 1fr);"
+            >
+              ${monthsToRender.map((offset) => this.renderMonthPanel(offset))}
+            </div>
 
             <button
               type="button"
-              class="gui-button gui-calendar__month-button"
+              class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
               ?disabled=${!this.canGoNext()}
               @click=${this.nextMonth}
             >
               ${this.nextMonthIcon ? html`<span class="${this.nextMonthIcon}"></span>` : '>'}
             </button>
-          </header>
-
-          <div class="gui-calendar__days-grid" role="grid">
-            ${repeat(
-              weekDays,
-              (weekday, i) => i,
-              (weekday) => html`<span class="gui-calendar__weekday">${weekday}</span>`,
-            )}
-            ${repeat(
-              days,
-              (day) => day.date.toISOString(),
-              (day) => this.renderDay(day),
-            )}
           </div>
         </div>
       </div>
 
       ${this.errors?.length ? addErrors(this.uid as string, templateData) : nothing}
+    `;
+  }
+
+  /**
+   * Render a month panel
+   */
+  private renderMonthPanel(offset: number) {
+    const days = this.getDaysInMonth(offset);
+    const weekDays = getWeekdayLabels(this.localeId);
+    const panelDate = new Date(this._currentDate);
+    panelDate.setDate(1);
+    panelDate.setMonth(panelDate.getMonth() + offset);
+
+    return html`
+      <div class="gui-calendar__panel">
+        <header class="gui-calendar__header">
+          <h2>${getMonthName(this.localeId, panelDate)}</h2>
+        </header>
+
+        <div class="gui-calendar__days-grid" role="grid">
+          ${repeat(
+            weekDays,
+            (weekday, i) => i,
+            (weekday) => html`<span class="gui-calendar__weekday">${weekday}</span>`,
+          )}
+          ${repeat(
+            days,
+            (day) => day.date.toISOString(),
+            (day) => this.renderDay(day),
+          )}
+        </div>
+      </div>
     `;
   }
 
@@ -153,7 +178,7 @@ export abstract class AbstractCalendar extends LitElement {
       case ' ':
       case 'Enter':
         event.preventDefault();
-        this.selectDate(day);
+        this.selectDate(day, event);
         return;
     }
 
@@ -252,15 +277,16 @@ export abstract class AbstractCalendar extends LitElement {
     this._currentDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
   }
 
-  protected generateDateGrid(): Date[] {
+  protected generateDateGrid(offset = 0): Date[] {
     const year = this._currentDate.getFullYear();
-    const month = this._currentDate.getMonth();
+    const month = this._currentDate.getMonth() + offset;
+
     const firstDayOfMonth = new Date(year, month, 1);
     const dayOfWeek = firstDayOfMonth.getDay();
     const gridStartDay = weekDaysOrder(this.localeId)[0];
-    const offset = (dayOfWeek - gridStartDay + 7) % 7;
+    const offsetDay = (dayOfWeek - gridStartDay + 7) % 7;
     const startDate = new Date(firstDayOfMonth);
-    startDate.setDate(firstDayOfMonth.getDate() - offset);
+    startDate.setDate(firstDayOfMonth.getDate() - offsetDay);
 
     const dates: Date[] = [];
     for (let i = 0; i < 42; i++) {
@@ -290,16 +316,11 @@ export abstract class AbstractCalendar extends LitElement {
 
     while (index >= 0 && index < buttons.length) {
       const button = buttons[index];
-
-      // It's enabled, return the index
       if (!this.isButtonDisabled(button)) {
         return index;
       }
-
-      // It's disabled, jump to the next day/week
       index += step;
     }
-
     return index;
   }
 
@@ -322,6 +343,7 @@ export abstract class AbstractCalendar extends LitElement {
    *
    * @return {boolean} Returns true if navigation to the previous month is permitted; otherwise, returns false.
    */
+
   protected canGoPrev(): boolean {
     if (!this.minDate) return true;
 
@@ -331,7 +353,6 @@ export abstract class AbstractCalendar extends LitElement {
       0,
     );
     const prevMonthStr = toISODateString(prevMonthDate);
-
     return prevMonthStr >= this.minDate;
   }
 
@@ -343,12 +364,14 @@ export abstract class AbstractCalendar extends LitElement {
    *
    * @return {boolean} Returns true if navigation to the next month is permitted; otherwise, returns false.
    */
+
   protected canGoNext(): boolean {
     if (!this.maxDate) return true;
 
+    const lastVisibleMonthOffset = (this.numberOfMonths ?? 1) - 1;
     const nextMonthDate = new Date(
       this._currentDate.getFullYear(),
-      this._currentDate.getMonth() + 1,
+      this._currentDate.getMonth() + lastVisibleMonthOffset + 1,
       1,
     );
     const nextMonthStr = toISODateString(nextMonthDate);

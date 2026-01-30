@@ -24,7 +24,7 @@ export class GuiCalendarControl extends AbstractCalendar {
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
-      if (this.value) {
+      if (this.value && this.numberOfMonths === 1) {
         this._currentDate = new Date(this.value);
       }
     }
@@ -55,12 +55,17 @@ export class GuiCalendarControl extends AbstractCalendar {
     `;
   }
 
-  override getDaysInMonth(): CalendarDay[] {
-    const rawDates = this.generateDateGrid();
-    const month = this._currentDate.getMonth();
+  override getDaysInMonth(offset: number): CalendarDay[] {
+    // Normalize to the first day of the month so we calculate the months to render always from day 1
+    const panelDate = new Date(this._currentDate);
+    panelDate.setDate(1);
+    panelDate.setMonth(panelDate.getMonth() + offset);
+
+    const rawDates = this.generateDateGrid(offset);
+    const targetMonth = panelDate.getMonth();
 
     let days = rawDates.map((date) => {
-      const isCurrentMonth = date.getMonth() === month;
+      const isCurrentMonth = date.getMonth() === targetMonth;
       const isDisabled = this.isDisabled(date);
       const isSelected = !!this.value && isSameDay(date, new Date(this.value));
       const isFocusable = isSelected && isCurrentMonth;

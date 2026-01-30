@@ -41,6 +41,7 @@ export function RangeCalendar(fieldInstance: Core.WithField) {
   const minDate = templateData.minDate;
   const maxDate = templateData.maxDate;
   const disabledRanges = templateData.disabledRanges;
+  const numberOfMonths = templateData.numberOfMonths;
   const lang = templateData.lang;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -67,6 +68,7 @@ export function RangeCalendar(fieldInstance: Core.WithField) {
         minDate={minDate}
         maxDate={maxDate}
         disabledRanges={disabledRanges}
+        numberOfMonths={numberOfMonths}
         localeId={lang}
       />
     </div>

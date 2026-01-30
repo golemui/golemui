@@ -1,3 +1,4 @@
+export * from './flight-tickets';
 export * from './item-renderers';
 export * from './json-schema-test';
 export * from './kitchen-sink';

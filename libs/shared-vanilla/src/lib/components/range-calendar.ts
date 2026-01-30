@@ -28,7 +28,7 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
-      if (this.value && this.value.length > 0) {
+      if (this.value && this.value.length > 0 && this.numberOfMonths === 1) {
         this._currentDate = new Date(this.value[0].start);
       }
     }
@@ -67,16 +67,21 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
     `;
   }
 
-  override getDaysInMonth(): RangeCalendarDay[] {
-    const rawDates = this.generateDateGrid();
-    const month = this._currentDate.getMonth();
+  override getDaysInMonth(offset: number): RangeCalendarDay[] {
+    // Normalize to the first day of the month so we calculate the months to render always from day 1
+    const panelDate = new Date(this._currentDate);
+    panelDate.setDate(1);
+    panelDate.setMonth(panelDate.getMonth() + offset);
+
+    const rawDates = this.generateDateGrid(offset);
+    const targetMonth = panelDate.getMonth();
 
     let days = rawDates.map((date) => {
-      const isCurrentMonth = date.getMonth() === month;
+      const isCurrentMonth = date.getMonth() === targetMonth;
       const isDisabled = this.isDisabled(date);
       const isTodayDate = isToday(date);
       const { isRangeStart, isRangeEnd, isInRange, isSelecting } = this.checkDateStatus(date);
-      const isFocusable = isRangeStart && isRangeEnd && isCurrentMonth;
+      const isFocusable = isTodayDate || isRangeStart;
       const isAnchor = this._anchorDate ? isSameDay(date, this._anchorDate) : false;
 
       return {
@@ -152,11 +157,11 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
     return { isRangeStart, isRangeEnd, isInRange, isSelecting };
   }
 
-  override selectDate(day: RangeCalendarDay, e: MouseEvent) {
+  override selectDate(day: RangeCalendarDay, e: MouseEvent | KeyboardEvent | null = null) {
     if (!day.isCurrentMonth || this.disabled || this.readOnly) return;
 
     const clickedDate = day.date;
-    const isShiftPressed = e.shiftKey;
+    const isShiftPressed = e?.shiftKey;
 
     // Start selection
     if (!this._anchorDate) {
