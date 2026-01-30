@@ -8,6 +8,7 @@ export const controlWidgets = [
   'list',
   'number',
   'radiogroup',
+  'rangeCalendar',
   'repeater',
   'select',
   'textarea',

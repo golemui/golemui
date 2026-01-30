@@ -8,6 +8,8 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
 
   // CONTROLS
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,
+  rangeCalendar: async () =>
+    (await import('./components/range-calendar.element')).RangeCalendarElement,
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,

@@ -1,4 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
+import { flightTickets } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
@@ -7,10 +8,10 @@ import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
-import { rendererMock } from '../../renderer-mock';
 import './form.element.scss';
+import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 
-const mock = rendererMock;
+const mock = flightTickets;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -30,6 +31,7 @@ export class FormElement extends LitElement {
   itemRenderers = {
     complexListItemRenderer: complexListItemRenderer,
     productItemRenderer: productItemRenderer,
+    airportItemRenderer: airportItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
   validators: ValidatorsVanilla.CustomValidatorSchemas = {

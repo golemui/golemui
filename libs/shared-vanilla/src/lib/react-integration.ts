@@ -12,6 +12,7 @@ import { GuiCurrencyControl } from './components/currency';
 import { GuiListControl } from './components/list';
 import { GuiLabel } from './components/label';
 import { GuiErrors } from './components/errors';
+import { GuiRangeCalendarControl } from './components/range-calendar';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -35,6 +36,11 @@ declare global {
         Partial<GuiDateControl>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCalendarControl>;
+      'gui-range-calendar': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeCalendarControl>;
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiNumberControl>;
       'gui-radiogroup': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

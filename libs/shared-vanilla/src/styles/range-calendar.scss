@@ -1,0 +1,32 @@
+:root {
+  --gui-radius-range: calc(var(--gui-radius) * 2);
+}
+
+gui-range-calendar {
+  .gui-calendar__day-button {
+    &.in-range {
+      background-color: var(--gui-color-primary);
+      border-radius: 0;
+    }
+    &.range-start {
+      background-color: var(--gui-color-primary);
+      color: white;
+      border-radius: var(--gui-radius-range) 0 0 var(--gui-radius-range);
+    }
+    &.range-end {
+      background-color: var(--gui-color-primary);
+      color: white;
+      border-radius: 0 var(--gui-radius-range) var(--gui-radius-range) 0;
+    }
+
+    &.range-start.range-end {
+      border-radius: var(--gui-radius-range);
+    }
+    &.is-anchor {
+      border: 1px dashed #2196f3;
+    }
+    &.is-selecting {
+      border: 1px dashed #2196f3;
+    }
+  }
+}

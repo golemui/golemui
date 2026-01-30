@@ -1,14 +1,14 @@
 import * as Core from '@golemui/core';
 import { useControlField } from '@golemui/react';
-import { CalendarProps } from '@golemui/shared-vanilla';
+import { DateRange, RangeCalendarProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Calendar(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string>;
+export function RangeCalendar(fieldInstance: Core.WithField) {
+  const field = fieldInstance.field as Core.ControlField<DateRange[]>;
   const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useControlField<
-    string,
-    CalendarProps
+    DateRange[],
+    RangeCalendarProps
   >(field);
 
   const handleRef = useCallback(
@@ -48,8 +48,8 @@ export function Calendar(fieldInstance: Core.WithField) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-calendar">
-      <gui-calendar
+    <div className="gui-range-calendar">
+      <gui-range-calendar
         ref={handleRef}
         uid={uid}
         label={label}

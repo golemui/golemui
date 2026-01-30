@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<gui-calendar
+<gui-range-calendar
   [uid]="field.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"
@@ -23,4 +23,4 @@
   [localeId]="templateData.lang"
   (blur)="adapter.onBlur()"
   (change)="onChangeDate($event)"
-></gui-calendar>
+></gui-range-calendar>

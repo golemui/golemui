@@ -1,21 +1,21 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { CalendarProps } from '@golemui/shared-vanilla';
+import { DateRange, RangeCalendarProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-calendar-control')
-export class CalendarElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+@customElement('gui-range-calendar-control')
+export class RangeCalendarElement extends LitElement implements Core.WithField {
+  field!: Core.ControlField<DateRange[]>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, CalendarProps>();
+  adapter = new Lit.ControlFieldAdapter<DateRange[], RangeCalendarProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -38,7 +38,7 @@ export class CalendarElement extends LitElement implements Core.WithField {
     super.render();
 
     return html`
-      <gui-calendar
+      <gui-range-calendar
         .uid=${this.field.uid}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
@@ -59,7 +59,7 @@ export class CalendarElement extends LitElement implements Core.WithField {
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
-      ></gui-calendar>
+      ></gui-range-calendar>
     `;
   }
 

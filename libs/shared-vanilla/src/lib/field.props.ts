@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import { FieldPropertyFunctionParams } from '@golemui/core';
 import { OptionValue } from './components';
+import { DateRange } from './utils/date';
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -36,12 +37,149 @@ export type TextareaProps = {
 };
 
 export type CalendarProps = {
+  /**
+   * An optional descriptive text providing guidance or information about the associated field or functionality.
+   */
   hint?: string;
+  /**
+   * A string representing the icon for navigating to the previous month.
+   * This variable is optional and may define a custom icon as a CSS class
+   * that will be used to visually represent the "previous month" navigation button.
+   */
   prevMonthIcon?: string;
+  /**
+   * A string representing the icon for navigating to the previous month.
+   * This variable is optional and may define a custom icon as a CSS class
+   * that will be used to visually represent the "next month" navigation button.
+   */
   nextMonthIcon?: string;
+  /**
+   * Specifies the formatting style for displaying the day portion of a date.
+   *
+   * The variable `dayFormat` can accept one of the following values:
+   * - 'numeric': Displays the day as a numeric value without leading zeros (e.g., 1, 15, 31).
+   * - '2-digit': Displays the day as a two-digit value with leading zeros if necessary (e.g., 01, 15, 31).
+   *
+   * This is typically used to configure date formatting options for internationalization purposes.
+   */
   dayFormat?: 'numeric' | '2-digit';
+  /**
+   * Specifies the format of the weekday to be used.
+   * Acceptable values are:
+   * - 'short': Abbreviated format of the weekday (e.g., Mon, Tue).
+   * - 'long': Full name of the weekday (e.g., Monday, Tuesday).
+   * - 'narrow': Minimal format of the weekday, typically a single letter (e.g., M, T).
+   * This property is typically used to customize the presentation of weekday names.
+   */
   weekdayFormat?: 'short' | 'long' | 'narrow';
+  /**
+   * Specifies the format style to use when displaying month values.
+   *
+   * The accepted formats are:
+   * - 'numeric': Displays the month as a number without leading zeros (e.g., "1" for January).
+   * - '2-digit': Displays the month as a two-digit number with leading zeros as necessary (e.g., "01" for January).
+   * - 'long': Displays the month as a full name (e.g., "January").
+   * - 'short': Displays the month as an abbreviated name (e.g., "Jan").
+   * - 'narrow': Displays a single letter representation of the month (e.g., "J" for January).
+   *
+   * This property is optional. When not specified, the default formatting behavior may depend on the context or implementation.
+   */
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  /**
+   * Represents the earliest allowable date in the calendar.
+   * The value is optional and can be assigned as a string in an ISO date format.
+   */
+  minDate?: string;
+  /**
+   * Represents the latest allowable date in the calendar.
+   * The value is optional and can be assigned as a string in an ISO date format.
+   */
+  maxDate?: string;
+  /**
+   * Represents an optional property that defines a set of date ranges
+   * which are disabled or unavailable for selection.
+   *
+   * @type {DateRange[] | undefined}
+   */
+  disabledRanges?: DateRange[];
+  /**
+   * Specifies the number of months to be displayed in the calendar.
+   * Default is 1.
+   */
+  numberOfMonths?: number;
+};
+
+export type RangeCalendarProps = {
+  /**
+   * An optional descriptive text providing guidance or information about the associated field or functionality.
+   */
+  hint?: string;
+  /**
+   * A string representing the icon for navigating to the previous month.
+   * This variable is optional and may define a custom icon as a CSS class
+   * that will be used to visually represent the "previous month" navigation button.
+   */
+  prevMonthIcon?: string;
+  /**
+   * A string representing the icon for navigating to the previous month.
+   * This variable is optional and may define a custom icon as a CSS class
+   * that will be used to visually represent the "next month" navigation button.
+   */
+  nextMonthIcon?: string;
+  /**
+   * Specifies the formatting style for displaying the day portion of a date.
+   *
+   * The variable `dayFormat` can accept one of the following values:
+   * - 'numeric': Displays the day as a numeric value without leading zeros (e.g., 1, 15, 31).
+   * - '2-digit': Displays the day as a two-digit value with leading zeros if necessary (e.g., 01, 15, 31).
+   *
+   * This is typically used to configure date formatting options for internationalization purposes.
+   */
+  dayFormat?: 'numeric' | '2-digit';
+  /**
+   * Specifies the format of the weekday to be used.
+   * Acceptable values are:
+   * - 'short': Abbreviated format of the weekday (e.g., Mon, Tue).
+   * - 'long': Full name of the weekday (e.g., Monday, Tuesday).
+   * - 'narrow': Minimal format of the weekday, typically a single letter (e.g., M, T).
+   * This property is typically used to customize the presentation of weekday names.
+   */
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  /**
+   * Specifies the format style to use when displaying month values.
+   *
+   * The accepted formats are:
+   * - 'numeric': Displays the month as a number without leading zeros (e.g., "1" for January).
+   * - '2-digit': Displays the month as a two-digit number with leading zeros as necessary (e.g., "01" for January).
+   * - 'long': Displays the month as a full name (e.g., "January").
+   * - 'short': Displays the month as an abbreviated name (e.g., "Jan").
+   * - 'narrow': Displays a single letter representation of the month (e.g., "J" for January).
+   *
+   * This property is optional. When not specified, the default formatting behavior may depend on the context or implementation.
+   */
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  /**
+   * Represents the earliest allowable date in the calendar.
+   * The value is optional and can be assigned as a string in an ISO date format.
+   */
+  minDate?: string;
+  /**
+   * Represents the latest allowable date in the calendar.
+   * The value is optional and can be assigned as a string in an ISO date format.
+   */
+  maxDate?: string;
+  /**
+   * Represents an optional property that defines a set of date ranges
+   * which are disabled or unavailable for selection.
+   *
+   * @type {DateRange[] | undefined}
+   */
+  disabledRanges?: DateRange[];
+  /**
+   * Specifies the number of months to be displayed in the calendar.
+   * Default is 1.
+   */
+  numberOfMonths?: number;
 };
 
 export type DateinputProps = {

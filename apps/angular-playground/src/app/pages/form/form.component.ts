@@ -3,15 +3,16 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AngularItemRenderer } from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
+import { flightTickets } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
-import { rendererMock } from '../../renderer-mock';
+import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 
-const mock = rendererMock;
+const mock = flightTickets;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
@@ -43,6 +44,7 @@ export class AppFormPage {
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
     complexListItemRenderer: ComplexListItemRenderer,
     productItemRenderer: ProductItemRenderer,
+    airportItemRenderer: AirportItemRenderer,
   };
 
   protected error = '';
