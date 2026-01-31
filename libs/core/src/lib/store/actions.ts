@@ -82,7 +82,7 @@ export type SET_FORM_HEALTH = {
  */
 export type ATTEMPT_VALIDATION = {
   type: 'ATTEMPT_VALIDATION';
-  payload: { reason: Exclude<ValidateOn, any[] | 'eager' | 'submit'>; path: DotPath };
+  payload: { reason: Exclude<ValidateOn, any[] | 'eager' | 'submit'>; path: DotPath; uid: Uid };
 };
 
 /**
