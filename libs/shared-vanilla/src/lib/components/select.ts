@@ -81,17 +81,6 @@ export class GuiSelectControl extends LitElement {
       ? this.options.find(({ value }) => value === this.value) !== undefined
       : false;
 
-    if (!this.hasMatchingValue && this.value) {
-      this.dispatchEvent(
-        new CustomEvent('inputError', {
-          detail: {
-            message: `Invalid selection: '${this.value}' is not a valid option.`,
-          },
-          bubbles: true,
-        }),
-      );
-    }
-
     const options = this.optionsLoading
       ? html`<span>Loading...</span>`
       : html`
@@ -131,6 +120,21 @@ export class GuiSelectControl extends LitElement {
 
       ${addErrors(this.uid as string, templateData)}
     `;
+  }
+
+  override updated(changedProperties: Map<string, any>) {
+    if (changedProperties.has('value') || changedProperties.has('options')) {
+      if (!this.hasMatchingValue && this.value) {
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: {
+              message: `Invalid selection: '${this.value}' is not a valid option.`,
+            },
+            bubbles: true,
+          }),
+        );
+      }
+    }
   }
 
   valueChanged(event: Event) {
