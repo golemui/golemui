@@ -10,34 +10,23 @@ const form = defineForm({
   form: [
     {
       uid: '',
-      kind: 'layout',
-      widget: 'accordion',
-      props: {
-        singleOpen: false,
-        defaultOpen: {
-          a: true,
+      kind: 'control',
+      widget: 'checkbox',
+      label: 'Register',
+      path: 'registerMode',
+    },
+    (api) => {
+      return {
+        uid: 'input-name2',
+        kind: 'control',
+        widget: 'textinput',
+        path: 'details.clientName2',
+        label: api?.errors && api.touched ? `Error: ${api?.errors}` : 'Ohmmmm',
+        props: {
+          placeholder: 'e.g. Jane Doe',
         },
-        sections: [
-          { label: 'Personal Information', uid: 'a' },
-          { label: 'Shipping Address', uid: 'b' },
-        ],
-      },
-      children: [
-        {
-          uid: 'a',
-          kind: 'control',
-          widget: 'checkbox',
-          label: 'Login',
-          path: 'loginMode',
-        },
-        {
-          uid: 'b',
-          kind: 'control',
-          widget: 'checkbox',
-          label: 'Register',
-          path: 'registerMode',
-        },
-      ],
+        validator: { type: 'string', required: true, minLength: 3 },
+      };
     },
     {
       uid: '',
