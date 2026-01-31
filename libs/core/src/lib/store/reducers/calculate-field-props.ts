@@ -50,6 +50,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
         originalDerivedField.current = originalSource({
           $form: state.data,
           errors: originalSource.path ? state.validations[originalSource.path] : undefined,
+          touched: originalSource.path ? state.touchedControls[originalSource.path] : undefined,
           translate: localization.translate,
         });
         originalDerivedField.current.uid = uid;
@@ -118,13 +119,16 @@ function calculateProps(state: State, localization: I18nTranslator) {
 
         // Calculate visible children based on current flags
         const children = originalSource.children.filter((child) => {
-          if (isFunctionField(child)) {
-            child = child({
-              $form: state.data,
-              errors: child.path ? state.validations[child.path] : undefined,
-            });
-          }
-          return !state.fieldFlags[child.uid] || state.fieldFlags[child.uid].hidden !== true;
+          // TODO: why were we doing this??? It doesn't make logical sense
+          // if (isFunctionField(child)) {
+          //   child = child({
+          //     $form: state.data,
+          //     errors: child.path ? state.validations[child.path] : undefined,
+          //     touched: child.path ? state.touchedControls[child.path] : undefined,
+          //     translate: localization.translate,
+          //   });
+          // }
+          return !state.fieldFlags[child.uid!] || state.fieldFlags[child.uid!].hidden !== true;
         });
 
         (derivedField as DerivedField<LayoutField<string>>).current.children = children;

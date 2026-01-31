@@ -18,7 +18,9 @@ function calculateFlags(state: State): State['fieldFlags'] {
         if (isFunctionField(field)) {
           const field_ = field({
             $form: state.data,
-            errors: field.path ? state.validations[field.path] : undefined,
+            errors: undefined,
+            touched: undefined,
+            translate: undefined,
           });
           field_.uid = field.uid!;
           return field_;
@@ -32,6 +34,7 @@ function calculateFlags(state: State): State['fieldFlags'] {
         if (field.exclude && 'from' in field.exclude) {
           return true;
         }
+        // TODO: I don't think we need this `if` statement here anymore, we're only concerned about `include` and `exclude`
         // Has any of the properties a state suffix? e.g. '"disabled.someState" = true'
         if (Object.keys(field).find((key) => key.indexOf('.') > -1)) {
           return true;
