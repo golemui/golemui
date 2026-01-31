@@ -123,7 +123,7 @@ export class GuiSelectControl extends LitElement {
   }
 
   override updated(changedProperties: Map<string, any>) {
-    if (changedProperties.has('value') || changedProperties.has('options')) {
+    if (changedProperties.has('value')) {
       if (!this.hasMatchingValue && this.value) {
         this.dispatchEvent(
           new CustomEvent('inputError', {
