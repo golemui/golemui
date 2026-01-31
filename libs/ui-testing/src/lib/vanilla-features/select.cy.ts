@@ -33,7 +33,9 @@ export const runSelectComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="testButton_button"]').click();
       cy.get('[data-cy="testSubject_validator-errors"]').should('exist');
       cy.get('[data-cy="testSubject_validator-error"]').should('be.visible');
-      cy.get('[data-cy="testSubject_validator-error"]').contains('Invalid date format');
+      cy.get('[data-cy="testSubject_validator-error"]').contains(
+        `Invalid selection: 'd' is not a valid option.`,
+      );
     });
   });
 };
