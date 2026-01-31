@@ -18,7 +18,6 @@ const form = defineForm({
       kind: 'control',
       widget: 'textinput',
       label: 'Name',
-
       path: 'name',
     },
     {
