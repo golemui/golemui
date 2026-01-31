@@ -91,5 +91,45 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
         'Another Label Placeholder',
       );
     });
+    it('Should provide the api.touched property as an argument', () => {
+      mountFn({
+        data: {},
+        formDef: Core.defineForm<TestData>({
+          form: [
+            {
+              uid: 'openUid',
+              kind: 'control',
+              widget: 'checkbox',
+              label: "Toggle me! I don't trigger input label changes",
+              path: 'open',
+            },
+            (api) => ({
+              uid: 'inputUid',
+              kind: 'control',
+              widget: 'textinput',
+              path: 'myInput',
+              label: api?.touched ? (api?.errors ? 'Has errors!' : 'Ohmmm') : 'Not touched',
+              validator: { type: 'string', required: true, minLength: 3 },
+            }),
+          ],
+        }),
+      });
+
+      // The checbox doesn't trigger errors on the input because the input is not touched
+      cy.get('[data-cy="openUid_checkbox"]').check();
+      cy.get('[data-cy="inputUid_label"]').contains('Not touched');
+      cy.get('[data-cy="openUid_checkbox"]').uncheck();
+      cy.get('[data-cy="inputUid_label"]').contains('Not touched');
+
+      // As soon as we start typing the errors surface
+      cy.get('[data-cy="inputUid_textinput"]').type('1');
+      cy.get('[data-cy="inputUid_label"]').contains('Has errors!');
+      cy.get('[data-cy="inputUid_textinput"]').type('2');
+      cy.get('[data-cy="inputUid_label"]').contains('Has errors!');
+      cy.get('[data-cy="inputUid_textinput"]').type('3');
+
+      // No more errors because validation passes
+      cy.get('[data-cy="inputUid_label"]').contains('Ohmmm');
+    });
   });
 };
