@@ -88,7 +88,7 @@ export class FormElement extends LitElement {
     const ready = this.state?.formDef && this.context.fieldRegistry.ready;
 
     return html`
-      <form id=${this.formName}>
+      <form id=${this.formName} novalidate>
         ${when(
           ready,
           () => html` <gui-field .field=${this.state?.formDef.form}></gui-field>`,
