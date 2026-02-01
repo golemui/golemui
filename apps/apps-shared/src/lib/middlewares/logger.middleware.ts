@@ -19,7 +19,7 @@ export const loggerMiddleware: Core.Middleware<Core.State, Core.Action> =
     const durationMs = performance.now() - start;
 
     if (error) {
-      console.error(`[STORE ERROR] ${action.type} (${durationMs.toFixed(2)} ms)`, error);
+      console.error(`%c[STORE ERROR]%c - ${action.type} - (${durationMs.toFixed(2)} ms)`, error);
       throw error;
     }
 
@@ -27,6 +27,11 @@ export const loggerMiddleware: Core.Middleware<Core.State, Core.Action> =
     const diffs = diffState(prevState, nextState);
 
     if (diffs.length === 0) {
+      console.log(
+        `%c${action.type}%c (${durationMs.toFixed(2)}ms) No Diffs`,
+        'font-weight: bold;',
+        'font-weight: normal;',
+      );
       return result;
     }
 

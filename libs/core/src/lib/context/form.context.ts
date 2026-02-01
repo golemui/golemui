@@ -84,7 +84,11 @@ export class FormContext<ComponentType> {
       if (eventType === 'change') {
         this.store.dispatch({
           type: 'ATTEMPT_VALIDATION',
-          payload: { reason: 'change', path: (field as ControlField<any, string>).path },
+          payload: {
+            reason: 'change',
+            path: (field as ControlField<any, string>).path,
+            uid: field.uid,
+          },
         });
       } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
         this.store.dispatch({

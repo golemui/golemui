@@ -52,8 +52,9 @@ export type ReactiveFormField = LooseObject<
 
 export type FunctionFieldParams<FormData> = {
   $form: ImmutableRecord<FormData>;
-  errors?: ValidationStatus;
-  translate?: I18nTranslator['translate'];
+  errors: ValidationStatus | undefined;
+  touched: boolean | undefined;
+  translate: I18nTranslator['translate'] | undefined;
 };
 
 /**
