@@ -129,7 +129,7 @@ export type ControlField<
     defaultValue?: T;
     validator?: ReactiveFieldValue<object, FormData>; // `object` should be `V` (the validator type)
   },
-  'disabled' | 'label' | 'validator' | 'size',
+  'disabled' | 'readonly' | 'label' | 'validator' | 'size',
   StateKeys
 >;
 
@@ -297,6 +297,7 @@ const displayFieldDecoder = jd.object<DisplayField<string>>(
     size: jd.optional(jd.number()),
     include: jd.optional(includeDecoder),
     exclude: jd.optional(excludeDecoder),
+    // TODO: disabled and reaonly make no sense for display fields
     disabled: jd.optional(boolWhenDecoder),
     readonly: jd.optional(boolWhenDecoder),
     props: jd.optional(jd.succeed()),
@@ -312,9 +313,10 @@ const interactiveFieldDecoder = objectWithSuffix<InteractiveField<string>>(
     size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
-    disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
     label: { suffixed: true, decoder: decodeFieldPropOrfieldPropFn(localizableDecoder) },
-    readonly: { decoder: jd.optional(boolWhenDecoder) },
+    disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
+    // TODO: readonly makes no sense for display fields
+    readonly: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
   },
@@ -344,8 +346,7 @@ const controlFieldDecoder = objectWithSuffix<ControlField<any, string>>(
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    // TODO: shoudn't readonly have suffix support?
-    readonly: { decoder: jd.optional(boolWhenDecoder) },
+    readonly: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
     label: {
@@ -405,9 +406,9 @@ export const layoutFieldDecoder = objectWithSuffix<LayoutField<string>>(
     size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
+    // TODO: disabled and readonly make no sense for layouts
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    // TODO: shoudn't readonly have suffix support?
-    readonly: { decoder: jd.optional(boolWhenDecoder) },
+    readonly: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
     on: { decoder: jd.optional(onDecoder) },
     children: { decoder: jd.array(formFieldDecoder, 'FormField[]') },
