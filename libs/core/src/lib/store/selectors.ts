@@ -141,7 +141,9 @@ export const touchedControlsByPath$ = (path: DotPath) =>
 
 const selectFormHealth = pipe(
   map((store: State) => store.formHealth),
-  distinctUntilChanged(),
+  distinctUntilChanged(
+    (prev, current) => !(prev.status !== current.status || prev.status === 'errored'),
+  ),
 );
 
 export const formHealth = (store: Observable<State>) => store.pipe(selectFormHealth);
