@@ -67,6 +67,7 @@ export class SelectElement extends LitElement implements Core.WithField {
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}
         @change=${this.valueChanged}
+        @inputError=${this.onInputError}
         @blur=${() => this.adapter.onBlur()}
       ></gui-select>
     `;
@@ -75,6 +76,10 @@ export class SelectElement extends LitElement implements Core.WithField {
   valueChanged(event: CustomEvent) {
     const value = event.detail.value;
     this.adapter.valueChanged(value);
+  }
+
+  onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 
   override disconnectedCallback() {

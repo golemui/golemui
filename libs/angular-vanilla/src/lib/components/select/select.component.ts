@@ -31,7 +31,12 @@ export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   valueChanged(event: Event) {
+    this.adapter.injectValidationIssues(null);
     const value = (event as CustomEvent).detail.value;
     this.adapter.valueChanged(value);
+  }
+
+  onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 }

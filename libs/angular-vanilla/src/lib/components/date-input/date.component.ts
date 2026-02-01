@@ -23,9 +23,6 @@ export class DateComponent implements OnInit, OnDestroy, Core.WithField {
   );
   currentDate = new Date();
 
-  // TODO: Get localeId from i18n feature
-  localeId = 'es';
-
   ngOnInit(): void {
     this.adapter.init(this.field);
   }

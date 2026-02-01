@@ -10,27 +10,15 @@ const data = {
 const form = defineForm({
   states: {
     hasSubregion: `!!$form.selects?.subregion`,
+    hasName: `$form.name && $form.name.length > 0`,
   },
   form: [
     {
       uid: '',
       kind: 'control',
       widget: 'textinput',
+      label: 'Name',
       path: 'name',
-    },
-    {
-      uid: '',
-      kind: 'control',
-      widget: 'checkbox',
-      path: 'aaaa',
-      readonly: true,
-    },
-    {
-      uid: '',
-      kind: 'control',
-      widget: 'checkbox',
-      path: 'bbb',
-      readonly: false,
     },
     {
       uid: '',
@@ -38,7 +26,8 @@ const form = defineForm({
       widget: 'select',
       path: 'greeting',
       label: 'Greeting',
-      readonly: true,
+      disabled: true,
+      'disabled.hasName': false,
       props: {
         options: ['hello', 'bye'],
         placeholder: 'Please, select an option',
@@ -88,10 +77,10 @@ const form = defineForm({
       kind: 'interactive',
       widget: 'button',
       label: 'Send',
-      disabled: true,
-      'disabled.hasSubregion': false,
+      //disabled: true,
+      //'disabled.hasSubregion': false,
       on: {
-        click: 'sendCountry',
+        click: 'submit',
       },
     },
   ],

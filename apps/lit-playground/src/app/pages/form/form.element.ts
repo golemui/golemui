@@ -10,7 +10,7 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 
-const mock = AppsShared.tests;
+const mock = AppsShared.selects;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {

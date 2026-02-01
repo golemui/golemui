@@ -11,7 +11,7 @@ import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer'
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const mock = AppsShared.tests;
+const mock = AppsShared.selects;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
