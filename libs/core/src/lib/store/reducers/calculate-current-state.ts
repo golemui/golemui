@@ -11,7 +11,6 @@ export const calculateCurrentState = (state: State): State => {
   let currentStates: string[] = [];
   let formHealth: FormHealth = { status: 'ok' };
   try {
-    // TODO: Security. See: https://github.com/dy/subscript/issues/25
     // TODO: Cache compiled expressions
     currentStates = Object.keys(stateExpressions)
       .map((stateName) => {
