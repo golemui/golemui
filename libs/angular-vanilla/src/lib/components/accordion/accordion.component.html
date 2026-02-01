@@ -14,10 +14,11 @@
         {{ section.label }}<span class="gui-accordion__icon"></span>
       </button>
 
-      @if (activeSections[section.uid]) {
+      @if (activeSections[section.uid] || templateData.logic === 'hide') {
         <section
           class="gui-field"
           role="region"
+          [hidden]="!activeSections[section.uid] && templateData.logic === 'hide'"
           [id]="'accordion_section_' + section.uid"
           [attr.aria-labelledby]="'accordion_button_' + section.uid"
         >

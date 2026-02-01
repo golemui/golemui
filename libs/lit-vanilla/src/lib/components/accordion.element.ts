@@ -80,16 +80,19 @@ export class AccordionElement extends LitElement implements Core.WithField {
               this.adapter.templateData.sections,
               (section: any) => section.uid,
               (section: any) => {
-                const sectionContent = this.activeSections[section.uid]
-                  ? html`<section
-                      class="gui-field"
-                      role="region"
-                      id=${`accordion_section_${section.uid}`}
-                      aria-labelledby=${`accordion_button_${section.uid}`}
-                    >
-                      <gui-field .field=${this.getChild(section.uid)}></gui-field>
-                    </section>`
-                  : nothing;
+                const sectionContent =
+                  this.activeSections[section.uid] || this.adapter.templateData.logic === 'hide'
+                    ? html`<section
+                        class="gui-field"
+                        role="region"
+                        id=${`accordion_section_${section.uid}`}
+                        ?hidden=${!this.activeSections[section.uid] &&
+                        this.adapter.templateData.logic === 'hide'}
+                        aria-labelledby=${`accordion_button_${section.uid}`}
+                      >
+                        <gui-field .field=${this.getChild(section.uid)}></gui-field>
+                      </section>`
+                    : nothing;
 
                 return html`<div class="gui-accordion__section">
                   <button

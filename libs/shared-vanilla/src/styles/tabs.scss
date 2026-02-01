@@ -114,6 +114,10 @@
       background: var(--gui-color-bg);
       color: var(--gui-color-fg);
 
+      &[hidden] {
+        display: none;
+      }
+
       &:focus {
         outline: 0;
         border: var(--gui-color-fg) solid 1px;

@@ -125,7 +125,7 @@ export function Tabs(fieldInstance: Core.WithField) {
     const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);
 
     return children
-      .filter((field) => field.uid === activeTab)
+      .filter((field) => field.uid === activeTab || templateData.logic === 'hide')
       .map((section) => (
         <section
           key={`tabpanel_${field.uid}_${section.uid}`}
@@ -133,6 +133,7 @@ export function Tabs(fieldInstance: Core.WithField) {
           tabIndex={0}
           data-cy={`tabpanel_${field.uid}_${activeSectionIndex}`}
           id={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          hidden={section.uid !== activeTab && templateData.logic === 'hide'}
           aria-labelledby={`tab_${field.uid}_${activeSectionIndex}`}
         >
           <FieldRenderer key={section.uid} field={section as Core.NonFunctionField<string>} />

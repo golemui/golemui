@@ -86,11 +86,9 @@ export class TabsElement extends LitElement implements Core.WithField {
   override render() {
     if (!this.adapter.templateData) return html``;
 
-    const activeSection = this.adapter.templateData.children.find(
-      (section: any) => section.uid === this.activeTab,
-    );
-    const activeSectionIndex = this.adapter.templateData.children.findIndex(
-      (section: any) => section.uid === this.activeTab,
+    const activeSections = this.field.children.filter(
+      (section: any) =>
+        section.uid === this.activeTab || this.adapter.templateData.logic === 'hide',
     );
 
     const navClasses = {
@@ -132,15 +130,16 @@ export class TabsElement extends LitElement implements Core.WithField {
         </ul>
       </nav>
       ${repeat(
-        [activeSection],
+        activeSections,
         (section) => section?.uid,
-        (section) =>
+        (section, index) =>
           html`<section
             role="tabpanel"
             tabindex="0"
-            data-cy=${`tabpanel_${this.field.uid}_${activeSectionIndex}`}
-            id=${`tabpanel_${this.field.uid}_${activeSectionIndex}`}
-            aria-labelledby=${`tab_${this.field.uid}_${activeSectionIndex}`}
+            data-cy=${`tabpanel_${this.field.uid}_${index}`}
+            id=${`tabpanel_${this.field.uid}_${index}`}
+            ?hidden=${section.uid !== this.activeTab && this.adapter.templateData.logic === 'hide'}
+            aria-labelledby=${`tab_${this.field.uid}_${index}`}
           >
             <gui-field .field=${section}></gui-field>
           </section>`,

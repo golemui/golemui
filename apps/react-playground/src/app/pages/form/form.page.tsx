@@ -1,5 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
-import { flightTickets } from '@golemui/apps-shared';
+import { kitchenSink } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { ReactItemRenderer } from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
@@ -15,7 +15,7 @@ async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = flightTickets;
+const mock = kitchenSink;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);

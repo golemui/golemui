@@ -38,6 +38,7 @@ const form = defineForm({
       widget: 'tabs',
       props: {
         defaultOpen: 'tab12',
+        logic: 'hide',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
