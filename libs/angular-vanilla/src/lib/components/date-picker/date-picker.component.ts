@@ -38,9 +38,6 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   dateControl = viewChild<ElementRef>('dateControlRef');
   calendarControl = viewChild<ElementRef>('calendarControlRef');
 
-  // TODO: Get localeId from i18n feature
-  localeId = 'es';
-
   readonly isCalendarOpen = signal(false);
 
   onDocumentClick(event: MouseEvent) {

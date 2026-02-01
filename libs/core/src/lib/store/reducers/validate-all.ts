@@ -42,7 +42,7 @@ export const validateAll =
             Array.isArray(newValidations[control.path]) &&
             Array.isArray(oldValidations[control.path])
           ) {
-            // Check if they are structurally different, if they are, keep the old string[] ref to avoid change detection
+            // Check if they are structurally equal, if they are, keep the old string[] ref to avoid change detection
             if (
               zipEvery(
                 newValidations[control.path] as string[],

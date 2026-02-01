@@ -1,4 +1,4 @@
-import { isControlField } from '../form-field';
+import { isControlField, isFunctionField } from '../form-field';
 import { ValidatorFn } from '../form-validator';
 import { I18nTranslator } from '../i18n';
 import { ValidateOn } from '../shared';
@@ -111,6 +111,34 @@ export const reducer =
               touchedControls: { ...state.touchedControls, [path]: true },
             },
             Reducers.validateAll(validators),
+            // TODO: extract this into a separate function
+            // When the field is a Field Function, we propagate the validation result immediately
+            (state) => {
+              const uid = action.payload.uid;
+              const originalDerivedField = state.calculatedFields[uid];
+              const originalSource = originalDerivedField.source;
+              if (isFunctionField(originalSource)) {
+                // TODO: prev vs current validation comparison to avoid change detection here
+                const current = originalSource({
+                  $form: state.data,
+                  errors: state.validations[path],
+                  touched: true,
+                  translate: localization.translate,
+                });
+                return {
+                  ...state,
+                  calculatedFields: {
+                    ...state.calculatedFields,
+                    [uid]: {
+                      ...originalDerivedField,
+                      previous: originalDerivedField.current,
+                      current,
+                    },
+                  },
+                };
+              }
+              return state;
+            },
           );
         }
 

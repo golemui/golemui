@@ -8,9 +8,9 @@ import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
+import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
-import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 
 const mock = kitchenSink;
 
@@ -46,6 +46,7 @@ export class AppFormPage {
     productItemRenderer: ProductItemRenderer,
     airportItemRenderer: AirportItemRenderer,
   };
+  protected validateOn: Core.ValidateOn = 'eager';
 
   protected error = '';
 

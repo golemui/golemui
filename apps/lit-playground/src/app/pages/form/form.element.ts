@@ -6,10 +6,10 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
-import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 
 const mock = kitchenSink;
 
@@ -37,6 +37,7 @@ export class FormElement extends LitElement {
   validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
+  validateOn: Core.ValidateOn = 'eager';
 
   error = '';
 
@@ -88,7 +89,7 @@ export class FormElement extends LitElement {
           .localization=${this.localization}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
-          .validateOn=${'eager'}
+          .validateOn=${this.validateOn}
           @formHealth=${this.onFormHealth}
           @formEvent=${this.onFormEvent}
         ></gui-form>

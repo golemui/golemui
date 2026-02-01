@@ -6,10 +6,10 @@ import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { useState } from 'react';
+import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 import styles from './form.page.module.scss';
-import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
@@ -39,6 +39,7 @@ const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   productItemRenderer: ProductItemRenderer,
   airportItemRenderer: AirportItemRenderer,
 };
+const validateOn: Core.ValidateOn = 'eager';
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -61,7 +62,7 @@ export function FormPage() {
         itemRenderers={itemRenderers}
         localization={localization}
         validators={validators}
-        validateOn="eager"
+        validateOn={validateOn}
         formHealth={onFormHealth}
         formEvent={onFormEvent}
       />

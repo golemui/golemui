@@ -98,7 +98,7 @@ export class ControlFieldAdapter<
   onBlur() {
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur', path: this.field.path },
+      payload: { reason: 'blur', path: this.field.path, uid: this.field.uid },
     });
   }
 }

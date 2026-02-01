@@ -17,5 +17,6 @@
   [labelField]="templateData.labelField"
   [valueField]="templateData.valueField"
   (change)="valueChanged($event)"
+  (inputError)="onInputError($event)"
   (blur)="adapter.onBlur()"
 ></gui-select>
