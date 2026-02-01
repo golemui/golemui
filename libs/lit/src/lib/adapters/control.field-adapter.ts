@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { combineLatest, takeUntil } from 'rxjs';
-import { BaseFieldAdapter } from './base.field-adapter';
 import { LitItemRenderer } from '../components/item-renderers/item-renderer';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 export const controlContext =
   createContext<ControlFieldAdapter<any, any>>('guiControlFieldAdapter');
@@ -92,7 +92,7 @@ export class ControlFieldAdapter<
   onBlur() {
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur', path: this.field.path },
+      payload: { reason: 'blur', path: this.field.path, uid: this.field.uid },
     });
   }
 }

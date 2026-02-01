@@ -38,6 +38,7 @@ const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   productItemRenderer: ProductItemRenderer,
   airportItemRenderer: AirportItemRenderer,
 };
+const validateOn: Core.ValidateOn = 'eager';
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -60,7 +61,7 @@ export function FormPage() {
         itemRenderers={itemRenderers}
         localization={localization}
         validators={validators}
-        validateOn="eager"
+        validateOn={validateOn}
         formHealth={onFormHealth}
         formEvent={onFormEvent}
       />

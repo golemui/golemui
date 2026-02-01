@@ -45,6 +45,7 @@ export class AppFormPage {
     productItemRenderer: ProductItemRenderer,
     airportItemRenderer: AirportItemRenderer,
   };
+  protected validateOn: Core.ValidateOn = 'eager';
 
   protected error = '';
 

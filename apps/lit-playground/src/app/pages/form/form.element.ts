@@ -36,6 +36,7 @@ export class FormElement extends LitElement {
   validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
+  validateOn: Core.ValidateOn = 'eager';
 
   error = '';
 
@@ -87,7 +88,7 @@ export class FormElement extends LitElement {
           .localization=${this.localization}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
-          .validateOn=${'eager'}
+          .validateOn=${this.validateOn}
           @formHealth=${this.onFormHealth}
           @formEvent=${this.onFormEvent}
         ></gui-form>

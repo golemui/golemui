@@ -43,6 +43,11 @@ export type State = {
   validations: Record<DotPath, ValidationStatus>;
 
   /**
+   * Tracks controls that have been _touched_ hence can display validation errors.
+   */
+  touchedControls: Record<DotPath, boolean>;
+
+  /**
    * Validation statuses injected imperatively via the public API.
    *
    * These validation statuses are not derived from the schema validators and are intended
@@ -55,11 +60,6 @@ export type State = {
    * When data changes, these fields are updated and their flags recalculated.
    */
   fieldFlags: Record<Uid, Field.Flags>;
-
-  /**
-   * Tracks controls that have been _touched_ hence can display validation errors.
-   */
-  touchedControls: Record<DotPath, boolean>;
 
   /**
    * Allows overriding a field’s `prop` properties externally via its event handler mechanism.
@@ -100,9 +100,9 @@ export const createInitialState = (lang: string): State => ({
   currentStates: [],
   calculatedFields: {},
   validations: {},
+  touchedControls: {},
   injectedValidations: {},
   fieldFlags: {},
-  touchedControls: {},
   fieldPropOverrides: {},
   data: {},
   formHealth: { status: 'ok' },
