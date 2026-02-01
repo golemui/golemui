@@ -41,9 +41,9 @@ export const reducer =
       case 'ADD_FIELD':
         return Fn.pipe(
           Reducers.addField(state, action),
-          Reducers.calculateCurrentState,
-          Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps(localization),
+          reduceIf(formIsHealthy, Reducers.calculateCurrentState),
+          reduceIf(formIsHealthy, Reducers.calculateFieldFlags),
+          reduceIf(formIsHealthy, Reducers.calculateFieldProps(localization)),
         );
 
       case 'REMOVE_FIELD':
@@ -154,3 +154,5 @@ export const reducer =
       }
     }
   };
+
+const formIsHealthy = (state: State) => state.formHealth.status === 'ok';

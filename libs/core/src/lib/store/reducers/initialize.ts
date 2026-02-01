@@ -1,6 +1,6 @@
 import * as Form from '../../form';
 import * as Field from '../../form-field';
-import { flattenForm } from '../../utils/form';
+import { flattenForm, uidCollisionErrorMessage } from '../../utils/form';
 import * as Actions from '../actions';
 import { createInitialState, FormHealth, State } from '../model';
 
@@ -44,16 +44,32 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
   const result = Form.formDefDecoder.decode(formDef);
 
   if (result.isOk()) {
-    return {
-      ...initialState,
-      formDef: result.value as Form.Form,
-      flatForm: flattenForm([result.value.form] as Field.FormField[]).reduce(
+    formHealth = { status: 'ok' };
+    let flatForm = {} as State['flatForm'];
+    try {
+      flatForm = flattenForm([result.value.form] as Field.FormField[]).reduce(
         (acc, cur) => {
+          if (acc[cur.uid!]) {
+            throw { existingField: acc[cur.uid!], newField: cur };
+          }
           acc[cur.uid!] = cur;
           return acc;
         },
         {} as State['flatForm'],
-      ),
+      );
+    } catch (error: any) {
+      formHealth = {
+        status: 'errored',
+        message: uidCollisionErrorMessage(error.existingField, error.newField),
+      };
+      flatForm = {};
+    }
+
+    return {
+      ...initialState,
+      formDef: result.value as Form.Form,
+      flatForm,
+      formHealth,
     };
   }
 

@@ -6,6 +6,11 @@ export const calculateCurrentState = (state: State): State => {
   if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
     return state;
   }
+
+  if (state.formHealth.status === 'errored') {
+    return state;
+  }
+
   stateExpressions = expandStateExpressions(stateExpressions);
 
   let currentStates: string[] = [];

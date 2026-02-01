@@ -11,13 +11,15 @@ export const runUidTests = (mountFn: MountComponentFn) => {
               uid: 'uid1',
               kind: 'control',
               widget: 'textinput',
+              label: 'Something 1',
               path: 'something1',
             },
             {
               uid: 'uid1',
-              kind: 'control',
-              widget: 'checkbox',
-              path: 'something2',
+              kind: 'display',
+              widget: 'alert',
+              props: { text: 'You have been alerted' },
+              include: { in: ['showAlert'] },
             },
           ],
         }),
@@ -26,7 +28,7 @@ export const runUidTests = (mountFn: MountComponentFn) => {
       cy.get('@formHealth').should('have.been.calledWithMatch', {
         status: 'errored',
         message:
-          'Duplicate UID "uid1": Assigned to widget "textinput" at "something1" and "checkbox" at "something2".',
+          'Duplicate UID "uid1": Assigned to widget "textinput" at "something1" and "alert".',
       } satisfies Core.FormHealth);
     });
   });
