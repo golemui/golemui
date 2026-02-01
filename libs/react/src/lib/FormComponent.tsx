@@ -121,7 +121,7 @@ export function FormComponent({
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
-        <form id={formNameRef.current}>
+        <form id={formNameRef.current} noValidate>
           <FieldErrorBoundary field={formLayoutField}>
             <FieldRenderer field={formLayoutField} />
           </FieldErrorBoundary>
