@@ -56,6 +56,10 @@
       border: 1px solid var(--gui-color-border);
       background: var(--gui-color-bg);
       color: var(--gui-color-fg);
+
+      &[hidden] {
+        display: none;
+      }
     }
   }
 }

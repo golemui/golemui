@@ -34,10 +34,11 @@
 </nav>
 
 @for (child of templateData.children; track child.uid; let i = $index) {
-  @if (child.uid === activeTab()) {
+  @if (child.uid === activeTab() || templateData.renderMode !== 'activeOnly') {
     <section
       role="tabpanel"
       tabindex="0"
+      [hidden]="child.uid !== activeTab() && templateData.renderMode !== 'activeOnly'"
       [attr.data-cy]="'tabpanel_' + field.uid + '_' + i"
       [id]="'tabpanel_' + field.uid + '_' + i"
       [attr.aria-labelledby]="'tab_' + field.uid + '_' + i"
