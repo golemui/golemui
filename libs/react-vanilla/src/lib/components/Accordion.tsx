@@ -43,19 +43,19 @@ export function Accordion(fieldInstance: Core.WithField) {
         (section) => section.uid === uid,
       ) as Core.NonFunctionField<string>;
       const isActiveSection = activeSections[uid];
-      return (isActiveSection || templateData.logic === 'hide') && child ? (
+      return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section
           className="gui-field"
           role="region"
           id={`accordion_section_${uid}`}
-          hidden={!isActiveSection && templateData.logic === 'hide'}
+          hidden={!isActiveSection && templateData.renderMode !== 'activeOnly'}
           aria-labelledby={`accordion_button_${uid}`}
         >
           <FieldRenderer field={child} />
         </section>
       ) : null;
     },
-    [children, activeSections, templateData.logic],
+    [children, activeSections, templateData.renderMode],
   );
 
   const renderAccordion = useCallback(() => {

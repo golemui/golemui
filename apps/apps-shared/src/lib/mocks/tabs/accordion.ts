@@ -4,7 +4,6 @@ export const accordion = (): any => ({
   widget: 'accordion',
   props: {
     singleOpen: false,
-    logic: 'hide',
     defaultOpen: {
       section1: true,
     },

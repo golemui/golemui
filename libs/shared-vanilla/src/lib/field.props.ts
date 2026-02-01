@@ -6,7 +6,7 @@ import { DateRange } from './utils/date';
 export type AccordionProps = {
   singleOpen?: boolean;
   defaultOpen?: { [key: string]: boolean };
-  logic?: 'destroy' | 'hide';
+  renderMode?: 'all' | 'activeOnly';
   sections: { label: string; uid: string }[];
 };
 
@@ -317,6 +317,6 @@ export type StackProps = {
 
 export type TabsProps = {
   defaultOpen?: string;
-  logic: 'destroy' | 'hide';
+  renderMode: 'all' | 'activeOnly';
   tabs: { label: string; uid: string }[];
 };
