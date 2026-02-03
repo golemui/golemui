@@ -1,12 +1,12 @@
 export const calendar = (): any => ({
   uid: 'tab12',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
       kind: 'input',
-      widget: 'rangeCalendar',
+      type: 'rangeCalendar',
       path: 'rangeCalendar',
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
       props: {
@@ -21,7 +21,7 @@ export const calendar = (): any => ({
     {
       uid: '',
       kind: 'input',
-      widget: 'calendar',
+      type: 'calendar',
       path: 'calendar',
       defaultValue: '2026-02-13',
       props: {
@@ -37,7 +37,7 @@ export const calendar = (): any => ({
     {
       uid: '',
       kind: 'input',
-      widget: 'dateInput',
+      type: 'dateInput',
       path: 'dateInput',
       props: {
         icon: 'material-icons material-icons-calendar_month',
@@ -47,7 +47,7 @@ export const calendar = (): any => ({
     {
       uid: '',
       kind: 'input',
-      widget: 'datePicker',
+      type: 'datePicker',
       path: 'datePicker',
       props: {
         icon: 'material-icons material-icons-calendar_month',

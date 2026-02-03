@@ -3,10 +3,10 @@ import * as Props from './field.props';
 
 type ControlFieldConfig<T> = Omit<
   Core.InputWidget<T>,
-  'kind' | 'widget' | 'uid' | 'props' | 'validator'
+  'kind' | 'type' | 'uid' | 'props' | 'validator'
 >;
-type LayoutFieldConfig = Omit<Core.LayoutWidget, 'kind' | 'widget' | 'uid' | 'props'>;
-type DisplayFieldConfig = Omit<Core.BaseWidget, 'kind' | 'widget' | 'uid' | 'props'>;
+type LayoutFieldConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
+type DisplayFieldConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 
 /**
  * Vanilla field factory
@@ -27,7 +27,7 @@ export const Vanilla = {
   }): Core.InputWidget<string, StateKeys> => ({
     uid: '',
     kind: 'input',
-    widget: 'textinput',
+    type: 'textinput',
     // The `props` key only exists in the returned object when `props` is actually provided
     ...(props && { props }),
     ...(validator && { validator }),
@@ -45,7 +45,7 @@ export const Vanilla = {
   }): Core.InputWidget<number, StateKeys> => ({
     uid: '',
     kind: 'input',
-    widget: 'numberinput',
+    type: 'numberinput',
     ...(props && { props }),
     ...(validator && { validator }),
     ...config,
@@ -62,7 +62,7 @@ export const Vanilla = {
   }): Core.InputWidget<boolean, StateKeys> => ({
     uid: '',
     kind: 'input',
-    widget: 'checkbox',
+    type: 'checkbox',
     ...(props && { props }),
     ...(validator && { validator }),
     ...config,
@@ -79,7 +79,7 @@ export const Vanilla = {
   }): Core.InputWidget<string, StateKeys> => ({
     uid: '',
     kind: 'input',
-    widget: 'select',
+    type: 'select',
     ...(props && { props }),
     ...(validator && { validator }),
     ...config,
@@ -94,7 +94,7 @@ export const Vanilla = {
   ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
-    widget: 'stack',
+    type: 'stack',
     ...(props && { props }),
     ...config,
   }),
@@ -104,7 +104,7 @@ export const Vanilla = {
   ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
-    widget: 'tabs',
+    type: 'tabs',
     ...(props && { props }),
     ...config,
   }),
@@ -118,7 +118,7 @@ export const Vanilla = {
   ): Core.DisplayWidget<StateKeys> => ({
     uid: '',
     kind: 'display',
-    widget: 'alert',
+    type: 'alert',
     ...(props && { props }),
     ...config,
   }),

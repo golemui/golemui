@@ -26,14 +26,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'requiredString',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'requiredString',
                 validator: { type: 'string', required: true },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -56,14 +56,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'requiredString',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'requiredString',
                 validator: { type: 'string', required: true },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -85,14 +85,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'minLength',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'minLength',
                 validator: { type: 'string', minLength: 3 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -122,14 +122,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'maxLength',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'maxLength',
                 validator: { type: 'string', maxLength: 6 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -159,14 +159,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 validator: { type: 'string', pattern: 'CD' },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -196,14 +196,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'enumString',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'enumString',
                 validator: { type: 'string', enum: 'golemui' },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -231,14 +231,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'const',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'const',
                 validator: { type: 'string', const: 'golemui' },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -266,14 +266,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'format',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'format',
                 validator: { type: 'string', format: 'email' },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -303,14 +303,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'requiredNumber',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'requiredNumber',
                 validator: { type: 'number', required: true },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -333,14 +333,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'requiredNumber',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'requiredNumber',
                 validator: { type: 'number', required: true },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -366,14 +366,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'min',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'min',
                 validator: { type: 'number', minimum: 1 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -399,14 +399,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'max',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'max',
                 validator: { type: 'number', maximum: 100 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -432,14 +432,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'exclusiveMinimum',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'exclusiveMinimum',
                 validator: { type: 'number', exclusiveMinimum: 100 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -465,14 +465,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'exclusiveMaximum',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'exclusiveMaximum',
                 validator: { type: 'number', exclusiveMaximum: 100 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -498,14 +498,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'multipleOf',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'multipleOf',
                 validator: { type: 'number', multipleOf: 5 },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -533,7 +533,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'boolean',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 path: 'boolean',
                 label: 'Boolean',
                 validator: { type: 'boolean', const: true },
@@ -541,7 +541,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -572,14 +572,14 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'allowedNamesCustomValidator',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'allowedNamesCustomValidator',
                 validator: { type: 'custom', allowedNames: ['golemui'] },
               },
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -611,7 +611,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 defaultValue: 'ab',
                 validator: { type: 'string', pattern: 'CD' },
@@ -619,7 +619,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -650,7 +650,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 defaultValue: 'ab',
                 validator: { type: 'string', pattern: 'CD' },
@@ -658,7 +658,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -690,7 +690,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 defaultValue: 'ab',
                 validator: { type: 'string', pattern: 'CD' },
@@ -698,7 +698,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -734,7 +734,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 defaultValue: 'ab',
                 validator: { type: 'string', pattern: 'CD' },
@@ -742,7 +742,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -770,7 +770,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 defaultValue: 'ab',
                 validator: { type: 'string', pattern: 'CD' },
@@ -778,7 +778,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',
@@ -805,7 +805,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'pattern',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'pattern',
                 defaultValue: 'ab',
                 validator: { type: 'string', pattern: 'CD' },
@@ -813,7 +813,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'testButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Test',
                 on: {
                   click: 'submit',

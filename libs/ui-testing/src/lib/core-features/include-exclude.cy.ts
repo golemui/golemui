@@ -15,7 +15,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check1',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Check 1',
                 path: 'check1',
                 props: {},
@@ -23,7 +23,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check2',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Check 2',
                 path: 'check2',
                 props: {},
@@ -31,7 +31,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check1_check2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 include: { in: ['check1:check2'] },
@@ -58,7 +58,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check1',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Check 1',
                 path: 'check1',
                 props: {},
@@ -66,7 +66,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check2',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Check 2',
                 path: 'check2',
                 props: {},
@@ -74,7 +74,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check1_check2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 exclude: { from: ['check1:check2'] },
@@ -105,7 +105,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number1',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Number 1',
                 path: 'number1',
                 props: {},
@@ -113,7 +113,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number2',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Number 2',
                 path: 'number2',
                 props: {},
@@ -121,7 +121,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number1_number2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 include: { in: ['number1:number2'] },
@@ -148,7 +148,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number1',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Number 1',
                 path: 'number1',
                 props: {},
@@ -156,7 +156,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number2',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Number 2',
                 path: 'number2',
                 props: {},
@@ -164,7 +164,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number1_number2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 exclude: { from: ['number1:number2'] },
@@ -195,7 +195,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput1',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Textinput 1',
                 path: 'textinput1',
                 props: {},
@@ -203,7 +203,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Textinput 2',
                 path: 'textinput2',
                 props: {},
@@ -211,7 +211,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput1_textinput2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 include: { in: ['textinput1:textinput2'] },
@@ -238,7 +238,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput1',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Textinput 1',
                 path: 'textinput1',
                 props: {},
@@ -246,7 +246,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Textinput 2',
                 path: 'textinput2',
                 props: {},
@@ -254,7 +254,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput1_textinput2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 exclude: { from: ['textinput1:textinput2'] },

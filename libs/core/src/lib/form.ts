@@ -29,7 +29,7 @@ export function defineForm<
     ...config,
     form: {
       uid: '',
-      widget: 'stack',
+      type: 'stack',
       kind: 'layout',
       children: config.form,
     },

@@ -25,7 +25,7 @@ export type Flags = {
 export type WidgetType = string;
 // export type WidgetType = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 
-type ReactiveWidgetValue<T, FormData extends Record<string, any> = any> =
+type ReactiveWidgetPropertyValue<T, FormData extends Record<string, any> = any> =
   | ReactiveExpression
   | WidgetPropertyFunction<T, FormData>
   | T;
@@ -40,10 +40,10 @@ export type On<
   FormData extends Record<string, any> = any,
 > = AllSuffixable<
   {
-    load?: ReactiveWidgetValue<EventExpression, FormData>;
-    click?: ReactiveWidgetValue<EventExpression, FormData>;
-    change?: ReactiveWidgetValue<EventExpression, FormData>;
-    filter?: ReactiveWidgetValue<EventExpression, FormData>;
+    load?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
+    click?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
+    change?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
+    filter?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
   },
   StateKeys
 >;
@@ -54,7 +54,7 @@ export type BaseWidget<
 > = {
   // kind: 'display' | 'action' | 'input' | 'layout';
   uid: Uid;
-  widget: WidgetType;
+  type: WidgetType;
   size?: number;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
@@ -103,7 +103,7 @@ export type ActionWidget<
 > = SomeSuffixable<
   BaseWidget<StateKeys, FormData> & {
     kind: 'action';
-    label?: ReactiveWidgetValue<Localizable, FormData>;
+    label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
     on?: On<StateKeys, FormData>;
   },
   'disabled' | 'label',
@@ -124,10 +124,10 @@ export type InputWidget<
      * - If `label` is an empty string, no label will be displayed.
      * - Otherwise, the provided label will be rendered.
      */
-    label?: ReactiveWidgetValue<Localizable, FormData>;
+    label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
     on?: On<StateKeys, FormData>;
     defaultValue?: T;
-    validator?: ReactiveWidgetValue<object, FormData>; // `object` should be `V` (the validator type)
+    validator?: ReactiveWidgetPropertyValue<object, FormData>; // `object` should be `V` (the validator type)
   },
   'disabled' | 'readonly' | 'label' | 'validator' | 'size',
   StateKeys
@@ -169,7 +169,7 @@ export type FunctionWidget<
   FormData extends Record<string, any> = any,
 > = {
   uid?: Uid;
-  widget?: string;
+  type?: string;
   path?: string; // when this is a control, this will have a path, otherwise undefined
   /**
    * Function that calculates the widget definition.
@@ -296,7 +296,7 @@ const displayWidgetDecoder = jd.object<DisplayWidget<string>>(
   {
     kind: jd.literal('display'),
     uid: uidDecoder,
-    widget: jd.string(),
+    type: jd.string(),
     size: jd.optional(jd.number()),
     include: jd.optional(includeDecoder),
     exclude: jd.optional(excludeDecoder),
@@ -312,7 +312,7 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
   {
     kind: { decoder: jd.literal('action') },
     uid: { decoder: uidDecoder },
-    widget: { decoder: jd.string() },
+    type: { decoder: jd.string() },
     size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
@@ -333,7 +333,7 @@ const functionWidgetDecoder: jd.Decoder<FunctionWidget<string>> = new jd.Decoder
       const fnWidget = json as FunctionWidget<string>;
       const widget = fnWidget(undefined);
       fnWidget.uid = widget.uid || shortUUID();
-      fnWidget.widget = widget.widget;
+      fnWidget.type = widget.type;
       fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
       return jd.ok(fnWidget);
     } else {
@@ -346,7 +346,7 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
   {
     kind: { decoder: jd.literal('input') },
     uid: { decoder: uidDecoder },
-    widget: { decoder: jd.string() },
+    type: { decoder: jd.string() },
     size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
@@ -369,10 +369,10 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
 ).map((ctrl) => {
   const transformed = { ...ctrl };
   if (!ctrl.uid) {
-    transformed.uid = `${ctrl.path}-${ctrl.widget}`;
+    transformed.uid = `${ctrl.path}-${ctrl.type}`;
   }
   // TODO: no type safety in this block
-  if (ctrl.widget === 'repeater') {
+  if (ctrl.type === 'repeater') {
     const props = ctrl['props'] as Record<string, any>;
     props['template'] = layoutWidgetDecoder.parse(props['template']);
   }
@@ -410,7 +410,7 @@ export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>(
   {
     kind: { decoder: jd.literal('layout') },
     uid: { decoder: uidDecoder },
-    widget: { decoder: jd.string() },
+    type: { decoder: jd.string() },
     size: { decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },

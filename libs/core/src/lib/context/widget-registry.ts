@@ -1,13 +1,13 @@
 import { NonFunctionWidget } from '../form-widget';
 
-type Registry<ComponentType, Widget extends string = NonFunctionWidget['widget']> = Record<
+type Registry<ComponentType, Widget extends string = NonFunctionWidget['type']> = Record<
   Widget,
   ComponentType
 >;
 
 export type WidgetLoaders<
   ComponentType,
-  Widget extends string = NonFunctionWidget['widget'],
+  Widget extends string = NonFunctionWidget['type'],
 > = Record<Widget, () => Promise<ComponentType>>;
 
 export class WidgetRegistry<ComponentType> {
@@ -28,7 +28,7 @@ export class WidgetRegistry<ComponentType> {
     this._ready = true;
   }
 
-  async loadWidget(widget: NonFunctionWidget['widget']): Promise<ComponentType> {
+  async loadWidget(widget: NonFunctionWidget['type']): Promise<ComponentType> {
     return this.registry[widget] ?? (this.registry[widget] = await this.widgetLoaders[widget]());
   }
 }

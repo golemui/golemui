@@ -39,7 +39,7 @@ function fallback(error: Error, field: Props['field']) {
     <div style={{ border: '1px solid red', padding: '4px' }}>
       Component{' '}
       <code style={{ fontWeight: 'bold' }}>
-        {field.widget}[{field.uid}]
+        {field.type}[{field.uid}]
       </code>{' '}
       failed with:
       <p style={{ color: 'red', marginTop: '4px' }}>

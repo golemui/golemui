@@ -19,7 +19,7 @@ const form = defineForm({
     {
       uid: 'header-1',
       kind: 'display',
-      widget: 'heading',
+      type: 'heading',
       props: {
         text: {
           key: 'consultation.header.onsite',
@@ -34,7 +34,7 @@ const form = defineForm({
     {
       uid: 'toggle-mode',
       kind: 'input',
-      widget: 'toggle',
+      type: 'toggle',
       path: 'details.isRemote',
       label: {
         key: 'consultation.mode.label',
@@ -46,7 +46,7 @@ const form = defineForm({
     {
       uid: 'input-name',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       path: 'details.clientName',
       label: {
         key: 'consultation.field.name',
@@ -64,7 +64,7 @@ const form = defineForm({
     {
       uid: 'input-date',
       kind: 'input',
-      widget: 'calendar',
+      type: 'calendar',
       path: 'details.date',
       label: {
         key: 'consultation.field.date',
@@ -82,7 +82,7 @@ const form = defineForm({
     {
       uid: 'info-location',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: {
           key: 'consultation.info.onsite',
@@ -101,7 +101,7 @@ const form = defineForm({
     {
       uid: 'input-deposit',
       kind: 'input',
-      widget: 'currency',
+      type: 'currency',
       path: 'depositAmount',
       label: {
         key: 'consultation.field.deposit',
@@ -117,7 +117,7 @@ const form = defineForm({
     {
       uid: 'btn-submit',
       kind: 'action',
-      widget: 'button',
+      type: 'button',
       on: {
         click: 'handleSubmit',
       },

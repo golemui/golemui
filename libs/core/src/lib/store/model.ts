@@ -91,8 +91,8 @@ export const createInitialState = (lang: string): State => ({
   formName: '',
   formDef: Form.formDefDecoder.parse({
     form: {
-      widget: 'stack',
       kind: 'layout',
+      type: 'stack',
       children: [],
     },
   }) as Form.Form,

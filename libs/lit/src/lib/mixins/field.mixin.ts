@@ -30,7 +30,7 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
       if (!this.field) return;
 
       try {
-        const component = await this.formContext.widgetRegistry.loadWidget(this.field.widget!);
+        const component = await this.formContext.widgetRegistry.loadWidget(this.field.type!);
         const element = new component();
 
         const index = this.repeaterIndex ?? this.repeaterIndexToken?.index;
@@ -43,12 +43,12 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
 
         this.replaceWith(element);
       } catch (err) {
-        console.error(`Field "${this.field.widget}" could not be loaded`, err);
+        console.error(`Field "${this.field.type}" could not be loaded`, err);
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Field "${this.field.widget}" could not be loaded`,
+              message: `Field "${this.field.type}" could not be loaded`,
             },
             bubbles: true,
             composed: true,

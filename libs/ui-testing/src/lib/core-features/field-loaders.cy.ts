@@ -11,7 +11,7 @@ export const runFieldLoadersComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: '',
               kind: 'display',
-              widget: 'heading',
+              type: 'heading',
               props: {
                 text: 'KITCHEN SINK',
                 level: 3,

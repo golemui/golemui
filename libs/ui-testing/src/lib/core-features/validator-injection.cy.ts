@@ -11,7 +11,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
             {
               uid: 'testSubject',
               kind: 'input',
-              widget: 'customdate',
+              type: 'customdate',
               path: 'myField',
             },
           ],
@@ -31,7 +31,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
             {
               uid: 'testSubject',
               kind: 'input',
-              widget: 'customdate',
+              type: 'customdate',
               path: 'myField',
             },
           ],
@@ -55,7 +55,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
             {
               uid: 'testSubject',
               kind: 'input',
-              widget: 'customdate',
+              type: 'customdate',
               path: 'myField',
             },
           ],
@@ -76,7 +76,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
             {
               uid: 'testSubject',
               kind: 'input',
-              widget: 'customdate',
+              type: 'customdate',
               path: 'myField',
               validator: {
                 type: 'string',

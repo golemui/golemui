@@ -16,7 +16,7 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'check1',
               kind: 'input',
-              widget: 'checkbox',
+              type: 'checkbox',
               label: 'Check 1',
               path: 'check1',
               props: {},
@@ -46,7 +46,7 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'check1',
               kind: 'input',
-              widget: 'checkbox',
+              type: 'checkbox',
               label: 'Check 1',
               path: 'check1',
               props: {},

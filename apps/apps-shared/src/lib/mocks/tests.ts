@@ -11,7 +11,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Register',
       path: 'registerMode',
     },
@@ -19,7 +19,7 @@ const form = defineForm({
       return {
         uid: 'input-name2',
         kind: 'input',
-        widget: 'textinput',
+        type: 'textinput',
         path: 'details.clientName2',
         label: api?.errors && api.touched ? `Error: ${api?.errors}` : 'Ohmmmm',
         props: {
@@ -31,7 +31,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'action',
-      widget: 'button',
+      type: 'button',
       label: 'Login',
       'label.register': 'Register',
       on: {

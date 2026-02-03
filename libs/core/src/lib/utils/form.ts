@@ -31,5 +31,5 @@ export function uidCollisionErrorMessage(
 ) {
   const getPath = (f: Widget.FormWidget<string>) =>
     Widget.isInputWidget(f) ? ` at "${f.path}"` : '';
-  return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.widget}"${getPath(existingWidget)} and "${newWidget.widget}"${getPath(newWidget)}.`;
+  return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
 }

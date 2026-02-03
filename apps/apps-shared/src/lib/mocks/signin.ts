@@ -16,7 +16,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'display',
-      widget: 'heading',
+      type: 'heading',
       props: {
         text: 'Login',
         'text.register': 'Register',
@@ -25,7 +25,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'User Id',
       path: 'user.id',
       readonly: true,
@@ -33,7 +33,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'User Name',
       path: 'user.name',
       validator: { type: 'custom', allowedNames: ['Joan', 'Raul'] },
@@ -42,7 +42,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'User Email',
       path: 'user.email',
       validator: { type: 'string', required: true, format: 'email' },
@@ -50,7 +50,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'User Password',
       'label.register': 'Password 1',
       props: {
@@ -69,7 +69,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'Confirm Password',
       props: {
         'placeholder.register': 'Enter password 2',
@@ -81,7 +81,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'User Age',
       path: 'user.age',
       defaultValue: 0,
@@ -91,7 +91,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'User Height',
       path: 'user.height',
       defaultValue: '170',
@@ -101,7 +101,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Play Basketball',
       path: 'user.playBasketball',
       include: { in: ['register:tall'] },
@@ -109,7 +109,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Register',
       props: {
         checkboxPosition: 'left',
@@ -120,7 +120,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Accept Terms',
       path: 'terms',
       include: { in: ['register'] },
@@ -128,7 +128,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Parental Approval!',
       path: 'parentalApproval',
       include: { in: ['register:minor'] },
@@ -136,7 +136,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: 'Some fields need your attention',
         level: 'warning',
@@ -149,7 +149,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'action',
-      widget: 'button',
+      type: 'button',
       label: 'Login',
       'label.register': 'Register',
       disabled: false,

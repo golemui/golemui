@@ -17,7 +17,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
             {
               uid: 'propertyFunctionLabel',
               kind: 'input',
-              widget: 'textinput',
+              type: 'textinput',
               path: 'myInput',
               label: ({ $form }) => {
                 return $form.myInput;
@@ -99,7 +99,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
             {
               uid: 'openUid',
               kind: 'input',
-              widget: 'checkbox',
+              type: 'checkbox',
               label: "Toggle me! I don't trigger input label changes",
               path: 'open',
             },

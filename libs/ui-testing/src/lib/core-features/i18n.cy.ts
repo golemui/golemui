@@ -40,7 +40,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
             {
               uid,
               kind: 'input',
-              widget: 'textinput',
+              type: 'textinput',
               label: {
                 key: 'user.name.label',
               },
@@ -61,7 +61,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
             {
               uid,
               kind: 'input',
-              widget: 'textinput',
+              type: 'textinput',
               label: {
                 key: 'a.b.c.d',
                 default: 'This is the default label',
@@ -82,13 +82,13 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
             {
               uid: 'first-name',
               kind: 'input',
-              widget: 'textinput',
+              type: 'textinput',
               path: 'user.firstName',
             },
             {
               uid: 'greeting',
               kind: 'display',
-              widget: 'alert',
+              type: 'alert',
               props: {
                 text: {
                   key: 'user.greeting',

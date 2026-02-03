@@ -24,7 +24,7 @@ function FieldRenderer(props: Props) {
     isMounted.current = true;
     const loadComponent = async () => {
       try {
-        const loadedComponent = await formContext.widgetRegistry.loadWidget(props.field.widget);
+        const loadedComponent = await formContext.widgetRegistry.loadWidget(props.field.type);
         if (isMounted.current) {
           if (repeaterIndex > -1) {
             setField(Core.makeRepeaterItemConfig(Core.cloneObject(props.field), repeaterIndex));
@@ -37,7 +37,7 @@ function FieldRenderer(props: Props) {
           payload: {
             formHealth: {
               status: 'errored',
-              message: `Field "${props.field.widget}" could not be loaded`,
+              message: `Field "${props.field.type}" could not be loaded`,
             },
           },
         });

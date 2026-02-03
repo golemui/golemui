@@ -1,12 +1,12 @@
 export const toggle = (): any => ({
   uid: 'tab10',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
       kind: 'input',
-      widget: 'toggle',
+      type: 'toggle',
       label: 'Create new account?',
       path: 'isNewUser',
       props: {},
@@ -14,7 +14,7 @@ export const toggle = (): any => ({
     {
       uid: '',
       kind: 'input',
-      widget: 'toggle',
+      type: 'toggle',
       label: 'Disabled toggle',
       path: 'isDisabled',
       disabled: true,
@@ -24,7 +24,7 @@ export const toggle = (): any => ({
     {
       uid: '',
       kind: 'input',
-      widget: 'toggle',
+      type: 'toggle',
       label: 'Create new account?',
       path: 'isNewUserLeft',
       props: {
@@ -35,7 +35,7 @@ export const toggle = (): any => ({
     {
       uid: '',
       kind: 'input',
-      widget: 'toggle',
+      type: 'toggle',
       label: 'Create new account?',
       path: 'isNewUserHint',
       props: {

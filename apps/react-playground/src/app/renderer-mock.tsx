@@ -11,7 +11,7 @@ const form = defineForm({
     {
       uid: 'renderer-component',
       kind: 'display',
-      widget: 'renderer',
+      type: 'renderer',
       props: {
         render: (api) => {
           console.log('render', api);
@@ -22,7 +22,7 @@ const form = defineForm({
     {
       uid: 'input-name',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       path: 'details.clientName',
       label: 'Client Name',
       props: {
@@ -35,7 +35,7 @@ const form = defineForm({
     {
       uid: 'btn-submit',
       kind: 'action',
-      widget: 'button',
+      type: 'button',
       on: {
         click: 'handleSubmit',
       },

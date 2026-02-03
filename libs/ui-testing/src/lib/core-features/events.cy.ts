@@ -10,7 +10,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: '',
               kind: 'input',
-              widget: 'asdf',
+              type: 'asdf',
               path: 'asdf',
               props: {},
             },
@@ -51,7 +51,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'eventSelect',
               kind: 'input',
-              widget: 'select',
+              type: 'select',
               path: 'subregion',
               label: 'Country subregion',
               on: {
@@ -98,7 +98,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'regionSelect',
               kind: 'input',
-              widget: 'select',
+              type: 'select',
               path: 'region',
               props: {
                 options: [
@@ -114,7 +114,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'countrySelect',
               kind: 'input',
-              widget: 'select',
+              type: 'select',
               path: 'country',
               label: 'Country',
             },
@@ -141,7 +141,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'tabsComponent',
               kind: 'layout',
-              widget: 'tabs',
+              type: 'tabs',
               props: {
                 defaultOpen: 'tab1',
                 tabs: [
@@ -154,7 +154,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid: 'tab1',
                   kind: 'display',
-                  widget: 'alert',
+                  type: 'alert',
                   props: {
                     text: 'Some fields need your attention 1',
                     level: 'warning',
@@ -163,7 +163,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid: 'tab2',
                   kind: 'display',
-                  widget: 'alert',
+                  type: 'alert',
                   props: {
                     text: 'Some fields need your attention 2',
                     level: 'warning',
@@ -218,13 +218,13 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'regionSelect',
               kind: 'input',
-              widget: 'select',
+              type: 'select',
               path: 'region',
             },
             {
               uid: 'loadCountriesButton',
               kind: 'action',
-              widget: 'button',
+              type: 'button',
               label: 'Load Countries',
               on: {
                 click: 'getRegionsForSelect',

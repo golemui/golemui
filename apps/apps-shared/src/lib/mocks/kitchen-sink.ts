@@ -26,7 +26,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'display',
-      widget: 'heading',
+      type: 'heading',
       props: {
         text: 'KITCHEN SINK',
         level: 3,
@@ -35,9 +35,9 @@ const form = defineForm({
     {
       uid: '',
       kind: 'layout',
-      widget: 'tabs',
+      type: 'tabs',
       props: {
-        defaultOpen: 'tab12',
+        defaultOpen: 'tab3',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },
@@ -78,7 +78,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'action',
-      widget: 'button',
+      type: 'button',
       label: 'Create',
       on: {
         click: 'submit',

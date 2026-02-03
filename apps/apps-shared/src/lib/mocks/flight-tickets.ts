@@ -6,13 +6,13 @@ const form = defineForm({
     {
       uid: 'tab15',
       kind: 'layout',
-      widget: 'stack',
+      type: 'stack',
       props: { direction: 'horizontal' },
       children: [
         {
           uid: '',
           kind: 'input',
-          widget: 'dropdown',
+          type: 'dropdown',
           path: 'from',
           label: 'From',
           size: 1,
@@ -34,7 +34,7 @@ const form = defineForm({
         {
           uid: '',
           kind: 'input',
-          widget: 'dropdown',
+          type: 'dropdown',
           path: 'to',
           label: 'To',
           size: 1,
@@ -56,7 +56,7 @@ const form = defineForm({
         {
           uid: '',
           kind: 'input',
-          widget: 'number',
+          type: 'number',
           path: 'passengers',
           defaultValue: 1,
           label: 'Number of passengers',
@@ -66,7 +66,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'rangeCalendar',
+      type: 'rangeCalendar',
       path: 'dates',
       label: 'Outbound/Return Dates',
       props: {

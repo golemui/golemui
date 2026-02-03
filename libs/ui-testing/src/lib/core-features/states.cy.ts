@@ -15,7 +15,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check1',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Check 1',
                 path: 'check1',
                 props: {},
@@ -23,7 +23,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check2',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Check 2',
                 path: 'check2',
                 props: {},
@@ -31,7 +31,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'check1_check2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 validator: { type: 'string', pattern: 'ab' },
@@ -84,7 +84,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number1',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Number 1',
                 path: 'number1',
                 props: {},
@@ -92,7 +92,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number2',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Number 2',
                 path: 'number2',
                 props: {},
@@ -100,7 +100,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'number1_number2',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 path: 'number',
                 props: {},
                 validator: { type: 'number', required: true },
@@ -184,7 +184,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput1',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Textinput 1',
                 path: 'textinput1',
                 props: {},
@@ -192,7 +192,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Textinput 2',
                 path: 'textinput2',
                 props: {},
@@ -200,7 +200,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'textinput1_textinput2',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 validator: { type: 'string', required: true },
@@ -306,7 +306,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onLoad',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Execute on load',
                 path: 'onLoad',
                 defaultValue: true,
@@ -315,7 +315,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'eventSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'subregion',
                 label: 'Country subregion',
                 on: {
@@ -365,7 +365,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onChange',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Execute on change',
                 path: 'onChange',
                 defaultValue: false,
@@ -374,7 +374,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'regionSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'region',
                 props: {
                   options: [
@@ -390,7 +390,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'countrySelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'country',
                 label: 'Country',
               },
@@ -439,7 +439,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onClick',
                 kind: 'input',
-                widget: 'checkbox',
+                type: 'checkbox',
                 label: 'Execute on click',
                 path: 'onClick',
                 props: {},
@@ -447,13 +447,13 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'regionSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'region',
               },
               {
                 uid: 'loadCountriesButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Load Countries',
                 on: {
                   'click.doClick': 'getRegionsForSelect',
@@ -506,7 +506,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onLoad',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Execute on load',
                 path: 'onLoad',
                 defaultValue: 10,
@@ -515,7 +515,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'eventSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'subregion',
                 label: 'Country subregion',
                 on: {
@@ -565,7 +565,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onChange',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Execute on change',
                 path: 'onChange',
                 props: {},
@@ -573,7 +573,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'regionSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'region',
                 props: {
                   options: [
@@ -589,7 +589,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'countrySelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'country',
                 label: 'Country',
               },
@@ -638,7 +638,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onClick',
                 kind: 'input',
-                widget: 'number',
+                type: 'number',
                 label: 'Execute on click',
                 path: 'onClick',
                 props: {},
@@ -646,13 +646,13 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'regionSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'region',
               },
               {
                 uid: 'loadCountriesButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Load Countries',
                 on: {
                   'click.doClick': 'getRegionsForSelect',
@@ -705,7 +705,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onLoad',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Execute on load',
                 path: 'onLoad',
                 defaultValue: 'abc',
@@ -714,7 +714,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'eventSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'subregion',
                 label: 'Country subregion',
                 on: {
@@ -764,7 +764,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onChange',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Execute on change',
                 path: 'onChange',
                 props: {},
@@ -772,7 +772,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'regionSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'region',
                 props: {
                   options: [
@@ -788,7 +788,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'countrySelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'country',
                 label: 'Country',
               },
@@ -837,7 +837,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'onClick',
                 kind: 'input',
-                widget: 'textinput',
+                type: 'textinput',
                 label: 'Execute on click',
                 path: 'onClick',
                 props: {},
@@ -845,13 +845,13 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               {
                 uid: 'regionSelect',
                 kind: 'input',
-                widget: 'select',
+                type: 'select',
                 path: 'region',
               },
               {
                 uid: 'loadCountriesButton',
                 kind: 'action',
-                widget: 'button',
+                type: 'button',
                 label: 'Load Countries',
                 on: {
                   'click.doClick': 'getRegionsForSelect',

@@ -1,7 +1,7 @@
 export const accordion = (): any => ({
   uid: 'tab5',
   kind: 'layout',
-  widget: 'accordion',
+  type: 'accordion',
   props: {
     singleOpen: false,
     defaultOpen: {
@@ -18,19 +18,19 @@ export const accordion = (): any => ({
     {
       uid: 'section1',
       kind: 'layout',
-      widget: 'stack',
+      type: 'stack',
       children: [
         {
           uid: '',
           kind: 'input',
-          widget: 'textinput',
+          type: 'textinput',
           path: 'shoppingCart.firstName',
           validator: { type: 'string', required: true },
         },
         {
           uid: '',
           kind: 'input',
-          widget: 'textinput',
+          type: 'textinput',
           path: 'shoppingCart.lastName',
           validator: { type: 'string', required: true },
         },
@@ -39,19 +39,19 @@ export const accordion = (): any => ({
     {
       uid: 'section2',
       kind: 'layout',
-      widget: 'stack',
+      type: 'stack',
       children: [
         {
           uid: '',
           kind: 'input',
-          widget: 'textinput',
+          type: 'textinput',
           path: 'shoppingCart.shippingAddress',
           validator: { type: 'string', required: true },
         },
         {
           uid: '',
           kind: 'input',
-          widget: 'textinput',
+          type: 'textinput',
           path: 'shoppingCart.shippingState',
           validator: { type: 'string', required: true },
         },
@@ -60,19 +60,19 @@ export const accordion = (): any => ({
     {
       uid: 'section3',
       kind: 'layout',
-      widget: 'stack',
+      type: 'stack',
       children: [
         {
           uid: '',
           kind: 'input',
-          widget: 'textinput',
+          type: 'textinput',
           path: 'shoppingCart.billingAddress',
           validator: { type: 'string', required: true },
         },
         {
           uid: '',
           kind: 'input',
-          widget: 'textinput',
+          type: 'textinput',
           path: 'shoppingCart.billingState',
           validator: { type: 'string', required: true },
         },

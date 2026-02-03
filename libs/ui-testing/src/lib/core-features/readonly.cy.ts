@@ -18,7 +18,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -27,7 +27,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: false }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -36,7 +36,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should be readonly when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: true }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'readonly');
@@ -50,7 +50,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   disabled: false,
                   'readonly.register': true,
@@ -70,7 +70,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -79,7 +79,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: false }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -88,7 +88,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should be readonly when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: true }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'readonly');
@@ -102,7 +102,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   readonly: false,
                   'readonly.register': true,
@@ -122,7 +122,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -131,7 +131,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: false }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -140,7 +140,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should be readonly when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: true }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'readonly');
@@ -154,7 +154,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   readonly: false,
                   'readonly.register': true,
@@ -174,7 +174,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -183,7 +183,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should not be readonly when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: false }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'readonly');
@@ -192,7 +192,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
         it('should be readonly when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'input', widget, path: 'test', readonly: true }],
+              form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
@@ -207,7 +207,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   readonly: false,
                   'readonly.register': true,
@@ -232,7 +232,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   props: { options },
                 },
@@ -249,7 +249,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   readonly: false,
                   props: { options },
@@ -267,7 +267,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   readonly: true,
                   props: { options },
@@ -287,7 +287,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid,
                   kind: 'input',
-                  widget,
+                  type: widget,
                   path: 'test',
                   readonly: false,
                   'readonly.register': true,

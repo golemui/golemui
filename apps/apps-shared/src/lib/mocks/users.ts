@@ -9,7 +9,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'The List Name',
       'label.itsFive': 'Its five!!',
       path: 'listName',
@@ -19,7 +19,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'textinput',
+      type: 'textinput',
       label: 'Something',
       path: 'something',
       defaultValue: 'Type 5 should change the label on the list name',
@@ -27,7 +27,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Cant Select me',
       path: 'nocheckable',
       readonly: true,
@@ -35,7 +35,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'input',
-      widget: 'checkbox',
+      type: 'checkbox',
       label: 'Select me!',
       path: 'checkable',
     },
