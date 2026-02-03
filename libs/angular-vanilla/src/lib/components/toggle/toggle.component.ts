@@ -8,7 +8,7 @@ import { ToggleProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-toggle-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './toggle.component.html',
   host: {
     class: 'gui-toggle',
@@ -18,8 +18,8 @@ import { ToggleProps } from '@golemui/shared-vanilla';
 })
 export class ToggleComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, ToggleProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, ToggleProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {

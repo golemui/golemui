@@ -6,6 +6,6 @@
   [id]="widget.uid"
 >
   @for (child of templateData.children; track child.uid) {
-    <ng-container guiField [field]="child" />
+    <ng-container guiWidget [widget]="child" />
   }
 </div>

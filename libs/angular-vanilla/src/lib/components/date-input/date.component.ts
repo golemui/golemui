@@ -8,7 +8,7 @@ import { DatePickerProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-date-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './date.component.html',
   host: {
     class: 'gui-date',
@@ -18,8 +18,8 @@ import { DatePickerProps } from '@golemui/shared-vanilla';
 })
 export class DateComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, DatePickerProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, DatePickerProps> = inject(
+    Angular.InputWidgetAdapter,
   );
   currentDate = new Date();
 

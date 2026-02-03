@@ -1,28 +1,28 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { takeUntil } from 'rxjs';
-import { BaseFieldAdapter } from './base.field-adapter';
+import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
-export class LayoutFieldAdapter<
+export class LayoutWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.LayoutWidget> {
+> extends BaseWidgetAdapter<Core.LayoutWidget> {
   templateData = signal<Core.LayoutTemplateData & ExtraProps>({
     children: [] as Core.FormWidget<string>[],
   } as Core.LayoutTemplateData & ExtraProps);
 
-  init(field: Core.LayoutWidget) {
-    this.field = field;
+  init(widget: Core.LayoutWidget) {
+    this.widget = widget;
 
     // Set initial templateData
     this.templateData.update((current) => ({
       ...current,
-      ...this.field.props,
+      ...this.widget.props,
     }));
 
     // Listen to the layout's `hidden`-flag-filtered children stream
     this.context.store.state$
-      .pipe(Core.calculatedLayoutChildrenByUid$(this.field.uid))
+      .pipe(Core.calculatedLayoutChildrenByUid$(this.widget.uid))
       .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
         this.templateData.update((current) => ({
@@ -31,11 +31,11 @@ export class LayoutFieldAdapter<
         }));
       });
 
-    this.addFieldToTheStore(field);
+    this.addWidgetToTheStore(widget);
     this.templateDataUpdater(this.templateData);
   }
 
   change<T>(detail?: T) {
-    this.context.emitEvent('change', this.field, detail);
+    this.context.emitEvent('change', this.widget, detail);
   }
 }

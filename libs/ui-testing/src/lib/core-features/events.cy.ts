@@ -20,7 +20,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get('@formHealth').should('have.been.calledWith', {
         status: 'errored',
-        message: 'Field "asdf" could not be loaded',
+        message: 'Widget "asdf" could not be loaded',
       } satisfies Core.FormHealth);
     });
 

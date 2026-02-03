@@ -43,7 +43,7 @@
       [id]="'tabpanel_' + widget.uid + '_' + i"
       [attr.aria-labelledby]="'tab_' + widget.uid + '_' + i"
     >
-      <ng-container guiField [field]="child" />
+      <ng-container guiWidget [widget]="child" />
     </section>
   }
 }

@@ -8,7 +8,7 @@ import { OptionValue, RadiogroupProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-radiogroup-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './radiogroup.component.html',
   host: {
     class: 'gui-radiogroup',
@@ -18,8 +18,8 @@ import { OptionValue, RadiogroupProps } from '@golemui/shared-vanilla';
 })
 export class RadiogroupComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<OptionValue, RadiogroupProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<OptionValue, RadiogroupProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {

@@ -3,31 +3,31 @@ import * as Core from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
-export abstract class BaseFieldAdapter<F extends Core.NonFunctionWidget> {
+export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
   protected context = inject(AngularFormContext);
   protected destroy$ = new Subject<void>();
-  protected field!: F;
+  protected widget!: F;
 
-  protected addFieldToTheStore(field: F) {
+  protected addWidgetToTheStore(widget: F) {
     this.context.store.dispatch({
       type: 'ADD_WIDGET',
-      payload: { widget: field },
+      payload: { widget: widget },
     });
   }
 
   // TODO: we may want to not flatten everything to avoid name collisions
-  // Listen to the calculated props stream and keep all field props merged in a flattened object
+  // Listen to the calculated props stream and keep all widget props merged in a flattened object
   protected templateDataUpdater<TemplateData extends Record<string, any>>(
     templateData: WritableSignal<TemplateData>,
   ) {
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.calculatedWidgetsByUid$(this.field.uid))
-      .subscribe((calculatedField) => {
+      .pipe(takeUntil(this.destroy$), Core.calculatedWidgetsByUid$(this.widget.uid))
+      .subscribe((calculatedWidget) => {
         templateData.update((current) => {
           return {
             ...current,
-            ...calculatedField,
-            ...calculatedField.props,
+            ...calculatedWidget,
+            ...calculatedWidget.props,
             lang: this.context.store.getState().lang,
           };
         });
@@ -37,7 +37,7 @@ export abstract class BaseFieldAdapter<F extends Core.NonFunctionWidget> {
   destroy() {
     this.context.store.dispatch({
       type: 'REMOVE_WIDGET',
-      payload: { uid: this.field.uid },
+      payload: { uid: this.widget.uid },
     });
     this.destroy$.next();
   }

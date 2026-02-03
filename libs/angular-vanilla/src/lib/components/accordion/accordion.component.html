@@ -22,7 +22,7 @@
           [id]="'accordion_section_' + section.uid"
           [attr.aria-labelledby]="'accordion_button_' + section.uid"
         >
-          <ng-container guiField [field]="getChild(section.uid)" />
+          <ng-container guiWidget [widget]="getChild(section.uid)" />
         </section>
       }
     </div>

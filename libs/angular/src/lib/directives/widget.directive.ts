@@ -13,11 +13,11 @@ import { AngularFormContext } from '../context/form.context';
 import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
 
 @Directive({
-  selector: '[guiField]',
+  selector: '[guiWidget]',
   standalone: true,
 })
-export class FieldDirective implements OnInit {
-  field = input.required<Core.NonFunctionWidget<string>>();
+export class WidgetDirective implements OnInit {
+  widget = input.required<Core.NonFunctionWidget<string>>();
   private repeaterIndexToken = inject(REPEATER_INDEX_TOKEN);
 
   private formContext: AngularFormContext<Type<Core.WithWidget>> = inject(AngularFormContext);
@@ -26,14 +26,14 @@ export class FieldDirective implements OnInit {
 
   async ngOnInit() {
     try {
-      this.createComponent(await this.formContext.widgetRegistry.loadWidget(this.field().type));
+      this.createComponent(await this.formContext.widgetRegistry.loadWidget(this.widget().type));
     } catch {
       this.formContext.store.dispatch({
         type: 'SET_FORM_HEALTH',
         payload: {
           formHealth: {
             status: 'errored',
-            message: `Field "${this.field().type}" could not be loaded`,
+            message: `Widget "${this.widget().type}" could not be loaded`,
           },
         },
       });
@@ -56,11 +56,11 @@ export class FieldDirective implements OnInit {
     const index = repeaterIndex ?? this.repeaterIndexToken;
     if (index > -1) {
       this.componentRef.instance.widget = Core.makeRepeaterItemConfig(
-        Core.cloneObject(this.field()),
+        Core.cloneObject(this.widget()),
         index,
       );
     } else {
-      this.componentRef.instance.widget = this.field();
+      this.componentRef.instance.widget = this.widget();
     }
     (this.componentRef.location.nativeElement as HTMLElement).id =
       `host-${this.componentRef.instance.widget.uid}`;

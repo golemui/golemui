@@ -43,12 +43,12 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
 
         this.replaceWith(element);
       } catch (err) {
-        console.error(`Field "${this.field.type}" could not be loaded`, err);
+        console.error(`Widget "${this.field.type}" could not be loaded`, err);
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Field "${this.field.type}" could not be loaded`,
+              message: `Widget "${this.field.type}" could not be loaded`,
             },
             bubbles: true,
             composed: true,
