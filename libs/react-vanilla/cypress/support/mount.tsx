@@ -5,7 +5,7 @@ import { ComponentType } from 'react';
 import { FormComponent } from '../../src/lib/components/Form';
 
 export const mountFramework = (options: MountOptions) => {
-  const fieldLoaders: Core.WidgetLoaders<ComponentType<Core.WithWidget>> =
+  const widgetLoaders: Core.WidgetLoaders<ComponentType<Core.WithWidget>> =
     options.withCustomComponent
       ? {
           heading: async () =>
@@ -26,7 +26,7 @@ export const mountFramework = (options: MountOptions) => {
       validators={options.validators}
       validateOn={options.validateOn ?? 'eager'}
       localization={options.localization}
-      fieldLoaders={fieldLoaders}
+      widgetLoaders={widgetLoaders}
       formEvent={handleFormEvent}
       formHealth={handleFormHealth}
     />,

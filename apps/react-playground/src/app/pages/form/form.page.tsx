@@ -26,7 +26,7 @@ const languages = AppsShared.commonLanguages
     label: `${flag} ${label}`,
   }));
 
-const customFieldLoaders = {
+const customWidgetLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
@@ -57,7 +57,7 @@ export function FormPage() {
       <FormComponent
         formDef={formDef}
         data={formData}
-        fieldLoaders={customFieldLoaders}
+        widgetLoaders={customWidgetLoaders}
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
