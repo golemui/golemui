@@ -37,7 +37,7 @@ function FieldRenderer(props: Props) {
           payload: {
             formHealth: {
               status: 'errored',
-              message: `Field "${props.field.type}" could not be loaded`,
+              message: `Widget "${props.field.type}" could not be loaded`,
             },
           },
         });
