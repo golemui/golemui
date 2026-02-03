@@ -1,8 +1,8 @@
 import { MountComponentFn } from '../utils';
 import * as Core from '@golemui/core';
 
-export const runFieldLoadersComponentTests = (mountFn: MountComponentFn) => {
-  describe('Field Loaders', () => {
+export const runWidgetLoadersComponentTests = (mountFn: MountComponentFn) => {
+  describe('Widget Loaders', () => {
     it('Should load a custom component', () => {
       mountFn({
         withCustomComponent: true,
