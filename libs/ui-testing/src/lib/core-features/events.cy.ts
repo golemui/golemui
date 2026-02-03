@@ -9,7 +9,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'asdf',
               path: 'asdf',
               props: {},
@@ -34,7 +34,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
           if (event.callback) {
             event.callback({
-              type: 'OVERRIDE_FIELD_PROP',
+              type: 'OVERRIDE_WIDGET_PROP',
               payload: {
                 path: 'subregion',
                 prop: 'options',
@@ -50,7 +50,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'eventSelect',
-              kind: 'control',
+              kind: 'input',
               widget: 'select',
               path: 'subregion',
               label: 'Country subregion',
@@ -81,7 +81,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
           if (event.callback) {
             event.callback({
-              type: 'OVERRIDE_FIELD_PROP',
+              type: 'OVERRIDE_WIDGET_PROP',
               payload: {
                 path: 'country',
                 prop: 'options',
@@ -97,7 +97,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'regionSelect',
-              kind: 'control',
+              kind: 'input',
               widget: 'select',
               path: 'region',
               props: {
@@ -113,7 +113,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             },
             {
               uid: 'countrySelect',
-              kind: 'control',
+              kind: 'input',
               widget: 'select',
               path: 'country',
               label: 'Country',
@@ -201,7 +201,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
           if (event.callback) {
             event.callback({
-              type: 'OVERRIDE_FIELD_PROP',
+              type: 'OVERRIDE_WIDGET_PROP',
               payload: {
                 path: 'region',
                 prop: 'options',
@@ -217,13 +217,13 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'regionSelect',
-              kind: 'control',
+              kind: 'input',
               widget: 'select',
               path: 'region',
             },
             {
               uid: 'loadCountriesButton',
-              kind: 'interactive',
+              kind: 'action',
               widget: 'button',
               label: 'Load Countries',
               on: {

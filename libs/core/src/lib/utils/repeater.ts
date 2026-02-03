@@ -1,20 +1,20 @@
-import { isControlField, NonFunctionField } from '../form-field';
+import { isInputWidget, NonFunctionWidget } from '../form-widget';
 import { DotPath, Uid } from '../shared';
 
 export function makeRepeaterItemConfig(
-  field: NonFunctionField<string>,
+  widget: NonFunctionWidget<string>,
   repeaterIndex: number,
-): NonFunctionField<string> {
-  const uid = toRepeaterItemUid(field.uid, repeaterIndex);
-  if (isControlField(field)) {
+): NonFunctionWidget<string> {
+  const uid = toRepeaterItemUid(widget.uid, repeaterIndex);
+  if (isInputWidget(widget)) {
     return {
-      ...field,
+      ...widget,
       uid,
-      path: toRepeaterItemPath(field.path, repeaterIndex),
+      path: toRepeaterItemPath(widget.path, repeaterIndex),
     };
   } else {
     return {
-      ...field,
+      ...widget,
       uid,
     };
   }

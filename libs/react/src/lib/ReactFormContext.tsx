@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 import * as Core from '@golemui/core';
 
 export const ReactFormContext = createContext<{
-  formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
+  formContext: Core.FormContext<React.ComponentType<Core.WithWidget>>;
 } | null>(null);
 
 export function useReactFormContext() {

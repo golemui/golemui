@@ -7,7 +7,7 @@ export const dropdown = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.searchAsYouType',
       label: 'Search as you type',
@@ -29,7 +29,7 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.defaultListRenderer',
       label: 'Default list renderer with primitive values',
@@ -41,7 +41,7 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.defaultRenderer20',
       label: 'Default Renderer with 20px item height',
@@ -54,7 +54,7 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.disabledList',
       label: 'Disabled list',
@@ -67,7 +67,7 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.requiredList',
       label: 'Required list',
@@ -80,7 +80,7 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.invalidValueList',
       label: 'Invalid value list',
@@ -93,7 +93,7 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdowns.customItemRenderer',
       label: 'Custom item renderer',

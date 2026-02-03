@@ -8,7 +8,7 @@ const form = defineForm({
   form: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'The List Name',
       'label.itsFive': 'Its five!!',
@@ -18,7 +18,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'Something',
       path: 'something',
@@ -26,7 +26,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Cant Select me',
       path: 'nocheckable',
@@ -34,7 +34,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Select me!',
       path: 'checkable',

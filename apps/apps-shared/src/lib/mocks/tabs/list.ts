@@ -7,7 +7,7 @@ export const list = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'lists.defaultListRenderer',
       props: {
@@ -18,7 +18,7 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'lists.defaultRenderer20',
       label: 'Default Renderer with 20px item height',
@@ -31,7 +31,7 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'lists.disabledList',
       label: 'Disabled list',
@@ -44,7 +44,7 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'lists.requiredList',
       label: 'Required list',
@@ -57,7 +57,7 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'lists.invalidValueList',
       label: 'Invalid value list',
@@ -70,7 +70,7 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'lists.customItemRenderer',
       props: {

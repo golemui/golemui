@@ -5,7 +5,7 @@ export const checkbox = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUser',
@@ -13,7 +13,7 @@ export const checkbox = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Disabled checkbox',
       path: 'isDisabled',
@@ -23,7 +23,7 @@ export const checkbox = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUserLeft',
@@ -34,7 +34,7 @@ export const checkbox = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUserHint',

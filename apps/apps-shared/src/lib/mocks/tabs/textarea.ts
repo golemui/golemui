@@ -5,13 +5,13 @@ export const textarea = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textarea',
       path: 'textarea',
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textarea',
       path: 'textareaDisabled',
       disabled: true,
@@ -19,7 +19,7 @@ export const textarea = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textarea',
       path: 'textareaAutoGrow',
       props: {
@@ -30,7 +30,7 @@ export const textarea = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textarea',
       path: 'textareaWithHint',
       props: {
@@ -40,7 +40,7 @@ export const textarea = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textarea',
       path: 'textareaWithIcon',
       props: {

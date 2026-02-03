@@ -12,7 +12,7 @@ import { vanillaFieldLoaders } from '../field.loaders';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
-  fieldLoaders?: Core.FieldLoaders<ComponentType<Core.WithField>>;
+  fieldLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
   localization?: Core.I18nTranslator;
   validators?: CustomValidatorSchemas;

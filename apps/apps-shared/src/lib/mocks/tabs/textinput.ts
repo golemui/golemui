@@ -5,13 +5,13 @@ export const textinput = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'textinput',
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'textinputDisabled',
       disabled: true,
@@ -19,7 +19,7 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'textinputPhone',
       props: {
@@ -28,7 +28,7 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'textinputWithHint',
       props: {
@@ -38,7 +38,7 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'textinputWithIcon',
       props: {
@@ -49,7 +49,7 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'textinputIconRight',
       props: {

@@ -18,7 +18,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -27,7 +27,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: false }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -36,7 +36,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should be disabled when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: true }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
@@ -49,7 +49,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: false,
@@ -70,7 +70,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -79,7 +79,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: false }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -88,7 +88,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should be disabled when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: true }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
@@ -101,7 +101,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: false,
@@ -122,7 +122,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -131,7 +131,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: false }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -140,7 +140,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should be disabled when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: true }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
@@ -153,7 +153,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: false,
@@ -174,7 +174,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test' }],
+              form: [{ uid, kind: 'input', widget, path: 'test' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -183,7 +183,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled when set to false', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: false }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: false }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -192,7 +192,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should be disabled when set to true', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'control', widget, path: 'test', disabled: true }],
+              form: [{ uid, kind: 'input', widget, path: 'test', disabled: true }],
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
@@ -205,7 +205,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: false,
@@ -229,7 +229,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   props: { options },
@@ -246,7 +246,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: false,
@@ -264,7 +264,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: true,
@@ -283,7 +283,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
+                  kind: 'input',
                   widget,
                   path: 'test',
                   disabled: false,
@@ -306,7 +306,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
         it('should not be disabled by default', () => {
           mountFn({
             formDef: Core.defineForm({
-              form: [{ uid, kind: 'interactive', widget: 'button', label: 'Send' }],
+              form: [{ uid, kind: 'action', widget: 'button', label: 'Send' }],
             }),
           });
           cy.get(selector).should('not.have.attr', 'disabled');
@@ -318,7 +318,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'interactive',
+                  kind: 'action',
                   widget: 'button',
                   label: 'Send',
                   disabled: false,
@@ -335,7 +335,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'interactive',
+                  kind: 'action',
                   widget: 'button',
                   label: 'Send',
                   disabled: true,
@@ -353,7 +353,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'interactive',
+                  kind: 'action',
                   widget: 'button',
                   label: 'Send',
                   disabled: false,

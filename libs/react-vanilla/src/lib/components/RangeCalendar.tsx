@@ -4,8 +4,8 @@ import { DateRange, RangeCalendarProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function RangeCalendar(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<DateRange[]>;
+export function RangeCalendar(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<DateRange[]>;
   const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useControlField<
     DateRange[],
     RangeCalendarProps

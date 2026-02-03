@@ -14,7 +14,7 @@ export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
-    @property({ type: Object }) field!: Core.FormField<string>;
+    @property({ type: Object }) field!: Core.FormWidget<string>;
     @property({ type: Number }) repeaterIndex = -1;
 
     @provide({ context: repeaterIndexTokenContext })
@@ -29,13 +29,13 @@ export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>
       if (!this.field) return;
 
       try {
-        const component = await this.formContext.fieldRegistry.loadField(this.field.widget!);
+        const component = await this.formContext.widgetRegistry.loadWidget(this.field.widget!);
         const element = new component();
 
         this.repeaterIndexToken.index = repeaterIndex;
         new ContextProvider(element, repeaterIndexTokenContext, this.repeaterIndexToken);
 
-        element.field = Core.makeRepeaterItemConfig(Core.cloneObject(this.field), repeaterIndex);
+        element.widget = Core.makeRepeaterItemConfig(Core.cloneObject(this.field), repeaterIndex);
         element.id = `host-${this.field.uid}`;
         this.replaceWith(element);
       } catch (err) {

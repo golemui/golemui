@@ -41,13 +41,13 @@ const form = defineForm({
           children: [
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'textinput',
               path: 'listName',
             },
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'textinput',
               path: 'listOwner',
             },
@@ -60,7 +60,7 @@ const form = defineForm({
           children: [
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'repeater',
               path: 'users',
               props: {
@@ -75,13 +75,13 @@ const form = defineForm({
                   children: [
                     {
                       uid: '',
-                      kind: 'control',
+                      kind: 'input',
                       widget: 'textinput',
                       path: 'users.items.firstName',
                     },
                     {
                       uid: '',
-                      kind: 'control',
+                      kind: 'input',
                       widget: 'textinput',
                       path: 'users.items.lastName',
                     },
@@ -98,7 +98,7 @@ const form = defineForm({
           children: [
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'checkbox',
               label: 'Create new account?',
               path: 'isNewUser',
@@ -128,13 +128,13 @@ const form = defineForm({
               children: [
                 {
                   uid: '',
-                  kind: 'control',
+                  kind: 'input',
                   widget: 'textinput',
                   path: 'shoppingCart.firstName',
                 },
                 {
                   uid: '',
-                  kind: 'control',
+                  kind: 'input',
                   widget: 'textinput',
                   path: 'shoppingCart.lastName',
                 },
@@ -147,13 +147,13 @@ const form = defineForm({
               children: [
                 {
                   uid: '',
-                  kind: 'control',
+                  kind: 'input',
                   widget: 'textinput',
                   path: 'shoppingCart.shippingAddress',
                 },
                 {
                   uid: '',
-                  kind: 'control',
+                  kind: 'input',
                   widget: 'textinput',
                   path: 'shoppingCart.shippingState',
                 },
@@ -166,13 +166,13 @@ const form = defineForm({
               children: [
                 {
                   uid: '',
-                  kind: 'control',
+                  kind: 'input',
                   widget: 'textinput',
                   path: 'shoppingCart.billingAddress',
                 },
                 {
                   uid: '',
-                  kind: 'control',
+                  kind: 'input',
                   widget: 'textinput',
                   path: 'shoppingCart.billingState',
                 },
@@ -184,7 +184,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       label: 'Create',
       on: {

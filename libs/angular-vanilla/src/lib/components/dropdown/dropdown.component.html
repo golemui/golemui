@@ -3,7 +3,7 @@
 
 <gui-label
   [targetElement]="[inputRef, listRef]"
-  [uid]="field.uid"
+  [uid]="widget.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"
   [errors]="templateData.errors"
@@ -15,7 +15,7 @@
   <input
     #inputRef
     type="text"
-    [id]="field.uid"
+    [id]="widget.uid"
     [required]="templateData.validator?.required"
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
@@ -28,8 +28,8 @@
   />
   <gui-list
     #listRef
-    [id]="field.uid + '-list'"
-    [uid]="field.uid"
+    [id]="widget.uid + '-list'"
+    [uid]="widget.uid"
     [value]="templateData.value ?? ''"
     [valueField]="templateData.valueField"
     [items]="displayItems()"
@@ -56,7 +56,7 @@
         role="option"
         tabindex="-1"
         class="gui-list__item-wrapper"
-        [id]="field.uid + '-item-' + absoluteIndex"
+        [id]="widget.uid + '-item-' + absoluteIndex"
         [style.height.px]="templateData.itemHeight || 40"
         [attr.aria-selected]="templateData.value === item.value"
         (click)="onClickItem(item, absoluteIndex)"

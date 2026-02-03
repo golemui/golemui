@@ -1,5 +1,5 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
-import { ControlField, isControlField } from '../../form-field';
+import { InputWidget, isInputWidget } from '../../form-widget';
 import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '../../form-validator';
 import { ValidationStatus } from '../../shared';
 import { filterMap, SKIP, zipEvery } from '../../utils/array';
@@ -9,8 +9,8 @@ import { State } from '../model';
 export const validateAll =
   (validators: ValidatorFn<any>) =>
   (state: State): State => {
-    const controls = filterMap(Object.values(state.calculatedFields), ({ current }) =>
-      isControlField(current) ? current : SKIP,
+    const controls = filterMap(Object.values(state.calculatedWidgets), ({ current }) =>
+      isInputWidget(current) ? current : SKIP,
     );
 
     const oldValidations = state.validations;
@@ -20,9 +20,9 @@ export const validateAll =
       validations: controls.reduce(
         (
           newValidations: Record<string, ValidationStatus>,
-          control: ControlField<unknown, string>,
+          control: InputWidget<unknown, string>,
         ): Record<string, ValidationStatus> => {
-          // By default the field is valid
+          // By default the widget is valid
           newValidations[control.path] = null;
 
           if (control.validator) {

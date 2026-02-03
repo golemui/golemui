@@ -1,96 +1,96 @@
 import {
-  FormField,
-  FunctionField,
-  isControlField,
-  isFunctionField,
-  isInteractiveField,
-  isLayoutField,
-  LayoutField,
-  NonFunctionField,
-} from '../../form-field';
+  FormWidget,
+  FunctionWidget,
+  isActionWidget,
+  isFunctionWidget,
+  isInputWidget,
+  isLayoutWidget,
+  LayoutWidget,
+  NonFunctionWidget,
+} from '../../form-widget';
 import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
 import { isPotentialDotPath } from '../../utils/dot-path';
 import { get, set } from '../../utils/object';
-import { DerivedField, State } from '../model';
+import { DerivedWidget, State } from '../model';
 
-export const calculateFieldProps =
+export const calculateWidgetProps =
   (localization: I18nTranslator) =>
   (state: State): State => {
-    return { ...state, calculatedFields: calculateProps(state, localization) };
+    return { ...state, calculatedWidgets: calculateProps(state, localization) };
   };
 
-const mkDerivedField = <F extends FormField<string>>(
+const mkDerivedWidget = <F extends FormWidget<string>>(
   source: F,
-  previous: Exclude<F, FunctionField<string>>,
-): DerivedField<F> => ({
+  previous: Exclude<F, FunctionWidget<string>>,
+): DerivedWidget<F> => ({
   source,
   previous,
-  current: {} as Exclude<F, FunctionField<string>>,
+  current: {} as Exclude<F, FunctionWidget<string>>,
   changed: false,
 });
 
-type CoreProp = keyof NonFunctionField;
+type CoreProp = keyof NonFunctionWidget;
 
 function unsuffixedUniqueKeys(keys: string[]): string[] {
   return Array.from(new Set(keys.map((k) => k.split('.')[0])));
 }
 
 function calculateProps(state: State, localization: I18nTranslator) {
-  return Object.keys(state.calculatedFields).reduce(
+  return Object.keys(state.calculatedWidgets).reduce(
     (acc, uid) => {
-      if (state.fieldFlags[uid] !== undefined && state.fieldFlags[uid].hidden) {
+      if (state.widgetFlags[uid] !== undefined && state.widgetFlags[uid].hidden) {
         return acc;
       }
 
-      const originalDerivedField = state.calculatedFields[uid];
-      const originalSource = originalDerivedField.source;
+      const originalDerivedWidget = state.calculatedWidgets[uid];
+      const originalSource = originalDerivedWidget.source;
 
-      if (isFunctionField(originalSource)) {
-        originalDerivedField.previous = originalDerivedField.current;
-        originalDerivedField.current = originalSource({
+      if (isFunctionWidget(originalSource)) {
+        originalDerivedWidget.previous = originalDerivedWidget.current;
+        originalDerivedWidget.current = originalSource({
           $form: state.data,
           errors: originalSource.path ? state.validations[originalSource.path] : undefined,
           touched: originalSource.path ? state.touchedControls[originalSource.path] : undefined,
           translate: localization.translate,
         });
-        originalDerivedField.current.uid = uid;
+        originalDerivedWidget.current.uid = uid;
         // TODO: structural comparison to avoid change detection
-        acc[uid] = { ...originalDerivedField };
+        acc[uid] = { ...originalDerivedWidget };
         return acc;
       }
 
-      const derivedField = mkDerivedField(
+      const derivedWidget = mkDerivedWidget(
         originalSource,
         // previous is the new current
-        originalDerivedField.current,
+        originalDerivedWidget.current,
       );
 
       // TODO: Optimize: we know in advanced which suffixable core properties exist
-      // Field core properties
+      // Widget core properties
       unsuffixedUniqueKeys(Object.keys(originalSource))
         .filter((prop) => prop !== 'props' && prop !== 'on')
         .forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
-            fieldPropOverrides: state.fieldPropOverrides,
-            derivedField,
+            widgetPropOverrides: state.widgetPropOverrides,
+            derivedWidget: derivedWidget,
             property: prop as CoreProp,
             $form: state.data,
             localization,
           });
         });
 
-      // Field "props" properties
+      // Widget "props" properties
       const props = {
         ...(originalSource.props || {}),
         // We may have overridden properties that aren't set on the original object, so we need to account for them
-        ...state.fieldPropOverrides[originalSource.uid],
+        ...state.widgetPropOverrides[originalSource.uid],
       };
       unsuffixedUniqueKeys(Object.keys(props)).forEach((prop) => {
         calculateProperty({
           currentStates: state.currentStates,
-          fieldPropOverrides: state.fieldPropOverrides,
-          derivedField,
+          widgetPropOverrides: state.widgetPropOverrides,
+          derivedWidget: derivedWidget,
           property: 'props',
           subProp: prop,
           $form: state.data,
@@ -98,13 +98,13 @@ function calculateProps(state: State, localization: I18nTranslator) {
         });
       });
 
-      // Field "on" properties
-      if (isControlField(originalSource) || isInteractiveField(originalSource)) {
+      // Widget "on" properties
+      if (isInputWidget(originalSource) || isActionWidget(originalSource)) {
         unsuffixedUniqueKeys(Object.keys(originalSource.on || {})).forEach((prop) => {
           calculateProperty({
             currentStates: state.currentStates,
-            fieldPropOverrides: state.fieldPropOverrides,
-            derivedField,
+            widgetPropOverrides: state.widgetPropOverrides,
+            derivedWidget: derivedWidget,
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
             $form: state.data,
@@ -114,13 +114,13 @@ function calculateProps(state: State, localization: I18nTranslator) {
       }
 
       // Layout "children" property
-      if (isLayoutField(originalSource)) {
-        const prevChildren = (derivedField.previous as LayoutField<string>).children || [];
+      if (isLayoutWidget(originalSource)) {
+        const prevChildren = (derivedWidget.previous as LayoutWidget<string>).children || [];
 
         // Calculate visible children based on current flags
         const children = originalSource.children.filter((child) => {
           // TODO: why were we doing this??? It doesn't make logical sense
-          // if (isFunctionField(child)) {
+          // if (isFunctionWidget(child)) {
           //   child = child({
           //     $form: state.data,
           //     errors: child.path ? state.validations[child.path] : undefined,
@@ -128,48 +128,48 @@ function calculateProps(state: State, localization: I18nTranslator) {
           //     translate: localization.translate,
           //   });
           // }
-          return !state.fieldFlags[child.uid!] || state.fieldFlags[child.uid!].hidden !== true;
+          return !state.widgetFlags[child.uid!] || state.widgetFlags[child.uid!].hidden !== true;
         });
 
-        (derivedField as DerivedField<LayoutField<string>>).current.children = children;
+        (derivedWidget as DerivedWidget<LayoutWidget<string>>).current.children = children;
 
         // Reflect structural equality changes
-        derivedField.changed =
+        derivedWidget.changed =
           prevChildren.length !== children.length ||
           !children.every(
             (_, index) => prevChildren[index] && prevChildren[index].uid === children[index].uid,
           );
       }
 
-      // If there are no changes we can keep the old field reference to avoid unnecessary rerendering
-      acc[uid] = derivedField.changed ? derivedField : originalDerivedField;
+      // If there are no changes we can keep the old widget reference to avoid unnecessary rerendering
+      acc[uid] = derivedWidget.changed ? derivedWidget : originalDerivedWidget;
       delete acc[uid].changed;
       return acc;
     },
-    {} as State['calculatedFields'],
+    {} as State['calculatedWidgets'],
   );
 }
 
 /**
- * Computes a field property based on the current calculated states
+ * Computes a widget property based on the current calculated states
  * and determines whether the result differs from the previous computation.
  *
  * The returned value is compared against the previously computed value to
  * determine if a change has occurred. This allows to decide later on whether
  * a new object reference should be created (for ref equality change detection)
  */
-function calculateProperty<F extends NonFunctionField<string>>({
+function calculateProperty<F extends NonFunctionWidget<string>>({
   currentStates,
-  fieldPropOverrides,
-  derivedField,
+  widgetPropOverrides,
+  derivedWidget,
   property,
   subProp,
   $form,
   localization,
 }: {
   currentStates: string[];
-  fieldPropOverrides: State['fieldPropOverrides'];
-  derivedField: DerivedField<F>;
+  widgetPropOverrides: State['widgetPropOverrides'];
+  derivedWidget: DerivedWidget<F>;
   property: CoreProp;
   subProp?: string;
   $form: State['data'];
@@ -181,8 +181,8 @@ function calculateProperty<F extends NonFunctionField<string>>({
     .sort((a, b) => b.length - a.length)
     .find((currentState) => {
       const currentStateValue = subProp
-        ? derivedField.source?.[property as 'props' /* | 'on' */]?.[`${subProp}.${currentState}`]
-        : derivedField.source[`${property}.${currentState}` as CoreProp];
+        ? derivedWidget.source?.[property as 'props' /* | 'on' */]?.[`${subProp}.${currentState}`]
+        : derivedWidget.source[`${property}.${currentState}` as CoreProp];
       return currentStateValue !== undefined;
     });
 
@@ -190,18 +190,18 @@ function calculateProperty<F extends NonFunctionField<string>>({
   // if no matching state is found, we use the property as is, without suffix
   if (matchedState === undefined) {
     propValue = subProp
-      ? derivedField.source[property as 'props']?.[subProp]
-      : derivedField.source[property];
+      ? derivedWidget.source[property as 'props']?.[subProp]
+      : derivedWidget.source[property];
   } else {
     propValue = subProp
-      ? derivedField.source[property as 'props' /* | 'on */]?.[`${subProp}.${matchedState}`]
-      : derivedField.source[`${property}.${matchedState}` as CoreProp];
+      ? derivedWidget.source[property as 'props' /* | 'on */]?.[`${subProp}.${matchedState}`]
+      : derivedWidget.source[`${property}.${matchedState}` as CoreProp];
   }
 
   const dotPath = subProp ? `${property}.${subProp}` : property;
 
   if (typeof propValue === 'function') {
-    set(derivedField.current, dotPath, propValue({ $form, translate: localization.translate }));
+    set(derivedWidget.current, dotPath, propValue({ $form, translate: localization.translate }));
   } else {
     // TODO: is this too naive? it only checks for the existence of `{key: string;}`
     if (isTranslationConfig(propValue)) {
@@ -211,21 +211,21 @@ function calculateProperty<F extends NonFunctionField<string>>({
         propValue.default,
       );
     }
-    set(derivedField.current, dotPath, propValue);
+    set(derivedWidget.current, dotPath, propValue);
   }
 
   if (
     property === 'props' &&
     subProp &&
-    fieldPropOverrides[derivedField.source.uid] &&
-    fieldPropOverrides[derivedField.source.uid][subProp] !== undefined
+    widgetPropOverrides[derivedWidget.source.uid] &&
+    widgetPropOverrides[derivedWidget.source.uid][subProp] !== undefined
   ) {
-    set(derivedField.current, dotPath, fieldPropOverrides[derivedField.source.uid][subProp]);
+    set(derivedWidget.current, dotPath, widgetPropOverrides[derivedWidget.source.uid][subProp]);
   }
 
   // TODO: this only takes into account primitives, what happens with objects and arrays that are structurally equivalent?
-  if (get(derivedField.previous, dotPath) !== get(derivedField.current, dotPath)) {
-    derivedField.changed = true;
+  if (get(derivedWidget.previous, dotPath) !== get(derivedWidget.current, dotPath)) {
+    derivedWidget.changed = true;
   }
 }
 

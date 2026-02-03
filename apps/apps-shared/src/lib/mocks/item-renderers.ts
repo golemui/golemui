@@ -12,7 +12,7 @@ const form = defineForm({
   form: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdown-default-renderer',
       props: {
@@ -24,7 +24,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dropdown',
       path: 'dropdown-complex-renderer',
       props: {
@@ -44,7 +44,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'default-renderer',
       props: {
@@ -56,7 +56,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'list',
       path: 'complex-renderer',
       props: {
@@ -76,7 +76,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'user.height',
       defaultValue: '170',
@@ -85,14 +85,14 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Register',
       path: 'registerMode',
     },
     {
       uid: '',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       label: 'Login',
       'label.register': 'Register',

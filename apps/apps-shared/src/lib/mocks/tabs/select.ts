@@ -5,7 +5,7 @@ export const select = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'select',
       path: 'selects.greeting',
       label: 'Greeting',
@@ -19,7 +19,7 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'select',
       path: 'selects.wrongGreeting',
       props: {
@@ -32,7 +32,7 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'select',
       path: 'selects.requiredUnselected',
       props: {
@@ -43,7 +43,7 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'select',
       path: 'selects.greetingIndex',
       props: {
@@ -56,7 +56,7 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'select',
       path: 'selects.subregion',
       label: 'Country subregion',
@@ -68,7 +68,7 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'select',
       path: 'selects.country',
       include: { in: ['hasSubregionSelect'] },

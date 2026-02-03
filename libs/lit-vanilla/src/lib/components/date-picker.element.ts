@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-date-picker-control')
-export class DatePickerElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+export class DatePickerElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -46,7 +46,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
     document.addEventListener('click', this.onDocumentClick);
     this.classList.add('gui-date-picker');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -74,7 +74,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
     const calendar = this.isCalendarOpen
       ? html`<gui-calendar
           id="calendar-control"
-          .uid=${this.field.uid}
+          .uid=${this.widget.uid}
           .hint=${this.adapter.templateData.hint}
           ?touched=${this.adapter.templateData.touched}
           ?required=${this.adapter.templateData.validator?.required}
@@ -93,7 +93,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
       : nothing;
 
     return html`
-      ${addLabel(this.field.uid, this.adapter.templateData)}
+      ${addLabel(this.widget.uid, this.adapter.templateData)}
 
       <div
         role="button"
@@ -106,7 +106,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
         <gui-date
           id="date-control"
           class=${classMap(datePickerIcon.fieldClasses)}
-          .uid=${this.field.uid}
+          .uid=${this.widget.uid}
           .hint=${this.adapter.templateData.hint}
           .showErrors=${false}
           .errors=${this.adapter.templateData.errors}
@@ -126,7 +126,7 @@ export class DatePickerElement extends LitElement implements Core.WithField {
         ${calendar}
       </div>
 
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      ${addErrors(this.widget.uid, this.adapter.templateData)}
     `;
   }
 

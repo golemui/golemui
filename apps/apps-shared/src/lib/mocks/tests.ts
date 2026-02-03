@@ -10,7 +10,7 @@ const form = defineForm({
   form: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Register',
       path: 'registerMode',
@@ -18,7 +18,7 @@ const form = defineForm({
     (api) => {
       return {
         uid: 'input-name2',
-        kind: 'control',
+        kind: 'input',
         widget: 'textinput',
         path: 'details.clientName2',
         label: api?.errors && api.touched ? `Error: ${api?.errors}` : 'Ohmmmm',
@@ -30,7 +30,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       label: 'Login',
       'label.register': 'Register',

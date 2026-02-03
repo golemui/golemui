@@ -1,3 +1,3 @@
-export * from './field.registry';
+export * from './widget-registry';
 export * from './form.context';
-export * from './with-field.type';
+export * from './with-widget.type';

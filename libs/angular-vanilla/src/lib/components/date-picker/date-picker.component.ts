@@ -28,8 +28,8 @@ import { LabelComponent } from '../../utils/templates/label.component';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
+export class DatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
   protected adapter: Angular.ControlFieldAdapter<string, DatePickerProps> = inject(
     Angular.ControlFieldAdapter,
   );
@@ -52,7 +52,7 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   onChangeDate(event: Event) {

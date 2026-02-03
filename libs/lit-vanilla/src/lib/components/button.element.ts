@@ -6,8 +6,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-button-interactive')
-export class ButtonElement extends LitElement implements Core.WithField {
-  field!: Core.InteractiveField;
+export class ButtonElement extends LitElement implements Core.WithWidget {
+  widget!: Core.ActionWidget;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -26,7 +26,7 @@ export class ButtonElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-button');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -50,8 +50,8 @@ export class ButtonElement extends LitElement implements Core.WithField {
       <div class="gui-field">
         <button
           type="button"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_button`}
+          id=${this.widget.uid}
+          data-cy=${`${this.widget.uid}_button`}
           @click=${() => this.adapter.click()}
           ?disabled=${this.adapter.templateData.disabled === true}
         >

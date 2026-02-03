@@ -17,7 +17,7 @@ import { vanillaFieldLoaders } from '../../field.loaders';
 })
 export class FormComponent {
   formDef = input.required<string | Record<string, any>>();
-  fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>({});
+  fieldLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>({});
   data = input<Record<string, any>>({});
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   validators = input<CustomValidatorSchemas>({});

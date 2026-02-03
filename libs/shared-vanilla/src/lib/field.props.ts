@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { FieldPropertyFunctionParams } from '@golemui/core';
+import { WidgetPropertyFunctionParams } from '@golemui/core';
 import { OptionValue } from './components';
 import { DateRange } from './utils/date';
 
@@ -235,14 +235,14 @@ export type RendererProps<ComponentType = unknown> = {
  * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>
  */
 export type ComponentRendererProps<ComponentType = unknown> = {
-  render: { component: ComponentType; api: FieldPropertyFunctionParams<any> };
+  render: { component: ComponentType; api: WidgetPropertyFunctionParams<any> };
 };
 
 export type RepeaterProps = {
   addLabel?: string;
   removeLabel?: string;
   limit?: number;
-  template: Core.LayoutField<string>;
+  template: Core.LayoutWidget<string>;
 };
 
 export type Option = {

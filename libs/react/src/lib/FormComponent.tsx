@@ -9,7 +9,7 @@ type JsonObject = Record<string, any>;
 
 export interface FormComponentProps {
   formDef: JsonStringified | JsonObject;
-  fieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
+  fieldLoaders: Core.WidgetLoaders<React.ComponentType<Core.WithWidget>>;
   itemRenderers: Record<string, Core.ItemRenderer>;
   localization?: Core.I18nTranslator;
   validators: Core.ValidatorFn<any>;
@@ -34,11 +34,11 @@ export function FormComponent({
   formHealth,
   formEvent,
 }: FormComponentProps) {
-  const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithField>>>(
+  const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
     new Core.FormContext(),
   );
   const formNameRef = useRef(formName || Core.shortUUID());
-  const [formLayoutField, setFormLayoutField] = useState<Core.LayoutField<string> | null>(null);
+  const [formLayoutField, setFormLayoutField] = useState<Core.LayoutWidget<string> | null>(null);
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {

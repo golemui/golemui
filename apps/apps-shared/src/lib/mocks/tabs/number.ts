@@ -5,13 +5,13 @@ export const number = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'number',
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'numberDisabled',
       disabled: true,
@@ -19,7 +19,7 @@ export const number = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'numberPhone',
       props: {
@@ -28,7 +28,7 @@ export const number = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'numberWithHint',
       props: {
@@ -38,7 +38,7 @@ export const number = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'numberIcon',
       props: {
@@ -49,7 +49,7 @@ export const number = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'numberIconRight',
       props: {
@@ -61,7 +61,7 @@ export const number = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'number',
       path: 'height',
       props: {

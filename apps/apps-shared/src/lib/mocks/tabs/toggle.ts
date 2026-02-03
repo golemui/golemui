@@ -5,7 +5,7 @@ export const toggle = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'toggle',
       label: 'Create new account?',
       path: 'isNewUser',
@@ -13,7 +13,7 @@ export const toggle = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'toggle',
       label: 'Disabled toggle',
       path: 'isDisabled',
@@ -23,7 +23,7 @@ export const toggle = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'toggle',
       label: 'Create new account?',
       path: 'isNewUserLeft',
@@ -34,7 +34,7 @@ export const toggle = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'toggle',
       label: 'Create new account?',
       path: 'isNewUserHint',

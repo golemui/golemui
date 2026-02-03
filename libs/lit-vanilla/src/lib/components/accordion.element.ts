@@ -9,8 +9,8 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-accordion-layout')
-export class AccordionElement extends LitElement implements Core.WithField {
-  field!: Core.LayoutField;
+export class AccordionElement extends LitElement implements Core.WithWidget {
+  widget!: Core.LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
 
   @consume({ context: Lit.formContext })
@@ -29,9 +29,9 @@ export class AccordionElement extends LitElement implements Core.WithField {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-accordion');
-    const props: AccordionProps = this.field.props as AccordionProps;
+    const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
     this.activeSections = props.defaultOpen ?? {};
 
     this.subscriptions.push(
@@ -40,7 +40,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
   }
 
   onClickButton(uid: string) {
-    const props: AccordionProps = this.field.props as AccordionProps;
+    const props: AccordionProps = this.widget.props as AccordionProps;
     if (props.singleOpen) {
       Object.keys(this.activeSections)
         .filter((sectionUid) => sectionUid !== uid)
@@ -55,7 +55,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
   }
 
   getChild(uid: string) {
-    return this.field.children.find((section) => section.uid === uid) as Core.FormField<string>;
+    return this.widget.children.find((section) => section.uid === uid) as Core.FormWidget<string>;
   }
 
   override updated(changedProperties: any) {
@@ -74,7 +74,7 @@ export class AccordionElement extends LitElement implements Core.WithField {
     if (!this.adapter.templateData) return html``;
 
     return html`
-      <div class="gui-field" id=${this.field.uid}>
+      <div class="gui-field" id=${this.widget.uid}>
         ${this.adapter.templateData.sections
           ? repeat(
               this.adapter.templateData.sections,

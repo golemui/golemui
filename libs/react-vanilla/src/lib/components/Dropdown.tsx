@@ -14,8 +14,8 @@ interface GuiLabelElement extends HTMLElement {
   targetElement?: HTMLElement | HTMLElement[];
 }
 
-export function Dropdown(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string | null>;
+export function Dropdown(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<string | null>;
 
   const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
     useControlField<string | number | null, DropdownProps<never>>(field);

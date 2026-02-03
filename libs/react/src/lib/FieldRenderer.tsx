@@ -5,11 +5,11 @@ import { useReactFormContext } from './ReactFormContext';
 import { useRepeaterIndex } from './RepeaterIndexContext';
 
 type Props = {
-  field: Core.NonFunctionField<string>;
+  field: Core.NonFunctionWidget<string>;
   repeaterIndex?: number;
 };
 
-type FieldComponent = React.ComponentType<Core.WithField>;
+type FieldComponent = React.ComponentType<Core.WithWidget>;
 
 function FieldRenderer(props: Props) {
   const { formContext } = useReactFormContext();
@@ -24,7 +24,7 @@ function FieldRenderer(props: Props) {
     isMounted.current = true;
     const loadComponent = async () => {
       try {
-        const loadedComponent = await formContext.fieldRegistry.loadField(props.field.widget);
+        const loadedComponent = await formContext.widgetRegistry.loadWidget(props.field.widget);
         if (isMounted.current) {
           if (repeaterIndex > -1) {
             setField(Core.makeRepeaterItemConfig(Core.cloneObject(props.field), repeaterIndex));
@@ -48,7 +48,7 @@ function FieldRenderer(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [props.field, repeaterIndex, formContext.fieldRegistry, formContext.store]);
+  }, [props.field, repeaterIndex, formContext.widgetRegistry, formContext.store]);
 
   if (!Component) {
     return null;
@@ -56,7 +56,7 @@ function FieldRenderer(props: Props) {
 
   return (
     <FieldErrorBoundary field={field}>
-      <Component field={field} />
+      <Component widget={field} />
     </FieldErrorBoundary>
   );
 }

@@ -6,7 +6,7 @@ export function ReactFormContextProvider({
   formContext,
 }: {
   children: React.ReactNode;
-  formContext: Core.FormContext<React.ComponentType<Core.WithField>>;
+  formContext: Core.FormContext<React.ComponentType<Core.WithWidget>>;
 }) {
   return <ReactFormContext.Provider value={{ formContext }}>{children}</ReactFormContext.Provider>;
 }

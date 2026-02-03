@@ -11,7 +11,7 @@ const form = defineForm({
       children: [
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'dropdown',
           path: 'from',
           label: 'From',
@@ -33,7 +33,7 @@ const form = defineForm({
         },
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'dropdown',
           path: 'to',
           label: 'To',
@@ -55,7 +55,7 @@ const form = defineForm({
         },
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'number',
           path: 'passengers',
           defaultValue: 1,
@@ -65,7 +65,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'rangeCalendar',
       path: 'dates',
       label: 'Outbound/Return Dates',

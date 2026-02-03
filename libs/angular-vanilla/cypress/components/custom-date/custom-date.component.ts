@@ -13,14 +13,14 @@ import * as Core from '@golemui/core';
     class: 'gui-customdate',
   },
 })
-export class CustomdateComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
+export class CustomdateComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
   protected adapter: Angular.ControlFieldAdapter<string, Record<string, any>> = inject(
     Angular.ControlFieldAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

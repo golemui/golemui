@@ -7,8 +7,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-currency-control')
-export class CurrencyElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<number>;
+export class CurrencyElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<number>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -27,7 +27,7 @@ export class CurrencyElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-currency');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -51,7 +51,7 @@ export class CurrencyElement extends LitElement implements Core.WithField {
 
     return html`
       <gui-currency
-        .uid=${this.field.uid}
+        .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

@@ -14,12 +14,12 @@ import * as Core from '@golemui/core';
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class ButtonComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.InteractiveField;
+export class ButtonComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.ActionWidget;
   protected adapter: Angular.InteractiveFieldAdapter = inject(Angular.InteractiveFieldAdapter);
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

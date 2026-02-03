@@ -22,14 +22,14 @@ export const accordion = (): any => ({
       children: [
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'textinput',
           path: 'shoppingCart.firstName',
           validator: { type: 'string', required: true },
         },
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'textinput',
           path: 'shoppingCart.lastName',
           validator: { type: 'string', required: true },
@@ -43,14 +43,14 @@ export const accordion = (): any => ({
       children: [
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'textinput',
           path: 'shoppingCart.shippingAddress',
           validator: { type: 'string', required: true },
         },
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'textinput',
           path: 'shoppingCart.shippingState',
           validator: { type: 'string', required: true },
@@ -64,14 +64,14 @@ export const accordion = (): any => ({
       children: [
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'textinput',
           path: 'shoppingCart.billingAddress',
           validator: { type: 'string', required: true },
         },
         {
           uid: '',
-          kind: 'control',
+          kind: 'input',
           widget: 'textinput',
           path: 'shoppingCart.billingState',
           validator: { type: 'string', required: true },

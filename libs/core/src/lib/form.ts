@@ -1,5 +1,5 @@
 import * as jd from 'ts.data.json';
-import { FormField, LayoutField, layoutFieldDecoder } from './form-field';
+import { FormWidget, LayoutWidget, layoutWidgetDecoder } from './form-widget';
 import { ReactiveExpression, UiState } from './shared';
 
 // --------------------------------
@@ -10,7 +10,7 @@ import { ReactiveExpression, UiState } from './shared';
 
 export type Form<StateKeys extends UiState = never, FormData extends Record<string, any> = any> = {
   states?: Record<StateKeys, ReactiveExpression>;
-  form: LayoutField<StateKeys, FormData>;
+  form: LayoutWidget<StateKeys, FormData>;
 };
 
 /**
@@ -23,7 +23,7 @@ export function defineForm<
   States extends Record<string, ReactiveExpression> = Record<string, ReactiveExpression>,
 >(config: {
   states?: States;
-  form: FormField<Extract<keyof States, string>, FormData>[]; // this Extract<> removes number and symbol from the indexed type
+  form: FormWidget<Extract<keyof States, string>, FormData>[]; // this Extract<> removes number and symbol from the indexed type
 }): Form<Extract<keyof States, string>, FormData> {
   return {
     ...config,
@@ -45,7 +45,7 @@ export function defineForm<
 export const formDefDecoder = jd.object(
   {
     states: jd.optional(jd.record(jd.string(), 'states')),
-    form: layoutFieldDecoder,
+    form: layoutWidgetDecoder,
   },
   'FormDef',
 );

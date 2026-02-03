@@ -43,7 +43,7 @@ async function getSubregions(event: Core.FormEvent, path: Core.DotPath) {
   const response = await fetch('/data/subregions.json');
   const subregions = await response.json();
   event.callback({
-    type: 'OVERRIDE_FIELD_PROP',
+    type: 'OVERRIDE_WIDGET_PROP',
     payload: { path, prop: 'options', value: subregions },
   });
 }
@@ -52,7 +52,7 @@ async function getCountries(event: Core.FormEvent, subregion: string, path: Core
   const response = await fetch('/data/countries.json');
   const countries = await response.json();
   event.callback({
-    type: 'OVERRIDE_FIELD_PROP',
+    type: 'OVERRIDE_WIDGET_PROP',
     payload: {
       path,
       prop: 'options',
@@ -69,7 +69,7 @@ async function getProducts(event: Core.FormEvent, filter: string, path: Core.Dot
       ? products.filter((p: any) => JSON.stringify(p).includes(filter)).slice(0, 10)
       : products.slice(0, 10);
     event.callback({
-      type: 'OVERRIDE_FIELD_PROP',
+      type: 'OVERRIDE_WIDGET_PROP',
       payload: {
         path,
         prop: 'items',
@@ -107,7 +107,7 @@ async function getAirports(event: Core.FormEvent, filter: string, path: Core.Dot
           .slice(0, 10)
       : airports.slice(0, 10);
     event.callback({
-      type: 'OVERRIDE_FIELD_PROP',
+      type: 'OVERRIDE_WIDGET_PROP',
       payload: {
         path,
         prop: 'items',
@@ -118,7 +118,7 @@ async function getAirports(event: Core.FormEvent, filter: string, path: Core.Dot
     // From and To have been selected, we load the disabled dates for those flights
     if (event.data['from'] && event.data['to']) {
       event.callback({
-        type: 'OVERRIDE_FIELD_PROP',
+        type: 'OVERRIDE_WIDGET_PROP',
         payload: {
           path: 'dates',
           prop: 'disabledRanges',

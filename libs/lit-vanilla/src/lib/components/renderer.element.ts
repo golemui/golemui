@@ -7,8 +7,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-renderer-component')
-export class RendererElement extends LitElement implements Core.WithField {
-  field!: Core.DisplayField;
+export class RendererElement extends LitElement implements Core.WithWidget {
+  widget!: Core.DisplayWidget;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -27,7 +27,7 @@ export class RendererElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-renderer');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -36,7 +36,7 @@ export class RendererElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="gui-field" id=${this.field.uid}>${this.adapter.templateData.render}</div>
+      <div class="gui-field" id=${this.widget.uid}>${this.adapter.templateData.render}</div>
     `;
   }
 

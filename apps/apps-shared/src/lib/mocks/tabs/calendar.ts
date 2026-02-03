@@ -5,7 +5,7 @@ export const calendar = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'rangeCalendar',
       path: 'rangeCalendar',
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
@@ -20,7 +20,7 @@ export const calendar = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'calendar',
       path: 'calendar',
       defaultValue: '2026-02-13',
@@ -36,7 +36,7 @@ export const calendar = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'dateInput',
       path: 'dateInput',
       props: {
@@ -46,7 +46,7 @@ export const calendar = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'datePicker',
       path: 'datePicker',
       props: {

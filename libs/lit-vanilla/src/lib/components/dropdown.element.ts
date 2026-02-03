@@ -8,8 +8,8 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-dropdown-control')
-export class DropdownElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+export class DropdownElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -53,7 +53,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
     document.addEventListener('click', this.onDocumentClick);
     this.classList.add('gui-dropdown');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this._filteredItems = this.adapter.templateData.items;
 
@@ -162,7 +162,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
 
   private _filterItems(filterValue: string) {
     const templateData = this.adapter.templateData;
-    const asyncFiltering = !!this.field.on?.filter;
+    const asyncFiltering = !!this.widget.on?.filter;
 
     this.adapter.filterChanged(filterValue);
 
@@ -242,12 +242,12 @@ export class DropdownElement extends LitElement implements Core.WithField {
       ? this._selectedItem?.template[referenceField]
       : this._selectedItem?.template;
 
-    const asyncFiltering = !!this.field.on?.filter;
+    const asyncFiltering = !!this.widget.on?.filter;
 
     return html`
       <gui-label
         .targetElement=${[this._listRef, this._inputRef]}
-        .uid=${this.field.uid}
+        .uid=${this.widget.uid}
         .label=${templateData.label}
         .hint=${templateData.hint}
         .errors=${templateData.errors}
@@ -258,8 +258,8 @@ export class DropdownElement extends LitElement implements Core.WithField {
       <div class="gui-field">
         <input
           type="text"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_textinput`}
+          id=${this.widget.uid}
+          data-cy=${`${this.widget.uid}_textinput`}
           .value=${selectedItemValue ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}
@@ -272,8 +272,8 @@ export class DropdownElement extends LitElement implements Core.WithField {
         />
 
         <gui-list
-          id=${this.field.uid}
-          .uid=${this.field.uid}
+          id=${this.widget.uid}
+          .uid=${this.widget.uid}
           .value=${templateData.value ?? ''}
           .valueField=${templateData.valueField as string}
           .items=${this._isFiltering && !asyncFiltering ? this._filteredItems : templateData.items}
@@ -301,7 +301,7 @@ export class DropdownElement extends LitElement implements Core.WithField {
                 role="option"
                 tabindex="-1"
                 class="gui-list__item-wrapper"
-                id="${this.field.uid}-item-${absoluteIndex}"
+                id="${this.widget.uid}-item-${absoluteIndex}"
                 style="height: ${templateData.itemHeight || 40}px"
                 aria-selected=${isSelected ? 'true' : 'false'}
                 @click=${() => this._onClickItem(item, absoluteIndex)}

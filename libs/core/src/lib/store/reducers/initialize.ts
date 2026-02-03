@@ -1,5 +1,5 @@
 import * as Form from '../../form';
-import * as Field from '../../form-field';
+import * as Widget from '../../form-widget';
 import { flattenForm, uidCollisionErrorMessage } from '../../utils/form';
 import * as Actions from '../actions';
 import { createInitialState, FormHealth, State } from '../model';
@@ -31,13 +31,13 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
   // the layout must be generated here instead.
   if (Array.isArray((formDef as Record<string, any>)['form'])) {
     const formDef_ = formDef as Record<string, any>;
-    const fields: any[] = formDef_['form'];
+    const widgets: any[] = formDef_['form'];
     // mutate
     formDef_['form'] = {
       uid: '',
       widget: 'stack',
       kind: 'layout',
-      children: fields,
+      children: widgets,
     };
   }
 
@@ -47,10 +47,10 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     formHealth = { status: 'ok' };
     let flatForm = {} as State['flatForm'];
     try {
-      flatForm = flattenForm([result.value.form] as Field.FormField[]).reduce(
+      flatForm = flattenForm([result.value.form] as Widget.FormWidget[]).reduce(
         (acc, cur) => {
           if (acc[cur.uid!]) {
-            throw { existingField: acc[cur.uid!], newField: cur };
+            throw { existingWidget: acc[cur.uid!], newWidget: cur };
           }
           acc[cur.uid!] = cur;
           return acc;
@@ -60,7 +60,7 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     } catch (error: any) {
       formHealth = {
         status: 'errored',
-        message: uidCollisionErrorMessage(error.existingField, error.newField),
+        message: uidCollisionErrorMessage(error.existingWidget, error.newWidget),
       };
       flatForm = {};
     }

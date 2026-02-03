@@ -77,7 +77,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       label: 'Create',
       on: {

@@ -2,8 +2,8 @@ import * as Core from '@golemui/core';
 import { useControlField } from '@golemui/react';
 import { useCallback } from 'react';
 
-export function Customdate(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string>;
+export function Customdate(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<string>;
   const { uid, errors, value, isTouched, onValueChanged, onBlur, injectValidationIssues } =
     useControlField<string, Record<string, any>>(field);
 

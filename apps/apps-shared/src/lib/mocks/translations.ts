@@ -33,7 +33,7 @@ const form = defineForm({
     // 2. Mode Toggle (The State Switcher)
     {
       uid: 'toggle-mode',
-      kind: 'control',
+      kind: 'input',
       widget: 'toggle',
       path: 'details.isRemote',
       label: {
@@ -45,7 +45,7 @@ const form = defineForm({
     // 3. Client Name Input
     {
       uid: 'input-name',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'details.clientName',
       label: {
@@ -63,7 +63,7 @@ const form = defineForm({
     // 4. Calendar Control (The Requested Widget)
     {
       uid: 'input-date',
-      kind: 'control',
+      kind: 'input',
       widget: 'calendar',
       path: 'details.date',
       label: {
@@ -100,7 +100,7 @@ const form = defineForm({
     // 6. Conditional Currency (Only for on-site deposits)
     {
       uid: 'input-deposit',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'depositAmount',
       label: {
@@ -116,7 +116,7 @@ const form = defineForm({
     // 7. Submit Action
     {
       uid: 'btn-submit',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       on: {
         click: 'handleSubmit',

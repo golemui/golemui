@@ -16,15 +16,15 @@ type OwnWidgetProps = {
   templateUrl: './heading.component.html',
   styleUrls: ['./heading.component.scss'],
 })
-export class HeadingComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.DisplayField;
+export class HeadingComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.DisplayWidget;
 
   protected adapter: Angular.DisplayFieldAdapter<OwnWidgetProps> = inject(
     Angular.DisplayFieldAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

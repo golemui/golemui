@@ -5,13 +5,13 @@ export const currency = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'currency',
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'currencyDisabled',
       disabled: true,
@@ -19,7 +19,7 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'currencyMaximumFractionDigits',
       props: {
@@ -29,7 +29,7 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'currencyMinimumFractionDigits',
       props: {
@@ -39,7 +39,7 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'currencyWithIcon',
       props: {
@@ -50,7 +50,7 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'currency',
       path: 'currencyIconRightWithEUR',
       props: {

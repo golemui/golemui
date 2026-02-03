@@ -3,8 +3,8 @@ import { useDisplayField } from '@golemui/react';
 import { RendererProps } from '@golemui/shared-vanilla';
 import { ReactNode } from 'react';
 
-export function Renderer(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.DisplayField;
+export function Renderer(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.DisplayWidget;
   const { uid, templateData } = useDisplayField<RendererProps<ReactNode>>(field);
   const renderedElement = templateData?.render;
   return (

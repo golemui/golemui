@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 
 @customElement('gui-stack-layout')
-export class StackElement extends LitElement implements Core.WithField {
-  field!: Core.LayoutField;
+export class StackElement extends LitElement implements Core.WithWidget {
+  widget!: Core.LayoutWidget;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -28,7 +28,7 @@ export class StackElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-stack');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -57,7 +57,7 @@ export class StackElement extends LitElement implements Core.WithField {
         class=${classes.horizontal
           ? 'gui-stack__field gui-stack__field--horizontal'
           : 'gui-stack__field'}
-        id=${this.field?.uid}
+        id=${this.widget?.uid}
       >
         ${repeat(
           this.adapter.templateData.children || [],

@@ -1,4 +1,4 @@
-import { isControlField, isFunctionField } from '../form-field';
+import { isFunctionWidget, isInputWidget } from '../form-widget';
 import { ValidatorFn } from '../form-validator';
 import { I18nTranslator } from '../i18n';
 import { ValidateOn } from '../shared';
@@ -28,47 +28,47 @@ export const reducer =
         return Fn.pipe(
           Reducers.setData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps(localization),
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
         );
 
       case 'SET_LANGUAGE':
         return Fn.pipe(
           Reducers.setLanguage(state, action),
-          Reducers.calculateFieldProps(localization),
+          Reducers.calculateWidgetProps(localization),
         );
 
-      case 'ADD_FIELD':
+      case 'ADD_WIDGET':
         return Fn.pipe(
-          Reducers.addField(state, action),
+          Reducers.addWidget(state, action),
           reduceIf(formIsHealthy, Reducers.calculateCurrentState),
-          reduceIf(formIsHealthy, Reducers.calculateFieldFlags),
-          reduceIf(formIsHealthy, Reducers.calculateFieldProps(localization)),
+          reduceIf(formIsHealthy, Reducers.calculateWidgetFlags),
+          reduceIf(formIsHealthy, Reducers.calculateWidgetProps(localization)),
         );
 
-      case 'REMOVE_FIELD':
+      case 'REMOVE_WIDGET':
         return Fn.pipe(
-          Reducers.removeField(state, action),
+          Reducers.removeWidget(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps(localization),
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
         );
 
-      case 'SET_FIELD_INITIAL_DATA':
-      case 'SET_FIELD_DATA':
+      case 'SET_WIDGET_INITIAL_DATA':
+      case 'SET_WIDGET_DATA':
         return Fn.pipe(
-          Reducers.setFieldData(state, action),
+          Reducers.setWidgetData(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps(localization),
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
         );
 
-      case 'OVERRIDE_FIELD_PROP':
+      case 'OVERRIDE_WIDGET_PROP':
         return Fn.pipe(
-          Reducers.overrideFieldProp(state, action),
+          Reducers.overrideWidgetProp(state, action),
           Reducers.calculateCurrentState,
-          Reducers.calculateFieldFlags,
-          Reducers.calculateFieldProps(localization),
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
         );
@@ -81,11 +81,11 @@ export const reducer =
           {
             ...state,
             touched: true,
-            touchedControls: Object.keys(state.calculatedFields).reduce(
+            touchedControls: Object.keys(state.calculatedWidgets).reduce(
               (touchedControls, key) => {
-                const field = state.calculatedFields[key].source;
-                if (isControlField(field)) {
-                  touchedControls[field.path] = true;
+                const widget = state.calculatedWidgets[key].source;
+                if (isInputWidget(widget)) {
+                  touchedControls[widget.path] = true;
                 }
                 return touchedControls;
               },
@@ -112,12 +112,12 @@ export const reducer =
             },
             Reducers.validateAll(validators),
             // TODO: extract this into a separate function
-            // When the field is a Field Function, we propagate the validation result immediately
+            // When the widget is a Widget Function, we propagate the validation result immediately
             (state) => {
               const uid = action.payload.uid;
-              const originalDerivedField = state.calculatedFields[uid];
-              const originalSource = originalDerivedField.source;
-              if (isFunctionField(originalSource)) {
+              const originalDerivedWidget = state.calculatedWidgets[uid];
+              const originalSource = originalDerivedWidget.source;
+              if (isFunctionWidget(originalSource)) {
                 // TODO: prev vs current validation comparison to avoid change detection here
                 const current = originalSource({
                   $form: state.data,
@@ -127,11 +127,11 @@ export const reducer =
                 });
                 return {
                   ...state,
-                  calculatedFields: {
-                    ...state.calculatedFields,
+                  calculatedWidgets: {
+                    ...state.calculatedWidgets,
                     [uid]: {
-                      ...originalDerivedField,
-                      previous: originalDerivedField.current,
+                      ...originalDerivedWidget,
+                      previous: originalDerivedWidget.current,
                       current,
                     },
                   },

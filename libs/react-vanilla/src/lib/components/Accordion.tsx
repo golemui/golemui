@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};
 
-export function Accordion(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.LayoutField;
+export function Accordion(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.LayoutWidget;
   const { uid, children, templateData, onChange } = useLayoutField<AccordionProps>(field);
   const [activeSections, setActiveSections] =
     useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
@@ -41,7 +41,7 @@ export function Accordion(fieldInstance: Core.WithField) {
     (uid: string) => {
       const child = children.find(
         (section) => section.uid === uid,
-      ) as Core.NonFunctionField<string>;
+      ) as Core.NonFunctionWidget<string>;
       const isActiveSection = activeSections[uid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section

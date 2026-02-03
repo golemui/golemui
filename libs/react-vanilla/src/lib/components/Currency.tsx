@@ -4,8 +4,8 @@ import { CurrencyProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Currency(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<number>;
+export function Currency(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<number>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
     number,
     CurrencyProps

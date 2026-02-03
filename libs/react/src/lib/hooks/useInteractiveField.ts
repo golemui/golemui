@@ -4,11 +4,11 @@ import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useInteractiveField<ExtraProps extends Record<string, any>>(
-  field: Core.InteractiveField<string>,
+  field: Core.ActionWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const templateData = useTemplateData<Core.InteractiveField<string>, ExtraProps>(field);
+  const templateData = useTemplateData<Core.ActionWidget<string>, ExtraProps>(field);
 
   useEffect(() => {
     setUid(field.uid);
@@ -16,8 +16,8 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
 
   useEffect(() => {
     formContext.store.dispatch({
-      type: 'ADD_FIELD',
-      payload: { field },
+      type: 'ADD_WIDGET',
+      payload: { widget: field },
     });
   }, [field, formContext.store]);
 
@@ -28,7 +28,7 @@ export function useInteractiveField<ExtraProps extends Record<string, any>>(
   useEffect(() => {
     return () => {
       formContext.store.dispatch({
-        type: 'REMOVE_FIELD',
+        type: 'REMOVE_WIDGET',
         payload: { uid: field.uid },
       });
     };

@@ -24,7 +24,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'User Id',
       path: 'user.id',
@@ -32,7 +32,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'User Name',
       path: 'user.name',
@@ -41,7 +41,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'User Email',
       path: 'user.email',
@@ -49,7 +49,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'User Password',
       'label.register': 'Password 1',
@@ -68,7 +68,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'Confirm Password',
       props: {
@@ -80,7 +80,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'User Age',
       path: 'user.age',
@@ -90,7 +90,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       label: 'User Height',
       path: 'user.height',
@@ -100,7 +100,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Play Basketball',
       path: 'user.playBasketball',
@@ -108,7 +108,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Register',
       props: {
@@ -119,7 +119,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Accept Terms',
       path: 'terms',
@@ -127,7 +127,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'checkbox',
       label: 'Parental Approval!',
       path: 'parentalApproval',
@@ -148,7 +148,7 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       label: 'Login',
       'label.register': 'Register',

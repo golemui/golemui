@@ -3,7 +3,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
-  field: Core.NonFunctionField<string, any>;
+  field: Core.NonFunctionWidget<string, any>;
 }
 
 interface State {

@@ -9,14 +9,14 @@ export const stack = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'listName',
       size: 1,
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'listOwner',
       size: 2,

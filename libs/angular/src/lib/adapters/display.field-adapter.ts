@@ -5,12 +5,12 @@ import { BaseFieldAdapter } from './base.field-adapter';
 @Injectable()
 export class DisplayFieldAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.DisplayField> {
-  templateData = signal<Core.DisplayFieldTemplateData & ExtraProps>(
-    {} as Core.DisplayFieldTemplateData & ExtraProps,
+> extends BaseFieldAdapter<Core.DisplayWidget> {
+  templateData = signal<Core.DisplayWidgetTemplateData & ExtraProps>(
+    {} as Core.DisplayWidgetTemplateData & ExtraProps,
   );
 
-  init(field: Core.DisplayField) {
+  init(field: Core.DisplayWidget) {
     this.field = field;
 
     // Set initial templateData

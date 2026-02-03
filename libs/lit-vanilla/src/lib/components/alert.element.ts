@@ -7,8 +7,8 @@ import { AlertProps } from '@golemui/shared-vanilla';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-alert-display')
-export class AlertElement extends LitElement implements Core.WithField {
-  field!: Core.DisplayField;
+export class AlertElement extends LitElement implements Core.WithWidget {
+  widget!: Core.DisplayWidget;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -27,7 +27,7 @@ export class AlertElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-alert');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -48,7 +48,7 @@ export class AlertElement extends LitElement implements Core.WithField {
 
   override render() {
     return html`
-      <div class="gui-field" id=${this.field.uid}>
+      <div class="gui-field" id=${this.widget.uid}>
         <div
           role="alert"
           class="gui-alert-notification gui-alert-notification--${this.adapter.templateData.level ||

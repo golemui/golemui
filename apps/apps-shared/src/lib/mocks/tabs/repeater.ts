@@ -5,7 +5,7 @@ export const repeater = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'repeater',
       path: 'repeaters.users',
       props: {
@@ -20,14 +20,14 @@ export const repeater = (): any => ({
           children: [
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'textinput',
               path: 'repeaters.users.items.firstName',
               validator: { type: 'string', required: true },
             },
             {
               uid: '',
-              kind: 'control',
+              kind: 'input',
               widget: 'textinput',
               path: 'repeaters.users.items.lastName',
             },

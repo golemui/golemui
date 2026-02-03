@@ -5,7 +5,7 @@ export const radiogroup = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'radiogroup',
       path: 'radiogroups.greeting',
       label: 'Greeting',
@@ -17,7 +17,7 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'radiogroup',
       path: 'radiogroups.wrongGreeting',
       props: {
@@ -28,7 +28,7 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'radiogroup',
       path: 'radiogroups.requiredUnselected',
       props: {
@@ -39,7 +39,7 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'radiogroup',
       path: 'radiogroups.greetingIndex',
       props: {
@@ -52,7 +52,7 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'radiogroup',
       path: 'radiogroups.subregion',
       label: 'Country subregion',
@@ -64,7 +64,7 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
+      kind: 'input',
       widget: 'radiogroup',
       path: 'radiogroups.country',
       include: { in: ['hasSubregionRadiogroup'] },

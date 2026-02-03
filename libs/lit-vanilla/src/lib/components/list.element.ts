@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-list-control')
-export class ListElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+export class ListElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -34,7 +34,7 @@ export class ListElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-list');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => {
@@ -74,7 +74,7 @@ export class ListElement extends LitElement implements Core.WithField {
     return html`
       <gui-label
         .targetElement=${this._guiListRef}
-        .uid=${this.field.uid}
+        .uid=${this.widget.uid}
         .label=${data.label}
         .hint=${data.hint}
         .errors=${data.errors}
@@ -84,8 +84,8 @@ export class ListElement extends LitElement implements Core.WithField {
 
       <div class="gui-field">
         <gui-list
-          id=${this.field.uid}
-          .uid=${this.field.uid}
+          id=${this.widget.uid}
+          .uid=${this.widget.uid}
           .value=${data.value ?? ''}
           .valueField=${data.valueField}
           .items=${data.items}
@@ -111,7 +111,7 @@ export class ListElement extends LitElement implements Core.WithField {
                 role="option"
                 tabindex="-1"
                 class="gui-list__item-wrapper"
-                id="${this.field.uid}-item-${absoluteIndex}"
+                id="${this.widget.uid}-item-${absoluteIndex}"
                 style="height: ${data.itemHeight || 40}px"
                 aria-selected=${isSelected ? 'true' : 'false'}
                 aria-disabled=${data.disabled ? 'true' : 'false'}

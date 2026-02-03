@@ -9,7 +9,7 @@ export const runUidTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'uid1',
-              kind: 'control',
+              kind: 'input',
               widget: 'textinput',
               label: 'Something 1',
               path: 'something1',

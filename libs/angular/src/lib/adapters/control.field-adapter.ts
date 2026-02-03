@@ -8,12 +8,12 @@ import { BaseFieldAdapter } from './base.field-adapter';
 export class ControlFieldAdapter<
   T,
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.ControlField<T>> {
+> extends BaseFieldAdapter<Core.InputWidget<T>> {
   templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
     {} as Core.ControlTemplateData<T> & ExtraProps,
   );
 
-  init(field: Core.ControlField<T>) {
+  init(field: Core.InputWidget<T>) {
     this.field = field;
 
     this.addFieldToTheStore(field);
@@ -21,7 +21,7 @@ export class ControlFieldAdapter<
 
     // Set field data
     this.context.store.dispatch({
-      type: 'SET_FIELD_INITIAL_DATA',
+      type: 'SET_WIDGET_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
 
@@ -64,7 +64,7 @@ export class ControlFieldAdapter<
 
   valueChanged<T>(value: T) {
     this.context.store.dispatch({
-      type: 'SET_FIELD_DATA',
+      type: 'SET_WIDGET_DATA',
       payload: { path: this.field.path, data: value },
     });
     this.context.emitEvent('change', this.field);

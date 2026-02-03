@@ -4,12 +4,12 @@ import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useLayoutField<ExtraProps extends Record<string, any>>(
-  field: Core.LayoutField<string>,
+  field: Core.LayoutWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const [children, setChildren] = useState<Core.FormField<string>[]>([]);
-  const templateData = useTemplateData<Core.LayoutField<string>, ExtraProps>(field);
+  const [children, setChildren] = useState<Core.FormWidget<string>[]>([]);
+  const templateData = useTemplateData<Core.LayoutWidget<string>, ExtraProps>(field);
 
   useEffect(() => {
     setUid(field.uid);
@@ -17,8 +17,8 @@ export function useLayoutField<ExtraProps extends Record<string, any>>(
 
   useEffect(() => {
     formContext.store.dispatch({
-      type: 'ADD_FIELD',
-      payload: { field },
+      type: 'ADD_WIDGET',
+      payload: { widget: field },
     });
   }, [field, formContext.store]);
 
@@ -33,7 +33,7 @@ export function useLayoutField<ExtraProps extends Record<string, any>>(
   useEffect(() => {
     return () => {
       formContext.store.dispatch({
-        type: 'REMOVE_FIELD',
+        type: 'REMOVE_WIDGET',
         payload: { uid: field.uid },
       });
     };

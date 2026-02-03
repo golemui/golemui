@@ -21,7 +21,7 @@ const form = defineForm({
     },
     {
       uid: 'input-name',
-      kind: 'control',
+      kind: 'input',
       widget: 'textinput',
       path: 'details.clientName',
       label: 'Client Name',
@@ -34,7 +34,7 @@ const form = defineForm({
     // 7. Submit Action
     {
       uid: 'btn-submit',
-      kind: 'interactive',
+      kind: 'action',
       widget: 'button',
       on: {
         click: 'handleSubmit',

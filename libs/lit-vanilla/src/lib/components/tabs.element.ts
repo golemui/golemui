@@ -10,8 +10,8 @@ import { Subscription } from 'rxjs';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 
 @customElement('gui-tabs-layout')
-export class TabsElement extends LitElement implements Core.WithField {
-  field!: Core.LayoutField;
+export class TabsElement extends LitElement implements Core.WithWidget {
+  widget!: Core.LayoutWidget;
 
   @query('#start-sentinel') startSentinel!: HTMLElement;
   @query('#end-sentinel') endSentinel!: HTMLElement;
@@ -43,9 +43,9 @@ export class TabsElement extends LitElement implements Core.WithField {
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-tabs');
-    const props: TabsProps = this.field.props as TabsProps;
+    const props: TabsProps = this.widget.props as TabsProps;
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
     this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
 
     this.subscriptions.push(
@@ -78,7 +78,7 @@ export class TabsElement extends LitElement implements Core.WithField {
     );
 
     // Scroll into view the active tab, just in case it's out of view
-    const tabs = (this.field.props as TabsProps).tabs;
+    const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
     this.tabButtons[currentIndex].scrollIntoView();
   }
@@ -86,7 +86,7 @@ export class TabsElement extends LitElement implements Core.WithField {
   override render() {
     if (!this.adapter.templateData) return html``;
 
-    const activeSections = this.field.children.filter(
+    const activeSections = this.widget.children.filter(
       (section: any) =>
         section.uid === this.activeTab || this.adapter.templateData.renderMode !== 'activeOnly',
     );
@@ -98,7 +98,7 @@ export class TabsElement extends LitElement implements Core.WithField {
       'gui-tabs--end-shadow': !this.isEndVisible,
     };
 
-    return html`<nav class=${classMap(navClasses)} role="tablist" id=${this.field.uid}>
+    return html`<nav class=${classMap(navClasses)} role="tablist" id=${this.widget.uid}>
         <ul>
           <li role="presentation" id="start-sentinel" class="gui-sentinel"></li>
           ${this.adapter.templateData.tabs
@@ -110,9 +110,9 @@ export class TabsElement extends LitElement implements Core.WithField {
                       type="button"
                       role="tab"
                       tabindex=${ifDefined(tab.uid === this.activeTab ? undefined : -1)}
-                      data-cy=${`tab_${this.field.uid}_${index}`}
-                      id=${`tab_${this.field.uid}_${index}`}
-                      aria-controls=${`tabpanel_${this.field.uid}_${index}`}
+                      data-cy=${`tab_${this.widget.uid}_${index}`}
+                      id=${`tab_${this.widget.uid}_${index}`}
+                      aria-controls=${`tabpanel_${this.widget.uid}_${index}`}
                       aria-selected=${tab.uid === this.activeTab ? 'true' : 'false'}
                       class=${classMap({ active: tab.uid === this.activeTab })}
                       @click=${() => this.onClickTab(tab.uid)}
@@ -136,11 +136,11 @@ export class TabsElement extends LitElement implements Core.WithField {
           html`<section
             role="tabpanel"
             tabindex="0"
-            data-cy=${`tabpanel_${this.field.uid}_${index}`}
-            id=${`tabpanel_${this.field.uid}_${index}`}
+            data-cy=${`tabpanel_${this.widget.uid}_${index}`}
+            id=${`tabpanel_${this.widget.uid}_${index}`}
             ?hidden=${section.uid !== this.activeTab &&
             this.adapter.templateData.renderMode !== 'activeOnly'}
-            aria-labelledby=${`tab_${this.field.uid}_${index}`}
+            aria-labelledby=${`tab_${this.widget.uid}_${index}`}
           >
             <gui-field .field=${section}></gui-field>
           </section>`,
@@ -162,7 +162,7 @@ export class TabsElement extends LitElement implements Core.WithField {
   }
 
   private onKeyDown(event: KeyboardEvent) {
-    const tabs = (this.field.props as TabsProps).tabs;
+    const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
     const tabButtons = Array.from(this.tabButtons);
 

@@ -4,8 +4,8 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Repeater(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<Record<string, unknown>[]>;
+export function Repeater(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
   const { uid, value, onValueChanged, templateData } = useControlField<
     Record<string, unknown>[],
     RepeaterProps

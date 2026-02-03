@@ -16,14 +16,14 @@ import { SelectProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
+export class SelectComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
   protected adapter: Angular.ControlFieldAdapter<string, SelectProps> = inject(
     Angular.ControlFieldAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {
