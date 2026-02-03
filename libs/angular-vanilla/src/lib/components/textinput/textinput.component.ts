@@ -8,7 +8,7 @@ import { TextinputProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-textinput-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './textinput.component.html',
   host: {
     class: 'gui-textinput',
@@ -18,8 +18,8 @@ import { TextinputProps } from '@golemui/shared-vanilla';
 })
 export class TextinputComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, TextinputProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, TextinputProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {

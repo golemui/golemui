@@ -8,7 +8,7 @@ import { CalendarProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-calendar-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './calendar.component.html',
   host: {
     class: 'gui-calendar',
@@ -18,8 +18,8 @@ import { CalendarProps } from '@golemui/shared-vanilla';
 })
 export class CalendarComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, CalendarProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, CalendarProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {

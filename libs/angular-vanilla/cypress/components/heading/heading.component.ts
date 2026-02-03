@@ -12,15 +12,15 @@ type OwnWidgetProps = {
   standalone: true,
   selector: 'gui-heading',
   imports: [CommonModule],
-  providers: [Angular.DisplayFieldAdapter],
+  providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './heading.component.html',
   styleUrls: ['./heading.component.scss'],
 })
 export class HeadingComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.DisplayWidget;
 
-  protected adapter: Angular.DisplayFieldAdapter<OwnWidgetProps> = inject(
-    Angular.DisplayFieldAdapter,
+  protected adapter: Angular.DisplayWidgetAdapter<OwnWidgetProps> = inject(
+    Angular.DisplayWidgetAdapter,
   );
 
   ngOnInit(): void {

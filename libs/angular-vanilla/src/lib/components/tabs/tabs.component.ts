@@ -17,8 +17,8 @@ import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui
 @Component({
   standalone: true,
   selector: 'gui-tabs-layout',
-  imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.LayoutFieldAdapter],
+  imports: [CommonModule, Angular.WidgetDirective],
+  providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs',
@@ -35,7 +35,7 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.Wit
   isStartVisible = signal(false);
   isEndVisible = signal(false);
 
-  protected adapter: Angular.LayoutFieldAdapter<TabsProps> = inject(Angular.LayoutFieldAdapter);
+  protected adapter: Angular.LayoutWidgetAdapter<TabsProps> = inject(Angular.LayoutWidgetAdapter);
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
 

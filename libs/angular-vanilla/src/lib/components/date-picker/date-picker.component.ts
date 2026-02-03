@@ -19,7 +19,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
   standalone: true,
   selector: 'gui-date-picker-control',
   imports: [CommonModule, ErrorsComponent, LabelComponent],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './date-picker.component.html',
   host: {
     class: 'gui-date-picker',
@@ -30,8 +30,8 @@ import { LabelComponent } from '../../utils/templates/label.component';
 })
 export class DatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, DatePickerProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, DatePickerProps> = inject(
+    Angular.InputWidgetAdapter,
   );
   currentDate = new Date();
 

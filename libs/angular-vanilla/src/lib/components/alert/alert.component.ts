@@ -8,7 +8,7 @@ import { AlertProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-alert-display',
   imports: [CommonModule],
-  providers: [Angular.DisplayFieldAdapter],
+  providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './alert.component.html',
   host: {
     class: 'gui-alert',
@@ -18,7 +18,9 @@ import { AlertProps } from '@golemui/shared-vanilla';
 export class AlertComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.DisplayWidget;
 
-  protected adapter: Angular.DisplayFieldAdapter<AlertProps> = inject(Angular.DisplayFieldAdapter);
+  protected adapter: Angular.DisplayWidgetAdapter<AlertProps> = inject(
+    Angular.DisplayWidgetAdapter,
+  );
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

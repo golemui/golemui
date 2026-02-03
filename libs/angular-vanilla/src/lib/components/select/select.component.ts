@@ -8,7 +8,7 @@ import { SelectProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-select-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './select.component.html',
   host: {
     class: 'gui-select',
@@ -18,8 +18,8 @@ import { SelectProps } from '@golemui/shared-vanilla';
 })
 export class SelectComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, SelectProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, SelectProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {

@@ -13,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as Core from '@golemui/core';
 import { AngularFormContext } from '../../context/form.context';
-import { FieldDirective } from '../../directives/field.directive';
+import { WidgetDirective } from '../../directives/widget.directive';
 
 type JsonStringified = string;
 type JsonObject = Record<string, any>;
@@ -22,7 +22,7 @@ type JsonObject = Record<string, any>;
   selector: 'gui-core-form',
   standalone: true,
   templateUrl: './form.component.html',
-  imports: [CommonModule, FieldDirective],
+  imports: [CommonModule, WidgetDirective],
   providers: [AngularFormContext],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -32,7 +32,7 @@ type JsonObject = Record<string, any>;
 export class FormCoreComponent implements OnInit, OnDestroy {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
-  fieldLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>();
+  widgetLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>();
   validators = input.required<Core.ValidatorFn<any>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
@@ -55,7 +55,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // LIFE CYCLE
   ngOnInit(): void {
     this.context.initialize(
-      this.fieldLoaders(),
+      this.widgetLoaders(),
       this.middlewares(),
       this.validators(),
       this.validateOn(),

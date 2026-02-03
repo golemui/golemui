@@ -26,7 +26,7 @@ interface GuiListElement extends HTMLElement {
   standalone: true,
   selector: 'gui-dropdown-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './dropdown.component.html',
   host: {
     class: 'gui-dropdown',
@@ -37,8 +37,8 @@ interface GuiListElement extends HTMLElement {
 export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
-  protected adapter: Angular.ControlFieldAdapter<string, DropdownProps<never>> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, DropdownProps<never>> = inject(
+    Angular.InputWidgetAdapter,
   );
   private el = inject(ElementRef);
 

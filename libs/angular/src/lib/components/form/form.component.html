@@ -2,7 +2,7 @@
 
 <form [id]="formName()" novalidate>
   @if (formState && formState.formDef && context.widgetRegistry.ready) {
-    <ng-container guiField [field]="formState.formDef.form" />
+    <ng-container guiWidget [widget]="formState.formDef.form" />
   } @else {
     <div>Loading form...</div>
   }

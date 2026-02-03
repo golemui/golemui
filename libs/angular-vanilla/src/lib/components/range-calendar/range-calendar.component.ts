@@ -8,7 +8,7 @@ import { RangeCalendarProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-range-calendar-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './range-calendar.component.html',
   host: {
     class: 'gui-range-calendar',
@@ -18,8 +18,8 @@ import { RangeCalendarProps } from '@golemui/shared-vanilla';
 })
 export class RangeCalendarComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, RangeCalendarProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, RangeCalendarProps> = inject(
+    Angular.InputWidgetAdapter,
   );
   currentDate = new Date();
 

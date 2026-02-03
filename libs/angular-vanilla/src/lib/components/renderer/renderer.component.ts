@@ -8,7 +8,7 @@ import { ComponentRendererProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-renderer-component',
   imports: [CommonModule],
-  providers: [Angular.DisplayFieldAdapter],
+  providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './renderer.component.html',
   host: {
     class: 'gui-renderer',
@@ -17,8 +17,8 @@ import { ComponentRendererProps } from '@golemui/shared-vanilla';
 export class RendererComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.DisplayWidget;
 
-  protected adapter: Angular.DisplayFieldAdapter<ComponentRendererProps<Type<any>>> = inject(
-    Angular.DisplayFieldAdapter,
+  protected adapter: Angular.DisplayWidgetAdapter<ComponentRendererProps<Type<any>>> = inject(
+    Angular.DisplayWidgetAdapter,
   );
 
   ngOnInit(): void {

@@ -1,25 +1,25 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { BaseFieldAdapter } from './base.field-adapter';
+import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
-export class DisplayFieldAdapter<
+export class DisplayWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.DisplayWidget> {
+> extends BaseWidgetAdapter<Core.DisplayWidget> {
   templateData = signal<Core.DisplayWidgetTemplateData & ExtraProps>(
     {} as Core.DisplayWidgetTemplateData & ExtraProps,
   );
 
-  init(field: Core.DisplayWidget) {
-    this.field = field;
+  init(widget: Core.DisplayWidget) {
+    this.widget = widget;
 
     // Set initial templateData
     this.templateData.update((current) => ({
       ...current,
-      ...this.field.props,
+      ...this.widget.props,
     }));
 
-    this.addFieldToTheStore(field);
+    this.addWidgetToTheStore(widget);
     this.templateDataUpdater(this.templateData);
   }
 }

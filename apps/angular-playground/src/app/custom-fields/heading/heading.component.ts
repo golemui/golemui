@@ -11,16 +11,16 @@ type OwnWidgetProps = {
 @Component({
   standalone: true,
   selector: 'app-heading',
-  imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.DisplayFieldAdapter],
+  imports: [CommonModule, Angular.WidgetDirective],
+  providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './heading.component.html',
   styleUrls: ['./heading.component.scss'],
 })
 export class HeadingComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.DisplayWidget;
 
-  protected adapter: Angular.DisplayFieldAdapter<OwnWidgetProps> = inject(
-    Angular.DisplayFieldAdapter,
+  protected adapter: Angular.DisplayWidgetAdapter<OwnWidgetProps> = inject(
+    Angular.DisplayWidgetAdapter,
   );
 
   ngOnInit(): void {

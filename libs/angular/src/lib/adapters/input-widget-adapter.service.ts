@@ -2,42 +2,42 @@ import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { combineLatest, takeUntil } from 'rxjs';
 import { AngularItemRenderer } from '../components/item-renderers/item-renderer';
-import { BaseFieldAdapter } from './base.field-adapter';
+import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
-export class ControlFieldAdapter<
+export class InputWidgetAdapter<
   T,
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.InputWidget<T>> {
+> extends BaseWidgetAdapter<Core.InputWidget<T>> {
   templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
     {} as Core.ControlTemplateData<T> & ExtraProps,
   );
 
-  init(field: Core.InputWidget<T>) {
-    this.field = field;
+  init(widget: Core.InputWidget<T>) {
+    this.widget = widget;
 
-    this.addFieldToTheStore(field);
+    this.addWidgetToTheStore(widget);
     this.templateDataUpdater(this.templateData);
 
-    // Set field data
+    // Set widget data
     this.context.store.dispatch({
       type: 'SET_WIDGET_INITIAL_DATA',
-      payload: { data: field.defaultValue, path: field.path },
+      payload: { data: widget.defaultValue, path: widget.path },
     });
 
     // Set the initial templateData, including the controls's data value
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(field.path))
+      .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(widget.path))
       .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
     // Listen to the validation stream for this control
     const validation$ = this.context.store.state$.pipe(
       takeUntil(this.destroy$),
-      Core.validationByPath$(field.path),
+      Core.validationByPath$(widget.path),
     );
     const injectedValidation$ = this.context.store.state$.pipe(
       takeUntil(this.destroy$),
-      Core.injectedValidationByPath$(field.path),
+      Core.injectedValidationByPath$(widget.path),
     );
 
     combineLatest([validation$, injectedValidation$]).subscribe(
@@ -51,7 +51,7 @@ export class ControlFieldAdapter<
 
     // Listen to the touchedControls stream for this control
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.touchedControlsByPath$(field.path))
+      .pipe(takeUntil(this.destroy$), Core.touchedControlsByPath$(widget.path))
       .subscribe((touched) => {
         this.templateData.update((current) => ({
           ...current,
@@ -59,25 +59,25 @@ export class ControlFieldAdapter<
         }));
       });
 
-    this.context.emitEvent('load', this.field);
+    this.context.emitEvent('load', this.widget);
   }
 
   valueChanged<T>(value: T) {
     this.context.store.dispatch({
       type: 'SET_WIDGET_DATA',
-      payload: { path: this.field.path, data: value },
+      payload: { path: this.widget.path, data: value },
     });
-    this.context.emitEvent('change', this.field);
+    this.context.emitEvent('change', this.widget);
   }
 
   filterChanged<T>(value: T) {
-    this.context.emitEvent('filter', this.field, value);
+    this.context.emitEvent('filter', this.widget, value);
   }
 
   injectValidationIssues(issues: string[] | null) {
     this.context.store.dispatch({
       type: 'INJECT_VALIDATION_ISSUES',
-      payload: { path: this.field.path, issues },
+      payload: { path: this.widget.path, issues },
     });
   }
 
@@ -98,7 +98,7 @@ export class ControlFieldAdapter<
   onBlur() {
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur', path: this.field.path, uid: this.field.uid },
+      payload: { reason: 'blur', path: this.widget.path, uid: this.widget.uid },
     });
   }
 }
