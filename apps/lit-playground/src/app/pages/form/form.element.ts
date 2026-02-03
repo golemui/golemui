@@ -84,7 +84,7 @@ export class FormElement extends LitElement {
         <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
-          .fieldLoaders=${this.customWidgetLoaders}
+          .widgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
           .middlewares=${this.middlewares}
