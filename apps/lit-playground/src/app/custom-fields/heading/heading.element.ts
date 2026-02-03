@@ -19,7 +19,7 @@ export class HeadingElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.displayWidgetContext })
-  adapter: Lit.DisplayFieldAdapter<OwnWidgetProps> = new Lit.DisplayFieldAdapter();
+  adapter: Lit.DisplayWidgetAdapter<OwnWidgetProps> = new Lit.DisplayWidgetAdapter();
 
   subscriptions: Subscription[] = [];
 

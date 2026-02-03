@@ -3,9 +3,9 @@ import { createContext } from '@lit/context';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 export const displayWidgetContext =
-  createContext<DisplayFieldAdapter<any>>('guiDisplayFieldAdapter');
+  createContext<DisplayWidgetAdapter<any>>('guiDisplayWidgetAdapter');
 
-export class DisplayFieldAdapter<
+export class DisplayWidgetAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.DisplayWidget> {
   override templateData = {} as Core.DisplayWidgetTemplateData & ExtraProps;
