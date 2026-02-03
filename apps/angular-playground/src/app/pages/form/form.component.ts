@@ -34,9 +34,9 @@ export class AppFormPage {
   protected formData = mock.data;
 
   protected middlewares = [AppsShared.loggerMiddleware];
-  protected customFieldLoaders = {
+  protected customWidgetLoaders = {
     heading: async () =>
-      (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
+      (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
   };
   protected validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
