@@ -62,7 +62,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
             (api) => ({
               uid: 'propertyFunctionLabel',
               kind: 'input',
-              widget: 'textinput',
+              type: 'textinput',
               path: 'myInput',
               label: api?.$form.myInput,
               props: {
@@ -106,7 +106,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
             (api) => ({
               uid: 'inputUid',
               kind: 'input',
-              widget: 'textinput',
+              type: 'textinput',
               path: 'myInput',
               label: api?.touched ? (api?.errors ? 'Has errors!' : 'Ohmmm') : 'Not touched',
               validator: { type: 'string', required: true, minLength: 3 },
