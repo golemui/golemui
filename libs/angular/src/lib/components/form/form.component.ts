@@ -32,7 +32,7 @@ type JsonObject = Record<string, any>;
 export class FormCoreComponent implements OnInit, OnDestroy {
   // INPUTS
   formDef = input.required<JsonStringified | JsonObject>();
-  fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>();
+  fieldLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>();
   validators = input.required<Core.ValidatorFn<any>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
@@ -46,7 +46,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   protected formEvent = output<Core.FormEvent>();
 
   // INJECTS
-  protected context: AngularFormContext<Type<Core.WithField>> = inject(AngularFormContext);
+  protected context: AngularFormContext<Type<Core.WithWidget>> = inject(AngularFormContext);
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);

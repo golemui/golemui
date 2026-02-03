@@ -15,8 +15,8 @@ import { AccordionEventDetail, AccordionProps } from '@golemui/shared-vanilla';
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.LayoutField;
+export class AccordionComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
 
   protected adapter: Angular.LayoutFieldAdapter<AccordionProps> = inject(
@@ -24,13 +24,13 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
   );
 
   ngOnInit(): void {
-    const props: AccordionProps = this.field.props as AccordionProps;
-    this.adapter.init(this.field);
+    const props: AccordionProps = this.widget.props as AccordionProps;
+    this.adapter.init(this.widget);
     this.activeSections = props.defaultOpen ?? {};
   }
 
   onClickButton(uid: string) {
-    const props: AccordionProps = this.field.props as AccordionProps;
+    const props: AccordionProps = this.widget.props as AccordionProps;
     if (props.singleOpen) {
       Object.keys(this.activeSections)
         .filter((sectionUid) => sectionUid !== uid)
@@ -45,9 +45,9 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   getChild(uid: string) {
-    return this.field.children.find(
+    return this.widget.children.find(
       (section) => section.uid === uid,
-    ) as Core.NonFunctionField<string>;
+    ) as Core.NonFunctionWidget<string>;
   }
 
   ngOnDestroy(): void {

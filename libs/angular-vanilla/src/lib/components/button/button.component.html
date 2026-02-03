@@ -3,10 +3,10 @@
 <div class="gui-field">
   <button
     type="button"
-    [id]="field.uid"
+    [id]="widget.uid"
     (click)="onClick()"
     [disabled]="templateData.disabled"
-    [attr.data-cy]="field.uid + '_button'"
+    [attr.data-cy]="widget.uid + '_button'"
   >
     {{ templateData.label }}
   </button>

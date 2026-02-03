@@ -3,10 +3,10 @@ import * as Core from '@golemui/core';
 import { BaseFieldAdapter } from './base.field-adapter';
 
 @Injectable()
-export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.InteractiveField> {
-  templateData = signal<Core.InteractiveFieldTemplateData>({} as Core.InteractiveFieldTemplateData);
+export class InteractiveFieldAdapter extends BaseFieldAdapter<Core.ActionWidget> {
+  templateData = signal<Core.ActionWidgetTemplateData>({} as Core.ActionWidgetTemplateData);
 
-  init(field: Core.InteractiveField) {
+  init(field: Core.ActionWidget) {
     this.field = field;
     this.templateData.update((current) => ({
       ...current,

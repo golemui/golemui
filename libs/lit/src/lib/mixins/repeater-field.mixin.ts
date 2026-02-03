@@ -14,7 +14,7 @@ export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
-    @property({ type: Object }) field!: Core.FormField<string>;
+    @property({ type: Object }) field!: Core.FormWidget<string>;
     @property({ type: Number }) repeaterIndex = -1;
 
     @provide({ context: repeaterIndexTokenContext })
@@ -29,22 +29,22 @@ export const RepeaterFieldMixin = <T extends new (...args: any[]) => LitElement>
       if (!this.field) return;
 
       try {
-        const component = await this.formContext.fieldRegistry.loadField(this.field.widget!);
+        const component = await this.formContext.widgetRegistry.loadWidget(this.field.type!);
         const element = new component();
 
         this.repeaterIndexToken.index = repeaterIndex;
         new ContextProvider(element, repeaterIndexTokenContext, this.repeaterIndexToken);
 
-        element.field = Core.makeRepeaterItemConfig(Core.cloneObject(this.field), repeaterIndex);
+        element.widget = Core.makeRepeaterItemConfig(Core.cloneObject(this.field), repeaterIndex);
         element.id = `host-${this.field.uid}`;
         this.replaceWith(element);
       } catch (err) {
-        console.error(`Field "${this.field.widget}" could not be loaded`, err);
+        console.error(`Field "${this.field.type}" could not be loaded`, err);
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Field "${this.field.widget}" could not be loaded`,
+              message: `Field "${this.field.type}" could not be loaded`,
             },
             bubbles: true,
             composed: true,

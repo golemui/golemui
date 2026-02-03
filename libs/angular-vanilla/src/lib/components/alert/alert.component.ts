@@ -15,13 +15,13 @@ import { AlertProps } from '@golemui/shared-vanilla';
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class AlertComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.DisplayField;
+export class AlertComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.DisplayWidget;
 
   protected adapter: Angular.DisplayFieldAdapter<AlertProps> = inject(Angular.DisplayFieldAdapter);
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

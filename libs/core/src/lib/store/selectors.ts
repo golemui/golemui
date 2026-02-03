@@ -1,5 +1,5 @@
 import { distinctUntilChanged, filter, map, Observable, pipe, startWith } from 'rxjs';
-import { LayoutField } from '../form-field';
+import { LayoutWidget } from '../form-widget';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
 import { State } from './model';
@@ -64,21 +64,21 @@ export const injectedValidationByPath$ = (path: DotPath) =>
 
 // --------------------------------
 //
-// CALCULATED FIELDS
+// CALCULATED WIDGETS
 //
 // --------------------------------
 
-const selectCalculatedFields = pipe(
-  map((store: State) => store.calculatedFields),
+const selectCalculatedWidgets = pipe(
+  map((store: State) => store.calculatedWidgets),
   distinctUntilChanged(),
 );
 
-export const calculatedFieldsByUid$ = (uid: Uid) =>
+export const calculatedWidgetsByUid$ = (uid: Uid) =>
   pipe(
-    selectCalculatedFields,
-    map((calculatedFields) => calculatedFields[uid]),
-    filter((derivedField) => derivedField !== undefined),
-    map((derivedField) => derivedField.current),
+    selectCalculatedWidgets,
+    map((calculatedWidgets) => calculatedWidgets[uid]),
+    filter((derivedWidget) => derivedWidget !== undefined),
+    map((derivedWidget) => derivedWidget.current),
     distinctUntilChanged(),
   );
 
@@ -90,28 +90,28 @@ export const calculatedFieldsByUid$ = (uid: Uid) =>
 
 export const calculatedLayoutChildrenByUid$ = (uid: Uid) =>
   pipe(
-    selectCalculatedFields,
-    map((calculatedFields) => calculatedFields[uid]),
-    filter((derivedField) => derivedField !== undefined),
-    map((derivedField) => (derivedField.current as LayoutField).children),
+    selectCalculatedWidgets,
+    map((calculatedWidgets) => calculatedWidgets[uid]),
+    filter((derivedWidget) => derivedWidget !== undefined),
+    map((derivedWidget) => (derivedWidget.current as LayoutWidget).children),
     distinctUntilChanged(),
   );
 
 // --------------------------------
 //
-// FIELD FLAGS
+// WIDGET FLAGS
 //
 // --------------------------------
 
-export const selectFieldFlags = pipe(
-  map((store: State) => store.fieldFlags),
+export const selectWidgetFlags = pipe(
+  map((store: State) => store.widgetFlags),
   distinctUntilChanged(),
 );
 
-export const fieldFlagsByUid$ = (uid: Uid) =>
+export const widgetFlagsByUid$ = (uid: Uid) =>
   pipe(
-    selectFieldFlags,
-    map((fieldFlags) => fieldFlags[uid]),
+    selectWidgetFlags,
+    map((widgetFlags) => widgetFlags[uid]),
     distinctUntilChanged(),
   );
 

@@ -7,8 +7,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-textinput-control')
-export class TextinputElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+export class TextinputElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -27,7 +27,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-textinput');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -51,7 +51,7 @@ export class TextinputElement extends LitElement implements Core.WithField {
 
     return html`
       <gui-textinput
-        .uid=${this.field.uid}
+        .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

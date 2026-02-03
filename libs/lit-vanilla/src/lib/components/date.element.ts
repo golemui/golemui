@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-date-control')
-export class DateElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+export class DateElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -28,7 +28,7 @@ export class DateElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-date');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -56,7 +56,7 @@ export class DateElement extends LitElement implements Core.WithField {
     return html`
       <gui-date
         class=${classMap(dateIcon.fieldClasses)}
-        .uid=${this.field.uid}
+        .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label as string}
         .hint=${this.adapter.templateData.hint}
         .errors=${this.adapter.templateData.errors}

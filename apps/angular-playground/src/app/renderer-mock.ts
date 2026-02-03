@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { defineForm, FieldPropertyFunctionParams } from '@golemui/core';
+import { defineForm, WidgetPropertyFunctionParams } from '@golemui/core';
 
 const data = {
   details: {
@@ -11,7 +11,7 @@ const data = {
   template: `<h1>Client Name: {{ api().$form.details?.clientName || 'unknown' }}</h1>`,
 })
 class SampleComponent {
-  api = input.required<FieldPropertyFunctionParams<any>>();
+  api = input.required<WidgetPropertyFunctionParams<any>>();
 }
 
 const form = defineForm({
@@ -19,17 +19,17 @@ const form = defineForm({
     {
       uid: 'renderer-component',
       kind: 'display',
-      widget: 'renderer',
+      type: 'renderer',
       props: {
-        render: (api: FieldPropertyFunctionParams<any>) => {
+        render: (api: WidgetPropertyFunctionParams<any>) => {
           return { component: SampleComponent, api: api };
         },
       },
     },
     {
       uid: 'input-name',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'details.clientName',
       label: 'Client Name',
       props: {
@@ -41,8 +41,8 @@ const form = defineForm({
     // 7. Submit Action
     {
       uid: 'btn-submit',
-      kind: 'interactive',
-      widget: 'button',
+      kind: 'action',
+      type: 'button',
       on: {
         click: 'handleSubmit',
       },

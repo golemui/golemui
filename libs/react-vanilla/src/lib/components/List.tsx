@@ -9,8 +9,8 @@ interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
 }
 
-export function List(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<OptionValue>;
+export function List(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<OptionValue>;
 
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
     OptionValue,

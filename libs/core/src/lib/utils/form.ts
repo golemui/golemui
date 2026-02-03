@@ -1,35 +1,35 @@
-import * as Field from '../form-field';
+import * as Widget from '../form-widget';
 
 /**
- * Flattens the hierarchical form structure into a single-level array of form fields.
+ * Flattens the hierarchical form structure into a single-level array of form widgets.
  *
- * @returns A flattened array of all form fields, including nested ones from layout fields
+ * @returns A flattened array of all form widgets, including nested ones from layout widgets
  *
  * @example
  * ```typescript
- * const hierarchicalFields = [
+ * const hierarchicalWidgets = [
  *   { type: 'text', name: 'firstName' },
  *   { type: 'layout', children: [
  *     { type: 'text', name: 'street' },
  *     { type: 'text', name: 'city' }
  *   ]}
  * ];
- * const flatFields = flattenForm(hierarchicalFields);
- * // Result: [firstName field, layout field, street field, city field]
+ * const flatWidgets = flattenForm(hierarchicalWidgets);
+ * // Result: [firstName, layout, street, city]
  * ```
  */
-export function flattenForm(fields: Field.FormField[]): Field.FormField[] {
-  return fields.flatMap((field) => [
-    field,
-    ...(Field.isLayoutField(field) ? flattenForm(field.children) : []),
+export function flattenForm(widgets: Widget.FormWidget[]): Widget.FormWidget[] {
+  return widgets.flatMap((widget) => [
+    widget,
+    ...(Widget.isLayoutWidget(widget) ? flattenForm(widget.children) : []),
   ]);
 }
 
 export function uidCollisionErrorMessage(
-  existingField: Field.FormField<string>,
-  newField: Field.FormField<string>,
+  existingWidget: Widget.FormWidget<string>,
+  newWidget: Widget.FormWidget<string>,
 ) {
-  const getPath = (f: Field.FormField<string>) =>
-    Field.isControlField(f) ? ` at "${f.path}"` : '';
-  return `Duplicate UID "${newField.uid}": Assigned to widget "${existingField.widget}"${getPath(existingField)} and "${newField.widget}"${getPath(newField)}.`;
+  const getPath = (f: Widget.FormWidget<string>) =>
+    Widget.isInputWidget(f) ? ` at "${f.path}"` : '';
+  return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
 }

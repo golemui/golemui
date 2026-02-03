@@ -15,15 +15,15 @@ const form = defineForm({
   form: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       label: 'Name',
       path: 'name',
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'greeting',
       label: 'Greeting',
       disabled: true,
@@ -35,8 +35,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'wrongGreeting',
       props: {
         options: ['hello', 'bye'],
@@ -44,8 +44,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'greetingIndex',
       props: {
         options: [
@@ -56,8 +56,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.subregion',
       label: 'Country subregion',
       on: {
@@ -67,15 +67,15 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.country',
       include: { in: ['hasSubregion'] },
     },
     {
       uid: '',
-      kind: 'interactive',
-      widget: 'button',
+      kind: 'action',
+      type: 'button',
       label: 'Send',
       //disabled: true,
       //'disabled.hasSubregion': false,

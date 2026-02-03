@@ -7,8 +7,8 @@ type OwnWidgetProps = {
   level?: number;
 };
 
-export function HeadingComponent(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.DisplayField;
+export function HeadingComponent(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.DisplayWidget;
   const { uid, templateData } = useDisplayField<OwnWidgetProps>(field);
 
   return (

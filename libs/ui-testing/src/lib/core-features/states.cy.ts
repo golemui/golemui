@@ -14,24 +14,24 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'check1',
-                kind: 'control',
-                widget: 'checkbox',
+                kind: 'input',
+                type: 'checkbox',
                 label: 'Check 1',
                 path: 'check1',
                 props: {},
               },
               {
                 uid: 'check2',
-                kind: 'control',
-                widget: 'checkbox',
+                kind: 'input',
+                type: 'checkbox',
                 label: 'Check 2',
                 path: 'check2',
                 props: {},
               },
               {
                 uid: 'check1_check2',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 validator: { type: 'string', pattern: 'ab' },
@@ -83,24 +83,24 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'number1',
-                kind: 'control',
-                widget: 'number',
+                kind: 'input',
+                type: 'number',
                 label: 'Number 1',
                 path: 'number1',
                 props: {},
               },
               {
                 uid: 'number2',
-                kind: 'control',
-                widget: 'number',
+                kind: 'input',
+                type: 'number',
                 label: 'Number 2',
                 path: 'number2',
                 props: {},
               },
               {
                 uid: 'number1_number2',
-                kind: 'control',
-                widget: 'number',
+                kind: 'input',
+                type: 'number',
                 path: 'number',
                 props: {},
                 validator: { type: 'number', required: true },
@@ -183,24 +183,24 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'textinput1',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 label: 'Textinput 1',
                 path: 'textinput1',
                 props: {},
               },
               {
                 uid: 'textinput2',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 label: 'Textinput 2',
                 path: 'textinput2',
                 props: {},
               },
               {
                 uid: 'textinput1_textinput2',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 path: 'textinput',
                 props: {},
                 validator: { type: 'string', required: true },
@@ -286,7 +286,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'subregion',
                   prop: 'options',
@@ -305,8 +305,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onLoad',
-                kind: 'control',
-                widget: 'checkbox',
+                kind: 'input',
+                type: 'checkbox',
                 label: 'Execute on load',
                 path: 'onLoad',
                 defaultValue: true,
@@ -314,8 +314,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'eventSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'subregion',
                 label: 'Country subregion',
                 on: {
@@ -345,7 +345,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'country',
                   prop: 'options',
@@ -364,8 +364,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onChange',
-                kind: 'control',
-                widget: 'checkbox',
+                kind: 'input',
+                type: 'checkbox',
                 label: 'Execute on change',
                 path: 'onChange',
                 defaultValue: false,
@@ -373,8 +373,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'regionSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'region',
                 props: {
                   options: [
@@ -389,8 +389,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'countrySelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'country',
                 label: 'Country',
               },
@@ -419,7 +419,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'region',
                   prop: 'options',
@@ -438,22 +438,22 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onClick',
-                kind: 'control',
-                widget: 'checkbox',
+                kind: 'input',
+                type: 'checkbox',
                 label: 'Execute on click',
                 path: 'onClick',
                 props: {},
               },
               {
                 uid: 'regionSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'region',
               },
               {
                 uid: 'loadCountriesButton',
-                kind: 'interactive',
-                widget: 'button',
+                kind: 'action',
+                type: 'button',
                 label: 'Load Countries',
                 on: {
                   'click.doClick': 'getRegionsForSelect',
@@ -486,7 +486,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'subregion',
                   prop: 'options',
@@ -505,8 +505,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onLoad',
-                kind: 'control',
-                widget: 'number',
+                kind: 'input',
+                type: 'number',
                 label: 'Execute on load',
                 path: 'onLoad',
                 defaultValue: 10,
@@ -514,8 +514,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'eventSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'subregion',
                 label: 'Country subregion',
                 on: {
@@ -545,7 +545,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'country',
                   prop: 'options',
@@ -564,16 +564,16 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onChange',
-                kind: 'control',
-                widget: 'number',
+                kind: 'input',
+                type: 'number',
                 label: 'Execute on change',
                 path: 'onChange',
                 props: {},
               },
               {
                 uid: 'regionSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'region',
                 props: {
                   options: [
@@ -588,8 +588,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'countrySelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'country',
                 label: 'Country',
               },
@@ -618,7 +618,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'region',
                   prop: 'options',
@@ -637,22 +637,22 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onClick',
-                kind: 'control',
-                widget: 'number',
+                kind: 'input',
+                type: 'number',
                 label: 'Execute on click',
                 path: 'onClick',
                 props: {},
               },
               {
                 uid: 'regionSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'region',
               },
               {
                 uid: 'loadCountriesButton',
-                kind: 'interactive',
-                widget: 'button',
+                kind: 'action',
+                type: 'button',
                 label: 'Load Countries',
                 on: {
                   'click.doClick': 'getRegionsForSelect',
@@ -685,7 +685,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'subregion',
                   prop: 'options',
@@ -704,8 +704,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onLoad',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 label: 'Execute on load',
                 path: 'onLoad',
                 defaultValue: 'abc',
@@ -713,8 +713,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'eventSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'subregion',
                 label: 'Country subregion',
                 on: {
@@ -744,7 +744,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'country',
                   prop: 'options',
@@ -763,16 +763,16 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onChange',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 label: 'Execute on change',
                 path: 'onChange',
                 props: {},
               },
               {
                 uid: 'regionSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'region',
                 props: {
                   options: [
@@ -787,8 +787,8 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
               },
               {
                 uid: 'countrySelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'country',
                 label: 'Country',
               },
@@ -817,7 +817,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
             if (event.callback) {
               event.callback({
-                type: 'OVERRIDE_FIELD_PROP',
+                type: 'OVERRIDE_WIDGET_PROP',
                 payload: {
                   path: 'region',
                   prop: 'options',
@@ -836,22 +836,22 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
             form: [
               {
                 uid: 'onClick',
-                kind: 'control',
-                widget: 'textinput',
+                kind: 'input',
+                type: 'textinput',
                 label: 'Execute on click',
                 path: 'onClick',
                 props: {},
               },
               {
                 uid: 'regionSelect',
-                kind: 'control',
-                widget: 'select',
+                kind: 'input',
+                type: 'select',
                 path: 'region',
               },
               {
                 uid: 'loadCountriesButton',
-                kind: 'interactive',
-                widget: 'button',
+                kind: 'action',
+                type: 'button',
                 label: 'Load Countries',
                 on: {
                   'click.doClick': 'getRegionsForSelect',

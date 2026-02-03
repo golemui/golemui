@@ -1,5 +1,5 @@
 import * as Form from '../form';
-import * as Field from '../form-field';
+import * as Widget from '../form-widget';
 import { DotPath, Uid, ValidationStatus } from '../shared';
 
 // ------------------------------
@@ -17,10 +17,10 @@ export type State = {
   formDef: Form.Form<string>;
 
   /**
-   * Flattened representation of `formDef` as a map from UID to field definition.
+   * Flattened representation of `formDef` as a map from UID to widget definition.
    * Enables more efficient lookup and processing in downstream operations.
    */
-  flatForm: Record<Uid, Field.FormField<string>>;
+  flatForm: Record<Uid, Widget.FormWidget<string>>;
 
   /**
    * List of states computed for the current form state.
@@ -28,10 +28,10 @@ export type State = {
   currentStates: string[];
 
   /**
-   * Tracks fields whose components have been rendered.
-   * A field is added when its component mounts and removed when it unmounts.
+   * Tracks widgets whose components have been rendered.
+   * A widget is added when its component mounts and removed when it unmounts.
    */
-  calculatedFields: Record<Uid, DerivedField<Field.FormField<string>>>;
+  calculatedWidgets: Record<Uid, DerivedWidget<Widget.FormWidget<string>>>;
 
   /**
    * Validations statuses derived from the schema validators expressed declaratively.
@@ -56,16 +56,16 @@ export type State = {
   injectedValidations: Record<DotPath, ValidationStatus>;
 
   /**
-   * Tracks fields with state expressions.
-   * When data changes, these fields are updated and their flags recalculated.
+   * Tracks widgets with state expressions.
+   * When data changes, these widgets are updated and their flags recalculated.
    */
-  fieldFlags: Record<Uid, Field.Flags>;
+  widgetFlags: Record<Uid, Widget.Flags>;
 
   /**
-   * Allows overriding a field’s `prop` properties externally via its event handler mechanism.
-   * For example, this can be used to load options for a select field asynchronously.
+   * Allows overriding a widget’s `prop` properties externally via its event handler mechanism.
+   * For example, this can be used to load options for a select widget asynchronously.
    */
-  fieldPropOverrides: Record<Uid, Record<string, any>>;
+  widgetPropOverrides: Record<Uid, Record<string, any>>;
 
   data: Record<string, any>;
 
@@ -91,19 +91,19 @@ export const createInitialState = (lang: string): State => ({
   formName: '',
   formDef: Form.formDefDecoder.parse({
     form: {
-      widget: 'stack',
       kind: 'layout',
+      type: 'stack',
       children: [],
     },
   }) as Form.Form,
   flatForm: {},
   currentStates: [],
-  calculatedFields: {},
+  calculatedWidgets: {},
   validations: {},
   touchedControls: {},
   injectedValidations: {},
-  fieldFlags: {},
-  fieldPropOverrides: {},
+  widgetFlags: {},
+  widgetPropOverrides: {},
   data: {},
   formHealth: { status: 'ok' },
   touched: false,
@@ -133,20 +133,20 @@ export type Middleware<S, A> = (
 export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
 
 /**
- * Represents a form field whose value is derived from a computation
+ * Represents a form widget whose value is derived from a computation
  * and evaluated against its previous derived state.
  *
- * A `DerivedField<T>` captures the source field, the previous derived value,
+ * A `DerivedWidget<T>` captures the source widget, the previous derived value,
  * the newly derived value, and whether a structural change occurred between
  * derivations.
  */
-export type DerivedField<F extends Field.FormField<string>> = {
-  /** The source field from which the derived value is computed */
+export type DerivedWidget<F extends Widget.FormWidget<string>> = {
+  /** The source widget from which the derived value is computed */
   source: F;
   /** The previously derived value */
-  previous: Exclude<F, Field.FunctionField<string>>;
+  previous: Exclude<F, Widget.FunctionWidget<string>>;
   /** The newly derived value */
-  current: Exclude<F, Field.FunctionField<string>>;
+  current: Exclude<F, Widget.FunctionWidget<string>>;
   /** Indicates whether the newly derived value changed structurally */
   changed?: boolean;
 };

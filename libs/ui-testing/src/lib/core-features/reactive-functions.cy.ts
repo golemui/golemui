@@ -16,8 +16,8 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
           form: [
             {
               uid: 'propertyFunctionLabel',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'myInput',
               label: ({ $form }) => {
                 return $form.myInput;
@@ -61,8 +61,8 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
           form: [
             (api) => ({
               uid: 'propertyFunctionLabel',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'myInput',
               label: api?.$form.myInput,
               props: {
@@ -98,15 +98,15 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
           form: [
             {
               uid: 'openUid',
-              kind: 'control',
-              widget: 'checkbox',
+              kind: 'input',
+              type: 'checkbox',
               label: "Toggle me! I don't trigger input label changes",
               path: 'open',
             },
             (api) => ({
               uid: 'inputUid',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'myInput',
               label: api?.touched ? (api?.errors ? 'Has errors!' : 'Ohmmm') : 'Not touched',
               validator: { type: 'string', required: true, minLength: 3 },

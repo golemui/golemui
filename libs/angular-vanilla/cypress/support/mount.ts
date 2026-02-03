@@ -7,7 +7,7 @@ import { createOutputSpy, mount } from 'cypress/angular';
 import { FormComponent } from '../../src/lib/components/form/form.component';
 
 export const mountFramework = (options: MountOptions) => {
-  const fieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = options.withCustomComponent
+  const fieldLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent
     ? {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,

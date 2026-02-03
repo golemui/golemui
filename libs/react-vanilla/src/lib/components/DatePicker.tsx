@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
 
-export function DatePicker(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string>;
+export function DatePicker(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<string>;
   const {
     uid,
     errors,

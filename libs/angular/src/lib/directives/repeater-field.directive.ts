@@ -19,7 +19,7 @@ export class RepeaterFieldDirective extends FieldDirective {
   repeaterIndex = input.required<number>();
   private injector = inject(Injector);
 
-  protected override createComponent(component: Type<Core.WithField>) {
+  protected override createComponent(component: Type<Core.WithWidget>) {
     const injector = Injector.create({
       providers: [{ provide: REPEATER_INDEX_TOKEN, useValue: this.repeaterIndex() }],
       parent: this.injector,

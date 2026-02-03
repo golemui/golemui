@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { FieldLoaders, WithField } from '@golemui/core';
+import { WidgetLoaders, WithWidget } from '@golemui/core';
 import '@golemui/lit';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import {
@@ -17,14 +17,14 @@ import { LitItemRenderer, Type } from '@golemui/lit';
 export class FormElement extends LitElement {
   @property({ type: Object }) formDef!: string | Record<string, any>;
   @property({ type: Object }) data: any = {};
-  @property({ type: Object }) fieldLoaders: FieldLoaders<Type<WithField>> = {};
+  @property({ type: Object }) fieldLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
   @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
 
-  protected customFieldLoaders: FieldLoaders<Type<WithField>> = {
+  protected customFieldLoaders: WidgetLoaders<Type<WithWidget>> = {
     ...vanillaFieldLoaders,
     ...this.fieldLoaders,
   };

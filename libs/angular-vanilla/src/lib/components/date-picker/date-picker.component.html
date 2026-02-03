@@ -2,7 +2,7 @@
 @let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 @if (templateData.label) {
-  <label gui-label [for]="field.uid" [uid]="field.uid" [templateData]="templateData"></label>
+  <label gui-label [for]="widget.uid" [uid]="widget.uid" [templateData]="templateData"></label>
 }
 
 <div
@@ -16,7 +16,7 @@
 >
   <gui-date
     #dateControlRef
-    [uid]="field.uid"
+    [uid]="widget.uid"
     [hint]="templateData.hint"
     [showErrors]="false"
     [errors]="templateData.errors"
@@ -36,7 +36,7 @@
   @if (isCalendarOpen()) {
     <gui-calendar
       #calendarControlRef
-      [uid]="field.uid"
+      [uid]="widget.uid"
       [hint]="templateData.hint"
       [touched]="templateData.touched"
       [required]="templateData.validator?.required"
@@ -58,8 +58,8 @@
 @if (showErrors) {
   <ul
     gui-errors
-    [uid]="field.uid"
+    [uid]="widget.uid"
     [templateData]="templateData"
-    [attr.data-cy]="field.uid + '_validator-errors'"
+    [attr.data-cy]="widget.uid + '_validator-errors'"
   ></ul>
 }

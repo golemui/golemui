@@ -68,7 +68,7 @@ Creating a dynamic form has never been this easy.
         ```ts
         const vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
         const formDef = defineForm({
-          form: [{ uid: '', kind: 'control', widget: 'textinput', path: 'username' }],
+          form: [{ uid: '', kind: 'input', widget: 'textinput', path: 'username' }],
         });
         const formData = { username: 'golemui' };
 
@@ -100,7 +100,7 @@ Creating a dynamic form has never been this easy.
         })
         export class AppFormPage {
           protected formDef = defineForm({
-            form: [{ uid: '', kind: 'control', widget: 'textinput', path: 'username' }],
+            form: [{ uid: '', kind: 'input', widget: 'textinput', path: 'username' }],
           });
           protected formData = { username: 'golemui' };
           protected vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
@@ -112,7 +112,7 @@ Creating a dynamic form has never been this easy.
         @customElement('lit-form')
         export class FormElement extends LitElement {
           formDef = defineForm({
-            form: [{ uid: '', kind: 'control', widget: 'textinput', path: 'username' }],
+            form: [{ uid: '', kind: 'input', widget: 'textinput', path: 'username' }],
           });
           formData = { username: 'golemui' };
           vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };

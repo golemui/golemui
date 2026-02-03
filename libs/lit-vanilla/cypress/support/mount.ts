@@ -5,7 +5,7 @@ import '../../src/lib/components/form.element';
 import { Type } from '../../src/lib/utils/types';
 
 export const mountFramework = (options: MountOptions) => {
-  const fieldLoaders: Core.FieldLoaders<Type<Core.WithField>> = options.withCustomComponent
+  const fieldLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent
     ? {
         heading: async () => (await import('../components/heading/heading.element')).HeadingElement,
         customdate: async () =>

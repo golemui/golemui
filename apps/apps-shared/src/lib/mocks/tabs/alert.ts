@@ -1,12 +1,12 @@
 export const alert = (): any => ({
   uid: 'tab1',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: 'Some fields need your attention',
         level: 'warning',
@@ -15,7 +15,7 @@ export const alert = (): any => ({
     {
       uid: '',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: 'Some fields need your attention',
         level: 'success',
@@ -24,7 +24,7 @@ export const alert = (): any => ({
     {
       uid: '',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: 'Some fields need your attention',
         level: 'error',
@@ -33,7 +33,7 @@ export const alert = (): any => ({
     {
       uid: '',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: 'Some fields need your attention',
         level: 'info',
@@ -42,7 +42,7 @@ export const alert = (): any => ({
     {
       uid: '',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: 'Some fields need your attention',
       },

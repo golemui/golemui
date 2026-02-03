@@ -5,7 +5,7 @@ import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useControlField<T, ExtraProps extends Record<string, any>>(
-  field: Core.ControlField<T, string>,
+  field: Core.InputWidget<T, string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
@@ -13,15 +13,15 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
 
-  const templateData = useTemplateData<Core.ControlField<T, string>, ExtraProps>(field);
+  const templateData = useTemplateData<Core.InputWidget<T, string>, ExtraProps>(field);
 
   useEffect(() => {
     formContext.store.dispatch({
-      type: 'ADD_FIELD',
-      payload: { field },
+      type: 'ADD_WIDGET',
+      payload: { widget: field },
     });
     formContext.store.dispatch({
-      type: 'SET_FIELD_INITIAL_DATA',
+      type: 'SET_WIDGET_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
     setUid(field.uid);
@@ -67,7 +67,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   useEffect(() => {
     return () => {
       formContext.store.dispatch({
-        type: 'REMOVE_FIELD',
+        type: 'REMOVE_WIDGET',
         payload: { uid: field.uid },
       });
     };
@@ -76,7 +76,7 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   const onValueChanged = useCallback(
     (newValue: T) => {
       formContext.store.dispatch({
-        type: 'SET_FIELD_DATA',
+        type: 'SET_WIDGET_DATA',
         payload: { path: field.path, data: newValue },
       });
       formContext.emitEvent('change', field);

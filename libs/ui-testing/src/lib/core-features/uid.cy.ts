@@ -9,15 +9,15 @@ export const runUidTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'uid1',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               label: 'Something 1',
               path: 'something1',
             },
             {
               uid: 'uid1',
               kind: 'display',
-              widget: 'alert',
+              type: 'alert',
               props: { text: 'You have been alerted' },
               include: { in: ['showAlert'] },
             },

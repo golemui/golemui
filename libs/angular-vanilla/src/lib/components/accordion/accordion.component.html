@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-field" [id]="field.uid">
+<div class="gui-field" [id]="widget.uid">
   @for (section of templateData.sections; track section.uid) {
     <div class="gui-accordion__section">
       <button

@@ -19,7 +19,7 @@ const form = defineForm({
     {
       uid: 'header-1',
       kind: 'display',
-      widget: 'heading',
+      type: 'heading',
       props: {
         text: {
           key: 'consultation.header.onsite',
@@ -33,8 +33,8 @@ const form = defineForm({
     // 2. Mode Toggle (The State Switcher)
     {
       uid: 'toggle-mode',
-      kind: 'control',
-      widget: 'toggle',
+      kind: 'input',
+      type: 'toggle',
       path: 'details.isRemote',
       label: {
         key: 'consultation.mode.label',
@@ -45,8 +45,8 @@ const form = defineForm({
     // 3. Client Name Input
     {
       uid: 'input-name',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'details.clientName',
       label: {
         key: 'consultation.field.name',
@@ -63,8 +63,8 @@ const form = defineForm({
     // 4. Calendar Control (The Requested Widget)
     {
       uid: 'input-date',
-      kind: 'control',
-      widget: 'calendar',
+      kind: 'input',
+      type: 'calendar',
       path: 'details.date',
       label: {
         key: 'consultation.field.date',
@@ -82,7 +82,7 @@ const form = defineForm({
     {
       uid: 'info-location',
       kind: 'display',
-      widget: 'alert',
+      type: 'alert',
       props: {
         text: {
           key: 'consultation.info.onsite',
@@ -100,8 +100,8 @@ const form = defineForm({
     // 6. Conditional Currency (Only for on-site deposits)
     {
       uid: 'input-deposit',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'depositAmount',
       label: {
         key: 'consultation.field.deposit',
@@ -116,8 +116,8 @@ const form = defineForm({
     // 7. Submit Action
     {
       uid: 'btn-submit',
-      kind: 'interactive',
-      widget: 'button',
+      kind: 'action',
+      type: 'button',
       on: {
         click: 'handleSubmit',
       },

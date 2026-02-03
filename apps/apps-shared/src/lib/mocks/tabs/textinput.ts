@@ -1,26 +1,26 @@
 export const textinput = (): any => ({
   uid: 'tab6',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'textinput',
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'textinputDisabled',
       disabled: true,
       readonly: true,
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'textinputPhone',
       props: {
         placeholder: 'Please enter your phone number',
@@ -28,8 +28,8 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'textinputWithHint',
       props: {
         hint: 'This is a hint',
@@ -38,8 +38,8 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'textinputWithIcon',
       props: {
         icon: 'material-icons material-icons-phone_callback',
@@ -49,8 +49,8 @@ export const textinput = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'textinputIconRight',
       props: {
         icon: 'material-icons material-icons-phone_callback',

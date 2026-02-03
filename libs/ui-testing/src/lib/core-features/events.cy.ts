@@ -9,8 +9,8 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: '',
-              kind: 'control',
-              widget: 'asdf',
+              kind: 'input',
+              type: 'asdf',
               path: 'asdf',
               props: {},
             },
@@ -34,7 +34,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
           if (event.callback) {
             event.callback({
-              type: 'OVERRIDE_FIELD_PROP',
+              type: 'OVERRIDE_WIDGET_PROP',
               payload: {
                 path: 'subregion',
                 prop: 'options',
@@ -50,8 +50,8 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'eventSelect',
-              kind: 'control',
-              widget: 'select',
+              kind: 'input',
+              type: 'select',
               path: 'subregion',
               label: 'Country subregion',
               on: {
@@ -81,7 +81,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
           if (event.callback) {
             event.callback({
-              type: 'OVERRIDE_FIELD_PROP',
+              type: 'OVERRIDE_WIDGET_PROP',
               payload: {
                 path: 'country',
                 prop: 'options',
@@ -97,8 +97,8 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'regionSelect',
-              kind: 'control',
-              widget: 'select',
+              kind: 'input',
+              type: 'select',
               path: 'region',
               props: {
                 options: [
@@ -113,8 +113,8 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             },
             {
               uid: 'countrySelect',
-              kind: 'control',
-              widget: 'select',
+              kind: 'input',
+              type: 'select',
               path: 'country',
               label: 'Country',
             },
@@ -141,7 +141,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: 'tabsComponent',
               kind: 'layout',
-              widget: 'tabs',
+              type: 'tabs',
               props: {
                 defaultOpen: 'tab1',
                 tabs: [
@@ -154,7 +154,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid: 'tab1',
                   kind: 'display',
-                  widget: 'alert',
+                  type: 'alert',
                   props: {
                     text: 'Some fields need your attention 1',
                     level: 'warning',
@@ -163,7 +163,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 {
                   uid: 'tab2',
                   kind: 'display',
-                  widget: 'alert',
+                  type: 'alert',
                   props: {
                     text: 'Some fields need your attention 2',
                     level: 'warning',
@@ -201,7 +201,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
           if (event.callback) {
             event.callback({
-              type: 'OVERRIDE_FIELD_PROP',
+              type: 'OVERRIDE_WIDGET_PROP',
               payload: {
                 path: 'region',
                 prop: 'options',
@@ -217,14 +217,14 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'regionSelect',
-              kind: 'control',
-              widget: 'select',
+              kind: 'input',
+              type: 'select',
               path: 'region',
             },
             {
               uid: 'loadCountriesButton',
-              kind: 'interactive',
-              widget: 'button',
+              kind: 'action',
+              type: 'button',
               label: 'Load Countries',
               on: {
                 click: 'getRegionsForSelect',

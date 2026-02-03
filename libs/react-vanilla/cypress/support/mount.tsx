@@ -5,13 +5,14 @@ import { ComponentType } from 'react';
 import { FormComponent } from '../../src/lib/components/Form';
 
 export const mountFramework = (options: MountOptions) => {
-  const fieldLoaders: Core.FieldLoaders<ComponentType<Core.WithField>> = options.withCustomComponent
-    ? {
-        heading: async () =>
-          (await import('../components/heading/heading.component')).HeadingComponent,
-        customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
-      }
-    : {};
+  const fieldLoaders: Core.WidgetLoaders<ComponentType<Core.WithWidget>> =
+    options.withCustomComponent
+      ? {
+          heading: async () =>
+            (await import('../components/heading/heading.component')).HeadingComponent,
+          customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
+        }
+      : {};
 
   const handleFormEvent = options.formEvent ? options.formEvent : cy.spy().as('formEvent');
 

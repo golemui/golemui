@@ -1,12 +1,12 @@
 export const repeater = (): any => ({
   uid: 'tab3',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'repeater',
+      kind: 'input',
+      type: 'repeater',
       path: 'repeaters.users',
       props: {
         addLabel: 'Add new developer',
@@ -16,19 +16,19 @@ export const repeater = (): any => ({
         template: {
           uid: '',
           kind: 'layout',
-          widget: 'stack',
+          type: 'stack',
           children: [
             {
               uid: '',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'repeaters.users.items.firstName',
               validator: { type: 'string', required: true },
             },
             {
               uid: '',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'repeaters.users.items.lastName',
             },
           ],

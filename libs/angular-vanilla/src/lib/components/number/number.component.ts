@@ -16,14 +16,14 @@ import { NumberinputProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class NumberComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<number>;
+export class NumberComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<number>;
   protected adapter: Angular.ControlFieldAdapter<number, NumberinputProps> = inject(
     Angular.ControlFieldAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

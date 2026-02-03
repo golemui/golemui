@@ -10,8 +10,8 @@ export const runSelectComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'testSubject',
-              kind: 'control',
-              widget: 'select',
+              kind: 'input',
+              type: 'select',
               path: 'myField',
               props: {
                 options: ['a', 'b', 'c'],
@@ -19,8 +19,8 @@ export const runSelectComponentTests = (mountFn: MountComponentFn) => {
             },
             {
               uid: 'testButton',
-              kind: 'interactive',
-              widget: 'button',
+              kind: 'action',
+              type: 'button',
               label: 'Test',
               on: {
                 click: 'submit',

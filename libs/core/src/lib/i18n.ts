@@ -62,7 +62,7 @@ export type TranslationConfig = {
 };
 
 /**
- * Represents a field property that can be localized.
+ * Represents a widget property that can be localized.
  *
  * - If a plain string is provided, it is returned as-is.
  * - If a structured descriptor is provided, it is resolved via the translation system.

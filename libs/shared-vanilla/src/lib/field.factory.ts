@@ -2,11 +2,11 @@ import * as Core from '@golemui/core';
 import * as Props from './field.props';
 
 type ControlFieldConfig<T> = Omit<
-  Core.ControlField<T>,
-  'kind' | 'widget' | 'uid' | 'props' | 'validator'
+  Core.InputWidget<T>,
+  'kind' | 'type' | 'uid' | 'props' | 'validator'
 >;
-type LayoutFieldConfig = Omit<Core.LayoutField, 'kind' | 'widget' | 'uid' | 'props'>;
-type DisplayFieldConfig = Omit<Core.BaseField, 'kind' | 'widget' | 'uid' | 'props'>;
+type LayoutFieldConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
+type DisplayFieldConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 
 /**
  * Vanilla field factory
@@ -24,10 +24,10 @@ export const Vanilla = {
     props?: Props.TextinputProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.ControlField<string, StateKeys> => ({
+  }): Core.InputWidget<string, StateKeys> => ({
     uid: '',
-    kind: 'control',
-    widget: 'textinput',
+    kind: 'input',
+    type: 'textinput',
     // The `props` key only exists in the returned object when `props` is actually provided
     ...(props && { props }),
     ...(validator && { validator }),
@@ -42,10 +42,10 @@ export const Vanilla = {
     props?: Props.NumberinputProps;
     // validator?: Core.NumberValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.ControlField<number, StateKeys> => ({
+  }): Core.InputWidget<number, StateKeys> => ({
     uid: '',
-    kind: 'control',
-    widget: 'numberinput',
+    kind: 'input',
+    type: 'numberinput',
     ...(props && { props }),
     ...(validator && { validator }),
     ...config,
@@ -59,10 +59,10 @@ export const Vanilla = {
     props?: Props.CheckboxProps;
     // validator?: Core.BooleanValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.ControlField<boolean, StateKeys> => ({
+  }): Core.InputWidget<boolean, StateKeys> => ({
     uid: '',
-    kind: 'control',
-    widget: 'checkbox',
+    kind: 'input',
+    type: 'checkbox',
     ...(props && { props }),
     ...(validator && { validator }),
     ...config,
@@ -76,10 +76,10 @@ export const Vanilla = {
     props?: Props.SelectProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.ControlField<string, StateKeys> => ({
+  }): Core.InputWidget<string, StateKeys> => ({
     uid: '',
-    kind: 'control',
-    widget: 'select',
+    kind: 'input',
+    type: 'select',
     ...(props && { props }),
     ...(validator && { validator }),
     ...config,
@@ -91,20 +91,20 @@ export const Vanilla = {
   stack: <StateKeys extends Core.UiState = string>(
     config: LayoutFieldConfig,
     props?: Props.StackProps,
-  ): Core.LayoutField<StateKeys> => ({
+  ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
-    widget: 'stack',
+    type: 'stack',
     ...(props && { props }),
     ...config,
   }),
   tabs: <StateKeys extends Core.UiState = string>(
     config: LayoutFieldConfig,
     props?: Props.TabsProps,
-  ): Core.LayoutField<StateKeys> => ({
+  ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
-    widget: 'tabs',
+    type: 'tabs',
     ...(props && { props }),
     ...config,
   }),
@@ -115,10 +115,10 @@ export const Vanilla = {
   alert: <StateKeys extends Core.UiState = string>(
     config: DisplayFieldConfig,
     props?: Props.AlertProps,
-  ): Core.DisplayField<StateKeys> => ({
+  ): Core.DisplayWidget<StateKeys> => ({
     uid: '',
     kind: 'display',
-    widget: 'alert',
+    type: 'alert',
     ...(props && { props }),
     ...config,
   }),

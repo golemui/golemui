@@ -1,12 +1,12 @@
 export const select = (): any => ({
   uid: 'tab7',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.greeting',
       label: 'Greeting',
       readonly: true,
@@ -19,8 +19,8 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.wrongGreeting',
       props: {
         icon: 'material-icons material-icons-phone_callback',
@@ -32,8 +32,8 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.requiredUnselected',
       props: {
         hint: 'The disabled  "Select an Option" option should be selected, and a validation error should be displayed because the field is required',
@@ -43,8 +43,8 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.greetingIndex',
       props: {
         hint: '"bye.2" should be selected',
@@ -56,8 +56,8 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.subregion',
       label: 'Country subregion',
       props: { hint: 'The disabled  "Select an Option" option should be selected' },
@@ -68,8 +68,8 @@ export const select = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.country',
       include: { in: ['hasSubregionSelect'] },
     },

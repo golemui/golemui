@@ -15,14 +15,14 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class RepeaterComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<Record<string, unknown>[]>;
+export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<Record<string, unknown>[]>;
   protected adapter: Angular.ControlFieldAdapter<Record<string, unknown>[], RepeaterProps> = inject(
     Angular.ControlFieldAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   addItem() {

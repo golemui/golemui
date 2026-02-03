@@ -17,23 +17,23 @@ import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
   standalone: true,
 })
 export class FieldDirective implements OnInit {
-  field = input.required<Core.NonFunctionField<string>>();
+  field = input.required<Core.NonFunctionWidget<string>>();
   private repeaterIndexToken = inject(REPEATER_INDEX_TOKEN);
 
-  private formContext: AngularFormContext<Type<Core.WithField>> = inject(AngularFormContext);
+  private formContext: AngularFormContext<Type<Core.WithWidget>> = inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
-  private componentRef!: ComponentRef<Core.WithField>;
+  private componentRef!: ComponentRef<Core.WithWidget>;
 
   async ngOnInit() {
     try {
-      this.createComponent(await this.formContext.fieldRegistry.loadField(this.field().widget));
+      this.createComponent(await this.formContext.widgetRegistry.loadWidget(this.field().type));
     } catch {
       this.formContext.store.dispatch({
         type: 'SET_FORM_HEALTH',
         payload: {
           formHealth: {
             status: 'errored',
-            message: `Field "${this.field().widget}" could not be loaded`,
+            message: `Field "${this.field().type}" could not be loaded`,
           },
         },
       });
@@ -46,7 +46,7 @@ export class FieldDirective implements OnInit {
    * @param repeaterIndex We need to pass the index also because otherwise the top layout component refId is not updated to be unique via the index
    */
   protected createComponent(
-    component: Type<Core.WithField>,
+    component: Type<Core.WithWidget>,
     injector?: Injector,
     repeaterIndex?: number,
   ) {
@@ -55,14 +55,14 @@ export class FieldDirective implements OnInit {
     });
     const index = repeaterIndex ?? this.repeaterIndexToken;
     if (index > -1) {
-      this.componentRef.instance.field = Core.makeRepeaterItemConfig(
+      this.componentRef.instance.widget = Core.makeRepeaterItemConfig(
         Core.cloneObject(this.field()),
         index,
       );
     } else {
-      this.componentRef.instance.field = this.field();
+      this.componentRef.instance.widget = this.field();
     }
     (this.componentRef.location.nativeElement as HTMLElement).id =
-      `host-${this.componentRef.instance.field.uid}`;
+      `host-${this.componentRef.instance.widget.uid}`;
   }
 }

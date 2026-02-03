@@ -15,13 +15,13 @@ import { StackProps } from '@golemui/shared-vanilla';
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class StackComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.LayoutField;
+export class StackComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.LayoutWidget;
 
   protected adapter: Angular.LayoutFieldAdapter<StackProps> = inject(Angular.LayoutFieldAdapter);
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

@@ -17,7 +17,7 @@ const form = defineForm<FormData>({
     // {
     //   uid: '',
     //   kind: 'display',
-    //   widget: 'heading',
+    //   type: 'heading',
     //   props: {
     //     text: ({ $form }) => {
     //       if ($form.user?.name && !$form.registerMode) {
@@ -29,8 +29,8 @@ const form = defineForm<FormData>({
     // },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'user.name',
       label: ({ $form }) => {
         return $form.registerMode ? 'Name in Register' : 'Name in Login';
@@ -43,8 +43,8 @@ const form = defineForm<FormData>({
     },
     (api) => ({
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'user.lastName',
       label: api?.errors
         ? 'ERRORS!!!!!!!'
@@ -58,8 +58,8 @@ const form = defineForm<FormData>({
     }),
     {
       uid: '',
-      kind: 'control',
-      widget: 'checkbox',
+      kind: 'input',
+      type: 'checkbox',
       path: 'registerMode',
       label: ({ $form }) => {
         return $form.registerMode ? 'Change to Login' : 'Change to Register';
@@ -77,8 +77,8 @@ const form = defineForm<FormData>({
     },
     {
       uid: '',
-      kind: 'interactive',
-      widget: 'button',
+      kind: 'action',
+      type: 'button',
       label: ({ $form }) => {
         return $form.registerMode ? 'Register' : 'Login';
       },

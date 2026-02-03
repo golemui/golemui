@@ -4,8 +4,8 @@ import { OptionValue, SelectProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Select(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string>;
+export function Select(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<string>;
   const {
     uid,
     errors,

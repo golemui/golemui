@@ -4,8 +4,8 @@ import { CheckboxProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Checkbox(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<boolean>;
+export function Checkbox(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<boolean>;
   const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useControlField<
     boolean,
     CheckboxProps

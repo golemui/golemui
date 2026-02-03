@@ -4,8 +4,8 @@ import { TextinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function TextInput(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string>;
+export function TextInput(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<string>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
     string,
     TextinputProps

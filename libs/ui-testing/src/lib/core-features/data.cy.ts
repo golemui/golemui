@@ -16,26 +16,26 @@ export const runDataComponentTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'stringData',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'stringData',
             },
             {
               uid: 'numberData',
-              kind: 'control',
-              widget: 'number',
+              kind: 'input',
+              type: 'number',
               path: 'numberData',
             },
             {
               uid: 'booleanData',
-              kind: 'control',
-              widget: 'checkbox',
+              kind: 'input',
+              type: 'checkbox',
               path: 'booleanData',
             },
             {
               uid: 'selectData',
-              kind: 'control',
-              widget: 'select',
+              kind: 'input',
+              type: 'select',
               path: 'selectData',
               props: {
                 options: ['option1', 'option2'],
@@ -43,8 +43,8 @@ export const runDataComponentTests = (mountFn: MountComponentFn) => {
             },
             {
               uid: 'radioData',
-              kind: 'control',
-              widget: 'radiogroup',
+              kind: 'input',
+              type: 'radiogroup',
               path: 'radioData',
               props: {
                 options: ['radio1', 'radio2'],

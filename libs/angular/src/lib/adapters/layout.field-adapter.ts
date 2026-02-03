@@ -6,12 +6,12 @@ import { BaseFieldAdapter } from './base.field-adapter';
 @Injectable()
 export class LayoutFieldAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.LayoutField> {
+> extends BaseFieldAdapter<Core.LayoutWidget> {
   templateData = signal<Core.LayoutTemplateData & ExtraProps>({
-    children: [] as Core.FormField<string>[],
+    children: [] as Core.FormWidget<string>[],
   } as Core.LayoutTemplateData & ExtraProps);
 
-  init(field: Core.LayoutField) {
+  init(field: Core.LayoutWidget) {
     this.field = field;
 
     // Set initial templateData

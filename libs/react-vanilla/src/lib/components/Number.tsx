@@ -4,8 +4,8 @@ import { NumberinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function NumberInput(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<number>;
+export function NumberInput(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<number>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
     number,
     NumberinputProps

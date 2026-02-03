@@ -1,12 +1,12 @@
 export const radiogroup = (): any => ({
   uid: 'tab9',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'radiogroup',
+      kind: 'input',
+      type: 'radiogroup',
       path: 'radiogroups.greeting',
       label: 'Greeting',
       readonly: true,
@@ -17,8 +17,8 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'radiogroup',
+      kind: 'input',
+      type: 'radiogroup',
       path: 'radiogroups.wrongGreeting',
       props: {
         hint: 'No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
@@ -28,8 +28,8 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'radiogroup',
+      kind: 'input',
+      type: 'radiogroup',
       path: 'radiogroups.requiredUnselected',
       props: {
         hint: 'No option should be selected, and a validation error should be displayed because the field is required',
@@ -39,8 +39,8 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'radiogroup',
+      kind: 'input',
+      type: 'radiogroup',
       path: 'radiogroups.greetingIndex',
       props: {
         hint: '"bye.2" should be selected',
@@ -52,8 +52,8 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'radiogroup',
+      kind: 'input',
+      type: 'radiogroup',
       path: 'radiogroups.subregion',
       label: 'Country subregion',
       props: { hint: 'No option should be selected' },
@@ -64,8 +64,8 @@ export const radiogroup = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'radiogroup',
+      kind: 'input',
+      type: 'radiogroup',
       path: 'radiogroups.country',
       include: { in: ['hasSubregionRadiogroup'] },
     },

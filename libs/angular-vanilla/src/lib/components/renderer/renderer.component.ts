@@ -14,15 +14,15 @@ import { ComponentRendererProps } from '@golemui/shared-vanilla';
     class: 'gui-renderer',
   },
 })
-export class RendererComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.DisplayField;
+export class RendererComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.DisplayWidget;
 
   protected adapter: Angular.DisplayFieldAdapter<ComponentRendererProps<Type<any>>> = inject(
     Angular.DisplayFieldAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {
