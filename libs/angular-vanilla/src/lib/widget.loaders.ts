@@ -2,15 +2,13 @@ import { Type } from '@angular/core';
 import * as Core from '@golemui/core';
 import { VanillaWidget } from '@golemui/shared-vanilla';
 
-export const vanillaFieldLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
-  // INTERACTIVE FIELDS
+export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
+  // ACTION WIDGETS
   button: async () => (await import('./components/button/button.component')).ButtonComponent,
 
-  // REPEATER
+  // INPUT WIDGETS
   repeater: async () =>
     (await import('./components/repeater/repeater.component')).RepeaterComponent,
-
-  // CONTROLS
   textinput: async () =>
     (await import('./components/textinput/textinput.component')).TextinputComponent,
   currency: async () =>
@@ -35,13 +33,13 @@ export const vanillaFieldLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Vani
     (await import('./components/radiogroup/radiogroup.component')).RadiogroupComponent,
   list: async () => (await import('./components/list/list.component')).ListComponent,
 
-  // LAYOUTS
+  // LAYOUT WIDGETS
   stack: async () => (await import('./components/stack/stack.component')).StackComponent,
   tabs: async () => (await import('./components/tabs/tabs.component')).TabsComponent,
   accordion: async () =>
     (await import('./components/accordion/accordion.component')).AccordionComponent,
 
-  // DISPLAY FIELDS
+  // DISPLAY WIDGETS
   alert: async () => (await import('./components/alert/alert.component')).AlertComponent,
   renderer: async () =>
     (await import('./components/renderer/renderer.component')).RendererComponent,
