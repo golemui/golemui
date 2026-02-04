@@ -1,7 +1,7 @@
 export * from './lib/adapters/base-widget.adapter';
-export * from './lib/adapters/control-widget.adapter';
+export * from './lib/adapters/input-widget.adapter';
 export * from './lib/adapters/display.widget-adapter';
-export * from './lib/adapters/interactive-widget.adapter';
+export * from './lib/adapters/action-widget.adapter';
 export * from './lib/adapters/layout-widget.adapter';
 
 export * from './lib/components/widget/widget-element';

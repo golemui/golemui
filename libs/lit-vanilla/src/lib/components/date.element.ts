@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-date-control')
+@customElement('gui-date-input')
 export class DateElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
@@ -15,8 +15,8 @@ export class DateElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlWidgetAdapter<string, DatePickerProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<string, DatePickerProps>();
 
   subscriptions: Subscription[] = [];
 

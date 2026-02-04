@@ -6,7 +6,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-checkbox-control')
+@customElement('gui-checkbox-input')
 export class CheckboxElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<boolean>;
 
@@ -14,8 +14,8 @@ export class CheckboxElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlWidgetAdapter<boolean, CheckboxProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<boolean, CheckboxProps>();
 
   subscriptions: Subscription[] = [];
 

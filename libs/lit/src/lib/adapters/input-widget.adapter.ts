@@ -4,10 +4,9 @@ import { combineLatest, takeUntil } from 'rxjs';
 import { LitItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
-export const controlContext =
-  createContext<ControlWidgetAdapter<any, any>>('guiControlWidgetAdapter');
+export const inputContext = createContext<InputWidgetAdapter<any, any>>('guiInputWidgetAdapter');
 
-export class ControlWidgetAdapter<
+export class InputWidgetAdapter<
   T,
   ExtraProps extends Record<string, any>,
 > extends BaseWidgetAdapter<Core.InputWidget<T>> {

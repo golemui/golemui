@@ -5,7 +5,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-button-interactive')
+@customElement('gui-button-action')
 export class ButtonElement extends LitElement implements Core.WithWidget {
   widget!: Core.ActionWidget;
 
@@ -13,8 +13,8 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.interactiveContext })
-  adapter = new Lit.InteractiveWidgetAdapter();
+  @provide({ context: Lit.actionContext })
+  adapter = new Lit.ActionWidgetAdapter();
 
   subscriptions: Subscription[] = [];
 

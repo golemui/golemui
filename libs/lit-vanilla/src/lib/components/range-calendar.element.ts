@@ -6,7 +6,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-range-calendar-control')
+@customElement('gui-range-calendar-input')
 export class RangeCalendarElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<DateRange[]>;
 
@@ -14,8 +14,8 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlWidgetAdapter<DateRange[], RangeCalendarProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<DateRange[], RangeCalendarProps>();
 
   subscriptions: Subscription[] = [];
 

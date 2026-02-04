@@ -7,7 +7,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-repeater-control')
+@customElement('gui-repeater-input')
 export class RepeaterElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<Record<string, unknown>[]>;
 
@@ -15,8 +15,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlWidgetAdapter<Record<string, unknown>[], RepeaterProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps>();
 
   subscriptions: Subscription[] = [];
 

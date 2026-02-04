@@ -3,10 +3,10 @@ import { Type } from '@golemui/lit';
 import { VanillaWidget } from '@golemui/shared-vanilla';
 
 export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
-  // INTERACTIVE
+  // ACTION
   button: async () => (await import('./components/button.element')).ButtonElement,
 
-  // CONTROLS
+  // INPUTS
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,
   rangeCalendar: async () =>
     (await import('./components/range-calendar.element')).RangeCalendarElement,

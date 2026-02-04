@@ -7,7 +7,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-date-picker-control')
+@customElement('gui-date-picker-input')
 export class DatePickerElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
@@ -15,11 +15,11 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlWidgetAdapter<string, DatePickerProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<string, DatePickerProps>();
 
-  @query('#date-control') dateControl?: HTMLElement;
-  @query('#calendar-control') calendarControl?: HTMLElement;
+  @query('#date-input') dateInput?: HTMLElement;
+  @query('#calendar-input') calendarInput?: HTMLElement;
 
   @state() isCalendarOpen = false;
 
@@ -29,8 +29,8 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     if (!this.isCalendarOpen) return;
 
     const path = event.composedPath();
-    const clickedInsideDate = this.dateControl && path.includes(this.dateControl);
-    const clickedInsideCalendar = this.calendarControl && path.includes(this.calendarControl);
+    const clickedInsideDate = this.dateInput && path.includes(this.dateInput);
+    const clickedInsideCalendar = this.calendarInput && path.includes(this.calendarInput);
 
     if (!clickedInsideDate && !clickedInsideCalendar) {
       this.closeCalendar();
@@ -73,7 +73,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
 
     const calendar = this.isCalendarOpen
       ? html`<gui-calendar
-          id="calendar-control"
+          id="calendar-input"
           .uid=${this.widget.uid}
           .hint=${this.adapter.templateData.hint}
           ?touched=${this.adapter.templateData.touched}
@@ -104,7 +104,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
         @click=${() => this.openCalendar()}
       >
         <gui-date
-          id="date-control"
+          id="date-input"
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.widget.uid}
           .hint=${this.adapter.templateData.hint}

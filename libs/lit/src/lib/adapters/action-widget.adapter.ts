@@ -2,11 +2,9 @@ import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
-export const interactiveContext = createContext<InteractiveWidgetAdapter>(
-  'guiInteractiveWidgetAdapter',
-);
+export const actionContext = createContext<ActionWidgetAdapter>('guiActionWidgetAdapter');
 
-export class InteractiveWidgetAdapter extends BaseWidgetAdapter<Core.ActionWidget> {
+export class ActionWidgetAdapter extends BaseWidgetAdapter<Core.ActionWidget> {
   override templateData = {} as Core.ActionWidgetTemplateData;
 
   init(widget: Core.ActionWidget) {
