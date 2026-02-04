@@ -15,7 +15,7 @@ export class ToggleElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<boolean, ToggleProps>();
+  adapter = new Lit.ControlWidgetAdapter<boolean, ToggleProps>();
 
   subscriptions: Subscription[] = [];
 

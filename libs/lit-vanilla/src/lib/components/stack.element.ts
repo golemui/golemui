@@ -16,7 +16,7 @@ export class StackElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutFieldAdapter<StackProps>();
+  adapter = new Lit.LayoutWidgetAdapter<StackProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -62,7 +62,7 @@ export class StackElement extends LitElement implements Core.WithWidget {
         ${repeat(
           this.adapter.templateData.children || [],
           (child: any) => child?.uid,
-          (child: any) => html`<gui-field .field=${child}></gui-field>`,
+          (child: any) => html`<gui-widget .widget=${child}></gui-widget>`,
         )}
       </div>
     `;

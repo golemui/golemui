@@ -45,14 +45,14 @@ export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: st
   fieldType: string,
   templateData: ControlTemplateData<T> & ExtraProps,
 ) => {
-  const fieldClasses: { [key: string]: boolean } = {
+  const widgetClasses: { [key: string]: boolean } = {
     [`gui-${fieldType}--icon`]: false,
     [`gui-${fieldType}--icon-right`]: false,
   };
 
   if (templateData.icon) {
-    fieldClasses[`gui-${fieldType}--icon`] = true;
-    fieldClasses[`gui-${fieldType}--icon-right`] = templateData.iconPosition === 'right';
+    widgetClasses[`gui-${fieldType}--icon`] = true;
+    widgetClasses[`gui-${fieldType}--icon-right`] = templateData.iconPosition === 'right';
 
     const classes = {
       'gui-field-icon': true,
@@ -60,11 +60,11 @@ export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: st
       [templateData.icon]: true,
     };
     return {
-      fieldClasses: fieldClasses,
+      widgetClasses: widgetClasses,
       html: html`<span class=${classMap(classes)}></span>`,
     };
   } else {
-    return { fieldClasses: fieldClasses, html: html`` };
+    return { widgetClasses: widgetClasses, html: html`` };
   }
 };
 

@@ -107,7 +107,7 @@ export class GuiSelectControl extends LitElement {
         <select
           id=${this.uid!}
           data-cy=${`${this.uid}_select`}
-          class=${classMap(selectIcon.fieldClasses)}
+          class=${classMap(selectIcon.widgetClasses)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled || templateData.readonly}
           @change=${this.valueChanged}

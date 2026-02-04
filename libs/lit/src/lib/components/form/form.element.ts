@@ -6,7 +6,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
-import '../field/field.element';
+import '../widget/widgetElement';
 import { ValidateOnConverter } from './property.converters';
 
 @customElement('gui-core-form')
@@ -91,7 +91,7 @@ export class FormElement extends LitElement {
       <form id=${this.formName} novalidate>
         ${when(
           ready,
-          () => html` <gui-field .field=${this.state?.formDef.form}></gui-field>`,
+          () => html` <gui-widget .widget=${this.state?.formDef.form}></gui-widget>`,
           () => html` <div>Loading form...</div>`,
         )}
       </form>

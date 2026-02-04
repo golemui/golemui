@@ -18,7 +18,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutFieldAdapter<AccordionProps>();
+  adapter = new Lit.LayoutWidgetAdapter<AccordionProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -91,7 +91,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
                         this.adapter.templateData.renderMode !== 'activeOnly'}
                         aria-labelledby=${`accordion_button_${section.uid}`}
                       >
-                        <gui-field .field=${this.getChild(section.uid)}></gui-field>
+                        <gui-widget .widget=${this.getChild(section.uid)}></gui-widget>
                       </section>`
                     : nothing;
 

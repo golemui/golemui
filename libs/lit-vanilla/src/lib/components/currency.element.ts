@@ -15,7 +15,7 @@ export class CurrencyElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<number, CurrencyProps>();
+  adapter = new Lit.ControlWidgetAdapter<number, CurrencyProps>();
 
   subscriptions: Subscription[] = [];
 

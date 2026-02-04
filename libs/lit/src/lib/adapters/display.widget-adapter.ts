@@ -1,24 +1,24 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
-import { BaseFieldAdapter } from './base.field-adapter';
+import { BaseWidgetAdapter } from './base-widget.adapter';
 
 export const displayWidgetContext =
   createContext<DisplayWidgetAdapter<any>>('guiDisplayWidgetAdapter');
 
 export class DisplayWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.DisplayWidget> {
+> extends BaseWidgetAdapter<Core.DisplayWidget> {
   override templateData = {} as Core.DisplayWidgetTemplateData & ExtraProps;
 
-  init(field: Core.DisplayWidget) {
-    this.field = field;
+  init(widget: Core.DisplayWidget) {
+    this.widget = widget;
 
     // Set initial templateData
     this.setTemplateData({
-      ...this.field.props,
+      ...this.widget.props,
     });
 
-    this.addFieldToTheStore(field);
+    this.addWidgetToTheStore(widget);
     this.templateDataUpdater();
   }
 }

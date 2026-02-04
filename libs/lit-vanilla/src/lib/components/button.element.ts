@@ -14,7 +14,7 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.interactiveContext })
-  adapter = new Lit.InteractiveFieldAdapter();
+  adapter = new Lit.InteractiveWidgetAdapter();
 
   subscriptions: Subscription[] = [];
 

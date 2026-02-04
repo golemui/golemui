@@ -15,7 +15,7 @@ export class TextareaElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, TextareaProps>();
+  adapter = new Lit.ControlWidgetAdapter<string, TextareaProps>();
 
   subscriptions: Subscription[] = [];
 

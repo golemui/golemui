@@ -15,7 +15,7 @@ export class NumberElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<number, NumberinputProps>();
+  adapter = new Lit.ControlWidgetAdapter<number, NumberinputProps>();
 
   subscriptions: Subscription[] = [];
 

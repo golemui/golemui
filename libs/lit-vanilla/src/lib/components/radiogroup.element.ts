@@ -15,7 +15,7 @@ export class RadiogroupElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, RadiogroupProps>();
+  adapter = new Lit.ControlWidgetAdapter<string, RadiogroupProps>();
 
   subscriptions: Subscription[] = [];
 

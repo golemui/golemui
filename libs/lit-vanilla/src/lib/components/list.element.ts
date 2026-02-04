@@ -16,7 +16,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, ListProps<any>>();
+  adapter = new Lit.ControlWidgetAdapter<string, ListProps<any>>();
 
   subscriptions: Subscription[] = [];
 

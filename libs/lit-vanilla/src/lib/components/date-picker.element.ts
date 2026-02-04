@@ -16,7 +16,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, DatePickerProps>();
+  adapter = new Lit.ControlWidgetAdapter<string, DatePickerProps>();
 
   @query('#date-control') dateControl?: HTMLElement;
   @query('#calendar-control') calendarControl?: HTMLElement;
@@ -105,7 +105,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
       >
         <gui-date
           id="date-control"
-          class=${classMap(datePickerIcon.fieldClasses)}
+          class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.widget.uid}
           .hint=${this.adapter.templateData.hint}
           .showErrors=${false}

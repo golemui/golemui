@@ -16,7 +16,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, DropdownProps<never>>();
+  adapter = new Lit.ControlWidgetAdapter<string, DropdownProps<never>>();
 
   debouncer = new Subject<string>();
   subscriptions: Subscription[] = [];

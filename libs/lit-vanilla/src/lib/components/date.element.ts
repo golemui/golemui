@@ -16,7 +16,7 @@ export class DateElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, DatePickerProps>();
+  adapter = new Lit.ControlWidgetAdapter<string, DatePickerProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -55,7 +55,7 @@ export class DateElement extends LitElement implements Core.WithWidget {
 
     return html`
       <gui-date
-        class=${classMap(dateIcon.fieldClasses)}
+        class=${classMap(dateIcon.widgetClasses)}
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label as string}
         .hint=${this.adapter.templateData.hint}

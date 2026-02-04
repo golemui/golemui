@@ -15,7 +15,7 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<DateRange[], RangeCalendarProps>();
+  adapter = new Lit.ControlWidgetAdapter<DateRange[], RangeCalendarProps>();
 
   subscriptions: Subscription[] = [];
 

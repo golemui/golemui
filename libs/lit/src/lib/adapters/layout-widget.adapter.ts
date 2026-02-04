@@ -1,26 +1,26 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
-import { BaseFieldAdapter } from './base.field-adapter';
+import { BaseWidgetAdapter } from './base-widget.adapter';
 
-export const layoutContext = createContext<LayoutFieldAdapter<any>>('guiLayoutFieldAdapter');
+export const layoutContext = createContext<LayoutWidgetAdapter<any>>('guiLayoutWidgetAdapter');
 
-export class LayoutFieldAdapter<
+export class LayoutWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.LayoutWidget> {
+> extends BaseWidgetAdapter<Core.LayoutWidget> {
   override templateData = {} as Core.LayoutTemplateData & ExtraProps;
 
-  init(field: Core.LayoutWidget) {
-    this.field = field;
+  init(widget: Core.LayoutWidget) {
+    this.widget = widget;
 
     // Set initial templateData
     this.setTemplateData({
-      ...this.field.props,
+      ...this.widget.props,
     });
 
     // Listen to the layout's `hidden`-flag-filtered children stream
     this.context.store.state$
-      .pipe(Core.calculatedLayoutChildrenByUid$(this.field.uid))
+      .pipe(Core.calculatedLayoutChildrenByUid$(this.widget.uid))
       .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
         this.setTemplateData({
@@ -28,11 +28,11 @@ export class LayoutFieldAdapter<
         });
       });
 
-    this.addFieldToTheStore(field);
+    this.addWidgetToTheStore(widget);
     this.templateDataUpdater();
   }
 
   change<T>(detail?: T) {
-    this.context.emitEvent('change', this.field, detail);
+    this.context.emitEvent('change', this.widget, detail);
   }
 }
