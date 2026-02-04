@@ -6,7 +6,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
-import '../widget/widgetElement';
+import '../widget/widget-element';
 import { ValidateOnConverter } from './property.converters';
 
 @customElement('gui-core-form')
