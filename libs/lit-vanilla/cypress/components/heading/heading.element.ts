@@ -17,8 +17,8 @@ export class HeadingElement extends LitElement implements Core.WithWidget {
   @consume({ context: Lit.formContext })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.displayFieldContext })
-  adapter: Lit.DisplayFieldAdapter<OwnWidgetProps> = new Lit.DisplayFieldAdapter();
+  @provide({ context: Lit.displayWidgetContext })
+  adapter: Lit.DisplayWidgetAdapter<OwnWidgetProps> = new Lit.DisplayWidgetAdapter();
 
   override createRenderRoot() {
     return this;

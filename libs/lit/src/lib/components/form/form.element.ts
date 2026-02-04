@@ -15,7 +15,7 @@ export class FormElement extends LitElement {
   context = new LitFormContext();
 
   @property({ type: Object }) formDef: any = {};
-  @property({ type: Object }) fieldLoaders!: WidgetLoaders<WithWidget>;
+  @property({ type: Object }) widgetLoaders!: WidgetLoaders<WithWidget>;
   @property({ attribute: false }) validators!: Core.ValidatorFn<any>;
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: Object }) data: any = {};
@@ -35,7 +35,7 @@ export class FormElement extends LitElement {
     super.connectedCallback();
     this.classList.add('gui-form');
     this.context.initialize(
-      this.fieldLoaders,
+      this.widgetLoaders,
       this.middlewares,
       this.validators,
       this.validateOn,

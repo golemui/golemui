@@ -14,8 +14,8 @@ export class RendererElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.displayFieldContext })
-  adapter = new Lit.DisplayFieldAdapter<RendererProps>();
+  @provide({ context: Lit.displayWidgetContext })
+  adapter = new Lit.DisplayWidgetAdapter<RendererProps>();
 
   subscriptions: Subscription[] = [];
 

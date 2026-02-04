@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { Type } from '@golemui/lit';
 import { VanillaWidget } from '@golemui/shared-vanilla';
 
-export const vanillaFieldLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
+export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
   // INTERACTIVE
   button: async () => (await import('./components/button.element')).ButtonElement,
 

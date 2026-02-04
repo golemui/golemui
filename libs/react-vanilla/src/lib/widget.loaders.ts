@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { VanillaWidget } from '@golemui/shared-vanilla';
 
-export const vanillaFieldLoaders: Core.WidgetLoaders<
+export const vanillaWidgetLoaders: Core.WidgetLoaders<
   React.ComponentType<Core.WithWidget>,
   VanillaWidget
 > = {

@@ -2,10 +2,10 @@ import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { BaseFieldAdapter } from './base.field-adapter';
 
-export const displayFieldContext =
-  createContext<DisplayFieldAdapter<any>>('guiDisplayFieldAdapter');
+export const displayWidgetContext =
+  createContext<DisplayWidgetAdapter<any>>('guiDisplayWidgetAdapter');
 
-export class DisplayFieldAdapter<
+export class DisplayWidgetAdapter<
   ExtraProps extends Record<string, any>,
 > extends BaseFieldAdapter<Core.DisplayWidget> {
   override templateData = {} as Core.DisplayWidgetTemplateData & ExtraProps;
