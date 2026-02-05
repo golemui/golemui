@@ -2,7 +2,7 @@
   .gui-date-picker {
     display: block;
 
-    > .gui-field {
+    > .gui-widget {
       &::after {
         content: '';
         border: solid;

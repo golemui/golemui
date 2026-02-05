@@ -45,7 +45,7 @@ export function Accordion(widgetInstance: Core.WithWidget) {
       const isActiveSection = activeSections[uid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section
-          className="gui-field"
+          className="gui-widget"
           role="region"
           id={`accordion_section_${uid}`}
           hidden={!isActiveSection && templateData.renderMode !== 'activeOnly'}
@@ -81,7 +81,7 @@ export function Accordion(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-accordion" style={{ flex: templateData.size }}>
-      <div className="gui-field" id={uid}>
+      <div className="gui-widget" id={uid}>
         {renderAccordion()}
       </div>
     </div>

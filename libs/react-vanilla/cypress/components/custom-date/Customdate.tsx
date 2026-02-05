@@ -60,7 +60,7 @@ export function Customdate(fieldInstance: Core.WithWidget) {
 
   return (
     <div className="gui-customdate">
-      <div className="gui-field">
+      <div className="gui-widget">
         <input
           type="text"
           id={uid}

@@ -8,7 +8,7 @@ export function Alert(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-alert" style={{ flex: templateData.size }}>
-      <div className="gui-field" id={uid}>
+      <div className="gui-widget" id={uid}>
         <div
           role="alert"
           className={`gui-alert-notification gui-alert-notification--${templateData.level || 'default'}`}

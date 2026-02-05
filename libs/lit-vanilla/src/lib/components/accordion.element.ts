@@ -74,7 +74,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
     if (!this.adapter.templateData) return html``;
 
     return html`
-      <div class="gui-field" id=${this.widget.uid}>
+      <div class="gui-widget" id=${this.widget.uid}>
         ${this.adapter.templateData.sections
           ? repeat(
               this.adapter.templateData.sections,
@@ -84,7 +84,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
                   this.activeSections[section.uid] ||
                   this.adapter.templateData.renderMode !== 'activeOnly'
                     ? html`<section
-                        class="gui-field"
+                        class="gui-widget"
                         role="region"
                         id=${`accordion_section_${section.uid}`}
                         ?hidden=${!this.activeSections[section.uid] &&

@@ -112,7 +112,7 @@ export function List(widgetInstance: Core.WithWidget) {
         required={isRequired}
       ></gui-label>
 
-      <div className="gui-field">
+      <div className="gui-widget">
         <gui-list
           ref={listRef}
           id={uid}

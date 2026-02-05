@@ -62,7 +62,7 @@ export class GuiToggle extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData, true)}
 
-      <div class="gui-field gui-field--horizontal gui-toggle--switch">
+      <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
         <input
           type="checkbox"
           id=${this.uid}

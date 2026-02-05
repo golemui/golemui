@@ -99,7 +99,7 @@ export class GuiRadiogroup extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">${options}</div>
+      <div class="gui-widget">${options}</div>
 
       ${addErrors(this.uid as string, templateData)}
     `;

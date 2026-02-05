@@ -124,7 +124,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
         <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
           {templateData.label + (isRequired ? ' *' : '')}
           {hint && (
-            <div className="gui-field-hint" id={`${uid}_hint`}>
+            <div className="gui-widget-hint" id={`${uid}_hint`}>
               {hint}
             </div>
           )}
@@ -133,7 +133,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
       <div
         role="button"
         tabIndex={0}
-        className="gui-field"
+        className="gui-widget"
         onClick={openCalendar}
         onKeyUp={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {

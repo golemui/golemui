@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-field" [id]="widget.uid">
+<div class="gui-widget" [id]="widget.uid">
   @for (section of templateData.sections; track section.uid) {
     <div class="gui-accordion__section">
       <button
@@ -16,7 +16,7 @@
 
       @if (activeSections[section.uid] || templateData.renderMode !== 'activeOnly') {
         <section
-          class="gui-field"
+          class="gui-widget"
           role="region"
           [hidden]="!activeSections[section.uid] && templateData.renderMode !== 'activeOnly'"
           [id]="'accordion_section_' + section.uid"

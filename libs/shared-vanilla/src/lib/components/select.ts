@@ -103,7 +103,7 @@ export class GuiSelect extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <select
           id=${this.uid!}
           data-cy=${`${this.uid}_select`}

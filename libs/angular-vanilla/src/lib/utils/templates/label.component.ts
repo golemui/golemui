@@ -10,7 +10,7 @@ import * as Core from '@golemui/core';
       {{ templateData().label + (templateData().validator?.required ? ' *' : '') }}
     }
     @if (templateData().hint) {
-      <div class="gui-field-hint" [id]="uid() + '_hint'">{{ templateData().hint }}</div>
+      <div class="gui-widget-hint" [id]="uid() + '_hint'">{{ templateData().hint }}</div>
     }
     <ng-content></ng-content>`,
   host: {

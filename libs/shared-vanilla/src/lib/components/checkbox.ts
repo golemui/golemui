@@ -62,7 +62,7 @@ export class GuiCheckbox extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData, true)}
 
-      <div class="gui-field gui-field--horizontal">
+      <div class="gui-widget gui-widget--horizontal">
         <input
           type="checkbox"
           id=${this.uid}

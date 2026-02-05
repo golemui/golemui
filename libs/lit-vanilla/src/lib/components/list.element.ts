@@ -82,7 +82,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
         .required=${data.validator?.required}
       ></gui-label>
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <gui-list
           id=${this.widget.uid}
           .uid=${this.widget.uid}

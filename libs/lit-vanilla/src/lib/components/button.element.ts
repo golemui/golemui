@@ -47,7 +47,7 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
 
   override render() {
     return html`
-      <div class="gui-field">
+      <div class="gui-widget">
         <button
           type="button"
           id=${this.widget.uid}

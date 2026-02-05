@@ -70,15 +70,15 @@ export class GuiNumber extends LitElement {
     };
 
     const numberClasses = {
-      'gui-field-icon': true,
-      'gui-field-icon--right': this.iconPosition === 'right',
+      'gui-widget-icon': true,
+      'gui-widget-icon--right': this.iconPosition === 'right',
       [this.icon as string]: true,
     };
 
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <input
           type="number"
           inputmode="numeric"

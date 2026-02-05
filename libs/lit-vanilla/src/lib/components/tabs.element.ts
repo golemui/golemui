@@ -92,8 +92,8 @@ export class TabsElement extends LitElement implements Core.WithWidget {
     );
 
     const navClasses = {
-      'gui-field': true,
-      'gui-field--horizontal': true,
+      'gui-widget': true,
+      'gui-widget--horizontal': true,
       'gui-tabs--start-shadow': !this.isStartVisible,
       'gui-tabs--end-shadow': !this.isEndVisible,
     };

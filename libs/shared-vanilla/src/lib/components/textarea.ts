@@ -79,8 +79,8 @@ export class GuiTextarea extends LitElement {
       fieldClasses[`gui-textarea--icon`] = true;
 
       const classes = {
-        'gui-field-icon': true,
-        'gui-field-icon--right': true,
+        'gui-widget-icon': true,
+        'gui-widget-icon--right': true,
         [templateData.icon]: true,
       };
       textareaIcon = html`<span class=${classMap(classes)}></span>`;
@@ -128,7 +128,7 @@ export class GuiTextarea extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <textarea
           id=${this.uid}
           data-cy=${`${this.uid}_textarea`}

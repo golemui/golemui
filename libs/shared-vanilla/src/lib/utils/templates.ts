@@ -37,7 +37,7 @@ export const addHint = <T, ExtraProps extends { hint?: string }>(
   templateData: ControlTemplateData<T> & ExtraProps,
 ) => {
   return templateData.hint
-    ? html`<div class="gui-field-hint" id=${`${uid}_hint`}>${templateData.hint}</div>`
+    ? html`<div class="gui-widget-hint" id=${`${uid}_hint`}>${templateData.hint}</div>`
     : html``;
 };
 
@@ -55,8 +55,8 @@ export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: st
     widgetClasses[`gui-${widgetType}--icon-right`] = templateData.iconPosition === 'right';
 
     const classes = {
-      'gui-field-icon': true,
-      'gui-field-icon--right': templateData.iconPosition === 'right',
+      'gui-widget-icon': true,
+      'gui-widget-icon--right': templateData.iconPosition === 'right',
       [templateData.icon]: true,
     };
     return {

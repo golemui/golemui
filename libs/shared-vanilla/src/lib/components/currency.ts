@@ -89,7 +89,7 @@ export class GuiCurrency extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <input
           type="text"
           id=${this.uid}

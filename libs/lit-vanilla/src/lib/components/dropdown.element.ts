@@ -255,7 +255,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
         .required=${templateData.validator?.required}
       ></gui-label>
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <input
           type="text"
           id=${this.widget.uid}

@@ -89,14 +89,14 @@ export class GuiDate extends LitElement {
     }).formatToParts(new Date());
 
     const iconClassMap = {
-      'gui-field-icon': true,
+      'gui-widget-icon': true,
       [this.icon as string]: true,
     };
 
     return html`
       ${this.label ? addLabel(this.uid as string, templateData) : nothing}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}" role="group">
           ${repeat(
             parts,

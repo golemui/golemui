@@ -283,7 +283,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         required={isRequired}
       ></gui-label>
 
-      <div className="gui-field">
+      <div className="gui-widget">
         <input
           ref={inputRef}
           type="text"

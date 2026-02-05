@@ -145,8 +145,8 @@ export function Tabs(widgetInstance: Core.WithWidget) {
     <div className="gui-tabs" style={{ flex: templateData.size }}>
       <nav
         className={cn({
-          'gui-field': true,
-          'gui-field--horizontal': true,
+          'gui-widget': true,
+          'gui-widget--horizontal': true,
           'gui-tabs--start-shadow': !isStartVisible,
           'gui-tabs--end-shadow': !isEndVisible,
         })}

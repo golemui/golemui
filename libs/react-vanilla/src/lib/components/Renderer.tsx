@@ -9,7 +9,7 @@ export function Renderer(widgetInstance: Core.WithWidget) {
   const renderedElement = templateData?.render;
   return (
     <div className="gui-renderer">
-      <div className="gui-field" id={uid}>
+      <div className="gui-widget" id={uid}>
         {renderedElement}
       </div>
     </div>

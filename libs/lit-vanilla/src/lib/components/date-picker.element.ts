@@ -98,7 +98,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
       <div
         role="button"
         tabindex="0"
-        class="gui-field"
+        class="gui-widget"
         aria-expanded=${this.isCalendarOpen}
         @keyup=${() => this.onKeyUp(event)}
         @click=${() => this.openCalendar()}
