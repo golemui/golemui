@@ -55,8 +55,8 @@ export class StackElement extends LitElement implements Core.WithWidget {
     return html`
       <div
         class=${classes.horizontal
-          ? 'gui-stack__field gui-stack__field--horizontal'
-          : 'gui-stack__field'}
+          ? 'gui-stack__widget gui-stack__widget--horizontal'
+          : 'gui-stack__widget'}
         id=${this.widget?.uid}
       >
         ${repeat(

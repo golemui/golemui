@@ -14,7 +14,7 @@ export function Stack(widgetInstance: Core.WithWidget) {
     ));
   }, [children]);
 
-  const direction = templateData.direction === 'horizontal' ? 'gui-stack__field--horizontal' : '';
+  const direction = templateData.direction === 'horizontal' ? 'gui-stack__widget--horizontal' : '';
   return (
     <div className="gui-stack" style={{ flex: templateData.size }}>
       <div className={`gui-stack__widget ${direction}`} id={uid}>

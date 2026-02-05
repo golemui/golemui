@@ -2,7 +2,7 @@
 
 <div
   class="gui-stack__widget"
-  [class.gui-stack__field--horizontal]="templateData.direction === 'horizontal'"
+  [class.gui-stack__widget--horizontal]="templateData.direction === 'horizontal'"
   [id]="widget.uid"
 >
   @for (child of templateData.children; track child.uid) {

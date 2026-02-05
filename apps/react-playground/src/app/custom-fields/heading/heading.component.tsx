@@ -13,7 +13,7 @@ export function HeadingComponent(fieldInstance: Core.WithWidget) {
   const { uid, templateData } = useDisplayWdiget<OwnWidgetProps>(field);
 
   return (
-    <div className="gui-field" id={uid}>
+    <div className="gui-widget" id={uid}>
       <DynamicHeading level={templateData.level || 1}>{templateData.text}</DynamicHeading>
     </div>
   );

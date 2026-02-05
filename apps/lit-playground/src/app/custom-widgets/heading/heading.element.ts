@@ -62,7 +62,7 @@ export class HeadingElement extends LitElement implements Core.WithWidget {
         break;
     }
 
-    return html`<div class="gui-field">${heading}</div>`;
+    return html`<div class="gui-widget">${heading}</div>`;
   }
 
   disconnectedCallback() {
