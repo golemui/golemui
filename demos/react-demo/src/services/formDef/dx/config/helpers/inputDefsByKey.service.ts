@@ -8,17 +8,17 @@ import {
 import { ParsedDxShortcut, UnrolledField, UnrolledFields } from '../../dx.domain';
 import {
   DxField,
-  DxFieldsByKey,
+  FacadeFieldByKey,
   OneOfDataInputDefsCallback,
   ProcessedDxField,
   ProcessedDxFieldsByKey,
-} from '../../gui/guiFields.impl';
+} from '../../gui/fields/guiFields.impl';
 
 export class InputDefsByKeyService {
   constructor(private readonly sensibleDefaults: SensibleDefaults) {}
 
   unroll<FORM_DATA extends Record<string, any> = any>(
-    payload: DxFieldsByKey<FORM_DATA>,
+    payload: FacadeFieldByKey<FORM_DATA>,
     source: ParsedDxShortcut<any>,
   ): UnrolledFields {
     return {
@@ -29,7 +29,7 @@ export class InputDefsByKeyService {
   }
 
   public expandFields<T extends Record<string, any>>(
-    fields: DxFieldsByKey<T>,
+    fields: FacadeFieldByKey<T>,
   ): ProcessedDxFieldsByKey<T> {
     const result: ProcessedDxFieldsByKey<T> = {};
     Object.entries(fields).forEach(([key, dataInputDef]) => {
@@ -62,7 +62,7 @@ export class InputDefsByKeyService {
   }
 
   private processPayload<FORM_DATA extends Record<string, any> = any>(
-    payload: DxFieldsByKey<FORM_DATA>,
+    payload: FacadeFieldByKey<FORM_DATA>,
   ): UnrolledField[] {
     const expandedFields:ProcessedDxFieldsByKey<FORM_DATA> = this.expandFields(payload);
     const result: UnrolledField[] = [];

@@ -1,4 +1,4 @@
-import { ControllerDef, ControllerDefCallback, OneOfDataInputDefs } from './formDef.domain';
+import { ActionDef, ControllerDefCallback, OneOfDataInputDefs } from './formDef.domain';
 
 export interface DefaultFieldDefParams {
   data: any;
@@ -7,9 +7,9 @@ export interface DefaultFieldDefParams {
   baseDef: OneOfDataInputDefs;
 }
 
-export type DefaultFieldDefFn = (params: DefaultFieldDefParams) => Partial<OneOfDataInputDefs>;
+export type DefaultFieldDefFn = (params: Partial<DefaultFieldDefParams>) => Partial<OneOfDataInputDefs>;
 export type DefaultFieldDefLike = Partial<OneOfDataInputDefs> | DefaultFieldDefFn;
-export type DefaultButtonDefLike = Partial<ControllerDef> | ControllerDefCallback;
+export type DefaultButtonDefLike = Partial<ActionDef> | ControllerDefCallback;
 
 export interface FormConfig<T extends Record<string, any> = any> {
   defaultButtonDef?: DefaultButtonDefLike;

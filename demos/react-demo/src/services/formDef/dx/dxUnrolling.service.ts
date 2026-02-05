@@ -1,6 +1,5 @@
-import {
+import UnrolledController, {
   ParsedDxShortcut,
-  UnrolledController,
   UnrolledField,
   UnrolledItems,
   UnrolledLayout,

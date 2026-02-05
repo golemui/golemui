@@ -1,5 +1,6 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
+import { _guiFields } from '../../services/formDef/dx/gui/fields/guiFields.impl';
+import { _guiStack, _guiHorizontalStack } from '../../services/formDef/dx/gui/fields/guiStack.impl';
 
 export const mixingLayouts: FormDemoDefinition = {
   title: 'Mixing Layouts',
@@ -10,15 +11,12 @@ export const mixingLayouts: FormDemoDefinition = {
       age: 'number',
       height: 'number',
     }),
-    [
-      '_horizontalLayout',
-      [
-        _guiFields({
-          married: 'number',
-          withChildren: 'number',
-        }),
-      ],
-    ],
+    _guiHorizontalStack(
+      _guiFields({
+        married: 'number',
+        withChildren: 'number',
+      }),
+    ),
     _guiFields({
       occupation: 'string',
     }),

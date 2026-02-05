@@ -1,29 +1,30 @@
 import {
-  ControlField,
-  DisplayField,
+  ActionWidget,
+  DisplayWidget,
   Form,
-  FunctionField,
-  FunctionFieldParams,
-  InteractiveField,
-  LayoutField,
+  FunctionWidget,
+  FunctionWidgetParams,
+  InputWidget,
+  LayoutWidget,
   UiState,
 } from '@golemui/core';
-import { ControllerDef, OneOfDataInputDefs } from '../formDef.domain';
+import { ActionDef, OneOfDataInputDefs } from '../formDef.domain';
 import { FormConfig } from '../fomConfig.domain';
 import formItemsMapper, { FormItemsMapper } from './formItemsMapper.service';
 import dxUnrollingService, { DxUnrollingService } from '../dx/dxUnrolling.service';
-import { UnrolledController, UnrolledField, ValidUnrolledElement } from '../dx/dx.domain';
+import UnrolledController, { UnrolledField, ValidUnrolledElement } from '../dx/dx.domain';
 
-type FormField<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
-  | DisplayField<StateKeys, FormData>
-  | ControlField<any, StateKeys, FormData>
-  | LayoutField<StateKeys, FormData>
-  | InteractiveField<StateKeys, FormData>;
+export type FormWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
+  | DisplayWidget<StateKeys, FormData>
+  | FunctionWidget<StateKeys, FormData>
+  | InputWidget<any, StateKeys, FormData>
+  | LayoutWidget<StateKeys, FormData>
+  | ActionWidget<StateKeys, FormData>;
 
 export interface ReadyToMapToGolemFormItem {
   type: 'controller' | 'field';
   unrolledElement: UnrolledField | UnrolledController;
-  value: OneOfDataInputDefs | ControllerDef;
+  value: OneOfDataInputDefs | ActionDef;
   isCallback: boolean;
 }
 
@@ -46,64 +47,44 @@ export class FormDefMapper {
   private doMap<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     unrolledResults: ValidUnrolledElement[],
     formConfig: FormConfig<FormData> | undefined,
-  ): (
-    | DisplayField<StateKeys, FormData>
-    | ControlField<any, StateKeys, FormData>
-    | LayoutField<StateKeys, FormData>
-    | InteractiveField<StateKeys, FormData>
-    | FunctionField<StateKeys, FormData>
-  )[] {
-    return unrolledResults.flatMap((item) => this.mapToFormFields(item, formConfig));
+  ): FormWidget<StateKeys, FormData>[] {
+    return unrolledResults.flatMap((item) => this.mapToFormWidget(item, formConfig));
   }
 
   private createLayout<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    children: (
-      | DisplayField<StateKeys, FormData>
-      | ControlField<any, StateKeys, FormData>
-      | LayoutField<StateKeys, FormData>
-      | InteractiveField<StateKeys, FormData>
-      | FunctionField<StateKeys, FormData>
-    )[],
+    children: FormWidget<StateKeys, FormData>[],
     direction: 'vertical' | 'horizontal' = 'vertical',
-  ): LayoutField<StateKeys, FormData> {
+  ): LayoutWidget<StateKeys, FormData> {
     return {
       uid: '',
       children,
       kind: 'layout',
-      widget: 'stack',
+      type: 'stack',
       props: {
         direction: direction,
       },
     };
   }
 
-  private mapToFormFields<
+  private mapToFormWidget<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
     unrolledElement: ValidUnrolledElement,
     formConfig?: FormConfig<FormData>,
-  ): (
-    | FormField<StateKeys, FormData>
-    | FunctionField<StateKeys, FormData>
-    | LayoutField<StateKeys, FormData>
-  )[] {
+  ): FormWidget<StateKeys, FormData>[] {
     if (this.dxUnrollingService.isUnrolledLayout(unrolledElement)) {
-      const children: (
-        | FormField<StateKeys, FormData>
-        | FunctionField<StateKeys, FormData>
-        | LayoutField<StateKeys, FormData>
-      )[] = this.doMap(unrolledElement.children, formConfig);
+      const children: FormWidget<StateKeys, FormData>[] = this.doMap(unrolledElement.children, formConfig);
       return [this.createLayout(children, unrolledElement.layoutKey)];
     }
     if (dxUnrollingService.isUnrolledItems(unrolledElement)) {
       return unrolledElement.items.map((itemElement) => {
         const itemDef = itemElement.value;
         if (typeof itemDef === 'function') {
-          return ((params: FunctionFieldParams<FormData>) => {
+          return ((params: FunctionWidgetParams<FormData>) => {
             console.log(`item dynamic definition`, params);
             const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
             const hotMapping = itemDef({ error: hasErrors });
@@ -118,12 +99,12 @@ export class FormDefMapper {
             );
             console.log(`item final config`, mapControlField);
             return mapControlField;
-          }) as FunctionField<StateKeys, FormData>;
+          }) as FunctionWidget<StateKeys, FormData>;
         }
         return this.mapToFormItem(
           {
             unrolledElement: itemElement,
-            value: itemElement.value as OneOfDataInputDefs | ControllerDef,
+            value: itemElement.value as OneOfDataInputDefs | ActionDef,
             isCallback: false,
             type: unrolledElement.type === 'controllers' ? 'controller' : 'field',
           },
@@ -140,7 +121,7 @@ export class FormDefMapper {
   >(
     toMap: ReadyToMapToGolemFormItem,
     formConfig?: FormConfig<FormData>,
-  ): FormField<StateKeys, FormData> {
+  ): FormWidget<StateKeys, FormData> {
     return this.formItemsMapper.mapItem(toMap, formConfig);
   }
 }

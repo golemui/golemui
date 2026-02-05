@@ -1,9 +1,43 @@
 import * as React from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import GolemForm from '../wrappers/golemForm.component';
 import { FormDefFacade } from '../services/formDef/formDef.domain';
 import { FormConfig } from '../services/formDef/fomConfig.domain';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
+
+class FormErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Error in form rendering:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '1rem', border: '2px solid red', borderRadius: '4px', backgroundColor: '#fff5f5' }}>
+          <h4 style={{ color: 'red', margin: '0 0 0.5rem 0' }}>Form Rendering Error</h4>
+          <p style={{ color: '#666', margin: 0, fontSize: '0.9rem' }}>
+            {this.state.error?.message || 'An error occurred while rendering the form'}
+          </p>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   title: string;
@@ -82,12 +116,14 @@ export function FormDisplayLayout<T extends Record<string, any>>({
           {resolvedFormDef && (
             <div className={styles.formSection}>
               <h4 className={styles.sectionTitle}>Form</h4>
-              <GolemForm<T>
-                formDef={resolvedFormDef}
-                formData={formData}
-                onConfigProcessed={handleConfigProcessed}
-                formConfig={formConfig}
-              />
+              <FormErrorBoundary>
+                <GolemForm<T>
+                  formDef={resolvedFormDef}
+                  formData={formData}
+                  onConfigProcessed={handleConfigProcessed}
+                  formConfig={formConfig}
+                />
+              </FormErrorBoundary>
             </div>
           )}
         </div>

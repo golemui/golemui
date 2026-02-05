@@ -1,5 +1,6 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
+import { _guiFields } from '../../services/formDef/dx/gui/fields/guiFields.impl';
+import { _guiHorizontalStack } from '../../services/formDef/dx/gui/fields/guiStack.impl';
 
 export const allBasicFunctionality: FormDemoDefinition = {
   title: 'All Basic Functionality',
@@ -17,14 +18,12 @@ export const allBasicFunctionality: FormDemoDefinition = {
       }),
       height: ['number', 'no_label', 'special'],
     }),
-    [
-      '_horizontalLayout', [
+    _guiHorizontalStack(
         _guiFields({
           married: 'number',
           withChildren: 'number',
         }),
-      ],
-    ],
+    ),
     _guiFields({
       occupation: 'string',
     }),

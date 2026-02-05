@@ -1,5 +1,6 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
+import { _guiFields } from '../../services/formDef/dx/gui/fields/guiFields.impl';
+import { _guiSubmitButton } from '../../services/formDef/dx/gui/fields/guiSubmitButton.impl';
 
 export const formDemoDefinition: FormDemoDefinition = {
   title: 'Should let us configure the submit button',
@@ -9,7 +10,7 @@ export const formDemoDefinition: FormDemoDefinition = {
       name: 'string',
       age: 'number',
     }),
-    '_submitButton',
+    _guiSubmitButton(),
     _guiFields({
       gender: 'string',
     }),

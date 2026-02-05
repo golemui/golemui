@@ -1,12 +1,12 @@
-import { DxFieldsByKey, ProcessedDxFieldsByKey } from './guiFields.impl';
-import inputDefsByKeyService, { InputDefsByKeyService } from '../config/helpers/inputDefsByKey.service';
+import { FacadeFieldByKey, ProcessedDxFieldsByKey } from './guiFields.impl';
+import inputDefsByKeyService, { InputDefsByKeyService } from '../../config/helpers/inputDefsByKey.service';
 
 export class GuiFieldsService {
   constructor(
     private readonly inputDefsByKeyService: InputDefsByKeyService,
   ) {}
 
-  expand<T extends Record<string, unknown>>(fields: DxFieldsByKey<T>): ProcessedDxFieldsByKey<T> {
+  expand<T extends Record<string, unknown>>(fields: FacadeFieldByKey<T>): ProcessedDxFieldsByKey<T> {
     return this.inputDefsByKeyService.expandFields(fields);
   }
 }

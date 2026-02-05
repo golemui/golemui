@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/guiFields.impl';
+import { _guiFields } from '../../services/formDef/dx/gui/fields/guiFields.impl';
 
 export const simpleDynamicDemo: FormDemoDefinition = {
   title: 'Simple Dynamic',

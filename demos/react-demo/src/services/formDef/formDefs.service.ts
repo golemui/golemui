@@ -2,9 +2,15 @@ import { Form, UiState } from '@golemui/core';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
 import { FormDefFacade, FormEvents, ValidDxElement } from './formDef.domain';
 import { FormConfig } from './fomConfig.domain';
-import dxElementService, { DxElementService,   } from './dx/dxElement.service';
-import { UnrolledLayout, ValidUnrolledElement } from './dx/dx.domain';
-import { FieldsShortcut } from './dx/gui/guiFields.impl';
+import dxElementService, { DxElementService } from './dx/dxElement.service';
+import UnrolledController, {
+  UnrolledControllers,
+  UnrolledFields,
+  UnrolledLayout,
+  ValidUnrolledElement,
+} from './dx/dx.domain';
+import { GuiShortcutType, ValidGuiShortcut } from './dx/gui/gui.domain';
+import { _guiSubmitButton } from './dx/gui/fields/guiSubmitButton.impl';
 
 /**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
@@ -28,86 +34,20 @@ export class FormDefs {
   ) {}
 
   processFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
-    formDefRaw: FormDefFacade<FORM_DATA>,
+    formDefRaw: FormDefFacade,
     formConfig?: FormConfig<FORM_DATA>,
   ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
-    // Detect if formDefRaw is a FieldsShortcut (tuple with 2 elements) and wrap it in an array
-    const normalizedFormDef: ValidDxElement<FORM_DATA>[] = this.isFieldsShortcut(formDefRaw)
-      ? [formDefRaw]
-      : formDefRaw;
+    const formDef: ValidGuiShortcut[] = Array.isArray(formDefRaw) ? formDefRaw : [formDefRaw];
+    const unrolledItems: ValidUnrolledElement[] = formDef.map((it) => this.unrollGuiShortcut(it));
+    const hasAButton = unrolledItems.filter(it=>it.type === 'controllers').length > 0;
+    const withButtonIfNeeded = hasAButton ? unrolledItems : [...unrolledItems, this.unrollGuiShortcut(_guiSubmitButton())];
 
-    const unrolled = this.unrollDxElements(normalizedFormDef);
-    let withAutoSubmit: ValidUnrolledElement[] = unrolled;
-    if (unrolled.filter((it) => it.type === 'controllers').length === 0) {
-      withAutoSubmit = [...unrolled, this.unrollDxElement('_submitButton')];
-    }
-
-    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(withAutoSubmit, formConfig);
+    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(withButtonIfNeeded, formConfig);
     if (formConfig?.onSubmit != null) {
       return [fwFormDef, formConfig.onSubmit as any] as [Form<STATE_KEYS, FORM_DATA>, FormEvents];
     }
 
     return fwFormDef;
-  }
-
-  /**
-   * Type guard to check if the input is a FieldsShortcut tuple.
-   * FieldsShortcut has the structure: [[string, ...string[]], ReadyToMapField[]]
-   * This validates:
-   * 1. Root is an array with exactly 2 elements
-   * 2. First element is an array with at least 1 string element
-   * 3. First element of the first array is '_inputDefsByKey'
-   * 4. Second element is an array of objects
-   */
-  private isFieldsShortcut<FORM_DATA extends Record<string, any>>(
-    formDefRaw: FormDefFacade<FORM_DATA>,
-  ): formDefRaw is FieldsShortcut {
-    if (!Array.isArray(formDefRaw)) {
-      return false;
-    }
-
-    // Must be exactly 2 elements at root level
-    if (formDefRaw.length !== 2) {
-      return false;
-    }
-
-    const [first, second] = formDefRaw;
-
-    // First element must be an array
-    if (!Array.isArray(first)) {
-      return false;
-    }
-
-    // First element must have at least one string element
-    if (first.length < 1 || typeof first[0] !== 'string') {
-      return false;
-    }
-
-    // First element's first item must be '_inputDefsByKey'
-    if (first[0] !== '_inputDefsByKey') {
-      return false;
-    }
-
-    // Second element must be an array
-    if (!Array.isArray(second)) {
-      return false;
-    }
-
-    // Second element should contain ReadyToMapField objects (or be empty)
-    if (second.length > 0) {
-      const firstItem = second[0];
-      // Basic structural check: should be an object with 'key' and 'processedField' properties
-      if (
-        firstItem == null ||
-        typeof firstItem !== 'object' ||
-        !('key' in firstItem) ||
-        !('processedField' in firstItem)
-      ) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   private unrollDxElements<FORM_DATA extends Record<string, any> = any>(
@@ -135,10 +75,43 @@ export class FormDefs {
     }
     return result;
   }
+
+  private unrollGuiShortcut(raw: ValidGuiShortcut): ValidUnrolledElement {
+    switch (raw.type) {
+      case GuiShortcutType.FIELDS:
+        return {
+          items: raw.fields.map((it) => ({
+            key: it.key,
+            type: 'field',
+            value: it.processedField,
+          })),
+          type: 'fields',
+        } as UnrolledFields;
+
+      case GuiShortcutType.LAYOUT:
+        return {
+          type: 'layout',
+          children: raw.children.map((it) => this.unrollGuiShortcut(it)),
+          layoutKey: raw.layoutNestedProps.orientation,
+        } as UnrolledLayout;
+
+      case GuiShortcutType.CONTROLLERS:
+        return {
+          type: 'controllers',
+          items: raw.controllers.map(
+            (it) =>
+              ({
+                type: 'controller',
+                value: it,
+              }) as UnrolledController,
+          ),
+        } as UnrolledControllers;
+
+      default:
+        throw new Error(`Unexpected error`);
+    }
+  }
 }
 
-const formDefs = new FormDefs(
-  formMapperService,
-  dxElementService,
-);
+const formDefs = new FormDefs(formMapperService, dxElementService);
 export default formDefs;

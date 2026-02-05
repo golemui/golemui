@@ -5,7 +5,7 @@ import {
   SUBMIT_BUTTON_SHORTCUT,
   ValidShortcutNames,
 } from '../dx.domain';
-import { ControllerDef } from '../../formDef.domain';
+import { ActionDef } from '../../formDef.domain';
 import { DxFieldsByKey, ReadyToMapField } from '../gui/guiFields.impl';
 
 export const REGISTERED_DX_SHORTCUTS: Record<ValidShortcutNames, DxShortcutDescriptor> = {
@@ -35,7 +35,7 @@ export const REGISTERED_DX_SHORTCUTS: Record<ValidShortcutNames, DxShortcutDescr
     produces: 'controllers',
     wiring: (
       dxWiringService,
-      source: ParsedDxShortcut<SUBMIT_BUTTON_SHORTCUT | ControllerDef | (() => ControllerDef)>,
+      source: ParsedDxShortcut<SUBMIT_BUTTON_SHORTCUT | ActionDef | (() => ActionDef)>,
     ) => {
       return dxWiringService.wireSubmitButton(source.payload, source);
     },
@@ -43,7 +43,7 @@ export const REGISTERED_DX_SHORTCUTS: Record<ValidShortcutNames, DxShortcutDescr
   _button: {
     allows: ['object', 'callback'],
     produces: 'controllers',
-    wiring: (dxWiringService, source: ParsedDxShortcut<ControllerDef | (() => ControllerDef)>) => {
+    wiring: (dxWiringService, source: ParsedDxShortcut<ActionDef | (() => ActionDef)>) => {
       return dxWiringService.wireButton(source.payload, source);
     },
   },

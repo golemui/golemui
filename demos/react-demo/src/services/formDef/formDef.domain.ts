@@ -6,9 +6,10 @@ import {
   HORIZONTAL_LAYOUT_SHORTCUT,
   SUBMIT_BUTTON_SHORTCUT,
 } from './dx/dx.domain';
-import { FieldsShortcut, ProcessedDxFieldsByKey } from './dx/gui/guiFields.impl';
+import { GuiFieldsShortcut, ValidGuiShortcut } from './dx/gui/gui.domain';
+import { ProcessedDxFieldsByKey } from './dx/gui/fields/guiFields.impl';
 
-export interface DataInputDef extends GolemFormItem {
+export interface DataInputDef extends GolemFormItemDef {
   type: 'text' | 'number' | 'boolean';
   placeholder?: string;
   label?: string | null;
@@ -33,7 +34,7 @@ export interface BooleanDataInputDef extends DataInputDef {
   type: 'boolean';
 }
 
-export interface GolemFormItem {
+export interface GolemFormItemDef {
   tags?: string[];
   removeField?: boolean;
 }
@@ -47,20 +48,20 @@ export interface DynamicDefParams {
 
 export type InputTags = [ValidShortcutType, ...string[]];
 
-export interface ControllerDef extends GolemFormItem {
+export interface ActionDef extends GolemFormItemDef {
   data?: any | null;
   type?: 'button';
   label?: string;
   disabled?: boolean;
-  onClick: (data: any) => void;
+  onClick?: (data: any) => void;
   on?: {
     click?: string;
   };
 }
 
-export type ControllerDefCallback = (params: DynamicDefParams) => ControllerDef;
+export type ControllerDefCallback = (params: DynamicDefParams) => ActionDef;
 
-export type ControllersDefFacade = OneOrMany<ControllerDef | ControllerDefCallback>;
+export type ControllersDefFacade = OneOrMany<ActionDef | ControllerDefCallback>;
 
 export type OneOrMany<T> = T | T[];
 export type ProcessedDataInputsTuple<FORM_DATA extends Record<string, any>> = [
@@ -72,11 +73,6 @@ export type FormDefTuple<FORM_DATA extends Record<string, any>> =
   | ['layout', FormDefTuple<FORM_DATA>[]]
   | ProcessedDataInputsTuple<FORM_DATA>
   | ['controllers', ControllersDefFacade];
-
-export type SubmitButtonDefinition = [
-  '_submitButton',
-  Partial<ControllerDef> | ControllerDefCallback,
-];
 export type DxShortcutDeveloped<NAME extends string, CONFIG_OBJECT> = [
   [NAME, ...string[]] | NAME,
   CONFIG_OBJECT,
@@ -96,33 +92,30 @@ export type DxShortcutPartialOrSimple<NAME extends string, CONFIG_OBJECT, PARAMS
   | DxShortcutSimple<NAME>
   | DxShortcutPartial<NAME, CONFIG_OBJECT, PARAMS>;
 
-export type HorizontalLayoutShortcut<T extends Record<string, any>> = DxShortcutDeveloped<
+export type HorizontalLayoutShortcut = DxShortcutDeveloped<
   HORIZONTAL_LAYOUT_SHORTCUT,
-  FormDefFacade<T>
+  FormDefFacade
 >;
 
-export type GroupShortcut<T extends Record<string, any>> = DxShortcutDeveloped<
-  GROUP_SHORTCUT,
-  FormDefFacade<T>
->;
+export type GroupShortcut = DxShortcutDeveloped<GROUP_SHORTCUT, FormDefFacade>;
 
 export type SubmitButtonShortcut = DxShortcutPartialOrSimple<
   SUBMIT_BUTTON_SHORTCUT,
-  ControllerDef,
+  ActionDef,
   { error: boolean }
 >;
 
-export type ButtonShortcut = DxShortcutPartial<BUTTON_SHORTCUT, ControllerDef, { error: boolean }>;
+export type ButtonShortcut = DxShortcutPartial<BUTTON_SHORTCUT, ActionDef, { error: boolean }>;
 
-export type ValidDxShortcuts<T extends Record<string, any>> =
-  | HorizontalLayoutShortcut<T>
+export type ValidDxShortcuts =
+  | HorizontalLayoutShortcut
   | SubmitButtonShortcut
-  | GroupShortcut<T>
-  | FieldsShortcut
+  | GroupShortcut
+  | GuiFieldsShortcut
   | ButtonShortcut;
 
-export type ValidDxElement<T extends Record<string, any>> = ValidDxShortcuts<T>;
+export type ValidDxElement = ValidDxShortcuts;
 
-export type FormDefFacade<T extends Record<string, any>> = ValidDxElement<T>[] | FieldsShortcut;
+export type FormDefFacade = ValidGuiShortcut | ValidGuiShortcut[];
 
 export type FormEvents = (event: Core.FormEvent) => void;

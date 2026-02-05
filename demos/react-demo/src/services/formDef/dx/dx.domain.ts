@@ -3,7 +3,7 @@ import {
 
 } from '../formDef.domain';
 import { DxWiringService } from './config/dxWiring.service';
-import { ProcessedValidControllerDef, ProcessedDxField } from './gui/guiFields.impl';
+import { ProcessedDxField, ProcessedValidControllerDef } from './gui/fields/guiFields.impl';
 
 export type GROUP_SHORTCUT = '_group';
 export type HORIZONTAL_LAYOUT_SHORTCUT = '_horizontalLayout';
@@ -48,7 +48,6 @@ export interface LayoutDxShortcut<PAYLOAD extends Record<string, any>>
 
 export interface UnrolledElements {
   type: DxShortcutFamily;
-  source: ParsedDxShortcut<any>;
 }
 
 export interface BaseUnrolledItem {
@@ -62,10 +61,12 @@ export interface UnrolledField extends BaseUnrolledItem {
   value: ProcessedDxField;
 }
 
-export interface UnrolledController extends BaseUnrolledItem {
+interface UnrolledController extends BaseUnrolledItem {
   type: 'controller';
   value: ProcessedValidControllerDef;
 }
+
+export default UnrolledController;
 
 export interface UnrolledLayout extends UnrolledElements {
   type: 'layout';
@@ -89,6 +90,7 @@ export interface UnrolledControllers extends UnrolledItems {
 }
 
 export type ValidUnrolledElement = UnrolledLayout | UnrolledItems;
+
 export type UnrollingResult<FORM_DATA extends Record<string, any> = any> =
   | ValidUnrolledElement
   | LayoutDxShortcut<FORM_DATA>;

@@ -1,13 +1,13 @@
 import {
   BooleanDataInputDef,
-  ControllerDef,
-  GolemFormItem,
+  ActionDef,
+  GolemFormItemDef,
   NumberDataInputDef,
   OneOfDataInputDefs,
   TextDataInputDef,
 } from '../formDef.domain';
 import { DefaultFieldDefFn, DefaultFieldDefParams, FormConfig } from '../fomConfig.domain';
-import { ControlField, InteractiveField, UiState } from '@golemui/core';
+import { ActionWidget, FormWidget, InputWidget, UiState } from '@golemui/core';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import { ReadyToMapToGolemFormItem } from './formDefMapper.service';
 import { UnrolledField } from '../dx/dx.domain';
@@ -28,12 +28,12 @@ export class FormItemsMapper {
   mapItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     item: ReadyToMapToGolemFormItem,
     formConfig?: FormConfig<FormData>,
-  ): ControlField<any, StateKeys, FormData> | InteractiveField<StateKeys, FormData> {
+  ): FormWidget<StateKeys, FormData> {
     let rolledUpConfig = formConfig;
     const rolledUpReadyToImport: ReadyToMapToGolemFormItem = {
       ...item,
     };
-    const value: GolemFormItem = item.value;
+    const value: GolemFormItemDef = item.value;
     if (value?.tags && value.tags.length > 0) {
       const valueTags = value.tags as string[];
       valueTags.forEach((tag) => {
@@ -52,22 +52,23 @@ export class FormItemsMapper {
           type: item.type,
         };
         const fieldDefForTag = this.applyFormConfig(fieldDefWithTagRemoved, rolledUpConfig);
-        rolledUpReadyToImport.value = this.objectUtils.deepMerge<
-          OneOfDataInputDefs | ControllerDef
-        >(rolledUpReadyToImport.value, fieldDefForTag.value);
+        rolledUpReadyToImport.value = this.objectUtils.deepMerge<OneOfDataInputDefs | ActionDef>(
+          rolledUpReadyToImport.value,
+          fieldDefForTag.value,
+        );
       });
     }
 
     const withBaseConfig = this.applyFormConfig(rolledUpReadyToImport, rolledUpConfig);
-    const merged = this.objectUtils.deepMerge<OneOfDataInputDefs | ControllerDef>(
+    const merged = this.objectUtils.deepMerge<OneOfDataInputDefs | ActionDef>(
       withBaseConfig.value,
       rolledUpReadyToImport.value,
     );
 
     if (rolledUpReadyToImport.type === 'controller') {
-      return this.mapInteractiveField(rolledUpReadyToImport.value as ControllerDef);
+      return this.mapActionDef(rolledUpReadyToImport.value as ActionDef);
     }
-    return this.mapToControlField<StateKeys, FormData>(
+    return this.mapToInputWidget<StateKeys, FormData>(
       (rolledUpReadyToImport.unrolledElement as UnrolledField).key,
       merged as OneOfDataInputDefs,
     );
@@ -148,41 +149,41 @@ export class FormItemsMapper {
   }
 
   private createDefaultFieldDefFromFn(
-    fn: (params: DefaultFieldDefParams) => Partial<OneOfDataInputDefs>,
+    fn: (params: Partial<DefaultFieldDefParams>) => Partial<OneOfDataInputDefs>,
     currentDef: OneOfDataInputDefs,
     baseDef: OneOfDataInputDefs,
     fieldKey: string,
   ): Partial<OneOfDataInputDefs> {
-    const params: DefaultFieldDefParams = {
+    const params: Partial<DefaultFieldDefParams> = {
       fieldKey,
       currentDef,
       baseDef,
     };
     return fn(params);
   }
-  private mapToControlField<
+  private mapToInputWidget<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: OneOfDataInputDefs): ControlField<any, StateKeys, FormData> {
+  >(key: string, fieldDef: OneOfDataInputDefs): InputWidget<any, StateKeys, FormData> {
     switch (fieldDef.type) {
       case 'text':
-        return this.mapTextFieldDef(key, fieldDef);
+        return this.mapTextInputDef(key, fieldDef);
       case 'number':
-        return this.mapNumberFieldDef(key, fieldDef);
+        return this.mapNumberInputDef(key, fieldDef);
       case 'boolean':
-        return this.mapBooleanFieldDef(key, fieldDef);
+        return this.mapBooleanInputDef(key, fieldDef);
       default:
         throw new Error(`Unsupported field type "${(fieldDef as OneOfDataInputDefs).type}"`);
     }
   }
-  private mapBooleanFieldDef<
+  private mapBooleanInputDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: BooleanDataInputDef): ControlField<any, StateKeys, FormData> {
+  >(key: string, fieldDef: BooleanDataInputDef): InputWidget<any, StateKeys, FormData> {
     return {
       uid: '',
-      kind: 'control',
-      widget: 'toggle',
+      kind: 'input',
+      type: 'toggle',
       path: key,
       ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
@@ -191,14 +192,14 @@ export class FormItemsMapper {
     };
   }
 
-  private mapTextFieldDef<
+  private mapTextInputDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: TextDataInputDef): ControlField<any, StateKeys, FormData> {
+  >(key: string, fieldDef: TextDataInputDef): InputWidget<any, StateKeys, FormData> {
     return {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: key,
       ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
@@ -211,14 +212,14 @@ export class FormItemsMapper {
     };
   }
 
-  private mapNumberFieldDef<
+  private mapNumberInputDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(key: string, fieldDef: NumberDataInputDef): ControlField<any, StateKeys, FormData> {
+  >(key: string, fieldDef: NumberDataInputDef): InputWidget<any, StateKeys, FormData> {
     return {
       uid: '',
-      kind: 'control',
-      widget: 'number',
+      kind: 'input',
+      type: 'number',
       path: key,
       ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
@@ -231,17 +232,17 @@ export class FormItemsMapper {
     };
   }
 
-  private mapInteractiveField<
+  private mapActionDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(controllerDef: ControllerDef): InteractiveField<StateKeys, FormData> {
+  >(controllerDef: ActionDef): ActionWidget<StateKeys, FormData> {
     return {
       uid: '',
-      kind: 'interactive', // data
-      widget: 'button',
+      kind: 'action', // data
+      type: 'button',
       disabled: controllerDef.disabled,
       label: controllerDef.label,
-      on: controllerDef.on
+      on: controllerDef.on,
     };
   }
 }
