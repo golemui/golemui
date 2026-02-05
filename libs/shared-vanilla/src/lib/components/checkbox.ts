@@ -2,10 +2,10 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addLabel, ControlTemplateData } from '../utils/templates';
-import { CheckboxProps } from '../field.props';
+import { CheckboxProps } from '../widget.props';
 
 @customElement('gui-checkbox')
-export class GuiCheckboxControl extends LitElement {
+export class GuiCheckbox extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -105,6 +105,6 @@ export class GuiCheckboxControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-checkbox': GuiCheckboxControl;
+    'gui-checkbox': GuiCheckbox;
   }
 }

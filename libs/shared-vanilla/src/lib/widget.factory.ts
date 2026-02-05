@@ -1,26 +1,26 @@
 import * as Core from '@golemui/core';
-import * as Props from './field.props';
+import * as Props from './widget.props';
 
-type ControlFieldConfig<T> = Omit<
+type InputWidgetConfig<T> = Omit<
   Core.InputWidget<T>,
   'kind' | 'type' | 'uid' | 'props' | 'validator'
 >;
-type LayoutFieldConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
-type DisplayFieldConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
+type LayoutWidgetConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
+type DisplayWidgetConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 
 /**
- * Vanilla field factory
+ * Vanilla widget factory
  */
 export const Vanilla = {
   //
-  // Control fields
+  // Input widgets
   //
   textinput: <StateKeys extends Core.UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
-    config: ControlFieldConfig<string>;
+    config: InputWidgetConfig<string>;
     props?: Props.TextinputProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
@@ -38,7 +38,7 @@ export const Vanilla = {
     props,
     validator,
   }: {
-    config: ControlFieldConfig<number>;
+    config: InputWidgetConfig<number>;
     props?: Props.NumberinputProps;
     // validator?: Core.NumberValidator | Core.CustomValidator;
     validator?: V;
@@ -55,7 +55,7 @@ export const Vanilla = {
     props,
     validator,
   }: {
-    config: ControlFieldConfig<boolean>;
+    config: InputWidgetConfig<boolean>;
     props?: Props.CheckboxProps;
     // validator?: Core.BooleanValidator | Core.CustomValidator;
     validator?: V;
@@ -72,7 +72,7 @@ export const Vanilla = {
     props,
     validator,
   }: {
-    config: ControlFieldConfig<string>;
+    config: InputWidgetConfig<string>;
     props?: Props.SelectProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
@@ -86,10 +86,10 @@ export const Vanilla = {
   }),
 
   //
-  // Layout fields
+  // Layout widgets
   //
   stack: <StateKeys extends Core.UiState = string>(
-    config: LayoutFieldConfig,
+    config: LayoutWidgetConfig,
     props?: Props.StackProps,
   ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
@@ -99,7 +99,7 @@ export const Vanilla = {
     ...config,
   }),
   tabs: <StateKeys extends Core.UiState = string>(
-    config: LayoutFieldConfig,
+    config: LayoutWidgetConfig,
     props?: Props.TabsProps,
   ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
@@ -110,10 +110,10 @@ export const Vanilla = {
   }),
 
   //
-  // Display fields
+  // Display widgets
   //
   alert: <StateKeys extends Core.UiState = string>(
-    config: DisplayFieldConfig,
+    config: DisplayWidgetConfig,
     props?: Props.AlertProps,
   ): Core.DisplayWidget<StateKeys> => ({
     uid: '',

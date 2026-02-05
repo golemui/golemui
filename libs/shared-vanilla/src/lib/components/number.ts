@@ -3,10 +3,10 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { NumberinputProps } from '../field.props';
+import { NumberinputProps } from '../widget.props';
 
 @customElement('gui-number')
-export class GuiNumberControl extends LitElement {
+export class GuiNumber extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
@@ -128,6 +128,6 @@ export class GuiNumberControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-number': GuiNumberControl;
+    'gui-number': GuiNumber;
   }
 }

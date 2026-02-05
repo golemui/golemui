@@ -42,17 +42,17 @@ export const addHint = <T, ExtraProps extends { hint?: string }>(
 };
 
 export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: string }>(
-  fieldType: string,
+  widgetType: string,
   templateData: ControlTemplateData<T> & ExtraProps,
 ) => {
   const widgetClasses: { [key: string]: boolean } = {
-    [`gui-${fieldType}--icon`]: false,
-    [`gui-${fieldType}--icon-right`]: false,
+    [`gui-${widgetType}--icon`]: false,
+    [`gui-${widgetType}--icon-right`]: false,
   };
 
   if (templateData.icon) {
-    widgetClasses[`gui-${fieldType}--icon`] = true;
-    widgetClasses[`gui-${fieldType}--icon-right`] = templateData.iconPosition === 'right';
+    widgetClasses[`gui-${widgetType}--icon`] = true;
+    widgetClasses[`gui-${widgetType}--icon-right`] = templateData.iconPosition === 'right';
 
     const classes = {
       'gui-field-icon': true,

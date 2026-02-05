@@ -3,11 +3,11 @@ import { html, LitElement } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { OneOfProps, Option, RadiogroupProps } from '../field.props';
+import { OneOfProps, Option, RadiogroupProps } from '../widget.props';
 import { GUIAriaController } from '../controllers';
 
 @customElement('gui-radiogroup')
-export class GuiRadiogroupControl extends LitElement {
+export class GuiRadiogroup extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -132,6 +132,6 @@ export class GuiRadiogroupControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-radiogroup': GuiRadiogroupControl;
+    'gui-radiogroup': GuiRadiogroup;
   }
 }

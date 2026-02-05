@@ -1,4 +1,4 @@
-export const controlWidgets = [
+export const inputWidgets = [
   'calendar',
   'checkbox',
   'currency',
@@ -17,18 +17,18 @@ export const controlWidgets = [
 ] as const;
 export const layoutWidgets = ['accordion', 'stack', 'tabs'] as const;
 export const displayWidgets = ['alert', 'renderer'] as const;
-export const interactiveWidgets = ['button'] as const;
+export const actionWidgets = ['button'] as const;
 
 export const vanillaWidgets = [
-  ...controlWidgets,
+  ...inputWidgets,
   ...layoutWidgets,
   ...displayWidgets,
-  ...interactiveWidgets,
+  ...actionWidgets,
 ];
 
-export type VanillaControlWidget = (typeof controlWidgets)[number];
+export type VanillaInputWidget = (typeof inputWidgets)[number];
 export type VanillaLayoutWidget = (typeof layoutWidgets)[number];
 export type VanillaDisplayWidget = (typeof displayWidgets)[number];
-export type VanillaInteractiveWidget = (typeof interactiveWidgets)[number];
+export type VanillaActionWidget = (typeof actionWidgets)[number];
 
 export type VanillaWidget = (typeof vanillaWidgets)[number];

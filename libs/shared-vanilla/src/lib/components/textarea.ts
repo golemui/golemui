@@ -3,11 +3,11 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { TextareaProps } from '../field.props';
+import { TextareaProps } from '../widget.props';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 @customElement('gui-textarea')
-export class GuiTextareaControl extends LitElement {
+export class GuiTextarea extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -178,6 +178,6 @@ export class GuiTextareaControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-textarea': GuiTextareaControl;
+    'gui-textarea': GuiTextarea;
   }
 }
