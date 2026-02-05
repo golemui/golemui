@@ -3,10 +3,10 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { CurrencyProps } from '../field.props';
+import { CurrencyProps } from '../widget.props';
 
 @customElement('gui-currency')
-export class GuiCurrencyControl extends LitElement {
+export class GuiCurrency extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
@@ -89,7 +89,7 @@ export class GuiCurrencyControl extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <input
           type="text"
           id=${this.uid}
@@ -224,6 +224,6 @@ export class GuiCurrencyControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-currency': GuiCurrencyControl;
+    'gui-currency': GuiCurrency;
   }
 }

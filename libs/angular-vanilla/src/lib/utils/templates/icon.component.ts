@@ -8,8 +8,8 @@ import * as Core from '@golemui/core';
   imports: [CommonModule],
   template: ``,
   host: {
-    class: 'gui-field-icon',
-    '[class.gui-field-icon--right]': 'templateData().iconPosition === "right"',
+    class: 'gui-widget-icon',
+    '[class.gui-widget-icon--right]': 'templateData().iconPosition === "right"',
     '[class]': 'templateData().icon',
   },
 })

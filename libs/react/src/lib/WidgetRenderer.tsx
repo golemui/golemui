@@ -1,21 +1,21 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
-import FieldErrorBoundary from './FieldErrorBoundary';
+import WidgetErrorBoundary from './WidgetErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';
 import { useRepeaterIndex } from './RepeaterIndexContext';
 
 type Props = {
-  field: Core.NonFunctionWidget<string>;
+  widget: Core.NonFunctionWidget<string>;
   repeaterIndex?: number;
 };
 
-type FieldComponent = React.ComponentType<Core.WithWidget>;
+type WidgetComponent = React.ComponentType<Core.WithWidget>;
 
-function FieldRenderer(props: Props) {
+function WidgetRenderer(props: Props) {
   const { formContext } = useReactFormContext();
-  const [Component, setComponent] = useState<FieldComponent | null>(null);
-  // We have to `() => props.field` because when `props.field` is a Field Function we don't want React interprets it as a lazy initializer e.g. `useState(() => initialState)`
-  const [field, setField] = useState(() => props.field);
+  const [Component, setComponent] = useState<WidgetComponent | null>(null);
+  // We have to `() => props.widget` because when `props.widget` is a Widget Function we don't want React interprets it as a lazy initializer e.g. `useState(() => initialState)`
+  const [widget, setWidget] = useState(() => props.widget);
   const isMounted = useRef(true);
   const repeaterIndexFromContext = useRepeaterIndex();
   const repeaterIndex = props.repeaterIndex ?? repeaterIndexFromContext;
@@ -24,10 +24,10 @@ function FieldRenderer(props: Props) {
     isMounted.current = true;
     const loadComponent = async () => {
       try {
-        const loadedComponent = await formContext.widgetRegistry.loadWidget(props.field.type);
+        const loadedComponent = await formContext.widgetRegistry.loadWidget(props.widget.type);
         if (isMounted.current) {
           if (repeaterIndex > -1) {
-            setField(Core.makeRepeaterItemConfig(Core.cloneObject(props.field), repeaterIndex));
+            setWidget(Core.makeRepeaterItemConfig(Core.cloneObject(props.widget), repeaterIndex));
           }
           setComponent(() => loadedComponent);
         }
@@ -37,7 +37,7 @@ function FieldRenderer(props: Props) {
           payload: {
             formHealth: {
               status: 'errored',
-              message: `Widget "${props.field.type}" could not be loaded`,
+              message: `Widget "${props.widget.type}" could not be loaded`,
             },
           },
         });
@@ -48,17 +48,17 @@ function FieldRenderer(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [props.field, repeaterIndex, formContext.widgetRegistry, formContext.store]);
+  }, [props.widget, repeaterIndex, formContext.widgetRegistry, formContext.store]);
 
   if (!Component) {
     return null;
   }
 
   return (
-    <FieldErrorBoundary field={field}>
-      <Component widget={field} />
-    </FieldErrorBoundary>
+    <WidgetErrorBoundary widget={widget}>
+      <Component widget={widget} />
+    </WidgetErrorBoundary>
   );
 }
 
-export default FieldRenderer;
+export default WidgetRenderer;

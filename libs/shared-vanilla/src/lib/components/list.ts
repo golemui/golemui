@@ -1,11 +1,11 @@
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { ListItem, ListProps } from '../field.props';
+import { ListItem, ListProps } from '../widget.props';
 import { OptionValue } from './one-of';
 import { updateListItems } from './list-items';
 
 @customElement('gui-list')
-export class GuiListControl extends LitElement {
+export class GuiList extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: Boolean }) touched: boolean | undefined = false;
   @property({ type: Boolean }) required: boolean | undefined = false;
@@ -287,6 +287,6 @@ export class GuiListControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-list': GuiListControl;
+    'gui-list': GuiList;
   }
 }

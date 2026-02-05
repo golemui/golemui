@@ -7,7 +7,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-repeater-control')
+@customElement('gui-repeater-input')
 export class RepeaterElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<Record<string, unknown>[]>;
 
@@ -15,8 +15,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<Record<string, unknown>[], RepeaterProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -57,13 +57,13 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
-              (field) => field['uid'],
-              (field, index) => html`
+              (widget) => widget['uid'],
+              (widget, index) => html`
                 <div class="card">
-                  <gui-repeater-field
+                  <gui-repeater-widget
                     .repeaterIndex=${index}
-                    .field=${this.adapter.templateData.template}
-                  ></gui-repeater-field>
+                    .widget=${this.adapter.templateData.template}
+                  ></gui-repeater-widget>
                   <button type="button" class="gui-button" @click=${() => this.removeItem(index)}>
                     ${this.adapter.templateData.removeLabel ?? 'Remove'}
                   </button>

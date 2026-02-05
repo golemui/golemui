@@ -6,7 +6,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-number-control')
+@customElement('gui-number-input')
 export class NumberElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<number>;
 
@@ -14,8 +14,8 @@ export class NumberElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<number, NumberinputProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<number, NumberinputProps>();
 
   subscriptions: Subscription[] = [];
 

@@ -7,7 +7,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
-@customElement('gui-dropdown-control')
+@customElement('gui-dropdown-input')
 export class DropdownElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
@@ -15,8 +15,8 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, DropdownProps<never>>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<string, DropdownProps<never>>();
 
   debouncer = new Subject<string>();
   subscriptions: Subscription[] = [];
@@ -255,7 +255,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
         .required=${templateData.validator?.required}
       ></gui-label>
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <input
           type="text"
           id=${this.widget.uid}

@@ -81,7 +81,7 @@ export abstract class AbstractCalendar extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, 'calendar') : nothing}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <div
           class="gui-calendar-input"
           aria-required=${this.required}

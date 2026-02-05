@@ -5,11 +5,11 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { DateinputProps } from '../field.props';
+import { DateinputProps } from '../widget.props';
 import { toISODateString } from '../utils/date';
 
 @customElement('gui-date')
-export class GuiDateControl extends LitElement {
+export class GuiDate extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
@@ -89,14 +89,14 @@ export class GuiDateControl extends LitElement {
     }).formatToParts(new Date());
 
     const iconClassMap = {
-      'gui-field-icon': true,
+      'gui-widget-icon': true,
       [this.icon as string]: true,
     };
 
     return html`
       ${this.label ? addLabel(this.uid as string, templateData) : nothing}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}" role="group">
           ${repeat(
             parts,
@@ -351,6 +351,6 @@ export class GuiDateControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-date': GuiDateControl;
+    'gui-date': GuiDate;
   }
 }

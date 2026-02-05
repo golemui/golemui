@@ -13,8 +13,8 @@ export class CustomdateElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, Record<string, any>>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<string, Record<string, any>>();
 
   subscriptions: Subscription[] = [];
 

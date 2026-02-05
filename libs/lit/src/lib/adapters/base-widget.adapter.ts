@@ -3,11 +3,11 @@ import { WithWidget } from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { LitFormContext } from '../context/form.context';
 
-export abstract class BaseFieldAdapter<F extends Core.FormWidget> {
+export abstract class BaseWidgetAdapter<F extends Core.FormWidget> {
   context!: LitFormContext<WithWidget>;
   templateData: any = {};
   protected destroy$ = new Subject<void>();
-  protected field!: F;
+  protected widget!: F;
 
   templateDataChanged$ = new Subject<void>();
 
@@ -16,21 +16,21 @@ export abstract class BaseFieldAdapter<F extends Core.FormWidget> {
     this.templateDataChanged$.next();
   }
 
-  protected addFieldToTheStore(field: F) {
+  protected addWidgetToTheStore(widget: F) {
     this.context.store.dispatch({
       type: 'ADD_WIDGET',
-      payload: { widget: field },
+      payload: { widget: widget },
     });
   }
 
-  // Listen to the calculated props stream and keep all field props merged in a flattened object
+  // Listen to the calculated props stream and keep all widget props merged in a flattened object
   protected templateDataUpdater() {
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.calculatedWidgetsByUid$(this.field.uid!))
-      .subscribe((calculatedField) => {
+      .pipe(takeUntil(this.destroy$), Core.calculatedWidgetsByUid$(this.widget.uid!))
+      .subscribe((calculatedWidget) => {
         this.setTemplateData({
-          ...calculatedField,
-          ...calculatedField.props,
+          ...calculatedWidget,
+          ...calculatedWidget.props,
           lang: this.context.store.getState().lang,
         });
       });
@@ -39,7 +39,7 @@ export abstract class BaseFieldAdapter<F extends Core.FormWidget> {
   destroy() {
     this.context.store.dispatch({
       type: 'REMOVE_WIDGET',
-      payload: { uid: this.field.uid! },
+      payload: { uid: this.widget.uid! },
     });
     this.destroy$.next();
   }

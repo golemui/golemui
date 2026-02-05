@@ -29,7 +29,7 @@ export class TabsElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutFieldAdapter<TabsProps>();
+  adapter = new Lit.LayoutWidgetAdapter<TabsProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -92,8 +92,8 @@ export class TabsElement extends LitElement implements Core.WithWidget {
     );
 
     const navClasses = {
-      'gui-field': true,
-      'gui-field--horizontal': true,
+      'gui-widget': true,
+      'gui-widget--horizontal': true,
       'gui-tabs--start-shadow': !this.isStartVisible,
       'gui-tabs--end-shadow': !this.isEndVisible,
     };
@@ -142,7 +142,7 @@ export class TabsElement extends LitElement implements Core.WithWidget {
             this.adapter.templateData.renderMode !== 'activeOnly'}
             aria-labelledby=${`tab_${this.widget.uid}_${index}`}
           >
-            <gui-field .field=${section}></gui-field>
+            <gui-widget .widget=${section}></gui-widget>
           </section>`,
       )}`;
   }

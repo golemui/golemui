@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
-import FieldErrorBoundary from './FieldErrorBoundary';
-import FieldRenderer from './FieldRenderer';
+import WidgetErrorBoundary from './WidgetErrorBoundary';
+import WidgetRenderer from './WidgetRenderer';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 
 type JsonStringified = string;
@@ -122,9 +122,9 @@ export function FormComponent({
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
         <form id={formNameRef.current} noValidate>
-          <FieldErrorBoundary field={formLayoutField}>
-            <FieldRenderer field={formLayoutField} />
-          </FieldErrorBoundary>
+          <WidgetErrorBoundary field={formLayoutField}>
+            <WidgetRenderer widget={formLayoutField} />
+          </WidgetErrorBoundary>
         </form>
       </div>
     </ReactFormContextProvider>

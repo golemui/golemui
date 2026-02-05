@@ -1,4 +1,4 @@
-export { default as FieldRenderer } from './lib/FieldRenderer';
+export { default as WidgetRenderer } from './lib/WidgetRenderer';
 export * from './lib/FormComponent';
 export * from './lib/hooks';
 export * from './lib/RepeaterIndexContext';

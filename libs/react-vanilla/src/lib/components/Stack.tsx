@@ -1,24 +1,24 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, useLayoutField } from '@golemui/react';
+import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { StackProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Stack(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.LayoutWidget;
-  const { uid, children, templateData } = useLayoutField<StackProps>(field);
+export function Stack(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.LayoutWidget;
+  const { uid, children, templateData } = useLayoutWidget<StackProps>(widget);
 
-  const renderFields = useCallback(() => {
-    return children.map((field) => (
-      <FieldRenderer key={field.uid} field={field as Core.NonFunctionWidget<string>} />
+  const renderWidgets = useCallback(() => {
+    return children.map((widget) => (
+      <WidgetRenderer key={widget.uid} widget={widget as Core.NonFunctionWidget<string>} />
     ));
   }, [children]);
 
-  const direction = templateData.direction === 'horizontal' ? 'gui-stack__field--horizontal' : '';
+  const direction = templateData.direction === 'horizontal' ? 'gui-stack__widget--horizontal' : '';
   return (
     <div className="gui-stack" style={{ flex: templateData.size }}>
-      <div className={`gui-stack__field ${direction}`} id={uid}>
-        {renderFields()}
+      <div className={`gui-stack__widget ${direction}`} id={uid}>
+        {renderWidgets()}
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ export interface CalendarDay {
 }
 
 @customElement('gui-calendar')
-export class GuiCalendarControl extends AbstractCalendar {
+export class GuiCalendar extends AbstractCalendar {
   @property({ type: String }) value: string | undefined = undefined;
 
   override createRenderRoot() {
@@ -111,6 +111,6 @@ export class GuiCalendarControl extends AbstractCalendar {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-calendar': GuiCalendarControl;
+    'gui-calendar': GuiCalendar;
   }
 }

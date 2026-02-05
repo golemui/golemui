@@ -1,15 +1,15 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { useInputWidget } from '@golemui/react';
 import { CheckboxProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Checkbox(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<boolean>;
-  const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useControlField<
+export function Checkbox(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<boolean>;
+  const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useInputWidget<
     boolean,
     CheckboxProps
-  >(field);
+  >(widget);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>

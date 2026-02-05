@@ -3,11 +3,11 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { TextareaProps } from '../field.props';
+import { TextareaProps } from '../widget.props';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 @customElement('gui-textarea')
-export class GuiTextareaControl extends LitElement {
+export class GuiTextarea extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -79,8 +79,8 @@ export class GuiTextareaControl extends LitElement {
       fieldClasses[`gui-textarea--icon`] = true;
 
       const classes = {
-        'gui-field-icon': true,
-        'gui-field-icon--right': true,
+        'gui-widget-icon': true,
+        'gui-widget-icon--right': true,
         [templateData.icon]: true,
       };
       textareaIcon = html`<span class=${classMap(classes)}></span>`;
@@ -128,7 +128,7 @@ export class GuiTextareaControl extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <textarea
           id=${this.uid}
           data-cy=${`${this.uid}_textarea`}
@@ -178,6 +178,6 @@ export class GuiTextareaControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-textarea': GuiTextareaControl;
+    'gui-textarea': GuiTextarea;
   }
 }

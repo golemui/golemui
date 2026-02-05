@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
-import { cn, FieldRenderer, useLayoutField } from '@golemui/react';
+import { cn, useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export function Tabs(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.LayoutWidget;
-  const { uid, children, templateData, onChange } = useLayoutField<TabsProps>(field);
+export function Tabs(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.LayoutWidget;
+  const { uid, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
   const startSentinelRef = useRef<HTMLLIElement>(null);
   const endSentinelRef = useRef<HTMLLIElement>(null);
@@ -95,7 +95,7 @@ export function Tabs(fieldInstance: Core.WithWidget) {
     const tabs = templateData.tabs || [];
     return tabs.map((tab, index) => {
       return (
-        <li key={`tab_${field.uid}_${tab.uid}`}>
+        <li key={`tab_${widget.uid}_${tab.uid}`}>
           <button
             ref={(el) => {
               tabRefs.current[index] = el!;
@@ -103,9 +103,9 @@ export function Tabs(fieldInstance: Core.WithWidget) {
             type="button"
             role="tab"
             tabIndex={tab.uid === activeTab ? undefined : -1}
-            data-cy={`tab_${field.uid}_${index}`}
-            id={`tab_${field.uid}_${index}`}
-            aria-controls={`tabpanel_${field.uid}_${index}`}
+            data-cy={`tab_${widget.uid}_${index}`}
+            id={`tab_${widget.uid}_${index}`}
+            aria-controls={`tabpanel_${widget.uid}_${index}`}
             aria-selected={tab.uid === activeTab ? 'true' : 'false'}
             className={`${tab.uid === activeTab ? 'active' : ''}`}
             onClick={() => handleTabChange(tab.uid)}
@@ -119,34 +119,34 @@ export function Tabs(fieldInstance: Core.WithWidget) {
         </li>
       );
     });
-  }, [templateData, activeTab, field, tabRefs, handleTabChange, onKeyDown]);
+  }, [templateData, activeTab, widget, tabRefs, handleTabChange, onKeyDown]);
 
-  const renderFields = useCallback(() => {
+  const renderWidgets = useCallback(() => {
     const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);
 
     return children
-      .filter((field) => field.uid === activeTab || templateData.renderMode !== 'activeOnly')
+      .filter((widget) => widget.uid === activeTab || templateData.renderMode !== 'activeOnly')
       .map((section) => (
         <section
-          key={`tabpanel_${field.uid}_${section.uid}`}
+          key={`tabpanel_${widget.uid}_${section.uid}`}
           role="tabpanel"
           tabIndex={0}
-          data-cy={`tabpanel_${field.uid}_${activeSectionIndex}`}
-          id={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          data-cy={`tabpanel_${widget.uid}_${activeSectionIndex}`}
+          id={`tabpanel_${widget.uid}_${activeSectionIndex}`}
           hidden={section.uid !== activeTab && templateData.renderMode !== 'activeOnly'}
-          aria-labelledby={`tab_${field.uid}_${activeSectionIndex}`}
+          aria-labelledby={`tab_${widget.uid}_${activeSectionIndex}`}
         >
-          <FieldRenderer key={section.uid} field={section as Core.NonFunctionWidget<string>} />
+          <WidgetRenderer key={section.uid} widget={section as Core.NonFunctionWidget<string>} />
         </section>
       ));
-  }, [children, activeTab, field]);
+  }, [children, activeTab, widget]);
 
   return (
     <div className="gui-tabs" style={{ flex: templateData.size }}>
       <nav
         className={cn({
-          'gui-field': true,
-          'gui-field--horizontal': true,
+          'gui-widget': true,
+          'gui-widget--horizontal': true,
           'gui-tabs--start-shadow': !isStartVisible,
           'gui-tabs--end-shadow': !isEndVisible,
         })}
@@ -159,7 +159,7 @@ export function Tabs(fieldInstance: Core.WithWidget) {
           <li role="presentation" ref={endSentinelRef} className="gui-sentinel"></li>
         </ul>
       </nav>
-      {renderFields()}
+      {renderWidgets()}
     </div>
   );
 }
