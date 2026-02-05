@@ -4,8 +4,8 @@ import { combineLatest } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
-export function useControlField<T, ExtraProps extends Record<string, any>>(
-  field: Core.InputWidget<T, string>,
+export function useInputWidget<T, ExtraProps extends Record<string, any>>(
+  widget: Core.InputWidget<T, string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
@@ -13,33 +13,33 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
 
-  const templateData = useTemplateData<Core.InputWidget<T, string>, ExtraProps>(field);
+  const templateData = useTemplateData<Core.InputWidget<T, string>, ExtraProps>(widget);
 
   useEffect(() => {
     formContext.store.dispatch({
       type: 'ADD_WIDGET',
-      payload: { widget: field },
+      payload: { widget: widget },
     });
     formContext.store.dispatch({
       type: 'SET_WIDGET_INITIAL_DATA',
-      payload: { data: field.defaultValue, path: field.path },
+      payload: { data: widget.defaultValue, path: widget.path },
     });
-    setUid(field.uid);
-  }, [field, formContext.store]);
+    setUid(widget.uid);
+  }, [widget, formContext.store]);
 
   // Set the initial templateData, including the controls's data value
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(Core.dataByPath$<T>(field.path))
+      .pipe(Core.dataByPath$<T>(widget.path))
       .subscribe((data) => setValue(data));
     return () => sub.unsubscribe();
-  }, [field.path, formContext.store.state$]);
+  }, [widget.path, formContext.store.state$]);
 
   // Listen to the validation stream for this control
   useEffect(() => {
-    const validation$ = formContext.store.state$.pipe(Core.validationByPath$(field.path));
+    const validation$ = formContext.store.state$.pipe(Core.validationByPath$(widget.path));
     const injectedValidation$ = formContext.store.state$.pipe(
-      Core.injectedValidationByPath$(field.path),
+      Core.injectedValidationByPath$(widget.path),
     );
 
     const sub = combineLatest([validation$, injectedValidation$]).subscribe(
@@ -48,65 +48,65 @@ export function useControlField<T, ExtraProps extends Record<string, any>>(
       },
     );
     return () => sub.unsubscribe();
-  }, [field, formContext.store]);
+  }, [widget, formContext.store]);
 
   // Listen to the touchedControls stream for this control
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(Core.touchedControlsByPath$(field.path))
+      .pipe(Core.touchedControlsByPath$(widget.path))
       .subscribe((touched) => {
         setIsTouched(touched);
       });
     return () => sub.unsubscribe();
-  }, [field, formContext.store]);
+  }, [widget, formContext.store]);
 
   useEffect(() => {
-    formContext.emitEvent('load', field);
-  }, [formContext, field]);
+    formContext.emitEvent('load', widget);
+  }, [formContext, widget]);
 
   useEffect(() => {
     return () => {
       formContext.store.dispatch({
         type: 'REMOVE_WIDGET',
-        payload: { uid: field.uid },
+        payload: { uid: widget.uid },
       });
     };
-  }, [formContext, field]);
+  }, [formContext, widget]);
 
   const onValueChanged = useCallback(
     (newValue: T) => {
       formContext.store.dispatch({
         type: 'SET_WIDGET_DATA',
-        payload: { path: field.path, data: newValue },
+        payload: { path: widget.path, data: newValue },
       });
-      formContext.emitEvent('change', field);
+      formContext.emitEvent('change', widget);
     },
-    [field, formContext],
+    [widget, formContext],
   );
 
   const onFilter = useCallback(
     (newValue: T) => {
-      formContext.emitEvent('filter', field, newValue);
+      formContext.emitEvent('filter', widget, newValue);
     },
-    [field, formContext],
+    [widget, formContext],
   );
 
   const injectValidationIssues = useCallback(
     (issues: string[] | null) => {
       formContext.store.dispatch({
         type: 'INJECT_VALIDATION_ISSUES',
-        payload: { path: field.path, issues },
+        payload: { path: widget.path, issues },
       });
     },
-    [field, formContext],
+    [widget, formContext],
   );
 
   const onBlur = useCallback(() => {
     formContext.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur', path: field.path, uid: field.uid },
+      payload: { reason: 'blur', path: widget.path, uid: widget.uid },
     });
-  }, [formContext, field]);
+  }, [formContext, widget]);
 
   return {
     uid,

@@ -1,15 +1,15 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { useInputWidget } from '@golemui/react';
 import { DateRange, RangeCalendarProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function RangeCalendar(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<DateRange[]>;
-  const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useControlField<
+export function RangeCalendar(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<DateRange[]>;
+  const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useInputWidget<
     DateRange[],
     RangeCalendarProps
-  >(field);
+  >(widget);
 
   const handleRef = useCallback(
     (node: HTMLElement | null) => {

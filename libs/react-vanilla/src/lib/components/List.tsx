@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Core from '@golemui/core';
-import { useControlField, useItemRenderer } from '@golemui/react';
+import { useInputWidget, useItemRenderer } from '@golemui/react';
 import { ListItem, ListProps, OptionValue } from '@golemui/shared-vanilla';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';
@@ -9,13 +9,13 @@ interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
 }
 
-export function List(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<OptionValue>;
+export function List(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<OptionValue>;
 
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
     OptionValue,
     ListProps<unknown>
-  >(field);
+  >(widget);
 
   // React catches bubbling blur events meanwhile Lit and Angular don't, we prevent double blur events here
   const handleBlur = useCallback(

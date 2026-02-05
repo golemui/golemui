@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useDisplayField } from '@golemui/react';
+import { useDisplayWdiget } from '@golemui/react';
 import { createElement, PropsWithChildren } from 'react';
 
 type OwnWidgetProps = {
@@ -9,7 +9,7 @@ type OwnWidgetProps = {
 
 export function HeadingComponent(fieldInstance: Core.WithWidget) {
   const field = fieldInstance.widget as Core.DisplayWidget;
-  const { uid, templateData } = useDisplayField<OwnWidgetProps>(field);
+  const { uid, templateData } = useDisplayWdiget<OwnWidgetProps>(field);
 
   return (
     <div className="gui-field" id={uid} data-cy="heading">

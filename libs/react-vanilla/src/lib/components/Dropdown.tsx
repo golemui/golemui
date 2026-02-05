@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Core from '@golemui/core';
-import { useControlField, useDebounceCallback, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
+import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
 import { DropdownProps, ListItem, OptionValue } from '@golemui/shared-vanilla';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';
@@ -14,11 +14,11 @@ interface GuiLabelElement extends HTMLElement {
   targetElement?: HTMLElement | HTMLElement[];
 }
 
-export function Dropdown(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<string | null>;
+export function Dropdown(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<string | null>;
 
   const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
-    useControlField<string | number | null, DropdownProps<never>>(field);
+    useInputWidget<string | number | null, DropdownProps<never>>(widget);
 
   const [range, setRange] = useState({ start: 0, end: 10 });
   const [listItems, setListItems] = useState<ListItem<never>[]>([]);
@@ -180,7 +180,7 @@ export function Dropdown(fieldInstance: Core.WithWidget) {
 
   const filterItems = useCallback(
     (filterValue: string) => {
-      const asyncFiltering = !!field.on?.filter;
+      const asyncFiltering = !!widget.on?.filter;
 
       onFilter(filterValue);
 
@@ -220,7 +220,7 @@ export function Dropdown(fieldInstance: Core.WithWidget) {
       }
     },
     [
-      field.on?.filter,
+      widget.on?.filter,
       onFilter,
       templateData.items,
       templateData.labelField,
@@ -269,7 +269,7 @@ export function Dropdown(fieldInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
-  const asyncFiltering = !!field.on?.filter;
+  const asyncFiltering = !!widget.on?.filter;
 
   return (
     <div className="gui-dropdown" style={{ flex: templateData.size }}>

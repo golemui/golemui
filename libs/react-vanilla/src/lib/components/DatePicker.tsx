@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { useInputWidget } from '@golemui/react';
 import { DatePickerProps } from '@golemui/shared-vanilla';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
 
-export function DatePicker(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<string>;
+export function DatePicker(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<string>;
   const {
     uid,
     errors,
@@ -16,7 +16,7 @@ export function DatePicker(fieldInstance: Core.WithWidget) {
     onValueChanged,
     onBlur,
     injectValidationIssues,
-  } = useControlField<string, DatePickerProps>(field);
+  } = useInputWidget<string, DatePickerProps>(widget);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const dateControlRef = useRef<HTMLElement | null>(null);
   const calendarControlRef = useRef<HTMLElement | null>(null);

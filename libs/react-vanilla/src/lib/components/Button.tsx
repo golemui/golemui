@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
-import { useInteractiveField } from '@golemui/react';
+import { useActionWidget } from '@golemui/react';
 import '../styles.scss';
 
-export function Button(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.ActionWidget;
-  const { uid, templateData, onClick } = useInteractiveField(field);
+export function Button(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.ActionWidget;
+  const { uid, templateData, onClick } = useActionWidget(widget);
   const isDisabled = templateData.disabled as boolean;
 
   return (
