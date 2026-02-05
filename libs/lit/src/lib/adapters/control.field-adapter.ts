@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { combineLatest, takeUntil } from 'rxjs';
-import { BaseFieldAdapter } from './base.field-adapter';
 import { LitItemRenderer } from '../components/item-renderers/item-renderer';
+import { BaseFieldAdapter } from './base.field-adapter';
 
 export const controlContext =
   createContext<ControlFieldAdapter<any, any>>('guiControlFieldAdapter');
@@ -10,10 +10,10 @@ export const controlContext =
 export class ControlFieldAdapter<
   T,
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.ControlField<T>> {
+> extends BaseFieldAdapter<Core.InputWidget<T>> {
   override templateData = {} as Core.ControlTemplateData<T> & ExtraProps;
 
-  init(field: Core.ControlField<T>) {
+  init(field: Core.InputWidget<T>) {
     this.field = field;
 
     this.addFieldToTheStore(field);
@@ -21,7 +21,7 @@ export class ControlFieldAdapter<
 
     // Set field data
     this.context.store.dispatch({
-      type: 'SET_FIELD_INITIAL_DATA',
+      type: 'SET_WIDGET_INITIAL_DATA',
       payload: { data: field.defaultValue, path: field.path },
     });
 
@@ -58,7 +58,7 @@ export class ControlFieldAdapter<
 
   valueChanged<T>(value: T) {
     this.context.store.dispatch({
-      type: 'SET_FIELD_DATA',
+      type: 'SET_WIDGET_DATA',
       payload: { path: this.field.path, data: value },
     });
     this.context.emitEvent('change', this.field);
@@ -92,7 +92,7 @@ export class ControlFieldAdapter<
   onBlur() {
     this.context.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
-      payload: { reason: 'blur', path: this.field.path },
+      payload: { reason: 'blur', path: this.field.path, uid: this.field.uid },
     });
   }
 }

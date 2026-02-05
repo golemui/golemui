@@ -1,8 +1,8 @@
 @let formState = context.store.state$ | async;
 
-<form [id]="formName()">
-  @if (formState && formState.formDef && context.fieldRegistry.ready) {
-    <ng-container guiField [field]="formState.formDef.form" />
+<form [id]="formName()" novalidate>
+  @if (formState && formState.formDef && context.widgetRegistry.ready) {
+    <ng-container guiWidget [widget]="formState.formDef.form" />
   } @else {
     <div>Loading form...</div>
   }

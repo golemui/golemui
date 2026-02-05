@@ -1,26 +1,26 @@
 export const currency = (): any => ({
   uid: 'tab13',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'currency',
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'currencyDisabled',
       disabled: true,
       readonly: true,
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'currencyMaximumFractionDigits',
       props: {
         placeholder: 'maximum 2 digits after the decimal point',
@@ -29,8 +29,8 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'currencyMinimumFractionDigits',
       props: {
         placeholder: 'minimum 4 digits after the decimal point',
@@ -39,8 +39,8 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'currencyWithIcon',
       props: {
         icon: 'material-icons material-icons-phone_callback',
@@ -50,8 +50,8 @@ export const currency = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'currency',
+      kind: 'input',
+      type: 'currency',
       path: 'currencyIconRightWithEUR',
       props: {
         currency: 'EUR',

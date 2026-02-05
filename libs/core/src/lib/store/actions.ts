@@ -1,4 +1,4 @@
-import { FormField } from '../form-field';
+import { FormWidget } from '../form-widget';
 import { DotPath, Uid, ValidateOn } from '../shared';
 import { FormHealth } from './model';
 
@@ -28,38 +28,38 @@ export type SET_LANGUAGE = {
   };
 };
 
-export type ADD_FIELD = {
-  type: 'ADD_FIELD';
-  payload: { field: FormField<string> };
+export type ADD_WIDGET = {
+  type: 'ADD_WIDGET';
+  payload: { widget: FormWidget<string> };
 };
 
-export type REMOVE_FIELD = {
-  type: 'REMOVE_FIELD';
+export type REMOVE_WIDGET = {
+  type: 'REMOVE_WIDGET';
   payload: { uid: Uid };
 };
 
-// TODO: rename all _FIELD_ to _CONTROL_ when the field has a path (it's a control)
+// TODO: rename all _WIDGET_ to _INPUT_ when the widget has a path (it's an input)
 /**
- * Sets the default value for a single form field.
+ * Sets the default value for a single form widget.
  */
-export type SET_FIELD_INITIAL_DATA = {
-  type: 'SET_FIELD_INITIAL_DATA';
+export type SET_WIDGET_INITIAL_DATA = {
+  type: 'SET_WIDGET_INITIAL_DATA';
   payload: { path: DotPath; data: any };
 };
 
 /**
- * Sets the data for a single form field.
+ * Sets the data for a single form widget.
  */
-export type SET_FIELD_DATA = {
-  type: 'SET_FIELD_DATA';
+export type SET_WIDGET_DATA = {
+  type: 'SET_WIDGET_DATA';
   payload: { path: DotPath; data: any };
 };
 
 /**
- * Overrides a property in a form field's `props` object.
+ * Overrides a property in a form widget's `props` object.
  */
-export type OVERRIDE_FIELD_PROP = {
-  type: 'OVERRIDE_FIELD_PROP';
+export type OVERRIDE_WIDGET_PROP = {
+  type: 'OVERRIDE_WIDGET_PROP';
   payload: { path: DotPath; prop: string; value: any };
 };
 
@@ -73,7 +73,7 @@ export type SET_FORM_HEALTH = {
  *
  * When dispatched, this action triggers validation for the entire form based on
  * the form's validation configuration. However, validation errors will only be
- * displayed for the specific field identified by the `path` property, which will
+ * displayed for the specific widget identified by the `path` property, which will
  * be marked as _touched_.
  *
  * The actual validation behavior is determined by the form's configuration and
@@ -82,15 +82,15 @@ export type SET_FORM_HEALTH = {
  */
 export type ATTEMPT_VALIDATION = {
   type: 'ATTEMPT_VALIDATION';
-  payload: { reason: Exclude<ValidateOn, any[] | 'eager' | 'submit'>; path: DotPath };
+  payload: { reason: Exclude<ValidateOn, any[] | 'eager' | 'submit'>; path: DotPath; uid: Uid };
 };
 
 /**
- * Action type that validates all form fields and marks them as _touched_.
+ * Action type that validates all form widgets and marks them as _touched_.
  *
- * When dispatched, this action triggers validation for every field in the form
- * and marks all fields as _touched_, causing validation errors to be displayed
- * for all invalid fields regardless of the form's validation configuration.
+ * When dispatched, this action triggers validation for every widget in the form
+ * and marks all widgets as _touched_, causing validation errors to be displayed
+ * for all invalid widgets regardless of the form's validation configuration.
  *
  * This action is typically dispatched when the user attempts to submit the form,
  * ensuring all validation errors are visible before submission proceeds.
@@ -108,11 +108,11 @@ export type Action =
   | INITIALIZE
   | SET_LANGUAGE
   | SET_DATA
-  | ADD_FIELD
-  | REMOVE_FIELD
-  | SET_FIELD_INITIAL_DATA
-  | SET_FIELD_DATA
-  | OVERRIDE_FIELD_PROP
+  | ADD_WIDGET
+  | REMOVE_WIDGET
+  | SET_WIDGET_INITIAL_DATA
+  | SET_WIDGET_DATA
+  | OVERRIDE_WIDGET_PROP
   | SET_FORM_HEALTH
   | INJECT_VALIDATION_ISSUES
   | ATTEMPT_VALIDATION

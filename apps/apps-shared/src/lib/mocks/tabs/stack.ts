@@ -1,7 +1,7 @@
 export const stack = (): any => ({
   uid: 'tab2',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   props: {
     direction: 'horizontal',
     'direction.limitReached': 'vertical',
@@ -9,15 +9,15 @@ export const stack = (): any => ({
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'listName',
       size: 1,
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
       path: 'listOwner',
       size: 2,
     },

@@ -36,8 +36,8 @@ export const reduceIf =
   };
 
 export const isControlTouched =
-  (fieldPath: DotPath) =>
+  (widgetPath: DotPath) =>
   (state: State): boolean => {
-    const touched = state.touchedControls[fieldPath];
+    const touched = state.touchedControls[widgetPath];
     return state.touched && touched;
   };

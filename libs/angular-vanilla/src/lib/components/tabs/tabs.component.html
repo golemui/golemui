@@ -5,7 +5,7 @@
   [class.gui-tabs--start-shadow]="!isStartVisible()"
   [class.gui-tabs--end-shadow]="!isEndVisible()"
   role="tablist"
-  [id]="field.uid"
+  [id]="widget.uid"
 >
   <ul>
     <li role="presentation" #startSentinel class="gui-sentinel"></li>
@@ -15,10 +15,10 @@
           #tabButtonRef
           type="button"
           role="tab"
-          [attr.data-cy]="'tab_' + field.uid + '_' + i"
+          [attr.data-cy]="'tab_' + widget.uid + '_' + i"
           [tabindex]="tab.uid === activeTab() ? null : -1"
-          [id]="'tab_' + field.uid + '_' + i"
-          [attr.aria-controls]="'tabpanel_' + field.uid + '_' + i"
+          [id]="'tab_' + widget.uid + '_' + i"
+          [attr.aria-controls]="'tabpanel_' + widget.uid + '_' + i"
           [attr.aria-selected]="tab.uid === activeTab() ? 'true' : 'false'"
           [class.active]="tab.uid === activeTab()"
           (click)="onClickTab(tab.uid)"
@@ -34,15 +34,16 @@
 </nav>
 
 @for (child of templateData.children; track child.uid; let i = $index) {
-  @if (child.uid === activeTab()) {
+  @if (child.uid === activeTab() || templateData.renderMode !== 'activeOnly') {
     <section
       role="tabpanel"
       tabindex="0"
-      [attr.data-cy]="'tabpanel_' + field.uid + '_' + i"
-      [id]="'tabpanel_' + field.uid + '_' + i"
-      [attr.aria-labelledby]="'tab_' + field.uid + '_' + i"
+      [hidden]="child.uid !== activeTab() && templateData.renderMode !== 'activeOnly'"
+      [attr.data-cy]="'tabpanel_' + widget.uid + '_' + i"
+      [id]="'tabpanel_' + widget.uid + '_' + i"
+      [attr.aria-labelledby]="'tab_' + widget.uid + '_' + i"
     >
-      <ng-container guiField [field]="child" />
+      <ng-container guiWidget [widget]="child" />
     </section>
   }
 }

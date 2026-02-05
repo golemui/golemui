@@ -1,26 +1,26 @@
 export const textarea = (): any => ({
   uid: 'tab11',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'textarea',
+      kind: 'input',
+      type: 'textarea',
       path: 'textarea',
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textarea',
+      kind: 'input',
+      type: 'textarea',
       path: 'textareaDisabled',
       disabled: true,
       readonly: true,
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textarea',
+      kind: 'input',
+      type: 'textarea',
       path: 'textareaAutoGrow',
       props: {
         placeholder: 'This textarea will grow automatically when you type in it.',
@@ -30,8 +30,8 @@ export const textarea = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textarea',
+      kind: 'input',
+      type: 'textarea',
       path: 'textareaWithHint',
       props: {
         hint: 'This is a hint',
@@ -40,8 +40,8 @@ export const textarea = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'textarea',
+      kind: 'input',
+      type: 'textarea',
       path: 'textareaWithIcon',
       props: {
         icon: 'material-icons material-icons-phone_callback',

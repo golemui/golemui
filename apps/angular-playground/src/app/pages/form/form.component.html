@@ -20,12 +20,12 @@
   <gui-form
     [formDef]="formDef"
     [data]="formData"
-    [fieldLoaders]="customFieldLoaders"
+    [widgetLoaders]="customWidgetLoaders"
     [middlewares]="middlewares"
     [validators]="validators"
     [itemRenderers]="itemRenderers"
     [localization]="localization"
-    [validateOn]="'eager'"
+    [validateOn]="validateOn"
     (formHealth)="onFormHealth($event)"
     (formEvent)="onFormEvent($event)"
   ></gui-form>

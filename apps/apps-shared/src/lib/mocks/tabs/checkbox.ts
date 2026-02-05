@@ -1,20 +1,20 @@
 export const checkbox = (): any => ({
   uid: 'tab4',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'checkbox',
+      kind: 'input',
+      type: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUser',
       props: {},
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'checkbox',
+      kind: 'input',
+      type: 'checkbox',
       label: 'Disabled checkbox',
       path: 'isDisabled',
       disabled: true,
@@ -23,8 +23,8 @@ export const checkbox = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'checkbox',
+      kind: 'input',
+      type: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUserLeft',
       props: {
@@ -34,8 +34,8 @@ export const checkbox = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'checkbox',
+      kind: 'input',
+      type: 'checkbox',
       label: 'Create new account?',
       path: 'isNewUserHint',
       props: {

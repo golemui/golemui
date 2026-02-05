@@ -1,13 +1,15 @@
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/shared-vanilla';
 import { Type } from '@golemui/lit';
+import { VanillaWidget } from '@golemui/shared-vanilla';
 
-export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, VanillaWidget> = {
+export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
   // INTERACTIVE
   button: async () => (await import('./components/button.element')).ButtonElement,
 
   // CONTROLS
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,
+  rangeCalendar: async () =>
+    (await import('./components/range-calendar.element')).RangeCalendarElement,
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,
@@ -31,4 +33,5 @@ export const vanillaFieldLoaders: Core.FieldLoaders<Type<Core.WithField>, Vanill
 
   // DISPLAY
   alert: async () => (await import('./components/alert.element')).AlertElement,
+  renderer: async () => (await import('./components/renderer.element')).RendererElement,
 };

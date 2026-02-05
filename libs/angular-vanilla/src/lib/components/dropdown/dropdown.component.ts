@@ -26,7 +26,7 @@ interface GuiListElement extends HTMLElement {
   standalone: true,
   selector: 'gui-dropdown-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './dropdown.component.html',
   host: {
     class: 'gui-dropdown',
@@ -34,11 +34,11 @@ interface GuiListElement extends HTMLElement {
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
+export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
-  protected adapter: Angular.ControlFieldAdapter<string, DropdownProps<never>> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, DropdownProps<never>> = inject(
+    Angular.InputWidgetAdapter,
   );
   private el = inject(ElementRef);
 
@@ -57,7 +57,7 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
   protected filteredItems = signal<ListItem<never>[]>([]);
 
   protected asyncFiltering = computed(() => {
-    return !!this.field.on?.filter;
+    return !!this.widget.on?.filter;
   });
 
   protected displayItems = computed(() => {
@@ -86,7 +86,7 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithField {
   protected subscriptions: Subscription[] = [];
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.debouncer

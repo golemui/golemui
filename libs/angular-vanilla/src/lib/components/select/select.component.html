@@ -1,7 +1,7 @@
 @let templateData = adapter.templateData();
 
 <gui-select
-  [uid]="field.uid"
+  [uid]="widget.uid"
   [label]="templateData.label"
   [errors]="templateData.errors"
   [touched]="templateData.touched"
@@ -17,5 +17,6 @@
   [labelField]="templateData.labelField"
   [valueField]="templateData.valueField"
   (change)="valueChanged($event)"
+  (inputError)="onInputError($event)"
   (blur)="adapter.onBlur()"
 ></gui-select>

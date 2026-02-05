@@ -8,7 +8,7 @@ import { SelectProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-select-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './select.component.html',
   host: {
     class: 'gui-select',
@@ -16,14 +16,14 @@ import { SelectProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, SelectProps> = inject(
-    Angular.ControlFieldAdapter,
+export class SelectComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
+  protected adapter: Angular.InputWidgetAdapter<string, SelectProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {
@@ -31,7 +31,12 @@ export class SelectComponent implements OnInit, OnDestroy, Core.WithField {
   }
 
   valueChanged(event: Event) {
+    this.adapter.injectValidationIssues(null);
     const value = (event as CustomEvent).detail.value;
     this.adapter.valueChanged(value);
+  }
+
+  onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
   }
 }

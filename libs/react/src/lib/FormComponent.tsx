@@ -9,7 +9,7 @@ type JsonObject = Record<string, any>;
 
 export interface FormComponentProps {
   formDef: JsonStringified | JsonObject;
-  fieldLoaders: Core.FieldLoaders<React.ComponentType<Core.WithField>>;
+  widgetLoaders: Core.WidgetLoaders<React.ComponentType<Core.WithWidget>>;
   itemRenderers: Record<string, Core.ItemRenderer>;
   localization?: Core.I18nTranslator;
   validators: Core.ValidatorFn<any>;
@@ -23,7 +23,7 @@ export interface FormComponentProps {
 
 export function FormComponent({
   formDef,
-  fieldLoaders,
+  widgetLoaders,
   itemRenderers,
   localization,
   middlewares,
@@ -34,23 +34,23 @@ export function FormComponent({
   formHealth,
   formEvent,
 }: FormComponentProps) {
-  const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithField>>>(
+  const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
     new Core.FormContext(),
   );
   const formNameRef = useRef(formName || Core.shortUUID());
-  const [formLayoutField, setFormLayoutField] = useState<Core.LayoutField<string> | null>(null);
+  const [formLayoutField, setFormLayoutField] = useState<Core.LayoutWidget<string> | null>(null);
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {
     formContextRef.current.initialize(
-      fieldLoaders,
+      widgetLoaders,
       middlewares,
       validators,
       validateOn || 'eager',
       itemRenderers,
       localization,
     );
-  }, [fieldLoaders, middlewares, validators, validateOn, itemRenderers, localization]);
+  }, [widgetLoaders, middlewares, validators, validateOn, itemRenderers, localization]);
 
   // FORM HEALTH
   useEffect(() => {
@@ -121,7 +121,7 @@ export function FormComponent({
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
-        <form id={formNameRef.current}>
+        <form id={formNameRef.current} noValidate>
           <FieldErrorBoundary field={formLayoutField}>
             <FieldRenderer field={formLayoutField} />
           </FieldErrorBoundary>

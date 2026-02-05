@@ -3,12 +3,12 @@ const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 export const dropdown = (): any => ({
   uid: 'tab15',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.searchAsYouType',
       label: 'Search as you type',
       props: {
@@ -29,8 +29,8 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.defaultListRenderer',
       label: 'Default list renderer with primitive values',
       props: {
@@ -41,8 +41,8 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.defaultRenderer20',
       label: 'Default Renderer with 20px item height',
       props: {
@@ -54,8 +54,8 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.disabledList',
       label: 'Disabled list',
       disabled: true,
@@ -67,8 +67,8 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.requiredList',
       label: 'Required list',
       props: {
@@ -80,8 +80,8 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.invalidValueList',
       label: 'Invalid value list',
       props: {
@@ -93,8 +93,8 @@ export const dropdown = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'dropdown',
+      kind: 'input',
+      type: 'dropdown',
       path: 'dropdowns.customItemRenderer',
       label: 'Custom item renderer',
       props: {

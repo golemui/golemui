@@ -10,35 +10,24 @@ const data = {
 const form = defineForm({
   states: {
     hasSubregion: `!!$form.selects?.subregion`,
+    hasName: `$form.name && $form.name.length > 0`,
   },
   form: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'textinput',
+      kind: 'input',
+      type: 'textinput',
+      label: 'Name',
       path: 'name',
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'checkbox',
-      path: 'aaaa',
-      readonly: true,
-    },
-    {
-      uid: '',
-      kind: 'control',
-      widget: 'checkbox',
-      path: 'bbb',
-      readonly: false,
-    },
-    {
-      uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'greeting',
       label: 'Greeting',
-      readonly: true,
+      disabled: true,
+      'disabled.hasName': false,
       props: {
         options: ['hello', 'bye'],
         placeholder: 'Please, select an option',
@@ -46,8 +35,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'wrongGreeting',
       props: {
         options: ['hello', 'bye'],
@@ -55,8 +44,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'greetingIndex',
       props: {
         options: [
@@ -67,8 +56,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.subregion',
       label: 'Country subregion',
       on: {
@@ -78,20 +67,20 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'select',
+      kind: 'input',
+      type: 'select',
       path: 'selects.country',
       include: { in: ['hasSubregion'] },
     },
     {
       uid: '',
-      kind: 'interactive',
-      widget: 'button',
+      kind: 'action',
+      type: 'button',
       label: 'Send',
-      disabled: true,
-      'disabled.hasSubregion': false,
+      //disabled: true,
+      //'disabled.hasSubregion': false,
       on: {
-        click: 'sendCountry',
+        click: 'submit',
       },
     },
   ],

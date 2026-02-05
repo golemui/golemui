@@ -1,6 +1,6 @@
-import { NonFunctionField } from './form-field';
+import { NonFunctionWidget } from './form-widget';
 import { I18nTranslator } from './i18n';
-import { OVERRIDE_FIELD_PROP } from './store/actions';
+import { OVERRIDE_WIDGET_PROP } from './store/actions';
 import { ImmutableRecord, LooseObject } from './utils/types';
 
 /**
@@ -30,36 +30,37 @@ export type Uid = string;
  */
 export type ValidationStatus = null | string[];
 
-export type FieldPropertyFunctionParams<FormData> = {
+export type WidgetPropertyFunctionParams<FormData> = {
   $form: ImmutableRecord<FormData>;
   translate?: I18nTranslator['translate'];
 };
 
 /**
- * A FieldPropertyFunction is a field function that is evaluated and then substituted by the produced value.
+ * A WidgetPropertyFunction is a widget function that is evaluated and then substituted by the produced value.
  */
-export type FieldPropertyFunction<T, FormData extends Record<string, any> = any> = (
-  api: FieldPropertyFunctionParams<FormData>,
+export type WidgetPropertyFunction<T, FormData extends Record<string, any> = any> = (
+  api: WidgetPropertyFunctionParams<FormData>,
 ) => T;
 
-export type ReactiveFormField = LooseObject<
+export type ReactiveFormWidget = LooseObject<
   {
-    props?: Record<string, FieldPropertyFunction<any>>;
-    on?: Record<string, FieldPropertyFunction<any>>;
+    props?: Record<string, WidgetPropertyFunction<any>>;
+    on?: Record<string, WidgetPropertyFunction<any>>;
   },
-  FieldPropertyFunction<any>
+  WidgetPropertyFunction<any>
 >;
 
-export type FunctionFieldParams<FormData> = {
+export type FunctionWidgetParams<FormData> = {
   $form: ImmutableRecord<FormData>;
-  errors?: ValidationStatus;
-  translate?: I18nTranslator['translate'];
+  errors: ValidationStatus | undefined;
+  touched: boolean | undefined;
+  translate: I18nTranslator['translate'] | undefined;
 };
 
 /**
- * Defines when field validation should run.
+ * Defines when widget validation should run.
  * - `'eager'` validates on `'change'`, `'blur'` and `'submit'`.
- * - When using 'submit', validation triggers when the 'submit' event is emitted. When that happens, all fields are also _touched_ first.
+ * - When using 'submit', validation triggers when the 'submit' event is emitted. When that happens, all widgets are also _touched_ first.
  * ```ts
  * {
  *   widget: 'button',
@@ -85,14 +86,14 @@ export type EventName = string;
 /**
  * Actions that can be called back from the event handler callback
  */
-export type EventHandlerCallback = OVERRIDE_FIELD_PROP;
+export type EventHandlerCallback = OVERRIDE_WIDGET_PROP;
 
 export type FormEvent<T = any> = {
-  /** The name of the form field that dispatched the event. */
+  /** The name of the form widget that dispatched the event. */
   name: EventName;
   /** The form's data at the moment the event was dispatched. */
   data: Record<string, T>;
-  /** The detail provided by the field at the moment the event was dispatched. */
+  /** The detail provided by the widget at the moment the event was dispatched. */
   detail?: any;
   /** Actions that the client can execute to interact with the forms engine from the application scope */
   callback: (action: EventHandlerCallback) => void;
@@ -134,13 +135,13 @@ export type LayoutTemplateData = {
    * size: 2
    */
   size?: number;
-  children: NonFunctionField<string>[];
+  children: NonFunctionWidget<string>[];
 };
 
 /**
- * Display field adapter templateData
+ * Display widget adapter templateData
  */
-export type DisplayFieldTemplateData = {
+export type DisplayWidgetTemplateData = {
   lang?: string;
   /**
    * A size relative to the container and sibling components
@@ -152,9 +153,9 @@ export type DisplayFieldTemplateData = {
 };
 
 /**
- * Interactive field adapter templateData
+ * Action widget adapter templateData
  */
-export type InteractiveFieldTemplateData = {
+export type ActionWidgetTemplateData = {
   lang?: string;
   label?: string;
   disabled?: boolean;

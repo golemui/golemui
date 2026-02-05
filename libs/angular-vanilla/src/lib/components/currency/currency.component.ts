@@ -8,7 +8,7 @@ import { CurrencyProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-currency-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './currency.component.html',
   host: {
     class: 'gui-currency',
@@ -16,14 +16,14 @@ import { CurrencyProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class CurrencyComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<number>;
-  protected adapter: Angular.ControlFieldAdapter<number, CurrencyProps> = inject(
-    Angular.ControlFieldAdapter,
+export class CurrencyComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<number>;
+  protected adapter: Angular.InputWidgetAdapter<number, CurrencyProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

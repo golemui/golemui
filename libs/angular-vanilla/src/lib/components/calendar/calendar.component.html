@@ -1,7 +1,7 @@
 @let templateData = adapter.templateData();
 
 <gui-calendar
-  [uid]="field.uid"
+  [uid]="widget.uid"
   [label]="templateData.label"
   [hint]="templateData.hint"
   [value]="templateData.value"
@@ -16,6 +16,10 @@
   [dayFormat]="templateData.dayFormat"
   [weekdayFormat]="templateData.weekdayFormat"
   [monthFormat]="templateData.monthFormat"
+  [minDate]="templateData.minDate"
+  [maxDate]="templateData.maxDate"
+  [disabledRanges]="templateData.disabledRanges"
+  [numberOfMonths]="templateData.numberOfMonths"
   [localeId]="templateData.lang"
   (blur)="adapter.onBlur()"
   (change)="onChangeDate($event)"

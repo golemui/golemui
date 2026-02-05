@@ -7,20 +7,20 @@ import * as Core from '@golemui/core';
   standalone: true,
   selector: 'gui-customdate',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './custom-date.component.html',
   host: {
     class: 'gui-customdate',
   },
 })
-export class CustomdateComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, Record<string, any>> = inject(
-    Angular.ControlFieldAdapter,
+export class CustomdateComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
+  protected adapter: Angular.InputWidgetAdapter<string, Record<string, any>> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

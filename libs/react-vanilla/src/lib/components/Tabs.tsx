@@ -3,8 +3,8 @@ import { cn, FieldRenderer, useLayoutField } from '@golemui/react';
 import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export function Tabs(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.LayoutField;
+export function Tabs(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.LayoutWidget;
   const { uid, children, templateData, onChange } = useLayoutField<TabsProps>(field);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
   const startSentinelRef = useRef<HTMLLIElement>(null);
@@ -125,7 +125,7 @@ export function Tabs(fieldInstance: Core.WithField) {
     const activeSectionIndex = children.findIndex((section: any) => section.uid === activeTab);
 
     return children
-      .filter((field) => field.uid === activeTab)
+      .filter((field) => field.uid === activeTab || templateData.renderMode !== 'activeOnly')
       .map((section) => (
         <section
           key={`tabpanel_${field.uid}_${section.uid}`}
@@ -133,9 +133,10 @@ export function Tabs(fieldInstance: Core.WithField) {
           tabIndex={0}
           data-cy={`tabpanel_${field.uid}_${activeSectionIndex}`}
           id={`tabpanel_${field.uid}_${activeSectionIndex}`}
+          hidden={section.uid !== activeTab && templateData.renderMode !== 'activeOnly'}
           aria-labelledby={`tab_${field.uid}_${activeSectionIndex}`}
         >
-          <FieldRenderer key={section.uid} field={section as Core.NonFunctionField<string>} />
+          <FieldRenderer key={section.uid} field={section as Core.NonFunctionWidget<string>} />
         </section>
       ));
   }, [children, activeTab, field]);

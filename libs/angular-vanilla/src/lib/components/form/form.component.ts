@@ -8,7 +8,7 @@ import {
   initValidators,
   jsonSchemaValidators,
 } from '@golemui/validators-vanilla';
-import { vanillaFieldLoaders } from '../../field.loaders';
+import { vanillaWidgetLoaders } from '../../widget.loaders';
 
 @Component({
   imports: [CommonModule, Angular.FormCoreComponent],
@@ -17,7 +17,7 @@ import { vanillaFieldLoaders } from '../../field.loaders';
 })
 export class FormComponent {
   formDef = input.required<string | Record<string, any>>();
-  fieldLoaders = input.required<Core.FieldLoaders<Type<Core.WithField>>>({});
+  widgetLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>({});
   data = input<Record<string, any>>({});
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   validators = input<CustomValidatorSchemas>({});
@@ -25,9 +25,9 @@ export class FormComponent {
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
   localization = input<Core.I18nTranslator>();
 
-  protected customFieldLoaders = computed(() => ({
-    ...vanillaFieldLoaders,
-    ...this.fieldLoaders(),
+  protected customWidgetLoaders = computed(() => ({
+    ...vanillaWidgetLoaders,
+    ...this.widgetLoaders(),
   }));
   protected customValidators = computed(() => initValidators({ ...this.validators() }));
   protected customMiddlewares = computed(() => [

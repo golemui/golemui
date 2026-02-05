@@ -1,3 +1,4 @@
+gui-range-calendar,
 gui-calendar {
   display: block;
   width: fit-content;
@@ -5,17 +6,27 @@ gui-calendar {
   .gui-field {
     // Month Calendar
     .gui-calendar-input {
-      width: var(--gui-calendar-width);
       border-radius: var(--gui-radius);
       background: var(--gui-color-bg);
       border: 1px solid var(--gui-color-border);
       padding: var(--gui-padding);
     }
 
+    .gui-calendar__panel {
+      width: 300px;
+    }
+
+    .gui-calendar__container {
+      display: flex;
+      gap: 2rem;
+    }
+
     .gui-calendar__header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      height: 50px;
     }
 
     .gui-calendar__weekday {
@@ -27,6 +38,17 @@ gui-calendar {
       border-radius: 100%;
       width: var(--gui-calendar-change-month-button-width);
       height: var(--gui-calendar-change-month-button-height);
+
+      &--prev {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+      }
+      &--next {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
     }
 
     .gui-calendar__month-button-icon {
@@ -92,6 +114,11 @@ gui-calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 1px;
+    }
+
+    .gui-calendar__months-grid {
+      display: grid;
+      gap: 2rem;
     }
   }
 }

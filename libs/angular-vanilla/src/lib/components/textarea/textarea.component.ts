@@ -8,7 +8,7 @@ import { TextareaProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-textarea-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './textarea.component.html',
   host: {
     class: 'gui-textarea',
@@ -16,15 +16,15 @@ import { TextareaProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class TextareaComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
+export class TextareaComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
-  protected adapter: Angular.ControlFieldAdapter<string, TextareaProps> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<string, TextareaProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

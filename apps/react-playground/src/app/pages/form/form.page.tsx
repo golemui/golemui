@@ -1,19 +1,21 @@
 import * as AppsShared from '@golemui/apps-shared';
+import { kitchenSink } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { ReactItemRenderer } from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { useState } from 'react';
+import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
-import styles from './form.page.module.scss';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
+import styles from './form.page.module.scss';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = AppsShared.kitchenSink;
+const mock = kitchenSink;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);
@@ -24,7 +26,7 @@ const languages = AppsShared.commonLanguages
     label: `${flag} ${label}`,
   }));
 
-const customFieldLoaders = {
+const customWidgetLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
@@ -35,7 +37,9 @@ const validators: ValidatorsVanilla.CustomValidatorSchemas = {
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   complexListItemRenderer: ComplexListItemRenderer,
   productItemRenderer: ProductItemRenderer,
+  airportItemRenderer: AirportItemRenderer,
 };
+const validateOn: Core.ValidateOn = 'eager';
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -53,12 +57,12 @@ export function FormPage() {
       <FormComponent
         formDef={formDef}
         data={formData}
-        fieldLoaders={customFieldLoaders}
+        widgetLoaders={customWidgetLoaders}
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
         validators={validators}
-        validateOn="eager"
+        validateOn={validateOn}
         formHealth={onFormHealth}
         formEvent={onFormEvent}
       />

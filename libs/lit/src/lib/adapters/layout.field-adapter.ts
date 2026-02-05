@@ -7,10 +7,10 @@ export const layoutContext = createContext<LayoutFieldAdapter<any>>('guiLayoutFi
 
 export class LayoutFieldAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseFieldAdapter<Core.LayoutField> {
+> extends BaseFieldAdapter<Core.LayoutWidget> {
   override templateData = {} as Core.LayoutTemplateData & ExtraProps;
 
-  init(field: Core.LayoutField) {
+  init(field: Core.LayoutWidget) {
     this.field = field;
 
     // Set initial templateData

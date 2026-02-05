@@ -13,8 +13,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   label,
                   path: 'test',
                 },
@@ -33,8 +33,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   label: 'wrong',
                   'label.register': label,
                   path: 'test',
@@ -55,8 +55,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'checkbox',
+                  kind: 'input',
+                  type: 'checkbox',
                   label,
                   path: 'test',
                 },
@@ -75,8 +75,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'checkbox',
+                  kind: 'input',
+                  type: 'checkbox',
                   label: 'wrong',
                   'label.register': label,
                   path: 'test',
@@ -97,8 +97,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'number',
+                  kind: 'input',
+                  type: 'number',
                   label,
                   path: 'test',
                 },
@@ -117,8 +117,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'number',
+                  kind: 'input',
+                  type: 'number',
                   label: 'wrong',
                   'label.register': label,
                   path: 'test',
@@ -139,8 +139,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'select',
+                  kind: 'input',
+                  type: 'select',
                   label,
                   path: 'test',
                 },
@@ -159,8 +159,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'select',
+                  kind: 'input',
+                  type: 'select',
                   label: 'wrong',
                   'label.register': label,
                   path: 'test',
@@ -181,8 +181,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'radiogroup',
+                  kind: 'input',
+                  type: 'radiogroup',
                   label,
                   path: 'test',
                 },
@@ -201,8 +201,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'control',
-                  widget: 'radiogroup',
+                  kind: 'input',
+                  type: 'radiogroup',
                   label: 'wrong',
                   'label.register': label,
                   path: 'test',
@@ -225,8 +225,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'interactive',
-                  widget: 'button',
+                  kind: 'action',
+                  type: 'button',
                   label,
                 },
               ],
@@ -244,8 +244,8 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               form: [
                 {
                   uid,
-                  kind: 'interactive',
-                  widget: 'button',
+                  kind: 'action',
+                  type: 'button',
                   label: 'wrong',
                   'label.register': label,
                 },

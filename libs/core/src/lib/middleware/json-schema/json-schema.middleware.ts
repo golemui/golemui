@@ -1,5 +1,5 @@
 import { Form } from '../../form';
-import { FormField, LayoutField } from '../../form-field';
+import { FormWidget, LayoutWidget } from '../../form-widget';
 import { Action } from '../../store/actions';
 import { Middleware, State } from '../../store/model';
 import { isJsonSchema, JSONSchemaObject, RefResolver } from './json-schema';
@@ -18,21 +18,21 @@ type JsonSchemaTypeMap =
 /**
  * Maps a Json Schema type to a widget name, so
  */
-export type SchemaToFieldMap = Record<
+export type SchemaToWidgetMap = Record<
   JsonSchemaTypeMap,
-  (schema: JSONSchemaObject, ...rest: any[]) => FormField
+  (schema: JSONSchemaObject, ...rest: any[]) => FormWidget
 >;
 
 /**
  * Use this middleware to convert a JSON schema into a JSON form.
  *
  * @example
- *  protected middlewares = jsonSchemaMiddleware(vanillaSchemaToFieldMap);
+ *  protected middlewares = jsonSchemaMiddleware(vanillaSchemaToWidgetMap);
  * @example
  *  <gui-form [middlewares]="middlewares" />
  */
 export const jsonSchemaMiddleware =
-  (schemaToFieldMap: SchemaToFieldMap): Middleware<State, Action> =>
+  (schemaToWidgetMap: SchemaToWidgetMap): Middleware<State, Action> =>
   (_) =>
   (next) =>
   (action) => {
@@ -45,7 +45,7 @@ export const jsonSchemaMiddleware =
       if (isJsonSchema(formDef)) {
         formDef = schemaToForm(
           formDef,
-          schemaToFieldMap,
+          schemaToWidgetMap,
           // TODO: Implement Json Schema Ref resolver
           () => {
             throw new Error('Ref resolving not implemented');
@@ -63,33 +63,33 @@ export const jsonSchemaMiddleware =
 
 function schemaToForm(
   schema: JSONSchemaObject,
-  schemaToFieldMap: SchemaToFieldMap,
+  schemaToWidgetMap: SchemaToWidgetMap,
   resolveRef: RefResolver,
   path: string[] = [],
-): FormField {
+): FormWidget {
   // TODO: Resolve refs
   if (schema.$ref) {
     const resolved = resolveRef(schema.$ref);
-    return schemaToForm(resolved, schemaToFieldMap, resolveRef, path);
+    return schemaToForm(resolved, schemaToWidgetMap, resolveRef, path);
   }
 
   // oneOf --> tabs XOR
   if (schema.oneOf) {
-    const tabs = schemaToFieldMap.oneOf(schema) as LayoutField;
+    const tabs = schemaToWidgetMap.oneOf(schema) as LayoutWidget;
     return {
       ...tabs,
       props: {},
-      children: schema.oneOf.map((s) => schemaToForm(s, schemaToFieldMap, resolveRef, path)),
+      children: schema.oneOf.map((s) => schemaToForm(s, schemaToWidgetMap, resolveRef, path)),
     };
   }
 
   // anyOf --> tabs OR
   if (schema.anyOf) {
-    const tabs = schemaToFieldMap.anyOf(schema) as LayoutField;
+    const tabs = schemaToWidgetMap.anyOf(schema) as LayoutWidget;
     return {
       ...tabs,
       props: {},
-      children: schema.anyOf.map((s) => schemaToForm(s, schemaToFieldMap, resolveRef, path)),
+      children: schema.anyOf.map((s) => schemaToForm(s, schemaToWidgetMap, resolveRef, path)),
     };
   }
 
@@ -97,15 +97,15 @@ function schemaToForm(
   // Object --> always a vertical stack
   //
   if (schema.type === 'object') {
-    const children: FormField[] = [];
+    const children: FormWidget[] = [];
     if (schema.properties) {
       for (const [key, subschema] of Object.entries(schema.properties)) {
         const childPath = [...path, key];
-        const child = schemaToForm(subschema, schemaToFieldMap, resolveRef, childPath);
+        const child = schemaToForm(subschema, schemaToWidgetMap, resolveRef, childPath);
         children.push(child);
       }
     }
-    return schemaToFieldMap.object(schema, children);
+    return schemaToWidgetMap.object(schema, children);
   }
 
   //
@@ -119,17 +119,17 @@ function schemaToForm(
   // Enum --> select
   //
   if (schema.enum) {
-    return schemaToFieldMap.enum(schema, path.join('.'));
+    return schemaToWidgetMap.enum(schema, path.join('.'));
   }
 
   //
   // Leaf primitives
   //
-  const mapFn = schemaToFieldMap[schema.type as keyof typeof schemaToFieldMap];
+  const mapFn = schemaToWidgetMap[schema.type as keyof typeof schemaToWidgetMap];
   if (mapFn) {
     return mapFn(schema, path.join('.'));
   }
 
   // fallback
-  return schemaToFieldMap.fallback(schema);
+  return schemaToWidgetMap.fallback(schema);
 }

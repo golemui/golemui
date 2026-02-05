@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { FieldLoaders, State, WithField } from '@golemui/core';
+import { State, WidgetLoaders, WithWidget } from '@golemui/core';
 import { provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -15,7 +15,7 @@ export class FormElement extends LitElement {
   context = new LitFormContext();
 
   @property({ type: Object }) formDef: any = {};
-  @property({ type: Object }) fieldLoaders!: FieldLoaders<WithField>;
+  @property({ type: Object }) widgetLoaders!: WidgetLoaders<WithWidget>;
   @property({ attribute: false }) validators!: Core.ValidatorFn<any>;
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: Object }) data: any = {};
@@ -35,7 +35,7 @@ export class FormElement extends LitElement {
     super.connectedCallback();
     this.classList.add('gui-form');
     this.context.initialize(
-      this.fieldLoaders,
+      this.widgetLoaders,
       this.middlewares,
       this.validators,
       this.validateOn,
@@ -85,10 +85,10 @@ export class FormElement extends LitElement {
   }
 
   override render() {
-    const ready = this.state?.formDef && this.context.fieldRegistry.ready;
+    const ready = this.state?.formDef && this.context.widgetRegistry.ready;
 
     return html`
-      <form id=${this.formName}>
+      <form id=${this.formName} novalidate>
         ${when(
           ready,
           () => html` <gui-field .field=${this.state?.formDef.form}></gui-field>`,

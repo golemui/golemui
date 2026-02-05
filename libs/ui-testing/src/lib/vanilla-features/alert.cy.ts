@@ -10,7 +10,7 @@ export const runAlertComponentTests = (mountFn: MountComponentFn) => {
             {
               uid: '',
               kind: 'display',
-              widget: 'alert',
+              type: 'alert',
               props: {
                 text: 'Some fields need your attention',
                 level: 'warning',

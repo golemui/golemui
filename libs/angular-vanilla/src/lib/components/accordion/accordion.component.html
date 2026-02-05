@@ -1,6 +1,6 @@
 @let templateData = adapter.templateData();
 
-<div class="gui-field" [id]="field.uid">
+<div class="gui-field" [id]="widget.uid">
   @for (section of templateData.sections; track section.uid) {
     <div class="gui-accordion__section">
       <button
@@ -14,14 +14,15 @@
         {{ section.label }}<span class="gui-accordion__icon"></span>
       </button>
 
-      @if (activeSections[section.uid]) {
+      @if (activeSections[section.uid] || templateData.renderMode !== 'activeOnly') {
         <section
           class="gui-field"
           role="region"
+          [hidden]="!activeSections[section.uid] && templateData.renderMode !== 'activeOnly'"
           [id]="'accordion_section_' + section.uid"
           [attr.aria-labelledby]="'accordion_button_' + section.uid"
         >
-          <ng-container guiField [field]="getChild(section.uid)" />
+          <ng-container guiWidget [widget]="getChild(section.uid)" />
         </section>
       }
     </div>

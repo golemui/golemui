@@ -19,7 +19,7 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
   standalone: true,
   selector: 'gui-list-control',
   imports: [CommonModule, NgComponentOutlet],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './list.component.html',
   host: {
     class: 'gui-list',
@@ -27,11 +27,11 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ListComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
+export class ListComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
-  protected adapter: Angular.ControlFieldAdapter<OptionValue, ListProps<unknown>> = inject(
-    Angular.ControlFieldAdapter,
+  protected adapter: Angular.InputWidgetAdapter<OptionValue, ListProps<unknown>> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
@@ -50,7 +50,7 @@ export class ListComponent implements OnInit, OnDestroy, Core.WithField {
   });
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

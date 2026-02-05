@@ -6,12 +6,16 @@ export const calculateCurrentState = (state: State): State => {
   if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
     return state;
   }
+
+  if (state.formHealth.status === 'errored') {
+    return state;
+  }
+
   stateExpressions = expandStateExpressions(stateExpressions);
 
   let currentStates: string[] = [];
   let formHealth: FormHealth = { status: 'ok' };
   try {
-    // TODO: Security. See: https://github.com/dy/subscript/issues/25
     // TODO: Cache compiled expressions
     currentStates = Object.keys(stateExpressions)
       .map((stateName) => {

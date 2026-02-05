@@ -8,8 +8,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-repeater-control')
-export class RepeaterElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<Record<string, unknown>[]>;
+export class RepeaterElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<Record<string, unknown>[]>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -28,7 +28,7 @@ export class RepeaterElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-repeater');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -51,7 +51,7 @@ export class RepeaterElement extends LitElement implements Core.WithField {
     super.render();
 
     return html`
-      <div id=${this.field.uid}>
+      <div id=${this.widget.uid}>
         <h2>${this.adapter.templateData.label}</h2>
 
         ${this.adapter.templateData.value

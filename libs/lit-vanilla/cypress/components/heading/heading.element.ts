@@ -11,14 +11,14 @@ type OwnWidgetProps = {
 };
 
 @customElement('app-heading')
-export class HeadingElement extends LitElement implements Core.WithField {
-  field!: Core.DisplayField;
+export class HeadingElement extends LitElement implements Core.WithWidget {
+  widget!: Core.DisplayWidget;
 
   @consume({ context: Lit.formContext })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.displayFieldContext })
-  adapter: Lit.DisplayFieldAdapter<OwnWidgetProps> = new Lit.DisplayFieldAdapter();
+  @provide({ context: Lit.displayWidgetContext })
+  adapter: Lit.DisplayWidgetAdapter<OwnWidgetProps> = new Lit.DisplayWidgetAdapter();
 
   override createRenderRoot() {
     return this;
@@ -27,7 +27,7 @@ export class HeadingElement extends LitElement implements Core.WithField {
   override connectedCallback() {
     super.connectedCallback();
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   override render() {

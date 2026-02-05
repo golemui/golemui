@@ -8,11 +8,12 @@ import {
   jsonSchemaValidators,
 } from '@golemui/validators-vanilla';
 import { ComponentType } from 'react';
-import { vanillaFieldLoaders } from '../field.loaders';
+import { vanillaWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
-  fieldLoaders?: Core.FieldLoaders<ComponentType<Core.WithField>>;
+  // TODO: this should be customWidgetLoaders
+  widgetLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
   localization?: Core.I18nTranslator;
   validators?: CustomValidatorSchemas;
@@ -27,7 +28,7 @@ export interface ReactFormComponentProps {
 export const FormComponent = ({
   formDef,
   data = undefined,
-  fieldLoaders = {},
+  widgetLoaders = {},
   itemRenderers = {},
   localization,
   validators = {},
@@ -36,7 +37,8 @@ export const FormComponent = ({
   formHealth = undefined,
   formEvent = undefined,
 }: ReactFormComponentProps) => {
-  const customFieldLoaders = { ...vanillaFieldLoaders, ...fieldLoaders };
+  // TODO: this should be customWidgetLoaders
+  const customWidgetLoaders = { ...vanillaWidgetLoaders, ...widgetLoaders };
   const customItemRenderers = { ...itemRenderers };
   const customValidators = initValidators({ ...validators });
   const customMiddlewares = [
@@ -47,7 +49,7 @@ export const FormComponent = ({
     <React.FormComponent
       formDef={formDef}
       data={data}
-      fieldLoaders={customFieldLoaders}
+      widgetLoaders={customWidgetLoaders}
       middlewares={customMiddlewares}
       itemRenderers={customItemRenderers}
       localization={localization}

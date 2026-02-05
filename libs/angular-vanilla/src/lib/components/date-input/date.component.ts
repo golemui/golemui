@@ -8,7 +8,7 @@ import { DatePickerProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-date-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './date.component.html',
   host: {
     class: 'gui-date',
@@ -16,18 +16,15 @@ import { DatePickerProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DateComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<string>;
-  protected adapter: Angular.ControlFieldAdapter<string, DatePickerProps> = inject(
-    Angular.ControlFieldAdapter,
+export class DateComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<string>;
+  protected adapter: Angular.InputWidgetAdapter<string, DatePickerProps> = inject(
+    Angular.InputWidgetAdapter,
   );
   currentDate = new Date();
 
-  // TODO: Get localeId from i18n feature
-  localeId = 'es';
-
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   onChangeDate(event: Event) {

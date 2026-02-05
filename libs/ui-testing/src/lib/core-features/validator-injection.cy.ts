@@ -10,8 +10,8 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'testSubject',
-              kind: 'control',
-              widget: 'customdate',
+              kind: 'input',
+              type: 'customdate',
               path: 'myField',
             },
           ],
@@ -30,8 +30,8 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'testSubject',
-              kind: 'control',
-              widget: 'customdate',
+              kind: 'input',
+              type: 'customdate',
               path: 'myField',
             },
           ],
@@ -54,8 +54,8 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'testSubject',
-              kind: 'control',
-              widget: 'customdate',
+              kind: 'input',
+              type: 'customdate',
               path: 'myField',
             },
           ],
@@ -75,8 +75,8 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
           form: [
             {
               uid: 'testSubject',
-              kind: 'control',
-              widget: 'customdate',
+              kind: 'input',
+              type: 'customdate',
               path: 'myField',
               validator: {
                 type: 'string',

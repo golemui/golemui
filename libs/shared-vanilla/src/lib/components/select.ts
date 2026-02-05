@@ -1,11 +1,11 @@
-import { inferOptionValue, OptionValue, updateOptions } from './one-of';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
-import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { OneOfProps, Option, SelectProps } from '../field.props';
-import { GUIAriaController } from '../controllers';
 import { classMap } from 'lit/directives/class-map.js';
+import { GUIAriaController } from '../controllers';
+import { OneOfProps, Option, SelectProps } from '../field.props';
+import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
+import { inferOptionValue, OptionValue, updateOptions } from './one-of';
 
 @customElement('gui-select')
 export class GuiSelectControl extends LitElement {
@@ -105,7 +105,7 @@ export class GuiSelectControl extends LitElement {
 
       <div class="gui-field">
         <select
-          id=${this.uid}
+          id=${this.uid!}
           data-cy=${`${this.uid}_select`}
           class=${classMap(selectIcon.fieldClasses)}
           ?required=${templateData.required}
@@ -120,6 +120,21 @@ export class GuiSelectControl extends LitElement {
 
       ${addErrors(this.uid as string, templateData)}
     `;
+  }
+
+  override updated(changedProperties: Map<string, any>) {
+    if (changedProperties.has('value')) {
+      if (!this.hasMatchingValue && this.value) {
+        this.dispatchEvent(
+          new CustomEvent('inputError', {
+            detail: {
+              message: `Invalid selection: '${this.value}' is not a valid option.`,
+            },
+            bubbles: true,
+          }),
+        );
+      }
+    }
   }
 
   valueChanged(event: Event) {

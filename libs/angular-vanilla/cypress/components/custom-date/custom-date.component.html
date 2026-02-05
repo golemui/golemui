@@ -5,8 +5,8 @@
   <input
     type="text"
     guiAria
-    [attr.data-cy]="field.uid + '_customdate'"
-    [id]="field.uid"
+    [attr.data-cy]="widget.uid + '_customdate'"
+    [id]="widget.uid"
     [value]="templateData.value || ''"
     placeholder="dd-mm-yyyy"
     (input)="valueChanged($event)"
@@ -15,9 +15,9 @@
 </div>
 
 @if (showErrors) {
-  <ul [attr.data-cy]="field.uid + '_validator-errors'">
+  <ul [attr.data-cy]="widget.uid + '_validator-errors'">
     @for (error of templateData.errors; track $index) {
-      <li [attr.data-cy]="field.uid + '_validator-error'">
+      <li [attr.data-cy]="widget.uid + '_validator-error'">
         {{ error }}
       </li>
     }

@@ -4,7 +4,7 @@ import type * as justin from './types/subscript__justin';
 type _ = justin;
 
 export * from './lib/form';
-export * from './lib/form-field';
+export * from './lib/form-widget';
 export * from './lib/form-store';
 export * from './lib/form-validator';
 export * from './lib/store/actions';

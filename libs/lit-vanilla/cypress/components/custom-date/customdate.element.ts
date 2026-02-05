@@ -6,8 +6,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-customdate')
-export class CustomdateElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<string>;
+export class CustomdateElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -26,7 +26,7 @@ export class CustomdateElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-customdate');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -40,8 +40,8 @@ export class CustomdateElement extends LitElement implements Core.WithField {
       <div class="gui-field">
         <input
           type="text"
-          id=${this.field.uid}
-          data-cy=${`${this.field.uid}_customdate`}
+          id=${this.widget.uid}
+          data-cy=${`${this.widget.uid}_customdate`}
           value=${this.adapter.templateData.value ?? ''}
           placeholder="dd-mm-yyyy"
           @input="${() => this.valueChanged(event)}"
@@ -49,7 +49,7 @@ export class CustomdateElement extends LitElement implements Core.WithField {
         />
       </div>
 
-      ${addErrors(this.field.uid, this.adapter.templateData)}
+      ${addErrors(this.widget.uid, this.adapter.templateData)}
     `;
   }
 

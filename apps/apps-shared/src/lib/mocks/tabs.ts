@@ -9,7 +9,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'layout',
-      widget: 'tabs',
+      type: 'tabs',
       props: {
         defaultOpen: 'tab5',
         tabs: [
@@ -24,7 +24,7 @@ const form = defineForm({
         {
           uid: 'tab1',
           kind: 'display',
-          widget: 'alert',
+          type: 'alert',
           props: {
             text: 'Some fields need your attention',
             level: 'warning',
@@ -33,7 +33,7 @@ const form = defineForm({
         {
           uid: 'tab2',
           kind: 'layout',
-          widget: 'stack',
+          type: 'stack',
           props: {
             direction: 'horizontal',
             'direction.limitReached': 'vertical',
@@ -41,14 +41,14 @@ const form = defineForm({
           children: [
             {
               uid: '',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'listName',
             },
             {
               uid: '',
-              kind: 'control',
-              widget: 'textinput',
+              kind: 'input',
+              type: 'textinput',
               path: 'listOwner',
             },
           ],
@@ -56,12 +56,12 @@ const form = defineForm({
         {
           uid: 'tab3',
           kind: 'layout',
-          widget: 'stack',
+          type: 'stack',
           children: [
             {
               uid: '',
-              kind: 'control',
-              widget: 'repeater',
+              kind: 'input',
+              type: 'repeater',
               path: 'users',
               props: {
                 addLabel: 'Add new developer',
@@ -71,18 +71,18 @@ const form = defineForm({
                 template: {
                   uid: '',
                   kind: 'layout',
-                  widget: 'stack',
+                  type: 'stack',
                   children: [
                     {
                       uid: '',
-                      kind: 'control',
-                      widget: 'textinput',
+                      kind: 'input',
+                      type: 'textinput',
                       path: 'users.items.firstName',
                     },
                     {
                       uid: '',
-                      kind: 'control',
-                      widget: 'textinput',
+                      kind: 'input',
+                      type: 'textinput',
                       path: 'users.items.lastName',
                     },
                   ],
@@ -94,12 +94,12 @@ const form = defineForm({
         {
           uid: 'tab4',
           kind: 'layout',
-          widget: 'stack',
+          type: 'stack',
           children: [
             {
               uid: '',
-              kind: 'control',
-              widget: 'checkbox',
+              kind: 'input',
+              type: 'checkbox',
               label: 'Create new account?',
               path: 'isNewUser',
             },
@@ -108,7 +108,7 @@ const form = defineForm({
         {
           uid: 'tab5',
           kind: 'layout',
-          widget: 'accordion',
+          type: 'accordion',
           props: {
             singleOpen: false,
             defaultOpen: {
@@ -124,18 +124,18 @@ const form = defineForm({
             {
               uid: 'section1',
               kind: 'layout',
-              widget: 'stack',
+              type: 'stack',
               children: [
                 {
                   uid: '',
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   path: 'shoppingCart.firstName',
                 },
                 {
                   uid: '',
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   path: 'shoppingCart.lastName',
                 },
               ],
@@ -143,18 +143,18 @@ const form = defineForm({
             {
               uid: 'section2',
               kind: 'layout',
-              widget: 'stack',
+              type: 'stack',
               children: [
                 {
                   uid: '',
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   path: 'shoppingCart.shippingAddress',
                 },
                 {
                   uid: '',
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   path: 'shoppingCart.shippingState',
                 },
               ],
@@ -162,18 +162,18 @@ const form = defineForm({
             {
               uid: 'section3',
               kind: 'layout',
-              widget: 'stack',
+              type: 'stack',
               children: [
                 {
                   uid: '',
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   path: 'shoppingCart.billingAddress',
                 },
                 {
                   uid: '',
-                  kind: 'control',
-                  widget: 'textinput',
+                  kind: 'input',
+                  type: 'textinput',
                   path: 'shoppingCart.billingState',
                 },
               ],
@@ -184,8 +184,8 @@ const form = defineForm({
     },
     {
       uid: '',
-      kind: 'interactive',
-      widget: 'button',
+      kind: 'action',
+      type: 'button',
       label: 'Create',
       on: {
         click: 'submit',

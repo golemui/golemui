@@ -4,17 +4,42 @@ import { OptionValue, SelectProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Select(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.ControlField<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
-    OptionValue,
-    SelectProps
-  >(field);
+export function Select(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.InputWidget<string>;
+  const {
+    uid,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onValueChanged,
+    onBlur,
+    injectValidationIssues,
+  } = useControlField<OptionValue, SelectProps>(field);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) =>
       onValueChanged((e.nativeEvent as CustomEvent).detail.value),
     [onValueChanged],
+  );
+
+  const handleRef = useCallback(
+    (node: HTMLElement | null) => {
+      const target = node as any;
+
+      const errorHandler = (e: CustomEvent) => {
+        injectValidationIssues([e.detail.message]);
+      };
+
+      if (node) {
+        target.addEventListener('inputError', errorHandler);
+      }
+
+      return () => {
+        target.removeEventListener('inputError', errorHandler);
+      };
+    },
+    [injectValidationIssues],
   );
 
   const options = templateData.options;
@@ -32,6 +57,7 @@ export function Select(fieldInstance: Core.WithField) {
   return (
     <div className="gui-select" style={{ flex: templateData.size }}>
       <gui-select
+        ref={handleRef}
         uid={uid}
         label={label}
         errors={errors}

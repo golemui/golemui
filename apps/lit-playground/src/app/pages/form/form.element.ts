@@ -1,15 +1,17 @@
 import * as AppsShared from '@golemui/apps-shared';
+import { kitchenSink } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
-import './form.element.scss';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
+import './form.element.scss';
 
-const mock = AppsShared.kitchenSink;
+const mock = kitchenSink;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -22,18 +24,20 @@ export class FormElement extends LitElement {
       value: code,
       label: `${flag} ${label}`,
     }));
-  customFieldLoaders = {
+  customWidgetLoaders = {
     heading: async () =>
-      (await import('../../custom-fields/heading/heading.element')).HeadingElement,
+      (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
   };
   itemRenderers = {
     complexListItemRenderer: complexListItemRenderer,
     productItemRenderer: productItemRenderer,
+    airportItemRenderer: airportItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
   validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
+  validateOn: Core.ValidateOn = 'eager';
 
   error = '';
 
@@ -80,12 +84,12 @@ export class FormElement extends LitElement {
         <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
-          .fieldLoaders=${this.customFieldLoaders}
+          .widgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
-          .validateOn=${'eager'}
+          .validateOn=${this.validateOn}
           @formHealth=${this.onFormHealth}
           @formEvent=${this.onFormEvent}
         ></gui-form>

@@ -2,8 +2,8 @@ import * as Core from '@golemui/core';
 import { useDisplayField } from '@golemui/react';
 import { AlertProps } from '@golemui/shared-vanilla';
 
-export function Alert(fieldInstance: Core.WithField) {
-  const field = fieldInstance.field as Core.DisplayField;
+export function Alert(fieldInstance: Core.WithWidget) {
+  const field = fieldInstance.widget as Core.DisplayWidget;
   const { uid, templateData } = useDisplayField<AlertProps>(field);
 
   return (

@@ -3,12 +3,12 @@ const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 export const list = (): any => ({
   uid: 'tab14',
   kind: 'layout',
-  widget: 'stack',
+  type: 'stack',
   children: [
     {
       uid: '',
-      kind: 'control',
-      widget: 'list',
+      kind: 'input',
+      type: 'list',
       path: 'lists.defaultListRenderer',
       props: {
         height: 100,
@@ -18,8 +18,8 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'list',
+      kind: 'input',
+      type: 'list',
       path: 'lists.defaultRenderer20',
       label: 'Default Renderer with 20px item height',
       props: {
@@ -31,8 +31,8 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'list',
+      kind: 'input',
+      type: 'list',
       path: 'lists.disabledList',
       label: 'Disabled list',
       disabled: true,
@@ -44,8 +44,8 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'list',
+      kind: 'input',
+      type: 'list',
       path: 'lists.requiredList',
       label: 'Required list',
       props: {
@@ -57,8 +57,8 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'list',
+      kind: 'input',
+      type: 'list',
       path: 'lists.invalidValueList',
       label: 'Invalid value list',
       props: {
@@ -70,8 +70,8 @@ export const list = (): any => ({
     },
     {
       uid: '',
-      kind: 'control',
-      widget: 'list',
+      kind: 'input',
+      type: 'list',
       path: 'lists.customItemRenderer',
       props: {
         height: 150,

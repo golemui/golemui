@@ -3,14 +3,16 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AngularItemRenderer } from '@golemui/angular';
 import * as Vanilla from '@golemui/angular-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
+import { kitchenSink } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
+import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const mock = AppsShared.kitchenSink;
+const mock = kitchenSink;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
@@ -32,9 +34,9 @@ export class AppFormPage {
   protected formData = mock.data;
 
   protected middlewares = [AppsShared.loggerMiddleware];
-  protected customFieldLoaders = {
+  protected customWidgetLoaders = {
     heading: async () =>
-      (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
+      (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
   };
   protected validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
@@ -42,7 +44,9 @@ export class AppFormPage {
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
     complexListItemRenderer: ComplexListItemRenderer,
     productItemRenderer: ProductItemRenderer,
+    airportItemRenderer: AirportItemRenderer,
   };
+  protected validateOn: Core.ValidateOn = 'eager';
 
   protected error = '';
 

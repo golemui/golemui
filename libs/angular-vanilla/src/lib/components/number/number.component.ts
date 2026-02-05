@@ -8,7 +8,7 @@ import { NumberinputProps } from '@golemui/shared-vanilla';
   standalone: true,
   selector: 'gui-number-control',
   imports: [CommonModule],
-  providers: [Angular.ControlFieldAdapter],
+  providers: [Angular.InputWidgetAdapter],
   templateUrl: './number.component.html',
   host: {
     class: 'gui-number',
@@ -16,14 +16,14 @@ import { NumberinputProps } from '@golemui/shared-vanilla';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class NumberComponent implements OnInit, OnDestroy, Core.WithField {
-  field!: Core.ControlField<number>;
-  protected adapter: Angular.ControlFieldAdapter<number, NumberinputProps> = inject(
-    Angular.ControlFieldAdapter,
+export class NumberComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<number>;
+  protected adapter: Angular.InputWidgetAdapter<number, NumberinputProps> = inject(
+    Angular.InputWidgetAdapter,
   );
 
   ngOnInit(): void {
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
   }
 
   ngOnDestroy(): void {

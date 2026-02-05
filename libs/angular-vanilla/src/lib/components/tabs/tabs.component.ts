@@ -17,31 +17,31 @@ import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui
 @Component({
   standalone: true,
   selector: 'gui-tabs-layout',
-  imports: [CommonModule, Angular.FieldDirective],
-  providers: [Angular.LayoutFieldAdapter],
+  imports: [CommonModule, Angular.WidgetDirective],
+  providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithField {
+export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithWidget {
   tabButtons = viewChildren<ElementRef>('tabButtonRef');
   startSentinel = viewChild.required<ElementRef>('startSentinel');
   endSentinel = viewChild.required<ElementRef>('endSentinel');
-  field!: Core.LayoutField;
+  widget!: Core.LayoutWidget;
 
   activeTab = signal('');
   isStartVisible = signal(false);
   isEndVisible = signal(false);
 
-  protected adapter: Angular.LayoutFieldAdapter<TabsProps> = inject(Angular.LayoutFieldAdapter);
+  protected adapter: Angular.LayoutWidgetAdapter<TabsProps> = inject(Angular.LayoutWidgetAdapter);
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
 
   ngOnInit(): void {
-    const props: TabsProps = this.field.props as TabsProps;
-    this.adapter.init(this.field);
+    const props: TabsProps = this.widget.props as TabsProps;
+    this.adapter.init(this.widget);
     this.activeTab.set(props.defaultOpen ?? props.tabs[0].uid);
 
     this.startObserver = createIntersectionObserver(
@@ -56,7 +56,7 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.Wit
 
   ngAfterViewInit() {
     // Scroll into view the active tab, just in case it's out of view
-    const tabs = (this.field.props as TabsProps).tabs;
+    const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
     this.tabButtons()[currentIndex].nativeElement.scrollIntoView();
   }
@@ -71,7 +71,7 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.Wit
   }
 
   onKeyDown($event: KeyboardEvent) {
-    const tabs = (this.field.props as TabsProps).tabs;
+    const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
 
     switch ($event.key) {

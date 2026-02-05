@@ -9,6 +9,7 @@ import {
   GuiListControl,
   GuiNumberControl,
   GuiRadiogroupControl,
+  GuiRangeCalendarControl,
   GuiSelectControl,
   GuiTextareaControl,
   GuiTextinputControl,
@@ -37,6 +38,11 @@ declare module 'react' {
         Partial<GuiDateControl>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCalendarControl>;
+      'gui-range-calendar': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeCalendarControl>;
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiNumberControl>;
       'gui-radiogroup': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

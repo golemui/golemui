@@ -7,8 +7,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-checkbox-control')
-export class CheckboxElement extends LitElement implements Core.WithField {
-  field!: Core.ControlField<boolean>;
+export class CheckboxElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<boolean>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
@@ -27,7 +27,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
     super.connectedCallback();
     this.classList.add('gui-checkbox');
     this.adapter.context = this.formContext;
-    this.adapter.init(this.field);
+    this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
@@ -51,7 +51,7 @@ export class CheckboxElement extends LitElement implements Core.WithField {
 
     return html`
       <gui-checkbox
-        .uid=${this.field.uid}
+        .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .errors=${this.adapter.templateData.errors}
         ?touched=${this.adapter.templateData.touched}

@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { FieldLoaders, WithField } from '@golemui/core';
+import { WidgetLoaders, WithWidget } from '@golemui/core';
 import '@golemui/lit';
 import { vanillaSchemaToFieldMap } from '@golemui/shared-vanilla';
 import {
@@ -10,23 +10,25 @@ import {
 } from '@golemui/validators-vanilla';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { vanillaFieldLoaders } from '../field.loaders';
+import { vanillaWidgetLoaders } from '../field.loaders';
 import { LitItemRenderer, Type } from '@golemui/lit';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
   @property({ type: Object }) formDef!: string | Record<string, any>;
   @property({ type: Object }) data: any = {};
-  @property({ type: Object }) fieldLoaders: FieldLoaders<Type<WithField>> = {};
+  // TODO: this should be customWidgetLoaders
+  @property({ type: Object }) widgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
   @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
 
-  protected customFieldLoaders: FieldLoaders<Type<WithField>> = {
-    ...vanillaFieldLoaders,
-    ...this.fieldLoaders,
+  // TODO: this should be widgetLoaders
+  protected customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
+    ...vanillaWidgetLoaders,
+    ...this.widgetLoaders,
   };
   protected customValidators: Core.ValidatorFn<Validator> = initValidators({ ...this.validators });
   protected customMiddlewares: Core.Middleware<Core.State, Core.Action>[] = [
@@ -41,9 +43,9 @@ export class FormElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
-    this.customFieldLoaders = {
-      ...vanillaFieldLoaders,
-      ...this.fieldLoaders,
+    this.customWidgetLoaders = {
+      ...vanillaWidgetLoaders,
+      ...this.widgetLoaders,
     };
     this.customValidators = initValidators({ ...this.validators });
     this.customMiddlewares = [
@@ -57,7 +59,7 @@ export class FormElement extends LitElement {
       <gui-core-form
         .formDef=${this.formDef}
         .data=${this.data}
-        .fieldLoaders=${this.customFieldLoaders}
+        .widgetLoaders=${this.customWidgetLoaders}
         .itemRenderers=${this.itemRenderers}
         .localization=${this.localization}
         .middlewares=${this.customMiddlewares}

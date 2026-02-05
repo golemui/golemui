@@ -1,0 +1,26 @@
+@let templateData = adapter.templateData();
+
+<gui-range-calendar
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [value]="templateData.value"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [value]="templateData.value"
+  [prevMonthIcon]="templateData.prevMonthIcon"
+  [nextMonthIcon]="templateData.nextMonthIcon"
+  [dayFormat]="templateData.dayFormat"
+  [weekdayFormat]="templateData.weekdayFormat"
+  [monthFormat]="templateData.monthFormat"
+  [minDate]="templateData.minDate"
+  [maxDate]="templateData.maxDate"
+  [disabledRanges]="templateData.disabledRanges"
+  [numberOfMonths]="templateData.numberOfMonths"
+  [localeId]="templateData.lang"
+  (blur)="adapter.onBlur()"
+  (change)="onChangeDate($event)"
+></gui-range-calendar>
