@@ -1,10 +1,9 @@
-import { ReadyToMapField } from './fields/guiFields.impl';
-import { ActionDef, ControllerDefCallback } from '../../formDef.domain';
+import { ActionDefCallback, ActionDef } from '../../formDef.domain';
+import { InputDefOrCallback } from './shortcuts/guiFields.impl';
 
 export enum GuiShortcutType {
-  FIELDS = 'FIELDS',
-  CONTROLLERS = 'CONTROLLERS',
   LAYOUT = 'LAYOUT',
+  ITEMS = 'ITEMS',
 }
 
 export interface GuiShortcut {
@@ -12,14 +11,34 @@ export interface GuiShortcut {
   tags: string[];
 }
 
-export interface GuiFieldsShortcut extends GuiShortcut {
-  type: GuiShortcutType.FIELDS;
-  fields: ReadyToMapField[];
+export enum GuiItemsShortcutType {
+  INPUTS = 'INPUTS',
+  ACTIONS = 'ACTIONS',
+}
+export interface ReadyToMapInputDef {
+  key: string;
+  inputDefOrCallback: InputDefOrCallback;
 }
 
-export interface GuiControllersShortcut extends GuiShortcut {
-  type: GuiShortcutType.CONTROLLERS;
-  controllers: (ActionDef | ControllerDefCallback)[];
+export type ReadyToMapActionDef = ActionDef | ActionDefCallback;
+export type ReadyToMapItemDef = ReadyToMapInputDef | ReadyToMapActionDef;
+
+export interface GuiItemsShortcut extends GuiShortcut {
+  type: GuiShortcutType.ITEMS;
+  itemsType: GuiItemsShortcutType;
+  items: ReadyToMapInputDef[] | ReadyToMapActionDef[];
+}
+
+export interface GuiFieldsShortcut extends GuiItemsShortcut {
+  type: GuiShortcutType.ITEMS;
+  itemsType: GuiItemsShortcutType.INPUTS;
+  items: ReadyToMapInputDef[];
+}
+
+export interface GuiActionsShortcut extends GuiItemsShortcut {
+  type: GuiShortcutType.ITEMS;
+  itemsType: GuiItemsShortcutType.ACTIONS;
+  items: ReadyToMapActionDef[];
 }
 
 export interface GuiLayoutShortcut<T> extends GuiShortcut {
@@ -31,4 +50,4 @@ export interface GuiLayoutShortcut<T> extends GuiShortcut {
   children: ValidGuiShortcut[];
 }
 
-export type ValidGuiShortcut = GuiFieldsShortcut | GuiLayoutShortcut<any> | GuiControllersShortcut;
+export type ValidGuiShortcut = GuiFieldsShortcut | GuiLayoutShortcut<any> | GuiActionsShortcut;

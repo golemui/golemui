@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/fields/guiFields.impl';
-import { _guiSubmitButton } from '../../services/formDef/dx/gui/fields/guiSubmitButton.impl';
+import { _guiFields } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
+import { _guiSubmitButton } from '../../services/formDef/dx/gui/shortcuts/guiSubmitButton.impl';
 
 export const formDemoDefinition: FormDemoDefinition = {
   title: 'Should let us configure the submit button',

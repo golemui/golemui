@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/fields/guiFields.impl';
+import { _guiFields } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
 
 export const simplestTagging: FormDemoDefinition = {
   title: 'Simplest Tagging',
@@ -14,7 +14,7 @@ export const simplestTagging: FormDemoDefinition = {
       no_label: {
         suppressAutomaticLabels: true,
         defaultFieldDef: ({ currentDef }) => ({
-          placeholder: currentDef.placeholder + ' I am special!',
+          placeholder: currentDef!.placeholder + ' I am special!',
         }),
       },
     },

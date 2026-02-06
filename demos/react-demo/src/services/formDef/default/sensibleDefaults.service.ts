@@ -1,12 +1,12 @@
 import {
   DataInputDef,
-  OneOfDataInputDefs,
+  InputDef,
   TextDataInputDef,
   ValidShortcutType,
 } from '../formDef.domain';
 
 export class SensibleDefaults {
-  public explodeShortcut(fieldDefRaw: ValidShortcutType): OneOfDataInputDefs {
+  public explodeShortcut(fieldDefRaw: ValidShortcutType): InputDef {
     switch (fieldDefRaw) {
       case 'string':
         return this.createDefaultStringDataInput();

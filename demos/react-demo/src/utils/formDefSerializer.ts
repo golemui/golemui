@@ -13,8 +13,14 @@ export function serializeFormDefForDisplay(obj: any, indent = 0): string {
   if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
 
   if (typeof obj === 'function') {
-    // Just show [Function] placeholder instead of full function code
-    return '[Function]';
+    // Show the function source code for better visibility
+    const fnStr = obj.toString();
+    // Format multi-line functions nicely
+    if (fnStr.includes('\n')) {
+      const lines = fnStr.split('\n');
+      return lines.map((line, idx) => (idx === 0 ? line : nextIndentStr + line)).join('\n');
+    }
+    return fnStr;
   }
 
   if (Array.isArray(obj)) {

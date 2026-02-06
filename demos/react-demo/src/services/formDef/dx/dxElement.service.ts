@@ -141,11 +141,6 @@ export class DxElementService {
     return null;
   }
 
-  isLayout<FORM_DATA extends Record<string, any> = any>(
-    element: UnrollingResult<FORM_DATA>,
-  ): element is LayoutDxShortcut<FORM_DATA> {
-    return 'descriptor' in element && element.descriptor.produces === 'layout';
-  }
 }
 
 const dxElementService = new DxElementService(dxUnrollingService);

@@ -8,47 +8,66 @@ import {
   LayoutWidget,
   UiState,
 } from '@golemui/core';
-import { ActionDef, OneOfDataInputDefs } from '../formDef.domain';
+import { ActionDef, ActionDefCallback, ActionDefOrCallback, InputDef } from '../formDef.domain';
 import { FormConfig } from '../fomConfig.domain';
-import formItemsMapper, { FormItemsMapper } from './formItemsMapper.service';
-import dxUnrollingService, { DxUnrollingService } from '../dx/dxUnrolling.service';
-import UnrolledController, { UnrolledField, ValidUnrolledElement } from '../dx/dx.domain';
+import formConfigDecorator, { FormConfigDecorator } from './formConfigDecorator.service';
+import {
+  GuiItemsShortcutType,
+  ReadyToMapInputDef,
+  ReadyToMapItemDef,
+  ValidGuiShortcut,
+} from '../dx/gui/gui.domain';
+import { InputDefCallback, InputDefOrCallback } from '../dx/gui/shortcuts/guiFields.impl';
 
-export type FormWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any> =
+export type FormWidget<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> =
   | DisplayWidget<StateKeys, FormData>
   | FunctionWidget<StateKeys, FormData>
   | InputWidget<any, StateKeys, FormData>
   | LayoutWidget<StateKeys, FormData>
   | ActionWidget<StateKeys, FormData>;
-
-export interface ReadyToMapToGolemFormItem {
-  type: 'controller' | 'field';
-  unrolledElement: UnrolledField | UnrolledController;
-  value: OneOfDataInputDefs | ActionDef;
-  isCallback: boolean;
-}
-
 export class FormDefMapper {
-  constructor(
-    private readonly formItemsMapper: FormItemsMapper,
-    private readonly dxUnrollingService: DxUnrollingService,
-  ) {}
+  constructor(private readonly formConfigDecorator: FormConfigDecorator) {}
 
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-    unrolledResults: ValidUnrolledElement[],
+    guiShortcuts: ValidGuiShortcut[],
     formConfig?: FormConfig<FormData>,
   ): Form<StateKeys, FormData> {
-    const formFields = this.doMap(unrolledResults, formConfig);
+    const formFields = this.flatMapWidgets(guiShortcuts, formConfig);
     return {
       form: this.createLayout(formFields),
     };
   }
 
-  private doMap<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-    unrolledResults: ValidUnrolledElement[],
+  private flatMapWidgets<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    guiShortcuts: ValidGuiShortcut[],
     formConfig: FormConfig<FormData> | undefined,
   ): FormWidget<StateKeys, FormData>[] {
-    return unrolledResults.flatMap((item) => this.mapToFormWidget(item, formConfig));
+    return guiShortcuts.flatMap((item) => this.mapWidget(item, formConfig));
+  }
+
+  private mapWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    guiShortcut: ValidGuiShortcut,
+    formConfig?: FormConfig<FormData>,
+  ): FormWidget<StateKeys, FormData>[] {
+    if (guiShortcut.type === 'LAYOUT') {
+      const children: FormWidget<StateKeys, FormData>[] = this.flatMapWidgets(
+        guiShortcut.children,
+        formConfig,
+      );
+      return [this.createLayout(children, guiShortcut.layoutNestedProps.direction)];
+    }
+    if (guiShortcut.type === 'ITEMS') {
+      return guiShortcut.items.map((readyToMapFieldOrAction) => {
+        return this.mapItem(guiShortcut.itemsType, readyToMapFieldOrAction, formConfig);
+      });
+    }
+    throw new Error(`Unexpected gui shortcut type`);
   }
 
   private createLayout<
@@ -69,62 +88,71 @@ export class FormDefMapper {
     };
   }
 
-  private mapToFormWidget<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
-    unrolledElement: ValidUnrolledElement,
+  private mapItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    itemType: GuiItemsShortcutType,
+    readyToMapFieldOrAction: ReadyToMapItemDef,
     formConfig?: FormConfig<FormData>,
-  ): FormWidget<StateKeys, FormData>[] {
-    if (this.dxUnrollingService.isUnrolledLayout(unrolledElement)) {
-      const children: FormWidget<StateKeys, FormData>[] = this.doMap(unrolledElement.children, formConfig);
-      return [this.createLayout(children, unrolledElement.layoutKey)];
+  ) {
+    let baseProvider: InputDefOrCallback | ActionDefOrCallback;
+    if (itemType === GuiItemsShortcutType.INPUTS) {
+      const asReadyToMapInput = readyToMapFieldOrAction as ReadyToMapInputDef;
+      baseProvider = asReadyToMapInput.inputDefOrCallback;
+    } else {
+      baseProvider = readyToMapFieldOrAction as ActionDefOrCallback;
     }
-    if (dxUnrollingService.isUnrolledItems(unrolledElement)) {
-      return unrolledElement.items.map((itemElement) => {
-        const itemDef = itemElement.value;
-        if (typeof itemDef === 'function') {
-          return ((params: FunctionWidgetParams<FormData>) => {
-            console.log(`item dynamic definition`, params);
-            const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
-            const hotMapping = itemDef({ error: hasErrors });
-            const mapControlField = this.mapToFormItem(
-              {
-                unrolledElement: itemElement,
-                value: hotMapping,
-                isCallback: true,
-                type: unrolledElement.type === 'controllers' ? 'controller' : 'field',
-              },
-              formConfig,
-            );
-            console.log(`item final config`, mapControlField);
-            return mapControlField;
-          }) as FunctionWidget<StateKeys, FormData>;
-        }
-        return this.mapToFormItem(
-          {
-            unrolledElement: itemElement,
-            value: itemElement.value as OneOfDataInputDefs | ActionDef,
-            isCallback: false,
-            type: unrolledElement.type === 'controllers' ? 'controller' : 'field',
-          },
+    if (typeof baseProvider === 'function') {
+      return ((params: FunctionWidgetParams<FormData>) => {
+        return this.mapCallbackItem(
+          params,
+          baseProvider,
+          itemType,
           formConfig,
         );
-      });
+      }) as FunctionWidget<StateKeys, FormData>;
     }
-    throw new Error(`Unexpected error`);
+    return this.formConfigDecorator.processFormConfiguration(
+      this.parseValue(readyToMapFieldOrAction),
+      itemType,
+      formConfig,
+    );
   }
 
-  private mapToFormItem<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
-    toMap: ReadyToMapToGolemFormItem,
-    formConfig?: FormConfig<FormData>,
+  private mapCallbackItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    params: FunctionWidgetParams<FormData>,
+    baseProvider: InputDefCallback | ActionDefCallback,
+    itemType: GuiItemsShortcutType,
+    formConfig: FormConfig<FormData> | undefined,
   ): FormWidget<StateKeys, FormData> {
-    return this.formItemsMapper.mapItem(toMap, formConfig);
+    console.log(`item dynamic definition`, params);
+    const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
+    const hotMapping = baseProvider({ error: hasErrors });
+    const mapControlField = this.formConfigDecorator.processFormConfiguration(
+      hotMapping,
+      itemType,
+      formConfig,
+    );
+    console.log(`item final config`, mapControlField);
+    return mapControlField;
+  }
+
+  private parseValue(readyToMapFieldOrAction: ReadyToMapItemDef): ActionDef | InputDef {
+    if ('key' in readyToMapFieldOrAction && 'inputDefOrCallback' in readyToMapFieldOrAction) {
+      const inputDefOrCallback = readyToMapFieldOrAction.inputDefOrCallback;
+      if (typeof inputDefOrCallback === 'function') {
+        throw new Error('Callback functions should be handled before parseValue is called');
+      }
+      return {
+        ...inputDefOrCallback,
+        dataPath: readyToMapFieldOrAction.key,
+      };
+    }
+    // It's a ReadyToMapActionDef (ActionDef | ActionDefCallback)
+    if (typeof readyToMapFieldOrAction === 'function') {
+      throw new Error('Callback functions should be handled before parseValue is called');
+    }
+    return readyToMapFieldOrAction;
   }
 }
 
-const formMapperService = new FormDefMapper(formItemsMapper, dxUnrollingService);
+const formMapperService = new FormDefMapper(formConfigDecorator);
 export default formMapperService;

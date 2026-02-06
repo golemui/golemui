@@ -7,7 +7,7 @@ import { FormDisplayLayout } from './FormDisplayLayout';
 interface DemoFormDisplayProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: FormDefFacade<T> | (() => FormDefFacade<T>);
+  formDef?: FormDefFacade | (() => FormDefFacade);
   formData?: T;
   warnings?: string[];
   formKey?: string;
@@ -19,7 +19,12 @@ class DemoErrorBoundary extends Component<
   { children: ReactNode; title: string; formKey?: string; showingSingleForm?: boolean },
   { hasError: boolean; error?: Error }
 > {
-  constructor(props: { children: ReactNode; title: string; formKey?: string; showingSingleForm?: boolean }) {
+  constructor(props: {
+    children: ReactNode;
+    title: string;
+    formKey?: string;
+    showingSingleForm?: boolean;
+  }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -42,8 +47,17 @@ class DemoErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', border: '2px solid red', margin: '1rem', borderRadius: '8px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <div
+          style={{ padding: '2rem', border: '2px solid red', margin: '1rem', borderRadius: '8px' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1rem',
+            }}
+          >
             <h2 style={{ color: 'red', margin: 0 }}>Error in: {this.props.title}</h2>
             {this.props.formKey && !this.props.showingSingleForm && (
               <button
@@ -55,7 +69,7 @@ class DemoErrorBoundary extends Component<
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '0.9rem'
+                  fontSize: '0.9rem',
                 }}
               >
                 Open in New Tab ↗

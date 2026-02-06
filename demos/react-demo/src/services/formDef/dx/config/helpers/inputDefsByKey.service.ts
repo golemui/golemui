@@ -1,7 +1,7 @@
 import sensibleDefaults, { SensibleDefaults } from '../../../default/sensibleDefaults.service';
 import {
   InputTags,
-  OneOfDataInputDefs,
+  InputDef,
 
 
 } from '../../../formDef.domain';
@@ -9,10 +9,10 @@ import { ParsedDxShortcut, UnrolledField, UnrolledFields } from '../../dx.domain
 import {
   DxField,
   FacadeFieldByKey,
-  OneOfDataInputDefsCallback,
-  ProcessedDxField,
+  InputDefCallback,
+  InputDefOrCallback,
   ProcessedDxFieldsByKey,
-} from '../../gui/fields/guiFields.impl';
+} from '../../gui/shortcuts/guiFields.impl';
 
 export class InputDefsByKeyService {
   constructor(private readonly sensibleDefaults: SensibleDefaults) {}
@@ -42,10 +42,10 @@ export class InputDefsByKeyService {
     return result;
   }
 
-  private expandField(dataInputDef: DxField): ProcessedDxField {
-    let value: ProcessedDxField;
+  private expandField(dataInputDef: DxField): InputDefOrCallback {
+    let value: InputDefOrCallback;
     if (typeof dataInputDef === 'function') {
-      value = dataInputDef as OneOfDataInputDefsCallback;
+      value = dataInputDef as InputDefCallback;
     } else if (typeof dataInputDef === 'string') {
       value = this.sensibleDefaults.explodeShortcut(dataInputDef);
     } else if (Array.isArray(dataInputDef)) {
@@ -55,7 +55,7 @@ export class InputDefsByKeyService {
         value.tags = tagList;
       }
     } else {
-      value = dataInputDef as OneOfDataInputDefs;
+      value = dataInputDef as InputDef;
     }
 
     return value;
@@ -72,7 +72,7 @@ export class InputDefsByKeyService {
         throw new Error(`Unexpected undefined value for field key: ${key}`);
       }
 
-      const value: ProcessedDxField = expandedFields[key as keyof FORM_DATA]!;
+      const value: InputDefOrCallback = expandedFields[key as keyof FORM_DATA]!;
 
       result.push({
         key,

@@ -16,8 +16,8 @@ export const submitButton: any = {
 };
 
 export const conditionalFields: any = {
-  title: 'Have groups with conditional fields',
-  description: 'Have conditional fields',
+  title: 'Have groups with conditional shortcuts',
+  description: 'Have conditional shortcuts',
   formDef: [
     {
       married: 'boolean',

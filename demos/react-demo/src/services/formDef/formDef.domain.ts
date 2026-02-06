@@ -7,9 +7,9 @@ import {
   SUBMIT_BUTTON_SHORTCUT,
 } from './dx/dx.domain';
 import { GuiFieldsShortcut, ValidGuiShortcut } from './dx/gui/gui.domain';
-import { ProcessedDxFieldsByKey } from './dx/gui/fields/guiFields.impl';
+import { ProcessedDxFieldsByKey } from './dx/gui/shortcuts/guiFields.impl';
 
-export interface DataInputDef extends GolemFormItemDef {
+export interface DataInputDef extends WidgetItemDef {
   type: 'text' | 'number' | 'boolean';
   placeholder?: string;
   label?: string | null;
@@ -34,21 +34,21 @@ export interface BooleanDataInputDef extends DataInputDef {
   type: 'boolean';
 }
 
-export interface GolemFormItemDef {
+export interface WidgetItemDef {
   tags?: string[];
   removeField?: boolean;
 }
 
-export type OneOfDataInputDefs = TextDataInputDef | NumberDataInputDef | BooleanDataInputDef;
+export type InputDef = TextDataInputDef | NumberDataInputDef | BooleanDataInputDef;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
-export interface DynamicDefParams {
+export interface DynamicInputDefParams {
   error?: boolean;
 }
 
 export type InputTags = [ValidShortcutType, ...string[]];
 
-export interface ActionDef extends GolemFormItemDef {
+export interface ActionDef extends WidgetItemDef {
   data?: any | null;
   type?: 'button';
   label?: string;
@@ -59,9 +59,10 @@ export interface ActionDef extends GolemFormItemDef {
   };
 }
 
-export type ControllerDefCallback = (params: DynamicDefParams) => ActionDef;
+export type ActionDefCallback = (params: DynamicInputDefParams) => ActionDef;
+export type ActionDefOrCallback = ActionDef | ActionDefCallback;
 
-export type ControllersDefFacade = OneOrMany<ActionDef | ControllerDefCallback>;
+export type ControllersDefFacade = OneOrMany<ActionDef | ActionDefCallback>;
 
 export type OneOrMany<T> = T | T[];
 export type ProcessedDataInputsTuple<FORM_DATA extends Record<string, any>> = [

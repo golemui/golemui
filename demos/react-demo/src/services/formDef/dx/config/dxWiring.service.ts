@@ -34,7 +34,6 @@ export class DxWiringService {
       items: [
         {
           type: 'controller',
-          tags: [],
           value: baseValue,
         },
       ],
@@ -51,21 +50,26 @@ export class DxWiringService {
       items: [
         {
           type: 'controller',
-          tags: [],
           value: payload,
         },
       ],
     };
   }
 
-  wireReadyToMapField<T extends Record<string, any>>(payload: ReadyToMapField[], source: ParsedDxShortcut<ReadyToMapField[]>) {
+  wireReadyToMapField<T extends Record<string, any>>(
+    payload: ReadyToMapField[],
+    source: ParsedDxShortcut<ReadyToMapField[]>,
+  ) {
     const inputDefsByKey: Partial<DxFieldsByKey<T>> = {};
 
     for (const field of payload) {
       inputDefsByKey[field.key as keyof T] = field.processedField;
     }
 
-    return this.wireInputDefsByKey(inputDefsByKey as DxFieldsByKey<T>, source as ParsedDxShortcut<DxFieldsByKey<T>>);
+    return this.wireInputDefsByKey(
+      inputDefsByKey as DxFieldsByKey<T>,
+      source as ParsedDxShortcut<DxFieldsByKey<T>>,
+    );
   }
 }
 
