@@ -1,4 +1,4 @@
-import { ListItem, ListProps } from '../field.props';
+import { ListItem, ListProps } from '../widget.props';
 
 export type ListItemValue = string | number;
 

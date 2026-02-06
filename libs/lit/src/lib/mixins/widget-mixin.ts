@@ -8,13 +8,13 @@ import {
   repeaterIndexTokenContext,
 } from '../context/repeater-index-token.context';
 
-export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
-  class FieldElement extends superClass {
+export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
+  class WidgetElement extends superClass {
     @consume({ context: formContext })
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
-    @property({ type: Object }) field!: Core.FormWidget<string> | undefined;
+    @property({ type: Object }) widget!: Core.FormWidget<string> | undefined;
     @property({ type: Number }) repeaterIndex: number | undefined;
 
     @consume({ context: repeaterIndexTokenContext, subscribe: true })
@@ -23,32 +23,32 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
 
     override connectedCallback() {
       super.connectedCallback?.();
-      this.loadFieldComponent();
+      this.loadWidgetComponent();
     }
 
-    private async loadFieldComponent() {
-      if (!this.field) return;
+    private async loadWidgetComponent() {
+      if (!this.widget) return;
 
       try {
-        const component = await this.formContext.widgetRegistry.loadWidget(this.field.type!);
+        const component = await this.formContext.widgetRegistry.loadWidget(this.widget.type!);
         const element = new component();
 
         const index = this.repeaterIndex ?? this.repeaterIndexToken?.index;
         element.widget =
           typeof index === 'number' && !Number.isNaN(index) && index > -1
-            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.field), index)
-            : this.field;
+            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), index)
+            : this.widget;
 
-        element.id = `host-${this.field.uid}`;
+        element.id = `host-${this.widget.uid}`;
 
         this.replaceWith(element);
       } catch (err) {
-        console.error(`Widget "${this.field.type}" could not be loaded`, err);
+        console.error(`Widget "${this.widget.type}" could not be loaded`, err);
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Widget "${this.field.type}" could not be loaded`,
+              message: `Widget "${this.widget.type}" could not be loaded`,
             },
             bubbles: true,
             composed: true,
@@ -62,5 +62,5 @@ export const FieldMixin = <T extends new (...args: any[]) => LitElement>(superCl
     }
   }
 
-  return FieldElement as unknown as T & (new (...args: any[]) => LitElement);
+  return WidgetElement as unknown as T & (new (...args: any[]) => LitElement);
 };

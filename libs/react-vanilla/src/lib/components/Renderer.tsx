@@ -1,15 +1,15 @@
 import * as Core from '@golemui/core';
-import { useDisplayField } from '@golemui/react';
+import { useDisplayWdiget } from '@golemui/react';
 import { RendererProps } from '@golemui/shared-vanilla';
 import { ReactNode } from 'react';
 
-export function Renderer(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.DisplayWidget;
-  const { uid, templateData } = useDisplayField<RendererProps<ReactNode>>(field);
+export function Renderer(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.DisplayWidget;
+  const { uid, templateData } = useDisplayWdiget<RendererProps<ReactNode>>(widget);
   const renderedElement = templateData?.render;
   return (
     <div className="gui-renderer">
-      <div className="gui-field" id={uid}>
+      <div className="gui-widget" id={uid}>
         {renderedElement}
       </div>
     </div>

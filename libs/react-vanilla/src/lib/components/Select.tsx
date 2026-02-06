@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { useInputWidget } from '@golemui/react';
 import { OptionValue, SelectProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Select(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<string>;
+export function Select(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<string>;
   const {
     uid,
     errors,
@@ -15,7 +15,7 @@ export function Select(fieldInstance: Core.WithWidget) {
     onValueChanged,
     onBlur,
     injectValidationIssues,
-  } = useControlField<OptionValue, SelectProps>(field);
+  } = useInputWidget<OptionValue, SelectProps>(widget);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) =>

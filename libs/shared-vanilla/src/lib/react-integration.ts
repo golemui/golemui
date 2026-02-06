@@ -1,54 +1,54 @@
 import * as React from 'react';
-import { GuiTextinputControl } from './components/textinput';
-import { GuiCheckboxControl } from './components/checkbox';
-import { GuiSelectControl } from './components/select';
-import { GuiDateControl } from './components/date-input';
-import { GuiCalendarControl } from './components/calendar';
-import { GuiNumberControl } from './components/number';
-import { GuiRadiogroupControl } from './components/radiogroup';
-import { GuiTextareaControl } from './components/textarea';
-import { GuiToggleControl } from './components/toggle';
-import { GuiCurrencyControl } from './components/currency';
-import { GuiListControl } from './components/list';
+import { GuiTextinput } from './components/textinput';
+import { GuiCheckbox } from './components/checkbox';
+import { GuiSelect } from './components/select';
+import { GuiDate } from './components/date-input';
+import { GuiCalendar } from './components/calendar';
+import { GuiNumber } from './components/number';
+import { GuiRadiogroup } from './components/radiogroup';
+import { GuiTextarea } from './components/textarea';
+import { GuiToggle } from './components/toggle';
+import { GuiCurrency } from './components/currency';
+import { GuiList } from './components/list';
 import { GuiLabel } from './components/label';
 import { GuiErrors } from './components/errors';
-import { GuiRangeCalendarControl } from './components/range-calendar';
+import { GuiRangeCalendar } from './components/range-calendar';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
       'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiTextinputControl>;
+        Partial<GuiTextinput>;
       'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiCurrencyControl>;
+        Partial<GuiCurrency>;
       'gui-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiListControl>;
+        Partial<GuiList>;
       'gui-label': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiLabel>;
       'gui-errors': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;
       'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiCheckboxControl>;
+        Partial<GuiCheckbox>;
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiSelectControl>;
+        Partial<GuiSelect>;
       'gui-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiDateControl>;
+        Partial<GuiDate>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiCalendarControl>;
+        Partial<GuiCalendar>;
       'gui-range-calendar': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeCalendarControl>;
+        Partial<GuiRangeCalendar>;
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiNumberControl>;
+        Partial<GuiNumber>;
       'gui-radiogroup': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiRadiogroupControl>;
+        Partial<GuiRadiogroup>;
       'gui-textarea': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiTextareaControl>;
+        Partial<GuiTextarea>;
       'gui-toggle': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiToggleControl>;
+        Partial<GuiToggle>;
     }
   }
 }

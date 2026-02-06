@@ -1,19 +1,19 @@
 import * as React from 'react';
 import {
-  GuiCalendarControl,
-  GuiCheckboxControl,
-  GuiCurrencyControl,
-  GuiDateControl,
+  GuiCalendar,
+  GuiCheckbox,
+  GuiCurrency,
+  GuiDate,
   GuiErrors,
   GuiLabel,
-  GuiListControl,
-  GuiNumberControl,
-  GuiRadiogroupControl,
-  GuiRangeCalendarControl,
-  GuiSelectControl,
-  GuiTextareaControl,
-  GuiTextinputControl,
-  GuiToggleControl,
+  GuiList,
+  GuiNumber,
+  GuiRadiogroup,
+  GuiRangeCalendar,
+  GuiSelect,
+  GuiTextarea,
+  GuiTextinput,
+  GuiToggle,
 } from '@golemui/shared-vanilla';
 
 declare module 'react' {
@@ -21,36 +21,36 @@ declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiTextinputControl>;
+        Partial<GuiTextinput>;
       'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiCurrencyControl>;
+        Partial<GuiCurrency>;
       'gui-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<Omit<GuiListControl, 'children'>>;
+        Partial<Omit<GuiList, 'children'>>;
       'gui-label': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiLabel>;
       'gui-errors': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;
       'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiCheckboxControl>;
+        Partial<GuiCheckbox>;
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiSelectControl>;
+        Partial<GuiSelect>;
       'gui-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiDateControl>;
+        Partial<GuiDate>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiCalendarControl>;
+        Partial<GuiCalendar>;
       'gui-range-calendar': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeCalendarControl>;
+        Partial<GuiRangeCalendar>;
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiNumberControl>;
+        Partial<GuiNumber>;
       'gui-radiogroup': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiRadiogroupControl>;
+        Partial<GuiRadiogroup>;
       'gui-textarea': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiTextareaControl>;
+        Partial<GuiTextarea>;
       'gui-toggle': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiToggleControl>;
+        Partial<GuiToggle>;
     }
   }
 }

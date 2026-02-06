@@ -11,7 +11,7 @@ export type WithFlattenedProps<
 export function useTemplateData<
   F extends Core.NonFunctionWidget<string>,
   ExtraProps extends Core.NonFunctionWidget<string>['props'],
->(field: F) {
+>(widget: F) {
   // TODO: this should be [templateData, setTemplateData]
   const [props, setProps] = useState<WithFlattenedProps<F, ExtraProps>>(
     {} as WithFlattenedProps<F, ExtraProps>,
@@ -21,17 +21,17 @@ export function useTemplateData<
   useEffect(() => {
     const destroy$ = new Subject<void>();
     formContext.store.state$
-      .pipe(takeUntil(destroy$), Core.calculatedWidgetsByUid$(field.uid))
-      .subscribe((calculatedField) => {
+      .pipe(takeUntil(destroy$), Core.calculatedWidgetsByUid$(widget.uid))
+      .subscribe((calculatedWidget) => {
         const templateData = {
-          ...calculatedField,
-          ...calculatedField.props,
+          ...calculatedWidget,
+          ...calculatedWidget.props,
           lang: formContext.store.getState().lang,
         } as unknown as WithFlattenedProps<F, ExtraProps>;
         setProps(templateData);
       });
     return () => destroy$.next();
-  }, [field, formContext]);
+  }, [widget, formContext]);
 
   return props;
 }

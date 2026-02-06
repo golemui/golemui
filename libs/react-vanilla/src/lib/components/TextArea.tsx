@@ -1,15 +1,15 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { useInputWidget } from '@golemui/react';
 import { TextareaProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function TextArea(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<string>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+export function TextArea(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<string>;
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
     string,
     TextareaProps
-  >(field);
+  >(widget);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) =>

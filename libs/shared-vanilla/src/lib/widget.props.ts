@@ -112,7 +112,7 @@ export type CalendarProps = {
 
 export type RangeCalendarProps = {
   /**
-   * An optional descriptive text providing guidance or information about the associated field or functionality.
+   * An optional descriptive text providing guidance or information about the associated widget or functionality.
    */
   hint?: string;
   /**
@@ -270,7 +270,7 @@ export type DropdownProps<T> = {
   hint?: string;
   items: ListItem<T>[];
   /**
-   * Property field used to display in the input when an item option is selected
+   * Property widget used to display in the input when an item option is selected
    */
   labelField?: keyof T;
   valueField?: keyof T;

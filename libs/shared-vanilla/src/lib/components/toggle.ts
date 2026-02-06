@@ -2,10 +2,10 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addLabel, ControlTemplateData } from '../utils/templates';
-import { ToggleProps } from '../field.props';
+import { ToggleProps } from '../widget.props';
 
 @customElement('gui-toggle')
-export class GuiToggleControl extends LitElement {
+export class GuiToggle extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -62,7 +62,7 @@ export class GuiToggleControl extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData, true)}
 
-      <div class="gui-field gui-field--horizontal gui-toggle--switch">
+      <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
         <input
           type="checkbox"
           id=${this.uid}
@@ -106,6 +106,6 @@ export class GuiToggleControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-toggle': GuiToggleControl;
+    'gui-toggle': GuiToggle;
   }
 }

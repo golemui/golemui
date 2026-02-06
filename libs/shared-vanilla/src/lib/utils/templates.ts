@@ -37,34 +37,34 @@ export const addHint = <T, ExtraProps extends { hint?: string }>(
   templateData: ControlTemplateData<T> & ExtraProps,
 ) => {
   return templateData.hint
-    ? html`<div class="gui-field-hint" id=${`${uid}_hint`}>${templateData.hint}</div>`
+    ? html`<div class="gui-widget-hint" id=${`${uid}_hint`}>${templateData.hint}</div>`
     : html``;
 };
 
 export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: string }>(
-  fieldType: string,
+  widgetType: string,
   templateData: ControlTemplateData<T> & ExtraProps,
 ) => {
-  const fieldClasses: { [key: string]: boolean } = {
-    [`gui-${fieldType}--icon`]: false,
-    [`gui-${fieldType}--icon-right`]: false,
+  const widgetClasses: { [key: string]: boolean } = {
+    [`gui-${widgetType}--icon`]: false,
+    [`gui-${widgetType}--icon-right`]: false,
   };
 
   if (templateData.icon) {
-    fieldClasses[`gui-${fieldType}--icon`] = true;
-    fieldClasses[`gui-${fieldType}--icon-right`] = templateData.iconPosition === 'right';
+    widgetClasses[`gui-${widgetType}--icon`] = true;
+    widgetClasses[`gui-${widgetType}--icon-right`] = templateData.iconPosition === 'right';
 
     const classes = {
-      'gui-field-icon': true,
-      'gui-field-icon--right': templateData.iconPosition === 'right',
+      'gui-widget-icon': true,
+      'gui-widget-icon--right': templateData.iconPosition === 'right',
       [templateData.icon]: true,
     };
     return {
-      fieldClasses: fieldClasses,
+      widgetClasses: widgetClasses,
       html: html`<span class=${classMap(classes)}></span>`,
     };
   } else {
-    return { fieldClasses: fieldClasses, html: html`` };
+    return { widgetClasses: widgetClasses, html: html`` };
   }
 };
 

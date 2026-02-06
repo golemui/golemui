@@ -1,13 +1,13 @@
 import * as Core from '@golemui/core';
-import { FieldRenderer, useLayoutField } from '@golemui/react';
+import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { AccordionProps } from '@golemui/shared-vanilla';
 import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};
 
-export function Accordion(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.LayoutWidget;
-  const { uid, children, templateData, onChange } = useLayoutField<AccordionProps>(field);
+export function Accordion(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.LayoutWidget;
+  const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
   const [activeSections, setActiveSections] =
     useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
 
@@ -45,13 +45,13 @@ export function Accordion(fieldInstance: Core.WithWidget) {
       const isActiveSection = activeSections[uid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section
-          className="gui-field"
+          className="gui-widget"
           role="region"
           id={`accordion_section_${uid}`}
           hidden={!isActiveSection && templateData.renderMode !== 'activeOnly'}
           aria-labelledby={`accordion_button_${uid}`}
         >
-          <FieldRenderer field={child} />
+          <WidgetRenderer widget={child} />
         </section>
       ) : null;
     },
@@ -81,7 +81,7 @@ export function Accordion(fieldInstance: Core.WithWidget) {
 
   return (
     <div className="gui-accordion" style={{ flex: templateData.size }}>
-      <div className="gui-field" id={uid}>
+      <div className="gui-widget" id={uid}>
         {renderAccordion()}
       </div>
     </div>

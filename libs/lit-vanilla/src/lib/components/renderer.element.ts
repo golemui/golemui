@@ -36,7 +36,7 @@ export class RendererElement extends LitElement implements Core.WithWidget {
 
   override render() {
     return html`
-      <div class="gui-field" id=${this.widget.uid}>${this.adapter.templateData.render}</div>
+      <div class="gui-widget" id=${this.widget.uid}>${this.adapter.templateData.render}</div>
     `;
   }
 

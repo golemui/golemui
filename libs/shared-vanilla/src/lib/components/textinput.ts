@@ -3,10 +3,10 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { TextinputProps } from '../field.props';
+import { TextinputProps } from '../widget.props';
 
 @customElement('gui-textinput')
-export class GuiTextinputControl extends LitElement {
+export class GuiTextinput extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -69,7 +69,7 @@ export class GuiTextinputControl extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <input
           type="text"
           id=${this.uid}
@@ -117,6 +117,6 @@ export class GuiTextinputControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-textinput': GuiTextinputControl;
+    'gui-textinput': GuiTextinput;
   }
 }

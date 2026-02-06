@@ -1,15 +1,15 @@
 import * as Core from '@golemui/core';
-import { useControlField } from '@golemui/react';
+import { useInputWidget } from '@golemui/react';
 import { NumberinputProps } from '@golemui/shared-vanilla';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function NumberInput(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<number>;
-  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useControlField<
+export function NumberInput(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<number>;
+  const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
     number,
     NumberinputProps
-  >(field);
+  >(widget);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>

@@ -3,12 +3,12 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
-import { OneOfProps, Option, SelectProps } from '../field.props';
+import { OneOfProps, Option, SelectProps } from '../widget.props';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
 import { inferOptionValue, OptionValue, updateOptions } from './one-of';
 
 @customElement('gui-select')
-export class GuiSelectControl extends LitElement {
+export class GuiSelect extends LitElement {
   @property({ type: String }) uid: string | undefined = undefined;
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: String, attribute: 'locale-id' }) localeId = 'en';
@@ -103,11 +103,11 @@ export class GuiSelectControl extends LitElement {
     return html`
       ${addLabel(this.uid as string, templateData)}
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <select
           id=${this.uid!}
           data-cy=${`${this.uid}_select`}
-          class=${classMap(selectIcon.fieldClasses)}
+          class=${classMap(selectIcon.widgetClasses)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled || templateData.readonly}
           @change=${this.valueChanged}
@@ -164,6 +164,6 @@ export class GuiSelectControl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-select': GuiSelectControl;
+    'gui-select': GuiSelect;
   }
 }

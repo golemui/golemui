@@ -48,7 +48,7 @@ export class AlertElement extends LitElement implements Core.WithWidget {
 
   override render() {
     return html`
-      <div class="gui-field" id=${this.widget.uid}>
+      <div class="gui-widget" id=${this.widget.uid}>
         <div
           role="alert"
           class="gui-alert-notification gui-alert-notification--${this.adapter.templateData.level ||

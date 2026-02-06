@@ -15,7 +15,7 @@ export interface RangeCalendarDay extends AbstractCalendarDay {
 }
 
 @customElement('gui-range-calendar')
-export class GuiRangeCalendarControl extends AbstractCalendar {
+export class GuiRangeCalendar extends AbstractCalendar {
   @property({ type: Array }) value: DateRange[] | undefined = [];
 
   @state() private _anchorDate: Date | null = null;
@@ -319,6 +319,6 @@ export class GuiRangeCalendarControl extends AbstractCalendar {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-range-calendar': GuiRangeCalendarControl;
+    'gui-range-calendar': GuiRangeCalendar;
   }
 }

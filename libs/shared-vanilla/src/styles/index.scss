@@ -4,10 +4,10 @@
 // Form container
 @use 'form';
 
-// Global field styles
-@use 'field';
+// Global widget styles
+@use 'widget';
 
-// Control Fields
+// Input Widgets
 @use 'calendar';
 @use 'checkbox';
 @use 'currency';
@@ -24,15 +24,15 @@
 @use 'textinput';
 @use 'toggle';
 
-// Layout Fields
+// Layout Widgets
 @use 'stack';
 @use 'tabs';
 @use 'accordion';
 
-// Button Fields
+// Action Widgets
 @use 'button';
 
-// Fields
+// Display Widgets
 @use 'alert';
 
 // Validators

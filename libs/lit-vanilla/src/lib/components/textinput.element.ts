@@ -6,7 +6,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-textinput-control')
+@customElement('gui-textinput-input')
 export class TextinputElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
@@ -14,8 +14,8 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, TextinputProps>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<string, TextinputProps>();
 
   subscriptions: Subscription[] = [];
 

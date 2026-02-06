@@ -1,4 +1,4 @@
-import { OneOfProps, Option } from '../field.props';
+import { OneOfProps, Option } from '../widget.props';
 
 /**
  * Checks whether a value is a valid option value

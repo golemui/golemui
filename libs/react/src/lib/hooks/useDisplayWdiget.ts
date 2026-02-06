@@ -3,32 +3,32 @@ import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
-export function useDisplayField<ExtraProps extends Record<string, any>>(
-  field: Core.DisplayWidget<string>,
+export function useDisplayWdiget<ExtraProps extends Record<string, any>>(
+  widget: Core.DisplayWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const templateData = useTemplateData<Core.DisplayWidget<string>, ExtraProps>(field);
+  const templateData = useTemplateData<Core.DisplayWidget<string>, ExtraProps>(widget);
 
   useEffect(() => {
-    setUid(field.uid);
-  }, [field]);
+    setUid(widget.uid);
+  }, [widget]);
 
   useEffect(() => {
     formContext.store.dispatch({
       type: 'ADD_WIDGET',
-      payload: { widget: field },
+      payload: { widget: widget },
     });
-  }, [field, formContext.store]);
+  }, [widget, formContext.store]);
 
   useEffect(() => {
     return () => {
       formContext.store.dispatch({
         type: 'REMOVE_WIDGET',
-        payload: { uid: field.uid },
+        payload: { uid: widget.uid },
       });
     };
-  }, [formContext, field]);
+  }, [formContext, widget]);
   return {
     uid,
     templateData,

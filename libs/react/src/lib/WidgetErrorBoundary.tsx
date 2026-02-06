@@ -3,14 +3,14 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
-  field: Core.NonFunctionWidget<string, any>;
+  widget: Core.NonFunctionWidget<string, any>;
 }
 
 interface State {
   error: Error | null;
 }
 
-export default class FieldErrorBoundary extends Component<Props, State> {
+export default class WidgetErrorBoundary extends Component<Props, State> {
   public state: State = { error: null };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -24,22 +24,22 @@ export default class FieldErrorBoundary extends Component<Props, State> {
 
   public render() {
     const { error } = this.state;
-    const { children, field } = this.props;
+    const { children, widget } = this.props;
 
     if (error) {
-      return fallback(error, field);
+      return fallback(error, widget);
     }
 
     return children;
   }
 }
 
-function fallback(error: Error, field: Props['field']) {
+function fallback(error: Error, widget: Props['widget']) {
   return (
     <div style={{ border: '1px solid red', padding: '4px' }}>
       Component{' '}
       <code style={{ fontWeight: 'bold' }}>
-        {field.type}[{field.uid}]
+        {widget.type}[{widget.uid}]
       </code>{' '}
       failed with:
       <p style={{ color: 'red', marginTop: '4px' }}>

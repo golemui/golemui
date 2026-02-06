@@ -2,8 +2,8 @@
 
 import * as Core from '@golemui/core';
 import { isOption } from '../components';
-import { Vanilla } from '../field.factory';
-import { Option } from '../field.props';
+import { Vanilla } from '../widget.factory';
+import { Option } from '../widget.props';
 
 function enumToOption(opt: unknown): Option {
   if (isOption(opt)) {

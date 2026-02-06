@@ -7,7 +7,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
-@customElement('gui-list-control')
+@customElement('gui-list-input')
 export class ListElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
@@ -15,8 +15,8 @@ export class ListElement extends LitElement implements Core.WithWidget {
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
-  @provide({ context: Lit.controlContext })
-  adapter = new Lit.ControlFieldAdapter<string, ListProps<any>>();
+  @provide({ context: Lit.inputContext })
+  adapter = new Lit.InputWidgetAdapter<string, ListProps<any>>();
 
   subscriptions: Subscription[] = [];
 
@@ -82,7 +82,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
         .required=${data.validator?.required}
       ></gui-label>
 
-      <div class="gui-field">
+      <div class="gui-widget">
         <gui-list
           id=${this.widget.uid}
           .uid=${this.widget.uid}
