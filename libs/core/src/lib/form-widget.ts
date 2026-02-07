@@ -50,6 +50,7 @@ export type On<
 export type BaseWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
+  Props extends Record<string, any> = any,
 > = {
   // kind: 'display' | 'action' | 'input' | 'layout';
   uid: Uid;
@@ -75,30 +76,37 @@ export type BaseWidget<
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: AllSuffixable<Props<FormData>, StateKeys>;
+  props?: AllSuffixable<MakeProps<Props, FormData>, StateKeys>;
 };
 
-type Props<FormData extends Record<string, any> = any> = Record<
-  string,
-  | string
-  | boolean
-  | number
-  | any[]
-  | Localizable
-  | Record<string, any>
-  | WidgetPropertyFunction<any, FormData>
+type MakeProps<
+  Props extends Record<string, any> = any,
+  FormData extends Record<string, any> = any,
+> = Partial<
+  Record<
+    keyof Props,
+    | string
+    | boolean
+    | number
+    | any[]
+    | Localizable
+    | Record<string, any>
+    | WidgetPropertyFunction<any, FormData>
+  >
 >;
 
 export type DisplayWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
-> = SomeSuffixable<BaseWidget<StateKeys, FormData> & { kind: 'display' }, never, StateKeys>;
+  Props extends Record<string, any> = any,
+> = SomeSuffixable<BaseWidget<StateKeys, FormData, Props> & { kind: 'display' }, never, StateKeys>;
 
 export type ActionWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
+  Props extends Record<string, any> = any,
 > = SomeSuffixable<
-  BaseWidget<StateKeys, FormData> & {
+  BaseWidget<StateKeys, FormData, Props> & {
     kind: 'action';
     label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
     disabled?: boolean | { when: ReactiveExpression };
@@ -112,8 +120,9 @@ export type InputWidget<
   T,
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
+  Props extends Record<string, any> = any,
 > = SomeSuffixable<
-  BaseWidget<StateKeys, FormData> & {
+  BaseWidget<StateKeys, FormData, Props> & {
     kind: 'input';
     path: DotPath;
     /**
@@ -136,8 +145,9 @@ export type InputWidget<
 export type LayoutWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
+  Props extends Record<string, any> = any,
 > = SomeSuffixable<
-  BaseWidget<StateKeys, FormData> & {
+  BaseWidget<StateKeys, FormData, Props> & {
     kind: 'layout';
     on?: On<StateKeys, FormData>;
     // ⚠️ This should be FormWidget, but types cannot reference themselves. Keep in sync!

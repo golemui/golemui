@@ -1,17 +1,23 @@
-import { defineForm } from '@golemui/core';
+import { defineForm, InputWidget } from '@golemui/core';
+import { TextinputProps } from '@golemui/shared-vanilla';
 import { Example } from './types';
 
 const data = { user: { id: 'ASDFGHJKL4567' } };
 
+const states = {
+  register: '$form.registerMode === true',
+  'register:tall': '$form.user.height > 180',
+  'register:minor': '$form.user.age < 18',
+  'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
+  'register:adult': '$form.user.age >= 18',
+  'register:adult:canSubmit': '$form.terms === true',
+};
+
+type States = keyof typeof states;
+type TextInput = InputWidget<string, States, any, TextinputProps>;
+
 const form = defineForm({
-  states: {
-    register: '$form.registerMode === true',
-    'register:tall': '$form.user.height > 180',
-    'register:minor': '$form.user.age < 18',
-    'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
-    'register:adult': '$form.user.age >= 18',
-    'register:adult:canSubmit': '$form.terms === true',
-  },
+  states,
   form: [
     {
       uid: '',
@@ -29,7 +35,12 @@ const form = defineForm({
       label: 'User Id',
       path: 'user.id',
       readonly: true,
-    },
+      props: {
+        placeholder: 'asasad',
+        'placeholder.register:minor': 'asdada',
+        'icon.register': 'asdad',
+      },
+    } satisfies TextInput,
     {
       uid: '',
       kind: 'input',
