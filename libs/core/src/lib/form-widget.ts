@@ -57,10 +57,6 @@ export type BaseWidget<
   size?: number;
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
-  // TODO: this shouldn't go here
-  disabled?: boolean | { when: ReactiveExpression };
-  // TODO: this shouldn't go here
-  readonly?: boolean | { when: ReactiveExpression };
 
   // <dev-note>
   //    TODO: Is this better? {in} and {when} is maybe too verbose...
@@ -79,17 +75,19 @@ export type BaseWidget<
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: Record<
-    string,
-    | string
-    | boolean
-    | number
-    | any[]
-    | Localizable
-    | Record<string, any>
-    | WidgetPropertyFunction<any, FormData>
-  >;
+  props?: AllSuffixable<Props<FormData>, StateKeys>;
 };
+
+type Props<FormData extends Record<string, any> = any> = Record<
+  string,
+  | string
+  | boolean
+  | number
+  | any[]
+  | Localizable
+  | Record<string, any>
+  | WidgetPropertyFunction<any, FormData>
+>;
 
 export type DisplayWidget<
   StateKeys extends UiState = never,
@@ -103,9 +101,10 @@ export type ActionWidget<
   BaseWidget<StateKeys, FormData> & {
     kind: 'action';
     label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
+    disabled?: boolean | { when: ReactiveExpression };
     on?: On<StateKeys, FormData>;
   },
-  'disabled' | 'label',
+  'disabled' | 'label' | 'size',
   StateKeys
 >;
 
@@ -124,6 +123,8 @@ export type InputWidget<
      * - Otherwise, the provided label will be rendered.
      */
     label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
+    disabled?: boolean | { when: ReactiveExpression };
+    readonly?: boolean | { when: ReactiveExpression };
     on?: On<StateKeys, FormData>;
     defaultValue?: T;
     validator?: ReactiveWidgetPropertyValue<object, FormData>; // `object` should be `V` (the validator type)
@@ -139,7 +140,7 @@ export type LayoutWidget<
   BaseWidget<StateKeys, FormData> & {
     kind: 'layout';
     on?: On<StateKeys, FormData>;
-    // TODO: this should be FormWidget, but types cannot reference themselves. Keep in sync!
+    // ⚠️ This should be FormWidget, but types cannot reference themselves. Keep in sync!
     children: (
       | DisplayWidget<StateKeys, FormData>
       | InputWidget<any, StateKeys, FormData>
@@ -291,18 +292,15 @@ const localizableDecoder = jd.oneOf<Localizable>(
 
 const uidDecoder = jd.optional(jd.string()).map((s) => s || shortUUID());
 
-const displayWidgetDecoder = jd.object<DisplayWidget<string>>(
+const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>(
   {
-    kind: jd.literal('display'),
-    uid: uidDecoder,
-    type: jd.string(),
-    size: jd.optional(jd.number()),
-    include: jd.optional(includeDecoder),
-    exclude: jd.optional(excludeDecoder),
-    // TODO: disabled and reaonly make no sense for display widgets
-    disabled: jd.optional(boolWhenDecoder),
-    readonly: jd.optional(boolWhenDecoder),
-    props: jd.optional(jd.succeed()),
+    kind: { decoder: jd.literal('display') },
+    uid: { decoder: uidDecoder },
+    type: { decoder: jd.string() },
+    size: { suffixed: true, decoder: jd.optional(jd.number()) },
+    include: { decoder: jd.optional(includeDecoder) },
+    exclude: { decoder: jd.optional(excludeDecoder) },
+    props: { decoder: jd.optional(jd.succeed()) },
   },
   'DisplayWidget',
 );
@@ -312,13 +310,11 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
     kind: { decoder: jd.literal('action') },
     uid: { decoder: uidDecoder },
     type: { decoder: jd.string() },
-    size: { decoder: jd.optional(jd.number()) },
+    size: { suffixed: true, decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     label: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(localizableDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    // TODO: readonly makes no sense for action widgets
-    readonly: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
     on: { decoder: jd.optional(onDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
   },
@@ -346,7 +342,7 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
     kind: { decoder: jd.literal('input') },
     uid: { decoder: uidDecoder },
     type: { decoder: jd.string() },
-    size: { decoder: jd.optional(jd.number()) },
+    size: { suffixed: true, decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
     disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
@@ -410,12 +406,9 @@ export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>(
     kind: { decoder: jd.literal('layout') },
     uid: { decoder: uidDecoder },
     type: { decoder: jd.string() },
-    size: { decoder: jd.optional(jd.number()) },
+    size: { suffixed: true, decoder: jd.optional(jd.number()) },
     include: { decoder: jd.optional(includeDecoder) },
     exclude: { decoder: jd.optional(excludeDecoder) },
-    // TODO: disabled and readonly make no sense for layouts
-    disabled: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
-    readonly: { suffixed: true, decoder: jd.optional(boolWhenDecoder) },
     props: { decoder: jd.optional(jd.succeed()) },
     on: { decoder: jd.optional(onDecoder) },
     children: { decoder: jd.array(formWidgetDecoder, 'FormWidget[]') },
