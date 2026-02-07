@@ -18,8 +18,11 @@ import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 //
 // --------------------------------
 
+/**
+ * The widget type identifier used to resolve the corresponding UI component from the registry.
+ * Examples: 'textinput', 'textarea', 'password', 'stack', 'grid', 'heading', 'markdown', 'alert'
+ */
 export type WidgetType = string;
-// export type WidgetType = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 
 type ReactiveWidgetPropertyValue<T, FormData extends Record<string, any> = any> =
   | ReactiveExpression
@@ -27,7 +30,7 @@ type ReactiveWidgetPropertyValue<T, FormData extends Record<string, any> = any> 
   | T;
 
 /**
- * An event expression is basically a way to change the current UI state: `currentState = 'loading'` or send an event `loadData` for the forms engine runtime to process.
+ * An event expression is basically a way to send an event `loadData` for the forms engine runtime to process.
  */
 type EventExpression = string;
 
