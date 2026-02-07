@@ -18,10 +18,6 @@ import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
 //
 // --------------------------------
 
-export type Flags = {
-  hidden?: boolean;
-};
-
 export type WidgetType = string;
 // export type WidgetType = 'textinput' | 'textarea' | 'password' | ... | 'stack' | 'grid' | ... | 'heading' | 'markdown' | 'alert' |...
 

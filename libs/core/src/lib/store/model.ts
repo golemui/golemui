@@ -59,7 +59,7 @@ export type State = {
    * Tracks widgets with state expressions.
    * When data changes, these widgets are updated and their flags recalculated.
    */
-  widgetFlags: Record<Uid, Widget.Flags>;
+  widgetFlags: Record<Uid, { hidden?: boolean }>;
 
   /**
    * Allows overriding a widget’s `prop` properties externally via its event handler mechanism.
