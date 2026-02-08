@@ -33,7 +33,7 @@ export function golemForm<FormType extends Record<string, any>>() {
 
 // ---
 
-type FormType = { name: string };
+type FormType = { name: string; registerMode: boolean };
 
 export const myDemoForm = golemForm<FormType>().create({
   states: {
@@ -79,7 +79,13 @@ export const myDemoForm = golemForm<FormType>().create({
               kind: 'input',
               type: 'checkbox',
               path: 'yay',
-              props: { hint: 'not type safe' },
+
+              props: {
+                hint: 'not type safe',
+                checkboxPosition: ({ $form }) => {
+                  return $form.registerMode ? 'left' : 'right';
+                },
+              },
             },
             { uid: '', kind: 'action', type: 'button' },
           ],
