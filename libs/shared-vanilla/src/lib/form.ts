@@ -13,7 +13,7 @@ type ExtractStates<S> = S extends Record<string, Core.ReactiveExpression> ? keyo
 class GolemFormBuilder<FormType extends Record<string, any>> {
   public create<States extends Record<string, Core.ReactiveExpression>>(config: {
     states?: States;
-    form: Widget<FormType, ExtractStates<States>>[];
+    form: GolemWidget<FormType, ExtractStates<States>>[];
   }): Core.Form<ExtractStates<States>, FormType> {
     return {
       states: config.states,
@@ -101,7 +101,7 @@ export const myDemoForm = golemForm<FormType>().create({
 //
 // -------------------
 
-type Widget<FormType extends Record<string, any>, States extends string> =
+type GolemWidget<FormType extends Record<string, any>, States extends string> =
   | GuiAccordion<FormType, States>
   | GuiAlert<FormType, States>
   | GuiButton<FormType, States>
@@ -129,7 +129,7 @@ type GuiAccordion<FormType extends Record<string, any>, States extends string> =
   States,
   FormType,
   Props.AccordionProps,
-  Widget<FormType, States>[]
+  GolemWidget<FormType, States>[]
 > & { type: 'accordion' };
 
 type GuiAlert<FormType extends Record<string, any>, States extends string> = Core.DisplayWidget<
@@ -188,7 +188,7 @@ type GuiDropdown<FormType extends Record<string, any>, States extends string> = 
 
 type GuiFunctionWidget<FormType extends Record<string, any>, States extends string> = (
   api?: Core.FunctionWidgetParams<FormType>,
-) => Exclude<Widget<FormType, States>, () => any>;
+) => Exclude<GolemWidget<FormType, States>, () => any>;
 
 type GuiList<FormType extends Record<string, any>, States extends string> = Core.InputWidget<
   OptionValue,
@@ -243,14 +243,14 @@ type GuiStack<FormType extends Record<string, any>, States extends string> = Cor
   States,
   FormType,
   Props.StackProps,
-  Widget<FormType, States>[]
+  GolemWidget<FormType, States>[]
 > & { type: 'stack' };
 
 type GuiTabs<FormType extends Record<string, any>, States extends string> = Core.LayoutWidget<
   States,
   FormType,
   Props.TabsProps,
-  Widget<FormType, States>[]
+  GolemWidget<FormType, States>[]
 > & { type: 'tabs' };
 
 type GuiTextarea<FormType extends Record<string, any>, States extends string> = Core.InputWidget<
