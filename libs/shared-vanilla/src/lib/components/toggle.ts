@@ -26,9 +26,10 @@ export class GuiToggle extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readOnly,
-        disabled: this.disabled,
         touched: this.touched,
+        // Checkboxes can't have aria-readonly
+        readonly: false,
+        disabled: false,
       },
     }),
   });
@@ -69,9 +70,9 @@ export class GuiToggle extends LitElement {
           data-cy=${`${this.uid}_toggle`}
           ?checked=${templateData.value}
           ?required=${templateData.required}
-          ?disabled=${templateData.disabled}
-          ?readonly=${templateData.readonly}
+          ?disabled=${templateData.disabled || templateData.readonly}
           @change=${this.valueChanged}
+          @blur=${this.onBlur}
         />
 
         <span class="gui-toggle--slider" role="presentation"></span>

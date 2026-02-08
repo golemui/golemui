@@ -84,7 +84,7 @@ export abstract class AbstractCalendar extends LitElement {
       <div class="gui-widget">
         <div
           class="gui-calendar-input"
-          aria-required=${this.required}
+          role="group"
           aria-labelledby=${this.label ? `${this.uid}_calendar_label` : nothing}
         >
           <div class="gui-calendar__container">
@@ -93,6 +93,7 @@ export abstract class AbstractCalendar extends LitElement {
               class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
               ?disabled=${!this.canGoPrev()}
               @click=${this.prevMonth}
+              aria-label="Previous month"
             >
               ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
             </button>
@@ -109,6 +110,7 @@ export abstract class AbstractCalendar extends LitElement {
               class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
               ?disabled=${!this.canGoNext()}
               @click=${this.nextMonth}
+              aria-label="Next month"
             >
               ${this.nextMonthIcon ? html`<span class="${this.nextMonthIcon}"></span>` : '>'}
             </button>
@@ -125,6 +127,7 @@ export abstract class AbstractCalendar extends LitElement {
    */
   private renderMonthPanel(offset: number) {
     const days = this.getDaysInMonth(offset);
+    const weeks = this.chunkDays(days);
     const weekDays = getWeekdayLabels(this.localeId);
     const panelDate = new Date(this._currentDate);
     panelDate.setDate(1);
@@ -137,15 +140,26 @@ export abstract class AbstractCalendar extends LitElement {
         </header>
 
         <div class="gui-calendar__days-grid" role="grid">
+          <div role="row" class="gui-calendar__rows">
+            ${repeat(
+              weekDays,
+              (weekday, i) => i,
+              (weekday) =>
+                html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
+            )}
+          </div>
+
           ${repeat(
-            weekDays,
-            (weekday, i) => i,
-            (weekday) => html`<span class="gui-calendar__weekday">${weekday}</span>`,
-          )}
-          ${repeat(
-            days,
-            (day) => day.date.toISOString(),
-            (day) => this.renderDay(day),
+            weeks,
+            (week) => html`
+              <div role="row" class="gui-calendar__rows">
+                ${repeat(
+                  week,
+                  (day) => day.date.toISOString(),
+                  (day) => this.renderDay(day),
+                )}
+              </div>
+            `,
           )}
         </div>
       </div>
@@ -237,6 +251,20 @@ export abstract class AbstractCalendar extends LitElement {
     } else {
       buttons[nextIndex]?.focus();
     }
+  }
+
+  /**
+   * Splits an array of calendar days into chunks of weeks, with each week consisting of up to 7 days.
+   *
+   * @param {AbstractCalendarDay[]} days - An array of calendar day objects to be grouped into weeks.
+   * @return {AbstractCalendarDay[][]} A two-dimensional array where each inner array represents a week of up to 7 days.
+   */
+  protected chunkDays(days: AbstractCalendarDay[]): AbstractCalendarDay[][] {
+    const weeks: AbstractCalendarDay[][] = [];
+    for (let i = 0; i < days.length; i += 7) {
+      weeks.push(days.slice(i, i + 7));
+    }
+    return weeks;
   }
 
   protected onFocusOut(e: FocusEvent) {

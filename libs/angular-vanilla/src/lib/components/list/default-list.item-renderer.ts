@@ -5,13 +5,10 @@ import { ItemRenderContext } from '@golemui/core';
   selector: 'gui-default-list-item-renderer',
   standalone: true,
   template: `<div
-    role="option"
     class="gui-list__item"
     [class.gui-list__item-disabled]="disabled"
     [class.gui-list__item-selected]="selected"
     [class.gui-list__item-focused]="focused"
-    [attr.aria-selected]="selected"
-    [attr.aria-disabled]="disabled"
   >
     {{ template }}
   </div>`,

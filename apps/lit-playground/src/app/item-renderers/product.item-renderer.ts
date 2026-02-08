@@ -18,12 +18,7 @@ export const productItemRenderer = (ctx: ItemRenderContext<ProductItem>): Templa
   };
 
   return html`
-    <div
-      role="option"
-      class=${classMap(classes)}
-      aria-selected=${ctx.selected ? 'true' : 'false'}
-      aria-disabled=${ctx.disabled ? 'true' : 'false'}
-    >
+    <div class=${classMap(classes)}>
       <div>
         <h2>${ctx.template.product}</h2>
         <p>${ctx.template.description}</p>

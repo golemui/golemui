@@ -98,14 +98,14 @@ export class TabsElement extends LitElement implements Core.WithWidget {
       'gui-tabs--end-shadow': !this.isEndVisible,
     };
 
-    return html`<nav class=${classMap(navClasses)} role="tablist" id=${this.widget.uid}>
-        <ul>
+    return html`<nav class=${classMap(navClasses)} id=${this.widget.uid}>
+        <ul role="tablist">
           <li role="presentation" id="start-sentinel" class="gui-sentinel"></li>
           ${this.adapter.templateData.tabs
             ? repeat(
                 this.adapter.templateData.tabs,
                 (tab, index) => html`
-                  <li>
+                  <li role="presentation">
                     <button
                       type="button"
                       role="tab"

@@ -110,6 +110,7 @@ export function List(widgetInstance: Core.WithWidget) {
         errors={errors}
         touched={isTouched}
         required={isRequired}
+        native={false}
       ></gui-label>
 
       <div className="gui-widget">

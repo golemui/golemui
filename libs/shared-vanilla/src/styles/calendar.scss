@@ -29,6 +29,10 @@ gui-calendar {
       height: 50px;
     }
 
+    .gui-calendar__rows {
+      display: contents;
+    }
+
     .gui-calendar__weekday {
       text-align: center;
     }

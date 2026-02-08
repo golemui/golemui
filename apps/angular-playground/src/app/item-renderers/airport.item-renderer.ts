@@ -38,14 +38,11 @@ import { AirportItem } from '@golemui/apps-shared';
     }
   `,
   template: `<div
-    role="option"
     class="airport-renderer"
     [class.disabled]="disabled"
     [class.selected]="selected"
     [class.focused]="focused"
     [class.odd]="index % 2"
-    [attr.aria-selected]="selected"
-    [attr.aria-disabled]="disabled"
   >
     <div>
       <p>{{ template.name }}</p>

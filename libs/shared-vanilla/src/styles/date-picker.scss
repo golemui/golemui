@@ -28,36 +28,8 @@
       }
     }
 
-    .gui-date-input {
-      input[type='text'] {
-        font-family: monospace;
-        border: 0;
-        padding: 0;
-        background: transparent;
-        border-radius: 0;
-        width: 24px;
-        text-align: center;
-
-        &.gui-year-input__year {
-          width: 40px;
-        }
-
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          appearance: none;
-          margin: 0;
-        }
-      }
-
-      &.gui-calendar--icon {
-        padding-left: 2.5rem;
-      }
-    }
-
     // Month Calendar
-    .gui-calendar__container {
+    .gui-calendar-input {
       width: 300px;
       position: absolute;
       border-radius: var(--gui-radius);
@@ -68,7 +40,7 @@
 
     .gui-calendar__header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
     }
 
