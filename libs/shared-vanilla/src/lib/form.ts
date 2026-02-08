@@ -47,7 +47,7 @@ export const myDemoForm = golemForm<FormType>().create({
       path: 'name',
       label: 'Label',
       'label.registering': '',
-      props: { placeholder: (api) => api.$form.aa, 'placeholder.registering': 'asas' },
+      props: { placeholder: (api) => api.$form.name, 'placeholder.registering': 'asas' },
     },
     (api) => ({
       uid: '',

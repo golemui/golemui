@@ -49,7 +49,7 @@ export type On<
 
 export type BaseWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
 > = {
   // kind: 'display' | 'action' | 'input' | 'layout';
@@ -76,7 +76,7 @@ export type BaseWidget<
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: AllSuffixable<MakeProps<Props>, StateKeys>;
+  props?: AllSuffixable<MakeProps<Props, FormType>, StateKeys>;
 };
 
 type MakeProps<
