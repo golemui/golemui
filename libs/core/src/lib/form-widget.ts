@@ -24,9 +24,9 @@ import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
  */
 export type WidgetType = string;
 
-type ReactiveWidgetPropertyValue<T, FormData extends Record<string, any> = any> =
+type ReactiveWidgetPropertyValue<T, FormType extends Record<string, any> = any> =
   | ReactiveExpression
-  | WidgetPropertyFunction<T, FormData>
+  | WidgetPropertyFunction<T, FormType>
   | T;
 
 /**
@@ -36,13 +36,13 @@ type EventExpression = string;
 
 export type On<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 > = AllSuffixable<
   {
-    load?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
-    click?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
-    change?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
-    filter?: ReactiveWidgetPropertyValue<EventExpression, FormData>;
+    load?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
+    click?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
+    change?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
+    filter?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
   },
   StateKeys
 >;
@@ -71,7 +71,7 @@ export type BaseWidget<
   // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
 
   // TODO: Fix the type. `props` should only accept functions or Json serializable values.
-  // TODO: WidgetPropertyFunction<any> should be WidgetPropertyFunction<MyFormDataType>
+  // TODO: WidgetPropertyFunction<any> should be WidgetPropertyFunction<MyFormType>
   /**
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
@@ -81,16 +81,16 @@ export type BaseWidget<
 
 type MakeProps<
   Props extends Record<string, any> = any,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 > = {
-  [K in keyof Props]:
-    | (Props[K] extends string | (string | undefined) ? Props[K] | Localizable : Props[K])
-    | WidgetPropertyFunction<Props[K], FormData>;
+  [K in keyof Props]: Props[K] extends string | (string | undefined)
+    ? Props[K] | Localizable | WidgetPropertyFunction<Props[K], FormType>
+    : Props[K] | WidgetPropertyFunction<Props[K], FormType>;
 };
 
 // type MakeProps_old<
 //   Props extends Record<string, any> = any,
-//   FormData extends Record<string, any> = any,
+//   FormType extends Record<string, any> = any,
 // > = Partial<
 //   Record<
 //     keyof Props,
@@ -100,26 +100,26 @@ type MakeProps<
 //     | any[]
 //     | Localizable
 //     | Record<string, any>
-//     | WidgetPropertyFunction<any, FormData>
+//     | WidgetPropertyFunction<any, FormType>
 //   >
 // >;
 
 export type DisplayWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
-> = SomeSuffixable<BaseWidget<StateKeys, FormData, Props> & { kind: 'display' }, never, StateKeys>;
+> = SomeSuffixable<BaseWidget<StateKeys, FormType, Props> & { kind: 'display' }, never, StateKeys>;
 
 export type ActionWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
 > = SomeSuffixable<
-  BaseWidget<StateKeys, FormData, Props> & {
+  BaseWidget<StateKeys, FormType, Props> & {
     kind: 'action';
-    label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
+    label?: ReactiveWidgetPropertyValue<Localizable, FormType>;
     disabled?: boolean | { when: ReactiveExpression };
-    on?: On<StateKeys, FormData>;
+    on?: On<StateKeys, FormType>;
   },
   'disabled' | 'label' | 'size',
   StateKeys
@@ -128,18 +128,18 @@ export type ActionWidget<
 export type InputWidget<
   T,
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
 > = SomeSuffixable<
-  BaseWidget<StateKeys, FormData, Props> & {
+  BaseWidget<StateKeys, FormType, Props> & {
     kind: 'input';
     path: DotPath;
-    label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
+    label?: ReactiveWidgetPropertyValue<Localizable, FormType>;
     disabled?: boolean | { when: ReactiveExpression };
     readonly?: boolean | { when: ReactiveExpression };
-    on?: On<StateKeys, FormData>;
+    on?: On<StateKeys, FormType>;
     defaultValue?: T;
-    validator?: ReactiveWidgetPropertyValue<object, FormData>; // `object` should be `V` (the validator type)
+    validator?: ReactiveWidgetPropertyValue<object, FormType>; // `object` should be `V` (the validator type)
   },
   'disabled' | 'readonly' | 'label' | 'validator' | 'size',
   StateKeys
@@ -175,12 +175,12 @@ export type LayoutWidget<
 // ⚠️ When updating, update LayoutWidget['children'] too!
 export type NonFunctionWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 > =
-  | DisplayWidget<StateKeys, FormData>
-  | InputWidget<any, StateKeys, FormData>
-  | LayoutWidget<StateKeys, FormData>
-  | ActionWidget<StateKeys, FormData>;
+  | DisplayWidget<StateKeys, FormType>
+  | InputWidget<any, StateKeys, FormType>
+  | LayoutWidget<StateKeys, FormType>
+  | ActionWidget<StateKeys, FormType>;
 
 // TODO: we should remove StateKeys because FunctionWidget don't support states
 export type FunctionWidget<
@@ -199,8 +199,8 @@ export type FunctionWidget<
 
 export type FormWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
-> = NonFunctionWidget<StateKeys, FormData> | FunctionWidget<StateKeys, FormData>;
+  FormType extends Record<string, any> = any,
+> = NonFunctionWidget<StateKeys, FormType> | FunctionWidget<StateKeys, FormType>;
 
 // --------------------------------
 //
@@ -210,43 +210,43 @@ export type FormWidget<
 
 export const isDisplayWidget = <
   StateKeys extends string,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 >(
-  widget: FormWidget<StateKeys, FormData>,
-): widget is DisplayWidget<StateKeys, FormData> =>
+  widget: FormWidget<StateKeys, FormType>,
+): widget is DisplayWidget<StateKeys, FormType> =>
   typeof widget !== 'function' && widget.kind === 'display';
 
 export const isActionWidget = <
   StateKeys extends string,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 >(
-  widget: FormWidget<StateKeys, FormData>,
-): widget is ActionWidget<StateKeys, FormData> =>
+  widget: FormWidget<StateKeys, FormType>,
+): widget is ActionWidget<StateKeys, FormType> =>
   typeof widget !== 'function' && widget.kind === 'action';
 
 export const isInputWidget = <
   T,
   StateKeys extends string,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 >(
-  widget: FormWidget<StateKeys, FormData>,
-): widget is InputWidget<T, StateKeys, FormData> =>
+  widget: FormWidget<StateKeys, FormType>,
+): widget is InputWidget<T, StateKeys, FormType> =>
   typeof widget !== 'function' && widget.kind === 'input';
 
 export const isLayoutWidget = <
   StateKeys extends string,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 >(
-  widget: FormWidget<StateKeys, FormData>,
-): widget is LayoutWidget<StateKeys, FormData> =>
+  widget: FormWidget<StateKeys, FormType>,
+): widget is LayoutWidget<StateKeys, FormType> =>
   typeof widget !== 'function' && widget.kind === 'layout';
 
 export const isFunctionWidget = <
   StateKeys extends string,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 >(
-  widget: FormWidget<StateKeys, FormData>,
-): widget is FunctionWidget<StateKeys, FormData> => typeof widget === 'function';
+  widget: FormWidget<StateKeys, FormType>,
+): widget is FunctionWidget<StateKeys, FormType> => typeof widget === 'function';
 
 // --------------------------------
 //

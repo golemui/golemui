@@ -1,14 +1,14 @@
 import { defineForm } from '@golemui/core';
 import { Example } from './types';
 
-type FormData = {
+type FormType = {
   registerMode: boolean;
   user?: { name: string };
 };
 
-const data: FormData = { registerMode: false };
+const data: FormType = { registerMode: false };
 
-const form = defineForm<FormData>({
+const form = defineForm<FormType>({
   states: {
     register: '$form.registerMode === true',
   },

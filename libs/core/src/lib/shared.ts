@@ -1,7 +1,7 @@
 import { NonFunctionWidget } from './form-widget';
 import { I18nTranslator } from './i18n';
 import { OVERRIDE_WIDGET_PROP } from './store/actions';
-import { ImmutableRecord, LooseObject } from './utils/types';
+import { ImmutableRecord } from './utils/types';
 
 /**
  * The UI state name.
@@ -30,28 +30,20 @@ export type Uid = string;
  */
 export type ValidationStatus = null | string[];
 
-export type WidgetPropertyFunctionParams<FormData> = {
-  $form: ImmutableRecord<FormData>;
+export type WidgetPropertyFunctionParams<FormType extends Record<string, any>> = {
+  $form: ImmutableRecord<FormType>;
   translate?: I18nTranslator['translate'];
 };
 
 /**
  * A WidgetPropertyFunction is a widget function that is evaluated and then substituted by the produced value.
  */
-export type WidgetPropertyFunction<T, FormData extends Record<string, any> = any> = (
-  api: WidgetPropertyFunctionParams<FormData>,
+export type WidgetPropertyFunction<T, FormType extends Record<string, any> = any> = (
+  api: WidgetPropertyFunctionParams<FormType>,
 ) => T;
 
-export type ReactiveFormWidget = LooseObject<
-  {
-    props?: Record<string, WidgetPropertyFunction<any>>;
-    on?: Record<string, WidgetPropertyFunction<any>>;
-  },
-  WidgetPropertyFunction<any>
->;
-
-export type FunctionWidgetParams<FormData> = {
-  $form: ImmutableRecord<FormData>;
+export type FunctionWidgetParams<FormType> = {
+  $form: ImmutableRecord<FormType>;
   errors: ValidationStatus | undefined;
   touched: boolean | undefined;
   translate: I18nTranslator['translate'] | undefined;
