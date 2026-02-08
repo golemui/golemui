@@ -1,9 +1,4 @@
-import {
-  isStandardValidateSuccess,
-  LooseObject,
-  standardValidate,
-  ValidatorFn,
-} from '@golemui/core';
+import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '@golemui/core';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import { iso } from 'zod';
 import {
@@ -89,10 +84,11 @@ export interface ArrayValidator extends BaseValidator {
   items?: Validator;
 }
 
-export type CustomValidator = LooseObject<{
+export interface CustomValidator {
   type: 'custom';
   required?: boolean;
-}>;
+  [key: string]: unknown;
+}
 export type CustomValidatorSchemaFn = (input: any) => StandardSchemaV1;
 export type CustomValidatorSchemas = {
   [key: string]: CustomValidatorSchemaFn;

@@ -66,6 +66,7 @@ export type FunctionWidgetParams<FormType> = {
 export type ValidateOn = 'eager' | 'change' | 'blur' | 'submit' | ('change' | 'blur' | 'submit')[];
 
 /**
+ * // TODO: should this be removed?
  * The bare minimum validation required for ny validation implementation
  */
 export type Validator<V = any> = V;

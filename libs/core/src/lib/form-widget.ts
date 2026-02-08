@@ -130,6 +130,7 @@ export type InputWidget<
   StateKeys extends UiState = never,
   FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
+  V = any,
 > = SomeSuffixable<
   BaseWidget<StateKeys, FormType, Props> & {
     kind: 'input';
@@ -139,7 +140,7 @@ export type InputWidget<
     readonly?: boolean | { when: ReactiveExpression };
     on?: On<StateKeys, FormType>;
     defaultValue?: T;
-    validator?: ReactiveWidgetPropertyValue<object, FormType>; // `object` should be `V` (the validator type)
+    validator?: V; //ReactiveWidgetPropertyValue<V, FormType>;
   },
   'disabled' | 'readonly' | 'label' | 'validator' | 'size',
   StateKeys
