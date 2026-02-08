@@ -4,16 +4,39 @@ import * as Props from './widget.props';
 
 // -------------------
 //
-// Golem Form Builder
+// Utils
 //
 // -------------------
 
 type ExtractStates<S> = S extends Record<string, Core.ReactiveExpression> ? keyof S : never;
 
+type DeepPartialUid<T> = T extends (...args: infer A) => infer R
+  ? (...args: A) => DeepPartialUid<R>
+  : T extends any[]
+    ? _DeepPartialUidArray<T>
+    : T extends object
+      ? {
+          [K in keyof T as K extends 'uid' ? never : K]: DeepPartialUid<T[K]>;
+        } & {
+          uid?: string;
+        }
+      : T;
+
+// Avoid circular reference issues in some TS versions
+type _DeepPartialUidArray<T extends any[]> = {
+  [P in keyof T]: DeepPartialUid<T[P]>;
+};
+
+// -------------------
+//
+// Golem Form Builder
+//
+// -------------------
+
 class GolemFormBuilder<FormType extends Record<string, any>> {
   public create<States extends Record<string, Core.ReactiveExpression>>(config: {
     states?: States;
-    form: GolemWidget<FormType, ExtractStates<States>>[];
+    form: DeepPartialUid<GolemWidget<FormType, ExtractStates<States>>>[];
   }): Core.Form<ExtractStates<States>, FormType> {
     return {
       states: config.states,
@@ -41,7 +64,6 @@ export const myDemoForm = golemForm<FormType>().create({
   },
   form: [
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'name',
@@ -50,32 +72,27 @@ export const myDemoForm = golemForm<FormType>().create({
       props: { placeholder: (api) => api.$form.name, 'placeholder.registering': 'asas' },
     },
     (api) => ({
-      uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'something',
       label: api?.$form.name ? api?.$form.name : 'No name yet',
     }),
     {
-      uid: '',
       kind: 'layout',
       type: 'stack',
       props: { direction: 'horizontal' },
       children: [
         {
-          uid: '',
           kind: 'input',
           type: 'textinput',
           path: 'surname',
           props: { hint: 'not type safe' },
         },
         {
-          uid: '',
           kind: 'layout',
           type: 'stack',
           children: [
             {
-              uid: '',
               kind: 'input',
               type: 'checkbox',
               path: 'yay',
@@ -87,7 +104,7 @@ export const myDemoForm = golemForm<FormType>().create({
                 },
               },
             },
-            { uid: '', kind: 'action', type: 'button' },
+            { kind: 'action', type: 'button' },
           ],
         },
       ],
