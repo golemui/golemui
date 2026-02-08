@@ -76,24 +76,33 @@ export type BaseWidget<
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: AllSuffixable<MakeProps<Props, FormData>, StateKeys>;
+  props?: AllSuffixable<MakeProps<Props>, StateKeys>;
 };
 
 type MakeProps<
   Props extends Record<string, any> = any,
   FormData extends Record<string, any> = any,
-> = Partial<
-  Record<
-    keyof Props,
-    | string
-    | boolean
-    | number
-    | any[]
-    | Localizable
-    | Record<string, any>
-    | WidgetPropertyFunction<any, FormData>
-  >
->;
+> = {
+  [K in keyof Props]:
+    | (Props[K] extends string | (string | undefined) ? Props[K] | Localizable : Props[K])
+    | WidgetPropertyFunction<Props[K], FormData>;
+};
+
+// type MakeProps_old<
+//   Props extends Record<string, any> = any,
+//   FormData extends Record<string, any> = any,
+// > = Partial<
+//   Record<
+//     keyof Props,
+//     | string
+//     | boolean
+//     | number
+//     | any[]
+//     | Localizable
+//     | Record<string, any>
+//     | WidgetPropertyFunction<any, FormData>
+//   >
+// >;
 
 export type DisplayWidget<
   StateKeys extends UiState = never,
@@ -125,12 +134,6 @@ export type InputWidget<
   BaseWidget<StateKeys, FormData, Props> & {
     kind: 'input';
     path: DotPath;
-    /**
-     * Defines the label behavior:
-     * - If `label` is `undefined`, it will be derived from the widget path.
-     * - If `label` is an empty string, no label will be displayed.
-     * - Otherwise, the provided label will be rendered.
-     */
     label?: ReactiveWidgetPropertyValue<Localizable, FormData>;
     disabled?: boolean | { when: ReactiveExpression };
     readonly?: boolean | { when: ReactiveExpression };
@@ -142,22 +145,28 @@ export type InputWidget<
   StateKeys
 >;
 
+type LayoutChildren<
+  StateKeys extends UiState = never,
+  FormType extends Record<string, any> = any,
+> = (
+  | DisplayWidget<StateKeys, FormType>
+  | InputWidget<any, StateKeys, FormType>
+  | LayoutWidget<StateKeys, FormType>
+  | ActionWidget<StateKeys, FormType>
+  | FunctionWidget<StateKeys, FormType>
+)[];
+
 export type LayoutWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
+  Children extends FormWidget<StateKeys, FormType>[] = LayoutChildren<StateKeys, FormType>,
 > = SomeSuffixable<
-  BaseWidget<StateKeys, FormData, Props> & {
+  BaseWidget<StateKeys, FormType, Props> & {
     kind: 'layout';
-    on?: On<StateKeys, FormData>;
+    on?: On<StateKeys, FormType>;
     // ⚠️ This should be FormWidget, but types cannot reference themselves. Keep in sync!
-    children: (
-      | DisplayWidget<StateKeys, FormData>
-      | InputWidget<any, StateKeys, FormData>
-      | LayoutWidget<StateKeys, FormData>
-      | ActionWidget<StateKeys, FormData>
-      | FunctionWidget<StateKeys, FormData>
-    )[];
+    children: Children;
   },
   'size',
   StateKeys
@@ -176,7 +185,7 @@ export type NonFunctionWidget<
 // TODO: we should remove StateKeys because FunctionWidget don't support states
 export type FunctionWidget<
   StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
 > = {
   uid?: Uid;
   type?: string;
@@ -185,7 +194,7 @@ export type FunctionWidget<
    * Function that calculates the widget definition.
    * Function Widgets are called at least once with `undefined`.
    */
-  (api?: FunctionWidgetParams<FormData>): NonFunctionWidget<StateKeys, FormData>;
+  (api?: FunctionWidgetParams<FormType>): NonFunctionWidget<StateKeys, FormType>;
 };
 
 export type FormWidget<
