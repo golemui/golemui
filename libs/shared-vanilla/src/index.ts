@@ -3,7 +3,7 @@ import './lib/react-integration';
 
 export * from './lib/components';
 export * from './lib/controllers';
-export * from './lib/form';
+export * from './lib/golem-form';
 export * from './lib/middleware/json-schema-vanilla';
 export * from './lib/utils/date';
 export * from './lib/utils/templates';
