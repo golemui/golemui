@@ -13,8 +13,8 @@ export const simplestTagging: FormDemoDefinition = {
     tags: {
       no_label: {
         suppressAutomaticLabels: true,
-        defaultFieldDef: ({ currentDef }) => ({
-          placeholder: currentDef!.placeholder + ' I am special!',
+        defaultInputDef: (currentDef) => ({
+          placeholder: currentDef.path + ' I am special!',
         }),
       },
     },

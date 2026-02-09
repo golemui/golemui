@@ -1,7 +1,6 @@
 import {
-  ActionDefCallback,
   ActionDef,
-  DynamicInputDefParams,
+  ActionDefCallback,
   InputDef,
   InputTags,
   ValidShortcutType,
@@ -13,10 +12,11 @@ import {
   ReadyToMapInputDef,
 } from '../gui.domain';
 import inputDefsByKeyService from '../../config/helpers/inputDefsByKey.service';
+import { PartialInputDefCallback } from '../../../fomConfig.domain';
 
 export type DxField = InputDefOrCallback | ValidShortcutType | InputTags;
-export type InputDefCallback = (params: DynamicInputDefParams) => InputDef;
-export type InputDefOrCallback = InputDef | InputDefCallback;
+export type InputDefOrCallback = InputDef | PartialInputDefCallback;
+export type PartialInputDefOrPartialCallback = Partial<InputDef> | PartialInputDefCallback;
 export type ProcessedValidControllerDef = ActionDef | ActionDefCallback;
 
 export type FacadeFieldByKey<T extends Record<string, any>> = Partial<Record<keyof T, DxField>>;

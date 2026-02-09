@@ -6,9 +6,9 @@ export const formConfigSimplest: FormDemoDefinition = {
   description:
     'Form driven form formConfig making all labels blank, it also uses a shortcut that decorates the field under the hood',
   formConfig: {
-    defaultFieldDef: ({ fieldKey }) => ({
+    defaultInputDef: ({ path }) => ({
       label: '',
-      placeholder: `${fieldKey}`,
+      placeholder: `${path}`,
     }),
   },
   formDef: ()=>

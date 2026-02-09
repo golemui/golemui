@@ -1,11 +1,23 @@
 import {
   ActionDef,
+  ActionDefCallback,
   BooleanDataInputDef,
+  DynamicItemDefParams,
   InputDef,
   NumberDataInputDef,
   TextDataInputDef,
+  WidgetItemDef,
 } from '../formDef.domain';
-import { FormConfig } from '../fomConfig.domain';
+import {
+  ActionHints,
+  FormActionConfigCallback,
+  FormActionConfigLike,
+  FormConfig,
+  FormInputConfigCallback,
+  FormInputConfigLike,
+  PartialInputDefCallback,
+  ItemHints,
+} from '../fomConfig.domain';
 import { ActionWidget, FormWidget, InputWidget, UiState } from '@golemui/core';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import { GuiItemsShortcutType } from '../dx/gui/gui.domain';
@@ -13,6 +25,12 @@ import { GuiItemsShortcutType } from '../dx/gui/gui.domain';
 const BASE_CONFIG: FormConfig<any> = {
   suppressAutomaticLabels: false,
 };
+export interface PreProcessResult {
+  accumulatedHints: Partial<ActionHints<any> | ItemHints>;
+  containsCallbacks: boolean;
+  applicableConfigsInPriorityOrder: FormConfig<FormData>[];
+  accumulatedDef: InputDef | ActionDef;
+}
 
 export class FormConfigDecorator {
   constructor(private readonly objectUtils: ObjectUtils) {}
@@ -25,32 +43,70 @@ export class FormConfigDecorator {
     type: GuiItemsShortcutType,
     formConfig?: FormConfig<FormData>,
   ): FormWidget<StateKeys, FormData> {
-    const applicableConfigs: FormConfig<FormData>[] = [BASE_CONFIG];
+    const preProcessResult = this.preProcess(item, type, formConfig);
+    return this.postProcess(preProcessResult, item, type);
+  }
+
+  public preProcess<FormData extends Record<string, any> = any>(
+    item: InputDef | ActionDef,
+    type: GuiItemsShortcutType,
+    formConfig?: FormConfig<FormData>,
+  ): PreProcessResult {
+    const applicableConfigsInPriorityOrder: FormConfig<FormData>[] =
+      formConfig != null ? [formConfig] : [];
     if (item?.tags && item.tags.length > 0) {
       const valueTags = item.tags as string[];
       valueTags
-        .reverse() // The most powerful tag should be the first
         .map((tag) => formConfig?.tags?.[tag])
         .filter((result) => result != null)
-        .forEach((config) => applicableConfigs.push(config));
+        .forEach((config) => applicableConfigsInPriorityOrder.push(config));
     }
 
-    let currentConfig: FormConfig<FormData> = {};
-    let accumulatedDef: InputDef | ActionDef = {};
-    applicableConfigs.forEach((newConfig) => {
-      currentConfig = this.objectUtils.deepMerge(currentConfig, newConfig);
-      const thisDef = this.applyItemConfig(type, item, currentConfig);
-      accumulatedDef = this.objectUtils.deepMerge(accumulatedDef, thisDef);
+    applicableConfigsInPriorityOrder.push(BASE_CONFIG);
+
+    let accumulatedHints: Partial<ActionHints<FormData> | ItemHints> = {};
+    let containsCallbacks = false;
+    let accumulatedDef: InputDef | ActionDef = item;
+    //We reverse the order of the configs to ensure that the most powerful one is applied last
+    applicableConfigsInPriorityOrder.reverse().forEach((newConfig) => {
+      accumulatedHints = this.objectUtils.deepMerge(accumulatedHints, newConfig);
+      const result = this.applyDefaultConfig(type, accumulatedDef, newConfig);
+      if (typeof result === 'function') {
+        containsCallbacks = true;
+      } else {
+        accumulatedDef = this.objectUtils.deepMerge(accumulatedDef, result);
+      }
     });
 
+    return {
+      accumulatedHints,
+      containsCallbacks,
+      applicableConfigsInPriorityOrder,
+      accumulatedDef,
+    };
+  }
+
+  public postProcess<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    preProcessResult: PreProcessResult,
+    item: TextDataInputDef | NumberDataInputDef | BooleanDataInputDef | ActionDef,
+    type: GuiItemsShortcutType,
+  ): FormWidget<StateKeys, FormData> {
+    if (preProcessResult.containsCallbacks) {
+      throw new Error(`TBI, nesting functions is not supported yet! Whoever called preProcess should check this first!`);
+    }
     // The most powerful configuration should be the one hardcoded in the formDef
-    accumulatedDef = this.objectUtils.deepMerge(accumulatedDef, item);
+    const accumulatedDef = this.objectUtils.deepMerge(preProcessResult.accumulatedDef, item);
 
     switch (type) {
+      //Finally we apply the accumulated hints to the item
       case GuiItemsShortcutType.INPUTS:
-        return this.mapToInputWidget(accumulatedDef as InputDef);
+        return this.mapToInputWidget(
+          this.applyInputHints(accumulatedDef as InputDef, preProcessResult.accumulatedHints),
+        );
       case GuiItemsShortcutType.ACTIONS:
-        return this.mapToActionWidget(accumulatedDef as ActionDef);
+        return this.mapToActionWidget(
+          this.applyActionHints(accumulatedDef as ActionDef, preProcessResult.accumulatedHints),
+        );
     }
   }
 
@@ -78,7 +134,7 @@ export class FormConfigDecorator {
       uid: '',
       kind: 'input',
       type: 'toggle',
-      path: fieldDef.dataPath!,
+      path: fieldDef.path!,
       ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
         placeholder: fieldDef.placeholder ?? '',
@@ -93,7 +149,7 @@ export class FormConfigDecorator {
       uid: '',
       kind: 'input',
       type: 'textinput',
-      path: fieldDef.dataPath!,
+      path: fieldDef.path!,
       ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
         placeholder: fieldDef.placeholder ?? '',
@@ -113,7 +169,7 @@ export class FormConfigDecorator {
       uid: '',
       kind: 'input',
       type: 'number',
-      path: fieldDef.dataPath!,
+      path: fieldDef.path!,
       ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
       props: {
         placeholder: fieldDef.placeholder ?? '',
@@ -138,37 +194,68 @@ export class FormConfigDecorator {
       on: controllerDef.on,
     };
   }
-
-  private applyItemConfig<FormData extends Record<string, any> = any>(
-    type: GuiItemsShortcutType,
-    item: InputDef | ActionDef,
-    currentConfig: FormConfig<FormData>
-  ): InputDef | ActionDef {
-    switch (type) {
-      case GuiItemsShortcutType.INPUTS:
-        return this.applyInputConfig(item as InputDef, currentConfig);
-      case GuiItemsShortcutType.ACTIONS:
-        return this.applyActionConfig(item as ActionDef, currentConfig);
-    }
-  }
-
-  private applyInputConfig<FormData extends Record<string, any> = any>(
+  private applyInputHints<FormData extends Record<string, any> = any>(
     item: InputDef,
     currentConfig: FormConfig<FormData>,
   ): InputDef {
+    if (item.label != null) {
+      return item;
+    }
     return {
       ...item,
-      ...(currentConfig.suppressAutomaticLabels ? {} : { label: item.label ?? item.dataPath }),
+      ...(currentConfig.suppressAutomaticLabels ? { label: '' } : { label: item.path }),
     };
   }
 
-  private applyActionConfig<FormData extends Record<string, any> = any>(
+  private applyActionHints<FormData extends Record<string, any> = any>(
     item: ActionDef,
     currentConfig: FormConfig<FormData>,
   ): ActionDef {
     return {
       ...item,
     };
+  }
+
+  private checkDefaultConfigIsCallback<FormData extends Record<string, any> = any>(
+    type: GuiItemsShortcutType,
+    config: FormConfig<FormData>,
+  ): boolean {
+    if (type === GuiItemsShortcutType.INPUTS) {
+      return typeof config.defaultInputDef === 'function';
+    }
+    if (type === GuiItemsShortcutType.ACTIONS) {
+      return typeof config.defaultActionDef === 'function';
+    }
+    return false;
+  }
+
+  private applyDefaultConfig<FormData extends Record<string, any> = any>(
+    type: GuiItemsShortcutType,
+    accumulatedDef: InputDef | ActionDef,
+    newConfig: FormConfig<FormData>,
+  ): WidgetItemDef | ActionDefCallback | PartialInputDefCallback {
+    let defaultValue: FormActionConfigLike | FormInputConfigLike | undefined;
+    if (type === GuiItemsShortcutType.INPUTS) {
+      defaultValue = newConfig.defaultInputDef;
+    }
+    if (type === GuiItemsShortcutType.ACTIONS) {
+      defaultValue = newConfig.defaultActionDef;
+    }
+    if (defaultValue == null) {
+      return accumulatedDef;
+    }
+    if (typeof defaultValue === 'object') {
+      return this.objectUtils.deepMerge(accumulatedDef, newConfig.defaultInputDef);
+    }
+
+    const asCallback: FormActionConfigCallback | FormInputConfigCallback = defaultValue;
+    const result = asCallback(accumulatedDef as any);
+
+    if (typeof result === 'function') {
+      return result;
+    }
+
+    return this.objectUtils.deepMerge(accumulatedDef, result);
   }
 }
 

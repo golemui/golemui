@@ -5,7 +5,7 @@ import { _guiHorizontalStack } from '../../services/formDef/dx/gui/shortcuts/gui
 export const allBasicFunctionality: FormDemoDefinition = {
   title: 'All Basic Functionality',
   description: 'Shortcuts, full definitions, layouts, tags...',
-  formDef: ()=>[
+  formDef: () => [
     _guiFields({
       name: ['string', 'no_label'],
       age: ({ error }: any) => ({
@@ -16,13 +16,13 @@ export const allBasicFunctionality: FormDemoDefinition = {
           minimum: 18,
         },
       }),
-      height: ['number', 'no_label', 'special'],
+      height: ['number', 'special', 'no_label'],
     }),
     _guiHorizontalStack(
-        _guiFields({
-          married: 'number',
-          withChildren: 'number',
-        }),
+      _guiFields({
+        married: 'number',
+        withChildren: 'number',
+      }),
     ),
     _guiFields({
       occupation: 'string',
@@ -32,10 +32,13 @@ export const allBasicFunctionality: FormDemoDefinition = {
     tags: {
       no_label: {
         suppressAutomaticLabels: true,
+        defaultInputDef: (currentDef) => ({
+          placeholder: `I have no label ${[currentDef.path]}`,
+        }),
       },
       special: {
-        defaultFieldDef: ({ currentDef }) => ({
-          placeholder: currentDef.placeholder + ' I am special!',
+        defaultInputDef: (currentDef) => ({
+          placeholder: currentDef.placeholder + ' + I am special!',
         }),
       },
     },

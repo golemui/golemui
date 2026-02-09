@@ -6,9 +6,9 @@ export const formConfigMixed: FormDemoDefinition = {
   description: 'Form driven form formConfig making all labels blank and tweaking them',
   formConfig: {
     suppressAutomaticLabels: true,
-    defaultFieldDef: ({ fieldKey, baseDef }) => {
+    defaultInputDef: (baseDef) => {
       if (baseDef.placeholder != null) return {};
-      return { placeholder: fieldKey + ' placeholder' };
+      return { placeholder: baseDef.path + ' placeholder' };
     },
   },
   formDef: ()=>_guiFields({

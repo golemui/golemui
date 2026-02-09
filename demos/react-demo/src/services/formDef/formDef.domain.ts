@@ -13,7 +13,7 @@ export interface DataInputDef extends WidgetItemDef {
   type: 'text' | 'number' | 'boolean';
   placeholder?: string;
   label?: string | null;
-  dataPath?: string;
+  path?: string;
 }
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
@@ -42,7 +42,7 @@ export interface WidgetItemDef {
 export type InputDef = TextDataInputDef | NumberDataInputDef | BooleanDataInputDef;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
-export interface DynamicInputDefParams {
+export interface DynamicItemDefParams {
   error?: boolean;
 }
 
@@ -59,8 +59,10 @@ export interface ActionDef extends WidgetItemDef {
   };
 }
 
-export type ActionDefCallback = (params: DynamicInputDefParams) => ActionDef;
+export type ActionDefPartialCallback = (params: DynamicItemDefParams) => Partial<ActionDef>;
+export type ActionDefCallback = (params: DynamicItemDefParams) => ActionDef;
 export type ActionDefOrCallback = ActionDef | ActionDefCallback;
+export type ActionDefOrPartialCallback = ActionDef | ActionDefPartialCallback;
 
 export type ControllersDefFacade = OneOrMany<ActionDef | ActionDefCallback>;
 

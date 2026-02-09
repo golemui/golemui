@@ -9,7 +9,7 @@ import {
   UiState,
 } from '@golemui/core';
 import { ActionDef, ActionDefCallback, ActionDefOrCallback, InputDef } from '../formDef.domain';
-import { FormConfig } from '../fomConfig.domain';
+import { FormConfig, PartialInputDefCallback } from '../fomConfig.domain';
 import formConfigDecorator, { FormConfigDecorator } from './formConfigDecorator.service';
 import {
   GuiItemsShortcutType,
@@ -17,7 +17,7 @@ import {
   ReadyToMapItemDef,
   ValidGuiShortcut,
 } from '../dx/gui/gui.domain';
-import { InputDefCallback, InputDefOrCallback } from '../dx/gui/shortcuts/guiFields.impl';
+import { InputDefOrCallback } from '../dx/gui/shortcuts/guiFields.impl';
 
 export type FormWidget<
   StateKeys extends UiState = never,
@@ -92,7 +92,7 @@ export class FormDefMapper {
     itemType: GuiItemsShortcutType,
     readyToMapFieldOrAction: ReadyToMapItemDef,
     formConfig?: FormConfig<FormData>,
-  ) {
+  ): FormWidget<StateKeys, FormData> {
     let baseProvider: InputDefOrCallback | ActionDefOrCallback;
     if (itemType === GuiItemsShortcutType.INPUTS) {
       const asReadyToMapInput = readyToMapFieldOrAction as ReadyToMapInputDef;
@@ -103,6 +103,7 @@ export class FormDefMapper {
     if (typeof baseProvider === 'function') {
       return ((params: FunctionWidgetParams<FormData>) => {
         return this.mapCallbackItem(
+          readyToMapFieldOrAction,
           params,
           baseProvider,
           itemType,
@@ -110,24 +111,35 @@ export class FormDefMapper {
         );
       }) as FunctionWidget<StateKeys, FormData>;
     }
-    return this.formConfigDecorator.processFormConfiguration(
-      this.parseValue(readyToMapFieldOrAction),
-      itemType,
-      formConfig,
-    );
+    const baseValue = this.parseValue(readyToMapFieldOrAction);
+    const result = this.formConfigDecorator.preProcess(baseValue, itemType, formConfig);
+    if (result.containsCallbacks) {
+      throw new Error(`TBI, nesting functions is not supported yet!`);
+    }
+    return this.formConfigDecorator.postProcess(result, baseValue, itemType);
   }
 
-  private mapCallbackItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+  private mapCallbackItem<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    readyToMapFieldOrAction: ReadyToMapItemDef,
     params: FunctionWidgetParams<FormData>,
-    baseProvider: InputDefCallback | ActionDefCallback,
+    baseProvider: PartialInputDefCallback | ActionDefCallback,
     itemType: GuiItemsShortcutType,
     formConfig: FormConfig<FormData> | undefined,
   ): FormWidget<StateKeys, FormData> {
     console.log(`item dynamic definition`, params);
     const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
     const hotMapping = baseProvider({ error: hasErrors });
+    const item = itemType === GuiItemsShortcutType.ACTIONS
+      ? hotMapping
+      : this.parseFieldKey(
+        hotMapping as InputDef,
+        (readyToMapFieldOrAction as ReadyToMapInputDef).key,
+      );
     const mapControlField = this.formConfigDecorator.processFormConfiguration(
-      hotMapping,
+      item as ActionDef | InputDef,
       itemType,
       formConfig,
     );
@@ -141,16 +153,19 @@ export class FormDefMapper {
       if (typeof inputDefOrCallback === 'function') {
         throw new Error('Callback functions should be handled before parseValue is called');
       }
-      return {
-        ...inputDefOrCallback,
-        dataPath: readyToMapFieldOrAction.key,
-      };
+      return this.parseFieldKey(inputDefOrCallback, readyToMapFieldOrAction.key);
     }
     // It's a ReadyToMapActionDef (ActionDef | ActionDefCallback)
     if (typeof readyToMapFieldOrAction === 'function') {
       throw new Error('Callback functions should be handled before parseValue is called');
     }
     return readyToMapFieldOrAction;
+  }
+  private parseFieldKey(inputDefOrCallback: InputDef, key: string): InputDef {
+    return {
+      ...inputDefOrCallback,
+      path: key,
+    };
   }
 }
 

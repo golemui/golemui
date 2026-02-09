@@ -9,7 +9,7 @@ import { ParsedDxShortcut, UnrolledField, UnrolledFields } from '../../dx.domain
 import {
   DxField,
   FacadeFieldByKey,
-  InputDefCallback,
+  PartialInputDefCallback,
   InputDefOrCallback,
   ProcessedDxFieldsByKey,
 } from '../../gui/shortcuts/guiFields.impl';

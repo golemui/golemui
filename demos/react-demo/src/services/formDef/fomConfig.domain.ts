@@ -1,20 +1,41 @@
-import { ActionDef, ActionDefCallback, InputDef } from './formDef.domain';
+import { ActionDef, ActionDefOrPartialCallback, InputDef } from './formDef.domain';
+import { PartialInputDefOrPartialCallback } from './dx/gui/shortcuts/guiFields.impl';
 
-export interface DefaultFieldDefParams {
+export interface DefaultInputFunctionDefParams {
   data: any;
   fieldKey: string;
   currentDef: InputDef;
   baseDef: InputDef;
 }
 
-export type DefaultFieldDefFn = (params: Partial<DefaultFieldDefParams>) => Partial<InputDef>;
-export type DefaultFieldDefLike = Partial<InputDef> | DefaultFieldDefFn;
-export type DefaultButtonDefLike = Partial<ActionDef> | ActionDefCallback;
-
-export interface FormConfig<T extends Record<string, any> = any> {
-  defaultButtonDef?: DefaultButtonDefLike;
-  defaultFieldDef?: DefaultFieldDefLike;
-  suppressAutomaticLabels?: boolean;
-  tags?: Record<string, FormConfig<T>>;
+export type PartialInputDefCallback = (
+  params: Partial<DefaultInputFunctionDefParams>,
+) => Partial<InputDef>;
+export interface ActionHints<T extends Record<string, any> = any> {
   onSubmit?: (data: T) => void;
+}
+
+export interface ItemHints {
+  suppressAutomaticLabels?: boolean;
+}
+
+export interface FormConfigHints<T extends Record<string, any> = any>
+  extends ItemHints,
+    ActionHints<T> {}
+
+export type FormActionConfigCallback = (current: ActionDef) => ActionDefOrPartialCallback;
+export type FormActionConfigLike = Partial<ActionDef> | FormActionConfigCallback;
+
+export type FormInputConfigCallback = (current: InputDef) => PartialInputDefOrPartialCallback;
+export type FormInputConfigLike = Partial<InputDef> | FormInputConfigCallback;
+
+export interface FormConfigDefaults extends FormConfigHints {
+  defaultActionDef?: FormActionConfigLike;
+  defaultInputDef?: FormInputConfigLike;
+}
+
+export interface FormConfig<T extends Record<string, any> = any>
+  extends FormConfigHints,
+    FormConfigDefaults {
+  tags?: Record<string, FormConfig<T>>;
 }
