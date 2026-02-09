@@ -1,4 +1,4 @@
-import { html, LitElement, PropertyValues } from 'lit';
+import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { ListItem, ListProps } from '../widget.props';
 import { OptionValue } from './one-of';
@@ -13,6 +13,8 @@ export class GuiList extends LitElement {
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: String }) value: OptionValue | undefined = undefined;
   @property({ type: String }) valueField: string | undefined = undefined;
+  @property({ type: String }) label: string | undefined = undefined;
+  @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: Array }) items: ListItem<unknown>[] = [];
 
   @property({ type: Number }) itemHeight: number | undefined = undefined;
@@ -56,6 +58,7 @@ export class GuiList extends LitElement {
     return html`
       <div
         role="listbox"
+        id=${this.uid}
         tabindex=${this.disabled ? -1 : 0}
         class="gui-list__scroll-viewport"
         style="height: ${height}px; overflow-y: auto; position: relative; display: block;"
@@ -63,11 +66,11 @@ export class GuiList extends LitElement {
         @keydown="${this.onKeyDown}"
         @focus="${this.onFocus}"
         @focusout="${this.onFocusOut}"
-        aria-required=${this.required}
-        aria-disabled=${this.disabled || this.readOnly ? 'true' : 'false'}
-        aria-labelledby=${`${this.uid}_label`}
-        aria-describedby=${`${this.uid}_hint`}
-        aria-activedescendant="${activeId || ''}"
+        aria-required=${this.required ? 'true' : nothing}
+        aria-disabled=${this.disabled || this.readOnly ? 'true' : nothing}
+        aria-activedescendant="${activeId ?? nothing}"
+        aria-label=${this.label ?? nothing}
+        aria-description=${this.hint ?? nothing}
       >
         <div
           class="gui-list__spacer"

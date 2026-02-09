@@ -95,7 +95,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
     const tabs = templateData.tabs || [];
     return tabs.map((tab, index) => {
       return (
-        <li key={`tab_${widget.uid}_${tab.uid}`}>
+        <li role="presentation" key={`tab_${widget.uid}_${tab.uid}`}>
           <button
             ref={(el) => {
               tabRefs.current[index] = el!;
@@ -150,10 +150,9 @@ export function Tabs(widgetInstance: Core.WithWidget) {
           'gui-tabs--start-shadow': !isStartVisible,
           'gui-tabs--end-shadow': !isEndVisible,
         })}
-        role="tablist"
         id={uid}
       >
-        <ul>
+        <ul role="tablist">
           <li role="presentation" ref={startSentinelRef} className="gui-sentinel"></li>
           {renderTabs()}
           <li role="presentation" ref={endSentinelRef} className="gui-sentinel"></li>

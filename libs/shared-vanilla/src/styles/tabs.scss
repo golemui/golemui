@@ -10,7 +10,7 @@
       pointer-events: none;
     }
 
-    nav[role='tablist'] {
+    nav {
       position: relative;
       overflow: hidden;
       padding: 0;
@@ -46,7 +46,7 @@
         opacity: 1;
       }
 
-      ul {
+      ul[role='tablist'] {
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;

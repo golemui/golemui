@@ -14,6 +14,7 @@ export class GuiLabel extends LitElement {
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: Boolean, attribute: 'readonly' }) readOnly: boolean | undefined = false;
   @property({ type: Boolean }) touched: boolean | undefined = false;
+  @property({ type: Boolean }) native: boolean | undefined = true;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () =>
@@ -39,13 +40,19 @@ export class GuiLabel extends LitElement {
   override render() {
     super.render();
 
-    return html`${addLabel(this.uid as string, {
-      label: this.label,
-      hint: this.hint,
-      required: this.required,
-      errors: this.errors,
-      touched: this.touched,
-    })}`;
+    return html`${addLabel(
+      this.uid as string,
+      {
+        label: this.label,
+        hint: this.hint,
+        required: this.required,
+        errors: this.errors,
+        touched: this.touched,
+      },
+      false,
+      undefined,
+      this.native,
+    )}`;
   }
 }
 

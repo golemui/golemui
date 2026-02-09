@@ -24,7 +24,7 @@ export function ComplexListItemRenderer({
   };
 
   return (
-    <div role="option" className={cn(classes)} aria-selected={selected} aria-disabled={disabled}>
+    <div className={cn(classes)}>
       <h2>{template?.title}</h2>
       <p>{template?.description}</p>
     </div>

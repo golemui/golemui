@@ -26,9 +26,10 @@ export class GuiCheckbox extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readOnly,
-        disabled: this.disabled,
         touched: this.touched,
+        // Checkboxes can't have aria-readonly
+        readonly: false,
+        disabled: false,
       },
     }),
   });
@@ -69,8 +70,7 @@ export class GuiCheckbox extends LitElement {
           data-cy=${`${this.uid}_checkbox`}
           ?checked=${this.value}
           ?required=${this.required}
-          ?disabled=${this.disabled}
-          ?readonly=${this.readOnly}
+          ?disabled=${this.disabled || this.readOnly}
           @change=${this.valueChanged}
           @blur=${this.onBlur}
         />

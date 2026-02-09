@@ -17,12 +17,7 @@ export const complexListItemRenderer = (ctx: ItemRenderContext<ComplexItem>): Te
   };
 
   return html`
-    <div
-      role="option"
-      class=${classMap(classes)}
-      aria-selected=${ctx.selected ? 'true' : 'false'}
-      aria-disabled=${ctx.disabled ? 'true' : 'false'}
-    >
+    <div class=${classMap(classes)}>
       <h2>${ctx.template.title}</h2>
       <p>${ctx.template.description}</p>
     </div>

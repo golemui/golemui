@@ -20,7 +20,7 @@ export function AirportItemRenderer({
   };
 
   return (
-    <div role="option" className={cn(classes)} aria-selected={selected} aria-disabled={disabled}>
+    <div className={cn(classes)}>
       <div>
         <p>{template?.name}</p>
       </div>

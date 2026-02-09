@@ -189,7 +189,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`span[id="${uid}_label"]`).should('exist').contains(label);
         });
 
         it('should have a label.register', () => {
@@ -210,7 +210,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get(`label[for="${uid}"]`).should('exist').contains(label);
+          cy.get(`span[id="${uid}_label"]`).should('exist').contains(label);
         });
       });
     });
