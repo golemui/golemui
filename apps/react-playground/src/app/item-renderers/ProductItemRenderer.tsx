@@ -25,7 +25,7 @@ export function ProductItemRenderer({
   };
 
   return (
-    <div role="option" className={cn(classes)} aria-selected={selected} aria-disabled={disabled}>
+    <div className={cn(classes)}>
       <div>
         <h2>{template?.product}</h2>
         <p>{template?.description}</p>

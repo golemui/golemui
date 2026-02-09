@@ -136,24 +136,27 @@ export class GuiDate extends LitElement {
     val: string,
   ) {
     return html`
-      <input
-        type="text"
-        inputmode="numeric"
-        class="gui-date-input__part ${type === 'year' ? 'gui-year-input__year' : ''}"
-        data-type=${type}
-        maxlength=${maxLen}
-        placeholder=${placeholder}
-        tabindex=${tabIndex}
-        ?required=${this.required}
-        ?disabled=${this.disabled}
-        ?readonly=${this.readOnly}
-        .value=${live(val)}
-        @keydown=${this.handleKeyDown}
-        @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}
-        @focus=${this.handleFocus}
-        @blur=${(e: FocusEvent) => this.handleBlur(e, type)}
-        @change=${(e: Event) => this.handleChange(e, type)}
-      />
+      <div class="gui-date-input__touch-target">
+        <input
+          type="text"
+          inputmode="numeric"
+          class="gui-date-input__part ${type === 'year' ? 'gui-date-input__year' : ''}"
+          data-type=${type}
+          maxlength=${maxLen}
+          placeholder=${placeholder}
+          tabindex=${tabIndex}
+          ?required=${this.required}
+          ?disabled=${this.disabled}
+          ?readonly=${this.readOnly}
+          .value=${live(val)}
+          @keydown=${this.handleKeyDown}
+          @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}
+          @focus=${this.handleFocus}
+          @blur=${(e: FocusEvent) => this.handleBlur(e, type)}
+          @change=${(e: Event) => this.handleChange(e, type)}
+        />
+        <div class="gui-date-input__visual-underline"></div>
+      </div>
     `;
   }
 

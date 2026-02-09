@@ -281,6 +281,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         errors={errors}
         touched={isTouched}
         required={isRequired}
+        native={false}
       ></gui-label>
 
       <div className="gui-widget">
@@ -298,6 +299,8 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
           onInput={handleInputFilter}
           onFocus={handleInputFocus}
           onBlur={handleFocusOut}
+          aria-labelledby={templateData.label ? `${uid}_label` : undefined}
+          aria-describedby={templateData.hint ? `${uid}_hint` : undefined}
         />
 
         <gui-list

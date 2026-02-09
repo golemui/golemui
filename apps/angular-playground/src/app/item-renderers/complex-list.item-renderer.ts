@@ -41,14 +41,11 @@ type ComplexItem = {
     }
   `,
   template: `<div
-    role="option"
     class="product-renderer"
     [class.disabled]="disabled"
     [class.selected]="selected"
     [class.focused]="focused"
     [class.odd]="index % 2"
-    [attr.aria-selected]="selected"
-    [attr.aria-disabled]="disabled"
   >
     <h2>{{ template.title }}</h2>
     <p>{{ template.description }}</p>

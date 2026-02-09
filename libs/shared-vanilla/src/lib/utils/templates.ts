@@ -18,18 +18,32 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
   templateData: ControlTemplateData<T> & ExtraProps,
   withErrors = false,
   type: string | undefined = undefined,
+  isNativeElement = true,
 ) => {
-  return templateData.label
-    ? html`<label
-        class="gui-label"
-        for=${uid}
-        data-cy=${`${uid}_label`}
-        id=${type ? `${uid}_${type}_label` : `${uid}_label`}
-      >
-        ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
-        ${withErrors ? addErrors(uid, templateData) : nothing}
-      </label>`
-    : nothing;
+  if (isNativeElement) {
+    return templateData.label
+      ? html`<label
+          class="gui-label"
+          for=${uid}
+          data-cy=${`${uid}_label`}
+          id=${type ? `${uid}_${type}_label` : `${uid}_label`}
+        >
+          ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
+          ${withErrors ? addErrors(uid, templateData) : nothing}
+        </label>`
+      : nothing;
+  } else {
+    return templateData.label
+      ? html`<span
+          class="gui-label"
+          data-cy=${`${uid}_label`}
+          id=${type ? `${uid}_${type}_label` : `${uid}_label`}
+        >
+          ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(uid, templateData)}
+          ${withErrors ? addErrors(uid, templateData) : nothing}
+        </span>`
+      : nothing;
+  }
 };
 
 export const addHint = <T, ExtraProps extends { hint?: string }>(

@@ -1,5 +1,5 @@
 import { inferOptionValue, OptionValue, updateOptions } from './one-of';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
@@ -33,9 +33,10 @@ export class GuiRadiogroup extends LitElement {
       templateData: {
         hint: this.hint,
         errors: this.errors,
-        readonly: this.readOnly,
-        disabled: this.disabled,
         touched: this.touched,
+        // Radiogroup inputs can't be readonly
+        readonly: false,
+        disabled: false,
       },
     }),
   });
@@ -97,9 +98,17 @@ export class GuiRadiogroup extends LitElement {
         `;
 
     return html`
-      ${addLabel(this.uid as string, templateData)}
+      ${addLabel(this.uid as string, templateData, false, undefined, false)}
 
-      <div class="gui-widget">${options}</div>
+      <div
+        class="gui-widget"
+        role="radiogroup"
+        id=${this.uid}
+        aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}
+        aria-describedby=${templateData.hint ? `${this.uid}_hint` : nothing}
+      >
+        ${options}
+      </div>
 
       ${addErrors(this.uid as string, templateData)}
     `;
