@@ -4,12 +4,7 @@ gui-textinput {
   .gui-widget {
     input[type='text'] {
       &.gui-textinput--icon {
-        padding-left: 2.5rem;
-      }
-
-      &.gui-textinput--icon-right {
-        padding-left: var(--gui-space-gap);
-        padding-right: var(--gui-icon-space-gap);
+        padding-inline-start: 2.5rem;
       }
     }
   }

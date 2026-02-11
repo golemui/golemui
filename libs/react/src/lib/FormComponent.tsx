@@ -8,6 +8,7 @@ type JsonStringified = string;
 type JsonObject = Record<string, any>;
 
 export interface FormComponentProps {
+  direction: 'ltr' | 'rtl';
   formDef: JsonStringified | JsonObject;
   widgetLoaders: Core.WidgetLoaders<React.ComponentType<Core.WithWidget>>;
   itemRenderers: Record<string, Core.ItemRenderer>;
@@ -22,6 +23,7 @@ export interface FormComponentProps {
 }
 
 export function FormComponent({
+  direction,
   formDef,
   widgetLoaders,
   itemRenderers,
@@ -120,9 +122,9 @@ export function FormComponent({
 
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
-      <div className="gui-form">
+      <div className="gui-form" dir={direction}>
         <form id={formNameRef.current} noValidate>
-          <WidgetErrorBoundary field={formLayoutField}>
+          <WidgetErrorBoundary widget={formLayoutField}>
             <WidgetRenderer widget={formLayoutField} />
           </WidgetErrorBoundary>
         </form>

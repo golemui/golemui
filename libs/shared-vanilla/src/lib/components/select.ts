@@ -21,7 +21,6 @@ export class GuiSelect extends LitElement {
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) options: Option[] = [];
   @property({ type: String }) placeholder: string | undefined = undefined;
   @property({ type: String }) labelField: string | undefined = undefined;
@@ -62,7 +61,6 @@ export class GuiSelect extends LitElement {
       value: this.value,
       hint: this.hint,
       icon: this.icon,
-      iconPosition: this.iconPosition,
       options: this.options,
       placeholder: this.placeholder,
       labelField: this.labelField,

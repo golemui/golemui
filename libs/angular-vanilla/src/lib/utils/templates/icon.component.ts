@@ -9,10 +9,9 @@ import * as Core from '@golemui/core';
   template: ``,
   host: {
     class: 'gui-widget-icon',
-    '[class.gui-widget-icon--right]': 'templateData().iconPosition === "right"',
     '[class]': 'templateData().icon',
   },
 })
-export class IconComponent<T, ExtraProps extends { icon?: string; iconPosition?: string }> {
+export class IconComponent<T, ExtraProps extends { icon?: string }> {
   templateData = input.required<Core.ControlTemplateData<T> & ExtraProps>();
 }

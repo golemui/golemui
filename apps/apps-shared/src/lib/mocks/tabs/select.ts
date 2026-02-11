@@ -24,7 +24,6 @@ export const select = (): any => ({
       path: 'selects.wrongGreeting',
       props: {
         icon: 'material-icons material-icons-phone_callback',
-        iconPosition: 'right',
         hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
         options: ['hello', 'bye'],
       },

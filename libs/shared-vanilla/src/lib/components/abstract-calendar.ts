@@ -174,14 +174,15 @@ export abstract class AbstractCalendar extends LitElement {
       this.querySelectorAll<HTMLButtonElement>('.gui-calendar__day-button:not(.other-month)'),
     );
     const currentIndex = buttons.indexOf(event.target as HTMLButtonElement);
+    const isRTL = window.getComputedStyle(this).direction === 'rtl';
 
     let step = 0;
     switch (event.key) {
       case 'ArrowLeft':
-        step = -1;
+        step = isRTL ? 1 : -1;
         break;
       case 'ArrowRight':
-        step = 1;
+        step = isRTL ? -1 : 1;
         break;
       case 'ArrowUp':
         step = -7;

@@ -14,7 +14,6 @@ export type TextinputProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 export type CurrencyProps = {
@@ -24,7 +23,6 @@ export type CurrencyProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 export type TextareaProps = {
@@ -203,7 +201,6 @@ export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
   step?: number;
 };
 
@@ -253,7 +250,6 @@ export type Option = {
 export type SelectProps = {
   hint?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
   options: Option[];
   placeholder?: string;
   labelField?: string;

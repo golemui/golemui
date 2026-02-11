@@ -19,7 +19,6 @@ export class GuiTextinput extends LitElement {
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) placeholder: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
@@ -54,7 +53,6 @@ export class GuiTextinput extends LitElement {
       readonly: this.readOnly,
       value: this.value,
       icon: this.icon,
-      iconPosition: this.iconPosition,
       placeholder: this.placeholder,
     };
 
@@ -63,7 +61,6 @@ export class GuiTextinput extends LitElement {
 
     const fieldClasses: { [key: string]: boolean } = {
       [`gui-textinput--icon`]: !!this.icon,
-      [`gui-textinput--icon-right`]: this.iconPosition === 'right',
     };
 
     return html`

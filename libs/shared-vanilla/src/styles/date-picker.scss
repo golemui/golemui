@@ -10,7 +10,7 @@
         height: 0.5rem;
         pointer-events: none;
         position: absolute;
-        right: 1.2rem;
+        inset-inline-end: 1.2rem;
         top: 1.3rem;
         width: 0.5rem;
         transform: translateY(-60%) rotate(45deg);
@@ -46,42 +46,6 @@
 
     .gui-calendar__weekday {
       text-align: center;
-    }
-
-    .gui-calendar__month-button {
-      padding: 0.25rem;
-      border-radius: 100%;
-
-      &-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 32px;
-        height: 32px;
-      }
-
-      &-icon--prev::before {
-        content: '';
-        width: 0.5rem;
-        height: 0.5rem;
-        margin-left: 2px;
-        border: solid;
-        border-width: 0 2px 2px 0;
-        pointer-events: none;
-        right: 29%;
-        top: 33%;
-        transform: translateY(0%) rotate(135deg);
-      }
-      &-icon--next::before {
-        content: '';
-        width: 0.5rem;
-        height: 0.5rem;
-        margin-right: 2px;
-        border: solid;
-        border-width: 0 2px 2px 0;
-        pointer-events: none;
-        transform: translateY(0%) rotate(-45deg);
-      }
     }
 
     .gui-calendar__day-button {

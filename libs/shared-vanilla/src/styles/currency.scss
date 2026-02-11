@@ -9,25 +9,29 @@ gui-currency {
       background: var(--gui-color-bg);
       font-size: var(--gui-font-size);
       top: 13px;
-      left: 13px;
+      inset-inline-start: 13px;
 
       transition: all 0.2s ease-in-out;
 
       &.gui-currency__format-value--icon {
-        left: calc(2.5rem);
+        inset-inline-start: calc(2.5rem);
       }
     }
 
-    input[type='text'] {
+    input[type='number'] {
       color: transparent;
 
-      &.gui-currency--icon {
-        padding-left: 2.5rem;
+      /* For Firefox */
+      appearance: textfield;
+
+      /* For Chrome/Edge and Safari */
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        appearance: none;
       }
 
-      &.gui-currency--icon-right {
-        padding-left: var(--gui-space-gap);
-        padding-right: var(--gui-icon-space-gap);
+      &.gui-currency--icon {
+        padding-inline-start: var(--gui-icon-space-gap);
       }
 
       &:focus {

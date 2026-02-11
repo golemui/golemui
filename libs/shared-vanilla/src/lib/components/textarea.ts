@@ -80,7 +80,6 @@ export class GuiTextarea extends LitElement {
 
       const classes = {
         'gui-widget-icon': true,
-        'gui-widget-icon--right': true,
         [templateData.icon]: true,
       };
       textareaIcon = html`<span class=${classMap(classes)}></span>`;
