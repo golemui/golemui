@@ -1,7 +1,7 @@
 import sensibleDefaults, { SensibleDefaults } from '../../../default/sensibleDefaults.service';
 import {
   InputTags,
-  InputDef,
+  InputDecorator,
 
 
 } from '../../../formDef.domain';
@@ -55,7 +55,7 @@ export class InputDefsByKeyService {
         value.tags = tagList;
       }
     } else {
-      value = dataInputDef as InputDef;
+      value = dataInputDef as InputDecorator;
     }
 
     return value;

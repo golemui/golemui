@@ -1,42 +1,44 @@
-import { ActionDef, ActionDefOrPartialCallback, InputDef } from './formDef.domain';
-import { PartialInputDefOrPartialCallback } from './dx/gui/shortcuts/guiFields.impl';
+import { ActionDecorator, ActionDefOrPartialCallback, InputDecorator } from './formDef.domain';
+import { PartialInputDecoratorOrCallback } from './dx/gui/shortcuts/guiFields.impl';
 
 export interface DefaultInputFunctionDefParams {
   data: any;
   fieldKey: string;
-  currentDef: InputDef;
-  baseDef: InputDef;
+  currentDef: InputDecorator;
+  baseDef: InputDecorator;
 }
 
 export type PartialInputDefCallback = (
   params: Partial<DefaultInputFunctionDefParams>,
-) => Partial<InputDef>;
+) => Partial<InputDecorator>;
 export interface ActionHints<T extends Record<string, any> = any> {
   onSubmit?: (data: T) => void;
 }
 
-export interface ItemHints {
+export interface ActionsSensibleDefaults {
+
+}
+export interface InputSensibleDefaults {
   suppressAutomaticLabels?: boolean;
   suppressAutomaticPlaceholders?: boolean;
 }
+export type ActionDecoratorCallback = (current: ActionDecorator) => ActionDefOrPartialCallback;
+export type ActionWidgetDecoratorsLike = Partial<ActionDecorator> | ActionDecoratorCallback;
 
-export interface FormConfigHints<T extends Record<string, any> = any>
-  extends ItemHints,
-    ActionHints<T> {}
+export type InputDecoratorCallback = (current: InputDecorator) => PartialInputDecoratorOrCallback;
+export type InputWidgetDecoratorsLike = Partial<InputDecorator> | InputDecoratorCallback;
 
-export type FormActionConfigCallback = (current: ActionDef) => ActionDefOrPartialCallback;
-export type FormActionConfigLike = Partial<ActionDef> | FormActionConfigCallback;
-
-export type FormInputConfigCallback = (current: InputDef) => PartialInputDefOrPartialCallback;
-export type FormInputConfigLike = Partial<InputDef> | FormInputConfigCallback;
-
-export interface FormConfigDefaults extends FormConfigHints {
-  defaultActionDef?: FormActionConfigLike;
-  defaultInputDef?: FormInputConfigLike;
+export interface FormSensibleDefaults {
+  inputs?: InputSensibleDefaults;
+  actions?: ActionsSensibleDefaults;
 }
 
-export interface FormConfig<T extends Record<string, any> = any>
-  extends FormConfigHints,
-    FormConfigDefaults {
+export interface FormDecorators {
+  inputs?: InputWidgetDecoratorsLike;
+  actions?: ActionWidgetDecoratorsLike;
+}
+export interface FormConfig<T extends Record<string, any> = any> {
   tags?: Record<string, FormConfig<T>>;
+  decorators?: FormDecorators;
+  sensibleDefaults?: FormSensibleDefaults;
 }

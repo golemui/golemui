@@ -1,12 +1,12 @@
 import {
-  DataInputDef,
-  InputDef,
-  TextDataInputDef,
+  DataInputDecorator,
+  InputDecorator,
+  TextDataInputDecorator,
   ValidShortcutType,
 } from '../formDef.domain';
 
 export class SensibleDefaults {
-  public explodeShortcut(fieldDefRaw: ValidShortcutType): InputDef {
+  public explodeShortcut(fieldDefRaw: ValidShortcutType): InputDecorator {
     switch (fieldDefRaw) {
       case 'string':
         return this.createDefaultStringDataInput();
@@ -19,8 +19,8 @@ export class SensibleDefaults {
     }
   }
 
-  public createDataInputDefinition(formDataValue: any): DataInputDef {
-    let fieldDef: DataInputDef | undefined;
+  public createDataInputDefinition(formDataValue: any): DataInputDecorator {
+    let fieldDef: DataInputDecorator | undefined;
     const typeOfFormData = typeof formDataValue;
     switch (typeOfFormData) {
       case 'string':
@@ -38,15 +38,15 @@ export class SensibleDefaults {
     return fieldDef;
   }
 
-  public createDefaultStringDataInput(): TextDataInputDef {
+  public createDefaultStringDataInput(): TextDataInputDecorator {
     return { type: 'text' };
   }
 
-  public createDefaultNumberDataInput(): DataInputDef {
+  public createDefaultNumberDataInput(): DataInputDecorator {
     return { type: 'number'};
   }
 
-  public createDefaultBooleanDataInput(): DataInputDef {
+  public createDefaultBooleanDataInput(): DataInputDecorator {
     return { type: 'boolean'};
   }
 

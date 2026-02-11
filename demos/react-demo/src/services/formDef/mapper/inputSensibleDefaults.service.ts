@@ -1,20 +1,20 @@
-import { InputDef } from '../formDef.domain';
-import { FormConfig } from '../fomConfig.domain';
+import { InputDecorator } from '../formDef.domain';
+import { InputSensibleDefaults } from '../fomConfig.domain';
 
-export class InputSensibleDefaults {
-  private sensibleDefaultValueForProperty<K extends keyof InputDef>(
-    item: InputDef,
+export class InputSensibleDefaultsService {
+  private sensibleDefaultValueForProperty<K extends keyof InputDecorator>(
+    item: InputDecorator,
     actsOn: K,
     shouldSuppress: boolean | undefined,
-    valueProvider: (item: InputDef) => InputDef[K],
-  ): InputDef {
+    valueProvider: (item: InputDecorator) => InputDecorator[K],
+  ): InputDecorator {
     // If it already has a value, we don't touch it
     if (item[actsOn] != null) {
       return item;
     }
 
     // Let's revert the semantics to make the code easier to read.
-    const shouldAddSensibleDefault = shouldSuppress === false;
+    const shouldAddSensibleDefault = shouldSuppress !== true;
 
     // From this point the current item definition does NOT have a value.
     // If we should NOT add a sensible default, then, leave it as it is
@@ -29,30 +29,24 @@ export class InputSensibleDefaults {
     };
   }
 
-  public processAutomaticLabels<FormData extends Record<string, any> = any>(
-    item: InputDef,
-    currentConfig: FormConfig<FormData>,
-  ) {
+  public processAutomaticLabels(item: InputDecorator, currentConfig: InputSensibleDefaults) {
     return this.sensibleDefaultValueForProperty(
       item,
       'label',
       currentConfig.suppressAutomaticLabels,
-      (item) => item.path
+      (item) => item.path,
     );
   }
 
-  public processAutomaticPlaceholders<FormData extends Record<string, any> = any>(
-    item: InputDef,
-    currentConfig: FormConfig<FormData>,
-  ) {
+  public processAutomaticPlaceholders(item: InputDecorator, currentConfig: InputSensibleDefaults) {
     return this.sensibleDefaultValueForProperty(
       item,
       'placeholder',
       currentConfig.suppressAutomaticPlaceholders,
-      (item) => item.path
+      (item) => item.path,
     );
   }
 }
 
-const formInputHintsDecoratorsService = new InputSensibleDefaults();
+const formInputHintsDecoratorsService = new InputSensibleDefaultsService();
 export default formInputHintsDecoratorsService;

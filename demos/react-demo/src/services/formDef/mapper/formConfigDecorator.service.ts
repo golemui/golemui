@@ -1,48 +1,52 @@
 import {
-  ActionDef,
+  ActionDecorator,
   ActionDefCallback,
-  BooleanDataInputDef,
-  InputDef,
-  NumberDataInputDef,
-  TextDataInputDef,
-  WidgetItemDef,
+  BooleanDataInputDecorator,
+  InputDecorator,
+  NumberDataInputDecorator,
+  TextDataInputDecorator,
+  WidgetItemDecorator,
 } from '../formDef.domain';
 import {
-  ActionHints,
-  FormActionConfigCallback,
-  FormActionConfigLike,
+  ActionDecoratorCallback,
+  ActionWidgetDecoratorsLike,
   FormConfig,
-  FormInputConfigCallback,
-  FormInputConfigLike,
-  ItemHints,
+  FormSensibleDefaults,
+  InputDecoratorCallback,
+  InputSensibleDefaults,
+  InputWidgetDecoratorsLike,
   PartialInputDefCallback,
 } from '../fomConfig.domain';
 import { ActionWidget, FormWidget, InputWidget, UiState } from '@golemui/core';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import { GuiItemsShortcutType } from '../dx/gui/gui.domain';
-import formInputHintsDecoratorsService, { InputSensibleDefaults } from './inputSensibleDefaults.service';
+import formInputHintsDecoratorsService, {
+  InputSensibleDefaultsService,
+} from './inputSensibleDefaults.service';
 
-const BASE_CONFIG: FormConfig<any> = {
-  suppressAutomaticLabels: false,
-};
 export interface PreProcessResult {
-  accumulatedHints: Partial<ActionHints<any> | ItemHints>;
+  aggregatedSensibleDefaults: FormSensibleDefaults;
   containsCallbacks: boolean;
   applicableConfigsInPriorityOrder: FormConfig<FormData>[];
-  accumulatedDef: InputDef | ActionDef;
+  accumulatedDef: InputDecorator | ActionDecorator;
 }
+
+export const BASE_INPUT_DEFAULTS: InputSensibleDefaults = {
+  suppressAutomaticPlaceholders: false,
+  suppressAutomaticLabels: false,
+};
 
 export class FormConfigDecorator {
   constructor(
     private readonly objectUtils: ObjectUtils,
-    private readonly formInputHintsDecoratorsService: InputSensibleDefaults
+    private readonly formInputHintsDecoratorsService: InputSensibleDefaultsService,
   ) {}
 
   processFormConfiguration<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    item: InputDef | ActionDef,
+    item: InputDecorator | ActionDecorator,
     type: GuiItemsShortcutType,
     formConfig?: FormConfig<FormData>,
   ): FormWidget<StateKeys, FormData> {
@@ -51,7 +55,7 @@ export class FormConfigDecorator {
   }
 
   public preProcess<FormData extends Record<string, any> = any>(
-    item: InputDef | ActionDef,
+    item: InputDecorator | ActionDecorator,
     type: GuiItemsShortcutType,
     formConfig?: FormConfig<FormData>,
   ): PreProcessResult {
@@ -65,14 +69,19 @@ export class FormConfigDecorator {
         .forEach((config) => applicableConfigsInPriorityOrder.push(config));
     }
 
-    applicableConfigsInPriorityOrder.push(BASE_CONFIG);
-
-    let accumulatedHints: Partial<ActionHints<FormData> | ItemHints> = {};
+    let aggregatedSensibleDefaults: FormSensibleDefaults = {
+      inputs: BASE_INPUT_DEFAULTS,
+    };
     let containsCallbacks = false;
-    let accumulatedDef: InputDef | ActionDef = item;
+    let accumulatedDef: InputDecorator | ActionDecorator = item;
     //We reverse the order of the configs to ensure that the most powerful one is applied last
+
+
     applicableConfigsInPriorityOrder.reverse().forEach((newConfig) => {
-      accumulatedHints = this.objectUtils.deepMerge(accumulatedHints, newConfig);
+      aggregatedSensibleDefaults = this.objectUtils.deepMerge(
+        aggregatedSensibleDefaults,
+        newConfig.sensibleDefaults,
+      );
       const result = this.applyDefaultConfig(type, accumulatedDef, newConfig);
       if (typeof result === 'function') {
         containsCallbacks = true;
@@ -82,7 +91,7 @@ export class FormConfigDecorator {
     });
 
     return {
-      accumulatedHints,
+      aggregatedSensibleDefaults,
       containsCallbacks,
       applicableConfigsInPriorityOrder,
       accumulatedDef,
@@ -91,7 +100,7 @@ export class FormConfigDecorator {
 
   public postProcess<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     preProcessResult: PreProcessResult,
-    item: TextDataInputDef | NumberDataInputDef | BooleanDataInputDef | ActionDef,
+    item: TextDataInputDecorator | NumberDataInputDecorator | BooleanDataInputDecorator | ActionDecorator,
     type: GuiItemsShortcutType,
   ): FormWidget<StateKeys, FormData> {
     if (preProcessResult.containsCallbacks) {
@@ -106,11 +115,17 @@ export class FormConfigDecorator {
       //Finally we apply the accumulated hints to the item
       case GuiItemsShortcutType.INPUTS:
         return this.mapToInputWidget(
-          this.applyInputHints(accumulatedDef as InputDef, preProcessResult.accumulatedHints),
+          this.applyInputSensibleDefaults(
+            accumulatedDef as InputDecorator,
+            preProcessResult.aggregatedSensibleDefaults,
+          ),
         );
       case GuiItemsShortcutType.ACTIONS:
         return this.mapToActionWidget(
-          this.applyActionHints(accumulatedDef as ActionDef, preProcessResult.accumulatedHints),
+          this.applyActionHints(
+            accumulatedDef as ActionDecorator,
+            preProcessResult.aggregatedSensibleDefaults.actions,
+          ),
         );
     }
   }
@@ -118,7 +133,7 @@ export class FormConfigDecorator {
   private mapToInputWidget<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(fieldDef: InputDef): InputWidget<any, StateKeys, FormData> {
+  >(fieldDef: InputDecorator): InputWidget<any, StateKeys, FormData> {
     switch (fieldDef.type) {
       case 'text':
         return this.mapTextInputDef(fieldDef);
@@ -127,14 +142,14 @@ export class FormConfigDecorator {
       case 'boolean':
         return this.mapBooleanInputDef(fieldDef);
       default:
-        throw new Error(`Unsupported field type "${(fieldDef as InputDef).type}"`);
+        throw new Error(`Unsupported field type "${(fieldDef as InputDecorator).type}"`);
     }
   }
 
   private mapBooleanInputDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(fieldDef: BooleanDataInputDef): InputWidget<any, StateKeys, FormData> {
+  >(fieldDef: BooleanDataInputDecorator): InputWidget<any, StateKeys, FormData> {
     return {
       uid: '',
       kind: 'input',
@@ -149,7 +164,7 @@ export class FormConfigDecorator {
   private mapTextInputDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(fieldDef: TextDataInputDef): InputWidget<any, StateKeys, FormData> {
+  >(fieldDef: TextDataInputDecorator): InputWidget<any, StateKeys, FormData> {
     return {
       uid: '',
       kind: 'input',
@@ -169,7 +184,7 @@ export class FormConfigDecorator {
   private mapNumberInputDef<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(fieldDef: NumberDataInputDef): InputWidget<any, StateKeys, FormData> {
+  >(fieldDef: NumberDataInputDecorator): InputWidget<any, StateKeys, FormData> {
     return {
       uid: '',
       kind: 'input',
@@ -189,7 +204,7 @@ export class FormConfigDecorator {
   private mapToActionWidget<
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
-  >(controllerDef: ActionDef): ActionWidget<StateKeys, FormData> {
+  >(controllerDef: ActionDecorator): ActionWidget<StateKeys, FormData> {
     return {
       uid: '',
       kind: 'action', // data
@@ -199,58 +214,64 @@ export class FormConfigDecorator {
       on: controllerDef.on,
     };
   }
-  private applyInputHints<FormData extends Record<string, any> = any>(
-    item: InputDef,
-    currentConfig: FormConfig<FormData>,
-  ): InputDef {
-    const decorators: ((item: InputDef, currentConfig: FormConfig<FormData>) => InputDef)[] = [];
-    decorators.push(this.formInputHintsDecoratorsService.processAutomaticLabels.bind(this.formInputHintsDecoratorsService));
-    decorators.push(this.formInputHintsDecoratorsService.processAutomaticPlaceholders.bind(this.formInputHintsDecoratorsService));
-    return decorators.reduce((accumulatedDef, decorator) => decorator(accumulatedDef, currentConfig), item);
+  private applyInputSensibleDefaults(
+    item: InputDecorator,
+    currentConfig: FormSensibleDefaults,
+  ): InputDecorator {
+    const inputsSensibleDefaults = currentConfig?.inputs;
+    if (inputsSensibleDefaults == null) {
+      return item;
+    }
+
+    const decorators: ((
+      item: InputDecorator,
+      currentConfig: InputSensibleDefaults,
+    ) => InputDecorator)[] = [];
+    decorators.push(
+      this.formInputHintsDecoratorsService.processAutomaticLabels.bind(
+        this.formInputHintsDecoratorsService,
+      ),
+    );
+    decorators.push(
+      this.formInputHintsDecoratorsService.processAutomaticPlaceholders.bind(
+        this.formInputHintsDecoratorsService,
+      ),
+    );
+    return decorators.reduce((accumulatedDef, decorator) => {
+      const result = decorator(accumulatedDef, inputsSensibleDefaults);
+      console.log(`Applying decorator ${decorator.name}`, result);
+      return result;
+    }, item);
   }
 
   private applyActionHints<FormData extends Record<string, any> = any>(
-    item: ActionDef,
+    item: ActionDecorator,
     currentConfig: FormConfig<FormData>,
-  ): ActionDef {
+  ): ActionDecorator {
     return {
       ...item,
     };
   }
-
-  private checkDefaultConfigIsCallback<FormData extends Record<string, any> = any>(
-    type: GuiItemsShortcutType,
-    config: FormConfig<FormData>,
-  ): boolean {
-    if (type === GuiItemsShortcutType.INPUTS) {
-      return typeof config.defaultInputDef === 'function';
-    }
-    if (type === GuiItemsShortcutType.ACTIONS) {
-      return typeof config.defaultActionDef === 'function';
-    }
-    return false;
-  }
-
   private applyDefaultConfig<FormData extends Record<string, any> = any>(
     type: GuiItemsShortcutType,
-    accumulatedDef: InputDef | ActionDef,
+    accumulatedDef: InputDecorator | ActionDecorator,
     newConfig: FormConfig<FormData>,
-  ): WidgetItemDef | ActionDefCallback | PartialInputDefCallback {
-    let defaultValue: FormActionConfigLike | FormInputConfigLike | undefined;
+  ): WidgetItemDecorator | ActionDefCallback | PartialInputDefCallback {
+    let defaultValue: ActionWidgetDecoratorsLike | InputWidgetDecoratorsLike | undefined;
     if (type === GuiItemsShortcutType.INPUTS) {
-      defaultValue = newConfig.defaultInputDef;
+      defaultValue = newConfig.decorators?.inputs;
     }
     if (type === GuiItemsShortcutType.ACTIONS) {
-      defaultValue = newConfig.defaultActionDef;
+      defaultValue = newConfig.decorators?.actions;
     }
     if (defaultValue == null) {
       return accumulatedDef;
     }
     if (typeof defaultValue === 'object') {
-      return this.objectUtils.deepMerge(accumulatedDef, newConfig.defaultInputDef);
+      return this.objectUtils.deepMerge(accumulatedDef, defaultValue);
     }
 
-    const asCallback: FormActionConfigCallback | FormInputConfigCallback = defaultValue;
+    const asCallback: ActionDecoratorCallback | InputDecoratorCallback = defaultValue;
     const result = asCallback(accumulatedDef as any);
 
     if (typeof result === 'function') {

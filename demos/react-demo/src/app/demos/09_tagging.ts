@@ -1,10 +1,10 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
+import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
 
 export const simplestTagging: FormDemoDefinition = {
   title: 'Simplest Tagging',
   description: 'Shortcuts with tags',
-  formDef: ()=>_guiFields({
+  formDef: ()=>_guiInputs({
     name: ['string', 'no_label'],
     age: 'number',
     height: ['number', 'no_label'],
@@ -12,10 +12,16 @@ export const simplestTagging: FormDemoDefinition = {
   formConfig: {
     tags: {
       no_label: {
-        suppressAutomaticLabels: true,
-        defaultInputDef: (currentDef) => ({
-          placeholder: currentDef.path + ' I am special!',
-        }),
+        decorators: {
+          inputs: (currentDef) => ({
+            placeholder: currentDef.path + ' I am special!',
+          }),
+        },
+        sensibleDefaults: {
+          inputs: {
+            suppressAutomaticLabels: true,
+          }
+        }
       },
     },
   },

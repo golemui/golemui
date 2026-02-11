@@ -1,11 +1,11 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
+import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
 
 export const simpleDynamicDemo: FormDemoDefinition = {
   title: 'Simple Dynamic',
   description: 'Form driven from formDef shortcuts, note that age has a validator',
   formDef: () =>
-    _guiFields({
+    _guiInputs({
       name: 'string',
       age: ({ error }: any) => ({
         label: error ? 'Age must be at least 18' : 'Age',

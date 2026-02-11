@@ -8,7 +8,7 @@ import {
   LayoutWidget,
   UiState,
 } from '@golemui/core';
-import { ActionDef, ActionDefCallback, ActionDefOrCallback, InputDef } from '../formDef.domain';
+import { ActionDecorator, ActionDefCallback, ActionDefOrCallback, InputDecorator } from '../formDef.domain';
 import { FormConfig, PartialInputDefCallback } from '../fomConfig.domain';
 import formConfigDecorator, { FormConfigDecorator } from './formConfigDecorator.service';
 import {
@@ -135,11 +135,11 @@ export class FormDefMapper {
     const item = itemType === GuiItemsShortcutType.ACTIONS
       ? hotMapping
       : this.parseFieldKey(
-        hotMapping as InputDef,
+        hotMapping as InputDecorator,
         (readyToMapFieldOrAction as ReadyToMapInputDef).key,
       );
     const mapControlField = this.formConfigDecorator.processFormConfiguration(
-      item as ActionDef | InputDef,
+      item as ActionDecorator | InputDecorator,
       itemType,
       formConfig,
     );
@@ -147,7 +147,7 @@ export class FormDefMapper {
     return mapControlField;
   }
 
-  private parseValue(readyToMapFieldOrAction: ReadyToMapItemDef): ActionDef | InputDef {
+  private parseValue(readyToMapFieldOrAction: ReadyToMapItemDef): ActionDecorator | InputDecorator {
     if ('key' in readyToMapFieldOrAction && 'inputDefOrCallback' in readyToMapFieldOrAction) {
       const inputDefOrCallback = readyToMapFieldOrAction.inputDefOrCallback;
       if (typeof inputDefOrCallback === 'function') {
@@ -161,7 +161,7 @@ export class FormDefMapper {
     }
     return readyToMapFieldOrAction;
   }
-  private parseFieldKey(inputDefOrCallback: InputDef, key: string): InputDef {
+  private parseFieldKey(inputDefOrCallback: InputDecorator, key: string): InputDecorator {
     return {
       ...inputDefOrCallback,
       path: key,

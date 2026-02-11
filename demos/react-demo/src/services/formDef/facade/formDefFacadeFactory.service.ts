@@ -1,6 +1,6 @@
 import { KeyOf } from 'zod/v4/core/util';
 import {
-  DataInputDef,
+  DataInputDecorator,
   FormDefTuple,
 
 } from '../formDef.domain';
@@ -20,7 +20,7 @@ export class FormDefTupleFactory {
 
     const tuples: FormDefTuple<FORM_DATA>[] = [];
     for (const key of fieldDefKeys) {
-      const fieldDef: DataInputDef = this.extractFieldDef(dataInputDefsByKey, key);
+      const fieldDef: DataInputDecorator = this.extractFieldDef(dataInputDefsByKey, key);
       const dataInputTuple: FormDefTuple<FORM_DATA> = this.createDataInputTuple(key, fieldDef);
       tuples.push(dataInputTuple);
     }
@@ -32,18 +32,18 @@ export class FormDefTupleFactory {
   private extractFieldDef<FORM_DATA extends Record<string, any> = any>(
     dataInputDefsByKey: Record<string, ProcessedDxField>,
     key: keyof FORM_DATA,
-  ): DataInputDef {
+  ): DataInputDecorator {
     const fieldDefForKey = dataInputDefsByKey?.[key as KeyOf<FORM_DATA>];
     if (fieldDefForKey == null) {
       throw new Error(`Unexpected error "${key as string}"`);
     }
 
-    return fieldDefForKey as DataInputDef;
+    return fieldDefForKey as DataInputDecorator;
   }
 
   private createDataInputTuple<FORM_DATA extends Record<string, any> = any>(
     key: keyof FORM_DATA,
-    fieldDef: DataInputDef,
+    fieldDef: DataInputDecorator,
   ): FormDefTuple<FORM_DATA> {
     const dataInput: ProcessedDxFieldsByKey<FORM_DATA> = {
       [key]: fieldDef,

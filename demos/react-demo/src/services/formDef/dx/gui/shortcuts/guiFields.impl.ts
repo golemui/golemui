@@ -1,7 +1,7 @@
 import {
-  ActionDef,
+  ActionDecorator,
   ActionDefCallback,
-  InputDef,
+  InputDecorator,
   InputTags,
   ValidShortcutType,
 } from '../../../formDef.domain';
@@ -15,9 +15,9 @@ import inputDefsByKeyService from '../../config/helpers/inputDefsByKey.service';
 import { PartialInputDefCallback } from '../../../fomConfig.domain';
 
 export type DxField = InputDefOrCallback | ValidShortcutType | InputTags;
-export type InputDefOrCallback = InputDef | PartialInputDefCallback;
-export type PartialInputDefOrPartialCallback = Partial<InputDef> | PartialInputDefCallback;
-export type ProcessedValidControllerDef = ActionDef | ActionDefCallback;
+export type InputDefOrCallback = InputDecorator | PartialInputDefCallback;
+export type PartialInputDecoratorOrCallback = Partial<InputDecorator> | PartialInputDefCallback;
+export type ProcessedValidControllerDef = ActionDecorator | ActionDefCallback;
 
 export type FacadeFieldByKey<T extends Record<string, any>> = Partial<Record<keyof T, DxField>>;
 
@@ -25,7 +25,7 @@ export type ProcessedDxFieldsByKey<T extends Record<string, any>> = Partial<
   Record<keyof T, InputDefOrCallback>
 >;
 
-export const _guiFields = <T extends Record<string, any>>(
+export const _guiInputs = <T extends Record<string, any>>(
   defs: FacadeFieldByKey<T>,
   tags?: string[],
 ): GuiFieldsShortcut => {

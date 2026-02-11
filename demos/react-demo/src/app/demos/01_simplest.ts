@@ -1,11 +1,11 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiFields } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
+import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
 
 export const simplestDemo: FormDemoDefinition = {
   title: 'Simplest Form',
   description: 'Shortcuts for everything',
   formDef: () =>
-    _guiFields({
+    _guiInputs({
       name: 'string',
       age: 'number',
       height: 'number',

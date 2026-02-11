@@ -9,7 +9,7 @@ import {
 import { GuiFieldsShortcut, ValidGuiShortcut } from './dx/gui/gui.domain';
 import { ProcessedDxFieldsByKey } from './dx/gui/shortcuts/guiFields.impl';
 
-export interface DataInputDef extends WidgetItemDef {
+export interface DataInputDecorator extends WidgetItemDecorator {
   type: 'text' | 'number' | 'boolean';
   placeholder?: string;
   label?: string | null;
@@ -18,28 +18,28 @@ export interface DataInputDef extends WidgetItemDef {
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
 
-export interface NumberDataInputDef extends DataInputDef {
+export interface NumberDataInputDecorator extends DataInputDecorator {
   type: 'number';
   validator?: NumberDataInputValidator;
 }
 
 export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
 
-export interface TextDataInputDef extends DataInputDef {
+export interface TextDataInputDecorator extends DataInputDecorator {
   type: 'text';
   validator?: TextDataInputValidator;
 }
 
-export interface BooleanDataInputDef extends DataInputDef {
+export interface BooleanDataInputDecorator extends DataInputDecorator {
   type: 'boolean';
 }
 
-export interface WidgetItemDef {
+export interface WidgetItemDecorator {
   tags?: string[];
   removeField?: boolean;
 }
 
-export type InputDef = TextDataInputDef | NumberDataInputDef | BooleanDataInputDef;
+export type InputDecorator = TextDataInputDecorator | NumberDataInputDecorator | BooleanDataInputDecorator;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
 export interface DynamicItemDefParams {
@@ -48,7 +48,7 @@ export interface DynamicItemDefParams {
 
 export type InputTags = [ValidShortcutType, ...string[]];
 
-export interface ActionDef extends WidgetItemDef {
+export interface ActionDecorator extends WidgetItemDecorator {
   data?: any | null;
   type?: 'button';
   label?: string;
@@ -59,12 +59,12 @@ export interface ActionDef extends WidgetItemDef {
   };
 }
 
-export type ActionDefPartialCallback = (params: DynamicItemDefParams) => Partial<ActionDef>;
-export type ActionDefCallback = (params: DynamicItemDefParams) => ActionDef;
-export type ActionDefOrCallback = ActionDef | ActionDefCallback;
-export type ActionDefOrPartialCallback = ActionDef | ActionDefPartialCallback;
+export type ActionDefPartialCallback = (params: DynamicItemDefParams) => Partial<ActionDecorator>;
+export type ActionDefCallback = (params: DynamicItemDefParams) => ActionDecorator;
+export type ActionDefOrCallback = ActionDecorator | ActionDefCallback;
+export type ActionDefOrPartialCallback = ActionDecorator | ActionDefPartialCallback;
 
-export type ControllersDefFacade = OneOrMany<ActionDef | ActionDefCallback>;
+export type ControllersDefFacade = OneOrMany<ActionDecorator | ActionDefCallback>;
 
 export type OneOrMany<T> = T | T[];
 export type ProcessedDataInputsTuple<FORM_DATA extends Record<string, any>> = [
@@ -104,11 +104,11 @@ export type GroupShortcut = DxShortcutDeveloped<GROUP_SHORTCUT, FormDefFacade>;
 
 export type SubmitButtonShortcut = DxShortcutPartialOrSimple<
   SUBMIT_BUTTON_SHORTCUT,
-  ActionDef,
+  ActionDecorator,
   { error: boolean }
 >;
 
-export type ButtonShortcut = DxShortcutPartial<BUTTON_SHORTCUT, ActionDef, { error: boolean }>;
+export type ButtonShortcut = DxShortcutPartial<BUTTON_SHORTCUT, ActionDecorator, { error: boolean }>;
 
 export type ValidDxShortcuts =
   | HorizontalLayoutShortcut

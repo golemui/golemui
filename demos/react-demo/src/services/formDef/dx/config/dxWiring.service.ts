@@ -1,4 +1,4 @@
-import { ActionDef } from '../../formDef.domain';
+import { ActionDecorator } from '../../formDef.domain';
 import {
   ParsedDxShortcut,
   SUBMIT_BUTTON_SHORTCUT,
@@ -23,8 +23,8 @@ export class DxWiringService {
   }
 
   wireSubmitButton(
-    payload: SUBMIT_BUTTON_SHORTCUT | ActionDef | (() => ActionDef),
-    source: ParsedDxShortcut<SUBMIT_BUTTON_SHORTCUT | ActionDef | (() => ActionDef)>,
+    payload: SUBMIT_BUTTON_SHORTCUT | ActionDecorator | (() => ActionDecorator),
+    source: ParsedDxShortcut<SUBMIT_BUTTON_SHORTCUT | ActionDecorator | (() => ActionDecorator)>,
   ): UnrolledControllers {
     const baseValue =
       payload === '_submitButton' ? this.sensibleDefaults.createDefaultSubmitButton() : payload;
@@ -41,8 +41,8 @@ export class DxWiringService {
   }
 
   wireButton(
-    payload: ActionDef | (() => ActionDef),
-    source: ParsedDxShortcut<ActionDef | (() => ActionDef)>,
+    payload: ActionDecorator | (() => ActionDecorator),
+    source: ParsedDxShortcut<ActionDecorator | (() => ActionDecorator)>,
   ): UnrolledControllers {
     return {
       type: 'controllers',

@@ -1,4 +1,4 @@
-import { ActionDefCallback, ActionDef } from '../../formDef.domain';
+import { ActionDefCallback, ActionDecorator } from '../../formDef.domain';
 import { InputDefOrCallback } from './shortcuts/guiFields.impl';
 
 export enum GuiShortcutType {
@@ -20,7 +20,7 @@ export interface ReadyToMapInputDef {
   inputDefOrCallback: InputDefOrCallback;
 }
 
-export type ReadyToMapActionDef = ActionDef | ActionDefCallback;
+export type ReadyToMapActionDef = ActionDecorator | ActionDefCallback;
 export type ReadyToMapItemDef = ReadyToMapInputDef | ReadyToMapActionDef;
 
 export interface GuiItemsShortcut extends GuiShortcut {
