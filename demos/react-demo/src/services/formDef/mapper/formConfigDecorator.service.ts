@@ -2,7 +2,6 @@ import {
   ActionDef,
   ActionDefCallback,
   BooleanDataInputDef,
-  DynamicItemDefParams,
   InputDef,
   NumberDataInputDef,
   TextDataInputDef,
@@ -15,12 +14,13 @@ import {
   FormConfig,
   FormInputConfigCallback,
   FormInputConfigLike,
-  PartialInputDefCallback,
   ItemHints,
+  PartialInputDefCallback,
 } from '../fomConfig.domain';
 import { ActionWidget, FormWidget, InputWidget, UiState } from '@golemui/core';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import { GuiItemsShortcutType } from '../dx/gui/gui.domain';
+import formInputHintsDecoratorsService, { InputSensibleDefaults } from './inputSensibleDefaults.service';
 
 const BASE_CONFIG: FormConfig<any> = {
   suppressAutomaticLabels: false,
@@ -33,7 +33,10 @@ export interface PreProcessResult {
 }
 
 export class FormConfigDecorator {
-  constructor(private readonly objectUtils: ObjectUtils) {}
+  constructor(
+    private readonly objectUtils: ObjectUtils,
+    private readonly formInputHintsDecoratorsService: InputSensibleDefaults
+  ) {}
 
   processFormConfiguration<
     StateKeys extends UiState = never,
@@ -92,7 +95,9 @@ export class FormConfigDecorator {
     type: GuiItemsShortcutType,
   ): FormWidget<StateKeys, FormData> {
     if (preProcessResult.containsCallbacks) {
-      throw new Error(`TBI, nesting functions is not supported yet! Whoever called preProcess should check this first!`);
+      throw new Error(
+        `TBI, nesting functions is not supported yet! Whoever called preProcess should check this first!`,
+      );
     }
     // The most powerful configuration should be the one hardcoded in the formDef
     const accumulatedDef = this.objectUtils.deepMerge(preProcessResult.accumulatedDef, item);
@@ -198,13 +203,10 @@ export class FormConfigDecorator {
     item: InputDef,
     currentConfig: FormConfig<FormData>,
   ): InputDef {
-    if (item.label != null) {
-      return item;
-    }
-    return {
-      ...item,
-      ...(currentConfig.suppressAutomaticLabels ? { label: '' } : { label: item.path }),
-    };
+    const decorators: ((item: InputDef, currentConfig: FormConfig<FormData>) => InputDef)[] = [];
+    decorators.push(this.formInputHintsDecoratorsService.processAutomaticLabels.bind(this.formInputHintsDecoratorsService));
+    decorators.push(this.formInputHintsDecoratorsService.processAutomaticPlaceholders.bind(this.formInputHintsDecoratorsService));
+    return decorators.reduce((accumulatedDef, decorator) => decorator(accumulatedDef, currentConfig), item);
   }
 
   private applyActionHints<FormData extends Record<string, any> = any>(
@@ -259,5 +261,5 @@ export class FormConfigDecorator {
   }
 }
 
-const formConfigDecorator = new FormConfigDecorator(objectUtils);
+const formConfigDecorator = new FormConfigDecorator(objectUtils, formInputHintsDecoratorsService);
 export default formConfigDecorator;

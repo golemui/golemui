@@ -17,6 +17,7 @@ export interface ActionHints<T extends Record<string, any> = any> {
 
 export interface ItemHints {
   suppressAutomaticLabels?: boolean;
+  suppressAutomaticPlaceholders?: boolean;
 }
 
 export interface FormConfigHints<T extends Record<string, any> = any>
