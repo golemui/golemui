@@ -8,7 +8,6 @@ type JsonStringified = string;
 type JsonObject = Record<string, any>;
 
 export interface FormComponentProps {
-  direction: 'ltr' | 'rtl';
   formDef: JsonStringified | JsonObject;
   widgetLoaders: Core.WidgetLoaders<React.ComponentType<Core.WithWidget>>;
   itemRenderers: Record<string, Core.ItemRenderer>;
@@ -23,7 +22,6 @@ export interface FormComponentProps {
 }
 
 export function FormComponent({
-  direction,
   formDef,
   widgetLoaders,
   itemRenderers,
@@ -41,6 +39,7 @@ export function FormComponent({
   );
   const formNameRef = useRef(formName || Core.shortUUID());
   const [formLayoutField, setFormLayoutField] = useState<Core.LayoutWidget<string> | null>(null);
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
 
   // INITIALIZE FORM CONTEXT
   useEffect(() => {
@@ -76,6 +75,7 @@ export function FormComponent({
   useEffect(() => {
     const sub = formContextRef.current.store.state$.subscribe((state) => {
       setFormLayoutField(state.formDef.form);
+      setDirection(Core.getDirectionFromLanguage(formContextRef.current.localization.lang));
     });
     return () => {
       sub.unsubscribe();
@@ -104,6 +104,7 @@ export function FormComponent({
   // I18n
   useEffect(() => {
     const sub = formContextRef.current.localization.subscribe((lang) => {
+      setDirection(Core.getDirectionFromLanguage(lang));
       formContextRef.current.store.dispatch({
         type: 'SET_LANGUAGE',
         payload: {
@@ -122,8 +123,8 @@ export function FormComponent({
 
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
-      <div className="gui-form" dir={direction}>
-        <form id={formNameRef.current} noValidate>
+      <div className="gui-form">
+        <form id={formNameRef.current} noValidate dir={direction}>
           <WidgetErrorBoundary widget={formLayoutField}>
             <WidgetRenderer widget={formLayoutField} />
           </WidgetErrorBoundary>

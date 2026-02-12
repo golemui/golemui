@@ -45,10 +45,8 @@ export const FormComponent = ({
     Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
     ...middlewares,
   ];
-  const direction = Core.getDirectionFromLanguage(localization?.lang ?? 'en');
   return (
     <React.FormComponent
-      direction={direction}
       formDef={formDef}
       data={data}
       widgetLoaders={customWidgetLoaders}

@@ -24,9 +24,6 @@ export class FormComponent {
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
   localization = input<Core.I18nTranslator>();
-  direction = computed(() => {
-    return Core.getDirectionFromLanguage(this.localization()?.lang ?? 'en');
-  });
 
   protected customWidgetLoaders = computed(() => ({
     ...vanillaWidgetLoaders,

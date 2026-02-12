@@ -1,6 +1,6 @@
 @let formState = context.store.state$ | async;
 
-<form [id]="formName()" novalidate>
+<form [id]="formName()" novalidate [attr.dir]="direction()">
   @if (formState && formState.formDef && context.widgetRegistry.ready) {
     <ng-container guiWidget [widget]="formState.formDef.form" />
   } @else {

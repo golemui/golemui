@@ -55,10 +55,8 @@ export class FormElement extends LitElement {
   }
 
   override render() {
-    const direction = Core.getDirectionFromLanguage(this.localization?.lang ?? 'en');
     return html`
       <gui-core-form
-        dir=${direction}
         .formDef=${this.formDef}
         .data=${this.data}
         .widgetLoaders=${this.customWidgetLoaders}

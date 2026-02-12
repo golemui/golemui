@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { State, WidgetLoaders, WithWidget } from '@golemui/core';
 import { provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
@@ -24,6 +24,8 @@ export class FormElement extends LitElement {
   @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
 
+  @state() direction: 'ltr' | 'rtl' = 'ltr';
+
   state: State | undefined;
   subscriptions: Subscription[] = [];
   private unsubscribeI18n: () => void = () => undefined;
@@ -42,6 +44,8 @@ export class FormElement extends LitElement {
       this.itemRenderers,
       this.localization,
     );
+
+    this.direction = Core.getDirectionFromLanguage(this.context.localization.lang);
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
@@ -71,6 +75,7 @@ export class FormElement extends LitElement {
     });
 
     this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
+      this.direction = Core.getDirectionFromLanguage(lang);
       this.context.store.dispatch({
         type: 'SET_LANGUAGE',
         payload: {
@@ -88,7 +93,7 @@ export class FormElement extends LitElement {
     const ready = this.state?.formDef && this.context.widgetRegistry.ready;
 
     return html`
-      <form id=${this.formName} novalidate>
+      <form id=${this.formName} novalidate dir=${this.direction}>
         ${when(
           ready,
           () => html` <gui-widget .widget=${this.state?.formDef.form}></gui-widget>`,
