@@ -4,6 +4,7 @@ import { createIntersectionObserver, TabsProps } from '@golemui/shared-vanilla';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Tabs(widgetInstance: Core.WithWidget) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const widget = widgetInstance.widget as Core.LayoutWidget;
   const { uid, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
@@ -62,20 +63,29 @@ export function Tabs(widgetInstance: Core.WithWidget) {
     (event: React.KeyboardEvent) => {
       const currentIndex = templateData.tabs.findIndex((tab) => tab.uid === activeTab);
       const tabButtons = tabRefs.current;
+      const isRTL = containerRef.current
+        ? window.getComputedStyle(containerRef.current).direction === 'rtl'
+        : false;
 
       switch (event.key) {
-        case 'ArrowLeft':
-          if (currentIndex > 0) {
-            handleTabChange(templateData.tabs[currentIndex - 1].uid);
-            tabButtons[currentIndex - 1]?.focus();
+        case 'ArrowLeft': {
+          const nextIndex = currentIndex + (isRTL ? 1 : -1);
+
+          if (nextIndex >= 0 && nextIndex < templateData.tabs.length) {
+            handleTabChange(templateData.tabs[nextIndex].uid);
+            tabButtons[nextIndex]?.focus();
           }
           break;
-        case 'ArrowRight':
-          if (currentIndex < templateData.tabs.length - 1) {
-            handleTabChange(templateData.tabs[currentIndex + 1].uid);
-            tabButtons[currentIndex + 1]?.focus();
+        }
+        case 'ArrowRight': {
+          const nextIndex = currentIndex + (isRTL ? -1 : 1);
+
+          if (nextIndex >= 0 && nextIndex < templateData.tabs.length) {
+            handleTabChange(templateData.tabs[nextIndex].uid);
+            tabButtons[nextIndex]?.focus();
           }
           break;
+        }
         case 'Home':
           handleTabChange(templateData.tabs[0].uid);
           tabButtons[0]?.focus();

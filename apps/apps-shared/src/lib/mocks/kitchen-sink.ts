@@ -37,7 +37,7 @@ const form = defineForm({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab3',
+        defaultOpen: 'tab13',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Stack Layout', uid: 'tab2' },

@@ -20,7 +20,6 @@ export class GuiNumber extends LitElement {
 
   @property({ type: Number }) step: number | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) placeholder: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
@@ -60,18 +59,15 @@ export class GuiNumber extends LitElement {
       value: this.value,
       step: this.step,
       icon: this.icon,
-      iconPosition: this.iconPosition,
       placeholder: this.placeholder,
     };
 
     const fieldClasses: { [key: string]: boolean } = {
       [`gui-number--icon`]: !!this.icon,
-      [`gui-number--icon-right`]: this.iconPosition === 'right',
     };
 
     const numberClasses = {
       'gui-widget-icon': true,
-      'gui-widget-icon--right': this.iconPosition === 'right',
       [this.icon as string]: true,
     };
 
@@ -81,7 +77,7 @@ export class GuiNumber extends LitElement {
       <div class="gui-widget">
         <input
           type="number"
-          inputmode="numeric"
+          inputmode="decimal"
           id=${this.uid}
           data-cy=${`${this.uid}_number`}
           class=${classMap(fieldClasses)}

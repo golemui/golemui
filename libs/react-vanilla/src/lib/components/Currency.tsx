@@ -24,7 +24,6 @@ export function Currency(widgetInstance: Core.WithWidget) {
   const maximumFractionDigits = templateData.maximumFractionDigits;
   const minimumFractionDigits = templateData.minimumFractionDigits;
   const icon = templateData.icon;
-  const iconPosition = templateData.iconPosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -46,7 +45,6 @@ export function Currency(widgetInstance: Core.WithWidget) {
         maximumFractionDigits={maximumFractionDigits}
         minimumFractionDigits={minimumFractionDigits}
         icon={icon}
-        iconPosition={iconPosition}
         placeholder={placeholder ?? undefined}
         localeId={lang}
         onInput={handleChange}

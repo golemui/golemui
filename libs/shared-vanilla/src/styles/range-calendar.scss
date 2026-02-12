@@ -11,12 +11,22 @@ gui-range-calendar {
     &.range-start {
       background-color: var(--gui-color-primary);
       color: white;
-      border-radius: var(--gui-radius-range) 0 0 var(--gui-radius-range);
+
+      // Top Left - Top Right - Bottom Left - Bottom Right
+      border-start-end-radius: 0;
+      border-start-start-radius: var(--gui-radius-range);
+      border-end-end-radius: 0;
+      border-end-start-radius: var(--gui-radius-range);
     }
     &.range-end {
       background-color: var(--gui-color-primary);
       color: white;
-      border-radius: 0 var(--gui-radius-range) var(--gui-radius-range) 0;
+
+      // Top Left - Top Right - Bottom Left - Bottom Right
+      border-start-end-radius: var(--gui-radius-range);
+      border-start-start-radius: 0;
+      border-end-end-radius: var(--gui-radius-range);
+      border-end-start-radius: 0;
     }
 
     &.range-start.range-end {

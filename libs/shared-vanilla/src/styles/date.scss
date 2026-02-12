@@ -2,15 +2,22 @@ gui-date {
   display: block;
 
   .gui-date-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 0;
+
     .gui-date-input__touch-target {
-      display: inline;
+      display: block;
       position: relative;
     }
 
     .gui-date-input__visual-underline {
       position: absolute;
       bottom: -1px;
-      left: 2px;
+      inset-inline-start: 2px;
       width: 18px;
       height: 1px;
       background-color: var(--gui-color-fg);
@@ -36,7 +43,8 @@ gui-date {
         background: transparent;
         text-align: center;
         padding: 0;
-        margin: -16px -12px;
+        margin-block: -16px;
+        margin-inline: -12px;
         position: relative;
         z-index: 2;
       }
@@ -65,7 +73,7 @@ gui-date {
     }
 
     &.gui-calendar--icon {
-      padding-left: 2.5rem;
+      padding-inline-start: 2.5rem;
     }
   }
 }

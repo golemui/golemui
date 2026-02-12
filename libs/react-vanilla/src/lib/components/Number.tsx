@@ -22,7 +22,6 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
   const placeholder = templateData.placeholder;
   const step = templateData.step;
   const icon = templateData.icon;
-  const iconPosition = templateData.iconPosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -41,7 +40,6 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
         value={value}
         step={step}
         icon={icon}
-        iconPosition={iconPosition}
         placeholder={placeholder ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}

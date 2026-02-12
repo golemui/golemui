@@ -54,7 +54,6 @@ export const number = (): any => ({
       path: 'numberIconRight',
       props: {
         icon: 'material-icons material-icons-phone_callback',
-        iconPosition: 'right',
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
       },

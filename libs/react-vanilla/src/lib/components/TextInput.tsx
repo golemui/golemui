@@ -21,7 +21,6 @@ export function TextInput(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;
-  const iconPosition = templateData.iconPosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -39,7 +38,6 @@ export function TextInput(widgetInstance: Core.WithWidget) {
         readOnly={isReadonly}
         value={value}
         icon={icon}
-        iconPosition={iconPosition}
         placeholder={placeholder ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}
