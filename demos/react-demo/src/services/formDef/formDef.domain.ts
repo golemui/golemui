@@ -1,12 +1,6 @@
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as Core from '@golemui/core';
-import {
-  BUTTON_SHORTCUT,
-  GROUP_SHORTCUT,
-  HORIZONTAL_LAYOUT_SHORTCUT,
-  SUBMIT_BUTTON_SHORTCUT,
-} from './dx/dx.domain';
-import { GuiFieldsShortcut, ValidGuiShortcut } from './dx/gui/gui.domain';
+import { ValidGuiShortcut } from './dx/gui/gui.domain';
 import { ProcessedDxFieldsByKey } from './dx/gui/shortcuts/guiFields.impl';
 
 export interface DataInputDecorator extends WidgetItemDecorator {
@@ -39,7 +33,10 @@ export interface WidgetItemDecorator {
   removeField?: boolean;
 }
 
-export type InputDecorator = TextDataInputDecorator | NumberDataInputDecorator | BooleanDataInputDecorator;
+export type InputDecorator =
+  | TextDataInputDecorator
+  | NumberDataInputDecorator
+  | BooleanDataInputDecorator;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
 export interface DynamicItemDefParams {
@@ -76,49 +73,6 @@ export type FormDefTuple<FORM_DATA extends Record<string, any>> =
   | ['layout', FormDefTuple<FORM_DATA>[]]
   | ProcessedDataInputsTuple<FORM_DATA>
   | ['controllers', ControllersDefFacade];
-export type DxShortcutDeveloped<NAME extends string, CONFIG_OBJECT> = [
-  [NAME, ...string[]] | NAME,
-  CONFIG_OBJECT,
-];
-export type DxShortcutPartial<NAME extends string, CONFIG_OBJECT, PARAMS> = [
-  [NAME, ...string[]] | NAME,
-  Partial<CONFIG_OBJECT> | ((params: PARAMS) => Partial<CONFIG_OBJECT>),
-];
-
-export type DxShortcutFinal<NAME extends string, CONFIG_OBJECT> = [
-  [NAME, ...string[]],
-  CONFIG_OBJECT[],
-];
-
-export type DxShortcutSimple<NAME extends string> = NAME;
-export type DxShortcutPartialOrSimple<NAME extends string, CONFIG_OBJECT, PARAMS> =
-  | DxShortcutSimple<NAME>
-  | DxShortcutPartial<NAME, CONFIG_OBJECT, PARAMS>;
-
-export type HorizontalLayoutShortcut = DxShortcutDeveloped<
-  HORIZONTAL_LAYOUT_SHORTCUT,
-  FormDefFacade
->;
-
-export type GroupShortcut = DxShortcutDeveloped<GROUP_SHORTCUT, FormDefFacade>;
-
-export type SubmitButtonShortcut = DxShortcutPartialOrSimple<
-  SUBMIT_BUTTON_SHORTCUT,
-  ActionDecorator,
-  { error: boolean }
->;
-
-export type ButtonShortcut = DxShortcutPartial<BUTTON_SHORTCUT, ActionDecorator, { error: boolean }>;
-
-export type ValidDxShortcuts =
-  | HorizontalLayoutShortcut
-  | SubmitButtonShortcut
-  | GroupShortcut
-  | GuiFieldsShortcut
-  | ButtonShortcut;
-
-export type ValidDxElement = ValidDxShortcuts;
-
 export type FormDefFacade = ValidGuiShortcut | ValidGuiShortcut[];
 
 export type FormEvents = (event: Core.FormEvent) => void;

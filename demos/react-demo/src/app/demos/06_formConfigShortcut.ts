@@ -7,11 +7,31 @@ export const formConfigShortcut: FormDemoDefinition = {
   formConfig: {
     sensibleDefaults: {
       inputs: {
-        suppressAutomaticLabels: true
-      }
-    }
+        suppressAutomaticLabels: true,
+      },
+    },
   },
-  formDef: ()=>
+  // formConfig2: [
+  //   _gslRootLayout({
+  //     allInputs: {
+  //       suppressAutomaticLabels: true,
+  //     },
+  //     thisLayout: {
+  //       decorator: {
+  //         orientation: 'horizontal'
+  //       }
+  //     }
+  //   }),
+  //   _gslActionById('#submit', {
+  //     onClick: () => console.log('submit clicked'),
+  //   }),
+  //   _gslTag('noLabels', {
+  //     inputs: {
+  //       suppressAutomaticLabels: true,
+  //     },
+  //   }),
+  // ],
+  formDef: () =>
     _guiInputs({
       name: 'string',
       age: 'number',

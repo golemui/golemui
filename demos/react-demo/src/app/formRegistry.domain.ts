@@ -8,6 +8,7 @@ export interface FormDemoDefinition<T extends Record<string, any> = any> {
   formData?: T;
   warnings?: string[];
   formConfig?: FormConfig<T>;
+  formConfig2?: any;
 }
 
 export type FormRegistryEntry<T extends Record<string, any> = any> = FormDemoDefinition<T> & {

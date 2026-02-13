@@ -39,6 +39,8 @@ export class InputSensibleDefaultsService {
   }
 
   public processAutomaticPlaceholders(item: InputDecorator, currentConfig: InputSensibleDefaults) {
+    // The automatic placeholder is only added if the label is not present.
+    if (item.label != null) return item;
     return this.sensibleDefaultValueForProperty(
       item,
       'placeholder',

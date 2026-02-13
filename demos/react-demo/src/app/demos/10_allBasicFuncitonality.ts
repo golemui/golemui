@@ -34,7 +34,7 @@ export const allBasicFunctionality: FormDemoDefinition = {
         sensibleDefaults: {
           inputs: {
             suppressAutomaticLabels: true,
-          }
+          },
         },
         decorators: {
           inputs: (currentDef) => ({
@@ -51,4 +51,21 @@ export const allBasicFunctionality: FormDemoDefinition = {
       },
     },
   },
+  // formConfig2: [
+  //   _gslTag('no_label', {
+  //     inputs: {
+  //       suppressAutomaticLabels: true,
+  //       decorator: (currentDef) => ({
+  //         placeholder: `I have no label ${[currentDef.path]}`,
+  //       }),
+  //     },
+  //   }),
+  //   _gslTag('special', {
+  //     inputs: {
+  //       decorator: (currentDef) => ({
+  //         placeholder: currentDef.placeholder + ' + I am special!',
+  //       }),
+  //     },
+  //   }),
+  // ],
 };

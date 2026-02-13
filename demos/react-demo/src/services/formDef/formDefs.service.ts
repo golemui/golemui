@@ -1,9 +1,7 @@
 import { Form, UiState } from '@golemui/core';
 import formMapperService, { FormDefMapper } from './mapper/formDefMapper.service';
-import { FormDefFacade, FormEvents, ValidDxElement } from './formDef.domain';
+import { FormDefFacade, FormEvents } from './formDef.domain';
 import { FormConfig } from './fomConfig.domain';
-import dxElementService, { DxElementService } from './dx/dxElement.service';
-import { UnrolledLayout, ValidUnrolledElement, } from './dx/dx.domain';
 import { ValidGuiShortcut } from './dx/gui/gui.domain';
 import { _guiSubmitButton } from './dx/gui/shortcuts/guiSubmitButton.impl';
 
@@ -32,20 +30,11 @@ export class FormDefs {
     formConfig?: FormConfig<FORM_DATA>,
   ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
     const formDef: ValidGuiShortcut[] = Array.isArray(formDefRaw) ? formDefRaw : [formDefRaw];
-    const hasAButton = formDef.filter((it) => it.type === 'ITEMS' && it.itemsType === 'ACTIONS').length > 0;
-    const withButtonIfNeeded = hasAButton
-      ? formDef
-      : [...formDef, _guiSubmitButton()];
+    const hasAButton =
+      formDef.filter((it) => it.type === 'ITEMS' && it.itemsType === 'ACTIONS').length > 0;
+    const withButtonIfNeeded = hasAButton ? formDef : [...formDef, _guiSubmitButton()];
 
-    const fwFormDef = this.formMapperService.map<STATE_KEYS, FORM_DATA>(
-      withButtonIfNeeded,
-      formConfig,
-    );
-    if (formConfig?.onSubmit != null) {
-      return [fwFormDef, formConfig.onSubmit as any] as [Form<STATE_KEYS, FORM_DATA>, FormEvents];
-    }
-
-    return fwFormDef;
+    return this.formMapperService.map<STATE_KEYS, FORM_DATA>(withButtonIfNeeded, formConfig);
   }
 
 }

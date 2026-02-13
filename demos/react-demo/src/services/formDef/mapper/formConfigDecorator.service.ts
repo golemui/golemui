@@ -76,7 +76,6 @@ export class FormConfigDecorator {
     let accumulatedDef: InputDecorator | ActionDecorator = item;
     //We reverse the order of the configs to ensure that the most powerful one is applied last
 
-
     applicableConfigsInPriorityOrder.reverse().forEach((newConfig) => {
       aggregatedSensibleDefaults = this.objectUtils.deepMerge(
         aggregatedSensibleDefaults,
@@ -100,7 +99,11 @@ export class FormConfigDecorator {
 
   public postProcess<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     preProcessResult: PreProcessResult,
-    item: TextDataInputDecorator | NumberDataInputDecorator | BooleanDataInputDecorator | ActionDecorator,
+    item:
+      | TextDataInputDecorator
+      | NumberDataInputDecorator
+      | BooleanDataInputDecorator
+      | ActionDecorator,
     type: GuiItemsShortcutType,
   ): FormWidget<StateKeys, FormData> {
     if (preProcessResult.containsCallbacks) {
@@ -112,7 +115,6 @@ export class FormConfigDecorator {
     const accumulatedDef = this.objectUtils.deepMerge(preProcessResult.accumulatedDef, item);
 
     switch (type) {
-      //Finally we apply the accumulated hints to the item
       case GuiItemsShortcutType.INPUTS:
         return this.mapToInputWidget(
           this.applyInputSensibleDefaults(
@@ -122,10 +124,7 @@ export class FormConfigDecorator {
         );
       case GuiItemsShortcutType.ACTIONS:
         return this.mapToActionWidget(
-          this.applyActionHints(
-            accumulatedDef as ActionDecorator,
-            preProcessResult.aggregatedSensibleDefaults.actions,
-          ),
+          item as ActionDecorator,
         );
     }
   }
@@ -244,14 +243,6 @@ export class FormConfigDecorator {
     }, item);
   }
 
-  private applyActionHints<FormData extends Record<string, any> = any>(
-    item: ActionDecorator,
-    currentConfig: FormConfig<FormData>,
-  ): ActionDecorator {
-    return {
-      ...item,
-    };
-  }
   private applyDefaultConfig<FormData extends Record<string, any> = any>(
     type: GuiItemsShortcutType,
     accumulatedDef: InputDecorator | ActionDecorator,
