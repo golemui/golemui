@@ -10,16 +10,16 @@ import {
 import {
   ActionDecoratorCallback,
   ActionWidgetDecoratorsLike,
-  FormConfig,
+  DxSelectors,
   FormSensibleDefaults,
   InputDecoratorCallback,
   InputSensibleDefaults,
   InputWidgetDecoratorsLike,
   PartialInputDefCallback,
-} from '../fomConfig.domain';
+} from '../dxSelectors.domain';
 import { ActionWidget, FormWidget, InputWidget, UiState } from '@golemui/core';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
-import { GuiItemsShortcutType } from '../dx/gui/gui.domain';
+import { GuiItemsShortcutType } from '../shortcuts/gui/gui.domain';
 import formInputHintsDecoratorsService, {
   InputSensibleDefaultsService,
 } from './inputSensibleDefaults.service';
@@ -27,7 +27,7 @@ import formInputHintsDecoratorsService, {
 export interface PreProcessResult {
   aggregatedSensibleDefaults: FormSensibleDefaults;
   containsCallbacks: boolean;
-  applicableConfigsInPriorityOrder: FormConfig<FormData>[];
+  applicableConfigsInPriorityOrder: DxSelectors<FormData>[];
   accumulatedDef: InputDecorator | ActionDecorator;
 }
 
@@ -48,7 +48,7 @@ export class FormConfigDecorator {
   >(
     item: InputDecorator | ActionDecorator,
     type: GuiItemsShortcutType,
-    formConfig?: FormConfig<FormData>,
+    formConfig?: DxSelectors<FormData>,
   ): FormWidget<StateKeys, FormData> {
     const preProcessResult = this.preProcess(item, type, formConfig);
     return this.postProcess(preProcessResult, item, type);
@@ -57,9 +57,9 @@ export class FormConfigDecorator {
   public preProcess<FormData extends Record<string, any> = any>(
     item: InputDecorator | ActionDecorator,
     type: GuiItemsShortcutType,
-    formConfig?: FormConfig<FormData>,
+    formConfig?: DxSelectors<FormData>,
   ): PreProcessResult {
-    const applicableConfigsInPriorityOrder: FormConfig<FormData>[] =
+    const applicableConfigsInPriorityOrder: DxSelectors<FormData>[] =
       formConfig != null ? [formConfig] : [];
     if (item?.tags && item.tags.length > 0) {
       const valueTags = item.tags as string[];
@@ -111,7 +111,7 @@ export class FormConfigDecorator {
         `TBI, nesting functions is not supported yet! Whoever called preProcess should check this first!`,
       );
     }
-    // The most powerful configuration should be the one hardcoded in the formDef
+    // The most powerful configuration should be the one hardcoded in the dx
     const accumulatedDef = this.objectUtils.deepMerge(preProcessResult.accumulatedDef, item);
 
     switch (type) {
@@ -246,7 +246,7 @@ export class FormConfigDecorator {
   private applyDefaultConfig<FormData extends Record<string, any> = any>(
     type: GuiItemsShortcutType,
     accumulatedDef: InputDecorator | ActionDecorator,
-    newConfig: FormConfig<FormData>,
+    newConfig: DxSelectors<FormData>,
   ): WidgetItemDecorator | ActionDefCallback | PartialInputDefCallback {
     let defaultValue: ActionWidgetDecoratorsLike | InputWidgetDecoratorsLike | undefined;
     if (type === GuiItemsShortcutType.INPUTS) {

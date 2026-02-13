@@ -1,13 +1,13 @@
-import { FormConfig } from '../services/formDef/fomConfig.domain';
-import { FormDefFacade } from '../services/formDef/formDef.domain';
+import { DxSelectors } from '../services/dx/dxSelectors.domain';
+import { DxDefinitions } from '../services/dx/formDef.domain';
 
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;
   description: string;
-  formDef: FormDefFacade | (() => FormDefFacade);
+  formDef: DxDefinitions | (() => DxDefinitions);
   formData?: T;
   warnings?: string[];
-  formConfig?: FormConfig<T>;
+  formConfig?: DxSelectors<T>;
   formConfig2?: any;
 }
 

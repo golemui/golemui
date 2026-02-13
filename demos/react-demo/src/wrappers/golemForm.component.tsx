@@ -4,9 +4,9 @@ import * as React from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
-import { FormDefFacade, FormEvents } from '../services/formDef/formDef.domain';
-import { FormConfig } from '../services/formDef/fomConfig.domain';
-import formDefs from '../services/formDef/formDefs.service';
+import { DxDefinitions, FormEvents } from '../services/dx/formDef.domain';
+import { DxSelectors } from '../services/dx/dxSelectors.domain';
+import formDefs from '../services/dx/dx.service';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
@@ -32,17 +32,17 @@ const golemLogMiddleware: Core.Middleware<Core.State, Core.Action> =
   };
 
 export interface GolemFormProps<T extends Record<string, any>> {
-  formDef: FormDefFacade<T>;
+  formDef: DxDefinitions<T>;
   formData?: T;
   onConfigProcessed?: (config: any) => void;
-  formConfig?: FormConfig<T>;
+  formConfig?: DxSelectors<T>;
 }
 
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
   const fwFormDefRaw = useMemo(
-    () => formDefs.processFacade<never, FormData>(props.formDef, props.formConfig),
+    () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formConfig),
     [props.formDef, props.formConfig],
   );
 

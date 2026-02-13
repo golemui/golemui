@@ -26,7 +26,7 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     }
   }
 
-  // defineForm() converts the form array into a layout (the formDef.form entry point).
+  // defineForm() converts the form array into a layout (the dx.form entry point).
   // When the form declaration originates from JSON (i.e., not via defineForm()),
   // the layout must be generated here instead.
   if (Array.isArray((formDef as Record<string, any>)['form'])) {

@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
+import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const withValidatorDemo: FormDemoDefinition = {
   title: 'With Validator',

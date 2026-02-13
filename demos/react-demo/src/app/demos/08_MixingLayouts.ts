@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
-import { _guiStack, _guiHorizontalStack } from '../../services/formDef/dx/gui/shortcuts/guiStack.impl';
+import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _guiStack, _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
 export const mixingLayouts: FormDemoDefinition = {
   title: 'Mixing Layouts',

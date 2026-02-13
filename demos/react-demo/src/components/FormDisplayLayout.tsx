@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import GolemForm from '../wrappers/golemForm.component';
-import { FormDefFacade } from '../services/formDef/formDef.domain';
-import { FormConfig } from '../services/formDef/fomConfig.domain';
+import { DxDefinitions } from '../services/dx/formDef.domain';
+import { DxSelectors } from '../services/dx/dxSelectors.domain';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 
@@ -42,12 +42,12 @@ class FormErrorBoundary extends Component<
 export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: FormDefFacade<T> | (() => FormDefFacade<T>);
+  formDef?: DxDefinitions<T> | (() => DxDefinitions<T>);
   formData?: T;
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
-  formConfig?: FormConfig<T>;
+  formConfig?: DxSelectors<T>;
 }
 
 export function FormDisplayLayout<T extends Record<string, any>>({
@@ -63,10 +63,10 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   const [processedConfig, setProcessedConfig] = React.useState<any>(null);
   const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
 
-  // Check if formDef is a function to get source code with helper functions
+  // Check if dx is a function to get source code with helper functions
   const isFormDefFunction = typeof formDef === 'function';
   const resolvedFormDef = React.useMemo(
-    () => (isFormDefFunction ? (formDef as () => FormDefFacade<T>)() : formDef),
+    () => (isFormDefFunction ? (formDef as () => DxDefinitions<T>)() : formDef),
     [formDef, isFormDefFunction]
   );
 
@@ -128,7 +128,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
           )}
         </div>
 
-        {/* Right Column: formDef + formConfig + Warnings */}
+        {/* Right Column: dx + formConfig + Warnings */}
         {resolvedFormDef && (
           <div className={styles.rightColumn}>
             <div>

@@ -1,9 +1,9 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
+import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const simpleDynamicDemo: FormDemoDefinition = {
   title: 'Simple Dynamic',
-  description: 'Form driven from formDef shortcuts, note that age has a validator',
+  description: 'Form driven from dx shortcuts, note that age has a validator',
   formDef: () =>
     _guiInputs({
       name: 'string',

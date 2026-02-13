@@ -1,5 +1,5 @@
 import { InputDecorator } from '../formDef.domain';
-import { InputSensibleDefaults } from '../fomConfig.domain';
+import { InputSensibleDefaults } from '../dxSelectors.domain';
 
 export class InputSensibleDefaultsService {
   private sensibleDefaultValueForProperty<K extends keyof InputDecorator>(

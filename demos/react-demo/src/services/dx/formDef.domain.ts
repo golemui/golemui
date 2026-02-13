@@ -1,7 +1,6 @@
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as Core from '@golemui/core';
-import { ValidGuiShortcut } from './dx/gui/gui.domain';
-import { ProcessedDxFieldsByKey } from './dx/gui/shortcuts/guiFields.impl';
+import { ValidGuiShortcut } from './shortcuts/gui/gui.domain';
 
 export interface DataInputDecorator extends WidgetItemDecorator {
   type: 'text' | 'number' | 'boolean';
@@ -60,19 +59,6 @@ export type ActionDefPartialCallback = (params: DynamicItemDefParams) => Partial
 export type ActionDefCallback = (params: DynamicItemDefParams) => ActionDecorator;
 export type ActionDefOrCallback = ActionDecorator | ActionDefCallback;
 export type ActionDefOrPartialCallback = ActionDecorator | ActionDefPartialCallback;
-
-export type ControllersDefFacade = OneOrMany<ActionDecorator | ActionDefCallback>;
-
-export type OneOrMany<T> = T | T[];
-export type ProcessedDataInputsTuple<FORM_DATA extends Record<string, any>> = [
-  'data_inputs',
-  ProcessedDxFieldsByKey<FORM_DATA>,
-];
-
-export type FormDefTuple<FORM_DATA extends Record<string, any>> =
-  | ['layout', FormDefTuple<FORM_DATA>[]]
-  | ProcessedDataInputsTuple<FORM_DATA>
-  | ['controllers', ControllersDefFacade];
-export type FormDefFacade = ValidGuiShortcut | ValidGuiShortcut[];
+export type DxDefinitions = ValidGuiShortcut | ValidGuiShortcut[];
 
 export type FormEvents = (event: Core.FormEvent) => void;

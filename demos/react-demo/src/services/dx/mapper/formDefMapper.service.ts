@@ -9,15 +9,15 @@ import {
   UiState,
 } from '@golemui/core';
 import { ActionDecorator, ActionDefCallback, ActionDefOrCallback, InputDecorator } from '../formDef.domain';
-import { FormConfig, PartialInputDefCallback } from '../fomConfig.domain';
+import { DxSelectors, PartialInputDefCallback } from '../dxSelectors.domain';
 import formConfigDecorator, { FormConfigDecorator } from './formConfigDecorator.service';
 import {
   GuiItemsShortcutType,
   ReadyToMapInputDef,
   ReadyToMapItemDef,
   ValidGuiShortcut,
-} from '../dx/gui/gui.domain';
-import { InputDefOrCallback } from '../dx/gui/shortcuts/guiFields.impl';
+} from '../shortcuts/gui/gui.domain';
+import { InputDefOrCallback } from '../shortcuts/gui/shortcuts/guiFields.impl';
 
 export type FormWidget<
   StateKeys extends UiState = never,
@@ -28,12 +28,12 @@ export type FormWidget<
   | InputWidget<any, StateKeys, FormData>
   | LayoutWidget<StateKeys, FormData>
   | ActionWidget<StateKeys, FormData>;
-export class FormDefMapper {
+export class FormMapper {
   constructor(private readonly formConfigDecorator: FormConfigDecorator) {}
 
   map<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     guiShortcuts: ValidGuiShortcut[],
-    formConfig?: FormConfig<FormData>,
+    formConfig?: DxSelectors<FormData>,
   ): Form<StateKeys, FormData> {
     const formFields = this.flatMapWidgets(guiShortcuts, formConfig);
     return {
@@ -46,14 +46,14 @@ export class FormDefMapper {
     FormData extends Record<string, any> = any,
   >(
     guiShortcuts: ValidGuiShortcut[],
-    formConfig: FormConfig<FormData> | undefined,
+    formConfig: DxSelectors<FormData> | undefined,
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((item) => this.mapWidget(item, formConfig));
   }
 
   private mapWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     guiShortcut: ValidGuiShortcut,
-    formConfig?: FormConfig<FormData>,
+    formConfig?: DxSelectors<FormData>,
   ): FormWidget<StateKeys, FormData>[] {
     if (guiShortcut.type === 'LAYOUT') {
       const children: FormWidget<StateKeys, FormData>[] = this.flatMapWidgets(
@@ -91,7 +91,7 @@ export class FormDefMapper {
   private mapItem<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     itemType: GuiItemsShortcutType,
     readyToMapFieldOrAction: ReadyToMapItemDef,
-    formConfig?: FormConfig<FormData>,
+    formConfig?: DxSelectors<FormData>,
   ): FormWidget<StateKeys, FormData> {
     let baseProvider: InputDefOrCallback | ActionDefOrCallback;
     if (itemType === GuiItemsShortcutType.INPUTS) {
@@ -127,7 +127,7 @@ export class FormDefMapper {
     params: FunctionWidgetParams<FormData>,
     baseProvider: PartialInputDefCallback | ActionDefCallback,
     itemType: GuiItemsShortcutType,
-    formConfig: FormConfig<FormData> | undefined,
+    formConfig: DxSelectors<FormData> | undefined,
   ): FormWidget<StateKeys, FormData> {
     console.log(`item dynamic definition`, params);
     const hasErrors = params != null && params?.errors != null && params.errors.length > 0;
@@ -169,5 +169,5 @@ export class FormDefMapper {
   }
 }
 
-const formMapperService = new FormDefMapper(formConfigDecorator);
+const formMapperService = new FormMapper(formConfigDecorator);
 export default formMapperService;

@@ -1,5 +1,5 @@
 import { ActionDecorator, ActionDefOrPartialCallback, InputDecorator } from './formDef.domain';
-import { PartialInputDecoratorOrCallback } from './dx/gui/shortcuts/guiFields.impl';
+import { PartialInputDecoratorOrCallback } from './shortcuts/gui/shortcuts/guiFields.impl';
 
 export interface DefaultInputFunctionDefParams {
   data: any;
@@ -37,8 +37,8 @@ export interface FormDecorators {
   inputs?: InputWidgetDecoratorsLike;
   actions?: ActionWidgetDecoratorsLike;
 }
-export interface FormConfig<T extends Record<string, any> = any> {
-  tags?: Record<string, FormConfig<T>>;
+export interface DxSelectors<T extends Record<string, any> = any> {
+  tags?: Record<string, DxSelectors<T>>;
   decorators?: FormDecorators;
   sensibleDefaults?: FormSensibleDefaults;
 }

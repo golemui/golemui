@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/formDef/dx/gui/shortcuts/guiFields.impl';
-import { _guiHorizontalStack } from '../../services/formDef/dx/gui/shortcuts/guiStack.impl';
+import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
 export const allBasicFunctionality: FormDemoDefinition = {
   title: 'All Basic Functionality',

@@ -12,7 +12,7 @@ import {
   ReadyToMapInputDef,
 } from '../gui.domain';
 import inputDefsByKeyService from '../../config/helpers/inputDefsByKey.service';
-import { PartialInputDefCallback } from '../../../fomConfig.domain';
+import { PartialInputDefCallback } from '../../../dxSelectors.domain';
 
 export type DxField = InputDefOrCallback | ValidShortcutType | InputTags;
 export type InputDefOrCallback = InputDecorator | PartialInputDefCallback;

@@ -1,18 +1,18 @@
 import * as React from '@golemui/react';
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { FormDefFacade } from '../services/formDef/formDef.domain';
-import { FormConfig } from '../services/formDef/fomConfig.domain';
+import { DxDefinitions } from '../services/dx/formDef.domain';
+import { DxSelectors } from '../services/dx/dxSelectors.domain';
 import { FormDisplayLayout } from './FormDisplayLayout';
 
 interface DemoFormDisplayProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: FormDefFacade | (() => FormDefFacade);
+  formDef?: DxDefinitions | (() => DxDefinitions);
   formData?: T;
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
-  formConfig?: FormConfig<T>;
+  formConfig?: DxSelectors<T>;
 }
 
 class DemoErrorBoundary extends Component<
