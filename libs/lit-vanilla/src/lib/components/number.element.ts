@@ -61,7 +61,9 @@ export class NumberElement extends LitElement implements Core.WithWidget {
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .step=${this.adapter.templateData.step}
-        .icon=${this.adapter.templateData.icon}
+        .minimum=${this.adapter.templateData.minimum}
+        .maximum=${this.adapter.templateData.maximum}
+        .autoGrow=${this.adapter.templateData.autoGrow}
         .placeholder=${this.adapter.templateData.placeholder}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}

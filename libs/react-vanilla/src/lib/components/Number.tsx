@@ -21,7 +21,9 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const step = templateData.step;
-  const icon = templateData.icon;
+  const minimum = templateData.minimum;
+  const maximum = templateData.maximum;
+  const autoGrow = templateData.autoGrow;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -39,7 +41,9 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
         readOnly={isReadonly}
         value={value}
         step={step}
-        icon={icon}
+        minimum={minimum}
+        maximum={maximum}
+        autoGrow={autoGrow}
         placeholder={placeholder ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}
