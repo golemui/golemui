@@ -1,6 +1,6 @@
 import * as Form from '../../form';
 import * as Widget from '../../form-widget';
-import { flattenForm, uidCollisionErrorMessage } from '../../utils/form';
+import { flattenForm } from '../../utils/form';
 import * as Actions from '../actions';
 import { createInitialState, FormHealth, State } from '../model';
 
@@ -41,7 +41,9 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     };
   }
 
+  console.log('formDef', formDef);
   const result = Form.formDefDecoder.decode(formDef);
+  console.log('result', result);
 
   if (result.isOk()) {
     formHealth = { status: 'ok' };
@@ -81,3 +83,12 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     },
   };
 };
+
+function uidCollisionErrorMessage(
+  existingWidget: Widget.FormWidget<string>,
+  newWidget: Widget.FormWidget<string>,
+) {
+  const getPath = (f: Widget.FormWidget<string>) =>
+    Widget.isInputWidget(f) ? ` at "${f.path}"` : '';
+  return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
+}

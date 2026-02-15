@@ -24,12 +24,3 @@ export function flattenForm(widgets: Widget.FormWidget[]): Widget.FormWidget[] {
     ...(Widget.isLayoutWidget(widget) ? flattenForm(widget.children) : []),
   ]);
 }
-
-export function uidCollisionErrorMessage(
-  existingWidget: Widget.FormWidget<string>,
-  newWidget: Widget.FormWidget<string>,
-) {
-  const getPath = (f: Widget.FormWidget<string>) =>
-    Widget.isInputWidget(f) ? ` at "${f.path}"` : '';
-  return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
-}
