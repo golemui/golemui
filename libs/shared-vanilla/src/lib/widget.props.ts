@@ -53,6 +53,16 @@ export type CalendarProps = {
    */
   nextMonthIcon?: string;
   /**
+   * An optional string that represents the ARIA label for the previous month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  prevMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the next month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  nextMonthAriaLabel?: string;
+  /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
    * The variable `dayFormat` can accept one of the following values:
@@ -126,6 +136,16 @@ export type RangeCalendarProps = {
    */
   nextMonthIcon?: string;
   /**
+   * An optional string that represents the ARIA label for the previous month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  prevMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the next month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  nextMonthAriaLabel?: string;
+  /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
    * The variable `dayFormat` can accept one of the following values:
@@ -192,6 +212,8 @@ export type DatePickerProps = {
   icon?: string;
   prevMonthIcon?: string;
   nextMonthIcon?: string;
+  prevMonthAriaLabel?: string;
+  nextMonthAriaLabel?: string;
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';

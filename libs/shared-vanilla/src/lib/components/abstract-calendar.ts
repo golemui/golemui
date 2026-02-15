@@ -32,6 +32,12 @@ export abstract class AbstractCalendar extends LitElement {
 
   @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
   @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
+  @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
+    | string
+    | undefined = '';
+  @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
+    | string
+    | undefined = '';
   @property({ type: String }) dayFormat: 'numeric' | '2-digit' | undefined = 'numeric';
   @property({ type: String }) weekdayFormat: 'short' | 'long' | 'narrow' | undefined = 'narrow';
   @property({ type: String }) monthFormat:
@@ -93,7 +99,7 @@ export abstract class AbstractCalendar extends LitElement {
               class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
               ?disabled=${!this.canGoPrev()}
               @click=${this.prevMonth}
-              aria-label="Previous month"
+              aria-label=${this.prevMonthAriaLabel ?? 'Previous month'}
             >
               ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
             </button>
@@ -110,7 +116,7 @@ export abstract class AbstractCalendar extends LitElement {
               class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
               ?disabled=${!this.canGoNext()}
               @click=${this.nextMonth}
-              aria-label="Next month"
+              aria-label=${this.nextMonthAriaLabel ?? 'Next month'}"
             >
               ${this.nextMonthIcon ? html`<span class="${this.nextMonthIcon}"></span>` : '>'}
             </button>
