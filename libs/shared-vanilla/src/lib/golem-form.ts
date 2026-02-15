@@ -11,10 +11,13 @@ import * as Props from './widget.props';
 
 type ExtractStates<S> = S extends Record<string, Core.ReactiveExpression> ? keyof S : never;
 
+/**
+ * Make the uid propery optional on all widgets
+ */
 type DeepPartialUid<T> = T extends (...args: infer A) => infer R
   ? (...args: A) => DeepPartialUid<R>
   : T extends any[]
-    ? _DeepPartialUidArray<T>
+    ? DeepPartialUidArray<T>
     : T extends object
       ? {
           [K in keyof T as K extends 'uid' ? never : K]: DeepPartialUid<T[K]>;
@@ -23,8 +26,7 @@ type DeepPartialUid<T> = T extends (...args: infer A) => infer R
         }
       : T;
 
-// Avoid circular reference issues in some TS versions
-type _DeepPartialUidArray<T extends any[]> = {
+type DeepPartialUidArray<T extends any[]> = {
   [P in keyof T]: DeepPartialUid<T[P]>;
 };
 
@@ -34,9 +36,20 @@ type _DeepPartialUidArray<T extends any[]> = {
 //
 // -------------------
 
+// TODO: finish this one
+type ConcatCustomWidgets<
+  FormType extends Record<string, any>,
+  States extends Record<string, Core.ReactiveExpression>,
+  CustomWidget extends Core.FormWidget<ExtractStates<States>, FormType>,
+> = GolemWidget<FormType, ExtractStates<States>, Validator> | CustomWidget;
+
 class GolemFormBuilder<FormType extends Record<string, any>> {
-  public create<States extends Record<string, Core.ReactiveExpression>>(config: {
+  public create<
+    States extends Record<string, Core.ReactiveExpression>,
+    //CustomWidget extends Core.FormWidget<ExtractStates<States>, FormType>,
+  >(config: {
     states?: States;
+    //form: DeepPartialUid<ConcatCustomWidgets<FormType, States, CustomWidget>>[];
     form: DeepPartialUid<GolemWidget<FormType, ExtractStates<States>, Validator>>[];
   }): Core.Form<ExtractStates<States>, FormType> {
     return {
@@ -124,7 +137,7 @@ export const myDemoForm = golemForm<FormType>().create({
 // -------------------
 
 type GolemWidget<FormType extends Record<string, any>, States extends string, V> =
-  | GuiAccordion<FormType, States>
+  | GuiAccordion<FormType, States, V>
   | GuiAlert<FormType, States>
   | GuiButton<FormType, States>
   | GuiCalendar<FormType, States, V>
@@ -133,25 +146,29 @@ type GolemWidget<FormType extends Record<string, any>, States extends string, V>
   | GuiDateinput<FormType, States, V>
   | GuiDatePicker<FormType, States, V>
   | GuiDropdown<FormType, States, V>
-  | GuiFunctionWidget<FormType, States>
+  | GuiFunctionWidget<FormType, States, V>
   | GuiList<FormType, States, V>
   | GuiNumberinput<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
   | GuiRangeCalendar<FormType, States, V>
-  //| GuiRenderer<FormType, States>
+  // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V>
   | GuiSelect<FormType, States, V>
-  | GuiStack<FormType, States>
-  | GuiTabs<FormType, States>
+  | GuiStack<FormType, States, V>
+  | GuiTabs<FormType, States, V>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
   | GuiToggle<FormType, States, V>;
 
-type GuiAccordion<FormType extends Record<string, any>, States extends string> = Core.LayoutWidget<
+type GuiAccordion<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = Core.LayoutWidget<
   States,
   FormType,
   Props.AccordionProps,
-  GolemWidget<FormType, States, Validator>[]
+  GolemWidget<FormType, States, V>[]
 > & { type: 'accordion' };
 
 type GuiAlert<FormType extends Record<string, any>, States extends string> = Core.DisplayWidget<
@@ -210,9 +227,9 @@ type GuiDropdown<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'dropdown' };
 
-type GuiFunctionWidget<FormType extends Record<string, any>, States extends string> = (
+type GuiFunctionWidget<FormType extends Record<string, any>, States extends string, V> = (
   api?: Core.FunctionWidgetParams<FormType>,
-) => Exclude<GolemWidget<FormType, States, Validator>, () => any>;
+) => Exclude<GolemWidget<FormType, States, V>, () => any>;
 
 type GuiList<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
   OptionValue,
@@ -267,18 +284,18 @@ type GuiSelect<FormType extends Record<string, any>, States extends string, V> =
   V
 > & { type: 'select' };
 
-type GuiStack<FormType extends Record<string, any>, States extends string> = Core.LayoutWidget<
+type GuiStack<FormType extends Record<string, any>, States extends string, V> = Core.LayoutWidget<
   States,
   FormType,
   Props.StackProps,
-  GolemWidget<FormType, States, Validator>[]
+  GolemWidget<FormType, States, V>[]
 > & { type: 'stack' };
 
-type GuiTabs<FormType extends Record<string, any>, States extends string> = Core.LayoutWidget<
+type GuiTabs<FormType extends Record<string, any>, States extends string, V> = Core.LayoutWidget<
   States,
   FormType,
   Props.TabsProps,
-  GolemWidget<FormType, States, Validator>[]
+  GolemWidget<FormType, States, V>[]
 > & { type: 'tabs' };
 
 type GuiTextarea<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
