@@ -200,8 +200,10 @@ export type DatePickerProps = {
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
-  icon?: string;
   step?: number;
+  minimum?: number;
+  maximum?: number;
+  autoGrow?: true;
 };
 
 export type CheckboxProps = {

@@ -1,5 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
-import { translations } from '@golemui/apps-shared';
+import { kitchenSink } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/lit-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
@@ -11,7 +11,7 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 
-const mock = translations;
+const mock = kitchenSink;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
