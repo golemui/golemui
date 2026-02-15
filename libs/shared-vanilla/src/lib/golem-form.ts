@@ -55,77 +55,82 @@ class GolemFormBuilder<
     };
   }
 }
-
-/*
-// ---
-// Example Usage
-// ---
-
-type CustomHeadingWidget = {
-  uid: string;
-  kind: 'display';
-  type: 'heading';
-  props: {
-    text: string;
-    level?: number;
-  };
-};
-
-type FormType = { name: string; registerMode: boolean };
-
-// 1. Pass CustomHeadingWidget here.
-// 2. Do NOT pass anything for States (it will be inferred in .create)
-export const myDemoForm = golemForm<FormType, CustomHeadingWidget>().create({
-  states: {
-    registering: '$form.register === true',
-  },
-  form: [
-    {
-      kind: 'input',
-      type: 'textinput',
-      path: 'name',
-      label: 'Label',
-      'label.registering': '',
-      props: { placeholder: (api) => api.$form.name, 'placeholder.registering': 'asas' },
-    },
-    // Custom widget usage
-    {
-      kind: 'display',
-      type: 'heading',
-      props: { text: 'User Details', level: 1 },
-    },
-    (api) => ({
-      kind: 'input',
-      type: 'textinput',
-      path: 'something',
-      label: api?.$form.name ? api?.$form.name : 'No name yet',
-    }),
-    {
-      kind: 'layout',
-      type: 'stack',
-      props: { direction: 'horizontal' },
-      children: [
-        {
-          kind: 'input',
-          type: 'textinput',
-          path: 'surname',
-          props: { hint: 'not type safe' },
-        },
-        // Nested custom widget
-        {
-          kind: 'display',
-          type: 'heading',
-          props: { text: 'Nested Heading', level: 2 },
-        },
-      ],
-    },
-  ],
-});
-*/
+/**
+ * Creates a new GolemFormBuilder instance for building type-safe forms.
+ *
+ * @template FormType - The shape of the form data object
+ * @template CustomWidget - Custom form widget type that extends Core.FormWidget, defaults to never
+ *
+ * @returns {GolemFormBuilder<FormType, CustomWidget>} A new GolemFormBuilder instance configured for the specified form type and custom widgets
+ *
+ * @example
+ * ```typescript
+ * type CustomHeadingWidget = {
+ *   uid: string;
+ *   kind: 'display';
+ *   type: 'heading';
+ *   props: {
+ *     text: string;
+ *     level?: number;
+ *   };
+ * };
+ *
+ * type FormType = { name: string; registerMode: boolean };
+ *
+ * // 1. Pass CustomHeadingWidget here.
+ * // 2. Do NOT pass anything for States (it will be inferred in .create)
+ * export const myDemoForm = golemForm<FormType, CustomHeadingWidget>().create({
+ *   states: {
+ *     registering: '$form.register === true',
+ *   },
+ *   form: [
+ *     {
+ *       kind: 'input',
+ *       type: 'textinput',
+ *       path: 'name',
+ *       label: 'Label',
+ *       'label.registering': '',
+ *       props: { placeholder: (api) => api.$form.name, 'placeholder.registering': 'asas' },
+ *     },
+ *     // Custom widget usage
+ *     {
+ *       kind: 'display',
+ *       type: 'heading',
+ *       props: { text: 'User Details', level: 1 },
+ *     },
+ *     (api) => ({
+ *       kind: 'input',
+ *       type: 'textinput',
+ *       path: 'something',
+ *       label: api?.$form.name ? api?.$form.name : 'No name yet',
+ *     }),
+ *     {
+ *       kind: 'layout',
+ *       type: 'stack',
+ *       props: { direction: 'horizontal' },
+ *       children: [
+ *         {
+ *           kind: 'input',
+ *           type: 'textinput',
+ *           path: 'surname',
+ *           props: { hint: 'not type safe' },
+ *         },
+ *         // Nested custom widget
+ *         {
+ *           kind: 'display',
+ *           type: 'heading',
+ *           props: { text: 'Nested Heading', level: 2 },
+ *         },
+ *       ],
+ *     },
+ *   ],
+ * });
+ * ```
+ */
 export function golemForm<
   FormType extends Record<string, any>,
   CustomWidget extends Core.FormWidget<any, FormType> = never,
->() {
+>(): GolemFormBuilder<FormType, CustomWidget> {
   return new GolemFormBuilder<FormType, CustomWidget>();
 }
 
