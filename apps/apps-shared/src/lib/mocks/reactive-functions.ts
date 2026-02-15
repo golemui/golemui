@@ -1,4 +1,5 @@
-import { defineForm } from '@golemui/core';
+import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/shared-vanilla';
 import { Example } from './types';
 
 type FormType = {
@@ -7,26 +8,34 @@ type FormType = {
 };
 
 const data: FormType = { registerMode: false };
+const states = {
+  register: '$form.registerMode === true',
+};
 
-const form = defineForm<FormType>({
-  states: {
-    register: '$form.registerMode === true',
-  },
+type States = keyof typeof states;
+
+type CustomHeadingWidgetProps = {
+  text: string;
+  level?: number;
+};
+type CustomHeadingWidget = Core.DisplayWidget<States, FormType, CustomHeadingWidgetProps>;
+
+const form = golemForm<FormType, CustomHeadingWidget>().create({
+  states,
   form: [
-    // TODO: why `props.text` as a functino fails in React????
-    // {
-    //   uid: '',
-    //   kind: 'display',
-    //   type: 'heading',
-    //   props: {
-    //     text: ({ $form }) => {
-    //       if ($form.user?.name && !$form.registerMode) {
-    //         return `Hello ${$form.user.name}`;
-    //       }
-    //       return 'Register';
-    //     },
-    //   },
-    // },
+    {
+      uid: '',
+      kind: 'display',
+      type: 'heading',
+      props: {
+        text: ({ $form }) => {
+          if ($form.user?.name && !$form.registerMode) {
+            return `Hello ${$form.user.name}`;
+          }
+          return 'Register';
+        },
+      },
+    },
     {
       uid: '',
       kind: 'input',
@@ -35,11 +44,11 @@ const form = defineForm<FormType>({
       label: ({ $form }) => {
         return $form.registerMode ? 'Name in Register' : 'Name in Login';
       },
-      validator: ({ $form }) => {
-        return $form.registerMode
-          ? { type: 'string', required: true }
-          : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
-      },
+      // validator: ({ $form }) => {
+      //   return $form.registerMode
+      //     ? { type: 'string', required: true }
+      //     : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
+      // },
     },
     (api) => ({
       uid: '',
@@ -48,7 +57,7 @@ const form = defineForm<FormType>({
       path: 'user.lastName',
       label: api?.errors
         ? 'ERRORS!!!!!!!'
-        : api?.$form?.user?.name
+        : api?.$form.user?.name
           ? `${api.$form.user.name}'s last name`
           : 'Last Name',
       validator: {
