@@ -172,7 +172,9 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
 
       const searchFields =
         templateData.searchFields ??
-        ([templateData.labelField, templateData.valueField].filter((field) => !!field) as string[]);
+        ([templateData.labelField!, templateData.valueField!].filter(
+          (field) => !!field,
+        ) as string[]);
       const hasSearchFields = searchFields.length > 0;
       const items = templateData.items || [];
       const filteredItems = items.filter((item: any) => {
@@ -275,7 +277,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           id=${this.widget.uid}
           .uid=${this.widget.uid}
           .value=${templateData.value ?? ''}
-          .valueField=${templateData.valueField as string}
+          .valueField=${templateData.valueField! as string}
           .items=${this._isFiltering && !asyncFiltering ? this._filteredItems : templateData.items}
           .itemHeight=${templateData.itemHeight}
           .height=${templateData.height}

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Core from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
 import { DropdownProps, ListItem, OptionValue } from '@golemui/shared-vanilla';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';
 
@@ -190,7 +190,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
 
         const searchFields =
           templateData.searchFields ??
-          ([templateData.labelField, templateData.valueField].filter(
+          ([templateData.labelField!, templateData.valueField!].filter(
             (field) => !!field,
           ) as string[]);
         const hasSearchFields = searchFields.length > 0;
@@ -305,7 +305,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
           id={`${uid}-list`}
           uid={uid}
           value={value ?? ''}
-          valueField={templateData.valueField as string}
+          valueField={templateData.valueField! as string}
           items={isFiltering && !asyncFiltering ? filteredItems : templateData.items}
           itemHeight={templateData.itemHeight}
           height={templateData.height}
