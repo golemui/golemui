@@ -24,7 +24,6 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
   states,
   form: [
     {
-      uid: '',
       kind: 'display',
       type: 'heading',
       props: {
@@ -37,21 +36,19 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
       },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'user.name',
       label: ({ $form }) => {
         return $form.registerMode ? 'Name in Register' : 'Name in Login';
       },
-      // validator: ({ $form }) => {
-      //   return $form.registerMode
-      //     ? { type: 'string', required: true }
-      //     : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
-      // },
+      validator: ({ $form }) => {
+        return $form.registerMode
+          ? { type: 'string', required: true }
+          : { type: 'custom', allowedNames: ['Joan', 'Raul'] };
+      },
     },
     (api) => ({
-      uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'user.lastName',
@@ -66,7 +63,6 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
       },
     }),
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       path: 'registerMode',
@@ -85,7 +81,6 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
       },
     },
     {
-      uid: '',
       kind: 'action',
       type: 'button',
       label: ({ $form }) => {
