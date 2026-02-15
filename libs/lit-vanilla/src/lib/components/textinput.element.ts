@@ -61,7 +61,6 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
-        .iconPosition=${this.adapter.templateData.iconPosition}
         .placeholder=${this.adapter.templateData.placeholder}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}

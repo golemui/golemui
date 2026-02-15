@@ -43,14 +43,11 @@ type ProductItem = {
     }
   `,
   template: `<div
-    role="option"
     class="product-renderer"
     [class.disabled]="disabled"
     [class.selected]="selected"
     [class.focused]="focused"
     [class.odd]="index % 2"
-    [attr.aria-selected]="selected"
-    [attr.aria-disabled]="disabled"
   >
     <div>
       <h2>{{ template.product }}</h2>

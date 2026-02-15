@@ -80,7 +80,6 @@ export class GuiTextarea extends LitElement {
 
       const classes = {
         'gui-widget-icon': true,
-        'gui-widget-icon--right': true,
         [templateData.icon]: true,
       };
       textareaIcon = html`<span class=${classMap(classes)}></span>`;
@@ -112,7 +111,6 @@ export class GuiTextarea extends LitElement {
       'min-height': `${templateData.minimumHeight}px`,
     };
 
-    // We can't use @query('textarea') with Angular because it's too lazy
     const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
 
     if (this.autoGrow && textarea) {

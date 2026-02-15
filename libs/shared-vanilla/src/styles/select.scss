@@ -2,9 +2,6 @@ gui-select {
   display: block;
 
   .gui-widget {
-    &-icon--right {
-      right: 2.5rem;
-    }
     &::after {
       content: '';
       border: solid;
@@ -12,7 +9,7 @@ gui-select {
       height: 0.5rem;
       pointer-events: none;
       position: absolute;
-      right: 1.2rem;
+      inset-inline-end: 1.2rem;
       top: 47%;
       width: 0.5rem;
       transform: translateY(-60%) rotate(45deg);
@@ -24,12 +21,7 @@ gui-select {
     appearance: none;
 
     &.gui-select--icon {
-      padding-left: 2.5rem;
-    }
-
-    &.gui-select--icon-right {
-      padding-left: var(--gui-space-gap);
-      padding-right: var(--gui-icon-space-gap);
+      padding-inline-start: 2.5rem;
     }
   }
 }

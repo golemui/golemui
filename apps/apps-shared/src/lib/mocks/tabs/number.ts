@@ -8,6 +8,16 @@ export const number = (): any => ({
       kind: 'input',
       type: 'number',
       path: 'number',
+      label: 'Temperature',
+      props: {
+        hint: 'This is a hint',
+        placeholder: 'ºC',
+        minimum: -45,
+        maximum: 42,
+        step: 0.5,
+        autoGrow: true,
+      },
+      validator: { type: 'number', minimum: -45, maximum: 42, required: true },
     },
     {
       uid: '',
@@ -21,19 +31,20 @@ export const number = (): any => ({
       uid: '',
       kind: 'input',
       type: 'number',
-      path: 'numberPhone',
+      path: 'percentage',
       props: {
-        placeholder: 'Please enter your phone number',
+        placeholder: '%',
       },
     },
     {
       uid: '',
       kind: 'input',
       type: 'number',
-      path: 'numberWithHint',
+      path: 'percentageWithHint',
+      label: 'Percentage',
       props: {
         hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
+        placeholder: '%',
       },
     },
     {
@@ -42,9 +53,8 @@ export const number = (): any => ({
       type: 'number',
       path: 'numberIcon',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
         hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
+        placeholder: 'ms',
       },
     },
     {
@@ -53,10 +63,8 @@ export const number = (): any => ({
       type: 'number',
       path: 'numberIconRight',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
-        iconPosition: 'right',
         hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
+        placeholder: 'Inch',
       },
     },
     {
@@ -64,8 +72,9 @@ export const number = (): any => ({
       kind: 'input',
       type: 'number',
       path: 'height',
+      label: 'Height',
       props: {
-        placeholder: 'Please enter your height in meters (min 0 and max 2.5)',
+        hint: 'In meters',
         step: 0.01,
       },
       validator: { type: 'number', minimum: 0, maximum: 2.5, required: true },

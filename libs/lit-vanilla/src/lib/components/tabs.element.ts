@@ -98,14 +98,14 @@ export class TabsElement extends LitElement implements Core.WithWidget {
       'gui-tabs--end-shadow': !this.isEndVisible,
     };
 
-    return html`<nav class=${classMap(navClasses)} role="tablist" id=${this.widget.uid}>
-        <ul>
+    return html`<nav class=${classMap(navClasses)} id=${this.widget.uid}>
+        <ul role="tablist">
           <li role="presentation" id="start-sentinel" class="gui-sentinel"></li>
           ${this.adapter.templateData.tabs
             ? repeat(
                 this.adapter.templateData.tabs,
                 (tab, index) => html`
-                  <li>
+                  <li role="presentation">
                     <button
                       type="button"
                       role="tab"
@@ -135,7 +135,6 @@ export class TabsElement extends LitElement implements Core.WithWidget {
         (section, index) =>
           html`<section
             role="tabpanel"
-            tabindex="0"
             data-cy=${`tabpanel_${this.widget.uid}_${index}`}
             id=${`tabpanel_${this.widget.uid}_${index}`}
             ?hidden=${section.uid !== this.activeTab &&
@@ -165,20 +164,27 @@ export class TabsElement extends LitElement implements Core.WithWidget {
     const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab);
     const tabButtons = Array.from(this.tabButtons);
+    const isRTL = window.getComputedStyle(this).direction === 'rtl';
 
     switch (event.key) {
-      case 'ArrowLeft':
-        if (currentIndex > 0) {
-          this.activeTab = tabs[currentIndex - 1].uid;
-          tabButtons[currentIndex - 1].focus();
+      case 'ArrowLeft': {
+        const nextIndex = currentIndex + (isRTL ? 1 : -1);
+
+        if (nextIndex >= 0 && nextIndex < tabs.length) {
+          this.activeTab = tabs[nextIndex].uid;
+          tabButtons[nextIndex].focus();
         }
         break;
-      case 'ArrowRight':
-        if (currentIndex < tabs.length - 1) {
-          this.activeTab = tabs[currentIndex + 1].uid;
-          tabButtons[currentIndex + 1].focus();
+      }
+      case 'ArrowRight': {
+        const nextIndex = currentIndex + (isRTL ? -1 : 1);
+
+        if (nextIndex >= 0 && nextIndex < tabs.length) {
+          this.activeTab = tabs[nextIndex].uid;
+          tabButtons[nextIndex].focus();
         }
         break;
+      }
       case 'Home':
         this.activeTab = tabs[0].uid;
         tabButtons[0].focus();

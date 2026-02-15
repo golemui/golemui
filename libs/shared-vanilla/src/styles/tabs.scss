@@ -10,7 +10,7 @@
       pointer-events: none;
     }
 
-    nav[role='tablist'] {
+    nav {
       position: relative;
       overflow: hidden;
       padding: 0;
@@ -46,7 +46,7 @@
         opacity: 1;
       }
 
-      ul {
+      ul[role='tablist'] {
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;
@@ -116,12 +116,6 @@
 
       &[hidden] {
         display: none;
-      }
-
-      &:focus {
-        outline: 0;
-        border: var(--gui-color-fg) solid 1px;
-        box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
       }
     }
   }

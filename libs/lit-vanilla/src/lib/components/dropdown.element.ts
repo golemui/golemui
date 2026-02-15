@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { DropdownProps, ListItem } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
@@ -255,6 +255,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
         .errors=${templateData.errors}
         .touched=${templateData.touched}
         .required=${templateData.validator?.required}
+        .native=${false}
       ></gui-label>
 
       <div class="gui-widget">
@@ -271,6 +272,8 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           @input=${this._onInput}
           @focusout=${this._onFocusOutInput}
           @focus=${this._onFocus}
+          aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
+          aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
         />
 
         <gui-list

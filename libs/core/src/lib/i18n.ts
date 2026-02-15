@@ -90,6 +90,18 @@ export const isTranslationConfig = (value: unknown): value is TranslationConfig 
 };
 
 /**
+ * Determines the text direction (left-to-right or right-to-left) based on the given language code.
+ *
+ * @param {string} lang - The BCP 47 language tag of the current locale (e.g., 'en-US', 'es', 'fr-CA').
+ * @return {'ltr' | 'rtl'} Returns 'ltr' for left-to-right or 'rtl' for right-to-left text direction.
+ */
+export function getDirectionFromLanguage(lang: string): 'ltr' | 'rtl' {
+  const script = new Intl.Locale(lang).maximize().script;
+  const rtlScripts = ['Arab', 'Hebr', 'Thaa', 'Syrc', 'Tfng', 'Adlm', 'Rohg'];
+  return rtlScripts.includes(script || '') ? 'rtl' : 'ltr';
+}
+
+/**
  * Default no-op translator.
  *
  * This implementation performs no localization and simply returns the

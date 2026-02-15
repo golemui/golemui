@@ -14,7 +14,6 @@ export type TextinputProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 export type CurrencyProps = {
@@ -24,7 +23,6 @@ export type CurrencyProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 export type TextareaProps = {
@@ -54,6 +52,16 @@ export type CalendarProps = {
    * that will be used to visually represent the "next month" navigation button.
    */
   nextMonthIcon?: string;
+  /**
+   * An optional string that represents the ARIA label for the previous month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  prevMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the next month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  nextMonthAriaLabel?: string;
   /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
@@ -128,6 +136,16 @@ export type RangeCalendarProps = {
    */
   nextMonthIcon?: string;
   /**
+   * An optional string that represents the ARIA label for the previous month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  prevMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the next month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  nextMonthAriaLabel?: string;
+  /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
    * The variable `dayFormat` can accept one of the following values:
@@ -194,6 +212,8 @@ export type DatePickerProps = {
   icon?: string;
   prevMonthIcon?: string;
   nextMonthIcon?: string;
+  prevMonthAriaLabel?: string;
+  nextMonthAriaLabel?: string;
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
@@ -202,9 +222,10 @@ export type DatePickerProps = {
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
   step?: number;
+  minimum?: number;
+  maximum?: number;
+  autoGrow?: true;
 };
 
 export type CheckboxProps = {
@@ -253,7 +274,6 @@ export type Option = {
 export type SelectProps = {
   hint?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
   options: Option[];
   placeholder?: string;
   labelField?: string;

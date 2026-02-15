@@ -136,24 +136,27 @@ export class GuiDate extends LitElement {
     val: string,
   ) {
     return html`
-      <input
-        type="text"
-        inputmode="numeric"
-        class="gui-date-input__part ${type === 'year' ? 'gui-year-input__year' : ''}"
-        data-type=${type}
-        maxlength=${maxLen}
-        placeholder=${placeholder}
-        tabindex=${tabIndex}
-        ?required=${this.required}
-        ?disabled=${this.disabled}
-        ?readonly=${this.readOnly}
-        .value=${live(val)}
-        @keydown=${this.handleKeyDown}
-        @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}
-        @focus=${this.handleFocus}
-        @blur=${(e: FocusEvent) => this.handleBlur(e, type)}
-        @change=${(e: Event) => this.handleChange(e, type)}
-      />
+      <div class="gui-date-input__touch-target">
+        <input
+          type="text"
+          inputmode="numeric"
+          class="gui-date-input__part ${type === 'year' ? 'gui-date-input__year' : ''}"
+          data-type=${type}
+          maxlength=${maxLen}
+          placeholder=${placeholder}
+          tabindex=${tabIndex}
+          ?required=${this.required}
+          ?disabled=${this.disabled}
+          ?readonly=${this.readOnly}
+          .value=${live(val)}
+          @keydown=${this.handleKeyDown}
+          @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}
+          @focus=${this.handleFocus}
+          @blur=${(e: FocusEvent) => this.handleBlur(e, type)}
+          @change=${(e: Event) => this.handleChange(e, type)}
+        />
+        <div class="gui-date-input__visual-underline"></div>
+      </div>
     `;
   }
 
@@ -198,6 +201,8 @@ export class GuiDate extends LitElement {
   private handleKeyUp(event: KeyboardEvent, type: 'day' | 'month' | 'year') {
     if (this.readOnly) return;
 
+    const isRTL = window.getComputedStyle(this).direction === 'rtl';
+    console.log('is RTL', isRTL);
     const input = event.target as HTMLInputElement;
     const inputs = Array.from(this.querySelectorAll('input'));
     const index = inputs.indexOf(input);
@@ -230,18 +235,22 @@ export class GuiDate extends LitElement {
         this.validateAndEmit();
         break;
       }
-      case 'ArrowLeft':
-        if (index > 0) {
-          inputs[index - 1].focus();
-          inputs[index - 1].select();
+      case 'ArrowLeft': {
+        const prevIdx = isRTL ? index + 1 : index - 1;
+        if (prevIdx >= 0 && prevIdx < inputs.length) {
+          inputs[prevIdx].focus();
+          inputs[prevIdx].select();
         }
         break;
-      case 'ArrowRight':
-        if (index < inputs.length - 1) {
-          inputs[index + 1].focus();
-          inputs[index + 1].select();
+      }
+      case 'ArrowRight': {
+        const nextIdx = isRTL ? index - 1 : index + 1;
+        if (nextIdx >= 0 && nextIdx < inputs.length) {
+          inputs[nextIdx].focus();
+          inputs[nextIdx].select();
         }
         break;
+      }
     }
   }
 

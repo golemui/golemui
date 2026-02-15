@@ -8,6 +8,7 @@ import {
   OnDestroy,
   OnInit,
   output,
+  signal,
   Type,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -40,6 +41,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
   localization = input<Core.I18nTranslator>();
+  direction = signal<'ltr' | 'rtl'>('ltr');
 
   // OUTPUTS
   protected formHealth = output<Core.FormHealth>();
@@ -86,7 +88,10 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       },
     });
 
+    this.direction.set(Core.getDirectionFromLanguage(this.context.localization.lang));
+
     this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
+      this.direction.set(Core.getDirectionFromLanguage(lang));
       this.context.store.dispatch({
         type: 'SET_LANGUAGE',
         payload: {

@@ -83,6 +83,8 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
           .value=${this.adapter.templateData.value}
           .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
           .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
+          .prevMonthAriaLabel=${this.adapter.templateData.prevMonthAriaLabel}
+          .nextMonthAriaLabel=${this.adapter.templateData.nextMonthAriaLabel}
           .dayFormat=${this.adapter.templateData.dayFormat}
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}

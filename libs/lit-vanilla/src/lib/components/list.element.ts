@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { ListItem, ListProps } from '@golemui/shared-vanilla';
 import { consume, provide } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
@@ -80,11 +80,11 @@ export class ListElement extends LitElement implements Core.WithWidget {
         .errors=${data.errors}
         .touched=${data.touched}
         .required=${data.validator?.required}
+        .native=${false}
       ></gui-label>
 
       <div class="gui-widget">
         <gui-list
-          id=${this.widget.uid}
           .uid=${this.widget.uid}
           .value=${data.value ?? ''}
           .valueField=${data.valueField}
@@ -95,6 +95,8 @@ export class ListElement extends LitElement implements Core.WithWidget {
           ?touched=${data.touched}
           ?disabled=${data.disabled}
           ?readonly=${data.readonly}
+          aria-labelledby=${data.label ? `${this.widget.uid}_label` : nothing}
+          aria-describedby=${data.hint ? `${this.widget.uid}_hint` : nothing}
           @gui-range-change=${this._onRangeChange}
           @gui-update-items=${this._onUpdateItems}
           @gui-focus-change=${this._onFocusChange}

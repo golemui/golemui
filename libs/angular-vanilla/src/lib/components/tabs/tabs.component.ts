@@ -26,6 +26,7 @@ import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui
   },
 })
 export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithWidget {
+  elementRef = inject(ElementRef);
   tabButtons = viewChildren<ElementRef>('tabButtonRef');
   startSentinel = viewChild.required<ElementRef>('startSentinel');
   endSentinel = viewChild.required<ElementRef>('endSentinel');
@@ -73,20 +74,27 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.Wit
   onKeyDown($event: KeyboardEvent) {
     const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
+    const isRTL = window.getComputedStyle(this.elementRef.nativeElement).direction === 'rtl';
 
     switch ($event.key) {
-      case 'ArrowLeft':
-        if (currentIndex > 0) {
-          this.activeTab.set(tabs[currentIndex - 1].uid);
-          this.tabButtons()[currentIndex - 1].nativeElement.focus();
+      case 'ArrowLeft': {
+        const nextIndex = currentIndex + (isRTL ? 1 : -1);
+
+        if (nextIndex >= 0 && nextIndex < tabs.length) {
+          this.activeTab.set(tabs[nextIndex].uid);
+          this.tabButtons()[nextIndex].nativeElement.focus();
         }
         break;
-      case 'ArrowRight':
-        if (currentIndex < tabs.length - 1) {
-          this.activeTab.set(tabs[currentIndex + 1].uid);
-          this.tabButtons()[currentIndex + 1].nativeElement.focus();
+      }
+      case 'ArrowRight': {
+        const nextIndex = currentIndex + (isRTL ? -1 : 1);
+
+        if (nextIndex >= 0 && nextIndex < tabs.length) {
+          this.activeTab.set(tabs[nextIndex].uid);
+          this.tabButtons()[nextIndex].nativeElement.focus();
         }
         break;
+      }
       case 'Home':
         this.activeTab.set(tabs[0].uid);
         this.tabButtons()[0].nativeElement.focus();

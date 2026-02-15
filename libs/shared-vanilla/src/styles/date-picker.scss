@@ -10,7 +10,7 @@
         height: 0.5rem;
         pointer-events: none;
         position: absolute;
-        right: 1.2rem;
+        inset-inline-end: 1.2rem;
         top: 1.3rem;
         width: 0.5rem;
         transform: translateY(-60%) rotate(45deg);
@@ -28,36 +28,8 @@
       }
     }
 
-    .gui-date-input {
-      input[type='text'] {
-        font-family: monospace;
-        border: 0;
-        padding: 0;
-        background: transparent;
-        border-radius: 0;
-        width: 24px;
-        text-align: center;
-
-        &.gui-year-input__year {
-          width: 40px;
-        }
-
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          appearance: none;
-          margin: 0;
-        }
-      }
-
-      &.gui-calendar--icon {
-        padding-left: 2.5rem;
-      }
-    }
-
     // Month Calendar
-    .gui-calendar__container {
+    .gui-calendar-input {
       width: 300px;
       position: absolute;
       border-radius: var(--gui-radius);
@@ -68,48 +40,12 @@
 
     .gui-calendar__header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
     }
 
     .gui-calendar__weekday {
       text-align: center;
-    }
-
-    .gui-calendar__month-button {
-      padding: 0.25rem;
-      border-radius: 100%;
-
-      &-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 32px;
-        height: 32px;
-      }
-
-      &-icon--prev::before {
-        content: '';
-        width: 0.5rem;
-        height: 0.5rem;
-        margin-left: 2px;
-        border: solid;
-        border-width: 0 2px 2px 0;
-        pointer-events: none;
-        right: 29%;
-        top: 33%;
-        transform: translateY(0%) rotate(135deg);
-      }
-      &-icon--next::before {
-        content: '';
-        width: 0.5rem;
-        height: 0.5rem;
-        margin-right: 2px;
-        border: solid;
-        border-width: 0 2px 2px 0;
-        pointer-events: none;
-        transform: translateY(0%) rotate(-45deg);
-      }
     }
 
     .gui-calendar__day-button {

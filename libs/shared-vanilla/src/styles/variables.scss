@@ -3,7 +3,7 @@
   --gui-color-bg: #fff;
   --gui-color-bg-disabled: #dcdcdc;
   --gui-color-fg: #1a1a1a;
-  --gui-color-fg--secondary: #646464;
+  --gui-color-fg--secondary: #999;
   --gui-color-border: #d0d0d0;
   --gui-color-primary: #007acc;
   --gui-color-primary--dark: #004777;
@@ -31,7 +31,7 @@
   /* Typography & layout */
   --gui-space-gap: 0.75rem;
   --gui-space-gap--inner: 0.5rem;
-  --gui-icon-space-gap: 1.5rem;
+  --gui-icon-space-gap: 2.5rem;
 
   /* Stack spacing */
   --gui-stack-space-gap: 1rem;
@@ -70,7 +70,7 @@
     --gui-color-bg-disabled: #434650;
     --gui-color-fg: #f2f3f5;
     --gui-color-border: #3b3e47;
-    --gui-color-primary: #58a6ff;
+    --gui-color-primary: #007acc;
     --gui-color-error: #ef5350;
   }
 }

@@ -9,6 +9,7 @@
   [errors]="templateData.errors"
   [touched]="templateData.touched"
   [required]="templateData.validator?.required"
+  [native]="false"
 ></gui-label>
 
 <div class="gui-widget">
@@ -25,6 +26,8 @@
     (input)="onInput($event)"
     (focus)="onInputFocus()"
     (focusout)="onFocusOutInput($event)"
+    [attr.aria-labelledby]="templateData.label ? widget.uid + '_label' : null"
+    [attr.aria-describedby]="templateData.hint ? widget.uid + '_hint' : null"
   />
   <gui-list
     #listRef

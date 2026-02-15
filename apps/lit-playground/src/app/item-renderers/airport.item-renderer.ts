@@ -13,12 +13,7 @@ export const airportItemRenderer = (ctx: ItemRenderContext<AirportItem>): Templa
   };
 
   return html`
-    <div
-      role="option"
-      class=${classMap(classes)}
-      aria-selected=${ctx.selected ? 'true' : 'false'}
-      aria-disabled=${ctx.disabled ? 'true' : 'false'}
-    >
+    <div class=${classMap(classes)}>
       <div>
         <p>${ctx.template.name}</p>
       </div>

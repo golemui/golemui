@@ -42,6 +42,7 @@ export class GuiCalendar extends AbstractCalendar {
     return html`
       <button
         type="button"
+        role="gridcell"
         class=${classMap(classes)}
         tabindex=${day.isFocusable ? 0 : -1}
         ?disabled=${!day.isCurrentMonth || day.isDisabled}
@@ -49,6 +50,7 @@ export class GuiCalendar extends AbstractCalendar {
         @click=${() => this.selectDate(day)}
         @focusout=${this.onFocusOut}
         @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
+        aria-selected=${day.isSelected}
       >
         ${day.dayLabel}
       </button>

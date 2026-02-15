@@ -52,15 +52,18 @@
       box-shadow 0.2s;
 
     &:focus {
-      outline: var(--gui-color-fg) solid 1px;
+      outline: 0;
+      border: var(--gui-color-fg) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
     }
 
     &[aria-invalid='true'] {
       border-color: var(--gui-color-error);
 
       &:focus {
-        outline: var(--gui-color-error) solid 1px;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
+        outline: 0;
+        border: var(--gui-color-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
       }
     }
 
@@ -82,10 +85,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
-    &--right {
-      right: 0;
-    }
   }
 
   &-hint {
