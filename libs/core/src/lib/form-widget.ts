@@ -84,25 +84,16 @@ type MakeProps<
   FormType extends Record<string, any> = any,
 > = {
   [K in keyof Props]: Props[K] extends string | (string | undefined)
-    ? Props[K] | Localizable | WidgetPropertyFunction<Props[K], FormType>
+    ? // We reconstruct the union to preserve literals.
+      // 1. Props[K]: Keeps e.g. 'horizontal' | 'vertical'
+      // 2. Exclude<Localizable, string>: Adds the object part of Localizable { key: ... }
+      // 3. (string & {}): Adds generic string support WITHOUT swallowing the literals
+      | Props[K]
+        | WidgetPropertyFunction<Props[K], FormType>
+        | Exclude<Localizable, string>
+        | (string & {})
     : Props[K] | WidgetPropertyFunction<Props[K], FormType>;
 };
-
-// type MakeProps_old<
-//   Props extends Record<string, any> = any,
-//   FormType extends Record<string, any> = any,
-// > = Partial<
-//   Record<
-//     keyof Props,
-//     | string
-//     | boolean
-//     | number
-//     | any[]
-//     | Localizable
-//     | Record<string, any>
-//     | WidgetPropertyFunction<any, FormType>
-//   >
-// >;
 
 export type DisplayWidget<
   StateKeys extends UiState = never,
@@ -177,9 +168,10 @@ export type LayoutWidget<
 export type NonFunctionWidget<
   StateKeys extends UiState = never,
   FormType extends Record<string, any> = any,
+  Validator = any,
 > =
   | DisplayWidget<StateKeys, FormType>
-  | InputWidget<any, StateKeys, FormType>
+  | InputWidget<any, StateKeys, FormType, any, Validator>
   | LayoutWidget<StateKeys, FormType>
   | ActionWidget<StateKeys, FormType>;
 
@@ -187,6 +179,7 @@ export type NonFunctionWidget<
 export type FunctionWidget<
   StateKeys extends UiState = never,
   FormType extends Record<string, any> = any,
+  Validator = any,
 > = {
   uid?: Uid;
   type?: string;
@@ -195,13 +188,16 @@ export type FunctionWidget<
    * Function that calculates the widget definition.
    * Function Widgets are called at least once with `undefined`.
    */
-  (api?: FunctionWidgetParams<FormType>): NonFunctionWidget<StateKeys, FormType>;
+  (api?: FunctionWidgetParams<FormType>): NonFunctionWidget<StateKeys, FormType, Validator>;
 };
 
 export type FormWidget<
   StateKeys extends UiState = never,
   FormType extends Record<string, any> = any,
-> = NonFunctionWidget<StateKeys, FormType> | FunctionWidget<StateKeys, FormType>;
+  Validator = any,
+> =
+  | NonFunctionWidget<StateKeys, FormType, Validator>
+  | FunctionWidget<StateKeys, FormType, Validator>;
 
 // --------------------------------
 //
