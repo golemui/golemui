@@ -39,7 +39,15 @@ gui-toggle {
       }
 
       &:focus + .gui-toggle--slider {
-        outline: var(--gui-color-fg) solid 1px;
+        outline: 0;
+        border: var(--gui-color-fg) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+      }
+
+      &:focus + .gui-toggle--slider[aria-invalid='true'] {
+        outline: 0;
+        border: var(--gui-color-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
       }
 
       &:checked + .gui-toggle--slider:before {
@@ -64,10 +72,6 @@ gui-toggle {
 
       &[aria-invalid='true'] {
         border-color: var(--gui-color-error);
-
-        &:focus {
-          box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 25%, transparent);
-        }
       }
 
       &:before {
