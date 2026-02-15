@@ -36,21 +36,13 @@ type DeepPartialUidArray<T extends any[]> = {
 //
 // -------------------
 
-// TODO: finish this one
-type ConcatCustomWidgets<
+class GolemFormBuilder<
   FormType extends Record<string, any>,
-  States extends Record<string, Core.ReactiveExpression>,
-  CustomWidget extends Core.FormWidget<ExtractStates<States>, FormType>,
-> = GolemWidget<FormType, ExtractStates<States>, Validator> | CustomWidget;
-
-class GolemFormBuilder<FormType extends Record<string, any>> {
-  public create<
-    States extends Record<string, Core.ReactiveExpression>,
-    //CustomWidget extends Core.FormWidget<ExtractStates<States>, FormType>,
-  >(config: {
+  CustomWidget extends Core.FormWidget<any, FormType> = never,
+> {
+  public create<States extends Record<string, Core.ReactiveExpression>>(config: {
     states?: States;
-    //form: DeepPartialUid<ConcatCustomWidgets<FormType, States, CustomWidget>>[];
-    form: DeepPartialUid<GolemWidget<FormType, ExtractStates<States>, Validator>>[];
+    form: DeepPartialUid<GolemWidget<FormType, ExtractStates<States>, Validator, CustomWidget>>[];
   }): Core.Form<ExtractStates<States>, FormType> {
     return {
       states: config.states,
@@ -58,24 +50,32 @@ class GolemFormBuilder<FormType extends Record<string, any>> {
         uid: 'gui-root-uid',
         type: 'stack',
         kind: 'layout',
-        children: config.form,
+        children: config.form as any,
       } as Core.LayoutWidget<ExtractStates<States>, FormType>,
     };
   }
 }
 
-export function golemForm<FormType extends Record<string, any>>() {
-  return new GolemFormBuilder<FormType>();
-}
-
-// ---
-// Example
-// ---
-
 /*
+// ---
+// Example Usage
+// ---
+
+type CustomHeadingWidget = {
+  uid: string;
+  kind: 'display';
+  type: 'heading';
+  props: {
+    text: string;
+    level?: number;
+  };
+};
+
 type FormType = { name: string; registerMode: boolean };
 
-export const myDemoForm = golemForm<FormType>().create({
+// 1. Pass CustomHeadingWidget here.
+// 2. Do NOT pass anything for States (it will be inferred in .create)
+export const myDemoForm = golemForm<FormType, CustomHeadingWidget>().create({
   states: {
     registering: '$form.register === true',
   },
@@ -87,6 +87,12 @@ export const myDemoForm = golemForm<FormType>().create({
       label: 'Label',
       'label.registering': '',
       props: { placeholder: (api) => api.$form.name, 'placeholder.registering': 'asas' },
+    },
+    // Custom widget usage
+    {
+      kind: 'display',
+      type: 'heading',
+      props: { text: 'User Details', level: 1 },
     },
     (api) => ({
       kind: 'input',
@@ -105,30 +111,23 @@ export const myDemoForm = golemForm<FormType>().create({
           path: 'surname',
           props: { hint: 'not type safe' },
         },
+        // Nested custom widget
         {
-          kind: 'layout',
-          type: 'stack',
-          children: [
-            {
-              kind: 'input',
-              type: 'checkbox',
-              path: 'yay',
-
-              props: {
-                hint: 'not type safe',
-                checkboxPosition: ({ $form }) => {
-                  return $form.registerMode ? 'left' : 'right';
-                },
-              },
-            },
-            { kind: 'action', type: 'button' },
-          ],
+          kind: 'display',
+          type: 'heading',
+          props: { text: 'Nested Heading', level: 2 },
         },
       ],
     },
   ],
 });
 */
+export function golemForm<
+  FormType extends Record<string, any>,
+  CustomWidget extends Core.FormWidget<any, FormType> = never,
+>() {
+  return new GolemFormBuilder<FormType, CustomWidget>();
+}
 
 // -------------------
 //
@@ -136,8 +135,13 @@ export const myDemoForm = golemForm<FormType>().create({
 //
 // -------------------
 
-type GolemWidget<FormType extends Record<string, any>, States extends string, V> =
-  | GuiAccordion<FormType, States, V>
+type GolemWidget<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType> = never,
+> =
+  | GuiAccordion<FormType, States, V, CustomWidget>
   | GuiAlert<FormType, States>
   | GuiButton<FormType, States>
   | GuiCalendar<FormType, States, V>
@@ -146,7 +150,7 @@ type GolemWidget<FormType extends Record<string, any>, States extends string, V>
   | GuiDateinput<FormType, States, V>
   | GuiDatePicker<FormType, States, V>
   | GuiDropdown<FormType, States, V>
-  | GuiFunctionWidget<FormType, States, V>
+  | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
   | GuiNumberinput<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
@@ -154,21 +158,23 @@ type GolemWidget<FormType extends Record<string, any>, States extends string, V>
   // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V>
   | GuiSelect<FormType, States, V>
-  | GuiStack<FormType, States, V>
-  | GuiTabs<FormType, States, V>
+  | GuiStack<FormType, States, V, CustomWidget>
+  | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
-  | GuiToggle<FormType, States, V>;
+  | GuiToggle<FormType, States, V>
+  | CustomWidget;
 
 type GuiAccordion<
   FormType extends Record<string, any>,
   States extends string,
   V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
 > = Core.LayoutWidget<
   States,
   FormType,
   Props.AccordionProps,
-  GolemWidget<FormType, States, V>[]
+  GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'accordion' };
 
 type GuiAlert<FormType extends Record<string, any>, States extends string> = Core.DisplayWidget<
@@ -227,9 +233,14 @@ type GuiDropdown<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'dropdown' };
 
-type GuiFunctionWidget<FormType extends Record<string, any>, States extends string, V> = (
+type GuiFunctionWidget<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
+> = (
   api?: Core.FunctionWidgetParams<FormType>,
-) => Exclude<GolemWidget<FormType, States, V>, () => any>;
+) => Exclude<GolemWidget<FormType, States, V, CustomWidget>, () => any>;
 
 type GuiList<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
   OptionValue,
@@ -284,18 +295,28 @@ type GuiSelect<FormType extends Record<string, any>, States extends string, V> =
   V
 > & { type: 'select' };
 
-type GuiStack<FormType extends Record<string, any>, States extends string, V> = Core.LayoutWidget<
+type GuiStack<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
+> = Core.LayoutWidget<
   States,
   FormType,
   Props.StackProps,
-  GolemWidget<FormType, States, V>[]
+  GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'stack' };
 
-type GuiTabs<FormType extends Record<string, any>, States extends string, V> = Core.LayoutWidget<
+type GuiTabs<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
+> = Core.LayoutWidget<
   States,
   FormType,
   Props.TabsProps,
-  GolemWidget<FormType, States, V>[]
+  GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'tabs' };
 
 type GuiTextarea<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<

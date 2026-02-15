@@ -1,5 +1,5 @@
-import { defineForm, InputWidget } from '@golemui/core';
-import { TextinputProps } from '@golemui/shared-vanilla';
+import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/shared-vanilla';
 import { Example } from './types';
 
 const data = { user: { id: 'ASDFGHJKL4567' } };
@@ -14,13 +14,18 @@ const states = {
 };
 
 type States = keyof typeof states;
-type TextInput = InputWidget<string, States, any, TextinputProps>;
+type FormType = typeof data;
 
-const form = defineForm({
+type CustomHeadingWidgetProps = {
+  text: string;
+  level?: number;
+};
+type CustomHeadingWidget = Core.DisplayWidget<States, FormType, CustomHeadingWidgetProps>;
+
+const form = golemForm<FormType, CustomHeadingWidget>().create({
   states,
   form: [
     {
-      uid: '',
       kind: 'display',
       type: 'heading',
       props: {
@@ -29,7 +34,6 @@ const form = defineForm({
       },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Id',
@@ -40,9 +44,8 @@ const form = defineForm({
         'placeholder.register:minor': 'asdada',
         'icon.register': 'asdad',
       },
-    } satisfies TextInput,
+    },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Name',
@@ -51,7 +54,6 @@ const form = defineForm({
       'validator.register': { type: 'string', required: true },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Email',
@@ -59,7 +61,6 @@ const form = defineForm({
       validator: { type: 'string', required: true, format: 'email' },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Password',
@@ -78,7 +79,6 @@ const form = defineForm({
       on: { 'change.register': 'checkPasswordMatch' },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'Confirm Password',
@@ -90,17 +90,15 @@ const form = defineForm({
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
-      type: 'textinput',
+      type: 'number',
       label: 'User Age',
       path: 'user.age',
       defaultValue: 0,
-      validator: { type: 'string', required: true },
+      validator: { type: 'number', required: true },
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Height',
@@ -110,7 +108,6 @@ const form = defineForm({
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Play Basketball',
@@ -118,7 +115,6 @@ const form = defineForm({
       include: { in: ['register:tall'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Register',
@@ -129,7 +125,6 @@ const form = defineForm({
       path: 'registerMode',
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Accept Terms',
@@ -137,7 +132,6 @@ const form = defineForm({
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Parental Approval!',
@@ -145,7 +139,6 @@ const form = defineForm({
       include: { in: ['register:minor'] },
     },
     {
-      uid: '',
       kind: 'display',
       type: 'alert',
       props: {
@@ -158,7 +151,6 @@ const form = defineForm({
       },
     },
     {
-      uid: '',
       kind: 'action',
       type: 'button',
       label: 'Login',
