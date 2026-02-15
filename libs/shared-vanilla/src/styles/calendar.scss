@@ -63,6 +63,12 @@ gui-calendar {
       border-radius: var(--gui-radius);
       cursor: pointer;
 
+      &:focus {
+        outline: 0;
+        border: var(--gui-color-fg) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+      }
+
       &:hover {
         border: 1px solid var(--gui-color-border);
         background-color: var(--gui-color-fg--secondary);

@@ -9,6 +9,23 @@ gui-date {
     flex-direction: row;
     gap: 0;
 
+    &[aria-invalid='true'] {
+      &:has(input) {
+        border-color: var(--gui-color-error);
+      }
+      &:has(input:focus) {
+        outline: 0;
+        border: var(--gui-color-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
+      }
+    }
+
+    &:has(input:focus) {
+      outline: 0;
+      border: var(--gui-color-fg) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+    }
+
     .gui-date-input__touch-target {
       display: block;
       position: relative;
@@ -58,6 +75,8 @@ gui-date {
       }
 
       &:focus {
+        box-shadow: none;
+
         & ~ .gui-date-input__visual-underline {
           display: block;
         }
