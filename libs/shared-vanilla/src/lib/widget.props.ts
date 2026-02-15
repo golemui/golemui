@@ -265,6 +265,7 @@ export type ListItem<T> = {
   value: OptionValue;
 };
 
+type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
 export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
@@ -272,9 +273,9 @@ export type DropdownProps<T> = {
   /**
    * Property widget used to display in the input when an item option is selected
    */
-  labelField?: keyof T;
-  valueField?: keyof T;
-  searchFields?: (keyof T)[];
+  labelField?: ItemKeys<T>;
+  valueField?: ItemKeys<T>;
+  searchFields?: ItemKeys<T>[];
   height?: number;
   itemHeight?: number;
   /**
