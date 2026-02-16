@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { MountComponentFn } from '../utils';
 
 export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
-  describe('Include/Exclude fields with boolean values', () => {
+  describe('Include.in/Exclude.in fields with boolean values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
@@ -92,7 +92,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
     });
   });
 
-  describe('Include/Exclude fields with number values', () => {
+  describe('Include.in/Exclude.in fields with number values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
@@ -182,7 +182,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
     });
   });
 
-  describe('Include/Exclude fields with string values', () => {
+  describe('Include.in/Exclude.in fields with string values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
@@ -269,6 +269,105 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="textinput2_textinput"]').type('def');
         cy.get('[data-cy="textinput1_textinput2_textinput"]').should('not.exist');
       });
+    });
+  });
+
+  describe('Include.when/Exclude.when fields', () => {
+    it('should show field when include.when expression is met', () => {
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'toggle',
+              kind: 'input',
+              type: 'checkbox',
+              path: 'showDetails',
+              label: 'Show Details',
+            },
+            {
+              uid: 'details',
+              kind: 'input',
+              type: 'textinput',
+              path: 'details',
+              label: 'Details',
+              include: { when: '$form.showDetails === true' },
+            },
+          ],
+        }),
+      });
+
+      cy.get('[data-cy="details_textinput"]').should('not.exist');
+      cy.get('[data-cy="toggle_checkbox"]').click();
+      cy.get('[data-cy="details_textinput"]').should('exist');
+      cy.get('[data-cy="toggle_checkbox"]').click();
+      cy.get('[data-cy="details_textinput"]').should('not.exist');
+    });
+
+    it('should hide field when exclude.when expression is met', () => {
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'mode',
+              kind: 'input',
+              type: 'checkbox',
+              path: 'isSimple',
+              label: 'Simple Mode',
+            },
+            {
+              uid: 'advanced_feature',
+              kind: 'input',
+              type: 'textinput',
+              path: 'advanced',
+              label: 'Advanced Setting',
+              exclude: { when: '$form.isSimple === true' },
+            },
+          ],
+        }),
+      });
+
+      cy.get('[data-cy="advanced_feature_textinput"]').should('exist');
+      cy.get('[data-cy="mode_checkbox"]').click();
+      cy.get('[data-cy="advanced_feature_textinput"]').should('not.exist');
+    });
+
+    it('should evaluate complex expressions involving multiple values', () => {
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'qty',
+              kind: 'input',
+              type: 'number',
+              path: 'quantity',
+              label: 'Quantity',
+            },
+            {
+              uid: 'price',
+              kind: 'input',
+              type: 'number',
+              path: 'unitPrice',
+              label: 'Price',
+            },
+            {
+              uid: 'warning',
+              kind: 'display',
+              type: 'alert',
+              props: { text: 'High Value Order!' },
+              include: { when: '($form.quantity * $form.unitPrice) > 1000' },
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-alert [role="alert"]').should('not.exist');
+
+      cy.get('[data-cy="qty_number"]').type('10');
+      cy.get('[data-cy="price_number"]').type('200'); // Total 2000
+      cy.get('.gui-alert [role="alert"]').should('exist');
+
+      cy.get('[data-cy="price_number"]').clear().type('50'); // Total 500
+      cy.get('.gui-alert [role="alert"]').should('not.exist');
     });
   });
 };
