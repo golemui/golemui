@@ -41,9 +41,7 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     };
   }
 
-  console.log('formDef', formDef);
   const result = Form.formDefDecoder.decode(formDef);
-  console.log('result', result);
 
   if (result.isOk()) {
     formHealth = { status: 'ok' };
