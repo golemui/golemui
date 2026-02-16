@@ -1,34 +1,41 @@
-import { defineForm } from '@golemui/core';
+import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/shared-vanilla';
 import { Example } from './types';
 
-type FormData = {
+type FormType = {
   registerMode: boolean;
   user?: { name: string };
 };
 
-const data: FormData = { registerMode: false };
+const data: FormType = { registerMode: false };
+const states = {
+  register: '$form.registerMode === true',
+};
 
-const form = defineForm<FormData>({
-  states: {
-    register: '$form.registerMode === true',
-  },
+type States = keyof typeof states;
+
+type CustomHeadingWidgetProps = {
+  text: string;
+  level?: number;
+};
+type CustomHeadingWidget = Core.DisplayWidget<States, FormType, CustomHeadingWidgetProps>;
+
+const form = golemForm<FormType, CustomHeadingWidget>().create({
+  states,
   form: [
-    // TODO: why `props.text` as a functino fails in React????
-    // {
-    //   uid: '',
-    //   kind: 'display',
-    //   type: 'heading',
-    //   props: {
-    //     text: ({ $form }) => {
-    //       if ($form.user?.name && !$form.registerMode) {
-    //         return `Hello ${$form.user.name}`;
-    //       }
-    //       return 'Register';
-    //     },
-    //   },
-    // },
     {
-      uid: '',
+      kind: 'display',
+      type: 'heading',
+      props: {
+        text: ({ $form }) => {
+          if ($form.user?.name && !$form.registerMode) {
+            return `Hello ${$form.user.name}`;
+          }
+          return 'Register';
+        },
+      },
+    },
+    {
       kind: 'input',
       type: 'textinput',
       path: 'user.name',
@@ -42,13 +49,12 @@ const form = defineForm<FormData>({
       },
     },
     (api) => ({
-      uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'user.lastName',
       label: api?.errors
         ? 'ERRORS!!!!!!!'
-        : api?.$form?.user?.name
+        : api?.$form.user?.name
           ? `${api.$form.user.name}'s last name`
           : 'Last Name',
       validator: {
@@ -57,7 +63,6 @@ const form = defineForm<FormData>({
       },
     }),
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       path: 'registerMode',
@@ -76,7 +81,6 @@ const form = defineForm<FormData>({
       },
     },
     {
-      uid: '',
       kind: 'action',
       type: 'button',
       label: ({ $form }) => {

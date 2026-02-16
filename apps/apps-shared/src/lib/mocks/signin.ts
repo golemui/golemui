@@ -1,20 +1,31 @@
-import { defineForm } from '@golemui/core';
+import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/shared-vanilla';
 import { Example } from './types';
 
 const data = { user: { id: 'ASDFGHJKL4567' } };
 
-const form = defineForm({
-  states: {
-    register: '$form.registerMode === true',
-    'register:tall': '$form.user.height > 180',
-    'register:minor': '$form.user.age < 18',
-    'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
-    'register:adult': '$form.user.age >= 18',
-    'register:adult:canSubmit': '$form.terms === true',
-  },
+const states = {
+  register: '$form.registerMode === true',
+  'register:tall': '$form.user.height > 180',
+  'register:minor': '$form.user.age < 18',
+  'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
+  'register:adult': '$form.user.age >= 18',
+  'register:adult:canSubmit': '$form.terms === true',
+};
+
+type States = keyof typeof states;
+type FormType = typeof data;
+
+type CustomHeadingWidgetProps = {
+  text: string;
+  level?: number;
+};
+type CustomHeadingWidget = Core.DisplayWidget<States, FormType, CustomHeadingWidgetProps>;
+
+const form = golemForm<FormType, CustomHeadingWidget>().create({
+  states,
   form: [
     {
-      uid: '',
       kind: 'display',
       type: 'heading',
       props: {
@@ -23,15 +34,18 @@ const form = defineForm({
       },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Id',
       path: 'user.id',
       readonly: true,
+      props: {
+        placeholder: 'asasad',
+        'placeholder.register:minor': 'asdada',
+        'icon.register': 'asdad',
+      },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Name',
@@ -40,7 +54,6 @@ const form = defineForm({
       'validator.register': { type: 'string', required: true },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Email',
@@ -48,7 +61,6 @@ const form = defineForm({
       validator: { type: 'string', required: true, format: 'email' },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Password',
@@ -67,7 +79,6 @@ const form = defineForm({
       on: { 'change.register': 'checkPasswordMatch' },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'Confirm Password',
@@ -79,17 +90,15 @@ const form = defineForm({
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
-      type: 'textinput',
+      type: 'number',
       label: 'User Age',
       path: 'user.age',
       defaultValue: 0,
-      validator: { type: 'string', required: true },
+      validator: { type: 'number', required: true },
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       label: 'User Height',
@@ -99,7 +108,6 @@ const form = defineForm({
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Play Basketball',
@@ -107,7 +115,6 @@ const form = defineForm({
       include: { in: ['register:tall'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Register',
@@ -118,7 +125,6 @@ const form = defineForm({
       path: 'registerMode',
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Accept Terms',
@@ -126,7 +132,6 @@ const form = defineForm({
       include: { in: ['register'] },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Parental Approval!',
@@ -134,7 +139,6 @@ const form = defineForm({
       include: { in: ['register:minor'] },
     },
     {
-      uid: '',
       kind: 'display',
       type: 'alert',
       props: {
@@ -147,7 +151,6 @@ const form = defineForm({
       },
     },
     {
-      uid: '',
       kind: 'action',
       type: 'button',
       label: 'Login',

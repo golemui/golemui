@@ -60,28 +60,31 @@ export function objectWithSuffix<T extends Record<string, any>>(
 ): jd.Decoder<T> {
   return new jd.Decoder<T>((json: any) => {
     if (typeof json !== 'object' || json === null) {
-      return jd.err<T>(`${decoderName} failed. Expected object literal, got ${typeof json}`);
+      return jd.err<T>(`<${decoderName}> failed. Expected object literal, got "${typeof json}"`);
     }
 
     const out: Record<string, any> = {};
 
-    for (const [rawKey, value] of Object.entries(json)) {
-      const specEntry = Object.entries(specs).find(([key, spec]) =>
-        spec.suffixed ? rawKey === key || rawKey.startsWith(key + '.') : rawKey === key,
-      );
-
-      if (!specEntry) {
-        return jd.err<T>(`${decoderName} failed. Unexpected object key "${rawKey}"`);
-      }
-
-      const [, spec] = specEntry;
-      const res = spec.decoder.decode(value);
-
+    for (const [specKey, spec] of Object.entries(specs)) {
+      // decode normal properties (without state)
+      const res = spec.decoder.decode(json[specKey]);
       if (!res.isOk()) {
-        return jd.err<T>(`${decoderName} failed with ${res.error}`);
+        return jd.err<T>(`<${decoderName}> failed at "${specKey}" with ${res.error}`);
       }
+      out[specKey] = res.value;
 
-      out[rawKey] = res.value;
+      // decode properties with state
+      if (spec.suffixed) {
+        for (const [jsonKey, jsonValue] of Object.entries(json)) {
+          if (jsonKey.startsWith(specKey + '.')) {
+            const res = spec.decoder.decode(jsonValue);
+            if (!res.isOk()) {
+              return jd.err<T>(`<${decoderName}> failed at "${jsonKey}" with ${res.error}`);
+            }
+            out[jsonKey] = res.value;
+          }
+        }
+      }
     }
 
     return jd.ok<T>(out as T);
