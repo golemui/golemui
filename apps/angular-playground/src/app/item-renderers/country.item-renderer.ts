@@ -31,17 +31,16 @@ type CountryItem = {
       background-color: #2c303c;
     }
     .selected {
-      color: black;
-      background-color: lightgray;
+      color: var(--gui-color-bg);
+      background-color: var(--gui-color-fg);
       font-weight: bold;
     }
     .focused {
-      border: 2px solid black;
+      box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
     }
   `,
   template: `<div
     class="country-renderer"
-    [class.disabled]="disabled"
     [class.selected]="selected"
     [class.focused]="focused"
     [class.odd]="index % 2"
