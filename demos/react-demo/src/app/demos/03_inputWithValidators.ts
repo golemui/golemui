@@ -1,0 +1,26 @@
+import { FormDemoDefinition } from '../formRegistry.domain';
+import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+
+export const inputWithValidatorsDemo: FormDemoDefinition = {
+  title: 'Input Validators',
+  description: 'Inputs with validators: minLength on text, minimum on number',
+  formDef: () =>
+    _guiInputs({
+      name: {
+        type: 'text',
+        label: 'Name',
+        placeholder: 'At least 3 characters',
+        validator: {
+          minLength: 3,
+        },
+      },
+      age: {
+        type: 'number',
+        label: 'Age',
+        placeholder: 'Must be >= 18',
+        validator: {
+          minimum: 18,
+        },
+      },
+    }),
+};

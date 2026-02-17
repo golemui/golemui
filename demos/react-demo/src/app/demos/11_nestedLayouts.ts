@@ -1,10 +1,10 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _guiStack, _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
+import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
-export const mixingLayouts: FormDemoDefinition = {
-  title: 'Mixing Layouts',
-  description: 'Basic layout mixing',
+export const nestedLayoutsDemo: FormDemoDefinition = {
+  title: 'Nested Layouts',
+  description: 'Composing multiple _guiInputs and _guiHorizontalStack in an array for mixed layout',
   formDef: () => [
     _guiInputs({
       name: 'string',
@@ -13,8 +13,8 @@ export const mixingLayouts: FormDemoDefinition = {
     }),
     _guiHorizontalStack(
       _guiInputs({
-        married: 'number',
-        withChildren: 'number',
+        married: 'boolean',
+        withChildren: 'boolean',
       }),
     ),
     _guiInputs({

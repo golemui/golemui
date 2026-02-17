@@ -1,24 +1,32 @@
 import * as React from '@golemui/react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
 import {
-  shortcutsAndObjectsDemo,
-  simpleDynamicDemo,
-  simplestDemo,
-  withValidatorDemo,
+  inputShortcutsDemo,
+  inputFullObjectsDemo,
+  inputWithValidatorsDemo,
+  inputMixedDemo,
+  inputDynamicDemo,
+  submitButtonDemo,
+  customButtonDemo,
+  multipleButtonsDemo,
+  horizontalStackDemo,
+  verticalStackDemo,
+  nestedLayoutsDemo,
+  gslSuppressLabelsDemo,
+  gslSuppressPlaceholdersDemo,
+  gslInputDecoratorDemo,
+  gslInputDecoratorMixedDemo,
+  gslActionsDemo,
+  gslActionByIdDemo,
+  gslLayoutByIdDemo,
+  gslRootSuppressStackDemo,
+  gslRootSuppressSubmitDemo,
+  gslRootWithChildrenDemo,
+  tagsBasicDemo,
+  tagsMultipleDemo,
+  fullCombinationDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
-import { formConfigSimplest } from './demos/05_formConfig';
-import { formConfigShortcut } from './demos/06_formConfigShortcut';
-import { formConfigMixed } from './demos/07_formConfigMixed';
-import { simplestTagging } from './demos/09_tagging';
-import { mixingLayouts } from './demos/08_MixingLayouts';
-import { allBasicFunctionality } from './demos/10_allBasicFuncitonality';
-import { manyTypes } from './demos/11_addingManyTypes';
-import { formDemoDefinition } from './demos/12_submitButton';
-import { configureDynamicButton } from './demos/13_submitButtonDynamic';
-import { horizontalRootDemo } from './demos/14_horizontalRoot';
-import { manualLayoutDemo } from './demos/15_suppressAutomaticStack';
-import { customSubmitDemo } from './demos/16_customSubmit';
 
 export interface FormData {
   name: string;
@@ -28,22 +36,30 @@ export interface FormData {
 
 // Register all forms
 formRegistry.registerAll([
-  simplestDemo,
-  withValidatorDemo,
-  shortcutsAndObjectsDemo,
-  simpleDynamicDemo,
-  formConfigSimplest,
-  formConfigShortcut,
-  formConfigMixed,
-  simplestTagging,
-  mixingLayouts,
-  allBasicFunctionality,
-  manyTypes,
-  formDemoDefinition,
-  configureDynamicButton,
-  horizontalRootDemo,
-  manualLayoutDemo,
-  customSubmitDemo,
+  inputShortcutsDemo,
+  inputFullObjectsDemo,
+  inputWithValidatorsDemo,
+  inputMixedDemo,
+  inputDynamicDemo,
+  submitButtonDemo,
+  customButtonDemo,
+  multipleButtonsDemo,
+  horizontalStackDemo,
+  verticalStackDemo,
+  nestedLayoutsDemo,
+  gslSuppressLabelsDemo,
+  gslSuppressPlaceholdersDemo,
+  gslInputDecoratorDemo,
+  gslInputDecoratorMixedDemo,
+  gslActionsDemo,
+  gslActionByIdDemo,
+  gslLayoutByIdDemo,
+  gslRootSuppressStackDemo,
+  gslRootSuppressSubmitDemo,
+  gslRootWithChildrenDemo,
+  tagsBasicDemo,
+  tagsMultipleDemo,
+  fullCombinationDemo,
 ]);
 
 export function App() {

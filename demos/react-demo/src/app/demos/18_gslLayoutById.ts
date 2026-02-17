@@ -2,9 +2,9 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 import { _gslLayoutById } from '../../services/dx/shortcuts/gsl/gslLayoutById.impl';
 
-export const horizontalRootDemo: FormDemoDefinition = {
-  title: 'Horizontal Root Layout',
-  description: 'Override the auto-generated root layout orientation to horizontal via _gslLayoutById',
+export const gslLayoutByIdDemo: FormDemoDefinition = {
+  title: 'GSL Layout By ID',
+  description: 'Using _gslLayoutById to override the auto-generated root layout direction to horizontal',
   formDef: () =>
     _guiInputs({
       name: 'string',
