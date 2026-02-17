@@ -11,12 +11,6 @@ type CountryItem = {
   selector: 'app-country-item-renderer',
   standalone: true,
   styles: `
-    h2,
-    p {
-      margin: 0;
-      padding: 0;
-    }
-
     .country-renderer {
       display: flex;
       flex-direction: row;

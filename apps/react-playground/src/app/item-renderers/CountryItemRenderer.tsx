@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListItemRendererProps } from '@golemui/react-vanilla';
-import './product-item-renderer.scss';
+import './country-item-renderer.scss';
 import { cn } from '@golemui/react';
 
 type CountryItem = {
@@ -17,7 +17,7 @@ export function CountryItemRenderer({
   focused,
 }: ListItemRendererProps<CountryItem>) {
   const classes = {
-    'product-renderer': true,
+    'country-renderer': true,
     disabled: disabled,
     selected: selected,
     focused: focused,

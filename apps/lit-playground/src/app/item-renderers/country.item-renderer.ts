@@ -10,7 +10,7 @@ type CountryItem = {
 
 export const countryItemRenderer = (ctx: ItemRenderContext<CountryItem>): TemplateResult => {
   const classes = {
-    'product-renderer': true,
+    'country-renderer': true,
     disabled: !!ctx.disabled,
     selected: !!ctx.selected,
     focused: !!ctx.focused,
