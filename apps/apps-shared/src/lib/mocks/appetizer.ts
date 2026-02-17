@@ -1,6 +1,8 @@
 import { defineForm, FunctionWidgetParams } from '@golemui/core';
 import { Example } from './types';
 
+const minDate = new Date().toISOString().split('T')[0];
+
 const coins: { [key: string]: string } = {
   AU: 'AUD',
   BR: 'BRL',
@@ -157,6 +159,7 @@ const form = defineForm({
         default: 'Select Preferred Dates',
       },
       props: {
+        minDate: minDate,
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
