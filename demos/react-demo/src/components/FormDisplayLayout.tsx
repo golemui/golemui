@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import GolemForm from '../wrappers/golemForm.component';
 import { DxDefinitions } from '../services/dx/formDef.domain';
-import { DxSelectors } from '../services/dx/dxSelectors.domain';
+import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 
@@ -42,12 +42,12 @@ class FormErrorBoundary extends Component<
 export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: DxDefinitions<T> | (() => DxDefinitions<T>);
+  formDef?: DxDefinitions | (() => DxDefinitions);
   formData?: T;
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
-  formConfig?: DxSelectors<T>;
+  formSelectors?: () => GslSelectorsInput;
 }
 
 export function FormDisplayLayout<T extends Record<string, any>>({
@@ -58,7 +58,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   warnings,
   formKey,
   showingSingleForm = false,
-  formConfig,
+  formSelectors,
 }: FormDisplayLayoutProps<T>) {
   const [processedConfig, setProcessedConfig] = React.useState<any>(null);
   const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
@@ -66,7 +66,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   // Check if dx is a function to get source code with helper functions
   const isFormDefFunction = typeof formDef === 'function';
   const resolvedFormDef = React.useMemo(
-    () => (isFormDefFunction ? (formDef as () => DxDefinitions<T>)() : formDef),
+    () => (isFormDefFunction ? (formDef as () => DxDefinitions)() : formDef),
     [formDef, isFormDefFunction]
   );
 
@@ -77,7 +77,14 @@ export function FormDisplayLayout<T extends Record<string, any>>({
         ? (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
         : serializeFormDefForDisplay(formDef))
     : '';
-  const serializedFormConfig = formConfig ? serializeFormDefForDisplay(formConfig) : '';
+  const resolvedFormSelectors = React.useMemo(
+    () => (formSelectors ? formSelectors() : undefined),
+    [formSelectors]
+  );
+
+  const serializedFormSelectors = formSelectors
+    ? formSelectors.toString().replace(/^\(\)\s*=>\s*/, '')
+    : '';
 
   const handleConfigProcessed = React.useCallback((config: any) => {
     setProcessedConfig((prev: any) => {
@@ -121,7 +128,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
                   formDef={resolvedFormDef}
                   formData={formData}
                   onConfigProcessed={handleConfigProcessed}
-                  formConfig={formConfig}
+                  formSelectors={resolvedFormSelectors}
                 />
               </FormErrorBoundary>
             </div>
@@ -138,11 +145,11 @@ export function FormDisplayLayout<T extends Record<string, any>>({
               </pre>
             </div>
 
-            {formConfig && (
+            {serializedFormSelectors && (
               <div>
-                <h4 className={styles.sectionTitle}>formConfig</h4>
+                <h4 className={styles.sectionTitle}>formSelectors</h4>
                 <pre className={styles.codeBlock}>
-                  <code>{serializedFormConfig}</code>
+                  <code>{serializedFormSelectors}</code>
                 </pre>
               </div>
             )}

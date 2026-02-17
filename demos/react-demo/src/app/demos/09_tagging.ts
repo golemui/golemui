@@ -1,5 +1,7 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _gslTag } from '../../services/dx/shortcuts/gsl/gslTag.impl';
+import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const simplestTagging: FormDemoDefinition = {
   title: 'Simplest Tagging',
@@ -9,20 +11,11 @@ export const simplestTagging: FormDemoDefinition = {
     age: 'number',
     height: ['number', 'no_label'],
   }),
-  formConfig: {
-    tags: {
-      no_label: {
-        decorators: {
-          inputs: (currentDef) => ({
-            placeholder: currentDef.path + ' I am special!',
-          }),
-        },
-        sensibleDefaults: {
-          inputs: {
-            suppressAutomaticLabels: true,
-          }
-        }
-      },
-    },
-  },
+  formSelectors: () =>
+    _gslTag('no_label',
+      _gslInputs({
+        suppressAutomaticLabels: true,
+        decorator: (currentDef) => ({ placeholder: currentDef.path + ' I am special!' }),
+      }),
+    ),
 };

@@ -15,7 +15,4 @@ export const formDemoDefinition: FormDemoDefinition = {
       gender: 'string',
     }),
   ],
-  formConfig: {
-    // onSubmit: (data: any) => alert(JSON.stringify(data)),
-  },
 };

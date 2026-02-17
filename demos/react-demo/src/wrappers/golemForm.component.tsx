@@ -5,7 +5,7 @@ import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
 import { DxDefinitions, FormEvents } from '../services/dx/formDef.domain';
-import { DxSelectors } from '../services/dx/dxSelectors.domain';
+import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
 import formDefs from '../services/dx/dx.service';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
@@ -32,18 +32,18 @@ const golemLogMiddleware: Core.Middleware<Core.State, Core.Action> =
   };
 
 export interface GolemFormProps<T extends Record<string, any>> {
-  formDef: DxDefinitions<T>;
+  formDef: DxDefinitions;
   formData?: T;
   onConfigProcessed?: (config: any) => void;
-  formConfig?: DxSelectors<T>;
+  formSelectors?: GslSelectorsInput;
 }
 
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
   const fwFormDefRaw = useMemo(
-    () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formConfig),
-    [props.formDef, props.formConfig],
+    () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formSelectors),
+    [props.formDef, props.formSelectors],
   );
 
   const fwFormDef = Array.isArray(fwFormDefRaw) ? fwFormDefRaw[0] : fwFormDefRaw;

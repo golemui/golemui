@@ -3,6 +3,7 @@ import {
   ActionDefCallback,
   InputDecorator,
   InputTags,
+  PartialInputDefCallback,
   ValidShortcutType,
 } from '../../../formDef.domain';
 import {
@@ -12,7 +13,6 @@ import {
   ReadyToMapInputDef,
 } from '../gui.domain';
 import inputDefsByKeyService from '../../config/helpers/inputDefsByKey.service';
-import { PartialInputDefCallback } from '../../../dxSelectors.domain';
 
 export type DxField = InputDefOrCallback | ValidShortcutType | InputTags;
 export type InputDefOrCallback = InputDecorator | PartialInputDefCallback;

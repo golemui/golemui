@@ -1,7 +1,7 @@
 import * as React from '@golemui/react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { DxDefinitions } from '../services/dx/formDef.domain';
-import { DxSelectors } from '../services/dx/dxSelectors.domain';
+import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
 import { FormDisplayLayout } from './FormDisplayLayout';
 
 interface DemoFormDisplayProps<T extends Record<string, any>> {
@@ -12,7 +12,7 @@ interface DemoFormDisplayProps<T extends Record<string, any>> {
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
-  formConfig?: DxSelectors<T>;
+  formSelectors?: () => GslSelectorsInput;
 }
 
 class DemoErrorBoundary extends Component<
@@ -95,7 +95,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
   warnings,
   formKey,
   showingSingleForm = false,
-  formConfig,
+  formSelectors,
 }: DemoFormDisplayProps<T>) {
   return (
     <DemoErrorBoundary title={title} formKey={formKey} showingSingleForm={showingSingleForm}>
@@ -107,7 +107,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
         warnings={warnings}
         formKey={formKey}
         showingSingleForm={showingSingleForm}
-        formConfig={formConfig}
+        formSelectors={formSelectors}
       />
     </DemoErrorBoundary>
   );

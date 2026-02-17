@@ -1,6 +1,8 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
+import { _gslTag } from '../../services/dx/shortcuts/gsl/gslTag.impl';
+import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const allBasicFunctionality: FormDemoDefinition = {
   title: 'All Basic Functionality',
@@ -8,8 +10,8 @@ export const allBasicFunctionality: FormDemoDefinition = {
   formDef: () => [
     _guiInputs({
       name: ['string', 'no_label'],
-      age: ({ error }: any) => ({
-        label: error ? 'Age must be at least 18' : 'Age',
+      age: (params) => ({
+        label: params.errors != null && params.errors.length > 0 ? 'Age must be at least 18' : 'Age',
         type: 'number',
         placeholder: 'age >= 18',
         validator: {
@@ -28,44 +30,21 @@ export const allBasicFunctionality: FormDemoDefinition = {
       occupation: 'string',
     }),
   ],
-  formConfig: {
-    tags: {
-      no_label: {
-        sensibleDefaults: {
-          inputs: {
-            suppressAutomaticLabels: true,
-          },
-        },
-        decorators: {
-          inputs: (currentDef) => ({
-            placeholder: `I have no label ${[currentDef.path]}`,
-          }),
-        },
-      },
-      special: {
-        decorators: {
-          inputs: (currentDef) => ({
-            placeholder: currentDef.placeholder + ' + I am special!',
-          }),
-        },
-      },
-    },
-  },
-  // formConfig2: [
-  //   _gslTag('no_label', {
-  //     inputs: {
-  //       suppressAutomaticLabels: true,
-  //       decorator: (currentDef) => ({
-  //         placeholder: `I have no label ${[currentDef.path]}`,
-  //       }),
-  //     },
-  //   }),
-  //   _gslTag('special', {
-  //     inputs: {
-  //       decorator: (currentDef) => ({
-  //         placeholder: currentDef.placeholder + ' + I am special!',
-  //       }),
-  //     },
-  //   }),
-  // ],
+  formSelectors: () => [
+    _gslTag('no_label',
+      _gslInputs({
+        suppressAutomaticLabels: true,
+        decorator: (currentDef) => ({
+          placeholder: `I have no label ${[currentDef.path]}`,
+        }),
+      }),
+    ),
+    _gslTag('special',
+      _gslInputs({
+        decorator: (currentDef) => ({
+          placeholder: currentDef.placeholder + ' + I am special!',
+        }),
+      }),
+    ),
+  ],
 };

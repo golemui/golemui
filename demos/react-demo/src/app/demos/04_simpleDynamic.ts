@@ -7,8 +7,8 @@ export const simpleDynamicDemo: FormDemoDefinition = {
   formDef: () =>
     _guiInputs({
       name: 'string',
-      age: ({ error }: any) => ({
-        label: error ? 'Age must be at least 18' : 'Age',
+      age: (params) => ({
+        label: params.errors != null && params.errors.length > 0 ? 'Age must be at least 18' : 'Age',
         type: 'number',
         placeholder: 'age >= 18',
         validator: {

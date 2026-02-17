@@ -1,5 +1,5 @@
 import { InputDecorator } from '../formDef.domain';
-import { InputSensibleDefaults } from '../dxSelectors.domain';
+import { InputSensibleDefaultsConfig as InputSensibleDefaults } from '../shortcuts/gsl/gsl.domain';
 
 export class InputSensibleDefaultsService {
   private sensibleDefaultValueForProperty<K extends keyof InputDecorator>(

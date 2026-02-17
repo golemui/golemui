@@ -1,5 +1,5 @@
-import { DxSelectors } from '../services/dx/dxSelectors.domain';
 import { DxDefinitions } from '../services/dx/formDef.domain';
+import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
 
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;
@@ -7,8 +7,7 @@ export interface FormDemoDefinition<T extends Record<string, any> = any> {
   formDef: DxDefinitions | (() => DxDefinitions);
   formData?: T;
   warnings?: string[];
-  formConfig?: DxSelectors<T>;
-  formConfig2?: any;
+  formSelectors?: () => GslSelectorsInput;
 }
 
 export type FormRegistryEntry<T extends Record<string, any> = any> = FormDemoDefinition<T> & {

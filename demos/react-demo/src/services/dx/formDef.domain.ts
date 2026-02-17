@@ -1,5 +1,6 @@
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as Core from '@golemui/core';
+import { FunctionWidgetParams } from '@golemui/core';
 import { ValidGuiShortcut } from './shortcuts/gui/gui.domain';
 
 export interface DataInputDecorator extends WidgetItemDecorator {
@@ -38,9 +39,7 @@ export type InputDecorator =
   | BooleanDataInputDecorator;
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
-export interface DynamicItemDefParams {
-  error?: boolean;
-}
+export type DxRuntimeParams<FormData = any> = FunctionWidgetParams<FormData>;
 
 export type InputTags = [ValidShortcutType, ...string[]];
 
@@ -55,10 +54,14 @@ export interface ActionDecorator extends WidgetItemDecorator {
   };
 }
 
-export type ActionDefPartialCallback = (params: DynamicItemDefParams) => Partial<ActionDecorator>;
-export type ActionDefCallback = (params: DynamicItemDefParams) => ActionDecorator;
+export type ActionDefPartialCallback = (params: DxRuntimeParams) => Partial<ActionDecorator>;
+export type ActionDefCallback = (params: DxRuntimeParams) => ActionDecorator;
 export type ActionDefOrCallback = ActionDecorator | ActionDefCallback;
 export type ActionDefOrPartialCallback = ActionDecorator | ActionDefPartialCallback;
 export type DxDefinitions = ValidGuiShortcut | ValidGuiShortcut[];
 
 export type FormEvents = (event: Core.FormEvent) => void;
+
+export type PartialInputDefCallback = (
+  params: DxRuntimeParams,
+) => Partial<InputDecorator>;

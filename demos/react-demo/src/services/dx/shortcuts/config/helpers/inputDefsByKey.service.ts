@@ -6,7 +6,7 @@ import {
   InputDefOrCallback,
   ProcessedDxFieldsByKey,
 } from '../../gui/shortcuts/guiFields.impl';
-import { PartialInputDefCallback } from '../../../dxSelectors.domain';
+import { PartialInputDefCallback } from '../../../formDef.domain';
 
 export class InputDefsByKeyService {
   constructor(private readonly sensibleDefaults: SensibleDefaults) {}

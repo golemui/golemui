@@ -16,6 +16,9 @@ import { allBasicFunctionality } from './demos/10_allBasicFuncitonality';
 import { manyTypes } from './demos/11_addingManyTypes';
 import { formDemoDefinition } from './demos/12_submitButton';
 import { configureDynamicButton } from './demos/13_submitButtonDynamic';
+import { horizontalRootDemo } from './demos/14_horizontalRoot';
+import { manualLayoutDemo } from './demos/15_suppressAutomaticStack';
+import { customSubmitDemo } from './demos/16_customSubmit';
 
 export interface FormData {
   name: string;
@@ -38,7 +41,9 @@ formRegistry.registerAll([
   manyTypes,
   formDemoDefinition,
   configureDynamicButton,
-  // manyButtons,
+  horizontalRootDemo,
+  manualLayoutDemo,
+  customSubmitDemo,
 ]);
 
 export function App() {
@@ -60,7 +65,7 @@ export function App() {
           warnings={entry.warnings}
           formKey={entry.key}
           showingSingleForm={true}
-          formConfig={entry.formConfig}
+          formSelectors={entry.formSelectors}
         />
       );
     }
@@ -86,7 +91,7 @@ export function App() {
           warnings={entry.warnings}
           formKey={entry.key}
           showingSingleForm={false}
-          formConfig={entry.formConfig}
+          formSelectors={entry.formSelectors}
         />
       ))}
     </>
