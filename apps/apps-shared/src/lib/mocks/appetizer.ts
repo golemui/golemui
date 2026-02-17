@@ -48,7 +48,7 @@ const form = defineForm({
             default: 'Departure Country',
           },
           props: {
-            size: 2,
+            size: 4,
             height: 300,
             itemHeight: 60,
             itemRenderer: 'countryItemRenderer',
@@ -83,7 +83,7 @@ const form = defineForm({
             default: 'Travel Budget',
           },
           props: {
-            size: 2,
+            size: 4,
             step: 100,
             placeholder: (data: FunctionWidgetParams<any> | undefined) =>
               coins[data?.$form?.departureCountry ?? 'US'],
@@ -102,11 +102,27 @@ const form = defineForm({
             default: 'Number of Passengers',
           },
           props: {
-            size: 1,
+            size: 2,
             minimum: 1,
             maximum: 10,
           },
           validator: { type: 'number', required: true, minimum: 1, maximum: 10 },
+        },
+        {
+          uid: 'pets',
+          kind: 'input',
+          type: 'number',
+          path: 'pets',
+          label: {
+            key: 'travelPlanner.field.pets',
+            default: 'Number of Pets',
+          },
+          props: {
+            minimum: 1,
+            maximum: 3,
+          },
+          validator: { type: 'number', required: true, minimum: 1, maximum: 3 },
+          include: { when: '$form.includePets === true' },
         },
       ],
     },
@@ -120,12 +136,12 @@ const form = defineForm({
       },
       children: [
         {
-          uid: 'pets',
+          uid: 'includePets',
           kind: 'input',
           type: 'toggle',
-          path: 'pets',
+          path: 'includePets',
           label: {
-            key: 'travelPlanner.field.pets',
+            key: 'travelPlanner.field.includePets',
             default: 'Include Pets',
           },
         },
@@ -187,7 +203,8 @@ const resources = {
           departureCountry: 'Departure Country',
           budget: 'Travel Budget',
           passengers: 'Number of Passengers',
-          pets: 'Include Pets',
+          pets: 'Number of Pets',
+          includePets: 'Include Pets',
           preferredDates: {
             label: 'Select Preferred Dates',
             nextMonthAriaLabel: 'Next Month',
@@ -209,7 +226,8 @@ const resources = {
           departureCountry: 'País de origen',
           budget: 'Presupuesto de viaje',
           passengers: 'Número de pasajeros',
-          pets: 'Incluir mascotas',
+          pets: 'Número de mascotas',
+          includePets: 'Incluir mascotas',
           preferredDates: {
             label: 'Seleccionar fechas preferidas',
             nextMonthAriaLabel: 'Mes siguiente',
@@ -231,7 +249,8 @@ const resources = {
           departureCountry: '出発国',
           budget: '旅行予算',
           passengers: '乗客人数',
-          pets: 'ペット同伴',
+          pets: 'ペットの数',
+          includePets: 'ペット同伴',
           preferredDates: {
             label: '希望日の選択',
             nextMonthAriaLabel: '翌月',
@@ -253,7 +272,8 @@ const resources = {
           departureCountry: 'کشور مبدا',
           budget: 'بودجه سفر',
           passengers: 'تعداد مسافران',
-          pets: 'همراه با حیوان خانگی',
+          pets: 'تعدادی حیوان خانگی',
+          includePets: 'همراه با حیوان خانگی',
           preferredDates: {
             label: 'انتخاب تاریخ‌های مورد نظر',
             nextMonthAriaLabel: 'ماه بعد',
