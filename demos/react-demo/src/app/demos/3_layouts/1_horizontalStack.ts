@@ -1,9 +1,10 @@
-import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
+import { FormDemoDefinition } from '../../formRegistry.domain';
+import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _guiHorizontalStack } from '../../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
 export const horizontalStackDemo: FormDemoDefinition = {
   title: 'Layouts / Horizontal Stack',
+  category: 'Layouts',
   description: 'Inputs wrapped in a _guiHorizontalStack layout',
   formDef: () =>
     _guiHorizontalStack(

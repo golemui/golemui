@@ -1,4 +1,5 @@
 import * as React from '@golemui/react';
+import { useState } from 'react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
 import {
   // 1. Inputs
@@ -6,11 +7,9 @@ import {
   inputFullObjectsDemo,
   inputWithValidatorsDemo,
   inputMixedDemo,
-  inputDynamicDemo,
   gslSuppressLabelsDemo,
   gslSuppressPlaceholdersDemo,
   gslInputDecoratorDemo,
-  gslInputDecoratorMixedDemo,
   // 2. Actions
   submitButtonDemo,
   customButtonDemo,
@@ -26,14 +25,23 @@ import {
   nestedLayoutsDemo,
   gslLayoutByIdDemo,
   gslRootSuppressStackDemo,
-  // 4. Tags
+  // 4. Functions
+  inputCallbackDemo,
+  actionCallbackDemo,
+  inputAndActionCallbacksDemo,
+  inputCallbackWithGslDecoratorDemo,
+  gslInputRuntimeFunctionDemo,
+  gslActionRuntimeFunctionDemo,
+  gslMixedRuntimeFunctionDemo,
+  // 5. Tags
   tagsBasicDemo,
   tagsMultipleDemo,
-  // 5. Combinations
+  // 6. Combinations
   gslRootWithChildrenDemo,
   fullCombinationDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
+import styles from './app.module.css';
 
 export interface FormData {
   name: string;
@@ -48,11 +56,9 @@ formRegistry.registerAll([
   inputFullObjectsDemo,
   inputWithValidatorsDemo,
   inputMixedDemo,
-  inputDynamicDemo,
   gslSuppressLabelsDemo,
   gslSuppressPlaceholdersDemo,
   gslInputDecoratorDemo,
-  gslInputDecoratorMixedDemo,
   // 2. Actions
   submitButtonDemo,
   customButtonDemo,
@@ -68,10 +74,18 @@ formRegistry.registerAll([
   nestedLayoutsDemo,
   gslLayoutByIdDemo,
   gslRootSuppressStackDemo,
-  // 4. Tags
+  // 4. Functions
+  inputCallbackDemo,
+  actionCallbackDemo,
+  inputAndActionCallbacksDemo,
+  inputCallbackWithGslDecoratorDemo,
+  gslInputRuntimeFunctionDemo,
+  gslActionRuntimeFunctionDemo,
+  gslMixedRuntimeFunctionDemo,
+  // 5. Tags
   tagsBasicDemo,
   tagsMultipleDemo,
-  // 5. Combinations
+  // 6. Combinations
   gslRootWithChildrenDemo,
   fullCombinationDemo,
 ]);
@@ -108,21 +122,50 @@ export function App() {
     );
   }
 
-  // Show all forms if no formKey parameter
+  // Show all forms grouped by category
+  return <CategoryGroupedDemos />;
+}
+
+function CategoryGroupedDemos() {
+  const categories = formRegistry.getByCategory();
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+  const toggleCategory = (category: string) => {
+    setCollapsed((prev) => ({ ...prev, [category]: !prev[category] }));
+  };
+
   return (
     <>
-      {formRegistry.getAll().map((entry, index) => (
-        <DemoFormDisplay<FormData>
-          key={entry.key}
-          title={`${index + 1}. ${entry.title}`}
-          description={entry.description}
-          formDef={entry.formDef}
-          formData={entry.formData}
-          warnings={entry.warnings}
-          formKey={entry.key}
-          showingSingleForm={false}
-          formSelectors={entry.formSelectors}
-        />
+      {categories.map(({ category, entries }, catIndex) => (
+        <div key={category} className={styles.categorySection}>
+          <button
+            onClick={() => toggleCategory(category)}
+            className={styles.categoryToggle}
+          >
+            <span className={styles.categoryToggleIcon}>
+              {collapsed[category] ? '▶' : '▼'}
+            </span>
+            {catIndex + 1}. {category}
+            <span className={styles.categoryCount}>({entries.length})</span>
+          </button>
+          {!collapsed[category] && (
+            <div className={styles.categoryContent}>
+              {entries.map((entry, index) => (
+                <DemoFormDisplay<FormData>
+                  key={entry.key}
+                  title={`${catIndex + 1}.${index + 1}. ${entry.title}`}
+                  description={entry.description}
+                  formDef={entry.formDef}
+                  formData={entry.formData}
+                  warnings={entry.warnings}
+                  formKey={entry.key}
+                  showingSingleForm={false}
+                  formSelectors={entry.formSelectors}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       ))}
     </>
   );

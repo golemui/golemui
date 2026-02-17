@@ -1,8 +1,9 @@
-import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { FormDemoDefinition } from '../../formRegistry.domain';
+import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const inputWithValidatorsDemo: FormDemoDefinition = {
   title: 'Inputs / Validators',
+  category: 'Inputs',
   description: 'Inputs with validators: minLength on text, minimum on number',
   formDef: () =>
     _guiInputs({

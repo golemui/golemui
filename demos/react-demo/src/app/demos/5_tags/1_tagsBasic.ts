@@ -1,10 +1,11 @@
-import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslTag } from '../../services/dx/shortcuts/gsl/gslTag.impl';
-import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
+import { FormDemoDefinition } from '../../formRegistry.domain';
+import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _gslTag } from '../../../services/dx/shortcuts/gsl/gslTag.impl';
+import { _gslInputs } from '../../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const tagsBasicDemo: FormDemoDefinition = {
   title: 'Tags / Basic',
+  category: 'Tags',
   description: 'Tagged tuples in _guiInputs with a _gslTag scope that targets only tagged inputs',
   formDef: () =>
     _guiInputs({

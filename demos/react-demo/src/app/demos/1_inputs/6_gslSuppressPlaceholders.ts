@@ -1,9 +1,10 @@
-import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
+import { FormDemoDefinition } from '../../formRegistry.domain';
+import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _gslInputs } from '../../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const gslSuppressPlaceholdersDemo: FormDemoDefinition = {
   title: 'Inputs / Suppress Placeholders',
+  category: 'Inputs',
   description: 'Using _gslInputs({ suppressAutomaticPlaceholders: true }) to remove auto-generated placeholders',
   formDef: () =>
     _guiInputs({

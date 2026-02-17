@@ -1,31 +1,37 @@
 // 1. Inputs
-export { inputShortcutsDemo } from './01_inputShortcuts';
-export { inputFullObjectsDemo } from './02_inputFullObjects';
-export { inputWithValidatorsDemo } from './03_inputWithValidators';
-export { inputMixedDemo } from './04_inputMixed';
-export { inputDynamicDemo } from './05_inputDynamic';
-export { gslSuppressLabelsDemo } from './12_gslSuppressLabels';
-export { gslSuppressPlaceholdersDemo } from './13_gslSuppressPlaceholders';
-export { gslInputDecoratorDemo } from './14_gslInputDecorator';
-export { gslInputDecoratorMixedDemo } from './15_gslInputDecoratorMixed';
+export { inputShortcutsDemo } from './1_inputs/1_inputShortcuts';
+export { inputFullObjectsDemo } from './1_inputs/2_inputFullObjects';
+export { inputWithValidatorsDemo } from './1_inputs/3_inputWithValidators';
+export { inputMixedDemo } from './1_inputs/4_inputMixed';
+export { gslSuppressLabelsDemo } from './1_inputs/5_gslSuppressLabels';
+export { gslSuppressPlaceholdersDemo } from './1_inputs/6_gslSuppressPlaceholders';
+export { gslInputDecoratorDemo } from './1_inputs/7_gslInputDecorator';
 // 2. Actions
-export { submitButtonDemo } from './06_submitButton';
-export { customButtonDemo } from './07_customButton';
-export { multipleButtonsDemo } from './08_multipleButtons';
-export { onClickSubmitDemo } from './26_onClickSubmit';
-export { gslRootOnSubmitDemo } from './25_gslRootOnSubmit';
-export { gslRootSuppressSubmitDemo } from './20_gslRootSuppressSubmit';
-export { gslActionsDemo } from './16_gslActions';
-export { gslActionByIdDemo } from './17_gslActionById';
+export { submitButtonDemo } from './2_actions/1_submitButton';
+export { customButtonDemo } from './2_actions/2_customButton';
+export { multipleButtonsDemo } from './2_actions/3_multipleButtons';
+export { onClickSubmitDemo } from './2_actions/4_onClickSubmit';
+export { gslRootOnSubmitDemo } from './2_actions/5_gslRootOnSubmit';
+export { gslRootSuppressSubmitDemo } from './2_actions/6_gslRootSuppressSubmit';
+export { gslActionsDemo } from './2_actions/7_gslActions';
+export { gslActionByIdDemo } from './2_actions/8_gslActionById';
 // 3. Layouts
-export { horizontalStackDemo } from './09_horizontalStack';
-export { verticalStackDemo } from './10_verticalStack';
-export { nestedLayoutsDemo } from './11_nestedLayouts';
-export { gslLayoutByIdDemo } from './18_gslLayoutById';
-export { gslRootSuppressStackDemo } from './19_gslRootSuppressStack';
-// 4. Tags
-export { tagsBasicDemo } from './22_tagsBasic';
-export { tagsMultipleDemo } from './23_tagsMultiple';
-// 5. Combinations
-export { gslRootWithChildrenDemo } from './21_gslRootWithChildren';
-export { fullCombinationDemo } from './24_fullCombination';
+export { horizontalStackDemo } from './3_layouts/1_horizontalStack';
+export { verticalStackDemo } from './3_layouts/2_verticalStack';
+export { nestedLayoutsDemo } from './3_layouts/3_nestedLayouts';
+export { gslLayoutByIdDemo } from './3_layouts/4_gslLayoutById';
+export { gslRootSuppressStackDemo } from './3_layouts/5_gslRootSuppressStack';
+// 4. Functions
+export { inputCallbackDemo } from './4_functions/1_inputCallback';
+export { actionCallbackDemo } from './4_functions/2_actionCallback';
+export { inputAndActionCallbacksDemo } from './4_functions/3_inputAndActionCallbacks';
+export { inputCallbackWithGslDecoratorDemo } from './4_functions/4_inputCallbackWithGslDecorator';
+export { gslInputRuntimeFunctionDemo } from './4_functions/5_gslInputRuntimeFunction';
+export { gslActionRuntimeFunctionDemo } from './4_functions/6_gslActionRuntimeFunction';
+export { gslMixedRuntimeFunctionDemo } from './4_functions/7_gslMixedRuntimeFunction';
+// 5. Tags
+export { tagsBasicDemo } from './5_tags/1_tagsBasic';
+export { tagsMultipleDemo } from './5_tags/2_tagsMultiple';
+// 6. Combinations
+export { gslRootWithChildrenDemo } from './6_combinations/1_gslRootWithChildren';
+export { fullCombinationDemo } from './6_combinations/2_fullCombination';

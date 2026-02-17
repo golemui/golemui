@@ -1,10 +1,11 @@
-import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslTag } from '../../services/dx/shortcuts/gsl/gslTag.impl';
-import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
+import { FormDemoDefinition } from '../../formRegistry.domain';
+import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _gslTag } from '../../../services/dx/shortcuts/gsl/gslTag.impl';
+import { _gslInputs } from '../../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const tagsMultipleDemo: FormDemoDefinition = {
   title: 'Tags / Multiple',
+  category: 'Tags',
   description: 'Multiple _gslTag scopes targeting different tags with different decorators',
   formDef: () =>
     _guiInputs({

@@ -4,6 +4,7 @@ import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;
   description: string;
+  category?: string;
   formDef: DxDefinitions | (() => DxDefinitions);
   formData?: T;
   warnings?: string[];
@@ -30,6 +31,23 @@ class FormRegistry {
 
   getAll(): FormRegistryEntry[] {
     return this.forms;
+  }
+
+  getByCategory(): { category: string; entries: FormRegistryEntry[] }[] {
+    const categoryMap = new Map<string, FormRegistryEntry[]>();
+    const categoryOrder: string[] = [];
+    for (const form of this.forms) {
+      const cat = form.category ?? 'Uncategorized';
+      if (!categoryMap.has(cat)) {
+        categoryMap.set(cat, []);
+        categoryOrder.push(cat);
+      }
+      categoryMap.get(cat)!.push(form);
+    }
+    return categoryOrder.map((category) => ({
+      category,
+      entries: categoryMap.get(category)!,
+    }));
   }
 
   getAllKeys(): string[] {

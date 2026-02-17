@@ -1,9 +1,10 @@
-import { FormDemoDefinition } from '../formRegistry.domain';
-import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslRoot } from '../../services/dx/shortcuts/gsl/gslRoot.impl';
+import { FormDemoDefinition } from '../../formRegistry.domain';
+import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _gslRoot } from '../../../services/dx/shortcuts/gsl/gslRoot.impl';
 
 export const gslRootOnSubmitDemo: FormDemoDefinition = {
   title: 'Actions / Custom onSubmit (_gslRoot)',
+  category: 'Actions',
   description: 'Using _gslRoot({ onSubmit }) to configure the default submit handler. The auto-generated submit button triggers this callback.',
   formDef: () =>
     _guiInputs({
