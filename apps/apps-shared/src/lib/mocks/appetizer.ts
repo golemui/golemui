@@ -84,11 +84,13 @@ const form = defineForm({
           },
           props: {
             size: 2,
+            step: 100,
             placeholder: (data: FunctionWidgetParams<any> | undefined) =>
               coins[data?.$form?.departureCountry ?? 'US'],
             currency: (data: FunctionWidgetParams<any> | undefined) =>
               coins[data?.$form?.departureCountry ?? 'US'],
           },
+          validator: { type: 'number', required: true, minimum: 100 },
         },
         {
           uid: 'passengers',
@@ -106,6 +108,17 @@ const form = defineForm({
           },
           validator: { type: 'number', required: true, minimum: 1, maximum: 10 },
         },
+      ],
+    },
+    {
+      uid: '',
+      kind: 'layout',
+      type: 'stack',
+      props: {
+        direction: 'horizontal',
+        align: 'end',
+      },
+      children: [
         {
           uid: 'pets',
           kind: 'input',

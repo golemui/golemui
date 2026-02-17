@@ -25,18 +25,30 @@ type CountryItem = {
       padding: 0 12px;
       cursor: pointer;
       height: 100%;
+      background-color: var(--gui-color-bg);
     }
 
     .odd {
-      background-color: #2c303c;
+      background-color: #ecf6ff;
     }
     .selected {
       color: var(--gui-color-bg);
-      background-color: var(--gui-color-fg);
+      background-color: var(--gui-color-primary);
       font-weight: bold;
     }
     .focused {
       box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .odd {
+        background-color: #2c303c;
+      }
+      .selected {
+        color: var(--gui-color-fg);
+        background-color: var(--gui-color-primary);
+        font-weight: bold;
+      }
     }
   `,
   template: `<div
