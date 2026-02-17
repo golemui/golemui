@@ -44,14 +44,12 @@ export type DxRuntimeParams<FormData = any> = FunctionWidgetParams<FormData>;
 export type InputTags = [ValidShortcutType, ...string[]];
 
 export interface ActionDecorator extends WidgetItemDecorator {
+  uid?: string;
   data?: any | null;
   type?: 'button';
   label?: string;
   disabled?: boolean;
-  onClick?: (data: any) => void;
-  on?: {
-    click?: string;
-  };
+  onClick?: ((data: any) => void) | 'submit';
 }
 
 export type ActionDefPartialCallback = (params: DxRuntimeParams) => Partial<ActionDecorator>;

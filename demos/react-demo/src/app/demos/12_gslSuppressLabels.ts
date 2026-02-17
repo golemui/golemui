@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const gslSuppressLabelsDemo: FormDemoDefinition = {
-  title: 'GSL Suppress Labels',
+  title: 'Inputs / Suppress Labels',
   description: 'Using _gslInputs({ suppressAutomaticLabels: true }) to remove auto-generated labels',
   formDef: () =>
     _guiInputs({

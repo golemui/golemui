@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _gslRoot } from '../../services/dx/shortcuts/gsl/gslRoot.impl';
 
 export const gslRootSuppressSubmitDemo: FormDemoDefinition = {
-  title: 'GSL Suppress Auto-Submit',
+  title: 'Actions / Suppress Auto-Submit',
   description: 'Using _gslRoot({ suppressAutomaticSubmit: true }) so no submit button is auto-generated',
   formDef: () =>
     _guiInputs({

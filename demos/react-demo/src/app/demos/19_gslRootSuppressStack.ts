@@ -4,7 +4,7 @@ import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/g
 import { _gslRoot } from '../../services/dx/shortcuts/gsl/gslRoot.impl';
 
 export const gslRootSuppressStackDemo: FormDemoDefinition = {
-  title: 'GSL Suppress Auto-Stack',
+  title: 'Layouts / Suppress Auto-Stack',
   description: 'Using _gslRoot({ suppressAutomaticStack: true }) and providing a manual horizontal layout',
   formDef: () =>
     _guiHorizontalStack([

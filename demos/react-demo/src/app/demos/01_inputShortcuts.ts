@@ -2,7 +2,7 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const inputShortcutsDemo: FormDemoDefinition = {
-  title: 'Input Shortcuts',
+  title: 'Inputs / Shortcuts',
   description: 'Simplest form using only string shortcuts: string, number, boolean',
   formDef: () =>
     _guiInputs({

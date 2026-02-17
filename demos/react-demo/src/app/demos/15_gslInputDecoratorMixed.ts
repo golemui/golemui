@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const gslInputDecoratorMixedDemo: FormDemoDefinition = {
-  title: 'GSL Decorator + Suppress',
+  title: 'Inputs / GSL Decorator + Suppress',
   description: 'Combining suppressAutomaticLabels with a decorator callback that adds custom placeholders',
   formDef: () =>
     _guiInputs({

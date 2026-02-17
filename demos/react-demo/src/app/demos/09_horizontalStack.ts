@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
 export const horizontalStackDemo: FormDemoDefinition = {
-  title: 'Horizontal Stack',
+  title: 'Layouts / Horizontal Stack',
   description: 'Inputs wrapped in a _guiHorizontalStack layout',
   formDef: () =>
     _guiHorizontalStack(

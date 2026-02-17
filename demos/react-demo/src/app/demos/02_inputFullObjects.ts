@@ -2,7 +2,7 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const inputFullObjectsDemo: FormDemoDefinition = {
-  title: 'Input Full Objects',
+  title: 'Inputs / Full Objects',
   description: 'Inputs defined with explicit InputDecorator objects specifying type, label, and placeholder',
   formDef: () =>
     _guiInputs({

@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _gslActionById } from '../../services/dx/shortcuts/gsl/gslActionById.impl';
 
 export const gslActionByIdDemo: FormDemoDefinition = {
-  title: 'GSL Action By ID',
+  title: 'Actions / GSL Action By ID',
   description: 'Using _gslActionById to customize the auto-generated submit button with an onClick handler',
   formDef: () =>
     _guiInputs({

@@ -2,7 +2,7 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const inputMixedDemo: FormDemoDefinition = {
-  title: 'Mixed Shortcuts & Objects',
+  title: 'Inputs / Mixed Shortcuts & Objects',
   description: 'Combining string shortcuts and full InputDecorator objects in the same _guiInputs call',
   formDef: () =>
     _guiInputs({

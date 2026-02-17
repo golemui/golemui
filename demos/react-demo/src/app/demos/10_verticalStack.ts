@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _guiVerticalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
 export const verticalStackDemo: FormDemoDefinition = {
-  title: 'Vertical Stack',
+  title: 'Layouts / Vertical Stack',
   description: 'Inputs wrapped in an explicit _guiVerticalStack (same as auto-stack but explicit)',
   formDef: () =>
     _guiVerticalStack([

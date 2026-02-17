@@ -4,23 +4,23 @@ import { _guiButtons } from '../../services/dx/shortcuts/gui/shortcuts/guiSubmit
 import { _gslActions } from '../../services/dx/shortcuts/gsl/gslActions.impl';
 
 export const gslActionsDemo: FormDemoDefinition = {
-  title: 'GSL Action Decorator',
-  description: 'Using _gslActions with a decorator callback to customize all action buttons',
+  title: 'Actions / GSL Decorator',
+  description: 'Using _gslActions with a decorator callback to disable all action buttons globally',
   formDef: () => [
     _guiInputs({
       name: 'string',
       age: 'number',
     }),
     _guiButtons([
-      { label: 'Save' },
-      { label: 'Cancel' },
+      { label: 'Save', onClick: (data: any) => console.log('Saved:', data) },
+      { label: 'Cancel', onClick: () => console.log('Cancelled') },
+      { label: 'Export', disabled: false, onClick: () => console.log('Exported') },
     ]),
   ],
   formSelectors: () =>
     _gslActions({
-      decorator: (current) => ({
-        ...current,
-        disabled: false,
+      decorator: () => ({
+        disabled: true,
       }),
     }),
 };

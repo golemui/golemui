@@ -134,13 +134,14 @@ export class WidgetMapper {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(controllerDef: ActionDecorator): ActionWidget<StateKeys, FormData> {
+    const def = controllerDef as ActionDecorator & Record<string, any>;
     return {
-      uid: '',
+      uid: def.uid ?? '',
       kind: 'action',
       type: 'button',
-      disabled: controllerDef.disabled,
-      label: controllerDef.label,
-      on: controllerDef.on,
+      disabled: def.disabled,
+      label: def.label,
+      ...(def.on != null ? { on: def.on } : {}),
     };
   }
 

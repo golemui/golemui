@@ -2,7 +2,7 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 
 export const inputDynamicDemo: FormDemoDefinition = {
-  title: 'Dynamic Inputs',
+  title: 'Inputs / Dynamic (Callbacks)',
   description: 'Inputs defined with callback functions that receive runtime params (errors, data)',
   formDef: () =>
     _guiInputs({

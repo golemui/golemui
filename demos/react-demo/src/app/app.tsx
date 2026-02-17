@@ -1,29 +1,36 @@
 import * as React from '@golemui/react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
 import {
+  // 1. Inputs
   inputShortcutsDemo,
   inputFullObjectsDemo,
   inputWithValidatorsDemo,
   inputMixedDemo,
   inputDynamicDemo,
-  submitButtonDemo,
-  customButtonDemo,
-  multipleButtonsDemo,
-  horizontalStackDemo,
-  verticalStackDemo,
-  nestedLayoutsDemo,
   gslSuppressLabelsDemo,
   gslSuppressPlaceholdersDemo,
   gslInputDecoratorDemo,
   gslInputDecoratorMixedDemo,
+  // 2. Actions
+  submitButtonDemo,
+  customButtonDemo,
+  multipleButtonsDemo,
+  onClickSubmitDemo,
+  gslRootOnSubmitDemo,
+  gslRootSuppressSubmitDemo,
   gslActionsDemo,
   gslActionByIdDemo,
+  // 3. Layouts
+  horizontalStackDemo,
+  verticalStackDemo,
+  nestedLayoutsDemo,
   gslLayoutByIdDemo,
   gslRootSuppressStackDemo,
-  gslRootSuppressSubmitDemo,
-  gslRootWithChildrenDemo,
+  // 4. Tags
   tagsBasicDemo,
   tagsMultipleDemo,
+  // 5. Combinations
+  gslRootWithChildrenDemo,
   fullCombinationDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
@@ -36,29 +43,36 @@ export interface FormData {
 
 // Register all forms
 formRegistry.registerAll([
+  // 1. Inputs
   inputShortcutsDemo,
   inputFullObjectsDemo,
   inputWithValidatorsDemo,
   inputMixedDemo,
   inputDynamicDemo,
-  submitButtonDemo,
-  customButtonDemo,
-  multipleButtonsDemo,
-  horizontalStackDemo,
-  verticalStackDemo,
-  nestedLayoutsDemo,
   gslSuppressLabelsDemo,
   gslSuppressPlaceholdersDemo,
   gslInputDecoratorDemo,
   gslInputDecoratorMixedDemo,
+  // 2. Actions
+  submitButtonDemo,
+  customButtonDemo,
+  multipleButtonsDemo,
+  onClickSubmitDemo,
+  gslRootOnSubmitDemo,
+  gslRootSuppressSubmitDemo,
   gslActionsDemo,
   gslActionByIdDemo,
+  // 3. Layouts
+  horizontalStackDemo,
+  verticalStackDemo,
+  nestedLayoutsDemo,
   gslLayoutByIdDemo,
   gslRootSuppressStackDemo,
-  gslRootSuppressSubmitDemo,
-  gslRootWithChildrenDemo,
+  // 4. Tags
   tagsBasicDemo,
   tagsMultipleDemo,
+  // 5. Combinations
+  gslRootWithChildrenDemo,
   fullCombinationDemo,
 ]);
 

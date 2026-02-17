@@ -3,8 +3,8 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _guiSubmitButton } from '../../services/dx/shortcuts/gui/shortcuts/guiSubmitButton.impl';
 
 export const submitButtonDemo: FormDemoDefinition = {
-  title: 'Submit Button',
-  description: 'Explicit _guiSubmitButton() placed between input groups',
+  title: 'Actions / Auto Submit (default onSubmit)',
+  description: 'Explicit _guiSubmitButton() placed between input groups. Uses the default onSubmit (logs data to console).',
   formDef: () => [
     _guiInputs({
       name: 'string',

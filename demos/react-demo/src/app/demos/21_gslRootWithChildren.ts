@@ -4,7 +4,7 @@ import { _gslRoot } from '../../services/dx/shortcuts/gsl/gslRoot.impl';
 import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const gslRootWithChildrenDemo: FormDemoDefinition = {
-  title: 'GSL Root with Children',
+  title: 'Combinations / GSL Root with Children',
   description: 'Using _gslRoot with child widget selectors and root defaults combined',
   formDef: () =>
     _guiInputs({

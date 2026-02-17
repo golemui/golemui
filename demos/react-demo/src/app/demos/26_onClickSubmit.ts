@@ -2,17 +2,17 @@ import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
 import { _guiButton } from '../../services/dx/shortcuts/gui/shortcuts/guiSubmitButton.impl';
 
-export const customButtonDemo: FormDemoDefinition = {
-  title: 'Actions / Custom Button (onClick)',
-  description: 'A custom button using _guiButton with a label and onClick handler',
+export const onClickSubmitDemo: FormDemoDefinition = {
+  title: 'Actions / onClick: submit',
+  description: 'Using onClick: \'submit\' to promote a regular _guiButton to the form\'s submit button. No _guiSubmitButton needed.',
   formDef: () => [
     _guiInputs({
       name: 'string',
-      age: 'number',
+      email: 'string',
     }),
     _guiButton({
-      label: 'Say Hello',
-      onClick: (data: any) => alert(`Hello ${data?.name ?? 'stranger'}!`),
+      label: 'Go!',
+      onClick: 'submit',
     }),
   ],
 };

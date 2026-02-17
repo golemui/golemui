@@ -4,7 +4,7 @@ import { _gslTag } from '../../services/dx/shortcuts/gsl/gslTag.impl';
 import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const tagsMultipleDemo: FormDemoDefinition = {
-  title: 'Multiple Tags',
+  title: 'Tags / Multiple',
   description: 'Multiple _gslTag scopes targeting different tags with different decorators',
   formDef: () =>
     _guiInputs({

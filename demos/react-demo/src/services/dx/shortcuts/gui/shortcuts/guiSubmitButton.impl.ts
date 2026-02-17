@@ -22,12 +22,10 @@ export const _guiButton = (
 };
 
 export const _guiSubmitButton = (defs?: ActionDecorator | ActionDefCallback): GuiActionsShortcut => {
-  const baseSubmit = {
+  const baseSubmit: ActionDecorator = {
+    uid: '#submit',
     label: 'Submit',
-    on: {
-      click: 'submit',
-    },
   };
-  const merged = defs == null ? objectUtils.deepMerge(baseSubmit, defs) : baseSubmit;
+  const merged = defs != null ? objectUtils.deepMerge(baseSubmit, defs) : baseSubmit;
   return _guiButton(merged);
 };

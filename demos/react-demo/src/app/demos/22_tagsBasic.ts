@@ -4,7 +4,7 @@ import { _gslTag } from '../../services/dx/shortcuts/gsl/gslTag.impl';
 import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const tagsBasicDemo: FormDemoDefinition = {
-  title: 'Basic Tags',
+  title: 'Tags / Basic',
   description: 'Tagged tuples in _guiInputs with a _gslTag scope that targets only tagged inputs',
   formDef: () =>
     _guiInputs({

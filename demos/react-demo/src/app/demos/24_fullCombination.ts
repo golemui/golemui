@@ -9,7 +9,7 @@ import { _gslLayoutById } from '../../services/dx/shortcuts/gsl/gslLayoutById.im
 import { _gslActionById } from '../../services/dx/shortcuts/gsl/gslActionById.impl';
 
 export const fullCombinationDemo: FormDemoDefinition = {
-  title: 'Kitchen Sink',
+  title: 'Combinations / Kitchen Sink',
   description: 'All features combined: shortcuts, objects, dynamic inputs, tags, custom buttons, nested layouts, and GSL selectors',
   formDef: () => [
     _guiInputs({

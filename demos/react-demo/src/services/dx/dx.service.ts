@@ -1,3 +1,4 @@
+import * as Core from '@golemui/core';
 import {
   Form,
   FormWidget,
@@ -30,12 +31,15 @@ import {
   GslScopeSelectorType,
   GslWidgetSelector,
   LayoutDecorator,
+  MergeResult,
   RuntimeFunction,
 } from './shortcuts/gsl/gsl.domain';
 import selectorResolver, { SelectorResolver } from './resolver/selectorResolver.service';
 import widgetMerger, { WidgetMerger } from './merger/widgetMerger.service';
 import widgetMapper, { WidgetMapper } from './mapper/widgetMapper.service';
 import { InputDefOrCallback } from './shortcuts/gui/shortcuts/guiFields.impl';
+
+type OnClickRegistry = Map<string, (data: any) => void>;
 
 /**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
@@ -44,6 +48,7 @@ import { InputDefOrCallback } from './shortcuts/gui/shortcuts/guiFields.impl';
  * Orchestrates: root defaults → auto-submit → walk _gui* tree → Resolver → Merger → Mapper → auto-stack.
  */
 export class DxService {
+  private actionCounter = 0;
   constructor(
     private readonly resolver: SelectorResolver,
     private readonly merger: WidgetMerger,
@@ -65,17 +70,21 @@ export class DxService {
     const rootDefaults = this.extractRootDefaults(gslSelectors);
 
     // ── 2. Auto-submit (if not suppressed) ──
-    if (!rootDefaults.suppressAutomaticSubmit) {
-      const hasAction = defs.some(
-        (d) => d.type === 'ITEMS' && d.itemsType === 'ACTIONS',
+    const submitCount = this.countSubmitButtons(defs);
+    if (submitCount > 1) {
+      throw new Error(
+        `Only one submit button is allowed per form, but ${submitCount} were found. ` +
+        `A button is a submit button if it has uid: '#submit' or onClick: 'submit'.`,
       );
-      if (!hasAction) {
-        defs.push(_guiSubmitButton());
-      }
+    }
+    if (!rootDefaults.suppressAutomaticSubmit && submitCount === 0) {
+      defs.push(_guiSubmitButton());
     }
 
     // ── 3. Walk the _gui* tree and map each widget ──
-    const widgets = this.walkAndMap<STATE_KEYS, FORM_DATA>(defs, gslSelectors);
+    const onClickRegistry: OnClickRegistry = new Map();
+    this.actionCounter = 0;
+    const widgets = this.walkAndMap<STATE_KEYS, FORM_DATA>(defs, gslSelectors, onClickRegistry, rootDefaults);
 
     // ── 4. Auto-stack (if not suppressed) ──
     if (!rootDefaults.suppressAutomaticStack) {
@@ -116,7 +125,7 @@ export class DxService {
         };
       }
 
-      return { form: rootLayout };
+      return this.buildResult<STATE_KEYS, FORM_DATA>({ form: rootLayout }, onClickRegistry);
     } else {
       // Validate: user must provide a top-level layout
       const topLevelLayout = widgets.find(
@@ -128,8 +137,30 @@ export class DxService {
           'Wrap your elements in _guiStack or similar.',
         );
       }
-      return { form: topLevelLayout as LayoutWidget<STATE_KEYS, FORM_DATA> };
+      return this.buildResult<STATE_KEYS, FORM_DATA>(
+        { form: topLevelLayout as LayoutWidget<STATE_KEYS, FORM_DATA> },
+        onClickRegistry,
+      );
     }
+  }
+
+  private buildResult<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    form: Form<StateKeys, FormData>,
+    onClickRegistry: OnClickRegistry,
+  ): Form<StateKeys, FormData> | [Form<StateKeys, FormData>, FormEvents] {
+    if (onClickRegistry.size === 0) {
+      return form;
+    }
+    const formEvents: FormEvents = (event: Core.FormEvent) => {
+      const handler = onClickRegistry.get(event.name);
+      if (handler) {
+        handler(event.data);
+      }
+    };
+    return [form, formEvents];
   }
 
   private walkAndMap<
@@ -138,12 +169,16 @@ export class DxService {
   >(
     guiShortcuts: ValidGuiShortcut[],
     gslSelectors: GslSelector[],
+    onClickRegistry: OnClickRegistry,
+    rootDefaults: GslRootDefaults,
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((shortcut) => {
       if (shortcut.type === 'LAYOUT') {
         const children = this.walkAndMap<StateKeys, FormData>(
           shortcut.children,
           gslSelectors,
+          onClickRegistry,
+          rootDefaults,
         );
         const layout: LayoutWidget<StateKeys, FormData> = {
           uid: '',
@@ -164,6 +199,8 @@ export class DxService {
             shortcut.itemsType,
             shortcut.tags,
             gslSelectors,
+            onClickRegistry,
+            rootDefaults,
           );
         });
       }
@@ -180,6 +217,8 @@ export class DxService {
     itemType: GuiItemsShortcutType,
     parentTags: string[],
     gslSelectors: GslSelector[],
+    onClickRegistry: OnClickRegistry,
+    rootDefaults: GslRootDefaults,
   ): FormWidget<StateKeys, FormData> {
 
     // Extract the base provider (static def or callback)
@@ -200,13 +239,21 @@ export class DxService {
 
     const itemTags = typeof baseDef === 'function'
       ? [...parentTags]
-      : [...parentTags, ...(baseDef.tags ?? [])];
+      : [...parentTags, ...('tags' in baseDef && baseDef.tags ? baseDef.tags : [])];
+
+    // Extract uid from static action defs for ID-based selector matching
+    const itemUid = typeof baseDef !== 'function' && 'uid' in baseDef ? baseDef.uid : undefined;
 
     // Resolve applicable selectors
-    const resolved = this.resolver.resolve(gslItemType, itemTags, undefined, gslSelectors);
+    const resolved = this.resolver.resolve(gslItemType, itemTags, itemUid, gslSelectors);
 
     // Merge (handles both static and runtime baseDef)
-    const mergeResult = this.merger.merge(baseDef, gslItemType, resolved);
+    let mergeResult = this.merger.merge(baseDef, gslItemType, resolved);
+
+    // Extract onClick from action defs (after merge so GSL decorators are included)
+    if (itemType === GuiItemsShortcutType.ACTIONS) {
+      mergeResult = this.extractOnClickFromMergeResult(mergeResult, onClickRegistry, rootDefaults);
+    }
 
     // Map to core widget (handles both static and dynamic mergeResult)
     return this.mapper.mapToWidget<StateKeys, FormData>(mergeResult, gslItemType);
@@ -244,11 +291,80 @@ export class DxService {
     return readyToMapFieldOrAction;
   }
 
+  private extractOnClickFromMergeResult(
+    mergeResult: MergeResult,
+    onClickRegistry: OnClickRegistry,
+    rootDefaults: GslRootDefaults,
+  ): MergeResult {
+    if (mergeResult.kind === 'dynamic') {
+      const originalFn = mergeResult.fn;
+      const wrappedFn: RuntimeFunction = (params: FunctionWidgetParams<any>) => {
+        const result = originalFn(params) as ActionDecorator & Record<string, any>;
+        return this.wireOnClick(result, onClickRegistry, rootDefaults);
+      };
+      return { kind: 'dynamic', fn: wrappedFn };
+    }
+
+    const actionDef = mergeResult.def as ActionDecorator & Record<string, any>;
+    const wired = this.wireOnClick(actionDef, onClickRegistry, rootDefaults);
+    return { kind: 'static', def: wired as ActionDecorator };
+  }
+
+  private wireOnClick(
+    actionDef: ActionDecorator & Record<string, any>,
+    onClickRegistry: OnClickRegistry,
+    rootDefaults: GslRootDefaults,
+  ): Record<string, any> {
+    // onClick: 'submit' promotes the button to #submit
+    const isSubmit = actionDef.uid === '#submit' || actionDef.onClick === 'submit';
+    const actionId = isSubmit ? '#submit' : `action_${this.actionCounter++}`;
+    const eventName = isSubmit ? 'submit' : actionId;
+
+    // Resolve the effective onClick callback:
+    //   explicit function > rootDefaults.onSubmit (for #submit only) > none
+    //   onClick: 'submit' is not a callback — it's a marker, so skip it
+    const rawOnClick = actionDef.onClick;
+    const explicitCallback = typeof rawOnClick === 'function' ? rawOnClick : undefined;
+    const effectiveOnClick = explicitCallback
+      ?? (isSubmit ? rootDefaults.onSubmit : undefined);
+
+    if (effectiveOnClick) {
+      onClickRegistry.set(eventName, effectiveOnClick);
+      const { onClick: _, ...rest } = actionDef;
+      return { ...rest, uid: actionId, on: { click: eventName } };
+    }
+
+    if (isSubmit) {
+      const { onClick: _, ...rest } = actionDef;
+      return { ...rest, uid: actionId, on: { click: 'submit' } };
+    }
+
+    return { ...actionDef, uid: actionId };
+  }
+
   private parseFieldKey(inputDef: InputDecorator, key: string): InputDecorator {
     return {
       ...inputDef,
       path: key,
     };
+  }
+
+  private countSubmitButtons(defs: ValidGuiShortcut[]): number {
+    let count = 0;
+    for (const def of defs) {
+      if (def.type === 'LAYOUT') {
+        count += this.countSubmitButtons(def.children);
+      } else if (def.type === 'ITEMS' && def.itemsType === GuiItemsShortcutType.ACTIONS) {
+        for (const item of def.items) {
+          if (typeof item === 'function') continue;
+          const action = item as ActionDecorator;
+          if (action.uid === '#submit' || action.onClick === 'submit') {
+            count++;
+          }
+        }
+      }
+    }
+    return count;
   }
 
   private isWidgetSelector(item: GslSelector | GslWidgetSelector): item is GslWidgetSelector {
@@ -284,6 +400,7 @@ export class DxService {
     let defaults: GslRootDefaults = {
       suppressAutomaticStack: false,
       suppressAutomaticSubmit: false,
+      onSubmit: (data: any) => console.log('Form submitted:', data),
     };
     for (const sel of selectors) {
       if (sel.kind === 'scope' && sel.scopeType === GslScopeSelectorType.ROOT && sel.rootDefaults) {

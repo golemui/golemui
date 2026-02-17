@@ -3,7 +3,7 @@ import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.
 import { _guiHorizontalStack } from '../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
 
 export const nestedLayoutsDemo: FormDemoDefinition = {
-  title: 'Nested Layouts',
+  title: 'Layouts / Nested',
   description: 'Composing multiple _guiInputs and _guiHorizontalStack in an array for mixed layout',
   formDef: () => [
     _guiInputs({

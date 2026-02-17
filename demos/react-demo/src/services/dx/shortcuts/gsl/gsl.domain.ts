@@ -8,6 +8,7 @@ import { ActionDecorator, InputDecorator } from '../../formDef.domain';
 export interface GslRootDefaults {
   suppressAutomaticStack?: boolean;
   suppressAutomaticSubmit?: boolean;
+  onSubmit?: (data: any) => void;
 }
 
 // ═══════════════════════════════════════════════════
