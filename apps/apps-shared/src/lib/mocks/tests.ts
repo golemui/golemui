@@ -1,42 +1,56 @@
-import { defineForm } from '@golemui/core';
 import { Example } from './types';
+import { golemForm } from '@golemui/shared-vanilla';
 
-const data = { 'complex-renderer': 'one', 'dropdown-complex-renderer': 'two' };
+const data = {};
 
-const form = defineForm({
-  states: {
-    register: '$form.registerMode === true',
-  },
+const form = golemForm().create({
   form: [
     {
-      uid: '',
       kind: 'input',
       type: 'checkbox',
       label: 'Register',
       path: 'registerMode',
     },
-    (api) => {
-      return {
-        uid: 'input-name2',
-        kind: 'input',
-        type: 'textinput',
-        path: 'details.clientName2',
-        label: api?.errors && api.touched ? `Error: ${api?.errors}` : 'Ohmmmm',
-        props: {
-          placeholder: 'e.g. Jane Doe',
-        },
-        validator: { type: 'string', required: true, minLength: 3 },
-      };
+    {
+      kind: 'input',
+      type: 'checkbox',
+      label: 'I am eating',
+      path: 'eatingMode',
     },
     {
-      uid: '',
+      type: 'alert',
+      kind: 'display',
+      props: {
+        text: 'Registering',
+        level: 'success',
+      },
+      include: { when: '$form.registerMode === true' },
+    },
+    {
+      type: 'alert',
+      kind: 'display',
+      props: {
+        text: 'Not eating',
+        level: 'warning',
+      },
+      exclude: { when: '$form.eatingMode === true' },
+    },
+    {
+      kind: 'input',
+      type: 'textinput',
+      path: 'details.clientName',
+      label: 'Client Name',
+      props: {
+        placeholder: 'e.g. Jane Doe',
+      },
+      validator: { type: 'string', required: true, minLength: 3 },
+    },
+    {
       kind: 'action',
       type: 'button',
       label: 'Login',
-      'label.register': 'Register',
       on: {
         click: 'submit',
-        'click.register': 'handleRegister',
       },
     },
   ],

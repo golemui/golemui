@@ -59,19 +59,6 @@ export type BaseWidget<
   include?: { in: StateKeys[] } | { when: ReactiveExpression };
   exclude?: { from: StateKeys[] } | { when: ReactiveExpression };
 
-  // <dev-note>
-  //    TODO: Is this better? {in} and {when} is maybe too verbose...
-  //    includeIn?: StateKeys[] | ReactiveExpression;
-  //    excludeFrom?: StateKeys[] | ReactiveExpression;
-  //    disabled?: boolean | ReactiveExpression;
-  //    required?: boolean | ReactiveExpression;
-  //    readonly?: boolean | ReactiveExpression;
-  // </ dev-note>
-
-  // TODO: figure out the type to make props AllSuffixable. e.g. AllSuffixable<Record<string, unknown>, StateKeys>
-
-  // TODO: Fix the type. `props` should only accept functions or Json serializable values.
-  // TODO: WidgetPropertyFunction<any> should be WidgetPropertyFunction<MyFormType>
   /**
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
