@@ -1,7 +1,7 @@
 export const textinput = (): any => ({
   uid: 'tab6',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

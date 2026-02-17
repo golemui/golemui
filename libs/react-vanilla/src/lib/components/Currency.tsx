@@ -21,6 +21,7 @@ export function Currency(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const currency = templateData.currency;
+  const step = templateData.step;
   const maximumFractionDigits = templateData.maximumFractionDigits;
   const minimumFractionDigits = templateData.minimumFractionDigits;
   const icon = templateData.icon;
@@ -42,6 +43,7 @@ export function Currency(widgetInstance: Core.WithWidget) {
         readOnly={isReadonly}
         value={value}
         currency={currency}
+        step={step}
         maximumFractionDigits={maximumFractionDigits}
         minimumFractionDigits={minimumFractionDigits}
         icon={icon}

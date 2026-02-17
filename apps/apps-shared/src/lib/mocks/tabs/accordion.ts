@@ -18,7 +18,7 @@ export const accordion = (): any => ({
     {
       uid: 'section1',
       kind: 'layout',
-      type: 'stack',
+      type: 'flex',
       children: [
         {
           uid: '',
@@ -39,7 +39,7 @@ export const accordion = (): any => ({
     {
       uid: 'section2',
       kind: 'layout',
-      type: 'stack',
+      type: 'flex',
       children: [
         {
           uid: '',
@@ -60,7 +60,7 @@ export const accordion = (): any => ({
     {
       uid: 'section3',
       kind: 'layout',
-      type: 'stack',
+      type: 'flex',
       children: [
         {
           uid: '',

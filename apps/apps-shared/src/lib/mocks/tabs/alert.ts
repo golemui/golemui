@@ -1,7 +1,7 @@
 export const alert = (): any => ({
   uid: 'tab1',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

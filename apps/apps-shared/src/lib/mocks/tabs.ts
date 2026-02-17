@@ -14,7 +14,7 @@ const form = defineForm({
         defaultOpen: 'tab5',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
-          { label: 'Stack Layout', uid: 'tab2' },
+          { label: 'Flex Layout', uid: 'tab2' },
           { label: 'Repeater Component', uid: 'tab3' },
           { label: 'Checkbox Component', uid: 'tab4' },
           { label: 'Accordion Layout', uid: 'tab5' },
@@ -33,7 +33,7 @@ const form = defineForm({
         {
           uid: 'tab2',
           kind: 'layout',
-          type: 'stack',
+          type: 'flex',
           props: {
             direction: 'horizontal',
             'direction.limitReached': 'vertical',
@@ -56,7 +56,7 @@ const form = defineForm({
         {
           uid: 'tab3',
           kind: 'layout',
-          type: 'stack',
+          type: 'flex',
           children: [
             {
               uid: '',
@@ -71,7 +71,7 @@ const form = defineForm({
                 template: {
                   uid: '',
                   kind: 'layout',
-                  type: 'stack',
+                  type: 'flex',
                   children: [
                     {
                       uid: '',
@@ -94,7 +94,7 @@ const form = defineForm({
         {
           uid: 'tab4',
           kind: 'layout',
-          type: 'stack',
+          type: 'flex',
           children: [
             {
               uid: '',
@@ -124,7 +124,7 @@ const form = defineForm({
             {
               uid: 'section1',
               kind: 'layout',
-              type: 'stack',
+              type: 'flex',
               children: [
                 {
                   uid: '',
@@ -143,7 +143,7 @@ const form = defineForm({
             {
               uid: 'section2',
               kind: 'layout',
-              type: 'stack',
+              type: 'flex',
               children: [
                 {
                   uid: '',
@@ -162,7 +162,7 @@ const form = defineForm({
             {
               uid: 'section3',
               kind: 'layout',
-              type: 'stack',
+              type: 'flex',
               children: [
                 {
                   uid: '',

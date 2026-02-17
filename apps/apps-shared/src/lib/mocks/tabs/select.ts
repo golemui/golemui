@@ -1,7 +1,7 @@
 export const select = (): any => ({
   uid: 'tab7',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

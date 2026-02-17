@@ -28,7 +28,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<
   repeater: async () => (await import('./components/Repeater')).Repeater,
 
   // LAYOUTS
-  stack: async () => (await import('./components/Stack')).Stack,
+  flex: async () => (await import('./components/Flex')).Flex,
   tabs: async () => (await import('./components/Tabs')).Tabs,
   accordion: async () => (await import('./components/Accordion')).Accordion,
 

@@ -1,31 +1,31 @@
 .gui-form {
-  .gui-stack {
+  .gui-flex {
     display: flex;
     flex-direction: column;
 
-    .gui-stack__widget {
+    .gui-flex__widget {
       display: flex;
       flex-direction: column;
       margin: var(--gui-space-gap) 0;
-      column-gap: var(--gui-stack-space-gap);
-      row-gap: var(--gui-stack-space-gap);
+      column-gap: var(--gui-flex-space-gap);
+      row-gap: var(--gui-flex-space-gap);
 
       &--horizontal {
         flex-direction: row;
 
-        &.gui-stack__widget--align-center {
+        &.gui-flex__widget--align-center {
           justify-content: center;
         }
-        &.gui-stack__widget--align-start {
+        &.gui-flex__widget--align-start {
           justify-content: start;
         }
-        &.gui-stack__widget--align-end {
+        &.gui-flex__widget--align-end {
           justify-content: end;
         }
-        &.gui-stack__widget--align-space-between {
+        &.gui-flex__widget--align-space-between {
           justify-content: space-between;
         }
-        &.gui-stack__widget--align-space-around {
+        &.gui-flex__widget--align-space-around {
           justify-content: space-around;
         }
       }

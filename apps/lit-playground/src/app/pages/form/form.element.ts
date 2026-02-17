@@ -9,8 +9,9 @@ import { airportItemRenderer } from '../../item-renderers/airport.item-renderer'
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
+import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 
-const mock = AppsShared.tests;
+const mock = AppsShared.appetizer;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -31,6 +32,7 @@ export class FormElement extends LitElement {
     complexListItemRenderer: complexListItemRenderer,
     productItemRenderer: productItemRenderer,
     airportItemRenderer: airportItemRenderer,
+    countryItemRenderer: countryItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
   validators: ValidatorsVanilla.CustomValidatorSchemas = {

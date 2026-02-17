@@ -1,7 +1,7 @@
 export const number = (): any => ({
   uid: 'tab8',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

@@ -333,7 +333,7 @@ export type OneOfProps = {
   valueField?: string;
 };
 
-export type StackProps = {
+export type FlexProps = {
   direction?: 'horizontal' | 'vertical';
   align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
   gap?: number;
