@@ -6,6 +6,7 @@ gui-range-calendar {
   .gui-calendar__day-button {
     &.in-range {
       background-color: var(--gui-color-primary);
+      color: white;
       border-radius: 0;
     }
     &.range-start {
