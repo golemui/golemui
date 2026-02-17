@@ -1,6 +1,30 @@
 @use '../../../libs/shared-vanilla/src/styles/index';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+html, body {
+  background-color: #fff;
+  color: #1a1a1a;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 990px;
+  padding: 1rem;
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #23262f;
+    color: #f2f3f5;
+  }
+}
+
 // Custom icons
 .material-icons {
   font-family: 'Material Icons';

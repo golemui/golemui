@@ -28,7 +28,7 @@ export const vanillaSchemaToFieldMap = <V>(
     Vanilla.numberinput({ config: { path }, validator: validators.numberValidator() }),
   integer: (_schema, path: string) =>
     Vanilla.numberinput({ config: { path }, validator: validators.integerValidator() }),
-  object: (_schema, children: Core.FormWidget[]) => Vanilla.stack({ children }),
+  object: (_schema, children: Core.FormWidget[]) => Vanilla.flex({ children }),
   // one or the other must be valid .
   // - remove data when tabs change.
   // - don't generate all tabs initially.

@@ -10,8 +10,9 @@ import { APP_CONFIG } from '../../../environments/environment.model';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
+import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 
-const mock = AppsShared.tests;
+const mock = AppsShared.appetizer;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
@@ -44,6 +45,7 @@ export class AppFormPage {
     complexListItemRenderer: ComplexListItemRenderer,
     productItemRenderer: ProductItemRenderer,
     airportItemRenderer: AirportItemRenderer,
+    countryItemRenderer: CountryItemRenderer,
   };
   protected validateOn: Core.ValidateOn = 'eager';
 

@@ -146,7 +146,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
                 defaultOpen: 'tab1',
                 tabs: [
                   { label: 'Alert Component', uid: 'tab1' },
-                  { label: 'Stack Layout', uid: 'tab2' },
+                  { label: 'Flex Layout', uid: 'tab2' },
                 ],
               },
               on: { change: 'onTabEvent' },

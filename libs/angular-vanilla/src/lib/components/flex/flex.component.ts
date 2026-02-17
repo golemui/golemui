@@ -2,23 +2,23 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { StackProps } from '@golemui/shared-vanilla';
+import { FlexProps } from '@golemui/shared-vanilla';
 
 @Component({
   standalone: true,
-  selector: 'gui-stack-layout',
+  selector: 'gui-flex-layout',
   imports: [CommonModule, Angular.WidgetDirective],
   providers: [Angular.LayoutWidgetAdapter],
-  templateUrl: './stack.component.html',
+  templateUrl: './flex.component.html',
   host: {
-    class: 'gui-stack',
+    class: 'gui-flex',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class StackComponent implements OnInit, OnDestroy, Core.WithWidget {
+export class FlexComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.LayoutWidget;
 
-  protected adapter: Angular.LayoutWidgetAdapter<StackProps> = inject(Angular.LayoutWidgetAdapter);
+  protected adapter: Angular.LayoutWidgetAdapter<FlexProps> = inject(Angular.LayoutWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

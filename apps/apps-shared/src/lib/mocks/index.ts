@@ -1,3 +1,4 @@
+export * from './appetizer';
 export * from './flight-tickets';
 export * from './item-renderers';
 export * from './json-schema-test';

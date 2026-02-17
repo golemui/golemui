@@ -92,7 +92,7 @@ export const createInitialState = (lang: string): State => ({
   formDef: Form.formDefDecoder.parse({
     form: {
       kind: 'layout',
-      type: 'stack',
+      type: 'flex',
       children: [],
     },
   }) as Form.Form,

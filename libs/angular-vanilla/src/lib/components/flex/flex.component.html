@@ -1,0 +1,17 @@
+@let templateData = adapter.templateData();
+
+<div
+  class="gui-flex__widget"
+  [class.gui-flex__widget--horizontal]="templateData.direction === 'horizontal'"
+  [class.gui-flex__widget--align-center]="templateData.align === 'center'"
+  [class.gui-flex__widget--align-start]="templateData.align === 'start'"
+  [class.gui-flex__widget--align-end]="templateData.align === 'end'"
+  [class.gui-flex__widget--align-space-between]="templateData.align === 'space-between'"
+  [class.gui-flex__widget--align-space-around]="templateData.align === 'space-around'"
+  [style.gap.px]="templateData.gap"
+  [id]="widget.uid"
+>
+  @for (child of templateData.children; track child.uid) {
+    <ng-container guiWidget [widget]="child" />
+  }
+</div>

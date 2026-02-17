@@ -3,7 +3,7 @@ const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 export const dropdown = (): any => ({
   uid: 'tab15',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

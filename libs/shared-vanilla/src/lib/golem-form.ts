@@ -48,7 +48,7 @@ class GolemFormBuilder<
       states: config.states,
       form: {
         uid: 'gui-root-uid',
-        type: 'stack',
+        type: 'flex',
         kind: 'layout',
         children: config.form as any,
       } as Core.LayoutWidget<ExtractStates<States>, FormType>,
@@ -106,7 +106,7 @@ class GolemFormBuilder<
  *     }),
  *     {
  *       kind: 'layout',
- *       type: 'stack',
+ *       type: 'flex',
  *       props: { direction: 'horizontal' },
  *       children: [
  *         {
@@ -163,7 +163,7 @@ type GolemWidget<
   // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V>
   | GuiSelect<FormType, States, V>
-  | GuiStack<FormType, States, V, CustomWidget>
+  | GuiFlex<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
@@ -300,7 +300,7 @@ type GuiSelect<FormType extends Record<string, any>, States extends string, V> =
   V
 > & { type: 'select' };
 
-type GuiStack<
+type GuiFlex<
   FormType extends Record<string, any>,
   States extends string,
   V,
@@ -308,9 +308,9 @@ type GuiStack<
 > = Core.LayoutWidget<
   States,
   FormType,
-  Props.StackProps,
+  Props.FlexProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
-> & { type: 'stack' };
+> & { type: 'flex' };
 
 type GuiTabs<
   FormType extends Record<string, any>,
