@@ -18,6 +18,7 @@ export class GuiCurrency extends LitElement {
   @property({ type: String }) value: number | null | undefined = undefined;
 
   @property({ type: String }) currency: string | undefined = undefined;
+  @property({ type: String }) step: number | undefined = undefined;
   @property({ type: String }) maximumFractionDigits: number | undefined = undefined;
   @property({ type: String }) minimumFractionDigits: number | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
@@ -93,6 +94,7 @@ export class GuiCurrency extends LitElement {
           id=${this.uid}
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
+          step=${this.step && this.step > 0 ? this.step : nothing}
           .value=${this.value ?? ''}
           ?required=${this.disabled}
           ?disabled=${this.disabled}

@@ -18,6 +18,7 @@ export type TextinputProps = {
 
 export type CurrencyProps = {
   currency?: string;
+  step?: number;
   maximumFractionDigits?: number;
   minimumFractionDigits?: number;
   hint?: string;
@@ -334,6 +335,8 @@ export type OneOfProps = {
 
 export type StackProps = {
   direction?: 'horizontal' | 'vertical';
+  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
+  gap?: number;
 };
 
 export type TabsProps = {

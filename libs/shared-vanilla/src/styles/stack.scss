@@ -2,7 +2,6 @@
   .gui-stack {
     display: flex;
     flex-direction: column;
-    margin: var(--gui-space-gap) 0;
 
     .gui-stack__widget {
       display: flex;
@@ -13,6 +12,38 @@
 
       &--horizontal {
         flex-direction: row;
+
+        &.gui-stack__widget--align-center {
+          justify-content: center;
+        }
+        &.gui-stack__widget--align-start {
+          justify-content: start;
+        }
+        &.gui-stack__widget--align-end {
+          justify-content: end;
+        }
+        &.gui-stack__widget--align-space-between {
+          justify-content: space-between;
+        }
+        &.gui-stack__widget--align-space-around {
+          justify-content: space-around;
+        }
+      }
+
+      &--align-center {
+        justify-content: center;
+      }
+      &--align-start {
+        justify-content: start;
+      }
+      &--align-end {
+        justify-content: end;
+      }
+      &--align-space-between {
+        justify-content: space-between;
+      }
+      &--align-space-around {
+        justify-content: space-around;
       }
     }
   }
