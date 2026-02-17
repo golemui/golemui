@@ -38,6 +38,7 @@ const form = defineForm({
       type: 'stack',
       props: {
         direction: 'horizontal',
+        gap: 50,
       },
       children: [
         {
@@ -104,7 +105,6 @@ const form = defineForm({
             default: 'Number of Passengers',
           },
           props: {
-            size: 2,
             minimum: 1,
             maximum: 10,
           },

@@ -8,6 +8,7 @@
   [class.gui-stack__widget--align-end]="templateData.align === 'end'"
   [class.gui-stack__widget--align-space-between]="templateData.align === 'space-between'"
   [class.gui-stack__widget--align-space-around]="templateData.align === 'space-around'"
+  [style.gap.px]="templateData.gap"
   [id]="widget.uid"
 >
   @for (child of templateData.children; track child.uid) {
