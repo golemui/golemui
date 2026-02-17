@@ -28,6 +28,7 @@ import {
   GslSelector,
   GslSelectorsInput,
   GslScopeSelectorType,
+  GslWidgetSelector,
   LayoutDecorator,
   RuntimeFunction,
 } from './shortcuts/gsl/gsl.domain';
@@ -57,10 +58,8 @@ export class DxService {
       ? [...dxDefinitionsRaw]
       : [dxDefinitionsRaw];
 
-    // Normalize single selector to array
-    const gslSelectors: GslSelector[] = Array.isArray(gslSelectorsInput)
-      ? gslSelectorsInput
-      : [gslSelectorsInput];
+    // Normalize input to array and wrap bare GslWidgetSelectors into an implicit root scope
+    const gslSelectors: GslSelector[] = this.normalizeSelectors(gslSelectorsInput);
 
     // ── 1. Extract root defaults ──
     const rootDefaults = this.extractRootDefaults(gslSelectors);
@@ -250,6 +249,35 @@ export class DxService {
       ...inputDef,
       path: key,
     };
+  }
+
+  private isWidgetSelector(item: GslSelector | GslWidgetSelector): item is GslWidgetSelector {
+    return item.kind === 'widget';
+  }
+
+  private normalizeSelectors(input: GslSelectorsInput): GslSelector[] {
+    const items = Array.isArray(input) ? input : [input];
+
+    const gslSelectors: GslSelector[] = [];
+    const bareWidgetSelectors: GslWidgetSelector[] = [];
+
+    for (const item of items) {
+      if (this.isWidgetSelector(item)) {
+        bareWidgetSelectors.push(item);
+      } else {
+        gslSelectors.push(item);
+      }
+    }
+
+    if (bareWidgetSelectors.length > 0) {
+      gslSelectors.unshift({
+        kind: 'scope',
+        scopeType: GslScopeSelectorType.ROOT,
+        children: bareWidgetSelectors,
+      });
+    }
+
+    return gslSelectors;
   }
 
   private extractRootDefaults(selectors: GslSelector[]): GslRootDefaults {

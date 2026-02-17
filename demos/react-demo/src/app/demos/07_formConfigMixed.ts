@@ -1,18 +1,15 @@
 import { FormDemoDefinition } from '../formRegistry.domain';
 import { _guiInputs } from '../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslRoot } from '../../services/dx/shortcuts/gsl/gslRoot.impl';
 import { _gslInputs } from '../../services/dx/shortcuts/gsl/gslInputs.impl';
 
 export const formConfigMixed: FormDemoDefinition = {
   title: 'Form Selectors Mixed',
   description: 'Form driven by formSelectors making all labels blank and tweaking them',
   formSelectors: () =>
-    _gslRoot(
-      _gslInputs({
-        suppressAutomaticLabels: true,
-        decorator: (baseDef) => ({ placeholder: baseDef.path + ' placeholder' }),
-      }),
-    ),
+    _gslInputs({
+      suppressAutomaticLabels: true,
+      decorator: (baseDef) => ({ placeholder: baseDef.path + ' placeholder' }),
+    }),
   formDef: ()=>_guiInputs({
     name: 'string',
     age: (params) => ({

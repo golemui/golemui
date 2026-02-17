@@ -75,6 +75,7 @@ export enum GslWidgetSelectorType {
 }
 
 export interface GslWidgetSelector {
+  kind: 'widget';
   selectorType: GslWidgetSelectorType;
   config: GslInputsConfig | GslActionsConfig;
 }
@@ -118,7 +119,7 @@ export interface GslScopeSelector {
 
 export type GslSelector = GslScopeSelector | GslIdSelector;
 
-export type GslSelectorsInput = GslSelector | GslSelector[];
+export type GslSelectorsInput = GslSelector | GslWidgetSelector | (GslSelector | GslWidgetSelector)[];
 
 // ═══════════════════════════════════════════════════
 // Resolved Selectors (output of SelectorResolver)

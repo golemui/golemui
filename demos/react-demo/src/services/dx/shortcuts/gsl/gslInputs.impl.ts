@@ -2,6 +2,7 @@ import { GslInputsConfig, GslWidgetSelector, GslWidgetSelectorType } from './gsl
 
 export function _gslInputs(config: GslInputsConfig): GslWidgetSelector {
   return {
+    kind: 'widget',
     selectorType: GslWidgetSelectorType.INPUTS,
     config,
   };
