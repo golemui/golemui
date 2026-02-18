@@ -8,6 +8,7 @@ interface DemoFormDisplayProps<T extends Record<string, any>> {
   title: string;
   description: string;
   formDef?: DxDefinitions | (() => DxDefinitions);
+  formDefSource?: string;
   formData?: T;
   warnings?: string[];
   formKey?: string;
@@ -91,6 +92,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
   title,
   description,
   formDef,
+  formDefSource,
   formData,
   warnings,
   formKey,
@@ -103,6 +105,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
         title={title}
         description={description}
         formDef={formDef}
+        formDefSource={formDefSource}
         formData={formData}
         warnings={warnings}
         formKey={formKey}

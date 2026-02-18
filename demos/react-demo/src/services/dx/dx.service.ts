@@ -11,17 +11,20 @@ import {
   ActionDecorator,
   ActionDefCallback,
   ActionDefOrCallback,
+  DxDefinitionItem,
   DxDefinitions,
   FormEvents,
   InputDecorator,
   PartialInputDefCallback,
 } from './formDef.domain';
 import {
+  GuiDisplayShortcut,
   GuiItemsShortcutType,
   ReadyToMapInputDef,
   ReadyToMapItemDef,
   ValidGuiShortcut,
 } from './shortcuts/gui/gui.domain';
+import { _guiDisplay } from './shortcuts/gui/shortcuts/guiDisplay.impl';
 import { _guiSubmitButton } from './shortcuts/gui/shortcuts/guiSubmitButton.impl';
 import {
   GslItemType,
@@ -59,9 +62,12 @@ export class DxService {
     dxDefinitionsRaw: DxDefinitions,
     gslSelectorsInput: GslSelectorsInput = [],
   ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
-    const defs: ValidGuiShortcut[] = Array.isArray(dxDefinitionsRaw)
+    const rawItems: DxDefinitionItem[] = Array.isArray(dxDefinitionsRaw)
       ? [...dxDefinitionsRaw]
       : [dxDefinitionsRaw];
+    const defs: ValidGuiShortcut[] = rawItems.map((item) =>
+      typeof item === 'function' ? _guiDisplay(item) : item,
+    );
 
     // Normalize input to array and wrap bare GslWidgetSelectors into an implicit root scope
     const gslSelectors: GslSelector[] = this.normalizeSelectors(gslSelectorsInput);
@@ -203,6 +209,17 @@ export class DxService {
             rootDefaults,
           );
         });
+      }
+
+      if (shortcut.type === 'DISPLAY') {
+        const displayShortcut = shortcut as GuiDisplayShortcut;
+        const fn = ((params?: FunctionWidgetParams<FormData>) => ({
+          uid: '',
+          kind: 'display' as const,
+          type: 'renderer',
+          props: { render: displayShortcut.render(params ?? ({} as FunctionWidgetParams<FormData>)) },
+        })) as FormWidget<StateKeys, FormData>;
+        return [fn];
       }
 
       throw new Error('Unexpected gui shortcut type');

@@ -51,12 +51,11 @@ export interface ActionDecorator extends WidgetItemDecorator {
   disabled?: boolean;
   onClick?: ((data: any) => void) | 'submit';
 }
-
-export type ActionDefPartialCallback = (params: DxRuntimeParams) => Partial<ActionDecorator>;
 export type ActionDefCallback = (params: DxRuntimeParams) => ActionDecorator;
 export type ActionDefOrCallback = ActionDecorator | ActionDefCallback;
-export type ActionDefOrPartialCallback = ActionDecorator | ActionDefPartialCallback;
-export type DxDefinitions = ValidGuiShortcut | ValidGuiShortcut[];
+export type DxDisplayRenderFn = (params: DxRuntimeParams) => any;
+export type DxDefinitionItem = ValidGuiShortcut | DxDisplayRenderFn;
+export type DxDefinitions = DxDefinitionItem | DxDefinitionItem[];
 
 export type FormEvents = (event: Core.FormEvent) => void;
 

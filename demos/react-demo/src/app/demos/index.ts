@@ -29,9 +29,10 @@ export { inputCallbackWithGslDecoratorDemo } from './4_functions/4_inputCallback
 export { gslInputRuntimeFunctionDemo } from './4_functions/5_gslInputRuntimeFunction';
 export { gslActionRuntimeFunctionDemo } from './4_functions/6_gslActionRuntimeFunction';
 export { gslMixedRuntimeFunctionDemo } from './4_functions/7_gslMixedRuntimeFunction';
-// 5. Tags
-export { tagsBasicDemo } from './5_tags/1_tagsBasic';
-export { tagsMultipleDemo } from './5_tags/2_tagsMultiple';
-// 6. Combinations
-export { gslRootWithChildrenDemo } from './6_combinations/1_gslRootWithChildren';
-export { fullCombinationDemo } from './6_combinations/2_fullCombination';
+// 5. Displays
+export { displayShortcutDemo } from './5_displays/1_displayShortcut';
+// 6. Tags
+export { tagsBasicDemo } from './6_tags/1_tagsBasic';
+export { tagsMultipleDemo } from './6_tags/2_tagsMultiple';
+// 7. Combinations
+export { smartContactFormDemo } from './7_combinations/1_smartContactForm';

@@ -33,12 +33,13 @@ import {
   gslInputRuntimeFunctionDemo,
   gslActionRuntimeFunctionDemo,
   gslMixedRuntimeFunctionDemo,
-  // 5. Tags
+  // 5. Displays
+  displayShortcutDemo,
+  // 6. Tags
   tagsBasicDemo,
   tagsMultipleDemo,
-  // 6. Combinations
-  gslRootWithChildrenDemo,
-  fullCombinationDemo,
+  // 7. Combinations
+  smartContactFormDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
 import styles from './app.module.css';
@@ -82,12 +83,13 @@ formRegistry.registerAll([
   gslInputRuntimeFunctionDemo,
   gslActionRuntimeFunctionDemo,
   gslMixedRuntimeFunctionDemo,
-  // 5. Tags
+  // 5. Displays
+  displayShortcutDemo,
+  // 6. Tags
   tagsBasicDemo,
   tagsMultipleDemo,
-  // 6. Combinations
-  gslRootWithChildrenDemo,
-  fullCombinationDemo,
+  // 7. Combinations
+  smartContactFormDemo,
 ]);
 
 export function App() {
@@ -105,6 +107,7 @@ export function App() {
           title={`${index + 1}. ${entry.title}`}
           description={entry.description}
           formDef={entry.formDef}
+          formDefSource={entry.formDefSource}
           formData={entry.formData}
           warnings={entry.warnings}
           formKey={entry.key}
@@ -128,7 +131,8 @@ export function App() {
 
 function CategoryGroupedDemos() {
   const categories = formRegistry.getByCategory();
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const initialCollapsed = Object.fromEntries(categories.map(({ category }) => [category, true]));
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(initialCollapsed);
 
   const toggleCategory = (category: string) => {
     setCollapsed((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -156,6 +160,7 @@ function CategoryGroupedDemos() {
                   title={`${catIndex + 1}.${index + 1}. ${entry.title}`}
                   description={entry.description}
                   formDef={entry.formDef}
+                  formDefSource={entry.formDefSource}
                   formData={entry.formData}
                   warnings={entry.warnings}
                   formKey={entry.key}

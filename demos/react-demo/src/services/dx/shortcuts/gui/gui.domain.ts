@@ -4,6 +4,7 @@ import { InputDefOrCallback } from './shortcuts/guiFields.impl';
 export enum GuiShortcutType {
   LAYOUT = 'LAYOUT',
   ITEMS = 'ITEMS',
+  DISPLAY = 'DISPLAY',
 }
 
 export interface GuiShortcut {
@@ -50,4 +51,9 @@ export interface GuiLayoutShortcut<T> extends GuiShortcut {
   children: ValidGuiShortcut[];
 }
 
-export type ValidGuiShortcut = GuiFieldsShortcut | GuiLayoutShortcut<any> | GuiActionsShortcut;
+export interface GuiDisplayShortcut extends GuiShortcut {
+  type: GuiShortcutType.DISPLAY;
+  render: (params: any) => any;
+}
+
+export type ValidGuiShortcut = GuiFieldsShortcut | GuiLayoutShortcut<any> | GuiActionsShortcut | GuiDisplayShortcut;

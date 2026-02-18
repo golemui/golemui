@@ -43,6 +43,7 @@ export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   title: string;
   description: string;
   formDef?: DxDefinitions | (() => DxDefinitions);
+  formDefSource?: string;
   formData?: T;
   warnings?: string[];
   formKey?: string;
@@ -54,6 +55,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   title,
   description,
   formDef,
+  formDefSource,
   formData,
   warnings,
   formKey,
@@ -72,11 +74,13 @@ export function FormDisplayLayout<T extends Record<string, any>>({
 
   // For display: show function source if it's a function, otherwise serialize the value
   // If it's a function, strip the "() => " wrapper from the beginning
-  const serialized = formDef
-    ? (isFormDefFunction
-        ? (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
-        : serializeFormDefForDisplay(formDef))
-    : '';
+  const serialized = formDefSource
+    ? formDefSource
+    : formDef
+      ? (isFormDefFunction
+          ? (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
+          : serializeFormDefForDisplay(formDef))
+      : '';
   const resolvedFormSelectors = React.useMemo(
     () => (formSelectors ? formSelectors() : undefined),
     [formSelectors]

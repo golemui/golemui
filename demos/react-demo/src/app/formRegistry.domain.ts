@@ -6,6 +6,7 @@ export interface FormDemoDefinition<T extends Record<string, any> = any> {
   description: string;
   category?: string;
   formDef: DxDefinitions | (() => DxDefinitions);
+  formDefSource?: string;
   formData?: T;
   warnings?: string[];
   formSelectors?: () => GslSelectorsInput;
