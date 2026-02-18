@@ -1,7 +1,7 @@
 export const textinput = (): any => ({
   uid: 'tab6',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',
@@ -54,7 +54,6 @@ export const textinput = (): any => ({
       path: 'textinputIconRight',
       props: {
         icon: 'material-icons material-icons-phone_callback',
-        iconPosition: 'right',
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
       },

@@ -61,10 +61,10 @@ export class CurrencyElement extends LitElement implements Core.WithWidget {
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .currency=${this.adapter.templateData.currency}
+        .step=${this.adapter.templateData.step}
         .maximumFractionDigits=${this.adapter.templateData.maximumFractionDigits}
         .minimumFractionDigits=${this.adapter.templateData.minimumFractionDigits}
         .icon=${this.adapter.templateData.icon}
-        .iconPosition=${this.adapter.templateData.iconPosition}
         .placeholder=${this.adapter.templateData.placeholder}
         .localeId=${this.adapter.templateData.lang}
         @input=${this.valueChanged}

@@ -8,9 +8,9 @@ import { ReactiveExpression, UiState } from './shared';
 //
 // --------------------------------
 
-export type Form<StateKeys extends UiState = never, FormData extends Record<string, any> = any> = {
+export type Form<StateKeys extends UiState = never, FormType extends Record<string, any> = any> = {
   states?: Record<StateKeys, ReactiveExpression>;
-  form: LayoutWidget<StateKeys, FormData>;
+  form: LayoutWidget<StateKeys, FormType>;
 };
 
 /**
@@ -19,17 +19,17 @@ export type Form<StateKeys extends UiState = never, FormData extends Record<stri
  * Use this helper to enforce strong typing in form structures.
  */
 export function defineForm<
-  FormData extends Record<string, any> = any,
+  FormType extends Record<string, any> = any,
   States extends Record<string, ReactiveExpression> = Record<string, ReactiveExpression>,
 >(config: {
   states?: States;
-  form: FormWidget<Extract<keyof States, string>, FormData>[]; // this Extract<> removes number and symbol from the indexed type
-}): Form<Extract<keyof States, string>, FormData> {
+  form: FormWidget<Extract<keyof States, string>, FormType>[]; // this Extract<> removes number and symbol from the indexed type
+}): Form<Extract<keyof States, string>, FormType> {
   return {
     ...config,
     form: {
       uid: '',
-      type: 'stack',
+      type: 'flex',
       kind: 'layout',
       children: config.form,
     },

@@ -2,15 +2,39 @@ gui-date {
   display: block;
 
   .gui-date-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 0;
+
+    &[aria-invalid='true'] {
+      &:has(input) {
+        border-color: var(--gui-color-error);
+      }
+      &:has(input:focus) {
+        outline: 0;
+        border: var(--gui-color-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
+      }
+    }
+
+    &:has(input:focus) {
+      outline: 0;
+      border: var(--gui-color-fg) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+    }
+
     .gui-date-input__touch-target {
-      display: inline;
+      display: block;
       position: relative;
     }
 
     .gui-date-input__visual-underline {
       position: absolute;
       bottom: -1px;
-      left: 2px;
+      inset-inline-start: 2px;
       width: 18px;
       height: 1px;
       background-color: var(--gui-color-fg);
@@ -36,7 +60,8 @@ gui-date {
         background: transparent;
         text-align: center;
         padding: 0;
-        margin: -16px -12px;
+        margin-block: -16px;
+        margin-inline: -12px;
         position: relative;
         z-index: 2;
       }
@@ -50,6 +75,8 @@ gui-date {
       }
 
       &:focus {
+        box-shadow: none;
+
         & ~ .gui-date-input__visual-underline {
           display: block;
         }
@@ -65,7 +92,7 @@ gui-date {
     }
 
     &.gui-calendar--icon {
-      padding-left: 2.5rem;
+      padding-inline-start: 2.5rem;
     }
   }
 }

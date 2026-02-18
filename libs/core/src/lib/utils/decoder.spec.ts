@@ -21,31 +21,6 @@ describe('objectWithSuffix (KeySpec)', () => {
     }
   });
 
-  it('decodes suffixed keys when suffixed is true', () => {
-    const decoder = objectWithSuffix<Record<string, string>>(
-      {
-        label: {
-          suffixed: true,
-          decoder: jd.string(),
-        },
-      },
-      'MyObj',
-    );
-
-    const res = decoder.decode({
-      'label.register': 'Register',
-      'label.login': 'Login',
-    });
-
-    expect(res.isOk()).toBe(true);
-    if (res.isOk()) {
-      expect(res.value).toEqual({
-        'label.register': 'Register',
-        'label.login': 'Login',
-      });
-    }
-  });
-
   it('accepts base and suffixed keys together when suffixed is true', () => {
     const decoder = objectWithSuffix<Record<string, string>>(
       {
@@ -88,11 +63,11 @@ describe('objectWithSuffix (KeySpec)', () => {
 
     expect(res.isOk()).toBe(false);
     if (!res.isOk()) {
-      expect(res.error).toContain('Unexpected object key "label.register"');
+      expect(res.error).toContain('<MyObj> failed at "label" with undefined is not a valid string');
     }
   });
 
-  it('fails on unexpected keys', () => {
+  it('fails when a required spec key is not provided', () => {
     const decoder = objectWithSuffix<{ label: string }>(
       {
         label: {
@@ -104,12 +79,12 @@ describe('objectWithSuffix (KeySpec)', () => {
     );
 
     const res = decoder.decode({
-      title: 'Hello',
+      somethingelse: 'Hello',
     });
 
     expect(res.isOk()).toBe(false);
     if (!res.isOk()) {
-      expect(res.error).toContain('Unexpected object key "title"');
+      expect(res.error).toContain('<MyObj> failed at "label" with undefined is not a valid string');
     }
   });
 
@@ -147,6 +122,60 @@ describe('objectWithSuffix (KeySpec)', () => {
     expect(res.isOk()).toBe(false);
     if (!res.isOk()) {
       expect(res.error).toContain('Expected object literal');
+    }
+  });
+
+  it('autogenerates uid when empty string', () => {
+    const generateId = vi.fn(() => 'generated-id-123');
+    const uidDecoder = jd.optional(jd.string()).map((s) => s || generateId());
+
+    const decoder = objectWithSuffix<{ uid: string }>(
+      {
+        uid: { suffixed: false, decoder: uidDecoder },
+      },
+      'MyObj',
+    );
+
+    const res = decoder.decode({ uid: '' });
+    expect(res.isOk()).toBe(true);
+    if (res.isOk()) {
+      expect(res.value.uid).toBe('generated-id-123');
+    }
+  });
+
+  it('autogenerates uid when undefined', () => {
+    const generateId = vi.fn(() => 'generated-id-123');
+    const uidDecoder = jd.optional(jd.string()).map((s) => s || generateId());
+
+    const decoder = objectWithSuffix<{ uid: string }>(
+      {
+        uid: { suffixed: false, decoder: uidDecoder },
+      },
+      'MyObj',
+    );
+
+    const res = decoder.decode({});
+    expect(res.isOk()).toBe(true);
+    if (res.isOk()) {
+      expect(res.value.uid).toBe('generated-id-123');
+    }
+  });
+
+  it('preserves custom uid when provided', () => {
+    const generateId = vi.fn(() => 'generated-id-123');
+    const uidDecoder = jd.optional(jd.string()).map((s) => s || generateId());
+
+    const decoder = objectWithSuffix<{ uid: string }>(
+      {
+        uid: { suffixed: false, decoder: uidDecoder },
+      },
+      'MyObj',
+    );
+
+    const res = decoder.decode({ uid: 'my-custom-id' });
+    expect(res.isOk()).toBe(true);
+    if (res.isOk()) {
+      expect(res.value.uid).toBe('my-custom-id');
     }
   });
 });

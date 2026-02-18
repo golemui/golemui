@@ -1,7 +1,7 @@
-export const stack = (): any => ({
+export const flex = (): any => ({
   uid: 'tab2',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   props: {
     direction: 'horizontal',
     'direction.limitReached': 'vertical',

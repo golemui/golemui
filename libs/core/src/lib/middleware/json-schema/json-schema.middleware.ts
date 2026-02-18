@@ -94,7 +94,7 @@ function schemaToForm(
   }
 
   //
-  // Object --> always a vertical stack
+  // Object --> always a vertical flex
   //
   if (schema.type === 'object') {
     const children: FormWidget[] = [];

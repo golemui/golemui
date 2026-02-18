@@ -1,5 +1,6 @@
 // Variables
 @use 'variables';
+@use 'rtl';
 
 // Form container
 @use 'form';
@@ -25,7 +26,7 @@
 @use 'toggle';
 
 // Layout Widgets
-@use 'stack';
+@use 'flex';
 @use 'tabs';
 @use 'accordion';
 

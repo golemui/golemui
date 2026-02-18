@@ -18,11 +18,11 @@ export class GuiCurrency extends LitElement {
   @property({ type: String }) value: number | null | undefined = undefined;
 
   @property({ type: String }) currency: string | undefined = undefined;
+  @property({ type: String }) step: number | undefined = undefined;
   @property({ type: String }) maximumFractionDigits: number | undefined = undefined;
   @property({ type: String }) minimumFractionDigits: number | undefined = undefined;
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) placeholder: string | undefined = undefined;
 
   @state() private displayValue: string | undefined;
@@ -72,7 +72,6 @@ export class GuiCurrency extends LitElement {
       maximumFractionDigits: this.maximumFractionDigits,
       minimumFractionDigits: this.minimumFractionDigits,
       icon: this.icon,
-      iconPosition: this.iconPosition,
       placeholder: this.placeholder,
     };
 
@@ -83,7 +82,6 @@ export class GuiCurrency extends LitElement {
 
     const fieldClasses: { [key: string]: boolean } = {
       [`gui-currency--icon`]: !!this.icon,
-      [`gui-currency--icon-right`]: this.iconPosition === 'right',
     };
 
     return html`
@@ -91,25 +89,24 @@ export class GuiCurrency extends LitElement {
 
       <div class="gui-widget">
         <input
-          type="text"
+          type="number"
+          inputmode="decimal"
           id=${this.uid}
           data-cy=${`${this.uid}_currency`}
           class=${classMap(fieldClasses)}
+          step=${this.step && this.step > 0 ? this.step : nothing}
           .value=${this.value ?? ''}
           ?required=${this.disabled}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
-          @beforeinput=${this.handleBeforeInput}
           @input=${this.handleInput}
           @focus=${this.handleFocus}
           @blur=${this.handleBlur}
         />
         <label
           for=${this.uid}
-          class="gui-currency__format-value ${this.icon && this.iconPosition !== 'right'
-            ? 'gui-currency__format-value--icon'
-            : ''}"
+          class="gui-currency__format-value ${this.icon ? 'gui-currency__format-value--icon' : ''}"
           >${this.displayValue}</label
         >
         ${currencyIcon.html}
@@ -119,61 +116,16 @@ export class GuiCurrency extends LitElement {
     `;
   }
 
-  private handleBeforeInput(event: InputEvent) {
-    if (!event.data && !event.inputType.startsWith('insert')) return;
-    if (
-      event.inputType === 'deleteContentBackward' ||
-      event.inputType === 'deleteContentForward' ||
-      this.readOnly
-    ) {
-      return;
-    }
-
-    const data = event.data;
-    if (!data) return;
-
-    const { decimal } = this.separators;
-
-    if (data === '-') {
-      const cursorStart = this.inputElement.selectionStart;
-      const currentValue = this.inputElement.value;
-      const isReplacing = (this.inputElement.selectionEnd || 0) - (cursorStart || 0) > 0;
-
-      if (cursorStart !== 0 || (currentValue.includes('-') && !isReplacing)) {
-        event.preventDefault();
-      }
-      return;
-    }
-
-    const allowedPattern = new RegExp(`[0-9\\${decimal}]`);
-
-    if (!allowedPattern.test(data)) {
-      event.preventDefault();
-      return;
-    }
-
-    if (data === decimal && this.inputElement.value.includes(decimal)) {
-      event.preventDefault();
-    }
-  }
-
   private handleInput(event: InputEvent) {
     event.stopPropagation();
 
     if (!this.readOnly) {
-      const input = event.target as HTMLInputElement;
-      const { decimal, group } = this.separators;
-
-      let rawValueString = input.value.split(group).join('').replace(decimal, '.');
-
-      if (rawValueString === `-.`) rawValueString = '-0.';
-
-      this.value = isNaN(parseFloat(rawValueString)) ? null : parseFloat(rawValueString);
-      this.displayValue = this.formatCurrency(this.value);
+      const target = event.target as HTMLInputElement;
+      this.displayValue = this.formatCurrency(target.valueAsNumber);
 
       this.dispatchEvent(
         new CustomEvent('input', {
-          detail: { value: this.value },
+          detail: { value: target.valueAsNumber },
           bubbles: true,
           composed: true,
         }),

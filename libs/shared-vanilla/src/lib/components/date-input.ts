@@ -201,6 +201,8 @@ export class GuiDate extends LitElement {
   private handleKeyUp(event: KeyboardEvent, type: 'day' | 'month' | 'year') {
     if (this.readOnly) return;
 
+    const isRTL = window.getComputedStyle(this).direction === 'rtl';
+    console.log('is RTL', isRTL);
     const input = event.target as HTMLInputElement;
     const inputs = Array.from(this.querySelectorAll('input'));
     const index = inputs.indexOf(input);
@@ -233,18 +235,22 @@ export class GuiDate extends LitElement {
         this.validateAndEmit();
         break;
       }
-      case 'ArrowLeft':
-        if (index > 0) {
-          inputs[index - 1].focus();
-          inputs[index - 1].select();
+      case 'ArrowLeft': {
+        const prevIdx = isRTL ? index + 1 : index - 1;
+        if (prevIdx >= 0 && prevIdx < inputs.length) {
+          inputs[prevIdx].focus();
+          inputs[prevIdx].select();
         }
         break;
-      case 'ArrowRight':
-        if (index < inputs.length - 1) {
-          inputs[index + 1].focus();
-          inputs[index + 1].select();
+      }
+      case 'ArrowRight': {
+        const nextIdx = isRTL ? index - 1 : index + 1;
+        if (nextIdx >= 0 && nextIdx < inputs.length) {
+          inputs[nextIdx].focus();
+          inputs[nextIdx].select();
         }
         break;
+      }
     }
   }
 

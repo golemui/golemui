@@ -1,7 +1,7 @@
 export const calendar = (): any => ({
   uid: 'tab12',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',
@@ -13,6 +13,8 @@ export const calendar = (): any => ({
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
+        prevMonthAriaLabel: 'Go To Previous Month',
+        nextMonthAriaLabel: 'Go To Next Month',
         minDate: '2026-01-01',
         maxDate: '2026-03-28',
         disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
@@ -28,6 +30,8 @@ export const calendar = (): any => ({
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
+        prevMonthAriaLabel: 'Go To Previous Month',
+        nextMonthAriaLabel: 'Go To Next Month',
         minDate: '2026-01-01',
         maxDate: '2026-03-28',
         disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
@@ -53,6 +57,8 @@ export const calendar = (): any => ({
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
+        prevMonthAriaLabel: 'Go To Previous Month',
+        nextMonthAriaLabel: 'Go To Next Month',
       },
       validator: { type: 'string', required: true, format: 'date' },
     },

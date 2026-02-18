@@ -55,7 +55,7 @@ export const addHint = <T, ExtraProps extends { hint?: string }>(
     : html``;
 };
 
-export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: string }>(
+export const addIcon = <T, ExtraProps extends { icon?: string }>(
   widgetType: string,
   templateData: ControlTemplateData<T> & ExtraProps,
 ) => {
@@ -66,11 +66,9 @@ export const addIcon = <T, ExtraProps extends { icon?: string; iconPosition?: st
 
   if (templateData.icon) {
     widgetClasses[`gui-${widgetType}--icon`] = true;
-    widgetClasses[`gui-${widgetType}--icon-right`] = templateData.iconPosition === 'right';
 
     const classes = {
       'gui-widget-icon': true,
-      'gui-widget-icon--right': templateData.iconPosition === 'right',
       [templateData.icon]: true,
     };
     return {

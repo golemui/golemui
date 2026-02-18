@@ -1,7 +1,7 @@
 export const textarea = (): any => ({
   uid: 'tab11',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

@@ -3,8 +3,8 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
-import { OneOfProps, Option, SelectProps } from '../widget.props';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
+import { OneOfProps, Option, SelectProps } from '../widget.props';
 import { inferOptionValue, OptionValue, updateOptions } from './one-of';
 
 @customElement('gui-select')
@@ -21,7 +21,6 @@ export class GuiSelect extends LitElement {
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
-  @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
   @property({ type: String }) options: Option[] = [];
   @property({ type: String }) placeholder: string | undefined = undefined;
   @property({ type: String }) labelField: string | undefined = undefined;
@@ -62,7 +61,6 @@ export class GuiSelect extends LitElement {
       value: this.value,
       hint: this.hint,
       icon: this.icon,
-      iconPosition: this.iconPosition,
       options: this.options,
       placeholder: this.placeholder,
       labelField: this.labelField,
@@ -105,7 +103,7 @@ export class GuiSelect extends LitElement {
 
       <div class="gui-widget">
         <select
-          id=${this.uid!}
+          id=${this.uid as string}
           data-cy=${`${this.uid}_select`}
           class=${classMap(selectIcon.widgetClasses)}
           ?required=${templateData.required}

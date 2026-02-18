@@ -14,17 +14,16 @@ export type TextinputProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 export type CurrencyProps = {
   currency?: string;
+  step?: number;
   maximumFractionDigits?: number;
   minimumFractionDigits?: number;
   hint?: string;
   placeholder?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 export type TextareaProps = {
@@ -54,6 +53,16 @@ export type CalendarProps = {
    * that will be used to visually represent the "next month" navigation button.
    */
   nextMonthIcon?: string;
+  /**
+   * An optional string that represents the ARIA label for the previous month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  prevMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the next month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  nextMonthAriaLabel?: string;
   /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
@@ -128,6 +137,16 @@ export type RangeCalendarProps = {
    */
   nextMonthIcon?: string;
   /**
+   * An optional string that represents the ARIA label for the previous month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  prevMonthAriaLabel?: string;
+  /**
+   * An optional string that represents the ARIA label for the next month's navigation button.
+   * This label is used to improve accessibility by providing screen readers with descriptive text.
+   */
+  nextMonthAriaLabel?: string;
+  /**
    * Specifies the formatting style for displaying the day portion of a date.
    *
    * The variable `dayFormat` can accept one of the following values:
@@ -194,6 +213,8 @@ export type DatePickerProps = {
   icon?: string;
   prevMonthIcon?: string;
   nextMonthIcon?: string;
+  prevMonthAriaLabel?: string;
+  nextMonthAriaLabel?: string;
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
@@ -202,9 +223,10 @@ export type DatePickerProps = {
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
   step?: number;
+  minimum?: number;
+  maximum?: number;
+  autoGrow?: true;
 };
 
 export type CheckboxProps = {
@@ -253,7 +275,6 @@ export type Option = {
 export type SelectProps = {
   hint?: string;
   icon?: string;
-  iconPosition?: 'left' | 'right';
   options: Option[];
   placeholder?: string;
   labelField?: string;
@@ -265,6 +286,7 @@ export type ListItem<T> = {
   value: OptionValue;
 };
 
+type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
 export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
@@ -272,9 +294,9 @@ export type DropdownProps<T> = {
   /**
    * Property widget used to display in the input when an item option is selected
    */
-  labelField?: keyof T;
-  valueField?: keyof T;
-  searchFields?: (keyof T)[];
+  labelField?: ItemKeys<T>;
+  valueField?: ItemKeys<T>;
+  searchFields?: ItemKeys<T>[];
   height?: number;
   itemHeight?: number;
   /**
@@ -311,8 +333,10 @@ export type OneOfProps = {
   valueField?: string;
 };
 
-export type StackProps = {
+export type FlexProps = {
   direction?: 'horizontal' | 'vertical';
+  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
+  gap?: number;
 };
 
 export type TabsProps = {

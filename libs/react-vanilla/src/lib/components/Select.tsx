@@ -47,7 +47,6 @@ export function Select(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const icon = templateData.icon;
-  const iconPosition = templateData.iconPosition;
   const valueField = templateData.valueField;
   const labelField = templateData.labelField;
   const isDisabled = templateData.disabled as boolean;
@@ -69,7 +68,6 @@ export function Select(widgetInstance: Core.WithWidget) {
         hint={hint}
         placeholder={placeholder}
         icon={icon}
-        iconPosition={iconPosition}
         options={options}
         labelField={labelField}
         valueField={valueField}

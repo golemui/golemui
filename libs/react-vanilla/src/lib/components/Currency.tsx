@@ -21,10 +21,10 @@ export function Currency(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const currency = templateData.currency;
+  const step = templateData.step;
   const maximumFractionDigits = templateData.maximumFractionDigits;
   const minimumFractionDigits = templateData.minimumFractionDigits;
   const icon = templateData.icon;
-  const iconPosition = templateData.iconPosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -43,10 +43,10 @@ export function Currency(widgetInstance: Core.WithWidget) {
         readOnly={isReadonly}
         value={value}
         currency={currency}
+        step={step}
         maximumFractionDigits={maximumFractionDigits}
         minimumFractionDigits={minimumFractionDigits}
         icon={icon}
-        iconPosition={iconPosition}
         placeholder={placeholder ?? undefined}
         localeId={lang}
         onInput={handleChange}

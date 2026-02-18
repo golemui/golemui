@@ -14,8 +14,8 @@ import {
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { DropdownProps, ListItem } from '@golemui/shared-vanilla';
-import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 import { debounceTime, Subject, Subscription } from 'rxjs';
+import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 
 interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
@@ -164,7 +164,9 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
 
       const searchFields =
         templateData.searchFields ??
-        ([templateData.labelField, templateData.valueField].filter((field) => !!field) as string[]);
+        ([templateData.labelField!, templateData.valueField!].filter(
+          (field) => !!field,
+        ) as string[]);
       const hasSearchFields = searchFields.length > 0;
       const items = templateData.items || [];
       const filtered = items.filter((item: any) => {

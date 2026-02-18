@@ -35,6 +35,8 @@ export function RangeCalendar(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const prevMonthIcon = templateData.prevMonthIcon;
   const nextMonthIcon = templateData.nextMonthIcon;
+  const prevMonthAriaLabel = templateData.prevMonthAriaLabel;
+  const nextMonthAriaLabel = templateData.nextMonthAriaLabel;
   const dayFormat = templateData.dayFormat;
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
@@ -62,6 +64,8 @@ export function RangeCalendar(widgetInstance: Core.WithWidget) {
         value={value}
         prevMonthIcon={prevMonthIcon}
         nextMonthIcon={nextMonthIcon}
+        prevMonthAriaLabel={prevMonthAriaLabel}
+        nextMonthAriaLabel={nextMonthAriaLabel}
         dayFormat={dayFormat}
         weekdayFormat={weekdayFormat}
         monthFormat={monthFormat}

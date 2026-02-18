@@ -1,5 +1,4 @@
 import * as AppsShared from '@golemui/apps-shared';
-import { kitchenSink } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { ReactItemRenderer } from '@golemui/react';
 import { FormComponent } from '@golemui/react-vanilla';
@@ -10,12 +9,13 @@ import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 import styles from './form.page.module.scss';
+import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = kitchenSink;
+const mock = AppsShared.appetizer;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);
@@ -38,6 +38,7 @@ const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   complexListItemRenderer: ComplexListItemRenderer,
   productItemRenderer: ProductItemRenderer,
   airportItemRenderer: AirportItemRenderer,
+  countryItemRenderer: CountryItemRenderer,
 };
 const validateOn: Core.ValidateOn = 'eager';
 

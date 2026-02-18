@@ -1,7 +1,7 @@
 export const checkbox = (): any => ({
   uid: 'tab4',
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children: [
     {
       uid: '',

@@ -27,7 +27,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
   repeater: async () => (await import('./components/repeater.element')).RepeaterElement,
 
   // LAYOUTS
-  stack: async () => (await import('./components/stack.element')).StackElement,
+  flex: async () => (await import('./components/flex.element')).FlexElement,
   tabs: async () => (await import('./components/tabs.element')).TabsElement,
   accordion: async () => (await import('./components/accordion.element')).AccordionElement,
 

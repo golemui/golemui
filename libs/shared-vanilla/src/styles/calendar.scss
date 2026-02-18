@@ -55,37 +55,6 @@ gui-calendar {
       }
     }
 
-    .gui-calendar__month-button-icon {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: calc(var(--gui-calendar-change-month-button-width) - 8px);
-      height: calc(var(--gui-calendar-change-month-button-height) - 8px);
-
-      &--prev::before {
-        content: '';
-        width: 0.5rem;
-        height: 0.5rem;
-        margin-left: 2px;
-        border: solid;
-        border-width: 0 2px 2px 0;
-        pointer-events: none;
-        right: 29%;
-        top: 33%;
-        transform: translateY(0%) rotate(135deg);
-      }
-      &--next::before {
-        content: '';
-        width: 0.5rem;
-        height: 0.5rem;
-        margin-right: 2px;
-        border: solid;
-        border-width: 0 2px 2px 0;
-        pointer-events: none;
-        transform: translateY(0%) rotate(-45deg);
-      }
-    }
-
     .gui-calendar__day-button {
       border: 1px solid transparent;
       background: transparent;
@@ -93,6 +62,12 @@ gui-calendar {
       padding: var(--gui-padding);
       border-radius: var(--gui-radius);
       cursor: pointer;
+
+      &:focus {
+        outline: 0;
+        border: var(--gui-color-fg) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+      }
 
       &:hover {
         border: 1px solid var(--gui-color-border);
@@ -110,6 +85,7 @@ gui-calendar {
 
       &[disabled] {
         background-color: var(--gui-color-bg-disabled);
+        color: var(--gui-color-fg);
         cursor: not-allowed;
       }
     }

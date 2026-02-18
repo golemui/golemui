@@ -10,7 +10,7 @@ import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
 import { repeater } from './tabs/repeater';
 import { select } from './tabs/select';
-import { stack } from './tabs/stack';
+import { flex } from './tabs/flex';
 import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
@@ -37,10 +37,10 @@ const form = defineForm({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab3',
+        defaultOpen: 'tab8',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
-          { label: 'Stack Layout', uid: 'tab2' },
+          { label: 'Flex Layout', uid: 'tab2' },
           { label: 'Repeater Component', uid: 'tab3' },
           { label: 'Checkbox Component', uid: 'tab4' },
           { label: 'Accordion Layout', uid: 'tab5' },
@@ -59,7 +59,7 @@ const form = defineForm({
       on: { change: 'onTabEvent' },
       children: [
         alert(),
-        stack(),
+        flex(),
         repeater(),
         checkbox(),
         accordion(),

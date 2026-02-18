@@ -6,7 +6,7 @@ const form = defineForm({
     {
       uid: 'tab15',
       kind: 'layout',
-      type: 'stack',
+      type: 'flex',
       props: { direction: 'horizontal' },
       children: [
         {

@@ -3,8 +3,7 @@ gui-textarea {
 
   textarea {
     &.gui-textarea--icon {
-      padding-left: var(--gui-space-gap);
-      padding-right: var(--gui-icon-space-gap);
+      padding-inline-start: var(--gui-icon-space-gap);
     }
   }
 

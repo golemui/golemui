@@ -88,13 +88,13 @@ export const Vanilla = {
   //
   // Layout widgets
   //
-  stack: <StateKeys extends Core.UiState = string>(
+  flex: <StateKeys extends Core.UiState = string>(
     config: LayoutWidgetConfig,
-    props?: Props.StackProps,
+    props?: Props.FlexProps,
   ): Core.LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
-    type: 'stack',
+    type: 'flex',
     ...(props && { props }),
     ...config,
   }),

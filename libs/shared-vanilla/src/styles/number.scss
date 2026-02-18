@@ -1,37 +1,56 @@
 gui-number {
-  display: block;
+  display: inline-block;
 
   .gui-widget {
-    &::before {
-      content: '';
-      border: solid;
-      border-width: 0 2px 2px 0;
-      pointer-events: none;
-      position: absolute;
-      right: 1rem;
-      top: 40%;
-      width: 0.25rem;
-      height: 0.25rem;
-      transform: translateY(-60%) rotate(225deg);
+    display: inline-flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    overflow: hidden;
+
+
+    border-radius: var(--gui-radius);
+    border: 1px solid var(--gui-color-border);
+    color: var(--gui-color-fg);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:has(input[aria-invalid='true']) {
+      border-color: var(--gui-color-error);
     }
-    &::after {
-      content: '';
-      border: solid;
-      border-width: 0 2px 2px 0;
-      pointer-events: none;
-      position: absolute;
-      right: 1rem;
-      top: 60%;
-      width: 0.25rem;
-      height: 0.25rem;
-      transform: translateY(-60%) rotate(45deg);
+    &:has(input[aria-invalid='true']:focus) {
+      outline: 0;
+      border: var(--gui-color-error) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
+    }
+    &:has(input:focus) {
+      outline: 0;
+      border: var(--gui-color-fg) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
     }
 
-    &-icon--right {
-      right: 2.5rem;
+    input:focus,
+    input[aria-invalid='true']:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    button.gui-button.gui-number__minus,
+    button.gui-button.gui-number__plus {
+      border-radius: 0;
     }
 
     input[type='number'] {
+      text-align: center;
+      border-radius: 0;
+      border: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      font-size: 20px;
+      width: 43px;
+      height: 43px;
+
       /* For Firefox */
       appearance: textfield;
 
@@ -39,15 +58,6 @@ gui-number {
       &::-webkit-outer-spin-button,
       &::-webkit-inner-spin-button {
         appearance: none;
-      }
-
-      &.gui-number--icon {
-        padding-left: 2.5rem;
-      }
-
-      &.gui-number--icon-right {
-        padding-left: var(--gui-space-gap);
-        padding-right: var(--gui-icon-space-gap);
       }
     }
   }
