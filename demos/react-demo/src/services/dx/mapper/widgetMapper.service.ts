@@ -152,7 +152,7 @@ export class WidgetMapper {
     return {
       uid: layoutDef.uid ?? '',
       kind: 'layout',
-      type: layoutDef.widgetName ?? 'stack',
+      type: layoutDef.widgetName ?? 'flex',
       props: {
         direction: layoutDef.direction ?? 'vertical',
       },

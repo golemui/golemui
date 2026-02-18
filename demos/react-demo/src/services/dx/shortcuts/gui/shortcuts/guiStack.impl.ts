@@ -4,7 +4,7 @@ export type StackOrientation = 'horizontal' | 'vertical';
 
 export interface GuiStackShortcut extends GuiLayoutShortcut<{ orientation: StackOrientation }> {
   layoutRootProps: {
-    widgetName: 'stack';
+    widgetName: 'flex';
   };
 }
 
@@ -17,7 +17,7 @@ export const _guiStack = (
 
   return {
     type: GuiShortcutType.LAYOUT,
-    layoutRootProps: { widgetName: 'stack' },
+    layoutRootProps: { widgetName: 'flex' },
     layoutNestedProps: { orientation },
     tags: tagsList,
     children,

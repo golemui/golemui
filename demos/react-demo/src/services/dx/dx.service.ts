@@ -97,7 +97,7 @@ export class DxService {
       const rootLayoutDef: LayoutDecorator = {
         uid: '#root',
         direction: 'vertical',
-        widgetName: 'stack',
+        widgetName: 'flex',
       };
 
       // Apply any _gslLayoutById('#root', ...) selectors
@@ -116,7 +116,7 @@ export class DxService {
           rootLayout = {
             uid: '#root',
             kind: 'layout',
-            type: 'stack',
+            type: 'flex',
             props: { direction: 'vertical' },
             children: widgets,
           };
@@ -125,7 +125,7 @@ export class DxService {
         rootLayout = {
           uid: '#root',
           kind: 'layout',
-          type: 'stack',
+          type: 'flex',
           props: { direction: 'vertical' },
           children: widgets,
         };
