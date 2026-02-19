@@ -4,32 +4,10 @@
 <section class="custom-power">
   <div class="container">
     <div class="content">
-      <h2>Build Anything.<br />Create without limits.</h2>
+      <h2>Your <span class="gradient-text">Brand</span>.<br />Your <span class="gradient-text">Rules</span>.</h2>
       <p>
-        Don't get locked into a rigid system. GolemUI gives you the low-level control you need to
-        build custom requirements.
+        Style GolemUI effortlessly using native CSS Variables. Quickly override our default tokens to match your brand or author a complete custom theme from scratch. Total design freedom, zero complexity.
       </p>
-
-      <div class="features">
-        <div class="feature">
-          <h3>Components</h3>
-          <p>
-            <a href="guides/custom-components/">Build your own complex widgets</a> that integrate seamlessly with the form state.
-          </p>
-        </div>
-        <div class="feature">
-          <h3>Validators</h3>
-          <p>
-            <a href="/guides/validators/">Write complex validators</a> that run async on the server or client with full type safety.
-          </p>
-        </div>
-        <div class="feature">
-          <h3>Middlewares</h3>
-          <p>
-            Intercept value changes, transform data, or trigger side effects with a <a href="/guides/middlewares/">powerful middleware pipeline</a>.
-          </p>
-        </div>
-      </div>
     </div>
     <div class="visual">
       <div>
@@ -49,16 +27,14 @@
   }
 
   .custom-power {
-    padding: 8rem 0;
+    padding: 4rem 0;
     background: var(--bg-color);
     overflow: hidden;
   }
 
   .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
 
     @media (max-width: 960px) {
       grid-template-columns: 1fr;
@@ -68,7 +44,7 @@
 
   .content {
     h2 {
-      font-size: 3rem;
+      font-size: 5rem;
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 1.5rem;

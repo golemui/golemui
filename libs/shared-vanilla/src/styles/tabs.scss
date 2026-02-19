@@ -14,6 +14,7 @@
       position: relative;
       overflow: hidden;
       padding: 0;
+      margin-bottom: -1px;
 
       &::before,
       &::after {
@@ -109,7 +110,6 @@
     section[role='tabpanel'] {
       padding: var(--gui-padding);
       border: 1px solid var(--gui-color-border);
-      border-top: 0;
       border-radius: 0 0 var(--gui-radius) var(--gui-radius);
       background: var(--gui-color-bg);
       color: var(--gui-color-fg);

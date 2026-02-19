@@ -25,7 +25,7 @@ const data = {
   details: {
     clientName: '',
     date: null,
-    isRemote: false, // Toggles the UI state
+    isRemote: false,
     notes: '',
   },
 };
@@ -42,55 +42,17 @@ const form = defineForm({
       },
       children: [
         {
-          uid: 'departureCountry',
-          kind: 'input',
-          type: 'dropdown',
-          path: 'departureCountry',
-          label: {
-            key: 'travelPlanner.field.departureCountry.label',
-            default: 'Departure Country',
-          },
-          props: {
-            size: 4,
-            height: 300,
-            itemHeight: 60,
-            itemRenderer: 'countryItemRenderer',
-            placeholder: {
-              key: 'travelPlanner.field.departureCountry.placeholder',
-              default: 'Select a Country',
-            },
-            labelField: 'label',
-            valueField: 'id',
-            items: [
-              { id: 'AU', flag: '🇦🇺', label: 'Australia' },
-              { id: 'BR', flag: '🇧🇷', label: 'Brazil' },
-              { id: 'CA', flag: '🇨🇦', label: 'Canada' },
-              { id: 'CN', flag: '🇨🇳', label: 'China' },
-              { id: 'FR', flag: '🇫🇷', label: 'France' },
-              { id: 'DE', flag: '🇩🇪', label: 'Germany' },
-              { id: 'IN', flag: '🇮🇳', label: 'India' },
-              { id: 'IT', flag: '🇮🇹', label: 'Italy' },
-              { id: 'JP', flag: '🇯🇵', label: 'Japan' },
-              { id: 'MX', flag: '🇲🇽', label: 'Mexico' },
-              { id: 'KR', flag: '🇰🇷', label: 'South Korea' },
-              { id: 'ES', flag: '🇪🇸', label: 'Spain' },
-              { id: 'UK', flag: '🇺🇦', label: 'Ukraine' },
-              { id: 'US', flag: '🇺🇸', label: 'United States' },
-              { id: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
-            ],
-          },
-        },
-        {
           uid: 'budget',
           kind: 'input',
           type: 'currency',
           path: 'budget',
+          defaultValue: 10000,
           label: {
             key: 'travelPlanner.field.budget',
             default: 'Travel Budget',
           },
           props: {
-            size: 4,
+            size: 1,
             step: 100,
             placeholder: (data: FunctionWidgetParams<any> | undefined) =>
               coins[data?.$form?.departureCountry ?? 'US'],
@@ -106,29 +68,14 @@ const form = defineForm({
           path: 'passengers',
           label: {
             key: 'travelPlanner.field.passengers',
-            default: 'Number of Passengers',
+            default: 'Passengers',
           },
+          defaultValue: 1,
           props: {
             minimum: 1,
             maximum: 10,
           },
           validator: { type: 'number', required: true, minimum: 1, maximum: 10 },
-        },
-        {
-          uid: 'pets',
-          kind: 'input',
-          type: 'number',
-          path: 'pets',
-          label: {
-            key: 'travelPlanner.field.pets',
-            default: 'Number of Pets',
-          },
-          props: {
-            minimum: 1,
-            maximum: 3,
-          },
-          validator: { type: 'number', required: true, minimum: 1, maximum: 3 },
-          include: { when: '$form.includePets === true' },
         },
       ],
     },
@@ -138,7 +85,7 @@ const form = defineForm({
       type: 'flex',
       props: {
         direction: 'horizontal',
-        align: 'end',
+        align: 'start',
       },
       children: [
         {
@@ -147,8 +94,15 @@ const form = defineForm({
           type: 'toggle',
           path: 'includePets',
           label: {
-            key: 'travelPlanner.field.includePets',
+            key: 'travelPlanner.field.includePets.label',
             default: 'Include Pets',
+          },
+          props: {
+            togglePosition: 'left',
+            hint: {
+              key: 'travelPlanner.field.includePets.hint',
+              default: 'Only hosts with pets will be included in the search results.',
+            },
           },
         },
       ],
@@ -163,7 +117,8 @@ const form = defineForm({
         default: 'Select Preferred Dates',
       },
       props: {
-        minDate: minDate,
+        size: 1,
+        numberOfMonths: 2,
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
@@ -175,23 +130,6 @@ const form = defineForm({
           key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
           default: 'Next Month',
         },
-        numberOfMonths: 3,
-      },
-    },
-    // Submit Action
-    {
-      uid: 'btn-submit',
-      kind: 'action',
-      type: 'button',
-      on: {
-        click: 'handleSubmit',
-      },
-      label: {
-        key: 'travelPlanner.btn.submit',
-        default: 'Search My Trip',
-      },
-      props: {
-        size: 0,
       },
     },
   ],
@@ -200,9 +138,8 @@ const form = defineForm({
 /**
  * i18next Resource Bundle
  */
-
 const resources = {
-  // English (Default)
+  // English
   en: {
     translation: {
       travelPlanner: {
@@ -212,9 +149,12 @@ const resources = {
             placeholder: 'Select a Country',
           },
           budget: 'Travel Budget',
-          passengers: 'Number of Passengers',
-          pets: 'Number of Pets',
-          includePets: 'Include Pets',
+          passengers: 'Passengers',
+          pets: 'Pets',
+          includePets: {
+            label: 'Include Pets',
+            hint: 'Only hosts with pets will be included in the search results.',
+          },
           preferredDates: {
             label: 'Select Preferred Dates',
             nextMonthAriaLabel: 'Next Month',
@@ -238,9 +178,12 @@ const resources = {
             placeholder: 'Seleccione un país',
           },
           budget: 'Presupuesto de viaje',
-          passengers: 'Número de pasajeros',
-          pets: 'Número de mascotas',
-          includePets: 'Incluir mascotas',
+          passengers: 'Pasajeros',
+          pets: 'Mascotas',
+          includePets: {
+            label: 'Incluir mascotas',
+            hint: 'Solo se incluirán en los resultados de búsqueda los alojamientos que acepten mascotas.',
+          },
           preferredDates: {
             label: 'Seleccionar fechas preferidas',
             nextMonthAriaLabel: 'Mes siguiente',
@@ -264,9 +207,12 @@ const resources = {
             placeholder: '国を選択',
           },
           budget: '旅行予算',
-          passengers: '乗客人数',
-          pets: 'ペットの数',
-          includePets: 'ペット同伴',
+          passengers: '乗客',
+          pets: 'ペット',
+          includePets: {
+            label: 'ペット同伴',
+            hint: 'ペット可の宿泊先のみが検索結果に表示されます。',
+          },
           preferredDates: {
             label: '希望日の選択',
             nextMonthAriaLabel: '翌月',
@@ -280,7 +226,7 @@ const resources = {
     },
   },
 
-  // Farsi (فارسی) - RTL Language support required in UI
+  // Farsi (فارسی)
   fa: {
     translation: {
       travelPlanner: {
@@ -290,9 +236,12 @@ const resources = {
             placeholder: 'یک کشور را انتخاب کنید',
           },
           budget: 'بودجه سفر',
-          passengers: 'تعداد مسافران',
-          pets: 'تعدادی حیوان خانگی',
-          includePets: 'همراه با حیوان خانگی',
+          passengers: 'مسافران',
+          pets: 'حیوانات خانگی',
+          includePets: {
+            label: 'همراه با حیوان خانگی',
+            hint: 'فقط میزبانانی که حیوان خانگی می‌پذیرند در نتایج جستجو نشان داده می‌شوند.',
+          },
           preferredDates: {
             label: 'انتخاب تاریخ‌های مورد نظر',
             nextMonthAriaLabel: 'ماه بعد',
@@ -307,7 +256,7 @@ const resources = {
   },
 };
 
-export const appetizer: Example = {
+export const i18nDemo: Example = {
   data,
   form,
   resources,

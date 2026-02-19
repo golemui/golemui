@@ -8,7 +8,7 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
 <section class="custom-power">
   <div class="container">
     <div class="content">
-      <h2>Unlimited Power.<br />Made easy.</h2>
+      <h2>Unlimited <span class="gradient-text">Power</span>.<br />Made <span class="gradient-text">Easy</span>.</h2>
       <p>
         GolemUI is the easiest and fastest library to build dynamic forms.
       </p>
@@ -28,12 +28,12 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
         </TabItem>
       </Tabs>
     </div>
-    <div>
+    <div class="iframe-example">
       <iframe
         src="/template/index.html?form=home/form.json"
         title="Custom components"
         width="100%"
-        height="570px"
+        height="571px"
       ></iframe>
     </div>
   </div>
@@ -44,31 +44,31 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
     border: none;
   }
 
+  .iframe-example {
+    width: 50%;
+  }
+
+  .home-examples {
+    width: 50%;
+  }
+
   .home-examples .expressive-code .frame pre {
     overflow-y: auto;
   }
 
   .custom-power {
-    padding: 6rem 0;
+    padding: 4rem 0;
     background: var(--bg-color);
     overflow: hidden;
   }
 
   .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-
-    @media (max-width: 960px) {
-      grid-template-columns: 1fr;
-      gap: 4rem;
-    }
+    display: flex;
   }
 
   .content {
     h2 {
-      font-size: 3rem;
+      font-size: 5rem;
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 1.5rem;

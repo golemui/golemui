@@ -33,125 +33,24 @@ const data = {
 const form = defineForm({
   form: [
     {
-      uid: '',
-      kind: 'layout',
-      type: 'flex',
-      props: {
-        direction: 'horizontal',
-        gap: 50,
+      uid: 'budget',
+      kind: 'input',
+      type: 'currency',
+      path: 'budget',
+      defaultValue: 10000,
+      label: {
+        key: 'travelPlanner.field.budget',
+        default: 'Travel Budget',
       },
-      children: [
-        {
-          uid: 'departureCountry',
-          kind: 'input',
-          type: 'dropdown',
-          path: 'departureCountry',
-          label: {
-            key: 'travelPlanner.field.departureCountry.label',
-            default: 'Departure Country',
-          },
-          props: {
-            size: 4,
-            height: 300,
-            itemHeight: 60,
-            itemRenderer: 'countryItemRenderer',
-            placeholder: {
-              key: 'travelPlanner.field.departureCountry.placeholder',
-              default: 'Select a Country',
-            },
-            labelField: 'label',
-            valueField: 'id',
-            items: [
-              { id: 'AU', flag: '🇦🇺', label: 'Australia' },
-              { id: 'BR', flag: '🇧🇷', label: 'Brazil' },
-              { id: 'CA', flag: '🇨🇦', label: 'Canada' },
-              { id: 'CN', flag: '🇨🇳', label: 'China' },
-              { id: 'FR', flag: '🇫🇷', label: 'France' },
-              { id: 'DE', flag: '🇩🇪', label: 'Germany' },
-              { id: 'IN', flag: '🇮🇳', label: 'India' },
-              { id: 'IT', flag: '🇮🇹', label: 'Italy' },
-              { id: 'JP', flag: '🇯🇵', label: 'Japan' },
-              { id: 'MX', flag: '🇲🇽', label: 'Mexico' },
-              { id: 'KR', flag: '🇰🇷', label: 'South Korea' },
-              { id: 'ES', flag: '🇪🇸', label: 'Spain' },
-              { id: 'UK', flag: '🇺🇦', label: 'Ukraine' },
-              { id: 'US', flag: '🇺🇸', label: 'United States' },
-              { id: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
-            ],
-          },
-        },
-        {
-          uid: 'budget',
-          kind: 'input',
-          type: 'currency',
-          path: 'budget',
-          label: {
-            key: 'travelPlanner.field.budget',
-            default: 'Travel Budget',
-          },
-          props: {
-            size: 4,
-            step: 100,
-            placeholder: (data: FunctionWidgetParams<any> | undefined) =>
-              coins[data?.$form?.departureCountry ?? 'US'],
-            currency: (data: FunctionWidgetParams<any> | undefined) =>
-              coins[data?.$form?.departureCountry ?? 'US'],
-          },
-          validator: { type: 'number', required: true, minimum: 100 },
-        },
-        {
-          uid: 'passengers',
-          kind: 'input',
-          type: 'number',
-          path: 'passengers',
-          label: {
-            key: 'travelPlanner.field.passengers',
-            default: 'Number of Passengers',
-          },
-          props: {
-            minimum: 1,
-            maximum: 10,
-          },
-          validator: { type: 'number', required: true, minimum: 1, maximum: 10 },
-        },
-        {
-          uid: 'pets',
-          kind: 'input',
-          type: 'number',
-          path: 'pets',
-          label: {
-            key: 'travelPlanner.field.pets',
-            default: 'Number of Pets',
-          },
-          props: {
-            minimum: 1,
-            maximum: 3,
-          },
-          validator: { type: 'number', required: true, minimum: 1, maximum: 3 },
-          include: { when: '$form.includePets === true' },
-        },
-      ],
-    },
-    {
-      uid: '',
-      kind: 'layout',
-      type: 'flex',
       props: {
-        direction: 'horizontal',
-        align: 'end',
+        size: 4,
+        step: 100,
+        placeholder: (data: FunctionWidgetParams<any> | undefined) =>
+          coins[data?.$form?.departureCountry ?? 'US'],
+        currency: (data: FunctionWidgetParams<any> | undefined) =>
+          coins[data?.$form?.departureCountry ?? 'US'],
       },
-      children: [
-        {
-          uid: 'includePets',
-          kind: 'input',
-          type: 'toggle',
-          path: 'includePets',
-          label: {
-            key: 'travelPlanner.field.includePets',
-            default: 'Include Pets',
-          },
-        },
-      ],
+      validator: { type: 'number', required: true, minimum: 100 },
     },
     {
       uid: 'preferredDates',
@@ -175,23 +74,6 @@ const form = defineForm({
           key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
           default: 'Next Month',
         },
-        numberOfMonths: 3,
-      },
-    },
-    // Submit Action
-    {
-      uid: 'btn-submit',
-      kind: 'action',
-      type: 'button',
-      on: {
-        click: 'handleSubmit',
-      },
-      label: {
-        key: 'travelPlanner.btn.submit',
-        default: 'Search My Trip',
-      },
-      props: {
-        size: 0,
       },
     },
   ],
@@ -307,7 +189,7 @@ const resources = {
   },
 };
 
-export const appetizer: Example = {
+export const validationDemo: Example = {
   data,
   form,
   resources,
