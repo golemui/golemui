@@ -11,7 +11,7 @@ import { productItemRenderer } from '../../item-renderers/product.item-renderer'
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 
-const mock = AppsShared.a11yDemo;
+const mock = AppsShared.validationDemo;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
