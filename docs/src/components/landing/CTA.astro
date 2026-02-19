@@ -1,0 +1,104 @@
+---
+---
+
+<section class="cta-section">
+  <div class="cta-card">
+    <div class="cta-content">
+      <h2>Ready to Start Building?</h2>
+      <p>
+        Start creating smarter, faster, and fully accessible forms today. GolemUI provides the lightweight, open-source foundation your next enterprise project deserves.
+      </p>
+    </div>
+
+    <div class="cta-buttons">
+      <a href="/guides/getting-started" class="btn btn-docs">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Read the Docs
+      </a>
+
+      <a href="https://github.com/golemui/formforge" class="btn btn-github" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section {
+    padding: 8rem 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .cta-card {
+    background: linear-gradient(0deg,var(--accent-color) 0%,#bd7dfa 100%);
+    padding: 4rem 2rem;
+    border-radius: 2rem;
+    text-align: center;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .cta-content h2 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .cta-content p {
+    font-size: 1.2rem;
+    color: var(--sl-color-white);
+    max-width: 600px;
+    margin: 0 auto 3rem auto;
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+  }
+
+  .btn-docs {
+    color: var(--sl-color-black);
+    background: var(--sl-color-text-accent);
+  }
+
+  .btn-docs:hover {
+    background: var(--sl-color-white);
+    transform: translateY(-3px);
+  }
+
+  .btn-github {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white) !important;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .btn-github:hover {
+    background: var(--sl-color-gray-5);
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 640px) {
+    .cta-card { padding: 3rem 1.5rem; }
+    .cta-buttons { flex-direction: column; }
+    .btn { justify-content: center; }
+  }
+</style>
