@@ -11,7 +11,7 @@ import { productItemRenderer } from '../../item-renderers/product.item-renderer'
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 
-const mock = AppsShared.kitchenSink;
+const mock = AppsShared.appetizer;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
@@ -69,21 +69,15 @@ export class FormElement extends LitElement {
   }
 
   private languagePicker() {
-    return html`<div style="display: flex">
-      <button @click=${() => this.setLanguage('en')}>EN</button>
-      <button @click=${() => this.setLanguage('es')}>ES</button>
-      <button @click=${() => this.setLanguage('fa')}>FA</button>
-      <button @click=${() => this.setLanguage('ja')}>JA</button>
+    return html`<div>
+      <gui-select
+        label="Language picker"
+        uid="language"
+        value="en"
+        .options=${this.languages}
+        @change=${this.onLanguageChanged}
+      ></gui-select>
     </div>`;
-    // return html`<div>
-    //   <gui-select
-    //     label="Language picker"
-    //     uid="language"
-    //     value="en"
-    //     .options=${this.languages}
-    //     @change=${this.onLanguageChanged}
-    //   ></gui-select>
-    // </div>`;
   }
 
   render() {

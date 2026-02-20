@@ -11,5 +11,6 @@ export * from './selects';
 export * from './signin';
 export * from './tabs';
 export * from './tests';
+export * from './tiny';
 export * from './translations';
 export * from './users';

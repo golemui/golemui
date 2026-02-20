@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+@use '../../../libs/shared-vanilla/src/styles/index';
+
+html, body {
+  background-color: #fff;
+  color: #1a1a1a;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+gui-tiny {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 990px;
+  padding: 1rem;
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #23262f;
+    color: #f2f3f5;
+  }
+}

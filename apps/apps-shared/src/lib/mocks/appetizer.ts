@@ -104,11 +104,13 @@ const form = defineForm({
           kind: 'input',
           type: 'number',
           path: 'passengers',
+          defaultValue: 1,
           label: {
             key: 'travelPlanner.field.passengers',
-            default: 'Number of Passengers',
+            default: 'Passengers',
           },
           props: {
+            size: 2,
             minimum: 1,
             maximum: 10,
           },
@@ -119,11 +121,13 @@ const form = defineForm({
           kind: 'input',
           type: 'number',
           path: 'pets',
+          defaultValue: 1,
           label: {
             key: 'travelPlanner.field.pets',
-            default: 'Number of Pets',
+            default: 'Pets',
           },
           props: {
+            size: 2,
             minimum: 1,
             maximum: 3,
           },
@@ -212,8 +216,8 @@ const resources = {
             placeholder: 'Select a Country',
           },
           budget: 'Travel Budget',
-          passengers: 'Number of Passengers',
-          pets: 'Number of Pets',
+          passengers: 'Passengers',
+          pets: 'Pets',
           includePets: 'Include Pets',
           preferredDates: {
             label: 'Select Preferred Dates',
@@ -238,8 +242,8 @@ const resources = {
             placeholder: 'Seleccione un país',
           },
           budget: 'Presupuesto de viaje',
-          passengers: 'Número de pasajeros',
-          pets: 'Número de mascotas',
+          passengers: 'pasajeros',
+          pets: 'mascotas',
           includePets: 'Incluir mascotas',
           preferredDates: {
             label: 'Seleccionar fechas preferidas',
@@ -264,8 +268,8 @@ const resources = {
             placeholder: '国を選択',
           },
           budget: '旅行予算',
-          passengers: '乗客人数',
-          pets: 'ペットの数',
+          passengers: '乗客',
+          pets: 'ペット',
           includePets: 'ペット同伴',
           preferredDates: {
             label: '希望日の選択',
@@ -290,8 +294,8 @@ const resources = {
             placeholder: 'یک کشور را انتخاب کنید',
           },
           budget: 'بودجه سفر',
-          passengers: 'تعداد مسافران',
-          pets: 'تعدادی حیوان خانگی',
+          passengers: 'مسافران',
+          pets: 'حیوانات خانگی',
           includePets: 'همراه با حیوان خانگی',
           preferredDates: {
             label: 'انتخاب تاریخ‌های مورد نظر',
