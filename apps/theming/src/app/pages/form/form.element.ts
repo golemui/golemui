@@ -24,12 +24,12 @@ export class FormElement extends LitElement {
   }
 
   setOverrideCSSVariables() {
-    this.updateGuiVariable('--gui-color-border', '#fff');
-  }
-
-  setCustomCSSFile() {
-    this.updateGuiVariable('--gui-color-border', 'blue');
-    this.updateGuiVariable('--gui-radius', '0');
+    this.updateGuiVariable('--gui-color-border', '#a855f7');
+    this.updateGuiVariable('--gui-radius', '12px');
+    this.updateGuiVariable(
+      '--gui-color-primary',
+      'linear-gradient(135deg, #60a5fa 0%, #a855f7 100%)',
+    );
   }
 
   updateGuiVariable = (property: string, value: string): void => {
@@ -42,7 +42,7 @@ export class FormElement extends LitElement {
         <div class="theming-options">
           <div class="theming-option">
             <label>
-              <input type="radio" name="theming" @click=${() => this.setGolemUITheme()} />
+              <input type="radio" name="theming" checked @click=${() => this.setGolemUITheme()} />
               <span>Use our GolemUI Theme</span>
             </label>
             <pre>@import '@golemui/themes/dist/golemui-theme.css';</pre>
@@ -53,27 +53,10 @@ export class FormElement extends LitElement {
               <input type="radio" name="theming" @click=${() => this.setOverrideCSSVariables()} />
               <span>Override GolemUI styles with CSS Variables</span>
             </label>
-            <pre>--gui-color-border: #fff;</pre>
-          </div>
-
-          <div class="theming-option">
-            <label>
-              <input type="radio" name="theming" @click=${() => this.setCustomCSSFile()} />
-              <span>Create an entire new CSS file that fits perfectly for your needs</span>
-            </label>
             <pre>
-gui-textinput {
-  display: block;
-
-  .gui-widget {
-    input[type='text'] {
-      &.gui-textinput--icon {
-        padding-inline-start: 2.5rem;
-      }
-    }
-  }
-}
-            </pre
+--gui-color-border: #a855f7;
+--gui-radius: 12px;
+--gui-color-primary: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);</pre
             >
           </div>
         </div>
