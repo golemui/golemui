@@ -1,70 +1,43 @@
 import { FunctionWidgetParams } from '@golemui/core';
-import { ActionDecorator, InputDecorator } from '../../formDef.domain';
+import type { InputDecorator, InputSensibleDefaultsConfig, GslInputsConfig, GuiFieldsShortcut } from '../shortcuts/inputs/inputs.domain';
+import type { ActionDecorator, ActionSensibleDefaultsConfig, GslActionsConfig, GslActionByIdConfig, GuiActionsShortcut } from '../shortcuts/actions/actions.domain';
+import type { LayoutDecorator, LayoutSensibleDefaultsConfig, GslLayoutByIdConfig, GuiLayoutShortcut } from '../shortcuts/layouts/layouts.domain';
+import type { GuiDisplayShortcut } from '../shortcuts/display/display.domain';
+import type { GslScopeSelector } from '../shortcuts/scopes/scopes.domain';
 
 // ═══════════════════════════════════════════════════
-// Root Sensible Defaults
-// ═══════════════════════════════════════════════════
-
-export interface GslRootDefaults {
-  suppressAutomaticStack?: boolean;
-  suppressAutomaticSubmit?: boolean;
-  onSubmit?: (data: any) => void;
-}
-
-// ═══════════════════════════════════════════════════
-// Layout Decorator (DX-level type for layouts)
-// ═══════════════════════════════════════════════════
-
-export interface LayoutDecorator {
-  uid?: string;
-  direction?: 'vertical' | 'horizontal';
-  widgetName?: string;
-}
-
-// ═══════════════════════════════════════════════════
-// Sensible Defaults Configs (per widget type)
-// ═══════════════════════════════════════════════════
-
-export interface InputSensibleDefaultsConfig {
-  suppressAutomaticLabels?: boolean;
-  suppressAutomaticPlaceholders?: boolean;
-}
-
-export type ActionSensibleDefaultsConfig = Record<string, never>;
-
-export type LayoutSensibleDefaultsConfig = Record<string, never>;
-
-// ═══════════════════════════════════════════════════
-// Decorator Callbacks
+// Runtime Function
 // ═══════════════════════════════════════════════════
 
 export type RuntimeFunction = (params: FunctionWidgetParams<any>) => any;
 
-export type GslInputDecoratorCallback = (current: InputDecorator) => Partial<InputDecorator> | RuntimeFunction;
-export type GslActionDecoratorCallback = (current: ActionDecorator) => Partial<ActionDecorator> | RuntimeFunction;
-export type GslLayoutDecoratorCallback = (current: LayoutDecorator) => Partial<LayoutDecorator>;
-
 // ═══════════════════════════════════════════════════
-// Widget-Type Selector Configs
+// GUI Shortcut Base Types
 // ═══════════════════════════════════════════════════
 
-export interface GslInputsConfig {
-  decorator?: Partial<InputDecorator> | GslInputDecoratorCallback;
-  suppressAutomaticLabels?: boolean;
-  suppressAutomaticPlaceholders?: boolean;
+export enum GuiShortcutType {
+  LAYOUT = 'LAYOUT',
+  ITEMS = 'ITEMS',
+  DISPLAY = 'DISPLAY',
 }
 
-export interface GslActionsConfig {
-  decorator?: Partial<ActionDecorator> | GslActionDecoratorCallback;
+export interface GuiShortcut {
+  type: GuiShortcutType;
+  tags: string[];
 }
 
-export interface GslLayoutByIdConfig {
-  decorator?: Partial<LayoutDecorator> | GslLayoutDecoratorCallback;
+export enum GuiItemsShortcutType {
+  INPUTS = 'INPUTS',
+  ACTIONS = 'ACTIONS',
 }
 
-export interface GslActionByIdConfig {
-  decorator?: Partial<ActionDecorator> | GslActionDecoratorCallback;
+export interface GuiItemsShortcut extends GuiShortcut {
+  type: GuiShortcutType.ITEMS;
+  itemsType: GuiItemsShortcutType;
+  items: any[];
 }
+
+export type ValidGuiShortcut = GuiFieldsShortcut | GuiLayoutShortcut<any> | GuiActionsShortcut | GuiDisplayShortcut;
 
 // ═══════════════════════════════════════════════════
 // Widget Selectors (produced by _gslInputs, _gslActions)
@@ -98,21 +71,10 @@ export interface GslIdSelector {
 }
 
 // ═══════════════════════════════════════════════════
-// Scope Selectors (produced by _gslRoot, _gslTag)
+// Scope Selectors (re-exported from scopes/)
 // ═══════════════════════════════════════════════════
 
-export enum GslScopeSelectorType {
-  ROOT = 'ROOT',
-  TAG = 'TAG',
-}
-
-export interface GslScopeSelector {
-  kind: 'scope';
-  scopeType: GslScopeSelectorType;
-  tag?: string;
-  children: GslWidgetSelector[];
-  rootDefaults?: GslRootDefaults;
-}
+export { GslScopeSelectorType, type GslScopeSelector, type GslRootDefaults } from '../shortcuts/scopes/scopes.domain';
 
 // ═══════════════════════════════════════════════════
 // Top-level Selector (what goes in formSelectors[])
@@ -147,3 +109,14 @@ export type MergeResult =
 // ═══════════════════════════════════════════════════
 
 export type GslItemType = 'INPUTS' | 'ACTIONS' | 'LAYOUT';
+
+// ═══════════════════════════════════════════════════
+// Ready-to-map item types (used by dx.service.ts)
+// ═══════════════════════════════════════════════════
+
+export type { ReadyToMapInputDef } from '../shortcuts/inputs/inputs.domain';
+export type { ReadyToMapActionDef } from '../shortcuts/actions/actions.domain';
+
+import type { ReadyToMapInputDef } from '../shortcuts/inputs/inputs.domain';
+import type { ReadyToMapActionDef } from '../shortcuts/actions/actions.domain';
+export type ReadyToMapItemDef = ReadyToMapInputDef | ReadyToMapActionDef;

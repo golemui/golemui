@@ -1,21 +1,17 @@
 import { FunctionWidgetParams } from '@golemui/core';
-import { ActionDecorator, InputDecorator } from '../formDef.domain';
 import {
   GslItemType,
-  LayoutDecorator,
   MergeResult,
   ResolvedSelectors,
   RuntimeFunction,
-  GslInputsConfig,
-  GslActionsConfig,
-  GslLayoutByIdConfig,
-  GslActionByIdConfig,
-} from '../shortcuts/gsl/gsl.domain';
+} from './dx.domain';
+import { InputDecorator, InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
+import { ActionDecorator, GslActionsConfig, GslActionByIdConfig } from '../shortcuts/actions/actions.domain';
+import { LayoutDecorator, GslLayoutByIdConfig } from '../shortcuts/layouts/layouts.domain';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import inputSensibleDefaultsService, {
   InputSensibleDefaultsService,
-} from '../mapper/inputSensibleDefaults.service';
-import { InputSensibleDefaultsConfig } from '../shortcuts/gsl/gsl.domain';
+} from '../shortcuts/inputs/inputSensibleDefaults.service';
 
 export class WidgetMerger {
   constructor(

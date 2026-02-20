@@ -8,24 +8,10 @@ import {
   UiState,
 } from '@golemui/core';
 import {
-  ActionDecorator,
-  ActionDefCallback,
-  ActionDefOrCallback,
   DxDefinitionItem,
   DxDefinitions,
   FormEvents,
-  InputDecorator,
-  PartialInputDefCallback,
 } from './formDef.domain';
-import {
-  GuiDisplayShortcut,
-  GuiItemsShortcutType,
-  ReadyToMapInputDef,
-  ReadyToMapItemDef,
-  ValidGuiShortcut,
-} from './shortcuts/gui/gui.domain';
-import { _guiDisplay } from './shortcuts/gui/shortcuts/guiDisplay.impl';
-import { _guiSubmitButton } from './shortcuts/gui/shortcuts/guiSubmitButton.impl';
 import {
   GslItemType,
   GslRootDefaults,
@@ -33,14 +19,21 @@ import {
   GslSelectorsInput,
   GslScopeSelectorType,
   GslWidgetSelector,
-  LayoutDecorator,
+  GuiItemsShortcutType,
   MergeResult,
+  ReadyToMapItemDef,
   RuntimeFunction,
-} from './shortcuts/gsl/gsl.domain';
-import selectorResolver, { SelectorResolver } from './resolver/selectorResolver.service';
-import widgetMerger, { WidgetMerger } from './merger/widgetMerger.service';
-import widgetMapper, { WidgetMapper } from './mapper/widgetMapper.service';
-import { InputDefOrCallback } from './shortcuts/gui/shortcuts/guiFields.impl';
+  ValidGuiShortcut,
+} from './core/dx.domain';
+import { InputDecorator, InputDefOrCallback, PartialInputDefCallback, ReadyToMapInputDef } from './shortcuts/inputs/inputs.domain';
+import { ActionDecorator, ActionDefCallback, ActionDefOrCallback } from './shortcuts/actions/actions.domain';
+import { LayoutDecorator } from './shortcuts/layouts/layouts.domain';
+import { GuiDisplayShortcut } from './shortcuts/display/display.domain';
+import { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
+import { _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
+import selectorResolver, { SelectorResolver } from './core/selectorResolver.service';
+import widgetMerger, { WidgetMerger } from './core/widgetMerger.service';
+import widgetMapper, { WidgetMapper } from './core/widgetMapper.service';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 

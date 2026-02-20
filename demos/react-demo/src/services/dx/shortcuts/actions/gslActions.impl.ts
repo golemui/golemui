@@ -1,4 +1,5 @@
-import { GslActionsConfig, GslWidgetSelector, GslWidgetSelectorType } from './gsl.domain';
+import { GslWidgetSelector, GslWidgetSelectorType } from '../../core/dx.domain';
+import { GslActionsConfig } from './actions.domain';
 
 export function _gslActions(config: GslActionsConfig): GslWidgetSelector {
   return {

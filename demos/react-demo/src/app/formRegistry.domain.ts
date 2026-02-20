@@ -1,5 +1,5 @@
 import { DxDefinitions } from '../services/dx/formDef.domain';
-import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
+import { GslSelectorsInput } from '../services/dx/core/dx.domain';
 
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;

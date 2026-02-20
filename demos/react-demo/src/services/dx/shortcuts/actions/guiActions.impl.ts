@@ -1,9 +1,9 @@
-import { ActionDecorator, ActionDefCallback } from '../../../formDef.domain';
-import { GuiActionsShortcut, GuiItemsShortcutType, GuiShortcutType } from '../gui.domain';
-import objectUtils from '../../../../../utils/objectUtils.service';
+import { GuiShortcutType, GuiItemsShortcutType } from '../../core/dx.domain';
+import { ActionDecorator, ActionDefOrCallback, GuiActionsShortcut } from './actions.domain';
+import objectUtils from '../../../../utils/objectUtils.service';
 
 export const _guiButtons = (
-  defs: (ActionDecorator | ActionDefCallback)[],
+  defs: (ActionDecorator | ActionDefOrCallback)[],
   tags?: string[],
 ): GuiActionsShortcut => {
   return {
@@ -15,13 +15,13 @@ export const _guiButtons = (
 };
 
 export const _guiButton = (
-  defs: ActionDecorator | ActionDefCallback,
+  defs: ActionDecorator | ActionDefOrCallback,
   tags?: string[],
 ): GuiActionsShortcut => {
   return _guiButtons([defs], tags);
 };
 
-export const _guiSubmitButton = (defs?: ActionDecorator | ActionDefCallback): GuiActionsShortcut => {
+export const _guiSubmitButton = (defs?: ActionDecorator | ActionDefOrCallback): GuiActionsShortcut => {
   const baseSubmit: ActionDecorator = {
     uid: '#submit',
     label: 'Submit',

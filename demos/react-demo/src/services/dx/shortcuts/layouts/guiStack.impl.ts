@@ -1,4 +1,6 @@
-import { GuiLayoutShortcut, GuiShortcutType, ValidGuiShortcut } from '../gui.domain';
+import { ValidGuiShortcut } from '../../core/dx.domain';
+import { GuiLayoutShortcut } from './layouts.domain';
+import { GuiShortcutType } from '../../core/dx.domain';
 
 export type StackOrientation = 'horizontal' | 'vertical';
 

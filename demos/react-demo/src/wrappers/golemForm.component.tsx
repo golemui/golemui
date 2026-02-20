@@ -5,7 +5,7 @@ import { FormComponent } from '@golemui/react-vanilla';
 import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as AppsShared from '@golemui/apps-shared';
 import { DxDefinitions, FormEvents } from '../services/dx/formDef.domain';
-import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
+import { GslSelectorsInput } from '../services/dx/core/dx.domain';
 import formDefs from '../services/dx/dx.service';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {

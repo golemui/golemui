@@ -1,15 +1,22 @@
-import sensibleDefaults, { SensibleDefaults } from '../../../default/sensibleDefaults.service';
-import { InputDecorator, InputTags } from '../../../formDef.domain';
+import inputTypeDefaults, { InputTypeDefaults } from './inputTypeDefaults.service';
 import {
-  DxField,
-  FacadeFieldByKey,
+  InputDecorator,
+  InputTags,
   InputDefOrCallback,
-  ProcessedDxFieldsByKey,
-} from '../../gui/shortcuts/guiFields.impl';
-import { PartialInputDefCallback } from '../../../formDef.domain';
+  PartialInputDefCallback,
+  ValidShortcutType,
+} from './inputs.domain';
+
+export type DxField = InputDefOrCallback | ValidShortcutType | InputTags;
+
+export type FacadeFieldByKey<T extends Record<string, any>> = Partial<Record<keyof T, DxField>>;
+
+export type ProcessedDxFieldsByKey<T extends Record<string, any>> = Partial<
+  Record<keyof T, InputDefOrCallback>
+>;
 
 export class InputDefsByKeyService {
-  constructor(private readonly sensibleDefaults: SensibleDefaults) {}
+  constructor(private readonly inputTypeDefaults: InputTypeDefaults) {}
   public expandFields<T extends Record<string, any>>(
     fields: FacadeFieldByKey<T>,
   ): ProcessedDxFieldsByKey<T> {
@@ -29,10 +36,10 @@ export class InputDefsByKeyService {
     if (typeof dataInputDef === 'function') {
       value = dataInputDef as PartialInputDefCallback;
     } else if (typeof dataInputDef === 'string') {
-      value = this.sensibleDefaults.explodeShortcut(dataInputDef);
+      value = this.inputTypeDefaults.explodeShortcut(dataInputDef);
     } else if (Array.isArray(dataInputDef)) {
       const [shortcut, ...tagList] = dataInputDef as InputTags;
-      value = this.sensibleDefaults.explodeShortcut(shortcut);
+      value = this.inputTypeDefaults.explodeShortcut(shortcut);
       if (tagList.length > 0) {
         value.tags = tagList;
       }
@@ -44,5 +51,5 @@ export class InputDefsByKeyService {
   }
 }
 
-const inputDefsByKeyService = new InputDefsByKeyService(sensibleDefaults);
+const inputDefsByKeyService = new InputDefsByKeyService(inputTypeDefaults);
 export default inputDefsByKeyService;

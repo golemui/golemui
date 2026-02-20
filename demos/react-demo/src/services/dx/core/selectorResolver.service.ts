@@ -6,12 +6,11 @@ import {
   GslScopeSelectorType,
   GslWidgetSelector,
   GslWidgetSelectorType,
-  InputSensibleDefaultsConfig,
-  ActionSensibleDefaultsConfig,
-  LayoutSensibleDefaultsConfig,
   ResolvedSelectors,
-  GslInputsConfig,
-} from '../shortcuts/gsl/gsl.domain';
+} from './dx.domain';
+import { InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
+import { ActionSensibleDefaultsConfig } from '../shortcuts/actions/actions.domain';
+import { LayoutSensibleDefaultsConfig } from '../shortcuts/layouts/layouts.domain';
 
 const BASE_INPUT_SENSIBLE_DEFAULTS: InputSensibleDefaultsConfig = {
   suppressAutomaticLabels: false,

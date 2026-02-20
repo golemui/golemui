@@ -1,4 +1,5 @@
-import { GslIdSelector, GslIdSelectorType, GslLayoutByIdConfig } from './gsl.domain';
+import { GslIdSelector, GslIdSelectorType } from '../../core/dx.domain';
+import { GslLayoutByIdConfig } from './layouts.domain';
 
 export function _gslLayoutById(id: string, config: GslLayoutByIdConfig): GslIdSelector {
   return {

@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslInputs } from '../../../services/dx/shortcuts/gsl/gslInputs.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _gslInputs } from '../../../services/dx/shortcuts/inputs/gslInputs.impl';
 
 export const gslInputDecoratorDemo: FormDemoDefinition = {
   title: 'Inputs / GSL Decorator',

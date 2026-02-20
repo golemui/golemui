@@ -1,5 +1,6 @@
-import { DxRuntimeParams } from '../../../formDef.domain';
-import { GuiDisplayShortcut, GuiShortcutType } from '../gui.domain';
+import { GuiShortcutType } from '../../core/dx.domain';
+import { GuiDisplayShortcut } from './display.domain';
+import { DxRuntimeParams } from '../inputs/inputs.domain';
 
 export const _guiDisplay = (
   render: (params: DxRuntimeParams) => any,

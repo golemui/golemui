@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import GolemForm from '../wrappers/golemForm.component';
 import { DxDefinitions } from '../services/dx/formDef.domain';
-import { GslSelectorsInput } from '../services/dx/shortcuts/gsl/gsl.domain';
+import { GslSelectorsInput } from '../services/dx/core/dx.domain';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 

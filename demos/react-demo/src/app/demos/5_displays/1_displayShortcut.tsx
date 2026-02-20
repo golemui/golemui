@@ -1,5 +1,5 @@
-import { _guiDisplay } from '../../../services/dx/shortcuts/gui/shortcuts/guiDisplay.impl';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _guiDisplay } from '../../../services/dx/shortcuts/display/guiDisplay.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
 import { FormDemoDefinition } from '../../formRegistry.domain';
 
 export const displayShortcutDemo: FormDemoDefinition = {

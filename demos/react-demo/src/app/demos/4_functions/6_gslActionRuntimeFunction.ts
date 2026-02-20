@@ -1,7 +1,7 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _guiButton } from '../../../services/dx/shortcuts/gui/shortcuts/guiSubmitButton.impl';
-import { _gslActions } from '../../../services/dx/shortcuts/gsl/gslActions.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _guiButton } from '../../../services/dx/shortcuts/actions/guiActions.impl';
+import { _gslActions } from '../../../services/dx/shortcuts/actions/gslActions.impl';
 
 export const gslActionRuntimeFunctionDemo: FormDemoDefinition = {
   title: 'Functions / GSL Action RuntimeFunction',

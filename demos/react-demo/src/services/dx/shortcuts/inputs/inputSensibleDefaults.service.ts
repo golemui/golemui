@@ -1,5 +1,4 @@
-import { InputDecorator } from '../formDef.domain';
-import { InputSensibleDefaultsConfig as InputSensibleDefaults } from '../shortcuts/gsl/gsl.domain';
+import { InputDecorator, InputSensibleDefaultsConfig } from './inputs.domain';
 
 export class InputSensibleDefaultsService {
   private sensibleDefaultValueForProperty<K extends keyof InputDecorator>(
@@ -29,7 +28,7 @@ export class InputSensibleDefaultsService {
     };
   }
 
-  public processAutomaticLabels(item: InputDecorator, currentConfig: InputSensibleDefaults) {
+  public processAutomaticLabels(item: InputDecorator, currentConfig: InputSensibleDefaultsConfig) {
     return this.sensibleDefaultValueForProperty(
       item,
       'label',
@@ -38,7 +37,7 @@ export class InputSensibleDefaultsService {
     );
   }
 
-  public processAutomaticPlaceholders(item: InputDecorator, currentConfig: InputSensibleDefaults) {
+  public processAutomaticPlaceholders(item: InputDecorator, currentConfig: InputSensibleDefaultsConfig) {
     // The automatic placeholder is only added if the label is not present.
     if (item.label != null) return item;
     return this.sensibleDefaultValueForProperty(
@@ -50,5 +49,5 @@ export class InputSensibleDefaultsService {
   }
 }
 
-const formInputHintsDecoratorsService = new InputSensibleDefaultsService();
-export default formInputHintsDecoratorsService;
+const inputSensibleDefaultsService = new InputSensibleDefaultsService();
+export default inputSensibleDefaultsService;

@@ -1,11 +1,11 @@
 import {
-  DataInputDecorator,
   InputDecorator,
   TextDataInputDecorator,
+  DataInputDecorator,
   ValidShortcutType,
-} from '../formDef.domain';
+} from './inputs.domain';
 
-export class SensibleDefaults {
+export class InputTypeDefaults {
   public explodeShortcut(fieldDefRaw: ValidShortcutType): InputDecorator {
     switch (fieldDefRaw) {
       case 'string':
@@ -29,16 +29,7 @@ export class SensibleDefaults {
   public createDefaultBooleanDataInput(): DataInputDecorator {
     return { type: 'boolean'};
   }
-
-  public createDefaultSubmitButton(): any {
-    return {
-      type: 'button',
-      widget: 'button',
-      label: 'Submit',
-      on: { click: 'submit' },
-    };
-  }
 }
 
-const sensibleDefaults = new SensibleDefaults();
-export default sensibleDefaults;
+const inputTypeDefaults = new InputTypeDefaults();
+export default inputTypeDefaults;

@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _guiButton } from '../../../services/dx/shortcuts/gui/shortcuts/guiSubmitButton.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _guiButton } from '../../../services/dx/shortcuts/actions/guiActions.impl';
 
 export const customButtonDemo: FormDemoDefinition = {
   title: 'Actions / Custom Button (onClick)',

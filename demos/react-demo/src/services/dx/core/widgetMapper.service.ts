@@ -8,17 +8,17 @@ import {
   UiState,
 } from '@golemui/core';
 import {
-  ActionDecorator,
-  BooleanDataInputDecorator,
+  GslItemType,
+  MergeResult,
+} from './dx.domain';
+import {
   InputDecorator,
+  BooleanDataInputDecorator,
   NumberDataInputDecorator,
   TextDataInputDecorator,
-} from '../formDef.domain';
-import {
-  GslItemType,
-  LayoutDecorator,
-  MergeResult,
-} from '../shortcuts/gsl/gsl.domain';
+} from '../shortcuts/inputs/inputs.domain';
+import { ActionDecorator } from '../shortcuts/actions/actions.domain';
+import { LayoutDecorator } from '../shortcuts/layouts/layouts.domain';
 
 export class WidgetMapper {
 

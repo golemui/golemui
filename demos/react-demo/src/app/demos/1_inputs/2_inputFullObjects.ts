@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
 
 export const inputFullObjectsDemo: FormDemoDefinition = {
   title: 'Inputs / Full Objects',

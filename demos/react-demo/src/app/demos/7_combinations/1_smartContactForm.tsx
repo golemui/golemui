@@ -1,13 +1,13 @@
 import { DxRuntimeParams } from '../../../services/dx/formDef.domain';
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _guiButton } from '../../../services/dx/shortcuts/gui/shortcuts/guiSubmitButton.impl';
-import { _guiHorizontalStack } from '../../../services/dx/shortcuts/gui/shortcuts/guiStack.impl';
-import { _gslTag } from '../../../services/dx/shortcuts/gsl/gslTag.impl';
-import { _gslInputs } from '../../../services/dx/shortcuts/gsl/gslInputs.impl';
-import { _gslRoot } from '../../../services/dx/shortcuts/gsl/gslRoot.impl';
-import { _gslActionById } from '../../../services/dx/shortcuts/gsl/gslActionById.impl';
-import { _gslLayoutById } from '../../../services/dx/shortcuts/gsl/gslLayoutById.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _guiButton } from '../../../services/dx/shortcuts/actions/guiActions.impl';
+import { _guiHorizontalStack } from '../../../services/dx/shortcuts/layouts/guiStack.impl';
+import { _gslTag } from '../../../services/dx/shortcuts/scopes/gslTag.impl';
+import { _gslInputs } from '../../../services/dx/shortcuts/inputs/gslInputs.impl';
+import { _gslRoot } from '../../../services/dx/shortcuts/scopes/gslRoot.impl';
+import { _gslActionById } from '../../../services/dx/shortcuts/actions/gslActionById.impl';
+import { _gslLayoutById } from '../../../services/dx/shortcuts/layouts/gslLayoutById.impl';
 
 export const smartContactFormDemo: FormDemoDefinition = {
   title: 'Combinations / Smart Contact Form',

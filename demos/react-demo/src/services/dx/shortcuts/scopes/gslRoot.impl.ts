@@ -3,7 +3,7 @@ import {
   GslScopeSelector,
   GslScopeSelectorType,
   GslWidgetSelector,
-} from './gsl.domain';
+} from '../../core/dx.domain';
 
 function isGslWidgetSelector(arg: GslWidgetSelector | GslRootDefaults): arg is GslWidgetSelector {
   return 'selectorType' in arg;

@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslLayoutById } from '../../../services/dx/shortcuts/gsl/gslLayoutById.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _gslLayoutById } from '../../../services/dx/shortcuts/layouts/gslLayoutById.impl';
 
 export const gslLayoutByIdDemo: FormDemoDefinition = {
   title: 'Layouts / GSL Layout By ID',

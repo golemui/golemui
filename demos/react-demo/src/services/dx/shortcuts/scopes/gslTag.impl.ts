@@ -1,4 +1,4 @@
-import { GslScopeSelector, GslScopeSelectorType, GslWidgetSelector } from './gsl.domain';
+import { GslScopeSelector, GslScopeSelectorType, GslWidgetSelector } from '../../core/dx.domain';
 
 export function _gslTag(tag: string, ...children: GslWidgetSelector[]): GslScopeSelector {
   return {

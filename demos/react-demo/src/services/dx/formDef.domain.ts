@@ -1,64 +1,46 @@
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import * as Core from '@golemui/core';
-import { FunctionWidgetParams } from '@golemui/core';
-import { ValidGuiShortcut } from './shortcuts/gui/gui.domain';
+import { ValidGuiShortcut } from './core/dx.domain';
+import { DxRuntimeParams } from './shortcuts/inputs/inputs.domain';
 
-export interface DataInputDecorator extends WidgetItemDecorator {
-  type: 'text' | 'number' | 'boolean';
-  placeholder?: string;
-  label?: string | null;
-  path?: string;
-}
-
-export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
-
-export interface NumberDataInputDecorator extends DataInputDecorator {
-  type: 'number';
-  validator?: NumberDataInputValidator;
-}
-
-export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
-
-export interface TextDataInputDecorator extends DataInputDecorator {
-  type: 'text';
-  validator?: TextDataInputValidator;
-}
-
-export interface BooleanDataInputDecorator extends DataInputDecorator {
-  type: 'boolean';
-}
+// ═══════════════════════════════════════════════════
+// Base Types (owned here)
+// ═══════════════════════════════════════════════════
 
 export interface WidgetItemDecorator {
   tags?: string[];
   removeField?: boolean;
 }
 
-export type InputDecorator =
-  | TextDataInputDecorator
-  | NumberDataInputDecorator
-  | BooleanDataInputDecorator;
-export type ValidShortcutType = 'string' | 'number' | 'boolean';
+// ═══════════════════════════════════════════════════
+// DX-level aggregate types
+// ═══════════════════════════════════════════════════
 
-export type DxRuntimeParams<FormData = any> = FunctionWidgetParams<FormData>;
-
-export type InputTags = [ValidShortcutType, ...string[]];
-
-export interface ActionDecorator extends WidgetItemDecorator {
-  uid?: string;
-  data?: any | null;
-  type?: 'button';
-  label?: string;
-  disabled?: boolean;
-  onClick?: ((data: any) => void) | 'submit';
-}
-export type ActionDefCallback = (params: DxRuntimeParams) => ActionDecorator;
-export type ActionDefOrCallback = ActionDecorator | ActionDefCallback;
 export type DxDisplayRenderFn = (params: DxRuntimeParams) => any;
 export type DxDefinitionItem = ValidGuiShortcut | DxDisplayRenderFn;
 export type DxDefinitions = DxDefinitionItem | DxDefinitionItem[];
 
 export type FormEvents = (event: Core.FormEvent) => void;
 
-export type PartialInputDefCallback = (
-  params: DxRuntimeParams,
-) => Partial<InputDecorator>;
+// ═══════════════════════════════════════════════════
+// Re-exports from shortcut folders (backward compat)
+// ═══════════════════════════════════════════════════
+
+export type {
+  DataInputDecorator,
+  NumberDataInputValidator,
+  NumberDataInputDecorator,
+  TextDataInputValidator,
+  TextDataInputDecorator,
+  BooleanDataInputDecorator,
+  InputDecorator,
+  ValidShortcutType,
+  DxRuntimeParams,
+  InputTags,
+  PartialInputDefCallback,
+} from './shortcuts/inputs/inputs.domain';
+
+export type {
+  ActionDecorator,
+  ActionDefCallback,
+  ActionDefOrCallback,
+} from './shortcuts/actions/actions.domain';

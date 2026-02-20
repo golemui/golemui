@@ -1,6 +1,6 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx/shortcuts/gui/shortcuts/guiFields.impl';
-import { _gslActionById } from '../../../services/dx/shortcuts/gsl/gslActionById.impl';
+import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _gslActionById } from '../../../services/dx/shortcuts/actions/gslActionById.impl';
 
 export const gslActionByIdDemo: FormDemoDefinition = {
   title: 'Actions / GSL Action By ID',
