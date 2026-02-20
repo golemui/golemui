@@ -1,10 +1,9 @@
-import { GslScopeSelector, GslScopeSelectorType, GslWidgetSelector } from '../../core/dx.domain';
+import { GslAggregatedSelector, GslLeafSelector } from '../../core/dx.domain';
 
-export function _gslTag(tag: string, ...children: GslWidgetSelector[]): GslScopeSelector {
+export function _gslTag(tag: string, ...children: GslLeafSelector[]): GslAggregatedSelector {
   return {
-    kind: 'scope',
-    scopeType: GslScopeSelectorType.TAG,
-    tag,
+    kind: 'aggregated',
+    matcher: (d) => d.tags?.includes(tag) ?? false,
     children,
   };
 }

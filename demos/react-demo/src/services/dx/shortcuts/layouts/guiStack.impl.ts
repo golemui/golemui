@@ -1,35 +1,27 @@
-import { ValidGuiShortcut } from '../../core/dx.domain';
-import { GuiLayoutShortcut } from './layouts.domain';
-import { GuiShortcutType } from '../../core/dx.domain';
+import { ValidGuiShortcut, GuiItemTypes } from '../../core/dx.domain';
+import { GuiLayoutItemsShortcut } from './layouts.domain';
 
 export type StackOrientation = 'horizontal' | 'vertical';
-
-export interface GuiStackShortcut extends GuiLayoutShortcut<{ orientation: StackOrientation }> {
-  layoutRootProps: {
-    widgetName: 'flex';
-  };
-}
 
 export const _guiStack = (
   tupleOrString: [StackOrientation, ...string[]] | StackOrientation,
   children: ValidGuiShortcut[],
-): GuiStackShortcut => {
+): GuiLayoutItemsShortcut => {
   const tuple = typeof tupleOrString === 'string' ? [tupleOrString] : tupleOrString;
   const [orientation, ...tagsList] = tuple;
 
   return {
-    type: GuiShortcutType.LAYOUT,
-    layoutRootProps: { widgetName: 'flex' },
-    layoutNestedProps: { orientation },
+    type: 'ITEMS',
+    itemType: GuiItemTypes.LAYOUTS,
+    items: [{ def: { widgetName: 'flex', direction: orientation }, children }],
     tags: tagsList,
-    children,
   };
 };
 
-export const _guiHorizontalStack = (children: ValidGuiShortcut[] | ValidGuiShortcut): GuiStackShortcut => {
+export const _guiHorizontalStack = (children: ValidGuiShortcut[] | ValidGuiShortcut): GuiLayoutItemsShortcut => {
   return _guiStack('horizontal', Array.isArray(children) ? children : (children ? [children] : []));
 };
 
-export const _guiVerticalStack = (children: ValidGuiShortcut[]): GuiStackShortcut => {
+export const _guiVerticalStack = (children: ValidGuiShortcut[]): GuiLayoutItemsShortcut => {
   return _guiStack('vertical', children);
 };

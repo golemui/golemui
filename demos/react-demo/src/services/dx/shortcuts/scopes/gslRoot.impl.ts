@@ -1,39 +1,38 @@
 import {
+  GslAggregatedSelector,
+  GslLeafSelector,
   GslRootDefaults,
-  GslScopeSelector,
-  GslScopeSelectorType,
-  GslWidgetSelector,
 } from '../../core/dx.domain';
 
-function isGslWidgetSelector(arg: GslWidgetSelector | GslRootDefaults): arg is GslWidgetSelector {
-  return 'selectorType' in arg;
+function isGslLeafSelector(arg: GslLeafSelector | GslRootDefaults): arg is GslLeafSelector {
+  return 'kind' in arg && arg.kind === 'leaf';
 }
 
 export function _gslRoot(
-  ...args: [...GslWidgetSelector[], GslRootDefaults] | GslWidgetSelector[]
-): GslScopeSelector {
-  let children: GslWidgetSelector[] = [];
+  ...args: [...GslLeafSelector[], GslRootDefaults] | GslLeafSelector[]
+): GslAggregatedSelector {
+  let children: GslLeafSelector[] = [];
   let rootDefaults: GslRootDefaults | undefined;
 
   if (args.length === 0) {
     return {
-      kind: 'scope',
-      scopeType: GslScopeSelectorType.ROOT,
+      kind: 'aggregated',
+      matcher: () => true,
       children: [],
     };
   }
 
   const lastArg = args[args.length - 1];
-  if (!isGslWidgetSelector(lastArg)) {
+  if (!isGslLeafSelector(lastArg)) {
     rootDefaults = lastArg as GslRootDefaults;
-    children = args.slice(0, -1) as GslWidgetSelector[];
+    children = args.slice(0, -1) as GslLeafSelector[];
   } else {
-    children = args as GslWidgetSelector[];
+    children = args as GslLeafSelector[];
   }
 
   return {
-    kind: 'scope',
-    scopeType: GslScopeSelectorType.ROOT,
+    kind: 'aggregated',
+    matcher: () => true,
     children,
     rootDefaults,
   };

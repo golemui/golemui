@@ -1,11 +1,11 @@
-import { GslIdSelector, GslIdSelectorType } from '../../core/dx.domain';
-import { GslLayoutByIdConfig } from './layouts.domain';
+import { GslLayoutsLeafSelector } from '../../core/dx.domain';
+import { GslLayoutsConfig } from './layouts.domain';
 
-export function _gslLayoutById(id: string, config: GslLayoutByIdConfig): GslIdSelector {
+export function _gslLayoutById(id: string, config: GslLayoutsConfig): GslLayoutsLeafSelector {
   return {
-    kind: 'id',
-    selectorType: GslIdSelectorType.LAYOUT,
-    id,
+    kind: 'leaf',
+    selectorType: 'LAYOUTS',
+    matcher: (d) => d.uid === id,
     config,
   };
 }

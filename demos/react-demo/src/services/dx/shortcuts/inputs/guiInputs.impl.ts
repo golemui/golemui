@@ -1,29 +1,26 @@
-import { GuiShortcutType, GuiItemsShortcutType } from '../../core/dx.domain';
+import { GuiItemTypes } from '../../core/dx.domain';
 import {
-  GuiFieldsShortcut,
-  ReadyToMapInputDef,
+  GuiInputsShortcut,
+  InputEntry,
   InputDefOrCallback,
 } from './inputs.domain';
 import inputDefsByKeyService from './inputDefsByKey.service';
 import { FacadeFieldByKey } from './inputDefsByKey.service';
-
-export type PartialInputDecoratorOrCallback = Partial<import('./inputs.domain').InputDecorator> | import('./inputs.domain').PartialInputDefCallback;
-
 export const _guiInputs = <T extends Record<string, any>>(
   defs: FacadeFieldByKey<T>,
   tags?: string[],
-): GuiFieldsShortcut => {
+): GuiInputsShortcut => {
   const fields = inputDefsByKeyService.expandFields(defs);
-  const asReadyToMap = Object.entries(fields).map<ReadyToMapInputDef>(([key, value]) => {
+  const items = Object.entries(fields).map<InputEntry>(([key, value]) => {
     return {
       key,
-      inputDefOrCallback: value as InputDefOrCallback,
+      def: value as InputDefOrCallback,
     };
   });
   return {
-    items: asReadyToMap,
-    type: GuiShortcutType.ITEMS,
-    itemsType: GuiItemsShortcutType.INPUTS,
+    items,
+    type: 'ITEMS',
+    itemType: GuiItemTypes.INPUTS,
     tags: tags ?? [],
   };
 };

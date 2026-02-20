@@ -1,14 +1,15 @@
-import { GuiShortcutType } from '../../core/dx.domain';
-import { GuiDisplayShortcut } from './display.domain';
+import { GuiItemTypes } from '../../core/dx.domain';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
+import { GuiDisplayItemsShortcut } from './display.domain';
 
 export const _guiDisplay = (
   render: (params: DxRuntimeParams) => any,
   tags?: string[],
-): GuiDisplayShortcut => {
+): GuiDisplayItemsShortcut => {
   return {
-    type: GuiShortcutType.DISPLAY,
-    render,
+    type: 'ITEMS',
+    itemType: GuiItemTypes.DISPLAYS,
+    items: [{ render }],
     tags: tags ?? [],
   };
 };

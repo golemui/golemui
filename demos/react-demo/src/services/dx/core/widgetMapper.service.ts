@@ -19,6 +19,7 @@ import {
 } from '../shortcuts/inputs/inputs.domain';
 import { ActionDecorator } from '../shortcuts/actions/actions.domain';
 import { LayoutDecorator } from '../shortcuts/layouts/layouts.domain';
+import { DisplayDecorator } from '../shortcuts/display/display.domain';
 
 export class WidgetMapper {
 
@@ -45,7 +46,7 @@ export class WidgetMapper {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    def: InputDecorator | ActionDecorator | LayoutDecorator,
+    def: InputDecorator | ActionDecorator | LayoutDecorator | DisplayDecorator,
     itemType: GslItemType,
   ): NonFunctionWidget<StateKeys, FormData> {
     switch (itemType) {
@@ -53,8 +54,10 @@ export class WidgetMapper {
         return this.mapToInputWidget<StateKeys, FormData>(def as InputDecorator);
       case 'ACTIONS':
         return this.mapToActionWidget<StateKeys, FormData>(def as ActionDecorator);
-      case 'LAYOUT':
+      case 'LAYOUTS':
         return this.mapToLayoutWidget<StateKeys, FormData>(def as LayoutDecorator);
+      case 'DISPLAYS':
+        return this.mapToDisplayWidget<StateKeys, FormData>(def as DisplayDecorator);
     }
   }
 
@@ -158,6 +161,18 @@ export class WidgetMapper {
       },
       children: [],
     };
+  }
+
+  private mapToDisplayWidget<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(displayDef: DisplayDecorator): NonFunctionWidget<StateKeys, FormData> {
+    return {
+      uid: '',
+      kind: 'display' as any,
+      type: 'renderer',
+      props: { render: displayDef.render },
+    } as unknown as NonFunctionWidget<StateKeys, FormData>;
   }
 }
 

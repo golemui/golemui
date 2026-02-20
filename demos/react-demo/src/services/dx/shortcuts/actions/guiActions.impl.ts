@@ -1,15 +1,15 @@
-import { GuiShortcutType, GuiItemsShortcutType } from '../../core/dx.domain';
-import { ActionDecorator, ActionDefOrCallback, GuiActionsShortcut } from './actions.domain';
+import { GuiItemTypes } from '../../core/dx.domain';
+import { ActionDecorator, ActionDefOrCallback, ActionEntry, GuiActionsShortcut } from './actions.domain';
 import objectUtils from '../../../../utils/objectUtils.service';
 
 export const _guiButtons = (
-  defs: (ActionDecorator | ActionDefOrCallback)[],
+  defs: ActionEntry[],
   tags?: string[],
 ): GuiActionsShortcut => {
   return {
     items: defs,
-    type: GuiShortcutType.ITEMS,
-    itemsType: GuiItemsShortcutType.ACTIONS,
+    type: 'ITEMS',
+    itemType: GuiItemTypes.ACTIONS,
     tags: tags ?? [],
   };
 };

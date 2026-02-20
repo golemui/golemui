@@ -1,11 +1,11 @@
-import { GslIdSelector, GslIdSelectorType } from '../../core/dx.domain';
-import { GslActionByIdConfig } from './actions.domain';
+import { GslActionsLeafSelector } from '../../core/dx.domain';
+import { GslActionsConfig } from './actions.domain';
 
-export function _gslActionById(id: string, config: GslActionByIdConfig): GslIdSelector {
+export function _gslActionById(id: string, config: GslActionsConfig): GslActionsLeafSelector {
   return {
-    kind: 'id',
-    selectorType: GslIdSelectorType.ACTION,
-    id,
+    kind: 'leaf',
+    selectorType: 'ACTIONS',
+    matcher: (d) => d.uid === id,
     config,
   };
 }

@@ -5,9 +5,9 @@ import {
   ResolvedSelectors,
   RuntimeFunction,
 } from './dx.domain';
-import { InputDecorator, InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
-import { ActionDecorator, GslActionsConfig, GslActionByIdConfig } from '../shortcuts/actions/actions.domain';
-import { LayoutDecorator, GslLayoutByIdConfig } from '../shortcuts/layouts/layouts.domain';
+import { InputDecorator, InputSensibleDefaultsConfig } from '../shortcuts/inputs/inputs.domain';
+import { ActionDecorator } from '../shortcuts/actions/actions.domain';
+import { LayoutDecorator } from '../shortcuts/layouts/layouts.domain';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
 import inputSensibleDefaultsService, {
   InputSensibleDefaultsService,
@@ -98,17 +98,8 @@ export class WidgetMerger {
 
     const decorators: (Partial<InputDecorator | ActionDecorator | LayoutDecorator> | ((...args: any[]) => any))[] = [];
 
-    // From widget selectors (root → tags, already ordered by resolver)
-    for (const ws of resolved.widgetSelectors) {
-      const config = ws.config as GslInputsConfig | GslActionsConfig;
-      if (config.decorator != null) {
-        decorators.push(config.decorator);
-      }
-    }
-
-    // From ID selectors (higher priority than tag selectors)
-    for (const ids of resolved.idSelectors) {
-      const config = ids.config as GslLayoutByIdConfig | GslActionByIdConfig;
+    for (const leaf of resolved.leafSelectors) {
+      const config = leaf.config as { decorator?: any };
       if (config.decorator != null) {
         decorators.push(config.decorator);
       }

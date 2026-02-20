@@ -1,11 +1,12 @@
-import { GuiShortcutType, GuiShortcut, ValidGuiShortcut } from '../../core/dx.domain';
+import { DxRuntimeParams } from '../inputs/inputs.domain';
+import { RuntimeFunction, GuiItemsShortcut, GUI_ITEM_TYPE_LAYOUTS, ValidGuiShortcut } from '../../core/dx.domain';
+import { WidgetItemDecorator } from '../../formDef.domain';
 
 // ═══════════════════════════════════════════════════
 // Layout Decorator (DX-level type for layouts)
 // ═══════════════════════════════════════════════════
 
-export interface LayoutDecorator {
-  uid?: string;
+export interface LayoutDecorator extends WidgetItemDecorator {
   direction?: 'vertical' | 'horizontal';
   widgetName?: string;
 }
@@ -20,9 +21,9 @@ export type LayoutSensibleDefaultsConfig = Record<string, never>;
 // GSL Layout Types
 // ═══════════════════════════════════════════════════
 
-export type GslLayoutDecoratorCallback = (current: LayoutDecorator) => Partial<LayoutDecorator>;
+export type GslLayoutDecoratorCallback = (current: LayoutDecorator) => Partial<LayoutDecorator> | RuntimeFunction;
 
-export interface GslLayoutByIdConfig {
+export interface GslLayoutsConfig {
   decorator?: Partial<LayoutDecorator> | GslLayoutDecoratorCallback;
 }
 
@@ -30,11 +31,12 @@ export interface GslLayoutByIdConfig {
 // GUI Layout Types
 // ═══════════════════════════════════════════════════
 
-export interface GuiLayoutShortcut<T> extends GuiShortcut {
-  type: GuiShortcutType.LAYOUT;
-  layoutRootProps: {
-    widgetName: string;
-  };
-  layoutNestedProps: T;
-  children: ValidGuiShortcut[];
+export type LayoutDefCallback = (params: DxRuntimeParams) => Partial<LayoutDecorator>;
+export type LayoutDefOrCallback = LayoutDecorator | LayoutDefCallback;
+
+export type LayoutEntry = { def: LayoutDefOrCallback; children: ValidGuiShortcut[] };
+
+export interface GuiLayoutItemsShortcut extends GuiItemsShortcut {
+  itemType: GUI_ITEM_TYPE_LAYOUTS;
+  items: LayoutEntry[];
 }

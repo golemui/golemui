@@ -1,9 +1,13 @@
 import { FunctionWidgetParams } from '@golemui/core';
-import type { InputDecorator, InputSensibleDefaultsConfig, GslInputsConfig, GuiFieldsShortcut } from '../shortcuts/inputs/inputs.domain';
-import type { ActionDecorator, ActionSensibleDefaultsConfig, GslActionsConfig, GslActionByIdConfig, GuiActionsShortcut } from '../shortcuts/actions/actions.domain';
-import type { LayoutDecorator, LayoutSensibleDefaultsConfig, GslLayoutByIdConfig, GuiLayoutShortcut } from '../shortcuts/layouts/layouts.domain';
-import type { GuiDisplayShortcut } from '../shortcuts/display/display.domain';
-import type { GslScopeSelector } from '../shortcuts/scopes/scopes.domain';
+import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
+import type { InputDecorator, InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
+import type { ActionDecorator, ActionSensibleDefaultsConfig, GslActionsConfig } from '../shortcuts/actions/actions.domain';
+import type { LayoutDecorator, LayoutSensibleDefaultsConfig, GslLayoutsConfig, LayoutEntry, GuiLayoutItemsShortcut } from '../shortcuts/layouts/layouts.domain';
+import type { DisplayDecorator, DisplaySensibleDefaultsConfig, GslDisplaysConfig, DisplayEntry, GuiDisplayItemsShortcut } from '../shortcuts/display/display.domain';
+import type { GuiInputsShortcut, InputEntry } from '../shortcuts/inputs/inputs.domain';
+import type { GuiActionsShortcut, ActionEntry } from '../shortcuts/actions/actions.domain';
+
+export type { GslItemType } from '../formDef.domain';
 
 // ═══════════════════════════════════════════════════
 // Runtime Function
@@ -12,88 +16,126 @@ import type { GslScopeSelector } from '../shortcuts/scopes/scopes.domain';
 export type RuntimeFunction = (params: FunctionWidgetParams<any>) => any;
 
 // ═══════════════════════════════════════════════════
-// GUI Shortcut Base Types
+// GUI Item Type (single source of truth)
 // ═══════════════════════════════════════════════════
 
-export enum GuiShortcutType {
-  LAYOUT = 'LAYOUT',
-  ITEMS = 'ITEMS',
-  DISPLAY = 'DISPLAY',
-}
+export type GUI_ITEM_TYPE_INPUTS = 'INPUTS';
+export type GUI_ITEM_TYPE_ACTIONS = 'ACTIONS';
+export type GUI_ITEM_TYPE_LAYOUTS = 'LAYOUTS';
+export type GUI_ITEM_TYPE_DISPLAYS = 'DISPLAYS';
+export type GuiItemType = GUI_ITEM_TYPE_INPUTS | GUI_ITEM_TYPE_ACTIONS | GUI_ITEM_TYPE_LAYOUTS | GUI_ITEM_TYPE_DISPLAYS;
 
-export interface GuiShortcut {
-  type: GuiShortcutType;
+export const GuiItemTypes: {
+  INPUTS: GUI_ITEM_TYPE_INPUTS;
+  ACTIONS: GUI_ITEM_TYPE_ACTIONS;
+  LAYOUTS: GUI_ITEM_TYPE_LAYOUTS;
+  DISPLAYS: GUI_ITEM_TYPE_DISPLAYS;
+} = {
+  INPUTS: 'INPUTS',
+  ACTIONS: 'ACTIONS',
+  LAYOUTS: 'LAYOUTS',
+  DISPLAYS: 'DISPLAYS',
+};
+
+// ═══════════════════════════════════════════════════
+// GUI Shortcut Core Shapes
+// ═══════════════════════════════════════════════════
+
+// ── Shape 1: Items (base) ──
+
+export interface GuiItemsShortcut {
+  type: 'ITEMS';
+  itemType: GuiItemType;
+  items: InputEntry[] | ActionEntry[] | LayoutEntry[] | DisplayEntry[];
   tags: string[];
 }
 
-export enum GuiItemsShortcutType {
-  INPUTS = 'INPUTS',
-  ACTIONS = 'ACTIONS',
-}
+// ── Union ──
 
-export interface GuiItemsShortcut extends GuiShortcut {
-  type: GuiShortcutType.ITEMS;
-  itemsType: GuiItemsShortcutType;
-  items: any[];
-}
-
-export type ValidGuiShortcut = GuiFieldsShortcut | GuiLayoutShortcut<any> | GuiActionsShortcut | GuiDisplayShortcut;
+export type ValidGuiShortcut =
+  | GuiInputsShortcut
+  | GuiActionsShortcut
+  | GuiLayoutItemsShortcut
+  | GuiDisplayItemsShortcut;
 
 // ═══════════════════════════════════════════════════
-// Widget Selectors (produced by _gslInputs, _gslActions)
+// GSL Matcher
 // ═══════════════════════════════════════════════════
 
-export enum GslWidgetSelectorType {
-  INPUTS = 'INPUTS',
-  ACTIONS = 'ACTIONS',
+export type GslMatcher = (decorator: WidgetItemDecorator) => boolean;
+
+// ═══════════════════════════════════════════════════
+// Leaf Selectors
+// ═══════════════════════════════════════════════════
+
+export type GslLeafConfig = GslInputsConfig | GslActionsConfig | GslLayoutsConfig | GslDisplaysConfig;
+
+export interface GslLeafSelector {
+  kind: 'leaf';
+  selectorType: GslItemType;
+  matcher: (decorator: any) => boolean;
+  config: GslLeafConfig;
 }
 
-export interface GslWidgetSelector {
-  kind: 'widget';
-  selectorType: GslWidgetSelectorType;
-  config: GslInputsConfig | GslActionsConfig;
+export interface GslInputsLeafSelector extends GslLeafSelector {
+  selectorType: 'INPUTS';
+  matcher: (decorator: InputDecorator) => boolean;
+  config: GslInputsConfig;
+}
+
+export interface GslActionsLeafSelector extends GslLeafSelector {
+  selectorType: 'ACTIONS';
+  matcher: (decorator: ActionDecorator) => boolean;
+  config: GslActionsConfig;
+}
+
+export interface GslLayoutsLeafSelector extends GslLeafSelector {
+  selectorType: 'LAYOUTS';
+  matcher: (decorator: LayoutDecorator) => boolean;
+  config: GslLayoutsConfig;
+}
+
+export interface GslDisplaysLeafSelector extends GslLeafSelector {
+  selectorType: 'DISPLAYS';
+  matcher: (decorator: DisplayDecorator) => boolean;
+  config: GslDisplaysConfig;
 }
 
 // ═══════════════════════════════════════════════════
-// ID Selectors (produced by _gslLayoutById, _gslActionById)
+// Aggregated Selectors
 // ═══════════════════════════════════════════════════
 
-export enum GslIdSelectorType {
-  LAYOUT = 'LAYOUT',
-  ACTION = 'ACTION',
+export interface GslRootDefaults {
+  suppressAutomaticStack?: boolean;
+  suppressAutomaticSubmit?: boolean;
+  onSubmit?: (data: any) => void;
 }
 
-export interface GslIdSelector {
-  kind: 'id';
-  selectorType: GslIdSelectorType;
-  id: string;
-  config: GslLayoutByIdConfig | GslActionByIdConfig;
+export interface GslAggregatedSelector {
+  kind: 'aggregated';
+  matcher: GslMatcher;
+  children: GslLeafSelector[];
+  rootDefaults?: GslRootDefaults;
 }
-
-// ═══════════════════════════════════════════════════
-// Scope Selectors (re-exported from scopes/)
-// ═══════════════════════════════════════════════════
-
-export { GslScopeSelectorType, type GslScopeSelector, type GslRootDefaults } from '../shortcuts/scopes/scopes.domain';
 
 // ═══════════════════════════════════════════════════
 // Top-level Selector (what goes in formSelectors[])
 // ═══════════════════════════════════════════════════
 
-export type GslSelector = GslScopeSelector | GslIdSelector;
+export type GslSelector = GslAggregatedSelector | GslLeafSelector;
 
-export type GslSelectorsInput = GslSelector | GslWidgetSelector | (GslSelector | GslWidgetSelector)[];
+export type GslSelectorsInput = GslSelector | GslSelector[];
 
 // ═══════════════════════════════════════════════════
 // Resolved Selectors (output of SelectorResolver)
 // ═══════════════════════════════════════════════════
 
 export interface ResolvedSelectors {
-  widgetSelectors: GslWidgetSelector[];
-  idSelectors: GslIdSelector[];
+  leafSelectors: GslLeafSelector[];
   aggregatedInputSensibleDefaults: InputSensibleDefaultsConfig;
   aggregatedActionSensibleDefaults: ActionSensibleDefaultsConfig;
   aggregatedLayoutSensibleDefaults: LayoutSensibleDefaultsConfig;
+  aggregatedDisplaySensibleDefaults: DisplaySensibleDefaultsConfig;
 }
 
 // ═══════════════════════════════════════════════════
@@ -101,22 +143,6 @@ export interface ResolvedSelectors {
 // ═══════════════════════════════════════════════════
 
 export type MergeResult =
-  | { kind: 'static'; def: InputDecorator | ActionDecorator | LayoutDecorator }
+  | { kind: 'static'; def: InputDecorator | ActionDecorator | LayoutDecorator | DisplayDecorator }
   | { kind: 'dynamic'; fn: RuntimeFunction };
 
-// ═══════════════════════════════════════════════════
-// Item Type (used across resolver, merger, mapper)
-// ═══════════════════════════════════════════════════
-
-export type GslItemType = 'INPUTS' | 'ACTIONS' | 'LAYOUT';
-
-// ═══════════════════════════════════════════════════
-// Ready-to-map item types (used by dx.service.ts)
-// ═══════════════════════════════════════════════════
-
-export type { ReadyToMapInputDef } from '../shortcuts/inputs/inputs.domain';
-export type { ReadyToMapActionDef } from '../shortcuts/actions/actions.domain';
-
-import type { ReadyToMapInputDef } from '../shortcuts/inputs/inputs.domain';
-import type { ReadyToMapActionDef } from '../shortcuts/actions/actions.domain';
-export type ReadyToMapItemDef = ReadyToMapInputDef | ReadyToMapActionDef;

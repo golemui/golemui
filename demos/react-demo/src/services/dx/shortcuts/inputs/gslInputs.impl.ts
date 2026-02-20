@@ -1,10 +1,14 @@
-import { GslWidgetSelector, GslWidgetSelectorType } from '../../core/dx.domain';
-import { GslInputsConfig } from './inputs.domain';
+import { GslInputsLeafSelector } from '../../core/dx.domain';
+import { InputDecorator, GslInputsConfig } from './inputs.domain';
 
-export function _gslInputs(config: GslInputsConfig): GslWidgetSelector {
+export function _gslInputs(
+  config: GslInputsConfig,
+  matcher: (decorator: InputDecorator) => boolean = () => true,
+): GslInputsLeafSelector {
   return {
-    kind: 'widget',
-    selectorType: GslWidgetSelectorType.INPUTS,
+    kind: 'leaf',
+    selectorType: 'INPUTS',
+    matcher,
     config,
   };
 }

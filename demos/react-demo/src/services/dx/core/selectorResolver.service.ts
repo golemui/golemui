@@ -1,16 +1,14 @@
 import {
-  GslIdSelector,
-  GslItemType,
+  GslAggregatedSelector,
+  GslLeafSelector,
   GslSelector,
-  GslScopeSelector,
-  GslScopeSelectorType,
-  GslWidgetSelector,
-  GslWidgetSelectorType,
   ResolvedSelectors,
 } from './dx.domain';
+import type { WidgetItemDecorator } from '../formDef.domain';
 import { InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
 import { ActionSensibleDefaultsConfig } from '../shortcuts/actions/actions.domain';
 import { LayoutSensibleDefaultsConfig } from '../shortcuts/layouts/layouts.domain';
+import { DisplaySensibleDefaultsConfig } from '../shortcuts/display/display.domain';
 
 const BASE_INPUT_SENSIBLE_DEFAULTS: InputSensibleDefaultsConfig = {
   suppressAutomaticLabels: false,
@@ -20,79 +18,65 @@ const BASE_INPUT_SENSIBLE_DEFAULTS: InputSensibleDefaultsConfig = {
 export class SelectorResolver {
 
   resolve(
-    itemType: GslItemType,
-    itemTags: string[],
-    itemUid: string | undefined,
+    decorator: WidgetItemDecorator,
     allSelectors: GslSelector[],
   ): ResolvedSelectors {
 
-    const scopeSelectors = allSelectors.filter(
-      (s): s is GslScopeSelector => s.kind === 'scope',
-    );
-    const idSelectors = allSelectors.filter(
-      (s): s is GslIdSelector => s.kind === 'id',
-    );
+    const leafSelectors: GslLeafSelector[] = [];
 
-    const widgetSelectorType = this.itemTypeToWidgetSelectorType(itemType);
-    const widgetSelectors: GslWidgetSelector[] = [];
-
-    // ROOT selectors first (lowest priority)
-    for (const scope of scopeSelectors) {
-      if (scope.scopeType === GslScopeSelectorType.ROOT) {
-        for (const child of scope.children) {
-          if (child.selectorType === widgetSelectorType) {
-            widgetSelectors.push(child);
-          }
-        }
+    for (const sel of allSelectors) {
+      if (sel.kind === 'aggregated') {
+        this.collectFromAggregated(sel, decorator, leafSelectors);
+      } else {
+        this.collectFromLeaf(sel, decorator, leafSelectors);
       }
     }
 
-    // TAG selectors next (in array order = increasing priority)
-    for (const scope of scopeSelectors) {
-      if (scope.scopeType === GslScopeSelectorType.TAG && scope.tag != null && itemTags.includes(scope.tag)) {
-        for (const child of scope.children) {
-          if (child.selectorType === widgetSelectorType) {
-            widgetSelectors.push(child);
-          }
-        }
-      }
-    }
-
-    // Matching ID selectors (highest priority among selectors)
-    const matchingIdSelectors = itemUid
-      ? idSelectors.filter((s) => s.id === itemUid)
-      : [];
-
-    // Roll up sensible defaults from all applicable widget selectors
-    const aggregatedInputSensibleDefaults = this.rollUpInputSensibleDefaults(widgetSelectors);
+    // Roll up sensible defaults from all matching leaf selectors
+    const aggregatedInputSensibleDefaults = this.rollUpInputSensibleDefaults(leafSelectors);
     const aggregatedActionSensibleDefaults: ActionSensibleDefaultsConfig = {};
     const aggregatedLayoutSensibleDefaults: LayoutSensibleDefaultsConfig = {};
+    const aggregatedDisplaySensibleDefaults: DisplaySensibleDefaultsConfig = {};
 
     return {
-      widgetSelectors,
-      idSelectors: matchingIdSelectors,
+      leafSelectors,
       aggregatedInputSensibleDefaults,
       aggregatedActionSensibleDefaults,
       aggregatedLayoutSensibleDefaults,
+      aggregatedDisplaySensibleDefaults,
     };
   }
 
-  private itemTypeToWidgetSelectorType(itemType: GslItemType): GslWidgetSelectorType | null {
-    switch (itemType) {
-      case 'INPUTS': return GslWidgetSelectorType.INPUTS;
-      case 'ACTIONS': return GslWidgetSelectorType.ACTIONS;
-      case 'LAYOUT': return null;
+  private collectFromAggregated(
+    agg: GslAggregatedSelector,
+    decorator: WidgetItemDecorator,
+    out: GslLeafSelector[],
+  ): void {
+    if (!agg.matcher(decorator)) return;
+
+    for (const child of agg.children) {
+      this.collectFromLeaf(child, decorator, out);
     }
   }
 
+  private collectFromLeaf(
+    leaf: GslLeafSelector,
+    decorator: WidgetItemDecorator,
+    out: GslLeafSelector[],
+  ): void {
+    if (leaf.selectorType !== decorator.itemType) return;
+    if (!leaf.matcher(decorator)) return;
+    out.push(leaf);
+  }
+
   private rollUpInputSensibleDefaults(
-    widgetSelectors: GslWidgetSelector[],
+    leafSelectors: GslLeafSelector[],
   ): InputSensibleDefaultsConfig {
     let result: InputSensibleDefaultsConfig = { ...BASE_INPUT_SENSIBLE_DEFAULTS };
 
-    for (const ws of widgetSelectors) {
-      if (ws.selectorType === GslWidgetSelectorType.INPUTS) {
-        const cfg = ws.config as GslInputsConfig;
+    for (const leaf of leafSelectors) {
+      if (leaf.selectorType === 'INPUTS') {
+        const cfg = leaf.config as GslInputsConfig;
         if (cfg.suppressAutomaticLabels != null) {
           result = { ...result, suppressAutomaticLabels: cfg.suppressAutomaticLabels };
         }

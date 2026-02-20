@@ -1,5 +1,5 @@
 import { WidgetItemDecorator } from '../../formDef.domain';
-import { GuiShortcutType, GuiItemsShortcutType, GuiItemsShortcut, RuntimeFunction } from '../../core/dx.domain';
+import { RuntimeFunction, GuiItemsShortcut, GUI_ITEM_TYPE_ACTIONS } from '../../core/dx.domain';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
 
 // ═══════════════════════════════════════════════════
@@ -34,18 +34,13 @@ export interface GslActionsConfig {
   decorator?: Partial<ActionDecorator> | GslActionDecoratorCallback;
 }
 
-export interface GslActionByIdConfig {
-  decorator?: Partial<ActionDecorator> | GslActionDecoratorCallback;
-}
-
 // ═══════════════════════════════════════════════════
 // GUI Action Types
 // ═══════════════════════════════════════════════════
 
-export type ReadyToMapActionDef = ActionDecorator | ActionDefCallback;
+export type ActionEntry = ActionDecorator | ActionDefCallback;
 
 export interface GuiActionsShortcut extends GuiItemsShortcut {
-  type: GuiShortcutType.ITEMS;
-  itemsType: GuiItemsShortcutType.ACTIONS;
-  items: ReadyToMapActionDef[];
+  itemType: GUI_ITEM_TYPE_ACTIONS;
+  items: ActionEntry[];
 }
