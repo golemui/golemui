@@ -16,6 +16,7 @@ export * from './lib/core-features/validator-injection.cy';
 // Vanilla features and components
 export * from './lib/vanilla-features/alert.cy';
 export * from './lib/vanilla-features/select.cy';
+export * from './lib/vanilla-features/repeater.cy';
 export * from './lib/vanilla-features/validators.cy';
 
 // Utils

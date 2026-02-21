@@ -30,9 +30,13 @@ export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
   }
 
   removeItem(index: number) {
-    const arr = [...(this.adapter.templateData().value ?? [])];
-    arr.splice(index, 1);
-    this.adapter.valueChanged(arr);
+    const items = (this.adapter.templateData().value ?? []).filter((_, i) => index !== i);
+    // Make sure we don't keep object references
+    if ('structuredClone' in window) {
+      this.adapter.valueChanged(structuredClone(items));
+    } else {
+      this.adapter.valueChanged(JSON.parse(JSON.stringify(items)));
+    }
   }
 
   ngOnDestroy(): void {
