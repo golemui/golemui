@@ -118,6 +118,7 @@ export type InputWidget<
     readonly?: boolean | { when: ReactiveExpression };
     on?: On<StateKeys, FormType>;
     defaultValue?: T;
+    // TODO: this shouldn't be a ReactiveWidgetPropertyValue because it cannot be a string
     validator?: ReactiveWidgetPropertyValue<V, FormType>;
   },
   'disabled' | 'readonly' | 'label' | 'validator' | 'size',
