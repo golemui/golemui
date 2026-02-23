@@ -108,7 +108,7 @@
     }
 
     section[role='tabpanel'] {
-      padding: var(--gui-padding);
+      padding: calc(var(--gui-space-gap) * 2) var(--gui-space-gap);
       border: 1px solid var(--gui-color-border);
       border-radius: 0 0 var(--gui-radius) var(--gui-radius);
       background: var(--gui-color-bg);
