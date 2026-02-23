@@ -15,6 +15,16 @@ export type TextinputProps = {
   icon?: string;
 };
 
+export type PasswordProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  showPasswordIcon?: string;
+  hidePasswordIcon?: string;
+  showPasswordLabel?: string;
+  hidePasswordLabel?: string;
+};
+
 export type CurrencyProps = {
   currency?: string;
   step?: number;

@@ -8,6 +8,7 @@ import {
   GuiLabel,
   GuiList,
   GuiNumber,
+  GuiPassword,
   GuiRadiogroup,
   GuiRangeCalendar,
   GuiSelect,
@@ -22,6 +23,8 @@ declare module 'react' {
     interface IntrinsicElements {
       'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTextinput>;
+      'gui-password': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiPassword>;
       'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCurrency>;
       'gui-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

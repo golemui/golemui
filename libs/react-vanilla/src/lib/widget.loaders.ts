@@ -15,6 +15,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<
   datePicker: async () => (await import('./components/DatePicker')).DatePicker,
   dropdown: async () => (await import('./components/Dropdown')).Dropdown,
   list: async () => (await import('./components/List')).List,
+  password: async () => (await import('./components/Password')).Password,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
