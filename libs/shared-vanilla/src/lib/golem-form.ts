@@ -161,7 +161,7 @@ type GolemWidget<
   | GuiRadiogroup<FormType, States, V>
   | GuiRangeCalendar<FormType, States, V>
   // | GuiRenderer<FormType, States>
-  | GuiRepeater<FormType, States, V>
+  | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
   | GuiFlex<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
@@ -284,11 +284,23 @@ type GuiRangeCalendar<
 //   Props.RangeCalendarProps
 // > & { type: 'renderer' };
 
-type GuiRepeater<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiRepeater<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
+> = Core.InputWidget<
   Record<string, unknown>[],
   States,
   FormType,
-  Props.RepeaterProps,
+  Props.RepeaterProps<
+    Core.LayoutWidget<
+      States,
+      FormType,
+      Props.AccordionProps,
+      GolemWidget<FormType, States, V, CustomWidget>[]
+    >
+  >,
   V
 > & { type: 'repeater' };
 

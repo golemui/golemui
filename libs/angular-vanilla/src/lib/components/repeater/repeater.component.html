@@ -5,7 +5,7 @@
     <h2>{{ templateData.label }}</h2>
   }
   @if (templateData.template && templateData.value) {
-    @for (_ of templateData.value; track $index) {
+    @for (item of templateData.value; track item) {
       <div class="card">
         <ng-container guiRepeaterWidget [repeaterIndex]="$index" [widget]="templateData.template" />
         <button type="button" class="gui-button" (click)="removeItem($index)">

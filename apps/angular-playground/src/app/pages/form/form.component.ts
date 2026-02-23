@@ -12,7 +12,7 @@ import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 
-const mock = AppsShared.kitchenSink;
+const mock = AppsShared.tests;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],

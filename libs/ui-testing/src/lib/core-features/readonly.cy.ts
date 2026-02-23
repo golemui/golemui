@@ -1,11 +1,5 @@
 import * as Core from '@golemui/core';
-import { Option } from '@golemui/shared-vanilla';
 import { MountComponentFn } from '../utils';
-
-const options: Option[] = [
-  { label: 'Opt 1', value: 'o1' },
-  { label: 'Opt 2', value: 'o2' },
-];
 
 export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
   describe('Field readonly', () => {
