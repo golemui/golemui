@@ -1,5 +1,5 @@
-import { Example } from './types';
 import { golemForm } from '@golemui/shared-vanilla';
+import { Example } from './types';
 
 const data = {
   repeaters: {
@@ -52,7 +52,7 @@ const form = golemForm().create({
                   type: 'textinput',
                   path: 'repeaters.users.items.lastName',
                 },
-              ] as any,
+              ],
             },
           },
         },

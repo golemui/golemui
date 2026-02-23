@@ -1,4 +1,3 @@
-import * as Core from '@golemui/core';
 import { WidgetPropertyFunctionParams } from '@golemui/core';
 import { OptionValue } from './components';
 import { DateRange } from './utils/date';
@@ -260,11 +259,11 @@ export type ComponentRendererProps<ComponentType = unknown> = {
   render: { component: ComponentType; api: WidgetPropertyFunctionParams<any> };
 };
 
-export type RepeaterProps = {
+export type RepeaterProps<Template> = {
   addLabel?: string;
   removeLabel?: string;
   limit?: number;
-  template: Core.LayoutWidget<string>;
+  template: Template;
 };
 
 export type Option = {
