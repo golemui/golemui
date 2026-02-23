@@ -1,0 +1,177 @@
+---
+import { Code, TabItem, Tabs } from '@astrojs/starlight/components';
+import ReactForm from '../../../public/template/code-samples/react/MyGolemUIForm.tsx?raw';
+
+export const jsonDSL = `const authForm = golemForm().create({
+  states: {
+    registering: '$form.isRegistering === true',
+  },
+  form: [
+    {
+      kind: 'input',
+      type: 'textinput',
+      label: 'Email',
+      path: 'email',
+      validator: { type: 'string', required: true, format: 'email' },
+    },
+    {
+      kind: 'input',
+      type: 'toggle',
+      label: 'Create an account?',
+      path: 'isRegistering',
+    },
+    {
+      kind: 'input',
+      type: 'checkbox',
+      label: 'Agree to terms',
+      path: 'agree',
+      include: { in: ['registering'] },
+    },
+    {
+      kind: 'action',
+      type: 'button',
+      label: 'Sign In',
+      'label.registering': 'Join Now',
+      'disabled.registering': {
+        when: '$form.isRegistering === true && $form.agree !== true',
+      },
+      on: { click: 'handleSubmit' },
+    },
+  ],
+});`;
+---
+
+<section class="one-engine">
+  <div class="container">
+    <div class="content">
+      <h2>One <span class="gradient-text">Engine</span>.<br />Infinite <span class="gradient-text">Composability</span>.</h2>
+      <p>
+        GolemUI is built on a “Core-first” philosophy, allowing you to plug in your own implementation for every part of the library.
+      </p>
+    </div>
+    <div class="visual">
+      <ul class="visual-list">
+        <li><strong class="gradient-text">Bring Your Own Validation:</strong> Seamlessly integrate <a href="https://zod.dev/" target="_blank">Zod</a>, <a href="https://valibot.dev/" target="_blank">Valibot</a>, or any library compliant with the <a href="https://standardschema.dev/" target="_blank">@standard-schema/spec</a>.</li>
+        <li><strong class="gradient-text">Bring Your Own Components:</strong> Extend our existing UI toolkit or build your own with minimal boilerplate. Simply map your components to one of our four core widget behaviors: <a href="components-reference/input-fields/overview/">input</a>, <a href="components-reference/action-fields/overview/">action</a>, <a href="components-reference/layout-fields/overview/">layout</a>, or <a href="components-reference/display-fields/overview/">display</a>.</li>
+        <li><strong class="gradient-text">Bring Your Own i18n:</strong> GolemUI is localization-agnostic by design. Implement our Translator interfaces to bridge your preferred library effortlessly.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container container-row">
+    <div class="configuration">
+      <Tabs>
+        <TabItem label="Programmatic Configuration">
+          <Code code={ReactForm} lang="tsx" />
+        </TabItem>
+        <TabItem label="JSON DSL Configuration">
+          <Code code={jsonDSL} lang="ts" />
+        </TabItem>
+      </Tabs>
+    </div>
+    <div class="your-strategy">
+      <h3>Your <span class="gradient-text">Strategy</span>.</h3>
+      <p>
+        Whether you prefer a programmatic API or the portability of a serializable JSON DSL, GolemUI adapts to your workflow.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  a {
+    color: var(--accent-color);
+  }
+
+  .visual {
+    margin-bottom: 2rem;
+  }
+
+  .visual-list {
+    font-size: 1.5rem;
+    margin: 2rem 0;
+
+    li {
+      padding: 1rem 0;
+    }
+  }
+
+  .one-engine {
+    padding: 4rem 0;
+    background: var(--bg-color);
+    overflow: hidden;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container-row {
+    display: flex;
+    flex-direction: row;
+    gap: 48px;
+  }
+
+  h2 {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+  h3 {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  p {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+  }
+
+  .your-strategy {
+    flex: 4;
+  }
+  .configuration {
+    flex: 5;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: #23262e;
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .feature {
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+      }
+
+      p {
+        font-size: 1rem;
+        margin: 0;
+      }
+    }
+  }
+
+  iframe {
+    border: none;
+  }
+</style>
