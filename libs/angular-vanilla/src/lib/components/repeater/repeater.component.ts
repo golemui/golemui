@@ -17,9 +17,10 @@ import { RepeaterProps } from '@golemui/shared-vanilla';
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<Record<string, unknown>[]>;
-  protected adapter: Angular.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps> = inject(
-    Angular.InputWidgetAdapter,
-  );
+  protected adapter: Angular.InputWidgetAdapter<
+    Record<string, unknown>[],
+    RepeaterProps<Core.NonFunctionWidget>
+  > = inject(Angular.InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);
