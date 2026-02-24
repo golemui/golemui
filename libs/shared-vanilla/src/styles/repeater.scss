@@ -1,16 +1,16 @@
 .gui-form {
   .gui-repeater {
     .card {
-      margin-bottom: var(--gui-space-gap);
-      padding: var(--gui-padding);
-      border: 1px solid var(--gui-color-border);
-      border-radius: var(--gui-radius) var(--gui-radius);
-      background: var(--gui-color-bg);
-      color: var(--gui-color-fg);
+      margin-bottom: var(--gui-space-3);
+      padding: var(--gui-space-3);
+      border: 1px solid var(--gui-border-default);
+      border-radius: var(--gui-radius-md) var(--gui-radius-md);
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
     }
 
     > button {
-      margin: var(--gui-widget-gap);
+      margin: var(--gui-space-3) 0;
     }
   }
 }

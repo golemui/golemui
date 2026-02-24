@@ -3,51 +3,51 @@
     display: flex;
 
     .gui-alert-notification {
-      padding: 12px 16px;
-      border-radius: 4px;
+      padding: var(--gui-space-3) var(--gui-space-4);
+      border-radius: var(--gui-radius-md);
       border: 1px solid;
-      font-size: 14px;
+      font-size: var(--gui-font-sm);
       line-height: 1.4;
-      margin: 8px 0;
+      margin: var(--gui-space-2) 0;
 
       /* Default level */
 
       &.gui-alert-notification--default {
-        background-color: var(--gui-color-default--light);
-        border-color: var(--gui-color-default);
-        color: var(--gui-color-default--dark);
+        background-color: var(--gui-bg-surface-hover);
+        border-color: var(--gui-border-default);
+        color: var(--gui-text-default);
       }
 
       /* Info level */
 
       &.gui-alert-notification--info {
-        background-color: var(--gui-color-info--light);
-        border-color: var(--gui-color-info);
-        color: var(--gui-color-info--dark);
+        background-color: var(--gui-intent-info-bg);
+        border-color: var(--gui-intent-info);
+        color: var(--gui-intent-info-text);
       }
 
       /* Success level */
 
       &.gui-alert-notification--success {
-        background-color: var(--gui-color-success--light);
-        border-color: var(--gui-color-success);
-        color: var(--gui-color-success--dark);
+        background-color: var(--gui-intent-success-bg);
+        border-color: var(--gui-intent-success);
+        color: var(--gui-intent-success-text);
       }
 
       /* Warning level */
 
       &.gui-alert-notification--warning {
-        background-color: var(--gui-color-warning--light);
-        border-color: var(--gui-color-warning);
-        color: var(--gui-color-warning--dark);
+        background-color: var(--gui-intent-warning-bg);
+        border-color: var(--gui-intent-warning);
+        color: var(--gui-intent-warning-text);
       }
 
       /* Error level */
 
       &.gui-alert-notification--error {
-        background-color: var(--gui-color-error--light);
-        border-color: var(--gui-color-error);
-        color: var(--gui-color-error--dark);
+        background-color: var(--gui-intent-error-bg);
+        border-color: var(--gui-intent-error);
+        color: var(--gui-intent-error-text);
       }
     }
   }

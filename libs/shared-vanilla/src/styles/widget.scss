@@ -1,8 +1,8 @@
 .gui-label {
   display: flex;
   flex-direction: column;
-  gap: var(--gui-space-gap--inner);
-  margin-bottom: var(--gui-space-gap--inner);
+  gap: var(--gui-space-2);
+  margin-bottom: var(--gui-space-2);
   font-weight: 500;
 }
 
@@ -10,8 +10,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  column-gap: var(--gui-space-gap--inner);
-  row-gap: var(--gui-space-gap--inner);
+  column-gap: var(--gui-space-2);
+  row-gap: var(--gui-space-2);
   flex: 1;
 
   &.gui-widget--horizontal {
@@ -41,34 +41,35 @@
   .gui-date-input,
   .gui-calendar-input {
     font-family: var(--gui-font-family);
-    font-size: var(--gui-font-size);
-    padding: var(--gui-padding);
-    border-radius: var(--gui-radius);
-    background: var(--gui-color-bg);
-    border: 1px solid var(--gui-color-border);
-    color: var(--gui-color-fg);
+    font-size: var(--gui-font-sm);
+    padding: var(--gui-space-3);
+    border-radius: var(--gui-radius-md);
+    background: var(--gui-bg-surface);
+    border: 1px solid var(--gui-border-default);
+    color: var(--gui-text-default);
     transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
+      border-color var(--gui-transition-normal, 0.2s),
+      box-shadow var(--gui-transition-normal, 0.2s);
 
     &:focus {
       outline: 0;
-      border: var(--gui-color-fg) solid 1px;
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
     }
 
     &[aria-invalid='true'] {
-      border-color: var(--gui-color-error);
+      border-color: var(--gui-intent-error);
 
       &:focus {
         outline: 0;
-        border: var(--gui-color-error) solid 1px;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
+        border-color: var(--gui-intent-error);
+        box-shadow: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
       }
     }
 
     &:disabled {
-      background-color: var(--gui-color-bg-disabled);
+      background-color: var(--gui-bg-disabled);
+      color: var(--gui-text-disabled);
       pointer-events: none;
     }
   }
@@ -81,14 +82,14 @@
     position: absolute;
     width: 40px;
     height: 40px;
-    color: var(--gui-color-fg);
+    color: var(--gui-text-secondary);
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
   &-hint {
-    font-size: var(--gui-font-size--small);
-    color: var(--gui-color-fg--secondary);
+    font-size: var(--gui-font-xs);
+    color: var(--gui-text-muted);
   }
 }

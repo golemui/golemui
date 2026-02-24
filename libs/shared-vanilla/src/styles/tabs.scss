@@ -1,6 +1,6 @@
 .gui-form {
   .gui-tabs {
-    margin: var(--gui-space-gap) 0;
+    margin: var(--gui-space-3) 0;
 
     .gui-sentinel {
       width: 0;
@@ -32,12 +32,12 @@
 
       &::before {
         left: 0;
-        background: linear-gradient(to right, var(--gui-color-bg) 20%, transparent);
+        background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
       }
 
       &::after {
         right: 0;
-        background: linear-gradient(to left, var(--gui-color-bg) 20%, transparent);
+        background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
       }
 
       &.gui-tabs--start-shadow::before {
@@ -70,14 +70,14 @@
     button[role='tab'] {
       flex: 0 0 auto;
       display: inline-block;
-      padding: var(--gui-padding);
+      padding: var(--gui-space-3);
 
-      border: 1px solid var(--gui-color-border);
+      border: 1px solid var(--gui-border-default);
       margin-left: -1px;
 
-      border-radius: var(--gui-radius) var(--gui-radius) 0 0;
-      background: var(--gui-color-bg);
-      color: var(--gui-color-fg);
+      border-radius: var(--gui-radius-md) var(--gui-radius-md) 0 0;
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
 
       position: relative;
       z-index: 1;
@@ -90,7 +90,7 @@
       white-space: nowrap;
 
       &.active {
-        border-bottom-color: var(--gui-color-bg);
+        border-bottom-color: var(--gui-bg-default);
       }
 
       &:first-child {
@@ -98,21 +98,21 @@
       }
 
       &:focus {
-        outline: var(--gui-color-fg) solid 1px;
-        border: var(--gui-color-fg) solid 1px;
+        outline: var(--gui-text-default) solid 1px;
+        border: var(--gui-text-default) solid 1px;
 
         &.active {
-          border-bottom-color: var(--gui-color-bg);
+          border-bottom-color: var(--gui-bg-default);
         }
       }
     }
 
     section[role='tabpanel'] {
-      padding: calc(var(--gui-space-gap) * 2) var(--gui-space-gap);
-      border: 1px solid var(--gui-color-border);
-      border-radius: 0 0 var(--gui-radius) var(--gui-radius);
-      background: var(--gui-color-bg);
-      color: var(--gui-color-fg);
+      padding: calc(var(--gui-space-3) * 2) var(--gui-space-3);
+      border: 1px solid var(--gui-border-default);
+      border-radius: 0 0 var(--gui-radius-md) var(--gui-radius-md);
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
 
       &[hidden] {
         display: none;

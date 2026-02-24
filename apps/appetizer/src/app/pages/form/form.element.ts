@@ -5,9 +5,6 @@ import * as ValidatorsVanilla from '@golemui/validators-vanilla';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
-import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
-import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 
@@ -29,9 +26,6 @@ export class FormElement extends LitElement {
       (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
   };
   itemRenderers = {
-    complexListItemRenderer: complexListItemRenderer,
-    productItemRenderer: productItemRenderer,
-    airportItemRenderer: airportItemRenderer,
     countryItemRenderer: countryItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];

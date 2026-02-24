@@ -2,8 +2,7 @@
 @use '../../../libs/shared-vanilla/src/styles/index';
 
 html, body {
-  background-color: #fff;
-  color: #1a1a1a;
+  background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
 
@@ -22,12 +21,4 @@ gui-tiny {
   width: 100%;
   max-width: 990px;
   padding: 1rem;
-}
-
-// Dark mode
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #23262f;
-    color: #f2f3f5;
-  }
 }

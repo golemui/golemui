@@ -1,55 +1,184 @@
 :root {
-  /* Color system */
-  --gui-color-bg: #fff;
-  --gui-color-bg-disabled: #dcdcdc;
-  --gui-color-fg: #1a1a1a;
-  --gui-color-fg--secondary: #999;
-  --gui-color-border: #d0d0d0;
-  --gui-color-primary: #007acc;
-  --gui-color-primary--dark: #004777;
+  /* Primitive Colors - Neutral (Slate) */
+  --gui-color-neutral-50: #f8fafc;
+  --gui-color-neutral-100: #f1f5f9;
+  --gui-color-neutral-200: #e2e8f0;
+  --gui-color-neutral-300: #cbd5e1;
+  --gui-color-neutral-400: #94a3b8;
+  --gui-color-neutral-500: #64748b;
+  --gui-color-neutral-600: #475569;
+  --gui-color-neutral-700: #334155;
+  --gui-color-neutral-800: #1e293b;
+  --gui-color-neutral-900: #0f172a;
+  --gui-color-neutral-950: #020617;
 
-  --gui-color-default--light: #f8f9fa;
-  --gui-color-default: #adb5bd;
-  --gui-color-default--dark: #495056;
+  /* Primitive Colors - Brand/Primary (Blue) */
+  --gui-color-primary-50: #eff6ff;
+  --gui-color-primary-100: #dbeafe;
+  --gui-color-primary-200: #bfdbfe;
+  --gui-color-primary-300: #93c5fd;
+  --gui-color-primary-400: #60a5fa;
+  --gui-color-primary-500: #3b82f6;
+  --gui-color-primary-600: #2563eb;
+  --gui-color-primary-700: #1d4ed8;
+  --gui-color-primary-800: #1e40af;
+  --gui-color-primary-900: #1e3a8a;
+  --gui-color-primary-950: #172554;
 
-  --gui-color-info--light: #d1ecf1;
-  --gui-color-info: #7ed4e8;
-  --gui-color-info--dark: #0c5460;
+  /* Primitive Colors - Success (Green) */
+  --gui-color-success-50: #f0fdf4;
+  --gui-color-success-100: #dcfce7;
+  --gui-color-success-300: #86efac;
+  --gui-color-success-400: #4ade80;
+  --gui-color-success-500: #22c55e;
+  --gui-color-success-600: #16a34a;
+  --gui-color-success-700: #15803d;
+  --gui-color-success-900: #14532d;
 
-  --gui-color-success--light: #d4edda;
-  --gui-color-success: #28a745;
-  --gui-color-success--dark: #155724;
+  /* Primitive Colors - Info (Cyan) */
+  --gui-color-info-50: #ecfeff;
+  --gui-color-info-100: #cffafe;
+  --gui-color-info-300: #67e8f9;
+  --gui-color-info-400: #22d3ee;
+  --gui-color-info-500: #06b6d4;
+  --gui-color-info-600: #0891b2;
+  --gui-color-info-700: #0e7490;
+  --gui-color-info-900: #164e63;
 
-  --gui-color-warning--light: #fff3cd;
-  --gui-color-warning: #ffc107;
-  --gui-color-warning--dark: #856404;
+  /* Primitive Colors - Warning (Amber) */
+  --gui-color-warning-50: #fffbeb;
+  --gui-color-warning-100: #fef3c7;
+  --gui-color-warning-300: #fcd34d;
+  --gui-color-warning-400: #fbbf24;
+  --gui-color-warning-500: #f59e0b;
+  --gui-color-warning-600: #d97706;
+  --gui-color-warning-700: #b45309;
+  --gui-color-warning-900: #78350f;
 
-  --gui-color-error--light: #f8d7da;
-  --gui-color-error: #d32f2f;
-  --gui-color-error--dark: #721c24;
+  /* Primitive Colors - Error (Red) */
+  --gui-color-error-50: #fef2f2;
+  --gui-color-error-100: #fee2e2;
+  --gui-color-error-300: #fca5a5;
+  --gui-color-error-400: #f87171;
+  --gui-color-error-500: #ef4444;
+  --gui-color-error-600: #dc2626;
+  --gui-color-error-700: #b91c1c;
+  --gui-color-error-900: #7f1d1d;
 
-  /* Typography & layout */
-  --gui-space-gap: 0.75rem;
-  --gui-space-gap--inner: 0.5rem;
-  --gui-icon-space-gap: 2.5rem;
+  /* Primitive - Base */
+  --gui-color-white: #ffffff;
+  --gui-color-black: #000000;
+  --gui-color-transparent: transparent;
 
-  /* Flex spacing */
-  --gui-flex-space-gap: 1rem;
+  /* Semantic Tokens - Backgrounds */
+  --gui-bg-default: var(--gui-color-white);
+  --gui-bg-surface: var(--gui-color-white);
+  --gui-bg-surface-hover: var(--gui-color-neutral-50);
+  --gui-bg-surface-active: var(--gui-color-neutral-100);
+  --gui-bg-disabled: var(--gui-color-neutral-100);
+  --gui-bg-inverse: var(--gui-color-neutral-900);
 
-  --gui-font-family: system-ui, sans-serif;
-  --gui-font-size--xlarge: 32px;
-  --gui-font-size--large: 24px;
-  --gui-font-size--medium: 18px;
-  --gui-font-size: 14px;
-  --gui-font-size--small: 12px;
-  --gui-font-size--xsmall: 10px;
-  --gui-radius: 4px;
-  --gui-padding: var(--gui-space-gap) var(--gui-space-gap);
-  --gui-widget-gap: var(--gui-space-gap) 0;
-  --gui-widget-gap--inner: var(--gui-space-gap) 0;
+  /* Semantic Tokens - Foreground / Text */
+  --gui-text-default: var(--gui-color-neutral-900);
+  --gui-text-secondary: var(--gui-color-neutral-500);
+  --gui-text-muted: var(--gui-color-neutral-400);
+  --gui-text-inverse: var(--gui-color-white);
+  --gui-text-disabled: var(--gui-color-neutral-400);
 
-  /* Checkbox */
-  --gui-checkbox-radius: 0.25rem;
+  /* Semantic Tokens - Borders */
+  --gui-border-default: var(--gui-color-neutral-300);
+  --gui-border-subtle: var(--gui-color-neutral-200);
+  --gui-border-strong: var(--gui-color-neutral-400);
+  --gui-border-disabled: var(--gui-color-neutral-200);
+  --gui-border-focus: var(--gui-color-primary-500);
+
+  /* Semantic Tokens - Status / Intent */
+  --gui-intent-primary: var(--gui-color-primary-600);
+  --gui-intent-primary-hover: var(--gui-color-primary-700);
+  --gui-intent-primary-active: var(--gui-color-primary-800);
+  --gui-intent-primary-text: var(--gui-color-white);
+
+  --gui-intent-success: var(--gui-color-success-600);
+  --gui-intent-success-hover: var(--gui-color-success-700);
+  --gui-intent-success-bg: var(--gui-color-success-50);
+  --gui-intent-success-text: var(--gui-color-success-900);
+
+  --gui-intent-info: var(--gui-color-info-600);
+  --gui-intent-info-hover: var(--gui-color-info-700);
+  --gui-intent-info-bg: var(--gui-color-info-50);
+  --gui-intent-info-text: var(--gui-color-info-900);
+
+  --gui-intent-warning: var(--gui-color-warning-500);
+  --gui-intent-warning-hover: var(--gui-color-warning-600);
+  --gui-intent-warning-bg: var(--gui-color-warning-50);
+  --gui-intent-warning-text: var(--gui-color-warning-900);
+
+  --gui-intent-error: var(--gui-color-error-600);
+  --gui-intent-error-hover: var(--gui-color-error-700);
+  --gui-intent-error-bg: var(--gui-color-error-50);
+  --gui-intent-error-text: var(--gui-color-error-900);
+
+  /* Spacing Scale */
+  --gui-space-0: 0px;
+  --gui-space-1: 0.25rem;
+  /* 4px */
+  --gui-space-2: 0.5rem;
+  /* 8px */
+  --gui-space-3: 0.75rem;
+  /* 12px */
+  --gui-space-4: 1rem;
+  /* 16px */
+  --gui-space-5: 1.25rem;
+  /* 20px */
+  --gui-space-6: 1.5rem;
+  /* 24px */
+  --gui-space-8: 2rem;
+  /* 32px */
+  --gui-space-10: 2.5rem;
+  /* 40px */
+
+
+
+  /* Typography Scale */
+  --gui-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --gui-font-xs: 0.75rem;
+  /* 12px */
+  --gui-font-sm: 0.875rem;
+  /* 14px */
+  --gui-font-base: 1rem;
+  /* 16px */
+  --gui-font-lg: 1.125rem;
+  /* 18px */
+  --gui-font-xl: 1.25rem;
+  /* 20px */
+  --gui-font-2xl: 1.5rem;
+  /* 24px */
+  --gui-font-3xl: 2rem;
+  /* 32px */
+
+
+
+  /* Radii Scale */
+  --gui-radius-none: 0px;
+  --gui-radius-sm: 0.125rem;
+  /* 2px */
+  --gui-radius-md: 0.25rem;
+  /* 4px */
+  --gui-radius-lg: 0.5rem;
+  /* 8px */
+  --gui-radius-xl: 0.75rem;
+  /* 12px */
+  --gui-radius-full: 9999px;
+
+
+
+  /* Shadows */
+  --gui-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --gui-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --gui-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --gui-shadow-focus: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+
+
 
   /* Toggle */
   --gui-toggle-width: 38px;
@@ -66,11 +195,44 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --gui-color-bg: #23262f;
-    --gui-color-bg-disabled: #434650;
-    --gui-color-fg: #f2f3f5;
-    --gui-color-border: #3b3e47;
-    --gui-color-primary: #007acc;
-    --gui-color-error: #ef5350;
+    /* Semantic Tokens - Backgrounds (Dark Mode) */
+    --gui-bg-default: var(--gui-color-neutral-950);
+    --gui-bg-surface: var(--gui-color-neutral-900);
+    --gui-bg-surface-hover: var(--gui-color-neutral-800);
+    --gui-bg-surface-active: var(--gui-color-neutral-700);
+    --gui-bg-disabled: var(--gui-color-neutral-800);
+    --gui-bg-inverse: var(--gui-color-white);
+
+    /* Semantic Tokens - Foreground / Text (Dark Mode) */
+    --gui-text-default: var(--gui-color-neutral-50);
+    --gui-text-secondary: var(--gui-color-neutral-400);
+    --gui-text-muted: var(--gui-color-neutral-500);
+    --gui-text-inverse: var(--gui-color-neutral-900);
+    --gui-text-disabled: var(--gui-color-neutral-600);
+
+    /* Semantic Tokens - Borders (Dark Mode) */
+    --gui-border-default: var(--gui-color-neutral-700);
+    --gui-border-subtle: var(--gui-color-neutral-800);
+    --gui-border-strong: var(--gui-color-neutral-600);
+    --gui-border-disabled: var(--gui-color-neutral-700);
+    --gui-border-focus: var(--gui-color-primary-500);
+
+    /* Semantic Tokens - Status / Intent (Dark Mode adjustments) */
+    --gui-intent-primary: var(--gui-color-primary-500);
+    --gui-intent-primary-hover: var(--gui-color-primary-400);
+    --gui-intent-primary-active: var(--gui-color-primary-300);
+
+    /* For dark mode background tints, we use color-mix to tint the dark surface */
+    --gui-intent-success-bg: color-mix(in srgb, var(--gui-color-success-500) 20%, transparent);
+    --gui-intent-success-text: var(--gui-color-success-400);
+
+    --gui-intent-info-bg: color-mix(in srgb, var(--gui-color-info-500) 20%, transparent);
+    --gui-intent-info-text: var(--gui-color-info-400);
+
+    --gui-intent-warning-bg: color-mix(in srgb, var(--gui-color-warning-500) 20%, transparent);
+    --gui-intent-warning-text: var(--gui-color-warning-400);
+
+    --gui-intent-error-bg: color-mix(in srgb, var(--gui-color-error-500) 20%, transparent);
+    --gui-intent-error-text: var(--gui-color-error-400);
   }
 }

@@ -25,11 +25,11 @@ gui-radiogroup {
         border-radius: 50%;
         transform: scale(0);
         transition: 120ms transform ease-in-out;
-        box-shadow: inset 1em 1em var(--gui-color-primary);
+        box-shadow: inset 1em 1em var(--gui-intent-primary);
       }
 
       &:checked {
-        border-color: var(--gui-color-primary);
+        border-color: var(--gui-intent-primary);
       }
 
       &:checked::before {

@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body {
-  background-color: #23262f;
+  background-color: var(--gui-bg-default);
 }
 
 .gui-flex__widget {

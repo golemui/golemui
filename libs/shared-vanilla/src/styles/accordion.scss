@@ -1,6 +1,6 @@
 .gui-form {
   .gui-accordion {
-    margin: var(--gui-space-gap) 0;
+    margin: var(--gui-space-3) 0;
 
     > .gui-widget {
       row-gap: 0;
@@ -27,17 +27,17 @@
     button {
       position: relative;
       display: inline-block;
-      padding: var(--gui-padding);
-      border: 1px solid var(--gui-color-border);
-      background: var(--gui-color-bg);
-      color: var(--gui-color-fg);
+      padding: var(--gui-space-3);
+      border: 1px solid var(--gui-border-default);
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
       transition:
         border-color 0.2s,
         box-shadow 0.2s;
       cursor: pointer;
 
       &.active {
-        border-bottom-color: var(--gui-color-bg);
+        border-bottom-color: var(--gui-bg-default);
       }
 
       &[aria-expanded='true'] .gui-accordion__icon {
@@ -46,16 +46,16 @@
 
       &:focus {
         outline: 0;
-        border: var(--gui-color-fg) solid 1px;
-        box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+        border: var(--gui-text-default) solid 1px;
+        box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
       }
     }
 
     section[role='region'] {
-      padding: var(--gui-padding);
-      border: 1px solid var(--gui-color-border);
-      background: var(--gui-color-bg);
-      color: var(--gui-color-fg);
+      padding: var(--gui-space-3);
+      border: 1px solid var(--gui-border-default);
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
 
       &[hidden] {
         display: none;

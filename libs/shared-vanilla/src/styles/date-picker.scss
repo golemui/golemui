@@ -32,10 +32,10 @@
     .gui-calendar-input {
       width: 300px;
       position: absolute;
-      border-radius: var(--gui-radius);
-      background: var(--gui-color-bg);
-      border: 1px solid var(--gui-color-border);
-      padding: var(--gui-padding);
+      border-radius: var(--gui-radius-md);
+      background: var(--gui-bg-default);
+      border: 1px solid var(--gui-border-default);
+      padding: var(--gui-space-3);
     }
 
     .gui-calendar__header {
@@ -51,27 +51,27 @@
     .gui-calendar__day-button {
       border: 1px solid transparent;
       background: transparent;
-      color: var(--gui-color-fg);
-      padding: var(--gui-padding);
-      border-radius: var(--gui-radius);
+      color: var(--gui-text-default);
+      padding: var(--gui-space-3);
+      border-radius: var(--gui-radius-md);
       cursor: pointer;
 
       &:hover {
-        border: 1px solid var(--gui-color-border);
-        background-color: var(--gui-color-fg--secondary);
+        border: 1px solid var(--gui-border-default);
+        background-color: var(--gui-text-secondary);
       }
 
       &.today {
-        border-color: var(--gui-color-primary--dark);
+        border-color: var(--gui-intent-primary-hover);
         border-width: 2px;
       }
 
       &.selected {
-        background-color: var(--gui-color-primary);
+        background-color: var(--gui-intent-primary);
       }
 
       &[disabled] {
-        background-color: var(--gui-color-bg-disabled);
+        background-color: var(--gui-bg-disabled);
         cursor: not-allowed;
       }
     }

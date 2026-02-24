@@ -1,8 +1,7 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html, body {
-  background-color: #fff;
-  color: #1a1a1a;
+  background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
 
@@ -14,14 +13,6 @@ body {
 .container {
   width: 990px;
   padding: 1rem;
-}
-
-// Dark mode
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #23262f;
-    color: #f2f3f5;
-  }
 }
 
 // Custom icons
