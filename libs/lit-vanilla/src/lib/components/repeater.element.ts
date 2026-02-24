@@ -16,7 +16,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps>();
+  adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
 
   subscriptions: Subscription[] = [];
 

@@ -51,15 +51,20 @@ export class GuiNumber extends LitElement {
 
     const inputElement = this.querySelector(`input[id="${this.uid}"]`) as HTMLInputElement;
 
+    // TODO: Try to calculate this better, too many magic numbers
     const inputStyles: any = {
-      'min-width': '20px',
+      'min-width': '23px',
     };
 
-    if (inputElement && this.autoGrow) {
-      inputElement.style.width = '0px';
-      const newWidth = Math.max(20, inputElement.scrollWidth);
-      inputStyles.width = `${newWidth}px`;
-      inputElement.style.width = '';
+    if (this.autoGrow) {
+      if (inputElement) {
+        inputElement.style.width = '0px';
+        const newWidth = Math.max(23, inputElement.scrollWidth);
+        inputStyles.width = `${newWidth}px`;
+        inputElement.style.width = '';
+      } else {
+        inputStyles.width = '47px';
+      }
     }
 
     const templateData: ControlTemplateData<number> & NumberinputProps = {

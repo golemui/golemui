@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
+import { Type } from '@golemui/lit';
 import '../../src/lib/components/form.element';
-import { Type } from '../../src/lib/utils/types';
 
 export const mountFramework = (options: MountOptions) => {
   const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent

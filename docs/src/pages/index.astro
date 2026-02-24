@@ -1,9 +1,11 @@
 ---
 import Hero from '../components/landing/Hero.astro';
-import LatestReleases from '../components/landing/LatestReleases.astro';
-import FAQ from '../components/landing/FAQ.astro';
-import Components from '../components/landing/Components.astro';
 import UnlimitedPower from '../components/landing/UnlimitedPower.astro';
+import OneEngine from '../components/landing/OneEngine.astro';
+import Theming from '../components/landing/Theming.astro';
+import Features from '../components/landing/Features.astro';
+import Metrics from '../components/landing/Metrics.astro';
+import CTA from '../components/landing/CTA.astro';
 ---
 
 <html lang="en" class="dark">
@@ -81,9 +83,11 @@ import UnlimitedPower from '../components/landing/UnlimitedPower.astro';
     <main>
       <Hero />
       <UnlimitedPower />
-      <Components />
-      <LatestReleases />
-      <FAQ />
+      <OneEngine />
+      <Theming />
+      <Features />
+      <Metrics />
+      <CTA />
     </main>
 
     <footer class="landing-footer">
@@ -91,7 +95,7 @@ import UnlimitedPower from '../components/landing/UnlimitedPower.astro';
         <div class="footer-content">
           <div class="footer-col">
             <h3>GolemUI</h3>
-            <p>The enterprise-grade forms library.</p>
+            <p>The Enterprise Forms Library.</p>
           </div>
           <div class="footer-col">
             <h4>Product</h4>
@@ -145,6 +149,7 @@ import UnlimitedPower from '../components/landing/UnlimitedPower.astro';
     --bg-color: #ffffff;
     --text-color: #1a1a1a;
     --text-muted: #666666;
+    --secondary-color: #a855f7;
     --accent-color: #3b82f6;
     --accent-color-rgb: 59, 130, 246;
     --border-color: #e5e5e5;
@@ -334,11 +339,16 @@ import UnlimitedPower from '../components/landing/UnlimitedPower.astro';
     }
   }
 
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 
   html.dark {
     --bg-color: #23262f;
     --text-color: #ffffff;
-    --text-muted: #a1a1aa;
+    --text-muted: #fff;
     --accent-color: #60a5fa;
     --accent-color-rgb: 96, 165, 250;
     --border-color: #3f3f46;

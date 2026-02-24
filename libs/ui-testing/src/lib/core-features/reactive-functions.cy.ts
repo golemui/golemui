@@ -23,7 +23,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
                 return $form.myInput;
               },
               props: {
-                placeholder: ({ $form }) => {
+                placeholder: ({ $form }: any) => {
                   return $form.myInput === 'My Label'
                     ? 'My Placeholder'
                     : `${$form.myInput} Placeholder`;
