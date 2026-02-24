@@ -50,4 +50,19 @@ body {
     content: 'chevron_left';
     font-size: 1.8rem;
   }
+
+  &-password::before {
+    content: 'password';
+    font-size: 1.2rem;
+  }
+
+  &-visibility::before {
+    content: 'visibility';
+    font-size: 1.2rem;
+  }
+
+  &-visibility_off::before {
+    content: 'visibility_off';
+    font-size: 1.2rem;
+  }
 }

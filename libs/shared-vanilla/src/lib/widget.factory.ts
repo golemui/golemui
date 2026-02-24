@@ -33,6 +33,24 @@ export const Vanilla = {
     ...(validator && { validator }),
     ...config,
   }),
+  password: <StateKeys extends Core.UiState = string, V = any>({
+    config,
+    props,
+    validator,
+  }: {
+    config: InputWidgetConfig<string>;
+    props?: Props.PasswordProps;
+    // validator?: Core.StringValidator | Core.CustomValidator;
+    validator?: V;
+  }): Core.InputWidget<string, StateKeys> => ({
+    uid: '',
+    kind: 'input',
+    type: 'password',
+    // The `props` key only exists in the returned object when `props` is actually provided
+    ...(props && { props }),
+    ...(validator && { validator }),
+    ...config,
+  }),
   numberinput: <StateKeys extends Core.UiState = string, V = any>({
     config,
     props,

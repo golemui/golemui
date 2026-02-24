@@ -7,6 +7,7 @@ export const inputWidgets = [
   'dropdown',
   'list',
   'number',
+  'password',
   'radiogroup',
   'rangeCalendar',
   'repeater',
