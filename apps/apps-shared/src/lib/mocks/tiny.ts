@@ -20,7 +20,7 @@ const form = defineForm({
         {
           uid: 'login-password',
           kind: 'input',
-          type: 'textinput',
+          type: 'password',
           path: 'login.password',
           props: { type: 'password', placeholder: 'Enter your password...' },
         },
