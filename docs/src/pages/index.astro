@@ -128,7 +128,9 @@ import CTA from '../components/landing/CTA.astro';
 
 <style lang="scss" is:global>
   :root {
-    color-scheme: light dark;
+    --ec-codeBg: #020617;
+    --ec-brdWd: 0;
+    --ec-frm-edBg: transparent;
 
     --bg-color: #ffffff;
     --text-color: #1a1a1a;
@@ -310,6 +312,11 @@ import CTA from '../components/landing/CTA.astro';
       0px 25px 7px rgba(0, 0, 0, 0.01), 0px 16px 6px hsla(0, 0%, 0%, 0.03),
       0px 9px 5px hsla(223, 13%, 10%, 0.08), 0px 4px 4px hsla(0, 0%, 0%, 0.16),
       0px 4px 2px hsla(0, 0%, 0%, 0.04);
+
+    .home-examples {
+      width: 50%;
+      background-color: transparent;
+    }
   }
 
   @media (min-width: 50em) {
@@ -365,6 +372,11 @@ import CTA from '../components/landing/CTA.astro';
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
+  }
+
+  starlight-tabs {
+    border-radius: 20px;
+    overflow: hidden;
   }
 
   starlight-tabs ul {
@@ -480,5 +492,6 @@ import CTA from '../components/landing/CTA.astro';
 
   .home-examples .expressive-code .frame pre {
     overflow-y: auto;
+    background: var(--code-background);
   }
 </style>

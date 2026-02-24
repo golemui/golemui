@@ -51,11 +51,7 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
 
   .home-examples {
     width: 50%;
-    background-color: var(--gui-bg-default);
-  }
-
-  .home-examples .expressive-code .frame pre {
-    overflow-y: auto;
+    background-color: transparent;
   }
 
   .custom-power {
@@ -93,5 +89,11 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
 
   iframe {
     border: 0;
+  }
+
+  html.dark {
+    .home-examples {
+      background-color: var(--ec-codeBg);
+    }
   }
 </style>
