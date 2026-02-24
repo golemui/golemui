@@ -158,6 +158,7 @@ type GolemWidget<
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
   | GuiNumberinput<FormType, States, V>
+  | GuiPassword<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
   | GuiRangeCalendar<FormType, States, V>
   // | GuiRenderer<FormType, States>
@@ -349,6 +350,14 @@ type GuiTextInput<
   States extends string,
   V,
 > = Core.InputWidget<string, States, FormType, Props.TextinputProps, V> & { type: 'textinput' };
+
+type GuiPassword<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+  string,
+  States,
+  FormType,
+  Props.PasswordProps,
+  V
+> & { type: 'password' };
 
 type GuiToggle<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
   boolean,

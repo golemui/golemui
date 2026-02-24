@@ -11,6 +11,8 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
     (await import('./components/repeater/repeater.component')).RepeaterComponent,
   textinput: async () =>
     (await import('./components/textinput/textinput.component')).TextinputComponent,
+  password: async () =>
+    (await import('./components/password/password.component')).PasswordComponent,
   currency: async () =>
     (await import('./components/currency/currency.component')).CurrencyComponent,
   textarea: async () =>
