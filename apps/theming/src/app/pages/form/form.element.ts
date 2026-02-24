@@ -24,10 +24,10 @@ export class FormElement extends LitElement {
   }
 
   setOverrideCSSVariables() {
-    this.updateGuiVariable('--gui-color-border', '#a855f7');
-    this.updateGuiVariable('--gui-radius', '12px');
+    this.updateGuiVariable('--gui-border-default', '#a855f7');
+    this.updateGuiVariable('--gui-radius-md', '12px');
     this.updateGuiVariable(
-      '--gui-color-primary',
+      '--gui-intent-primary',
       'linear-gradient(135deg, #60a5fa 0%, #a855f7 100%)',
     );
   }
@@ -54,9 +54,9 @@ export class FormElement extends LitElement {
               <span>Override GolemUI styles with CSS Variables</span>
             </label>
             <pre>
---gui-color-border: #a855f7;
---gui-radius: 12px;
---gui-color-primary: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);</pre
+--gui-border-default: #a855f7;
+--gui-radius-md: 12px;
+--gui-intent-primary: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);</pre
             >
           </div>
         </div>
