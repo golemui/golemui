@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @use '../../../libs/shared-vanilla/src/styles/index';
+@use '../../../libs/shared-vanilla/src/styles/themes/clay';
 
 html, body {
   background-color: var(--gui-bg-default);
-  font-family: system-ui, sans-serif;
+  font-family: var(--gui-font-family);
 }
 
 body {
@@ -41,8 +42,8 @@ gui-theming {
   color: var(--gui-text-default);
 
   &:has(input:checked) {
-    border: 1px solid #333;
-    background-color: var(--gui-color-neutral-700);
+    border: 1px solid var(--gui-border-default);
+    background: var(--gui-intent-primary);
     color: white;
 
     pre {
@@ -67,11 +68,11 @@ gui-theming {
     margin-right: 12px;
 
     border-radius: 50%;
-    border: 1px solid color-mix(in srgb, #23262f, #f2f3f5 30%);
+    border: 1px solid color-mix(in srgb, var(--gui-color-neutral-800), var(--gui-color-neutral-50) 30%);
     transition: background-color .25s ease-in-out, border-color .25s ease-in-out, box-shadow .25s ease-in-out;
 
     &:checked {
-      border: 6px solid color-mix(in srgb, #f2f3f5, #007acc 50%);
+      border: 6px solid color-mix(in srgb, var(--gui-color-neutral-50), var(--gui-color-neutral-950) 50%);
     }
   }
 }
