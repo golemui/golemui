@@ -1,0 +1,47 @@
+{
+    "$schema": "./form.schema.json",
+    "states": {
+        "isRegistering": "$form.mode === 'register'",
+        "hasError": "$form.error !== null"
+    },
+    "form": [
+        {
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+                "direction": "vertical",
+                "gap": 10
+            },
+            "children": [
+                {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "username",
+                    "label": "Username",
+                    "props": {
+                        "placeholder": "Enter your username",
+                        "hint.isRegistering": "Choose a unique username"
+                    }
+                },
+                {
+                    "kind": "input",
+                    "type": "password",
+                    "path": "password",
+                    "label": "Password",
+                    "props": {
+                        "placeholder": "Enter your password"
+                    }
+                },
+                {
+                    "kind": "action",
+                    "type": "button",
+                    "label": "Login",
+                    "label.isRegistering": "Create Account",
+                    "on": {
+                        "click": "submitForm"
+                    }
+                }
+            ]
+        }
+    ]
+}

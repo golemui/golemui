@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://golemui.com/schemas/components/repeater.schema.json",
+    "title": "Repeater Widget",
+    "type": "object",
+    "allOf": [
+        {
+            "$ref": "../common.schema.json#/definitions/baseWidget"
+        }
+    ],
+    "properties": {
+        "kind": {
+            "const": "input"
+        },
+        "type": {
+            "const": "repeater"
+        },
+        "path": {
+            "$ref": "../common.schema.json#/definitions/dotPath"
+        },
+        "label": {
+            "$ref": "../common.schema.json#/definitions/localizable"
+        },
+        "on": {
+            "$ref": "../common.schema.json#/definitions/on"
+        },
+        "props": {
+            "type": "object",
+            "properties": {
+                "addLabel": {
+                    "type": "string"
+                },
+                "removeLabel": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "number"
+                },
+                "template": {
+                    "$ref": "../form.schema.json#/definitions/formWidget"
+                }
+            },
+            "required": [
+                "template"
+            ],
+            "patternProperties": {
+                "^.*\\..*$": {}
+            }
+        }
+    },
+    "required": [
+        "kind",
+        "type",
+        "path",
+        "props"
+    ]
+}
