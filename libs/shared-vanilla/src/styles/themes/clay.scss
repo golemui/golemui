@@ -1,0 +1,86 @@
+[data-theme="clay"] {
+  /* Primitive Colors - Neutral (Slate) */
+  --gui-color-neutral-50: #ffceb0;
+  --gui-color-neutral-100: #f1c2a7;
+  --gui-color-neutral-200: #e3b99d;
+  --gui-color-neutral-300: #c6a188;
+  --gui-color-neutral-400: #917664;
+  --gui-color-neutral-500: #675246;
+  --gui-color-neutral-600: #57463c;
+  --gui-color-neutral-700: #493b32;
+  --gui-color-neutral-800: #29211c;
+  --gui-color-neutral-900: #1b1612;
+  --gui-color-neutral-950: #0e0b0a;
+
+  /* Semantic Tokens - Backgrounds */
+  --gui-bg-default: #f5f0eb;
+  --gui-bg-surface: #fdfcfb;
+  --gui-bg-surface-hover: #ebe1d9;
+  --gui-bg-surface-active: #dfd1c5;
+  --gui-bg-disabled: #f0e9e1;
+  --gui-bg-inverse: #3b322c;
+
+  /* Semantic Tokens - Foreground / Text */
+  --gui-text-default: #2d241f;
+  --gui-text-secondary: #6b5c52;
+  --gui-text-muted: #8c7b6f;
+  --gui-text-inverse: #fdfcfb;
+  --gui-text-disabled: #a89a8e;
+
+  /* Semantic Tokens - Borders */
+  --gui-border-default: #d3c4b7;
+  --gui-border-subtle: #e6dacd;
+  --gui-border-strong: #a89a8e;
+  --gui-border-disabled: #e6dacd;
+  --gui-border-focus: #c25e4e;
+
+  /* Semantic Tokens - Status / Intent (Primary = Terracotta) */
+  --gui-intent-primary: #c25e4e;
+  --gui-intent-primary-hover: #a64c3e;
+  --gui-intent-primary-active: #8a3c30;
+  --gui-intent-primary-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="clay"] {
+    /* Primitive Colors - Neutral (Slate) */
+    --gui-color-neutral-50: #0e0b0a;
+    --gui-color-neutral-100: #1b1612;
+    --gui-color-neutral-200: #29211c;
+    --gui-color-neutral-300: #493b32;
+    --gui-color-neutral-400: #57463c;
+    --gui-color-neutral-500: #675246;
+    --gui-color-neutral-600: #917664;
+    --gui-color-neutral-700: #c6a188;
+    --gui-color-neutral-800: #e3b99d;
+    --gui-color-neutral-900: #f1c2a7;
+    --gui-color-neutral-950: #ffceb0;
+
+    /* Semantic Tokens - Backgrounds (Dark Mode) */
+    --gui-bg-default: #24201e;
+    --gui-bg-surface: #2d2623;
+    --gui-bg-surface-hover: #3b322c;
+    --gui-bg-surface-active: #4a3e37;
+    --gui-bg-disabled: #322b27;
+    --gui-bg-inverse: #fdfcfb;
+
+    /* Semantic Tokens - Foreground / Text (Dark Mode) */
+    --gui-text-default: #f5f0eb;
+    --gui-text-secondary: #c2b4a8;
+    --gui-text-muted: #a89a8e;
+    --gui-text-inverse: #2d241f;
+    --gui-text-disabled: #8c7b6f;
+
+    /* Semantic Tokens - Borders (Dark Mode) */
+    --gui-border-default: #5c4e45;
+    --gui-border-subtle: #4a3e37;
+    --gui-border-strong: #7a6a5e;
+    --gui-border-disabled: #4a3e37;
+    --gui-border-focus: #db7665;
+
+    /* Semantic Tokens - Status / Intent (Primary = Terracotta Dark) */
+    --gui-intent-primary: #db7665;
+    --gui-intent-primary-hover: #e38d7e;
+    --gui-intent-primary-active: #eba598;
+  }
+}

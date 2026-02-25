@@ -30,6 +30,8 @@ export class FormElement extends LitElement {
       '--gui-intent-primary',
       'linear-gradient(135deg, #60a5fa 0%, #a855f7 100%)',
     );
+    this.updateGuiVariable('--gui-color-neutral-50', '#9ccaff');
+    this.updateGuiVariable('--gui-color-neutral-950', '#3f205c');
   }
 
   updateGuiVariable = (property: string, value: string): void => {
@@ -43,9 +45,9 @@ export class FormElement extends LitElement {
           <div class="theming-option">
             <label>
               <input type="radio" name="theming" checked @click=${() => this.setGolemUITheme()} />
-              <span>Use our GolemUI Theme</span>
+              <span>Use one of our GolemUI Themes</span>
             </label>
-            <pre>@import '@golemui/themes/dist/golemui-theme.css';</pre>
+            <pre>@import '@golemui/shared-vanilla/styles/index.css';</pre>
           </div>
 
           <div class="theming-option">
@@ -56,7 +58,9 @@ export class FormElement extends LitElement {
             <pre>
 --gui-border-default: #a855f7;
 --gui-radius-md: 12px;
---gui-intent-primary: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);</pre
+--gui-intent-primary: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+--gui-color-neutral-50: #9ccaff;
+--gui-color-neutral-950: #3f205c;</pre
             >
           </div>
         </div>

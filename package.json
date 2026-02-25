@@ -14,7 +14,7 @@
     "lint:affected": "nx affected -t lint test --no-cloud",
     "build:docs": "./build-docs.sh --skip-install && cd docs && npm run build",
     "build:libs": "npx nx run-many --target=build --projects=libs/*",
-    "build:styles": "npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/shared-vanilla/lib/styles/index.css",
+    "build:styles": "sh ./tools/build-sass.sh",
     "cz:breaking": "npm run precz && czg break",
     "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts"
   },
