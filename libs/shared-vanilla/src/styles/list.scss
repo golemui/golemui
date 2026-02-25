@@ -6,9 +6,9 @@
 
 gui-list {
   display: block;
-  background-color: var(--gui-color-bg);
-  border: 1px solid var(--gui-color-border);
-  border-radius: var(--gui-radius);
+  background-color: var(--gui-bg-default);
+  border: 1px solid var(--gui-border-default);
+  border-radius: var(--gui-radius-md);
   overflow: hidden;
 
   ul {
@@ -21,7 +21,7 @@ gui-list {
     background-color: transparent;
 
     &[aria-disabled='true'] {
-      background-color: var(--gui-color-bg-disabled);
+      background-color: var(--gui-bg-disabled);
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -36,19 +36,19 @@ gui-list {
 
     &-disabled {
       cursor: not-allowed;
-      background-color: var(--gui-color-bg-disabled);
+      background-color: var(--gui-bg-disabled);
     }
 
     &-selected {
-      background-color: var(--gui-color-primary);
+      background-color: var(--gui-intent-primary);
     }
 
     &-focused {
-      border: 1px solid var(--gui-color-primary);
+      border: 1px solid var(--gui-intent-primary);
     }
 
     &:hover {
-      background-color: var(--gui-color-primary--dark);
+      background-color: var(--gui-intent-primary-hover);
     }
   }
 }

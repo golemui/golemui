@@ -11,19 +11,19 @@ gui-date {
 
     &[aria-invalid='true'] {
       &:has(input) {
-        border-color: var(--gui-color-error);
+        border-color: var(--gui-intent-error);
       }
       &:has(input:focus) {
         outline: 0;
-        border: var(--gui-color-error) solid 1px;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-error) 50%, transparent);
+        border: var(--gui-intent-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
       }
     }
 
     &:has(input:focus) {
       outline: 0;
-      border: var(--gui-color-fg) solid 1px;
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-color-fg) 25%, transparent);
+      border: var(--gui-text-default) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
     }
 
     .gui-date-input__touch-target {
@@ -37,7 +37,7 @@ gui-date {
       inset-inline-start: 2px;
       width: 18px;
       height: 1px;
-      background-color: var(--gui-color-fg);
+      background-color: var(--gui-text-default);
       z-index: 1;
       pointer-events: none;
       display: none;

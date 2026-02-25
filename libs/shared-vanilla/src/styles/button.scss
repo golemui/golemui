@@ -2,21 +2,25 @@
   /* Buttons inside widgets */
 
   button.gui-button,
-    /* Button Widget */
+  /* Button Widget */
   .gui-button button {
     display: inline-block;
     cursor: pointer;
-    background: var(--gui-color-primary);
-    color: white;
-    border-radius: var(--gui-radius);
+    background: var(--gui-intent-primary);
+    color: var(--gui-intent-primary-text);
+    border-radius: var(--gui-radius-md);
     border: 0;
-    padding: var(--gui-padding);
+    padding: var(--gui-space-3);
     font-weight: 500;
     text-align: center;
-    transition: filter 0.2s;
+    transition: background-color var(--gui-transition-normal, 0.2s);
 
     &:hover {
-      filter: brightness(1.1);
+      background: var(--gui-intent-primary-hover);
+    }
+
+    &:active {
+      background: var(--gui-intent-primary-active);
     }
 
     &:disabled {

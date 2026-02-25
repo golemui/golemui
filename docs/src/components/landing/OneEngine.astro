@@ -148,7 +148,7 @@ export const jsonDSL = `const authForm = golemForm().create({
     flex: 5;
     overflow: hidden;
     border-radius: 20px;
-    background-color: #23262e;
+    background-color: transparent;
   }
 
   .features {
@@ -173,5 +173,11 @@ export const jsonDSL = `const authForm = golemForm().create({
 
   iframe {
     border: none;
+  }
+
+  html.dark {
+    .configuration {
+      background-color: var(--ec-codeBg);
+    }
   }
 </style>

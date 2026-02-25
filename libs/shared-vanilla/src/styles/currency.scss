@@ -6,8 +6,8 @@ gui-currency {
 
     .gui-currency__format-value {
       position: absolute;
-      background: var(--gui-color-bg);
-      font-size: var(--gui-font-size);
+      background: var(--gui-bg-default);
+      font-size: var(--gui-font-sm);
       top: 13px;
       inset-inline-start: 13px;
 
@@ -31,21 +31,21 @@ gui-currency {
       }
 
       &.gui-currency--icon {
-        padding-inline-start: var(--gui-icon-space-gap);
+        padding-inline-start: var(--gui-space-10);
       }
 
       &:focus {
-        color: var(--gui-color-fg);
+        color: var(--gui-text-default);
       }
 
       &:focus + .gui-currency__format-value {
-        font-size: var(--gui-font-size--small);
+        font-size: var(--gui-font-sm);
         top: -9px;
         padding: 2px;
       }
 
       &:focus[aria-invalid='true'] + .gui-currency__format-value {
-        color: var(--gui-color-error);
+        color: var(--gui-intent-error);
       }
     }
   }

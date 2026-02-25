@@ -1,16 +1,16 @@
 :root {
-  --gui-radius-range: calc(var(--gui-radius) * 2);
+  --gui-radius-range: calc(var(--gui-radius-md) * 2);
 }
 
 gui-range-calendar {
   .gui-calendar__day-button {
     &.in-range {
-      background-color: var(--gui-color-primary);
+      background-color: var(--gui-intent-primary);
       color: white;
       border-radius: 0;
     }
     &.range-start {
-      background-color: var(--gui-color-primary);
+      background-color: var(--gui-intent-primary);
       color: white;
 
       // Top Left - Top Right - Bottom Left - Bottom Right
@@ -20,7 +20,7 @@ gui-range-calendar {
       border-end-start-radius: var(--gui-radius-range);
     }
     &.range-end {
-      background-color: var(--gui-color-primary);
+      background-color: var(--gui-intent-primary);
       color: white;
 
       // Top Left - Top Right - Bottom Left - Bottom Right

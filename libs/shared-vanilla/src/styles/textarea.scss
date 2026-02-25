@@ -3,7 +3,7 @@ gui-textarea {
 
   textarea {
     &.gui-textarea--icon {
-      padding-inline-start: var(--gui-icon-space-gap);
+      padding-inline-start: var(--gui-space-10);
     }
   }
 
@@ -13,12 +13,12 @@ gui-textarea {
   }
 
   .gui-textarea--counter {
-    font-size: var(--gui-font-size--small);
-    margin-top: var(--gui-space-gap--inner);
+    font-size: var(--gui-font-sm);
+    margin-top: var(--gui-space-2);
     padding: 0;
 
     &__error {
-      color: var(--gui-color-error);
+      color: var(--gui-intent-error);
     }
   }
 }

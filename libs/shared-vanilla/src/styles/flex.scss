@@ -6,8 +6,8 @@
     .gui-flex__widget {
       display: flex;
       flex-direction: column;
-      column-gap: var(--gui-flex-space-gap);
-      row-gap: var(--gui-flex-space-gap);
+      column-gap: var(--gui-space-4);
+      row-gap: var(--gui-space-4);
 
       &--horizontal {
         flex-direction: row;

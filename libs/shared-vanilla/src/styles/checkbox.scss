@@ -19,8 +19,8 @@ gui-checkbox {
     place-content: center;
     width: 1rem;
     height: 1rem;
-    border-radius: var(--gui-checkbox-radius);
-    accent-color: var(--gui-color-primary);
+    border-radius: var(--gui-radius-sm);
+    accent-color: var(--gui-intent-primary);
     appearance: none;
     margin-top: 1px;
 
@@ -32,7 +32,7 @@ gui-checkbox {
       transform: scale(0);
       transform-origin: center center;
       transition: 150ms transform cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: inset 1em 1em var(--gui-color-primary);
+      box-shadow: inset 1em 1em var(--gui-intent-primary);
       /* Windows High Contrast Mode */
       background-color: CanvasText;
     }

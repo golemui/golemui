@@ -2,8 +2,7 @@
 @use '../../../libs/shared-vanilla/src/styles/index';
 
 html, body {
-  background-color: #fff;
-  color: #1a1a1a;
+  background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
 
@@ -39,10 +38,12 @@ gui-theming {
   padding: 12px;
   margin: 12px;
   border-radius: 8px;
+  color: var(--gui-text-default);
 
   &:has(input:checked) {
     border: 1px solid #333;
-    background-color: #3b3e47;
+    background-color: var(--gui-color-neutral-700);
+    color: white;
 
     pre {
       display: block;
@@ -77,12 +78,4 @@ gui-theming {
 
 .theming-view {
   flex: 1;
-}
-
-// Dark mode
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #23262f;
-    color: #f2f3f5;
-  }
 }
