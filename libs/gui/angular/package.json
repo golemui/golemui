@@ -1,0 +1,14 @@
+{
+  "name": "@golemui/gui-angular",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": ">=18.0.0",
+    "@angular/core": ">=18.0.0",
+    "@golemui/angular": "*",
+    "@golemui/core": "*",
+    "@golemui/gui-components": "*",
+    "@golemui/validators": "*",
+    "rxjs": "^7.8.0"
+  },
+  "sideEffects": false
+}

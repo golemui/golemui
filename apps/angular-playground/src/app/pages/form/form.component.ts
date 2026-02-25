@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AngularItemRenderer } from '@golemui/angular';
-import * as Vanilla from '@golemui/angular-vanilla';
+import * as Vanilla from '@golemui/gui-angular';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import * as ValidatorsVanilla from '@golemui/validators';
 import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';

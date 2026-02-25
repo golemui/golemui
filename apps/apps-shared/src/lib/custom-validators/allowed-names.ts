@@ -1,4 +1,4 @@
-import { CustomValidatorSchemaFn } from '@golemui/validators-vanilla';
+import { CustomValidatorSchemaFn } from '@golemui/validators';
 import * as z from 'zod/mini';
 
 export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>

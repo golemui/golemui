@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { defineForm } from '@golemui/core';
-import '@golemui/lit-vanilla';
+import '@golemui/gui-lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';

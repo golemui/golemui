@@ -8,13 +8,13 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
     [
       '@golemui/core',
       '@golemui/angular',
-      '@golemui/angular-vanilla',
+      '@golemui/gui-angular',
       '@golemui/react',
-      '@golemui/react-vanilla',
+      '@golemui/gui-react',
       '@golemui/lit',
-      '@golemui/lit-vanilla',
-      '@golemui/shared-vanilla',
-      '@golemui/validators-vanilla',
+      '@golemui/gui-lit',
+      '@golemui/gui-components',
+      '@golemui/validators',
     ].forEach((packageName) => {
       console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
       try {
