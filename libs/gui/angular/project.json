@@ -1,5 +1,5 @@
 {
-  "name": "angular-vanilla",
+  "name": "gui-angular",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/gui/angular/src",
   "prefix": "lib",

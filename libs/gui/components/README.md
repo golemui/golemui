@@ -1,11 +1,11 @@
-# shared-vanilla
+# gui-components
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Building
 
-Run `nx build shared-vanilla` to build the library.
+Run `nx build gui-components` to build the library.
 
 ## Running unit tests
 
-Run `nx test shared-vanilla` to execute the unit tests.
+Run `nx test gui-components` to execute the unit tests.

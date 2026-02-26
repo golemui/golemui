@@ -6,7 +6,7 @@ import * as path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/libs/lit-vanilla',
+  cacheDir: '../../../node_modules/.vite/libs/gui/lit',
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -18,12 +18,12 @@ export default defineConfig(() => ({
   ],
   // Configuration for building your library.
   build: {
-    outDir: '../../../dist/libs/lit-vanilla',
+    outDir: '../../../dist/libs/gui/lit',
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
       entry: 'src/index.ts',
-      name: 'lit-vanilla',
+      name: 'gui-lit',
       fileName: 'index',
     },
     rollupOptions: {
@@ -37,14 +37,14 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: 'lit-vanilla',
+    name: 'gui-lit',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../../coverage/libs/lit-vanilla',
+      reportsDirectory: '../../../coverage/libs/gui/lit',
       provider: 'v8' as const,
     },
   },

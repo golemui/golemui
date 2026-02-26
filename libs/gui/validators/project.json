@@ -1,7 +1,7 @@
 {
-  "name": "validators-vanilla",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/validators/src",
+  "name": "gui-validators",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/gui/validators/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -15,8 +15,8 @@
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/validators",
-        "configFile": "libs/validators/vite.config.ts"
+        "outputPath": "dist/libs/gui/validators",
+        "configFile": "libs/gui/validators/vite.config.ts"
       }
     },
     "nx-release-publish": {

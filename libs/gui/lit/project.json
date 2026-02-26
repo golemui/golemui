@@ -1,5 +1,5 @@
 {
-  "name": "lit-vanilla",
+  "name": "gui-lit",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/gui/lit/src",
   "projectType": "library",
@@ -32,7 +32,7 @@
       "options": {
         "cypressConfig": "libs/gui/lit/cypress.config.ts",
         "testingType": "component",
-        "devServerTarget": "lit-vanilla:build",
+        "devServerTarget": "gui-lit:build",
         "skipServe": true
       }
     }

@@ -4,7 +4,7 @@
     "module": "es2022",
     "target": "es2022",
     "moduleResolution": "node",
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../../dist/out-tsc",
     "declaration": true,
     "types": ["node"]
   },

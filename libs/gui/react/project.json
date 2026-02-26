@@ -1,5 +1,5 @@
 {
-  "name": "react-vanilla",
+  "name": "gui-react",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/gui/react/src",
   "projectType": "library",
@@ -32,7 +32,7 @@
       "options": {
         "cypressConfig": "libs/gui/react/cypress.config.ts",
         "testingType": "component",
-        "devServerTarget": "react-vanilla:build",
+        "devServerTarget": "gui-react:build",
         "skipServe": true
       }
     }

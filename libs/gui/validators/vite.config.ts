@@ -6,7 +6,7 @@ import * as path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/libs/validators-vanilla',
+  cacheDir: '../../../node_modules/.vite/libs/gui/validators',
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -18,12 +18,12 @@ export default defineConfig(() => ({
   ],
   // Configuration for building your library.
   build: {
-    outDir: '../../dist/libs/validators-vanilla',
+    outDir: '../../../dist/libs/gui/validators',
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
       entry: 'src/index.ts',
-      name: 'validators-vanilla',
+      name: 'gui-validators',
       fileName: 'index',
     },
     rollupOptions: {
@@ -32,14 +32,14 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: 'validators-vanilla',
+    name: 'gui-validators',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/libs/validators-vanilla',
+      reportsDirectory: '../../../coverage/libs/gui/validators',
       provider: 'v8' as const,
     },
   },

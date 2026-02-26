@@ -8,7 +8,7 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/libs/react-vanilla',
+  cacheDir: '../../../node_modules/.vite/libs/gui/react',
   plugins: [
     react(),
     nxViteTsPaths(),
@@ -20,12 +20,12 @@ export default defineConfig(() => ({
     }),
   ],
   build: {
-    outDir: '../../../dist/libs/react-vanilla',
+    outDir: '../../../dist/libs/gui/react',
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
       entry: 'src/index.ts',
-      name: 'react-vanilla',
+      name: 'gui-react',
       fileName: 'index',
     },
     rollupOptions: {
@@ -40,14 +40,14 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: 'react-vanilla',
+    name: 'gui-react',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../../coverage/libs/react-vanilla',
+      reportsDirectory: '../../../coverage/libs/gui/react',
       provider: 'v8' as const,
     },
   },
