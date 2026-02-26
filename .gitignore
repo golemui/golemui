@@ -49,9 +49,6 @@ Thumbs.db
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
-# Docs static files
-/docs/public
-
 # Local apps to test package installations from npm
 angular-test-app
 react-test-app
