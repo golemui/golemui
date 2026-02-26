@@ -8,7 +8,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "Building CSS..."
-npx npx sass libs/shared-vanilla/src/styles/index.scss dist/libs/shared-vanilla/lib/styles/index.css
-npx npx sass libs/shared-vanilla/src/styles/themes/clay.scss dist/libs/shared-vanilla/lib/styles/themes/clay.css
+npx npx sass libs/gui/components/src/styles/index.scss dist/libs/gui/components/lib/styles/index.css
+npx npx sass libs/gui/components/src/styles/themes/clay.scss dist/libs/gui/components/lib/styles/themes/clay.css
 
 echo "Build and copy completely successfully! 🎉"

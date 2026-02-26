@@ -23,7 +23,7 @@
           }
         ],
         "styles": [
-          "libs/shared-vanilla/src/styles/index.scss",
+          "libs/gui/components/src/styles/index.scss",
           "apps/angular-playground/src/styles.scss"
         ]
       },

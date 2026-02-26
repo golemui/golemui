@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListItemRendererProps } from '@golemui/react-vanilla';
+import { ListItemRendererProps } from '@golemui/gui-react';
 import './airport-item-renderer.scss';
 import { cn } from '@golemui/react';
 import { AirportItem } from '@golemui/apps-shared';

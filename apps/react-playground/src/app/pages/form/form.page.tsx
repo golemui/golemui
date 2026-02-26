@@ -1,8 +1,8 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { ReactItemRenderer } from '@golemui/react';
-import { FormComponent } from '@golemui/react-vanilla';
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import { FormComponent } from '@golemui/gui-react';
+import * as ValidatorsVanilla from '@golemui/validators';
 import i18next from 'i18next';
 import { useState } from 'react';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';

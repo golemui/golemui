@@ -1,6 +1,6 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import '@golemui/lit-vanilla';
+import '@golemui/gui-lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';

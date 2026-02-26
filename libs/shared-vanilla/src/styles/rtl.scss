@@ -1,6 +1,0 @@
-html[dir="rtl"], .gui-form form[dir="rtl"] {
-  gui-range-calendar .gui-widget button.gui-button.gui-calendar__month-button,
-  gui-calendar .gui-widget button.gui-button.gui-calendar__month-button {
-    transform: scaleX(-1);
-  }
-}

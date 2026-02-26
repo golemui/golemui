@@ -1,6 +1,6 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import '@golemui/lit-vanilla';
+import '@golemui/gui-lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';
@@ -47,7 +47,7 @@ export class FormElement extends LitElement {
               <input type="radio" name="theming" checked @click=${() => this.setGolemUITheme()} />
               <span>Use one of our GolemUI Themes</span>
             </label>
-            <pre>@import '@golemui/shared-vanilla/styles/index.css';</pre>
+            <pre>@import '@golemui/gui-components/styles/index.css';</pre>
           </div>
 
           <div class="theming-option">
