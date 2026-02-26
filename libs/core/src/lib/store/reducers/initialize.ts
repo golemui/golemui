@@ -35,7 +35,7 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     // mutate
     formDef_['form'] = {
       uid: '',
-      widget: 'flex',
+      type: 'flex',
       kind: 'layout',
       children: widgets,
     };

@@ -1,0 +1,12 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Some fields need your attention"
+      }
+    }
+  ]
+}
