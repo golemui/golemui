@@ -1,6 +1,7 @@
 # Add files here to ignore them from prettier formatting
 /dist
 /docs/public
+/docs/src/examples
 /coverage
 /.nx/cache
 /.nx/workspace-data

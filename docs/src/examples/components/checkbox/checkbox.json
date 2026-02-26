@@ -1,0 +1,11 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "type": "checkbox",
+      "path": "createUser",
+      "label": "Create a new user?"
+    }
+  ]
+}

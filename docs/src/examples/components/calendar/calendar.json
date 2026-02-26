@@ -1,0 +1,8 @@
+{
+    "key": "calendar-example",
+    "type": "calendar",
+    "props": {
+        "label": "Calendar",
+        "hint": "Select a date"
+    }
+}

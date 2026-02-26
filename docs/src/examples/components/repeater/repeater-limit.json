@@ -1,0 +1,42 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "type": "repeater",
+      "path": "users",
+      "defaultValue": [
+        {
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        {
+          "firstName": "Jane",
+          "lastName": "Doe"
+        }
+      ],
+      "props": {
+        "limit": 2,
+        "template": {
+          "uid": "",
+          "kind": "layout",
+          "type": "stack",
+          "children": [
+            {
+              "uid": "",
+              "kind": "control",
+              "type": "textinput",
+              "path": "users.items.firstName"
+            },
+            {
+              "uid": "",
+              "kind": "control",
+              "type": "textinput",
+              "path": "users.items.lastName"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

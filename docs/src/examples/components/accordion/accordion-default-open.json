@@ -1,0 +1,61 @@
+{
+  "form": [
+    {
+      "uid": "tab5",
+      "kind": "layout",
+      "type": "accordion",
+      "props": {
+        "defaultOpen": {
+          "section1": true,
+          "section2": true
+        },
+        "sections": [
+          { "label": "Personal Information", "uid": "section1" },
+          { "label": "Shipping Address", "uid": "section2" },
+          { "label": "Billing Address", "uid": "section3" }
+        ]
+      },
+      "children": [
+        {
+          "uid": "section1",
+          "kind": "layout",
+          "type": "flex",
+          "children": [
+            {
+              "uid": "",
+              "kind": "control",
+              "type": "textinput",
+              "path": "shoppingCart.firstName"
+            }
+          ]
+        },
+        {
+          "uid": "section2",
+          "kind": "layout",
+          "type": "flex",
+          "children": [
+            {
+              "uid": "",
+              "kind": "control",
+              "type": "textinput",
+              "path": "shoppingCart.shippingAddress"
+            }
+          ]
+        },
+        {
+          "uid": "section3",
+          "kind": "layout",
+          "type": "flex",
+          "children": [
+            {
+              "uid": "",
+              "kind": "control",
+              "type": "textinput",
+              "path": "shoppingCart.billingAddress"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

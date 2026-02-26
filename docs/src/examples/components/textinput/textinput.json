@@ -1,0 +1,11 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "type": "textinput",
+      "path": "listName",
+      "label": "First Name"
+    }
+  ]
+}

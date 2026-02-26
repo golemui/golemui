@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "type": "number",
+      "path": "number",
+      "label": "Phone Number",
+      "props": {
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "control",
+      "widget": "textinput",
+      "path": "username"
+    }
+  ]
+}
