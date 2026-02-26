@@ -1,0 +1,63 @@
+gui-number {
+  display: inline-block;
+
+  .gui-widget {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    overflow: hidden;
+
+    border-radius: var(--gui-radius-md);
+    border: 1px solid var(--gui-border-default);
+    color: var(--gui-text-default);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:has(input[aria-invalid='true']) {
+      border-color: var(--gui-intent-error);
+    }
+    &:has(input[aria-invalid='true']:focus) {
+      outline: 0;
+      border: var(--gui-intent-error) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
+    }
+    &:has(input:focus) {
+      outline: 0;
+      border: var(--gui-text-default) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
+    }
+
+    input:focus,
+    input[aria-invalid='true']:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    button.gui-button.gui-number__minus,
+    button.gui-button.gui-number__plus {
+      border-radius: 0;
+    }
+
+    input[type='number'] {
+      text-align: center;
+      border-radius: 0;
+      border: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      font-size: 20px;
+      width: 100%;
+      height: 43px;
+
+      /* For Firefox */
+      appearance: textfield;
+
+      /* For Chrome/Edge and Safari */
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        appearance: none;
+      }
+    }
+  }
+}

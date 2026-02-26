@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@use '../../../libs/shared-vanilla/src/styles/index';
-@use '../../../libs/shared-vanilla/src/styles/themes/clay';
+@use '../../../libs/gui/components/src/styles/index';
+@use '../../../libs/gui/components/src/styles/themes/clay';
 
 html, body {
   background-color: var(--gui-bg-default);

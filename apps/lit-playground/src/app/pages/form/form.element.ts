@@ -1,7 +1,7 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import '@golemui/lit-vanilla';
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import '@golemui/gui-lit';
+import * as ValidatorsVanilla from '@golemui/validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';

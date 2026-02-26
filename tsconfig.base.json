@@ -17,15 +17,15 @@
     "baseUrl": ".",
     "paths": {
       "@golemui/angular": ["libs/angular/src/index.ts"],
-      "@golemui/angular-vanilla": ["libs/angular-vanilla/src/index.ts"],
       "@golemui/apps-shared": ["apps/apps-shared/src/index.ts"],
       "@golemui/core": ["libs/core/src/index.ts"],
+      "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
+      "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
+      "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
+      "@golemui/gui-components": ["libs/gui/components/src/index.ts"],
       "@golemui/lit": ["libs/lit/src/index.ts"],
-      "@golemui/lit-vanilla": ["libs/lit-vanilla/src/index.ts"],
       "@golemui/react": ["libs/react/src/index.ts"],
-      "@golemui/react-vanilla": ["libs/react-vanilla/src/index.ts"],
-      "@golemui/shared-vanilla": ["libs/shared-vanilla/src/index.ts"],
-      "@golemui/validators-vanilla": ["libs/validators-vanilla/src/index.ts"],
+      "@golemui/validators": ["libs/gui/validators/src/index.ts"],
       "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"]
     }
   },
