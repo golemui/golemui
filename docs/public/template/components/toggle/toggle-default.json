@@ -1,0 +1,7 @@
+{
+    "key": "toggle-example",
+    "type": "toggle",
+    "props": {
+        "label": "Toggle"
+    }
+}
