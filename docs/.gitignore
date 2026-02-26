@@ -19,3 +19,11 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# demo apps
+public/appetizer
+public/material
+public/theming
+public/tiny
+public/template/assets
+public/template/index.html

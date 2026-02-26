@@ -2,7 +2,7 @@
   "form": [
     {
       "uid": "",
-      "kind": "control",
+      "kind": "input",
       "type": "repeater",
       "path": "users",
       "defaultValue": [
@@ -23,13 +23,13 @@
           "children": [
             {
               "uid": "",
-              "kind": "control",
+              "kind": "input",
               "type": "textinput",
               "path": "users.items.firstName"
             },
             {
               "uid": "",
-              "kind": "control",
+              "kind": "input",
               "type": "textinput",
               "path": "users.items.lastName"
             }

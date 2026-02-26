@@ -23,7 +23,7 @@
           "children": [
             {
               "uid": "",
-              "kind": "control",
+              "kind": "input",
               "type": "textinput",
               "path": "shoppingCart.firstName"
             }
@@ -36,7 +36,7 @@
           "children": [
             {
               "uid": "",
-              "kind": "control",
+              "kind": "input",
               "type": "textinput",
               "path": "shoppingCart.shippingAddress"
             }
@@ -49,7 +49,7 @@
           "children": [
             {
               "uid": "",
-              "kind": "control",
+              "kind": "input",
               "type": "textinput",
               "path": "shoppingCart.billingAddress"
             }

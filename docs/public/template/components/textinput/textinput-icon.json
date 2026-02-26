@@ -2,7 +2,7 @@
   "form": [
     {
       "uid": "",
-      "kind": "control",
+      "kind": "input",
       "type": "textinput",
       "path": "phoneNumber",
       "label": "Phone Number",
@@ -13,7 +13,7 @@
     },
     {
       "uid": "",
-      "kind": "control",
+      "kind": "input",
       "type": "textinput",
       "path": "email",
       "label": "Email",

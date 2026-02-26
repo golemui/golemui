@@ -2,7 +2,7 @@
   "form": [
     {
       "uid": "",
-      "kind": "control",
+      "kind": "input",
       "type": "textinput",
       "path": "listName",
       "label": "First Name",

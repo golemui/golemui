@@ -1,8 +1,8 @@
 {
   "form": [
     {
-      "kind": "control",
-      "widget": "textinput",
+      "kind": "input",
+      "type": "textinput",
       "path": "user.name",
       "validator": { "type": "custom", "allowedNames": ["John", "Jane"] }
     }

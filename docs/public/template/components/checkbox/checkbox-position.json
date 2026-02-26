@@ -2,7 +2,7 @@
   "form": [
     {
       "uid": "",
-      "kind": "control",
+      "kind": "input",
       "type": "checkbox",
       "path": "acceptConditions",
       "label": "Yes, I have read terms and conditions",

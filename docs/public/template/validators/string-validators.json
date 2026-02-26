@@ -2,8 +2,8 @@
   "form": [
     {
       "uid": "userPasswordInput",
-      "kind": "control",
-      "widget": "textinput",
+      "kind": "input",
+      "type": "textinput",
       "path": "user.password",
       "validator": {
         "type": "string",
