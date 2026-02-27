@@ -96,3 +96,9 @@
     color: var(--gui-text-muted);
   }
 }
+
+@container gui-form (max-width: 480px) {
+  .gui-widget.gui-widget--horizontal {
+    flex-direction: column;
+  }
+}

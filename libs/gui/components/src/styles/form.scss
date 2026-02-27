@@ -1,5 +1,7 @@
 .gui-form {
   display: block;
+  container-type: inline-size;
+  container-name: gui-form;
   background: var(--gui-bg-default);
   border-radius: var(--gui-radius-md);
 

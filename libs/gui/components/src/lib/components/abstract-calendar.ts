@@ -104,10 +104,7 @@ export abstract class AbstractCalendar extends LitElement {
               ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
             </button>
 
-            <div
-              class="gui-calendar__months-grid"
-              style="grid-template-columns: repeat(${Math.min(this.numberOfMonths ?? 1, 3)}, 1fr);"
-            >
+            <div class="gui-calendar__months-grid">
               ${monthsToRender.map((offset) => this.renderMonthPanel(offset))}
             </div>
 
@@ -116,7 +113,7 @@ export abstract class AbstractCalendar extends LitElement {
               class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
               ?disabled=${!this.canGoNext()}
               @click=${this.nextMonth}
-              aria-label=${this.nextMonthAriaLabel ?? 'Next month'}"
+              aria-label=${this.nextMonthAriaLabel ?? 'Next month'}
             >
               ${this.nextMonthIcon ? html`<span class="${this.nextMonthIcon}"></span>` : '>'}
             </button>
