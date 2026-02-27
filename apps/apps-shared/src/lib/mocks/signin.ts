@@ -93,7 +93,8 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
       },
       path: 'confirm',
       on: { change: 'checkPasswordMatch' },
-      include: { in: ['register'] },
+      // include: { in: ['register'] },
+      disabled: { when: '$form.registerMode !== true' },
     },
     {
       kind: 'input',
