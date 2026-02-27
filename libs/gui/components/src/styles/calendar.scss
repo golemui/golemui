@@ -2,6 +2,7 @@ gui-range-calendar,
 gui-calendar {
   display: block;
   width: fit-content;
+  max-width: 100%;
 
   .gui-widget {
     // Month Calendar
@@ -10,10 +11,6 @@ gui-calendar {
       background: var(--gui-bg-default);
       border: 1px solid var(--gui-border-default);
       padding: var(--gui-space-3);
-    }
-
-    .gui-calendar__panel {
-      width: 300px;
     }
 
     .gui-calendar__container {
@@ -75,8 +72,7 @@ gui-calendar {
       }
 
       &.today {
-        border-color: var(--gui-intent-primary-hover);
-        border-width: 2px;
+        border-color: var(--gui-intent-primary-active);
       }
 
       &.selected {
@@ -97,8 +93,18 @@ gui-calendar {
     }
 
     .gui-calendar__months-grid {
-      display: grid;
+      display: flex;
+      flex-wrap: wrap;
       gap: 2rem;
+      justify-content: center;
+      margin: auto;
     }
+  }
+}
+
+@container gui-form (max-width: 480px) {
+  gui-range-calendar,
+  gui-calendar {
+    width: auto;
   }
 }

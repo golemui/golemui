@@ -12,6 +12,11 @@ body {
   justify-content: center;
 }
 
+gui-appetizer {
+  width: 100%;
+  margin: 12px;
+}
+
 lit-root {
   display: flex;
   width: 100%;
@@ -20,8 +25,6 @@ lit-root {
 
 .container {
   width: 100%;
-  max-width: 990px;
-  padding: 1rem;
 }
 
 // Custom icons
