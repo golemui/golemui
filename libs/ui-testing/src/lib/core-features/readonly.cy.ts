@@ -54,6 +54,34 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
           });
           cy.get(selector).should('have.attr', 'readonly');
         });
+
+        it('should be readonly via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  readonly: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'readonly');
+
+          // Toggle the lock checkbox to true, which removes the readonly state
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'readonly');
+        });
       });
 
       context('number', () => {
@@ -105,6 +133,33 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
             }),
           });
           cy.get(selector).should('have.attr', 'readonly');
+        });
+
+        it('should be readonly via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  readonly: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'readonly');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'readonly');
         });
       });
 
@@ -159,6 +214,37 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
           });
           cy.get(selector).should('have.attr', 'disabled');
           cy.get(selector).should('have.attr', 'aria-readonly', 'true');
+        });
+
+        it('should be readonly via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  readonly: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          // Select maps readonly to disabled + aria-readonly
+          cy.get(selector).should('have.attr', 'disabled');
+          cy.get(selector).should('have.attr', 'aria-readonly', 'true');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+
+          cy.get(selector).should('not.have.attr', 'disabled');
+          cy.get(selector).should('not.have.attr', 'aria-readonly');
         });
       });
     });
