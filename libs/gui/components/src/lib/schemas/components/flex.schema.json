@@ -3,6 +3,17 @@
   "$id": "https://golemui.com/schemas/components/flex.schema.json",
   "title": "Flex Widget",
   "type": "object",
+  "$defs": {
+    "directionProp": {
+      "enum": ["horizontal", "vertical"]
+    },
+    "alignProp": {
+      "enum": ["center", "start", "end", "space-between", "space-around"]
+    },
+    "gapProp": {
+      "type": "number"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -22,17 +33,25 @@
       "type": "object",
       "properties": {
         "direction": {
-          "enum": ["horizontal", "vertical"]
+          "$ref": "#/$defs/directionProp"
         },
         "align": {
-          "enum": ["center", "start", "end", "space-between", "space-around"]
+          "$ref": "#/$defs/alignProp"
         },
         "gap": {
-          "type": "number"
+          "$ref": "#/$defs/gapProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^direction\\.[^.]+$": {
+          "$ref": "#/$defs/directionProp"
+        },
+        "^align\\.[^.]+$": {
+          "$ref": "#/$defs/alignProp"
+        },
+        "^gap\\.[^.]+$": {
+          "$ref": "#/$defs/gapProp"
+        }
       },
       "additionalProperties": false
     },
