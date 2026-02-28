@@ -8,7 +8,7 @@
       "$ref": "../common.schema.json#/definitions/localizable"
     },
     "hintProp": {
-      v
+      "$ref": "../common.schema.json#/definitions/localizable"
     },
     "itemsProp": {
       "type": "array",
