@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/accordion.schema.json",
+  "title": "Accordion Widget",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/definitions/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "layout"
+    },
+    "type": {
+      "const": "accordion"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/definitions/on"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "singleOpen": {
+          "type": "boolean"
+        },
+        "defaultOpen": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "renderMode": {
+          "enum": ["all", "activeOnly"]
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "uid": {
+                "type": "string"
+              }
+            },
+            "required": ["label", "uid"]
+          }
+        }
+      },
+      "required": ["sections"],
+      "patternProperties": {
+        "^[^.]*\\.?[[^.]]*$": {}
+      },
+      "additionalProperties": false
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "../form.schema.json#/definitions/formWidget"
+      }
+    }
+  },
+  "required": ["kind", "type", "children", "props"]
+}

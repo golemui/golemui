@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/textarea.schema.json",
+  "title": "TextArea Widget",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/definitions/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "textarea"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/definitions/dotPath"
+    },
+    "label": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabled": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "when": {
+              "$ref": "../common.schema.json#/definitions/reactiveExpression"
+            }
+          },
+          "required": ["when"]
+        }
+      ]
+    },
+    "readonly": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "when": {
+              "$ref": "../common.schema.json#/definitions/reactiveExpression"
+            }
+          },
+          "required": ["when"]
+        }
+      ]
+    },
+    "on": {
+      "$ref": "../common.schema.json#/definitions/on"
+    },
+    "defaultValue": {
+      "type": "string"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "counterMode": {
+          "enum": ["remaining", "current"]
+        },
+        "minimumHeight": {
+          "type": "number"
+        },
+        "autoGrow": {
+          "type": "boolean"
+        },
+        "maxLength": {
+          "type": "number"
+        }
+      },
+      "patternProperties": {
+        "^[^.]*\\.?[[^.]]*$": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "path"]
+}

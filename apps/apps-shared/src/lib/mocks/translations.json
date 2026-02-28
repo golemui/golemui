@@ -1,0 +1,91 @@
+{
+  "$schema": "../../../../../libs/gui/components/src/lib/schemas/form.schema.json",
+  "states": {
+    "remote": "$form.details.isRemote === true"
+  },
+  "form": [
+    {
+      "kind": "input",
+      "type": "toggle",
+      "path": "details.isRemote",
+      "label": {
+        "key": "consultation.mode.label",
+        "default": "I prefer a remote Zoom meeting"
+      }
+    },
+
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "details.clientName",
+      "label": {
+        "key": "consultation.field.name"
+      },
+      "props": {
+        "placeholder": {
+          "key": "consultation.placeholder.name",
+          "default": "e.g. Jane Doe"
+        }
+      },
+      "validator": { "type": "string", "required": true, "minLength": 2 }
+    },
+
+    {
+      "kind": "input",
+      "type": "calendar",
+      "path": "details.date",
+      "label": {
+        "key": "consultation.field.date",
+        "default": "Select a Date"
+      },
+      "props": {
+        "prevMonthIcon": "material-icons material-icons-chevron_left",
+        "nextMonthIcon": "material-icons material-icons-chevron_right"
+      },
+      "validator": { "type": "string", "required": true, "format": "date-time" }
+    },
+
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": {
+          "key": "consultation.info.onsite",
+          "default": "Please arrive at our Main St. office 10 minutes early."
+        },
+        "level": "info",
+        "text.remote": {
+          "key": "consultation.info.remote",
+          "default": "A Zoom link will be sent to your email upon confirmation."
+        },
+        "level.remote": "warning"
+      }
+    },
+
+    {
+      "kind": "input",
+      "type": "currency",
+      "path": "depositAmount",
+      "label": {
+        "key": "consultation.field.deposit",
+        "default": "Room Reservation Deposit"
+      },
+      "props": {
+        "currency": "EUR"
+      },
+      "exclude": { "from": ["remote"] }
+    },
+
+    {
+      "kind": "action",
+      "type": "button",
+      "on": {
+        "click": "handleSubmit"
+      },
+      "label": {
+        "key": "consultation.btn.submit",
+        "default": "Confirm Booking"
+      }
+    }
+  ]
+}

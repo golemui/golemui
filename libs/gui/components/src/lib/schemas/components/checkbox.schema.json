@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/checkbox.schema.json",
+  "title": "Checkbox Widget",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/definitions/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "checkbox"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/definitions/dotPath"
+    },
+    "label": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabled": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "when": {
+              "$ref": "../common.schema.json#/definitions/reactiveExpression"
+            }
+          },
+          "required": ["when"]
+        }
+      ]
+    },
+    "readonly": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "when": {
+              "$ref": "../common.schema.json#/definitions/reactiveExpression"
+            }
+          },
+          "required": ["when"]
+        }
+      ]
+    },
+    "on": {
+      "$ref": "../common.schema.json#/definitions/on"
+    },
+    "defaultValue": {
+      "type": "boolean"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "checkboxPosition": {
+          "enum": ["left", "right"]
+        },
+        "hint": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^[^.]*\\.?[[^.]]*$": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "path"]
+}
