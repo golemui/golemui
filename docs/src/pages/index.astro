@@ -122,6 +122,19 @@ import CTA from '../components/landing/CTA.astro';
         html.className = newTheme;
         localStorage.setItem('theme', newTheme);
       });
+
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'golemui-resize') {
+          const iframes = document.querySelectorAll('.demo-iframe');
+          const sourceIframe = Array.from(iframes).find(
+            (iframe) => (iframe as HTMLIFrameElement).contentWindow === event.source
+          );
+
+          if (sourceIframe) {
+            (sourceIframe as HTMLElement).style.height = event.data.height + 'px';
+          }
+        }
+      });
     </script>
   </body>
 </html>

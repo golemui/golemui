@@ -9,3 +9,84 @@ iframe {
 code {
   word-wrap: normal;
 }
+
+/* ========================================================
+   FormForge Docs RWD Strategy (Mobile-First)
+   ======================================================== */
+
+/* --- Fluid Typography & Globals --- */
+:root {
+  /* Link to Starlight's text base or define a fluid base */
+  --fluid-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+}
+
+body {
+  font-size: var(--fluid-base, var(--sl-text-base, 1rem));
+}
+
+/* --- Prevent Overflow in MDX Content --- */
+.sl-markdown-content img,
+.sl-markdown-content video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.sl-markdown-content pre,
+.sl-markdown-content code,
+.sl-markdown-content .expressive-code {
+  max-width: 100%;
+  overflow-x: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Exception for Expressive Code blocks if they handle their own scrolling */
+.sl-markdown-content .expressive-code pre {
+  white-space: pre; 
+}
+
+/* --- Responsive Layout Utilities (Mobile-First) --- */
+
+/* Grid Utility for Landing Pages */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile: 1 Column */
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Tablet / Small Desktop (>= 50rem / 800px) */
+@media (min-width: 50rem) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr); /* Tablet: 2 Columns */
+  }
+
+  /* Specific tweak for components that need tight side-by-side */
+  .responsive-split {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+}
+
+/* Large Desktop (>= 72rem / 1152px) */
+@media (min-width: 72rem) {
+  .responsive-grid.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr); /* Desktop: 3 Columns */
+  }
+
+  .responsive-grid.grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr); /* Large Screens: 4 Columns */
+  }
+}
+
+/* --- Specific Overrides for Starlight / Custom Pages --- */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
