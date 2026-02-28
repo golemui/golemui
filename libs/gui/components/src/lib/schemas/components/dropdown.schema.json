@@ -3,6 +3,56 @@
   "$id": "https://golemui.com/schemas/components/dropdown.schema.json",
   "title": "Dropdown Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "itemsProp": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "template": {
+            "type": "object"
+          },
+          "value": {
+            "type": ["string", "number", "boolean", "null"]
+          }
+        },
+        "required": ["template", "value"]
+      }
+    },
+    "labelFieldProp": {
+      "type": "string"
+    },
+    "valueFieldProp": {
+      "type": "string"
+    },
+    "searchFieldsProp": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "heightProp": {
+      "type": "number"
+    },
+    "itemHeightProp": {
+      "type": "number"
+    },
+    "itemRendererProp": {
+      "type": "string"
+    },
+    "inputDebounceProp": {
+      "type": "number"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,7 +69,7 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -28,55 +78,74 @@
       "type": "object",
       "properties": {
         "placeholder": {
-          "type": "string"
+          "$ref": "#/$defs/placeholderProp"
         },
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "items": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "template": {
-                "type": "object"
-              },
-              "value": {
-                "type": ["string", "number", "boolean", "null"]
-              }
-            },
-            "required": ["template", "value"]
-          }
+          "$ref": "#/$defs/itemsProp"
         },
         "labelField": {
-          "type": "string"
+          "$ref": "#/$defs/labelFieldProp"
         },
         "valueField": {
-          "type": "string"
+          "$ref": "#/$defs/valueFieldProp"
         },
         "searchFields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "$ref": "#/$defs/searchFieldsProp"
         },
         "height": {
-          "type": "number"
+          "$ref": "#/$defs/heightProp"
         },
         "itemHeight": {
-          "type": "number"
+          "$ref": "#/$defs/itemHeightProp"
         },
         "itemRenderer": {
-          "type": "string"
+          "$ref": "#/$defs/itemRendererProp"
         },
         "inputDebounce": {
-          "type": "number"
+          "$ref": "#/$defs/inputDebounceProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^items\\.[^.]+$": {
+          "$ref": "#/$defs/itemsProp"
+        },
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
+        "^valueField\\.[^.]+$": {
+          "$ref": "#/$defs/valueFieldProp"
+        },
+        "^searchFields\\.[^.]+$": {
+          "$ref": "#/$defs/searchFieldsProp"
+        },
+        "^height\\.[^.]+$": {
+          "$ref": "#/$defs/heightProp"
+        },
+        "^itemHeight\\.[^.]+$": {
+          "$ref": "#/$defs/itemHeightProp"
+        },
+        "^itemRenderer\\.[^.]+$": {
+          "$ref": "#/$defs/itemRendererProp"
+        },
+        "^inputDebounce\\.[^.]+$": {
+          "$ref": "#/$defs/inputDebounceProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type", "path"]
