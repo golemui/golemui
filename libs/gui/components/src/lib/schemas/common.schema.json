@@ -87,6 +87,22 @@
         }
       ]
     },
+    "disabled": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "when": {
+              "$ref": "#/definitions/reactiveExpression"
+            }
+          },
+          "required": ["when"]
+        }
+      ]
+    },
     "on": {
       "type": "object",
       "properties": {
