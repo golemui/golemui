@@ -87,7 +87,7 @@
         }
       ]
     },
-    "disabled": {
+    "boolOrWhen": {
       "oneOf": [
         {
           "type": "boolean"

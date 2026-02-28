@@ -5,7 +5,10 @@
   "type": "object",
   "$defs": {
     "disabledProp": {
-      "$ref": "../common.schema.json#/definitions/disabled"
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
     },
     "variantProp": {
       "enum": ["filled", "outlined"]
@@ -24,7 +27,7 @@
       "const": "button"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "disabled": {
       "$ref": "#/$defs/disabledProp"
@@ -50,6 +53,9 @@
   "patternProperties": {
     "^disabled\\.[^.]+$": {
       "$ref": "#/$defs/disabledProp"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type"]

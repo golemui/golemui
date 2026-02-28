@@ -3,6 +3,26 @@
   "$id": "https://golemui.com/schemas/components/textinput.schema.json",
   "title": "TextInput Widget",
   "type": "object",
+  "$defs": {
+    "disabledProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,39 +39,13 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "disabled": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/disabledProp"
     },
     "readonly": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/readonlyProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -63,19 +57,38 @@
       "type": "object",
       "properties": {
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "placeholder": {
-          "type": "string"
+          "$ref": "#/$defs/placeholderProp"
         },
         "icon": {
-          "type": "string"
+          "$ref": "#/$defs/iconProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledProp"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyProp"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type", "path"]
