@@ -41,3 +41,7 @@ export const isControlTouched =
     const touched = state.touchedControls[widgetPath];
     return state.touched && touched;
   };
+
+export const hasWhen = (val: unknown): val is { when: string } => {
+  return val !== undefined && typeof val === 'object' && val !== null && 'when' in val;
+};

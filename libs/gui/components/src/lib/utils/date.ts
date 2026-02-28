@@ -96,3 +96,19 @@ export function getWeekdayLabels(localeId: string | undefined): string[] {
 export function getMonthName(localeId: string | undefined, currentDate: Date): string {
   return new Intl.DateTimeFormat(localeId, { month: 'long' }).format(currentDate);
 }
+
+/**
+ * Retrieves the numeric day label from a given date formatted based on the specified locale.
+ *
+ * @param {string | undefined} localeId - The locale identifier to format the day. Defaults to 'en-US' if not provided or undefined.
+ * @param {Date} date - The date object from which the day label is retrieved.
+ * @return {string} The numeric day label as a string based on the locale format.
+ */
+export function getDayLabel(localeId: string | undefined, date: Date): string {
+  const locale = localeId || 'en-US';
+  const formatter = new Intl.DateTimeFormat(locale, { day: 'numeric' });
+  const parts = formatter.formatToParts(date);
+  const dayPart = parts.find((part) => part.type === 'day');
+
+  return dayPart ? dayPart.value : date.getDate().toString();
+}

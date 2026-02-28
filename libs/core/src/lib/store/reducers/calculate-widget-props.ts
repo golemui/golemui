@@ -12,6 +12,7 @@ import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
 import { isPotentialDotPath } from '../../utils/dot-path';
 import { get, set } from '../../utils/object';
 import { DerivedWidget, State } from '../model';
+import { hasWhen } from './utils';
 
 export const calculateWidgetProps =
   (localization: I18nTranslator) =>
@@ -76,6 +77,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
             derivedWidget: derivedWidget,
             property: prop as CoreProp,
             $form: state.data,
+            widgetFlags: state.widgetFlags,
             localization,
           });
         });
@@ -94,6 +96,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
           property: 'props',
           subProp: prop,
           $form: state.data,
+          widgetFlags: state.widgetFlags,
           localization,
         });
       });
@@ -108,6 +111,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
             $form: state.data,
+            widgetFlags: state.widgetFlags,
             localization,
           });
         });
@@ -165,6 +169,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
   property,
   subProp,
   $form,
+  widgetFlags,
   localization,
 }: {
   currentStates: string[];
@@ -173,6 +178,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
   property: CoreProp;
   subProp?: string;
   $form: State['data'];
+  widgetFlags: State['widgetFlags'];
   localization: I18nTranslator;
 }) {
   // TODO: Does this assumption holds?
@@ -210,6 +216,14 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
         resolveI18nParams(propValue.params, $form),
         propValue.default,
       );
+    }
+    // This is for `disabled` an `readonly`
+    // TODO: `disabled` an `readonly` don't need to be kept in state['flags'], we could calculate them right here
+    if (
+      ((property as string) === 'disabled' || (property as string) === 'readonly') &&
+      hasWhen(propValue)
+    ) {
+      propValue = widgetFlags[derivedWidget.current.uid][property as 'disabled' | 'readonly'];
     }
     set(derivedWidget.current, dotPath, propValue);
   }

@@ -109,8 +109,12 @@ export const jsonDSL = `const authForm = golemForm().create({
 
   .container-row {
     display: flex;
-    flex-direction: row;
-    gap: 48px;
+    flex-direction: column-reverse;
+
+    @media (min-width: 50rem) {
+      flex-direction: row;
+      gap: 48px;
+    }
   }
 
   h2 {

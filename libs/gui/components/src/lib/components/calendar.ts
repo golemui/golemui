@@ -1,7 +1,7 @@
 import { html, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { isSameDay, isToday, toISODateString } from '../utils/date';
+import { getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
 import { AbstractCalendar } from './abstract-calendar';
 
 export interface CalendarDay {
@@ -74,7 +74,7 @@ export class GuiCalendar extends AbstractCalendar {
 
       return {
         date,
-        dayLabel: new Intl.DateTimeFormat(this.localeId, { day: 'numeric' }).format(date),
+        dayLabel: getDayLabel(this.localeId, date),
         isCurrentMonth,
         isToday: isToday(date),
         isDisabled,

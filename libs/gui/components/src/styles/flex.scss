@@ -47,3 +47,10 @@
     }
   }
 }
+
+/* Responsive: stack horizontal layouts when container is narrow */
+@container gui-form (max-width: 480px) {
+  .gui-form .gui-flex .gui-flex__widget--horizontal {
+    flex-direction: column;
+  }
+}

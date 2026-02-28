@@ -60,6 +60,34 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
           });
           cy.get(selector).should('have.attr', 'disabled');
         });
+
+        it('should be disabled via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  disabled: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'disabled');
+
+          // Toggle the lock checkbox to true, which enables the input
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'disabled');
+        });
       });
 
       context('checkbox', () => {
@@ -111,6 +139,33 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
+        });
+
+        it('should be disabled via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  disabled: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'disabled');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'disabled');
         });
       });
 
@@ -164,6 +219,33 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
           });
           cy.get(selector).should('have.attr', 'disabled');
         });
+
+        it('should be disabled via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  disabled: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'disabled');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'disabled');
+        });
       });
 
       context('select', () => {
@@ -215,6 +297,33 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
+        });
+
+        it('should be disabled via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  disabled: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'disabled');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'disabled');
         });
       });
 
@@ -295,6 +404,34 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
           });
           cy.get(selector).should('have.attr', 'disabled');
         });
+
+        it('should be disabled via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'input',
+                  type: widget,
+                  path: 'test',
+                  disabled: { when: '$form.isLocked !== true' },
+                  props: { options },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'disabled');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'disabled');
+        });
       });
     });
 
@@ -363,6 +500,33 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
             }),
           });
           cy.get(selector).should('have.attr', 'disabled');
+        });
+
+        it('should be disabled via a when expression', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'lock-uid',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'isLocked',
+                },
+                {
+                  uid,
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Send',
+                  disabled: { when: '$form.isLocked !== true' },
+                },
+              ],
+            }),
+          });
+
+          cy.get(selector).should('have.attr', 'disabled');
+
+          cy.get('[data-cy="lock-uid_checkbox"]').click();
+          cy.get(selector).should('not.have.attr', 'disabled');
         });
       });
     });

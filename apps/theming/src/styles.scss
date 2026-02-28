@@ -25,8 +25,12 @@ gui-theming {
 
 .theming-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 24px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 }
 
 .theming-options {
@@ -48,6 +52,7 @@ gui-theming {
 
     pre {
       display: block;
+      text-wrap: auto;
     }
   }
 

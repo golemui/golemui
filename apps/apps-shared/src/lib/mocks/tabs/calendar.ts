@@ -10,6 +10,7 @@ export const calendar = (): any => ({
       path: 'rangeCalendar',
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
       props: {
+        numberOfMonths: 3,
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',

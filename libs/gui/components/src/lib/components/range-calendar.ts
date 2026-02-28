@@ -1,7 +1,7 @@
 import { html, PropertyValues, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { DateRange, isSameDay, isToday, toISODateString } from '../utils/date';
+import { DateRange, getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
 import { AbstractCalendar, AbstractCalendarDay } from './abstract-calendar';
 
 export interface RangeCalendarDay extends AbstractCalendarDay {
@@ -87,7 +87,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
       return {
         date,
-        dayLabel: new Intl.DateTimeFormat(this.localeId, { day: 'numeric' }).format(date),
+        dayLabel: getDayLabel(this.localeId, date),
         isCurrentMonth,
         isToday: isTodayDate,
         isRangeStart,

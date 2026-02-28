@@ -1,4 +1,5 @@
 ---
+import Demo from './Demo.astro';
 ---
 
 <section class="hero">
@@ -10,10 +11,11 @@
     </div>
     <div class="example-container">
       <div class="visual">
-        <iframe src="appetizer/index.html" width="1024" height="897"></iframe>
+        <Demo src="/appetizer/index.html" />
       </div>
       <p class="subtitle">
-        100% serializable, framework agnostic and AI ready. Built for enterprise teams who need performance, extensibility, and control.
+        100% serializable, framework agnostic and AI ready. Built for enterprise teams who need
+        performance, extensibility, and control.
       </p>
     </div>
   </div>
@@ -38,7 +40,11 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle at center, rgba(var(--accent-color-rgb), 0.15) 0%, transparent 50%);
+      background: radial-gradient(
+        circle at center,
+        rgba(var(--accent-color-rgb), 0.15) 0%,
+        transparent 50%
+      );
       z-index: 0;
       pointer-events: none;
     }
@@ -63,14 +69,14 @@
   }
 
   .title {
-    font-size: 7.5rem;
+    font-size: 2.5rem;
     line-height: 1.1;
     font-weight: 800;
     letter-spacing: -0.02em;
     text-align: center;
 
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
+    @media (min-width: 768px) {
+      font-size: 7.5rem;
     }
   }
 
@@ -86,9 +92,10 @@
     gap: 1rem;
     margin-top: 1rem;
     flex-wrap: wrap;
+    justify-content: center;
 
-    @media (max-width: 960px) {
-      justify-content: center;
+    @media (min-width: 960px) {
+      justify-content: flex-start;
     }
   }
 
@@ -142,7 +149,6 @@
     flex-direction: column;
     width: 100%;
     max-width: 1024px;
-    height: 897px;
   }
 
   .visual {

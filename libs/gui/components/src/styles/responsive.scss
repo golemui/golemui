@@ -1,0 +1,27 @@
+/* ── Breakpoint Reference ── */
+:root {
+  --gui-bp-sm: 640px;
+  --gui-bp-md: 768px;
+  --gui-bp-lg: 1024px;
+  --gui-bp-xl: 1280px;
+}
+
+/* ── Responsive Token Overrides ── */
+@media (max-width: 768px) {
+  :root {
+    --gui-space-6: 1.25rem; /* 24→20 */
+    --gui-space-8: 1.5rem; /* 32→24 */
+    --gui-space-10: 2rem; /* 40→32 */
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gui-space-4: 0.75rem; /* 16→12 */
+    --gui-space-6: 1rem; /* 24→16 */
+    --gui-space-8: 1.25rem; /* 32→20 */
+    --gui-space-10: 1.5rem; /* 40→24 */
+    --gui-font-2xl: 1.25rem; /* 24→20 */
+    --gui-font-3xl: 1.5rem; /* 32→24 */
+  }
+}
