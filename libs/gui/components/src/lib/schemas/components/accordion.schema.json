@@ -3,6 +3,37 @@
   "$id": "https://golemui.com/schemas/components/accordion.schema.json",
   "title": "Accordion Widget",
   "type": "object",
+  "$defs": {
+    "singleOpenProp": {
+      "type": "boolean"
+    },
+    "defaultOpenProp": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "minProperties": 1
+    },
+    "renderModeProp": {
+      "enum": ["all", "activeOnly"]
+    },
+    "sectionsProp": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "$ref": "../common.schema.json#/definitions/localizable"
+          },
+          "uid": {
+            "type": "string"
+          }
+        },
+        "required": ["label", "uid"]
+      }
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -22,38 +53,32 @@
       "type": "object",
       "properties": {
         "singleOpen": {
-          "type": "boolean"
+          "$ref": "#/$defs/singleOpenProp"
         },
         "defaultOpen": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "boolean"
-          },
-          "minProperties": 1
+          "$ref": "#/$defs/defaultOpenProp"
         },
         "renderMode": {
-          "enum": ["all", "activeOnly"]
+          "$ref": "#/$defs/renderModeProp"
         },
         "sections": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": {
-                "$ref": "../common.schema.json#/definitions/localizable"
-              },
-              "uid": {
-                "type": "string"
-              }
-            },
-            "required": ["label", "uid"]
-          }
+          "$ref": "#/$defs/sectionsProp"
         }
       },
       "required": ["sections"],
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^singleOpen\\.[^.]+$": {
+          "$ref": "#/$defs/singleOpenProp"
+        },
+        "^defaultOpen\\.[^.]+$": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "^renderMode\\.[^.]+$": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "^sections\\.[^.]+$": {
+          "$ref": "#/$defs/sectionsProp"
+        }
       },
       "additionalProperties": false
     },
