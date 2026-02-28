@@ -3,6 +3,14 @@
   "$id": "https://golemui.com/schemas/components/alert.schema.json",
   "title": "Alert Widget",
   "type": "object",
+  "$defs": {
+    "localizableText": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "alertLevel": {
+      "enum": ["default", "info", "success", "warning", "error"]
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,16 +27,21 @@
       "type": "object",
       "properties": {
         "text": {
-          "$ref": "../common.schema.json#/definitions/localizable"
+          "$ref": "#/$defs/localizableText"
         },
         "level": {
-          "enum": ["default", "info", "success", "warning", "error"]
+          "$ref": "#/$defs/alertLevel"
+        }
+      },
+      "patternProperties": {
+        "^text\\.[^.]+$": {
+          "$ref": "#/$defs/localizableText"
+        },
+        "^level\\.[^.]+$": {
+          "$ref": "#/$defs/alertLevel"
         }
       },
       "required": ["text"],
-      "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
-      },
       "additionalProperties": false
     }
   },
