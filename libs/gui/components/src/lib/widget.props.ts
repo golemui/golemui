@@ -9,6 +9,11 @@ export type AccordionProps = {
   sections: { label: string; uid: string }[];
 };
 
+// TODO: implement this
+export type ButtonProps = {
+  variant?: 'filled' | 'outlined';
+};
+
 export type TextinputProps = {
   hint?: string;
   placeholder?: string;
