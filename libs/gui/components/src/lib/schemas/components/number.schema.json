@@ -3,6 +3,35 @@
   "$id": "https://golemui.com/schemas/components/number.schema.json",
   "title": "Number Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "stepProp": {
+      "type": "number"
+    },
+    "minimumProp": {
+      "type": "number"
+    },
+    "maximumProp": {
+      "type": "number"
+    },
+    "autoGrowProp": {
+      "type": "boolean"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,39 +48,13 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "disabled": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/disabledProp"
     },
     "readonly": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/readonlyProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -63,28 +66,56 @@
       "type": "object",
       "properties": {
         "placeholder": {
-          "type": "string"
+          "$ref": "#/$defs/placeholderProp"
         },
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "step": {
-          "type": "number"
+          "$ref": "#/$defs/stepProp"
         },
         "minimum": {
-          "type": "number"
+          "$ref": "#/$defs/minimumProp"
         },
         "maximum": {
-          "type": "number"
+          "$ref": "#/$defs/maximumProp"
         },
         "autoGrow": {
-          "const": true
+          "$ref": "#/$defs/autoGrowProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^step\\.[^.]+$": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "^minimum\\.[^.]+$": {
+          "$ref": "#/$defs/minimumProp"
+        },
+        "^maximum\\.[^.]+$": {
+          "$ref": "#/$defs/maximumProp"
+        },
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledProp"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyProp"
     }
   },
   "required": ["kind", "type", "path"]
