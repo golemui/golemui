@@ -1,13 +1,12 @@
 ---
+
 ---
 
 <section class="features">
   <div class="container">
     <div class="content">
       <h2>Built-in <span class="gradient-text">Excellence</span>.</h2>
-      <p>
-        Native support for the features that matter most.
-      </p>
+      <p>Native support for the features that matter most.</p>
     </div>
     <div class="bento-grid">
       <div class="bento-item i18n">
@@ -46,13 +45,13 @@
 
   .content {
     h2 {
-      font-size: 5rem;
+      font-size: 2.5rem;
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 1.5rem;
 
-      @media (max-width: 768px) {
-        font-size: 2.5rem;
+      @media (min-width: 768px) {
+        font-size: 5rem;
       }
     }
 
@@ -65,11 +64,18 @@
 
   .bento-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 1.5rem;
+
+    @media (min-width: 50rem) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 72rem) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
   .bento-item {
-    height: 519px;
     position: relative;
     border-radius: 20px;
     overflow: hidden;
@@ -85,6 +91,7 @@
     bottom: 0;
     padding: 1.5rem;
     color: white;
+    width: 100%;
   }
   .overlay-i18n {
     background: linear-gradient(0deg, var(--accent-color) 0%, #b472fa 100%);
@@ -95,10 +102,12 @@
   .overlay-validations {
     background: linear-gradient(0deg, var(--accent-color) 0%, #bd7dfa 100%);
   }
-  h3 { margin: 0; font-size: 1.25rem; }
-  p { font-size: 0.9rem; opacity: 0.8; }
-
-  @media (max-width: 768px) {
-    .bento-grid { grid-template-columns: 1fr; }
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  p {
+    font-size: 0.9rem;
+    opacity: 0.8;
   }
 </style>

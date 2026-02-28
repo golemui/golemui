@@ -4,6 +4,7 @@ import '@golemui/gui-lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';
+import { iframeResizer } from '@golemui/apps-shared';
 
 @customElement('gui-material')
 export class AppElement extends LitElement {
@@ -47,6 +48,11 @@ export class AppElement extends LitElement {
 
   override createRenderRoot() {
     return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    iframeResizer();
   }
 
   render() {
