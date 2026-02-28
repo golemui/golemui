@@ -3,6 +3,41 @@
   "$id": "https://golemui.com/schemas/components/datepicker.schema.json",
   "title": "DatePicker Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "prevMonthIconProp": {
+      "type": "string"
+    },
+    "nextMonthIconProp": {
+      "type": "string"
+    },
+    "prevMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "nextMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "dayFormatProp": {
+      "enum": ["numeric", "2-digit"]
+    },
+    "weekdayFormatProp": {
+      "enum": ["short", "long", "narrow"]
+    },
+    "monthFormatProp": {
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,7 +54,7 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -28,40 +63,74 @@
       "type": "object",
       "properties": {
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "placeholder": {
-          "type": "string"
+          "$ref": "#/$defs/placeholderProp"
         },
         "icon": {
-          "type": "string"
+          "$ref": "#/$defs/iconProp"
         },
         "prevMonthIcon": {
-          "type": "string"
+          "$ref": "#/$defs/prevMonthIconProp"
         },
         "nextMonthIcon": {
-          "type": "string"
+          "$ref": "#/$defs/nextMonthIconProp"
         },
         "prevMonthAriaLabel": {
-          "type": "string"
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
         },
         "nextMonthAriaLabel": {
-          "type": "string"
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
         "dayFormat": {
-          "enum": ["numeric", "2-digit"]
+          "$ref": "#/$defs/dayFormatProp"
         },
         "weekdayFormat": {
-          "enum": ["short", "long", "narrow"]
+          "$ref": "#/$defs/weekdayFormatProp"
         },
         "monthFormat": {
-          "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+          "$ref": "#/$defs/monthFormatProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^prevMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "^nextMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "^prevMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "^nextMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^dayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "^weekdayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "^monthFormat\\.[^.]+$": {
+          "$ref": "#/$defs/monthFormatProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type", "path"]
