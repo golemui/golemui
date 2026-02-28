@@ -3,6 +3,14 @@
   "$id": "https://golemui.com/schemas/components/button.schema.json",
   "title": "Button Widget",
   "type": "object",
+  "$defs": {
+    "disabledProp": {
+      "$ref": "../common.schema.json#/definitions/disabled"
+    },
+    "variantProp": {
+      "enum": ["filled", "outlined"]
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,23 +27,29 @@
       "$ref": "../common.schema.json#/definitions/localizable"
     },
     "disabled": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/disabledProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
+    },
+    "additionalProperties": false,
+    "props": {
+      "properties": {
+        "variant": {
+          "$ref": "#/$defs/variantProp"
+        }
+      },
+      "patternProperties": {
+        "^variant\\.[^.]+$": {
+          "$ref": "#/$defs/variantProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledProp"
     }
   },
   "required": ["kind", "type"]
