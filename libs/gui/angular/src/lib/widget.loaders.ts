@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/gui-components';
+import { VanillaWidget } from '@golemui/gui-shared';
 
 export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
   // ACTION WIDGETS

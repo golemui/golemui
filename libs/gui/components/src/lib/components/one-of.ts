@@ -1,4 +1,4 @@
-import { OneOfProps, Option, OptionValue } from '@golemui/gui-shared';
+import { isOption, OneOfProps, Option, OptionValue } from '@golemui/gui-shared';
 
 /**
  * Checks whether a value is a valid option value
@@ -34,15 +34,6 @@ export const updateOptions = (opts: Option[], props: OneOfProps): Option[] => {
 
   return opts;
 };
-
-/**
- * Checks whether a value is a fully compliant Option (with label and value fields)
- */
-export const isOption = (opt: unknown): opt is Option =>
-  opt !== null &&
-  typeof opt === 'object' &&
-  Object.prototype.hasOwnProperty.call(opt, 'label') &&
-  Object.prototype.hasOwnProperty.call(opt, 'value');
 
 /** Checks if an object can be converted into an actual Option */
 export const isProtoOption = (
