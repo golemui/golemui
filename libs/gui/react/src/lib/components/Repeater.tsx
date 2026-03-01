@@ -8,7 +8,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
   const { uid, value, onValueChanged, templateData } = useInputWidget<
     Record<string, unknown>[],
-    RepeaterProps
+    RepeaterProps<any>
   >(widget);
 
   const addItem = useCallback(
