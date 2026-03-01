@@ -5,8 +5,8 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { DateinputProps } from '../widget.props';
 import { toISODateString } from '../utils/date';
+import { DateinputProps } from '@golemui/gui-shared';
 
 @customElement('gui-date')
 export class GuiDate extends LitElement {

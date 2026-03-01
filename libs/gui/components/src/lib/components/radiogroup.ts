@@ -1,10 +1,10 @@
-import { inferOptionValue, OptionValue, updateOptions } from './one-of';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { OneOfProps, Option, RadiogroupProps } from '../widget.props';
 import { GUIAriaController } from '../controllers';
+import { OptionValue, Option, RadiogroupProps, OneOfProps } from '@golemui/gui-shared';
+import { inferOptionValue, updateOptions } from './one-of';
 
 @customElement('gui-radiogroup')
 export class GuiRadiogroup extends LitElement {
