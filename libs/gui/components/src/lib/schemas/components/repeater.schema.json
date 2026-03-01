@@ -3,6 +3,23 @@
   "$id": "https://golemui.com/schemas/components/repeater.schema.json",
   "title": "Repeater Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "addLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "removeLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "limitProp": {
+      "type": "number"
+    },
+    "templateProp": {
+      "$ref": "./flex.schema.json"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,7 +36,7 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -28,23 +45,39 @@
       "type": "object",
       "properties": {
         "addLabel": {
-          "type": "string"
+          "$ref": "#/$defs/addLabelProp"
         },
         "removeLabel": {
-          "type": "string"
+          "$ref": "#/$defs/removeLabelProp"
         },
         "limit": {
-          "type": "number"
+          "$ref": "#/$defs/limitProp"
         },
         "template": {
-          "$ref": "../form.schema.json#/definitions/formWidget"
+          "$ref": "#/$defs/templateProp"
         }
       },
       "required": ["template"],
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^addLabel\\.[^.]+$": {
+          "$ref": "#/$defs/addLabelProp"
+        },
+        "^removeLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removeLabelProp"
+        },
+        "^limit\\.[^.]+$": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "^template\\.[^.]+$": {
+          "$ref": "#/$defs/templateProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type", "path", "props"]
