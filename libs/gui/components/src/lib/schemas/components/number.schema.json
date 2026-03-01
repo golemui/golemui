@@ -4,13 +4,13 @@
   "title": "Number Widget",
   "type": "object",
   "$defs": {
-    "labelProp": {
+    "labelDef": {
       "$ref": "../common.schema.json#/definitions/localizable"
     },
-    "disabledProp": {
+    "disabledDef": {
       "$ref": "../common.schema.json#/definitions/boolOrWhen"
     },
-    "readonlyProp": {
+    "readonlyDef": {
       "$ref": "../common.schema.json#/definitions/boolOrWhen"
     },
     "placeholderProp": {
@@ -48,13 +48,13 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "#/$defs/labelProp"
+      "$ref": "#/$defs/labelDef"
     },
     "disabled": {
-      "$ref": "#/$defs/disabledProp"
+      "$ref": "#/$defs/disabledDef"
     },
     "readonly": {
-      "$ref": "#/$defs/readonlyProp"
+      "$ref": "#/$defs/readonlyDef"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -109,13 +109,13 @@
   },
   "patternProperties": {
     "^label\\.[^.]+$": {
-      "$ref": "#/$defs/labelProp"
+      "$ref": "#/$defs/labelDef"
     },
     "^disabled\\.[^.]+$": {
-      "$ref": "#/$defs/disabledProp"
+      "$ref": "#/$defs/disabledDef"
     },
     "^readonly\\.[^.]+$": {
-      "$ref": "#/$defs/readonlyProp"
+      "$ref": "#/$defs/readonlyDef"
     }
   },
   "required": ["kind", "type", "path"]

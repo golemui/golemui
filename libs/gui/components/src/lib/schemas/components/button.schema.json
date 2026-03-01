@@ -4,11 +4,11 @@
   "title": "Button Widget",
   "type": "object",
   "$defs": {
-    "disabledProp": {
-      "$ref": "../common.schema.json#/definitions/boolOrWhen"
-    },
-    "labelProp": {
+    "labelDef": {
       "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
     },
     "variantProp": {
       "enum": ["filled", "outlined"]
@@ -27,10 +27,10 @@
       "const": "button"
     },
     "label": {
-      "$ref": "#/$defs/labelProp"
+      "$ref": "#/$defs/labelDef"
     },
     "disabled": {
-      "$ref": "#/$defs/disabledProp"
+      "$ref": "#/$defs/disabledDef"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -52,10 +52,10 @@
   },
   "patternProperties": {
     "^disabled\\.[^.]+$": {
-      "$ref": "#/$defs/disabledProp"
+      "$ref": "#/$defs/disabledDef"
     },
     "^label\\.[^.]+$": {
-      "$ref": "#/$defs/labelProp"
+      "$ref": "#/$defs/labelDef"
     }
   },
   "required": ["kind", "type"]

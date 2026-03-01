@@ -4,7 +4,7 @@
   "title": "Repeater Widget",
   "type": "object",
   "$defs": {
-    "labelProp": {
+    "labelDef": {
       "$ref": "../common.schema.json#/definitions/localizable"
     },
     "addLabelProp": {
@@ -36,7 +36,7 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "#/$defs/labelProp"
+      "$ref": "#/$defs/labelDef"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -77,7 +77,7 @@
   },
   "patternProperties": {
     "^label\\.[^.]+$": {
-      "$ref": "#/$defs/labelProp"
+      "$ref": "#/$defs/labelDef"
     }
   },
   "required": ["kind", "type", "path", "props"]
