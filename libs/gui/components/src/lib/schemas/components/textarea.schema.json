@@ -3,6 +3,38 @@
   "$id": "https://golemui.com/schemas/components/textarea.schema.json",
   "title": "TextArea Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "counterModeProp": {
+      "enum": ["remaining", "current"]
+    },
+    "minimumHeightProp": {
+      "type": "number"
+    },
+    "autoGrowProp": {
+      "type": "boolean"
+    },
+    "maxLengthProp": {
+      "type": "number"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,39 +51,13 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "disabled": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/disabledProp"
     },
     "readonly": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/readonlyProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -63,31 +69,62 @@
       "type": "object",
       "properties": {
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "placeholder": {
-          "type": "string"
+          "$ref": "#/$defs/placeholderProp"
         },
         "icon": {
-          "type": "string"
+          "$ref": "#/$defs/iconProp"
         },
         "counterMode": {
-          "enum": ["remaining", "current"]
+          "$ref": "#/$defs/counterModeProp"
         },
         "minimumHeight": {
-          "type": "number"
+          "$ref": "#/$defs/minimumHeightProp"
         },
         "autoGrow": {
-          "type": "boolean"
+          "$ref": "#/$defs/autoGrowProp"
         },
         "maxLength": {
-          "type": "number"
+          "$ref": "#/$defs/maxLengthProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^counterMode\\.[^.]+$": {
+          "$ref": "#/$defs/counterModeProp"
+        },
+        "^minimumHeight\\.[^.]+$": {
+          "$ref": "#/$defs/minimumHeightProp"
+        },
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "^maxLength\\.[^.]+$": {
+          "$ref": "#/$defs/maxLengthProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledProp"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyProp"
     }
   },
   "required": ["kind", "type", "path"]
