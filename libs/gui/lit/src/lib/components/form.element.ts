@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { WidgetLoaders, WithWidget } from '@golemui/core';
 import '@golemui/lit';
-import { vanillaSchemaToFieldMap } from '@golemui/gui-components';
+import { vanillaSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
   initValidators,

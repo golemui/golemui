@@ -1,10 +1,26 @@
 {
   "name": "@golemui/gui-shared",
   "version": "0.0.1",
-  "type": "commonjs",
-  "main": "./src/index.js",
-  "types": "./src/index.d.ts",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    }
+  },
+  "files": [
+    "lib",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
+    "*.md"
+  ],
   "dependencies": {
-    "tslib": "^2.3.0"
+    "@golemui/core": "*",
+    "@golemui/validators": "*"
   }
 }
