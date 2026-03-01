@@ -1,4 +1,4 @@
-import { WidgetPropertyFunctionParams } from '@golemui/core';
+import { Localizable, WidgetPropertyFunctionParams } from '@golemui/core';
 import { OptionValue } from './components';
 import { DateRange } from './utils/date';
 
@@ -6,7 +6,7 @@ export type AccordionProps = {
   singleOpen?: boolean;
   defaultOpen?: { [key: string]: boolean };
   renderMode?: 'all' | 'activeOnly';
-  sections: { label: string; uid: string }[];
+  sections: { label: Localizable; uid: string }[];
 };
 
 // TODO: implement this

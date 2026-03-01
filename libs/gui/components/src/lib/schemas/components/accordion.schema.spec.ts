@@ -99,23 +99,38 @@ describe('Accordion schema validation', () => {
   });
 
   it('should validate state-scoped properties', () => {
-    // GolemUI Core expects props to support 'propertyName.stateName'
-    const stateScopedAccordion = {
-      uid: 'acc-2',
-      type: 'accordion',
-      kind: 'layout',
-      children: [],
-      props: {
-        sections: [{ uid: 's1', label: 'Basic' }],
-        // This is a common failure point if patternProperties isn't defined
-        'sections.registering': [
-          { uid: 's1', label: 'Registration Progress' },
-          { uid: 's2', label: 'Security' },
-        ],
-        'singleOpen.mobile': true,
+    const formDef = golemForm().create({
+      states: {
+        registering: '$form.a === true',
+        mobile: '$form.b === true',
       },
-    };
+      form: [
+        {
+          uid: 'acc-2',
+          type: 'accordion',
+          kind: 'layout',
+          children: [
+            {
+              uid: 'child-1',
+              path: 'some.path',
+              kind: 'input',
+              type: 'textinput',
+              label: 'Child label',
+            },
+          ],
+          props: {
+            sections: [{ uid: 's1', label: 'Basic' }],
+            'sections.registering': [
+              { uid: 's1', label: 'Registration Progress' },
+              { uid: 's2', label: 'Security' },
+            ],
+            'singleOpen.mobile': true,
+          },
+        },
+      ],
+    });
 
+    const stateScopedAccordion = formDef.form.children[0];
     const isValid = validate(stateScopedAccordion);
     if (!isValid) {
       logValidationErrors(validate, stateScopedAccordion);
@@ -124,58 +139,124 @@ describe('Accordion schema validation', () => {
   });
 
   it('should fail if "sections" is missing from props', () => {
-    const invalidAccordion = {
-      uid: 'acc-3',
-      type: 'accordion',
-      kind: 'layout',
-      children: [],
-      props: {
-        singleOpen: true,
-      },
-    };
+    const formDef = golemForm().create({
+      form: [
+        // @ts-expect-error Expected, sections is missing.
+        {
+          uid: 'acc-3',
+          type: 'accordion',
+          kind: 'layout',
+          children: [
+            {
+              uid: 'child-1',
+              path: 'some.path',
+              kind: 'input',
+              type: 'textinput',
+              label: 'Child label',
+            },
+          ],
+          props: {
+            singleOpen: true,
+          },
+        },
+      ],
+    });
 
+    const invalidAccordion = formDef.form.children[0];
     const isValid = validate(invalidAccordion);
-    // Here we WANT it to fail, so we don't log unless isValid is true
     expect(isValid).toBe(false);
     expect(validate.errors?.[0].message).toContain("must have required property 'sections'");
   });
 
   it('should validate i18n localizable labels in sections', () => {
-    const i18nAccordion = {
-      uid: 'acc-4',
-      type: 'accordion',
-      kind: 'layout',
-      children: [],
-      props: {
-        sections: [
-          {
-            uid: 's1',
-            label: { key: 'form.accordion.section1', default: 'Fallback Label' },
+    const formDef = golemForm().create({
+      form: [
+        {
+          uid: 'acc-4',
+          type: 'accordion',
+          kind: 'layout',
+          children: [
+            {
+              uid: 'child-1',
+              path: 'some.path',
+              kind: 'input',
+              type: 'textinput',
+              label: 'Child label',
+            },
+          ],
+          props: {
+            sections: [
+              {
+                uid: 's1',
+                label: { key: 'form.accordion.section1', default: 'Fallback Label' },
+              },
+            ],
           },
-        ],
-      },
-    };
+        },
+      ],
+    });
 
+    const i18nAccordion = formDef.form.children[0];
     const isValid = validate(i18nAccordion);
-    if (!isValid) logValidationErrors(validate, i18nAccordion);
+    if (!isValid) {
+      logValidationErrors(validate, i18nAccordion);
+    }
     expect(isValid).toBe(true);
   });
 
   it('should fail on invalid renderMode enum', () => {
-    const invalidMode = {
-      uid: 'acc-5',
-      type: 'accordion',
-      kind: 'layout',
-      children: [],
-      props: {
-        sections: [{ uid: 's1', label: 'L' }],
-        renderMode: 'on-demand', // Expected: 'all' | 'activeOnly' | 'lazy'
-      },
-    };
+    const formDef = golemForm().create({
+      form: [
+        // @ts-expect-error Expected, invalid renderMode
+        {
+          uid: 'acc-5',
+          type: 'accordion',
+          kind: 'layout',
+          children: [
+            {
+              uid: 'child-1',
+              path: 'some.path',
+              kind: 'input',
+              type: 'textinput',
+              label: 'Child label',
+            },
+          ],
+          props: {
+            sections: [{ uid: 's1', label: 'L' }],
+            renderMode: 'on-demand', // Expected: 'all' | 'activeOnly' | 'lazy'
+          },
+        },
+      ],
+    });
 
+    const invalidMode = formDef.form.children[0];
     const isValid = validate(invalidMode);
     expect(isValid).toBe(false);
     const hasEnumError = validate.errors?.some((e) => e.keyword === 'enum');
     expect(hasEnumError).toBe(true);
+  });
+
+  it('should fail when children is empty', () => {
+    const formDef = golemForm().create({
+      form: [
+        {
+          uid: 'acc-5',
+          type: 'accordion',
+          kind: 'layout',
+          children: [],
+          props: {
+            sections: [{ uid: 's1', label: 'L' }],
+          },
+        },
+      ],
+    });
+
+    const invalidMode = formDef.form.children[0];
+    const isValid = validate(invalidMode);
+    expect(isValid).toBe(false);
+    const hasChildrenError = validate.errors?.some(
+      (e) => e.instancePath === '/children' && e.message === 'must NOT have fewer than 1 items',
+    );
+    expect(hasChildrenError).toBe(true);
   });
 });
