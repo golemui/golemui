@@ -4,10 +4,10 @@
   "title": "Alert Widget",
   "type": "object",
   "$defs": {
-    "localizableTextProp": {
+    "textProp": {
       "$ref": "../common.schema.json#/definitions/localizable"
     },
-    "alertLevelProp": {
+    "levelProp": {
       "enum": ["default", "info", "success", "warning", "error"]
     }
   },
@@ -27,18 +27,18 @@
       "type": "object",
       "properties": {
         "text": {
-          "$ref": "#/$defs/localizableTextProp"
+          "$ref": "#/$defs/textProp"
         },
         "level": {
-          "$ref": "#/$defs/alertLevelProp"
+          "$ref": "#/$defs/levelProp"
         }
       },
       "patternProperties": {
         "^text\\.[^.]+$": {
-          "$ref": "#/$defs/localizableTextProp"
+          "$ref": "#/$defs/textProp"
         },
         "^level\\.[^.]+$": {
-          "$ref": "#/$defs/alertLevelProp"
+          "$ref": "#/$defs/levelProp"
         }
       },
       "required": ["text"],
