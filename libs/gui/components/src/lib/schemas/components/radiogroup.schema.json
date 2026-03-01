@@ -3,6 +3,35 @@
   "$id": "https://golemui.com/schemas/components/radiogroup.schema.json",
   "title": "RadioGroup Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "optionsProp": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": ["string", "number", "boolean"]
+          }
+        },
+        "required": ["label", "value"]
+      }
+    },
+    "labelFieldProp": {
+      "type": "string"
+    },
+    "valueFieldProp": {
+      "type": "string"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,7 +48,7 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -28,34 +57,38 @@
       "type": "object",
       "properties": {
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "options": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": {
-                "type": "string"
-              },
-              "value": {
-                "type": ["string", "number", "boolean", "null"]
-              }
-            },
-            "required": ["label", "value"]
-          }
+          "$ref": "#/$defs/optionsProp"
         },
         "labelField": {
-          "type": "string"
+          "$ref": "#/$defs/labelFieldProp"
         },
         "valueField": {
-          "type": "string"
+          "$ref": "#/$defs/valueFieldProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^options\\.[^.]+$": {
+          "$ref": "#/$defs/optionsProp"
+        },
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
+        "^valueField\\.[^.]+$": {
+          "$ref": "#/$defs/valueFieldProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type", "path"]
