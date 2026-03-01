@@ -4,6 +4,12 @@
   "title": "Dropdown Widget",
   "type": "object",
   "$defs": {
+    "disabledProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
     "labelProp": {
       "$ref": "../common.schema.json#/definitions/localizable"
     },
@@ -70,6 +76,12 @@
     },
     "label": {
       "$ref": "#/$defs/labelProp"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledProp"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -146,6 +158,12 @@
   "patternProperties": {
     "^label\\.[^.]+$": {
       "$ref": "#/$defs/labelProp"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledProp"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyProp"
     }
   },
   "required": ["kind", "type", "path"]
