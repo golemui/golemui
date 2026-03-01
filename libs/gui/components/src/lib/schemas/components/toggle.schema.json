@@ -3,6 +3,23 @@
   "$id": "https://golemui.com/schemas/components/toggle.schema.json",
   "title": "Toggle Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyProp": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "togglePositionProp": {
+      "enum": ["left", "right"]
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,39 +36,13 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "disabled": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/disabledProp"
     },
     "readonly": {
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "when": {
-              "$ref": "../common.schema.json#/definitions/reactiveExpression"
-            }
-          },
-          "required": ["when"]
-        }
-      ]
+      "$ref": "#/$defs/readonlyProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -63,16 +54,32 @@
       "type": "object",
       "properties": {
         "togglePosition": {
-          "enum": ["left", "right"]
+          "$ref": "#/$defs/togglePositionProp"
         },
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^togglePosition\\.[^.]+$": {
+          "$ref": "#/$defs/togglePositionProp"
+        },
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledProp"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyProp"
     }
   },
   "required": ["kind", "type", "path"]
