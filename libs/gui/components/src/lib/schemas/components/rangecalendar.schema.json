@@ -3,6 +3,44 @@
   "$id": "https://golemui.com/schemas/components/rangecalendar.schema.json",
   "title": "RangeCalendar Widget",
   "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "prevMonthIconProp": {
+      "type": "string"
+    },
+    "nextMonthIconProp": {
+      "type": "string"
+    },
+    "prevMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "nextMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "dayFormatProp": {
+      "enum": ["numeric", "2-digit"]
+    },
+    "weekdayFormatProp": {
+      "enum": ["short", "long", "narrow"]
+    },
+    "monthFormatProp": {
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+    },
+    "minDateProp": {
+      "type": "string"
+    },
+    "maxDateProp": {
+      "type": "string"
+    },
+    "numberOfMonthsProp": {
+      "type": "number"
+    }
+  },
   "allOf": [
     {
       "$ref": "../common.schema.json#/definitions/baseWidget"
@@ -19,7 +57,7 @@
       "$ref": "../common.schema.json#/definitions/dotPath"
     },
     "label": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "#/$defs/labelProp"
     },
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
@@ -28,43 +66,80 @@
       "type": "object",
       "properties": {
         "hint": {
-          "type": "string"
+          "$ref": "#/$defs/hintProp"
         },
         "prevMonthIcon": {
-          "type": "string"
+          "$ref": "#/$defs/prevMonthIconProp"
         },
         "nextMonthIcon": {
-          "type": "string"
+          "$ref": "#/$defs/nextMonthIconProp"
         },
         "prevMonthAriaLabel": {
-          "type": "string"
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
         },
         "nextMonthAriaLabel": {
-          "type": "string"
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
         "dayFormat": {
-          "enum": ["numeric", "2-digit"]
+          "$ref": "#/$defs/dayFormatProp"
         },
         "weekdayFormat": {
-          "enum": ["short", "long", "narrow"]
+          "$ref": "#/$defs/weekdayFormatProp"
         },
         "monthFormat": {
-          "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+          "$ref": "#/$defs/monthFormatProp"
         },
         "minDate": {
-          "type": "string"
+          "$ref": "#/$defs/minDateProp"
         },
         "maxDate": {
-          "type": "string"
+          "$ref": "#/$defs/maxDateProp"
         },
         "numberOfMonths": {
-          "type": "number"
+          "$ref": "#/$defs/numberOfMonthsProp"
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {}
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^prevMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "^nextMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "^prevMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "^nextMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^dayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "^weekdayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "^monthFormat\\.[^.]+$": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "^minDate\\.[^.]+$": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "^maxDate\\.[^.]+$": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "^numberOfMonths\\.[^.]+$": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        }
       },
       "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelProp"
     }
   },
   "required": ["kind", "type", "path"]
