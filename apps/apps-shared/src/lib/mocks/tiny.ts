@@ -1,9 +1,9 @@
-import { defineForm } from '@golemui/core';
+import { golemForm } from '@golemui/gui-components';
 import { Example } from './types';
 
 const data = {};
 
-const form = defineForm({
+const form = golemForm().create({
   form: [
     {
       uid: 'login-flex',
@@ -15,14 +15,14 @@ const form = defineForm({
           kind: 'input',
           type: 'textinput',
           path: 'login.email',
-          props: { type: 'email', placeholder: 'example@domain.com' },
+          props: { placeholder: 'example@domain.com' },
         },
         {
           uid: 'login-password',
           kind: 'input',
           type: 'password',
           path: 'login.password',
-          props: { type: 'password', placeholder: 'Enter your password...' },
+          props: { placeholder: 'Enter your password...' },
         },
         {
           uid: 'login-submit',

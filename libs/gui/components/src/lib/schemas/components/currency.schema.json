@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/currency.schema.json",
+  "title": "Currency Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "currencyProp": {
+      "type": "string"
+    },
+    "stepProp": {
+      "type": "number"
+    },
+    "maximumFractionDigitsProp": {
+      "type": "number"
+    },
+    "minimumFractionDigitsProp": {
+      "type": "number"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/definitions/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "currency"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/definitions/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/definitions/on"
+    },
+    "defaultValue": {
+      "type": "number"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "$ref": "#/$defs/currencyProp"
+        },
+        "step": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "maximumFractionDigits": {
+          "$ref": "#/$defs/maximumFractionDigitsProp"
+        },
+        "minimumFractionDigits": {
+          "$ref": "#/$defs/minimumFractionDigitsProp"
+        },
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        }
+      },
+      "patternProperties": {
+        "^currency\\.[^.]+$": {
+          "$ref": "#/$defs/currencyProp"
+        },
+        "^step\\.[^.]+$": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "^maximumFractionDigits\\.[^.]+$": {
+          "$ref": "#/$defs/maximumFractionDigitsProp"
+        },
+        "^minimumFractionDigits\\.[^.]+$": {
+          "$ref": "#/$defs/minimumFractionDigitsProp"
+        },
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    }
+  },
+  "required": ["kind", "type", "path"]
+}
