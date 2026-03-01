@@ -7,6 +7,7 @@
     "@golemui/angular": "*",
     "@golemui/core": "*",
     "@golemui/gui-components": "*",
+    "@golemui/gui-shared": "*",
     "@golemui/validators": "*",
     "rxjs": "^7.8.0"
   },
