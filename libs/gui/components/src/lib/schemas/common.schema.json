@@ -120,7 +120,16 @@
         }
       },
       "patternProperties": {
-        "^[^.]*\\.?[[^.]]*$": {
+        "^load\\.[^.]+$": {
+          "type": "string"
+        },
+        "^click\\.[^.]+$": {
+          "type": "string"
+        },
+        "^change\\.[^.]+$": {
+          "type": "string"
+        },
+        "^filter\\.[^.]+$": {
           "type": "string"
         }
       },
