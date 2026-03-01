@@ -49,6 +49,13 @@
     "on": {
       "$ref": "../common.schema.json#/definitions/on"
     },
+    "children": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "../form.schema.json#/definitions/formWidget"
+      }
+    },
     "props": {
       "type": "object",
       "properties": {
@@ -81,13 +88,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "children": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "../form.schema.json#/definitions/formWidget"
-      }
     }
   },
   "required": ["kind", "type", "children", "props"]
