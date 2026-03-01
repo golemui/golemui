@@ -79,6 +79,9 @@
     {
       "kind": "action",
       "type": "button",
+      "props": {
+        "variant": "filled"
+      },
       "on": {
         "click": "handleSubmit"
       },

@@ -1,7 +1,7 @@
-import { defineForm } from '@golemui/core';
 import { Example } from './types';
+import { golemForm } from '@golemui/gui-components';
 
-const form = defineForm({
+const form = golemForm().create({
   states: {
     itsFive: '$form.something === "5"',
   },
