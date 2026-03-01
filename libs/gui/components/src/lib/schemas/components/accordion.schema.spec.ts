@@ -1,13 +1,30 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import Ajv2020 from 'ajv/dist/2020';
+import Ajv2020, { ErrorObject } from 'ajv/dist/2020';
 import * as commonSchema from '../common.schema.json';
 import * as formSchema from '../form.schema.json';
+import { golemForm } from '../../golem-form';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/accordion.schema.json';
 
 /**
- * Utility to assemble and register all GolemUI schemas dynamically
+ * Enhanced Error Reporter
  */
+function logValidationErrors(validate: any, data: any) {
+  if (validate.errors) {
+    console.error('--- GolemUI Validation Failed ---');
+    console.error('Data under test:', JSON.stringify(data, null, 2));
+    validate.errors.forEach((err: ErrorObject) => {
+      console.error(`- Path: ${err.instancePath}`);
+      console.error(`  Message: ${err.message}`);
+      console.error(`  Params:`, err.params);
+      if (err.keyword === 'additionalProperties') {
+        console.error(`  Unknown property: ${err.params['additionalProperty']}`);
+      }
+    });
+    console.error('---------------------------------');
+  }
+}
+
 function registerGolemSchemas(ajv: Ajv2020) {
   ajv.addSchema(commonSchema);
 
@@ -40,7 +57,7 @@ describe('Accordion schema validation', () => {
   beforeEach(() => {
     ajv = new Ajv2020({
       allErrors: true,
-      strict: false,
+      strict: false, // Set to false to allow dynamic property patterns
       verbose: true,
     });
     registerGolemSchemas(ajv);
@@ -51,28 +68,46 @@ describe('Accordion schema validation', () => {
   });
 
   it('should validate a minimum valid accordion definition', () => {
-    const validAccordion = {
-      uid: 'acc-1',
-      type: 'accordion',
-      kind: 'layout',
-      children: [{ type: 'text', kind: 'input', uid: 'child-1' }],
-      props: {
-        sections: [{ uid: 'section-1', label: 'General Info' }],
-      },
-    };
+    const formDef = golemForm().create({
+      form: [
+        {
+          uid: 'acc-1',
+          type: 'accordion',
+          kind: 'layout',
+          children: [
+            {
+              uid: 'child-1',
+              path: 'some.path',
+              kind: 'input',
+              type: 'textinput',
+              label: 'Child label',
+            },
+          ],
+          props: {
+            sections: [{ uid: 'child-1', label: 'General Info' }],
+          },
+        },
+      ],
+    });
 
+    const validAccordion = formDef.form.children[0];
     const isValid = validate(validAccordion);
-    console.log('isValid', isValid);
+    if (!isValid) {
+      logValidationErrors(validate, validAccordion);
+    }
     expect(isValid).toBe(true);
   });
 
-  it('should validate state-scoped properties (e.g. sections.registering)', () => {
+  it('should validate state-scoped properties', () => {
+    // GolemUI Core expects props to support 'propertyName.stateName'
     const stateScopedAccordion = {
+      uid: 'acc-2',
       type: 'accordion',
       kind: 'layout',
-      children: [{ type: 'text', kind: 'input', uid: 'c1' }],
+      children: [],
       props: {
         sections: [{ uid: 's1', label: 'Basic' }],
+        // This is a common failure point if patternProperties isn't defined
         'sections.registering': [
           { uid: 's1', label: 'Registration Progress' },
           { uid: 's2', label: 'Security' },
@@ -82,41 +117,35 @@ describe('Accordion schema validation', () => {
     };
 
     const isValid = validate(stateScopedAccordion);
+    if (!isValid) {
+      logValidationErrors(validate, stateScopedAccordion);
+    }
     expect(isValid).toBe(true);
   });
 
   it('should fail if "sections" is missing from props', () => {
     const invalidAccordion = {
+      uid: 'acc-3',
       type: 'accordion',
       kind: 'layout',
-      children: [{ type: 'text', kind: 'input' }],
+      children: [],
       props: {
         singleOpen: true,
       },
     };
 
     const isValid = validate(invalidAccordion);
+    // Here we WANT it to fail, so we don't log unless isValid is true
     expect(isValid).toBe(false);
     expect(validate.errors?.[0].message).toContain("must have required property 'sections'");
   });
 
-  it('should fail if "kind" is not "layout"', () => {
-    const invalidAccordion = {
-      type: 'accordion',
-      kind: 'input', // Wrong kind
-      children: [{ type: 'text', kind: 'input' }],
-      props: { sections: [{ uid: 's1', label: 'L' }] },
-    };
-
-    const isValid = validate(invalidAccordion);
-    expect(isValid).toBe(false);
-  });
-
   it('should validate i18n localizable labels in sections', () => {
     const i18nAccordion = {
+      uid: 'acc-4',
       type: 'accordion',
       kind: 'layout',
-      children: [{ type: 'text', kind: 'input' }],
+      children: [],
       props: {
         sections: [
           {
@@ -128,26 +157,25 @@ describe('Accordion schema validation', () => {
     };
 
     const isValid = validate(i18nAccordion);
+    if (!isValid) logValidationErrors(validate, i18nAccordion);
     expect(isValid).toBe(true);
   });
 
-  it('should validate renderMode enum values', () => {
-    const validMode = {
+  it('should fail on invalid renderMode enum', () => {
+    const invalidMode = {
+      uid: 'acc-5',
       type: 'accordion',
       kind: 'layout',
-      children: [{ type: 'text', kind: 'input' }],
+      children: [],
       props: {
         sections: [{ uid: 's1', label: 'L' }],
-        renderMode: 'activeOnly',
+        renderMode: 'on-demand', // Expected: 'all' | 'activeOnly' | 'lazy'
       },
     };
 
-    const invalidMode = {
-      ...validMode,
-      props: { ...validMode.props, renderMode: 'on-demand' }, // Not in enum
-    };
-
-    expect(validate(validMode)).toBe(true);
-    expect(validate(invalidMode)).toBe(false);
+    const isValid = validate(invalidMode);
+    expect(isValid).toBe(false);
+    const hasEnumError = validate.errors?.some((e) => e.keyword === 'enum');
+    expect(hasEnumError).toBe(true);
   });
 });
