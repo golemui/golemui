@@ -1,1 +1,2 @@
-export * from './lib/gui-shared';
+export * from './lib/golem-form';
+export * from './lib/widget.props';

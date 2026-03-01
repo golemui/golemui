@@ -27,7 +27,7 @@
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/validators": ["libs/gui/validators/src/index.ts"],
       "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"],
-      "@golemui/shared": ["libs/gui/shared/src/index.ts"]
+      "@golemui/gui-shared": ["libs/gui/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
