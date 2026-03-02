@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { Option } from '@golemui/gui-components';
+import { Option } from '@golemui/gui-shared';
 import { MountComponentFn } from '../utils';
 
 const options: Option[] = [
