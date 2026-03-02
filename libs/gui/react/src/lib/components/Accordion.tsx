@@ -70,7 +70,7 @@ export function Accordion(widgetInstance: Core.WithWidget) {
           className={activeSections[section.uid] ? 'active' : ''}
           onClick={() => onClickButton(section.uid)}
         >
-          {section.label}
+          {section.label as string}
           <span className="gui-accordion__icon"></span>
         </button>
 
