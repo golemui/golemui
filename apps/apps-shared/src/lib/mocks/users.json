@@ -1,0 +1,37 @@
+{
+  "$schema": "../../../../../libs/gui/components/src/lib/schemas/form.schema.json",
+  "states": {
+    "itsFive": "'5' === $form.something"
+  },
+  "form": [
+    {
+      "kind": "input",
+      "type": "textinput",
+      "label": "The List Name",
+      "label.itsFive": "Its five!!",
+      "path": "listName",
+      "readonly": true,
+      "validator": { "type": "string", "required": true }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "label": "Something",
+      "path": "something",
+      "defaultValue": "Type 5 should change the label on the list name"
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "label": "Cant Select me",
+      "path": "nocheckable",
+      "readonly": true
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "label": "Select me!",
+      "path": "checkable"
+    }
+  ]
+}

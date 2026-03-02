@@ -15,6 +15,7 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
       '@golemui/gui-lit',
       '@golemui/gui-components',
       '@golemui/gui-validators',
+      '@golemui/gui-shared',
     ].forEach((packageName) => {
       console.log(`Updating dist-tag: latest => ${packageName}@${version}`);
       try {

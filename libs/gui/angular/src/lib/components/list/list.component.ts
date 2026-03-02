@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { ListItem, ListProps, OptionValue } from '@golemui/gui-components';
+import { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
 
 @Component({

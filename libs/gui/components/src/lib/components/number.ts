@@ -2,7 +2,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { NumberinputProps } from '../widget.props';
+import { NumberinputProps } from '@golemui/gui-shared';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 @customElement('gui-number')

@@ -4,7 +4,7 @@ import { AngularItemRenderer } from '@golemui/angular';
 import * as Vanilla from '@golemui/gui-angular';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import * as ValidatorsVanilla from '@golemui/validators';
+import * as ValidatorsVanilla from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';

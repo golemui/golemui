@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { CurrencyProps } from '@golemui/gui-components';
+import { CurrencyProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 

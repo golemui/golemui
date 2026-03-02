@@ -4,8 +4,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { OneOfProps, Option, SelectProps } from '../widget.props';
-import { inferOptionValue, OptionValue, updateOptions } from './one-of';
+import { OneOfProps, Option, OptionValue, SelectProps } from '@golemui/gui-shared';
+import { inferOptionValue, updateOptions } from './one-of';
 
 @customElement('gui-select')
 export class GuiSelect extends LitElement {

@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { OptionValue, SelectProps } from '@golemui/gui-components';
+import { OptionValue, SelectProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 

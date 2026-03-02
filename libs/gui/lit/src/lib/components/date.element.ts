@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { addIcon, DatePickerProps } from '@golemui/gui-components';
+import { addIcon } from '@golemui/gui-components';
+import { DatePickerProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';

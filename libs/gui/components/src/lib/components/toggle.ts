@@ -2,7 +2,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addLabel, ControlTemplateData } from '../utils/templates';
-import { ToggleProps } from '../widget.props';
+import { ToggleProps } from '@golemui/gui-shared';
 
 @customElement('gui-toggle')
 export class GuiToggle extends LitElement {

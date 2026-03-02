@@ -2,7 +2,7 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addLabel, ControlTemplateData } from '../utils/templates';
-import { CheckboxProps } from '../widget.props';
+import { CheckboxProps } from '@golemui/gui-shared';
 
 @customElement('gui-checkbox')
 export class GuiCheckbox extends LitElement {

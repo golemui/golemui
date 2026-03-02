@@ -1,3 +1,4 @@
+// TODO: We can probably remove this module entirely
 import * as Core from '@golemui/core';
 import * as Props from './widget.props';
 

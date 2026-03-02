@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/checkbox.schema.json",
+  "title": "Checkbox Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "checkboxPositionProp": {
+      "enum": ["left", "right"]
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/definitions/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "checkbox"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/definitions/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/definitions/on"
+    },
+    "defaultValue": {
+      "type": "boolean"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "checkboxPosition": {
+          "$ref": "#/$defs/checkboxPositionProp"
+        },
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        }
+      },
+      "patternProperties": {
+        "^checkboxPosition\\.[^.]+$": {
+          "$ref": "#/$defs/checkboxPositionProp"
+        },
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    }
+  },
+  "required": ["kind", "type", "path"]
+}

@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { DropdownProps, ListItem } from '@golemui/gui-components';
+import { DropdownProps, ListItem } from '@golemui/gui-shared';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 

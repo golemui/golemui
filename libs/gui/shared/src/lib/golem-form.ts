@@ -1,6 +1,5 @@
 import * as Core from '@golemui/core';
-import { Validator } from '@golemui/validators';
-import { OptionValue } from './components';
+import { Validator } from '@golemui/gui-validators';
 import * as Props from './widget.props';
 
 // -------------------
@@ -232,7 +231,7 @@ type GuiDatePicker<
 > = Core.InputWidget<string, States, FormType, Props.DatePickerProps, V> & { type: 'datePicker' };
 
 type GuiDropdown<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
-  OptionValue,
+  Props.OptionValue,
   States,
   FormType,
   Props.DropdownProps<unknown>,
@@ -249,7 +248,7 @@ type GuiFunctionWidget<
 ) => Exclude<GolemWidget<FormType, States, V, CustomWidget>, () => any>;
 
 type GuiList<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
-  OptionValue,
+  Props.OptionValue,
   States,
   FormType,
   Props.ListProps<unknown>,
@@ -266,7 +265,7 @@ type GuiRadiogroup<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<OptionValue, States, FormType, Props.RadiogroupProps, V> & {
+> = Core.InputWidget<Props.OptionValue, States, FormType, Props.RadiogroupProps, V> & {
   type: 'radiogroup';
 };
 
@@ -306,7 +305,7 @@ type GuiRepeater<
 > & { type: 'repeater' };
 
 type GuiSelect<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
-  OptionValue,
+  Props.OptionValue,
   States,
   FormType,
   Props.SelectProps,

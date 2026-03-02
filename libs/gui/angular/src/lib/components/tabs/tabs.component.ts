@@ -12,7 +12,8 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui/gui-components';
+import { createIntersectionObserver, TabsEventDetail } from '@golemui/gui-components';
+import { TabsProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
