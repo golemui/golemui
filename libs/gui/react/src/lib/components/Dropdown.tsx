@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
-import { DropdownProps, ListItem, OptionValue } from '@golemui/gui-components';
+import { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';

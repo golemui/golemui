@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/gui-components';
+import { VanillaWidget } from '@golemui/gui-shared';
+import '@golemui/gui-components';
 
 export const vanillaWidgetLoaders: Core.WidgetLoaders<
   React.ComponentType<Core.WithWidget>,

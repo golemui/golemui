@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
-import { AlertProps } from '@golemui/gui-components';
+import { AlertProps } from '@golemui/gui-shared';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-alert-display')

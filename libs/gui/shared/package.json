@@ -21,6 +21,6 @@
   ],
   "dependencies": {
     "@golemui/core": "*",
-    "@golemui/validators": "*"
+    "@golemui/gui-validators": "*"
   }
 }

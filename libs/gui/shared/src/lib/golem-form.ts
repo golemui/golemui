@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { Validator } from '@golemui/validators';
+import { Validator } from '@golemui/gui-validators';
 import * as Props from './widget.props';
 
 // -------------------

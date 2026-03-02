@@ -7,10 +7,10 @@ import {
   initValidators,
   jsonSchemaValidators,
   Validator,
-} from '@golemui/validators';
+} from '@golemui/gui-validators';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { vanillaWidgetLoaders } from '../field.loaders';
+import { vanillaWidgetLoaders } from '../widget.loaders';
 import { LitItemRenderer, Type } from '@golemui/lit';
 
 @customElement('gui-form')

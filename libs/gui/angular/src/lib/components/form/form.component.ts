@@ -3,7 +3,11 @@ import { Component, computed, input, output, Type } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { vanillaSchemaToFieldMap } from '@golemui/gui-shared';
-import { CustomValidatorSchemas, initValidators, jsonSchemaValidators } from '@golemui/validators';
+import {
+  CustomValidatorSchemas,
+  initValidators,
+  jsonSchemaValidators,
+} from '@golemui/gui-validators';
 import { vanillaWidgetLoaders } from '../../widget.loaders';
 
 @Component({

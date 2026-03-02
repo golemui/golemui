@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { FlexProps } from '@golemui/gui-components';
+import { FlexProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 

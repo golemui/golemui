@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { Action, Middleware, State, ValidateOn } from '@golemui/core';
-import { CustomValidatorSchemas } from '@golemui/validators';
+import { CustomValidatorSchemas } from '@golemui/gui-validators';
 
 export interface MountOptions<StateKeys extends Core.UiState = string> {
   formDef: Core.Form<StateKeys>;

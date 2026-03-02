@@ -1,5 +1,5 @@
 {
-  "name": "@golemui/validators",
+  "name": "@golemui/gui-validators",
   "version": "0.0.1",
   "type": "module",
   "main": "./index.umd.cjs",
