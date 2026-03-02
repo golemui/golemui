@@ -1,6 +1,6 @@
 import { DisplayWidget } from '@golemui/core';
 import { Example } from './types';
-import { golemForm } from '@golemui/gui-components';
+import { golemForm } from '@golemui/gui-shared';
 
 const data = {
   details: {

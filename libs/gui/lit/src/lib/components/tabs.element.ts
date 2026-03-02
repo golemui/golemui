@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { createIntersectionObserver, TabsEventDetail, TabsProps } from '@golemui/gui-components';
+import { createIntersectionObserver, TabsEventDetail } from '@golemui/gui-components';
+import { TabsProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';

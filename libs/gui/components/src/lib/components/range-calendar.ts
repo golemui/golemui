@@ -1,8 +1,9 @@
 import { html, PropertyValues, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { DateRange, getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
+import { getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
 import { AbstractCalendar, AbstractCalendarDay } from './abstract-calendar';
+import { DateRange } from '@golemui/gui-shared';
 
 export interface RangeCalendarDay extends AbstractCalendarDay {
   isToday: boolean;

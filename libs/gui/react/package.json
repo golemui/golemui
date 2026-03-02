@@ -26,6 +26,7 @@
     "@golemui/react": "*",
     "@golemui/core": "*",
     "@golemui/gui-components": "*",
-    "@golemui/validators": "*"
+    "@golemui/gui-shared": "*",
+    "@golemui/gui-validators": "*"
   }
 }

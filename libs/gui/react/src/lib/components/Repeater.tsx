@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { RepeaterIndexContext, useInputWidget, WidgetRenderer } from '@golemui/react';
-import { RepeaterProps } from '@golemui/gui-components';
+import { RepeaterProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 

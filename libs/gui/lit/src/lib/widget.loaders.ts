@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import { Type } from '@golemui/lit';
-import { VanillaWidget } from '@golemui/gui-components';
+import { VanillaWidget } from '@golemui/gui-shared';
+import '@golemui/gui-components';
 
 export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
   // ACTION

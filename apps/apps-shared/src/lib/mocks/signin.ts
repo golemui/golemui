@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { golemForm } from '@golemui/gui-components';
+import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = { user: { id: 'ASDFGHJKL4567' } };

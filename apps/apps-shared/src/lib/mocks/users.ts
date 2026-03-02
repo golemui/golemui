@@ -1,5 +1,5 @@
 import { Example } from './types';
-import { golemForm } from '@golemui/gui-components';
+import { golemForm } from '@golemui/gui-shared';
 
 const form = golemForm().create({
   states: {

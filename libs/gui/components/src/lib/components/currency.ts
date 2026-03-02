@@ -3,7 +3,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { CurrencyProps } from '../widget.props';
+import { CurrencyProps } from '@golemui/gui-shared';
 
 @customElement('gui-currency')
 export class GuiCurrency extends LitElement {

@@ -36,6 +36,7 @@ export default defineConfig(() => ({
         '@golemui/core',
         '@golemui/react',
         '@golemui/gui-components',
+        '@golemui/gui-shared',
       ],
     },
   },

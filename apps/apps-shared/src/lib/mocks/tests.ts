@@ -1,4 +1,4 @@
-import { golemForm } from '@golemui/gui-components';
+import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = {

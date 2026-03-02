@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
-import { RendererProps } from '@golemui/gui-components';
+import { RendererProps } from '@golemui/gui-shared';
 import { ReactNode } from 'react';
 
 export function Renderer(widgetInstance: Core.WithWidget) {

@@ -1,6 +1,9 @@
 import { Localizable, WidgetPropertyFunctionParams } from '@golemui/core';
-import { OptionValue } from './components';
-import { DateRange } from './utils/date';
+
+export interface DateRange {
+  start: string;
+  end?: string;
+}
 
 export type AccordionProps = {
   singleOpen?: boolean;
@@ -280,6 +283,8 @@ export type RepeaterProps<Template> = {
   limit?: number;
   template: Template;
 };
+
+export type OptionValue = string | number;
 
 export type Option = {
   label: string;

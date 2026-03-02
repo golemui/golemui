@@ -1,9 +1,9 @@
 // JSON Schema 2020-12 --> GolemUI dynamic form description
 
 import * as Core from '@golemui/core';
-import { isOption } from '../components';
 import { Vanilla } from '../widget.factory';
 import { Option } from '../widget.props';
+import { isOption } from '../utils';
 
 function enumToOption(opt: unknown): Option {
   if (isOption(opt)) {

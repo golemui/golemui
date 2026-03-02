@@ -1,4 +1,4 @@
-import { ListItem, ListProps } from '../widget.props';
+import { ListItem, ListProps } from '@golemui/gui-shared';
 
 export type ListItemValue = string | number;
 
