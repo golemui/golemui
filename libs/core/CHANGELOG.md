@@ -1,3 +1,36 @@
+## 0.19.0 (2026-03-02)
+
+### 🚀 Features
+
+- Logic-Based Visibility Toggling via include.when and exclude.when ([9c44ff38](https://github.com/golemui/formforge/commit/9c44ff38))
+- Add RTL support ([85a39657](https://github.com/golemui/formforge/commit/85a39657))
+- type tetris to create a golem form biolder ([fc402635](https://github.com/golemui/formforge/commit/fc402635))
+- add field size ([a3eb4a9c](https://github.com/golemui/formforge/commit/a3eb4a9c))
+- **core:** enhance the I18nTranslator interface to allow providing a language ([7426c8e5](https://github.com/golemui/formforge/commit/7426c8e5))
+- optional label ([e57c9c74](https://github.com/golemui/formforge/commit/e57c9c74))
+- add support for i18n param interpolation ([7c84f01e](https://github.com/golemui/formforge/commit/7c84f01e))
+- Implement the core i18n bindings ([33e98d4e](https://github.com/golemui/formforge/commit/33e98d4e))
+- item renderers first draft ([2288470d](https://github.com/golemui/formforge/commit/2288470d))
+
+### 🩹 Fixes
+
+- implement `when` support for disabled and readonly ([f8932db7](https://github.com/golemui/formforge/commit/f8932db7))
+- **repeater:** Fix template propery nesting types ([43358f7f](https://github.com/golemui/formforge/commit/43358f7f))
+- rename stack to flex ([4486d6a1](https://github.com/golemui/formforge/commit/4486d6a1))
+- add type safety to golemForm validators ([965bb2e9](https://github.com/golemui/formforge/commit/965bb2e9))
+- **core:** fix FormType inference in root function props ([e052586c](https://github.com/golemui/formforge/commit/e052586c))
+- **core:** expose props on all widget kinds so type inference can reach props ([8ca0e029](https://github.com/golemui/formforge/commit/8ca0e029))
+- **core:** update kind taxonomy ([17d0aba1](https://github.com/golemui/formforge/commit/17d0aba1))
+- **core:** move uid collision to the form  initialization ([3452b8ad](https://github.com/golemui/formforge/commit/3452b8ad))
+- **core:** function fields validation errors ([e00cb6e7](https://github.com/golemui/formforge/commit/e00cb6e7))
+- **core:** add support for prefixes in translation params ([25e7e36a](https://github.com/golemui/formforge/commit/25e7e36a))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- mudscientist
+- Raul Jimenez @Elecash
+
 ## 0.18.0 (2026-01-13)
 
 ### 🚀 Features

@@ -1,3 +1,24 @@
+## 0.19.0 (2026-03-02)
+
+### 🚀 Features
+
+- Add RTL support ([85a39657](https://github.com/golemui/formforge/commit/85a39657))
+- add the novalidate attr to forms ([60189661](https://github.com/golemui/formforge/commit/60189661))
+- add input debounce to dropdown ([5abd503a](https://github.com/golemui/formforge/commit/5abd503a))
+- **react:** integrate i18n.lang on the calendar component ([01ba177f](https://github.com/golemui/formforge/commit/01ba177f))
+- optional label ([e57c9c74](https://github.com/golemui/formforge/commit/e57c9c74))
+- **react:** i18n integration ([1188657a](https://github.com/golemui/formforge/commit/1188657a))
+- **react:** add list component ([59ea192e](https://github.com/golemui/formforge/commit/59ea192e))
+
+### 🩹 Fixes
+
+- **core:** update kind taxonomy ([17d0aba1](https://github.com/golemui/formforge/commit/17d0aba1))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.18.0 (2026-01-13)
 
 ### 🩹 Fixes

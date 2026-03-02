@@ -1,3 +1,7 @@
+## 0.19.0 (2026-03-02)
+
+This was a version bump only for gui-lit to align it with other projects, there were no code changes.
+
 ## 0.18.0 (2026-01-13)
 
 ### 🚀 Features
