@@ -1,0 +1,113 @@
+---
+
+---
+
+<section class="features">
+  <div class="container">
+    <div class="content">
+      <h2>Built-in <span class="gradient-text">Excellence</span>.</h2>
+      <p>Native support for the features that matter most.</p>
+    </div>
+    <div class="bento-grid">
+      <div class="bento-item i18n">
+        <video src="/videos/i18n.mp4" autoplay loop muted playsinline></video>
+        <div class="overlay overlay-i18n">
+          <h3>Global by Design</h3>
+          <p>Localize your forms with native-like performance in any language.</p>
+        </div>
+      </div>
+
+      <div class="bento-item a11y">
+        <video src="/videos/a11y.mp4" autoplay loop muted playsinline></video>
+        <div class="overlay overlay-a11y">
+          <h3>Accessible by Default</h3>
+          <p>Exceed WCAG standards with fully compliant ARIA patterns built-in.</p>
+        </div>
+      </div>
+
+      <div class="bento-item validations">
+        <video src="/videos/validations.mp4" autoplay loop muted playsinline></video>
+        <div class="overlay overlay-validations">
+          <h3>Bulletproof Data</h3>
+          <p>Smart, real-time validations driven by your JSON Schema.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .content {
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+
+      @media (min-width: 768px) {
+        font-size: 5rem;
+      }
+    }
+
+    p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+    }
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: 50rem) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 72rem) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .bento-item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--golem-card-bg);
+    border: 1px solid var(--golem-border);
+  }
+  video {
+    width: 100%;
+    object-fit: cover;
+  }
+  .overlay {
+    position: absolute;
+    bottom: 0;
+    padding: 1.5rem;
+    color: white;
+    width: 100%;
+  }
+  .overlay-i18n {
+    background: linear-gradient(0deg, var(--accent-color) 0%, #b472fa 100%);
+  }
+  .overlay-a11y {
+    background: linear-gradient(0deg, var(--accent-color) 0%, #b373fa 100%);
+  }
+  .overlay-validations {
+    background: linear-gradient(0deg, var(--accent-color) 0%, #bd7dfa 100%);
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+</style>

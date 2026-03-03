@@ -1,0 +1,11 @@
+.gui-form {
+  .gui-validator {
+    margin-top: var(--gui-space-2);
+    padding: 0;
+
+    &__error {
+      list-style: none;
+      color: var(--gui-intent-error);
+    }
+  }
+}

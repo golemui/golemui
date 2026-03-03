@@ -1,0 +1,14 @@
+.gui-form {
+  display: block;
+  container-type: inline-size;
+  container-name: gui-form;
+  background: var(--gui-bg-default);
+  border-radius: var(--gui-radius-md);
+
+  /* Base reset for all gui-* components */
+  font-family: var(--gui-font-family);
+  font-size: var(--gui-font-sm);
+  color: var(--gui-text-default);
+  box-sizing: border-box;
+  margin: var(--gui-space-3) 0;
+}

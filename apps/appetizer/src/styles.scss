@@ -1,0 +1,84 @@
+/* You can add global styles to this file, and also import other style files */
+@use '../../../libs/gui/components/src/styles/index';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+html, body {
+  background-color: var(--gui-bg-default);
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+gui-appetizer {
+  width: 100%;
+  margin: 12px;
+}
+
+lit-root {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+}
+
+// Custom icons
+.material-icons {
+  font-family: 'Material Icons';
+  font-size: medium;
+
+  &-phone_callback::before {
+    content: 'phone_callback';
+  }
+
+  &-alternate_email::before {
+    content: 'alternate_email';
+  }
+
+  &-calendar_month::before {
+    content: 'calendar_month';
+  }
+
+  &-chevron_right::before {
+    content: 'chevron_right';
+    font-size: 1.8rem;
+  }
+
+  &-chevron_left::before {
+    content: 'chevron_left';
+    font-size: 1.8rem;
+  }
+}
+
+// List Item Renderer
+.country-renderer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  cursor: pointer;
+  height: 100%;
+  background-color: var(--gui-bg-default);
+
+  &:focus {
+    background-color: var(--gui-intent-primary-hover);
+  }
+
+  &.odd {
+    background-color: var(--gui-bg-surface);
+  }
+  &.selected {
+    color: var(--gui-text-default);
+    background-color: var(--gui-intent-primary);
+    font-weight: bold;
+  }
+  &.focused {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-intent-primary-hover) 50%, transparent);
+  }
+}

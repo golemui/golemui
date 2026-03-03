@@ -1,3 +1,21 @@
+## 0.19.0 (2026-03-02)
+
+### 🚀 Features
+
+- add the novalidate attr to forms ([60189661](https://github.com/golemui/formforge/commit/60189661))
+- **lit:** integrate i18n.lang on the calendar component ([86cba865](https://github.com/golemui/formforge/commit/86cba865))
+- **lit:** i18n integration ([0744c6db](https://github.com/golemui/formforge/commit/0744c6db))
+- **lit:** add list component to lit-vanilla ([a00ba79e](https://github.com/golemui/formforge/commit/a00ba79e))
+
+### 🩹 Fixes
+
+- **core:** update kind taxonomy ([17d0aba1](https://github.com/golemui/formforge/commit/17d0aba1))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.18.0 (2026-01-13)
 
 ### 🩹 Fixes

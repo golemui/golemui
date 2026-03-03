@@ -34,8 +34,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build template
-        run: cd docs/template && npm i && npm run build
+      - name: Build documentation apps
+        run: sh ./tools/build-docs-apps.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

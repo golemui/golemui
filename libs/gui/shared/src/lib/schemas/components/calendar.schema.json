@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/components/calendar.schema.json",
+  "title": "Calendar Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "prevMonthIconProp": {
+      "type": "string"
+    },
+    "nextMonthIconProp": {
+      "type": "string"
+    },
+    "prevMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "nextMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/definitions/localizable"
+    },
+    "dayFormatProp": {
+      "enum": ["numeric", "2-digit"]
+    },
+    "weekdayFormatProp": {
+      "enum": ["short", "long", "narrow"]
+    },
+    "monthFormatProp": {
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+    },
+    "minDateProp": {
+      "type": "string"
+    },
+    "maxDateProp": {
+      "type": "string"
+    },
+    "numberOfMonthsProp": {
+      "type": "number"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/definitions/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "calendar"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/definitions/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/definitions/on"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "prevMonthIcon": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "nextMonthIcon": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "prevMonthAriaLabel": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "nextMonthAriaLabel": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "dayFormat": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "weekdayFormat": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "monthFormat": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "minDate": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "maxDate": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "numberOfMonths": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^prevMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "^nextMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "^prevMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "^nextMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^dayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "^weekdayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "^monthFormat\\.[^.]+$": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "^minDate\\.[^.]+$": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "^maxDate\\.[^.]+$": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "^numberOfMonths\\.[^.]+$": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    }
+  },
+  "required": ["kind", "type", "path"]
+}

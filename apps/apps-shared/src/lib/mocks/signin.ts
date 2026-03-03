@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { golemForm } from '@golemui/shared-vanilla';
+import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = { user: { id: 'ASDFGHJKL4567' } };
@@ -62,11 +62,17 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
     },
     {
       kind: 'input',
-      type: 'textinput',
+      type: 'password',
       label: 'User Password',
       'label.register': 'Password 1',
       props: {
+        icon: 'material-icons material-icons-password',
+        hint: 'Requires an uppercase, lowercase, and a number',
         'placeholder.register': 'Enter password 1',
+        showPasswordIcon: 'material-icons material-icons-visibility',
+        hidePasswordIcon: 'material-icons material-icons-visibility_off',
+        showPasswordLabel: 'SHOW',
+        hidePasswordLabel: 'HIDE',
       },
       path: 'user.password',
       validator: {
@@ -87,7 +93,8 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
       },
       path: 'confirm',
       on: { change: 'checkPasswordMatch' },
-      include: { in: ['register'] },
+      // include: { in: ['register'] },
+      disabled: { when: '$form.registerMode !== true' },
     },
     {
       kind: 'input',

@@ -1,7 +1,7 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import '@golemui/lit-vanilla';
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import '@golemui/gui-lit';
+import * as ValidatorsVanilla from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
@@ -11,7 +11,7 @@ import { productItemRenderer } from '../../item-renderers/product.item-renderer'
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 
-const mock = AppsShared.appetizer;
+const mock = AppsShared.signin;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {

@@ -1,0 +1,94 @@
+gui-toggle {
+  display: flex;
+  align-items: start;
+  gap: 0.5rem;
+
+  &.gui-toggle--left {
+    flex-direction: row-reverse;
+    align-self: flex-start;
+  }
+
+  /* The toggle - the box around the slider */
+  .gui-toggle--switch {
+    position: relative;
+    display: inline-block;
+    width: var(--gui-toggle-width);
+    height: var(--gui-toggle-height);
+    min-width: var(--gui-toggle-width);
+    min-height: var(--gui-toggle-height);
+
+    /* Hide default HTML checkbox */
+    input {
+      position: absolute;
+      width: var(--gui-toggle-width);
+      height: var(--gui-toggle-height);
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: 2;
+      cursor: pointer;
+      margin: 0;
+
+      &:disabled + .gui-toggle--slider {
+        background-color: var(--gui-bg-disabled);
+      }
+
+      &:checked + .gui-toggle--slider {
+        background-color: var(--gui-intent-primary);
+        border: 1px solid var(--gui-intent-primary);
+      }
+
+      &:focus + .gui-toggle--slider {
+        outline: 0;
+        border: var(--gui-text-default) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
+      }
+
+      &:focus + .gui-toggle--slider[aria-invalid='true'] {
+        outline: 0;
+        border: var(--gui-intent-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
+      }
+
+      &:checked + .gui-toggle--slider:before {
+        transform: translateX(var(--gui-toggle-slider-transform));
+        background-color: var(--gui-bg-default);
+      }
+    }
+
+    /* The slider */
+    .gui-toggle--slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      bottom: 0;
+      width: calc(var(--gui-toggle-width) - 2px);
+      background-color: var(--gui-bg-default);
+      border: 1px solid var(--gui-border-default);
+      transition: 0.4s;
+      border-radius: 30px;
+
+      &[aria-invalid='true'] {
+        border-color: var(--gui-intent-error);
+      }
+
+      &:before {
+        position: absolute;
+        content: '';
+        width: var(--gui-toggle-slider-width);
+        height: var(--gui-toggle-slider-height);
+        border-radius: 20px;
+        left: 2px;
+        top: 1px;
+        background-color: var(--gui-border-default);
+        transition: 0.4s;
+      }
+    }
+  }
+
+  label {
+    cursor: pointer;
+  }
+}

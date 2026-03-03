@@ -1,3 +1,22 @@
+## 0.19.0 (2026-03-02)
+
+### 🚀 Features
+
+- add the novalidate attr to forms ([60189661](https://github.com/golemui/formforge/commit/60189661))
+- **angular:** integrate i18n.lang on the calendar component ([f3c92c49](https://github.com/golemui/formforge/commit/f3c92c49))
+- **angular:** i18n integration ([358949af](https://github.com/golemui/formforge/commit/358949af))
+- item renderers first draft ([2288470d](https://github.com/golemui/formforge/commit/2288470d))
+
+### 🩹 Fixes
+
+- **angular:** update kind taxonomy ([cbe8d48a](https://github.com/golemui/formforge/commit/cbe8d48a))
+- **core:** update kind taxonomy ([17d0aba1](https://github.com/golemui/formforge/commit/17d0aba1))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- Raul Jimenez @Elecash
+
 ## 0.18.0 (2026-01-13)
 
 ### 🚀 Features

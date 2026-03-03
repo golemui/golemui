@@ -1,0 +1,129 @@
+.gui-form {
+  .gui-tabs {
+    margin: var(--gui-space-3) 0;
+
+    .gui-sentinel {
+      width: 0;
+      height: 0;
+      flex-shrink: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    nav {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      margin-bottom: -1px;
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 60px;
+        height: 40px;
+        z-index: 2;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+      }
+
+      &::before {
+        left: 0;
+        background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
+      }
+
+      &::after {
+        right: 0;
+        background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
+      }
+
+      &.gui-tabs--start-shadow::before {
+        opacity: 1;
+      }
+      &.gui-tabs--end-shadow::after {
+        opacity: 1;
+      }
+
+      ul[role='tablist'] {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        scrollbar-width: none;
+      }
+
+      li {
+        flex: 0 0 auto;
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    button[role='tab'] {
+      flex: 0 0 auto;
+      display: inline-block;
+      padding: var(--gui-space-3);
+
+      border: 1px solid var(--gui-border-default);
+      margin-left: -1px;
+
+      border-radius: var(--gui-radius-md) var(--gui-radius-md) 0 0;
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
+
+      position: relative;
+      z-index: 1;
+
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+      cursor: pointer;
+
+      white-space: nowrap;
+
+      &.active {
+        border-bottom-color: var(--gui-bg-default);
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:focus {
+        outline: var(--gui-text-default) solid 1px;
+        border: var(--gui-text-default) solid 1px;
+
+        &.active {
+          border-bottom-color: var(--gui-bg-default);
+        }
+      }
+    }
+
+    section[role='tabpanel'] {
+      padding: calc(var(--gui-space-3) * 2) var(--gui-space-3);
+      border: 1px solid var(--gui-border-default);
+      border-radius: 0 0 var(--gui-radius-md) var(--gui-radius-md);
+      background: var(--gui-bg-default);
+      color: var(--gui-text-default);
+
+      &[hidden] {
+        display: none;
+      }
+    }
+  }
+}
+
+@container gui-form (max-width: 480px) {
+  .gui-form .gui-tabs button[role='tab'] {
+    padding: var(--gui-space-2);
+    font-size: var(--gui-font-xs);
+  }
+}

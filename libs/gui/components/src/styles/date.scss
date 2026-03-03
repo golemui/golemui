@@ -1,0 +1,98 @@
+gui-date {
+  display: block;
+
+  .gui-date-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 0;
+
+    &[aria-invalid='true'] {
+      &:has(input) {
+        border-color: var(--gui-intent-error);
+      }
+      &:has(input:focus) {
+        outline: 0;
+        border: var(--gui-intent-error) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
+      }
+    }
+
+    &:has(input:focus) {
+      outline: 0;
+      border: var(--gui-text-default) solid 1px;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
+    }
+
+    .gui-date-input__touch-target {
+      display: block;
+      position: relative;
+    }
+
+    .gui-date-input__visual-underline {
+      position: absolute;
+      bottom: -1px;
+      inset-inline-start: 2px;
+      width: 18px;
+      height: 1px;
+      background-color: var(--gui-text-default);
+      z-index: 1;
+      pointer-events: none;
+      display: none;
+    }
+
+    input[type='text'] {
+      font-family: monospace;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+      outline: none;
+      width: 24px;
+      text-align: center;
+
+      &.gui-date-input__part {
+        min-width: 48px;
+        min-height: 48px;
+        border: none;
+        background: transparent;
+        text-align: center;
+        padding: 0;
+        margin-block: -16px;
+        margin-inline: -12px;
+        position: relative;
+        z-index: 2;
+      }
+
+      &.gui-date-input__year {
+        width: 64px;
+
+        & ~ .gui-date-input__visual-underline {
+          width: 36px;
+        }
+      }
+
+      &:focus {
+        box-shadow: none;
+
+        & ~ .gui-date-input__visual-underline {
+          display: block;
+        }
+      }
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+      }
+    }
+
+    &.gui-calendar--icon {
+      padding-inline-start: 2.5rem;
+    }
+  }
+}

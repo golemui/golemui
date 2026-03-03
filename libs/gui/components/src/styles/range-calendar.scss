@@ -1,0 +1,43 @@
+:root {
+  --gui-radius-range: calc(var(--gui-radius-md) * 2);
+}
+
+gui-range-calendar {
+  .gui-calendar__day-button {
+    &.in-range {
+      background-color: var(--gui-intent-primary);
+      color: white;
+      border-radius: 0;
+    }
+    &.range-start {
+      background-color: var(--gui-intent-primary);
+      color: white;
+
+      // Top Left - Top Right - Bottom Left - Bottom Right
+      border-start-end-radius: 0;
+      border-start-start-radius: var(--gui-radius-range);
+      border-end-end-radius: 0;
+      border-end-start-radius: var(--gui-radius-range);
+    }
+    &.range-end {
+      background-color: var(--gui-intent-primary);
+      color: white;
+
+      // Top Left - Top Right - Bottom Left - Bottom Right
+      border-start-end-radius: var(--gui-radius-range);
+      border-start-start-radius: 0;
+      border-end-end-radius: var(--gui-radius-range);
+      border-end-start-radius: 0;
+    }
+
+    &.range-start.range-end {
+      border-radius: var(--gui-radius-range);
+    }
+    &.is-anchor {
+      border: 1px dashed #2196f3;
+    }
+    &.is-selecting {
+      border: 1px dashed #2196f3;
+    }
+  }
+}

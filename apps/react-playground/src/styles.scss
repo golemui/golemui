@@ -1,9 +1,8 @@
-@use '../../../libs/shared-vanilla/src/styles/index';
+@use '../../../libs/gui/components/src/styles/index';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html, body {
-  background-color: #fff;
-  color: #1a1a1a;
+  background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
 
@@ -15,14 +14,6 @@ body {
 .container {
   width: 990px;
   padding: 1rem;
-}
-
-// Dark mode
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #23262f;
-    color: #f2f3f5;
-  }
 }
 
 // Custom icons
@@ -50,5 +41,19 @@ body {
   &-chevron_left::before {
     content: 'chevron_left';
     font-size: 1.8rem;
+  }
+  &-password::before {
+    content: 'password';
+    font-size: 1.2rem;
+  }
+
+  &-visibility::before {
+    content: 'visibility';
+    font-size: 1.2rem;
+  }
+
+  &-visibility_off::before {
+    content: 'visibility_off';
+    font-size: 1.2rem;
   }
 }

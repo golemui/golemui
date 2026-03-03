@@ -98,6 +98,7 @@
   },
   "release": {
     "version": {
+      "preVersionCommand": "npx nx run-many -t build",
       "specifierSource": "conventional-commits",
       "currentVersionResolver": "git-tag"
     },
@@ -138,6 +139,13 @@
         "watchDepsTargetName": "watch-deps",
         "buildDepsTargetName": "build-deps",
         "typecheckTargetName": "typecheck"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "vitest:test",
+        "ciTargetName": "test-ci"
       }
     }
   ]

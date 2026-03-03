@@ -8,33 +8,30 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
 <section class="custom-power">
   <div class="container">
     <div class="content">
-      <h2>Unlimited Power.<br />Made easy.</h2>
-      <p>
-        GolemUI is the easiest and fastest library to build dynamic forms.
-      </p>
+      <h2>
+        Unlimited <span class="gradient-text">Power</span>.<br />Made <span class="gradient-text"
+          >Easy</span
+        >.
+      </h2>
+      <p>GolemUI is the easiest and fastest library to build dynamic forms.</p>
     </div>
   </div>
-  <div class="container">
+  <div class="container-demo">
     <div class="home-examples">
       <Tabs>
         <TabItem label="Angular">
-          <Code code={AngularForm} lang="ts" title="my-golemui-form.component.ts" />
+          <Code code={AngularForm} lang="ts" />
         </TabItem>
         <TabItem label="React">
-          <Code code={ReactForm} lang="tsx" title="MyGolemUIForm.tsx" />
+          <Code code={ReactForm} lang="tsx" />
         </TabItem>
         <TabItem label="Lit">
-          <Code code={LitForm} lang="ts" title="my-golemui-form.element.ts" />
+          <Code code={LitForm} lang="ts" />
         </TabItem>
       </Tabs>
     </div>
-    <div>
-      <iframe
-        src="/template/index.html?form=home/form.json"
-        title="Custom components"
-        width="100%"
-        height="570px"
-      ></iframe>
+    <div class="iframe-example">
+      <iframe src="tiny/index.html" title="Custom components" width="100%" height="596px"></iframe>
     </div>
   </div>
 </section>
@@ -44,37 +41,57 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
     border: none;
   }
 
-  .home-examples .expressive-code .frame pre {
-    overflow-y: auto;
+  .iframe-example {
+    width: 100%;
+    height: 250px;
+
+    @media (min-width: 50rem) {
+      width: 50%;
+      height: 596px;
+    }
+  }
+
+  .home-examples {
+    width: 100%;
+    background-color: transparent;
+
+    @media (min-width: 50rem) {
+      width: 50%;
+    }
   }
 
   .custom-power {
-    padding: 6rem 0;
+    padding: 4rem 0.25rem;
     background: var(--bg-color);
     overflow: hidden;
+
+    @media (min-width: 361px) {
+      padding: 4rem 1.5rem;
+    }
   }
 
-  .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
+  .container-demo {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 
-    @media (max-width: 960px) {
-      grid-template-columns: 1fr;
-      gap: 4rem;
+    @media (min-width: 50rem) {
+      flex-direction: row;
     }
   }
 
   .content {
     h2 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 1.5rem;
 
-      @media (max-width: 768px) {
-        font-size: 2.5rem;
+      @media (min-width: 768px) {
+        font-size: 5rem;
       }
     }
 
@@ -87,5 +104,11 @@ import LitForm from '../../../public/template/code-samples/lit/my-golemui-form.e
 
   iframe {
     border: 0;
+  }
+
+  html.dark {
+    .home-examples {
+      background-color: var(--ec-codeBg);
+    }
   }
 </style>

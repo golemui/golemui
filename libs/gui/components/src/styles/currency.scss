@@ -1,0 +1,52 @@
+gui-currency {
+  display: block;
+
+  .gui-widget {
+    position: relative;
+
+    .gui-currency__format-value {
+      position: absolute;
+      background: var(--gui-bg-default);
+      font-size: var(--gui-font-sm);
+      top: 13px;
+      inset-inline-start: 13px;
+
+      transition: all 0.2s ease-in-out;
+
+      &.gui-currency__format-value--icon {
+        inset-inline-start: calc(2.5rem);
+      }
+    }
+
+    input[type='number'] {
+      color: transparent;
+
+      /* For Firefox */
+      appearance: textfield;
+
+      /* For Chrome/Edge and Safari */
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        appearance: none;
+      }
+
+      &.gui-currency--icon {
+        padding-inline-start: var(--gui-space-10);
+      }
+
+      &:focus {
+        color: var(--gui-text-default);
+      }
+
+      &:focus + .gui-currency__format-value {
+        font-size: var(--gui-font-sm);
+        top: -9px;
+        padding: 2px;
+      }
+
+      &:focus[aria-invalid='true'] + .gui-currency__format-value {
+        color: var(--gui-intent-error);
+      }
+    }
+  }
+}

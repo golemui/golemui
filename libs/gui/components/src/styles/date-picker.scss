@@ -1,0 +1,85 @@
+.gui-form {
+  .gui-date-picker {
+    display: block;
+
+    > .gui-widget {
+      &::after {
+        content: '';
+        border: solid;
+        border-width: 0 2px 2px 0;
+        height: 0.5rem;
+        pointer-events: none;
+        position: absolute;
+        inset-inline-end: 1.2rem;
+        top: 1.3rem;
+        width: 0.5rem;
+        transform: translateY(-60%) rotate(45deg);
+        transition: transform 0.3s;
+      }
+
+      &[aria-expanded='true']::after {
+        transform: translateY(-50%) rotate(-135deg);
+      }
+
+      gui-calendar {
+        position: absolute;
+        top: 100%;
+        z-index: 10;
+      }
+    }
+
+    // Month Calendar
+    .gui-calendar-input {
+      width: 300px;
+      position: absolute;
+      border-radius: var(--gui-radius-md);
+      background: var(--gui-bg-default);
+      border: 1px solid var(--gui-border-default);
+      padding: var(--gui-space-3);
+    }
+
+    .gui-calendar__header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .gui-calendar__weekday {
+      text-align: center;
+    }
+
+    .gui-calendar__day-button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--gui-text-default);
+      padding: var(--gui-space-3);
+      border-radius: var(--gui-radius-md);
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid var(--gui-border-default);
+        background-color: var(--gui-text-secondary);
+      }
+
+      &.today {
+        border-color: var(--gui-intent-primary-hover);
+        border-width: 2px;
+      }
+
+      &.selected {
+        background-color: var(--gui-intent-primary);
+      }
+
+      &[disabled] {
+        background-color: var(--gui-bg-disabled);
+        cursor: not-allowed;
+      }
+    }
+
+    .gui-calendar__days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr); /* 7 columnas iguales */
+      gap: 1px;
+    }
+  }
+}

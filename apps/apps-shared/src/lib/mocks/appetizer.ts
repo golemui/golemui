@@ -47,7 +47,7 @@ const form = defineForm({
           type: 'dropdown',
           path: 'departureCountry',
           label: {
-            key: 'travelPlanner.field.departureCountry',
+            key: 'travelPlanner.field.departureCountry.label',
             default: 'Departure Country',
           },
           props: {
@@ -55,6 +55,10 @@ const form = defineForm({
             height: 300,
             itemHeight: 60,
             itemRenderer: 'countryItemRenderer',
+            placeholder: {
+              key: 'travelPlanner.field.departureCountry.placeholder',
+              default: 'Select a Country',
+            },
             labelField: 'label',
             valueField: 'id',
             items: [
@@ -100,11 +104,13 @@ const form = defineForm({
           kind: 'input',
           type: 'number',
           path: 'passengers',
+          defaultValue: 1,
           label: {
             key: 'travelPlanner.field.passengers',
-            default: 'Number of Passengers',
+            default: 'Passengers',
           },
           props: {
+            size: 2,
             minimum: 1,
             maximum: 10,
           },
@@ -115,11 +121,13 @@ const form = defineForm({
           kind: 'input',
           type: 'number',
           path: 'pets',
+          defaultValue: 1,
           label: {
             key: 'travelPlanner.field.pets',
-            default: 'Number of Pets',
+            default: 'Pets',
           },
           props: {
+            size: 2,
             minimum: 1,
             maximum: 3,
           },
@@ -203,10 +211,13 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
-          departureCountry: 'Departure Country',
+          departureCountry: {
+            label: 'Departure Country',
+            placeholder: 'Select a Country',
+          },
           budget: 'Travel Budget',
-          passengers: 'Number of Passengers',
-          pets: 'Number of Pets',
+          passengers: 'Passengers',
+          pets: 'Pets',
           includePets: 'Include Pets',
           preferredDates: {
             label: 'Select Preferred Dates',
@@ -226,10 +237,13 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
-          departureCountry: 'País de origen',
+          departureCountry: {
+            label: 'País de origen',
+            placeholder: 'Seleccione un país',
+          },
           budget: 'Presupuesto de viaje',
-          passengers: 'Número de pasajeros',
-          pets: 'Número de mascotas',
+          passengers: 'pasajeros',
+          pets: 'mascotas',
           includePets: 'Incluir mascotas',
           preferredDates: {
             label: 'Seleccionar fechas preferidas',
@@ -249,10 +263,13 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
-          departureCountry: '出発国',
+          departureCountry: {
+            label: '出発国',
+            placeholder: '国を選択',
+          },
           budget: '旅行予算',
-          passengers: '乗客人数',
-          pets: 'ペットの数',
+          passengers: '乗客',
+          pets: 'ペット',
           includePets: 'ペット同伴',
           preferredDates: {
             label: '希望日の選択',
@@ -272,10 +289,13 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
-          departureCountry: 'کشور مبدا',
+          departureCountry: {
+            label: 'کشور مبدا',
+            placeholder: 'یک کشور را انتخاب کنید',
+          },
           budget: 'بودجه سفر',
-          passengers: 'تعداد مسافران',
-          pets: 'تعدادی حیوان خانگی',
+          passengers: 'مسافران',
+          pets: 'حیوانات خانگی',
           includePets: 'همراه با حیوان خانگی',
           preferredDates: {
             label: 'انتخاب تاریخ‌های مورد نظر',

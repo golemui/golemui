@@ -1,0 +1,40 @@
+gui-radiogroup {
+  display: block;
+
+  .gui-widget {
+    label {
+      display: grid;
+      grid-template-columns: 1.6em auto;
+    }
+
+    input {
+      display: grid;
+      place-content: center;
+      width: 0.5em;
+      height: 0.5em;
+      padding: 0.6em;
+      border-radius: 50%;
+
+      appearance: none;
+      margin: 0;
+
+      &::before {
+        content: '';
+        width: 0.65em;
+        height: 0.65em;
+        border-radius: 50%;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em var(--gui-intent-primary);
+      }
+
+      &:checked {
+        border-color: var(--gui-intent-primary);
+      }
+
+      &:checked::before {
+        transform: scale(1);
+      }
+    }
+  }
+}

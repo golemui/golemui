@@ -1,0 +1,110 @@
+gui-range-calendar,
+gui-calendar {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+
+  .gui-widget {
+    // Month Calendar
+    .gui-calendar-input {
+      border-radius: var(--gui-radius-md);
+      background: var(--gui-bg-default);
+      border: 1px solid var(--gui-border-default);
+      padding: var(--gui-space-3);
+    }
+
+    .gui-calendar__container {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .gui-calendar__header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      height: 50px;
+    }
+
+    .gui-calendar__rows {
+      display: contents;
+    }
+
+    .gui-calendar__weekday {
+      text-align: center;
+    }
+
+    button.gui-button.gui-calendar__month-button {
+      padding: 0.25rem;
+      border-radius: 100%;
+      width: var(--gui-calendar-change-month-button-width);
+      height: var(--gui-calendar-change-month-button-height);
+
+      &--prev {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+      }
+      &--next {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
+    }
+
+    .gui-calendar__day-button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--gui-text-default);
+      padding: var(--gui-space-3);
+      border-radius: var(--gui-radius-md);
+      cursor: pointer;
+
+      &:focus {
+        outline: 0;
+        border: var(--gui-text-default) solid 1px;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
+      }
+
+      &:hover {
+        border: 1px solid var(--gui-border-default);
+        background-color: var(--gui-text-secondary);
+      }
+
+      &.today {
+        border-color: var(--gui-intent-primary-active);
+      }
+
+      &.selected {
+        background-color: var(--gui-intent-primary);
+      }
+
+      &[disabled] {
+        background-color: var(--gui-bg-disabled);
+        color: var(--gui-text-default);
+        cursor: not-allowed;
+      }
+    }
+
+    .gui-calendar__days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+    }
+
+    .gui-calendar__months-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin: auto;
+    }
+  }
+}
+
+@container gui-form (max-width: 480px) {
+  gui-range-calendar,
+  gui-calendar {
+    width: auto;
+  }
+}

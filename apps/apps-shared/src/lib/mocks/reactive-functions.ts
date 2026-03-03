@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { golemForm } from '@golemui/shared-vanilla';
+import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 type FormType = {

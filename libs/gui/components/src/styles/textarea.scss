@@ -1,0 +1,24 @@
+gui-textarea {
+  display: block;
+
+  textarea {
+    &.gui-textarea--icon {
+      padding-inline-start: var(--gui-space-10);
+    }
+  }
+
+  .gui-textarea--validation {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .gui-textarea--counter {
+    font-size: var(--gui-font-sm);
+    margin-top: var(--gui-space-2);
+    padding: 0;
+
+    &__error {
+      color: var(--gui-intent-error);
+    }
+  }
+}

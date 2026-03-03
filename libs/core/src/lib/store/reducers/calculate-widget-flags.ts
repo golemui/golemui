@@ -1,6 +1,7 @@
 import { compile, parse } from 'subscript/justin';
-import { isFunctionWidget } from '../../form-widget';
+import { isActionWidget, isFunctionWidget, isInputWidget } from '../../form-widget';
 import { State } from '../model';
+import { hasWhen } from './utils';
 
 export const calculateWidgetFlags = (state: State): State => {
   return {
@@ -35,9 +36,10 @@ function calculateFlags(state: State): State['widgetFlags'] {
         if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
           return true;
         }
-        // TODO: I don't think we need this `if` statement here anymore, we're only concerned about `include` and `exclude`
-        // Has any of the properties a state suffix? e.g. '"disabled.someState" = true'
-        if (Object.keys(widget).find((key) => key.indexOf('.') > -1)) {
+        if (isInputWidget(widget) || (isActionWidget(widget) && hasWhen(widget.disabled))) {
+          return true;
+        }
+        if (isInputWidget(widget) && hasWhen(widget.readonly)) {
           return true;
         }
         return false;
@@ -45,6 +47,7 @@ function calculateFlags(state: State): State['widgetFlags'] {
       .reduce(
         (flags, widget) => {
           flags[widget.uid] = flags[widget.uid] || {};
+
           // show
           if (widget.include && 'in' in widget.include) {
             flags[widget.uid].hidden = !widget.include.in.some((widgetState) =>
@@ -53,6 +56,7 @@ function calculateFlags(state: State): State['widgetFlags'] {
           } else if (widget.include && 'when' in widget.include) {
             flags[widget.uid].hidden = !expressionIsTrue(widget.include.when, state.data);
           }
+
           // hide
           if (widget.exclude && 'from' in widget.exclude) {
             flags[widget.uid].hidden = widget.exclude.from.some((widgetState) =>
@@ -60,6 +64,27 @@ function calculateFlags(state: State): State['widgetFlags'] {
             );
           } else if (widget.exclude && 'when' in widget.exclude) {
             flags[widget.uid].hidden = expressionIsTrue(widget.exclude.when, state.data);
+          }
+
+          // TODO: We have to document that (disabled|readonly).when is NOT compatible with states e.g. `{'disabled.register': {when: '...'}}`
+          //       It's either boolean, states + boolean or when.
+
+          // disabled
+          if (isInputWidget(widget) || isActionWidget(widget)) {
+            if (hasWhen(widget.disabled)) {
+              flags[widget.uid].disabled = expressionIsTrue(
+                (widget.disabled as { when: string }).when,
+                state.data,
+              );
+            }
+          }
+
+          // readonly
+          if (isInputWidget(widget) && hasWhen(widget.readonly)) {
+            flags[widget.uid].readonly = expressionIsTrue(
+              (widget.readonly as { when: string }).when,
+              state.data,
+            );
           }
 
           return flags;

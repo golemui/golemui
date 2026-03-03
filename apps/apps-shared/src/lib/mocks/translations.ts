@@ -1,5 +1,6 @@
-import { defineForm } from '@golemui/core';
+import { DisplayWidget } from '@golemui/core';
 import { Example } from './types';
+import { golemForm } from '@golemui/gui-shared';
 
 const data = {
   details: {
@@ -10,14 +11,22 @@ const data = {
   },
 };
 
-const form = defineForm({
-  states: {
-    remote: '$form.details.isRemote === true',
-  },
+const states = {
+  remote: '$form.details.isRemote === true',
+};
+type States = keyof typeof states;
+
+type CustomHeadingWidgetProps = {
+  text: string;
+  level?: number;
+};
+type CustomHeadingWidget = DisplayWidget<States, typeof data, CustomHeadingWidgetProps>;
+
+const form = golemForm<typeof data, CustomHeadingWidget>().create({
+  states,
   form: [
     // 1. Dynamic Heading based on state
     {
-      uid: 'header-1',
       kind: 'display',
       type: 'heading',
       props: {
@@ -32,7 +41,6 @@ const form = defineForm({
 
     // 2. Mode Toggle (The State Switcher)
     {
-      uid: 'toggle-mode',
       kind: 'input',
       type: 'toggle',
       path: 'details.isRemote',
@@ -44,7 +52,6 @@ const form = defineForm({
 
     // 3. Client Name Input
     {
-      uid: 'input-name',
       kind: 'input',
       type: 'textinput',
       path: 'details.clientName',
@@ -62,7 +69,6 @@ const form = defineForm({
 
     // 4. Calendar Control (The Requested Widget)
     {
-      uid: 'input-date',
       kind: 'input',
       type: 'calendar',
       path: 'details.date',
@@ -71,7 +77,6 @@ const form = defineForm({
         default: 'Select a Date',
       },
       props: {
-        icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
       },
@@ -80,7 +85,6 @@ const form = defineForm({
 
     // 5. Dynamic Info Alert (Changes content based on context)
     {
-      uid: 'info-location',
       kind: 'display',
       type: 'alert',
       props: {
@@ -99,7 +103,6 @@ const form = defineForm({
 
     // 6. Conditional Currency (Only for on-site deposits)
     {
-      uid: 'input-deposit',
       kind: 'input',
       type: 'currency',
       path: 'depositAmount',
@@ -115,7 +118,17 @@ const form = defineForm({
 
     // 7. Submit Action
     {
-      uid: 'btn-submit',
+      kind: 'action',
+      type: 'button',
+      on: {
+        click: 'handleSubmit',
+      },
+      label: {
+        key: 'consultation.btn.submit',
+        default: 'Confirm Booking',
+      },
+    },
+    /*{
       kind: 'action',
       type: 'button',
       on: {
@@ -134,7 +147,7 @@ const form = defineForm({
           },
         },
       },
-    },
+    },*/
   ],
 });
 

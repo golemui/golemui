@@ -1,0 +1,18 @@
+{
+    "key": "select-example",
+    "type": "select",
+    "props": {
+        "label": "Select",
+        "placeholder": "Choose an option",
+        "options": [
+            {
+                "label": "Option A",
+                "value": "a"
+            },
+            {
+                "label": "Option B",
+                "value": "b"
+            }
+        ]
+    }
+}
