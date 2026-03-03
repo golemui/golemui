@@ -27,5 +27,10 @@
     "@golemui/gui-shared": "*",
     "lit-html": "^3.3.1",
     "lit": "^3.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/gui/components"
   }
 }

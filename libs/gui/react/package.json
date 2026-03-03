@@ -28,5 +28,10 @@
     "@golemui/gui-components": "*",
     "@golemui/gui-shared": "*",
     "@golemui/gui-validators": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/gui/react"
   }
 }

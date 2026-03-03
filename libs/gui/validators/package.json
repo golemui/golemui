@@ -23,5 +23,10 @@
     "zod": "^4.0.0",
     "@standard-schema/spec": "^1.0.0",
     "@golemui/core": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/gui/validators"
   }
 }

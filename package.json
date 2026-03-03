@@ -1,6 +1,10 @@
 {
   "name": "@golemui/source",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git"
+  },
   "license": "MIT",
   "scripts": {
     "format": "nx format:write --all",
