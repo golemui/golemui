@@ -8,6 +8,7 @@ import { _gslInputs } from '../../../services/dx/shortcuts/inputs/gslInputs.impl
 import { _gslRoot } from '../../../services/dx/shortcuts/scopes/gslRoot.impl';
 import { _gslActionById } from '../../../services/dx/shortcuts/actions/gslActionById.impl';
 import { _gslLayoutById } from '../../../services/dx/shortcuts/layouts/gslLayoutById.impl';
+import { _guiCalendar } from '../../../services/dx/shortcuts/calendar/guiCalendar.impl';
 
 export const smartContactFormDemo: FormDemoDefinition = {
   title: 'Combinations / Smart Contact Form',
@@ -41,6 +42,7 @@ export const smartContactFormDemo: FormDemoDefinition = {
       validator: { minLength: 10 },
     }),
   }),
+  _guiCalendar('birthDate'),
   // Dynamic greeting — auto-wrapped into _guiDisplay
   (params) => {
     const name = params.$form?.firstName;
@@ -85,6 +87,7 @@ export const smartContactFormDemo: FormDemoDefinition = {
         validator: { minLength: 10 },
       }),
     }),
+    _guiCalendar('birthDate'),
     (params: DxRuntimeParams) => {
       const name = params.$form?.firstName;
       if (!name) return null;

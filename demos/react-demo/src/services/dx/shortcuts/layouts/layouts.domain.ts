@@ -1,5 +1,5 @@
 import { DxRuntimeParams } from '../inputs/inputs.domain';
-import { RuntimeFunction, GuiItemsShortcut, GUI_ITEM_TYPE_LAYOUTS, ValidGuiShortcut } from '../../core/dx.domain';
+import { RuntimeFunction, GuiItemsShortcut, ValidGuiShortcut } from '../../core/dx.domain';
 import { WidgetItemDecorator } from '../../formDef.domain';
 
 // ═══════════════════════════════════════════════════
@@ -37,6 +37,6 @@ export type LayoutDefOrCallback = LayoutDecorator | LayoutDefCallback;
 export type LayoutEntry = { def: LayoutDefOrCallback; children: ValidGuiShortcut[] };
 
 export interface GuiLayoutItemsShortcut extends GuiItemsShortcut {
-  itemType: GUI_ITEM_TYPE_LAYOUTS;
+  itemType: 'LAYOUTS';
   items: LayoutEntry[];
 }

@@ -5,15 +5,7 @@ import {
   ResolvedSelectors,
 } from './dx.domain';
 import type { WidgetItemDecorator } from '../formDef.domain';
-import { InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
-import { ActionSensibleDefaultsConfig } from '../shortcuts/actions/actions.domain';
-import { LayoutSensibleDefaultsConfig } from '../shortcuts/layouts/layouts.domain';
-import { DisplaySensibleDefaultsConfig } from '../shortcuts/display/display.domain';
-
-const BASE_INPUT_SENSIBLE_DEFAULTS: InputSensibleDefaultsConfig = {
-  suppressAutomaticLabels: false,
-  suppressAutomaticPlaceholders: false,
-};
+import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
 
 export class SelectorResolver {
 
@@ -32,18 +24,12 @@ export class SelectorResolver {
       }
     }
 
-    // Roll up sensible defaults from all matching leaf selectors
-    const aggregatedInputSensibleDefaults = this.rollUpInputSensibleDefaults(leafSelectors);
-    const aggregatedActionSensibleDefaults: ActionSensibleDefaultsConfig = {};
-    const aggregatedLayoutSensibleDefaults: LayoutSensibleDefaultsConfig = {};
-    const aggregatedDisplaySensibleDefaults: DisplaySensibleDefaultsConfig = {};
+    // Roll up sensible defaults via registered handlers
+    const sensibleDefaults = this.rollUpSensibleDefaults(leafSelectors);
 
     return {
       leafSelectors,
-      aggregatedInputSensibleDefaults,
-      aggregatedActionSensibleDefaults,
-      aggregatedLayoutSensibleDefaults,
-      aggregatedDisplaySensibleDefaults,
+      sensibleDefaults,
     };
   }
 
@@ -69,23 +55,24 @@ export class SelectorResolver {
     out.push(leaf);
   }
 
-  private rollUpInputSensibleDefaults(
+  private rollUpSensibleDefaults(
     leafSelectors: GslLeafSelector[],
-  ): InputSensibleDefaultsConfig {
-    let result: InputSensibleDefaultsConfig = { ...BASE_INPUT_SENSIBLE_DEFAULTS };
-
+  ): Record<string, Record<string, any>> {
+    // Group leaf selectors by their selectorType
+    const byType = new Map<string, GslLeafSelector[]>();
     for (const leaf of leafSelectors) {
-      if (leaf.selectorType === 'INPUTS') {
-        const cfg = leaf.config as GslInputsConfig;
-        if (cfg.suppressAutomaticLabels != null) {
-          result = { ...result, suppressAutomaticLabels: cfg.suppressAutomaticLabels };
-        }
-        if (cfg.suppressAutomaticPlaceholders != null) {
-          result = { ...result, suppressAutomaticPlaceholders: cfg.suppressAutomaticPlaceholders };
-        }
-      }
+      const list = byType.get(leaf.selectorType) ?? [];
+      list.push(leaf);
+      byType.set(leaf.selectorType, list);
     }
 
+    // Delegate rollup to each registered handler
+    const result: Record<string, Record<string, any>> = {};
+    for (const [itemType, leaves] of byType) {
+      if (hasItemTypeHandler(itemType)) {
+        result[itemType] = getItemTypeHandler(itemType).rollUpSensibleDefaults(leaves);
+      }
+    }
     return result;
   }
 }

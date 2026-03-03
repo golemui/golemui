@@ -1,7 +1,7 @@
-import { GslLayoutsLeafSelector } from '../../core/dx.domain';
+import { GslLeafSelector } from '../../core/dx.domain';
 import { GslLayoutsConfig } from './layouts.domain';
 
-export function _gslLayoutById(id: string, config: GslLayoutsConfig): GslLayoutsLeafSelector {
+export function _gslLayoutById(id: string, config: GslLayoutsConfig): GslLeafSelector {
   return {
     kind: 'leaf',
     selectorType: 'LAYOUTS',

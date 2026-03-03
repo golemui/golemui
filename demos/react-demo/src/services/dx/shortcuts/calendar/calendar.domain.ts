@@ -3,36 +3,49 @@ import { DxRuntimeParams } from '../inputs/inputs.domain';
 import { WidgetItemDecorator } from '../../formDef.domain';
 
 // ═══════════════════════════════════════════════════
-// Display Decorator
+// Calendar Decorators
 // ═══════════════════════════════════════════════════
 
-export interface DisplayDecorator extends WidgetItemDecorator {
-  render: (params: DxRuntimeParams) => any;
+export interface CalendarDecorator extends WidgetItemDecorator {
+  type: 'calendar';
+  path?: string;
+  label?: string | null;
+  minDate?: string;
+  maxDate?: string;
 }
 
 // ═══════════════════════════════════════════════════
-// Display Sensible Defaults Config
+// Calendar Sensible Defaults Config
 // ═══════════════════════════════════════════════════
 
-export type DisplaySensibleDefaultsConfig = Record<string, never>;
-
-// ═══════════════════════════════════════════════════
-// GSL Display Types
-// ═══════════════════════════════════════════════════
-
-export type GslDisplayDecoratorCallback = (current: DisplayDecorator) => Partial<DisplayDecorator> | RuntimeFunction;
-
-export interface GslDisplaysConfig {
-  decorator?: Partial<DisplayDecorator> | GslDisplayDecoratorCallback;
+export interface CalendarSensibleDefaultsConfig {
+  suppressAutomaticLabels?: boolean;
 }
 
 // ═══════════════════════════════════════════════════
-// GUI Display Types
+// GSL Calendar Types
 // ═══════════════════════════════════════════════════
 
-export type DisplayEntry = DisplayDecorator;
+export type GslCalendarDecoratorCallback = (current: CalendarDecorator) => Partial<CalendarDecorator> | RuntimeFunction;
 
-export interface GuiDisplayItemsShortcut extends GuiItemsShortcut {
-  itemType: 'DISPLAYS';
-  items: DisplayEntry[];
+export interface GslCalendarConfig {
+  decorator?: Partial<CalendarDecorator> | GslCalendarDecoratorCallback;
+  suppressAutomaticLabels?: boolean;
+}
+
+// ═══════════════════════════════════════════════════
+// GUI Calendar Types
+// ═══════════════════════════════════════════════════
+
+export type PartialCalendarDefCallback = (
+  params: DxRuntimeParams,
+) => Partial<CalendarDecorator>;
+
+export type CalendarDefOrCallback = CalendarDecorator | PartialCalendarDefCallback;
+
+export type CalendarEntry = CalendarDefOrCallback;
+
+export interface GuiCalendarShortcut extends GuiItemsShortcut {
+  itemType: 'CALENDAR';
+  items: CalendarEntry[];
 }

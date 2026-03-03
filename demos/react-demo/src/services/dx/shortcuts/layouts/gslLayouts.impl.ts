@@ -1,10 +1,10 @@
-import { GslLayoutsLeafSelector } from '../../core/dx.domain';
+import { GslLeafSelector } from '../../core/dx.domain';
 import { LayoutDecorator, GslLayoutsConfig } from './layouts.domain';
 
 export function _gslLayouts(
   config: GslLayoutsConfig,
   matcher: (decorator: LayoutDecorator) => boolean = () => true,
-): GslLayoutsLeafSelector {
+): GslLeafSelector {
   return {
     kind: 'leaf',
     selectorType: 'LAYOUTS',

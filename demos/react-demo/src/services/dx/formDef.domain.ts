@@ -6,7 +6,7 @@ import { DxRuntimeParams } from './shortcuts/inputs/inputs.domain';
 // Base Types (owned here)
 // ═══════════════════════════════════════════════════
 
-export type GslItemType = 'INPUTS' | 'ACTIONS' | 'LAYOUTS' | 'DISPLAYS';
+export type GslItemType = string;
 
 export interface WidgetItemDecorator {
   itemType?: GslItemType;

@@ -1,11 +1,5 @@
 import { FunctionWidgetParams } from '@golemui/core';
 import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
-import type { InputDecorator, InputSensibleDefaultsConfig, GslInputsConfig } from '../shortcuts/inputs/inputs.domain';
-import type { ActionDecorator, ActionSensibleDefaultsConfig, GslActionsConfig } from '../shortcuts/actions/actions.domain';
-import type { LayoutDecorator, LayoutSensibleDefaultsConfig, GslLayoutsConfig, LayoutEntry, GuiLayoutItemsShortcut } from '../shortcuts/layouts/layouts.domain';
-import type { DisplayDecorator, DisplaySensibleDefaultsConfig, GslDisplaysConfig, DisplayEntry, GuiDisplayItemsShortcut } from '../shortcuts/display/display.domain';
-import type { GuiInputsShortcut, InputEntry } from '../shortcuts/inputs/inputs.domain';
-import type { GuiActionsShortcut, ActionEntry } from '../shortcuts/actions/actions.domain';
 
 export type { GslItemType } from '../formDef.domain';
 
@@ -16,26 +10,17 @@ export type { GslItemType } from '../formDef.domain';
 export type RuntimeFunction = (params: FunctionWidgetParams<any>) => any;
 
 // ═══════════════════════════════════════════════════
-// GUI Item Type (single source of truth)
+// GUI Item Type (open — new types register at runtime)
 // ═══════════════════════════════════════════════════
 
-export type GUI_ITEM_TYPE_INPUTS = 'INPUTS';
-export type GUI_ITEM_TYPE_ACTIONS = 'ACTIONS';
-export type GUI_ITEM_TYPE_LAYOUTS = 'LAYOUTS';
-export type GUI_ITEM_TYPE_DISPLAYS = 'DISPLAYS';
-export type GuiItemType = GUI_ITEM_TYPE_INPUTS | GUI_ITEM_TYPE_ACTIONS | GUI_ITEM_TYPE_LAYOUTS | GUI_ITEM_TYPE_DISPLAYS;
+export type GuiItemType = string;
 
-export const GuiItemTypes: {
-  INPUTS: GUI_ITEM_TYPE_INPUTS;
-  ACTIONS: GUI_ITEM_TYPE_ACTIONS;
-  LAYOUTS: GUI_ITEM_TYPE_LAYOUTS;
-  DISPLAYS: GUI_ITEM_TYPE_DISPLAYS;
-} = {
+export const GuiItemTypes = {
   INPUTS: 'INPUTS',
   ACTIONS: 'ACTIONS',
   LAYOUTS: 'LAYOUTS',
   DISPLAYS: 'DISPLAYS',
-};
+} as const satisfies Record<string, string>;
 
 // ═══════════════════════════════════════════════════
 // GUI Shortcut Core Shapes
@@ -46,17 +31,13 @@ export const GuiItemTypes: {
 export interface GuiItemsShortcut {
   type: 'ITEMS';
   itemType: GuiItemType;
-  items: InputEntry[] | ActionEntry[] | LayoutEntry[] | DisplayEntry[];
+  items: any[];
   tags: string[];
 }
 
-// ── Union ──
+// ── Union (open — sub-interfaces live in each shortcut folder) ──
 
-export type ValidGuiShortcut =
-  | GuiInputsShortcut
-  | GuiActionsShortcut
-  | GuiLayoutItemsShortcut
-  | GuiDisplayItemsShortcut;
+export type ValidGuiShortcut = GuiItemsShortcut;
 
 // ═══════════════════════════════════════════════════
 // GSL Matcher
@@ -65,40 +46,16 @@ export type ValidGuiShortcut =
 export type GslMatcher = (decorator: WidgetItemDecorator) => boolean;
 
 // ═══════════════════════════════════════════════════
-// Leaf Selectors
+// Leaf Selectors (open — config is generic)
 // ═══════════════════════════════════════════════════
 
-export type GslLeafConfig = GslInputsConfig | GslActionsConfig | GslLayoutsConfig | GslDisplaysConfig;
+export type GslLeafConfig = Record<string, any>;
 
 export interface GslLeafSelector {
   kind: 'leaf';
   selectorType: GslItemType;
   matcher: (decorator: any) => boolean;
   config: GslLeafConfig;
-}
-
-export interface GslInputsLeafSelector extends GslLeafSelector {
-  selectorType: 'INPUTS';
-  matcher: (decorator: InputDecorator) => boolean;
-  config: GslInputsConfig;
-}
-
-export interface GslActionsLeafSelector extends GslLeafSelector {
-  selectorType: 'ACTIONS';
-  matcher: (decorator: ActionDecorator) => boolean;
-  config: GslActionsConfig;
-}
-
-export interface GslLayoutsLeafSelector extends GslLeafSelector {
-  selectorType: 'LAYOUTS';
-  matcher: (decorator: LayoutDecorator) => boolean;
-  config: GslLayoutsConfig;
-}
-
-export interface GslDisplaysLeafSelector extends GslLeafSelector {
-  selectorType: 'DISPLAYS';
-  matcher: (decorator: DisplayDecorator) => boolean;
-  config: GslDisplaysConfig;
 }
 
 // ═══════════════════════════════════════════════════
@@ -132,10 +89,7 @@ export type GslSelectorsInput = GslSelector | GslSelector[];
 
 export interface ResolvedSelectors {
   leafSelectors: GslLeafSelector[];
-  aggregatedInputSensibleDefaults: InputSensibleDefaultsConfig;
-  aggregatedActionSensibleDefaults: ActionSensibleDefaultsConfig;
-  aggregatedLayoutSensibleDefaults: LayoutSensibleDefaultsConfig;
-  aggregatedDisplaySensibleDefaults: DisplaySensibleDefaultsConfig;
+  sensibleDefaults: Record<string, Record<string, any>>;
 }
 
 // ═══════════════════════════════════════════════════
@@ -143,6 +97,6 @@ export interface ResolvedSelectors {
 // ═══════════════════════════════════════════════════
 
 export type MergeResult =
-  | { kind: 'static'; def: InputDecorator | ActionDecorator | LayoutDecorator | DisplayDecorator }
+  | { kind: 'static'; def: Record<string, any> }
   | { kind: 'dynamic'; fn: RuntimeFunction };
 

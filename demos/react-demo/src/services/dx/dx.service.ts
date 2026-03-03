@@ -26,6 +26,13 @@ import selectorNormalizer, { SelectorNormalizer } from './core/selectorNormalize
 import actionOnClickService, { ActionOnClickService } from './core/actionOnClick.service';
 import { ItemWalker } from './core/itemWalker.service';
 
+// ── Item type registrations (side-effect imports) ──
+import './shortcuts/inputs/register';
+import './shortcuts/actions/register';
+import './shortcuts/layouts/register';
+import './shortcuts/display/register';
+import './shortcuts/calendar/register';
+
 type OnClickRegistry = Map<string, (data: any) => void>;
 
 interface PreparedForm {

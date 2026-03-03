@@ -1,7 +1,7 @@
-import { GslActionsLeafSelector } from '../../core/dx.domain';
+import { GslLeafSelector } from '../../core/dx.domain';
 import { GslActionsConfig } from './actions.domain';
 
-export function _gslActionById(id: string, config: GslActionsConfig): GslActionsLeafSelector {
+export function _gslActionById(id: string, config: GslActionsConfig): GslLeafSelector {
   return {
     kind: 'leaf',
     selectorType: 'ACTIONS',

@@ -1,5 +1,5 @@
 import { WidgetItemDecorator } from '../../formDef.domain';
-import { RuntimeFunction, GuiItemsShortcut, GUI_ITEM_TYPE_ACTIONS } from '../../core/dx.domain';
+import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
 
 // ═══════════════════════════════════════════════════
@@ -41,6 +41,6 @@ export interface GslActionsConfig {
 export type ActionEntry = ActionDecorator | ActionDefCallback;
 
 export interface GuiActionsShortcut extends GuiItemsShortcut {
-  itemType: GUI_ITEM_TYPE_ACTIONS;
+  itemType: 'ACTIONS';
   items: ActionEntry[];
 }

@@ -1,7 +1,7 @@
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import * as ValidatorsVanilla from '@golemui/gui-validators';
 import { FunctionWidgetParams } from '@golemui/core';
 import { WidgetItemDecorator } from '../../formDef.domain';
-import { RuntimeFunction, GuiItemsShortcut, GUI_ITEM_TYPE_INPUTS } from '../../core/dx.domain';
+import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
 
 // ═══════════════════════════════════════════════════
 // Input Decorators
@@ -77,6 +77,6 @@ export type InputDefOrCallback = InputDecorator | PartialInputDefCallback;
 export type InputEntry = { key: string; def: InputDefOrCallback };
 
 export interface GuiInputsShortcut extends GuiItemsShortcut {
-  itemType: GUI_ITEM_TYPE_INPUTS;
+  itemType: 'INPUTS';
   items: InputEntry[];
 }

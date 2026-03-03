@@ -13,14 +13,13 @@ import {
 } from './dx.domain';
 import type { GuiItemType } from './dx.domain';
 import type { GslItemType, WidgetItemDecorator } from '../formDef.domain';
-import { InputDecorator, InputDefOrCallback, PartialInputDefCallback, InputEntry } from '../shortcuts/inputs/inputs.domain';
-import { ActionDecorator, ActionDefCallback, ActionDefOrCallback, ActionEntry } from '../shortcuts/actions/actions.domain';
-import { LayoutDecorator, LayoutEntry, LayoutDefOrCallback } from '../shortcuts/layouts/layouts.domain';
-import { DisplayDecorator, DisplayEntry } from '../shortcuts/display/display.domain';
+import { LayoutEntry, LayoutDefOrCallback } from '../shortcuts/layouts/layouts.domain';
+import { DisplayEntry } from '../shortcuts/display/display.domain';
 import { SelectorResolver } from './selectorResolver.service';
 import { WidgetMerger } from './widgetMerger.service';
 import { WidgetMapper } from './widgetMapper.service';
 import { ActionOnClickService } from './actionOnClick.service';
+import { getItemTypeHandler } from './itemTypeRegistry';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 
@@ -63,7 +62,7 @@ export class ItemWalker {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    entry: InputEntry | ActionEntry | LayoutEntry | DisplayEntry,
+    entry: any,
     itemType: GuiItemType,
     parentTags: string[],
     gslSelectors: GslSelector[],
@@ -71,7 +70,7 @@ export class ItemWalker {
     rootDefaults: GslRootDefaults,
   ): FormWidget<StateKeys, FormData> {
 
-    const gslItemType: GslItemType = itemType as GslItemType;
+    const gslItemType: GslItemType = itemType;
 
     // ── LAYOUTS: process through pipeline, then attach children ──
     if (itemType === GuiItemTypes.LAYOUTS) {
@@ -87,21 +86,22 @@ export class ItemWalker {
       );
     }
 
-    // ── INPUTS / ACTIONS: existing pipeline ──
-
-    // Extract the base provider (static def or callback)
-    let baseProvider: InputDefOrCallback | ActionDefOrCallback;
-    if (itemType === GuiItemTypes.INPUTS) {
-      const asInput = entry as InputEntry;
-      baseProvider = asInput.def;
-    } else {
-      baseProvider = entry as ActionEntry;
-    }
+    // ── Generic pipeline (INPUTS, ACTIONS, CALENDAR, etc.) ──
+    const handler = getItemTypeHandler(itemType);
+    const parsed = handler.parseEntry(entry);
+    const baseProvider = parsed.baseDef;
 
     // Build the baseDef — either static or a RuntimeFunction
-    const baseDef: InputDecorator | ActionDecorator | LayoutDecorator | DisplayDecorator | RuntimeFunction = typeof baseProvider === 'function'
-      ? this.buildRuntimeBaseDef(entry as InputEntry | ActionEntry, baseProvider, itemType)
-      : this.parseValue(entry as InputEntry | ActionEntry, itemType);
+    let baseDef: Record<string, any> | RuntimeFunction;
+    if (typeof baseProvider === 'function') {
+      baseDef = (params: FunctionWidgetParams<any>) => {
+        const safeParams = params ?? ({} as FunctionWidgetParams<any>);
+        const hotMapping = baseProvider(safeParams);
+        return parsed.path != null ? { ...hotMapping, path: parsed.path } : hotMapping;
+      };
+    } else {
+      baseDef = parsed.path != null ? { ...baseProvider, path: parsed.path } : baseProvider;
+    }
 
     // Populate decorator properties for selector matching
     const decoratorForMatching = this.buildDecoratorForMatching(baseDef, gslItemType, parentTags);
@@ -134,7 +134,7 @@ export class ItemWalker {
     const layoutDef = entry.def;
     const baseProvider: LayoutDefOrCallback = layoutDef;
 
-    const baseDef: LayoutDecorator | RuntimeFunction = typeof baseProvider === 'function'
+    const baseDef: Record<string, any> | RuntimeFunction = typeof baseProvider === 'function'
       ? (params: FunctionWidgetParams<any>) => baseProvider(params)
       : baseProvider;
 
@@ -184,7 +184,7 @@ export class ItemWalker {
 
     // Displays are always rendered as function widgets (they need runtime params)
     if (mergeResult.kind === 'static') {
-      const displayDef = mergeResult.def as DisplayDecorator;
+      const displayDef = mergeResult.def as any;
       const fn = ((params?: FunctionWidgetParams<FormData>) => ({
         uid: '',
         kind: 'display' as const,
@@ -196,7 +196,7 @@ export class ItemWalker {
 
     const runtimeFn = mergeResult.fn;
     const fn = ((params?: FunctionWidgetParams<FormData>) => {
-      const displayDef = runtimeFn(params as any) as DisplayDecorator;
+      const displayDef = runtimeFn(params as any);
       return {
         uid: '',
         kind: 'display' as const,
@@ -208,7 +208,7 @@ export class ItemWalker {
   }
 
   private buildDecoratorForMatching(
-    baseDef: InputDecorator | ActionDecorator | LayoutDecorator | DisplayDecorator | RuntimeFunction,
+    baseDef: Record<string, any> | RuntimeFunction,
     itemType: GslItemType,
     parentTags: string[],
   ): WidgetItemDecorator {
@@ -218,45 +218,5 @@ export class ItemWalker {
     const tags = [...parentTags, ...('tags' in baseDef && baseDef.tags ? baseDef.tags : [])];
     const uid = 'uid' in baseDef ? baseDef.uid : undefined;
     return { itemType, tags, uid };
-  }
-
-  private buildRuntimeBaseDef(
-    entry: InputEntry | ActionEntry,
-    baseProvider: PartialInputDefCallback | ActionDefCallback,
-    itemType: GuiItemType,
-  ): RuntimeFunction {
-    return (params: FunctionWidgetParams<any>) => {
-      const safeParams = params ?? ({} as FunctionWidgetParams<any>);
-      const hotMapping = baseProvider(safeParams);
-
-      return itemType === GuiItemTypes.ACTIONS
-        ? hotMapping as ActionDecorator
-        : this.parseFieldKey(
-            hotMapping as InputDecorator,
-            (entry as InputEntry).key,
-          );
-    };
-  }
-
-  private parseValue(entry: InputEntry | ActionEntry, itemType: GuiItemType): ActionDecorator | InputDecorator {
-    if (itemType === GuiItemTypes.INPUTS) {
-      const inputEntry = entry as InputEntry;
-      const def = inputEntry.def;
-      if (typeof def === 'function') {
-        throw new Error('Callback functions should be handled before parseValue is called');
-      }
-      return this.parseFieldKey(def, inputEntry.key);
-    }
-    if (typeof entry === 'function') {
-      throw new Error('Callback functions should be handled before parseValue is called');
-    }
-    return entry as ActionDecorator;
-  }
-
-  private parseFieldKey(inputDef: InputDecorator, key: string): InputDecorator {
-    return {
-      ...inputDef,
-      path: key,
-    };
   }
 }

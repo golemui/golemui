@@ -1,8 +1,7 @@
 import { ReactElement, useEffect, useMemo } from 'react';
 import * as Core from '@golemui/core';
-import * as React from '@golemui/react';
-import { FormComponent } from '@golemui/react-vanilla';
-import * as ValidatorsVanilla from '@golemui/validators-vanilla';
+import { FormComponent } from '@golemui/gui-react';
+import * as ValidatorsVanilla from '@golemui/gui-validators';
 import * as AppsShared from '@golemui/apps-shared';
 import { DxDefinitions, FormEvents } from '../services/dx/formDef.domain';
 import { GslSelectorsInput } from '../services/dx/core/dx.domain';

@@ -5,22 +5,16 @@ import {
   ResolvedSelectors,
   RuntimeFunction,
 } from './dx.domain';
-import { InputDecorator, InputSensibleDefaultsConfig } from '../shortcuts/inputs/inputs.domain';
-import { ActionDecorator } from '../shortcuts/actions/actions.domain';
-import { LayoutDecorator } from '../shortcuts/layouts/layouts.domain';
 import objectUtils, { ObjectUtils } from '../../../utils/objectUtils.service';
-import inputSensibleDefaultsService, {
-  InputSensibleDefaultsService,
-} from '../shortcuts/inputs/inputSensibleDefaults.service';
+import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
 
 export class WidgetMerger {
   constructor(
     private readonly objectUtils: ObjectUtils,
-    private readonly inputSensibleDefaults: InputSensibleDefaultsService,
   ) {}
 
   merge(
-    baseDef: InputDecorator | ActionDecorator | LayoutDecorator | RuntimeFunction,
+    baseDef: Record<string, any> | RuntimeFunction,
     itemType: GslItemType,
     resolved: ResolvedSelectors,
   ): MergeResult {
@@ -52,7 +46,7 @@ export class WidgetMerger {
         if (typeof result === 'function') {
           promotedToRuntime = this.createPromotedFunction(
             accumulated,
-            baseDef as InputDecorator | ActionDecorator | LayoutDecorator,
+            baseDef as Record<string, any>,
             result as RuntimeFunction,
             itemType,
             resolved,
@@ -78,14 +72,7 @@ export class WidgetMerger {
     // Sensible defaults produce values based on the MERGED state of the def
     // (so they can read `path` from baseDef). They only fill in properties
     // that are still missing after all decorators and the inline def.
-    let final = { ...merged };
-
-    if (itemType === 'INPUTS') {
-      final = this.applyInputSensibleDefaults(
-        final as InputDecorator,
-        resolved.aggregatedInputSensibleDefaults,
-      );
-    }
+    const final = this.applySensibleDefaults({ ...merged }, itemType, resolved);
 
     return { kind: 'static', def: final };
   }
@@ -94,9 +81,9 @@ export class WidgetMerger {
 
   private collectDecorators(
     resolved: ResolvedSelectors,
-  ): (Partial<InputDecorator | ActionDecorator | LayoutDecorator> | ((...args: any[]) => any))[] {
+  ): (Record<string, any> | ((...args: any[]) => any))[] {
 
-    const decorators: (Partial<InputDecorator | ActionDecorator | LayoutDecorator> | ((...args: any[]) => any))[] = [];
+    const decorators: (Record<string, any> | ((...args: any[]) => any))[] = [];
 
     for (const leaf of resolved.leafSelectors) {
       const config = leaf.config as { decorator?: any };
@@ -108,22 +95,23 @@ export class WidgetMerger {
     return decorators;
   }
 
-  // ── Apply input sensible defaults ──
+  // ── Apply sensible defaults via registry ──
 
-  private applyInputSensibleDefaults(
-    item: InputDecorator,
-    config: InputSensibleDefaultsConfig,
-  ): InputDecorator {
-    let result = this.inputSensibleDefaults.processAutomaticLabels(item, config);
-    result = this.inputSensibleDefaults.processAutomaticPlaceholders(result, config);
-    return result;
+  private applySensibleDefaults(
+    def: Record<string, any>,
+    itemType: GslItemType,
+    resolved: ResolvedSelectors,
+  ): Record<string, any> {
+    if (!hasItemTypeHandler(itemType)) return def;
+    const config = resolved.sensibleDefaults[itemType] ?? {};
+    return getItemTypeHandler(itemType).applySensibleDefaults(def, config);
   }
 
   // ── Create promoted FunctionWidget ──
 
   private createPromotedFunction(
     accumulatedSoFar: Record<string, any>,
-    baseDef: InputDecorator | ActionDecorator | LayoutDecorator,
+    baseDef: Record<string, any>,
     runtimeFn: RuntimeFunction,
     itemType: GslItemType,
     resolved: ResolvedSelectors,
@@ -135,14 +123,7 @@ export class WidgetMerger {
       // Inline wins last
       merged = this.objectUtils.deepMerge(merged, baseDef);
 
-      if (itemType === 'INPUTS') {
-        merged = this.applyInputSensibleDefaults(
-          merged as InputDecorator,
-          resolved.aggregatedInputSensibleDefaults,
-        );
-      }
-
-      return merged;
+      return this.applySensibleDefaults(merged, itemType, resolved);
     };
   }
 
@@ -161,14 +142,7 @@ export class WidgetMerger {
         result = this.objectUtils.deepMerge(accumulated, result);
       }
 
-      if (itemType === 'INPUTS') {
-        result = this.applyInputSensibleDefaults(
-          result as InputDecorator,
-          resolved.aggregatedInputSensibleDefaults,
-        );
-      }
-
-      return result;
+      return this.applySensibleDefaults(result, itemType, resolved);
     };
   }
 
@@ -196,5 +170,5 @@ export class WidgetMerger {
   }
 }
 
-const widgetMerger = new WidgetMerger(objectUtils, inputSensibleDefaultsService);
+const widgetMerger = new WidgetMerger(objectUtils);
 export default widgetMerger;
