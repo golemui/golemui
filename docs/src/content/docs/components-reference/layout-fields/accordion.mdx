@@ -1,61 +1,42 @@
 ---
 title: Accordion
-description: An Accordion component to display collapsable information and content
+description: A Layout component for organizing content into collapsible sections
 ---
+import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
 import accordionJson from '../../../../../public/template/components/accordion/accordion.json?raw';
-import accordionSingleOpenJson
-from '../../../../../public/template/components/accordion/accordion-single-open.json?raw';
-import accordionDefaultOpenJson
-from '../../../../../public/template/components/accordion/accordion-default-open.json?raw';
+import accordionSingleJson from '../../../../../public/template/components/accordion/accordion-single.json?raw';
 import accordionAnatomyHtml from '../../../../../public/template/components/accordion/accordion-anatomy.html?raw';
 export const configJson = 'accordion.json';
-export const anatomy = 'accordion.html';
+export const anatomy = 'accordion-anatomy.html';
 
-Accordion components are [Layout Fields](/components-reference/layout-fields/overview) that organize collapsable information.
+Accordion components are [Layout Fields](/components-reference/layout-fields/overview) that allow users to toggle the visibility of content sections. They are ideal for grouping related fields and saving vertical space in complex forms.
 
 <Code code={accordionJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/accordion/accordion.json"
-  title="Accordion example"
-  width="100%"
-  style="height: 570px;"
-></iframe>
+/>
 
 ## Props
 
-Use this `props` to customize your Accordion component.
+Use these `props` to customize your Accordion component.
 
-| prop          | type    | value                                                                                     |
-| ------------- | ------- | ----------------------------------------------------------------------------------------- |
-| `singleOpen`  | boolean | A boolean value to have only one active section at a time                                 |
-| `defaultOpen` | object  | An object with a dictionary of sections with boolean values to display sections on start  |
-| `sections`    | array   | **MANDATORY** An array of objects with `title` and a target `uid` in the `children` array |
+| prop          | type    | description                                                                                                         |
+| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `sections`    | array   | **Required**. Array of section definitions: `{ label: string, uid: string }`                                        |
+| `singleOpen`  | boolean | If `true`, only one section can be open at a time. Defaults to `false`                                              |
+| `defaultOpen` | object  | Object mapping section `uid`s to boolean state (e.g., `{ "section_1": true }`)                                      |
+| `renderMode`  | string  | Either `'all'` (renders hidden sections in DOM) or `'activeOnly'` (renders only open sections). Defaults to `'all'` |
 
 ### Single Open
 
-Use the property `singleOpen` to display only one section. When `true` Accordion component will collapse other sections if a new section has been selected.
+Use the `singleOpen` property to ensure that opening one section automatically closes others.
 
-<Code code={accordionSingleOpenJson} lang="js" title={configJson} />
-<iframe
-  src="/template/index.html?form=template/components/accordion/accordion-single-open.json"
-  title="Accordion with single open"
-  width="100%"
-  style="height: 340px;"
-></iframe>
-
-### Default Open
-
-Use the property `defaultOpen` to open one or more sections on start.
-
-<Code code={accordionDefaultOpenJson} lang="js" title={configJson} />
-<iframe
-  src="/template/index.html?form=template/components/accordion/accordion-default-open.json"
-  title="Accordion with default open"
-  width="100%"
-  style="height: 570px;"
-></iframe>
+<Code code={accordionSingleJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/accordion/accordion-single.json"
+/>
 
 ## Styling
 
@@ -63,15 +44,14 @@ Accordions can be styled as explained in the [Styling Guide](/guides/styling).
 
 ### CSS Variables
 
-Following you will find a list with the CSS Variables and a quick description of what you will style.
+Following you will find a list with the CSS Variables used to style the accordion.
 
-| CSS Variable         | Description                         |
-| -------------------- | ----------------------------------- |
-| `--gui-space-gap`    | Accordion margins                   |
-| `--gui-padding`      | Button and Section padding          |
-| `--gui-color-border` | Button and Section border color     |
-| `--gui-color-bg`     | Button and Section background color |
-| `--gui-color-fg`     | Button and Section text color       |
+| CSS Variable           | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `--gui-bg-default`     | Background color for sections and buttons |
+| `--gui-border-default` | Border color for sections and buttons     |
+| `--gui-text-default`   | Text color for labels                     |
+| `--gui-space-3`        | Padding inside sections and buttons       |
 
 ### Anatomy
 

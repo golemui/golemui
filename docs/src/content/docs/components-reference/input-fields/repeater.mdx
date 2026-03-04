@@ -1,11 +1,8 @@
 ---
 title: Repeater
 description: A Repeater component to allow the user to enter information as a list
-sidebar:
-  badge:
-    text: Enterprise
-    variant: danger
 ---
+import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
 import repeaterJson from '../../../../../public/template/components/repeater/repeater.json?raw';
@@ -15,15 +12,12 @@ import repeaterAnatomyHtml from '../../../../../public/template/components/repea
 export const configJson = 'repeater.json';
 export const anatomy = 'repeater.html';
 
-Repeater components are [Control Fields](/components-reference/control-fields/overview) that allow the user to enter information as a list given a template. The information will be stored and returned as an array of objects.
+Repeater components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter information as a list given a template. The information will be stored and returned as an array of objects.
 
 <Code code={repeaterJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/repeater/repeater.json"
-  title="Repeater example"
-  width="100%"
-  style="height: 650px"
-></iframe>
+/>
 
 ## Props
 
@@ -38,39 +32,30 @@ Use this `props` to customize your Repeater component.
 
 ### Template
 
-Use the property `template` to render a tree of Field components for each item in the array of the Repeater component. The `path` in the [Control Fields](/components-reference/control-fields/overview) components inside the `template` will be updated replacing `items` keyword by the index of the array. For example, `users.items.firstName` will be replaced by `users[0].firstName` for the first element and so on.
+Use the property `template` to render a tree of Field components for each item in the array of the Repeater component. The `path` in the [Input Fields](/components-reference/input-fields/overview) components inside the `template` will be updated replacing `items` keyword by the index of the array. For example, `users.items.firstName` will be replaced by `users[0].firstName` for the first element and so on.
 
 <Code code={repeaterJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/repeater/repeater.json"
-  title="Repeater example"
-  width="100%"
-  style="height: 650px"
-></iframe>
+/>
 
 ### Add and Remove Labels
 
 Use the property `addLabel` and `removeLabel` to set custom labels for the Add and Remove button.
 
 <Code code={repeaterLabelsJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/repeater/repeater-labels.json"
-  title="Repeater with custom labels"
-  width="100%"
-  style="height: 650px"
-></iframe>
+/>
 
 ### Limit
 
 Use the property `limit` to set a limit to the number of elements that can be added to a repeater.
 
 <Code code={repeaterLimitJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/repeater/repeater-limit.json"
-  title="Repeater with limit"
-  width="100%"
-  style="height: 650px"
-></iframe>
+/>
 
 ## Styling
 

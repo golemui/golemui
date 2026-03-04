@@ -1,40 +1,20 @@
 {
   "form": [
     {
-      "uid": "",
+      "uid": "repeater_limit",
       "kind": "input",
       "type": "repeater",
-      "path": "users",
-      "defaultValue": [
-        {
-          "firstName": "John",
-          "lastName": "Doe"
-        },
-        {
-          "firstName": "Jane",
-          "lastName": "Doe"
-        }
-      ],
+      "path": "contacts",
+      "label": "Emergency Contacts",
       "props": {
-        "limit": 2,
+        "limit": 3,
+        "addLabel": "Add Contact",
+        "removeLabel": "Delete",
         "template": {
-          "uid": "",
-          "kind": "layout",
-          "type": "flex",
-          "children": [
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "users.items.firstName"
-            },
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "users.items.lastName"
-            }
-          ]
+          "kind": "input",
+          "type": "textinput",
+          "path": "phone",
+          "label": "Phone Number"
         }
       }
     }

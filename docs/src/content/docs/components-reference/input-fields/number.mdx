@@ -2,6 +2,7 @@
 title: Number
 description: A Number component to allow user to enter string chains
 ---
+import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
 import numberJson from '../../../../../public/template/components/number/number.json?raw';
@@ -13,14 +14,12 @@ import numberAnatomyHtml from '../../../../../public/template/components/number/
 export const configJson = 'number.json';
 export const anatomy = 'number.html';
 
-Number components are [Control Fields](/components-reference/control-fields/overview) that allow the user to enter numeric values.
+Number components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter numeric values.
 
 <Code code={numberJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/number/number.json"
-  title="Number example"
-  width="100%"
-></iframe>
+/>
 
 ## Props
 
@@ -39,47 +38,36 @@ Use this `props` to customize your Number component.
 Use the property `placeholder` to add a placeholder.
 
 <Code code={numberPlaceholderJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/number/number-placeholder.json"
-  title="Number with placeholder"
-  width="100%"
-></iframe>
+/>
 
 ### Hint
 
 Use the property `hint` to add a description.
 
 <Code code={numberHintJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/number/number-hint.json"
-  title="Number with hint"
-  width="100%"
-  style="height: 171px"
-></iframe>
+/>
 
 ### Icon
 
 Use the property `icon` to add an icon to the `number`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed on the `left` by default, you can set the property `iconPosition` to `right` if you want the icon to be right aligned.
 
 <Code code={numberIconJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/number/number-icon.json"
-  title="Number with icon"
-  width="100%"
-  style="height: 278px"
-></iframe>
+/>
 
 ### Step
 
 Use the properties `step` to set a jump value on each keystroke using the arrow keys. This number can be decimal.
 
 <Code code={numberStepJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/number/number-step.json"
-  title="Number with step"
-  width="100%"
-  style="height: 158px"
-></iframe>
+/>
 
 ## Styling
 

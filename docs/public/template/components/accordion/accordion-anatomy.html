@@ -1,9 +1,30 @@
-<gui-accordion>
-  <div class="gui-accordion__section">
-    <button type="button" tabindex="1" class="active" aria-expanded="true">
-      Label<span class="gui-accordion__icon"></span>
-    </button>
+<div class="gui-accordion">
+  <div class="gui-widget" id="accordion_uid">
+    
+    <div class="gui-accordion__section">
+      <button type="button" class="active" id="accordion_button_personal" aria-expanded="true">
+        Personal Information
+        <span class="gui-accordion__icon"></span>
+      </button>
+      
+      <section role="region" id="accordion_section_personal" aria-labelledby="accordion_button_personal">
+        <!-- Content for Personal Information -->
+        <div class="gui-widget">
+           <!-- Child widgets render here -->
+        </div>
+      </section>
+    </div>
 
-    <section class="gui-widget" role="region"></section>
+    <div class="gui-accordion__section">
+      <button type="button" id="accordion_button_account" aria-expanded="false">
+        Account Settings
+        <span class="gui-accordion__icon"></span>
+      </button>
+      
+      <section role="region" id="accordion_section_account" aria-labelledby="accordion_button_account" hidden>
+        <!-- Content for Account Settings -->
+      </section>
+    </div>
+
   </div>
-</gui-accordion>
+</div>

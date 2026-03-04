@@ -1,0 +1,101 @@
+---
+title: Currency
+description: A Currency component to allow user to enter monetary values
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import currencyJson from '../../../../../public/template/components/currency/currency.json?raw';
+import currencyPlaceholderJson from '../../../../../public/template/components/currency/currency-placeholder.json?raw';
+import currencyHintJson from '../../../../../public/template/components/currency/currency-hint.json?raw';
+import currencyIconJson from '../../../../../public/template/components/currency/currency-icon.json?raw';
+import currencyFormatJson from '../../../../../public/template/components/currency/currency-format.json?raw';
+import currencyAnatomyHtml from '../../../../../public/template/components/currency/currency-anatomy.html?raw';
+export const configJson = 'currency.json';
+export const anatomy = 'currency-anatomy.html';
+
+Currency components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter monetary values, displaying a formatted currency string over the input when inactive.
+
+<Code code={currencyJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency.json"
+/>
+
+## Props
+
+Use these `props` to customize your Currency component.
+
+| prop                    | type   | description                                                                      |
+| ----------------------- | ------ | -------------------------------------------------------------------------------- |
+| `placeholder`           | string | A placeholder text to display when the currency input has no value               |
+| `hint`                  | string | A description to display below the currency input                                |
+| `icon`                  | string | A css class to display an icon inside the input                                  |
+| `currency`              | string | The ISO 4217 currency code (e.g., `USD`, `EUR`) to format the number as currency |
+| `step`                  | number | Numeric step size for user input                                                 |
+| `maximumFractionDigits` | number | Maximum number of decimal places to include in the formatted string              |
+| `minimumFractionDigits` | number | Minimum number of decimal places to include in the formatted string              |
+
+### Placeholder
+
+Use the property `placeholder` to add a placeholder.
+
+<Code code={currencyPlaceholderJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency-placeholder.json"
+/>
+
+### Hint
+
+Use the property `hint` to add a description.
+
+<Code code={currencyHintJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency-hint.json"
+/>
+
+### Icon
+
+Use the property `icon` to add an icon to the component. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the input field.
+
+<Code code={currencyIconJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency-icon.json"
+/>
+
+### Currency & Decimal Formatting
+
+Use the properties `currency`, `minimumFractionDigits`, and `maximumFractionDigits` to tightly control how the monetary value is parsed and formatted when not actively being edited. Default for minimum fraction digits is usually 2.
+
+<Code code={currencyFormatJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency-format.json"
+/>
+
+## Styling
+
+Currency inputs can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable             | Description                                |
+| ------------------------ | ------------------------------------------ |
+| `--gui-bg-default`       | Formatted value text background over input |
+| `--gui-font-sm`          | Formatted value text and hint font size    |
+| `--gui-space-10`         | Icon left padding or inline-start space    |
+| `--gui-text-default`     | Default text and focus border color        |
+| `--gui-intent-error`     | Border and text color when invalid         |
+| `--gui-space-gap--inner` | Label gap and margin bottom                |
+| `--gui-padding`          | Input padding                              |
+| `--gui-radius`           | Input radius                               |
+| `--gui-color-border`     | Input border color                         |
+| `--gui-color-bg`         | Input background color                     |
+| `--gui-color-fg`         | Input text color                           |
+| `--gui-color-primary`    | Input border color and outline on focus    |
+
+### Anatomy
+
+This is the anatomy of the Currency Component in case you want to use your CSS styles.
+
+<Code code={currencyAnatomyHtml} lang="html" title={anatomy} />

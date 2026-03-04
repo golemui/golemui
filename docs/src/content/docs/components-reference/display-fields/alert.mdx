@@ -1,70 +1,58 @@
 ---
 title: Alert
-description: A Textinput component to allow the user to enter string chains
+description: A Display component for showing status messages, notifications, or feedback to the user
 ---
+import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
 import alertJson from '../../../../../public/template/components/alert/alert.json?raw';
-import alertLevelJson from '../../../../../public/template/components/alert/alert-level.json?raw';
+import alertInfoJson from '../../../../../public/template/components/alert/alert-info.json?raw';
+import alertLevelsJson from '../../../../../public/template/components/alert/alert-levels.json?raw';
 import alertAnatomyHtml from '../../../../../public/template/components/alert/alert-anatomy.html?raw';
 export const configJson = 'alert.json';
-export const anatomy = 'alert.html';
+export const anatomy = 'alert-anatomy.html';
 
-Alert components are [Display Fields](/components-reference/display-fields/overview) to display contextual feedback messages for user actions or system events.
+Alert components are [Display Fields](/components-reference/display-fields/overview) used to provide contextual feedback or record information for the user. They are non-interactive and purely informational.
 
 <Code code={alertJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/alert/alert.json"
-  title="Alert example"
-  width="100%"
-></iframe>
+/>
 
 ## Props
 
-Use this `props` to customize your Alert component.
+Use these `props` to customize your Alert component.
 
-| prop    | type   | value                                                                                                                    |
-| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `text`  | string | **MANDATORY** The message to display                                                                                     |
-| `level` | string | Defines the type of alert to display (`success`, `warning`, `error`, `info`), if no level is set, `default` is the level |
+| prop    | type   | description                                                                                           |
+| ------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `text`  | string | **Required**. The message to display in the alert                                                     |
+| `level` | string | Visual severity of the alert: `default`, `info`, `success`, `warning`, `error`. Defaults to `default` |
 
-### Level
+### Alert Levels
 
-Use the property `level` to determines the tone and appearance of the alert.
+Use the `level` property to change the visual importance and color scheme of the alert.
 
-<Code code={alertLevelJson} lang="js" title={configJson} />
-<iframe
-  src="/template/index.html?form=template/components/alert/alert-level.json"
-  title="Alert with level"
-  width="100%"
-  style="height: 450px;"
-></iframe>
+<Code code={alertLevelsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/alert/alert-levels.json"
+/>
 
 ## Styling
 
-Textinputs can be styled as explained in the [Styling Guide](/guides/styling).
+Alerts can be styled as explained in the [Styling Guide](/guides/styling).
 
 ### CSS Variables
 
-Following you will find a list with the CSS Variables and a quick description of what you will style.
+Following you will find a list with the CSS Variables used to style different severity levels.
 
-| CSS Variable                 | Description                          |
-| ---------------------------- | ------------------------------------ |
-| `--gui-color-default--light` | Background color for `default` level |
-| `--gui-color-default`        | Border color for `default` level     |
-| `--gui-color-default--dark`  | Font color for `default` level       |
-| `--gui-color-info--light`    | Background color for `info` level    |
-| `--gui-color-info`           | Border color for `info` level        |
-| `--gui-color-info--dark`     | Font color for `info` level          |
-| `--gui-color-success--light` | Background color for `success` level |
-| `--gui-color-success`        | Border color for `success` level     |
-| `--gui-color-success--dark`  | Font color for `success` level       |
-| `--gui-color-warning--light` | Background color for `warning` level |
-| `--gui-color-warning`        | Border color for `warning` level     |
-| `--gui-color-warning--dark`  | Font color for `warning` level       |
-| `--gui-color-error--light`   | Background color for `error` level   |
-| `--gui-color-error`          | Border color for `error` level       |
-| `--gui-color-error--dark`    | Font color for `error` level         |
+| CSS Variable           | Description                      |
+| ---------------------- | -------------------------------- |
+| `--gui-intent-info`    | Border color for info alerts     |
+| `--gui-intent-info-bg` | Background color for info alerts |
+| `--gui-intent-success` | Border color for success alerts  |
+| `--gui-intent-warning` | Border color for warning alerts  |
+| `--gui-intent-error`   | Border color for error alerts    |
+| `--gui-radius-md`      | Border radius for the alert box  |
 
 ### Anatomy
 

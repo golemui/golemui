@@ -1,0 +1,73 @@
+---
+title: Dropdown
+description: A Dropdown component that allows users to pick an item from a list or search by typing
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import dropdownJson from '../../../../../public/template/components/dropdown/dropdown.json?raw';
+import dropdownHintJson from '../../../../../public/template/components/dropdown/dropdown-hint.json?raw';
+import dropdownCustomJson from '../../../../../public/template/components/dropdown/dropdown-custom.json?raw';
+import dropdownAnatomyHtml from '../../../../../public/template/components/dropdown/dropdown-anatomy.html?raw';
+export const configJson = 'dropdown.json';
+export const anatomy = 'dropdown-anatomy.html';
+
+Dropdown components are [Input Fields](/components-reference/input-fields/overview) that provide a searchable list of items. Users can either type in the input to filter the list or select an item directly from the interactive dropdown menu.
+
+<Code code={dropdownJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/dropdown/dropdown.json"
+/>
+
+## Props
+
+Use these `props` to customize your Dropdown component.
+
+| prop            | type   | description                                                       |
+| --------------- | ------ | ----------------------------------------------------------------- |
+| `items`         | array  | **Required**. Array of items to be displayed in the dropdown list |
+| `placeholder`   | string | Text shown in the input when it is empty                          |
+| `hint`          | string | A description to display below the input                          |
+| `labelField`    | string | Field to use for the display label when items are objects         |
+| `valueField`    | string | Field to use for the value when items are objects                 |
+| `searchFields`  | array  | List of fields to search on when filtering the list               |
+| `height`        | number | Height of the dropdown list container                             |
+| `itemHeight`    | number | Height of each individual item in the list                        |
+| `inputDebounce` | number | Delay in milliseconds before triggering a search/filter           |
+
+### Hint
+
+Use the property `hint` to provide instructions for the user.
+
+<Code code={dropdownHintJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/dropdown/dropdown-hint.json"
+/>
+
+### Custom Fields
+
+If your items are complex objects, you can specify which fields to use for labels, values, and searching.
+
+<Code code={dropdownCustomJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/dropdown/dropdown-custom.json"
+/>
+
+## Styling
+
+Dropdowns can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Dropdowns leverage standard container and list variables.
+
+| CSS Variable           | Description                     |
+| ---------------------- | ------------------------------- |
+| `--gui-radius-md`      | Border radius for the container |
+| `--gui-border-default` | Default border color            |
+
+### Anatomy
+
+This is the anatomy of the Dropdown Component in case you want to use your CSS styles.
+
+<Code code={dropdownAnatomyHtml} lang="html" title={anatomy} />

@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textarea",
+      "path": "comments",
+      "label": "Comments",
+      "props": {
+        "maxLength": 100,
+        "counterMode": "remaining"
+      }
+    }
+  ]
+}

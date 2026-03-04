@@ -1,39 +1,19 @@
 {
   "form": [
     {
-      "uid": "",
+      "uid": "repeater_basic",
       "kind": "input",
       "type": "repeater",
-      "path": "users",
-      "defaultValue": [
-        {
-          "firstName": "John",
-          "lastName": "Doe"
-        },
-        {
-          "firstName": "Jane",
-          "lastName": "Doe"
-        }
-      ],
+      "path": "items",
+      "label": "Guest List",
       "props": {
+        "addLabel": "Add Guest",
+        "removeLabel": "Remove Guest",
         "template": {
-          "uid": "",
-          "kind": "layout",
-          "type": "flex",
-          "children": [
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "users.items.firstName"
-            },
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "users.items.lastName"
-            }
-          ]
+          "kind": "input",
+          "type": "textinput",
+          "path": "guest_name",
+          "label": "Full Name"
         }
       }
     }

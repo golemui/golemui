@@ -1,0 +1,13 @@
+{
+  "form": [
+    {
+      "uid": "button_disabled",
+      "kind": "action",
+      "type": "button",
+      "props": {
+        "label": "Disabled Button",
+        "disabled": true
+      }
+    }
+  ]
+}

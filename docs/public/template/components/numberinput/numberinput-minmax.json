@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "numberinput",
+      "path": "quantity",
+      "label": "Quantity",
+      "props": {
+        "minimum": 1,
+        "maximum": 10
+      }
+    }
+  ]
+}

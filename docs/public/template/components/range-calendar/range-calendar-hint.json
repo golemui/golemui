@@ -1,0 +1,13 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "range-calendar",
+      "path": "vacationDates",
+      "props": {
+        "hint": "Please select the start and end dates for your vacation"
+      }
+    }
+  ]
+}

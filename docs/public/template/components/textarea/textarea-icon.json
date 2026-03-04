@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textarea",
+      "path": "comments",
+      "label": "Comments",
+      "props": {
+        "icon": "fas fa-comment",
+        "hint": "With an icon in the textarea"
+      }
+    }
+  ]
+}

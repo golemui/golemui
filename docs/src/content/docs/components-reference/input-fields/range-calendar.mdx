@@ -1,0 +1,90 @@
+---
+title: Range Calendar
+description: A Range Calendar component to allow user to select a range of dates from an interactive calendar interface
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import rangeCalendarJson from '../../../../../public/template/components/range-calendar/range-calendar.json?raw';
+import rangeCalendarHintJson from '../../../../../public/template/components/range-calendar/range-calendar-hint.json?raw';
+import rangeCalendarMinMaxJson from '../../../../../public/template/components/range-calendar/range-calendar-minmax.json?raw';
+import rangeCalendarMonthsJson from '../../../../../public/template/components/range-calendar/range-calendar-months.json?raw';
+import rangeCalendarDisabledJson from '../../../../../public/template/components/range-calendar/range-calendar-disabled.json?raw';
+import rangeCalendarAnatomyHtml from '../../../../../public/template/components/range-calendar/range-calendar-anatomy.html?raw';
+export const configJson = 'range-calendar.json';
+export const anatomy = 'range-calendar-anatomy.html';
+
+Range Calendar components are [Input Fields](/components-reference/input-fields/overview) that allow the user to visualize and select an inclusive date range (start date and end date).
+
+<Code code={rangeCalendarJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar.json"
+/>
+
+## Props
+
+Use these `props` to customize your Range Calendar component. Range Calendars share all properties with standard [Calendars](/components-reference/input-fields/calendar).
+
+| prop             | type   | description                                                                        |
+| ---------------- | ------ | ---------------------------------------------------------------------------------- |
+| `hint`           | string | A description to display below the range calendar                                  |
+| `minDate`        | string | Minimum allowable date in ISO format                                               |
+| `maxDate`        | string | Maximum allowable date in ISO format                                               |
+| `numberOfMonths` | number | Number of months to display simultaneously. Defaults to 2 for range calendars      |
+| `disabledRanges` | array  | Array of objects (`{ start: string, end?: string }`) defining disabled date ranges |
+
+### Hint
+
+Use the property `hint` to add a description to the date range selection.
+
+<Code code={rangeCalendarHintJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar-hint.json"
+/>
+
+### Min and Max Dates
+
+Use the properties `minDate` and `maxDate` to specify the boundaries for selectable dates.
+
+<Code code={rangeCalendarMinMaxJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar-minmax.json"
+/>
+
+### Number of Months
+
+Use the property `numberOfMonths` to display multiple months side-by-side to ease selection of larger spans.
+
+<Code code={rangeCalendarMonthsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar-months.json"
+/>
+
+### Disabled Ranges
+
+Use the property `disabledRanges` to define dates which cannot be highlighted as part of a range.
+
+<Code code={rangeCalendarDisabledJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar-disabled.json"
+/>
+
+## Styling
+
+Range Calendars can be styled as explained in the [Styling Guide](/guides/styling). They inherit all Calendar component styles along with specialized range highlighting rules.
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable           | Description                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `--gui-radius-md`      | Calendar container base radius                                                                    |
+| `--gui-radius-range`   | Border radius applied to the start and end of a selected range (calculated as double `radius-md`) |
+| `--gui-intent-primary` | Selected range, range start, and range end background color                                       |
+
+### Anatomy
+
+This is the anatomy of the Range Calendar Component in case you want to use your CSS styles.
+
+<Code code={rangeCalendarAnatomyHtml} lang="html" title={anatomy} />

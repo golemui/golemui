@@ -1,0 +1,14 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "date-picker",
+      "path": "startDate",
+      "label": "Start Date",
+      "props": {
+        "placeholder": "Select a start date"
+      }
+    }
+  ]
+}

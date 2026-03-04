@@ -1,55 +1,30 @@
 {
   "form": [
     {
-      "uid": "tab5",
+      "uid": "accordion_basic",
       "kind": "layout",
       "type": "accordion",
       "props": {
         "sections": [
-          { "label": "Personal Information", "uid": "section1" },
-          { "label": "Shipping Address", "uid": "section2" },
-          { "label": "Billing Address", "uid": "section3" }
-        ]
+          { "uid": "personal", "label": "Personal Information" },
+          { "uid": "account", "label": "Account Settings" }
+        ],
+        "defaultOpen": { "personal": true }
       },
       "children": [
         {
-          "uid": "section1",
-          "kind": "layout",
-          "type": "flex",
-          "children": [
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "shoppingCart.firstName"
-            }
-          ]
+          "uid": "personal",
+          "kind": "input",
+          "type": "textinput",
+          "path": "name",
+          "label": "Full Name"
         },
         {
-          "uid": "section2",
-          "kind": "layout",
-          "type": "flex",
-          "children": [
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "shoppingCart.shippingAddress"
-            }
-          ]
-        },
-        {
-          "uid": "section3",
-          "kind": "layout",
-          "type": "flex",
-          "children": [
-            {
-              "uid": "",
-              "kind": "input",
-              "type": "textinput",
-              "path": "shoppingCart.billingAddress"
-            }
-          ]
+          "uid": "account",
+          "kind": "input",
+          "type": "textinput",
+          "path": "email",
+          "label": "Email Address"
         }
       ]
     }

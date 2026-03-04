@@ -1,0 +1,75 @@
+---
+title: Toggle
+description: A Toggle component to allow user to switch between two states
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import toggleJson from '../../../../../public/template/components/toggle/toggle.json?raw';
+import toggleHintJson from '../../../../../public/template/components/toggle/toggle-hint.json?raw';
+import togglePositionJson from '../../../../../public/template/components/toggle/toggle-position.json?raw';
+import toggleAnatomyHtml from '../../../../../public/template/components/toggle/toggle-anatomy.html?raw';
+export const configJson = 'toggle.json';
+export const anatomy = 'toggle-anatomy.html';
+
+Toggle components are [Input Fields](/components-reference/input-fields/overview) that act as visual switches, allowing the user to turn a setting on or off. They represent a boolean value.
+
+<Code code={toggleJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/toggle/toggle.json"
+/>
+
+## Props
+
+Use these `props` to customize your Toggle component.
+
+| prop             | type   | description                                                                                           |
+| ---------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `hint`           | string | A description to display below the toggle control                                                     |
+| `togglePosition` | string | Position of the toggle switch relative to its label. Possible values are `left` or `right` (default). |
+
+### Hint
+
+Use the property `hint` to add a description.
+
+<Code code={toggleHintJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/toggle/toggle-hint.json"
+/>
+
+### Position
+
+Use the property `togglePosition` to align the toggle switch to the `left` or `right` (default) of its label.
+
+<Code code={togglePositionJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/toggle/toggle-position.json"
+/>
+
+## Styling
+
+Toggles can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable                    | Description                                               |
+| ------------------------------- | --------------------------------------------------------- |
+| `--gui-toggle-width`            | Total width of the toggle switch                          |
+| `--gui-toggle-height`           | Total height of the toggle switch                         |
+| `--gui-toggle-slider-width`     | Width of the round slider knob thumb                      |
+| `--gui-toggle-slider-height`    | Height of the round slider knob thumb                     |
+| `--gui-toggle-slider-transform` | X-axis transform value distance for the knob when checked |
+| `--gui-bg-default`              | Background color of slider container when off             |
+| `--gui-bg-disabled`             | Background color of slider container when disabled        |
+| `--gui-border-default`          | Default border of the off-state slider background         |
+| `--gui-intent-primary`          | Slider background and border color when checked / on      |
+| `--gui-text-default`            | Border color when focused                                 |
+| `--gui-intent-error`            | Border and shadow color when invalid                      |
+
+### Anatomy
+
+This is the anatomy of the Toggle Component in case you want to use your CSS styles.
+
+<Code code={toggleAnatomyHtml} lang="html" title={anatomy} />

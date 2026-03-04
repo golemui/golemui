@@ -1,0 +1,13 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "range-calendar",
+      "path": "vacationDates",
+      "props": {
+        "numberOfMonths": 2
+      }
+    }
+  ]
+}

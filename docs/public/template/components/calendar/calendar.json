@@ -1,8 +1,14 @@
 {
-    "key": "calendar-example",
-    "type": "calendar",
-    "props": {
-        "label": "Calendar",
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "calendar",
+      "path": "appointmentDate",
+      "label": "Calendar",
+      "props": {
         "hint": "Select a date"
+      }
     }
+  ]
 }
