@@ -23,7 +23,17 @@ export default defineConfig({
               );
 
               if (sourceIframe) {
-                sourceIframe.style.height = event.data.height + 'px';
+                // Use requestAnimationFrame to ensure the initial state (e.g. height: 0) 
+                // is painted before applying the new height, triggering the transition.
+                requestAnimationFrame(() => {
+                  sourceIframe.style.height = event.data.height + 'px';
+                  
+                  // If there is a min-height set in the data attribute, apply it
+                  const minHeight = sourceIframe.getAttribute('data-min-height');
+                  if (minHeight) {
+                    sourceIframe.style.minHeight = minHeight;
+                  }
+                });
               }
             }
           });

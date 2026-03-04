@@ -2,6 +2,7 @@
 title: Dropdown
 description: A Dropdown component that allows users to pick an item from a list or search by typing
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
@@ -17,6 +18,7 @@ Dropdown components are [Input Fields](/components-reference/input-fields/overvi
 <Code code={dropdownJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/dropdown/dropdown.json"
+  minHeight="500"
 />
 
 ## Props
@@ -42,6 +44,7 @@ Use the property `hint` to provide instructions for the user.
 <Code code={dropdownHintJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/dropdown/dropdown-hint.json"
+  minHeight="500"
 />
 
 ### Custom Fields
@@ -51,6 +54,7 @@ If your items are complex objects, you can specify which fields to use for label
 <Code code={dropdownCustomJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/dropdown/dropdown-custom.json"
+  minHeight="500"
 />
 
 ## Styling

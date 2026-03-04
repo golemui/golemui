@@ -2,6 +2,7 @@
 title: Date Picker
 description: A Date Picker component to allow user to enter a date via keyboard or by picking from an interactive calendar
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
@@ -19,6 +20,7 @@ Date Picker components are [Input Fields](/components-reference/input-fields/ove
 <Code code={datePickerJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker.json"
+  minHeight="500"
 />
 
 ## Props
@@ -45,6 +47,7 @@ Use the property `placeholder` to provide context via an accessible placeholder 
 <Code code={datePickerPlaceholderJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-placeholder.json"
+  minHeight="500"
 />
 
 ### Hint
@@ -54,6 +57,7 @@ Use the property `hint` to add descriptive text.
 <Code code={datePickerHintJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-hint.json"
+  minHeight="500"
 />
 
 ### Icon
@@ -63,6 +67,7 @@ Use the property `icon` to add an icon, which appears next to the toggle chevron
 <Code code={datePickerIconJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-icon.json"
+  minHeight="500"
 />
 
 ### Popover Calendar Formatting
@@ -72,6 +77,7 @@ Use properties like `dayFormat`, `monthFormat` and `weekdayFormat` to control th
 <Code code={datePickerFormatJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-format.json"
+  minHeight="500"
 />
 
 ## Styling
