@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
 import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
 import { golemForm } from '../../golem-form';
@@ -107,7 +108,11 @@ describe('Alert schema validation', () => {
       const invalidAlert = formDef.form.children[0];
       const isValid = validate(invalidAlert);
       expect(isValid).toBe(false);
-      expect(validate.errors?.[0].message).toContain("must have required property 'kind'");
+      expect(validate.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ message: "must have required property 'kind'" }),
+        ]),
+      );
     });
 
     it('should invalidate when "kind" is incorrect', () => {
@@ -125,11 +130,15 @@ describe('Alert schema validation', () => {
       const invalidAlert = formDef.form.children[0];
       const isValid = validate(invalidAlert);
       expect(isValid).toBe(false);
-      expect(validate.errors?.[0]).toMatchObject({
-        schemaPath: '#/properties/kind/const',
-        message: 'must be equal to constant',
-        params: { allowedValue: 'display' },
-      });
+      expect(validate.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            schemaPath: '#/properties/kind/const',
+            message: 'must be equal to constant',
+            params: { allowedValue: 'display' },
+          }),
+        ]),
+      );
     });
 
     it('should invalidate when "type" is missing', () => {
@@ -146,7 +155,11 @@ describe('Alert schema validation', () => {
       const invalidAlert = formDef.form.children[0];
       const isValid = validate(invalidAlert);
       expect(isValid).toBe(false);
-      expect(validate.errors?.[0].message).toContain("must have required property 'type'");
+      expect(validate.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ message: "must have required property 'type'" }),
+        ]),
+      );
     });
 
     it('should invalidate when "type" is incorrect', () => {
@@ -164,20 +177,30 @@ describe('Alert schema validation', () => {
       const invalidAlert = formDef.form.children[0];
       const isValid = validate(invalidAlert);
       expect(isValid).toBe(false);
-      expect(validate.errors?.[0]).toMatchObject({
-        schemaPath: '#/properties/type/const',
-        message: 'must be equal to constant',
-        params: { allowedValue: 'alert' },
-      });
+      expect(validate.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            schemaPath: '#/properties/type/const',
+            message: 'must be equal to constant',
+            params: { allowedValue: 'alert' },
+          }),
+        ]),
+      );
     });
 
-    /*it('should invalidate when "props" is entirely missing', () => {
-      const invalidAlert = {
-        kind: 'display',
-        type: 'alert',
-      };
+    it('should invalidate when "props" is entirely missing', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            kind: 'display',
+            type: 'alert',
+          },
+        ],
+      });
 
-      expect(validate(invalidAlert)).toBe(false);
+      const invalidAlert = formDef.form.children[0];
+      const isValid = validate(invalidAlert);
+      expect(isValid).toBe(false);
       expect(validate.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ keyword: 'required', params: { missingProperty: 'props' } }),
@@ -186,15 +209,22 @@ describe('Alert schema validation', () => {
     });
 
     it('should invalidate when "props.text" is missing', () => {
-      const invalidAlert = {
-        kind: 'display',
-        type: 'alert',
-        props: {
-          level: 'info',
-        },
-      };
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, "props.text" is missing.
+          {
+            kind: 'display',
+            type: 'alert',
+            props: {
+              level: 'info',
+            },
+          },
+        ],
+      });
 
-      expect(validate(invalidAlert)).toBe(false);
+      const invalidAlert = formDef.form.children[0];
+      const isValid = validate(invalidAlert);
+      expect(isValid).toBe(false);
       expect(validate.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ keyword: 'required', params: { missingProperty: 'text' } }),
@@ -203,21 +233,28 @@ describe('Alert schema validation', () => {
     });
 
     it('should invalidate when "props.level" has an unrecognized enum value', () => {
-      const invalidAlert = {
-        kind: 'display',
-        type: 'alert',
-        props: {
-          text: 'Critical meltdown',
-          level: 'critical', // Not in [default, info, success, warning, error]
-        },
-      };
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, invalid value for level.
+          {
+            kind: 'display',
+            type: 'alert',
+            props: {
+              text: 'Critical meltdown',
+              level: 'superbad',
+            },
+          },
+        ],
+      });
 
-      expect(validate(invalidAlert)).toBe(false);
+      const invalidAlert = formDef.form.children[0];
+      const isValid = validate(invalidAlert);
+      expect(isValid).toBe(false);
       expect(validate.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ keyword: 'enum', instancePath: '/props/level' }),
         ]),
       );
-    });*/
+    });
   });
 });
