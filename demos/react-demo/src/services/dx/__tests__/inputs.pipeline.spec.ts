@@ -1,0 +1,183 @@
+import { describe, expect, it } from 'vitest';
+import {
+  processDx,
+  getStaticChild,
+  getRawChild,
+  resolveDynamic,
+} from './helpers';
+import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
+import { _gslInputs } from '../shortcuts/inputs/gslInputs.impl';
+
+describe('DX Pipeline — Inputs', () => {
+  describe('Basic shortcut expansion', () => {
+    it("expands 'string' into a text input with path", () => {
+      const result = processDx(_guiInputs({ name: 'string' }));
+      const input = getStaticChild(result, 0) as {
+        kind?: string;
+        type?: string;
+        path?: string;
+      };
+
+      expect(input.kind).toBe('input');
+      expect(input.type).toBe('textinput');
+      expect(input.path).toBe('name');
+    });
+
+    it("expands 'number' into a number input with path", () => {
+      const result = processDx(_guiInputs({ age: 'number' }));
+      const input = getStaticChild(result, 0) as { type?: string; path?: string };
+
+      expect(input.type).toBe('number');
+      expect(input.path).toBe('age');
+    });
+
+    it("expands 'boolean' into a toggle input with path", () => {
+      const result = processDx(_guiInputs({ active: 'boolean' }));
+      const input = getStaticChild(result, 0) as { type?: string; path?: string };
+
+      expect(input.type).toBe('toggle');
+      expect(input.path).toBe('active');
+    });
+
+    it("expands tuple ['string', 'required'] and keeps required validator", () => {
+      const result = processDx(_guiInputs({ name: ['string', 'required'] }));
+      const input = getStaticChild(result, 0) as {
+        type?: string;
+        path?: string;
+        validator?: { required?: unknown };
+      };
+
+      expect(input.type).toBe('textinput');
+      expect(input.path).toBe('name');
+      expect(input.validator?.required).toBeTruthy();
+    });
+
+    it('preserves placeholder from full object input definition', () => {
+      const result = processDx(
+        _guiInputs({
+          email: { type: 'text', placeholder: 'you@...' },
+        }),
+      );
+      const input = getStaticChild(result, 0) as {
+        props?: { placeholder?: string };
+      };
+
+      expect(input.props?.placeholder).toBe('you@...');
+    });
+
+    it('expands multiple fields into multiple child widgets with matching paths', () => {
+      const result = processDx(_guiInputs({ first: 'string', last: 'string' }));
+      const first = getStaticChild(result, 0) as { path?: string };
+      const last = getStaticChild(result, 1) as { path?: string };
+
+      expect(result.children?.length).toBe(2);
+      expect(first.path).toBe('first');
+      expect(last.path).toBe('last');
+    });
+  });
+
+  describe('Sensible defaults', () => {
+    it('auto-generates label from key (camelCase to Title Case)', () => {
+      const result = processDx(_guiInputs({ firstName: 'string' }));
+      const input = getStaticChild(result, 0) as { label?: string };
+
+      expect(input.label).toBe('First Name');
+    });
+
+    it('auto-generates placeholder from key', () => {
+      const result = processDx(_guiInputs({ firstName: 'string' }));
+      const input = getStaticChild(result, 0) as {
+        props?: { placeholder?: string };
+      };
+
+      expect(input.props?.placeholder).toBeDefined();
+      expect(input.props?.placeholder).not.toBe('');
+    });
+
+    it('keeps explicit label instead of using auto-label', () => {
+      const result = processDx(
+        _guiInputs({
+          name: { type: 'text', label: 'Your Name' },
+        }),
+      );
+      const input = getStaticChild(result, 0) as { label?: string };
+
+      expect(input.label).toBe('Your Name');
+    });
+
+    it('suppresses automatic labels through GSL config', () => {
+      const result = processDx(
+        _guiInputs({ name: 'string' }),
+        _gslInputs({ suppressAutomaticLabels: true }),
+      );
+      const input = getStaticChild(result, 0) as { label?: string };
+
+      expect(input.label).toBeUndefined();
+    });
+  });
+
+  describe('Dynamic (callback) inputs', () => {
+    it('keeps callback inputs as function widgets and resolves by runtime params', () => {
+      const result = processDx(
+        _guiInputs({
+          msg: (p) => ({
+            type: 'text',
+            label: p.errors?.length ? 'Fix!' : 'Msg',
+          }),
+        }),
+      );
+
+      const rawChild = getRawChild(result, 0);
+      expect(typeof rawChild).toBe('function');
+
+      const withErrors = resolveDynamic(rawChild, { errors: ['x'] }) as { label?: string };
+      const withoutErrors = resolveDynamic(rawChild, {}) as { label?: string };
+
+      expect(withErrors.label).toBe('Fix!');
+      expect(withoutErrors.label).toBe('Msg');
+    });
+  });
+
+  describe('Validators', () => {
+    it('sets required validator from tuple tag', () => {
+      const result = processDx(_guiInputs({ name: ['string', 'required'] }));
+      const input = getStaticChild(result, 0) as {
+        validator?: { required?: unknown };
+      };
+
+      expect(input.validator?.required).toBeTruthy();
+    });
+
+    it('keeps explicit validator settings from full object', () => {
+      const result = processDx(
+        _guiInputs({
+          email: {
+            type: 'text',
+            validator: {
+              pattern: '^[^@]+@[^@]+$',
+            },
+          },
+        }),
+      );
+      const input = getStaticChild(result, 0) as {
+        validator?: { pattern?: string };
+      };
+
+      expect(input.validator?.pattern).toBe('^[^@]+@[^@]+$');
+    });
+  });
+
+  describe('GSL selector overrides', () => {
+    it('applies static GSL decorator override to placeholder', () => {
+      const result = processDx(
+        _guiInputs({ name: 'string' }),
+        [_gslInputs({ decorator: { placeholder: 'Override' } })],
+      );
+      const input = getStaticChild(result, 0) as {
+        props?: { placeholder?: string };
+      };
+
+      expect(input.props?.placeholder).toBe('Override');
+    });
+  });
+});

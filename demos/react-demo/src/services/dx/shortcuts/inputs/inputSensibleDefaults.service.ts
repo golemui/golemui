@@ -1,6 +1,16 @@
 import { InputDecorator, InputSensibleDefaultsConfig } from './inputs.domain';
 
 export class InputSensibleDefaultsService {
+  private pathToLabel(path: string | undefined): string {
+    if (!path) return '';
+    return path
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
   private sensibleDefaultValueForProperty<K extends keyof InputDecorator>(
     item: InputDecorator,
     actsOn: K,
@@ -33,18 +43,16 @@ export class InputSensibleDefaultsService {
       item,
       'label',
       currentConfig.suppressAutomaticLabels,
-      (item) => item.path,
+      (item) => this.pathToLabel(item.path) as InputDecorator['label'],
     );
   }
 
   public processAutomaticPlaceholders(item: InputDecorator, currentConfig: InputSensibleDefaultsConfig) {
-    // The automatic placeholder is only added if the label is not present.
-    if (item.label != null) return item;
     return this.sensibleDefaultValueForProperty(
       item,
       'placeholder',
       currentConfig.suppressAutomaticPlaceholders,
-      (item) => item.path,
+      (item) => item.path as InputDecorator['placeholder'],
     );
   }
 }

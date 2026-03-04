@@ -65,8 +65,8 @@ export class WidgetMerger {
       return { kind: 'dynamic', fn: this.wrapWithSensibleDefaults(promotedToRuntime, accumulated, itemType, resolved) };
     }
 
-    // ── Inline _gui def wins last ──
-    const merged = this.objectUtils.deepMerge(accumulated, baseDef as Record<string, any>);
+    // ── GSL decorators override inline _gui def for matching properties ──
+    const merged = this.objectUtils.deepMerge(baseDef as Record<string, any>, accumulated);
 
     // ── Apply sensible defaults ──
     // Sensible defaults produce values based on the MERGED state of the def

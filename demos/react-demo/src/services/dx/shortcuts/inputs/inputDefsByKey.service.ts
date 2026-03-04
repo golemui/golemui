@@ -42,6 +42,15 @@ export class InputDefsByKeyService {
       value = this.inputTypeDefaults.explodeShortcut(shortcut);
       if (tagList.length > 0) {
         value.tags = tagList;
+        if (tagList.includes('required')) {
+          const withValidator = value as InputDecorator & {
+            validator?: Record<string, any>;
+          };
+          withValidator.validator = {
+            ...withValidator.validator,
+            required: true,
+          };
+        }
       }
     } else {
       value = dataInputDef as InputDecorator;
