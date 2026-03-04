@@ -1,7 +1,8 @@
 ---
-title: Number
-description: A Number component to allow user to enter string chains
+title: Number Input
+description: A Number Input component to allow user to enter numeric values
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
@@ -10,11 +11,13 @@ import numberPlaceholderJson from '../../../../../public/template/components/num
 import numberHintJson from '../../../../../public/template/components/number/number-hint.json?raw';
 import numberIconJson from '../../../../../public/template/components/number/number-icon.json?raw';
 import numberStepJson from '../../../../../public/template/components/number/number-step.json?raw';
+import numberMinMaxJson from '../../../../../public/template/components/number/number-min-max.json?raw';
+import numberAutogrowJson from '../../../../../public/template/components/number/number-autogrow.json?raw';
 import numberAnatomyHtml from '../../../../../public/template/components/number/number-anatomy.html?raw';
 export const configJson = 'number.json';
-export const anatomy = 'number.html';
+export const anatomy = 'number-anatomy.html';
 
-Number components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter numeric values.
+Number Input components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter numeric values. They can include built-in controls (plus/minus buttons) for incrementing and decrementing the number.
 
 <Code code={numberJson} lang="js" title={configJson} />
 <Demo
@@ -23,15 +26,18 @@ Number components are [Input Fields](/components-reference/input-fields/overview
 
 ## Props
 
-Use this `props` to customize your Number component.
+Use these `props` to customize your Number Input component.
 
-| prop           | type   | value                                                            |
-| -------------- | ------ | ---------------------------------------------------------------- |
-| `placeholder`  | string | A placeholder text to display when the input number has no value |
-| `hint`         | string | A description to display below the input number label            |
-| `icon`         | string | A css class to display an icon                                   |
-| `iconPosition` | string | The icon position, possible values are `right` or `left`         |
-| `step`         | number | Step value to jump on each keystroke using the arrow keys        |
+| prop           | type    | description                                                                          |
+| -------------- | ------- | ------------------------------------------------------------------------------------ |
+| `placeholder`  | string  | A placeholder text to display when the input has no value                            |
+| `hint`         | string  | A description to display below the input                                             |
+| `step`         | number  | The increment or decrement step size when using the plus/minus buttons or arrow keys |
+| `minimum`      | number  | The minimum allowed value                                                            |
+| `maximum`      | number  | The maximum allowed value                                                            |
+| `autoGrow`     | boolean | If true, the input width expands according to the number of digits                   |
+| `icon`         | string  | A css class to display an icon                                                       |
+| `iconPosition` | string  | The icon position, possible values are `right` or `left` (default)                   |
 
 ### Placeholder
 
@@ -53,7 +59,7 @@ Use the property `hint` to add a description.
 
 ### Icon
 
-Use the property `icon` to add an icon to the `number`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed on the `left` by default, you can set the property `iconPosition` to `right` if you want the icon to be right aligned.
+Use the property `icon` to add an icon to the component. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed on the `left` by default, you can set the property `iconPosition` to `right` if you want the icon to be right aligned.
 
 <Code code={numberIconJson} lang="js" title={configJson} />
 <Demo
@@ -62,38 +68,49 @@ Use the property `icon` to add an icon to the `number`. The value of `icon` repr
 
 ### Step
 
-Use the properties `step` to set a jump value on each keystroke using the arrow keys. This number can be decimal.
+Use the property `step` to define the amount by which the value increases or decreases when interacting with the controls.
 
 <Code code={numberStepJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-step.json"
 />
 
+### Min & Max
+
+Use the `minimum` and `maximum` properties to constrain the accepted range. The plus/minus buttons will be disabled if the limit is reached.
+
+<Code code={numberMinMaxJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/number/number-min-max.json"
+/>
+
+### Auto Grow
+
+Use the property `autoGrow` to allow the input's width to change dynamically based on its content value.
+
+<Code code={numberAutogrowJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/number/number-autogrow.json"
+/>
+
 ## Styling
 
-Number inputs can be styled as explained in the [Styling Guide](/guides/styling).
+Number Inputs can be styled as explained in the [Styling Guide](/guides/styling).
 
 ### CSS Variables
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable                | Description                             |
-| --------------------------- | --------------------------------------- |
-| `--gui-space-gap--inner`    | Label gap and margin bottom             |
-| `--gui-padding`             | Input padding                           |
-| `--gui-color-border`        | Input border color                      |
-| `--gui-radius`              | Input radius                            |
-| `--gui-color-bg`            | Input background color                  |
-| `--gui-color-fg`            | Input text color                        |
-| `--gui-color-primary`       | Input border color and outline on focus |
-| `--gui-color-error`         | Input border color when invalid         |
-| `--gui-space-gap`           | Icon left padding                       |
-| `--gui-icon-space-gap`      | Icon right padding                      |
-| `--gui-font-size--small`    | Hint font size                          |
-| `--gui-color-fg--secondary` | Hint font color                         |
+| CSS Variable             | Description                         |
+| ------------------------ | ----------------------------------- |
+| `--gui-radius-md`        | Overall widget border radius        |
+| `--gui-border-default`   | Default border color                |
+| `--gui-text-default`     | Default text and focus border color |
+| `--gui-intent-error`     | Border color when invalid           |
+| `--gui-space-gap--inner` | Label gap and margin bottom         |
 
 ### Anatomy
 
-This is the anatomy of the Number Component in case you want to use your CSS styles.
+This is the anatomy of the Number Input Component in case you want to use your CSS styles.
 
 <Code code={numberAnatomyHtml} lang="html" title={anatomy} />

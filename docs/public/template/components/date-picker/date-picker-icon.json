@@ -3,7 +3,7 @@
     {
       "uid": "",
       "kind": "input",
-      "type": "date-picker",
+      "type": "datePicker",
       "path": "startDate",
       "label": "Start Date",
       "props": {

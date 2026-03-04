@@ -3,7 +3,7 @@
     {
       "uid": "",
       "kind": "input",
-      "type": "range-calendar",
+      "type": "rangeCalendar",
       "path": "vacationDates",
       "props": {
         "hint": "Please select the start and end dates for your vacation"

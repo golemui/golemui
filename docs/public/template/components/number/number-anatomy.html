@@ -5,20 +5,29 @@
   </label>
 
   <div class="gui-widget">
+    <button
+      type="button"
+      tabindex="-1"
+      class="gui-button gui-number__minus"
+    >
+      -
+    </button>
+
     <input
-      type="text"
-      inputmode="numeric"
-      min="0"
-      max="100"
-      step="0.01"
+      type="number"
+      inputmode="decimal"
       id="fieldUid"
-      class="gui-number__icon gui-number__icon--right"
-      disabled
-      readonly
       placeholder="Custom placeholder"
       aria-required="true"
       aria-describedby="fieldUid_hint"
     />
-    <span class="gui-number__icon gui-number__icon--right"></span>
+
+    <button
+      type="button"
+      tabindex="-1"
+      class="gui-button gui-number__plus"
+    >
+      +
+    </button>
   </div>
 </gui-number>

@@ -3,7 +3,7 @@
     {
       "uid": "",
       "kind": "input",
-      "type": "range-calendar",
+      "type": "rangeCalendar",
       "path": "vacationDates",
       "props": {
         "minDate": "2024-06-01T00:00:00.000Z",

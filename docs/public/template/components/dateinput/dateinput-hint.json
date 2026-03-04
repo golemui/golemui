@@ -3,7 +3,7 @@
     {
       "uid": "",
       "kind": "input",
-      "type": "dateinput",
+      "type": "dateInput",
       "path": "birthDate",
       "label": "Birth Date",
       "props": {
