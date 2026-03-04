@@ -10,39 +10,37 @@ import {
   ParsedEntry,
   AfterMergeContext,
 } from '../../core/itemTypeRegistry';
-import { ActionDecorator, ActionEntry } from './actions.domain';
+import { ActionDecorator, ActionEntry, ActionSensibleDefaultsConfig } from './actions.domain';
 import actionOnClickService from '../../core/actionOnClick.service';
 
-function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): Record<string, any> {
-  return {};
+function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): ActionSensibleDefaultsConfig {
+  return {} as ActionSensibleDefaultsConfig;
 }
 
 function applySensibleDefaults(
-  def: Record<string, any>,
-  _config: Record<string, any>,
-): Record<string, any> {
+  def: ActionDecorator,
+  _config: ActionSensibleDefaultsConfig,
+): ActionDecorator {
   return def;
 }
 
 function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
->(def: Record<string, any>): NonFunctionWidget<StateKeys, FormData> {
-  const controllerDef = def as ActionDecorator & Record<string, any>;
+>(def: ActionDecorator): NonFunctionWidget<StateKeys, FormData> {
   return {
-    uid: controllerDef.uid ?? '',
+    uid: def.uid ?? '',
     kind: 'action',
     type: 'button',
-    disabled: controllerDef.disabled,
-    label: controllerDef.label,
-    ...(controllerDef.on != null ? { on: controllerDef.on } : {}),
+    disabled: def.disabled,
+    label: def.label,
+    ...(def.on != null ? { on: def.on } : {}),
   } as ActionWidget<StateKeys, FormData>;
 }
 
-function parseEntry(entry: any): ParsedEntry {
+function parseEntry(entry: ActionEntry): ParsedEntry<ActionDecorator> {
   // ActionEntry is either an ActionDecorator or an ActionDefCallback (bare, no key)
-  const actionEntry = entry as ActionEntry;
-  return { baseDef: actionEntry };
+  return { baseDef: entry };
 }
 
 function afterMerge(
@@ -56,7 +54,7 @@ function afterMerge(
   );
 }
 
-const handler: ItemTypeHandler = {
+const handler: ItemTypeHandler<ActionEntry, ActionDecorator, ActionSensibleDefaultsConfig> = {
   rollUpSensibleDefaults,
   applySensibleDefaults,
   mapToWidget,

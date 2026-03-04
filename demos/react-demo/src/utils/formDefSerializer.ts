@@ -18,7 +18,7 @@ export function serializeFormDefForDisplay(obj: any, indent = 0): string {
     // Format multi-line functions nicely
     if (fnStr.includes('\n')) {
       const lines = fnStr.split('\n');
-      return lines.map((line, idx) => (idx === 0 ? line : nextIndentStr + line)).join('\n');
+      return lines.map((line: string, idx: number) => (idx === 0 ? line : nextIndentStr + line)).join('\n');
     }
     return fnStr;
   }

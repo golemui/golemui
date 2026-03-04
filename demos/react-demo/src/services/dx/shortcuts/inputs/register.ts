@@ -4,7 +4,7 @@ import {
   UiState,
 } from '@golemui/core';
 import { GslLeafSelector } from '../../core/dx.domain';
-import { registerItemType, ItemTypeHandler } from '../../core/itemTypeRegistry';
+import { registerItemType, ItemTypeHandler, ParsedEntry } from '../../core/itemTypeRegistry';
 import {
   InputDecorator,
   InputEntry,
@@ -38,30 +38,27 @@ function rollUpSensibleDefaults(leafSelectors: GslLeafSelector[]): InputSensible
 }
 
 function applySensibleDefaults(
-  def: Record<string, any>,
-  config: Record<string, any>,
-): Record<string, any> {
-  const inputDef = def as InputDecorator;
-  const inputConfig = config as InputSensibleDefaultsConfig;
-  let result = inputSensibleDefaultsService.processAutomaticLabels(inputDef, inputConfig);
-  result = inputSensibleDefaultsService.processAutomaticPlaceholders(result, inputConfig);
+  def: InputDecorator,
+  config: InputSensibleDefaultsConfig,
+): InputDecorator {
+  let result = inputSensibleDefaultsService.processAutomaticLabels(def, config);
+  result = inputSensibleDefaultsService.processAutomaticPlaceholders(result, config);
   return result;
 }
 
 function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
->(def: Record<string, any>): NonFunctionWidget<StateKeys, FormData> {
-  const fieldDef = def as InputDecorator;
-  switch (fieldDef.type) {
+>(def: InputDecorator): NonFunctionWidget<StateKeys, FormData> {
+  switch (def.type) {
     case 'text':
-      return mapTextInputDef<StateKeys, FormData>(fieldDef as TextDataInputDecorator);
+      return mapTextInputDef<StateKeys, FormData>(def as TextDataInputDecorator);
     case 'number':
-      return mapNumberInputDef<StateKeys, FormData>(fieldDef as NumberDataInputDecorator);
+      return mapNumberInputDef<StateKeys, FormData>(def as NumberDataInputDecorator);
     case 'boolean':
-      return mapBooleanInputDef<StateKeys, FormData>(fieldDef as BooleanDataInputDecorator);
+      return mapBooleanInputDef<StateKeys, FormData>(def as BooleanDataInputDecorator);
     default:
-      throw new Error(`Unsupported field type "${(fieldDef as any).type}"`);
+      throw new Error(`Unsupported field type "${(def as any).type}"`);
   }
 }
 
@@ -121,15 +118,14 @@ function mapNumberInputDef<
   };
 }
 
-function parseEntry(entry: any): { baseDef: any; path?: string } {
-  const inputEntry = entry as InputEntry;
+function parseEntry(entry: InputEntry): ParsedEntry<InputDecorator> {
   return {
-    baseDef: inputEntry.def,
-    path: inputEntry.key,
+    baseDef: entry.def,
+    path: entry.key,
   };
 }
 
-const handler: ItemTypeHandler = {
+const handler: ItemTypeHandler<InputEntry, InputDecorator, InputSensibleDefaultsConfig> = {
   rollUpSensibleDefaults,
   applySensibleDefaults,
   mapToWidget,

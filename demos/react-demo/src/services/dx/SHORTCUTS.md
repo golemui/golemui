@@ -22,6 +22,49 @@ All four flow through the same `processItem` → resolver → merger → mapper 
 
 Item type constants are defined once in `core/dx.domain.ts` as type aliases (`GUI_ITEM_TYPE_INPUTS`, `GUI_ITEM_TYPE_ACTIONS`, `GUI_ITEM_TYPE_LAYOUTS`, `GUI_ITEM_TYPE_DISPLAYS`) with a runtime object `GuiItemTypes` for use in comparisons and object literals.
 
+## Entry Shape Taxonomy
+
+Each shortcut family uses one of three entry shapes. The shape reflects the widget's semantics — it's a deliberate design choice, not an inconsistency.
+
+### 1. Keyed Entries — `{ key, def }`
+
+Path is derived from the key. Multiple entries per `_gui*` call. Used when the form data path comes from the entry key.
+
+**Used by:** Inputs (`InputEntry`). Future: select, radiogroup.
+
+```ts
+// _guiInputs({ firstName: 'string', lastName: 'string' })
+// Each key → an InputEntry { key: 'firstName', def: { type: 'text' } }
+```
+
+### 2. Bare Entries — decorator or callback directly
+
+No wrapping object. Path (if any) lives inside the decorator. One entry per `_gui*` call.
+
+**Used by:** Actions (`ActionEntry`), Calendar (`CalendarEntry`), Displays (`DisplayEntry`).
+
+```ts
+// _guiButton({ label: 'Send', onClick: 'submit' })
+// Entry is the ActionDecorator directly
+```
+
+### 3. Compound Entries — `{ def, children }`
+
+Container with nested shortcuts. Children are structural — they're walked recursively by the pipeline.
+
+**Used by:** Layouts (`LayoutEntry`). Future: tabs, accordion.
+
+```ts
+// _guiStack([_guiInputs({...}), _guiButton({...})], { direction: 'horizontal' })
+// Entry is { def: { direction: 'horizontal' }, children: [...] }
+```
+
+### Why three shapes?
+
+Each handler declares `TEntry` in its generics to match its shape. `parseEntry(entry: TEntry)` is the type-safe boundary — it extracts `baseDef` (the decorator or callback) and optionally `path` and `children` from whatever entry shape the family uses.
+
+There is no shared base type for entries. The shapes are intentionally different because the semantics are different. A keyed entry carries a data path in its key. A bare entry is the decorator itself. A compound entry carries children.
+
 ## Folder Structure
 
 ```

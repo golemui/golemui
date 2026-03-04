@@ -12,40 +12,38 @@ import {
   ParsedEntry,
   BuildWidgetContext,
 } from '../../core/itemTypeRegistry';
-import { LayoutDecorator, LayoutEntry } from './layouts.domain';
+import { LayoutDecorator, LayoutEntry, LayoutSensibleDefaultsConfig } from './layouts.domain';
 
-function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): Record<string, any> {
-  return {};
+function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): LayoutSensibleDefaultsConfig {
+  return {} as LayoutSensibleDefaultsConfig;
 }
 
 function applySensibleDefaults(
-  def: Record<string, any>,
-  _config: Record<string, any>,
-): Record<string, any> {
+  def: LayoutDecorator,
+  _config: LayoutSensibleDefaultsConfig,
+): LayoutDecorator {
   return def;
 }
 
 function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
->(def: Record<string, any>): NonFunctionWidget<StateKeys, FormData> {
-  const layoutDef = def as LayoutDecorator;
+>(def: LayoutDecorator): NonFunctionWidget<StateKeys, FormData> {
   return {
-    uid: layoutDef.uid ?? '',
+    uid: def.uid ?? '',
     kind: 'layout',
-    type: layoutDef.widgetName ?? 'flex',
+    type: def.widgetName ?? 'flex',
     props: {
-      direction: layoutDef.direction ?? 'vertical',
+      direction: def.direction ?? 'vertical',
     },
     children: [],
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function parseEntry(entry: any): ParsedEntry {
-  const layoutEntry = entry as LayoutEntry;
+function parseEntry(entry: LayoutEntry): ParsedEntry<LayoutDecorator> {
   return {
-    baseDef: layoutEntry.def,
-    children: layoutEntry.children,
+    baseDef: entry.def,
+    children: entry.children,
   };
 }
 
@@ -68,11 +66,11 @@ function buildWidget(
   }) as FormWidget;
 }
 
-function getChildren(entry: any): ValidGuiShortcut[] | undefined {
-  return (entry as LayoutEntry).children;
+function getChildren(entry: LayoutEntry): ValidGuiShortcut[] | undefined {
+  return entry.children;
 }
 
-const handler: ItemTypeHandler = {
+const handler: ItemTypeHandler<LayoutEntry, LayoutDecorator, LayoutSensibleDefaultsConfig> = {
   rollUpSensibleDefaults,
   applySensibleDefaults,
   mapToWidget,

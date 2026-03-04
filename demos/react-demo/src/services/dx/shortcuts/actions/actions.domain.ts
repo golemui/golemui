@@ -12,6 +12,7 @@ export interface ActionDecorator extends WidgetItemDecorator {
   type?: 'button';
   label?: string;
   disabled?: boolean;
+  on?: { click: string };
   onClick?: ((data: any) => void) | 'submit';
 }
 

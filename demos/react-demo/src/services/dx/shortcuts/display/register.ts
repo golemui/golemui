@@ -11,33 +11,32 @@ import {
   ParsedEntry,
   BuildWidgetContext,
 } from '../../core/itemTypeRegistry';
-import { DisplayDecorator } from './display.domain';
+import { DisplayDecorator, DisplayEntry, DisplaySensibleDefaultsConfig } from './display.domain';
 
-function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): Record<string, any> {
-  return {};
+function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): DisplaySensibleDefaultsConfig {
+  return {} as DisplaySensibleDefaultsConfig;
 }
 
 function applySensibleDefaults(
-  def: Record<string, any>,
-  _config: Record<string, any>,
-): Record<string, any> {
+  def: DisplayDecorator,
+  _config: DisplaySensibleDefaultsConfig,
+): DisplayDecorator {
   return def;
 }
 
 function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
->(def: Record<string, any>): NonFunctionWidget<StateKeys, FormData> {
-  const displayDef = def as DisplayDecorator;
+>(def: DisplayDecorator): NonFunctionWidget<StateKeys, FormData> {
   return {
     uid: '',
     kind: 'display' as any,
     type: 'renderer',
-    props: { render: displayDef.render },
+    props: { render: def.render },
   } as unknown as NonFunctionWidget<StateKeys, FormData>;
 }
 
-function parseEntry(entry: any): ParsedEntry {
+function parseEntry(entry: DisplayEntry): ParsedEntry<DisplayDecorator> {
   return { baseDef: entry };
 }
 
@@ -67,7 +66,7 @@ function buildWidget(
   }) as FormWidget;
 }
 
-const handler: ItemTypeHandler = {
+const handler: ItemTypeHandler<DisplayEntry, DisplayDecorator, DisplaySensibleDefaultsConfig> = {
   rollUpSensibleDefaults,
   applySensibleDefaults,
   mapToWidget,

@@ -24,7 +24,7 @@ export class WidgetMerger {
 
     // ── If the base itself is a runtime function, start in runtime mode ──
     if (typeof baseDef === 'function') {
-      promotedToRuntime = baseDef;
+      promotedToRuntime = baseDef as RuntimeFunction;
     }
 
     // ── Collect all decorators in priority order ──

@@ -31,7 +31,7 @@ export const GuiItemTypes = {
 export interface GuiItemsShortcut {
   type: 'ITEMS';
   itemType: GuiItemType;
-  items: any[];
+  items: unknown[];
   tags: string[];
 }
 

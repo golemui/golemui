@@ -3,6 +3,8 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
+import { WidgetItemDecorator } from '../formDef.domain';
+import { DxRuntimeParams } from '../shortcuts/inputs/inputs.domain';
 import {
   GslLeafSelector,
   GslRootDefaults,
@@ -15,8 +17,10 @@ import type { GslItemType } from './dx.domain';
 // Item Type Handler — each shortcut folder implements this
 // ═══════════════════════════════════════════════════
 
-export interface ParsedEntry {
-  baseDef: any;
+export interface ParsedEntry<
+  TDecorator extends WidgetItemDecorator = WidgetItemDecorator,
+> {
+  baseDef: TDecorator | ((params: DxRuntimeParams) => Partial<TDecorator>);
   path?: string;
   children?: ValidGuiShortcut[];
 }
@@ -34,21 +38,41 @@ export interface BuildWidgetContext {
   walkChildren: (children: ValidGuiShortcut[]) => FormWidget[];
 }
 
-export interface ItemTypeHandler {
+/**
+ * Entry shape taxonomy:
+ *
+ * 1. Keyed entries — { key, def } — path derived from key
+ *    Used by: inputs, future select/radiogroup
+ *
+ * 2. Bare entries — decorator | callback directly
+ *    Used by: actions, calendar, displays
+ *
+ * 3. Compound entries — { def, children } — container with nested shortcuts
+ *    Used by: layouts, future tabs/accordion
+ *
+ * Each handler declares TEntry to match its shape.
+ * There is no shared base type — the shapes are intentionally different.
+ * parseEntry(entry: TEntry) is the type-safe boundary.
+ */
+export interface ItemTypeHandler<
+  TEntry = any,
+  TDecorator extends WidgetItemDecorator = WidgetItemDecorator,
+  TConfig = Record<string, any>,
+> {
   // Used by selectorResolver: roll up sensible defaults from matching leaf selectors
-  rollUpSensibleDefaults(leafSelectors: GslLeafSelector[]): Record<string, any>;
+  rollUpSensibleDefaults(leafSelectors: GslLeafSelector[]): TConfig;
 
   // Used by widgetMerger: apply sensible defaults to a merged decorator
-  applySensibleDefaults(def: Record<string, any>, config: Record<string, any>): Record<string, any>;
+  applySensibleDefaults(def: TDecorator, config: TConfig): TDecorator;
 
   // Used by widgetMapper: map a decorator → core FormWidget
   mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-    def: Record<string, any>,
+    def: TDecorator,
   ): NonFunctionWidget<StateKeys, FormData>;
 
   // Used by itemWalker: extract the base decorator from an entry
   // Returns { baseDef, path? } where path is set for keyed entries (inputs, calendar, etc.)
-  parseEntry(entry: any): ParsedEntry;
+  parseEntry(entry: TEntry): ParsedEntry<TDecorator>;
 
   afterMerge?(
     mergeResult: MergeResult,
@@ -60,23 +84,23 @@ export interface ItemTypeHandler {
     context: BuildWidgetContext,
   ): FormWidget;
 
-  getChildren?(entry: any): ValidGuiShortcut[] | undefined;
+  getChildren?(entry: TEntry): ValidGuiShortcut[] | undefined;
 }
 
 // ═══════════════════════════════════════════════════
 // Registry singleton
 // ═══════════════════════════════════════════════════
 
-const registry = new Map<string, ItemTypeHandler>();
+const registry = new Map<string, ItemTypeHandler<any, any, any>>();
 
-export function registerItemType(itemType: string, handler: ItemTypeHandler): void {
+export function registerItemType(itemType: string, handler: ItemTypeHandler<any, any, any>): void {
   if (registry.has(itemType)) {
     throw new Error(`Item type "${itemType}" is already registered.`);
   }
   registry.set(itemType, handler);
 }
 
-export function getItemTypeHandler(itemType: string): ItemTypeHandler {
+export function getItemTypeHandler(itemType: string): ItemTypeHandler<any, any, any> {
   const handler = registry.get(itemType);
   if (!handler) {
     throw new Error(

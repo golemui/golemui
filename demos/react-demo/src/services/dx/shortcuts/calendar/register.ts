@@ -4,9 +4,10 @@ import {
   UiState,
 } from '@golemui/core';
 import { GslLeafSelector } from '../../core/dx.domain';
-import { registerItemType, ItemTypeHandler } from '../../core/itemTypeRegistry';
+import { registerItemType, ItemTypeHandler, ParsedEntry } from '../../core/itemTypeRegistry';
 import {
   CalendarDecorator,
+  CalendarEntry,
   CalendarSensibleDefaultsConfig,
   GslCalendarConfig,
 } from './calendar.domain';
@@ -30,38 +31,35 @@ function rollUpSensibleDefaults(leafSelectors: GslLeafSelector[]): CalendarSensi
 }
 
 function applySensibleDefaults(
-  def: Record<string, any>,
-  config: Record<string, any>,
-): Record<string, any> {
-  const calendarDef = def as CalendarDecorator;
-  const calendarConfig = config as CalendarSensibleDefaultsConfig;
-  return calendarSensibleDefaultsService.processAutomaticLabels(calendarDef, calendarConfig);
+  def: CalendarDecorator,
+  config: CalendarSensibleDefaultsConfig,
+): CalendarDecorator {
+  return calendarSensibleDefaultsService.processAutomaticLabels(def, config);
 }
 
 function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
->(def: Record<string, any>): NonFunctionWidget<StateKeys, FormData> {
-  const calendarDef = def as CalendarDecorator;
+>(def: CalendarDecorator): NonFunctionWidget<StateKeys, FormData> {
   return {
     uid: '',
     kind: 'input',
     type: 'calendar',
-    path: calendarDef.path ?? '',
-    ...(calendarDef.label != null ? { label: calendarDef.label } : {}),
+    path: def.path ?? '',
+    ...(def.label != null ? { label: def.label } : {}),
     props: {
-      ...(calendarDef.minDate != null ? { minDate: calendarDef.minDate } : {}),
-      ...(calendarDef.maxDate != null ? { maxDate: calendarDef.maxDate } : {}),
+      ...(def.minDate != null ? { minDate: def.minDate } : {}),
+      ...(def.maxDate != null ? { maxDate: def.maxDate } : {}),
     },
   } as InputWidget<any, StateKeys, FormData>;
 }
 
-function parseEntry(entry: any): { baseDef: any; path?: string } {
+function parseEntry(entry: CalendarEntry): ParsedEntry<CalendarDecorator> {
   // CalendarEntry is a bare decorator or callback — path lives inside the decorator
   return { baseDef: entry };
 }
 
-const handler: ItemTypeHandler = {
+const handler: ItemTypeHandler<CalendarEntry, CalendarDecorator, CalendarSensibleDefaultsConfig> = {
   rollUpSensibleDefaults,
   applySensibleDefaults,
   mapToWidget,
