@@ -1,11 +1,18 @@
 import {
+  FormWidget,
+  FunctionWidgetParams,
   LayoutWidget,
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector } from '../../core/dx.domain';
-import { registerItemType, ItemTypeHandler } from '../../core/itemTypeRegistry';
-import { LayoutDecorator } from './layouts.domain';
+import { GslLeafSelector, MergeResult, ValidGuiShortcut } from '../../core/dx.domain';
+import {
+  registerItemType,
+  ItemTypeHandler,
+  ParsedEntry,
+  BuildWidgetContext,
+} from '../../core/itemTypeRegistry';
+import { LayoutDecorator, LayoutEntry } from './layouts.domain';
 
 function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): Record<string, any> {
   return {};
@@ -34,10 +41,35 @@ function mapToWidget<
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function parseEntry(_entry: any): { baseDef: any; path?: string } {
-  // Layouts are handled by processLayoutItem, not the generic pipeline.
-  // This should never be called.
-  throw new Error('Layouts are processed via processLayoutItem, not parseEntry.');
+function parseEntry(entry: any): ParsedEntry {
+  const layoutEntry = entry as LayoutEntry;
+  return {
+    baseDef: layoutEntry.def,
+    children: layoutEntry.children,
+  };
+}
+
+function buildWidget(
+  mergeResult: MergeResult,
+  context: BuildWidgetContext,
+): FormWidget {
+  const children = context.walkChildren(context.children ?? []);
+
+  if (mergeResult.kind === 'static') {
+    const mapped = context.mapStaticDef(mergeResult.def, 'LAYOUTS') as LayoutWidget;
+    return { ...mapped, children };
+  }
+
+  const fn = mergeResult.fn;
+  return ((params: FunctionWidgetParams<any>) => {
+    const runtimeDef = fn(params);
+    const mapped = context.mapStaticDef(runtimeDef, 'LAYOUTS') as LayoutWidget;
+    return { ...mapped, children };
+  }) as FormWidget;
+}
+
+function getChildren(entry: any): ValidGuiShortcut[] | undefined {
+  return (entry as LayoutEntry).children;
 }
 
 const handler: ItemTypeHandler = {
@@ -45,6 +77,8 @@ const handler: ItemTypeHandler = {
   applySensibleDefaults,
   mapToWidget,
   parseEntry,
+  buildWidget,
+  getChildren,
 };
 
 registerItemType('LAYOUTS', handler);

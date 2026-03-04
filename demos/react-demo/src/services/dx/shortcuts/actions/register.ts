@@ -3,9 +3,15 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector } from '../../core/dx.domain';
-import { registerItemType, ItemTypeHandler } from '../../core/itemTypeRegistry';
+import { GslLeafSelector, MergeResult } from '../../core/dx.domain';
+import {
+  registerItemType,
+  ItemTypeHandler,
+  ParsedEntry,
+  AfterMergeContext,
+} from '../../core/itemTypeRegistry';
 import { ActionDecorator, ActionEntry } from './actions.domain';
+import actionOnClickService from '../../core/actionOnClick.service';
 
 function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): Record<string, any> {
   return {};
@@ -33,10 +39,21 @@ function mapToWidget<
   } as ActionWidget<StateKeys, FormData>;
 }
 
-function parseEntry(entry: any): { baseDef: any; path?: string } {
+function parseEntry(entry: any): ParsedEntry {
   // ActionEntry is either an ActionDecorator or an ActionDefCallback (bare, no key)
   const actionEntry = entry as ActionEntry;
   return { baseDef: actionEntry };
+}
+
+function afterMerge(
+  mergeResult: MergeResult,
+  context: AfterMergeContext,
+): MergeResult {
+  return actionOnClickService.extractOnClickFromMergeResult(
+    mergeResult,
+    context.onClickRegistry,
+    context.rootDefaults,
+  );
 }
 
 const handler: ItemTypeHandler = {
@@ -44,6 +61,7 @@ const handler: ItemTypeHandler = {
   applySensibleDefaults,
   mapToWidget,
   parseEntry,
+  afterMerge,
 };
 
 registerItemType('ACTIONS', handler);

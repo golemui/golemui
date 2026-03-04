@@ -1,9 +1,16 @@
 import {
+  FormWidget,
+  FunctionWidgetParams,
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector } from '../../core/dx.domain';
-import { registerItemType, ItemTypeHandler } from '../../core/itemTypeRegistry';
+import { GslLeafSelector, MergeResult } from '../../core/dx.domain';
+import {
+  registerItemType,
+  ItemTypeHandler,
+  ParsedEntry,
+  BuildWidgetContext,
+} from '../../core/itemTypeRegistry';
 import { DisplayDecorator } from './display.domain';
 
 function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): Record<string, any> {
@@ -30,10 +37,34 @@ function mapToWidget<
   } as unknown as NonFunctionWidget<StateKeys, FormData>;
 }
 
-function parseEntry(_entry: any): { baseDef: any; path?: string } {
-  // Displays are handled by processDisplayItem, not the generic pipeline.
-  // This should never be called.
-  throw new Error('Displays are processed via processDisplayItem, not parseEntry.');
+function parseEntry(entry: any): ParsedEntry {
+  return { baseDef: entry };
+}
+
+function buildWidget(
+  mergeResult: MergeResult,
+  _context: BuildWidgetContext,
+): FormWidget {
+  if (mergeResult.kind === 'static') {
+    const displayDef = mergeResult.def as DisplayDecorator;
+    return ((params?: FunctionWidgetParams<any>) => ({
+      uid: '',
+      kind: 'display' as const,
+      type: 'renderer',
+      props: { render: displayDef.render(params ?? ({} as FunctionWidgetParams<any>)) },
+    })) as FormWidget;
+  }
+
+  const runtimeFn = mergeResult.fn;
+  return ((params?: FunctionWidgetParams<any>) => {
+    const displayDef = runtimeFn(params as any);
+    return {
+      uid: '',
+      kind: 'display' as const,
+      type: 'renderer',
+      props: { render: displayDef.render(params ?? ({} as FunctionWidgetParams<any>)) },
+    };
+  }) as FormWidget;
 }
 
 const handler: ItemTypeHandler = {
@@ -41,6 +72,7 @@ const handler: ItemTypeHandler = {
   applySensibleDefaults,
   mapToWidget,
   parseEntry,
+  buildWidget,
 };
 
 registerItemType('DISPLAYS', handler);

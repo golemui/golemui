@@ -1,12 +1,38 @@
 import {
+  FormWidget,
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector } from './dx.domain';
+import {
+  GslLeafSelector,
+  GslRootDefaults,
+  MergeResult,
+  ValidGuiShortcut,
+} from './dx.domain';
+import type { GslItemType } from './dx.domain';
 
 // ═══════════════════════════════════════════════════
 // Item Type Handler — each shortcut folder implements this
 // ═══════════════════════════════════════════════════
+
+export interface ParsedEntry {
+  baseDef: any;
+  path?: string;
+  children?: ValidGuiShortcut[];
+}
+
+type OnClickRegistry = Map<string, (data: any) => void>;
+
+export interface AfterMergeContext {
+  onClickRegistry: OnClickRegistry;
+  rootDefaults: GslRootDefaults;
+}
+
+export interface BuildWidgetContext {
+  children?: ValidGuiShortcut[];
+  mapStaticDef: (def: Record<string, any>, itemType: GslItemType) => NonFunctionWidget;
+  walkChildren: (children: ValidGuiShortcut[]) => FormWidget[];
+}
 
 export interface ItemTypeHandler {
   // Used by selectorResolver: roll up sensible defaults from matching leaf selectors
@@ -22,7 +48,19 @@ export interface ItemTypeHandler {
 
   // Used by itemWalker: extract the base decorator from an entry
   // Returns { baseDef, path? } where path is set for keyed entries (inputs, calendar, etc.)
-  parseEntry(entry: any): { baseDef: any; path?: string };
+  parseEntry(entry: any): ParsedEntry;
+
+  afterMerge?(
+    mergeResult: MergeResult,
+    context: AfterMergeContext,
+  ): MergeResult;
+
+  buildWidget?(
+    mergeResult: MergeResult,
+    context: BuildWidgetContext,
+  ): FormWidget;
+
+  getChildren?(entry: any): ValidGuiShortcut[] | undefined;
 }
 
 // ═══════════════════════════════════════════════════

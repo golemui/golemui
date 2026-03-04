@@ -7,7 +7,7 @@ import {
   ValidGuiShortcut,
 } from './dx.domain';
 import { ActionDecorator } from '../shortcuts/actions/actions.domain';
-import { LayoutEntry } from '../shortcuts/layouts/layouts.domain';
+import { getItemTypeHandler } from './itemTypeRegistry';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 
@@ -40,12 +40,16 @@ export class ActionOnClickService {
   countSubmitButtons(defs: ValidGuiShortcut[]): number {
     let count = 0;
     for (const def of defs) {
-      if (def.type === 'ITEMS' && def.itemType === GuiItemTypes.LAYOUTS) {
-        for (const layoutEntry of def.items as LayoutEntry[]) {
-          count += this.countSubmitButtons(layoutEntry.children);
+      if (def.type !== 'ITEMS') continue;
+      const handler = getItemTypeHandler(def.itemType);
+
+      for (const item of def.items) {
+        const children = handler.getChildren?.(item);
+        if (children) {
+          count += this.countSubmitButtons(children);
         }
-      } else if (def.type === 'ITEMS' && def.itemType === GuiItemTypes.ACTIONS) {
-        for (const item of def.items) {
+
+        if (def.itemType === GuiItemTypes.ACTIONS) {
           if (typeof item === 'function') continue;
           const action = item as ActionDecorator;
           if (action.uid === '#submit' || action.onClick === 'submit') {

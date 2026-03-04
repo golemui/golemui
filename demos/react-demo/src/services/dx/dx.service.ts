@@ -135,6 +135,6 @@ export class DxService {
   }
 }
 
-const walker = new ItemWalker(selectorResolver, widgetMerger, widgetMapper, actionOnClickService);
+const walker = new ItemWalker(selectorResolver, widgetMerger, widgetMapper);
 const formDefs = new DxService(selectorNormalizer, actionOnClickService, walker);
 export default formDefs;
