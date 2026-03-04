@@ -10,7 +10,6 @@ import datePickerJson from '../../../../../public/template/components/date-picke
 import datePickerPlaceholderJson from '../../../../../public/template/components/date-picker/date-picker-placeholder.json?raw';
 import datePickerHintJson from '../../../../../public/template/components/date-picker/date-picker-hint.json?raw';
 import datePickerIconJson from '../../../../../public/template/components/date-picker/date-picker-icon.json?raw';
-import datePickerFormatJson from '../../../../../public/template/components/date-picker/date-picker-format.json?raw';
 import datePickerAnatomyHtml from '../../../../../public/template/components/date-picker/date-picker-anatomy.html?raw';
 export const configJson = 'date-picker.json';
 export const anatomy = 'date-picker-anatomy.html';
@@ -32,9 +31,6 @@ Use these `props` to customize your Date Picker component. The Date Picker inher
 | `placeholder`        | string | Accessible placeholder text for the component                                   |
 | `hint`               | string | A description to display below the input fields                                 |
 | `icon`               | string | Custom icon class to display inside the input visually (e.g. `fas fa-calendar`) |
-| `dayFormat`          | string | Formatting style for days (`numeric` or `2-digit`)                              |
-| `monthFormat`        | string | Formatting style for months (`numeric`, `2-digit`, `long`, `short`, `narrow`)   |
-| `weekdayFormat`      | string | Formatting style for weekdays (`short`, `long`, `narrow`)                       |
 | `prevMonthIcon`      | string | Custom CSS class for the "previous month" button inside the calendar            |
 | `nextMonthIcon`      | string | Custom CSS class for the "next month" button inside the calendar                |
 | `prevMonthAriaLabel` | string | ARIA label for the previous month button                                        |
@@ -70,16 +66,6 @@ Use the property `icon` to add an icon, which appears next to the toggle chevron
 <Code code={datePickerIconJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-icon.json"
-  minHeight="500"
-/>
-
-### Popover Calendar Formatting
-
-Use properties like `dayFormat`, `monthFormat` and `weekdayFormat` to control the display of the interactive calendar popover.
-
-<Code code={datePickerFormatJson} lang="js" title={configJson} />
-<Demo
-  src="/template/index.html?form=template/components/date-picker/date-picker-format.json"
   minHeight="500"
 />
 

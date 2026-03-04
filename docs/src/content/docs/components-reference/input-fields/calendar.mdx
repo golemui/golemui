@@ -10,7 +10,6 @@ import calendarHintJson from '../../../../../public/template/components/calendar
 import calendarMinMaxJson from '../../../../../public/template/components/calendar/calendar-minmax.json?raw';
 import calendarMonthsJson from '../../../../../public/template/components/calendar/calendar-months.json?raw';
 import calendarDisabledJson from '../../../../../public/template/components/calendar/calendar-disabled.json?raw';
-import calendarFormatJson from '../../../../../public/template/components/calendar/calendar-format.json?raw';
 import calendarAnatomyHtml from '../../../../../public/template/components/calendar/calendar-anatomy.html?raw';
 export const configJson = 'calendar.json';
 export const anatomy = 'calendar-anatomy.html';
@@ -33,9 +32,6 @@ Use these `props` to customize your Calendar component.
 | `maxDate`            | string | Maximum allowable date in ISO format                                               |
 | `numberOfMonths`     | number | Number of months to display simultaneously. Defaults to 1                          |
 | `disabledRanges`     | array  | Array of objects (`{ start: string, end?: string }`) defining disabled date ranges |
-| `dayFormat`          | string | Formatting style for days (`numeric` or `2-digit`)                                 |
-| `monthFormat`        | string | Formatting style for months (`numeric`, `2-digit`, `long`, `short`, `narrow`)      |
-| `weekdayFormat`      | string | Formatting style for weekdays (`short`, `long`, `narrow`)                          |
 | `prevMonthIcon`      | string | Custom CSS class for the "previous month" button icon                              |
 | `nextMonthIcon`      | string | Custom CSS class for the "next month" button icon                                  |
 | `prevMonthAriaLabel` | string | ARIA label for the previous month button                                           |
@@ -78,15 +74,6 @@ Use the property `disabledRanges` to selectively disable specific date blocks wi
 <Code code={calendarDisabledJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-disabled.json"
-/>
-
-### Custom Formatting
-
-Use `dayFormat`, `monthFormat` and `weekdayFormat` to tweak the calendar's localized presentation style (e.g. padding zeros, shorthand vs. full labels).
-
-<Code code={calendarFormatJson} lang="js" title={configJson} />
-<Demo
-  src="/template/index.html?form=template/components/calendar/calendar-format.json"
 />
 
 ## Styling
