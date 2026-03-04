@@ -24,8 +24,11 @@ export class GuiCalendar extends AbstractCalendar {
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
-      if (this.value && this.numberOfMonths === 1) {
-        this._currentDate = new Date(this.value);
+      if (this.value) {
+        const date = new Date(this.value);
+        if (!isNaN(date.getTime())) {
+          this._currentDate = date;
+        }
       }
     }
   }
