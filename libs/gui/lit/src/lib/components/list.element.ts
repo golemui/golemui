@@ -87,8 +87,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
         <gui-list
           .uid=${this.widget.uid}
           .value=${data.value ?? ''}
-          .valueField=${data.valueField}
-          .labelField=${data.labelField}
+          .valueField=${data.valueField as string}
           .items=${data.items}
           .itemHeight=${data.itemHeight}
           .height=${data.height}

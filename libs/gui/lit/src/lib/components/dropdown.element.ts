@@ -281,7 +281,6 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           .uid=${this.widget.uid}
           .value=${templateData.value ?? ''}
           .valueField=${templateData.valueField! as string}
-          .labelField=${templateData.labelField! as string}
           .items=${this._isFiltering && !asyncFiltering ? this._filteredItems : templateData.items}
           .itemHeight=${templateData.itemHeight}
           .height=${templateData.height}
