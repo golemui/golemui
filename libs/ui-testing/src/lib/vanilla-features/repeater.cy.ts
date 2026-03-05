@@ -139,5 +139,36 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="firstName[0]_textinput"]').should('have.value', 'Second');
       cy.get('[data-cy="firstName[1]_textinput"]').should('not.exist');
     });
+
+    it('should add and then remove items', () => {
+      const initialData = {
+        repeaters: {
+          users: [],
+        },
+      };
+
+      mountFn({
+        data: initialData,
+        formDef: getFormDefinition(),
+      });
+
+      // Add three items
+      cy.get('.gui-button').contains('Add new developer').click();
+      cy.get('.gui-button').contains('Add new developer').click();
+      cy.get('.gui-button').contains('Add new developer').click();
+
+      // Fill the text inputs
+      cy.get('[data-cy="firstName[0]_textinput"]').type('First');
+      cy.get('[data-cy="firstName[1]_textinput"]').type('Second');
+      cy.get('[data-cy="firstName[2]_textinput"]').type('Third');
+
+      // Click remove on the first row
+      cy.get('.gui-button').contains('Remove developer').first().click();
+
+      // The index 0 now should have "Second"
+      cy.get('[data-cy="firstName[0]_textinput"]').should('have.value', 'Second');
+      cy.get('[data-cy="firstName[1]_textinput"]').should('have.value', 'Third');
+      cy.get('[data-cy="firstName[2]_textinput"]').should('not.exist');
+    });
   });
 };

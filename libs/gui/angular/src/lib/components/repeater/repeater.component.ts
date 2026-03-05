@@ -27,7 +27,8 @@ export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
   }
 
   addItem() {
-    this.adapter.valueChanged([...(this.adapter.templateData().value ?? []), {}]);
+    const newValue = [...(this.adapter.templateData().value ?? []), {}];
+    this.adapter.valueChanged(newValue);
   }
 
   removeItem(index: number) {
