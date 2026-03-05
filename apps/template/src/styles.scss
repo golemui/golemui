@@ -74,6 +74,18 @@ lit-root {
   &-edit_note::before {
     content: 'edit_note';
   }
+
+  &-save::before {
+    content: 'save';
+  }
+
+  &-remove::before {
+    content: 'remove';
+  }
+
+  &-add::before {
+    content: 'add';
+  }
 }
 
 // List Item Renderer

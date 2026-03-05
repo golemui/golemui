@@ -80,6 +80,10 @@ const form = defineForm({
       kind: 'action',
       type: 'button',
       label: 'Create',
+      props: {
+        icon: 'material-icons material-icons-save',
+        iconPosition: 'right',
+      },
       on: {
         click: 'submit',
       },

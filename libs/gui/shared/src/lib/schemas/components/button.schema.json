@@ -40,6 +40,12 @@
       "properties": {
         "variant": {
           "$ref": "#/$defs/variantProp"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "iconPosition": {
+          "enum": ["left", "right"]
         }
       },
       "patternProperties": {
