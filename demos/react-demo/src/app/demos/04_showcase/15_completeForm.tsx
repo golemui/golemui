@@ -11,6 +11,8 @@ import {
   _guiDateInput,
   _guiCurrency,
   _guiRangeCalendar,
+  _guiSelect,
+  _guiRadiogroup,
   _guiButton,
   _guiHorizontalStack,
   _guiDisplay,
@@ -53,6 +55,22 @@ export const completeFormDemo: FormDemoDefinition = {
     _guiCurrency('budget', { currency: 'EUR', step: 0.5 }),
 
     _guiRangeCalendar('stayRange', { numberOfMonths: 2 }),
+
+    _guiSelect('dietaryPreference', {
+      options: [
+        { label: 'No preference', value: 'none' },
+        { label: 'Vegetarian', value: 'vegetarian' },
+        { label: 'Vegan', value: 'vegan' },
+      ],
+      placeholder: 'Select diet...',
+    }),
+
+    _guiRadiogroup('ticketType', {
+      options: [
+        { label: 'Standard', value: 'standard' },
+        { label: 'VIP', value: 'vip' },
+      ],
+    }),
 
     _guiCalendar('eventDate', (params) => ({
       minDate: new Date().toISOString().slice(0, 10),

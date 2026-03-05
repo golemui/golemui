@@ -9,6 +9,7 @@ import {
   layoutsDemo,
   buttonsDemo,
   moreInputTypesDemo,
+  selectAndRadioDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -41,6 +42,7 @@ formRegistry.registerAll([
   layoutsDemo,
   buttonsDemo,
   moreInputTypesDemo,
+  selectAndRadioDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,

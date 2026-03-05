@@ -15,6 +15,8 @@ export { _guiCheckbox } from './shortcuts/checkbox/guiCheckbox.impl';
 export { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
 export { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
+export { _guiSelect } from './shortcuts/select/guiSelect.impl';
+export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
 export { _guiButton, _guiButtons, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
 export { _guiStack, _guiHorizontalStack, _guiVerticalStack } from './shortcuts/layouts/guiStack.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
@@ -30,6 +32,8 @@ export { _gslCheckbox, _gslCheckboxById } from './shortcuts/checkbox/register';
 export { _gslDateInput, _gslDateInputById } from './shortcuts/date-input/register';
 export { _gslCurrency, _gslCurrencyById } from './shortcuts/currency/register';
 export { _gslRangeCalendar, _gslRangeCalendarById } from './shortcuts/range-calendar/register';
+export { _gslSelect, _gslSelectById } from './shortcuts/select/register';
+export { _gslRadiogroup, _gslRadiogroupById } from './shortcuts/radiogroup/register';
 export { _gslActions, _gslActionById } from './shortcuts/actions/register';
 export { _gslLayouts, _gslLayoutById } from './shortcuts/layouts/register';
 export { _gslDisplays, _gslDisplayById } from './shortcuts/display/register';
@@ -63,10 +67,16 @@ export type {
   RangeCalendarDecorator,
   GslRangeCalendarConfig,
 } from './shortcuts/range-calendar/rangeCalendar.domain';
+export type { SelectDecorator, GslSelectConfig } from './shortcuts/select/select.domain';
+export type {
+  RadiogroupDecorator,
+  GslRadiogroupConfig,
+} from './shortcuts/radiogroup/radiogroup.domain';
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
 export type { LayoutDecorator, GslLayoutsConfig } from './shortcuts/layouts/layouts.domain';
 export type { DisplayDecorator, GslDisplaysConfig } from './shortcuts/display/display.domain';
 export type { StackOrientation } from './shortcuts/layouts/guiStack.impl';
+export type { Option, OptionValue } from '@golemui/gui-shared';
 
 // ─── Extension API (for adding custom shortcut types) ───
 

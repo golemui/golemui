@@ -65,6 +65,8 @@ export type { CheckboxDecorator } from './shortcuts/checkbox/checkbox.domain';
 export type { DateInputDecorator } from './shortcuts/date-input/dateInput.domain';
 export type { CurrencyDecorator } from './shortcuts/currency/currency.domain';
 export type { RangeCalendarDecorator } from './shortcuts/range-calendar/rangeCalendar.domain';
+export type { SelectDecorator } from './shortcuts/select/select.domain';
+export type { RadiogroupDecorator } from './shortcuts/radiogroup/radiogroup.domain';
 
 export type {
   GslDecoratorCallback,
