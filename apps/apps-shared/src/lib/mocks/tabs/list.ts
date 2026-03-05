@@ -1,4 +1,8 @@
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
+const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
+  label: `Item ${i}`,
+  value: i,
+}));
 
 export const list = (): any => ({
   uid: 'tab14',
@@ -14,6 +18,19 @@ export const list = (): any => ({
         height: 100,
         hint: 'Virtual scroll list with 1000 items. Default Item height.',
         items: thousandsOfItems,
+      },
+    },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'list',
+      path: 'lists.defaultListRendererObjectItems',
+      props: {
+        height: 100,
+        hint: 'Virtual scroll list with 1000 items. Default Item height.',
+        items: thousandsOfObjectItems,
+        labelField: 'label',
+        valueField: 'value',
       },
     },
     {
@@ -76,6 +93,7 @@ export const list = (): any => ({
       props: {
         height: 150,
         itemHeight: 60,
+        labelField: 'title',
         valueField: 'value',
         itemRenderer: 'complexListItemRenderer',
         items: [

@@ -1,4 +1,5 @@
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
+const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
 
 export const dropdown = (): any => ({
   uid: 'tab15',
@@ -25,6 +26,20 @@ export const dropdown = (): any => ({
       on: {
         load: 'searchProductForDropdown',
         filter: 'searchProductForDropdown',
+      },
+    },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'dropdown',
+      path: 'dropdowns.defaultListRendererObjectItems',
+      label: 'Default list renderer with object values',
+      props: {
+        height: 100,
+        hint: 'Virtual scroll list with 1000 items. Default Item height.',
+        items: thousandsOfObjectItems,
+        labelField: 'label',
+        valueField: 'value',
       },
     },
     {

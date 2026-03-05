@@ -134,6 +134,10 @@ export function List(widgetInstance: Core.WithWidget) {
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
 
+            const template = item.template && templateData.labelField && !templateData.itemRenderer
+              ? item.template[templateData.labelField]
+              : item.template;
+
             return (
               <div
                 key={absoluteIndex}
@@ -147,7 +151,7 @@ export function List(widgetInstance: Core.WithWidget) {
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
-                  template={item.template}
+                  template={template}
                   value={item.value}
                   index={index}
                   selected={isSelected}
