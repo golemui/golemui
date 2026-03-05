@@ -61,6 +61,10 @@ export default defineConfig({
               label: 'Layout Fields',
               autogenerate: { directory: 'components-reference/layout-fields' },
             },
+            {
+              label: 'Interactive Fields',
+              autogenerate: { directory: 'components-reference/interactive-fields' },
+            },
           ],
         },
       ],

@@ -15,6 +15,8 @@ export type AccordionProps = {
 // TODO: implement this
 export type ButtonProps = {
   variant?: 'filled' | 'outlined';
+  icon?: string;
+  iconPosition?: 'left' | 'right';
 };
 
 export type TextinputProps = {

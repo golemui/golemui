@@ -11,6 +11,8 @@ export class ActionWidgetAdapter extends BaseWidgetAdapter<Core.ActionWidget> {
     this.widget = widget;
     this.setTemplateData({
       label: this.widget.label,
+      icon: (this.widget.props as any)?.icon,
+      iconPosition: (this.widget.props as any)?.iconPosition,
     });
 
     this.addWidgetToTheStore(widget);
