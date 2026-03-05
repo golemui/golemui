@@ -1,11 +1,17 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { RepeaterProps } from '@golemui/gui-shared';
+import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
+
+/**
+ * Monotonically increasing counter for generating unique repeater item IDs.
+ */
+let nextRepeaterItemId = 0;
+const idIncrementer = () => nextRepeaterItemId++;
 
 @customElement('gui-repeater-input')
 export class RepeaterElement extends LitElement implements Core.WithWidget {
@@ -57,8 +63,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
-              (widget) => widget['uid'],
-              (widget, index) => html`
+              (widget) => getItemKey(widget, idIncrementer),
+              (_, index) => html`
                 <div class="card">
                   <gui-repeater-widget
                     .repeaterIndex=${index}
@@ -94,14 +100,19 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   }
 
   private addItem() {
-    this.adapter.valueChanged([...(this.adapter.templateData.value ?? []), {}]);
+    const newValue = [...(this.adapter.templateData.value ?? []), {}];
+    this.adapter.valueChanged(newValue);
     this.requestUpdate();
   }
 
   private removeItem(index: number) {
-    const arr = [...(this.adapter.templateData.value ?? [])];
-    arr.splice(index, 1);
-    this.adapter.valueChanged(arr);
+    const items = (this.adapter.templateData.value ?? []).filter((_, i) => index !== i);
+    // Make sure we don't keep object references
+    if ('structuredClone' in window) {
+      this.adapter.valueChanged(structuredClone(items));
+    } else {
+      this.adapter.valueChanged(JSON.parse(JSON.stringify(items)));
+    }
     this.requestUpdate();
   }
 }
