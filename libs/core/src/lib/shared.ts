@@ -114,8 +114,6 @@ export type ControlTemplateData<T, V = any> = {
   disabled?: boolean;
   readonly?: boolean;
   touched?: boolean;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
 };
 
 /**
@@ -161,6 +159,4 @@ export type ActionWidgetTemplateData = {
    * size: 2
    */
   size?: number;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
 };

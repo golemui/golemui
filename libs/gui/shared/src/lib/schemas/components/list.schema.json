@@ -31,6 +31,9 @@
         "required": ["template", "value"]
       }
     },
+    "labelFieldProp": {
+      "type": "string"
+    },
     "valueFieldProp": {
       "type": "string"
     },
@@ -80,6 +83,9 @@
         "items": {
           "$ref": "#/$defs/itemsProp"
         },
+        "labelField": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
         "valueField": {
           "$ref": "#/$defs/valueFieldProp"
         },
@@ -99,6 +105,9 @@
         },
         "^items\\.[^.]+$": {
           "$ref": "#/$defs/itemsProp"
+        },
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
         },
         "^valueField\\.[^.]+$": {
           "$ref": "#/$defs/valueFieldProp"

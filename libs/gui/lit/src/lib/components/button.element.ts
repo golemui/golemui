@@ -5,6 +5,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
+import { ButtonProps, CalendarProps } from '@golemui/gui-shared';
 
 @customElement('gui-button-action')
 export class ButtonElement extends LitElement implements Core.WithWidget {
@@ -15,7 +16,7 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.actionContext })
-  adapter = new Lit.ActionWidgetAdapter();
+  adapter = new Lit.ActionWidgetAdapter<ButtonProps>();
 
   subscriptions: Subscription[] = [];
 

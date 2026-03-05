@@ -1,14 +1,15 @@
 import * as Core from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 import '../styles.scss';
+import { ButtonProps } from '@golemui/gui-shared';
 
 export function Button(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.ActionWidget;
-  const { uid, templateData, onClick } = useActionWidget(widget);
+  const { uid, templateData, onClick } = useActionWidget<ButtonProps>(widget);
   const isDisabled = templateData.disabled as boolean;
-  const icon = templateData.icon as string;
+  const icon = templateData.icon;
   const label = templateData.label as string;
-  const iconPosition = (templateData.iconPosition as string) || 'left';
+  const iconPosition = templateData.iconPosition || 'left';
 
   const iconElement = icon ? <span className={`gui-button-icon ${icon}`}></span> : null;
 
