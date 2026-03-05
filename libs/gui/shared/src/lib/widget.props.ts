@@ -50,6 +50,7 @@ export type TextareaProps = {
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
+  maxLength?: number;
 };
 
 export type CalendarProps = {
