@@ -5,7 +5,7 @@ description: A Number Input component to allow user to enter numeric values
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import numberJson from '../../../../../public/template/components/number/number.json?raw';
 import numberPlaceholderJson from '../../../../../public/template/components/number/number-placeholder.json?raw';
 import numberHintJson from '../../../../../public/template/components/number/number-hint.json?raw';
@@ -50,8 +50,7 @@ Use the property `placeholder` to add a placeholder.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 

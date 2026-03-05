@@ -5,7 +5,7 @@ description: A Range Calendar component to allow user to select a range of dates
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import rangeCalendarJson from '../../../../../public/template/components/range-calendar/range-calendar.json?raw';
 import rangeCalendarHintJson from '../../../../../public/template/components/range-calendar/range-calendar-hint.json?raw';
 import rangeCalendarMinMaxJson from '../../../../../public/template/components/range-calendar/range-calendar-minmax.json?raw';
@@ -37,8 +37,7 @@ Use these `props` to customize your Range Calendar component. Range Calendars sh
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description to the date range selection.
 

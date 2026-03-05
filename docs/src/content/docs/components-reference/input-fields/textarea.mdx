@@ -2,9 +2,10 @@
 title: Textarea
 description: A Textarea component to allow user to enter multi-line string chains
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import textareaJson from '../../../../../public/template/components/textarea/textarea.json?raw';
 import textareaPlaceholderJson from '../../../../../public/template/components/textarea/textarea-placeholder.json?raw';
 import textareaHintJson from '../../../../../public/template/components/textarea/textarea-hint.json?raw';
@@ -26,15 +27,15 @@ Textarea components are [Input Fields](/components-reference/input-fields/overvi
 
 Use these `props` to customize your Textarea component.
 
-| prop | type | description |
-| ---- | ---- | ----------- |
-| `placeholder` | string | A placeholder text to display when the textarea has no value |
-| `hint` | string | A description to display below the textarea |
-| `icon` | string | A css class to display an icon inside the textarea |
-| `counterMode` | string | Mode for the character counter if `maxLength` is set, possible values are `remaining` (default) or `current` |
-| `minimumHeight` | number | Minimum height of the textarea in pixels, defaults to 120 |
-| `autoGrow` | boolean | If true, the textarea will automatically expand its height as the user types |
-| `maxLength` | number | Maximum number of characters allowed. Also enables the character counter |
+| prop            | type    | description                                                                                                  |
+| --------------- | ------- | ------------------------------------------------------------------------------------------------------------ |
+| `placeholder`   | string  | A placeholder text to display when the textarea has no value                                                 |
+| `hint`          | string  | A description to display below the textarea                                                                  |
+| `icon`          | string  | A css class to display an icon inside the textarea                                                           |
+| `counterMode`   | string  | Mode for the character counter if `maxLength` is set, possible values are `remaining` (default) or `current` |
+| `minimumHeight` | number  | Minimum height of the textarea in pixels, defaults to 120                                                    |
+| `autoGrow`      | boolean | If true, the textarea will automatically expand its height as the user types                                 |
+| `maxLength`     | number  | Maximum number of characters allowed. Also enables the character counter                                     |
 
 ### Placeholder
 
@@ -47,8 +48,7 @@ Use the property `placeholder` to add a placeholder.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 
@@ -92,20 +92,20 @@ Textareas can be styled as explained in the [Styling Guide](/guides/styling).
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable | Description |
-| ------------ | ----------- |
-| `--gui-space-10` | Icon left padding or inline-start space |
-| `--gui-font-sm` | Counter text font size |
-| `--gui-space-2` | Counter top margin |
-| `--gui-intent-error` | Counter error color when max length is exceeded |
-| `--gui-space-gap--inner` | Label gap and margin bottom |
-| `--gui-padding` | Input padding |
-| `--gui-color-border` | Input border color |
-| `--gui-radius` | Input radius |
-| `--gui-color-bg` | Input background color |
-| `--gui-color-fg` | Input text color |
-| `--gui-color-primary` | Input border color and outline on focus |
-| `--gui-color-error` | Input border color when invalid |
+| CSS Variable             | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| `--gui-space-10`         | Icon left padding or inline-start space         |
+| `--gui-font-sm`          | Counter text font size                          |
+| `--gui-space-2`          | Counter top margin                              |
+| `--gui-intent-error`     | Counter error color when max length is exceeded |
+| `--gui-space-gap--inner` | Label gap and margin bottom                     |
+| `--gui-padding`          | Input padding                                   |
+| `--gui-color-border`     | Input border color                              |
+| `--gui-radius`           | Input radius                                    |
+| `--gui-color-bg`         | Input background color                          |
+| `--gui-color-fg`         | Input text color                                |
+| `--gui-color-primary`    | Input border color and outline on focus         |
+| `--gui-color-error`      | Input border color when invalid                 |
 
 ### Anatomy
 

@@ -2,9 +2,10 @@
 title: List
 description: A virtualized List component for displaying and selecting from large sets of data
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import listJson from '../../../../../public/template/components/list/list.json?raw';
 import listHintJson from '../../../../../public/template/components/list/list-hint.json?raw';
 import listAnatomyHtml from '../../../../../public/template/components/list/list-anatomy.html?raw';
@@ -34,8 +35,7 @@ Use these `props` to customize your List component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to provide additional context for the list.
 

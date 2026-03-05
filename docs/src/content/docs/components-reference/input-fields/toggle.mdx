@@ -2,9 +2,10 @@
 title: Toggle
 description: A Toggle component to allow user to switch between two states
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import toggleJson from '../../../../../public/template/components/toggle/toggle.json?raw';
 import toggleHintJson from '../../../../../public/template/components/toggle/toggle-hint.json?raw';
 import togglePositionJson from '../../../../../public/template/components/toggle/toggle-position.json?raw';
@@ -30,8 +31,7 @@ Use these `props` to customize your Toggle component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 

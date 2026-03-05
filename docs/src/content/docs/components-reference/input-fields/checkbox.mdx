@@ -2,9 +2,10 @@
 title: Checkbox
 description: A Checkbox component to allow user to toggle boolean values
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import checkboxJson from '../../../../../public/template/components/checkbox/checkbox.json?raw';
 import checkboxHintJson from '../../../../../public/template/components/checkbox/checkbox-hint.json?raw';
 import checkboxPositionJson from '../../../../../public/template/components/checkbox/checkbox-position.json?raw';
@@ -30,8 +31,7 @@ Use these `props` to customize your Checkbox component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 
@@ -57,10 +57,10 @@ Checkboxes can be styled as explained in the [Styling Guide](/guides/styling).
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable             | Description                                |
-| ------------------------ | ------------------------------------------ |
-| `--gui-radius-sm`        | Checkbox box border radius                 |
-| `--gui-intent-primary`   | Checkbox checked background and tick color |
+| CSS Variable           | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `--gui-radius-sm`      | Checkbox box border radius                 |
+| `--gui-intent-primary` | Checkbox checked background and tick color |
 
 ### Anatomy
 

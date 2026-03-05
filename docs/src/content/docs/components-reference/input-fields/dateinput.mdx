@@ -2,9 +2,10 @@
 title: Date Input
 description: A Date Input component to allow user to enter a date directly via keyboard using segmented inputs
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import dateinputJson from '../../../../../public/template/components/dateinput/dateinput.json?raw';
 import dateinputHintJson from '../../../../../public/template/components/dateinput/dateinput-hint.json?raw';
 import dateinputIconJson from '../../../../../public/template/components/dateinput/dateinput-icon.json?raw';
@@ -30,8 +31,7 @@ Use these `props` to customize your Date Input component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description or validation instructions.
 

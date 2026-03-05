@@ -5,11 +5,12 @@ description: A Date Picker component to allow user to enter a date via keyboard 
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import datePickerJson from '../../../../../public/template/components/date-picker/date-picker.json?raw';
 import datePickerPlaceholderJson from '../../../../../public/template/components/date-picker/date-picker-placeholder.json?raw';
 import datePickerHintJson from '../../../../../public/template/components/date-picker/date-picker-hint.json?raw';
 import datePickerIconJson from '../../../../../public/template/components/date-picker/date-picker-icon.json?raw';
+import datePickerIconsJson from '../../../../../public/template/components/date-picker/date-picker-icons.json?raw';
 import datePickerAnatomyHtml from '../../../../../public/template/components/date-picker/date-picker-anatomy.html?raw';
 export const configJson = 'date-picker.json';
 export const anatomy = 'date-picker-anatomy.html';
@@ -48,8 +49,7 @@ Use the property `placeholder` to provide context via an accessible placeholder 
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add descriptive text.
 
@@ -69,6 +69,16 @@ Use the property `icon` to add an icon, which appears next to the toggle chevron
   minHeight="500"
 />
 
+### Custom Icons
+
+Use the properties `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel`, and `nextMonthAriaLabel` to customize the navigation buttons within the calendar popover.
+
+<Code code={datePickerIconsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/date-picker/date-picker-icons.json"
+  minHeight="500"
+/>
+
 ## Styling
 
 Date Pickers can be styled as explained in the [Styling Guide](/guides/styling). Because they are composite components, they utilize variables from `textinput`, `dateinput`, and `calendar`.
@@ -77,13 +87,17 @@ Date Pickers can be styled as explained in the [Styling Guide](/guides/styling).
 
 Following you will find a list with the CSS Variables specific to the Date Picker popover positioning and toggle.
 
-| CSS Variable             | Description                                  |
-| ------------------------ | -------------------------------------------- |
-| `--gui-radius-md`        | Interactive calendar container border radius |
-| `--gui-bg-default`       | Interactive calendar background color        |
-| `--gui-border-default`   | Interactive calendar border color            |
-| `--gui-space-3`          | Internal padding within the calendar view    |
-| `--gui-space-gap--inner` | Label gap                                    |
+| CSS Variable                 | Description                                                 |
+| ---------------------------- | ----------------------------------------------------------- |
+| `--gui-radius-md`            | Interactive calendar container and day button border radius |
+| `--gui-bg-default`           | Interactive calendar background color                       |
+| `--gui-border-default`       | Interactive calendar border color                           |
+| `--gui-space-3`              | Internal padding within the calendar view and day buttons   |
+| `--gui-text-default`         | Input text color and day buttons text color                 |
+| `--gui-bg-disabled`          | Disabled day background color                               |
+| `--gui-intent-primary`       | Selected day background color                               |
+| `--gui-intent-primary-hover` | Today's day border color                                    |
+| `--gui-border-default`       | Hover day border color                                      |
 
 ### Anatomy
 

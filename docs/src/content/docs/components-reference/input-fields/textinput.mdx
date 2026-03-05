@@ -2,9 +2,10 @@
 title: Textinput
 description: A Textinput component to allow user to enter string chains
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import textinputJson from '../../../../../public/template/components/textinput/textinput.json?raw';
 import textinputPlaceholderJson
 from '../../../../../public/template/components/textinput/textinput-placeholder.json?raw';
@@ -43,8 +44,7 @@ Use the property `placeholder` to add a placeholder.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 

@@ -5,7 +5,7 @@ description: A Dropdown component that allows users to pick an item from a list 
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import dropdownJson from '../../../../../public/template/components/dropdown/dropdown.json?raw';
 import dropdownHintJson from '../../../../../public/template/components/dropdown/dropdown-hint.json?raw';
 import dropdownCustomJson from '../../../../../public/template/components/dropdown/dropdown-custom.json?raw';
@@ -39,8 +39,7 @@ Use these `props` to customize your Dropdown component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to provide instructions for the user.
 

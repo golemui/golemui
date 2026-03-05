@@ -2,9 +2,10 @@
 title: Select
 description: A Select component to allow user to pick one option from a dropdown menu using the native select behavior
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import selectJson from '../../../../../public/template/components/select/select.json?raw';
 import selectPlaceholderJson from '../../../../../public/template/components/select/select-placeholder.json?raw';
 import selectHintJson from '../../../../../public/template/components/select/select-hint.json?raw';
@@ -45,8 +46,7 @@ Use the property `placeholder` to define the default empty-state text.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add descriptive text or validation instructions.
 

@@ -5,7 +5,7 @@ description: A Currency component to allow user to enter monetary values
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import currencyJson from '../../../../../public/template/components/currency/currency.json?raw';
 import currencyPlaceholderJson from '../../../../../public/template/components/currency/currency-placeholder.json?raw';
 import currencyHintJson from '../../../../../public/template/components/currency/currency-hint.json?raw';
@@ -49,8 +49,7 @@ Use the property `placeholder` to add a placeholder.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 
@@ -108,7 +107,6 @@ Following you will find a list with the CSS Variables and a quick description of
 | `--gui-bg-default`     | Formatted value text background over input |
 | `--gui-font-sm`        | Formatted value text and hint font size    |
 | `--gui-space-10`       | Icon left padding or inline-start space    |
-| `--gui-text-default`   | Default text and focus border color        |
 | `--gui-intent-error`   | Border and text color when invalid         |
 | `--gui-radius-md`      | Input radius                               |
 | `--gui-border-default` | Input border color                         |

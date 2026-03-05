@@ -2,9 +2,10 @@
 title: Radio Group
 description: A Radio Group component for selecting a single option from a list of predefined choices
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import radiogroupJson from '../../../../../public/template/components/radiogroup/radiogroup.json?raw';
 import radiogroupHintJson from '../../../../../public/template/components/radiogroup/radiogroup-hint.json?raw';
 import radiogroupCustomJson from '../../../../../public/template/components/radiogroup/radiogroup-custom.json?raw';
@@ -33,8 +34,7 @@ Use these `props` to customize your Radio Group component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to provide instructions for the user.
 

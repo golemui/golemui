@@ -3,7 +3,7 @@ title: Calendar
 description: A Calendar component to allow user to select a single date from an interactive calendar interface
 ---
 
-import { Code } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
 import Demo from '../../../../../src/components/landing/Demo.astro';
 import calendarJson from '../../../../../public/template/components/calendar/calendar.json?raw';
 import calendarHintJson from '../../../../../public/template/components/calendar/calendar-hint.json?raw';
@@ -40,8 +40,7 @@ Use these `props` to customize your Calendar component.
 
 ### Hint
 
-> [!NOTE]
-> A `label` is required for the `hint` to be displayed.
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 
