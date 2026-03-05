@@ -241,7 +241,9 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
     debouncedFilter(filterValue);
   };
 
-  const handleInputFocus = () => {
+  const handleInputFocus = useCallback(() => {
+    if (isListVisible) return;
+
     setIsListVisible(true);
 
     setTimeout(() => {
@@ -249,7 +251,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         listRef.current.scrollToSelectedIndex();
       }
     }, 0);
-  };
+  }, [isListVisible]);
 
   const handleFocusOut = (e: React.FocusEvent) => {
     const newFocusTarget = e.relatedTarget as Node;
