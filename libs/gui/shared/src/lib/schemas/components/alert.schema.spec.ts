@@ -91,6 +91,26 @@ describe('Alert schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+    it('should validate i18n localizable labels in text', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            kind: 'display',
+            type: 'alert',
+            props: {
+              text: { key: 'alert.msg', default: 'Fallback Alert Message' },
+            },
+          },
+        ],
+      });
+
+      const i18nAlert = formDef.form.children[0];
+      const isValid = validate(i18nAlert);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, i18nAlert);
+      }
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {
