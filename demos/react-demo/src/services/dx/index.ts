@@ -17,6 +17,8 @@ export { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
 export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
 export { _guiSelect } from './shortcuts/select/guiSelect.impl';
 export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
+export { _guiTabs } from './shortcuts/tabs/guiTabs.impl';
+export { _guiList } from './shortcuts/list/guiList.impl';
 export { _guiButton, _guiButtons, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
 export { _guiStack, _guiHorizontalStack, _guiVerticalStack } from './shortcuts/layouts/guiStack.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
@@ -34,6 +36,8 @@ export { _gslCurrency, _gslCurrencyById } from './shortcuts/currency/register';
 export { _gslRangeCalendar, _gslRangeCalendarById } from './shortcuts/range-calendar/register';
 export { _gslSelect, _gslSelectById } from './shortcuts/select/register';
 export { _gslRadiogroup, _gslRadiogroupById } from './shortcuts/radiogroup/register';
+export { _gslTabs, _gslTabsById } from './shortcuts/tabs/register';
+export { _gslList, _gslListById } from './shortcuts/list/register';
 export { _gslActions, _gslActionById } from './shortcuts/actions/register';
 export { _gslLayouts, _gslLayoutById } from './shortcuts/layouts/register';
 export { _gslDisplays, _gslDisplayById } from './shortcuts/display/register';
@@ -72,11 +76,13 @@ export type {
   RadiogroupDecorator,
   GslRadiogroupConfig,
 } from './shortcuts/radiogroup/radiogroup.domain';
+export type { TabsDecorator, GslTabsConfig } from './shortcuts/tabs/tabs.domain';
+export type { ListDecorator, GslListConfig } from './shortcuts/list/list.domain';
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
 export type { LayoutDecorator, GslLayoutsConfig } from './shortcuts/layouts/layouts.domain';
 export type { DisplayDecorator, GslDisplaysConfig } from './shortcuts/display/display.domain';
 export type { StackOrientation } from './shortcuts/layouts/guiStack.impl';
-export type { Option, OptionValue } from '@golemui/gui-shared';
+export type { Option, OptionValue, ListItem } from '@golemui/gui-shared';
 
 // ─── Extension API (for adding custom shortcut types) ───
 

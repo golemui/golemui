@@ -40,6 +40,8 @@ import './shortcuts/currency/register';
 import './shortcuts/range-calendar/register';
 import './shortcuts/select/register';
 import './shortcuts/radiogroup/register';
+import './shortcuts/tabs/register';
+import './shortcuts/list/register';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 

@@ -10,6 +10,7 @@ import {
   buttonsDemo,
   moreInputTypesDemo,
   selectAndRadioDemo,
+  tabsAndListDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -43,6 +44,7 @@ formRegistry.registerAll([
   buttonsDemo,
   moreInputTypesDemo,
   selectAndRadioDemo,
+  tabsAndListDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,

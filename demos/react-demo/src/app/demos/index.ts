@@ -6,6 +6,7 @@ export { layoutsDemo } from './01_first_form/04_layouts';
 export { buttonsDemo } from './01_first_form/05_buttons';
 export { moreInputTypesDemo } from './01_first_form/16_moreInputTypes';
 export { selectAndRadioDemo } from './01_first_form/17_selectAndRadio';
+export { tabsAndListDemo } from './01_first_form/18_tabsAndList';
 
 // Chapter 2: Making It Dynamic
 export { dynamicInputDemo } from './02_dynamic/06_dynamicInput';

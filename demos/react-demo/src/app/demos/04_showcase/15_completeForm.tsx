@@ -13,6 +13,8 @@ import {
   _guiRangeCalendar,
   _guiSelect,
   _guiRadiogroup,
+  _guiTabs,
+  _guiList,
   _guiButton,
   _guiHorizontalStack,
   _guiDisplay,
@@ -32,43 +34,53 @@ export const completeFormDemo: FormDemoDefinition = {
   formDef: () => [
     () => <h2>Event Registration</h2>,
 
-    _guiHorizontalStack([
-      _guiInputs({
-        firstName: ['string', 'required'],
-        lastName: ['string', 'required'],
-      }),
-    ]),
+    _guiTabs({
+      Details: [
+        _guiHorizontalStack([
+          _guiInputs({
+            firstName: ['string', 'required'],
+            lastName: ['string', 'required'],
+          }),
+        ]),
 
-    _guiTextInput('email', {
-      placeholder: 'you@example.com',
-      validator: { required: true, pattern: '^[^@]+@[^@]+$' },
-    }, ['required']),
+        _guiTextInput('email', {
+          placeholder: 'you@example.com',
+          validator: { required: true, pattern: '^[^@]+@[^@]+$' },
+        }, ['required']),
 
-    _guiPassword('password', { hint: 'Use at least 8 characters' }, ['required']),
+        _guiPassword('password', { hint: 'Use at least 8 characters' }, ['required']),
 
-    _guiCheckbox('agreeToTerms', { checkboxPosition: 'right' }),
-
-    _guiNumberInput('guests', { minimum: 1, maximum: 10, step: 1 }),
-
-    _guiDateInput('arrivalDate', { icon: 'calendar' }),
-
-    _guiCurrency('budget', { currency: 'EUR', step: 0.5 }),
-
-    _guiRangeCalendar('stayRange', { numberOfMonths: 2 }),
-
-    _guiSelect('dietaryPreference', {
-      options: [
-        { label: 'No preference', value: 'none' },
-        { label: 'Vegetarian', value: 'vegetarian' },
-        { label: 'Vegan', value: 'vegan' },
+        _guiCheckbox('agreeToTerms', { checkboxPosition: 'right' }),
       ],
-      placeholder: 'Select diet...',
-    }),
+      Event: [
+        _guiNumberInput('guests', { minimum: 1, maximum: 10, step: 1 }),
+        _guiDateInput('arrivalDate', { icon: 'calendar' }),
+        _guiCurrency('budget', { currency: 'EUR', step: 0.5 }),
+        _guiRangeCalendar('stayRange', { numberOfMonths: 2 }),
 
-    _guiRadiogroup('ticketType', {
-      options: [
-        { label: 'Standard', value: 'standard' },
-        { label: 'VIP', value: 'vip' },
+        _guiSelect('dietaryPreference', {
+          options: [
+            { label: 'No preference', value: 'none' },
+            { label: 'Vegetarian', value: 'vegetarian' },
+            { label: 'Vegan', value: 'vegan' },
+          ],
+          placeholder: 'Select diet...',
+        }),
+
+        _guiRadiogroup('ticketType', {
+          options: [
+            { label: 'Standard', value: 'standard' },
+            { label: 'VIP', value: 'vip' },
+          ],
+        }),
+
+        _guiList('sessionTopics', {
+          items: [
+            { template: 'AI & Machine Learning', value: 'ai' },
+            { template: 'Web Development', value: 'web' },
+            { template: 'Cloud Infrastructure', value: 'cloud' },
+          ],
+        }),
       ],
     }),
 
