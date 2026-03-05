@@ -10,6 +10,7 @@ import calendarHintJson from '../../../../../public/template/components/calendar
 import calendarMinMaxJson from '../../../../../public/template/components/calendar/calendar-minmax.json?raw';
 import calendarMonthsJson from '../../../../../public/template/components/calendar/calendar-months.json?raw';
 import calendarDisabledJson from '../../../../../public/template/components/calendar/calendar-disabled.json?raw';
+import calendarIconsJson from '../../../../../public/template/components/calendar/calendar-icons.json?raw';
 import calendarAnatomyHtml from '../../../../../public/template/components/calendar/calendar-anatomy.html?raw';
 export const configJson = 'calendar.json';
 export const anatomy = 'calendar-anatomy.html';
@@ -74,6 +75,15 @@ Use the property `disabledRanges` to selectively disable specific date blocks wi
 <Code code={calendarDisabledJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-disabled.json"
+/>
+
+### Custom Icons
+
+Use `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel` and `nextMonthAriaLabel` to customize the navigation buttons.
+
+<Code code={calendarIconsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/calendar/calendar-icons.json"
 />
 
 ## Styling

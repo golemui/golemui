@@ -2,6 +2,7 @@
 title: Range Calendar
 description: A Range Calendar component to allow user to select a range of dates from an interactive calendar interface
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
@@ -10,6 +11,7 @@ import rangeCalendarHintJson from '../../../../../public/template/components/ran
 import rangeCalendarMinMaxJson from '../../../../../public/template/components/range-calendar/range-calendar-minmax.json?raw';
 import rangeCalendarMonthsJson from '../../../../../public/template/components/range-calendar/range-calendar-months.json?raw';
 import rangeCalendarDisabledJson from '../../../../../public/template/components/range-calendar/range-calendar-disabled.json?raw';
+import rangeCalendarIconsJson from '../../../../../public/template/components/range-calendar/range-calendar-icons.json?raw';
 import rangeCalendarAnatomyHtml from '../../../../../public/template/components/range-calendar/range-calendar-anatomy.html?raw';
 export const configJson = 'range-calendar.json';
 export const anatomy = 'range-calendar-anatomy.html';
@@ -72,6 +74,15 @@ Use the property `disabledRanges` to define dates which cannot be highlighted as
   src="/template/index.html?form=template/components/range-calendar/range-calendar-disabled.json"
 />
 
+### Custom Icons
+
+Use `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel` and `nextMonthAriaLabel` to customize the navigation buttons.
+
+<Code code={rangeCalendarIconsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar-icons.json"
+/>
+
 ## Styling
 
 Range Calendars can be styled as explained in the [Styling Guide](/guides/styling). They inherit all Calendar component styles along with specialized range highlighting rules.
@@ -80,11 +91,20 @@ Range Calendars can be styled as explained in the [Styling Guide](/guides/stylin
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable           | Description                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------------- |
-| `--gui-radius-md`      | Calendar container base radius                                                                    |
-| `--gui-radius-range`   | Border radius applied to the start and end of a selected range (calculated as double `radius-md`) |
-| `--gui-intent-primary` | Selected range, range start, and range end background color                                       |
+| CSS Variable                                | Description                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `--gui-radius-md`                           | Calendar container base radius                                                                    |
+| `--gui-radius-range`                        | Border radius applied to the start and end of a selected range (calculated as double `radius-md`) |
+| `--gui-bg-default`                          | Calendar container background color                                                               |
+| `--gui-border-default`                      | Default border color and cell hover border color                                                  |
+| `--gui-space-3`                             | Internal padding                                                                                  |
+| `--gui-calendar-change-month-button-width`  | Width of the next/prev buttons                                                                    |
+| `--gui-calendar-change-month-button-height` | Height of the next/prev buttons                                                                   |
+| `--gui-text-default`                        | Default text and focus border color                                                               |
+| `--gui-text-secondary`                      | Day button hover background color                                                                 |
+| `--gui-intent-primary-active`               | "Today" border highlight color                                                                    |
+| `--gui-intent-primary`                      | Selected range and selected day background color                                                  |
+| `--gui-bg-disabled`                         | Disabled day background color                                                                     |
 
 ### Anatomy
 
