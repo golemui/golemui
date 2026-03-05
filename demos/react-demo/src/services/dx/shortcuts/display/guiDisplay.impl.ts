@@ -1,5 +1,5 @@
 import { GuiItemTypes } from '../../core/dx.domain';
-import { DxRuntimeParams } from '../inputs/inputs.domain';
+import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import { GuiDisplayItemsShortcut } from './display.domain';
 
 export const _guiDisplay = (

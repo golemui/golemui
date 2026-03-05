@@ -14,13 +14,14 @@ function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 >(def: LayoutDecorator): NonFunctionWidget<StateKeys, FormData> {
+  const { uid, widgetName, tags: _tags, ...layoutProps } = def;
   return {
-    uid: def.uid ?? '',
+    uid: uid ?? '',
     kind: 'layout',
-    type: def.widgetName ?? 'flex',
+    type: widgetName ?? 'flex',
     props: {
-      direction: def.direction ?? 'vertical',
-      ...def.props,
+      direction: layoutProps.direction ?? 'vertical',
+      ...layoutProps,
     },
     children: [],
   } as LayoutWidget<StateKeys, FormData>;

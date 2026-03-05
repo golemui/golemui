@@ -4,6 +4,7 @@ import {
   UiState,
 } from '@golemui/core';
 import { defineShortcutType } from '../../core/defineShortcutType';
+import { extractWidgetProps } from '../../core/dxPropsHelper';
 import {
   processAutoLabel,
   processAutoPlaceholder,
@@ -37,6 +38,7 @@ function mapBooleanInputDef<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 >(fieldDef: BooleanDataInputDecorator): InputWidget<any, StateKeys, FormData> {
+  const props = extractWidgetProps(fieldDef);
   return {
     uid: fieldDef.uid ?? '',
     kind: 'input',
@@ -45,9 +47,7 @@ function mapBooleanInputDef<
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
     ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
     ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
-    props: {
-      ...fieldDef.props,
-    },
+    props,
   };
 }
 
@@ -55,6 +55,7 @@ function mapTextInputDef<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 >(fieldDef: TextDataInputDecorator): InputWidget<any, StateKeys, FormData> {
+  const textProps = extractWidgetProps(fieldDef);
   return {
     uid: fieldDef.uid ?? '',
     kind: 'input',
@@ -64,8 +65,8 @@ function mapTextInputDef<
     ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
     ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
     props: {
-      placeholder: fieldDef.placeholder ?? '',
-      ...fieldDef.props,
+      placeholder: textProps.placeholder ?? '',
+      ...textProps,
     },
     validator: {
       type: 'string',
@@ -78,6 +79,7 @@ function mapNumberInputDef<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 >(fieldDef: NumberDataInputDecorator): InputWidget<any, StateKeys, FormData> {
+  const numberProps = extractWidgetProps(fieldDef);
   return {
     uid: fieldDef.uid ?? '',
     kind: 'input',
@@ -87,8 +89,8 @@ function mapNumberInputDef<
     ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
     ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
     props: {
-      placeholder: fieldDef.placeholder ?? '',
-      ...fieldDef.props,
+      placeholder: numberProps.placeholder ?? '',
+      ...numberProps,
     },
     validator: {
       type: 'number',

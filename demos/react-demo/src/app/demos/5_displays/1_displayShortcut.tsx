@@ -1,5 +1,6 @@
 import { _guiDisplay } from '../../../services/dx/shortcuts/display/guiDisplay.impl';
 import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _guiTextInput } from '../../../services/dx/shortcuts/inputs/guiTextInput.impl';
 import { FormDemoDefinition } from '../../formRegistry.domain';
 
 export const displayShortcutDemo: FormDemoDefinition = {
@@ -11,14 +12,10 @@ export const displayShortcutDemo: FormDemoDefinition = {
   formDefSource: `[
   // Plain function — auto-wrapped into _guiDisplay
   () => <h2>Contact Us</h2>,
-  _guiInputs({
-    firstName: { type: 'text', validator: { required: true } },
-    lastName: { type: 'text', validator: { required: true } },
-    email: {
-      type: 'text',
-      placeholder: 'you@example.com',
-      validator: { required: true, pattern: '^[^@]+@[^@]+$' },
-    },
+  _guiInputs({ firstName: 'string', lastName: 'string' }),
+  _guiTextInput('email', {
+    placeholder: 'you@example.com',
+    validator: { required: true, pattern: '^[^@]+@[^@]+$' },
   }),
   // Explicit _guiDisplay with params — dynamic error summary
   _guiDisplay((params) => {
@@ -40,13 +37,12 @@ export const displayShortcutDemo: FormDemoDefinition = {
     // Plain function — auto-wrapped into _guiDisplay
     () => <h2>Contact Us</h2>,
     _guiInputs({
-      firstName: { type: 'text', validator: { required: true } },
-      lastName: { type: 'text', validator: { required: true } },
-      email: {
-        type: 'text',
-        placeholder: 'you@example.com',
-        validator: { required: true, pattern: '^[^@]+@[^@]+$' },
-      },
+      firstName: 'string',
+      lastName: 'string',
+    }),
+    _guiTextInput('email', {
+      placeholder: 'you@example.com',
+      validator: { required: true, pattern: '^[^@]+@[^@]+$' },
     }),
     // Explicit _guiDisplay with params — dynamic error summary
     _guiDisplay((params) => {

@@ -65,6 +65,64 @@ Each handler declares `TEntry` in its generics to match its shape. `parseEntry(e
 
 There is no shared base type for entries. The shapes are intentionally different because the semantics are different. A keyed entry carries a data path in its key. A bare entry is the decorator itself. A compound entry carries children.
 
+## Standardized Single-Widget Factory Pattern
+
+For single-widget input-like shortcuts, use a consistent API shape:
+
+```ts
+_guiXxx(path)
+_guiXxx(path, props)
+_guiXxx(path, props, tags)
+```
+
+Where:
+
+- `path` is always the first argument (`string`)
+- `props` is `Partial<Omit<XDecorator, 'type'>>`
+- `tags` is optional `string[]`
+- `type` is injected internally by the factory, never set by the form author
+
+Current examples:
+
+- `_guiCalendar(path, props?, tags?)`
+- `_guiTextarea(path, props?, tags?)`
+
+## Type-Specific Input Factories
+
+In addition to `_guiInputs`, use singular factories when defining one field and you want perfect type-specific IntelliSense:
+
+- `_guiTextInput(path, props?, tags?)`
+- `_guiNumberInput(path, props?, tags?)`
+- `_guiBooleanInput(path, props?, tags?)`
+
+These avoid union ambiguity and remove the need for manual `{ type: ... }` in user code.
+
+Each factory also supports dynamic callback form:
+
+- `_guiTextInput(path, callback, tags?)`
+- `_guiNumberInput(path, callback, tags?)`
+- `_guiBooleanInput(path, callback, tags?)`
+
+Where `callback(params)` returns partial props for that specific input type.
+
+## `_guiInputs` Scope (Batch Shorthands Only)
+
+`_guiInputs` is intentionally limited to simple batch declarations:
+
+- `'string' | 'number' | 'boolean'`
+- tag tuples like `['string', 'required']`
+
+It does **not** accept object literals or callbacks. For any per-field customization (props, validators, runtime callback), use the type-specific factories above.
+
+## Demo Requirement for New Shortcut Types
+
+Every new shortcut type must ship with at least one demo under `src/app/demos/` and be registered in:
+
+- `src/app/demos/index.ts`
+- `src/app/app.tsx` (`formRegistry.registerAll([...])`)
+
+If a shortcut has no visible demo, it is not considered complete.
+
 ## Folder Structure
 
 ```
@@ -124,7 +182,7 @@ A `--` means the shortcut does not implement that piece.
 | **Sub-interface** | `GuiInputsShortcut` | `GuiActionsShortcut` | `GuiLayoutItemsShortcut` | `GuiDisplayItemsShortcut` |
 | **Entry type** | `InputEntry` (keyed: `{key, def}`) | `ActionEntry` (bare: decorator or callback) | `LayoutEntry` (`{def, children}`) | `DisplayEntry` (bare: `DisplayDecorator`) |
 | **Decorator type** | `InputDecorator` (Text, Number, Boolean) | `ActionDecorator` | `LayoutDecorator` | `DisplayDecorator` |
-| **GUI shortcut fn** | `_guiInputs(defs)` | `_guiButtons`, `_guiButton`, `_guiSubmitButton` | `_guiStack`, `_guiHorizontalStack`, `_guiVerticalStack` | `_guiDisplay(renderFn)` |
+| **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButtons`, `_guiButton`, `_guiSubmitButton` | `_guiStack`, `_guiHorizontalStack`, `_guiVerticalStack` | `_guiDisplay(renderFn)` |
 | **GSL widget selector fn** | `_gslInputs(config)` | `_gslActions(config)` | `_gslLayouts(config)` | `_gslDisplays(config)` |
 | **GSL by-id selector fn** | -- | `_gslActionById(id, config)` | `_gslLayoutById(id, config)` | -- |
 | **GSL config type** | `GslInputsConfig` (decorator + 2 suppress flags) | `GslActionsConfig` (decorator only) | `GslLayoutsConfig` (decorator only) | `GslDisplaysConfig` (decorator only) |

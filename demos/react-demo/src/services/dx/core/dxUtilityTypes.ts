@@ -2,12 +2,14 @@
 // DX Shared Utility Types — collapse per-type domain boilerplate
 // ═══════════════════════════════════════════════════
 
+import type { FunctionWidgetParams } from '@golemui/core';
 import type {
   RuntimeFunction,
   GuiItemsShortcut,
   GslLeafSelector,
 } from './dx.domain';
-import type { DxRuntimeParams } from '../shortcuts/inputs/inputs.domain';
+
+export type DxRuntimeParams<FormData = any> = FunctionWidgetParams<FormData>;
 
 /**
  * Generic GSL decorator callback — same structure for every type.
@@ -20,8 +22,8 @@ export type GslDecoratorCallback<D> =
  * A field definition can be a static decorator or a runtime callback.
  * Usage: replace per-type `CalendarDefOrCallback`, `ActionDefOrCallback`, etc.
  */
-export type DefOrCallback<D> =
-  D | ((params: DxRuntimeParams) => Partial<D>);
+export type DefOrCallback<D, TForm = any> =
+  D | ((params: DxRuntimeParams<TForm>) => Partial<D>);
 
 /**
  * Standard GSL config shape — decorator override + optional suppress flags.

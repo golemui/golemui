@@ -1,5 +1,5 @@
 import { DxCommonFields, DxDisplayBase, DxInternalFields } from '../../core/dxBase.types';
-import { DxRuntimeParams } from '../inputs/inputs.domain';
+import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import {
   DefOrCallback,
   GslConfigBase,

@@ -1,21 +1,28 @@
 import {
   GuiCalendarShortcut,
   CalendarDecorator,
-  CalendarEntry,
 } from './calendar.domain';
 
-export const _guiCalendar = (
-  pathOrDef: string | CalendarEntry,
+export function _guiCalendar(path: string): GuiCalendarShortcut;
+export function _guiCalendar(
+  path: string,
+  props: Partial<Omit<CalendarDecorator, 'type'>>,
+): GuiCalendarShortcut;
+export function _guiCalendar(
+  path: string,
+  props: Partial<Omit<CalendarDecorator, 'type'>>,
+  tags: string[],
+): GuiCalendarShortcut;
+export function _guiCalendar(
+  path: string,
+  props?: Partial<Omit<CalendarDecorator, 'type'>>,
   tags?: string[],
-): GuiCalendarShortcut => {
-  const def: CalendarEntry =
-    typeof pathOrDef === 'string'
-      ? { type: 'calendar', path: pathOrDef } as CalendarDecorator
-      : pathOrDef;
+): GuiCalendarShortcut {
+  const def: CalendarDecorator = { type: 'calendar', path, ...props };
   return {
     items: [def],
     type: 'ITEMS',
     itemType: 'CALENDAR',
     tags: tags ?? [],
   };
-};
+}

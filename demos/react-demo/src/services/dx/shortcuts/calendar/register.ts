@@ -1,4 +1,5 @@
 import { defineShortcutType } from '../../core/defineShortcutType';
+import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
 import {
   CalendarDecorator,
@@ -22,6 +23,6 @@ defineShortcutType<CalendarEntry, CalendarDecorator, CalendarSensibleDefaultsCon
     ...(def.label != null ? { label: def.label } : {}),
     ...(def.disabled != null ? { disabled: def.disabled } : {}),
     ...(def.readonly != null ? { readonly: def.readonly } : {}),
-    props: { ...def.props },
+    props: extractWidgetProps(def),
   }),
 });

@@ -1,6 +1,6 @@
 import { ButtonProps } from '@golemui/gui-shared';
 import { DxActionBase, DxCommonFields, DxInternalFields } from '../../core/dxBase.types';
-import { DxRuntimeParams } from '../inputs/inputs.domain';
+import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import {
   DefOrCallback,
   GslConfigBase,
@@ -11,12 +11,11 @@ import {
 // Action Decorators
 // ═══════════════════════════════════════════════════
 
-export interface ActionDecorator extends DxActionBase, DxCommonFields {
+export interface ActionDecorator extends DxActionBase, DxCommonFields, Partial<ButtonProps> {
   data?: any | null;
   type?: 'button';
   on?: { click: string };
   onClick?: ((data: any) => void) | 'submit';
-  props?: Partial<ButtonProps>;
 }
 
 /**

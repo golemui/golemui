@@ -3,44 +3,29 @@ import {
   InputDecorator,
   InputTags,
   InputDefOrCallback,
-  InputObjectDef,
-  PartialInputDefCallback,
-  ValidShortcutType,
+  SimpleFieldDef,
 } from './inputs.domain';
 
-export type DxField = InputObjectDef | PartialInputDefCallback | ValidShortcutType | InputTags;
-
-export type FacadeFieldByKey<T extends Record<string, any>> = Partial<Record<keyof T, DxField>>;
-
-export type ProcessedDxFieldsByKey<T extends Record<string, any>> = Partial<
-  Record<keyof T, InputDefOrCallback>
->;
+export type ProcessedDxFieldsByKey = Record<string, InputDefOrCallback>;
 
 export class InputDefsByKeyService {
   constructor(private readonly inputTypeDefaults: InputTypeDefaults) {}
-  public expandFields<T extends Record<string, any>>(
-    fields: FacadeFieldByKey<T>,
-  ): ProcessedDxFieldsByKey<T> {
-    const result: ProcessedDxFieldsByKey<T> = {};
+  public expandFields(fields: Record<string, SimpleFieldDef>): ProcessedDxFieldsByKey {
+    const result: ProcessedDxFieldsByKey = {};
     Object.entries(fields).forEach(([key, dataInputDef]) => {
-      if (!dataInputDef) {
-        throw new Error(`Unexpected undefined value for field key: ${key}`);
-      }
-
-      result[key as keyof T] = this.expandField(dataInputDef);
+      result[key] = this.expandField(dataInputDef);
     });
     return result;
   }
 
-  private expandField(dataInputDef: DxField): InputDefOrCallback {
-    let value: InputDefOrCallback;
-    if (typeof dataInputDef === 'function') {
-      value = dataInputDef as PartialInputDefCallback;
-    } else if (typeof dataInputDef === 'string') {
-      value = this.inputTypeDefaults.explodeShortcut(dataInputDef);
-    } else if (Array.isArray(dataInputDef)) {
+  private expandField(dataInputDef: SimpleFieldDef): InputDefOrCallback {
+    if (typeof dataInputDef === 'string') {
+      return this.inputTypeDefaults.explodeShortcut(dataInputDef);
+    }
+
+    if (Array.isArray(dataInputDef)) {
       const [shortcut, ...tagList] = dataInputDef as InputTags;
-      value = this.inputTypeDefaults.explodeShortcut(shortcut);
+      const value = this.inputTypeDefaults.explodeShortcut(shortcut);
       if (tagList.length > 0) {
         value.tags = tagList;
         if (tagList.includes('required')) {
@@ -53,12 +38,12 @@ export class InputDefsByKeyService {
           };
         }
       }
-    } else {
-      // Object literal form — InputObjectDef or InputDecorator
-      value = dataInputDef as InputDefOrCallback;
+      return value;
     }
 
-    return value;
+    throw new Error(
+      `Invalid field definition: expected string shorthand or tag tuple, got ${typeof dataInputDef}`,
+    );
   }
 }
 

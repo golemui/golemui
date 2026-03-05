@@ -1,5 +1,6 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
 import { _guiInputs } from '../../../services/dx/shortcuts/inputs/guiInputs.impl';
+import { _guiNumberInput } from '../../../services/dx/shortcuts/inputs/guiNumberInput.impl';
 import { _guiButton } from '../../../services/dx/shortcuts/actions/guiActions.impl';
 
 export const inputAndActionCallbacksDemo: FormDemoDefinition = {
@@ -9,15 +10,14 @@ export const inputAndActionCallbacksDemo: FormDemoDefinition = {
   formDef: () => [
     _guiInputs({
       name: 'string',
-      age: (params) => ({
+    }),
+    _guiNumberInput('age', (params) => ({
         label: params.errors != null && params.errors.length > 0 ? 'Age must be at least 18' : 'Age',
-        type: 'number',
         placeholder: 'age >= 18',
         validator: {
           minimum: 18,
         },
-      }),
-    }),
+      })),
     _guiButton((params) => ({
       label: params.$form?.name ? `Save ${params.$form.name}` : 'Save',
       disabled: !params.$form?.name,

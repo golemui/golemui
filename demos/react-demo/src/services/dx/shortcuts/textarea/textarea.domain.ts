@@ -1,10 +1,8 @@
 import type { TextareaProps } from '@golemui/gui-shared';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
-export interface TextareaDecorator extends DxInputBase, DxCommonFields {
+export interface TextareaDecorator extends DxInputBase, DxCommonFields, Partial<TextareaProps> {
   type: 'textarea';
-  placeholder?: string;
-  props?: Partial<TextareaProps>;
 }
 
 export interface GslTextareaConfig extends GslConfigBase<TextareaDecorator> {

@@ -11,14 +11,25 @@ function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 >(def: ActionDecorator): NonFunctionWidget<StateKeys, FormData> {
+  const {
+    uid,
+    label,
+    disabled,
+    on,
+    onClick: _onClick,
+    data: _data,
+    type: _type,
+    tags: _tags,
+    ...buttonProps
+  } = def;
   return {
-    uid: def.uid ?? '',
+    uid: uid ?? '',
     kind: 'action',
     type: 'button',
-    disabled: def.disabled,
-    label: def.label,
-    ...(def.on != null ? { on: def.on } : {}),
-    props: { ...def.props },
+    disabled,
+    label,
+    ...(on != null ? { on } : {}),
+    props: buttonProps,
   } as ActionWidget<StateKeys, FormData>;
 }
 

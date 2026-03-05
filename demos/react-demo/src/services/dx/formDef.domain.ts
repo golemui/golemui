@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { ValidGuiShortcut } from './core/dx.domain';
 import { DxCommonFields, DxInternalFields } from './core/dxBase.types';
-import { DxRuntimeParams } from './shortcuts/inputs/inputs.domain';
+import { DxRuntimeParams } from './core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Base Types (owned here)
@@ -52,7 +52,6 @@ export type {
   ValidShortcutType,
   DxRuntimeParams,
   InputTags,
-  PartialInputDefCallback,
 } from './shortcuts/inputs/inputs.domain';
 
 export type {

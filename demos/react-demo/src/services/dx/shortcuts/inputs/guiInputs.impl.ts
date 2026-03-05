@@ -3,13 +3,14 @@ import {
   GuiInputsShortcut,
   InputEntry,
   InputDefOrCallback,
+  SimpleFieldDef,
 } from './inputs.domain';
 import inputDefsByKeyService from './inputDefsByKey.service';
-import { FacadeFieldByKey } from './inputDefsByKey.service';
-export const _guiInputs = <T extends Record<string, any>>(
-  defs: FacadeFieldByKey<T>,
+
+export function _guiInputs(
+  defs: Record<string, SimpleFieldDef>,
   tags?: string[],
-): GuiInputsShortcut => {
+): GuiInputsShortcut {
   const fields = inputDefsByKeyService.expandFields(defs);
   const items = Object.entries(fields).map<InputEntry>(([key, value]) => {
     return {
@@ -23,4 +24,4 @@ export const _guiInputs = <T extends Record<string, any>>(
     itemType: GuiItemTypes.INPUTS,
     tags: tags ?? [],
   };
-};
+}

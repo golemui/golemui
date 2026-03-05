@@ -10,13 +10,36 @@ import { _gslActionById } from '../../../services/dx/shortcuts/actions/gslAction
 import { _gslLayoutById } from '../../../services/dx/shortcuts/layouts/gslLayoutById.impl';
 import { _guiCalendar } from '../../../services/dx/shortcuts/calendar/guiCalendar.impl';
 import { _guiTextarea } from '../../../services/dx/shortcuts/textarea/guiTextarea.impl';
+import { _guiTextInput } from '../../../services/dx/shortcuts/inputs/guiTextInput.impl';
+
+interface ContactForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
+  subscribe: boolean;
+  message: string;
+  textArea: string;
+  birthDate: string;
+}
 
 export const smartContactFormDemo: FormDemoDefinition = {
   title: 'Combinations / Smart Contact Form',
   category: 'Combinations',
   description:
     'Every feature in one form: display shortcuts, input shortcuts, full objects, tags, nested layouts, input callbacks, button callbacks, GSL runtime functions, _gslRoot with children + defaults, _gslActionById, and _gslLayoutById',
-  formDefSource: `[
+  formDefSource: `interface ContactForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
+  subscribe: boolean;
+  message: string;
+  textArea: string;
+  birthDate: string;
+}
+
+[
   // Plain function — auto-wrapped into _guiDisplay
   () => <h2>Smart Contact Form</h2>,
   _guiHorizontalStack(
@@ -25,24 +48,23 @@ export const smartContactFormDemo: FormDemoDefinition = {
       lastName: ['string', 'required'],
     }),
   ),
+  _guiTextInput('email', {
+    placeholder: 'you@example.com',
+    validator: { pattern: '^[^@]+@[^@]+$' },
+  }),
+  _guiTextInput('message', (params) => ({
+    label:
+      params.errors != null && params.errors.length > 0
+        ? 'Message too short!'
+        : 'Message',
+    placeholder: 'At least 10 chars',
+    validator: { minLength: 10 },
+  })),
   _guiInputs({
-    email: {
-      type: 'text',
-      placeholder: 'you@example.com',
-      validator: { pattern: '^[^@]+@[^@]+$' },
-    },
     age: ['number', 'required'],
     subscribe: 'boolean',
-    message: (params) => ({
-      type: 'text',
-      label:
-        params.errors != null && params.errors.length > 0
-          ? 'Message too short!'
-          : 'Message',
-      placeholder: 'At least 10 chars',
-      validator: { minLength: 10 },
-    }),
   }),
+  _guiTextarea('textArea', { placeholder: 'Placeholder text' }),
   _guiCalendar('birthDate'),
   // Dynamic greeting — auto-wrapped into _guiDisplay
   (params) => {
@@ -70,26 +92,22 @@ export const smartContactFormDemo: FormDemoDefinition = {
         lastName: ['string', 'required'],
       }),
     ),
+    _guiTextInput('email', {
+      placeholder: 'you@example.com',
+      validator: { pattern: '^[^@]+@[^@]+$' },
+    }),
+    _guiTextInput('message', (params) => ({
+      label: params.errors != null && params.errors.length > 0 ? 'Message too short!' : 'Message',
+      placeholder: 'At least 10 chars',
+      validator: { minLength: 10 },
+    })),
     _guiInputs({
-      email: {
-        type: 'text',
-        placeholder: 'you@example.com',
-        validator: { pattern: '^[^@]+@[^@]+$' },
-      },
       age: ['number', 'required'],
       subscribe: 'boolean',
-      message: (params) => ({
-        type: 'text',
-        label: params.errors != null && params.errors.length > 0 ? 'Message too short!' : 'Message',
-        placeholder: 'At least 10 chars',
-        validator: { minLength: 10 },
-      }),
     }),
-    _guiTextarea({
-      textArea: 'Placeholder text'
-    }),
+    _guiTextarea('textArea', { placeholder: 'Placeholder text' }),
     _guiCalendar('birthDate'),
-    (params: DxRuntimeParams) => {
+    (params: DxRuntimeParams<ContactForm>) => {
       const name = params.$form?.firstName;
       if (!name) return null;
       return (
@@ -111,14 +129,14 @@ export const smartContactFormDemo: FormDemoDefinition = {
         decorator: (cur) => (params) => ({
           placeholder: params?.$form?.firstName
             ? `Hi ${params.$form.firstName}! Fill ${cur.path}`
-            : (cur.placeholder ?? cur.path),
+            : (('placeholder' in cur ? cur.placeholder : undefined) ?? cur.path),
         }),
       }),
     ),
     _gslRoot(
       _gslInputs({
         decorator: (cur) => ({
-          placeholder: cur.placeholder ?? `Enter ${cur.path}`,
+          placeholder: ('placeholder' in cur ? cur.placeholder : undefined) ?? `Enter ${cur.path}`,
         }),
       }),
       { onSubmit: (data: any) => alert('Root onSubmit: ' + JSON.stringify(data)) },

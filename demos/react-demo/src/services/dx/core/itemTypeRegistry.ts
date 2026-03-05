@@ -3,7 +3,7 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { DxRuntimeParams } from '../shortcuts/inputs/inputs.domain';
+import { DxRuntimeParams } from './dxUtilityTypes';
 import {
   GslLeafSelector,
   GslRootDefaults,

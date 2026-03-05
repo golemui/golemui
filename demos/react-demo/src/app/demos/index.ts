@@ -6,6 +6,8 @@ export { inputMixedDemo } from './1_inputs/4_inputMixed';
 export { gslSuppressLabelsDemo } from './1_inputs/5_gslSuppressLabels';
 export { gslSuppressPlaceholdersDemo } from './1_inputs/6_gslSuppressPlaceholders';
 export { gslInputDecoratorDemo } from './1_inputs/7_gslInputDecorator';
+export { typedInputsDemo } from './1_inputs/8_typedInputs';
+export { singleInputFactoriesDemo } from './1_inputs/9_singleInputFactories';
 // 2. Actions
 export { submitButtonDemo } from './2_actions/1_submitButton';
 export { customButtonDemo } from './2_actions/2_customButton';

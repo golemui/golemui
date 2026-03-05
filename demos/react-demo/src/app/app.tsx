@@ -10,6 +10,8 @@ import {
   gslSuppressLabelsDemo,
   gslSuppressPlaceholdersDemo,
   gslInputDecoratorDemo,
+  typedInputsDemo,
+  singleInputFactoriesDemo,
   // 2. Actions
   submitButtonDemo,
   customButtonDemo,
@@ -60,6 +62,8 @@ formRegistry.registerAll([
   gslSuppressLabelsDemo,
   gslSuppressPlaceholdersDemo,
   gslInputDecoratorDemo,
+  typedInputsDemo,
+  singleInputFactoriesDemo,
   // 2. Actions
   submitButtonDemo,
   customButtonDemo,

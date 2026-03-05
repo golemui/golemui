@@ -26,7 +26,9 @@ export const tagsMultipleDemo: FormDemoDefinition = {
     _gslTag('special',
       _gslInputs({
         decorator: (currentDef) => ({
-          placeholder: (currentDef.placeholder ?? currentDef.path) + ' + I am special!',
+          placeholder:
+            (('placeholder' in currentDef ? currentDef.placeholder : undefined) ?? currentDef.path)
+            + ' + I am special!',
         }),
       }),
     ),

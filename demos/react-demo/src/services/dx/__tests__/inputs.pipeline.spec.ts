@@ -6,6 +6,7 @@ import {
   resolveDynamic,
 } from './helpers';
 import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
+import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
 import { _gslInputs } from '../shortcuts/inputs/gslInputs.impl';
 
 describe('DX Pipeline — Inputs', () => {
@@ -52,11 +53,9 @@ describe('DX Pipeline — Inputs', () => {
       expect(input.validator?.required).toBeTruthy();
     });
 
-    it('preserves placeholder from full object input definition', () => {
+    it('preserves placeholder from _guiTextInput props', () => {
       const result = processDx(
-        _guiInputs({
-          email: { type: 'text', placeholder: 'you@...' },
-        }),
+        _guiTextInput('email', { placeholder: 'you@...' }),
       );
       const input = getStaticChild(result, 0) as {
         props?: { placeholder?: string };
@@ -94,11 +93,9 @@ describe('DX Pipeline — Inputs', () => {
       expect(input.props?.placeholder).not.toBe('');
     });
 
-    it('keeps explicit label instead of using auto-label', () => {
+    it('keeps explicit label set via _guiTextInput', () => {
       const result = processDx(
-        _guiInputs({
-          name: { type: 'text', label: 'Your Name' },
-        }),
+        _guiTextInput('name', { label: 'Your Name' }),
       );
       const input = getStaticChild(result, 0) as { label?: string };
 
@@ -117,14 +114,11 @@ describe('DX Pipeline — Inputs', () => {
   });
 
   describe('Dynamic (callback) inputs', () => {
-    it('keeps callback inputs as function widgets and resolves by runtime params', () => {
+    it('keeps _guiTextInput callback inputs as function widgets and resolves by runtime params', () => {
       const result = processDx(
-        _guiInputs({
-          msg: (p) => ({
-            type: 'text',
-            label: p.errors?.length ? 'Fix!' : 'Msg',
-          }),
-        }),
+        _guiTextInput('msg', (p) => ({
+          label: p.errors?.length ? 'Fix!' : 'Msg',
+        })),
       );
 
       const rawChild = getRawChild(result, 0);
@@ -148,14 +142,11 @@ describe('DX Pipeline — Inputs', () => {
       expect(input.validator?.required).toBeTruthy();
     });
 
-    it('keeps explicit validator settings from full object', () => {
+    it('keeps explicit validator settings from _guiTextInput props', () => {
       const result = processDx(
-        _guiInputs({
-          email: {
-            type: 'text',
-            validator: {
-              pattern: '^[^@]+@[^@]+$',
-            },
+        _guiTextInput('email', {
+          validator: {
+            pattern: '^[^@]+@[^@]+$',
           },
         }),
       );

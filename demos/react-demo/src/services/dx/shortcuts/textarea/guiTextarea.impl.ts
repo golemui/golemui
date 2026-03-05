@@ -1,13 +1,21 @@
 import type { GuiTextareaShortcut, TextareaDecorator, TextareaEntry } from './textarea.domain';
 
-type TextareaFieldMap = Record<string, TextareaDecorator | string>;
-
-export function _guiTextarea(fields: TextareaFieldMap, tags?: string[]): GuiTextareaShortcut {
-  const items: TextareaEntry[] = Object.entries(fields).map(([key, value]) => ({
-    key,
-    def: typeof value === 'string'
-      ? { type: 'textarea', path: key, placeholder: value }
-      : { ...value, type: 'textarea' },
-  }));
+export function _guiTextarea(path: string): GuiTextareaShortcut;
+export function _guiTextarea(
+  path: string,
+  props: Partial<Omit<TextareaDecorator, 'type'>>,
+): GuiTextareaShortcut;
+export function _guiTextarea(
+  path: string,
+  props: Partial<Omit<TextareaDecorator, 'type'>>,
+  tags: string[],
+): GuiTextareaShortcut;
+export function _guiTextarea(
+  path: string,
+  props?: Partial<Omit<TextareaDecorator, 'type'>>,
+  tags?: string[],
+): GuiTextareaShortcut {
+  const def: TextareaDecorator = { type: 'textarea', path, ...props };
+  const items: TextareaEntry[] = [{ key: path, def }];
   return { type: 'ITEMS', itemType: 'TEXTAREA', items, tags: tags ?? [] };
 }

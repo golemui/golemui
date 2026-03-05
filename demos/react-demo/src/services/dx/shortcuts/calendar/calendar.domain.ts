@@ -10,9 +10,8 @@ import {
 // Calendar Decorators
 // ═══════════════════════════════════════════════════
 
-export interface CalendarDecorator extends DxInputBase, DxCommonFields {
+export interface CalendarDecorator extends DxInputBase, DxCommonFields, Partial<CalendarProps> {
   type: 'calendar';
-  props?: Partial<CalendarProps>;
 }
 
 /**

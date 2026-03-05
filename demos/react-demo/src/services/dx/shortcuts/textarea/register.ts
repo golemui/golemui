@@ -1,5 +1,6 @@
 import { createGslSelector } from '../../core/dxUtilityTypes';
 import { defineShortcutType } from '../../core/defineShortcutType';
+import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { GslTextareaConfig, TextareaDecorator, TextareaEntry } from './textarea.domain';
 
@@ -15,7 +16,7 @@ defineShortcutType<TextareaEntry, TextareaDecorator, GslTextareaConfig>({
     uid: def.uid ?? '', kind: 'input', type: 'textarea', path: def.path ?? '',
     ...(def.label != null ? { label: def.label } : {}),
     ...(def.disabled != null ? { disabled: def.disabled } : {}),
-    props: def.placeholder != null ? { ...def.props, placeholder: def.placeholder } : { ...def.props },
+    props: extractWidgetProps(def),
   }),
 });
 

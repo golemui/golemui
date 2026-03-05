@@ -1,5 +1,5 @@
 import { FlexProps } from '@golemui/gui-shared';
-import { DxRuntimeParams } from '../inputs/inputs.domain';
+import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import { ValidGuiShortcut } from '../../core/dx.domain';
 import { DxCommonFields, DxInternalFields, DxLayoutBase } from '../../core/dxBase.types';
 import {
@@ -12,10 +12,8 @@ import {
 // Layout Decorator (DX-level type for layouts)
 // ═══════════════════════════════════════════════════
 
-export interface LayoutDecorator extends DxLayoutBase, DxCommonFields {
-  direction?: 'vertical' | 'horizontal';
+export interface LayoutDecorator extends DxLayoutBase, DxCommonFields, Partial<FlexProps> {
   widgetName?: string;
-  props?: Partial<FlexProps>;
 }
 
 /**

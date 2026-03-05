@@ -1,9 +1,9 @@
 import * as ValidatorsVanilla from '@golemui/gui-validators';
-import { FunctionWidgetParams } from '@golemui/core';
 import { NumberinputProps, TextinputProps, ToggleProps } from '@golemui/gui-shared';
 import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
 import {
   DefOrCallback,
+  DxRuntimeParams,
   GslConfigBase,
   GuiShortcutOf,
 } from '../../core/dxUtilityTypes';
@@ -23,26 +23,20 @@ export interface DataInputDecorator extends DxInputBase, DxCommonFields {
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
 
-export interface NumberDataInputDecorator extends DxInputBase, DxCommonFields {
+export interface NumberDataInputDecorator extends DxInputBase, DxCommonFields, Partial<NumberinputProps> {
   type: 'number';
-  placeholder?: string;
   validator?: NumberDataInputValidator;
-  props?: Partial<NumberinputProps>;
 }
 
 export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
 
-export interface TextDataInputDecorator extends DxInputBase, DxCommonFields {
+export interface TextDataInputDecorator extends DxInputBase, DxCommonFields, Partial<TextinputProps> {
   type: 'text';
-  placeholder?: string;
   validator?: TextDataInputValidator;
-  props?: Partial<TextinputProps>;
 }
 
-export interface BooleanDataInputDecorator extends DxInputBase, DxCommonFields {
+export interface BooleanDataInputDecorator extends DxInputBase, DxCommonFields, Partial<ToggleProps> {
   type: 'boolean';
-  placeholder?: string;
-  props?: Partial<ToggleProps>;
 }
 
 export type InputDecorator =
@@ -56,32 +50,13 @@ export type InputDecorator =
  */
 export type InputDecoratorFull = InputDecorator & DxInternalFields;
 
-// ═══════════════════════════════════════════════════
-// IntelliSense-Optimized Object Form
-// ═══════════════════════════════════════════════════
-
-/**
- * Discriminated union for the object form of _guiInputs.
- * When the user writes { type: 'text', ... }, TypeScript narrows to
- * the text-specific variant with correct validator, props, etc.
- *
- * Note: `type` is required in this form to enable discrimination.
- * The shorthand forms ('string', 'number', ['string', 'required']) are unaffected.
- */
-export type InputObjectDef =
-  | ({ type: 'text' } & Partial<Omit<TextDataInputDecorator, 'type'>>)
-  | ({ type: 'number' } & Partial<Omit<NumberDataInputDecorator, 'type'>>)
-  | ({ type: 'boolean' } & Partial<Omit<BooleanDataInputDecorator, 'type'>>);
-
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 
 export type InputTags = [ValidShortcutType, ...string[]];
 
-export type DxRuntimeParams<FormData = any> = FunctionWidgetParams<FormData>;
+export type SimpleFieldDef = ValidShortcutType | InputTags;
 
-export type PartialInputDefCallback = (
-  params: DxRuntimeParams,
-) => Partial<InputDecorator>;
+export type { DxRuntimeParams };
 
 // ═══════════════════════════════════════════════════
 // Input Sensible Defaults Config
