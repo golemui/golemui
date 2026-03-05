@@ -88,6 +88,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
           .uid=${this.widget.uid}
           .value=${data.value ?? ''}
           .valueField=${data.valueField}
+          .labelField=${data.labelField}
           .items=${data.items}
           .itemHeight=${data.itemHeight}
           .height=${data.height}
@@ -108,6 +109,10 @@ export class ListElement extends LitElement implements Core.WithWidget {
             const isSelected = data.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
+            const template = data.labelField
+              ? (item.template as any)[data.labelField]
+              : item.template;
+
             return html`
               <div
                 role="option"
@@ -120,7 +125,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({
-                  template: item.template as string,
+                  template: template as string,
                   value: item.value,
                   index: absoluteIndex,
                   selected: isSelected,

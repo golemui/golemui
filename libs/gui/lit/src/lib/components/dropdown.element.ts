@@ -281,6 +281,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           .uid=${this.widget.uid}
           .value=${templateData.value ?? ''}
           .valueField=${templateData.valueField! as string}
+          .labelField=${templateData.labelField! as string}
           .items=${this._isFiltering && !asyncFiltering ? this._filteredItems : templateData.items}
           .itemHeight=${templateData.itemHeight}
           .height=${templateData.height}
@@ -301,6 +302,10 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
+            const template = templateData.labelField
+              ? (item.template as any)[templateData.labelField]
+              : item.template;
+
             return html`
               <div
                 role="option"
@@ -312,7 +317,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({
-                  template: item.template as string,
+                  template: template as string,
                   value: item.value,
                   index: absoluteIndex,
                   selected: isSelected,

@@ -325,6 +325,10 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
 
+            const template = templateData.labelField
+              ? (item.template as any)[templateData.labelField]
+              : item.template;
+
             return (
               <div
                 key={absoluteIndex}
@@ -337,7 +341,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
-                  template={item.template}
+                  template={template}
                   value={item.value}
                   index={absoluteIndex}
                   selected={isSelected}
