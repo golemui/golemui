@@ -4,25 +4,10 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector, MergeResult } from '../../core/dx.domain';
-import {
-  registerItemType,
-  ItemTypeHandler,
-  ParsedEntry,
-  BuildWidgetContext,
-} from '../../core/itemTypeRegistry';
+import { MergeResult } from '../../core/dx.domain';
+import { BuildWidgetContext } from '../../core/itemTypeRegistry';
+import { defineShortcutType } from '../../core/defineShortcutType';
 import { DisplayDecorator, DisplayEntry, DisplaySensibleDefaultsConfig } from './display.domain';
-
-function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): DisplaySensibleDefaultsConfig {
-  return {} as DisplaySensibleDefaultsConfig;
-}
-
-function applySensibleDefaults(
-  def: DisplayDecorator,
-  _config: DisplaySensibleDefaultsConfig,
-): DisplayDecorator {
-  return def;
-}
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -34,10 +19,6 @@ function mapToWidget<
     type: 'renderer',
     props: { render: def.render },
   } as unknown as NonFunctionWidget<StateKeys, FormData>;
-}
-
-function parseEntry(entry: DisplayEntry): ParsedEntry<DisplayDecorator> {
-  return { baseDef: entry };
 }
 
 function buildWidget(
@@ -66,12 +47,9 @@ function buildWidget(
   }) as FormWidget;
 }
 
-const handler: ItemTypeHandler<DisplayEntry, DisplayDecorator, DisplaySensibleDefaultsConfig> = {
-  rollUpSensibleDefaults,
-  applySensibleDefaults,
+defineShortcutType<DisplayEntry, DisplayDecorator, DisplaySensibleDefaultsConfig>({
+  itemType: 'DISPLAYS',
+  entryShape: 'bare',
   mapToWidget,
-  parseEntry,
   buildWidget,
-};
-
-registerItemType('DISPLAYS', handler);
+});

@@ -1,7 +1,12 @@
 import { FlexProps } from '@golemui/gui-shared';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
-import { RuntimeFunction, GuiItemsShortcut, ValidGuiShortcut } from '../../core/dx.domain';
+import { ValidGuiShortcut } from '../../core/dx.domain';
 import { DxCommonFields, DxInternalFields, DxLayoutBase } from '../../core/dxBase.types';
+import {
+  DefOrCallback,
+  GslConfigBase,
+  GuiShortcutOf,
+} from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Layout Decorator (DX-level type for layouts)
@@ -28,22 +33,15 @@ export type LayoutSensibleDefaultsConfig = Record<string, never>;
 // GSL Layout Types
 // ═══════════════════════════════════════════════════
 
-export type GslLayoutDecoratorCallback = (current: LayoutDecorator) => Partial<LayoutDecorator> | RuntimeFunction;
-
-export interface GslLayoutsConfig {
-  decorator?: Partial<LayoutDecorator> | GslLayoutDecoratorCallback;
-}
+export type GslLayoutsConfig = GslConfigBase<LayoutDecorator>;
 
 // ═══════════════════════════════════════════════════
 // GUI Layout Types
 // ═══════════════════════════════════════════════════
 
 export type LayoutDefCallback = (params: DxRuntimeParams) => Partial<LayoutDecorator>;
-export type LayoutDefOrCallback = LayoutDecorator | LayoutDefCallback;
+export type LayoutDefOrCallback = DefOrCallback<LayoutDecorator>;
 
 export type LayoutEntry = { def: LayoutDefOrCallback; children: ValidGuiShortcut[] };
 
-export interface GuiLayoutItemsShortcut extends GuiItemsShortcut {
-  itemType: 'LAYOUTS';
-  items: LayoutEntry[];
-}
+export type GuiLayoutItemsShortcut = GuiShortcutOf<'LAYOUTS', LayoutEntry>;

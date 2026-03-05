@@ -1,14 +1,4 @@
-import { GslLeafSelector } from '../../core/dx.domain';
-import { ActionDecorator, GslActionsConfig } from './actions.domain';
+import { createGslSelector } from '../../core/dxUtilityTypes';
+import type { ActionDecorator, GslActionsConfig } from './actions.domain';
 
-export function _gslActions(
-  config: GslActionsConfig,
-  matcher: (decorator: ActionDecorator) => boolean = () => true,
-): GslLeafSelector {
-  return {
-    kind: 'leaf',
-    selectorType: 'ACTIONS',
-    matcher,
-    config,
-  };
-}
+export const _gslActions = createGslSelector<ActionDecorator, GslActionsConfig>('ACTIONS');

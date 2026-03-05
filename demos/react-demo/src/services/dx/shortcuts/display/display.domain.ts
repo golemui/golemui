@@ -1,6 +1,10 @@
-import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
 import { DxCommonFields, DxDisplayBase, DxInternalFields } from '../../core/dxBase.types';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
+import {
+  DefOrCallback,
+  GslConfigBase,
+  GuiShortcutOf,
+} from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Display Decorator
@@ -25,19 +29,12 @@ export type DisplaySensibleDefaultsConfig = Record<string, never>;
 // GSL Display Types
 // ═══════════════════════════════════════════════════
 
-export type GslDisplayDecoratorCallback = (current: DisplayDecorator) => Partial<DisplayDecorator> | RuntimeFunction;
-
-export interface GslDisplaysConfig {
-  decorator?: Partial<DisplayDecorator> | GslDisplayDecoratorCallback;
-}
+export type GslDisplaysConfig = GslConfigBase<DisplayDecorator>;
 
 // ═══════════════════════════════════════════════════
 // GUI Display Types
 // ═══════════════════════════════════════════════════
 
-export type DisplayEntry = DisplayDecorator;
+export type DisplayEntry = DefOrCallback<DisplayDecorator>;
 
-export interface GuiDisplayItemsShortcut extends GuiItemsShortcut {
-  itemType: 'DISPLAYS';
-  items: DisplayEntry[];
-}
+export type GuiDisplayItemsShortcut = GuiShortcutOf<'DISPLAYS', DisplayEntry>;

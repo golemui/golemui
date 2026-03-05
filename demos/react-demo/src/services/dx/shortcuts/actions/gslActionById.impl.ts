@@ -1,11 +1,8 @@
-import { GslLeafSelector } from '../../core/dx.domain';
-import { GslActionsConfig } from './actions.domain';
+import { createGslSelector } from '../../core/dxUtilityTypes';
+import type { ActionDecorator, GslActionsConfig } from './actions.domain';
 
-export function _gslActionById(id: string, config: GslActionsConfig): GslLeafSelector {
-  return {
-    kind: 'leaf',
-    selectorType: 'ACTIONS',
-    matcher: (d) => d.uid === id,
-    config,
-  };
+const createByIdSelector = createGslSelector<ActionDecorator, GslActionsConfig>('ACTIONS');
+
+export function _gslActionById(id: string, config: GslActionsConfig) {
+  return createByIdSelector(config, (d) => d.uid === id);
 }

@@ -3,26 +3,9 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector, MergeResult } from '../../core/dx.domain';
-import {
-  registerItemType,
-  ItemTypeHandler,
-  ParsedEntry,
-  AfterMergeContext,
-} from '../../core/itemTypeRegistry';
+import { defineShortcutType } from '../../core/defineShortcutType';
 import { ActionDecorator, ActionEntry, ActionSensibleDefaultsConfig } from './actions.domain';
 import actionOnClickService from '../../core/actionOnClick.service';
-
-function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): ActionSensibleDefaultsConfig {
-  return {} as ActionSensibleDefaultsConfig;
-}
-
-function applySensibleDefaults(
-  def: ActionDecorator,
-  _config: ActionSensibleDefaultsConfig,
-): ActionDecorator {
-  return def;
-}
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -39,28 +22,14 @@ function mapToWidget<
   } as ActionWidget<StateKeys, FormData>;
 }
 
-function parseEntry(entry: ActionEntry): ParsedEntry<ActionDecorator> {
-  // ActionEntry is either an ActionDecorator or an ActionDefCallback (bare, no key)
-  return { baseDef: entry };
-}
-
-function afterMerge(
-  mergeResult: MergeResult,
-  context: AfterMergeContext,
-): MergeResult {
-  return actionOnClickService.extractOnClickFromMergeResult(
-    mergeResult,
-    context.onClickRegistry,
-    context.rootDefaults,
-  );
-}
-
-const handler: ItemTypeHandler<ActionEntry, ActionDecorator, ActionSensibleDefaultsConfig> = {
-  rollUpSensibleDefaults,
-  applySensibleDefaults,
+defineShortcutType<ActionEntry, ActionDecorator, ActionSensibleDefaultsConfig>({
+  itemType: 'ACTIONS',
+  entryShape: 'bare',
   mapToWidget,
-  parseEntry,
-  afterMerge,
-};
-
-registerItemType('ACTIONS', handler);
+  afterMerge: (mergeResult, context) =>
+    actionOnClickService.extractOnClickFromMergeResult(
+      mergeResult,
+      context.onClickRegistry,
+      context.rootDefaults,
+    ),
+});

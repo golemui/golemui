@@ -5,25 +5,10 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector, MergeResult, ValidGuiShortcut } from '../../core/dx.domain';
-import {
-  registerItemType,
-  ItemTypeHandler,
-  ParsedEntry,
-  BuildWidgetContext,
-} from '../../core/itemTypeRegistry';
+import { MergeResult, ValidGuiShortcut } from '../../core/dx.domain';
+import { BuildWidgetContext } from '../../core/itemTypeRegistry';
+import { defineShortcutType } from '../../core/defineShortcutType';
 import { LayoutDecorator, LayoutEntry, LayoutSensibleDefaultsConfig } from './layouts.domain';
-
-function rollUpSensibleDefaults(_leafSelectors: GslLeafSelector[]): LayoutSensibleDefaultsConfig {
-  return {} as LayoutSensibleDefaultsConfig;
-}
-
-function applySensibleDefaults(
-  def: LayoutDecorator,
-  _config: LayoutSensibleDefaultsConfig,
-): LayoutDecorator {
-  return def;
-}
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -39,13 +24,6 @@ function mapToWidget<
     },
     children: [],
   } as LayoutWidget<StateKeys, FormData>;
-}
-
-function parseEntry(entry: LayoutEntry): ParsedEntry<LayoutDecorator> {
-  return {
-    baseDef: entry.def,
-    children: entry.children,
-  };
 }
 
 function buildWidget(
@@ -71,13 +49,10 @@ function getChildren(entry: LayoutEntry): ValidGuiShortcut[] | undefined {
   return entry.children;
 }
 
-const handler: ItemTypeHandler<LayoutEntry, LayoutDecorator, LayoutSensibleDefaultsConfig> = {
-  rollUpSensibleDefaults,
-  applySensibleDefaults,
+defineShortcutType<LayoutEntry, LayoutDecorator, LayoutSensibleDefaultsConfig>({
+  itemType: 'LAYOUTS',
+  entryShape: 'compound',
   mapToWidget,
-  parseEntry,
   buildWidget,
   getChildren,
-};
-
-registerItemType('LAYOUTS', handler);
+});

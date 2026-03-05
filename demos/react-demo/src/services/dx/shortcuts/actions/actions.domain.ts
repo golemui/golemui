@@ -1,7 +1,11 @@
 import { ButtonProps } from '@golemui/gui-shared';
-import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
 import { DxActionBase, DxCommonFields, DxInternalFields } from '../../core/dxBase.types';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
+import {
+  DefOrCallback,
+  GslConfigBase,
+  GuiShortcutOf,
+} from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Action Decorators
@@ -20,8 +24,8 @@ export interface ActionDecorator extends DxActionBase, DxCommonFields {
  */
 export type ActionDecoratorFull = ActionDecorator & DxInternalFields;
 
-export type ActionDefCallback = (params: DxRuntimeParams) => ActionDecorator;
-export type ActionDefOrCallback = ActionDecorator | ActionDefCallback;
+export type ActionDefCallback = (params: DxRuntimeParams) => Partial<ActionDecorator>;
+export type ActionDefOrCallback = DefOrCallback<ActionDecorator>;
 
 // ═══════════════════════════════════════════════════
 // Action Sensible Defaults Config
@@ -33,19 +37,12 @@ export type ActionSensibleDefaultsConfig = Record<string, never>;
 // GSL Action Types
 // ═══════════════════════════════════════════════════
 
-export type GslActionDecoratorCallback = (current: ActionDecorator) => Partial<ActionDecorator> | RuntimeFunction;
-
-export interface GslActionsConfig {
-  decorator?: Partial<ActionDecorator> | GslActionDecoratorCallback;
-}
+export type GslActionsConfig = GslConfigBase<ActionDecorator>;
 
 // ═══════════════════════════════════════════════════
 // GUI Action Types
 // ═══════════════════════════════════════════════════
 
-export type ActionEntry = ActionDecorator | ActionDefCallback;
+export type ActionEntry = ActionDefOrCallback;
 
-export interface GuiActionsShortcut extends GuiItemsShortcut {
-  itemType: 'ACTIONS';
-  items: ActionEntry[];
-}
+export type GuiActionsShortcut = GuiShortcutOf<'ACTIONS', ActionEntry>;

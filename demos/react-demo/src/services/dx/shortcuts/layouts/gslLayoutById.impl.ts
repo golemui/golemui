@@ -1,11 +1,8 @@
-import { GslLeafSelector } from '../../core/dx.domain';
-import { GslLayoutsConfig } from './layouts.domain';
+import { createGslSelector } from '../../core/dxUtilityTypes';
+import type { LayoutDecorator, GslLayoutsConfig } from './layouts.domain';
 
-export function _gslLayoutById(id: string, config: GslLayoutsConfig): GslLeafSelector {
-  return {
-    kind: 'leaf',
-    selectorType: 'LAYOUTS',
-    matcher: (d) => d.uid === id,
-    config,
-  };
+const createByIdSelector = createGslSelector<LayoutDecorator, GslLayoutsConfig>('LAYOUTS');
+
+export function _gslLayoutById(id: string, config: GslLayoutsConfig) {
+  return createByIdSelector(config, (d) => d.uid === id);
 }

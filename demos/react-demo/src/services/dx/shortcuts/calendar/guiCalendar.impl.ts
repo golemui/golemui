@@ -1,14 +1,14 @@
 import {
   GuiCalendarShortcut,
   CalendarDecorator,
-  CalendarDefOrCallback,
+  CalendarEntry,
 } from './calendar.domain';
 
 export const _guiCalendar = (
-  pathOrDef: string | CalendarDefOrCallback,
+  pathOrDef: string | CalendarEntry,
   tags?: string[],
 ): GuiCalendarShortcut => {
-  const def: CalendarDefOrCallback =
+  const def: CalendarEntry =
     typeof pathOrDef === 'string'
       ? { type: 'calendar', path: pathOrDef } as CalendarDecorator
       : pathOrDef;

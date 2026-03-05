@@ -60,3 +60,20 @@ export type {
   ActionDefCallback,
   ActionDefOrCallback,
 } from './shortcuts/actions/actions.domain';
+
+export type {
+  GslDecoratorCallback,
+  DefOrCallback,
+  GslConfigBase,
+  GuiShortcutOf,
+} from './core/dxUtilityTypes';
+export { createGslSelector } from './core/dxUtilityTypes';
+export { defineShortcutType } from './core/defineShortcutType';
+export type {
+  LabelSensibleDefaultsConfig,
+  PlaceholderSensibleDefaultsConfig,
+} from './core/sharedSensibleDefaults.service';
+export {
+  processAutoLabel,
+  processAutoPlaceholder,
+} from './core/sharedSensibleDefaults.service';

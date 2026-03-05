@@ -1,8 +1,12 @@
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import { FunctionWidgetParams } from '@golemui/core';
 import { NumberinputProps, TextinputProps, ToggleProps } from '@golemui/gui-shared';
-import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
 import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
+import {
+  DefOrCallback,
+  GslConfigBase,
+  GuiShortcutOf,
+} from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Input Decorators
@@ -92,10 +96,7 @@ export interface InputSensibleDefaultsConfig {
 // GSL Input Types
 // ═══════════════════════════════════════════════════
 
-export type GslInputDecoratorCallback = (current: InputDecorator) => Partial<InputDecorator> | RuntimeFunction;
-
-export interface GslInputsConfig {
-  decorator?: Partial<InputDecorator> | GslInputDecoratorCallback;
+export interface GslInputsConfig extends GslConfigBase<InputDecorator> {
   suppressAutomaticLabels?: boolean;
   suppressAutomaticPlaceholders?: boolean;
 }
@@ -104,11 +105,8 @@ export interface GslInputsConfig {
 // GUI Input Types
 // ═══════════════════════════════════════════════════
 
-export type InputDefOrCallback = InputDecorator | PartialInputDefCallback;
+export type InputDefOrCallback = DefOrCallback<InputDecorator>;
 
 export type InputEntry = { key: string; def: InputDefOrCallback };
 
-export interface GuiInputsShortcut extends GuiItemsShortcut {
-  itemType: 'INPUTS';
-  items: InputEntry[];
-}
+export type GuiInputsShortcut = GuiShortcutOf<'INPUTS', InputEntry>;

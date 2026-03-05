@@ -1,14 +1,4 @@
-import { GslLeafSelector } from '../../core/dx.domain';
-import { InputDecorator, GslInputsConfig } from './inputs.domain';
+import { createGslSelector } from '../../core/dxUtilityTypes';
+import type { InputDecorator, GslInputsConfig } from './inputs.domain';
 
-export function _gslInputs(
-  config: GslInputsConfig,
-  matcher: (decorator: InputDecorator) => boolean = () => true,
-): GslLeafSelector {
-  return {
-    kind: 'leaf',
-    selectorType: 'INPUTS',
-    matcher,
-    config,
-  };
-}
+export const _gslInputs = createGslSelector<InputDecorator, GslInputsConfig>('INPUTS');

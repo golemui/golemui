@@ -32,6 +32,7 @@ import './shortcuts/actions/register';
 import './shortcuts/layouts/register';
 import './shortcuts/display/register';
 import './shortcuts/calendar/register';
+import './shortcuts/textarea/register';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 

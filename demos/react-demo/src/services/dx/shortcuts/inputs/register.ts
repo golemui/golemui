@@ -3,48 +3,19 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { GslLeafSelector } from '../../core/dx.domain';
-import { registerItemType, ItemTypeHandler, ParsedEntry } from '../../core/itemTypeRegistry';
+import { defineShortcutType } from '../../core/defineShortcutType';
+import {
+  processAutoLabel,
+  processAutoPlaceholder,
+} from '../../core/sharedSensibleDefaults.service';
 import {
   InputDecorator,
   InputEntry,
   InputSensibleDefaultsConfig,
-  GslInputsConfig,
   BooleanDataInputDecorator,
   NumberDataInputDecorator,
   TextDataInputDecorator,
 } from './inputs.domain';
-import inputSensibleDefaultsService from './inputSensibleDefaults.service';
-
-const BASE_INPUT_SENSIBLE_DEFAULTS: InputSensibleDefaultsConfig = {
-  suppressAutomaticLabels: false,
-  suppressAutomaticPlaceholders: false,
-};
-
-function rollUpSensibleDefaults(leafSelectors: GslLeafSelector[]): InputSensibleDefaultsConfig {
-  let result: InputSensibleDefaultsConfig = { ...BASE_INPUT_SENSIBLE_DEFAULTS };
-
-  for (const leaf of leafSelectors) {
-    const cfg = leaf.config as GslInputsConfig;
-    if (cfg.suppressAutomaticLabels != null) {
-      result = { ...result, suppressAutomaticLabels: cfg.suppressAutomaticLabels };
-    }
-    if (cfg.suppressAutomaticPlaceholders != null) {
-      result = { ...result, suppressAutomaticPlaceholders: cfg.suppressAutomaticPlaceholders };
-    }
-  }
-
-  return result;
-}
-
-function applySensibleDefaults(
-  def: InputDecorator,
-  config: InputSensibleDefaultsConfig,
-): InputDecorator {
-  let result = inputSensibleDefaultsService.processAutomaticLabels(def, config);
-  result = inputSensibleDefaultsService.processAutomaticPlaceholders(result, config);
-  return result;
-}
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -126,18 +97,20 @@ function mapNumberInputDef<
   };
 }
 
-function parseEntry(entry: InputEntry): ParsedEntry<InputDecorator> {
-  return {
-    baseDef: entry.def,
-    path: entry.key,
-  };
-}
-
-const handler: ItemTypeHandler<InputEntry, InputDecorator, InputSensibleDefaultsConfig> = {
-  rollUpSensibleDefaults,
-  applySensibleDefaults,
+defineShortcutType<InputEntry, InputDecorator, InputSensibleDefaultsConfig>({
+  itemType: 'INPUTS',
+  entryShape: 'keyed',
+  sensibleDefaults: {
+    base: {
+      suppressAutomaticLabels: false,
+      suppressAutomaticPlaceholders: false,
+    },
+    fields: ['suppressAutomaticLabels', 'suppressAutomaticPlaceholders'],
+    apply: (def, config) => {
+      let result = processAutoLabel(def, config);
+      result = processAutoPlaceholder(result, config);
+      return result;
+    },
+  },
   mapToWidget,
-  parseEntry,
-};
-
-registerItemType('INPUTS', handler);
+});

@@ -145,94 +145,87 @@ A `--` means the shortcut does not implement that piece.
 5. **Displays** flow through the pipeline and produce function widgets. They support tag/scope selectors (`_gslDisplays`). Plain functions passed in `formDef` are auto-wrapped via `_guiDisplay`.
 6. **Not all pieces are required** — the minimum for a new item type is: Decorator + Entry type alias + `GuiXxxShortcut` sub-interface + mapper fn + `ValidGuiShortcut` union entry.
 
-## How to Add a New Item Shortcut
+## How to Add a New Item Shortcut (Phase 5+)
 
-This guide uses `calendar` as a concrete example, cross-referencing `inputs` as the reference.
+Phase 5 introduced three shared helpers that remove almost all registration boilerplate:
 
-### Step 1: Create the shortcut folder
+- `DefOrCallback<D>`, `GslConfigBase<D>`, `GuiShortcutOf<Type, Entry>` in `core/dxUtilityTypes.ts`
+- `createGslSelector<D, TConfig>(itemType)` in `core/dxUtilityTypes.ts`
+- `defineShortcutType<TEntry, TDecorator, TConfig>(config)` in `core/defineShortcutType.ts`
 
-Create `services/dx/shortcuts/calendar/` with:
+### Minimal files now
 
-| File | Purpose | Reference |
-|------|---------|-----------|
-| `calendar.domain.ts` | Decorator, entry type, sub-interface, GSL config, sensible defaults config | `inputs/inputs.domain.ts` |
-| `guiCalendar.impl.ts` | `_guiCalendar()` | `inputs/guiInputs.impl.ts` |
-| `gslCalendar.impl.ts` | `_gslCalendar()` | `inputs/gslInputs.impl.ts` |
-| `calendarSensibleDefaults.service.ts` | Auto-label processor | `inputs/inputSensibleDefaults.service.ts` |
+#### Bare-entry type (calendar/action/display-like)
 
-### Step 2: Define domain types
+1. `{type}.domain.ts` — decorator + `GslConfig` + entry + gui shortcut type aliases
+2. `gui{Type}.impl.ts` — hand-crafted ergonomic `_gui*` function
+3. `register.ts` — one `defineShortcutType(...)` call + exported `_gsl*` selector
 
-In `calendar.domain.ts`:
+#### Keyed-entry type (inputs-like)
 
-```typescript
-import { GuiItemsShortcut } from '../../core/dx.domain';
-// Import or define a GUI_ITEM_TYPE_CALENDAR type alias
+Same 3 files. In `defineShortcutType`, use `entryShape: 'keyed'`.
 
-// 1. Decorator
-export interface CalendarDecorator extends WidgetItemDecorator {
-  type: 'calendar';
-  path?: string;
-  label?: string | null;
-  minDate?: string;
-  maxDate?: string;
+#### Complex type with hooks (layouts/actions/displays)
+
+Same 3 files. Add only the hooks you need in `defineShortcutType`:
+
+- `afterMerge` (actions)
+- `buildWidget` (layouts/displays)
+- `getChildren` (layouts)
+
+### Copy-paste template — simplest bare type (no sensible defaults)
+
+`myType.domain.ts`
+
+```ts
+import type { DxCommonFields } from '../../core/dxBase.types';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+
+export interface MyTypeDecorator extends DxCommonFields {
+  type: 'myType';
 }
 
-// 2. Entry type
-export type CalendarDefOrCallback = CalendarDecorator | ((params: DxRuntimeParams) => Partial<CalendarDecorator>);
-export type CalendarEntry = { key: string; def: CalendarDefOrCallback };
-
-// 3. Sub-interface
-export interface GuiCalendarShortcut extends GuiItemsShortcut {
-  itemType: GUI_ITEM_TYPE_CALENDAR;
-  items: CalendarEntry[];
-}
-
-// 4. Sensible Defaults Config
-export interface CalendarSensibleDefaultsConfig {
-  suppressAutomaticLabels?: boolean;
-}
-
-// 5. GSL Config
-export interface GslCalendarConfig {
-  decorator?: Partial<CalendarDecorator> | GslCalendarDecoratorCallback;
-  suppressAutomaticLabels?: boolean;
-}
+export type GslMyTypeConfig = GslConfigBase<MyTypeDecorator>;
+export type MyTypeEntry = DefOrCallback<MyTypeDecorator>;
+export type GuiMyTypeShortcut = GuiShortcutOf<'MY_TYPE', MyTypeEntry>;
 ```
 
-### Step 3: Implement `_guiCalendar` and `_gslCalendar`
+`guiMyType.impl.ts`
 
-- `_guiCalendar(defs)` → returns `GuiCalendarShortcut` with `itemType: GuiItemTypes.CALENDAR`
-- `_gslCalendar(config)` → returns `GslWidgetSelector` with `selectorType: GslWidgetSelectorType.CALENDAR`
+```ts
+import type { GuiMyTypeShortcut, MyTypeEntry } from './myType.domain';
 
-### Step 4: Implement sensible defaults processor
+export const _guiMyType = (entry: MyTypeEntry, tags?: string[]): GuiMyTypeShortcut => ({
+  type: 'ITEMS',
+  itemType: 'MY_TYPE',
+  items: [entry],
+  tags: tags ?? [],
+});
+```
 
-Follow `InputSensibleDefaultsService` pattern: check if value exists → check if suppressed → fill default.
+`register.ts`
 
-### Step 5: Register in core
+```ts
+import { defineShortcutType } from '../../core/defineShortcutType';
+import { createGslSelector } from '../../core/dxUtilityTypes';
+import type { GslMyTypeConfig, MyTypeDecorator, MyTypeEntry } from './myType.domain';
 
-| File | What to add | Reference |
-|------|-------------|-----------|
-| `core/dx.domain.ts` | `GUI_ITEM_TYPE_CALENDAR` type alias + add to `GuiItemType` union + add to `GuiItemTypes` object | `GUI_ITEM_TYPE_INPUTS` |
-| `core/dx.domain.ts` | Add `CalendarEntry` to `GuiItemsShortcut.items` union | `InputEntry` |
-| `core/dx.domain.ts` | Add `GuiCalendarShortcut` to `ValidGuiShortcut` union | `GuiInputsShortcut` |
-| `core/dx.domain.ts` | `'CALENDAR'` to `GslItemType` | `'INPUTS'` |
-| `core/dx.domain.ts` | `CALENDAR` to `GslWidgetSelectorType` | `INPUTS = 'INPUTS'` |
-| `core/dx.domain.ts` | `aggregatedCalendarSensibleDefaults` to `ResolvedSelectors` | `aggregatedInputSensibleDefaults` |
-| `core/selectorResolver.service.ts` | case `'CALENDAR'` in `itemTypeToWidgetSelectorType` + rollup | `case 'INPUTS'` |
-| `core/widgetMerger.service.ts` | `if (itemType === 'CALENDAR')` → apply sensible defaults | `if (itemType === 'INPUTS')` |
-| `core/widgetMapper.service.ts` | case `'CALENDAR'` in `mapStaticDef` | `case 'INPUTS'` |
-| `dx.service.ts` | Handle `CalendarEntry` in `processItem` if keyed entry logic differs | `InputEntry` handling |
+defineShortcutType<MyTypeEntry, MyTypeDecorator>({
+  itemType: 'MY_TYPE',
+  entryShape: 'bare',
+  mapToWidget: (def) => ({
+    uid: def.uid ?? '',
+    kind: 'display',
+    type: 'renderer',
+    props: {},
+  }),
+});
 
-### Checklist
+export const _gslMyType = createGslSelector<MyTypeDecorator, GslMyTypeConfig>('MY_TYPE');
+```
 
-- [ ] Create `calendar/` folder with domain, gui, gsl, sensible defaults files
-- [ ] Define `CalendarDecorator`, `CalendarEntry`, `GuiCalendarShortcut`
-- [ ] Add `GUI_ITEM_TYPE_CALENDAR` to type aliases and `GuiItemTypes` object
-- [ ] Add `GuiCalendarShortcut` to `ValidGuiShortcut` union
-- [ ] Add `CalendarEntry` to `GuiItemsShortcut.items` union
-- [ ] Add sensible defaults config to `ResolvedSelectors`
-- [ ] Wire `selectorResolver` (type mapping + rollup)
-- [ ] Wire `widgetMerger` (sensible defaults application)
-- [ ] Wire `widgetMapper` (decorator-to-widget mapping)
-- [ ] Wire `dx.service.ts` if needed
-- [ ] Add demo(s) to validate
+### Notes
+
+- Keep `_gui*` factories hand-crafted for API ergonomics.
+- `defineShortcutType` already handles registration (`registerItemType`) internally.
+- Preserve existing behavior in `mapToWidget`/hooks when migrating old types — only ceremony should change.

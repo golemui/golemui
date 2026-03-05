@@ -9,6 +9,7 @@ import { _gslRoot } from '../../../services/dx/shortcuts/scopes/gslRoot.impl';
 import { _gslActionById } from '../../../services/dx/shortcuts/actions/gslActionById.impl';
 import { _gslLayoutById } from '../../../services/dx/shortcuts/layouts/gslLayoutById.impl';
 import { _guiCalendar } from '../../../services/dx/shortcuts/calendar/guiCalendar.impl';
+import { _guiTextarea } from '../../../services/dx/shortcuts/textarea/guiTextarea.impl';
 
 export const smartContactFormDemo: FormDemoDefinition = {
   title: 'Combinations / Smart Contact Form',
@@ -79,13 +80,13 @@ export const smartContactFormDemo: FormDemoDefinition = {
       subscribe: 'boolean',
       message: (params) => ({
         type: 'text',
-        label:
-          params.errors != null && params.errors.length > 0
-            ? 'Message too short!'
-            : 'Message',
+        label: params.errors != null && params.errors.length > 0 ? 'Message too short!' : 'Message',
         placeholder: 'At least 10 chars',
         validator: { minLength: 10 },
       }),
+    }),
+    _guiTextarea({
+      textArea: 'Placeholder text'
     }),
     _guiCalendar('birthDate'),
     (params: DxRuntimeParams) => {
@@ -98,9 +99,7 @@ export const smartContactFormDemo: FormDemoDefinition = {
       );
     },
     _guiButton((params) => ({
-      label: params.$form?.firstName
-        ? `Send for ${params.$form.firstName}`
-        : 'Send',
+      label: params.$form?.firstName ? `Send for ${params.$form.firstName}` : 'Send',
       disabled: !params.$form?.email,
       onClick: (data: any) => console.log('Submitted:', data),
     })),
@@ -112,7 +111,7 @@ export const smartContactFormDemo: FormDemoDefinition = {
         decorator: (cur) => (params) => ({
           placeholder: params?.$form?.firstName
             ? `Hi ${params.$form.firstName}! Fill ${cur.path}`
-            : cur.placeholder ?? cur.path,
+            : (cur.placeholder ?? cur.path),
         }),
       }),
     ),
