@@ -35,6 +35,7 @@ function mapToWidget<
     type: def.widgetName ?? 'flex',
     props: {
       direction: def.direction ?? 'vertical',
+      ...def.props,
     },
     children: [],
   } as LayoutWidget<StateKeys, FormData>;

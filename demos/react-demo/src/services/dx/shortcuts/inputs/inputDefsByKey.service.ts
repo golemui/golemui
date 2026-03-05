@@ -3,11 +3,12 @@ import {
   InputDecorator,
   InputTags,
   InputDefOrCallback,
+  InputObjectDef,
   PartialInputDefCallback,
   ValidShortcutType,
 } from './inputs.domain';
 
-export type DxField = InputDefOrCallback | ValidShortcutType | InputTags;
+export type DxField = InputObjectDef | PartialInputDefCallback | ValidShortcutType | InputTags;
 
 export type FacadeFieldByKey<T extends Record<string, any>> = Partial<Record<keyof T, DxField>>;
 
@@ -53,7 +54,8 @@ export class InputDefsByKeyService {
         }
       }
     } else {
-      value = dataInputDef as InputDecorator;
+      // Object literal form — InputObjectDef or InputDecorator
+      value = dataInputDef as InputDefOrCallback;
     }
 
     return value;

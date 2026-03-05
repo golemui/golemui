@@ -67,13 +67,15 @@ function mapBooleanInputDef<
   FormData extends Record<string, any> = any,
 >(fieldDef: BooleanDataInputDecorator): InputWidget<any, StateKeys, FormData> {
   return {
-    uid: '',
+    uid: fieldDef.uid ?? '',
     kind: 'input',
     type: 'toggle',
     path: fieldDef.path ?? '',
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
+    ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
+    ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
     props: {
-      placeholder: fieldDef.placeholder ?? '',
+      ...fieldDef.props,
     },
   };
 }
@@ -83,13 +85,16 @@ function mapTextInputDef<
   FormData extends Record<string, any> = any,
 >(fieldDef: TextDataInputDecorator): InputWidget<any, StateKeys, FormData> {
   return {
-    uid: '',
+    uid: fieldDef.uid ?? '',
     kind: 'input',
     type: 'textinput',
     path: fieldDef.path ?? '',
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
+    ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
+    ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
     props: {
       placeholder: fieldDef.placeholder ?? '',
+      ...fieldDef.props,
     },
     validator: {
       type: 'string',
@@ -103,13 +108,16 @@ function mapNumberInputDef<
   FormData extends Record<string, any> = any,
 >(fieldDef: NumberDataInputDecorator): InputWidget<any, StateKeys, FormData> {
   return {
-    uid: '',
+    uid: fieldDef.uid ?? '',
     kind: 'input',
     type: 'number',
     path: fieldDef.path ?? '',
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
+    ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
+    ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
     props: {
       placeholder: fieldDef.placeholder ?? '',
+      ...fieldDef.props,
     },
     validator: {
       type: 'number',

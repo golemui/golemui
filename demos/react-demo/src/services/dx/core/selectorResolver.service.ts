@@ -4,13 +4,15 @@ import {
   GslSelector,
   ResolvedSelectors,
 } from './dx.domain';
-import type { WidgetItemDecorator } from '../formDef.domain';
+import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
+
+type DecoratorForMatching = DxInternalFields & DxCommonFields;
 
 export class SelectorResolver {
 
   resolve(
-    decorator: WidgetItemDecorator,
+    decorator: DecoratorForMatching,
     allSelectors: GslSelector[],
   ): ResolvedSelectors {
 
@@ -35,7 +37,7 @@ export class SelectorResolver {
 
   private collectFromAggregated(
     agg: GslAggregatedSelector,
-    decorator: WidgetItemDecorator,
+    decorator: DecoratorForMatching,
     out: GslLeafSelector[],
   ): void {
     if (!agg.matcher(decorator)) return;
@@ -47,7 +49,7 @@ export class SelectorResolver {
 
   private collectFromLeaf(
     leaf: GslLeafSelector,
-    decorator: WidgetItemDecorator,
+    decorator: DecoratorForMatching,
     out: GslLeafSelector[],
   ): void {
     if (leaf.selectorType !== decorator.itemType) return;

@@ -35,6 +35,7 @@ function mapToWidget<
     disabled: def.disabled,
     label: def.label,
     ...(def.on != null ? { on: def.on } : {}),
+    props: { ...def.props },
   } as ActionWidget<StateKeys, FormData>;
 }
 

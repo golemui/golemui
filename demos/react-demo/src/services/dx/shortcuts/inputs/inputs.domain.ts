@@ -1,41 +1,73 @@
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import { FunctionWidgetParams } from '@golemui/core';
-import { WidgetItemDecorator } from '../../formDef.domain';
+import { NumberinputProps, TextinputProps, ToggleProps } from '@golemui/gui-shared';
 import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
+import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
 
 // ═══════════════════════════════════════════════════
 // Input Decorators
 // ═══════════════════════════════════════════════════
 
-export interface DataInputDecorator extends WidgetItemDecorator {
+/**
+ * @deprecated Kept for backward compatibility in pipeline internals.
+ * New code should use the individual subtypes directly.
+ */
+export interface DataInputDecorator extends DxInputBase, DxCommonFields {
   type: 'text' | 'number' | 'boolean';
   placeholder?: string;
-  label?: string | null;
-  path?: string;
 }
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
 
-export interface NumberDataInputDecorator extends DataInputDecorator {
+export interface NumberDataInputDecorator extends DxInputBase, DxCommonFields {
   type: 'number';
+  placeholder?: string;
   validator?: NumberDataInputValidator;
+  props?: Partial<NumberinputProps>;
 }
 
 export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
 
-export interface TextDataInputDecorator extends DataInputDecorator {
+export interface TextDataInputDecorator extends DxInputBase, DxCommonFields {
   type: 'text';
+  placeholder?: string;
   validator?: TextDataInputValidator;
+  props?: Partial<TextinputProps>;
 }
 
-export interface BooleanDataInputDecorator extends DataInputDecorator {
+export interface BooleanDataInputDecorator extends DxInputBase, DxCommonFields {
   type: 'boolean';
+  placeholder?: string;
+  props?: Partial<ToggleProps>;
 }
 
 export type InputDecorator =
   | TextDataInputDecorator
   | NumberDataInputDecorator
   | BooleanDataInputDecorator;
+
+/**
+ * Full decorator type including pipeline-internal fields.
+ * Used by the pipeline only — form authors use InputDecorator.
+ */
+export type InputDecoratorFull = InputDecorator & DxInternalFields;
+
+// ═══════════════════════════════════════════════════
+// IntelliSense-Optimized Object Form
+// ═══════════════════════════════════════════════════
+
+/**
+ * Discriminated union for the object form of _guiInputs.
+ * When the user writes { type: 'text', ... }, TypeScript narrows to
+ * the text-specific variant with correct validator, props, etc.
+ *
+ * Note: `type` is required in this form to enable discrimination.
+ * The shorthand forms ('string', 'number', ['string', 'required']) are unaffected.
+ */
+export type InputObjectDef =
+  | ({ type: 'text' } & Partial<Omit<TextDataInputDecorator, 'type'>>)
+  | ({ type: 'number' } & Partial<Omit<NumberDataInputDecorator, 'type'>>)
+  | ({ type: 'boolean' } & Partial<Omit<BooleanDataInputDecorator, 'type'>>);
 
 export type ValidShortcutType = 'string' | 'number' | 'boolean';
 

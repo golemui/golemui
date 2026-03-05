@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { ValidGuiShortcut } from './core/dx.domain';
+import { DxCommonFields, DxInternalFields } from './core/dxBase.types';
 import { DxRuntimeParams } from './shortcuts/inputs/inputs.domain';
 
 // ═══════════════════════════════════════════════════
@@ -8,12 +9,14 @@ import { DxRuntimeParams } from './shortcuts/inputs/inputs.domain';
 
 export type GslItemType = string;
 
-export interface WidgetItemDecorator {
-  itemType?: GslItemType;
-  tags?: string[];
-  uid?: string;
-  removeField?: boolean;
-}
+/**
+ * @deprecated Use DxCommonFields (+ kind-specific DxInputBase/DxActionBase/etc.)
+ * for public decorator interfaces. Use DxInternalFields & DxCommonFields for
+ * pipeline-internal code that needs the full set.
+ *
+ * This type is kept as an alias for backward compatibility with pipeline internals.
+ */
+export type WidgetItemDecorator = DxInternalFields & DxCommonFields;
 
 // ═══════════════════════════════════════════════════
 // DX-level aggregate types
@@ -28,6 +31,15 @@ export type FormEvents = (event: Core.FormEvent) => void;
 // ═══════════════════════════════════════════════════
 // Re-exports from shortcut folders (backward compat)
 // ═══════════════════════════════════════════════════
+
+export type {
+  DxInternalFields,
+  DxCommonFields,
+  DxInputBase,
+  DxActionBase,
+  DxLayoutBase,
+  DxDisplayBase,
+} from './core/dxBase.types';
 
 export type {
   DataInputDecorator,

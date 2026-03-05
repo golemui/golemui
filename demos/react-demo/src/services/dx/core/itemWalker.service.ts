@@ -9,14 +9,16 @@ import {
   RuntimeFunction,
   ValidGuiShortcut,
 } from './dx.domain';
+import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import type { GuiItemType } from './dx.domain';
-import type { GslItemType, WidgetItemDecorator } from '../formDef.domain';
+import type { GslItemType } from '../formDef.domain';
 import { SelectorResolver } from './selectorResolver.service';
 import { WidgetMerger } from './widgetMerger.service';
 import { WidgetMapper } from './widgetMapper.service';
 import { getItemTypeHandler } from './itemTypeRegistry';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
+type DecoratorForMatching = DxInternalFields & DxCommonFields;
 
 export class ItemWalker {
   constructor(
@@ -108,7 +110,7 @@ export class ItemWalker {
     baseDef: Record<string, any> | RuntimeFunction,
     itemType: GslItemType,
     parentTags: string[],
-  ): WidgetItemDecorator {
+  ): DecoratorForMatching {
     if (typeof baseDef === 'function') {
       return { itemType, tags: [...parentTags] };
     }

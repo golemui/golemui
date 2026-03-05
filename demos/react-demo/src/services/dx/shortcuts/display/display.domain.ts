@@ -1,14 +1,19 @@
 import { RuntimeFunction, GuiItemsShortcut } from '../../core/dx.domain';
+import { DxCommonFields, DxDisplayBase, DxInternalFields } from '../../core/dxBase.types';
 import { DxRuntimeParams } from '../inputs/inputs.domain';
-import { WidgetItemDecorator } from '../../formDef.domain';
 
 // ═══════════════════════════════════════════════════
 // Display Decorator
 // ═══════════════════════════════════════════════════
 
-export interface DisplayDecorator extends WidgetItemDecorator {
+export interface DisplayDecorator extends DxDisplayBase, DxCommonFields {
   render: (params: DxRuntimeParams) => any;
 }
+
+/**
+ * Full decorator type including pipeline-internal fields.
+ */
+export type DisplayDecoratorFull = DisplayDecorator & DxInternalFields;
 
 // ═══════════════════════════════════════════════════
 // Display Sensible Defaults Config

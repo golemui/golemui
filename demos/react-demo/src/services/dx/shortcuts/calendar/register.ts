@@ -42,15 +42,14 @@ function mapToWidget<
   FormData extends Record<string, any> = any,
 >(def: CalendarDecorator): NonFunctionWidget<StateKeys, FormData> {
   return {
-    uid: '',
+    uid: def.uid ?? '',
     kind: 'input',
     type: 'calendar',
     path: def.path ?? '',
     ...(def.label != null ? { label: def.label } : {}),
-    props: {
-      ...(def.minDate != null ? { minDate: def.minDate } : {}),
-      ...(def.maxDate != null ? { maxDate: def.maxDate } : {}),
-    },
+    ...(def.disabled != null ? { disabled: def.disabled } : {}),
+    ...(def.readonly != null ? { readonly: def.readonly } : {}),
+    props: { ...def.props },
   } as InputWidget<any, StateKeys, FormData>;
 }
 

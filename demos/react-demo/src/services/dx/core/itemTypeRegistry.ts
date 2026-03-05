@@ -3,7 +3,6 @@ import {
   NonFunctionWidget,
   UiState,
 } from '@golemui/core';
-import { WidgetItemDecorator } from '../formDef.domain';
 import { DxRuntimeParams } from '../shortcuts/inputs/inputs.domain';
 import {
   GslLeafSelector,
@@ -11,6 +10,7 @@ import {
   MergeResult,
   ValidGuiShortcut,
 } from './dx.domain';
+import type { DxCommonFields } from './dxBase.types';
 import type { GslItemType } from './dx.domain';
 
 // ═══════════════════════════════════════════════════
@@ -18,7 +18,7 @@ import type { GslItemType } from './dx.domain';
 // ═══════════════════════════════════════════════════
 
 export interface ParsedEntry<
-  TDecorator extends WidgetItemDecorator = WidgetItemDecorator,
+  TDecorator extends DxCommonFields = DxCommonFields,
 > {
   baseDef: TDecorator | ((params: DxRuntimeParams) => Partial<TDecorator>);
   path?: string;
@@ -56,7 +56,7 @@ export interface BuildWidgetContext {
  */
 export interface ItemTypeHandler<
   TEntry = any,
-  TDecorator extends WidgetItemDecorator = WidgetItemDecorator,
+  TDecorator extends DxCommonFields = DxCommonFields,
   TConfig = Record<string, any>,
 > {
   // Used by selectorResolver: roll up sensible defaults from matching leaf selectors
