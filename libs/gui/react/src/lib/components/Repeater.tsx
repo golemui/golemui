@@ -1,8 +1,14 @@
 import * as Core from '@golemui/core';
 import { RepeaterIndexContext, useInputWidget, WidgetRenderer } from '@golemui/react';
-import { RepeaterProps } from '@golemui/gui-shared';
+import { RepeaterProps, getItemKey } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
+
+/**
+ * Monotonically increasing counter for generating unique repeater item IDs.
+ */
+let nextRepeaterItemId = 0;
+const idIncrementer = () => nextRepeaterItemId++;
 
 export function Repeater(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
@@ -21,20 +27,25 @@ export function Repeater(widgetInstance: Core.WithWidget) {
 
   const removeItem = useCallback(
     (value: Record<string, unknown>[], index: number) => {
-      const arr = [...(value ?? [])];
-      arr.splice(index, 1);
-      onValueChanged(arr);
+      const items = (value ?? []).filter((_, i) => index !== i);
+      // Make sure we don't keep object references
+      if ('structuredClone' in window) {
+        onValueChanged(structuredClone(items));
+      } else {
+        onValueChanged(JSON.parse(JSON.stringify(items)));
+      }
     },
     [onValueChanged],
   );
 
   const renderWidgets = useCallback(() => {
-    return value?.map((_, index) => {
+    return value?.map((item, index) => {
+      const itemKey = getItemKey(item, idIncrementer);
       return (
-        <RepeaterIndexContext.Provider value={index} key={`${uid}-${index}`}>
+        <RepeaterIndexContext.Provider value={index} key={`${uid}-${itemKey}`}>
           <div className={'card'}>
             <WidgetRenderer
-              key={`${uid}-${index}`}
+              key={`${uid}-${itemKey}`}
               widget={templateData.template}
               repeaterIndex={index}
             />
