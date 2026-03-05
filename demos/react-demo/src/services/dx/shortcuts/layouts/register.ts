@@ -8,7 +8,7 @@ import {
 import { MergeResult, ValidGuiShortcut } from '../../core/dx.domain';
 import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
-import { LayoutDecorator, LayoutEntry, LayoutSensibleDefaultsConfig } from './layouts.domain';
+import { GslLayoutsConfig, LayoutDecorator, LayoutEntry } from './layouts.domain';
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -50,10 +50,11 @@ function getChildren(entry: LayoutEntry): ValidGuiShortcut[] | undefined {
   return entry.children;
 }
 
-defineShortcutType<LayoutEntry, LayoutDecorator, LayoutSensibleDefaultsConfig>({
-  itemType: 'LAYOUTS',
-  entryShape: 'compound',
-  mapToWidget,
-  buildWidget,
-  getChildren,
-});
+export const { gsl: _gslLayouts, gslById: _gslLayoutById } =
+  defineShortcutType<LayoutEntry, LayoutDecorator, GslLayoutsConfig>({
+    itemType: 'LAYOUTS',
+    entryShape: 'compound',
+    mapToWidget,
+    buildWidget,
+    getChildren,
+  });

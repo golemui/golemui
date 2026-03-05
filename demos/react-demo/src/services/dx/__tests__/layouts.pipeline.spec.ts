@@ -13,7 +13,7 @@ import {
   _guiVerticalStack,
   _guiStack,
 } from '../shortcuts/layouts/guiStack.impl';
-import { _gslLayoutById } from '../shortcuts/layouts/gslLayoutById.impl';
+import { _gslLayoutById } from '../shortcuts/layouts/register';
 
 describe('DX Pipeline — Layouts', () => {
   describe('Basic layout structure', () => {

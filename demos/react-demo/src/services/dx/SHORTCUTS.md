@@ -7,6 +7,90 @@ The DX (Developer Experience) layer provides shortcuts on top of the JSON-based 
 
 Both layers flow through a unified pipeline: **SelectorResolver → WidgetMerger → WidgetMapper** to produce core `FormWidget` definitions.
 
+## Entry Shape Convention
+
+### Keyed entries (`entryShape: 'keyed'`)
+
+The path is the entry's key. The factory does NOT put `path` in the decorator — the walker spreads `parsed.path` into the baseDef at runtime (itemWalker.service.ts line 82).
+
+Used when the factory takes `(path, ...)` and produces a `{ key, def }` entry.
+
+Example — `_guiTextInput`:
+```ts
+_guiTextInput('email', { placeholder: '...' })
+// → items: [{ key: 'email', def: { type: 'text', placeholder: '...' } }]
+// Note: NO `path` in the def object
+```
+
+Keyed types: **inputs**, **textarea**
+
+### Bare entries (`entryShape: 'bare'`)
+
+The path lives inside the decorator. No key wrapping — the entry IS the decorator.
+
+Example — `_guiCalendar`:
+```ts
+_guiCalendar('birthDate', { minDate: '...' })
+// → items: [{ type: 'calendar', path: 'birthDate', minDate: '...' }]
+// Note: `path` IS in the decorator
+```
+
+Bare types: **calendar**
+
+### Compound entries
+
+Container types with children. No path.
+
+Example — `_guiStack`:
+```ts
+_guiStack('horizontal', [...children])
+// → items: [{ def: { widgetName: 'flex', direction: 'horizontal' }, children: [...] }]
+```
+
+Compound types: **layouts**
+
+### Rule of thumb
+
+- Single-widget types with `(path, ...)` signature → **keyed** (most common)
+- Calendar → **bare** (legacy — the decorator IS the item)
+- Container types with children → **compound**
+
+## GSL Decorator Three-Level Pattern
+
+The `decorator` property in a GSL config supports three modes with increasing power:
+
+### Level 1: Static object
+
+Same override for all matched widgets.
+
+```ts
+_gslInputs({ decorator: { placeholder: 'fixed value' } })
+```
+
+### Level 2: Callback on current state
+
+Computes the override from the current widget's merged state. Receives the widget as it exists after sensible defaults and prior selectors.
+
+```ts
+_gslInputs({ decorator: (cur) => ({ placeholder: `Enter ${cur.path}` }) })
+```
+
+### Level 3: Callback returning runtime function
+
+Promotes the widget to a FunctionWidget. It re-renders when form state changes. The outer callback receives `cur` (merge-time), the inner receives `params` (runtime).
+
+```ts
+_gslInputs({
+  decorator: (cur) => (params) => ({
+    placeholder: params.$form?.name
+      ? `${cur.path} for ${params.$form.name}`
+      : `Enter ${cur.path}`,
+  }),
+})
+```
+
+Level 3 is the most powerful: one selector can make every matched widget reactive.
+
 ## One Core Shape
 
 All GUI shortcuts produce a single core shape (defined in `core/dx.domain.ts`):

@@ -2,46 +2,25 @@ import * as React from '@golemui/react';
 import { useState } from 'react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
 import {
-  // 1. Inputs
-  inputShortcutsDemo,
-  inputFullObjectsDemo,
-  inputWithValidatorsDemo,
-  inputMixedDemo,
-  gslSuppressLabelsDemo,
-  gslSuppressPlaceholdersDemo,
-  gslInputDecoratorDemo,
-  typedInputsDemo,
-  singleInputFactoriesDemo,
-  // 2. Actions
-  submitButtonDemo,
-  customButtonDemo,
-  multipleButtonsDemo,
-  onClickSubmitDemo,
-  gslRootOnSubmitDemo,
-  gslRootSuppressSubmitDemo,
-  gslActionsDemo,
-  gslActionByIdDemo,
-  // 3. Layouts
-  horizontalStackDemo,
-  verticalStackDemo,
-  nestedLayoutsDemo,
-  gslLayoutByIdDemo,
-  gslRootSuppressStackDemo,
-  // 4. Functions
-  inputCallbackDemo,
-  actionCallbackDemo,
-  inputAndActionCallbacksDemo,
-  inputCallbackWithGslDecoratorDemo,
-  gslInputRuntimeFunctionDemo,
-  gslActionRuntimeFunctionDemo,
-  gslMixedRuntimeFunctionDemo,
-  // 5. Displays
-  displayShortcutDemo,
-  // 6. Tags
-  tagsBasicDemo,
-  tagsMultipleDemo,
-  // 7. Combinations
-  smartContactFormDemo,
+  // Chapter 1: Your First Form
+  fourLinerDemo,
+  moreWidgetsDemo,
+  customFieldsDemo,
+  layoutsDemo,
+  buttonsDemo,
+  // Chapter 2: Making It Dynamic
+  dynamicInputDemo,
+  dynamicButtonDemo,
+  dynamicDisplayDemo,
+  dynamicCalendarTextareaDemo,
+  // Chapter 3: Selectors
+  globalConfigDemo,
+  decoratorOverridesDemo,
+  tagsDemo,
+  byIdAndByTypeDemo,
+  runtimePromotionDemo,
+  // Chapter 4: Showcase
+  completeFormDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
 import styles from './app.module.css';
@@ -54,46 +33,25 @@ export interface FormData {
 
 // Register all forms
 formRegistry.registerAll([
-  // 1. Inputs
-  inputShortcutsDemo,
-  inputFullObjectsDemo,
-  inputWithValidatorsDemo,
-  inputMixedDemo,
-  gslSuppressLabelsDemo,
-  gslSuppressPlaceholdersDemo,
-  gslInputDecoratorDemo,
-  typedInputsDemo,
-  singleInputFactoriesDemo,
-  // 2. Actions
-  submitButtonDemo,
-  customButtonDemo,
-  multipleButtonsDemo,
-  onClickSubmitDemo,
-  gslRootOnSubmitDemo,
-  gslRootSuppressSubmitDemo,
-  gslActionsDemo,
-  gslActionByIdDemo,
-  // 3. Layouts
-  horizontalStackDemo,
-  verticalStackDemo,
-  nestedLayoutsDemo,
-  gslLayoutByIdDemo,
-  gslRootSuppressStackDemo,
-  // 4. Functions
-  inputCallbackDemo,
-  actionCallbackDemo,
-  inputAndActionCallbacksDemo,
-  inputCallbackWithGslDecoratorDemo,
-  gslInputRuntimeFunctionDemo,
-  gslActionRuntimeFunctionDemo,
-  gslMixedRuntimeFunctionDemo,
-  // 5. Displays
-  displayShortcutDemo,
-  // 6. Tags
-  tagsBasicDemo,
-  tagsMultipleDemo,
-  // 7. Combinations
-  smartContactFormDemo,
+  // Chapter 1: Your First Form
+  fourLinerDemo,
+  moreWidgetsDemo,
+  customFieldsDemo,
+  layoutsDemo,
+  buttonsDemo,
+  // Chapter 2: Making It Dynamic
+  dynamicInputDemo,
+  dynamicButtonDemo,
+  dynamicDisplayDemo,
+  dynamicCalendarTextareaDemo,
+  // Chapter 3: Selectors
+  globalConfigDemo,
+  decoratorOverridesDemo,
+  tagsDemo,
+  byIdAndByTypeDemo,
+  runtimePromotionDemo,
+  // Chapter 4: Showcase
+  completeFormDemo,
 ]);
 
 export function App() {

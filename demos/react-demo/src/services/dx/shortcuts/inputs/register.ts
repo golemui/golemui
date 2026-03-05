@@ -12,7 +12,7 @@ import {
 import {
   InputDecorator,
   InputEntry,
-  InputSensibleDefaultsConfig,
+  GslInputsConfig,
   BooleanDataInputDecorator,
   NumberDataInputDecorator,
   TextDataInputDecorator,
@@ -99,20 +99,21 @@ function mapNumberInputDef<
   };
 }
 
-defineShortcutType<InputEntry, InputDecorator, InputSensibleDefaultsConfig>({
-  itemType: 'INPUTS',
-  entryShape: 'keyed',
-  sensibleDefaults: {
-    base: {
-      suppressAutomaticLabels: false,
-      suppressAutomaticPlaceholders: false,
+export const { gsl: _gslInputs, gslById: _gslInputById } =
+  defineShortcutType<InputEntry, InputDecorator, GslInputsConfig>({
+    itemType: 'INPUTS',
+    entryShape: 'keyed',
+    sensibleDefaults: {
+      base: {
+        suppressAutomaticLabels: false,
+        suppressAutomaticPlaceholders: false,
+      },
+      fields: ['suppressAutomaticLabels', 'suppressAutomaticPlaceholders'],
+      apply: (def, config) => {
+        let result = processAutoLabel(def, config);
+        result = processAutoPlaceholder(result, config);
+        return result;
+      },
     },
-    fields: ['suppressAutomaticLabels', 'suppressAutomaticPlaceholders'],
-    apply: (def, config) => {
-      let result = processAutoLabel(def, config);
-      result = processAutoPlaceholder(result, config);
-      return result;
-    },
-  },
-  mapToWidget,
-});
+    mapToWidget,
+  });

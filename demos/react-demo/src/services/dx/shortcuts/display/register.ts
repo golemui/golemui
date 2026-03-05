@@ -7,7 +7,7 @@ import {
 import { MergeResult } from '../../core/dx.domain';
 import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
-import { DisplayDecorator, DisplayEntry, DisplaySensibleDefaultsConfig } from './display.domain';
+import { DisplayDecorator, DisplayEntry, GslDisplaysConfig } from './display.domain';
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -47,9 +47,10 @@ function buildWidget(
   }) as FormWidget;
 }
 
-defineShortcutType<DisplayEntry, DisplayDecorator, DisplaySensibleDefaultsConfig>({
-  itemType: 'DISPLAYS',
-  entryShape: 'bare',
-  mapToWidget,
-  buildWidget,
-});
+export const { gsl: _gslDisplays, gslById: _gslDisplayById } =
+  defineShortcutType<DisplayEntry, DisplayDecorator, GslDisplaysConfig>({
+    itemType: 'DISPLAYS',
+    entryShape: 'bare',
+    mapToWidget,
+    buildWidget,
+  });

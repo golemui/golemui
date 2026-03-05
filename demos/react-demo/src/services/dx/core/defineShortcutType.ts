@@ -1,5 +1,7 @@
 import type { NonFunctionWidget, FormWidget } from '@golemui/core';
 import type { GslLeafSelector, MergeResult } from './dx.domain';
+import { createGslSelector } from './dxUtilityTypes';
+import type { GslConfigBase } from './dxUtilityTypes';
 import type {
   ItemTypeHandler,
   ParsedEntry,
@@ -27,11 +29,16 @@ interface ShortcutTypeConfig<TEntry, TDecorator, TConfig> {
   getChildren?: (entry: TEntry) => any[] | undefined;
 }
 
+export interface ShortcutTypeSelectors<TDecorator, TConfig extends GslConfigBase<TDecorator>> {
+  gsl: (config: TConfig, matcher?: (decorator: TDecorator) => boolean) => GslLeafSelector;
+  gslById: (id: string, config: TConfig) => GslLeafSelector;
+}
+
 export function defineShortcutType<
   TEntry,
   TDecorator extends DxCommonFields,
-  TConfig = Record<string, never>,
->(config: ShortcutTypeConfig<TEntry, TDecorator, TConfig>): void {
+  TConfig extends GslConfigBase<TDecorator> = GslConfigBase<TDecorator>,
+>(config: ShortcutTypeConfig<TEntry, TDecorator, TConfig>): ShortcutTypeSelectors<TDecorator, TConfig> {
   const rollUpSensibleDefaults = (leafSelectors: GslLeafSelector[]): TConfig => {
     if (!config.sensibleDefaults) {
       return {} as TConfig;
@@ -96,4 +103,10 @@ export function defineShortcutType<
   };
 
   registerItemType(config.itemType, handler);
+
+  const gsl = createGslSelector<TDecorator, TConfig>(config.itemType);
+  const gslById = (id: string, gslConfig: TConfig) =>
+    gsl(gslConfig, ((d: any) => d.uid === id) as any);
+
+  return { gsl, gslById };
 }

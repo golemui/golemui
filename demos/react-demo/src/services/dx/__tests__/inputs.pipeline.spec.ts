@@ -7,7 +7,7 @@ import {
 } from './helpers';
 import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
-import { _gslInputs } from '../shortcuts/inputs/gslInputs.impl';
+import { _gslInputs } from '../shortcuts/inputs/register';
 
 describe('DX Pipeline — Inputs', () => {
   describe('Basic shortcut expansion', () => {

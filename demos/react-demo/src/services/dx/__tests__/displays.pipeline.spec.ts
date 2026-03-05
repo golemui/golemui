@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { processDx, getRawChild, getStaticChild, resolveDynamic } from './helpers';
 import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
-import { _gslDisplays } from '../shortcuts/display/gslDisplays.impl';
+import { _gslDisplays } from '../shortcuts/display/register';
 import { _gslTag } from '../shortcuts/scopes/gslTag.impl';
 
 describe('DX Pipeline — Displays', () => {
