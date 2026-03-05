@@ -11,10 +11,16 @@
         "addLabel": "Add Contact",
         "removeLabel": "Delete",
         "template": {
-          "kind": "input",
-          "type": "textinput",
-          "path": "phone",
-          "label": "Phone Number"
+          "kind": "layout",
+          "type": "flex",
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "contacts.items.phone",
+              "label": "Phone Number"
+            }
+          ]
         }
       }
     }

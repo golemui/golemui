@@ -4,16 +4,22 @@
       "uid": "repeater_basic",
       "kind": "input",
       "type": "repeater",
-      "path": "items",
+      "path": "guests",
       "label": "Guest List",
       "props": {
         "addLabel": "Add Guest",
         "removeLabel": "Remove Guest",
         "template": {
-          "kind": "input",
-          "type": "textinput",
-          "path": "guest_name",
-          "label": "Full Name"
+          "kind": "layout",
+          "type": "flex",
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "guests.items.guest_name",
+              "label": "Full Name"
+            }
+          ]
         }
       }
     }
