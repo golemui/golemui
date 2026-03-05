@@ -17,6 +17,7 @@ export const dropdown = (): any => ({
         itemHeight: 60,
         itemRenderer: 'productItemRenderer',
         asyncFiltering: true,
+        labelField: 'product',
         valueField: 'id',
         inputDebounce: 300,
         items: [],
@@ -116,6 +117,7 @@ export const dropdown = (): any => ({
         height: 150,
         itemHeight: 60,
         itemRenderer: 'complexListItemRenderer',
+        labelField: 'title',
         valueField: 'value',
         searchFields: ['title', 'description'],
         items: [

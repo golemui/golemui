@@ -108,8 +108,8 @@ export class ListElement extends LitElement implements Core.WithWidget {
             const isSelected = data.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
-            const template = data.labelField
-              ? (item.template as any)[data.labelField]
+            const template = data.labelField && !data.itemRenderer
+              ? item.template[data.labelField]
               : item.template;
 
             return html`

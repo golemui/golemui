@@ -301,8 +301,8 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
-            const template = templateData.labelField
-              ? (item.template as any)[templateData.labelField]
+            const template = templateData.labelField && !templateData.itemRenderer
+              ? item.template[templateData.labelField]
               : item.template;
 
             return html`

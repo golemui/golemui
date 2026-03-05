@@ -53,7 +53,7 @@
   >
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;
-      @let template = templateData.labelField ? item.template[templateData.labelField] : item.template;
+      @let template = templateData.labelField && !templateData.itemRenderer ? item.template[templateData.labelField] : item.template;
 
       <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
       <div

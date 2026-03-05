@@ -1,5 +1,8 @@
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
-const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
+const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
+  label: `Item ${i}`,
+  value: i,
+}));
 
 export const list = (): any => ({
   uid: 'tab14',
@@ -90,6 +93,7 @@ export const list = (): any => ({
       props: {
         height: 150,
         itemHeight: 60,
+        labelField: 'title',
         valueField: 'value',
         itemRenderer: 'complexListItemRenderer',
         items: [
