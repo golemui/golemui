@@ -70,6 +70,10 @@ lit-root {
     content: 'attach_money';
     font-size: 1.2rem;
   }
+
+  &-edit_note::before {
+    content: 'edit_note';
+  }
 }
 
 // List Item Renderer
