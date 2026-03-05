@@ -154,6 +154,12 @@ export type ActionWidgetTemplateData = {
   lang?: string;
   label?: string;
   disabled?: boolean;
+  /**
+   * A size relative to the container and sibling components
+   * @example
+   * // This component will measure twice than sibling components with size: 1
+   * size: 2
+   */
   size?: number;
   icon?: string;
   iconPosition?: 'left' | 'right';
