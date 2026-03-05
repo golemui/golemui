@@ -10,6 +10,11 @@ export { _guiNumberInput } from './shortcuts/inputs/guiNumberInput.impl';
 export { _guiBooleanInput } from './shortcuts/inputs/guiBooleanInput.impl';
 export { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
 export { _guiTextarea } from './shortcuts/textarea/guiTextarea.impl';
+export { _guiPassword } from './shortcuts/password/guiPassword.impl';
+export { _guiCheckbox } from './shortcuts/checkbox/guiCheckbox.impl';
+export { _guiDateInput } from './shortcuts/date-input/guiDateInput.impl';
+export { _guiCurrency } from './shortcuts/currency/guiCurrency.impl';
+export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
 export { _guiButton, _guiButtons, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
 export { _guiStack, _guiHorizontalStack, _guiVerticalStack } from './shortcuts/layouts/guiStack.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
@@ -20,6 +25,11 @@ export { _gslInputs, _gslInputById } from './shortcuts/inputs/register';
 export { _gslTextInputs, _gslNumberInputs, _gslBooleanInputs } from './shortcuts/inputs/gslInputSubtypes';
 export { _gslCalendar, _gslCalendarById } from './shortcuts/calendar/register';
 export { _gslTextarea, _gslTextareaById } from './shortcuts/textarea/register';
+export { _gslPassword, _gslPasswordById } from './shortcuts/password/register';
+export { _gslCheckbox, _gslCheckboxById } from './shortcuts/checkbox/register';
+export { _gslDateInput, _gslDateInputById } from './shortcuts/date-input/register';
+export { _gslCurrency, _gslCurrencyById } from './shortcuts/currency/register';
+export { _gslRangeCalendar, _gslRangeCalendarById } from './shortcuts/range-calendar/register';
 export { _gslActions, _gslActionById } from './shortcuts/actions/register';
 export { _gslLayouts, _gslLayoutById } from './shortcuts/layouts/register';
 export { _gslDisplays, _gslDisplayById } from './shortcuts/display/register';
@@ -45,6 +55,14 @@ export type {
 } from './shortcuts/inputs/inputs.domain';
 export type { CalendarDecorator, GslCalendarConfig } from './shortcuts/calendar/calendar.domain';
 export type { TextareaDecorator, GslTextareaConfig } from './shortcuts/textarea/textarea.domain';
+export type { PasswordDecorator, GslPasswordConfig } from './shortcuts/password/password.domain';
+export type { CheckboxDecorator, GslCheckboxConfig } from './shortcuts/checkbox/checkbox.domain';
+export type { DateInputDecorator, GslDateInputConfig } from './shortcuts/date-input/dateInput.domain';
+export type { CurrencyDecorator, GslCurrencyConfig } from './shortcuts/currency/currency.domain';
+export type {
+  RangeCalendarDecorator,
+  GslRangeCalendarConfig,
+} from './shortcuts/range-calendar/rangeCalendar.domain';
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
 export type { LayoutDecorator, GslLayoutsConfig } from './shortcuts/layouts/layouts.domain';
 export type { DisplayDecorator, GslDisplaysConfig } from './shortcuts/display/display.domain';

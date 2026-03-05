@@ -60,6 +60,12 @@ export type {
   ActionDefOrCallback,
 } from './shortcuts/actions/actions.domain';
 
+export type { PasswordDecorator } from './shortcuts/password/password.domain';
+export type { CheckboxDecorator } from './shortcuts/checkbox/checkbox.domain';
+export type { DateInputDecorator } from './shortcuts/date-input/dateInput.domain';
+export type { CurrencyDecorator } from './shortcuts/currency/currency.domain';
+export type { RangeCalendarDecorator } from './shortcuts/range-calendar/rangeCalendar.domain';
+
 export type {
   GslDecoratorCallback,
   DefOrCallback,

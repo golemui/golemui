@@ -6,6 +6,11 @@ import {
   _guiNumberInput,
   _guiCalendar,
   _guiTextarea,
+  _guiPassword,
+  _guiCheckbox,
+  _guiDateInput,
+  _guiCurrency,
+  _guiRangeCalendar,
   _guiButton,
   _guiHorizontalStack,
   _guiDisplay,
@@ -37,7 +42,17 @@ export const completeFormDemo: FormDemoDefinition = {
       validator: { required: true, pattern: '^[^@]+@[^@]+$' },
     }, ['required']),
 
+    _guiPassword('password', { hint: 'Use at least 8 characters' }, ['required']),
+
+    _guiCheckbox('agreeToTerms', { checkboxPosition: 'right' }),
+
     _guiNumberInput('guests', { minimum: 1, maximum: 10, step: 1 }),
+
+    _guiDateInput('arrivalDate', { icon: 'calendar' }),
+
+    _guiCurrency('budget', { currency: 'EUR', step: 0.5 }),
+
+    _guiRangeCalendar('stayRange', { numberOfMonths: 2 }),
 
     _guiCalendar('eventDate', (params) => ({
       minDate: new Date().toISOString().slice(0, 10),

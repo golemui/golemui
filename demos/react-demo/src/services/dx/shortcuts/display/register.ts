@@ -15,7 +15,7 @@ function mapToWidget<
 >(def: DisplayDecorator): NonFunctionWidget<StateKeys, FormData> {
   return {
     uid: '',
-    kind: 'display' as any,
+    kind: 'display' as const,
     type: 'renderer',
     props: { render: def.render },
   } as unknown as NonFunctionWidget<StateKeys, FormData>;

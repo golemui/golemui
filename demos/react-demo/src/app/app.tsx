@@ -8,6 +8,7 @@ import {
   customFieldsDemo,
   layoutsDemo,
   buttonsDemo,
+  moreInputTypesDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -39,6 +40,7 @@ formRegistry.registerAll([
   customFieldsDemo,
   layoutsDemo,
   buttonsDemo,
+  moreInputTypesDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
