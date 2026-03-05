@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-html, body {
+html,
+body {
   background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
@@ -55,5 +56,17 @@ body {
   &-visibility_off::before {
     content: 'visibility_off';
     font-size: 1.2rem;
+  }
+
+  &-save::before {
+    content: 'save';
+  }
+
+  &-remove::before {
+    content: 'remove';
+  }
+
+  &-add::before {
+    content: 'add';
   }
 }

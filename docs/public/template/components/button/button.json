@@ -4,9 +4,7 @@
       "uid": "button_basic",
       "kind": "action",
       "type": "button",
-      "props": {
-        "label": "Click Me"
-      }
+      "label": "Click Me"
     }
   ]
 }

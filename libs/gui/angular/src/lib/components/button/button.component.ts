@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
+import { ButtonProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
@@ -16,7 +17,7 @@ import * as Core from '@golemui/core';
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.ActionWidget;
-  protected adapter: Angular.ActionWidgetAdapter = inject(Angular.ActionWidgetAdapter);
+  protected adapter: Angular.ActionWidgetAdapter<ButtonProps> = inject(Angular.ActionWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

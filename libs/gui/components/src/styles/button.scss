@@ -4,7 +4,9 @@
   button.gui-button,
   /* Button Widget */
   .gui-button button {
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     background: var(--gui-intent-primary);
     color: var(--gui-intent-primary-text);
@@ -14,6 +16,14 @@
     font-weight: 500;
     text-align: center;
     transition: background-color var(--gui-transition-normal, 0.2s);
+
+    .gui-button-icon {
+      padding: 0 var(--gui-space-2);
+      color: inherit;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     &:hover {
       background: var(--gui-intent-primary-hover);

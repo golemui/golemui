@@ -1,13 +1,11 @@
 {
   "form": [
     {
-      "uid": "button_disabled",
+      "uid": "button_basic",
       "kind": "action",
       "type": "button",
-      "props": {
-        "label": "Disabled Button",
-        "disabled": true
-      }
+      "label": "Click Me",
+      "disabled": true
     }
   ]
 }
