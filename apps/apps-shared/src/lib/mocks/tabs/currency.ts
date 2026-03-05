@@ -56,7 +56,6 @@ export const currency = (): any => ({
       props: {
         currency: 'EUR',
         icon: 'material-icons material-icons-phone_callback',
-        iconPosition: 'right',
         hint: 'This is a hint',
         placeholder: 'Please enter price in EUR',
       },

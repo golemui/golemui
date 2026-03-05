@@ -1,0 +1,14 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "datePicker",
+      "path": "startDate",
+      "label": "Start Date",
+      "props": {
+        "icon": "material-icons material-icons-calendar_month"
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 title: Validators
 description: Learn how to validate dynamic forms and create custom validators for GolemUI.
 ---
+import Demo from '../../../../src/components/landing/Demo.astro';
 
 import { TabItem, Tabs } from '@astrojs/starlight/components';
 
@@ -54,12 +55,9 @@ You can add more validators, triggering multiple errors if one or more of the re
 
 Let's give it a try!
 
-<iframe
+<Demo
   src="/template/index.html?form=template/validators/string-validators.json"
-  title="Custom Validator example"
-  width="100%"
-  style="height: 200px"
-></iframe>
+/>
 
 ### Creating a custom validator
 
@@ -166,11 +164,9 @@ Finally, declare your validator:
 
 Type something different from `John` and `Jane` to trigger the validation error.
 
-<iframe
+<Demo
   src="/template/index.html?form=template/validators/custom-validators.json"
-  title="Custom Validator example"
-  width="100%"
-></iframe>
+/>
 
 ### Configuring when validation triggers
 

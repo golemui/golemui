@@ -3,7 +3,9 @@ title: Textinput
 description: A Textinput component to allow user to enter string chains
 ---
 
-import { Code } from '@astrojs/starlight/components';
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
 import textinputJson from '../../../../../public/template/components/textinput/textinput.json?raw';
 import textinputPlaceholderJson
 from '../../../../../public/template/components/textinput/textinput-placeholder.json?raw';
@@ -13,14 +15,12 @@ import textinputAnatomyHtml from '../../../../../public/template/components/text
 export const configJson = 'textinput.json';
 export const anatomy = 'textinput.html';
 
-Textinput components are [Control Fields](/components-reference/control-fields/overview) that allow the user to enter string chains.
+Textinput components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter string chains.
 
 <Code code={textinputJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/textinput/textinput.json"
-  title="Textinput example"
-  width="100%"
-></iframe>
+/>
 
 ## Props
 
@@ -31,42 +31,35 @@ Use this `props` to customize your Textinput component.
 | `placeholder`  | string | A placeholder text to display when the text input has no value |
 | `hint`         | string | A description to display below the text input                  |
 | `icon`         | string | A css class to display an icon                                 |
-| `iconPosition` | string | The icon position, possible values are `right` or `left`       |
 
 ### Placeholder
 
 Use the property `placeholder` to add a placeholder.
 
 <Code code={textinputPlaceholderJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/textinput/textinput-placeholder.json"
-  title="Textinput with placeholder"
-  width="100%"
-></iframe>
+/>
 
 ### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
 
 Use the property `hint` to add a description.
 
 <Code code={textinputHintJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/textinput/textinput-hint.json"
-  title="Textinput with hint"
-  width="100%"
-  style="height: 171px"
-></iframe>
+/>
 
 ### Icon
 
-Use the property `icon` to add an icon to the `textinput`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed on the `left` by default, you can set the property `iconPosition` to `right` if you want the icon to be right aligned.
+Use the property `icon` to add an icon to the `textinput`. The value of `icon` represents a set of CSS classes separated by spaces.
 
 <Code code={textinputIconJson} lang="js" title={configJson} />
-<iframe
+<Demo
   src="/template/index.html?form=template/components/textinput/textinput-icon.json"
-  title="Textinput with icon"
-  width="100%"
-  style="height: 238px"
-></iframe>
+/>
 
 ## Styling
 

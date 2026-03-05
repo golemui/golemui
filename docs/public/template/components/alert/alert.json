@@ -1,11 +1,11 @@
 {
   "form": [
     {
-      "uid": "",
+      "uid": "alert_default",
       "kind": "display",
       "type": "alert",
       "props": {
-        "text": "Some fields need your attention"
+        "text": "This is a default alert message."
       }
     }
   ]

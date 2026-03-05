@@ -1,0 +1,10 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "rangeCalendar",
+      "path": "vacationDates"
+    }
+  ]
+}

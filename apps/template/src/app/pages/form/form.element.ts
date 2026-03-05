@@ -10,6 +10,7 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
+import { iframeResizer } from '@golemui/apps-shared';
 
 const mock = AppsShared.kitchenSink;
 
@@ -48,6 +49,7 @@ export class FormElement extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
+    iframeResizer();
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('form')) {
