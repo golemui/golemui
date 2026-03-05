@@ -7,7 +7,7 @@
       "path": "birthDate",
       "label": "Birth Date",
       "props": {
-        "icon": "fas fa-calendar"
+        "icon": "material-icons material-icons-calendar_month"
       }
     }
   ]
