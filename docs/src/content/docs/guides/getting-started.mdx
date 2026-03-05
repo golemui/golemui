@@ -4,6 +4,7 @@ description: Learn how to start creating dynamic forms with GolemUI.
 sidebar:
   order: 0
 ---
+import Demo from '../../../../src/components/landing/Demo.astro';
 
 import { Steps, TabItem, Tabs } from '@astrojs/starlight/components';
 
@@ -142,10 +143,6 @@ Creating a dynamic form has never been this easy.
 
     You can now see your form rendered in the browser.
 
-    <iframe
-      src="/template/index.html?form=template/getting-started/quick-start.json"
-      title="Getting Started example"
-      width="100%"
-    ></iframe>
+    <Demo src="/template/index.html?form=template/getting-started/quick-start.json" />
 
 </Steps>

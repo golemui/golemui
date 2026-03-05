@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textarea",
+      "path": "comments",
+      "label": "Comments",
+      "props": {
+        "autoGrow": true,
+        "minimumHeight": 50
+      }
+    }
+  ]
+}

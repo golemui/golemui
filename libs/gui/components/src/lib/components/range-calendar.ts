@@ -29,8 +29,17 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
-      if (this.value && this.value.length > 0 && this.numberOfMonths === 1) {
-        this._currentDate = new Date(this.value[0].start);
+      if (this.value) {
+        const value = Array.isArray(this.value)
+          ? this.value
+          : [{ start: this.value as unknown as string }];
+
+        if (value.length > 0 && value[0].start) {
+          const date = new Date(value[0].start);
+          if (!isNaN(date.getTime())) {
+            this._currentDate = date;
+          }
+        }
       }
     }
   }

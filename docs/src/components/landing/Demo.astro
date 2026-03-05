@@ -2,11 +2,17 @@
 interface Props {
   src: string;
   title?: string;
+  minHeight?: string | number;
 }
 
-const { src, title = "Component Demo" } = Astro.props;
-// Ya no necesitamos generar un demoId manual para el script,
-// el script identificará el iframe por su ventana de origen.
+const { src, title = 'Component Demo', minHeight } = Astro.props;
+
+let minHeightValue = minHeight;
+if (typeof minHeight === 'number') {
+  minHeightValue = `${minHeight}px`;
+} else if (typeof minHeight === 'string' && /^\d+$/.test(minHeight)) {
+  minHeightValue = `${minHeight}px`;
+}
 ---
 
 <div class="demo-container">
@@ -15,7 +21,8 @@ const { src, title = "Component Demo" } = Astro.props;
     title={title}
     class="demo-iframe"
     loading="lazy"
-  ></iframe>
+    data-min-height={minHeightValue}
+    style="height: 0px; min-height: 0px;"></iframe>
 </div>
 
 <style>
@@ -29,9 +36,10 @@ const { src, title = "Component Demo" } = Astro.props;
 
   .demo-iframe {
     width: 100%;
-    height: 0;
     border: none;
     display: block;
-    transition: height 0.2s ease-out;
+    transition:
+      height 0.3s ease-out,
+      min-height 0.3s ease-out;
   }
 </style>

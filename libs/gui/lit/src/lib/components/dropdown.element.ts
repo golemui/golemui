@@ -301,6 +301,10 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
+            const template = templateData.labelField && !templateData.itemRenderer
+              ? item.template[templateData.labelField]
+              : item.template;
+
             return html`
               <div
                 role="option"
@@ -312,7 +316,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({
-                  template: item.template as string,
+                  template: template as string,
                   value: item.value,
                   index: absoluteIndex,
                   selected: isSelected,

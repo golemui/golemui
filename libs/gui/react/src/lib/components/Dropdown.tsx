@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react'; // Asumiendo que exportaste el hook que creamos
+import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
 import { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
@@ -241,7 +241,9 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
     debouncedFilter(filterValue);
   };
 
-  const handleInputFocus = () => {
+  const handleInputFocus = useCallback(() => {
+    if (isListVisible) return;
+
     setIsListVisible(true);
 
     setTimeout(() => {
@@ -249,7 +251,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         listRef.current.scrollToSelectedIndex();
       }
     }, 0);
-  };
+  }, [isListVisible]);
 
   const handleFocusOut = (e: React.FocusEvent) => {
     const newFocusTarget = e.relatedTarget as Node;
@@ -325,6 +327,10 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
 
+            const template = templateData.labelField && !templateData.itemRenderer
+              ? item.template[templateData.labelField]
+              : item.template;
+
             return (
               <div
                 key={absoluteIndex}
@@ -337,7 +343,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
                 onClick={() => handleClickItem(item, absoluteIndex)}
               >
                 <ItemRenderer
-                  template={item.template}
+                  template={template}
                   value={item.value}
                   index={absoluteIndex}
                   selected={isSelected}

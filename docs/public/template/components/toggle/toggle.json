@@ -1,0 +1,11 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "toggle",
+      "path": "notificationsEnabled",
+      "label": "Enable push notifications"
+    }
+  ]
+}

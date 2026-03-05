@@ -1,0 +1,26 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textarea",
+      "path": "commentsRemaining",
+      "label": "Comments",
+      "props": {
+        "counterMode": "remaining"
+      },
+      "validator": { "type": "string", "maxLength": 10, "required": true }
+    },
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textarea",
+      "path": "commentsCurrent",
+      "label": "Comments",
+      "props": {
+        "counterMode": "current"
+      },
+      "validator": { "type": "string", "maxLength": 10, "required": true }
+    }
+  ]
+}

@@ -59,10 +59,10 @@ export function createListItemMapper(opt: unknown, { valueField }: ListProps<any
     if (item === null || typeof item !== 'object') {
       throw new Error('Item is not an object');
     }
-    const o = item as Record<string, unknown>;
+    const o = item as any;
     return {
       template: item,
-      value: resolvedValueField ? (o[resolvedValueField] as string) : '',
+      value: resolvedValueField ? o[resolvedValueField] : '',
     };
   };
 }

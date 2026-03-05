@@ -97,7 +97,7 @@ export class GuiDate extends LitElement {
       ${this.label ? addLabel(this.uid as string, templateData) : nothing}
 
       <div class="gui-widget">
-        <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : nothing}" role="group">
+        <div class="gui-date-input ${this.icon ? 'gui-calendar--icon' : ''}" role="group">
           ${repeat(
             parts,
             (part: any) => part.type,

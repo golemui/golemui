@@ -5,13 +5,14 @@ gui-toggle {
 
   &.gui-toggle--left {
     flex-direction: row-reverse;
-    align-self: flex-start;
+    justify-content: flex-end;
   }
 
   /* The toggle - the box around the slider */
   .gui-toggle--switch {
     position: relative;
     display: inline-block;
+    max-width: var(--gui-toggle-width);
     width: var(--gui-toggle-width);
     height: var(--gui-toggle-height);
     min-width: var(--gui-toggle-width);

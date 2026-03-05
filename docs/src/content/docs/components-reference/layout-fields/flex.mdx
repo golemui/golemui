@@ -1,0 +1,56 @@
+---
+title: Flex
+description: A Layout component for creating flexible, responsive grid-like structures
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import flexJson from '../../../../../public/template/components/flex/flex.json?raw';
+import flexHorizontalJson from '../../../../../public/template/components/flex/flex-horizontal.json?raw';
+import flexAnatomyHtml from '../../../../../public/template/components/flex/flex-anatomy.html?raw';
+export const configJson = 'flex.json';
+export const anatomy = 'flex-anatomy.html';
+
+Flex components are [Layout Fields](/components-reference/layout-fields/overview) that use CSS Flexbox to arrange child widgets either horizontally or vertically. They are the primary tool for building responsive form layouts.
+
+<Code code={flexJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/flex/flex.json"
+/>
+
+## Props
+
+Use these `props` to customize your Flex component.
+
+| prop        | type   | description                                                                                |
+| ----------- | ------ | ------------------------------------------------------------------------------------------ |
+| `direction` | string | Either `'horizontal'` or `'vertical'`. Defaults to `'vertical'`                            |
+| `align`     | string | Alignment of children: `'start'`, `'end'`, `'center'`, `'space-between'`, `'space-around'` |
+| `gap`       | number | Space between children in pixels (Implementation may vary)                                 |
+
+### Horizontal Layout
+
+Set `direction` to `"horizontal"` to place child widgets side-by-side. On small screens (max-width: 480px), horizontal layouts automatically stack vertically for better mobile usability.
+
+<Code code={flexHorizontalJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/flex/flex-horizontal.json"
+/>
+
+## Styling
+
+Flex layouts can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables used to control spacing within the Flex component.
+
+| CSS Variable    | Description                 |
+| --------------- | --------------------------- |
+| `--gui-space-4` | Default gap between widgets |
+
+### Anatomy
+
+This is the anatomy of the Flex Component in case you want to use your CSS styles.
+
+<Code code={flexAnatomyHtml} lang="html" title={anatomy} />

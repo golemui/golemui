@@ -1,0 +1,41 @@
+<gui-calendar>
+  <label for="fieldUid">
+    Label
+    <div class="gui-calendar__hint" id="fieldUid_hint">Hint</div>
+  </label>
+
+  <div class="gui-widget">
+    <div class="gui-calendar-input">
+      <div class="gui-calendar__container">
+        
+        <div class="gui-calendar__months-grid">
+          <div>
+            <div class="gui-calendar__header">
+              <button class="gui-button gui-calendar__month-button gui-calendar__month-button--prev" type="button" aria-label="Previous Month">&lt;</button>
+              <span aria-live="polite">March 2024</span>
+              <button class="gui-button gui-calendar__month-button gui-calendar__month-button--next" type="button" aria-label="Next Month">&gt;</button>
+            </div>
+            
+            <div class="gui-calendar__days-grid" role="grid" aria-label="March 2024">
+              <div class="gui-calendar__rows">
+                <div class="gui-calendar__weekday" role="columnheader">Su</div>
+                <div class="gui-calendar__weekday" role="columnheader">Mo</div>
+                <div class="gui-calendar__weekday" role="columnheader">Tu</div>
+                <div class="gui-calendar__weekday" role="columnheader">We</div>
+                <div class="gui-calendar__weekday" role="columnheader">Th</div>
+                <div class="gui-calendar__weekday" role="columnheader">Fr</div>
+                <div class="gui-calendar__weekday" role="columnheader">Sa</div>
+              </div>
+              <div class="gui-calendar__rows">
+                <!-- Day buttons go here -->
+                <button type="button" role="gridcell" class="gui-calendar__day-button other-month" tabindex="-1" disabled="" aria-selected="false">25</button>
+                <button type="button" role="gridcell" class="gui-calendar__day-button" tabindex="0" aria-selected="false">1</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</gui-calendar>

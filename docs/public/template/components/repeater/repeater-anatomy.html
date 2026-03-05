@@ -1,12 +1,24 @@
-<gui-repeater>
-  <div id="fieldUid">
-    <h2>Label</h2>
+<div class="gui-repeater">
+  <div id="repeater_uid">
+    <h2>Guest List</h2>
+    
     <div class="card">
-      <gui-flex class="gui-flex">
-        <!-- CONTENT -->
-      </gui-flex>
-      <button type="button" class="gui-button" disabled>Remove</button>
+      <gui-repeater-widget>
+        <div class="gui-label">
+          <label>Full Name</label>
+        </div>
+        <div class="gui-widget">
+          <input type="text" value="John Doe" />
+        </div>
+      </gui-repeater-widget>
+      
+      <button type="button" class="gui-button">
+        Remove Guest
+      </button>
     </div>
-    <button type="button" class="gui-button" disabled>ADD</button>
+
+    <button type="button" class="gui-button">
+      Add Guest
+    </button>
   </div>
-</gui-repeater>
+</div>

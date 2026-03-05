@@ -331,7 +331,8 @@ export type DropdownProps<T> = {
 export type ListProps<T> = {
   hint?: string;
   items: ListItem<T>[];
-  valueField?: string;
+  labelField?: ItemKeys<T>;
+  valueField?: ItemKeys<T>;
   height?: number;
   itemHeight?: number;
   /**
