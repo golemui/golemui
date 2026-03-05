@@ -5,7 +5,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
-import { ButtonProps, CalendarProps } from '@golemui/gui-shared';
+import { ButtonProps } from '@golemui/gui-shared';
 
 @customElement('gui-button-action')
 export class ButtonElement extends LitElement implements Core.WithWidget {
