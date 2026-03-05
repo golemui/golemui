@@ -2,6 +2,7 @@
 title: Alert
 description: A Display component for showing status messages, notifications, or feedback to the user
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
@@ -43,16 +44,35 @@ Alerts can be styled as explained in the [Styling Guide](/guides/styling).
 
 ### CSS Variables
 
-Following you will find a list with the CSS Variables used to style different severity levels.
+Following you will find a list with the CSS Variables used to style different severity levels and general appearance.
 
-| CSS Variable           | Description                      |
-| ---------------------- | -------------------------------- |
-| `--gui-intent-info`    | Border color for info alerts     |
-| `--gui-intent-info-bg` | Background color for info alerts |
-| `--gui-intent-success` | Border color for success alerts  |
-| `--gui-intent-warning` | Border color for warning alerts  |
-| `--gui-intent-error`   | Border color for error alerts    |
-| `--gui-radius-md`      | Border radius for the alert box  |
+| CSS Variable                | Description                         |
+| --------------------------- | ----------------------------------- |
+| `--gui-radius-md`           | Border radius for the alert box     |
+| `--gui-font-sm`             | Font size of the message            |
+| `--gui-space-2`             | Vertical margin between alerts      |
+| `--gui-space-3`             | Vertical internal padding           |
+| `--gui-space-4`             | Horizontal internal padding         |
+| **Default Level**           |                                     |
+| `--gui-bg-surface-hover`    | Background color for default alerts |
+| `--gui-border-default`      | Border color for default alerts     |
+| `--gui-text-default`        | Text color for default alerts       |
+| **Info Level**              |                                     |
+| `--gui-intent-info-bg`      | Background color for info alerts    |
+| `--gui-intent-info`         | Border color for info alerts        |
+| `--gui-intent-info-text`    | Text color for info alerts          |
+| **Success Level**           |                                     |
+| `--gui-intent-success-bg`   | Background color for success alerts |
+| `--gui-intent-success`      | Border color for success alerts     |
+| `--gui-intent-success-text` | Text color for success alerts       |
+| **Warning Level**           |                                     |
+| `--gui-intent-warning-bg`   | Background color for warning alerts |
+| `--gui-intent-warning`      | Border color for warning alerts     |
+| `--gui-intent-warning-text` | Text color for warning alerts       |
+| **Error Level**             |                                     |
+| `--gui-intent-error-bg`     | Background color for error alerts   |
+| `--gui-intent-error`        | Border color for error alerts       |
+| `--gui-intent-error-text`   | Text color for error alerts         |
 
 ### Anatomy
 
