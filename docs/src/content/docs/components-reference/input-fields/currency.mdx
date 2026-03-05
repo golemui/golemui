@@ -2,6 +2,7 @@
 title: Currency
 description: A Currency component to allow user to enter monetary values
 ---
+
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
@@ -10,6 +11,8 @@ import currencyPlaceholderJson from '../../../../../public/template/components/c
 import currencyHintJson from '../../../../../public/template/components/currency/currency-hint.json?raw';
 import currencyIconJson from '../../../../../public/template/components/currency/currency-icon.json?raw';
 import currencyFormatJson from '../../../../../public/template/components/currency/currency-format.json?raw';
+import currencyPrecisionJson from '../../../../../public/template/components/currency/currency-precision.json?raw';
+import currencyStepJson from '../../../../../public/template/components/currency/currency-step.json?raw';
 import currencyAnatomyHtml from '../../../../../public/template/components/currency/currency-anatomy.html?raw';
 export const configJson = 'currency.json';
 export const anatomy = 'currency-anatomy.html';
@@ -74,6 +77,24 @@ Use the properties `currency`, `minimumFractionDigits`, and `maximumFractionDigi
   src="/template/index.html?form=template/components/currency/currency-format.json"
 />
 
+### Precision
+
+Use the properties `minimumFractionDigits` and `maximumFractionDigits` to specify the exact number of decimal places for the formatted currency display.
+
+<Code code={currencyPrecisionJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency-precision.json"
+/>
+
+### Step
+
+Use the `step` property to define the increment size for numeric input via keyboard (arrows) or browser controls.
+
+<Code code={currencyStepJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/currency/currency-step.json"
+/>
+
 ## Styling
 
 Currency inputs can be styled as explained in the [Styling Guide](/guides/styling).
@@ -82,20 +103,17 @@ Currency inputs can be styled as explained in the [Styling Guide](/guides/stylin
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable             | Description                                |
-| ------------------------ | ------------------------------------------ |
-| `--gui-bg-default`       | Formatted value text background over input |
-| `--gui-font-sm`          | Formatted value text and hint font size    |
-| `--gui-space-10`         | Icon left padding or inline-start space    |
-| `--gui-text-default`     | Default text and focus border color        |
-| `--gui-intent-error`     | Border and text color when invalid         |
-| `--gui-space-gap--inner` | Label gap and margin bottom                |
-| `--gui-padding`          | Input padding                              |
-| `--gui-radius`           | Input radius                               |
-| `--gui-color-border`     | Input border color                         |
-| `--gui-color-bg`         | Input background color                     |
-| `--gui-color-fg`         | Input text color                           |
-| `--gui-color-primary`    | Input border color and outline on focus    |
+| CSS Variable           | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `--gui-bg-default`     | Formatted value text background over input |
+| `--gui-font-sm`        | Formatted value text and hint font size    |
+| `--gui-space-10`       | Icon left padding or inline-start space    |
+| `--gui-text-default`   | Default text and focus border color        |
+| `--gui-intent-error`   | Border and text color when invalid         |
+| `--gui-radius-md`      | Input radius                               |
+| `--gui-border-default` | Input border color                         |
+| `--gui-bg-surface`     | Input background color                     |
+| `--gui-text-default`   | Input text color                           |
 
 ### Anatomy
 

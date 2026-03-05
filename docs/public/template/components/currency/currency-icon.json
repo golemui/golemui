@@ -7,7 +7,7 @@
       "path": "price",
       "label": "Price",
       "props": {
-        "icon": "fas fa-money-bill"
+        "icon": "material-icons material-icons-attach_money"
       }
     }
   ]

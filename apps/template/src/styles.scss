@@ -65,6 +65,11 @@ lit-root {
     content: 'visibility_off';
     font-size: 1.2rem;
   }
+
+  &-attach_money::before {
+    content: 'attach_money';
+    font-size: 1.2rem;
+  }
 }
 
 // List Item Renderer
