@@ -16,6 +16,8 @@
 
       &--row,
       &--row-reverse {
+        align-items: end;
+
         &.gui-flex__widget--align-center {
           justify-content: center;
         }

@@ -12,6 +12,7 @@ export const flex = (): any => ({
       kind: 'input',
       type: 'textinput',
       path: 'listName',
+      label: 'List Name',
       size: 1,
     },
     {
