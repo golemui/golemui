@@ -284,6 +284,9 @@ export type RepeaterProps<Template> = {
   removeLabel?: string;
   limit?: number;
   template: Template;
+  title?: string;
+  addButtonIcon?: string;
+  removeButtonIcon?: string;
 };
 
 export type OptionValue = string | number;

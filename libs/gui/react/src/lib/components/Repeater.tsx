@@ -43,15 +43,27 @@ export function Repeater(widgetInstance: Core.WithWidget) {
       const itemKey = getItemKey(item, idIncrementer);
       return (
         <RepeaterIndexContext.Provider value={index} key={`${uid}-${itemKey}`}>
-          <div className={'card'}>
+          <div className="gui-repeater__card">
+            <div className="gui-repeater__card-header">
+              {templateData.title && (
+                <span className="gui-repeater__card-title">{templateData.title as string}</span>
+              )}
+              <button
+                type="button"
+                className="gui-button gui-repeater__remove-btn"
+                onClick={() => removeItem(value, index)}
+              >
+                {templateData.removeButtonIcon && (
+                  <span className={`gui-button-icon ${templateData.removeButtonIcon}`}></span>
+                )}
+                {templateData.removeLabel ?? 'Remove'}
+              </button>
+            </div>
             <WidgetRenderer
               key={`${uid}-${itemKey}`}
               widget={templateData.template}
               repeaterIndex={index}
             />
-            <button type="button" className="gui-button" onClick={() => removeItem(value, index)}>
-              {templateData.removeLabel ?? 'Remove'}
-            </button>
           </div>
         </RepeaterIndexContext.Provider>
       );
@@ -65,10 +77,13 @@ export function Repeater(widgetInstance: Core.WithWidget) {
         {renderWidgets()}
         <button
           type="button"
-          className="gui-button"
+          className="gui-button gui-repeater__add-btn"
           onClick={() => addItem(value || [])}
           disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
         >
+          {templateData.addButtonIcon && (
+            <span className={`gui-button-icon ${templateData.addButtonIcon}`}></span>
+          )}
           {templateData.addLabel ?? 'Add'}
         </button>
       </div>

@@ -1,15 +1,70 @@
 .gui-form {
   .gui-repeater {
-    .card {
+    button.gui-button .gui-button-icon {
+      padding: 0 var(--gui-space-1) 0 0;
+    }
+
+    &__card {
       margin-bottom: var(--gui-space-3);
       padding: var(--gui-space-3);
       border: 1px solid var(--gui-border-default);
-      border-radius: var(--gui-radius-md) var(--gui-radius-md);
+      border-radius: var(--gui-radius-md);
       background: var(--gui-bg-default);
       color: var(--gui-text-default);
 
-      > button {
-        margin-top: var(--gui-space-3);
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--gui-space-2);
+      }
+
+      &-title {
+        font-weight: 500;
+      }
+    }
+
+    &__remove-btn {
+      padding: var(--gui-space-1) var(--gui-space-2) !important;
+      background: transparent !important;
+      color: var(--gui-text-secondary, var(--gui-text-default));
+      border: 1px solid var(--gui-border-default) !important;
+      opacity: 0.6;
+      transition: opacity var(--gui-transition-normal, 0.2s);
+
+      &:hover {
+        background: transparent !important;
+        opacity: 1;
+      }
+
+      .gui-button-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    &__add-btn {
+      width: 100%;
+      border: 1px dashed var(--gui-border-default) !important;
+      background: transparent !important;
+      color: var(--gui-text-default);
+      opacity: 0.6;
+      transition: opacity var(--gui-transition-normal, 0.2s);
+
+      &:hover {
+        background: transparent !important;
+        opacity: 1;
+      }
+
+      &:disabled {
+        opacity: 0.3;
+      }
+
+      .gui-button-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
   }
