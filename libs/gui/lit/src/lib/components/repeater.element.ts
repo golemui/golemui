@@ -65,14 +65,26 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
               this.adapter.templateData.value,
               (widget) => getItemKey(widget, idIncrementer),
               (_, index) => html`
-                <div class="card">
+                <div class="gui-repeater__card">
+                  <div class="gui-repeater__card-header">
+                    ${this.adapter.templateData.title
+                      ? html`<span class="gui-repeater__card-title">${this.adapter.templateData.title} ${index + 1}</span>`
+                      : nothing}
+                    <button
+                      type="button"
+                      class="gui-button gui-repeater__remove-btn"
+                      @click=${() => this.removeItem(index)}
+                    >
+                      ${this.adapter.templateData.removeButtonIcon
+                        ? html`<span class="gui-button-icon ${this.adapter.templateData.removeButtonIcon}"></span>`
+                        : nothing}
+                      ${this.adapter.templateData.removeLabel ?? 'Remove'}
+                    </button>
+                  </div>
                   <gui-repeater-widget
                     .repeaterIndex=${index}
                     .widget=${this.adapter.templateData.template}
                   ></gui-repeater-widget>
-                  <button type="button" class="gui-button" @click=${() => this.removeItem(index)}>
-                    ${this.adapter.templateData.removeLabel ?? 'Remove'}
-                  </button>
                 </div>
               `,
             )
@@ -80,13 +92,16 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
         <button
           type="button"
-          class="gui-button"
+          class="gui-button gui-repeater__add-btn"
           @click=${() => this.addItem()}
           ?disabled=${!!(
             this.adapter.templateData.limit &&
             this.adapter.templateData.limit === this.adapter.templateData.value?.length
           )}
         >
+          ${this.adapter.templateData.addButtonIcon
+            ? html`<span class="gui-button-icon ${this.adapter.templateData.addButtonIcon}"></span>`
+            : nothing}
           ${this.adapter.templateData.addLabel ?? 'Add'}
         </button>
       </div>

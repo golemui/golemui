@@ -5,8 +5,7 @@
       "kind": "layout",
       "type": "flex",
       "props": {
-        "direction": "horizontal",
-        "align": "space-between"
+        "direction": "row"
       },
       "children": [
         {

@@ -106,7 +106,7 @@ class GolemFormBuilder<
  *     {
  *       kind: 'layout',
  *       type: 'flex',
- *       props: { direction: 'horizontal' },
+ *       props: { direction: 'row' },
  *       children: [
  *         {
  *           kind: 'input',

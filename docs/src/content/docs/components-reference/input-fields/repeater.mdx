@@ -8,6 +8,8 @@ import { Code } from '@astrojs/starlight/components';
 import repeaterJson from '../../../../../public/template/components/repeater/repeater.json?raw';
 import repeaterLabelsJson from '../../../../../public/template/components/repeater/repeater-labels.json?raw';
 import repeaterLimitJson from '../../../../../public/template/components/repeater/repeater-limit.json?raw';
+import repeaterTitleJson from '../../../../../public/template/components/repeater/repeater-title.json?raw';
+import repeaterIconsJson from '../../../../../public/template/components/repeater/repeater-icons.json?raw';
 import repeaterAnatomyHtml from '../../../../../public/template/components/repeater/repeater-anatomy.html?raw';
 export const configJson = 'repeater.json';
 export const anatomy = 'repeater.html';
@@ -23,12 +25,15 @@ Repeater components are [Input Fields](/components-reference/input-fields/overvi
 
 Use this `props` to customize your Repeater component.
 
-| prop          | type   | value                                                                     |
-| ------------- | ------ | ------------------------------------------------------------------------- |
-| `template`    | object | **MANDATORY** A template Field with the elements rendered by the repeater |
-| `addLabel`    | string | A placeholder text to display when the text input has no value            |
-| `removeLabel` | string | A description to display below the text input                             |
-| `limit`       | number | A css class to display an icon                                            |
+| prop               | type   | value                                                                     |
+| ------------------ | ------ | ------------------------------------------------------------------------- |
+| `template`         | object | **MANDATORY** A template Field with the elements rendered by the repeater |
+| `addLabel`         | string | Label text for the add button                                             |
+| `removeLabel`      | string | Label text for the remove button                                          |
+| `limit`            | number | Maximum number of items that can be added                                 |
+| `title`            | string | Optional title displayed at the top of each card                          |
+| `addButtonIcon`    | string | CSS class string for the icon displayed in the add button                 |
+| `removeButtonIcon` | string | CSS class string for the icon displayed in the remove button              |
 
 ### Template
 
@@ -55,6 +60,24 @@ Use the property `limit` to set a limit to the number of elements that can be ad
 <Code code={repeaterLimitJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-limit.json"
+/>
+
+### Card Title
+
+Use the property `title` to display a static title at the top of each card.
+
+<Code code={repeaterTitleJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/repeater/repeater-title.json"
+/>
+
+### Button Icons
+
+Use the properties `addButtonIcon` and `removeButtonIcon` to display an icon inside the add and remove buttons. Icons are passed as a CSS class string, the same way as other icon props in the library.
+
+<Code code={repeaterIconsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/repeater/repeater-icons.json"
 />
 
 ## Styling

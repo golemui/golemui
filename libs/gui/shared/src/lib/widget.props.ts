@@ -284,6 +284,9 @@ export type RepeaterProps<Template> = {
   removeLabel?: string;
   limit?: number;
   template: Template;
+  title?: string;
+  addButtonIcon?: string;
+  removeButtonIcon?: string;
 };
 
 export type OptionValue = string | number;
@@ -356,7 +359,7 @@ export type OneOfProps = {
 };
 
 export type FlexProps = {
-  direction?: 'horizontal' | 'vertical';
+  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
   gap?: number;
 };
