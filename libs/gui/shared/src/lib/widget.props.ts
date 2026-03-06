@@ -356,7 +356,7 @@ export type OneOfProps = {
 };
 
 export type FlexProps = {
-  direction?: 'horizontal' | 'vertical';
+  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
   gap?: number;
 };

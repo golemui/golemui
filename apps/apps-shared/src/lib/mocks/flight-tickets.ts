@@ -7,7 +7,7 @@ const form = defineForm({
       uid: 'tab15',
       kind: 'layout',
       type: 'flex',
-      props: { direction: 'horizontal' },
+      props: { direction: 'row' },
       children: [
         {
           uid: '',

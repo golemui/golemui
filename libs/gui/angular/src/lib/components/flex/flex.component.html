@@ -2,7 +2,10 @@
 
 <div
   class="gui-flex__widget"
-  [class.gui-flex__widget--horizontal]="templateData.direction === 'horizontal'"
+  [class.gui-flex__widget--row]="templateData.direction === 'row'"
+  [class.gui-flex__widget--row-reverse]="templateData.direction === 'row-reverse'"
+  [class.gui-flex__widget--column]="!templateData.direction || templateData.direction === 'column'"
+  [class.gui-flex__widget--column-reverse]="templateData.direction === 'column-reverse'"
   [class.gui-flex__widget--align-center]="templateData.align === 'center'"
   [class.gui-flex__widget--align-start]="templateData.align === 'start'"
   [class.gui-flex__widget--align-end]="templateData.align === 'end'"

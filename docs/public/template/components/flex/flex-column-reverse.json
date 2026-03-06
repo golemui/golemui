@@ -1,26 +1,26 @@
 {
   "form": [
     {
-      "uid": "flex_vertical",
+      "uid": "flex_column_reverse",
       "kind": "layout",
       "type": "flex",
       "props": {
-        "direction": "column"
+        "direction": "column-reverse"
       },
       "children": [
         {
-          "uid": "v1",
+          "uid": "cr1",
           "kind": "input",
           "type": "textinput",
-          "path": "v1",
-          "label": "Vertical Field 1"
+          "path": "cr1",
+          "label": "First Field"
         },
         {
-          "uid": "v2",
+          "uid": "cr2",
           "kind": "input",
           "type": "textinput",
-          "path": "v2",
-          "label": "Vertical Field 2"
+          "path": "cr2",
+          "label": "Second Field"
         }
       ]
     }
