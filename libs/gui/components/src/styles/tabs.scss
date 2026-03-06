@@ -8,6 +8,13 @@
       flex-shrink: 0;
       opacity: 0;
       pointer-events: none;
+
+      &__start {
+        margin-inline-end: 0;
+      }
+      &__end {
+        margin-inline-start: -1px;
+      }
     }
 
     nav {
