@@ -67,7 +67,7 @@ describe('Flex schema validation', () => {
               },
             ],
             props: {
-              direction: 'horizontal',
+              direction: 'row',
               align: 'center',
               gap: 16,
             },
@@ -99,7 +99,7 @@ describe('Flex schema validation', () => {
               },
             ],
             props: {
-              'direction.isMobile': 'vertical',
+              'direction.isMobile': 'column',
               'gap.isDesktop': 24,
             },
           },
