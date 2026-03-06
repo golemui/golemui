@@ -7,7 +7,7 @@
   [id]="widget.uid"
 >
   <ul role="tablist">
-    <li role="presentation" #startSentinel class="gui-sentinel"></li>
+    <li role="presentation" #startSentinel class="gui-sentinel gui-sentinel__start"></li>
     @for (tab of templateData.tabs; track tab.uid; let i = $index) {
       <li role="presentation">
         <button
@@ -28,7 +28,7 @@
         </button>
       </li>
     }
-    <li role="presentation" #endSentinel class="gui-sentinel"></li>
+    <li role="presentation" #endSentinel class="gui-sentinel gui-sentinel__end"></li>
   </ul>
 </nav>
 
