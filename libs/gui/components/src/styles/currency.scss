@@ -6,7 +6,7 @@ gui-currency {
 
     .gui-currency__format-value {
       position: absolute;
-      background: var(--gui-bg-default);
+      background: var(--gui-bg-surface);
       font-size: var(--gui-font-sm);
       top: 13px;
       inset-inline-start: 13px;
@@ -20,6 +20,7 @@ gui-currency {
 
     input[type='number'] {
       color: transparent;
+      font-variant-numeric: tabular-nums;
 
       /* For Firefox */
       appearance: textfield;

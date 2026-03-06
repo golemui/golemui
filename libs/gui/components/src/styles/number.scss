@@ -48,7 +48,9 @@ gui-number {
       padding-bottom: 0;
       font-size: 20px;
       width: 100%;
+      max-width: 100px;
       height: 43px;
+      font-variant-numeric: tabular-nums;
 
       /* For Firefox */
       appearance: textfield;
