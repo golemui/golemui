@@ -9,7 +9,7 @@ export const repeater = (): any => ({
       type: 'repeater',
       path: 'repeaters.users',
       props: {
-        title: 'Developers',
+        title: 'Developer',
         addButtonIcon: 'material-icons material-icons-person_add',
         removeButtonIcon: 'material-icons material-icons-delete',
         addLabel: 'Add new developer',

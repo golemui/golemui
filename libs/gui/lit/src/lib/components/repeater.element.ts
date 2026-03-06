@@ -68,7 +68,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                 <div class="gui-repeater__card">
                   <div class="gui-repeater__card-header">
                     ${this.adapter.templateData.title
-                      ? html`<span class="gui-repeater__card-title">${this.adapter.templateData.title}</span>`
+                      ? html`<span class="gui-repeater__card-title">${this.adapter.templateData.title} ${index + 1}</span>`
                       : nothing}
                     <button
                       type="button"

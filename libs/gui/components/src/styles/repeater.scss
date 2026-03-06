@@ -1,9 +1,5 @@
 .gui-form {
   .gui-repeater {
-    button.gui-button .gui-button-icon {
-      padding: 0 var(--gui-space-1) 0 0;
-    }
-
     &__card {
       margin-bottom: var(--gui-space-3);
       padding: var(--gui-space-3);
@@ -14,9 +10,13 @@
 
       &-header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
         margin-bottom: var(--gui-space-2);
+
+        .gui-repeater__remove-btn {
+          margin-inline-start: auto;
+          gap: var(--gui-space-1);
+        }
       }
 
       &-title {
@@ -24,47 +24,46 @@
       }
     }
 
-    &__remove-btn {
-      padding: var(--gui-space-1) var(--gui-space-2) !important;
-      background: transparent !important;
-      color: var(--gui-text-secondary, var(--gui-text-default));
-      border: 1px solid var(--gui-border-default) !important;
-      opacity: 0.6;
-      transition: opacity var(--gui-transition-normal, 0.2s);
-
-      &:hover {
-        background: transparent !important;
-        opacity: 1;
-      }
-
+    button.gui-button {
       .gui-button-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-
-    &__add-btn {
-      width: 100%;
-      border: 1px dashed var(--gui-border-default) !important;
-      background: transparent !important;
-      color: var(--gui-text-default);
-      opacity: 0.6;
-      transition: opacity var(--gui-transition-normal, 0.2s);
-
-      &:hover {
-        background: transparent !important;
-        opacity: 1;
+        padding: 0;
       }
 
-      &:disabled {
-        opacity: 0.3;
+      &.gui-repeater__remove-btn {
+        padding: var(--gui-space-1) var(--gui-space-2);
+        background: transparent;
+        color: var(--gui-text-default);
+        border: 1px solid var(--gui-intent-error);
+        opacity: 0.6;
+        transition: opacity var(--gui-transition-normal, 0.2s);
+
+        &:hover {
+          background: var(--gui-intent-error-bg);
+          opacity: 1;
+        }
+
+        .gui-button-icon {
+          color: var(--gui-intent-error);
+        }
       }
 
-      .gui-button-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      &.gui-repeater__add-btn {
+        width: 100%;
+        border: 1px dashed var(--gui-intent-primary);
+        background: transparent;
+        color: var(--gui-intent-primary);
+        opacity: 0.6;
+        transition: opacity var(--gui-transition-normal, 0.2s);
+        gap: var(--gui-space-1);
+
+        &:hover {
+          background: color-mix(in srgb, var(--gui-intent-primary) 10%, transparent);
+          opacity: 1;
+        }
+
+        &:disabled {
+          opacity: 0.3;
+        }
       }
     }
   }

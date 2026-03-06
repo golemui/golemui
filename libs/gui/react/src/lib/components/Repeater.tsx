@@ -46,7 +46,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
           <div className="gui-repeater__card">
             <div className="gui-repeater__card-header">
               {templateData.title && (
-                <span className="gui-repeater__card-title">{templateData.title as string}</span>
+                <span className="gui-repeater__card-title">{`${templateData.title} ${index + 1}`}</span>
               )}
               <button
                 type="button"
