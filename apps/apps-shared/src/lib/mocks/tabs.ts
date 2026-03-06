@@ -35,7 +35,7 @@ const form = defineForm({
           kind: 'layout',
           type: 'flex',
           props: {
-            direction: 'horizontal',
+            direction: 'row',
             'direction.limitReached': 'vertical',
           },
           children: [

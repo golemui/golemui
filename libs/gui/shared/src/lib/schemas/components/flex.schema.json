@@ -5,7 +5,7 @@
   "type": "object",
   "$defs": {
     "directionProp": {
-      "enum": ["horizontal", "vertical"]
+      "enum": ["row", "row-reverse", "column", "column-reverse"]
     },
     "alignProp": {
       "enum": ["center", "start", "end", "space-between", "space-around"]

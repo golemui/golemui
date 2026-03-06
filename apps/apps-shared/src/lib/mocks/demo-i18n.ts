@@ -37,7 +37,7 @@ const form = defineForm({
       kind: 'layout',
       type: 'flex',
       props: {
-        direction: 'horizontal',
+        direction: 'row',
         gap: 50,
       },
       children: [
@@ -84,7 +84,7 @@ const form = defineForm({
       kind: 'layout',
       type: 'flex',
       props: {
-        direction: 'horizontal',
+        direction: 'row',
         align: 'start',
       },
       children: [

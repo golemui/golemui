@@ -3,8 +3,8 @@ export const flex = (): any => ({
   kind: 'layout',
   type: 'flex',
   props: {
-    direction: 'horizontal',
-    'direction.limitReached': 'vertical',
+    direction: 'row',
+    'direction.limitReached': 'column',
   },
   children: [
     {
