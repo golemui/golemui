@@ -11,8 +11,14 @@ body {
   justify-content: center;
 }
 
+app-root {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
 .container {
-  width: 990px;
+  width: 100%;
   padding: 1rem;
 }
 

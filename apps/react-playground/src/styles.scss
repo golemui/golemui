@@ -11,8 +11,14 @@ body {
   justify-content: center;
 }
 
+#root {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
 .container {
-  width: 990px;
+  width: 100%;
   padding: 1rem;
 }
 
@@ -67,5 +73,13 @@ body {
 
   &-add::before {
     content: 'add';
+  }
+
+  &-person_add::before {
+    content: 'person_add';
+  }
+
+  &-delete::before {
+    content: 'delete';
   }
 }
