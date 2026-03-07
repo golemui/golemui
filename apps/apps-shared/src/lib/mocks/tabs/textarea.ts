@@ -1,5 +1,5 @@
-export const textarea = (): any => ({
-  uid: 'tab11',
+export const textarea = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
