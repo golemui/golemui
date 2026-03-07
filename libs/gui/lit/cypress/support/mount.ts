@@ -37,6 +37,7 @@ export const mountFramework = (options: MountOptions) => {
       .validators=${options.validators}
       .validateOn=${options.validateOn ?? 'eager'}
       .localization=${options.localization}
+      .dependencies=${options.dependencies}
       .widgetLoaders=${widgetLoaders}
       @formEvent=${handleFormEvent}
       @formHealth=${handleFormHealth}

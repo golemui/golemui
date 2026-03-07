@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { Action, Middleware, State, ValidateOn } from '@golemui/core';
+import { Dependencies } from '@golemui/gui-shared';
 import { CustomValidatorSchemas } from '@golemui/gui-validators';
 
 export interface MountOptions<StateKeys extends Core.UiState = string> {
@@ -12,6 +13,7 @@ export interface MountOptions<StateKeys extends Core.UiState = string> {
   validateOn?: ValidateOn;
   withCustomComponent?: boolean;
   localization?: Core.I18nTranslator;
+  dependencies?: Dependencies;
 }
 
 export type MountComponentFn<StateKeys extends Core.UiState = string> = (
