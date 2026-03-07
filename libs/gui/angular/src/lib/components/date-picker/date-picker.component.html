@@ -10,9 +10,9 @@
   tabindex="-1"
   class="gui-widget"
   [attr.aria-expanded]="isCalendarOpen()"
-  (keyup.space)="openCalendar()"
-  (keyup.enter)="openCalendar()"
-  (click)="openCalendar()"
+  (keyup.space)="$event.target === $event.currentTarget && isCalendarOpen.set(!isCalendarOpen())"
+  (keyup.enter)="$event.target === $event.currentTarget && isCalendarOpen.set(!isCalendarOpen())"
+  (click)="toggleCalendar($event)"
 >
   <gui-date
     #dateControlRef
