@@ -12,8 +12,7 @@ export function useTemplateData<
   F extends Core.NonFunctionWidget<string>,
   ExtraProps extends Core.NonFunctionWidget<string>['props'],
 >(widget: F) {
-  // TODO: this should be [templateData, setTemplateData]
-  const [props, setProps] = useState<WithFlattenedProps<F, ExtraProps>>(
+  const [templateData, setTemplateData] = useState<WithFlattenedProps<F, ExtraProps>>(
     {} as WithFlattenedProps<F, ExtraProps>,
   );
   const { formContext } = useReactFormContext();
@@ -27,11 +26,12 @@ export function useTemplateData<
           ...calculatedWidget,
           ...calculatedWidget.props,
           lang: formContext.store.getState().lang,
+          deps: formContext.dependencies,
         } as unknown as WithFlattenedProps<F, ExtraProps>;
-        setProps(templateData);
+        setTemplateData(templateData);
       });
     return () => destroy$.next();
   }, [widget, formContext]);
 
-  return props;
+  return templateData;
 }

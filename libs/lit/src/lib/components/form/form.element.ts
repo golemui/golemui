@@ -23,6 +23,7 @@ export class FormElement extends LitElement {
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
+  @property({ type: Object }) dependencies?: Record<string, unknown>;
 
   @state() direction: 'ltr' | 'rtl' = 'ltr';
 
@@ -43,6 +44,7 @@ export class FormElement extends LitElement {
       this.validateOn,
       this.itemRenderers,
       this.localization,
+      this.dependencies || {},
     );
 
     this.direction = Core.getDirectionFromLanguage(this.context.localization.lang);
