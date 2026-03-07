@@ -88,6 +88,7 @@
     },
     "props": {
       "type": "object",
+      "required": ["items"],
       "properties": {
         "placeholder": {
           "$ref": "#/$defs/placeholderProp"
@@ -166,5 +167,5 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path", "props"]
 }
