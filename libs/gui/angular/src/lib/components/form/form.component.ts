@@ -2,12 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, input, output, Type } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { vanillaSchemaToFieldMap } from '@golemui/gui-shared';
-import {
-  CustomValidatorSchemas,
-  initValidators,
-  jsonSchemaValidators,
-} from '@golemui/gui-validators';
+import { Dependencies } from '@golemui/gui-shared';
+import { CustomValidatorSchemas, initValidators } from '@golemui/gui-validators';
 import { vanillaWidgetLoaders } from '../../widget.loaders';
 
 @Component({
@@ -24,16 +20,14 @@ export class FormComponent {
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
   localization = input<Core.I18nTranslator>();
+  dependencies = input<Dependencies>({});
 
   protected customWidgetLoaders = computed(() => ({
     ...vanillaWidgetLoaders,
     ...this.widgetLoaders(),
   }));
   protected customValidators = computed(() => initValidators({ ...this.validators() }));
-  protected customMiddlewares = computed(() => [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
-    ...this.middlewares(),
-  ]);
+  protected customMiddlewares = computed(() => [...this.middlewares()]);
 
   formHealth = output<Core.FormHealth>();
   formEvent = output<Core.FormEvent>();

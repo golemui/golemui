@@ -366,6 +366,6 @@ export type FlexProps = {
 
 export type TabsProps = {
   defaultOpen?: string;
-  renderMode: 'all' | 'activeOnly';
+  renderMode?: 'all' | 'activeOnly';
   tabs: { label: string; uid: string }[];
 };
