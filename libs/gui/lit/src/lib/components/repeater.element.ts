@@ -58,8 +58,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
     return html`
       <div id=${this.widget.uid}>
-        <h2>${this.adapter.templateData.label}</h2>
-
+        ${this.adapter.templateData.label ? html`<h2>${this.adapter.templateData.label}</h2>` : nothing}
+        
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
