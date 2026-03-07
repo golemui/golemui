@@ -69,6 +69,17 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
     this.closeCalendar();
   }
 
+  toggleCalendar(event: Event) {
+    const target = event.target as HTMLElement;
+    const isInputClick = target.closest('.gui-date-input__part');
+    const isCalendarClick = target.closest('gui-calendar');
+    if (isInputClick || isCalendarClick) {
+      this.openCalendar();
+    } else {
+      this.isCalendarOpen.set(!this.isCalendarOpen());
+    }
+  }
+
   openCalendar() {
     this.isCalendarOpen.set(true);
   }

@@ -49,6 +49,8 @@ export abstract class AbstractCalendar extends LitElement {
 
   @state() _currentDate: Date = new Date();
 
+  private _blurRafId: number | undefined;
+
   protected abstract getDaysInMonth(offset: number): AbstractCalendarDay[];
   protected abstract renderDay(day: AbstractCalendarDay): TemplateResult;
   protected abstract selectDate(day: AbstractCalendarDay, event?: MouseEvent | KeyboardEvent): void;
@@ -271,7 +273,23 @@ export abstract class AbstractCalendar extends LitElement {
       return;
     }
 
-    this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+    if (this._blurRafId !== undefined) {
+      cancelAnimationFrame(this._blurRafId);
+    }
+
+    this._blurRafId = requestAnimationFrame(() => {
+      this._blurRafId = undefined;
+      if (!this.contains(document.activeElement)) {
+        this.dispatchEvent(new CustomEvent('blur', { bubbles: true, composed: true }));
+      }
+    });
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._blurRafId !== undefined) {
+      cancelAnimationFrame(this._blurRafId);
+    }
   }
 
   protected isDisabled(date: Date): boolean {

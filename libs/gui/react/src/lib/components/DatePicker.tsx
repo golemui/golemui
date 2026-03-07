@@ -101,8 +101,15 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
     };
   }, [isCalendarOpen]);
 
-  const openCalendar = () => {
-    if (!isCalendarOpen) setIsCalendarOpen(true);
+  const toggleCalendar = (event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    const isInputClick = target.closest('.gui-date-input__part');
+    const isCalendarClick = target.closest('gui-calendar');
+    if (isInputClick || isCalendarClick) {
+      if (!isCalendarOpen) setIsCalendarOpen(true);
+    } else {
+      setIsCalendarOpen((prev) => !prev);
+    }
   };
 
   const hint = templateData.hint;
@@ -136,10 +143,11 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
         role="button"
         tabIndex={0}
         className="gui-widget"
-        onClick={openCalendar}
+        onClick={toggleCalendar}
         onKeyUp={(event) => {
+          if (event.target !== event.currentTarget) return;
           if (event.key === 'Enter' || event.key === ' ') {
-            openCalendar();
+            setIsCalendarOpen((prev) => !prev);
           }
         }}
         aria-expanded={isCalendarOpen}
