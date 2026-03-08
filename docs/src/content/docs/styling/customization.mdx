@@ -1,0 +1,179 @@
+---
+title: Customization
+description: Override GolemUI styles with CSS variables, class selectors, or go fully headless.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+GolemUI gives you three levels of customization — pick the one that fits your needs:
+
+1. **CSS variable overrides** — Change design tokens for quick, broad adjustments
+2. **Class-based overrides** — Target specific components with standard CSS selectors
+3. **Headless mode** — Drop all default styles and build your own from scratch
+
+## CSS variable overrides
+
+The fastest way to customize GolemUI. Override any [design token](/styling/design-tokens/) on `:root` or a scoped selector, and every component that references it updates automatically.
+
+### Global overrides
+
+Set variables on `:root` to apply changes across your entire application:
+
+```css
+:root {
+  --gui-intent-primary: #8b5cf6;
+  --gui-intent-primary-hover: #7c3aed;
+  --gui-intent-primary-active: #6d28d9;
+  --gui-radius-md: 8px;
+  --gui-font-family: 'Inter', sans-serif;
+}
+```
+
+### Scoped overrides
+
+Target a specific container to limit changes to one section of your page:
+
+```css
+.my-sidebar-form {
+  --gui-intent-primary: #10b981;
+  --gui-bg-surface: #f0fdf4;
+  --gui-border-default: #a7f3d0;
+}
+```
+
+```html
+<div class="my-sidebar-form">
+  <gui-form ...></gui-form>
+</div>
+```
+
+### Runtime overrides
+
+For dynamic theming at runtime, set variables via JavaScript:
+
+```js
+const root = document.documentElement;
+root.style.setProperty('--gui-intent-primary', '#ec4899');
+root.style.setProperty('--gui-radius-md', '12px');
+```
+
+This is useful for live theme editors, user preference panels, or A/B testing visual styles.
+
+## Class-based overrides
+
+When CSS variables alone aren't enough, target specific BEM classes with standard CSS selectors.
+
+### Naming convention
+
+GolemUI follows the BEM naming convention consistently:
+
+| Pattern            | Example                                          | Description                   |
+| ------------------ | ------------------------------------------------ | ----------------------------- |
+| **Block**          | `.gui-button`, `.gui-form`, `.gui-widget`        | Top-level component class     |
+| **Element**        | `.gui-repeater__card`, `.gui-repeater__add-btn`  | Child element within a block  |
+| **Modifier**       | `.gui-widget--horizontal`, `.gui-checkbox--left` | Variant of a block or element |
+| **Custom element** | `gui-textinput`, `gui-select`, `gui-toggle`      | The web component tag itself  |
+
+### Examples
+
+Target all inputs within a form:
+
+```css
+.gui-form .gui-widget input {
+  border-radius: 8px;
+  border-width: 2px;
+}
+```
+
+Style buttons with uppercase text:
+
+```css
+.gui-form button.gui-button {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+```
+
+Customize the toggle slider shape:
+
+```css
+.gui-form gui-toggle .gui-toggle--slider {
+  border-radius: 4px;
+}
+```
+
+Add a custom background to alert notifications:
+
+```css
+.gui-alert-notification--success {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+}
+```
+
+<Aside type="caution">
+Avoid `!important` when possible. GolemUI styles are designed with low specificity, so your overrides naturally take priority. If you find yourself needing `!important`, try wrapping your override in a more specific selector instead.
+</Aside>
+
+### Component anatomy
+
+Each component in the [Components Reference](/components-reference/input-fields/overview/) includes an **Anatomy** section that shows the rendered HTML structure. Use these as a guide when writing class-based overrides — they show exactly which elements and class names are available to target.
+
+## Headless mode
+
+For complete control, skip the CSS import entirely:
+
+```ts
+// Import components only
+import '@golemui/gui-components';
+
+// No CSS imported — you're in headless mode
+```
+
+Components still render their full HTML structure with BEM class names, ARIA attributes, and all interactive behavior. You provide all the visual styling.
+
+Here's an example of styling a textinput from scratch in headless mode:
+
+```css
+/* Base input */
+gui-textinput .gui-widget input[type='text'] {
+  font-size: 16px;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #1e293b;
+  transition: border-color 0.15s ease;
+}
+
+/* Focus state */
+gui-textinput .gui-widget input[type='text']:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Invalid state */
+gui-textinput .gui-widget input[aria-invalid='true'] {
+  border-color: #ef4444;
+}
+
+/* Disabled state */
+gui-textinput .gui-widget input:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Label */
+gui-textinput .gui-label {
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 6px;
+}
+```
+
+<Aside type="tip">
+Even in headless mode, consider defining the same `--gui-*` CSS custom property names on `:root`. This way, if you later decide to opt into parts of the courtesy layer or a theme, the integration will be seamless.
+</Aside>

@@ -1,0 +1,141 @@
+---
+title: Theming
+description: Dark mode, built-in themes, and creating your own GolemUI themes.
+sidebar:
+  order: 2
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+GolemUI supports automatic dark mode out of the box, ships with built-in themes, and provides a clear pattern for creating your own.
+
+## Dark mode
+
+Dark mode activates automatically based on the user's system preference. No JavaScript, no class toggles, no configuration — just import the stylesheet and it works.
+
+All colors, backgrounds, borders, and status indicators adjust for dark backgrounds. You can see the exact light and dark values for every token in the [Design Tokens](/styling/design-tokens/#semantic-tokens) reference.
+
+<Aside type="tip">
+Want to customize the dark palette? Override the [primitive color variables](/styling/design-tokens/#primitive-colors). For example, changing `--gui-color-neutral-950` updates the dark mode background across every component.
+</Aside>
+
+## Built-in themes
+
+### Clay
+
+Clay is a warm, terracotta-inspired theme that replaces the neutral slate palette with earthy tones and uses terracotta as the primary accent color. It includes both light and dark mode variants.
+
+**Loading the Clay theme:**
+
+```css
+@import '@golemui/gui-components/index.css';
+@import '@golemui/gui-components/themes/clay.css';
+```
+
+**Applying the theme:**
+
+```html
+<div data-theme="clay">
+  <gui-form ...></gui-form>
+</div>
+```
+
+<Aside>
+The `data-theme` attribute can be placed on any ancestor element. Set it on `<html>` for a page-wide theme, or on a specific container to theme just that section.
+</Aside>
+
+**Key differences from the default theme:**
+
+| Token           | Default          | Clay                         |
+| --------------- | ---------------- | ---------------------------- |
+| Neutral palette | Slate grays      | Warm brown/clay tones        |
+| Primary color   | Blue (<span class="color-swatch color-swatch-mini" style="background:#2563eb"></span>`#2563eb`) | Terracotta (<span class="color-swatch color-swatch-mini" style="background:#c25e4e"></span>`#c25e4e`)       |
+| Background      | Pure white       | Warm off-white (<span class="color-swatch color-swatch-mini" style="background:#f5f0eb"></span>`#f5f0eb`)   |
+| Focus ring      | Blue             | Terracotta                   |
+| Dark primary    | Light blue       | Light terracotta (<span class="color-swatch color-swatch-mini" style="background:#db7665"></span>`#db7665`) |
+
+## Creating a custom theme
+
+<Steps>
+
+1.  ##### Choose a theme selector
+
+    Use the `[data-theme='your-theme-name']` attribute selector. This keeps your theme scoped and composable:
+
+    ```css
+    [data-theme='ocean'] {
+      /* your overrides go here */
+    }
+    ```
+
+2.  ##### Override the tokens you need
+
+    Start with semantic tokens for quick results, or replace entire primitive palettes for a deeper transformation:
+
+    ```css
+    [data-theme='ocean'] {
+      /* Override primitives for a new palette */
+      --gui-color-primary-400: #38bdf8;
+      --gui-color-primary-500: #0ea5e9;
+      --gui-color-primary-600: #0284c7;
+      --gui-color-primary-700: #0369a1;
+      --gui-color-primary-800: #075985;
+
+      /* Override semantic tokens */
+      --gui-intent-primary: var(--gui-color-primary-600);
+      --gui-intent-primary-hover: var(--gui-color-primary-700);
+      --gui-intent-primary-active: var(--gui-color-primary-800);
+      --gui-border-focus: var(--gui-color-primary-500);
+
+      /* Adjust backgrounds */
+      --gui-bg-default: #f0f9ff;
+      --gui-bg-surface: #ffffff;
+    }
+    ```
+
+3.  ##### Add dark mode overrides
+
+    Wrap your dark mode adjustments in a `prefers-color-scheme` media query nested under your theme selector:
+
+    ```css
+    @media (prefers-color-scheme: dark) {
+      [data-theme='ocean'] {
+        --gui-bg-default: #0c1929;
+        --gui-bg-surface: #0f2137;
+        --gui-intent-primary: var(--gui-color-primary-500);
+        --gui-intent-primary-hover: var(--gui-color-primary-400);
+      }
+    }
+    ```
+
+4.  ##### Apply the theme
+
+    Add `data-theme="ocean"` to any ancestor element:
+
+    ```html
+    <div data-theme="ocean">
+      <gui-form ...></gui-form>
+    </div>
+    ```
+
+</Steps>
+
+<Aside type="tip">
+Use the Clay theme source file as a complete template. It demonstrates the full pattern: primitive overrides, semantic overrides, and dark mode variants.
+</Aside>
+
+## Scoped themes
+
+Because `data-theme` is a standard CSS attribute selector, themes can be scoped to specific containers. This lets you display multiple themes on the same page:
+
+```html
+<div data-theme="clay">
+  <gui-form ...></gui-form>
+</div>
+
+<div data-theme="ocean">
+  <gui-form ...></gui-form>
+</div>
+```
+
+Each form renders with its own theme, and the CSS cascade handles everything naturally — no JavaScript needed.

@@ -1,0 +1,69 @@
+---
+title: Styling Overview
+description: Understand the GolemUI styling philosophy — headless CSS with a courtesy layer.
+sidebar:
+  order: 0
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+GolemUI is a **Headless CSS** library with a **courtesy layer**. The default theme ships as plain CSS that you can use as-is, override selectively, or remove entirely. No matter what you do with the styles, components always work — ARIA attributes, keyboard navigation, event handling, and state management are baked into the components themselves, not the CSS.
+
+## How it works
+
+- **Standard CSS** — You can target any element with regular CSS selectors. No special techniques, no piercing, no workarounds needed.
+- **Predictable class names** — Components use consistent classes like `.gui-form`, `.gui-widget`, `.gui-button`, `.gui-repeater__card`, and `.gui-widget--horizontal` that you can target directly.
+- **CSS custom properties** — The entire design system is expressed through CSS variables defined on `:root`. Change a variable, and every component that references it updates automatically.
+
+## Loading styles
+
+Import the CSS file in your project:
+
+```css
+@import '@golemui/gui-components/index.css';
+```
+
+That single import gives you the full courtesy layer — every component is styled and ready to use.
+
+<Aside>
+This import is entirely optional. If you skip it, you enter **headless mode** and components render without any visual styling. See [Going headless](#going-headless) below.
+</Aside>
+
+## Going headless
+
+To use GolemUI in fully headless mode, simply do not import the CSS file:
+
+```ts
+// Import components — they work as usual
+import '@golemui/gui-components';
+
+// Do NOT import styles
+// import '@golemui/gui-components/index.css';
+```
+
+Components retain all their functionality — ARIA compliance, keyboard interactions, validation, and event handling. You write your own CSS from scratch, targeting the BEM class names that components render.
+
+<Aside type="caution">
+In headless mode, components have no visual styling at all. You will need to provide CSS for every interactive state: focus, hover, active, disabled, and invalid.
+</Aside>
+
+## What's included
+
+The `index.css` file bundles everything you need in a single import:
+
+| What you get           | Description                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| **Design tokens**      | Colors, spacing, typography, border radii, and shadows as CSS variables       |
+| **Responsive scaling** | Spacing and font sizes automatically adjust on smaller screens                |
+| **RTL support**        | Right-to-left layout for Arabic, Hebrew, and similar languages                |
+| **Form layout**        | Base form container that adapts to its available width                        |
+| **Input styling**      | Styled inputs, labels, hints, and shared field patterns                       |
+| **Component styles**   | Visual styles for every component (button, textinput, calendar, toggle, etc.) |
+| **Validation styles**  | Error message formatting and invalid-state indicators                         |
+
+## Next steps
+
+- [Design Tokens](/styling/design-tokens/) — Complete reference of all CSS variables
+- [Theming](/styling/theming/) — Dark mode, built-in themes, and creating your own
+- [Customization](/styling/customization/) — Override styles with variables, classes, or go fully headless
+- [Responsive & RTL](/styling/responsive/) — Breakpoints, container queries, and right-to-left support
