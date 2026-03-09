@@ -14,7 +14,7 @@ const form = defineForm({
       kind: 'display',
       type: 'renderer',
       props: {
-        render: (api) => {
+        render: (api: any) => {
           return html`<h1>Client Name: ${api.$form?.details?.clientName || 'unknown'}</h1>`;
         },
       },
