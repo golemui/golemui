@@ -71,9 +71,7 @@ export class WidgetDirective implements OnInit {
     } else {
       repeaterIndexes = [...this.repeaterIndexesToken, repeaterIndex];
     }
-    console.log(
-      `##[${this.widget().type}]:${this.widget().uid} repeaterIndexes:${repeaterIndexes}, repeaterIndex:${repeaterIndex}, this.repeaterIndexesToken:${this.repeaterIndexesToken}`,
-    );
+
     if (repeaterIndexes.length > 0) {
       this.componentRef.instance.widget = Core.makeRepeaterItemConfig(
         Core.cloneObject(this.widget()),
