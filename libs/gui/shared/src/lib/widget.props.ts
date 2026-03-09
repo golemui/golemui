@@ -228,7 +228,6 @@ export type DateinputProps = {
 
 export type DatePickerProps = {
   hint?: string;
-  placeholder?: string;
   icon?: string;
   prevMonthIcon?: string;
   nextMonthIcon?: string;
