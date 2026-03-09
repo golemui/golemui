@@ -279,6 +279,7 @@ export type ComponentRendererProps<ComponentType = unknown> = {
   render: { component: ComponentType; api: WidgetPropertyFunctionParams<any> };
 };
 
+// TODO: do we need an {"minItems": 1} property or can it handled by the validators?
 export type RepeaterProps<Template> = {
   addLabel?: string;
   removeLabel?: string;
