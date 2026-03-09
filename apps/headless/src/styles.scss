@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.gui-form {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.gui-flex__widget {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gui-widget {
+  display: flex;
+  align-items: center;
+
+  .gui-password__toggle {
+    position: absolute;
+    inset-inline-end: 20px;
+    background: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input {
+    width: 100%;
+
+    /* Base input */
+    &[type='text'],
+    &[type='password'] {
+      font-size: 16px;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+      color: #1e293b;
+      transition: border-color 0.15s ease;
+
+      /* Focus state */
+      &:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+    }
+
+    /* Invalid state */
+    &[aria-invalid='true'] {
+      border-color: #ef4444;
+    }
+
+    /* Disabled state */
+    &:disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import { Aside, Steps } from '@astrojs/starlight/components';
+import Demo from '../../../../src/components/landing/Demo.astro';
 
 GolemUI supports automatic dark mode out of the box, ships with built-in themes, and provides a clear pattern for creating your own.
 
@@ -40,19 +41,11 @@ Clay is a warm, terracotta-inspired theme that replaces the neutral slate palett
 </div>
 ```
 
+<Demo src="/template/index.html?form=template/styling/sample-form.json&theme=clay" />
+
 <Aside>
 The `data-theme` attribute can be placed on any ancestor element. Set it on `<html>` for a page-wide theme, or on a specific container to theme just that section.
 </Aside>
-
-**Key differences from the default theme:**
-
-| Token           | Default          | Clay                         |
-| --------------- | ---------------- | ---------------------------- |
-| Neutral palette | Slate grays      | Warm brown/clay tones        |
-| Primary color   | Blue (<span class="color-swatch color-swatch-mini" style="background:#2563eb"></span>`#2563eb`) | Terracotta (<span class="color-swatch color-swatch-mini" style="background:#c25e4e"></span>`#c25e4e`)       |
-| Background      | Pure white       | Warm off-white (<span class="color-swatch color-swatch-mini" style="background:#f5f0eb"></span>`#f5f0eb`)   |
-| Focus ring      | Blue             | Terracotta                   |
-| Dark primary    | Light blue       | Light terracotta (<span class="color-swatch color-swatch-mini" style="background:#db7665"></span>`#db7665`) |
 
 ## Creating a custom theme
 
@@ -63,7 +56,7 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
     Use the `[data-theme='your-theme-name']` attribute selector. This keeps your theme scoped and composable:
 
     ```css
-    [data-theme='ocean'] {
+    [data-theme='sunset'] {
       /* your overrides go here */
     }
     ```
@@ -73,23 +66,27 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
     Start with semantic tokens for quick results, or replace entire primitive palettes for a deeper transformation:
 
     ```css
-    [data-theme='ocean'] {
-      /* Override primitives for a new palette */
-      --gui-color-primary-400: #38bdf8;
-      --gui-color-primary-500: #0ea5e9;
-      --gui-color-primary-600: #0284c7;
-      --gui-color-primary-700: #0369a1;
-      --gui-color-primary-800: #075985;
+    [data-theme='sunset'] {
+      /* Override primitives for a warm palette */
+      --gui-color-primary-400: #fb923c;
+      --gui-color-primary-500: #f97316;
+      --gui-color-primary-600: #ea580c;
+      --gui-color-primary-700: #c2410c;
+      --gui-color-primary-800: #9a3412;
 
       /* Override semantic tokens */
-      --gui-intent-primary: var(--gui-color-primary-600);
-      --gui-intent-primary-hover: var(--gui-color-primary-700);
-      --gui-intent-primary-active: var(--gui-color-primary-800);
-      --gui-border-focus: var(--gui-color-primary-500);
+      --gui-intent-primary: var(--gui-color-warning-600);
+      --gui-intent-primary-hover: var(--gui-color-warning-700);
+      --gui-intent-primary-active: var(--gui-color-warning-800);
+      --gui-border-focus: var(--gui-color-warning-500);
 
       /* Adjust backgrounds */
-      --gui-bg-default: #f0f9ff;
+      --gui-bg-default: #fff7ed;
       --gui-bg-surface: #ffffff;
+
+      /* Adjust borders */
+      --gui-border-default: var(--gui-color-warning-300);
+      --gui-shadow-focus: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
     }
     ```
 
@@ -99,30 +96,29 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
 
     ```css
     @media (prefers-color-scheme: dark) {
-      [data-theme='ocean'] {
-        --gui-bg-default: #0c1929;
-        --gui-bg-surface: #0f2137;
-        --gui-intent-primary: var(--gui-color-primary-500);
-        --gui-intent-primary-hover: var(--gui-color-primary-400);
+      [data-theme='sunset'] {
+        --gui-bg-default: #1c1210;
+        --gui-bg-surface: #271a16;
+        --gui-border-default: var(--gui-color-warning-600);
+        --gui-intent-primary: var(--gui-color-warning-500);
+        --gui-intent-primary-hover: var(--gui-color-warning-400);
       }
     }
     ```
 
 4.  ##### Apply the theme
 
-    Add `data-theme="ocean"` to any ancestor element:
+    Add `data-theme="sunset"` to any ancestor element:
 
     ```html
-    <div data-theme="ocean">
+    <div data-theme="sunset">
       <gui-form ...></gui-form>
     </div>
     ```
 
 </Steps>
 
-<Aside type="tip">
-Use the Clay theme source file as a complete template. It demonstrates the full pattern: primitive overrides, semantic overrides, and dark mode variants.
-</Aside>
+<Demo src="/template/index.html?form=template/styling/sample-form.json&theme=sunset" />
 
 ## Scoped themes
 
@@ -133,9 +129,11 @@ Because `data-theme` is a standard CSS attribute selector, themes can be scoped 
   <gui-form ...></gui-form>
 </div>
 
-<div data-theme="ocean">
+<div data-theme="sunset">
   <gui-form ...></gui-form>
 </div>
 ```
 
 Each form renders with its own theme, and the CSS cascade handles everything naturally — no JavaScript needed.
+
+<Demo src="/template/index.html?form=template/styling/scoped-themes.json&theme=clay|sunset" />

@@ -1,0 +1,28 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textinput",
+      "path": "username",
+      "label": {
+        "key": "rtl.username",
+        "default": "Username"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "password",
+      "path": "password",
+      "label": {
+        "key": "rtl.password",
+        "default": "Password"
+      },
+      "props": {
+        "showPasswordIcon": "material-icons material-icons-visibility",
+        "hidePasswordIcon": "material-icons material-icons-visibility_off"
+      }
+    }
+  ]
+}

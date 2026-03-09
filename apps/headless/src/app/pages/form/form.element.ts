@@ -17,7 +17,7 @@ const mock = AppsShared.template;
 @customElement('lit-form')
 export class FormElement extends LitElement {
   formThemes: string[] = [];
-  formDef = null;
+  formDef: any;
   formDir: string | null = null;
   formData = {};
   localization = AppsShared.initializeI18n(mock.resources);

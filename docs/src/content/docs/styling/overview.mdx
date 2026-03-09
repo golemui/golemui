@@ -29,24 +29,6 @@ That single import gives you the full courtesy layer — every component is styl
 This import is entirely optional. If you skip it, you enter **headless mode** and components render without any visual styling. See [Going headless](#going-headless) below.
 </Aside>
 
-## Going headless
-
-To use GolemUI in fully headless mode, simply do not import the CSS file:
-
-```ts
-// Import components — they work as usual
-import '@golemui/gui-components';
-
-// Do NOT import styles
-// import '@golemui/gui-components/index.css';
-```
-
-Components retain all their functionality — ARIA compliance, keyboard interactions, validation, and event handling. You write your own CSS from scratch, targeting the BEM class names that components render.
-
-<Aside type="caution">
-In headless mode, components have no visual styling at all. You will need to provide CSS for every interactive state: focus, hover, active, disabled, and invalid.
-</Aside>
-
 ## What's included
 
 The `index.css` file bundles everything you need in a single import:

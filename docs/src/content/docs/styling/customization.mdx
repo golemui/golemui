@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import Demo from '../../../../src/components/landing/Demo.astro';
 
 GolemUI gives you three levels of customization — pick the one that fits your needs:
 
@@ -48,18 +49,6 @@ Target a specific container to limit changes to one section of your page:
   <gui-form ...></gui-form>
 </div>
 ```
-
-### Runtime overrides
-
-For dynamic theming at runtime, set variables via JavaScript:
-
-```js
-const root = document.documentElement;
-root.style.setProperty('--gui-intent-primary', '#ec4899');
-root.style.setProperty('--gui-radius-md', '12px');
-```
-
-This is useful for live theme editors, user preference panels, or A/B testing visual styles.
 
 ## Class-based overrides
 
@@ -116,63 +105,89 @@ Add a custom background to alert notifications:
 Avoid `!important` when possible. GolemUI styles are designed with low specificity, so your overrides naturally take priority. If you find yourself needing `!important`, try wrapping your override in a more specific selector instead.
 </Aside>
 
+## Headless mode
+
+For complete control, skip the CSS import entirely. Components still render their full HTML structure with BEM class names, ARIA attributes, and all interactive behavior. You provide all the visual styling.
+
+Here's an example of styling a [Textinput](/components-reference/input-fields/textinput) and a [Password](/components-reference/input-fields/password) from scratch in headless mode with SCSS:
+
+```scss
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.gui-form {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.gui-flex__widget {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gui-widget {
+  display: flex;
+  align-items: center;
+
+  .gui-password__toggle {
+    position: absolute;
+    inset-inline-end: 20px;
+    background: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input {
+    width: 100%;
+
+    /* Base input */
+    &[type='text'],
+    &[type='password'] {
+      font-size: 16px;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+      color: #1e293b;
+      transition: border-color 0.15s ease;
+
+      /* Focus state */
+      &:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+    }
+
+    /* Invalid state */
+    &[aria-invalid='true'] {
+      border-color: #ef4444;
+    }
+
+    /* Disabled state */
+    &:disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+  }
+}
+```
+
+<Demo src="/headless/index.html?form=../template/styling/sample-form.json" />
+
+Components retain all their functionality — ARIA compliance, keyboard interactions, validation, and event handling. You write your own CSS from scratch, targeting the BEM class names that components render.
+
+<Aside type="caution">
+  In headless mode, components have no visual styling at all. You will need to provide CSS for every interactive state: focus, hover, active, disabled, and invalid.
+</Aside>
+
 ### Component anatomy
 
 Each component in the [Components Reference](/components-reference/input-fields/overview/) includes an **Anatomy** section that shows the rendered HTML structure. Use these as a guide when writing class-based overrides — they show exactly which elements and class names are available to target.
-
-## Headless mode
-
-For complete control, skip the CSS import entirely:
-
-```ts
-// Import components only
-import '@golemui/gui-components';
-
-// No CSS imported — you're in headless mode
-```
-
-Components still render their full HTML structure with BEM class names, ARIA attributes, and all interactive behavior. You provide all the visual styling.
-
-Here's an example of styling a textinput from scratch in headless mode:
-
-```css
-/* Base input */
-gui-textinput .gui-widget input[type='text'] {
-  font-size: 16px;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  background: white;
-  color: #1e293b;
-  transition: border-color 0.15s ease;
-}
-
-/* Focus state */
-gui-textinput .gui-widget input[type='text']:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-/* Invalid state */
-gui-textinput .gui-widget input[aria-invalid='true'] {
-  border-color: #ef4444;
-}
-
-/* Disabled state */
-gui-textinput .gui-widget input:disabled {
-  background: #f1f5f9;
-  color: #94a3b8;
-  cursor: not-allowed;
-}
-
-/* Label */
-gui-textinput .gui-label {
-  font-weight: 500;
-  color: #334155;
-  margin-bottom: 6px;
-}
-```
 
 <Aside type="tip">
 Even in headless mode, consider defining the same `--gui-*` CSS custom property names on `:root`. This way, if you later decide to opt into parts of the courtesy layer or a theme, the integration will be seamless.

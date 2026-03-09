@@ -5,7 +5,8 @@ sidebar:
   order: 4
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, TabItem, Tabs } from '@astrojs/starlight/components';
+import Demo from '../../../../src/components/landing/Demo.astro';
 
 GolemUI adapts to different screen sizes using two complementary strategies: **media queries** for global token scaling, and **container queries** for component-level layout adaptation.
 
@@ -72,19 +73,104 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
 
 ### Enabling RTL
 
-Set the `dir` attribute on `<html>` for a page-wide RTL layout:
+When you set in the `localization` property a `RTL` language like Persian or Hebrew, then the form will display automatically as `RTL`.
 
-```html
-<html dir="rtl" lang="ar">
-  ...
-</html>
-```
+<Tabs syncKey="framework">
+  <TabItem label="React">
+    ```ts
+    i18next.init({
+      fallbackLng: 'fa',
+      fa: {
+        translation: {
+          rtl: { username: 'نام کاربری', password: 'رمز عبور', },
+        },
+      },
+    });
 
-Or scope it to a specific form:
+    const localization = { /* i18next implementation */ };
 
-```html
-<gui-form dir="rtl" ...></gui-form>
-```
+    export function FormPage() {
+      return (
+        <div>
+          <React.FormComponent
+            formDef={formDef}
+            data={formData}
+            fieldLoader={vanillaWidgetLoaders}
+            localization={localization}
+          />
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Angular">
+    ```ts
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-dynamic-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [fieldLoaders]="vanillaFieldLoaders"
+        [localization]="localization"
+      ></gui-form>`,
+    })
+    export class AppFormPage {
+      protected localization = { /* i18next implementation */ };
+
+      constructor() {
+        i18next.init({
+          fallbackLng: 'fa',
+          fa: {
+            translation: {
+              rtl: { username: 'نام کاربری', password: 'رمز عبور', },
+            },
+          },
+        });
+      }
+    }
+  ```
+  </TabItem>
+  <TabItem label="Lit">
+    ```ts
+    @customElement('lit-form')
+    export class FormElement extends LitElement {
+      protected localization = { /* i18next implementation */ };
+
+      constructor() {
+        i18next.init({
+          fallbackLng: 'fa',
+          fa: {
+            translation: {
+              rtl: { username: 'نام کاربری', password: 'رمز عبور', },
+            },
+          },
+        });
+      }
+
+      render() {
+        return html`
+          <div>
+            <gui-form
+              .formDef=${this.formDef}
+              .data=${this.formData}
+              .fieldLoaders=${this.vanillaFieldLoaders}
+              .localization=${this.localization}
+            ></gui-form>
+          </div>
+        `;
+      }
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+Yes, it's that easy. Nothing else on your side has to be handled.
+
+<Demo src="/template/index.html?form=template/styling/rtl.json&dir=rtl" />
+
+Check the [i18n](/guides/i18n) section for more examples and full implementation details.
 
 ### What adapts automatically
 
