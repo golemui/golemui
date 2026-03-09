@@ -10,6 +10,7 @@ export * from './reactive-functions';
 export * from './selects';
 export * from './signin';
 export * from './tabs';
+export * from './template';
 export * from './tests';
 export * from './tiny';
 export * from './translations';
