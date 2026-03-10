@@ -4,7 +4,7 @@ import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 /**
@@ -23,6 +23,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
   @provide({ context: Lit.inputContext })
   adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
+
+  @state() isFocused = false;
 
   subscriptions: Subscription[] = [];
 
@@ -53,13 +55,23 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
     }
   }
 
+  onFocusIn(event: FocusEvent) {
+    event.stopPropagation();
+    this.isFocused = true;
+  }
+
+  onFocusOut(event: FocusEvent) {
+    event.stopPropagation();
+    this.isFocused = false;
+  }
+
   override render() {
     super.render();
 
     return html`
-      <div id=${this.widget.uid}>
+      <div id=${this.widget.uid} class=${`gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`} @focusin=${this.onFocusIn} @focusout=${this.onFocusOut}>
         ${this.adapter.templateData.label ? html`<h2>${this.adapter.templateData.label}</h2>` : nothing}
-        
+
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
