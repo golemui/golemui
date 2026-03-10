@@ -33,17 +33,23 @@
         padding: var(--gui-space-1) var(--gui-space-2);
         background: transparent;
         color: var(--gui-text-default);
-        border: 1px solid var(--gui-intent-error);
+        border: 1px solid var(--gui-border-default);
         opacity: 0.6;
-        transition: opacity var(--gui-transition-normal, 0.2s);
+        transition:
+          opacity var(--gui-transition-normal, 0.2s),
+          border-color var(--gui-transition-normal, 0.2s);
+
+        &:focus {
+          border-color: var(--gui-intent-error);
+
+          .gui-button-icon {
+            color: var(--gui-intent-error);
+          }
+        }
 
         &:hover {
           background: var(--gui-intent-error-bg);
           opacity: 1;
-        }
-
-        .gui-button-icon {
-          color: var(--gui-intent-error);
         }
       }
 

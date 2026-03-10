@@ -50,6 +50,12 @@ gui-calendar {
         top: 16px;
         right: 16px;
       }
+
+      &:focus {
+        outline: 0;
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
+      }
     }
 
     .gui-calendar__day-button {
@@ -62,8 +68,10 @@ gui-calendar {
 
       &:focus {
         outline: 0;
-        border: var(--gui-text-default) solid 1px;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
+        border-color: var(--gui-border-focus);
+        box-shadow:
+          0 0 0 0 var(--gui-bg-default),
+          0 0 0 2px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
       }
 
       &:hover {
@@ -76,6 +84,7 @@ gui-calendar {
       }
 
       &.selected {
+        color: var(--gui-color-white);
         background-color: var(--gui-intent-primary);
       }
 
