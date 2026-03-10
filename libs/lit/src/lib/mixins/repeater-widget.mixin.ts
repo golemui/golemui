@@ -1,12 +1,9 @@
 import * as Core from '@golemui/core';
-import { consume, ContextProvider, provide } from '@lit/context';
+import { consume, ContextProvider } from '@lit/context';
 import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { formContext, LitFormContext } from '../context/form.context';
-import {
-  RepeaterIndexTokenContext,
-  repeaterIndexTokenContext,
-} from '../context/repeater-index-token.context';
+import { repeaterIndexesContext } from '../context/repeater-index-token.context';
 
 export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement>(
   superClass: T,
@@ -19,8 +16,9 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
     @property({ type: Object }) widget!: Core.FormWidget<string>;
     @property({ type: Number }) repeaterIndex = -1;
 
-    @provide({ context: repeaterIndexTokenContext })
-    repeaterIndexToken = new RepeaterIndexTokenContext();
+    @consume({ context: repeaterIndexesContext, subscribe: true })
+    @property({ attribute: false })
+    parentRepeaterIndexes: number[] = [];
 
     override connectedCallback() {
       super.connectedCallback();
@@ -34,10 +32,10 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
         const component = await this.formContext.widgetRegistry.loadWidget(this.widget.type!);
         const element = new component();
 
-        this.repeaterIndexToken.index = repeaterIndex;
-        new ContextProvider(element, repeaterIndexTokenContext, this.repeaterIndexToken);
+        const repeaterIndexes = [...(this.parentRepeaterIndexes ?? []), repeaterIndex];
+        new ContextProvider(element, { context: repeaterIndexesContext, initialValue: repeaterIndexes });
 
-        element.widget = Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), repeaterIndex);
+        element.widget = Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), repeaterIndexes);
         element.id = `host-${this.widget.uid}`;
         this.replaceWith(element);
       } catch (err) {

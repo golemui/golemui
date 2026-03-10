@@ -3,13 +3,15 @@ import { MountComponentFn } from '../utils';
 
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
   describe('Repeater Component', () => {
-    const REPEATER_PATH = 'repeaters.users';
+    const TEAMS_REPEATER_PATH = 'repeaters.teams';
+    const DEVELOPERS_REPEATER_PATH = 'repeaters.teams.items.developers';
+    const SKILLS_REPEATER_PATH = 'repeaters.teams.items.developers.items.skills';
     const SUBMIT_BUTTON_UID = 'submitBtn';
 
     const getFormDefinition = () =>
       Core.defineForm({
         states: {
-          limitReached: `$form.${REPEATER_PATH}?.length === 5`,
+          limitReached: `$form.repeaters?.teams?.[0]?.developers?.length === 5`,
         },
         form: [
           {
@@ -18,31 +20,81 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
             type: 'flex',
             children: [
               {
-                uid: 'devRepeater',
+                uid: 'teamRepeater',
                 kind: 'input',
                 type: 'repeater',
-                path: REPEATER_PATH,
+                path: TEAMS_REPEATER_PATH,
                 props: {
-                  addLabel: 'Add new developer',
-                  'addLabel.limitReached': "Limit Reached, you can't add more",
-                  removeLabel: 'Remove developer',
-                  limit: 5,
+                  addLabel: 'Add new team',
+                  'addLabel.limitReached': `Limit Reached, you can't add more`,
+                  removeLabel: 'Remove team',
                   template: {
                     kind: 'layout',
                     type: 'flex',
                     children: [
                       {
-                        uid: 'firstName',
+                        uid: 'teamName',
                         kind: 'input',
                         type: 'textinput',
-                        path: `${REPEATER_PATH}.items.firstName`,
+                        path: `${TEAMS_REPEATER_PATH}.items.teamName`,
+                        label: 'Team Name',
                         validator: { type: 'string', required: true },
                       },
                       {
-                        uid: 'lastName',
+                        uid: 'devRepeater',
                         kind: 'input',
-                        type: 'textinput',
-                        path: `${REPEATER_PATH}.items.lastName`,
+                        type: 'repeater',
+                        path: DEVELOPERS_REPEATER_PATH,
+                        props: {
+                          addLabel: 'Add new developer',
+                          removeLabel: 'Remove developer',
+                          limit: 5,
+                          template: {
+                            kind: 'layout',
+                            type: 'flex',
+                            children: [
+                              {
+                                uid: 'firstName',
+                                kind: 'input',
+                                type: 'textinput',
+                                label: 'First Name',
+                                path: `${DEVELOPERS_REPEATER_PATH}.items.firstName`,
+                                validator: { type: 'string', required: true },
+                              },
+                              {
+                                uid: 'lastName',
+                                kind: 'input',
+                                type: 'textinput',
+                                label: 'Last Name',
+                                path: `${DEVELOPERS_REPEATER_PATH}.items.lastName`,
+                              },
+                              {
+                                uid: 'skillRepeater',
+                                kind: 'input',
+                                type: 'repeater',
+                                path: SKILLS_REPEATER_PATH,
+                                props: {
+                                  addLabel: 'Add new skill',
+                                  removeLabel: 'Remove skill',
+                                  template: {
+                                    kind: 'layout',
+                                    type: 'flex',
+                                    children: [
+                                      {
+                                        uid: 'developerSkill',
+                                        kind: 'input',
+                                        type: 'textinput',
+                                        path: `${SKILLS_REPEATER_PATH}.items.skill`,
+                                        label: 'Skill',
+                                        validator: { type: 'string', required: true },
+                                      },
+                                    ],
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        },
                       },
                     ],
                   },
@@ -65,10 +117,17 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
     it('should render initial data correctly with complex paths', () => {
       const initialData = {
         repeaters: {
-          users: [
-            { firstName: '0. Alice', lastName: '0. Johnson' },
-            { firstName: '', lastName: '1. Smith' },
-            { firstName: '2. Charlie' },
+          teams: [
+            {
+              teamName: 'Team A',
+              developers: [
+                {
+                  firstName: 'Alice',
+                  lastName: 'Smith',
+                  skills: [{ skill: 'JavaScript' }, { skill: 'React' }],
+                },
+              ],
+            },
           ],
         },
       };
@@ -78,16 +137,23 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         formDef: getFormDefinition(),
       });
 
-      cy.get('[data-cy="firstName[0]_textinput"]').should('have.value', '0. Alice');
-      cy.get('[data-cy="lastName[1]_textinput"]').should('have.value', '1. Smith');
-      cy.get('[data-cy="firstName[2]_textinput"]').should('have.value', '2. Charlie');
+      cy.get('[data-cy="teamName[0]_textinput"]').should('have.value', 'Team A');
+      cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'Alice');
+      cy.get('[data-cy="lastName[0][0]_textinput"]').should('have.value', 'Smith');
+      cy.get('[data-cy="developerSkill[0][0][0]_textinput"]').should('have.value', 'JavaScript');
+      cy.get('[data-cy="developerSkill[0][0][1]_textinput"]').should('have.value', 'React');
     });
 
     it('should show "Limit Reached" label when collection hits the limit', () => {
       // Fill the collection to 5 items to trigger the 'limitReached' state
       const limitData = {
         repeaters: {
-          users: new Array(5).fill({ firstName: 'User', lastName: 'Test' }),
+          teams: [
+            {
+              teamName: 'Team A',
+              developers: new Array(5).fill({ firstName: 'User', lastName: 'Test', skills: [] }),
+            },
+          ],
         },
       };
 
@@ -102,7 +168,18 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
     it('should trigger validation error on required field within the repeater', () => {
       const initialData = {
         repeaters: {
-          users: [{ firstName: '', lastName: 'Incomplete' }],
+          teams: [
+            {
+              teamName: '',
+              developers: [
+                {
+                  firstName: '',
+                  lastName: 'Smith',
+                  skills: [{ skill: 'JavaScript' }, { skill: '' }],
+                },
+              ],
+            },
+          ],
         },
       };
 
@@ -113,16 +190,31 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
 
       cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
 
-      // firstName[0] is required, so validation should trigger on that specific index
-      cy.get('[data-cy="firstName[0]_validator-error"]').should('be.visible');
+      // firstName[0][0] is required, so validation should trigger on that specific index
+      cy.get('[data-cy="teamName[0]_validator-error"]').should('be.visible');
+      cy.get('[data-cy="firstName[0][0]_validator-error"]').should('be.visible');
+      cy.get('[data-cy="developerSkill[0][0][1]_validator-error"]').should('be.visible');
     });
 
     it('should remove items and maintain correct indexing in the DOM', () => {
       const initialData = {
         repeaters: {
-          users: [
-            { firstName: 'First', lastName: 'User' },
-            { firstName: 'Second', lastName: 'User' },
+          teams: [
+            {
+              teamName: 'Team A',
+              developers: [
+                {
+                  firstName: 'Alice',
+                  lastName: 'Smith',
+                  skills: [{ skill: 'JavaScript' }, { skill: 'React' }],
+                },
+                {
+                  firstName: 'John',
+                  lastName: 'Doe',
+                  skills: [{ skill: 'TypeScript' }, { skill: 'Angular' }],
+                },
+              ],
+            },
           ],
         },
       };
@@ -135,15 +227,15 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
       // Click remove on the first row
       cy.get('.gui-button').contains('Remove developer').first().click();
 
-      // The old "Second" user should now be at index [0]
-      cy.get('[data-cy="firstName[0]_textinput"]').should('have.value', 'Second');
-      cy.get('[data-cy="firstName[1]_textinput"]').should('not.exist');
+      // The old second developer (John) should now be at index [0][0]
+      cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'John');
+      cy.get('[data-cy="firstName[0][1]_textinput"]').should('not.exist');
     });
 
     it('should add and then remove items', () => {
       const initialData = {
         repeaters: {
-          users: [],
+          teams: [{ teamName: 'Team A', developers: [] }],
         },
       };
 
@@ -152,23 +244,23 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
         formDef: getFormDefinition(),
       });
 
-      // Add three items
+      // Add three developers inside the existing team
       cy.get('.gui-button').contains('Add new developer').click();
       cy.get('.gui-button').contains('Add new developer').click();
       cy.get('.gui-button').contains('Add new developer').click();
 
       // Fill the text inputs
-      cy.get('[data-cy="firstName[0]_textinput"]').type('First');
-      cy.get('[data-cy="firstName[1]_textinput"]').type('Second');
-      cy.get('[data-cy="firstName[2]_textinput"]').type('Third');
+      cy.get('[data-cy="firstName[0][0]_textinput"]').type('First');
+      cy.get('[data-cy="firstName[0][1]_textinput"]').type('Second');
+      cy.get('[data-cy="firstName[0][2]_textinput"]').type('Third');
 
       // Click remove on the first row
       cy.get('.gui-button').contains('Remove developer').first().click();
 
-      // The index 0 now should have "Second"
-      cy.get('[data-cy="firstName[0]_textinput"]').should('have.value', 'Second');
-      cy.get('[data-cy="firstName[1]_textinput"]').should('have.value', 'Third');
-      cy.get('[data-cy="firstName[2]_textinput"]').should('not.exist');
+      // The index [0][0] now should have "Second"
+      cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'Second');
+      cy.get('[data-cy="firstName[0][1]_textinput"]').should('have.value', 'Third');
+      cy.get('[data-cy="firstName[0][2]_textinput"]').should('not.exist');
     });
   });
 };

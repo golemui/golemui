@@ -1,0 +1,473 @@
+{
+  "title": "Global Logistics & Shipping Manifest (Goliath)",
+  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
+  "states": {
+    "isHazardous": "$form.isHazardous === true"
+  },
+  "form": [
+    {
+      "uid": "header_layout",
+      "kind": "layout",
+      "type": "flex",
+      "props": {
+        "direction": "column",
+        "gap": 20
+      },
+      "children": [
+        {
+          "uid": "vessel_section",
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "row",
+            "gap": 15
+          },
+          "children": [
+            {
+              "uid": "imo_number",
+              "kind": "input",
+              "type": "textinput",
+              "path": "imoNumber",
+              "label": "Vessel IMO Number",
+              "props": {
+                "placeholder": "e.g. IMO 9876543"
+              }
+            },
+            {
+              "uid": "vessel_name",
+              "kind": "input",
+              "type": "textinput",
+              "path": "vesselName",
+              "label": "Vessel Name",
+              "props": {
+                "placeholder": "Enter full ship name"
+              }
+            },
+            {
+              "uid": "isHazardous",
+              "kind": "input",
+              "type": "toggle",
+              "path": "isHazardous",
+              "label": "Hazardous Cargo Voyage?",
+              "props": {
+                "hint": "Toggling this will apply 'Hazardous' constraints to all nested items."
+              }
+            }
+          ]
+        },
+        {
+          "uid": "voyage_details",
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "row",
+            "gap": 14
+          },
+          "children": [
+            {
+              "uid": "departure_port",
+              "kind": "input",
+              "type": "select",
+              "path": "departurePort",
+              "label": "Departure Port",
+              "props": {
+                "options": [
+                  { "label": "Rotterdam", "value": "ROT" },
+                  { "label": "Shanghai", "value": "SHA" },
+                  { "label": "Los Angeles", "value": "LAX" }
+                ]
+              }
+            },
+            {
+              "uid": "arrival_port",
+              "kind": "input",
+              "type": "select",
+              "path": "arrivalPort",
+              "label": "Arrival Port",
+              "props": {
+                "options": [
+                  { "label": "Hamburg", "value": "HAM" },
+                  { "label": "Singapore", "value": "SIN" },
+                  { "label": "New York", "value": "NYC" }
+                ]
+              }
+            },
+            {
+              "uid": "eta",
+              "kind": "input",
+              "type": "datePicker",
+              "path": "eta",
+              "label": "Expected Arrival Date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "uid": "container_repeater",
+      "kind": "input",
+      "type": "repeater",
+      "path": "containers",
+      "label": "Containers",
+      "props": {
+        "addLabel": "Add Cargo Container",
+        "template": {
+          "uid": "container_item",
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "column",
+            "gap": 10
+          },
+          "children": [
+            {
+              "uid": "container_id",
+              "kind": "input",
+              "type": "textinput",
+              "path": "containers.items.containerId",
+              "label": "Container Serial",
+              "props": {
+                "placeholder": "ABCD-123456-0"
+              }
+            },
+            {
+              "uid": "pallet_repeater",
+              "kind": "input",
+              "type": "repeater",
+              "path": "containers.items.pallets",
+              "label": "Pallets in Container",
+              "props": {
+                "addLabel": "Add Pallet",
+                "limit": 20,
+                "template": {
+                  "uid": "pallet_item",
+                  "kind": "layout",
+                  "type": "flex",
+                  "props": {
+                    "direction": "column",
+                    "gap": 10
+                  },
+                  "children": [
+                    {
+                      "uid": "pallet_type",
+                      "kind": "input",
+                      "type": "select",
+                      "path": "containers.items.pallets.items.palletType",
+                      "label": "Pallet Specification",
+                      "props": {
+                        "options": [
+                          { "label": "Euro Pallet", "value": "euro" },
+                          { "label": "ISO Pallet", "value": "iso" },
+                          { "label": "Industrial", "value": "ind" }
+                        ]
+                      }
+                    },
+                    {
+                      "uid": "item_repeater",
+                      "kind": "input",
+                      "type": "repeater",
+                      "path": "containers.items.pallets.items.itemRepeater",
+                      "label": "SKU Level Items",
+                      "props": {
+                        "addLabel": "Add SKU Item",
+                        "template": {
+                          "uid": "sku_item",
+                          "kind": "layout",
+                          "type": "flex",
+                          "props": {
+                            "direction": "row",
+                            "gap": 10
+                          },
+                          "children": [
+                            {
+                              "uid": "sku_code",
+                              "kind": "input",
+                              "type": "textinput",
+                              "path": "containers.items.pallets.items.itemRepeater.items.skuCode",
+                              "label": "SKU Code",
+                              "label.isHazardous": "HAZARDOUS SKU CODE",
+                              "props": {
+                                "placeholder": "00-000-00"
+                              }
+                            },
+                            {
+                              "uid": "item_weight",
+                              "kind": "input",
+                              "type": "number",
+                              "path": "containers.items.pallets.items.itemRepeater.items.itemWeight",
+                              "label": "Net Weight (kg)",
+                              "props": {
+                                "minimum": 0,
+                                "maximum": 5000
+                              }
+                            },
+                            {
+                              "uid": "is_battery",
+                              "kind": "input",
+                              "type": "checkbox",
+                              "path": "containers.items.pallets.items.itemRepeater.items.isBattery",
+                              "label": "Contains Lithium Batteries",
+                              "props": {
+                                "hint": "Triggered extra safety checks if Checked."
+                              }
+                            },
+                            {
+                              "uid": "item_value",
+                              "kind": "input",
+                              "type": "currency",
+                              "path": "containers.items.pallets.items.itemRepeater.items.itemValue",
+                              "label": "Declared Value",
+                              "props": {
+                                "currency": "USD"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "uid": "regulatory_compliance",
+      "kind": "layout",
+      "type": "flex",
+      "props": {
+        "direction": "column",
+        "gap": 14
+      },
+      "children": [
+        {
+          "uid": "customs_header",
+          "kind": "display",
+          "type": "alert",
+          "props": {
+            "text": "International Customs Declaration",
+            "level": "info"
+          }
+        },
+        {
+          "uid": "declaration_text",
+          "kind": "input",
+          "type": "textarea",
+          "path": "declarationText",
+          "label": "Goods Description",
+          "props": {
+            "placeholder": "Full legal description of all goods contained..."
+          }
+        },
+        {
+          "uid": "origin_grid",
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "row",
+            "gap": 10
+          },
+          "children": [
+            {
+              "uid": "origin_country",
+              "kind": "input",
+              "type": "select",
+              "path": "originCountry",
+              "label": "Country of Primary Origin",
+              "props": {
+                "options": [
+                  { "label": "China", "value": "CN" },
+                  { "label": "USA", "value": "US" },
+                  { "label": "Germany", "value": "DE" }
+                ]
+              }
+            },
+            {
+              "uid": "export_license",
+              "kind": "input",
+              "type": "textinput",
+              "path": "exportLicense",
+              "label": "Export License ID"
+            }
+          ]
+        },
+        {
+          "uid": "hazard_declaration",
+          "kind": "layout",
+          "type": "flex",
+          "include": {
+            "in": ["isHazardous"]
+          },
+          "props": {
+            "direction": "row",
+            "gap": 10
+          },
+          "children": [
+            {
+              "uid": "hazard_class",
+              "kind": "input",
+              "type": "select",
+              "path": "hazardClass",
+              "label": "UN Hazard Class",
+              "props": {
+                "options": [
+                  { "label": "Class 1: Explosives", "value": "1" },
+                  { "label": "Class 3: Flammable Liquids", "value": "3" },
+                  { "label": "Class 8: Corrosive", "value": "8" }
+                ]
+              }
+            },
+            {
+              "uid": "emergency_contact",
+              "kind": "input",
+              "type": "textinput",
+              "path": "emergencyContact",
+              "label": "Emergency 24h Phone",
+              "props": {
+                "placeholder": "+1-000-000-0000"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "uid": "financial_ledger",
+      "kind": "layout",
+      "type": "tabs",
+      "props": {
+        "tabs": [
+          {
+            "label": "Port Fees",
+            "uid": "tab_fees"
+          },
+          {
+            "label": "Insurance & Tax",
+            "uid": "tab_insurance"
+          }
+        ]
+      },
+      "children": [
+        {
+          "uid": "tab_fees",
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "column",
+            "gap": 10
+          },
+          "children": [
+            {
+              "uid": "fee_handling",
+              "kind": "input",
+              "type": "currency",
+              "path": "feeHandling",
+              "label": "Stevedoring/Handling",
+              "props": {
+                "currency": "EUR"
+              }
+            },
+            {
+              "uid": "fee_storage",
+              "kind": "input",
+              "type": "currency",
+              "path": "feeStorage",
+              "label": "Demurrage & Storage",
+              "props": {
+                "currency": "EUR"
+              }
+            },
+            {
+              "uid": "fee_inspection",
+              "kind": "input",
+              "type": "currency",
+              "path": "feeInspection",
+              "label": "Customs Inspection Fee",
+              "props": {
+                "currency": "EUR"
+              }
+            }
+          ]
+        },
+        {
+          "uid": "tab_insurance",
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "column",
+            "gap": 10
+          },
+          "children": [
+            {
+              "uid": "premium_marine",
+              "kind": "input",
+              "type": "currency",
+              "path": "premiumMarine",
+              "label": "Marine Hull Premium",
+              "props": {
+                "currency": "USD"
+              }
+            },
+            {
+              "uid": "premium_cargo",
+              "kind": "input",
+              "type": "currency",
+              "path": "premiumCargo",
+              "label": "Cargo Protection",
+              "props": {
+                "currency": "USD"
+              }
+            },
+            {
+              "uid": "premium_war",
+              "kind": "input",
+              "type": "currency",
+              "path": "premiumWar",
+              "label": "War/Strike Surcharge",
+              "props": {
+                "currency": "USD"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "uid": "footer_actions",
+      "kind": "layout",
+      "type": "flex",
+      "props": {
+        "direction": "row",
+        "gap": 10
+      },
+      "children": [
+        {
+          "uid": "btn_validate",
+          "kind": "action",
+          "type": "button",
+          "label": "Full Performance Scan",
+          "props": {
+            "variant": "outlined"
+          },
+          "on": {
+            "click": "validate"
+          }
+        },
+        {
+          "uid": "btn_submit",
+          "kind": "action",
+          "type": "button",
+          "label": "Submit Manifest",
+          "props": {
+            "variant": "filled"
+          },
+          "on": {
+            "click": "send"
+          }
+        }
+      ]
+    }
+  ]
+}
