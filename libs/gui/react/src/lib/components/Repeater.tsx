@@ -1,5 +1,10 @@
 import * as Core from '@golemui/core';
-import { RepeaterIndexContext, useInputWidget, WidgetRenderer } from '@golemui/react';
+import {
+  RepeaterIndexesContext,
+  useInputWidget,
+  useRepeaterIndexes,
+  WidgetRenderer,
+} from '@golemui/react';
 import { RepeaterProps, getItemKey } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
@@ -38,11 +43,16 @@ export function Repeater(widgetInstance: Core.WithWidget) {
     [onValueChanged],
   );
 
+  const repeaterIndexesFromContext = useRepeaterIndexes();
+
   const renderWidgets = useCallback(() => {
     return value?.map((item, index) => {
       const itemKey = getItemKey(item, idIncrementer);
       return (
-        <RepeaterIndexContext.Provider value={index} key={`${uid}-${itemKey}`}>
+        <RepeaterIndexesContext.Provider
+          value={[...repeaterIndexesFromContext, index]}
+          key={`${uid}-${itemKey}`}
+        >
           <div className="gui-repeater__card">
             <div className="gui-repeater__card-header">
               {templateData.title && (
@@ -65,10 +75,10 @@ export function Repeater(widgetInstance: Core.WithWidget) {
               repeaterIndex={index}
             />
           </div>
-        </RepeaterIndexContext.Provider>
+        </RepeaterIndexesContext.Provider>
       );
     });
-  }, [templateData, value, uid, removeItem]);
+  }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
 
   return (
     <div className="gui-repeater" style={{ flex: templateData.size }}>

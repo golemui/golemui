@@ -63,7 +63,7 @@ export class FlexElement extends LitElement implements Core.WithWidget {
     };
 
     return html`
-      <div class=${classMap(classes)} id=${this.widget?.uid}>
+      <div class=${classMap(classes)} id=${this.widget?.uid} style=${this.adapter.templateData.gap ? `gap: ${this.adapter.templateData.gap}px` : ''}>
         ${repeat(
           this.adapter.templateData.children || [],
           (child: any) => child?.uid,

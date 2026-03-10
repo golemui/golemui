@@ -168,6 +168,66 @@ describe('Repeater schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate a nested repeater definition', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'team-repeater',
+            path: 'teams',
+            kind: 'input',
+            type: 'repeater',
+            props: {
+              addLabel: 'Add Team',
+              template: {
+                uid: 'team-tpl',
+                kind: 'layout',
+                type: 'flex',
+                children: [
+                  {
+                    uid: 'team-name',
+                    kind: 'input',
+                    type: 'textinput',
+                    path: 'teams.items.teamName',
+                  },
+                  {
+                    uid: 'member-repeater',
+                    kind: 'input',
+                    type: 'repeater',
+                    path: 'teams.items.members',
+                    props: {
+                      addLabel: 'Add Member',
+                      removeLabel: 'Remove Member',
+                      limit: 10,
+                      template: {
+                        uid: 'member-tpl',
+                        kind: 'layout',
+                        type: 'flex',
+                        children: [
+                          {
+                            uid: 'member-name',
+                            kind: 'input',
+                            type: 'textinput',
+                            path: 'teams.items.members.items.memberName',
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      });
+
+      const nestedRepeater = formDef.form.children[0];
+      const isValid = validate(nestedRepeater);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, nestedRepeater);
+      }
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {

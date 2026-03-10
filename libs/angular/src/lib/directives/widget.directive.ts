@@ -10,7 +10,13 @@ import {
 } from '@angular/core';
 import * as Core from '@golemui/core';
 import { AngularFormContext } from '../context/form.context';
-import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
+import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
+
+/**
+ * Widgets can either be inside a repeater or not.
+ * repeaterIndexesToken: when they are inside of a repeater repeaterIndexesToken is
+ * an array with one or more elememnts, otherwise it's an empty array.
+ */
 
 @Directive({
   selector: '[guiWidget]',
@@ -18,7 +24,10 @@ import { REPEATER_INDEX_TOKEN } from './repeater-index.token';
 })
 export class WidgetDirective implements OnInit {
   widget = input.required<Core.NonFunctionWidget<string>>();
-  private repeaterIndexToken = inject(REPEATER_INDEX_TOKEN);
+  /**
+   * It's either `[]` (not part of a repeater) or `[n1,n2,n...]` (it's the child of a repeater)
+   */
+  private repeaterIndexesToken = inject(REPEATER_INDEXES_TOKEN);
 
   private formContext: AngularFormContext<Type<Core.WithWidget>> = inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
@@ -43,7 +52,9 @@ export class WidgetDirective implements OnInit {
   /**
    *
    * @param injector In case of components that are inside a repeater, we want to pass an injector with the repeater context set.
-   * @param repeaterIndex We need to pass the index also because otherwise the top layout component refId is not updated to be unique via the index
+   * @param repeaterIndex We need to be able to pass this index from the repeater-widget.directive, otherwise the top level repeated
+   *                      widget (likely a layout that wraps the repeated item) doesn't get its index, because repeaterIndexToken is
+   *                      not yet defined.
    */
   protected createComponent(
     component: Type<Core.WithWidget>,
@@ -53,11 +64,18 @@ export class WidgetDirective implements OnInit {
     this.componentRef = this.viewContainerRef.createComponent(component, {
       injector,
     });
-    const index = repeaterIndex ?? this.repeaterIndexToken;
-    if (index > -1) {
+
+    let repeaterIndexes = [];
+    if (repeaterIndex === undefined) {
+      repeaterIndexes = this.repeaterIndexesToken;
+    } else {
+      repeaterIndexes = [...this.repeaterIndexesToken, repeaterIndex];
+    }
+
+    if (repeaterIndexes.length > 0) {
       this.componentRef.instance.widget = Core.makeRepeaterItemConfig(
         Core.cloneObject(this.widget()),
-        index,
+        repeaterIndexes,
       );
     } else {
       this.componentRef.instance.widget = this.widget();

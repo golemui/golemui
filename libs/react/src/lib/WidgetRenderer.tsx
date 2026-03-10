@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';
-import { useRepeaterIndex } from './RepeaterIndexContext';
+import { useRepeaterIndexes } from './RepeaterIndexesContext';
 
 type Props = {
   widget: Core.NonFunctionWidget<string>;
@@ -17,8 +17,13 @@ function WidgetRenderer(props: Props) {
   // We have to `() => props.widget` because when `props.widget` is a Widget Function we don't want React interprets it as a lazy initializer e.g. `useState(() => initialState)`
   const [widget, setWidget] = useState(() => props.widget);
   const isMounted = useRef(true);
-  const repeaterIndexFromContext = useRepeaterIndex();
-  const repeaterIndex = props.repeaterIndex ?? repeaterIndexFromContext;
+  const repeaterIndexesFromContext = useRepeaterIndexes();
+  const repeaterIndexes = useMemo(() => {
+    if (props.repeaterIndex === undefined) {
+      return repeaterIndexesFromContext;
+    }
+    return [...repeaterIndexesFromContext, props.repeaterIndex];
+  }, [repeaterIndexesFromContext, props.repeaterIndex]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -26,8 +31,8 @@ function WidgetRenderer(props: Props) {
       try {
         const loadedComponent = await formContext.widgetRegistry.loadWidget(props.widget.type);
         if (isMounted.current) {
-          if (repeaterIndex > -1) {
-            setWidget(Core.makeRepeaterItemConfig(Core.cloneObject(props.widget), repeaterIndex));
+          if (repeaterIndexes.length > 0) {
+            setWidget(Core.makeRepeaterItemConfig(Core.cloneObject(props.widget), repeaterIndexes));
           }
           setComponent(() => loadedComponent);
         }
@@ -48,7 +53,7 @@ function WidgetRenderer(props: Props) {
     return () => {
       isMounted.current = false;
     };
-  }, [props.widget, repeaterIndex, formContext.widgetRegistry, formContext.store]);
+  }, [props.widget, repeaterIndexes, formContext.widgetRegistry, formContext.store]);
 
   if (!Component) {
     return null;
