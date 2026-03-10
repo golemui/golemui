@@ -10,6 +10,7 @@ import repeaterLabelsJson from '../../../../../public/template/components/repeat
 import repeaterLimitJson from '../../../../../public/template/components/repeater/repeater-limit.json?raw';
 import repeaterTitleJson from '../../../../../public/template/components/repeater/repeater-title.json?raw';
 import repeaterIconsJson from '../../../../../public/template/components/repeater/repeater-icons.json?raw';
+import repeaterNestedJson from '../../../../../public/template/components/repeater/repeater-nested.json?raw';
 import repeaterAnatomyHtml from '../../../../../public/template/components/repeater/repeater-anatomy.html?raw';
 export const configJson = 'repeater.json';
 export const anatomy = 'repeater.html';
@@ -78,6 +79,22 @@ Use the properties `addButtonIcon` and `removeButtonIcon` to display an icon ins
 <Code code={repeaterIconsJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-icons.json"
+/>
+
+### Nested Repeaters
+
+Repeaters can be nested inside other repeaters to model hierarchical data structures. Each nesting level adds an additional `.items.` segment to the `path`. For example, in a Teams → Members structure:
+
+- The outer repeater path is `teams`
+- Fields inside the outer template use `teams.items.fieldName`
+- The inner repeater path is `teams.items.members`
+- Fields inside the inner template use `teams.items.members.items.fieldName`
+
+At runtime, each `items` token is replaced by the corresponding array index. For instance, `teams.items.members.items.memberName` becomes `teams[0].members[1].memberName` for the second member of the first team.
+
+<Code code={repeaterNestedJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/repeater/repeater-nested.json"
 />
 
 ## Styling
