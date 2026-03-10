@@ -13,7 +13,6 @@ export const dropdown = (): any => ({
       path: 'dropdowns.searchAsYouType',
       label: 'Search as you type',
       props: {
-        height: 300,
         itemHeight: 60,
         itemRenderer: 'productItemRenderer',
         asyncFiltering: true,

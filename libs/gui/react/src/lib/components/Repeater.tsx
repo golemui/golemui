@@ -6,7 +6,7 @@ import {
   WidgetRenderer,
 } from '@golemui/react';
 import { RepeaterProps, getItemKey } from '@golemui/gui-shared';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import '../styles.scss';
 
 /**
@@ -42,6 +42,18 @@ export function Repeater(widgetInstance: Core.WithWidget) {
     },
     [onValueChanged],
   );
+
+  const [isFocused, setIsFocused] = useState(false);
+
+  const onFocusIn = useCallback((event: React.FocusEvent) => {
+    event.stopPropagation();
+    setIsFocused(true);
+  }, []);
+
+  const onFocusOut = useCallback((event: React.FocusEvent) => {
+    event.stopPropagation();
+    setIsFocused(false);
+  }, []);
 
   const repeaterIndexesFromContext = useRepeaterIndexes();
 
@@ -82,7 +94,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-repeater" style={{ flex: templateData.size }}>
-      <div id={uid}>
+      <div id={uid} className={`gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`} onFocus={onFocusIn} onBlur={onFocusOut}>
         {templateData.label && <h2 key={`${uid}-title`}>{templateData.label as string}</h2>}
         {renderWidgets()}
         <button

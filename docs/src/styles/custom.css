@@ -11,13 +11,14 @@ code {
 }
 
 /* ========================================================
-   FormForge Docs RWD Strategy (Mobile-First)
+   GolemUI Docs RWD Strategy (Mobile-First)
    ======================================================== */
 
 /* --- Fluid Typography & Globals --- */
 :root {
   /* Link to Starlight's text base or define a fluid base */
   --fluid-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --sl-content-width: 48rem;
 }
 
 body {

@@ -75,7 +75,7 @@
   --gui-bg-surface: var(--gui-color-white);
   --gui-bg-surface-hover: var(--gui-color-neutral-50);
   --gui-bg-surface-active: var(--gui-color-neutral-100);
-  --gui-bg-disabled: var(--gui-color-neutral-100);
+  --gui-bg-disabled: var(--gui-color-neutral-300);
   --gui-bg-inverse: var(--gui-color-neutral-900);
 
   /* Semantic Tokens - Foreground / Text */
@@ -175,6 +175,9 @@
   --gui-shadow-focus:
     0 0 0 2px var(--gui-bg-default),
     0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+  --gui-shadow-focus-error:
+    0 0 0 2px var(--gui-bg-default),
+    0 0 0 4px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
 
   /* Toggle */
   --gui-toggle-width: 38px;

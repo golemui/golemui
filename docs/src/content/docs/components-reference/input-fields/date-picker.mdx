@@ -7,7 +7,6 @@ import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
 import datePickerJson from '../../../../../public/template/components/date-picker/date-picker.json?raw';
-import datePickerPlaceholderJson from '../../../../../public/template/components/date-picker/date-picker-placeholder.json?raw';
 import datePickerHintJson from '../../../../../public/template/components/date-picker/date-picker-hint.json?raw';
 import datePickerIconJson from '../../../../../public/template/components/date-picker/date-picker-icon.json?raw';
 import datePickerIconsJson from '../../../../../public/template/components/date-picker/date-picker-icons.json?raw';
@@ -29,23 +28,12 @@ Use these `props` to customize your Date Picker component. The Date Picker inher
 
 | prop                 | type   | description                                                                     |
 | -------------------- | ------ | ------------------------------------------------------------------------------- |
-| `placeholder`        | string | Accessible placeholder text for the component                                   |
 | `hint`               | string | A description to display below the input fields                                 |
 | `icon`               | string | Custom icon class to display inside the input visually (e.g. `fas fa-calendar`) |
 | `prevMonthIcon`      | string | Custom CSS class for the "previous month" button inside the calendar            |
 | `nextMonthIcon`      | string | Custom CSS class for the "next month" button inside the calendar                |
 | `prevMonthAriaLabel` | string | ARIA label for the previous month button                                        |
 | `nextMonthAriaLabel` | string | ARIA label for the next month button                                            |
-
-### Placeholder
-
-Use the property `placeholder` to provide context via an accessible placeholder string explicitly. Note that individual date segments (dd, mm, yyyy) always show format placeholders by default.
-
-<Code code={datePickerPlaceholderJson} lang="js" title={configJson} />
-<Demo
-  src="/template/index.html?form=template/components/date-picker/date-picker-placeholder.json"
-  minHeight="500"
-/>
 
 ### Hint
 

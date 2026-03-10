@@ -9,7 +9,7 @@ export default defineConfig({
     starlight({
       title: 'GolemUI',
       customCss: ['./src/styles/custom.css'],
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/golemui/formforge' }],
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/golemui/golemui' }],
       head: [
         {
           tag: 'script',

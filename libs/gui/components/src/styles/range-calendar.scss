@@ -5,13 +5,14 @@
 gui-range-calendar {
   .gui-calendar__day-button {
     &.in-range {
-      background-color: var(--gui-intent-primary);
-      color: white;
+      background-color: color-mix(in srgb, var(--gui-intent-primary), transparent 50%);
+      color: var(--gui-color-white);
       border-radius: 0;
+      margin-left: -1px;
     }
     &.range-start {
       background-color: var(--gui-intent-primary);
-      color: white;
+      color: var(--gui-color-white);
 
       // Top Left - Top Right - Bottom Left - Bottom Right
       border-start-end-radius: 0;
@@ -21,7 +22,7 @@ gui-range-calendar {
     }
     &.range-end {
       background-color: var(--gui-intent-primary);
-      color: white;
+      color: var(--gui-color-white);
 
       // Top Left - Top Right - Bottom Left - Bottom Right
       border-start-end-radius: var(--gui-radius-range);

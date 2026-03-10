@@ -60,7 +60,7 @@ export class GuiList extends LitElement {
         id=${this.uid}
         tabindex=${this.disabled ? -1 : 0}
         class="gui-list__scroll-viewport"
-        style="height: ${height}px; overflow-y: auto; position: relative; display: block;"
+        style="max-height: ${height}px; overflow-y: auto; position: relative; display: block;"
         @scroll="${this.onScroll}"
         @keydown="${this.onKeyDown}"
         @focus="${this.onFocus}"
