@@ -1,0 +1,53 @@
+{
+  "form": [
+    {
+      "uid": "team_repeater",
+      "kind": "input",
+      "type": "repeater",
+      "path": "teams",
+      "label": "Teams",
+      "props": {
+        "addLabel": "Add Team",
+        "removeLabel": "Remove Team",
+        "template": {
+          "kind": "layout",
+          "type": "flex",
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "teams.items.teamName",
+              "label": "Team Name"
+            },
+            {
+              "uid": "member_repeater",
+              "kind": "input",
+              "type": "repeater",
+              "path": "teams.items.members",
+              "label": "Members",
+              "props": {
+                "addLabel": "Add Member",
+                "removeLabel": "Remove Member",
+                "template": {
+                  "kind": "layout",
+                  "type": "flex",
+                  "children": [
+                    {
+                      "kind": "input",
+                      "type": "textinput",
+                      "path": "teams.items.members.items.memberName",
+                      "label": "Member Name"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

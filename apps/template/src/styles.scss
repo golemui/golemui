@@ -1,6 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
 @use '../../../libs/gui/components/src/styles/index';
+@use '../../../libs/gui/components/src/styles/themes/clay';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+[dir="rtl"] .material-icons,
+[dir="rtl"] .material-symbols-outlined {
+  direction: rtl;
+}
+
+[data-theme='sunset'] {
+  /* Override primitives for a warm palette */
+  --gui-color-primary-400: #fb923c;
+  --gui-color-primary-500: #f97316;
+  --gui-color-primary-600: #ea580c;
+  --gui-color-primary-700: #c2410c;
+  --gui-color-primary-800: #9a3412;
+
+  /* Override semantic tokens */
+  --gui-intent-primary: var(--gui-color-warning-600);
+  --gui-intent-primary-hover: var(--gui-color-warning-700);
+  --gui-intent-primary-active: var(--gui-color-warning-800);
+  --gui-border-focus: var(--gui-color-warning-500);
+
+  /* Adjust backgrounds */
+  --gui-bg-default: #fff7ed;
+  --gui-bg-surface: #ffffff;
+
+  /* Adjust borders */
+  --gui-border-default: var(--gui-color-warning-300);
+  --gui-shadow-focus: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme='sunset'] {
+    --gui-bg-default: #1c1210;
+    --gui-bg-surface: #271a16;
+    --gui-border-default: var(--gui-color-warning-600);
+    --gui-intent-primary: var(--gui-color-warning-500);
+    --gui-intent-primary-hover: var(--gui-color-warning-400);
+  }
+}
 
 html, body {
   background-color: var(--gui-bg-default);

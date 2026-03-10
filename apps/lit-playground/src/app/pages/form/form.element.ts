@@ -13,7 +13,7 @@ import { countryItemRenderer } from '../../item-renderers/country.item-renderer'
 import { Dependencies } from '@golemui/gui-shared';
 import snarkdown from 'snarkdown';
 
-const mock = AppsShared.kitchenSink;
+const mock = AppsShared.shippingManifest;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {

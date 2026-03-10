@@ -23,11 +23,11 @@ export default defineConfig({
               );
 
               if (sourceIframe) {
-                // Use requestAnimationFrame to ensure the initial state (e.g. height: 0) 
+                // Use requestAnimationFrame to ensure the initial state (e.g. height: 0)
                 // is painted before applying the new height, triggering the transition.
                 requestAnimationFrame(() => {
                   sourceIframe.style.height = event.data.height + 'px';
-                  
+
                   // If there is a min-height set in the data attribute, apply it
                   const minHeight = sourceIframe.getAttribute('data-min-height');
                   if (minHeight) {
@@ -44,6 +44,10 @@ export default defineConfig({
         {
           label: 'Guides',
           autogenerate: { directory: 'guides' },
+        },
+        {
+          label: 'Styling',
+          autogenerate: { directory: 'styling' },
         },
         {
           label: 'Components Reference',

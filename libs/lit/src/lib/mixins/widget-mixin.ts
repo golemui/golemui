@@ -3,10 +3,7 @@ import { consume } from '@lit/context';
 import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { formContext, LitFormContext } from '../context/form.context';
-import {
-  RepeaterIndexTokenContext,
-  repeaterIndexTokenContext,
-} from '../context/repeater-index-token.context';
+import { repeaterIndexesContext } from '../context/repeater-index-token.context';
 
 export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
   class WidgetElement extends superClass {
@@ -17,9 +14,9 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
     @property({ type: Object }) widget!: Core.FormWidget<string> | undefined;
     @property({ type: Number }) repeaterIndex: number | undefined;
 
-    @consume({ context: repeaterIndexTokenContext, subscribe: true })
+    @consume({ context: repeaterIndexesContext, subscribe: true })
     @property({ attribute: false })
-    repeaterIndexToken?: RepeaterIndexTokenContext;
+    repeaterIndexes: number[] = [];
 
     override connectedCallback() {
       super.connectedCallback?.();
@@ -33,10 +30,17 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
         const component = await this.formContext.widgetRegistry.loadWidget(this.widget.type!);
         const element = new component();
 
-        const index = this.repeaterIndex ?? this.repeaterIndexToken?.index;
+        const repeaterIndexesFromContext = this.repeaterIndexes ?? [];
+        let indexes: number[];
+        if (this.repeaterIndex !== undefined) {
+          indexes = [...repeaterIndexesFromContext, this.repeaterIndex];
+        } else {
+          indexes = repeaterIndexesFromContext;
+        }
+
         element.widget =
-          typeof index === 'number' && !Number.isNaN(index) && index > -1
-            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), index)
+          indexes.length > 0
+            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), indexes)
             : this.widget;
 
         element.id = `host-${this.widget.uid}`;
