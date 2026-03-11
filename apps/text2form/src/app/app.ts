@@ -1,30 +1,39 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import * as Vanilla from '@golemui/gui-angular';
+import * as Gui from '@golemui/gui-angular';
+import { golemForm } from '@golemui/gui-shared';
+import * as Core from '@golemui/core';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const initialFormJson = `{
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "title": "Full Name"
+const initialFormJson = golemForm().create({
+  form: [
+    {
+      kind: 'input',
+      type: 'textinput',
+      path: 'email',
     },
-    "email": {
-      "type": "string",
-      "format": "email",
-      "title": "Email Address"
-    }
-  }
-}`;
+    {
+      kind: 'input',
+      type: 'password',
+      path: 'password',
+    },
+    {
+      kind: 'action',
+      type: 'button',
+      label: 'Send',
+
+      on: { click: 'submit' },
+    },
+  ],
+});
 
 @Component({
-  imports: [CommonModule, FormsModule, Vanilla.FormComponent],
+  imports: [CommonModule, FormsModule, Gui.FormComponent],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -32,32 +41,15 @@ const initialFormJson = `{
 })
 export class App {
   activeTab: 'form' | 'json' = 'form';
-
   chatInput = '';
   messages: ChatMessage[] = [
     { role: 'assistant', content: 'Hello! Describe the form you want to build.' },
   ];
-
-  formJson = initialFormJson;
-  formDef: any;
-  formData: any = {};
-  widgetLoaders: any = {};
-
-  constructor() {
-    this.updateFormDef();
-  }
-
-  updateFormDef() {
-    try {
-      this.formDef = JSON.parse(this.formJson);
-    } catch (e) {
-      console.error('Invalid form JSON', e);
-    }
-  }
+  error = '';
+  formJson = JSON.stringify(initialFormJson, undefined, 2);
 
   onJsonChange(value: string) {
     this.formJson = value;
-    this.updateFormDef();
   }
 
   switchTab(tab: 'form' | 'json') {
@@ -65,7 +57,9 @@ export class App {
   }
 
   sendMessage() {
-    if (!this.chatInput.trim()) return;
+    if (!this.chatInput.trim()) {
+      return;
+    }
 
     // Add user message
     this.messages.push({ role: 'user', content: this.chatInput });
@@ -80,5 +74,15 @@ export class App {
       });
       // In a real app we would call the LLM and update formJson here.
     }, 500);
+  }
+
+  onFormHealth(formHealth: Core.FormHealth) {
+    if (formHealth.status === 'errored') {
+      this.error = formHealth.message;
+    }
+  }
+
+  onFormEvent(event: Core.FormEvent) {
+    console.log('onFormEvent', event);
   }
 }

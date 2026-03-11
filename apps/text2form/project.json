@@ -21,7 +21,7 @@
             "input": "apps/text2form/public"
           }
         ],
-        "styles": ["apps/text2form/src/styles.scss"]
+        "styles": ["libs/gui/components/src/styles/index.scss", "apps/text2form/src/styles.scss"]
       },
       "configurations": {
         "production": {

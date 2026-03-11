@@ -37,13 +37,22 @@
     </header>
 
     <div class="tab-content" [ngSwitch]="activeTab">
+      @if (error) {
+      <div class="error-container">
+        <p class="error">{{ error }}</p>
+      </div>
+      }
       <!-- Form Tab -->
       <div *ngSwitchCase="'form'" class="form-preview-container">
         <div class="form-wrapper">
           <gui-form
-            [formDef]="formDef"
-            [data]="formData"
-            [widgetLoaders]="widgetLoaders"
+            [formDef]="formJson"
+            [data]="{}"
+            [widgetLoaders]="{}"
+            [validators]="{}"
+            [validateOn]="'eager'"
+            (formHealth)="onFormHealth($event)"
+            (formEvent)="onFormEvent($event)"
           ></gui-form>
         </div>
       </div>
