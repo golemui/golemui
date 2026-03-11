@@ -48,12 +48,46 @@ export type CurrencyProps = {
 export type TextareaProps = {
   hint?: string;
   placeholder?: string;
+  /**
+   * icon to display inside the textarea on the left-top corner.
+   */
   icon?: string;
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
   maxLength?: number;
 };
+
+type MarkdownButtons = 'H' | 'B' | 'I' | 'Q' | 'L' | 'NL' | 'UL' | '|';
+export type MarkdownProps = {
+  /**
+   * A collection of markdown-style formatting tokens.
+   * * @remarks
+   * Each token corresponds to a specific text decoration:
+   * - **H**: Heading -> `### Title`
+   * - **B**: Bold -> `**some text**`
+   * - **I**: Italic -> `_some text_`
+   * - **Q**: Quote -> `> some text`
+   * - **L**: Link -> `[some text](url)`
+   * - **NL**: Numbered list -> `1. some text`
+   * - **UL**: Unordered list -> `- some text`
+   * - **|**: Separator -> `|`
+   * * @example
+   * ```ts
+   * const toolbar = ['H', 'B', 'I', 'Q', 'L', '|', 'NL', 'UL'];
+   * ```
+   */
+  tools?: MarkdownButtons[];
+  writeTabLabel?: string;
+  previewTabLabel?: string;
+  headingTitle?: string;
+  boldTitle?: string;
+  italicTitle?: string;
+  quoteTitle?: string;
+  linkTitle?: string;
+  numberedListTitle?: string;
+  unorderedListTitle?: string;
+} & TextareaProps;
 
 export type CalendarProps = {
   /**

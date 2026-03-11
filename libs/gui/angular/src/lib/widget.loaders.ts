@@ -35,6 +35,8 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
   radiogroup: async () =>
     (await import('./components/radiogroup/radiogroup.component')).RadiogroupComponent,
   list: async () => (await import('./components/list/list.component')).ListComponent,
+  markdown: async () =>
+    (await import('./components/markdown/markdown.component')).MarkdownComponent,
 
   // LAYOUT WIDGETS
   flex: async () => (await import('./components/flex/flex.component')).FlexComponent,

@@ -6,6 +6,7 @@ export const inputWidgets = [
   'datePicker',
   'dropdown',
   'list',
+  'markdown',
   'number',
   'password',
   'radiogroup',
