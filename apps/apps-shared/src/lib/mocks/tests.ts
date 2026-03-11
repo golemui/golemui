@@ -2,11 +2,10 @@ import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = {
-  md: `
-  ### Something
-  - **hello**: _world_
-  - **seeyoulater**: _aligator_
-  `,
+  md: `### Something
+- **hello**: _world_
+- **seeyoulater**: _aligator_
+`,
 };
 
 const form = golemForm().create({
@@ -20,6 +19,7 @@ const form = golemForm().create({
         writeTabLabel: '🖊️ Write',
         previewTabLabel: '👁️ Preview',
       },
+      validator: { type: 'string', required: true, minLength: 2 },
     },
     {
       kind: 'action',

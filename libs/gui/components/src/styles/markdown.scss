@@ -1,0 +1,122 @@
+gui-markdown {
+  display: block;
+
+  .gui-widget.gui-markdown--with-preview {
+    .gui-markdown__preview {
+      display: block;
+    }
+    textarea {
+      width: calc(50% - (var(--gui-space-3) * 2));
+    }
+  }
+
+  .gui-widget {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    overflow: hidden;
+    width: 100%;
+
+    border-radius: var(--gui-radius-md);
+    border: 1px solid var(--gui-border-default);
+    color: var(--gui-text-default);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:has(textarea[aria-invalid='true']) {
+      border-color: var(--gui-intent-error);
+    }
+    &:has(textarea[aria-invalid='true']:focus) {
+      outline: 0;
+      border-color: var(--gui-intent-error);
+      box-shadow: var(--gui-shadow-focus-error);
+    }
+    &:has(textarea:focus) {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    textarea:focus,
+    textarea[aria-invalid='true']:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    textarea {
+      border-radius: 0;
+      border: 0;
+      padding-top: var(--gui-space-10);
+      padding-bottom: 0;
+      width: 100%;
+      resize: vertical;
+    }
+  }
+
+  .gui-markdown__preview {
+    display: none;
+    position: absolute;
+    inset-inline-end: 0;
+    width: calc(50% - (var(--gui-space-3) * 2));
+    height: calc(100% - var(--gui-space-10));
+    padding-top: var(--gui-space-10);
+    padding-left: var(--gui-space-3);
+    padding-right: var(--gui-space-3);
+    border-left: 1px solid var(--gui-border-default);
+  }
+
+  .gui-markdown__toolbar {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: var(--gui-space-1) var(--gui-space-3) var(--gui-space-0);
+    border-bottom: 1px solid var(--gui-border-default);
+
+    &-separator {
+      fill: var(--gui-text-default);
+    }
+
+    &-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: var(--gui-space-1);
+      fill: var(--gui-text-default);
+
+      &:hover {
+        background: var(--gui-bg-surface-hover);
+      }
+    }
+
+    ul {
+      display: flex;
+      gap: var(--gui-space-2);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .gui-markdown--validation {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .gui-markdown--counter {
+    font-size: var(--gui-font-sm);
+    margin-top: var(--gui-space-2);
+    padding: 0;
+
+    &__error {
+      color: var(--gui-intent-error);
+    }
+  }
+}

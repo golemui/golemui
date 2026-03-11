@@ -5,6 +5,7 @@ export * from './date-input';
 export * from './errors';
 export * from './label';
 export * from './list';
+export * from './markdown';
 export * from './number';
 export * from './one-of';
 export * from './password';

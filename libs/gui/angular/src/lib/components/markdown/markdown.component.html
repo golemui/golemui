@@ -1,79 +1,22 @@
 @let templateData = adapter.templateData();
 
-<nav class="gui-widget gui-widget--horizontal with-gui-tabs" [id]="widget.uid">
-  <ul role="tablist">
-    <li role="presentation">
-      <button
-        #tabButtonRef
-        type="button"
-        role="tab"
-        [attr.data-cy]="'tab_' + widget.uid + '_write'"
-        [tabindex]="activeTab() === 'write' ? null : -1"
-        [id]="'tab_' + widget.uid + '_write'"
-        [attr.aria-controls]="'tabpanel_' + widget.uid + '_write'"
-        [attr.aria-selected]="activeTab() === 'write' ? 'true' : 'false'"
-        [class.active]="activeTab() === 'write'"
-        (click)="onClickTab('write')"
-        (keydown)="onKeyDown($event)"
-        (focus)="onFocus($event)"
-      >
-        {{ templateData.writeTabLabel || 'Write' }}
-      </button>
-      <button
-        #tabButtonRef
-        type="button"
-        role="tab"
-        [attr.data-cy]="'tab_' + widget.uid + '_preview'"
-        [tabindex]="activeTab() === 'preview' ? null : -1"
-        [id]="'tab_' + widget.uid + '_preview'"
-        [attr.aria-controls]="'tabpanel_' + widget.uid + '_preview'"
-        [attr.aria-selected]="activeTab() === 'preview' ? 'true' : 'false'"
-        [class.active]="activeTab() === 'preview'"
-        (click)="onClickTab('preview')"
-        (keydown)="onKeyDown($event)"
-        (focus)="onFocus($event)"
-      >
-        {{ templateData.previewTabLabel || 'Preview' }}
-      </button>
-    </li>
-  </ul>
-</nav>
-
-<!-- WRITE TAB -->
-<section
-  role="tabpanel"
-  [hidden]="activeTab() === 'preview'"
-  [attr.data-cy]="'tabpanel_' + widget.uid + '_write'"
-  [id]="'tabpanel_' + widget.uid + '_write'"
-  [attr.aria-labelledby]="'tab_' + widget.uid + '_write'"
->
-  <gui-textarea
-    [uid]="widget.uid"
-    [label]="templateData.label"
-    [errors]="templateData.errors"
-    [touched]="templateData.touched"
-    [required]="templateData.validator?.required"
-    [disabled]="templateData.disabled"
-    [readOnly]="templateData.readonly"
-    [value]="templateData.value"
-    [hint]="templateData.hint"
-    [placeholder]="templateData.placeholder"
-    [icon]="templateData.icon"
-    [counterMode]="templateData.counterMode"
-    [minimumHeight]="templateData.minimumHeight"
-    [autoGrow]="templateData.autoGrow"
-    [maxLength]="templateData.validator?.maxLength"
-    (input)="valueChanged($event)"
-    (blur)="adapter.onBlur()"
-  ></gui-textarea>
-</section>
-
-<!-- PREVIEW TAB -->
-<section
-  role="tabpanel"
-  [hidden]="activeTab() === 'write'"
-  [attr.data-cy]="'tabpanel_' + widget.uid + '_preview'"
-  [id]="'tabpanel_' + widget.uid + '_preview'"
-  [attr.aria-labelledby]="'tab_' + widget.uid + '_preview'"
-  [innerHTML]="preview()"
-></section>
+<gui-markdown
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readOnly]="templateData.readonly"
+  [value]="templateData.value"
+  [hint]="templateData.hint"
+  [placeholder]="templateData.placeholder"
+  [icon]="templateData.icon"
+  [counterMode]="templateData.counterMode"
+  [minimumHeight]="templateData.minimumHeight"
+  [autoGrow]="templateData.autoGrow"
+  [maxLength]="templateData.validator?.maxLength"
+  [deps]="templateData.deps"
+  (input)="valueChanged($event)"
+  (blur)="adapter.onBlur()"
+></gui-markdown>
