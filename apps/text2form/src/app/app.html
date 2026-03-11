@@ -1,1 +1,58 @@
-hello
+<div class="app-layout">
+  <!-- Left Column: Chat -->
+  <aside class="chat-sidebar">
+    <div class="chat-header">
+      <h2>Text2Form</h2>
+      <p>Powered by GolemUI</p>
+    </div>
+
+    <div class="chat-history">
+      <div *ngFor="let msg of messages" [ngClass]="['chat-message', msg.role]">
+        <div class="message-bubble">{{ msg.content }}</div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="input-wrapper">
+        <textarea
+          [(ngModel)]="chatInput"
+          placeholder="Ask me to create a form..."
+          (keydown.enter)="$event.preventDefault(); sendMessage()"
+        >
+        </textarea>
+        <button (click)="sendMessage()" [disabled]="!chatInput.trim()">
+          <span class="icon-send">➤</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Column: Form/JSON Viewer -->
+  <main class="content-main">
+    <header class="tabs-header">
+      <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">Preview</button>
+      <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
+        Schema (JSON)
+      </button>
+    </header>
+
+    <div class="tab-content" [ngSwitch]="activeTab">
+      <!-- Form Tab -->
+      <div *ngSwitchCase="'form'" class="form-preview-container">
+        <div class="form-wrapper">
+          <gui-form
+            [formDef]="formDef"
+            [data]="formData"
+            [widgetLoaders]="widgetLoaders"
+          ></gui-form>
+        </div>
+      </div>
+
+      <!-- JSON Tab -->
+      <div *ngSwitchCase="'json'" class="json-editor-container">
+        <textarea class="json-editor" [ngModel]="formJson" (ngModelChange)="onJsonChange($event)">
+        </textarea>
+      </div>
+    </div>
+  </main>
+</div>
