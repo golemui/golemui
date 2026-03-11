@@ -19,6 +19,12 @@
         }
       }
 
+      &--focused {
+        outline: 0;
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
+      }
+
       &-title {
         font-weight: 500;
       }
@@ -32,18 +38,30 @@
       &.gui-repeater__remove-btn {
         padding: var(--gui-space-1) var(--gui-space-2);
         background: transparent;
-        color: var(--gui-text-default);
-        border: 1px solid var(--gui-intent-error);
+        color: var(--gui-intent-error-text);
+        border: 1px solid var(--gui-border-default);
         opacity: 0.6;
-        transition: opacity var(--gui-transition-normal, 0.2s);
+        transition:
+          opacity var(--gui-transition-normal, 0.2s),
+          border-color var(--gui-transition-normal, 0.2s);
 
-        &:hover {
-          background: var(--gui-intent-error-bg);
-          opacity: 1;
+        &:focus {
+          border-color: var(--gui-intent-error);
+
+          .gui-button-icon {
+            color: var(--gui-intent-error-text);
+          }
         }
 
-        .gui-button-icon {
-          color: var(--gui-intent-error);
+        &:hover {
+          color: var(--gui-color-white);
+          background: var(--gui-intent-error-bg);
+          border-color: var(--gui-intent-error);
+          opacity: 1;
+
+          .gui-button-icon {
+            color: var(--gui-color-white);
+          }
         }
       }
 

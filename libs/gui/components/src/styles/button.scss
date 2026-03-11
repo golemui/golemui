@@ -25,6 +25,12 @@
       align-items: center;
     }
 
+    &:focus {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+
     &:hover {
       background: var(--gui-intent-primary-hover);
     }

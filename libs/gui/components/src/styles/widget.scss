@@ -64,9 +64,7 @@
       &:focus {
         outline: 0;
         border-color: var(--gui-intent-error);
-        box-shadow:
-          0 0 0 2px var(--gui-bg-default),
-          0 0 0 4px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
+        box-shadow: var(--gui-shadow-focus-error);
       }
     }
 

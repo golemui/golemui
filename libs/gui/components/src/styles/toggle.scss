@@ -41,14 +41,14 @@ gui-toggle {
 
       &:focus + .gui-toggle--slider {
         outline: 0;
-        border: var(--gui-text-default) solid 1px;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
       }
 
       &:focus + .gui-toggle--slider[aria-invalid='true'] {
         outline: 0;
-        border: var(--gui-intent-error) solid 1px;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gui-intent-error) 50%, transparent);
+        border-color: var(--gui-intent-error);
+        box-shadow: var(--gui-shadow-focus-error);
       }
 
       &:checked + .gui-toggle--slider:before {
