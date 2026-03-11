@@ -5,6 +5,9 @@ gui-markdown {
     .gui-markdown__preview {
       display: block;
     }
+    .gui-markdown__toolbar {
+      width: calc(50% - (var(--gui-space-3) * 2));
+    }
     textarea {
       width: calc(50% - (var(--gui-space-3) * 2));
     }
@@ -73,6 +76,7 @@ gui-markdown {
     display: flex;
     justify-content: space-between;
     padding: var(--gui-space-1) var(--gui-space-3) var(--gui-space-0);
+    background: var(--gui-bg-surface);
     border-bottom: 1px solid var(--gui-border-default);
 
     &-separator {
@@ -85,9 +89,15 @@ gui-markdown {
       cursor: pointer;
       padding: var(--gui-space-1);
       fill: var(--gui-text-default);
+      border-radius: var(--gui-radius-sm);
 
       &:hover {
         background: var(--gui-bg-surface-hover);
+      }
+
+      &--active {
+        background: var(--gui-intent-primary);
+        fill: var(--gui-text-default);
       }
     }
 

@@ -47,6 +47,7 @@ export class GuiMarkdown extends LitElement {
   @property({ type: Object }) deps: Dependencies | undefined = undefined;
 
   @state() splitViewActive = false;
+  @state() private activeFormats: Record<string, boolean> = {};
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`textarea[id="${this.uid}"]`),
@@ -139,7 +140,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('heading')}
                 @click=${this.applyFormat('# ')}
                 title=${this.headingTitle ?? 'Heading'}
               >
@@ -158,7 +159,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('bold')}
                 @click=${this.applyFormat('**', '**')}
                 title=${this.boldTitle ?? 'Bold'}
               >
@@ -177,7 +178,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('italic')}
                 @click=${this.applyFormat('_', '_')}
                 title=${this.italicTitle ?? 'Italic'}
               >
@@ -196,7 +197,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('quote')}
                 @click=${this.applyFormat('> ')}
                 title=${this.quoteTitle ?? 'Quote'}
               >
@@ -215,7 +216,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('link')}
                 @click=${this.applyFormat('[', '](url)')}
                 title=${this.linkTitle ?? 'Link'}
               >
@@ -245,7 +246,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('orderedList')}
                 @click=${this.applyFormat('1. ')}
                 title=${this.numberedListTitle ?? 'Ordered List'}
               >
@@ -264,7 +265,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${this.toolbarBtnClass('unorderedList')}
                 @click=${this.applyFormat('- ')}
                 title=${this.unorderedListTitle ?? 'Unordered List'}
               >
@@ -283,7 +284,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
-                class="gui-markdown__toolbar-button"
+                class=${classMap({ 'gui-markdown__toolbar-button': true, 'gui-markdown__toolbar-button--active': this.splitViewActive })}
                 @click=${this.splitView}
                 title=${this.splitViewTitle ?? 'Split View'}
               >
@@ -303,6 +304,8 @@ export class GuiMarkdown extends LitElement {
           placeholder=${templateData.placeholder || nothing}
           .value=${this.value || ''}
           @input=${this.valueChanged}
+          @keyup=${this.detectFormats}
+          @mouseup=${this.detectFormats}
           @blur=${this.onBlur}
         ></textarea>
 
@@ -324,6 +327,75 @@ export class GuiMarkdown extends LitElement {
     this.splitViewActive = !this.splitViewActive;
   }
 
+  private toolbarBtnClass(format?: string) {
+    return classMap({
+      'gui-markdown__toolbar-button': true,
+      'gui-markdown__toolbar-button--active': !!format && !!this.activeFormats[format],
+    });
+  }
+
+  private detectFormats() {
+    const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const { selectionStart, value } = textarea;
+
+    // Get current line
+    const lineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+    const lineEnd = value.indexOf('\n', selectionStart);
+    const currentLine = value.substring(lineStart, lineEnd === -1 ? value.length : lineEnd);
+
+    this.activeFormats = {
+      heading: /^#{1,6}\s/.test(currentLine),
+      bold: this.isInsideInlineFormat(value, selectionStart, '**'),
+      italic: this.isInsideInlineFormat(value, selectionStart, '_'),
+      quote: currentLine.startsWith('> '),
+      link: this.isInsideLink(value, selectionStart),
+      orderedList: /^\d+\.\s/.test(currentLine),
+      unorderedList: currentLine.startsWith('- '),
+    };
+  }
+
+  private isInsideInlineFormat(text: string, cursorPos: number, marker: string): boolean {
+    const lineStart = text.lastIndexOf('\n', cursorPos - 1) + 1;
+    const lineEnd = text.indexOf('\n', cursorPos);
+    const line = text.substring(lineStart, lineEnd === -1 ? text.length : lineEnd);
+    const cursorInLine = cursorPos - lineStart;
+
+    let searchFrom = 0;
+    while (searchFrom < line.length) {
+      const openIdx = line.indexOf(marker, searchFrom);
+      if (openIdx === -1) break;
+
+      const closeIdx = line.indexOf(marker, openIdx + marker.length);
+      if (closeIdx === -1) break;
+
+      if (cursorInLine >= openIdx && cursorInLine <= closeIdx + marker.length) {
+        return true;
+      }
+
+      searchFrom = closeIdx + marker.length;
+    }
+
+    return false;
+  }
+
+  private isInsideLink(text: string, cursorPos: number): boolean {
+    const lineStart = text.lastIndexOf('\n', cursorPos - 1) + 1;
+    const lineEnd = text.indexOf('\n', cursorPos);
+    const line = text.substring(lineStart, lineEnd === -1 ? text.length : lineEnd);
+    const cursorInLine = cursorPos - lineStart;
+
+    const regex = /\[[^\]]*\]\([^)]*\)/g;
+    let match;
+    while ((match = regex.exec(line)) !== null) {
+      if (cursorInLine >= match.index && cursorInLine <= match.index + match[0].length) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   applyFormat(formatStart: string, formatEnd = '') {
     return () => {
       const textarea = this.querySelector(`textarea[id="${this.uid}"]`) as HTMLTextAreaElement;
@@ -343,6 +415,7 @@ export class GuiMarkdown extends LitElement {
 
       // Dispatch input event so the value change propagates
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      this.detectFormats();
     };
   }
 
