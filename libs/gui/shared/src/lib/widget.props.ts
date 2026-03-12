@@ -58,7 +58,7 @@ export type TextareaProps = {
   maxLength?: number;
 };
 
-type MarkdownButtons = 'H' | 'B' | 'I' | 'Q' | 'L' | 'OL' | 'UL' | '|';
+type MarkdownButtons = 'H' | 'B' | 'I' | 'S' | 'Q' | 'L' | 'OL' | 'UL' | '|';
 export type MarkdownProps = {
   /**
    * A collection of markdown-style formatting tokens.
@@ -67,6 +67,7 @@ export type MarkdownProps = {
    * - **H**: Heading -> `### Title`
    * - **B**: Bold -> `**some text**`
    * - **I**: Italic -> `_some text_`
+   * - **S**: Strikethrough -> `~~strikethrough~~`
    * - **Q**: Quote -> `> some text`
    * - **L**: Link -> `[some text](url)`
    * - **NL**: Ordered list -> `1. some text`
@@ -74,13 +75,14 @@ export type MarkdownProps = {
    * - **|**: Separator -> `|`
    * * @example
    * ```ts
-   * const toolbar = ['H', 'B', 'I', 'Q', 'L', '|', 'OL', 'UL'];
+   * const toolbar = ['H', 'B', 'I', 'S', 'Q', 'L', '|', 'OL', 'UL'];
    * ```
    */
   tools?: MarkdownButtons[];
   headingTitle?: string;
   boldTitle?: string;
   italicTitle?: string;
+  strikethroughTitle?: string;
   quoteTitle?: string;
   linkTitle?: string;
   orderedListTitle?: string;

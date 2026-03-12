@@ -7,7 +7,7 @@
       "path": "content",
       "label": "Content",
       "props": {
-        "tools": ["H", "B", "I", "|", "UL"]
+        "tools": ["H", "B", "I", "S", "|", "UL"]
       }
     }
   ]

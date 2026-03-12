@@ -70,6 +70,15 @@ gui-markdown {
     padding-right: var(--gui-space-3);
     border-left: 1px solid var(--gui-border-default);
     overflow-y: scroll;
+
+    a {
+      color: var(--gui-intent-primary);
+
+      &:hover,
+      &:visited {
+        color: var(--gui-intent-primary-hover);
+      }
+    }
   }
 
   .gui-markdown__toolbar {
@@ -77,7 +86,7 @@ gui-markdown {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: var(--gui-space-1) var(--gui-space-3) var(--gui-space-0);
+    padding: var(--gui-space-1) var(--gui-space-3) var(--gui-space-1);
     background: var(--gui-bg-surface);
     border-bottom: 1px solid var(--gui-border-default);
 
@@ -86,12 +95,19 @@ gui-markdown {
     }
 
     &-button {
+      height: var(--gui-space-7);
       background: transparent;
       border: none;
       cursor: pointer;
       padding: var(--gui-space-1);
       fill: var(--gui-text-default);
       border-radius: var(--gui-radius-sm);
+
+      &:focus {
+        outline: 0;
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
+      }
 
       &:hover {
         background: var(--gui-bg-surface-hover);

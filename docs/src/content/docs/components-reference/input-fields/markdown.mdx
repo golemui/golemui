@@ -55,6 +55,7 @@ Pass `dependencies` as a property on the form component itself, not inside the w
       ...
     ></gui-form>
     ```
+
   </TabItem>
   <TabItem label="React">
     ```tsx
@@ -74,6 +75,7 @@ Pass `dependencies` as a property on the form component itself, not inside the w
       ...
     />
     ```
+
   </TabItem>
   <TabItem label="Lit">
     ```typescript
@@ -94,6 +96,7 @@ Pass `dependencies` as a property on the form component itself, not inside the w
       ...
     ></golem-form>
     ```
+
   </TabItem>
 </Tabs>
 
@@ -115,6 +118,7 @@ Use these `props` to customize your Markdown component.
 | `headingTitle`       | string            | Tooltip for the heading button                                                                               |
 | `boldTitle`          | string            | Tooltip for the bold button                                                                                  |
 | `italicTitle`        | string            | Tooltip for the italic button                                                                                |
+| `strikethroughTitle` | string            | Tooltip for the strikethrough button                                                                         |
 | `quoteTitle`         | string            | Tooltip for the quote button                                                                                 |
 | `linkTitle`          | string            | Tooltip for the link button                                                                                  |
 | `orderedListTitle`   | string            | Tooltip for the ordered list button                                                                          |
@@ -205,23 +209,23 @@ Markdown editors can be styled as explained in the [Styling Guide](/guides/styli
 
 Following you will find a list with the CSS Variables and a quick description of what you will style.
 
-| CSS Variable             | Description                                         |
-| ------------------------ | --------------------------------------------------- |
-| `--gui-space-10`         | Textarea and preview top padding                    |
-| `--gui-space-3`          | Preview horizontal padding, toolbar padding         |
-| `--gui-space-1`          | Toolbar button padding                              |
-| `--gui-space-2`          | Toolbar button gap, counter top margin              |
-| `--gui-font-sm`          | Counter text font size                              |
-| `--gui-intent-error`     | Counter error color when max length is exceeded     |
-| `--gui-intent-primary`   | Active toolbar button background                    |
-| `--gui-radius-md`        | Widget border radius                                |
-| `--gui-radius-sm`        | Toolbar button border radius                        |
-| `--gui-border-default`   | Widget border, toolbar border, preview border       |
-| `--gui-border-focus`     | Widget border color on focus                        |
-| `--gui-shadow-focus`     | Widget box shadow on focus                          |
-| `--gui-text-default`     | Text and toolbar icon fill color                    |
-| `--gui-bg-surface`       | Toolbar background color                            |
-| `--gui-bg-surface-hover` | Toolbar button hover background                     |
+| CSS Variable             | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| `--gui-space-10`         | Textarea and preview top padding                |
+| `--gui-space-3`          | Preview horizontal padding, toolbar padding     |
+| `--gui-space-1`          | Toolbar button padding                          |
+| `--gui-space-2`          | Toolbar button gap, counter top margin          |
+| `--gui-font-sm`          | Counter text font size                          |
+| `--gui-intent-error`     | Counter error color when max length is exceeded |
+| `--gui-intent-primary`   | Active toolbar button background                |
+| `--gui-radius-md`        | Widget border radius                            |
+| `--gui-radius-sm`        | Toolbar button border radius                    |
+| `--gui-border-default`   | Widget border, toolbar border, preview border   |
+| `--gui-border-focus`     | Widget border color on focus                    |
+| `--gui-shadow-focus`     | Widget box shadow on focus                      |
+| `--gui-text-default`     | Text and toolbar icon fill color                |
+| `--gui-bg-surface`       | Toolbar background color                        |
+| `--gui-bg-surface-hover` | Toolbar button hover background                 |
 
 ### Anatomy
 

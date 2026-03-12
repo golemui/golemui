@@ -29,6 +29,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
   const headingTitle = templateData.headingTitle;
   const boldTitle = templateData.boldTitle;
   const italicTitle = templateData.italicTitle;
+  const strikethroughTitle = templateData.strikethroughTitle;
   const quoteTitle = templateData.quoteTitle;
   const linkTitle = templateData.linkTitle;
   const orderedListTitle = templateData.orderedListTitle;
@@ -60,6 +61,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
         headingTitle={headingTitle}
         boldTitle={boldTitle}
         italicTitle={italicTitle}
+        strikethroughTitle={strikethroughTitle}
         quoteTitle={quoteTitle}
         linkTitle={linkTitle}
         orderedListTitle={orderedListTitle}

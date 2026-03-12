@@ -6,7 +6,7 @@ import { useReactFormContext } from '../../ReactFormContext';
 export type WithFlattenedProps<
   F extends Core.NonFunctionWidget<string>,
   ExtraProps extends Core.NonFunctionWidget<string>['props'],
-> = F & ExtraProps & { lang: string };
+> = F & ExtraProps & { lang: string; deps: Record<string, unknown> };
 
 export function useTemplateData<
   F extends Core.NonFunctionWidget<string>,

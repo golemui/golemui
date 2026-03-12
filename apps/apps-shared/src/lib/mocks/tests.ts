@@ -2,9 +2,24 @@ import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = {
-  md: `### Something
-- **hello**: _world_
-- **seeyoulater**: _aligator_
+  md: `# Markdown editor with Snarkdown
+## Formatting text
+You can format text using **bold**, _italic_, and ~~strikethrough~~.
+> Blockquotes are also supported.
+You can add also a link to a website: [Golem UI](https://golemui.com).
+
+By adding # you can create a headings 1 to 6.
+
+## Lists
+Unordered lists can be started using the hyphen:
+- **option a**
+- **option b**
+- **option c**
+
+Ordered lists can be started using numbers followed by periods:
+1. **one**
+2. **two**
+3. **three**
 `,
 };
 
@@ -15,7 +30,7 @@ const form = golemForm().create({
       type: 'markdown',
       path: 'md',
       props: {
-        tools: ['H', 'B', 'I', '|', 'OL', 'UL', '|', 'L', 'Q', '|'],
+        tools: ['H', 'B', 'I', 'S', '|', 'OL', 'UL', '|', 'L', 'Q', '|'],
         autoGrow: true,
         defaultOpenPreview: true,
       },
