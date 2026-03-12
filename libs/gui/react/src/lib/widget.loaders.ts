@@ -19,6 +19,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<
   password: async () => (await import('./components/Password')).Password,
   textinput: async () => (await import('./components/TextInput')).TextInput,
   textarea: async () => (await import('./components/TextArea')).TextArea,
+  markdown: async () => (await import('./components/Markdown')).Markdown,
   checkbox: async () => (await import('./components/Checkbox')).Checkbox,
   toggle: async () => (await import('./components/Toggle')).Toggle,
   number: async () => (await import('./components/Number')).NumberInput,

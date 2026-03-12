@@ -58,7 +58,7 @@ export type TextareaProps = {
   maxLength?: number;
 };
 
-type MarkdownButtons = 'H' | 'B' | 'I' | 'Q' | 'L' | 'NL' | 'UL' | '|';
+type MarkdownButtons = 'H' | 'B' | 'I' | 'Q' | 'L' | 'OL' | 'UL' | '|';
 export type MarkdownProps = {
   /**
    * A collection of markdown-style formatting tokens.
@@ -69,24 +69,24 @@ export type MarkdownProps = {
    * - **I**: Italic -> `_some text_`
    * - **Q**: Quote -> `> some text`
    * - **L**: Link -> `[some text](url)`
-   * - **NL**: Numbered list -> `1. some text`
+   * - **NL**: Ordered list -> `1. some text`
    * - **UL**: Unordered list -> `- some text`
    * - **|**: Separator -> `|`
    * * @example
    * ```ts
-   * const toolbar = ['H', 'B', 'I', 'Q', 'L', '|', 'NL', 'UL'];
+   * const toolbar = ['H', 'B', 'I', 'Q', 'L', '|', 'OL', 'UL'];
    * ```
    */
   tools?: MarkdownButtons[];
-  writeTabLabel?: string;
-  previewTabLabel?: string;
   headingTitle?: string;
   boldTitle?: string;
   italicTitle?: string;
   quoteTitle?: string;
   linkTitle?: string;
-  numberedListTitle?: string;
+  orderedListTitle?: string;
   unorderedListTitle?: string;
+  splitViewTitle?: string;
+  defaultOpenPreview?: boolean;
 } & TextareaProps;
 
 export type CalendarProps = {

@@ -1,5 +1,7 @@
 gui-markdown {
   display: block;
+  container-type: inline-size;
+  container-name: gui-markdown-widget;
 
   .gui-widget.gui-markdown--with-preview {
     .gui-markdown__preview {
@@ -51,8 +53,7 @@ gui-markdown {
     textarea {
       border-radius: 0;
       border: 0;
-      padding-top: var(--gui-space-10);
-      padding-bottom: 0;
+      padding-top: var(--gui-space-12);
       width: 100%;
       resize: vertical;
     }
@@ -63,11 +64,12 @@ gui-markdown {
     position: absolute;
     inset-inline-end: 0;
     width: calc(50% - (var(--gui-space-3) * 2));
-    height: calc(100% - var(--gui-space-10));
-    padding-top: var(--gui-space-10);
+    height: calc(100% - var(--gui-space-12));
+    padding-top: var(--gui-space-12);
     padding-left: var(--gui-space-3);
     padding-right: var(--gui-space-3);
     border-left: 1px solid var(--gui-border-default);
+    overflow-y: scroll;
   }
 
   .gui-markdown__toolbar {
@@ -97,7 +99,7 @@ gui-markdown {
 
       &--active {
         background: var(--gui-intent-primary);
-        fill: var(--gui-text-default);
+        fill: var(--gui-intent-primary-text);
       }
     }
 
@@ -128,5 +130,28 @@ gui-markdown {
     &__error {
       color: var(--gui-intent-error);
     }
+  }
+}
+
+@container gui-markdown-widget (max-width: 768px) {
+  gui-markdown .gui-widget.gui-markdown--with-preview {
+    .gui-markdown__preview {
+      display: block;
+      width: calc(100% - var(--gui-space-3) * 2);
+    }
+    .gui-markdown__toolbar {
+      width: calc(100% - var(--gui-space-3) * 2);
+      z-index: 1;
+    }
+    textarea {
+      margin-inline-start: -100%;
+      padding: var(--gui-space-12) 0 var(--gui-space-3);
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  gui-markdown .gui-markdown__toolbar-button--active {
+    fill: var(--gui-text-default);
   }
 }

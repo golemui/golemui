@@ -15,9 +15,9 @@ const form = golemForm().create({
       type: 'markdown',
       path: 'md',
       props: {
-        tools: ['H', 'B', 'I', '|', 'L', 'Q'],
-        writeTabLabel: '🖊️ Write',
-        previewTabLabel: '👁️ Preview',
+        tools: ['H', 'B', 'I', '|', 'OL', 'UL', '|', 'L', 'Q', '|'],
+        autoGrow: true,
+        defaultOpenPreview: true,
       },
       validator: { type: 'string', required: true, minLength: 2 },
     },
