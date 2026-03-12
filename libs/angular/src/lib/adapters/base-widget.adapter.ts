@@ -29,6 +29,7 @@ export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
             ...calculatedWidget,
             ...calculatedWidget.props,
             lang: this.context.store.getState().lang,
+            deps: this.context.dependencies,
           };
         });
       });

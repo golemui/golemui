@@ -52,6 +52,9 @@
           "$ref": "./components/list.schema.json"
         },
         {
+          "$ref": "./components/markdown.schema.json"
+        },
+        {
           "$ref": "./components/number.schema.json"
         },
         {

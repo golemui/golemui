@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { WidgetLoaders, WithWidget } from '@golemui/core';
 import '@golemui/lit';
-import { vanillaSchemaToFieldMap } from '@golemui/gui-shared';
+import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
   initValidators,
@@ -21,6 +21,7 @@ export class FormElement extends LitElement {
   @property({ type: Object }) widgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
+  @property({ type: Object }) dependencies?: Dependencies;
   @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
@@ -62,6 +63,7 @@ export class FormElement extends LitElement {
         .widgetLoaders=${this.customWidgetLoaders}
         .itemRenderers=${this.itemRenderers}
         .localization=${this.localization}
+        .dependencies=${this.dependencies}
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
         .validateOn=${this.validateOn ?? 'eager'}

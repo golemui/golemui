@@ -48,12 +48,48 @@ export type CurrencyProps = {
 export type TextareaProps = {
   hint?: string;
   placeholder?: string;
+  /**
+   * icon to display inside the textarea on the left-top corner.
+   */
   icon?: string;
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
   maxLength?: number;
 };
+
+type MarkdownButtons = 'H' | 'B' | 'I' | 'S' | 'Q' | 'L' | 'OL' | 'UL' | '|';
+export type MarkdownProps = {
+  /**
+   * A collection of markdown-style formatting tokens.
+   * * @remarks
+   * Each token corresponds to a specific text decoration:
+   * - **H**: Heading -> `### Title`
+   * - **B**: Bold -> `**some text**`
+   * - **I**: Italic -> `_some text_`
+   * - **S**: Strikethrough -> `~~strikethrough~~`
+   * - **Q**: Quote -> `> some text`
+   * - **L**: Link -> `[some text](url)`
+   * - **NL**: Ordered list -> `1. some text`
+   * - **UL**: Unordered list -> `- some text`
+   * - **|**: Separator -> `|`
+   * * @example
+   * ```ts
+   * const toolbar = ['H', 'B', 'I', 'S', 'Q', 'L', '|', 'OL', 'UL'];
+   * ```
+   */
+  tools?: MarkdownButtons[];
+  headingTitle?: string;
+  boldTitle?: string;
+  italicTitle?: string;
+  strikethroughTitle?: string;
+  quoteTitle?: string;
+  linkTitle?: string;
+  orderedListTitle?: string;
+  unorderedListTitle?: string;
+  splitViewTitle?: string;
+  defaultOpenPreview?: boolean;
+} & TextareaProps;
 
 export type CalendarProps = {
   /**
@@ -366,6 +402,6 @@ export type FlexProps = {
 
 export type TabsProps = {
   defaultOpen?: string;
-  renderMode: 'all' | 'activeOnly';
+  renderMode?: 'all' | 'activeOnly';
   tabs: { label: string; uid: string }[];
 };

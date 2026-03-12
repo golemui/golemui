@@ -11,8 +11,10 @@ import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer'
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
+import { Dependencies } from '@golemui/gui-shared';
+import snarkdown from 'snarkdown';
 
-const mock = AppsShared.shippingManifest;
+const mock = AppsShared.tests;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],
@@ -32,6 +34,11 @@ export class AppFormPage {
     }));
   protected formDef = mock.form;
   protected formData = mock.data;
+  protected deps: Dependencies = {
+    markdown: {
+      parse: (md: string) => snarkdown(md),
+    },
+  };
 
   protected middlewares = [AppsShared.loggerMiddleware];
   protected customWidgetLoaders = {
