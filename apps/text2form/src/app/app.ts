@@ -1,9 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as Gui from '@golemui/gui-angular';
 import { golemForm } from '@golemui/gui-shared';
 import * as Core from '@golemui/core';
+import { GeminiService } from './gemini.service';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -40,23 +41,24 @@ const initialFormJson = golemForm().create({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class App {
-  activeTab: 'form' | 'json' = 'form';
-  chatInput = '';
-  messages: ChatMessage[] = [
+  private geminim = inject(GeminiService);
+  protected activeTab: 'form' | 'json' = 'form';
+  protected chatInput = '';
+  protected messages: ChatMessage[] = [
     { role: 'assistant', content: 'Hello! Describe the form you want to build.' },
   ];
-  error = '';
-  formJson = JSON.stringify(initialFormJson, undefined, 2);
+  protected error = '';
+  protected formJson = JSON.stringify(initialFormJson, undefined, 2);
 
-  onJsonChange(value: string) {
+  protected onJsonChange(value: string) {
     this.formJson = value;
   }
 
-  switchTab(tab: 'form' | 'json') {
+  protected switchTab(tab: 'form' | 'json') {
     this.activeTab = tab;
   }
 
-  sendMessage() {
+  protected sendMessage() {
     if (!this.chatInput.trim()) {
       return;
     }
@@ -76,13 +78,13 @@ export class App {
     }, 500);
   }
 
-  onFormHealth(formHealth: Core.FormHealth) {
+  protected onFormHealth(formHealth: Core.FormHealth) {
     if (formHealth.status === 'errored') {
       this.error = formHealth.message;
     }
   }
 
-  onFormEvent(event: Core.FormEvent) {
+  protected onFormEvent(event: Core.FormEvent) {
     console.log('onFormEvent', event);
   }
 }
