@@ -31,7 +31,7 @@ export class ObjectUtils {
     const result: any = { ...left };
 
     for (const key in right) {
-      if (right.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(right, key)) {
         if (
           typeof right[key] === 'object' &&
           !Array.isArray(right[key]) &&
@@ -53,5 +53,4 @@ export class ObjectUtils {
   }
 }
 
-const objectUtils = new ObjectUtils();
-export default objectUtils;
+export const objectUtils = new ObjectUtils();

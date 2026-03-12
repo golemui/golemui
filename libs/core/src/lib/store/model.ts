@@ -17,7 +17,7 @@ export type State = {
   formDef: Form.Form<string>;
 
   /**
-   * Flattened representation of `dx` as a map from UID to widget definition.
+   * Flattened representation of `formDef` as a map from UID to widget definition.
    * Enables more efficient lookup and processing in downstream operations.
    */
   flatForm: Record<Uid, Widget.FormWidget<string>>;

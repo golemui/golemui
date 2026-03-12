@@ -5,7 +5,7 @@ import {
   ResolvedSelectors,
   RuntimeFunction,
 } from './dx.domain';
-import objectUtils, { ObjectUtils } from '../../utils/objectUtils.service';
+import { objectUtils, ObjectUtils } from '../../utils/objectUtils.service';
 import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
 
 export class WidgetMerger {

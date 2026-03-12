@@ -1,7 +1,7 @@
 import { GuiItemTypes } from '../../core/dx.domain';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import { ActionDecorator, ActionDefOrCallback, ActionEntry, GuiActionsShortcut } from './actions.domain';
-import objectUtils from '../../../utils/objectUtils.service';
+import { objectUtils } from '../../../utils/objectUtils.service';
 
 export const _guiButtons = (
   defs: ActionEntry[],
