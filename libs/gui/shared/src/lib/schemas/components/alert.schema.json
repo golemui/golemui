@@ -5,7 +5,7 @@
   "type": "object",
   "$defs": {
     "textProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "levelProp": {
       "enum": ["default", "info", "success", "warning", "error"]
@@ -13,7 +13,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/definitions/baseWidget"
+      "$ref": "../common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {

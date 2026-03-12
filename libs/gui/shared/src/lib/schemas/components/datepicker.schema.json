@@ -5,19 +5,19 @@
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "placeholderProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
@@ -29,10 +29,10 @@
       "type": "string"
     },
     "prevMonthAriaLabelProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "nextMonthAriaLabelProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
       "enum": ["numeric", "2-digit"]
@@ -46,7 +46,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/definitions/baseWidget"
+      "$ref": "../common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -57,7 +57,7 @@
       "const": "datePicker"
     },
     "path": {
-      "$ref": "../common.schema.json#/definitions/dotPath"
+      "$ref": "../common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -69,7 +69,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/definitions/on"
+      "$ref": "../common.schema.json#/$defs/on"
     },
     "props": {
       "type": "object",

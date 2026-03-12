@@ -5,13 +5,13 @@
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "addLabelProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "removeLabelProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "limitProp": {
       "type": "number"
@@ -22,7 +22,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/definitions/baseWidget"
+      "$ref": "../common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -33,13 +33,13 @@
       "const": "repeater"
     },
     "path": {
-      "$ref": "../common.schema.json#/definitions/dotPath"
+      "$ref": "../common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/definitions/on"
+      "$ref": "../common.schema.json#/$defs/on"
     },
     "props": {
       "type": "object",

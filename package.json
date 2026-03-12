@@ -42,6 +42,7 @@
     "react-dom": "19.0.0",
     "react-router": "^7.9.3",
     "rxjs": "~7.8.0",
+    "snarkdown": "^2.0.0",
     "subscript": "^10.1.8",
     "ts.data.json": "^3.3.0",
     "zod": "^4.0.0",

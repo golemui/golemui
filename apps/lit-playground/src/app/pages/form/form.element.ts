@@ -10,14 +10,21 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
+import { Dependencies } from '@golemui/gui-shared';
+import snarkdown from 'snarkdown';
 
-const mock = AppsShared.shippingManifest;
+const mock = AppsShared.tests;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
   formDef = mock.form;
   formData = mock.data;
   localization = AppsShared.initializeI18n(mock.resources);
+  deps: Dependencies = {
+    markdown: {
+      parse: (md: string) => snarkdown(md),
+    },
+  };
   languages = AppsShared.commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
@@ -88,6 +95,7 @@ export class FormElement extends LitElement {
           .widgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
+          .dependencies=${this.deps}
           .middlewares=${this.middlewares}
           .validators=${this.validators}
           .validateOn=${this.validateOn}

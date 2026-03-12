@@ -6,6 +6,7 @@ export const inputWidgets = [
   'datePicker',
   'dropdown',
   'list',
+  'markdown',
   'number',
   'password',
   'radiogroup',
@@ -20,6 +21,7 @@ export const layoutWidgets = ['accordion', 'flex', 'tabs'] as const;
 export const displayWidgets = ['alert', 'renderer'] as const;
 export const actionWidgets = ['button'] as const;
 
+// TODO: rename to golem (search other vanilla named things accross the repo)
 export const vanillaWidgets = [
   ...inputWidgets,
   ...layoutWidgets,
