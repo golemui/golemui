@@ -7,11 +7,12 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@angular/build:application",
+      "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/text2form",
-        "browser": "apps/text2form/src/main.ts",
+        "index": "apps/text2form/src/index.html",
+        "main": "apps/text2form/src/main.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/text2form/tsconfig.app.json",
         "inlineStyleLanguage": "scss",

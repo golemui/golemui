@@ -40,7 +40,12 @@ export class GeminiService {
   }
 
   private async dereferencedSchema() {
-    return await $RefParser.dereference(mySchema);
+    const dereferenced = await $RefParser.dereference(
+      'https://golemui.com/schemas/form.schema.json',
+      { dereference: { circular: false } },
+    );
+    console.log(dereferenced);
+    return dereferenced as Schema;
   }
 
   async sendMessage(message: string) {
