@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://golemui.com/schemas/common.schema.json",
   "title": "Golem Common Definitions",
-  "definitions": {
+  "$defs": {
     "reactiveExpression": {
       "type": "string",
       "description": "A reactive expression string. Use `$form` to access form data e.g. `$form.termsAccepted === true`"
@@ -55,7 +55,7 @@
           "type": "object",
           "properties": {
             "when": {
-              "$ref": "#/definitions/reactiveExpression"
+              "$ref": "#/$defs/reactiveExpression"
             }
           },
           "required": ["when"]
@@ -80,7 +80,7 @@
           "type": "object",
           "properties": {
             "when": {
-              "$ref": "#/definitions/reactiveExpression"
+              "$ref": "#/$defs/reactiveExpression"
             }
           },
           "required": ["when"]
@@ -96,7 +96,7 @@
           "type": "object",
           "properties": {
             "when": {
-              "$ref": "#/definitions/reactiveExpression"
+              "$ref": "#/$defs/reactiveExpression"
             }
           },
           "required": ["when"]
@@ -139,7 +139,7 @@
       "type": "object",
       "properties": {
         "uid": {
-          "$ref": "#/definitions/uid"
+          "$ref": "#/$defs/uid"
         },
         "type": {
           "type": "string"
@@ -148,10 +148,10 @@
           "type": "number"
         },
         "include": {
-          "$ref": "#/definitions/include"
+          "$ref": "#/$defs/include"
         },
         "exclude": {
-          "$ref": "#/definitions/exclude"
+          "$ref": "#/$defs/exclude"
         }
       },
       "required": ["type"]
