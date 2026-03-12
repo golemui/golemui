@@ -2,61 +2,39 @@ import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = {
-  repeaters: {
-    users: [
-      {
-        firstName: '0. Alice',
-        lastName: '0. Johnson',
-      },
-      {
-        firstName: '',
-        lastName: '1. Smith',
-      },
-      {
-        firstName: '2. Charlie',
-      },
-    ],
-  },
+  md: `# Markdown editor with Snarkdown
+## Formatting text
+You can format text using **bold**, _italic_, and ~~strikethrough~~.
+> Blockquotes are also supported.
+You can add also a link to a website: [Golem UI](https://golemui.com).
+
+By adding # you can create a headings 1 to 6.
+
+## Lists
+Unordered lists can be started using the hyphen:
+- **option a**
+- **option b**
+- **option c**
+
+Ordered lists can be started using numbers followed by periods:
+1. **one**
+2. **two**
+3. **three**
+`,
 };
 
 const form = golemForm().create({
-  states: {
-    limitReached: '$form.repeaters.users?.length === 5',
-  },
   form: [
     {
-      kind: 'layout',
-      type: 'flex',
-      children: [
-        {
-          kind: 'input',
-          type: 'repeater',
-          path: 'repeaters.users',
-          props: {
-            addLabel: 'Add new developer',
-            'addLabel.limitReached': "Limit Reached, you can't add more",
-            removeLabel: 'Remove developer',
-            limit: 5,
-            template: {
-              kind: 'layout',
-              type: 'flex',
-              children: [
-                {
-                  kind: 'input',
-                  type: 'textinput',
-                  path: 'repeaters.users.items.firstName',
-                  validator: { type: 'string', required: true },
-                },
-                {
-                  kind: 'input',
-                  type: 'textinput',
-                  path: 'repeaters.users.items.lastName',
-                },
-              ],
-            },
-          },
-        },
-      ],
+      kind: 'input',
+      type: 'markdown',
+      path: 'md',
+      props: {
+        tools: ['H', 'B', 'I', 'S', '|', 'OL', 'UL', '|', 'L', 'Q', '|'],
+        autoGrow: true,
+        defaultOpenPreview: true,
+      },
+      validator: { type: 'string', required: true, minLength: 2 },
     },
     {
       kind: 'action',

@@ -7,6 +7,7 @@ import {
   GuiErrors,
   GuiLabel,
   GuiList,
+  GuiMarkdown,
   GuiNumber,
   GuiPassword,
   GuiRadiogroup,
@@ -38,6 +39,9 @@ declare module 'react' {
         Partial<GuiLabel>;
       'gui-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<Omit<GuiList, 'children'>>;
+
+      'gui-markdown': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiMarkdown>;
 
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiNumber>;

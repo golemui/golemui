@@ -12,6 +12,7 @@ export interface FormComponentProps {
   widgetLoaders: Core.WidgetLoaders<React.ComponentType<Core.WithWidget>>;
   itemRenderers: Record<string, Core.ItemRenderer>;
   localization?: Core.I18nTranslator;
+  dependencies?: Record<string, unknown>;
   validators: Core.ValidatorFn<any>;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
@@ -26,6 +27,7 @@ export function FormComponent({
   widgetLoaders,
   itemRenderers,
   localization,
+  dependencies,
   middlewares,
   validators,
   validateOn,
@@ -50,8 +52,17 @@ export function FormComponent({
       validateOn || 'eager',
       itemRenderers,
       localization,
+      dependencies || {},
     );
-  }, [widgetLoaders, middlewares, validators, validateOn, itemRenderers, localization]);
+  }, [
+    widgetLoaders,
+    middlewares,
+    validators,
+    validateOn,
+    itemRenderers,
+    localization,
+    dependencies,
+  ]);
 
   // FORM HEALTH
   useEffect(() => {

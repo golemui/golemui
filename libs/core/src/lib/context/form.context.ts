@@ -16,6 +16,11 @@ export class FormContext<ComponentType> {
   uuid = crypto.randomUUID();
   itemRenderers: Record<string, ItemRenderer> = {};
   localization!: I18nTranslator;
+  /**
+   * Dependencies are any 3rd party service components may need internally.
+   * e.g. a markdown parser for the Markdown component
+   */
+  dependencies: Record<string, unknown> = {};
 
   initialize(
     widgetLoaders: WidgetLoaders<ComponentType>,
@@ -24,8 +29,10 @@ export class FormContext<ComponentType> {
     validateOn: ValidateOn,
     itemRenderers: Record<string, ItemRenderer>,
     localization: I18nTranslator = identityTranslator(),
+    dependencies: Record<string, unknown>,
   ) {
     this.localization = localization;
+    this.dependencies = dependencies;
     this.widgetRegistry.setWidgetLoaders(widgetLoaders);
     this.itemRenderers = itemRenderers;
     this.store = createFormStore(middlewares, validators, validateOn, localization);

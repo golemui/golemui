@@ -97,6 +97,7 @@ export type FormEvent<T = any> = {
  */
 export type ControlTemplateData<T, V = any> = {
   lang?: string;
+  deps?: Record<string, unknown>;
   label?: string;
   value?: T;
   /**
@@ -121,6 +122,7 @@ export type ControlTemplateData<T, V = any> = {
  */
 export type LayoutTemplateData = {
   lang?: string;
+  deps?: Record<string, unknown>;
   /**
    * A size relative to the container and sibling components
    * @example
@@ -136,6 +138,7 @@ export type LayoutTemplateData = {
  */
 export type DisplayWidgetTemplateData = {
   lang?: string;
+  deps?: Record<string, unknown>;
   /**
    * A size relative to the container and sibling components
    * @example
@@ -150,6 +153,7 @@ export type DisplayWidgetTemplateData = {
  */
 export type ActionWidgetTemplateData = {
   lang?: string;
+  deps?: Record<string, unknown>;
   label?: string;
   disabled?: boolean;
   /**

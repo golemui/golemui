@@ -11,6 +11,8 @@ import { productItemRenderer } from '../../item-renderers/product.item-renderer'
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { iframeResizer } from '@golemui/apps-shared';
+import { Dependencies } from '@golemui/gui-shared';
+import snarkdown from 'snarkdown';
 
 const mock = AppsShared.template;
 
@@ -42,6 +44,11 @@ export class FormElement extends LitElement {
     allowedNames: AppsShared.allowedNames,
   };
   validateOn: Core.ValidateOn = 'eager';
+  deps: Dependencies = {
+    markdown: {
+      parse: (md: string) => snarkdown(md),
+    },
+  };
 
   error = '';
 
@@ -112,6 +119,7 @@ export class FormElement extends LitElement {
                 .middlewares=${this.middlewares}
                 .validators=${this.validators}
                 .validateOn=${this.validateOn}
+                .dependencies=${this.deps}
                 @formHealth=${this.onFormHealth}
                 @formEvent=${this.onFormEvent}
               ></gui-form>
