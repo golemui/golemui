@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-html, body {
+html,
+body {
   background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
@@ -10,8 +11,14 @@ body {
   justify-content: center;
 }
 
+app-root {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
 .container {
-  width: 990px;
+  width: 100%;
   padding: 1rem;
 }
 
@@ -55,5 +62,25 @@ body {
   &-visibility_off::before {
     content: 'visibility_off';
     font-size: 1.2rem;
+  }
+
+  &-save::before {
+    content: 'save';
+  }
+
+  &-remove::before {
+    content: 'remove';
+  }
+
+  &-add::before {
+    content: 'add';
+  }
+
+  &-person_add::before {
+    content: 'person_add';
+  }
+
+  &-delete::before {
+    content: 'delete';
   }
 }

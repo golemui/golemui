@@ -48,7 +48,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
     const tabs = templateData.tabs || [];
     const currentIndex = tabs.findIndex((tab) => tab.uid === activeTab);
     if (currentIndex > -1) {
-      tabRefs.current[currentIndex].scrollIntoView();
+      tabRefs.current[currentIndex].scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
   }, [activeTab, templateData.tabs]);
 
@@ -122,7 +122,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
             onClick={() => handleTabChange(tab.uid)}
             onKeyDown={(event: React.KeyboardEvent) => onKeyDown(event)}
             onFocus={(event: React.FocusEvent) => {
-              event.target.scrollIntoView();
+              event.target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
             }}
           >
             {tab.label}

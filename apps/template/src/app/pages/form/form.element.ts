@@ -3,19 +3,22 @@ import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import i18next from 'i18next';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
+import { iframeResizer } from '@golemui/apps-shared';
 
-const mock = AppsShared.kitchenSink;
+const mock = AppsShared.template;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
+  formThemes: string[] = [];
   formDef = null;
+  formDir: string | null = null;
   formData = {};
   localization = AppsShared.initializeI18n(mock.resources);
   languages = AppsShared.commonLanguages
@@ -48,6 +51,7 @@ export class FormElement extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
+    iframeResizer();
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('form')) {
@@ -60,6 +64,15 @@ export class FormElement extends LitElement {
       this.formData = await formDataResponse.json();
     } else {
       this.formData = {};
+    }
+
+    if (params.has('theme')) {
+      this.formThemes = params.get('theme')?.split('|') ?? [];
+    }
+
+    if (params.has('dir')) {
+      this.formDir = params.get('dir');
+      i18next.changeLanguage('fa');
     }
 
     this.requestUpdate();
@@ -78,45 +91,33 @@ export class FormElement extends LitElement {
     Promise.resolve().then(() => this.requestUpdate());
   }
 
-  protected onLanguageChanged(event: CustomEvent<{ value: string }>) {
-    const code = event.detail.value;
-    i18next.changeLanguage(code);
-  }
-
-  private languagePicker() {
-    return html`<div>
-      <gui-select
-        label="Language picker"
-        uid="language"
-        value="en"
-        .options=${this.languages}
-        @change=${this.onLanguageChanged}
-      ></gui-select>
-    </div>`;
-  }
-
   render() {
+    const themes = this.formThemes.length > 0 ? this.formThemes : [''];
+
     if (!this.formDef) {
       return html`<div>loading...</div>`;
     } else {
       return html`
-        <div>
-          ${this.languages.length > 0 ? this.languagePicker() : null}
-          ${this.error ? html`<p class="error">${this.error}</p>` : null}
+        ${themes.map(
+          (theme) => html`
+            <div data-theme=${theme ?? nothing}>
+              ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .widgetLoaders=${this.customWidgetLoaders}
-            .itemRenderers=${this.itemRenderers}
-            .localization=${this.localization}
-            .middlewares=${this.middlewares}
-            .validators=${this.validators}
-            .validateOn=${this.validateOn}
-            @formHealth=${this.onFormHealth}
-            @formEvent=${this.onFormEvent}
-          ></gui-form>
-        </div>
+              <gui-form
+                .formDef=${this.formDef}
+                .data=${this.formData}
+                .widgetLoaders=${this.customWidgetLoaders}
+                .itemRenderers=${this.itemRenderers}
+                .localization=${this.localization}
+                .middlewares=${this.middlewares}
+                .validators=${this.validators}
+                .validateOn=${this.validateOn}
+                @formHealth=${this.onFormHealth}
+                @formEvent=${this.onFormEvent}
+              ></gui-form>
+            </div>
+          `,
+        )}
       `;
     }
   }

@@ -1,0 +1,23 @@
+---
+title: Overview
+description: An input field that collects arbitrary user data
+sidebar:
+  order: 0
+---
+
+Input Fields are input fields that collect data from users. A text field, an email field, or a radio group are examples of Input Fields.
+
+Input Fields are defined by setting the `kind` property as `input`.
+
+## Main Properties
+
+Use these properties to customize your Input Fields.
+
+| property | type   | value                                                                                                                  |
+| -------- | ------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `uid`    | string | A unique id, if none provided, one will be generated automatically                                                     |
+| `kind`   | string | **MANDATORY** All Input Fields are type `input`                                                                        |
+| `widget` | string | **MANDATORY** The Input Field widget that you want to use (for example: `textinput`)                                   |
+| `path`   | string | **MANDATORY** A `.` separated string with the data path (for example: `user.firstName`)                                |
+| `label`  | string | A string to display the Input Field label                                                                              |
+| `props`  | object | An object with custom properties defined by each Input Field, check the documentation of each Input Field to know more |

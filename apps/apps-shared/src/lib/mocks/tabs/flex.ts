@@ -3,8 +3,8 @@ export const flex = (): any => ({
   kind: 'layout',
   type: 'flex',
   props: {
-    direction: 'horizontal',
-    'direction.limitReached': 'vertical',
+    direction: 'row',
+    'direction.limitReached': 'column',
   },
   children: [
     {
@@ -12,14 +12,18 @@ export const flex = (): any => ({
       kind: 'input',
       type: 'textinput',
       path: 'listName',
+      label: 'List Name',
       size: 1,
+      validator: { type: 'string', required: true },
     },
     {
       uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'listOwner',
+      label: 'List Owner',
       size: 2,
+      validator: { type: 'string', required: true },
     },
   ],
 });

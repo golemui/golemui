@@ -37,7 +37,7 @@ const form = defineForm({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab12',
+        defaultOpen: 'tab3',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Flex Layout', uid: 'tab2' },
@@ -80,6 +80,10 @@ const form = defineForm({
       kind: 'action',
       type: 'button',
       label: 'Create',
+      props: {
+        icon: 'material-icons material-icons-save',
+        iconPosition: 'right',
+      },
       on: {
         click: 'submit',
       },

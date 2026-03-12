@@ -1,0 +1,50 @@
+---
+title: Tabs
+description: A Layout component for organizing content into separate views accessible via a navigation bar
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import tabsJson from '../../../../../public/template/components/tabs/tabs.json?raw';
+import tabsAnatomyHtml from '../../../../../public/template/components/tabs/tabs-anatomy.html?raw';
+export const configJson = 'tabs.json';
+export const anatomy = 'tabs-anatomy.html';
+
+Tabs components are [Layout Fields](/components-reference/layout-fields/overview) that allow users to switch between different content areas within the same context. They are highly effective for breaking down large forms into logical, manageable pieces.
+
+<Code code={tabsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/tabs/tabs.json"
+/>
+
+## Props
+
+Use these `props` to customize your Tabs component.
+
+| prop          | type   | description                                                                                                    |
+| ------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| `tabs`        | array  | **Required**. Array of tab definitions: `{ label: string, uid: string }`                                       |
+| `defaultOpen` | string | The `uid` of the tab that should be open by default. Defaults to the first tab                                 |
+| `renderMode`  | string | Either `'all'` (renders hidden tabs in DOM) or `'activeOnly'` (renders only the open tab). Defaults to `'all'` |
+
+## Styling
+
+Tabs can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables used to style the tabs.
+
+| CSS Variable           | Description                                 |
+| ---------------------- | ------------------------------------------- |
+| `--gui-bg-default`     | Background color for tab buttons and panels |
+| `--gui-border-default` | Border color for tab buttons and panels     |
+| `--gui-text-default`   | Text color for labels                       |
+| `--gui-space-3`        | Padding inside tab buttons and panels       |
+| `--gui-radius-md`      | Border radius for tab buttons and panels    |
+
+### Anatomy
+
+This is the anatomy of the Tabs Component in case you want to use your CSS styles.
+
+<Code code={tabsAnatomyHtml} lang="html" title={anatomy} />

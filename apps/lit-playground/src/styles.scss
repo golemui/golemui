@@ -64,6 +64,26 @@ lit-root {
     content: 'visibility_off';
     font-size: 1.2rem;
   }
+
+  &-save::before {
+    content: 'save';
+  }
+
+  &-remove::before {
+    content: 'remove';
+  }
+
+  &-add::before {
+    content: 'add';
+  }
+
+  &-person_add::before {
+    content: 'person_add';
+  }
+
+  &-delete::before {
+    content: 'delete';
+  }
 }
 
 // List Item Renderer

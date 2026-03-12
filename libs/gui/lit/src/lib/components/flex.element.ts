@@ -51,7 +51,10 @@ export class FlexElement extends LitElement implements Core.WithWidget {
   override render() {
     const classes = {
       'gui-flex__widget': true,
-      'gui-flex__widget--horizontal': this.adapter.templateData.direction === 'horizontal',
+      'gui-flex__widget--row': this.adapter.templateData.direction === 'row',
+      'gui-flex__widget--row-reverse': this.adapter.templateData.direction === 'row-reverse',
+      'gui-flex__widget--column': !this.adapter.templateData.direction || this.adapter.templateData.direction === 'column',
+      'gui-flex__widget--column-reverse': this.adapter.templateData.direction === 'column-reverse',
       'gui-flex__widget--align-start': this.adapter.templateData.align === 'start',
       'gui-flex__widget--align-end': this.adapter.templateData.align === 'end',
       'gui-flex__widget--align-center': this.adapter.templateData.align === 'center',
@@ -60,7 +63,7 @@ export class FlexElement extends LitElement implements Core.WithWidget {
     };
 
     return html`
-      <div class=${classMap(classes)} id=${this.widget?.uid}>
+      <div class=${classMap(classes)} id=${this.widget?.uid} style=${this.adapter.templateData.gap ? `gap: ${this.adapter.templateData.gap}px` : ''}>
         ${repeat(
           this.adapter.templateData.children || [],
           (child: any) => child?.uid,

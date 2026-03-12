@@ -22,12 +22,15 @@ export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
     RepeaterProps<Core.NonFunctionWidget>
   > = inject(Angular.InputWidgetAdapter);
 
+  isFocused = false;
+
   ngOnInit(): void {
     this.adapter.init(this.widget);
   }
 
   addItem() {
-    this.adapter.valueChanged([...(this.adapter.templateData().value ?? []), {}]);
+    const newValue = [...(this.adapter.templateData().value ?? []), {}];
+    this.adapter.valueChanged(newValue);
   }
 
   removeItem(index: number) {
@@ -38,6 +41,16 @@ export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
     } else {
       this.adapter.valueChanged(JSON.parse(JSON.stringify(items)));
     }
+  }
+
+  onFocusIn(event: FocusEvent) {
+    event.stopPropagation();
+    this.isFocused = true;
+  }
+
+  onFocusOut(event: FocusEvent) {
+    event.stopPropagation();
+    this.isFocused = false;
   }
 
   ngOnDestroy(): void {

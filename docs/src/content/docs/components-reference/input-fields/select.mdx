@@ -1,0 +1,94 @@
+---
+title: Select
+description: A Select component to allow user to pick one option from a dropdown menu using the native select behavior
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import selectJson from '../../../../../public/template/components/select/select.json?raw';
+import selectPlaceholderJson from '../../../../../public/template/components/select/select-placeholder.json?raw';
+import selectHintJson from '../../../../../public/template/components/select/select-hint.json?raw';
+import selectIconJson from '../../../../../public/template/components/select/select-icon.json?raw';
+import selectCustomFieldsJson from '../../../../../public/template/components/select/select-custom-fields.json?raw';
+import selectAnatomyHtml from '../../../../../public/template/components/select/select-anatomy.html?raw';
+export const configJson = 'select.json';
+export const anatomy = 'select-anatomy.html';
+
+Select components are [Input Fields](/components-reference/input-fields/overview) that allow users to pick a single item from a predefined list of options. They use the native HTML `<select>` element to provide familiar interaction patterns, especially on mobile devices.
+
+<Code code={selectJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/select/select.json"
+/>
+
+## Props
+
+Use these `props` to customize your Select component.
+
+| prop          | type   | description                                                                        |
+| ------------- | ------ | ---------------------------------------------------------------------------------- |
+| `options`     | array  | **Required**. Array of objects representing the dropdown choices                   |
+| `placeholder` | string | Text shown when no option is selected. Defaults to "Select an option"              |
+| `hint`        | string | A description to display below the select dropdown                                 |
+| `icon`        | string | Custom icon class to display inside the select box (e.g. `fas fa-globe`)           |
+| `labelField`  | string | Which object key to use as the display label for an option. Defaults to `label`    |
+| `valueField`  | string | Which object key to use as the underlying value for an option. Defaults to `value` |
+
+### Placeholder
+
+Use the property `placeholder` to define the default empty-state text.
+
+<Code code={selectPlaceholderJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/select/select-placeholder.json"
+/>
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to add descriptive text or validation instructions.
+
+<Code code={selectHintJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/select/select-hint.json"
+/>
+
+### Icon
+
+Use the property `icon` to add a visual indicator inside the select input, on the left side.
+
+<Code code={selectIconJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/select/select-icon.json"
+/>
+
+### Custom Option Fields
+
+If your data source uses different keys for the label and value (e.g., `name` and `code`), use `labelField` and `valueField` to map them accordingly.
+
+<Code code={selectCustomFieldsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/select/select-custom-fields.json"
+/>
+
+## Styling
+
+Select components can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable             | Description                                |
+| ------------------------ | ------------------------------------------ |
+| `--gui-text-default`     | Dropdown arrow indicator color             |
+| `--gui-space-gap--inner` | Label gap                                  |
+| `--gui-intent-error`     | Border and focus shadow color when invalid |
+
+### Anatomy
+
+This is the anatomy of the Select Component in case you want to use your CSS styles.
+
+<Code code={selectAnatomyHtml} lang="html" title={anatomy} />

@@ -15,6 +15,8 @@ export type AccordionProps = {
 // TODO: implement this
 export type ButtonProps = {
   variant?: 'filled' | 'outlined';
+  icon?: string;
+  iconPosition?: 'left' | 'right';
 };
 
 export type TextinputProps = {
@@ -226,7 +228,6 @@ export type DateinputProps = {
 
 export type DatePickerProps = {
   hint?: string;
-  placeholder?: string;
   icon?: string;
   prevMonthIcon?: string;
   nextMonthIcon?: string;
@@ -277,11 +278,15 @@ export type ComponentRendererProps<ComponentType = unknown> = {
   render: { component: ComponentType; api: WidgetPropertyFunctionParams<any> };
 };
 
+// TODO: do we need an {"minItems": 1} property or can it handled by the validators?
 export type RepeaterProps<Template> = {
   addLabel?: string;
   removeLabel?: string;
   limit?: number;
   template: Template;
+  title?: string;
+  addButtonIcon?: string;
+  removeButtonIcon?: string;
 };
 
 export type OptionValue = string | number;
@@ -331,7 +336,8 @@ export type DropdownProps<T> = {
 export type ListProps<T> = {
   hint?: string;
   items: ListItem<T>[];
-  valueField?: string;
+  labelField?: ItemKeys<T>;
+  valueField?: ItemKeys<T>;
   height?: number;
   itemHeight?: number;
   /**
@@ -353,7 +359,7 @@ export type OneOfProps = {
 };
 
 export type FlexProps = {
-  direction?: 'horizontal' | 'vertical';
+  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
   gap?: number;
 };

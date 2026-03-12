@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../libs/gui/components/src/lib/schemas/form.schema.json",
+  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
   "states": {
     "limitReached": "$form.repeaters.users?.length === 5"
   },

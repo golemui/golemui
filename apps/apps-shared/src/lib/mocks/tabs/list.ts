@@ -1,4 +1,8 @@
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
+const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
+  label: `Item ${i}`,
+  value: i,
+}));
 
 export const list = (): any => ({
   uid: 'tab14',
@@ -11,9 +15,21 @@ export const list = (): any => ({
       type: 'list',
       path: 'lists.defaultListRenderer',
       props: {
-        height: 100,
         hint: 'Virtual scroll list with 1000 items. Default Item height.',
         items: thousandsOfItems,
+      },
+    },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'list',
+      path: 'lists.defaultListRendererObjectItems',
+      props: {
+        height: 150,
+        hint: 'Virtual scroll list with 1000 items. Default Item height.',
+        items: thousandsOfObjectItems,
+        labelField: 'label',
+        valueField: 'value',
       },
     },
     {
@@ -23,7 +39,7 @@ export const list = (): any => ({
       path: 'lists.defaultRenderer20',
       label: 'Default Renderer with 20px item height',
       props: {
-        height: 100,
+        height: 150,
         itemHeight: 20,
         hint: 'Virtual scroll list with 1000 items. Item height is 20px.',
         items: thousandsOfItems,
@@ -38,7 +54,7 @@ export const list = (): any => ({
       disabled: true,
       readonly: true,
       props: {
-        height: 100,
+        height: 150,
         items: thousandsOfItems,
       },
     },
@@ -50,7 +66,7 @@ export const list = (): any => ({
       label: 'Required list',
       props: {
         hint: 'Select a number greater than 10.',
-        height: 100,
+        height: 150,
         items: thousandsOfItems,
       },
       validator: { type: 'number', required: true, minimum: 10 },
@@ -63,7 +79,7 @@ export const list = (): any => ({
       label: 'Invalid value list',
       props: {
         hint: 'A list containing invalid values.',
-        height: 100,
+        height: 150,
         items: thousandsOfItems,
       },
       validator: { type: 'string', required: true },
@@ -74,8 +90,9 @@ export const list = (): any => ({
       type: 'list',
       path: 'lists.customItemRenderer',
       props: {
-        height: 150,
+        height: 200,
         itemHeight: 60,
+        labelField: 'title',
         valueField: 'value',
         itemRenderer: 'complexListItemRenderer',
         items: [

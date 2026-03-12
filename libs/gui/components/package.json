@@ -22,7 +22,6 @@
     "*.md"
   ],
   "peerDependencies": {
-    "react": "^19.0.0",
     "@golemui/core": "*",
     "@golemui/gui-shared": "*",
     "lit-html": "^3.3.1",

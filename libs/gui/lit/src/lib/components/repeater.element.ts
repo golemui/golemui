@@ -1,11 +1,17 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { RepeaterProps } from '@golemui/gui-shared';
+import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
+
+/**
+ * Monotonically increasing counter for generating unique repeater item IDs.
+ */
+let nextRepeaterItemId = 0;
+const idIncrementer = () => nextRepeaterItemId++;
 
 @customElement('gui-repeater-input')
 export class RepeaterElement extends LitElement implements Core.WithWidget {
@@ -17,6 +23,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
   @provide({ context: Lit.inputContext })
   adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
+
+  @state() isFocused = false;
 
   subscriptions: Subscription[] = [];
 
@@ -47,26 +55,48 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
     }
   }
 
+  onFocusIn(event: FocusEvent) {
+    event.stopPropagation();
+    this.isFocused = true;
+  }
+
+  onFocusOut(event: FocusEvent) {
+    event.stopPropagation();
+    this.isFocused = false;
+  }
+
   override render() {
     super.render();
 
     return html`
-      <div id=${this.widget.uid}>
-        <h2>${this.adapter.templateData.label}</h2>
+      <div id=${this.widget.uid} class=${`gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`} @focusin=${this.onFocusIn} @focusout=${this.onFocusOut}>
+        ${this.adapter.templateData.label ? html`<h2>${this.adapter.templateData.label}</h2>` : nothing}
 
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
-              (widget) => widget['uid'],
-              (widget, index) => html`
-                <div class="card">
+              (widget) => getItemKey(widget, idIncrementer),
+              (_, index) => html`
+                <div class="gui-repeater__card">
+                  <div class="gui-repeater__card-header">
+                    ${this.adapter.templateData.title
+                      ? html`<span class="gui-repeater__card-title">${this.adapter.templateData.title} ${index + 1}</span>`
+                      : nothing}
+                    <button
+                      type="button"
+                      class="gui-button gui-repeater__remove-btn"
+                      @click=${() => this.removeItem(index)}
+                    >
+                      ${this.adapter.templateData.removeButtonIcon
+                        ? html`<span class="gui-button-icon ${this.adapter.templateData.removeButtonIcon}"></span>`
+                        : nothing}
+                      ${this.adapter.templateData.removeLabel ?? 'Remove'}
+                    </button>
+                  </div>
                   <gui-repeater-widget
                     .repeaterIndex=${index}
                     .widget=${this.adapter.templateData.template}
                   ></gui-repeater-widget>
-                  <button type="button" class="gui-button" @click=${() => this.removeItem(index)}>
-                    ${this.adapter.templateData.removeLabel ?? 'Remove'}
-                  </button>
                 </div>
               `,
             )
@@ -74,13 +104,16 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
         <button
           type="button"
-          class="gui-button"
+          class="gui-button gui-repeater__add-btn"
           @click=${() => this.addItem()}
           ?disabled=${!!(
             this.adapter.templateData.limit &&
             this.adapter.templateData.limit === this.adapter.templateData.value?.length
           )}
         >
+          ${this.adapter.templateData.addButtonIcon
+            ? html`<span class="gui-button-icon ${this.adapter.templateData.addButtonIcon}"></span>`
+            : nothing}
           ${this.adapter.templateData.addLabel ?? 'Add'}
         </button>
       </div>
@@ -94,14 +127,19 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   }
 
   private addItem() {
-    this.adapter.valueChanged([...(this.adapter.templateData.value ?? []), {}]);
+    const newValue = [...(this.adapter.templateData.value ?? []), {}];
+    this.adapter.valueChanged(newValue);
     this.requestUpdate();
   }
 
   private removeItem(index: number) {
-    const arr = [...(this.adapter.templateData.value ?? [])];
-    arr.splice(index, 1);
-    this.adapter.valueChanged(arr);
+    const items = (this.adapter.templateData.value ?? []).filter((_, i) => index !== i);
+    // Make sure we don't keep object references
+    if ('structuredClone' in window) {
+      this.adapter.valueChanged(structuredClone(items));
+    } else {
+      this.adapter.valueChanged(JSON.parse(JSON.stringify(items)));
+    }
     this.requestUpdate();
   }
 }

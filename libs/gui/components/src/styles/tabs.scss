@@ -8,6 +8,13 @@
       flex-shrink: 0;
       opacity: 0;
       pointer-events: none;
+
+      &__start {
+        margin-inline-end: 0;
+      }
+      &__end {
+        margin-inline-start: -1px;
+      }
     }
 
     nav {
@@ -49,8 +56,6 @@
 
       ul[role='tablist'] {
         display: flex;
-        overflow-x: auto;
-        overflow-y: hidden;
         white-space: nowrap;
 
         margin: 0;

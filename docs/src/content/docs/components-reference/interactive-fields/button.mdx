@@ -1,0 +1,90 @@
+---
+title: Button
+description: A Button component for triggering actions within a form
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import buttonJson from '../../../../../public/template/components/button/button.json?raw';
+import buttonDisabledJson from '../../../../../public/template/components/button/button-disabled.json?raw';
+import buttonIconJson from '../../../../../public/template/components/button/button-icon.json?raw';
+import buttonIconRightJson from '../../../../../public/template/components/button/button-icon-right.json?raw';
+import buttonIconOnlyJson from '../../../../../public/template/components/button/button-icon-only.json?raw';
+import buttonAnatomyHtml from '../../../../../public/template/components/button/button-anatomy.html?raw';
+export const configJson = 'button.json';
+export const anatomy = 'button-anatomy.html';
+
+Button components are [Interactive Fields](/components-reference/interactive-fields/overview) (Actions) used to trigger events, submit forms, or perform custom logic defined in the form configuration.
+
+<Code code={buttonJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/button/button.json"
+/>
+
+## Props
+
+Use these `props` to customize your Button component.
+
+| prop           | type                | description                                                                |
+| -------------- | ------------------- | -------------------------------------------------------------------------- |
+| `label`        | string              | The text displayed inside the button (Optional if icon is present)         |
+| `disabled`     | boolean             | Whether the button is interactive or not                                   |
+| `icon`         | string              | Optional CSS class for an icon (Implementation may vary by framework)      |
+| `iconPosition` | `'left' \| 'right'` | **Optional**. Position of the icon relative to the label (Default: `left`) |
+
+### Icons
+
+Buttons support icons that can be positioned to the left or right of the label. The label itself is optional if an icon is provided.
+
+#### Button with Icon (Left)
+
+<Code code={buttonIconJson} lang="js" title="button-icon.json" />
+<Demo
+  src="/template/index.html?form=template/components/button/button-icon.json"
+/>
+
+#### Button with Icon (Right)
+
+<Code code={buttonIconRightJson} lang="js" title="button-icon-right.json" />
+<Demo
+  src="/template/index.html?form=template/components/button/button-icon-right.json"
+/>
+
+#### Icon Only Button
+
+<Code code={buttonIconOnlyJson} lang="js" title="button-icon-only.json" />
+<Demo
+  src="/template/index.html?form=template/components/button/button-icon-only.json"
+/>
+
+### Disabled State
+
+You can disable the button by setting the `disabled` property to `true`.
+
+<Code code={buttonDisabledJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/button/button-disabled.json"
+/>
+
+## Styling
+
+Buttons can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable                  | Description                         |
+| ----------------------------- | ----------------------------------- |
+| `--gui-intent-primary`        | Background color of the button      |
+| `--gui-intent-primary-text`   | Color of the text inside the button |
+| `--gui-intent-primary-hover`  | Background color on hover           |
+| `--gui-intent-primary-active` | Background color when clicked       |
+| `--gui-radius-md`             | Border radius of the button         |
+
+### Anatomy
+
+This is the anatomy of the Button Component in case you want to use your CSS styles.
+
+<Code code={buttonAnatomyHtml} lang="html" title={anatomy} />

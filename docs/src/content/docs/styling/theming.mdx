@@ -1,0 +1,139 @@
+---
+title: Theming
+description: Dark mode, built-in themes, and creating your own GolemUI themes.
+sidebar:
+  order: 2
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+import Demo from '../../../../src/components/landing/Demo.astro';
+
+GolemUI supports automatic dark mode out of the box, ships with built-in themes, and provides a clear pattern for creating your own.
+
+## Dark mode
+
+Dark mode activates automatically based on the user's system preference. No JavaScript, no class toggles, no configuration — just import the stylesheet and it works.
+
+All colors, backgrounds, borders, and status indicators adjust for dark backgrounds. You can see the exact light and dark values for every token in the [Design Tokens](/styling/design-tokens/#semantic-tokens) reference.
+
+<Aside type="tip">
+Want to customize the dark palette? Override the [primitive color variables](/styling/design-tokens/#primitive-colors). For example, changing `--gui-color-neutral-950` updates the dark mode background across every component.
+</Aside>
+
+## Built-in themes
+
+### Clay
+
+Clay is a warm, terracotta-inspired theme that replaces the neutral slate palette with earthy tones and uses terracotta as the primary accent color. It includes both light and dark mode variants.
+
+**Loading the Clay theme:**
+
+```css
+@import '@golemui/gui-components/index.css';
+@import '@golemui/gui-components/themes/clay.css';
+```
+
+**Applying the theme:**
+
+```html
+<div data-theme="clay">
+  <gui-form ...></gui-form>
+</div>
+```
+
+<Demo src="/template/index.html?form=template/styling/sample-form.json&theme=clay" />
+
+<Aside>
+The `data-theme` attribute can be placed on any ancestor element. Set it on `<html>` for a page-wide theme, or on a specific container to theme just that section.
+</Aside>
+
+## Creating a custom theme
+
+<Steps>
+
+1.  ##### Choose a theme selector
+
+    Use the `[data-theme='your-theme-name']` attribute selector. This keeps your theme scoped and composable:
+
+    ```css
+    [data-theme='sunset'] {
+      /* your overrides go here */
+    }
+    ```
+
+2.  ##### Override the tokens you need
+
+    Start with semantic tokens for quick results, or replace entire primitive palettes for a deeper transformation:
+
+    ```css
+    [data-theme='sunset'] {
+      /* Override primitives for a warm palette */
+      --gui-color-primary-400: #fb923c;
+      --gui-color-primary-500: #f97316;
+      --gui-color-primary-600: #ea580c;
+      --gui-color-primary-700: #c2410c;
+      --gui-color-primary-800: #9a3412;
+
+      /* Override semantic tokens */
+      --gui-intent-primary: var(--gui-color-warning-600);
+      --gui-intent-primary-hover: var(--gui-color-warning-700);
+      --gui-intent-primary-active: var(--gui-color-warning-800);
+      --gui-border-focus: var(--gui-color-warning-500);
+
+      /* Adjust backgrounds */
+      --gui-bg-default: #fff7ed;
+      --gui-bg-surface: #ffffff;
+
+      /* Adjust borders */
+      --gui-border-default: var(--gui-color-warning-300);
+      --gui-shadow-focus: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+    }
+    ```
+
+3.  ##### Add dark mode overrides
+
+    Wrap your dark mode adjustments in a `prefers-color-scheme` media query nested under your theme selector:
+
+    ```css
+    @media (prefers-color-scheme: dark) {
+      [data-theme='sunset'] {
+        --gui-bg-default: #1c1210;
+        --gui-bg-surface: #271a16;
+        --gui-border-default: var(--gui-color-warning-600);
+        --gui-intent-primary: var(--gui-color-warning-500);
+        --gui-intent-primary-hover: var(--gui-color-warning-400);
+      }
+    }
+    ```
+
+4.  ##### Apply the theme
+
+    Add `data-theme="sunset"` to any ancestor element:
+
+    ```html
+    <div data-theme="sunset">
+      <gui-form ...></gui-form>
+    </div>
+    ```
+
+</Steps>
+
+<Demo src="/template/index.html?form=template/styling/sample-form.json&theme=sunset" />
+
+## Scoped themes
+
+Because `data-theme` is a standard CSS attribute selector, themes can be scoped to specific containers. This lets you display multiple themes on the same page:
+
+```html
+<div data-theme="clay">
+  <gui-form ...></gui-form>
+</div>
+
+<div data-theme="sunset">
+  <gui-form ...></gui-form>
+</div>
+```
+
+Each form renders with its own theme, and the CSS cascade handles everything naturally — no JavaScript needed.
+
+<Demo src="/template/index.html?form=template/styling/scoped-themes.json&theme=clay|sunset" />

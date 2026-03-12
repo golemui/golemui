@@ -36,6 +36,8 @@
   >
     @for (item of visibleItems(); track $index) {
       @let absoluteIndex = currentRange().start + $index;
+      @let template =
+        templateData.labelField && !templateData.itemRenderer ? item.template[templateData.labelField] : item.template;
 
       <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
       <div
@@ -52,7 +54,7 @@
           *ngComponentOutlet="
             itemRenderer;
             inputs: {
-              template: item.template,
+              template: template,
               value: item.value,
               disabled: templateData.disabled,
               selected: templateData.value === item.value,

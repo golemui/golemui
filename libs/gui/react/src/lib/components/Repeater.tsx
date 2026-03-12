@@ -1,8 +1,19 @@
 import * as Core from '@golemui/core';
-import { RepeaterIndexContext, useInputWidget, WidgetRenderer } from '@golemui/react';
-import { RepeaterProps } from '@golemui/gui-shared';
-import { useCallback } from 'react';
+import {
+  RepeaterIndexesContext,
+  useInputWidget,
+  useRepeaterIndexes,
+  WidgetRenderer,
+} from '@golemui/react';
+import { RepeaterProps, getItemKey } from '@golemui/gui-shared';
+import { useCallback, useState } from 'react';
 import '../styles.scss';
+
+/**
+ * Monotonically increasing counter for generating unique repeater item IDs.
+ */
+let nextRepeaterItemId = 0;
+const idIncrementer = () => nextRepeaterItemId++;
 
 export function Repeater(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
@@ -21,43 +32,80 @@ export function Repeater(widgetInstance: Core.WithWidget) {
 
   const removeItem = useCallback(
     (value: Record<string, unknown>[], index: number) => {
-      const arr = [...(value ?? [])];
-      arr.splice(index, 1);
-      onValueChanged(arr);
+      const items = (value ?? []).filter((_, i) => index !== i);
+      // Make sure we don't keep object references
+      if ('structuredClone' in window) {
+        onValueChanged(structuredClone(items));
+      } else {
+        onValueChanged(JSON.parse(JSON.stringify(items)));
+      }
     },
     [onValueChanged],
   );
 
+  const [isFocused, setIsFocused] = useState(false);
+
+  const onFocusIn = useCallback((event: React.FocusEvent) => {
+    event.stopPropagation();
+    setIsFocused(true);
+  }, []);
+
+  const onFocusOut = useCallback((event: React.FocusEvent) => {
+    event.stopPropagation();
+    setIsFocused(false);
+  }, []);
+
+  const repeaterIndexesFromContext = useRepeaterIndexes();
+
   const renderWidgets = useCallback(() => {
-    return value?.map((_, index) => {
+    return value?.map((item, index) => {
+      const itemKey = getItemKey(item, idIncrementer);
       return (
-        <RepeaterIndexContext.Provider value={index} key={`${uid}-${index}`}>
-          <div className={'card'}>
+        <RepeaterIndexesContext.Provider
+          value={[...repeaterIndexesFromContext, index]}
+          key={`${uid}-${itemKey}`}
+        >
+          <div className="gui-repeater__card">
+            <div className="gui-repeater__card-header">
+              {templateData.title && (
+                <span className="gui-repeater__card-title">{`${templateData.title} ${index + 1}`}</span>
+              )}
+              <button
+                type="button"
+                className="gui-button gui-repeater__remove-btn"
+                onClick={() => removeItem(value, index)}
+              >
+                {templateData.removeButtonIcon && (
+                  <span className={`gui-button-icon ${templateData.removeButtonIcon}`}></span>
+                )}
+                {templateData.removeLabel ?? 'Remove'}
+              </button>
+            </div>
             <WidgetRenderer
-              key={`${uid}-${index}`}
+              key={`${uid}-${itemKey}`}
               widget={templateData.template}
               repeaterIndex={index}
             />
-            <button type="button" className="gui-button" onClick={() => removeItem(value, index)}>
-              {templateData.removeLabel ?? 'Remove'}
-            </button>
           </div>
-        </RepeaterIndexContext.Provider>
+        </RepeaterIndexesContext.Provider>
       );
     });
-  }, [templateData, value, uid, removeItem]);
+  }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
 
   return (
     <div className="gui-repeater" style={{ flex: templateData.size }}>
-      <div id={uid}>
+      <div id={uid} className={`gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`} onFocus={onFocusIn} onBlur={onFocusOut}>
         {templateData.label && <h2 key={`${uid}-title`}>{templateData.label as string}</h2>}
         {renderWidgets()}
         <button
           type="button"
-          className="gui-button"
+          className="gui-button gui-repeater__add-btn"
           onClick={() => addItem(value || [])}
           disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
         >
+          {templateData.addButtonIcon && (
+            <span className={`gui-button-icon ${templateData.addButtonIcon}`}></span>
+          )}
           {templateData.addLabel ?? 'Add'}
         </button>
       </div>

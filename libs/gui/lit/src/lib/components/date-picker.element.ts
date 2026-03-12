@@ -103,8 +103,8 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
         tabindex="0"
         class="gui-widget"
         aria-expanded=${this.isCalendarOpen}
-        @keyup=${() => this.onKeyUp(event)}
-        @click=${() => this.openCalendar()}
+        @keyup=${(e: Event) => this.onKeyUp(e)}
+        @click=${(e: Event) => this.toggleCalendar(e)}
       >
         <gui-date
           id="date-input"
@@ -147,16 +147,32 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     this.adapter.injectValidationIssues([event.detail.message]);
   }
 
-  onKeyUp(event: Event | undefined) {
+  onKeyUp(event: Event) {
     const evt = event as KeyboardEvent;
+    if (evt.target !== evt.currentTarget) return;
     if (evt?.key === 'Enter' || evt?.key === ' ') {
+      this.isCalendarOpen = !this.isCalendarOpen;
+      this.requestUpdate();
+    }
+  }
+
+  toggleCalendar(event: Event) {
+    const target = event.target as HTMLElement;
+    const isInputClick = target.closest('.gui-date-input__part');
+    const isCalendarClick = target.closest('gui-calendar');
+    if (isInputClick || isCalendarClick) {
       this.openCalendar();
+    } else {
+      this.isCalendarOpen = !this.isCalendarOpen;
+      this.requestUpdate();
     }
   }
 
   openCalendar() {
-    this.isCalendarOpen = true;
-    this.requestUpdate();
+    if (!this.isCalendarOpen) {
+      this.isCalendarOpen = true;
+      this.requestUpdate();
+    }
   }
 
   closeCalendar() {

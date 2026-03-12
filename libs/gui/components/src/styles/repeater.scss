@@ -1,15 +1,87 @@
 .gui-form {
   .gui-repeater {
-    .card {
+    &__card {
       margin-bottom: var(--gui-space-3);
       padding: var(--gui-space-3);
       border: 1px solid var(--gui-border-default);
-      border-radius: var(--gui-radius-md) var(--gui-radius-md);
+      border-radius: var(--gui-radius-md);
       background: var(--gui-bg-default);
       color: var(--gui-text-default);
 
-      > button {
-        margin-top: var(--gui-space-3);
+      &-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: var(--gui-space-2);
+
+        .gui-repeater__remove-btn {
+          margin-inline-start: auto;
+          gap: var(--gui-space-1);
+        }
+      }
+
+      &--focused {
+        outline: 0;
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
+      }
+
+      &-title {
+        font-weight: 500;
+      }
+    }
+
+    button.gui-button {
+      .gui-button-icon {
+        padding: 0;
+      }
+
+      &.gui-repeater__remove-btn {
+        padding: var(--gui-space-1) var(--gui-space-2);
+        background: transparent;
+        color: var(--gui-intent-error-text);
+        border: 1px solid var(--gui-border-default);
+        opacity: 0.6;
+        transition:
+          opacity var(--gui-transition-normal, 0.2s),
+          border-color var(--gui-transition-normal, 0.2s);
+
+        &:focus {
+          border-color: var(--gui-intent-error);
+
+          .gui-button-icon {
+            color: var(--gui-intent-error-text);
+          }
+        }
+
+        &:hover {
+          color: var(--gui-color-white);
+          background: var(--gui-intent-error-bg);
+          border-color: var(--gui-intent-error);
+          opacity: 1;
+
+          .gui-button-icon {
+            color: var(--gui-color-white);
+          }
+        }
+      }
+
+      &.gui-repeater__add-btn {
+        width: 100%;
+        border: 1px dashed var(--gui-intent-primary);
+        background: transparent;
+        color: var(--gui-intent-primary);
+        opacity: 0.6;
+        transition: opacity var(--gui-transition-normal, 0.2s);
+        gap: var(--gui-space-1);
+
+        &:hover {
+          background: color-mix(in srgb, var(--gui-intent-primary) 10%, transparent);
+          opacity: 1;
+        }
+
+        &:disabled {
+          opacity: 0.3;
+        }
       }
     }
   }
