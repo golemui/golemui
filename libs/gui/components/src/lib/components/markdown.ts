@@ -176,7 +176,6 @@ export class GuiMarkdown extends LitElement {
         </nav>
         <textarea
           id=${ifDefined(this.uid)}
-          data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : undefined)}
           class=${classMap(fieldClasses)}
           style=${styleMap(autoGrowStyles)}
           ?required=${templateData.required}
@@ -192,7 +191,7 @@ export class GuiMarkdown extends LitElement {
 
         ${this.splitViewActive
           ? html`
-              <section data-cy=${`${this.uid}_markdown`} class="gui-markdown__preview">
+              <section data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)} class="gui-markdown__preview">
                 ${unsafeHTML(this.dependencies?.markdown?.parse(this.value || '') || '')}
               </section>
             `
