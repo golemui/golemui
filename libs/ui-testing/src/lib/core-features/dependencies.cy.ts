@@ -16,12 +16,15 @@ export const runComponentDependenciesTests = (mountFn: MountComponentFn) => {
               kind: 'input',
               type: 'markdown',
               path: 'sample',
+              props: {
+                defaultOpenPreview: true,
+              },
             },
           ],
         }),
       });
 
-      cy.get('[data-cy="md1_markdown"]').should('have.value', 'PARSED: Some markdown');
+      cy.get('[data-cy="md1_markdown"]').should('contain', 'PARSED: Some markdown');
     });
   });
 };

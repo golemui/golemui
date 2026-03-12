@@ -192,7 +192,7 @@ export class GuiMarkdown extends LitElement {
 
         ${this.splitViewActive
           ? html`
-              <section class="gui-markdown__preview">
+              <section data-cy=${`${this.uid}_markdown`} class="gui-markdown__preview">
                 ${unsafeHTML(this.dependencies?.markdown?.parse(this.value || '') || '')}
               </section>
             `
