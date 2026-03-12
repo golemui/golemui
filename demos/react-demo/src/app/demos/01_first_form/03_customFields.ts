@@ -4,7 +4,7 @@ import {
   _guiTextInput,
   _guiNumberInput,
   _guiBooleanInput,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const customFieldsDemo: FormDemoDefinition = {
   title: '3. Customizing Fields',

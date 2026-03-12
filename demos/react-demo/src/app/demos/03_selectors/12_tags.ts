@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs, _guiTextInput, _gslTag, _gslInputs } from '../../../services/dx';
+import { _guiInputs, _guiTextInput, _gslTag, _gslInputs } from '@golemui/gui-shared';
 
 export const tagsDemo: FormDemoDefinition = {
   title: '12. Tags',

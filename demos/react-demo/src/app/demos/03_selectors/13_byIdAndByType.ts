@@ -7,7 +7,7 @@ import {
   _gslInputById,
   _gslLayoutById,
   _gslActionById,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const byIdAndByTypeDemo: FormDemoDefinition = {
   title: '13. By-ID & By-Type',
@@ -23,7 +23,7 @@ export const byIdAndByTypeDemo: FormDemoDefinition = {
     _gslTextInputs({ decorator: { placeholder: 'Text fields only' } }),
     _gslNumberInputs({ decorator: { placeholder: 'Numbers only' } }),
     _gslInputById('#email', { decorator: { readonly: true } }),
-    _gslLayoutById('#root', { decorator: { direction: 'horizontal' } }),
+    _gslLayoutById('#root', { decorator: { direction: 'row' } }),
     _gslActionById('#submit', { decorator: { label: 'Go!' } }),
   ],
 };

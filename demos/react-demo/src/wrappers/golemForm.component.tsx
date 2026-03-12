@@ -3,9 +3,7 @@ import * as Core from '@golemui/core';
 import { FormComponent } from '@golemui/gui-react';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import * as AppsShared from '@golemui/apps-shared';
-import { DxDefinitions, FormEvents } from '../services/dx/formDef.domain';
-import { GslSelectorsInput } from '../services/dx/core/dx.domain';
-import formDefs from '../services/dx/dx.service';
+import { DxDefinitions, FormEvents, GslSelectorsInput, formDefs } from '@golemui/gui-shared';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,

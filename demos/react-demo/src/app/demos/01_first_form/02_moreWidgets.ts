@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs, _guiCalendar, _guiTextarea } from '../../../services/dx';
+import { _guiInputs, _guiCalendar, _guiTextarea } from '@golemui/gui-shared';
 
 export const moreWidgetsDemo: FormDemoDefinition = {
   title: '2. More Widget Types',

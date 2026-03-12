@@ -6,7 +6,7 @@ import {
   _guiDateInput,
   _guiCheckbox,
   _gslRoot,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const tabsAndListDemo: FormDemoDefinition = {
   title: '18. Tabs & List',

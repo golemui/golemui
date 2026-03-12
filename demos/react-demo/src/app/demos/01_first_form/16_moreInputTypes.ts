@@ -7,7 +7,7 @@ import {
   _guiRangeCalendar,
   _guiInputs,
   _gslRoot,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const moreInputTypesDemo: FormDemoDefinition = {
   title: '16. More Input Types',

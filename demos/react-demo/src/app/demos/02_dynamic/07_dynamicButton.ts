@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs, _guiButton } from '../../../services/dx';
+import { _guiInputs, _guiButton } from '@golemui/gui-shared';
 
 export const dynamicButtonDemo: FormDemoDefinition = {
   title: '7. Dynamic Button',

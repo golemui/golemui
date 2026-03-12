@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { DxRuntimeParams, _guiInputs, _guiTextInput, _guiDisplay } from '../../../services/dx';
+import { DxRuntimeParams, _guiInputs, _guiTextInput, _guiDisplay } from '@golemui/gui-shared';
 
 export const dynamicDisplayDemo: FormDemoDefinition = {
   title: '8. Dynamic Display',

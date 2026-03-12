@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs } from '../../../services/dx';
+import { _guiInputs } from '@golemui/gui-shared';
 
 export const fourLinerDemo: FormDemoDefinition = {
   title: '1. The Four-Liner',

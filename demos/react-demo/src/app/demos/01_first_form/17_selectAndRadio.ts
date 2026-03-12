@@ -4,7 +4,7 @@ import {
   _guiRadiogroup,
   _guiInputs,
   _gslRoot,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const selectAndRadioDemo: FormDemoDefinition = {
   title: '17. Select & Radiogroup',

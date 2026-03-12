@@ -1,5 +1,4 @@
-import { DxDefinitions } from '../services/dx/formDef.domain';
-import { GslSelectorsInput } from '../services/dx/core/dx.domain';
+import { DxDefinitions, GslSelectorsInput } from '@golemui/gui-shared';
 
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;

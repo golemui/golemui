@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs, _guiButton, _gslRoot } from '../../../services/dx';
+import { _guiInputs, _guiButton, _gslRoot } from '@golemui/gui-shared';
 
 export const buttonsDemo: FormDemoDefinition = {
   title: '5. Buttons & Submit',

@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs, _guiCalendar, _gslInputs, _gslCalendar } from '../../../services/dx';
+import { _guiInputs, _guiCalendar, _gslInputs, _gslCalendar } from '@golemui/gui-shared';
 
 export const decoratorOverridesDemo: FormDemoDefinition = {
   title: '11. Decorator Overrides',

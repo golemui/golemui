@@ -55,3 +55,5 @@ vitest.config.*.timestamp*
 angular-test-app
 react-test-app
 lit-test-app
+.ai-sdlc/
+ai_readme.md

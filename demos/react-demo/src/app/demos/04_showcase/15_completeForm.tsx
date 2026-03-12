@@ -23,7 +23,7 @@ import {
   _gslRoot,
   _gslActionById,
   _gslLayoutById,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const completeFormDemo: FormDemoDefinition = {
   title: '15. The Complete Form',

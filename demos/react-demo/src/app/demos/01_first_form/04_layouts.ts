@@ -4,7 +4,7 @@ import {
   _guiNumberInput,
   _guiBooleanInput,
   _guiHorizontalStack,
-} from '../../../services/dx';
+} from '@golemui/gui-shared';
 
 export const layoutsDemo: FormDemoDefinition = {
   title: '4. Layout Composition',

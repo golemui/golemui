@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiInputs, _guiTextInput } from '../../../services/dx';
+import { _guiInputs, _guiTextInput } from '@golemui/gui-shared';
 
 export const dynamicInputDemo: FormDemoDefinition = {
   title: '6. Dynamic Input',
