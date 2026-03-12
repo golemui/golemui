@@ -7,85 +7,85 @@
     "states": {
       "type": "object",
       "additionalProperties": {
-        "$ref": "common.schema.json#/definitions/reactiveExpression"
+        "$ref": "common.schema.json#/$defs/reactiveExpression"
       }
     },
     "form": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/formWidget"
+        "$ref": "#/$defs/formWidget"
       }
     }
   },
   "required": ["form"],
-  "definitions": {
+  "$defs": {
     "formWidget": {
       "oneOf": [
         {
-          "$ref": "components/accordion.schema.json"
+          "$ref": "./components/accordion.schema.json"
         },
         {
-          "$ref": "components/alert.schema.json"
+          "$ref": "./components/alert.schema.json"
         },
         {
-          "$ref": "components/button.schema.json"
+          "$ref": "./components/button.schema.json"
         },
         {
-          "$ref": "components/calendar.schema.json"
+          "$ref": "./components/calendar.schema.json"
         },
         {
-          "$ref": "components/checkbox.schema.json"
+          "$ref": "./components/checkbox.schema.json"
         },
         {
-          "$ref": "components/currency.schema.json"
+          "$ref": "./components/currency.schema.json"
         },
         {
-          "$ref": "components/dateinput.schema.json"
+          "$ref": "./components/dateinput.schema.json"
         },
         {
-          "$ref": "components/datepicker.schema.json"
+          "$ref": "./components/datepicker.schema.json"
         },
         {
-          "$ref": "components/dropdown.schema.json"
+          "$ref": "./components/dropdown.schema.json"
         },
         {
-          "$ref": "components/list.schema.json"
+          "$ref": "./components/list.schema.json"
         },
         {
-          "$ref": "components/markdown.schema.json"
+          "$ref": "./components/markdown.schema.json"
         },
         {
-          "$ref": "components/number.schema.json"
+          "$ref": "./components/number.schema.json"
         },
         {
-          "$ref": "components/password.schema.json"
+          "$ref": "./components/password.schema.json"
         },
         {
-          "$ref": "components/radiogroup.schema.json"
+          "$ref": "./components/radiogroup.schema.json"
         },
         {
-          "$ref": "components/rangecalendar.schema.json"
+          "$ref": "./components/rangecalendar.schema.json"
         },
         {
-          "$ref": "components/repeater.schema.json"
+          "$ref": "./components/repeater.schema.json"
         },
         {
-          "$ref": "components/select.schema.json"
+          "$ref": "./components/select.schema.json"
         },
         {
-          "$ref": "components/flex.schema.json"
+          "$ref": "./components/flex.schema.json"
         },
         {
-          "$ref": "components/tabs.schema.json"
+          "$ref": "./components/tabs.schema.json"
         },
         {
-          "$ref": "components/textarea.schema.json"
+          "$ref": "./components/textarea.schema.json"
         },
         {
-          "$ref": "components/textinput.schema.json"
+          "$ref": "./components/textinput.schema.json"
         },
         {
-          "$ref": "components/toggle.schema.json"
+          "$ref": "./components/toggle.schema.json"
         }
       ]
     }
