@@ -6,7 +6,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
-@customElement('gui-range-date-input-element')
+@customElement('gui-range-date-input')
 export class RangeDateInputElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<DateRange[]>;
 
@@ -25,7 +25,7 @@ export class RangeDateInputElement extends LitElement implements Core.WithWidget
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-range-date-input');
+    this.classList.add('gui-range-date');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -38,7 +38,7 @@ export class RangeDateInputElement extends LitElement implements Core.WithWidget
     super.render();
 
     return html`
-      <gui-range-date-input
+      <gui-range-date
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
@@ -51,7 +51,7 @@ export class RangeDateInputElement extends LitElement implements Core.WithWidget
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
-      ></gui-range-date-input>
+      ></gui-range-date>
     `;
   }
 

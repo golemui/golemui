@@ -99,6 +99,7 @@
 .gui-widget .gui-range-date-input {
   padding: 0;
   min-height: 41px;
+  overflow: hidden;
 }
 
 @container gui-form (max-width: 480px) {

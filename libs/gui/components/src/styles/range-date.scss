@@ -31,15 +31,68 @@ gui-range-date {
     min-width: 265px;
   }
 
+  .gui-sentinel {
+    width: 0;
+    height: 0;
+    flex-shrink: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    &__start {
+      margin-inline-end: 0;
+    }
+    &__end {
+      margin-inline-start: -1px;
+    }
+  }
+
+  .gui-range-date-input__pills-wrapper {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    &::before {
+      left: 0;
+      background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &::after {
+      right: 0;
+      background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &.gui-range-date-input--start-shadow::before {
+      opacity: 1;
+    }
+    &.gui-range-date-input--end-shadow::after {
+      opacity: 1;
+    }
+  }
+
   .gui-range-date-input__pills {
     display: flex;
     align-items: center;
     padding: 0 var(--gui-space-3);
     gap: var(--gui-space-2);
     flex-wrap: nowrap;
-    overflow-x: scroll;
+    overflow-x: auto;
+    overflow-y: hidden;
     width: 100%;
-    /* Hide scrollbars, we handle this with shadows like the tabs */
     scrollbar-width: none;
   }
 

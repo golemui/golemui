@@ -2,9 +2,11 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
 import { toISODateString } from '../utils/date';
+import { createIntersectionObserver } from './tabs';
 import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
 
 interface DateParts {
@@ -34,6 +36,11 @@ export class GuiRangeDateInput extends LitElement {
 
   @state() private _startDate: DateParts = { day: '', month: '', year: '' };
   @state() private _endDate: DateParts = { day: '', month: '', year: '' };
+  @state() private _isStartVisible = true;
+  @state() private _isEndVisible = true;
+
+  private startObserver: IntersectionObserver | undefined;
+  private endObserver: IntersectionObserver | undefined;
 
   private readonly MIN_DAY = 1;
   private readonly MAX_DAY = 31;
@@ -69,6 +76,15 @@ export class GuiRangeDateInput extends LitElement {
     return this;
   }
 
+  override updated() {
+    this.setupObservers();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.disconnectObservers();
+  }
+
   override render() {
     const templateData: ControlTemplateData<DateRange[]> & RangeDateInputProps = {
       uid: this.uid,
@@ -96,12 +112,20 @@ export class GuiRangeDateInput extends LitElement {
       <div class="gui-widget">
         <div class="gui-range-date-input" role="group" aria-label=${this.label ?? 'Date range input'}>
           ${pills.length > 0
-            ? html`<div class="gui-range-date-input__pills" role="list">
-                ${repeat(
-                  pills,
-                  (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-                  (pill, index) => this.renderPill(pill, index),
-                )}
+            ? html`<div class=${classMap({
+                'gui-range-date-input__pills-wrapper': true,
+                'gui-range-date-input--start-shadow': !this._isStartVisible,
+                'gui-range-date-input--end-shadow': !this._isEndVisible,
+              })}>
+                <div class="gui-range-date-input__pills" role="list">
+                  <span class="gui-sentinel gui-sentinel__start"></span>
+                  ${repeat(
+                    pills,
+                    (pill) => `${pill.start}-${pill.end ?? pill.start}`,
+                    (pill, index) => this.renderPill(pill, index),
+                  )}
+                  <span class="gui-sentinel gui-sentinel__end"></span>
+                </div>
               </div>`
             : nothing}
 
@@ -144,6 +168,7 @@ export class GuiRangeDateInput extends LitElement {
         role="listitem"
         tabindex="0"
         aria-label="${pillLabel}"
+        @focus=${this.handlePillFocus}
         @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
       >
         <span class="gui-range-date-input__pill-text">${pillLabel}</span>
@@ -270,6 +295,10 @@ export class GuiRangeDateInput extends LitElement {
     });
   }
 
+  private handlePillFocus(e: FocusEvent) {
+    (e.target as Element).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }
+
   private handlePillKeydown(e: KeyboardEvent, index: number) {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
@@ -344,6 +373,16 @@ export class GuiRangeDateInput extends LitElement {
         if (prevIdx >= 0 && prevIdx < inputs.length) {
           inputs[prevIdx].focus();
           inputs[prevIdx].select();
+        } else {
+          const otherGroup = isRTL ? 'end' : 'start';
+          if (group !== otherGroup) {
+            const otherInputs = this.getGroupInputs(otherGroup);
+            if (otherInputs.length > 0) {
+              const target = otherInputs[otherInputs.length - 1];
+              target.focus();
+              target.select();
+            }
+          }
         }
         break;
       }
@@ -352,6 +391,15 @@ export class GuiRangeDateInput extends LitElement {
         if (nextIdx >= 0 && nextIdx < inputs.length) {
           inputs[nextIdx].focus();
           inputs[nextIdx].select();
+        } else {
+          const otherGroup = isRTL ? 'start' : 'end';
+          if (group !== otherGroup) {
+            const otherInputs = this.getGroupInputs(otherGroup);
+            if (otherInputs.length > 0) {
+              otherInputs[0].focus();
+              otherInputs[0].select();
+            }
+          }
         }
         break;
       }
@@ -437,6 +485,44 @@ export class GuiRangeDateInput extends LitElement {
     }
 
     return new Date(yearVal, monthVal - 1, dayVal);
+  }
+
+  private setupObservers() {
+    const startSentinel = this.querySelector('.gui-sentinel__start');
+    const endSentinel = this.querySelector('.gui-sentinel__end');
+
+    if (startSentinel && !this.startObserver) {
+      this.startObserver = createIntersectionObserver(
+        startSentinel,
+        (isIntersecting) => (this._isStartVisible = isIntersecting),
+      );
+    }
+
+    if (endSentinel && !this.endObserver) {
+      this.endObserver = createIntersectionObserver(
+        endSentinel,
+        (isIntersecting) => (this._isEndVisible = isIntersecting),
+      );
+    }
+
+    // If pills were removed and sentinels are gone, clean up
+    if (!startSentinel && this.startObserver) {
+      this.startObserver.disconnect();
+      this.startObserver = undefined;
+      this._isStartVisible = true;
+    }
+    if (!endSentinel && this.endObserver) {
+      this.endObserver.disconnect();
+      this.endObserver = undefined;
+      this._isEndVisible = true;
+    }
+  }
+
+  private disconnectObservers() {
+    this.startObserver?.disconnect();
+    this.endObserver?.disconnect();
+    this.startObserver = undefined;
+    this.endObserver = undefined;
   }
 
   private tryCreatePill() {

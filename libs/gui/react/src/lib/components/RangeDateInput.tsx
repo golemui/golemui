@@ -55,7 +55,7 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-range-date-input" style={{ flex: templateData.size }}>
-      <gui-range-date-input
+      <gui-range-date
         ref={handleRef}
         uid={uid}
         label={label}
