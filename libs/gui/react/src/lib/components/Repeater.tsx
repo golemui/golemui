@@ -17,7 +17,7 @@ const idIncrementer = () => nextRepeaterItemId++;
 
 export function Repeater(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
-  const { uid, value, onValueChanged, templateData } = useInputWidget<
+  const { uid, value, onValueChanged, templateData, errors, isTouched } = useInputWidget<
     Record<string, unknown>[],
     RepeaterProps<any>
   >(widget);
@@ -94,8 +94,27 @@ export function Repeater(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-repeater" style={{ flex: templateData.size }}>
-      <div id={uid} className={`gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`} onFocus={onFocusIn} onBlur={onFocusOut}>
+      <div
+        id={uid}
+        className={`gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`}
+        onFocus={onFocusIn}
+        onBlur={onFocusOut}
+      >
         {templateData.label && <h2 key={`${uid}-title`}>{templateData.label as string}</h2>}
+        {isTouched && errors && errors.length > 0 && (
+          <ul className="gui-validator" id={`${uid}_errors`} data-cy={`${uid}_validator-errors`}>
+            {errors.map((error: string, index: number) => (
+              <li
+                key={index}
+                className="gui-validator__error"
+                role="alert"
+                data-cy={`${uid}_validator-error`}
+              >
+                {error}
+              </li>
+            ))}
+          </ul>
+        )}
         {renderWidgets()}
         <button
           type="button"
