@@ -3,6 +3,20 @@ gui-range-date {
 
   .gui-range-date-input {
     display: flex;
+    align-items: center;
+
+    &--icon {
+      & > .gui-widget-icon {
+        flex-shrink: 0;
+      }
+
+      .gui-range-date-input__inputs {
+        padding-inline-start: 2.5rem;
+      }
+      .gui-range-date-input__pills-wrapper {
+        margin-inline-start: 2.5rem;
+      }
+    }
 
     &[aria-invalid='true'] {
       border-color: var(--gui-intent-error);
@@ -25,10 +39,14 @@ gui-range-date {
 
   .gui-range-date-input__inputs {
     display: flex;
+    padding-inline-start: 1rem;
     gap: var(--gui-space-2);
-    margin-inline-start: var(--gui-space-3);
     flex-wrap: wrap;
     min-width: 265px;
+  }
+
+  .gui-range-date-input__pills-wrapper + .gui-range-date-input__inputs {
+    padding-inline-start: 1rem;
   }
 
   .gui-sentinel {
@@ -48,9 +66,11 @@ gui-range-date {
 
   .gui-range-date-input__pills-wrapper {
     display: flex;
+    min-height: 41px;
+    border-inline-end: 1px solid var(--gui-border-default);
+    border-inline-start: 1px solid var(--gui-border-default);
     position: relative;
     overflow: hidden;
-    flex: 1;
     min-width: 0;
 
     &::before,
@@ -92,7 +112,6 @@ gui-range-date {
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    width: 100%;
     scrollbar-width: none;
   }
 
@@ -100,7 +119,6 @@ gui-range-date {
     display: flex;
     flex-wrap: nowrap;
     flex-shrink: 0;
-    height: var(--gui-space-4);
     gap: var(--gui-space-3);
     color: var(--gui-color-white);
     background-color: var(--gui-intent-primary);

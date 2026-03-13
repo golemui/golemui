@@ -264,6 +264,7 @@ export type DateinputProps = {
 
 export type RangeDateInputProps = {
   hint?: string;
+  icon?: string;
 };
 
 export type DatePickerProps = {

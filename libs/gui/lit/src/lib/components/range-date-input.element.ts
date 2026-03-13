@@ -42,6 +42,7 @@ export class RangeDateInputElement extends LitElement implements Core.WithWidget
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         .hint=${this.adapter.templateData.hint}
+        .icon=${this.adapter.templateData.icon}
         .errors=${this.adapter.templateData.errors}
         ?touched=${this.adapter.templateData.touched}
         ?required=${this.adapter.templateData.validator?.required}

@@ -48,6 +48,7 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
 
   const label = templateData.label as string;
   const hint = templateData.hint;
+  const icon = templateData.icon;
   const lang = templateData.lang;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -66,6 +67,7 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
         disabled={isDisabled}
         readOnly={isReadonly}
         value={value}
+        icon={icon}
         localeId={lang}
       />
     </div>

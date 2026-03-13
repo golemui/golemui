@@ -29,6 +29,7 @@ export class GuiRangeDateInput extends LitElement {
   @property({ type: Array }) value: DateRange[] | undefined = [];
 
   @property({ type: String }) hint: string | undefined = undefined;
+  @property({ type: String }) icon: string | undefined = '';
   @property({ type: String }) removePillAriaLabel: string | undefined = 'Remove date range';
   @property({ type: String }) startDateAriaLabel: string | undefined = 'Start date';
   @property({ type: String }) endDateAriaLabel: string | undefined = 'End date';
@@ -106,11 +107,17 @@ export class GuiRangeDateInput extends LitElement {
 
     const pills = this.getSortedPills();
 
+    const iconClassMap = {
+      'gui-widget-icon': true,
+      [this.icon as string]: !!this.icon,
+    };
+
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
       <div class="gui-widget">
-        <div class="gui-range-date-input" role="group" aria-label=${this.label ?? 'Date range input'}>
+        <div class="gui-range-date-input ${this.icon ? 'gui-range-date-input--icon' : ''}" role="group" aria-label=${this.label ?? 'Date range input'}>
+          ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
           ${pills.length > 0
             ? html`<div class=${classMap({
                 'gui-range-date-input__pills-wrapper': true,
@@ -167,7 +174,7 @@ export class GuiRangeDateInput extends LitElement {
         class="gui-range-date-input__pill"
         role="listitem"
         tabindex="0"
-        aria-label="${pillLabel}"
+        aria-label="${this.removePillAriaLabel}: ${pillLabel}"
         @focus=${this.handlePillFocus}
         @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
       >
@@ -176,7 +183,6 @@ export class GuiRangeDateInput extends LitElement {
           type="button"
           class="gui-range-date-input__pill-remove"
           tabindex="-1"
-          aria-label="${this.removePillAriaLabel}: ${pillLabel}"
           ?disabled=${this.disabled || this.readOnly}
           @click=${() => this.removePill(index)}
         >
