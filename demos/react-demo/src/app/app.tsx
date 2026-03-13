@@ -11,6 +11,11 @@ import {
   moreInputTypesDemo,
   selectAndRadioDemo,
   tabsAndListDemo,
+  alertDemo,
+  datePickerDemo,
+  dropdownDemo,
+  accordionDemo,
+  repeaterDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -45,6 +50,11 @@ formRegistry.registerAll([
   moreInputTypesDemo,
   selectAndRadioDemo,
   tabsAndListDemo,
+  alertDemo,
+  datePickerDemo,
+  dropdownDemo,
+  accordionDemo,
+  repeaterDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,

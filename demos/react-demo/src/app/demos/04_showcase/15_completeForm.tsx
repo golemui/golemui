@@ -18,6 +18,8 @@ import {
   _guiButton,
   _guiHorizontalStack,
   _guiDisplay,
+  _guiAccordion,
+  _guiRepeater,
   _gslTag,
   _gslInputs,
   _gslRoot,
@@ -83,6 +85,35 @@ export const completeFormDemo: FormDemoDefinition = {
         }),
       ],
     }),
+
+    _guiAccordion(
+      {
+        'Travel Details': [
+          _guiInputs({ departureCity: 'string', arrivalCity: 'string' }),
+          _guiSelect('transportMode', {
+            options: [
+              { label: 'Flight', value: 'flight' },
+              { label: 'Train', value: 'train' },
+              { label: 'Car', value: 'car' },
+            ],
+          }),
+        ],
+        'Accommodation': [
+          _guiInputs({ hotelName: 'string', roomNumber: 'string' }),
+          _guiCheckbox('needsParking'),
+        ],
+      },
+      { singleOpen: true, defaultOpen: { 'travel-details': true } },
+    ),
+
+    _guiRepeater('attendees', { addLabel: 'Add Attendee', limit: 5 }, [
+      _guiHorizontalStack([
+        _guiInputs({
+          'attendees.items.name': ['string', 'required'],
+          'attendees.items.email': 'string',
+        }),
+      ]),
+    ]),
 
     _guiCalendar('eventDate', (params) => ({
       minDate: new Date().toISOString().slice(0, 10),

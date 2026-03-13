@@ -7,6 +7,11 @@ export { buttonsDemo } from './01_first_form/05_buttons';
 export { moreInputTypesDemo } from './01_first_form/16_moreInputTypes';
 export { selectAndRadioDemo } from './01_first_form/17_selectAndRadio';
 export { tabsAndListDemo } from './01_first_form/18_tabsAndList';
+export { alertDemo } from './01_first_form/19_alert';
+export { datePickerDemo } from './01_first_form/20_datePicker';
+export { dropdownDemo } from './01_first_form/21_dropdown';
+export { accordionDemo } from './01_first_form/22_accordion';
+export { repeaterDemo } from './01_first_form/23_repeater';
 
 // Chapter 2: Making It Dynamic
 export { dynamicInputDemo } from './02_dynamic/06_dynamicInput';

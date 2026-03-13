@@ -22,6 +22,11 @@ export { _guiList } from './shortcuts/list/guiList.impl';
 export { _guiButton, _guiButtons, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
 export { _guiStack, _guiHorizontalStack, _guiVerticalStack } from './shortcuts/layouts/guiStack.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
+export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
+export { _guiDatePicker } from './shortcuts/date-picker/guiDatePicker.impl';
+export { _guiDropdown } from './shortcuts/dropdown/guiDropdown.impl';
+export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
+export { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 
 // ─── GSL selectors (behavior) ───
 
@@ -41,6 +46,11 @@ export { _gslList, _gslListById } from './shortcuts/list/register';
 export { _gslActions, _gslActionById } from './shortcuts/actions/register';
 export { _gslLayouts, _gslLayoutById } from './shortcuts/layouts/register';
 export { _gslDisplays, _gslDisplayById } from './shortcuts/display/register';
+export { _gslAlerts, _gslAlertById } from './shortcuts/alert/register';
+export { _gslDatePicker, _gslDatePickerById } from './shortcuts/date-picker/register';
+export { _gslDropdown, _gslDropdownById } from './shortcuts/dropdown/register';
+export { _gslAccordions, _gslAccordionById } from './shortcuts/accordion/register';
+export { _gslRepeaters, _gslRepeaterById } from './shortcuts/repeater/register';
 
 // ─── Scope selectors ───
 
@@ -81,6 +91,11 @@ export type { ListDecorator, GslListConfig } from './shortcuts/list/list.domain'
 export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/actions.domain';
 export type { LayoutDecorator, GslLayoutsConfig } from './shortcuts/layouts/layouts.domain';
 export type { DisplayDecorator, GslDisplaysConfig } from './shortcuts/display/display.domain';
+export type { AlertDecorator, GslAlertsConfig } from './shortcuts/alert/alert.domain';
+export type { DatePickerDecorator, GslDatePickerConfig } from './shortcuts/date-picker/datePicker.domain';
+export type { DropdownDecorator, GslDropdownConfig } from './shortcuts/dropdown/dropdown.domain';
+export type { AccordionDecorator, GslAccordionConfig } from './shortcuts/accordion/accordion.domain';
+export type { RepeaterDecorator, GslRepeaterConfig } from './shortcuts/repeater/repeater.domain';
 export type { GslSelectorsInput } from './core/dx.domain';
 export { formDefs } from './dx.service';
 

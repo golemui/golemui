@@ -14,3 +14,8 @@ import './shortcuts/select/register';
 import './shortcuts/radiogroup/register';
 import './shortcuts/tabs/register';
 import './shortcuts/list/register';
+import './shortcuts/alert/register';
+import './shortcuts/date-picker/register';
+import './shortcuts/dropdown/register';
+import './shortcuts/accordion/register';
+import './shortcuts/repeater/register';

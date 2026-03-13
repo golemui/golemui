@@ -69,6 +69,11 @@ export type { SelectDecorator } from './shortcuts/select/select.domain';
 export type { RadiogroupDecorator } from './shortcuts/radiogroup/radiogroup.domain';
 export type { TabsDecorator } from './shortcuts/tabs/tabs.domain';
 export type { ListDecorator } from './shortcuts/list/list.domain';
+export type { AlertDecorator } from './shortcuts/alert/alert.domain';
+export type { DatePickerDecorator } from './shortcuts/date-picker/datePicker.domain';
+export type { DropdownDecorator } from './shortcuts/dropdown/dropdown.domain';
+export type { AccordionDecorator } from './shortcuts/accordion/accordion.domain';
+export type { RepeaterDecorator } from './shortcuts/repeater/repeater.domain';
 
 export type {
   GslDecoratorCallback,
