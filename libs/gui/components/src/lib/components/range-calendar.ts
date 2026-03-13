@@ -1,7 +1,13 @@
 import { html, PropertyValues, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
+import {
+  getDayLabel,
+  isDateInVisibleMonths,
+  isSameDay,
+  isToday,
+  toISODateString,
+} from '../utils/date';
 import { AbstractCalendar, AbstractCalendarDay } from './abstract-calendar';
 import { DateRange } from '@golemui/gui-shared';
 
@@ -116,6 +122,20 @@ export class GuiRangeCalendar extends AbstractCalendar {
       const lastWeek = days.slice(-7);
       if (lastWeek.every((day) => !day.isCurrentMonth)) {
         days = days.slice(0, -7);
+      }
+    }
+
+    if (offset === 0 && !days.some((d) => d.isFocusable)) {
+      const months = this.numberOfMonths ?? 1;
+      const todayVisible = isDateInVisibleMonths(new Date(), this._currentDate, months);
+      const rangeStartVisible =
+        this.value?.some((range) =>
+          isDateInVisibleMonths(new Date(range.start), this._currentDate, months),
+        ) ?? false;
+
+      if (!todayVisible && !rangeStartVisible) {
+        const firstDay = days.find((d) => d.isCurrentMonth && !d.isDisabled);
+        if (firstDay) firstDay.isFocusable = true;
       }
     }
 
