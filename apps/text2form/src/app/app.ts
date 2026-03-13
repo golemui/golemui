@@ -34,7 +34,8 @@ const initialFormJson = golemForm().create({
 export class App {
   private geminim = inject(GeminiService);
   protected activeTab: 'form' | 'json' = 'form';
-  protected chatInput = '';
+  protected chatInput =
+    'Create a registration form with email, password, confirm password and a submit button';
   protected tokenCount = 0;
   private tokenDebounce: ReturnType<typeof setTimeout> | null = null;
   protected messages: ChatMessage[] = [

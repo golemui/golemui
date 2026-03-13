@@ -24,8 +24,9 @@ export class GeminiService {
       return;
     }
     this.genAI = new GoogleGenerativeAI(apiKey);
+    const model = { fast: 'gemini-2.5-flash', think: 'gemini-2.5-pro' };
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-3-flash-preview',
+      model: model.fast,
       systemInstruction: GOLEM_SYSTEM_PROMPT,
       generationConfig: {
         responseMimeType: 'application/json',

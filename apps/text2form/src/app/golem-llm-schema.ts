@@ -804,7 +804,7 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
 ## Examples
 
 ### Simple login form
-
+\`\`\`json
 {
   "form": [
     { "kind": "input", "type": "textinput", "path": "email", "label": "Email", "props": { "placeholder": "you@example.com" } },
@@ -812,9 +812,10 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     { "kind": "action", "type": "button", "label": "Sign In", "on": { "click": "submit" } }
   ]
 }
+\`\`\`
 
 ### Conditional fields
-
+\`\`\`json
 {
   "form": [
     {
@@ -828,9 +829,10 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     { "kind": "action", "type": "button", "label": "Submit", "on": { "click": "submit" } }
   ]
 }
+\`\`\`
 
 ### Accordion with multiple sections
-
+\`\`\`json
 {
   "form": [
     {
@@ -849,9 +851,10 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     { "kind": "action", "type": "button", "label": "Save", "on": { "click": "submit" } }
   ]
 }
+\`\`\`
 
 ### Repeater (dynamic list of rows)
-
+\`\`\`json
 {
   "form": [
     {
@@ -872,6 +875,7 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     }
   ]
 }
+\`\`\`
 
 ## Key rules
 
