@@ -106,22 +106,43 @@
     border-color: #3b82f6;
   }
 
-  textarea {
+  .textarea-container {
     flex: 1;
-    background: transparent;
-    border: none;
-    color: #f8fafc;
-    resize: none;
-    max-height: 150px;
-    min-height: 24px;
-    padding: 8px 0;
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-    line-height: 1.5;
+    position: relative;
 
-    &::placeholder {
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #f8fafc;
+      resize: none;
+      max-height: 150px;
+      min-height: 24px;
+      padding: 8px 0;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      line-height: 1.5;
+
+      &::placeholder {
+        color: #64748b;
+      }
+    }
+
+    .token-count {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-size: 0.7rem;
+      font-weight: 500;
       color: #64748b;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 1px 7px;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.2s;
     }
   }
 

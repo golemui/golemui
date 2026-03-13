@@ -44,6 +44,8 @@ export class App {
   private geminim = inject(GeminiService);
   protected activeTab: 'form' | 'json' = 'form';
   protected chatInput = '';
+  protected tokenCount = 0;
+  private tokenDebounce: ReturnType<typeof setTimeout> | null = null;
   protected messages: ChatMessage[] = [
     { role: 'assistant', content: 'Hello! Describe the form you want to build.' },
   ];
@@ -52,6 +54,14 @@ export class App {
 
   protected onJsonChange(value: string) {
     this.formJson = value;
+  }
+
+  protected onChatInputChange(value: string) {
+    this.chatInput = value;
+    if (this.tokenDebounce) clearTimeout(this.tokenDebounce);
+    this.tokenDebounce = setTimeout(() => {
+      this.tokenCount = value.trim() ? this.geminim.estimateTokens(value, this.messages) : 0;
+    }, 300);
   }
 
   protected switchTab(tab: 'form' | 'json') {

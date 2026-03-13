@@ -53,3 +53,4 @@ vitest.config.*.timestamp*
 angular-test-app
 react-test-app
 lit-test-app
+.claude
