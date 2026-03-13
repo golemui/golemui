@@ -262,6 +262,10 @@ export type DateinputProps = {
   icon?: string;
 };
 
+export type RangeDateInputProps = {
+  hint?: string;
+};
+
 export type DatePickerProps = {
   hint?: string;
   icon?: string;

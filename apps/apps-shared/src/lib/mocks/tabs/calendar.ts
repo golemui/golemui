@@ -6,6 +6,16 @@ export const calendar = (): any => ({
     {
       uid: '',
       kind: 'input',
+      type: 'rangeDateInput',
+      path: 'rangeDateInput',
+      defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }, { start: '2026-02-22' }, { start: '2026-02-23' }, { start: '2026-02-24' }, { start: '2026-02-25' }, { start: '2026-01-20' }, { start: '2025-02-07' }, { start: '2026-07-20' }, { start: '2024-12-02' }, { start: '2023-02-20' }],
+      props: {
+        icon: 'material-icons material-icons-calendar_month',
+      },
+    },
+    {
+      uid: '',
+      kind: 'input',
       type: 'dateInput',
       path: 'dateInput',
       props: {

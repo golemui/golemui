@@ -1,0 +1,17 @@
+@let templateData = adapter.templateData();
+
+<gui-range-date
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [value]="templateData.value"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [localeId]="templateData.lang"
+  (blur)="adapter.onBlur()"
+  (change)="onChangeDate($event)"
+  (inputError)="onInputError($event)"
+></gui-range-date>

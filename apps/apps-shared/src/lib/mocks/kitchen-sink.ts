@@ -46,7 +46,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab_textarea',
+        defaultOpen: 'tab12',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Flex Layout', uid: 'tab2' },

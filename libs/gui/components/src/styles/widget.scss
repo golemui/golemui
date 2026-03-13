@@ -40,6 +40,7 @@
   textarea,
   gui-list,
   .gui-date-input,
+  .gui-range-date-input,
   .gui-calendar-input {
     font-family: var(--gui-font-family);
     font-size: var(--gui-font-sm);
@@ -93,6 +94,11 @@
     font-size: var(--gui-font-xs);
     color: var(--gui-text-muted);
   }
+}
+
+.gui-widget .gui-range-date-input {
+  padding: 0;
+  min-height: 41px;
 }
 
 @container gui-form (max-width: 480px) {

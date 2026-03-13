@@ -11,6 +11,8 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,
   rangeCalendar: async () =>
     (await import('./components/range-calendar.element')).RangeCalendarElement,
+  rangeDateInput: async () =>
+    (await import('./components/range-date-input.element')).RangeDateInputElement,
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,
