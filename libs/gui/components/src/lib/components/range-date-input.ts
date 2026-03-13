@@ -39,6 +39,7 @@ export class GuiRangeDateInput extends LitElement {
   @state() private _endDate: DateParts = { day: '', month: '', year: '' };
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
+  @state() private _showPillsList = false;
 
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
@@ -84,6 +85,7 @@ export class GuiRangeDateInput extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.disconnectObservers();
+    document.removeEventListener('click', this.handleDocumentClick);
   }
 
   override render() {
@@ -133,6 +135,14 @@ export class GuiRangeDateInput extends LitElement {
                   )}
                   <span class="gui-sentinel gui-sentinel__end"></span>
                 </div>
+              </div>
+              <div class="gui-range-date-input__pills-compact">
+                <button
+                  type="button"
+                  class="gui-range-date-input__pill gui-range-date-input__pill--count"
+                  aria-label="${pills.length} date ranges"
+                  @click=${this.togglePillsList}
+                >${pills.length}</button>
               </div>`
             : nothing}
 
@@ -156,6 +166,31 @@ export class GuiRangeDateInput extends LitElement {
             </div>
           </div>
         </div>
+        ${this._showPillsList && pills.length > 0
+          ? html`<div class="gui-range-date-input__pills-dropdown" role="list">
+                ${repeat(
+            pills,
+            (pill) => `${pill.start}-${pill.end ?? pill.start}`,
+            (pill, index) => {
+              const startFormatted = this.formatDateForDisplay(pill.start);
+              const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
+              const label = `${startFormatted} - ${endFormatted}`;
+              return html`
+                      <div class="gui-range-date-input__pills-dropdown-item" role="listitem">
+                        <span class="gui-range-date-input__pill-text">${label}</span>
+                        <button
+                          type="button"
+                          class="gui-range-date-input__pill-remove"
+                          ?disabled=${this.disabled || this.readOnly}
+                          @click=${() => this.removePill(index)}
+                          aria-label="${this.removePillAriaLabel}: ${label}"
+                        >&times;</button>
+                      </div>
+                    `;
+            },
+          )}
+              </div>`
+          : nothing}
       </div>
 
       ${this.showErrors && this.errors?.length
@@ -271,6 +306,30 @@ export class GuiRangeDateInput extends LitElement {
     );
   }
 
+  private togglePillsList() {
+    this._showPillsList = !this._showPillsList;
+    if (this._showPillsList) {
+      requestAnimationFrame(() => {
+        document.addEventListener('click', this.handleDocumentClick);
+      });
+    } else {
+      document.removeEventListener('click', this.handleDocumentClick);
+    }
+  }
+
+  private handleDocumentClick = (e: MouseEvent) => {
+    const compact = this.querySelector('.gui-range-date-input__pills-compact');
+    const dropdown = this.querySelector('.gui-range-date-input__pills-dropdown');
+    const target = e.target as Node;
+    if (
+      compact && !compact.contains(target) &&
+      dropdown && !dropdown.contains(target)
+    ) {
+      this._showPillsList = false;
+      document.removeEventListener('click', this.handleDocumentClick);
+    }
+  };
+
   private removePill(index: number) {
     if (this.disabled || this.readOnly) return;
 
@@ -286,7 +345,15 @@ export class GuiRangeDateInput extends LitElement {
       }),
     );
 
-    // Focus the next pill or the first input
+    if (this._showPillsList) {
+      if (sorted.length === 0) {
+        this._showPillsList = false;
+        document.removeEventListener('click', this.handleDocumentClick);
+      }
+      return;
+    }
+
+    // Desktop: focus next pill or first input
     requestAnimationFrame(() => {
       const pills = this.querySelectorAll<HTMLElement>('.gui-range-date-input__pill');
       if (pills.length > 0) {

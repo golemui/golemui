@@ -4,12 +4,16 @@ gui-range-date {
   .gui-range-date-input {
     display: flex;
     align-items: center;
+    position: relative;
 
     &--icon {
       & > .gui-widget-icon {
         flex-shrink: 0;
       }
 
+      .gui-range-date-input__pills-compact {
+        padding-inline-start: 2.5rem;
+      }
       .gui-range-date-input__inputs {
         padding-inline-start: 2.5rem;
       }
@@ -45,7 +49,7 @@ gui-range-date {
     min-width: 265px;
   }
 
-  .gui-range-date-input__pills-wrapper + .gui-range-date-input__inputs {
+  .gui-range-date-input__pills-compact + .gui-range-date-input__inputs {
     padding-inline-start: 1rem;
   }
 
@@ -226,6 +230,69 @@ gui-range-date {
 
     &.gui-calendar--icon {
       padding-inline-start: 2.5rem;
+    }
+  }
+
+  .gui-range-date-input__pills-compact {
+    display: none;
+    align-items: center;
+    padding: 0 var(--gui-space-3);
+  }
+
+  .gui-range-date-input__pill--count {
+    cursor: pointer;
+    min-width: 24px;
+    font-size: var(--gui-font-xs);
+    border: none;
+    justify-content: center;
+    border-radius: var(--gui-radius-full);
+  }
+
+  .gui-range-date-input__pills-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    flex-direction: column;
+    background-color: var(--gui-bg-default);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    box-shadow: var(--gui-shadow-md);
+    margin-top: var(--gui-space-1);
+    padding: var(--gui-space-2);
+    gap: var(--gui-space-2);
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .gui-range-date-input__pills-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gui-space-3);
+    padding: var(--gui-space-2);
+    border-radius: var(--gui-radius-md);
+    background-color: var(--gui-intent-primary);
+    color: var(--gui-color-white);
+  }
+
+  @container gui-form (max-width: 540px) {
+    .gui-range-date-input__pills-wrapper {
+      display: none;
+    }
+
+    .gui-range-date-input__pills-compact {
+      display: flex;
+    }
+
+    .gui-range-date-input__pills-dropdown {
+      display: flex;
+    }
+
+    .gui-range-date-input__pills-compact + .gui-range-date-input__inputs {
+      padding-inline-start: 0;
     }
   }
 }
