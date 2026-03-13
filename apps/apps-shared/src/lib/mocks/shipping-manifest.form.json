@@ -467,7 +467,7 @@
             "variant": "filled"
           },
           "on": {
-            "click": "send"
+            "click": "submit"
           }
         }
       ]
