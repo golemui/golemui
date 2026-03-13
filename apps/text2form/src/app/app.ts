@@ -14,21 +14,12 @@ interface ChatMessage {
 const initialFormJson = golemForm().create({
   form: [
     {
-      kind: 'input',
-      type: 'textinput',
-      path: 'email',
-    },
-    {
-      kind: 'input',
-      type: 'password',
-      path: 'password',
-    },
-    {
-      kind: 'action',
-      type: 'button',
-      label: 'Send',
-
-      on: { click: 'submit' },
+      kind: 'display',
+      type: 'alert',
+      props: {
+        text: 'Use the prompt to update the form',
+        level: 'info',
+      },
     },
   ],
 });
@@ -51,6 +42,7 @@ export class App {
   ];
   protected error = '';
   protected formJson = JSON.stringify(initialFormJson, undefined, 2);
+  protected thinking = false;
 
   protected onJsonChange(value: string) {
     this.formJson = value;
@@ -68,24 +60,20 @@ export class App {
     this.activeTab = tab;
   }
 
-  protected sendMessage() {
+  protected async sendMessage() {
     if (!this.chatInput.trim()) {
       return;
     }
 
     // Add user message
     this.messages.push({ role: 'user', content: this.chatInput });
+    this.thinking = true;
     const userMessage = this.chatInput;
     this.chatInput = '';
 
-    // Mock assistant reply
-    setTimeout(() => {
-      this.messages.push({
-        role: 'assistant',
-        content: `I have updated the form based on: "${userMessage}".`,
-      });
-      // In a real app we would call the LLM and update formJson here.
-    }, 500);
+    const response = (await this.geminim.sendMessage(userMessage)) as string;
+    this.thinking = false;
+    this.formJson = JSON.stringify(JSON.parse(response), undefined, 2);
   }
 
   protected onFormHealth(formHealth: Core.FormHealth) {

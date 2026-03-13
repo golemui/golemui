@@ -30,11 +30,11 @@ export class GeminiService {
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: GOLEM_LLM_SCHEMA as Schema,
+        maxOutputTokens: 2000,
       },
     });
     this.chat = this.model.startChat({
       history: [],
-      generationConfig: { maxOutputTokens: 2000 },
     });
   }
 

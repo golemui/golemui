@@ -23,11 +23,15 @@
           >
           </textarea>
           @if (tokenCount > 0) {
-            <span class="token-count">~{{ tokenCount }}</span>
+          <span class="token-count">~{{ tokenCount }}</span>
           }
         </div>
-        <button (click)="sendMessage()" [disabled]="!chatInput.trim()">
+        <button (click)="sendMessage()" [disabled]="!chatInput.trim() || thinking">
+          @if (thinking) {
+          <span class="icon-loading">⏳</span>
+          } @else {
           <span class="icon-send">➤</span>
+          }
         </button>
       </div>
     </div>

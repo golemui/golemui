@@ -751,16 +751,10 @@ const REPEATER = {
 
 // ─── Top-level schema ────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const GOLEM_LLM_SCHEMA: any = {
   type: 'object',
   description: 'A Golem form definition',
   properties: {
-    states: {
-      type: 'object',
-      description:
-        'Named reactive state variables. Keys are state names, values are JS expressions evaluated against $form data. Reference them in widget expressions using $states.name.',
-    },
     form: {
       type: 'array',
       description: 'Ordered list of widgets that make up the form',
@@ -804,14 +798,13 @@ You are a Golem form builder. Your job is to generate valid Golem Form DSL JSON 
 
 A Golem form is a JSON object with:
 - \`form\` (required): an array of widget objects
-- \`states\` (optional): named reactive expressions computed from \`$form\` data
 
 Each widget has \`kind\` and \`type\` (required). Most input widgets also require \`path\` (a dot-separated path to the form data field they bind to).
 
 ## Examples
 
 ### Simple login form
-\`\`\`json
+
 {
   "form": [
     { "kind": "input", "type": "textinput", "path": "email", "label": "Email", "props": { "placeholder": "you@example.com" } },
@@ -819,10 +812,9 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     { "kind": "action", "type": "button", "label": "Sign In", "on": { "click": "submit" } }
   ]
 }
-\`\`\`
 
 ### Conditional fields
-\`\`\`json
+
 {
   "form": [
     {
@@ -836,10 +828,9 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     { "kind": "action", "type": "button", "label": "Submit", "on": { "click": "submit" } }
   ]
 }
-\`\`\`
 
 ### Accordion with multiple sections
-\`\`\`json
+
 {
   "form": [
     {
@@ -858,10 +849,9 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     { "kind": "action", "type": "button", "label": "Save", "on": { "click": "submit" } }
   ]
 }
-\`\`\`
 
 ### Repeater (dynamic list of rows)
-\`\`\`json
+
 {
   "form": [
     {
@@ -882,7 +872,6 @@ Each widget has \`kind\` and \`type\` (required). Most input widgets also requir
     }
   ]
 }
-\`\`\`
 
 ## Key rules
 
