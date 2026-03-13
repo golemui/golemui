@@ -42,7 +42,10 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
         if (value.length > 0 && value[0].start) {
           const date = new Date(value[0].start);
-          if (!isNaN(date.getTime())) {
+          if (
+            !isNaN(date.getTime()) &&
+            !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
+          ) {
             this._currentDate = date;
           }
         }

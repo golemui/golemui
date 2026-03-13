@@ -32,7 +32,10 @@ export class GuiCalendar extends AbstractCalendar {
     if (changedProperties.has('value')) {
       if (this.value) {
         const date = new Date(this.value);
-        if (!isNaN(date.getTime())) {
+        if (
+          !isNaN(date.getTime()) &&
+          !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
+        ) {
           this._currentDate = date;
         }
       }
