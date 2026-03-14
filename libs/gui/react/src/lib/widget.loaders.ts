@@ -26,6 +26,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<
   select: async () => (await import('./components/Select')).Select,
   radiogroup: async () => (await import('./components/RadioGroup')).RadioGroup,
   rangeCalendar: async () => (await import('./components/RangeCalendar')).RangeCalendar,
+  rangeDateInput: async () => (await import('./components/RangeDateInput')).RangeDateInput,
 
   // REPEATER
   repeater: async () => (await import('./components/Repeater')).Repeater,

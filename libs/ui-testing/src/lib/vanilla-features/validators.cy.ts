@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import * as z from 'zod/mini';
 import { MountComponentFn } from '../utils';
+import { golemForm } from '@golemui/gui-shared';
 
 const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
@@ -557,6 +558,161 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="boolean_checkbox"]').click();
         cy.get('[data-cy="boolean_validator-errors"]').should('exist');
         cy.get('[data-cy="boolean_validator-error"]').contains('Invalid input');
+      });
+    });
+
+    context('Array validators', () => {
+      it('should display an error validating required arrays on submit', () => {
+        mountFn({
+          formDef: golemForm().create({
+            form: [
+              {
+                uid: 'requiredArray',
+                kind: 'input',
+                type: 'repeater',
+                path: 'requiredArray',
+                label: 'Required Array',
+                validator: { type: 'array', required: true },
+                props: {
+                  addLabel: 'Add Item',
+                  template: {
+                    kind: 'layout',
+                    type: 'flex',
+                    children: [
+                      {
+                        uid: 'requiredArray_item',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: 'requiredArray.items.name',
+                        label: 'Name',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                uid: 'testButton',
+                kind: 'action',
+                type: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+        cy.get('[data-cy="testButton_button"]').click();
+        cy.get('[data-cy="requiredArray_validator-errors"]').should('exist');
+        cy.get('[data-cy="requiredArray_validator-error"]').contains(
+          'Invalid input: expected array, received undefined',
+        );
+
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('[data-cy="requiredArray_validator-errors"]').should('not.exist');
+      });
+
+      it('should display an error validating minItems', () => {
+        mountFn({
+          formDef: golemForm().create({
+            form: [
+              {
+                uid: 'minItems',
+                kind: 'input',
+                type: 'repeater',
+                path: 'minItems',
+                label: 'Min Items',
+                validator: { type: 'array', minItems: 2 },
+                props: {
+                  addLabel: 'Add Item',
+                  template: {
+                    kind: 'layout',
+                    type: 'flex',
+                    children: [
+                      {
+                        uid: 'minItems_item',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: 'minItems.items.name',
+                        label: 'Name',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                uid: 'testButton',
+                kind: 'action',
+                type: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('[data-cy="testButton_button"]').click();
+        cy.get('[data-cy="minItems_validator-errors"]').should('exist');
+        cy.get('[data-cy="minItems_validator-error"]').contains(
+          'Too small: expected array to have >=2 items',
+        );
+
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('[data-cy="minItems_validator-errors"]').should('not.exist');
+      });
+
+      it('should display an error validating maxItems', () => {
+        mountFn({
+          formDef: golemForm().create({
+            form: [
+              {
+                uid: 'maxItems',
+                kind: 'input',
+                type: 'repeater',
+                path: 'maxItems',
+                label: 'Max Items',
+                validator: { type: 'array', maxItems: 2 },
+                props: {
+                  addLabel: 'Add Item',
+                  template: {
+                    kind: 'layout',
+                    type: 'flex',
+                    children: [
+                      {
+                        uid: 'maxItems_item',
+                        kind: 'input',
+                        type: 'textinput',
+                        path: 'maxItems.items.name',
+                        label: 'Name',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                uid: 'testButton',
+                kind: 'action',
+                type: 'button',
+                label: 'Test',
+                on: {
+                  click: 'submit',
+                },
+              },
+            ],
+          }),
+        });
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('[data-cy="testButton_button"]').click();
+        cy.get('[data-cy="maxItems_validator-errors"]').should('not.exist');
+
+        cy.get('.gui-repeater__add-btn').click();
+        cy.get('[data-cy="maxItems_validator-errors"]').should('exist');
+        cy.get('[data-cy="maxItems_validator-error"]').contains(
+          'Too big: expected array to have <=2 items',
+        );
       });
     });
 

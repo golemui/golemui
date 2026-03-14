@@ -1,0 +1,22 @@
+@let templateData = adapter.templateData();
+
+<gui-range-date
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [hint]="templateData.hint"
+  [icon]="templateData.icon"
+  [value]="templateData.value"
+  [errors]="templateData.errors"
+  [touched]="templateData.touched"
+  [required]="templateData.validator?.required"
+  [disabled]="templateData.disabled"
+  [readonly]="templateData.readonly"
+  [localeId]="templateData.lang"
+  [separator]="templateData.separator"
+  [removePillAriaLabel]="templateData.removePillAriaLabel"
+  [startDateAriaLabel]="templateData.startDateAriaLabel"
+  [endDateAriaLabel]="templateData.endDateAriaLabel"
+  (blur)="adapter.onBlur()"
+  (change)="onChangeDate($event)"
+  (inputError)="onInputError($event)"
+></gui-range-date>

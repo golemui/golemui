@@ -39,14 +39,14 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       type: 'heading',
       props: {
         text: 'KITCHEN SINK',
-        level: 3,
+        level: 1,
       },
     },
     {
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab_textarea',
+        defaultOpen: 'tab12',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Flex Layout', uid: 'tab2' },
@@ -59,7 +59,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
           { label: 'Radiogroup Component', uid: 'tab9' },
           { label: 'Toggle Component', uid: 'tab10' },
           { label: 'Textarea Component', uid: 'tab_textarea' },
-          { label: 'Calendar Component', uid: 'tab12' },
+          { label: 'Date Components', uid: 'tab12' },
           { label: 'Currency Component', uid: 'tab13' },
           { label: 'List Component', uid: 'tab14' },
           { label: 'Dropdown Component', uid: 'tab15' },

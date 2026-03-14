@@ -18,7 +18,7 @@ import {
   refine,
   regex,
   string,
-  success,
+  array,
   superRefine,
   url,
   uuid,
@@ -75,7 +75,6 @@ export interface BooleanValidator extends BaseValidator {
   type: 'boolean';
 }
 
-// TODO: Repeater at some point in the future?
 export interface ArrayValidator extends BaseValidator {
   type: 'array';
   minItems?: number;
@@ -123,9 +122,7 @@ export const initValidators =
         return fromBooleanValidator(validator);
 
       case 'array':
-        // TODO: implement
-        console.warn('TODO: array validator not yet supported');
-        return success(any());
+        return fromArrayValidator(validator);
 
       case 'custom': {
         if (!customValidators) {
@@ -230,6 +227,26 @@ function fromBooleanValidator(v: BooleanValidator) {
 
     if (v.const !== undefined) {
       schema = schema.check(refine((val) => val === v.const));
+    }
+
+    return schema;
+  });
+}
+
+function fromArrayValidator(v: ArrayValidator) {
+  return withOptional(v, (v) => {
+    let schema = array(any());
+
+    if (v.required === true) {
+      schema = schema.check(minLength(1));
+    }
+
+    if (typeof v.minItems === 'number') {
+      schema = schema.check(minLength(v.minItems));
+    }
+
+    if (typeof v.maxItems === 'number') {
+      schema = schema.check(maxLength(v.maxItems));
     }
 
     return schema;

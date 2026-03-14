@@ -202,7 +202,6 @@ export class GuiDate extends LitElement {
     if (this.readOnly) return;
 
     const isRTL = window.getComputedStyle(this).direction === 'rtl';
-    console.log('is RTL', isRTL);
     const input = event.target as HTMLInputElement;
     const inputs = Array.from(this.querySelectorAll('input'));
     const index = inputs.indexOf(input);
