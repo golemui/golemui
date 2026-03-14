@@ -4,6 +4,52 @@ export const calendar = (): any => ({
   type: 'flex',
   children: [
     {
+      kind: 'display',
+      type: 'heading',
+      props: {
+        text: 'RANGE DATE INPUTS',
+        level: 3,
+      },
+    },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'rangeDateInput',
+      path: 'rangeDateInput',
+      defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }, { start: '2025-02-07', end: '2026-02-16' }, { start: '2026-07-20', end: '2026-07-26' }, { start: '2024-12-02', end: '2024-12-06' }, { start: '2023-02-20' }],
+      props: {
+        removePillAriaLabel: 'Delete holiday period',
+        startDateAriaLabel: 'Begin of holiday period',
+        endDateAriaLabel: 'End of holiday period',
+        separator: 'to',
+        icon: 'material-icons material-icons-calendar_month',
+      },
+    },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'rangeCalendar',
+      path: 'rangeCalendar',
+      defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
+      props: {
+        numberOfMonths: 3,
+        icon: 'material-icons material-icons-calendar_month',
+        prevMonthIcon: 'material-icons material-icons-chevron_left',
+        nextMonthIcon: 'material-icons material-icons-chevron_right',
+        prevMonthAriaLabel: 'Go To Previous Month',
+        nextMonthAriaLabel: 'Go To Next Month',
+        disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
+      },
+    },
+    {
+      kind: 'display',
+      type: 'heading',
+      props: {
+        text: 'DATE INPUTS',
+        level: 3,
+      },
+    },
+    {
       uid: '',
       kind: 'input',
       type: 'dateInput',
@@ -26,22 +72,6 @@ export const calendar = (): any => ({
         nextMonthAriaLabel: 'Go To Next Month',
       },
       validator: { type: 'string', required: true, format: 'date' },
-    },
-    {
-      uid: '',
-      kind: 'input',
-      type: 'rangeCalendar',
-      path: 'rangeCalendar',
-      defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
-      props: {
-        numberOfMonths: 3,
-        icon: 'material-icons material-icons-calendar_month',
-        prevMonthIcon: 'material-icons material-icons-chevron_left',
-        nextMonthIcon: 'material-icons material-icons-chevron_right',
-        prevMonthAriaLabel: 'Go To Previous Month',
-        nextMonthAriaLabel: 'Go To Next Month',
-        disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
-      },
     },
     {
       uid: '',

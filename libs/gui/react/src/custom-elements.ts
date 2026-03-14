@@ -12,6 +12,7 @@ import {
   GuiPassword,
   GuiRadiogroup,
   GuiRangeCalendar,
+  GuiRangeDateInput,
   GuiSelect,
   GuiTextarea,
   GuiTextinput,
@@ -56,6 +57,11 @@ declare module 'react' {
         HTMLElement
       > &
         Partial<GuiRangeCalendar>;
+      'gui-range-date': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeDateInput>;
 
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSelect>;

@@ -262,6 +262,15 @@ export type DateinputProps = {
   icon?: string;
 };
 
+export type RangeDateInputProps = {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  removePillAriaLabel?: string;
+  startDateAriaLabel?: string;
+  endDateAriaLabel?: string;
+};
+
 export type DatePickerProps = {
   hint?: string;
   icon?: string;
