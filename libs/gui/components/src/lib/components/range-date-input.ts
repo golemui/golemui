@@ -30,10 +30,10 @@ export class GuiRangeDateInput extends LitElement {
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = '';
-  @property({ type: String }) removePillAriaLabel: string | undefined = 'Remove date range';
-  @property({ type: String }) startDateAriaLabel: string | undefined = 'Start date';
-  @property({ type: String }) endDateAriaLabel: string | undefined = 'End date';
-  @property({ type: String }) separator: string | undefined = '-';
+  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
+  @property({ type: String }) startDateAriaLabel: string | undefined = undefined;
+  @property({ type: String }) endDateAriaLabel: string | undefined = undefined;
+  @property({ type: String }) separator: string | undefined = undefined;
 
   @state() private _startDate: DateParts = { day: '', month: '', year: '' };
   @state() private _endDate: DateParts = { day: '', month: '', year: '' };
@@ -155,7 +155,7 @@ export class GuiRangeDateInput extends LitElement {
               ${this.renderDateInputs('start', parts)}
             </div>
 
-            <span class="gui-range-date-input__separator">${this.separator}</span>
+            <span class="gui-range-date-input__separator">${this.separator ?? '-'}</span>
 
             <div
               class="gui-range-date-input__field"
@@ -193,7 +193,7 @@ export class GuiRangeDateInput extends LitElement {
         class="gui-range-date-input__pill"
         role="listitem"
         tabindex="0"
-        aria-label="${this.removePillAriaLabel}: ${pillLabel}"
+        aria-label="${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}"
         @focus=${this.handlePillFocus}
         @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
       >

@@ -18,6 +18,18 @@
     },
     "iconProp": {
       "type": "string"
+    },
+    "separatorProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "startDateAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "endDateAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     }
   },
   "allOf": [
@@ -55,6 +67,18 @@
         },
         "icon": {
           "$ref": "#/$defs/iconProp"
+        },
+        "separator": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "startDateAriaLabel": {
+          "$ref": "#/$defs/startDateAriaLabelProp"
+        },
+        "endDateAriaLabel": {
+          "$ref": "#/$defs/endDateAriaLabelProp"
         }
       },
       "patternProperties": {
@@ -63,6 +87,18 @@
         },
         "^icon\\.[^.]+$": {
           "$ref": "#/$defs/iconProp"
+        },
+        "^separator\\.[^.]+$": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "^startDateAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/startDateAriaLabelProp"
+        },
+        "^endDateAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/endDateAriaLabelProp"
         }
       },
       "additionalProperties": false

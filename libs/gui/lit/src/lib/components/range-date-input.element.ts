@@ -50,6 +50,10 @@ export class RangeDateInputElement extends LitElement implements Core.WithWidget
         ?readonly=${this.adapter.templateData.readonly}
         .value=${this.adapter.templateData.value}
         .localeId=${this.adapter.templateData.lang}
+        .separator=${this.adapter.templateData.separator}
+        .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
+        .startDateAriaLabel=${this.adapter.templateData.startDateAriaLabel}
+        .endDateAriaLabel=${this.adapter.templateData.endDateAriaLabel}
         @change=${this.valueChanged}
         @inputError=${this.onInputError}
       ></gui-range-date>

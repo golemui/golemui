@@ -50,6 +50,10 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const icon = templateData.icon;
   const lang = templateData.lang;
+  const separator = templateData.separator;
+  const removePillAriaLabel = templateData.removePillAriaLabel;
+  const startDateAriaLabel = templateData.startDateAriaLabel;
+  const endDateAriaLabel = templateData.endDateAriaLabel;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
@@ -69,6 +73,10 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
         value={value}
         icon={icon}
         localeId={lang}
+        separator={separator}
+        removePillAriaLabel={removePillAriaLabel}
+        startDateAriaLabel={startDateAriaLabel}
+        endDateAriaLabel={endDateAriaLabel}
       />
     </div>
   );

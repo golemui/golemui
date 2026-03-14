@@ -18,6 +18,10 @@ export const calendar = (): any => ({
       path: 'rangeDateInput',
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }, { start: '2025-02-07', end: '2026-02-16' }, { start: '2026-07-20', end: '2026-07-26' }, { start: '2024-12-02', end: '2024-12-06' }, { start: '2023-02-20' }],
       props: {
+        removePillAriaLabel: 'Delete holiday period',
+        startDateAriaLabel: 'Begin of holiday period',
+        endDateAriaLabel: 'End of holiday period',
+        separator: 'to',
         icon: 'material-icons material-icons-calendar_month',
       },
     },

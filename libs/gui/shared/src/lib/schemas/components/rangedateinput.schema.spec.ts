@@ -53,6 +53,10 @@ describe('RangeDateInput schema validation', () => {
             props: {
               hint: 'Select date ranges',
               icon: 'calendar',
+              separator: '-',
+              removePillAriaLabel: 'Remove date',
+              startDateAriaLabel: 'Start date',
+              endDateAriaLabel: 'End date',
             },
           },
         ],
@@ -75,6 +79,10 @@ describe('RangeDateInput schema validation', () => {
             type: 'rangeDateInput',
             props: {
               'hint.hasError': 'Date ranges required',
+              'separator.hasError': '~',
+              'removePillAriaLabel.hasError': 'Remove',
+              'startDateAriaLabel.hasError': 'From',
+              'endDateAriaLabel.hasError': 'To',
             },
           },
         ],
@@ -97,6 +105,10 @@ describe('RangeDateInput schema validation', () => {
             type: 'rangeDateInput',
             props: {
               hint: { key: 'rdi.hint', default: 'Hint' },
+              separator: { key: 'rdi.separator', default: '-' },
+              removePillAriaLabel: { key: 'rdi.removePill', default: 'Remove date' },
+              startDateAriaLabel: { key: 'rdi.startDate', default: 'Start date' },
+              endDateAriaLabel: { key: 'rdi.endDate', default: 'End date' },
             },
           },
         ],
