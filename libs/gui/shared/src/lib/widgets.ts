@@ -12,6 +12,7 @@ export const inputWidgets = [
   'radiogroup',
   'rangeCalendar',
   'rangeDateInput',
+  'rangeDatePicker',
   'repeater',
   'select',
   'textarea',

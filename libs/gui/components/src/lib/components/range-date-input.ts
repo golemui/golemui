@@ -194,6 +194,7 @@ export class GuiRangeDateInput extends LitElement {
         role="listitem"
         tabindex="0"
         aria-label="${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}"
+        @click=${() => this.onPillClick(pill)}
         @focus=${this.handlePillFocus}
         @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
       >
@@ -363,6 +364,15 @@ export class GuiRangeDateInput extends LitElement {
       return;
     }
 
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const sorted = this.getSortedPills();
+      if (sorted[index]) {
+        this.onPillClick(sorted[index]);
+      }
+      return;
+    }
+
     const isDropdown = this._showPillsList;
     const prevKey = isDropdown ? 'ArrowUp' : 'ArrowLeft';
     const nextKey = isDropdown ? 'ArrowDown' : 'ArrowRight';
@@ -378,6 +388,16 @@ export class GuiRangeDateInput extends LitElement {
         pills[newIndex].focus();
       }
     }
+  }
+
+  private onPillClick(range: DateRange) {
+    this.dispatchEvent(
+      new CustomEvent('pillClick', {
+        detail: { range },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private handleKeyDown(event: KeyboardEvent) {
@@ -428,6 +448,14 @@ export class GuiRangeDateInput extends LitElement {
     }
 
     switch (event.key) {
+      case 'Enter': {
+        this.tryCreatePill();
+        if (this.value && this.value.length > 0) {
+          const lastRange = this.value[this.value.length - 1];
+          this.onPillClick(lastRange);
+        }
+        break;
+      }
       case 'ArrowUp': {
         const value = isNaN(parseInt(input.value, 10) + 1) ? 1 : parseInt(input.value, 10) + 1;
         this.setDatePartValue(group, type, value);
