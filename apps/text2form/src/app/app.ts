@@ -5,6 +5,7 @@ import * as Gui from '@golemui/gui-angular';
 import { golemForm } from '@golemui/gui-shared';
 import * as Core from '@golemui/core';
 import { GeminiService } from './gemini.service';
+//import { AnthropicService } from './anthropic.service';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -32,7 +33,7 @@ const initialFormJson = golemForm().create({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class App {
-  private geminim = inject(GeminiService);
+  private ai = inject(GeminiService);
   protected activeTab: 'form' | 'json' = 'form';
   protected chatInput =
     'Create a registration form with email, password, confirm password and a submit button';
@@ -53,7 +54,7 @@ export class App {
     this.chatInput = value;
     if (this.tokenDebounce) clearTimeout(this.tokenDebounce);
     this.tokenDebounce = setTimeout(() => {
-      this.tokenCount = value.trim() ? this.geminim.estimateTokens(value, this.messages) : 0;
+      this.tokenCount = value.trim() ? this.ai.estimateTokens(value, this.messages) : 0;
     }, 300);
   }
 
@@ -72,7 +73,7 @@ export class App {
     const userMessage = this.chatInput;
     this.chatInput = '';
 
-    const response = (await this.geminim.sendMessage(userMessage)) as string;
+    const response = (await this.ai.sendMessage(userMessage)) as string;
     this.thinking = false;
     this.formJson = JSON.stringify(JSON.parse(response), undefined, 2);
   }

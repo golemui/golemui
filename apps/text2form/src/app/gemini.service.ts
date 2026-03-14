@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GoogleGenerativeAI, ChatSession, GenerativeModel, Schema } from '@google/generative-ai';
-import { GOLEM_LLM_SCHEMA, GOLEM_SYSTEM_PROMPT } from './golem-llm-schema';
+import { GOLEM_LLM_SCHEMA, GOLEM_SYSTEM_PROMPT } from './gemini-llm-schema';
 
 @Injectable({
   providedIn: 'root',
