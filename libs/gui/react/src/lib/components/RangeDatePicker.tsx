@@ -125,9 +125,12 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
     const isInputClick = target.closest('.gui-range-date-input__part');
     const isCalendarClick = target.closest('gui-range-calendar');
     const isPillClick = target.closest('.gui-range-date-input__pill');
+    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
     if (isInputClick || isCalendarClick || isPillClick) {
       if (!isCalendarOpen) setIsCalendarOpen(true);
-    } else {
+    } else if (isPillCountClick) {
+      if (isCalendarOpen) setIsCalendarOpen(false);
+    }  else {
       setIsCalendarOpen((prev) => !prev);
     }
   };

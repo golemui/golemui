@@ -189,9 +189,12 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
     const isInputClick = target.closest('.gui-range-date-input__part');
     const isCalendarClick = target.closest('gui-range-calendar');
     const isPillClick = target.closest('.gui-range-date-input__pill');
+    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
     if (isInputClick || isCalendarClick || isPillClick) {
       this.openCalendar();
-    } else {
+    } else if (isPillCountClick) {
+      this.closeCalendar();
+    }  else {
       this.isCalendarOpen = !this.isCalendarOpen;
       this.requestUpdate();
     }

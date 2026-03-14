@@ -92,8 +92,11 @@ export class RangeDatePickerComponent implements OnInit, OnDestroy, Core.WithWid
     const isInputClick = target.closest('.gui-range-date-input__part');
     const isCalendarClick = target.closest('gui-range-calendar');
     const isPillClick = target.closest('.gui-range-date-input__pill');
+    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
     if (isInputClick || isCalendarClick || isPillClick) {
       this.openCalendar();
+    } else if (isPillCountClick) {
+      this.closeCalendar();
     } else {
       this.isCalendarOpen.set(!this.isCalendarOpen());
     }
