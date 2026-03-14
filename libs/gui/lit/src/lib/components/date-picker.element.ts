@@ -26,6 +26,17 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
 
   subscriptions: Subscription[] = [];
 
+  onFocusOut = (event: FocusEvent) => {
+    if (!this.isCalendarOpen) return;
+
+    const newFocusTarget = event.relatedTarget as Node;
+    if (newFocusTarget && this.contains(newFocusTarget)) {
+      return;
+    }
+
+    this.closeCalendar();
+  };
+
   onDocumentClick = (event: MouseEvent) => {
     if (!this.isCalendarOpen) return;
 
@@ -45,6 +56,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
   override connectedCallback() {
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
+    this.addEventListener('focusout', this.onFocusOut);
     this.classList.add('gui-date-picker');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
@@ -100,7 +112,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
 
       <div
         role="button"
-        tabindex="0"
+        tabindex="-1"
         class="gui-widget"
         aria-expanded=${this.isCalendarOpen}
         @keyup=${(e: Event) => this.onKeyUp(e)}
@@ -183,6 +195,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
   override disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('click', this.onDocumentClick);
+    this.removeEventListener('focusout', this.onFocusOut);
     this.adapter.destroy();
     this.subscriptions.forEach((s) => s.unsubscribe());
   }

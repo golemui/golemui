@@ -18,6 +18,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
     injectValidationIssues,
   } = useInputWidget<string, DatePickerProps>(widget);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const dateControlRef = useRef<HTMLElement | null>(null);
   const calendarControlRef = useRef<HTMLElement | null>(null);
 
@@ -101,6 +102,17 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
     };
   }, [isCalendarOpen]);
 
+  const onFocusOut = (event: React.FocusEvent) => {
+    if (!isCalendarOpen) return;
+
+    const newFocusTarget = event.relatedTarget as Node;
+    if (newFocusTarget && containerRef.current?.contains(newFocusTarget)) {
+      return;
+    }
+
+    setIsCalendarOpen(false);
+  };
+
   const toggleCalendar = (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
     const isInputClick = target.closest('.gui-date-input__part');
@@ -128,7 +140,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-date-picker" style={{ flex: templateData.size }}>
+    <div ref={containerRef} className="gui-date-picker" style={{ flex: templateData.size }} onBlur={onFocusOut}>
       {templateData.label && (
         <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
           {templateData.label + (isRequired ? ' *' : '')}
@@ -141,7 +153,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
       )}
       <div
         role="button"
-        tabIndex={0}
+        tabIndex={-1}
         className="gui-widget"
         onClick={toggleCalendar}
         onKeyUp={(event) => {
