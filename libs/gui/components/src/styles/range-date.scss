@@ -130,6 +130,7 @@ gui-range-date {
     background-color: var(--gui-intent-primary);
     border-radius: var(--gui-radius-md);
     padding: var(--gui-space-1);
+    cursor: pointer;
 
     &-text {
       font-size: var(--gui-font-xs);
@@ -255,6 +256,7 @@ gui-range-date {
     border: none;
     justify-content: center;
     border-radius: var(--gui-radius-full);
+    cursor: pointer;
   }
 
   .gui-range-date-input__pills-dropdown {
