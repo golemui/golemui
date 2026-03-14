@@ -67,6 +67,9 @@
           "$ref": "./components/rangecalendar.schema.json"
         },
         {
+          "$ref": "./components/rangedateinput.schema.json"
+        },
+        {
           "$ref": "./components/repeater.schema.json"
         },
         {
