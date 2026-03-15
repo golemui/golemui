@@ -1,0 +1,14 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "rangeDatePicker",
+      "path": "dateRanges",
+      "label": "Date Ranges",
+      "props": {
+        "hint": "Select one or more date ranges from the calendar."
+      }
+    }
+  ]
+}
