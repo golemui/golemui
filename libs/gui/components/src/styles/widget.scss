@@ -10,6 +10,7 @@
 .gui-widget {
   position: relative;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   column-gap: var(--gui-space-2);
   row-gap: var(--gui-space-2);

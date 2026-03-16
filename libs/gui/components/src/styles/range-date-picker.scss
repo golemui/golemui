@@ -4,23 +4,19 @@
     container-type: inline-size;
     container-name: gui-range-date-picker-widget;
 
-    > .gui-widget {
-      &::after {
-        content: '';
-        border: solid;
-        border-width: 0 2px 2px 0;
-        height: 0.5rem;
-        pointer-events: none;
-        position: absolute;
-        inset-inline-end: 1.2rem;
-        top: 1.3rem;
-        width: 0.5rem;
-        transform: translateY(-60%) rotate(45deg);
+    .gui-widget {
+      .gui-range-date-picker__arrow {
+        fill: var(--gui-text-default);
+        transform: rotate(0deg);
         transition: transform 0.3s;
+        position: absolute;
+        inset-inline-end: var(--gui-space-3);
+        transform-origin: 50% 40%;
+        pointer-events: none;
       }
 
-      &[aria-expanded='true']::after {
-        transform: translateY(-50%) rotate(-135deg);
+      &[aria-expanded='true'] .gui-range-date-picker__arrow {
+        transform: rotate(180deg);
       }
 
       gui-range-calendar {
