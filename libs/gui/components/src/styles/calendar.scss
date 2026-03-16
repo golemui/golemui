@@ -142,11 +142,10 @@ gui-calendar {
         font-variant-numeric: tabular-nums;
       }
 
-      &-arrows {
-        display: inline-flex;
-        flex-direction: column;
-        font-size: 0.5rem;
-        line-height: 1;
+      &-arrow {
+        fill: white;
+        transform: rotate(0deg);
+        transition: transform 0.3s;
       }
 
       // Year grid overlay
@@ -196,6 +195,10 @@ gui-calendar {
           font-weight: bold;
         }
       }
+    }
+
+    .gui-calendar__year-selector[aria-expanded="true"] .gui-calendar__year-arrow {
+      transform: rotate(180deg);
     }
   }
 }

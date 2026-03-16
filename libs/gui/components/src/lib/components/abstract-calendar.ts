@@ -190,8 +190,8 @@ export abstract class AbstractCalendar extends LitElement {
                   aria-label="Select year"
                 >
                   <span class="gui-calendar__year-value">${part.value}</span>
-                  <span class="gui-calendar__year-arrows" aria-hidden="true">
-                    <span>&#9650;</span><span>&#9660;</span>
+                  <span class="gui-calendar__year-arrow" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
                   </span>
                 </button>`
               : html`<span class="gui-calendar__month-name">${part.value}</span>`,
