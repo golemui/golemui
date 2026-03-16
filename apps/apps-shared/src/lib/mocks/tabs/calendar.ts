@@ -105,7 +105,7 @@ export const calendar = (): any => ({
         nextMonthIcon: 'material-icons material-icons-chevron_right',
         prevMonthAriaLabel: 'Go To Previous Month',
         nextMonthAriaLabel: 'Go To Next Month',
-        minDate: '2026-01-01',
+        minDate: '2022-01-01',
         maxDate: '2026-03-28',
         disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
       },
