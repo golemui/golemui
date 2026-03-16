@@ -1,28 +1,29 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { addErrors, addIcon, addLabel } from '@golemui/gui-components';
-import { DatePickerProps } from '@golemui/gui-shared';
+import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('gui-date-picker-input')
-export class DatePickerElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+@customElement('gui-range-date-picker-input')
+export class RangeDatePickerElement extends LitElement implements Core.WithWidget {
+  widget!: Core.InputWidget<DateRange[]>;
 
   @consume({ context: Lit.formContext })
   @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, DatePickerProps>();
+  adapter = new Lit.InputWidgetAdapter<DateRange[], RangeDatePickerProps>();
 
   @query('#date-input') dateInput?: HTMLElement;
   @query('#calendar-input') calendarInput?: HTMLElement;
 
   @state() isCalendarOpen = false;
+  @state() focusDate: string | undefined = undefined;
 
   subscriptions: Subscription[] = [];
 
@@ -57,7 +58,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
     this.addEventListener('focusout', this.onFocusOut);
-    this.classList.add('gui-date-picker');
+    this.classList.add('gui-range-date-picker');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -85,7 +86,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     const datePickerIcon = addIcon('datePicker', this.adapter.templateData);
 
     const calendar = this.isCalendarOpen
-      ? html`<gui-calendar
+      ? html`<gui-range-calendar
           id="calendar-input"
           .uid=${this.widget.uid}
           .hint=${this.adapter.templateData.hint}
@@ -94,6 +95,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
           ?disabled=${this.adapter.templateData.disabled}
           ?readonly=${this.adapter.templateData.readonly}
           .value=${this.adapter.templateData.value}
+          .focusDate=${this.focusDate}
           .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
           .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
           .prevMonthAriaLabel=${this.adapter.templateData.prevMonthAriaLabel}
@@ -101,10 +103,14 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
           .dayFormat=${this.adapter.templateData.dayFormat}
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}
+          .minDate=${this.adapter.templateData.minDate}
+          .maxDate=${this.adapter.templateData.maxDate}
+          .disabledRanges=${this.adapter.templateData.disabledRanges}
+          .numberOfMonths=${this.adapter.templateData.numberOfMonths}
           .localeId=${this.adapter.templateData.lang}
           @blur=${this.onBlurCalendar}
           @change=${this.valueChanged}
-        ></gui-calendar>`
+        ></gui-range-calendar>`
       : nothing;
 
     return html`
@@ -118,7 +124,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
         @keyup=${(e: Event) => this.onKeyUp(e)}
         @click=${(e: Event) => this.toggleCalendar(e)}
       >
-        <gui-date
+        <gui-range-date
           id="date-input"
           class=${classMap(datePickerIcon.widgetClasses)}
           .uid=${this.widget.uid}
@@ -132,12 +138,17 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
           .value=${this.adapter.templateData.value}
           .icon=${this.adapter.templateData.icon}
           .localeId=${this.adapter.templateData.lang}
+          .separator=${this.adapter.templateData.separator}
+          .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
+          .startDateAriaLabel=${this.adapter.templateData.startDateAriaLabel}
+          .endDateAriaLabel=${this.adapter.templateData.endDateAriaLabel}
           @inputError=${this.onInputError}
           @blur=${() => this.adapter.onBlur()}
           @focus=${this.openCalendar}
           @change=${this.valueChanged}
-        ></gui-date>
-        <span class="gui-date-picker__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
+          @pillClick=${this.onPillClick}
+        ></gui-range-date>
+        <span class="gui-range-date-picker__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
 
         ${calendar}
       </div>
@@ -160,6 +171,11 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     this.adapter.injectValidationIssues([event.detail.message]);
   }
 
+  onPillClick(event: CustomEvent) {
+    this.focusDate = event.detail.range.start;
+    this.openCalendar();
+  }
+
   onKeyUp(event: Event) {
     const evt = event as KeyboardEvent;
     if (evt.target !== evt.currentTarget) return;
@@ -171,11 +187,15 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
 
   toggleCalendar(event: Event) {
     const target = event.target as HTMLElement;
-    const isInputClick = target.closest('.gui-date-input__part');
-    const isCalendarClick = target.closest('gui-calendar');
-    if (isInputClick || isCalendarClick) {
+    const isInputClick = target.closest('.gui-range-date-input__part');
+    const isCalendarClick = target.closest('gui-range-calendar');
+    const isPillClick = target.closest('.gui-range-date-input__pill');
+    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
+    if (isInputClick || isCalendarClick || isPillClick) {
       this.openCalendar();
-    } else {
+    } else if (isPillCountClick) {
+      this.closeCalendar();
+    }  else {
       this.isCalendarOpen = !this.isCalendarOpen;
       this.requestUpdate();
     }

@@ -162,6 +162,7 @@ type GolemWidget<
   | GuiRadiogroup<FormType, States, V>
   | GuiRangeCalendar<FormType, States, V>
   | GuiRangeDateInput<FormType, States, V>
+  | GuiRangeDatePicker<FormType, States, V>
   // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
@@ -293,6 +294,14 @@ type GuiRangeDateInput<
   V,
 > = Core.InputWidget<Props.DateRange[], States, FormType, Props.RangeDateInputProps, V> & {
   type: 'rangeDateInput';
+};
+
+type GuiRangeDatePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = Core.InputWidget<Props.DateRange[], States, FormType, Props.RangeDatePickerProps, V> & {
+  type: 'rangeDatePicker';
 };
 
 // TODO: how to do this one?

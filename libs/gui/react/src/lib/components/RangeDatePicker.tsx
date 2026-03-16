@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { DatePickerProps } from '@golemui/gui-shared';
+import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
 
-export function DatePicker(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<string>;
+export function RangeDatePicker(widgetInstance: Core.WithWidget) {
+  const widget = widgetInstance.widget as Core.InputWidget<DateRange[]>;
   const {
     uid,
     errors,
@@ -16,8 +16,9 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
     onValueChanged,
     onBlur,
     injectValidationIssues,
-  } = useInputWidget<string, DatePickerProps>(widget);
+  } = useInputWidget<DateRange[], RangeDatePickerProps>(widget);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [focusDate, setFocusDate] = useState<string | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const dateControlRef = useRef<HTMLElement | null>(null);
   const calendarControlRef = useRef<HTMLElement | null>(null);
@@ -35,6 +36,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
       const focusHandler = () => {
         setIsCalendarOpen(true);
       };
+      const pillClickHandler = (e: CustomEvent) => {
+        setFocusDate(e.detail.range.start);
+        setIsCalendarOpen(true);
+      };
 
       dateControlRef.current = node;
 
@@ -43,6 +48,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
         target.addEventListener('focus', focusHandler);
         target.addEventListener('blur', onBlur);
         target.addEventListener('inputError', errorHandler);
+        target.addEventListener('pillClick', pillClickHandler);
       }
 
       return () => {
@@ -50,6 +56,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
         target.removeEventListener('focus', focusHandler);
         target.removeEventListener('blur', onBlur);
         target.removeEventListener('inputError', errorHandler);
+        target.removeEventListener('pillClick', pillClickHandler);
       };
     },
     [onValueChanged, onBlur, injectValidationIssues],
@@ -115,10 +122,14 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
 
   const toggleCalendar = (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
-    const isInputClick = target.closest('.gui-date-input__part');
-    const isCalendarClick = target.closest('gui-calendar');
-    if (isInputClick || isCalendarClick) {
+    const isInputClick = target.closest('.gui-range-date-input__part');
+    const isCalendarClick = target.closest('gui-range-calendar');
+    const isPillClick = target.closest('.gui-range-date-input__pill');
+    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
+    if (isInputClick || isCalendarClick || isPillClick) {
       if (!isCalendarOpen) setIsCalendarOpen(true);
+    } else if (isPillCountClick) {
+      if (isCalendarOpen) setIsCalendarOpen(false);
     } else {
       setIsCalendarOpen((prev) => !prev);
     }
@@ -126,6 +137,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
 
   const hint = templateData.hint;
   const icon = templateData.icon;
+  const separator = templateData.separator;
+  const removePillAriaLabel = templateData.removePillAriaLabel;
+  const startDateAriaLabel = templateData.startDateAriaLabel;
+  const endDateAriaLabel = templateData.endDateAriaLabel;
   const prevMonthIcon = templateData.prevMonthIcon;
   const nextMonthIcon = templateData.nextMonthIcon;
   const prevMonthAriaLabel = templateData.prevMonthAriaLabel;
@@ -133,6 +148,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   const dayFormat = templateData.dayFormat;
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
+  const minDate = templateData.minDate;
+  const maxDate = templateData.maxDate;
+  const disabledRanges = templateData.disabledRanges;
+  const numberOfMonths = templateData.numberOfMonths;
   const showErrors = isTouched && errors && errors.length > 0;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -142,7 +161,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   return (
     <div
       ref={containerRef}
-      className="gui-date-picker"
+      className="gui-range-date-picker"
       style={{ flex: templateData.size }}
       onBlur={onFocusOut}
     >
@@ -169,7 +188,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
         }}
         aria-expanded={isCalendarOpen}
       >
-        <gui-date
+        <gui-range-date
           ref={handleDateRef}
           uid={uid}
           hint={hint}
@@ -182,15 +201,19 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
           value={value}
           icon={icon}
           localeId={lang}
+          separator={separator}
+          removePillAriaLabel={removePillAriaLabel}
+          startDateAriaLabel={startDateAriaLabel}
+          endDateAriaLabel={endDateAriaLabel}
         />
-        <span className="gui-date-picker__arrow">
+        <span className="gui-range-date-picker__arrow">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
             <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
           </svg>
         </span>
 
         {isCalendarOpen && (
-          <gui-calendar
+          <gui-range-calendar
             ref={handleCalendarRef}
             uid={uid}
             hint={hint}
@@ -199,6 +222,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
             disabled={isDisabled}
             readOnly={isReadonly}
             value={value}
+            focusDate={focusDate}
             prevMonthIcon={prevMonthIcon}
             nextMonthIcon={nextMonthIcon}
             prevMonthAriaLabel={prevMonthAriaLabel}
@@ -206,6 +230,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
             dayFormat={dayFormat}
             weekdayFormat={weekdayFormat}
             monthFormat={monthFormat}
+            minDate={minDate}
+            maxDate={maxDate}
+            disabledRanges={disabledRanges}
+            numberOfMonths={numberOfMonths}
             localeId={lang}
           />
         )}

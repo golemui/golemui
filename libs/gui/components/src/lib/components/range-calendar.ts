@@ -24,6 +24,7 @@ export interface RangeCalendarDay extends AbstractCalendarDay {
 @customElement('gui-range-calendar')
 export class GuiRangeCalendar extends AbstractCalendar {
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  @property({ type: String }) focusDate: string | undefined = undefined;
 
   @state() private _anchorDate: Date | null = null;
   @state() private _nextDate: RangeCalendarDay | null = null;
@@ -34,7 +35,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
-    if (changedProperties.has('value')) {
+    if (changedProperties.has('value') && !changedProperties.has('focusDate')) {
       if (this.value) {
         const value = Array.isArray(this.value)
           ? this.value
@@ -48,6 +49,18 @@ export class GuiRangeCalendar extends AbstractCalendar {
           ) {
             this._currentDate = date;
           }
+        }
+      }
+    }
+    if (changedProperties.has('focusDate')) {
+      if (this.focusDate) {
+        const date = new Date(this.focusDate);
+        if (!isNaN(date.getTime())) {
+          if (!isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)) {
+            this._currentDate = date;
+          }
+          // Reset so the same pill click triggers a change next time
+          this.focusDate = undefined;
         }
       }
     }

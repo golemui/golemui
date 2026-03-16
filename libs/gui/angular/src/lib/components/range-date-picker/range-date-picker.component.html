@@ -14,7 +14,7 @@
   (keyup.enter)="$event.target === $event.currentTarget && isCalendarOpen.set(!isCalendarOpen())"
   (click)="toggleCalendar($event)"
 >
-  <gui-date
+  <gui-range-date
     #dateControlRef
     [uid]="widget.uid"
     [hint]="templateData.hint"
@@ -27,15 +27,20 @@
     [value]="templateData.value"
     [icon]="templateData.icon"
     [localeId]="templateData.lang"
+    [separator]="templateData.separator"
+    [removePillAriaLabel]="templateData.removePillAriaLabel"
+    [startDateAriaLabel]="templateData.startDateAriaLabel"
+    [endDateAriaLabel]="templateData.endDateAriaLabel"
     (change)="onChangeDate($event)"
     (inputError)="onInputError($event)"
     (focus)="openCalendar()"
     (blur)="adapter.onBlur()"
-  ></gui-date>
-  <span class="gui-date-picker__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
+    (pillClick)="onPillClick($event)"
+  ></gui-range-date>
+  <span class="gui-range-date-picker__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
 
   @if (isCalendarOpen()) {
-    <gui-calendar
+    <gui-range-calendar
       #calendarControlRef
       [uid]="widget.uid"
       [hint]="templateData.hint"
@@ -44,6 +49,7 @@
       [disabled]="templateData.disabled"
       [readonly]="templateData.readonly"
       [value]="templateData.value"
+      [focusDate]="focusDate()"
       [prevMonthIcon]="templateData.prevMonthIcon"
       [nextMonthIcon]="templateData.nextMonthIcon"
       [nextMonthAriaLabel]="templateData.nextMonthAriaLabel"
@@ -51,10 +57,14 @@
       [dayFormat]="templateData.dayFormat"
       [weekdayFormat]="templateData.weekdayFormat"
       [monthFormat]="templateData.monthFormat"
+      [minDate]="templateData.minDate"
+      [maxDate]="templateData.maxDate"
+      [disabledRanges]="templateData.disabledRanges"
+      [numberOfMonths]="templateData.numberOfMonths"
       [localeId]="templateData.lang"
       (change)="onChangeDate($event)"
       (blur)="onBlurCalendar()"
-    ></gui-calendar>
+    ></gui-range-calendar>
   }
 </div>
 

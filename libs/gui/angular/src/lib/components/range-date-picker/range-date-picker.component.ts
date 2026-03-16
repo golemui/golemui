@@ -11,36 +11,36 @@ import {
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { DatePickerProps } from '@golemui/gui-shared';
+import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
 
 @Component({
   standalone: true,
-  selector: 'gui-date-picker-control',
+  selector: 'gui-range-date-picker-control',
   imports: [CommonModule, ErrorsComponent, LabelComponent],
   providers: [Angular.InputWidgetAdapter],
-  templateUrl: './date-picker.component.html',
+  templateUrl: './range-date-picker.component.html',
   host: {
-    class: 'gui-date-picker',
+    class: 'gui-range-date-picker',
     '(document:click)': 'onDocumentClick($event)',
     '(focusout)': 'onFocusOut($event)',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
-  protected adapter: Angular.InputWidgetAdapter<string, DatePickerProps> = inject(
+export class RangeDatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
+  widget!: Core.InputWidget<DateRange[]>;
+  protected adapter: Angular.InputWidgetAdapter<DateRange[], RangeDatePickerProps> = inject(
     Angular.InputWidgetAdapter,
   );
   private el = inject(ElementRef);
-  currentDate = new Date();
 
   dateControl = viewChild<ElementRef>('dateControlRef');
   calendarControl = viewChild<ElementRef>('calendarControlRef');
 
   readonly isCalendarOpen = signal(false);
+  readonly focusDate = signal<string | undefined>(undefined);
 
   onFocusOut(event: FocusEvent) {
     if (!this.isCalendarOpen()) return;
@@ -82,12 +82,21 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
     this.closeCalendar();
   }
 
+  onPillClick(event: Event) {
+    this.focusDate.set((event as CustomEvent).detail.range.start);
+    this.openCalendar();
+  }
+
   toggleCalendar(event: Event) {
     const target = event.target as HTMLElement;
-    const isInputClick = target.closest('.gui-date-input__part');
-    const isCalendarClick = target.closest('gui-calendar');
-    if (isInputClick || isCalendarClick) {
+    const isInputClick = target.closest('.gui-range-date-input__part');
+    const isCalendarClick = target.closest('gui-range-calendar');
+    const isPillClick = target.closest('.gui-range-date-input__pill');
+    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
+    if (isInputClick || isCalendarClick || isPillClick) {
       this.openCalendar();
+    } else if (isPillCountClick) {
+      this.closeCalendar();
     } else {
       this.isCalendarOpen.set(!this.isCalendarOpen());
     }

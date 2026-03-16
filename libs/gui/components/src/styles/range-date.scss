@@ -130,6 +130,7 @@ gui-range-date {
     background-color: var(--gui-intent-primary);
     border-radius: var(--gui-radius-md);
     padding: var(--gui-space-1);
+    cursor: pointer;
 
     &-text {
       font-size: var(--gui-font-xs);
@@ -242,6 +243,13 @@ gui-range-date {
   }
 
   .gui-range-date-input__pill--count {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: var(--gui-space-3);
+    color: var(--gui-color-white);
+    background-color: var(--gui-intent-primary);
+    padding: var(--gui-space-1);
     cursor: pointer;
     min-width: 24px;
     font-size: var(--gui-font-xs);
@@ -262,7 +270,6 @@ gui-range-date {
     border: 1px solid var(--gui-border-default);
     border-radius: var(--gui-radius-md);
     box-shadow: var(--gui-shadow-md);
-    margin-top: var(--gui-space-1);
     padding: var(--gui-space-2);
     gap: var(--gui-space-2);
     max-height: 200px;

@@ -24,6 +24,9 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
     (await import('./components/range-calendar/range-calendar.component')).RangeCalendarComponent,
   rangeDateInput: async () =>
     (await import('./components/range-date/range-date.component')).RangeDateComponent,
+  rangeDatePicker: async () =>
+    (await import('./components/range-date-picker/range-date-picker.component'))
+      .RangeDatePickerComponent,
   dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,
   datePicker: async () =>
     (await import('./components/date-picker/date-picker.component')).DatePickerComponent,

@@ -2,18 +2,14 @@ gui-select {
   display: block;
 
   .gui-widget {
-    &::after {
-      content: '';
-      border: solid;
-      border-width: 0 2px 2px 0;
-      height: 0.5rem;
-      pointer-events: none;
+    .gui-select__arrow {
+      fill: var(--gui-text-default);
+      transform: rotate(0deg);
+      transition: transform 0.3s;
       position: absolute;
-      inset-inline-end: 1.2rem;
-      top: 47%;
-      width: 0.5rem;
-      transform: translateY(-60%) rotate(45deg);
-      color: var(--gui-text-default);
+      inset-inline-end: var(--gui-space-3);
+      transform-origin: 50% 40%;
+      pointer-events: none;
     }
   }
 

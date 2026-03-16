@@ -99,6 +99,7 @@ gui-calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 1px;
+      width: 292px;
     }
 
     .gui-calendar__months-grid {
@@ -107,6 +108,98 @@ gui-calendar {
       gap: 2rem;
       justify-content: center;
       margin: auto;
+    }
+
+    // Year selector button in header
+    .gui-calendar__year {
+      &-selector {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: none;
+        border: 1px solid transparent;
+        border-bottom: 1px dashed var(--gui-border-default);
+        padding: 0 2px;
+        margin: 0 var(--gui-space-1);
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        line-height: inherit;
+
+        &:hover {
+          border-bottom-color: var(--gui-border-focus);
+        }
+
+        &:focus {
+          outline: 0;
+          border: 1px solid var(--gui-border-focus);
+          box-shadow: var(--gui-shadow-focus);
+          border-radius: var(--gui-radius-sm, 2px);
+        }
+      }
+
+      &-value {
+        font-variant-numeric: tabular-nums;
+      }
+
+      &-arrow {
+        fill: var(--gui-text-default);
+        transform: rotate(0deg);
+        transition: transform 0.3s;
+        pointer-events: none;
+      }
+
+      // Year grid overlay
+      &-grid {
+        display: grid;
+        align-content: start;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        width: 282px;
+        height: 216px;
+        overflow-y: auto;
+        padding: 4px;
+        scrollbar-width: thin;
+        border-radius: var(--gui-radius-md);
+        border: 1px solid var(--gui-border-default);
+      }
+
+      &-row {
+        display: contents;
+      }
+
+      &-button {
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--gui-text-default);
+        padding: var(--gui-space-2) var(--gui-space-3);
+        border-radius: var(--gui-radius-md);
+        cursor: pointer;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+
+        &:focus {
+          outline: 0;
+          border-color: var(--gui-border-focus);
+          box-shadow:
+            0 0 0 0 var(--gui-bg-default),
+            0 0 0 2px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+        }
+
+        &:hover {
+          border: 1px solid var(--gui-border-default);
+          background-color: var(--gui-text-secondary);
+        }
+
+        &.current {
+          border-color: var(--gui-intent-primary-active);
+          font-weight: bold;
+        }
+      }
+    }
+
+    .gui-calendar__year-selector[aria-expanded="true"] .gui-calendar__year-arrow {
+      transform: rotate(180deg);
     }
   }
 }
