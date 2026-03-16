@@ -119,6 +119,27 @@ export function isDateInVisibleMonths(
 }
 
 /**
+ * Returns an ordered array of month and year parts for the given date,
+ * respecting the locale's natural ordering.
+ *
+ * For example, in 'en-US': [{ type: 'month', value: 'March' }, { type: 'year', value: '2026' }]
+ * In 'ja-JP': [{ type: 'year', value: '2026' }, { type: 'month', value: '3月' }]
+ *
+ * @param {string | undefined} localeId - The locale identifier used to format the parts.
+ * @param {Date} date - The date from which month and year will be extracted.
+ * @param {'numeric' | '2-digit' | 'long' | 'short' | 'narrow'} monthFormat - The format style for the month portion.
+ * @return {{ type: string; value: string }[]} An array of month and year parts in locale order.
+ */
+export function getMonthYearParts(
+  localeId: string | undefined,
+  date: Date,
+  monthFormat: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' = 'long',
+): { type: string; value: string }[] {
+  const formatter = new Intl.DateTimeFormat(localeId, { month: monthFormat, year: 'numeric' });
+  return formatter.formatToParts(date).filter((p) => p.type === 'month' || p.type === 'year');
+}
+
+/**
  * Retrieves the numeric day label from a given date formatted based on the specified locale.
  *
  * @param {string | undefined} localeId - The locale identifier to format the day. Defaults to 'en-US' if not provided or undefined.
