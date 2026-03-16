@@ -93,6 +93,32 @@ export function getMonthName(localeId: string | undefined, currentDate: Date): s
 }
 
 /**
+ * Checks whether a given date falls within any of the visible months
+ * starting from a base date across a specified number of months.
+ *
+ * @param {Date} date - The date to check.
+ * @param {Date} currentDate - The base date representing the first visible month.
+ * @param {number} numberOfMonths - The number of months visible from the base date.
+ * @return {boolean} True if the date's month and year match any of the visible months.
+ */
+export function isDateInVisibleMonths(
+  date: Date,
+  currentDate: Date,
+  numberOfMonths: number,
+): boolean {
+  for (let i = 0; i < numberOfMonths; i++) {
+    const panelDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
+    if (
+      date.getMonth() === panelDate.getMonth() &&
+      date.getFullYear() === panelDate.getFullYear()
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Retrieves the numeric day label from a given date formatted based on the specified locale.
  *
  * @param {string | undefined} localeId - The locale identifier to format the day. Defaults to 'en-US' if not provided or undefined.

@@ -1,7 +1,13 @@
 import { html, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
+import {
+  getDayLabel,
+  isDateInVisibleMonths,
+  isSameDay,
+  isToday,
+  toISODateString,
+} from '../utils/date';
 import { AbstractCalendar } from './abstract-calendar';
 
 export interface CalendarDay {
@@ -26,7 +32,10 @@ export class GuiCalendar extends AbstractCalendar {
     if (changedProperties.has('value')) {
       if (this.value) {
         const date = new Date(this.value);
-        if (!isNaN(date.getTime())) {
+        if (
+          !isNaN(date.getTime()) &&
+          !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
+        ) {
           this._currentDate = date;
         }
       }
@@ -73,16 +82,17 @@ export class GuiCalendar extends AbstractCalendar {
       const isCurrentMonth = date.getMonth() === targetMonth;
       const isDisabled = this.isDisabled(date);
       const isSelected = !!this.value && isSameDay(date, new Date(this.value));
-      const isFocusable = isSelected && isCurrentMonth;
+      const isTodayDate = isToday(date);
+      const isFocusable = (isSelected || isTodayDate) && isCurrentMonth;
 
       return {
         date,
         dayLabel: getDayLabel(this.localeId, date),
         isCurrentMonth,
-        isToday: isToday(date),
+        isToday: isTodayDate,
         isDisabled,
         isSelected,
-        isFocusable: isFocusable || (!this.value && isToday(date) && isCurrentMonth),
+        isFocusable,
       };
     });
 
@@ -91,6 +101,14 @@ export class GuiCalendar extends AbstractCalendar {
       const lastWeek = days.slice(-7);
       if (lastWeek.every((day) => !day.isCurrentMonth)) {
         days = days.slice(0, -7);
+      }
+    }
+
+    if (offset === 0 && !days.some((d) => d.isFocusable)) {
+      const referenceDate = this.value ? new Date(this.value) : new Date();
+      if (!isDateInVisibleMonths(referenceDate, this._currentDate, this.numberOfMonths ?? 1)) {
+        const firstDay = days.find((d) => d.isCurrentMonth && !d.isDisabled);
+        if (firstDay) firstDay.isFocusable = true;
       }
     }
 

@@ -1,7 +1,13 @@
 import { html, PropertyValues, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { getDayLabel, isSameDay, isToday, toISODateString } from '../utils/date';
+import {
+  getDayLabel,
+  isDateInVisibleMonths,
+  isSameDay,
+  isToday,
+  toISODateString,
+} from '../utils/date';
 import { AbstractCalendar, AbstractCalendarDay } from './abstract-calendar';
 import { DateRange } from '@golemui/gui-shared';
 
@@ -18,6 +24,7 @@ export interface RangeCalendarDay extends AbstractCalendarDay {
 @customElement('gui-range-calendar')
 export class GuiRangeCalendar extends AbstractCalendar {
   @property({ type: Array }) value: DateRange[] | undefined = [];
+  @property({ type: String }) focusDate: string | undefined = undefined;
 
   @state() private _anchorDate: Date | null = null;
   @state() private _nextDate: RangeCalendarDay | null = null;
@@ -28,7 +35,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
-    if (changedProperties.has('value')) {
+    if (changedProperties.has('value') && !changedProperties.has('focusDate')) {
       if (this.value) {
         const value = Array.isArray(this.value)
           ? this.value
@@ -36,9 +43,24 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
         if (value.length > 0 && value[0].start) {
           const date = new Date(value[0].start);
-          if (!isNaN(date.getTime())) {
+          if (
+            !isNaN(date.getTime()) &&
+            !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
+          ) {
             this._currentDate = date;
           }
+        }
+      }
+    }
+    if (changedProperties.has('focusDate')) {
+      if (this.focusDate) {
+        const date = new Date(this.focusDate);
+        if (!isNaN(date.getTime())) {
+          if (!isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)) {
+            this._currentDate = date;
+          }
+          // Reset so the same pill click triggers a change next time
+          this.focusDate = undefined;
         }
       }
     }
@@ -116,6 +138,20 @@ export class GuiRangeCalendar extends AbstractCalendar {
       const lastWeek = days.slice(-7);
       if (lastWeek.every((day) => !day.isCurrentMonth)) {
         days = days.slice(0, -7);
+      }
+    }
+
+    if (offset === 0 && !days.some((d) => d.isFocusable)) {
+      const months = this.numberOfMonths ?? 1;
+      const todayVisible = isDateInVisibleMonths(new Date(), this._currentDate, months);
+      const rangeStartVisible =
+        this.value?.some((range) =>
+          isDateInVisibleMonths(new Date(range.start), this._currentDate, months),
+        ) ?? false;
+
+      if (!todayVisible && !rangeStartVisible) {
+        const firstDay = days.find((d) => d.isCurrentMonth && !d.isDisabled);
+        if (firstDay) firstDay.isFocusable = true;
       }
     }
 

@@ -262,6 +262,15 @@ export type DateinputProps = {
   icon?: string;
 };
 
+export type RangeDateInputProps = {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  removePillAriaLabel?: string;
+  startDateAriaLabel?: string;
+  endDateAriaLabel?: string;
+};
+
 export type DatePickerProps = {
   hint?: string;
   icon?: string;
@@ -272,6 +281,26 @@ export type DatePickerProps = {
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+};
+
+export type RangeDatePickerProps = {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  removePillAriaLabel?: string;
+  startDateAriaLabel?: string;
+  endDateAriaLabel?: string;
+  prevMonthIcon?: string;
+  nextMonthIcon?: string;
+  prevMonthAriaLabel?: string;
+  nextMonthAriaLabel?: string;
+  dayFormat?: 'numeric' | '2-digit';
+  weekdayFormat?: 'short' | 'long' | 'narrow';
+  monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  minDate?: string;
+  maxDate?: string;
+  disabledRanges?: DateRange[];
+  numberOfMonths?: number;
 };
 
 export type NumberinputProps = {

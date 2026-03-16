@@ -69,9 +69,34 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
     super.render();
 
     return html`
-      <div id=${this.widget.uid} class=${`gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`} @focusin=${this.onFocusIn} @focusout=${this.onFocusOut}>
-        ${this.adapter.templateData.label ? html`<h2>${this.adapter.templateData.label}</h2>` : nothing}
-
+      <div
+        id=${this.widget.uid}
+        class=${`gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`}
+        @focusin=${this.onFocusIn}
+        @focusout=${this.onFocusOut}
+      >
+        ${this.adapter.templateData.label
+          ? html`<h2>${this.adapter.templateData.label}</h2>`
+          : nothing}
+        ${this.adapter.templateData.touched && this.adapter.templateData.errors?.length
+          ? html` <ul
+              class="gui-validator"
+              id="${this.widget.uid}_errors"
+              data-cy="${this.widget.uid}_validator-errors"
+            >
+              ${this.adapter.templateData.errors.map(
+                (error: string) => html`
+                  <li
+                    class="gui-validator__error"
+                    role="alert"
+                    data-cy="${this.widget.uid}_validator-error"
+                  >
+                    ${error}
+                  </li>
+                `,
+              )}
+            </ul>`
+          : nothing}
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
@@ -80,7 +105,9 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                 <div class="gui-repeater__card">
                   <div class="gui-repeater__card-header">
                     ${this.adapter.templateData.title
-                      ? html`<span class="gui-repeater__card-title">${this.adapter.templateData.title} ${index + 1}</span>`
+                      ? html`<span class="gui-repeater__card-title"
+                          >${this.adapter.templateData.title} ${index + 1}</span
+                        >`
                       : nothing}
                     <button
                       type="button"
@@ -88,7 +115,9 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                       @click=${() => this.removeItem(index)}
                     >
                       ${this.adapter.templateData.removeButtonIcon
-                        ? html`<span class="gui-button-icon ${this.adapter.templateData.removeButtonIcon}"></span>`
+                        ? html`<span
+                            class="gui-button-icon ${this.adapter.templateData.removeButtonIcon}"
+                          ></span>`
                         : nothing}
                       ${this.adapter.templateData.removeLabel ?? 'Remove'}
                     </button>

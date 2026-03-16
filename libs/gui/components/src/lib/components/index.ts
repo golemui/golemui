@@ -11,6 +11,7 @@ export * from './one-of';
 export * from './password';
 export * from './radiogroup';
 export * from './range-calendar';
+export * from './range-date-input';
 export * from './select';
 export * from './tabs';
 export * from './textarea';

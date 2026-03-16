@@ -232,8 +232,21 @@ export abstract class AbstractCalendar extends LitElement {
         this.querySelectorAll<HTMLButtonElement>('.gui-calendar__day-button:not(.other-month)'),
       );
 
-      const targetIndex =
-        nextIndex < 0 ? newButtons.length + nextIndex : nextIndex - buttons.length;
+      const panels = Array.from(this.querySelectorAll('.gui-calendar__panel'));
+      let targetIndex: number;
+
+      if (nextIndex < 0) {
+        const firstPanelButtonCount = panels[0].querySelectorAll(
+          '.gui-calendar__day-button:not(.other-month)',
+        ).length;
+        targetIndex = firstPanelButtonCount + nextIndex;
+      } else {
+        const lastPanel = panels[panels.length - 1];
+        const lastPanelButtonCount = lastPanel.querySelectorAll(
+          '.gui-calendar__day-button:not(.other-month)',
+        ).length;
+        targetIndex = newButtons.length - lastPanelButtonCount + (nextIndex - buttons.length);
+      }
 
       if (this.isButtonDisabled(newButtons[targetIndex])) {
         const correctedIndex = this.findNextFocusableIndex(targetIndex, step, newButtons);

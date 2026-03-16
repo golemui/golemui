@@ -24,6 +24,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
   host: {
     class: 'gui-date-picker',
     '(document:click)': 'onDocumentClick($event)',
+    '(focusout)': 'onFocusOut($event)',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -33,12 +34,24 @@ export class DatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
   protected adapter: Angular.InputWidgetAdapter<string, DatePickerProps> = inject(
     Angular.InputWidgetAdapter,
   );
+  private el = inject(ElementRef);
   currentDate = new Date();
 
   dateControl = viewChild<ElementRef>('dateControlRef');
   calendarControl = viewChild<ElementRef>('calendarControlRef');
 
   readonly isCalendarOpen = signal(false);
+
+  onFocusOut(event: FocusEvent) {
+    if (!this.isCalendarOpen()) return;
+
+    const newFocusTarget = event.relatedTarget as Node;
+    if (newFocusTarget && this.el.nativeElement.contains(newFocusTarget)) {
+      return;
+    }
+
+    this.closeCalendar();
+  }
 
   onDocumentClick(event: MouseEvent) {
     const targetElement = event.target as HTMLElement;

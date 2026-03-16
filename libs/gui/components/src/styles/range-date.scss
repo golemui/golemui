@@ -1,0 +1,300 @@
+gui-range-date {
+  display: block;
+  container-type: inline-size;
+  container-name: gui-range-date-widget;
+
+  .gui-range-date-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    &--icon {
+      & > .gui-widget-icon {
+        flex-shrink: 0;
+      }
+
+      .gui-range-date-input__pills-compact {
+        padding-inline-start: 2.5rem;
+      }
+      .gui-range-date-input__inputs {
+        padding-inline-start: 2.5rem;
+      }
+      .gui-range-date-input__pills-wrapper {
+        margin-inline-start: 2.5rem;
+      }
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--gui-intent-error);
+
+      &:has(.gui-range-date-input__pill:focus),
+      &:has(input:focus) {
+        outline: 0;
+        border-color: var(--gui-intent-error);
+        box-shadow: var(--gui-shadow-focus-error);
+      }
+    }
+
+    &:has(.gui-range-date-input__pill:focus),
+    &:has(input:focus) {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+  }
+
+  .gui-range-date-input__inputs {
+    display: flex;
+    padding-inline-start: 1rem;
+    gap: var(--gui-space-2);
+    flex-wrap: wrap;
+    min-width: 265px;
+  }
+
+  .gui-range-date-input__pills-compact + .gui-range-date-input__inputs {
+    padding-inline-start: 1rem;
+  }
+
+  .gui-sentinel {
+    width: 0;
+    height: 0;
+    flex-shrink: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    &__start {
+      margin-inline-end: 0;
+    }
+    &__end {
+      margin-inline-start: -1px;
+    }
+  }
+
+  .gui-range-date-input__pills-wrapper {
+    display: flex;
+    min-height: 41px;
+    border-inline-end: 1px solid var(--gui-border-default);
+    border-inline-start: 1px solid var(--gui-border-default);
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    &::before {
+      left: 0;
+      background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &::after {
+      right: 0;
+      background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &.gui-range-date-input--start-shadow::before {
+      opacity: 1;
+    }
+    &.gui-range-date-input--end-shadow::after {
+      opacity: 1;
+    }
+  }
+
+  .gui-range-date-input__pills {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--gui-space-3);
+    gap: var(--gui-space-2);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .gui-range-date-input__pill {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: var(--gui-space-3);
+    color: var(--gui-color-white);
+    background-color: var(--gui-intent-primary);
+    border-radius: var(--gui-radius-md);
+    padding: var(--gui-space-1);
+    cursor: pointer;
+
+    &-text {
+      font-size: var(--gui-font-xs);
+    }
+
+    &-remove {
+      background: transparent;
+      border: 1px solid var(--gui-color-white);
+      border-radius: var(--gui-radius-full);
+      color: white;
+      padding: 0px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:focus {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+  }
+
+  .gui-range-date-input__separator {
+    display: flex;
+    align-items: center;
+  }
+
+  .gui-range-date-input__field {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 0;
+
+    .gui-range-date-input__touch-target {
+      display: block;
+      position: relative;
+    }
+
+    .gui-range-date-input__visual-underline {
+      position: absolute;
+      bottom: -1px;
+      inset-inline-start: 2px;
+      width: 18px;
+      height: 1px;
+      background-color: var(--gui-text-default);
+      z-index: 1;
+      pointer-events: none;
+      display: none;
+    }
+
+    input[type='text'] {
+      font-family: monospace;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+      outline: none;
+      width: 24px;
+      text-align: center;
+
+      &.gui-range-date-input__part {
+        min-width: 48px;
+        min-height: 48px;
+        border: none;
+        background: transparent;
+        text-align: center;
+        padding: 0;
+        margin-block: -16px;
+        margin-inline: -12px;
+        position: relative;
+        z-index: 2;
+      }
+
+      &.gui-range-date-input__year {
+        width: 64px;
+
+        & ~ .gui-range-date-input__visual-underline {
+          width: 36px;
+        }
+      }
+
+      &:focus {
+        box-shadow: none;
+
+        & ~ .gui-range-date-input__visual-underline {
+          display: block;
+        }
+      }
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+      }
+    }
+
+    &.gui-calendar--icon {
+      padding-inline-start: 2.5rem;
+    }
+  }
+
+  .gui-range-date-input__pills-compact {
+    display: none;
+    align-items: center;
+    padding: 0 var(--gui-space-3);
+  }
+
+  .gui-range-date-input__pill--count {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: var(--gui-space-3);
+    color: var(--gui-color-white);
+    background-color: var(--gui-intent-primary);
+    padding: var(--gui-space-1);
+    cursor: pointer;
+    min-width: 24px;
+    font-size: var(--gui-font-xs);
+    border: none;
+    justify-content: center;
+    border-radius: var(--gui-radius-full);
+  }
+
+  .gui-range-date-input__pills-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    flex-direction: column;
+    background-color: var(--gui-bg-default);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    box-shadow: var(--gui-shadow-md);
+    padding: var(--gui-space-2);
+    gap: var(--gui-space-2);
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .gui-range-date-input__pills-dropdown .gui-range-date-input__pill {
+    justify-content: space-between;
+  }
+
+  @container gui-range-date-widget (max-width: 540px) {
+    .gui-range-date-input__pills-wrapper {
+      display: none;
+    }
+
+    .gui-range-date-input__pills-compact {
+      display: flex;
+    }
+
+    .gui-range-date-input__pills-dropdown {
+      display: flex;
+    }
+
+    .gui-range-date-input__pills-compact + .gui-range-date-input__inputs {
+      padding-inline-start: 0;
+    }
+  }
+}

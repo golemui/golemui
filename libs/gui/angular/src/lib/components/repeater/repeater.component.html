@@ -1,4 +1,5 @@
 @let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <div
   [id]="widget.uid"
@@ -9,6 +10,23 @@
 >
   @if (templateData.label) {
     <h2>{{ templateData.label }}</h2>
+  }
+  @if (showErrors) {
+    <ul
+      class="gui-validator"
+      [id]="`${widget.uid}_errors`"
+      [attr.data-cy]="`${widget.uid}_validator-errors`"
+    >
+      @for (error of templateData.errors; track $index) {
+        <li
+          class="gui-validator__error"
+          role="alert"
+          [attr.data-cy]="`${widget.uid}_validator-error`"
+        >
+          {{ error }}
+        </li>
+      }
+    </ul>
   }
   @if (templateData.template && templateData.value) {
     @for (item of templateData.value; track item) {

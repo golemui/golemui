@@ -11,6 +11,8 @@ export const inputWidgets = [
   'password',
   'radiogroup',
   'rangeCalendar',
+  'rangeDateInput',
+  'rangeDatePicker',
   'repeater',
   'select',
   'textarea',
