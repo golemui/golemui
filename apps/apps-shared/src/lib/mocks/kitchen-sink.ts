@@ -1,4 +1,3 @@
-import { defineForm } from '@golemui/core';
 import { accordion } from './tabs/accordion';
 import { alert } from './tabs/alert';
 import { calendar } from './tabs/calendar';
@@ -15,16 +14,27 @@ import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
 import { Example } from './types';
+import { golemForm } from '@golemui/gui-shared';
+import * as Core from '@golemui/core';
 
-const form = defineForm({
-  states: {
-    limitReached: '$form.repeaters.users?.length === 5',
-    hasSubregionSelect: `!!$form.selects.subregion`,
-    hasSubregionRadiogroup: `!!$form.radiogroups.subregion`,
-  },
+const states = {
+  limitReached: '$form.repeaters.users?.length === 5',
+  hasSubregionSelect: `!!$form.selects.subregion`,
+  hasSubregionRadiogroup: `!!$form.radiogroups.subregion`,
+};
+
+type States = keyof typeof states;
+
+type CustomHeadingWidgetProps = {
+  text: string;
+  level?: number;
+};
+type CustomHeadingWidget = Core.DisplayWidget<States, any, CustomHeadingWidgetProps>;
+
+const form = golemForm<any, CustomHeadingWidget>().create({
+  states,
   form: [
     {
-      uid: '',
       kind: 'display',
       type: 'heading',
       props: {
@@ -33,11 +43,10 @@ const form = defineForm({
       },
     },
     {
-      uid: '',
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab3',
+        defaultOpen: 'tab_textarea',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Flex Layout', uid: 'tab2' },
@@ -49,7 +58,7 @@ const form = defineForm({
           { label: 'Number Component', uid: 'tab8' },
           { label: 'Radiogroup Component', uid: 'tab9' },
           { label: 'Toggle Component', uid: 'tab10' },
-          { label: 'Textarea Component', uid: 'tab11' },
+          { label: 'Textarea Component', uid: 'tab_textarea' },
           { label: 'Calendar Component', uid: 'tab12' },
           { label: 'Currency Component', uid: 'tab13' },
           { label: 'List Component', uid: 'tab14' },
@@ -68,7 +77,7 @@ const form = defineForm({
         number(),
         radiogroup(),
         toggle(),
-        textarea(),
+        textarea('tab_textarea'),
         calendar(),
         currency(),
         list(),
@@ -76,7 +85,6 @@ const form = defineForm({
       ],
     },
     {
-      uid: '',
       kind: 'action',
       type: 'button',
       label: 'Create',
@@ -87,7 +95,7 @@ const form = defineForm({
       on: {
         click: 'submit',
       },
-    },
+    } as any, // TODO: why is this failing
   ],
 });
 

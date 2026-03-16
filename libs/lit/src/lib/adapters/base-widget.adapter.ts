@@ -32,6 +32,7 @@ export abstract class BaseWidgetAdapter<F extends Core.FormWidget> {
           ...calculatedWidget,
           ...calculatedWidget.props,
           lang: this.context.store.getState().lang,
+          deps: this.context.dependencies,
         });
       });
   }

@@ -5,16 +5,16 @@
   "type": "object",
   "$defs": {
     "labelDef": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "disabledDef": {
-      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
-      "$ref": "../common.schema.json#/definitions/boolOrWhen"
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
-      "$ref": "../common.schema.json#/definitions/localizable"
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
@@ -22,7 +22,7 @@
   },
   "allOf": [
     {
-      "$ref": "../common.schema.json#/definitions/baseWidget"
+      "$ref": "../common.schema.json#/$defs/baseWidget"
     }
   ],
   "properties": {
@@ -33,7 +33,7 @@
       "const": "dateInput"
     },
     "path": {
-      "$ref": "../common.schema.json#/definitions/dotPath"
+      "$ref": "../common.schema.json#/$defs/dotPath"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -45,7 +45,7 @@
       "$ref": "#/$defs/readonlyDef"
     },
     "on": {
-      "$ref": "../common.schema.json#/definitions/on"
+      "$ref": "../common.schema.json#/$defs/on"
     },
     "props": {
       "type": "object",

@@ -10,12 +10,14 @@ import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRen
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 import styles from './form.page.module.scss';
 import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
+import snarkdown from 'snarkdown';
+import { Dependencies } from '@golemui/gui-shared';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
 }
 
-const mock = AppsShared.shippingManifest;
+const mock = AppsShared.tests;
 const formDef = mock.form;
 const formData = mock.data;
 const localization = AppsShared.initializeI18n(mock.resources);
@@ -25,7 +27,11 @@ const languages = AppsShared.commonLanguages
     value: code,
     label: `${flag} ${label}`,
   }));
-
+const deps: Dependencies = {
+  markdown: {
+    parse: (md: string) => snarkdown(md),
+  },
+};
 const customWidgetLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
@@ -62,6 +68,7 @@ export function FormPage() {
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
+        dependencies={deps}
         validators={validators}
         validateOn={validateOn}
         formHealth={onFormHealth}

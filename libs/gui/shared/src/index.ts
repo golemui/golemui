@@ -4,4 +4,5 @@ export * from './lib/widgets';
 export * from './lib/widget.factory';
 export * from './lib/middleware/json-schema-vanilla';
 export * from './lib/utils';
+export * from './lib/shared';
 export * from './lib/dx';

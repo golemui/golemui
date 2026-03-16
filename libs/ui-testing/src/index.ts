@@ -12,6 +12,7 @@ export * from './lib/core-features/readonly.cy';
 export * from './lib/core-features/states.cy';
 export * from './lib/core-features/uid.cy';
 export * from './lib/core-features/validator-injection.cy';
+export * from './lib/core-features/dependencies.cy';
 
 // Vanilla features and components
 export * from './lib/vanilla-features/alert.cy';

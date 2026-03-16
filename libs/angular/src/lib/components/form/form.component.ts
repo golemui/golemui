@@ -41,6 +41,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
   localization = input<Core.I18nTranslator>();
+  dependencies = input<Record<string, unknown>>({});
   direction = signal<'ltr' | 'rtl'>('ltr');
 
   // OUTPUTS
@@ -63,6 +64,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       this.validateOn(),
       this.itemRenderers(),
       this.localization(),
+      this.dependencies() || {},
     );
 
     Core.formHealth(this.context.store.state$)
