@@ -143,9 +143,10 @@ gui-calendar {
       }
 
       &-arrow {
-        fill: white;
+        fill: var(--gui-text-default);
         transform: rotate(0deg);
         transition: transform 0.3s;
+        pointer-events: none;
       }
 
       // Year grid overlay

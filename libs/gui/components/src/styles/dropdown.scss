@@ -2,6 +2,22 @@
   display: block;
   position: relative;
 
+  .gui-widget {
+    .gui-dropdown__arrow {
+      fill: var(--gui-text-default);
+      transform: rotate(0deg);
+      transition: transform 0.3s;
+      position: absolute;
+      inset-inline-end: var(--gui-space-3);
+      transform-origin: 50% 40%;
+      pointer-events: none;
+    }
+
+    &[aria-expanded='true'] .gui-dropdown__arrow {
+      transform: rotate(180deg);
+    }
+  }
+
   gui-list {
     position: absolute;
     width: 100%;
