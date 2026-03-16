@@ -3,7 +3,7 @@ import * as Core from '@golemui/core';
 import { FormComponent } from '@golemui/gui-react';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import * as AppsShared from '@golemui/apps-shared';
-import { DxDefinitions, FormEvents, GslSelectorsInput, formDefs } from '@golemui/gui-shared';
+import { DxDefinitions, formDefs, FormEvents, GslSelectorsInput } from '@golemui/gui-shared';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
@@ -38,18 +38,18 @@ export interface GolemFormProps<T extends Record<string, any>> {
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
-  const fwFormDefRaw = useMemo(
+  const { form, events, dependencies } = useMemo(
     () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formSelectors),
     [props.formDef, props.formSelectors],
   );
 
-  const fwFormDef = Array.isArray(fwFormDefRaw) ? fwFormDefRaw[0] : fwFormDefRaw;
+  const fwFormDef = form;
 
-  const fwFormEvents: FormEvents = Array.isArray(fwFormDefRaw)
-    ? fwFormDefRaw[1]
-    : (event: any) => {
-        console.log(JSON.stringify(event, null, 2));
-      };
+  const fwFormEvents: FormEvents =
+    events ??
+    ((event: any) => {
+      console.log(JSON.stringify(event, null, 2));
+    });
 
   useEffect(() => {
     if (import.meta.env.DEV) {
@@ -71,6 +71,7 @@ export function GolemForm<FormData extends Record<string, any> = any>(
       validators={validators}
       middlewares={import.meta.env.DEV ? [golemLogMiddleware] : []}
       formEvent={fwFormEvents}
+      dependencies={dependencies}
     />
   );
 }

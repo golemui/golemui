@@ -5,11 +5,17 @@ import {
   _guiDateInput,
   _guiCurrency,
   _guiRangeCalendar,
+  _guiMarkdown,
+  _guiRangeDateInput,
+  _guiRangeDatePicker,
   _gslPassword,
   _gslCheckbox,
   _gslDateInput,
   _gslCurrency,
   _gslRangeCalendar,
+  _gslMarkdown,
+  _gslRangeDateInput,
+  _gslRangeDatePicker,
 } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
@@ -232,6 +238,137 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
       const result = processDx(
         _guiRangeCalendar('range'),
         [_gslRangeCalendar({ decorator: { numberOfMonths: 3 } })],
+      );
+      const w = getStaticChild(result, 0) as { props?: { numberOfMonths?: number } };
+
+      expect(w.props?.numberOfMonths).toBe(3);
+    });
+  });
+
+  describe('Markdown', () => {
+    it('expands _guiMarkdown into a markdown input', () => {
+      const result = processDx(_guiMarkdown('bio'));
+      const w = getStaticChild(result, 0) as { kind?: string; type?: string; path?: string };
+
+      expect(w.kind).toBe('input');
+      expect(w.type).toBe('markdown');
+      expect(w.path).toBe('bio');
+    });
+
+    it('auto-generates label from path', () => {
+      const result = processDx(_guiMarkdown('userNotes'));
+      const w = getStaticChild(result, 0) as { label?: string };
+
+      expect(w.label).toBe('User Notes');
+    });
+
+    it('passes custom props through', () => {
+      const result = processDx(_guiMarkdown('bio', { hint: 'Write something' }));
+      const w = getStaticChild(result, 0) as { props?: { hint?: string } };
+
+      expect(w.props?.hint).toBe('Write something');
+    });
+
+    it('applies GSL decorator override', () => {
+      const result = processDx(
+        _guiMarkdown('bio'),
+        [_gslMarkdown({ decorator: { label: 'Biography' } })],
+      );
+      const w = getStaticChild(result, 0) as { label?: string };
+
+      expect(w.label).toBe('Biography');
+    });
+
+    it('passes markdown-specific props (tools, defaultOpenPreview)', () => {
+      const result = processDx(_guiMarkdown('content', {
+        tools: ['H', 'B', 'I', 'L'],
+        defaultOpenPreview: true,
+        headingTitle: 'Add heading',
+      }));
+      const w = getStaticChild(result, 0) as {
+        props?: { tools?: string[]; defaultOpenPreview?: boolean; headingTitle?: string };
+      };
+
+      expect(w.props?.tools).toEqual(['H', 'B', 'I', 'L']);
+      expect(w.props?.defaultOpenPreview).toBe(true);
+      expect(w.props?.headingTitle).toBe('Add heading');
+    });
+  });
+
+  describe('RangeDateInput', () => {
+    it('expands _guiRangeDateInput into a rangeDateInput widget', () => {
+      const result = processDx(_guiRangeDateInput('travelDates'));
+      const w = getStaticChild(result, 0) as { kind?: string; type?: string; path?: string };
+
+      expect(w.kind).toBe('input');
+      expect(w.type).toBe('rangeDateInput');
+      expect(w.path).toBe('travelDates');
+    });
+
+    it('auto-generates label from path', () => {
+      const result = processDx(_guiRangeDateInput('travelDates'));
+      const w = getStaticChild(result, 0) as { label?: string };
+
+      expect(w.label).toBe('Travel Dates');
+    });
+
+    it('passes range-date-input-specific props', () => {
+      const result = processDx(_guiRangeDateInput('dates', { separator: '→', hint: 'Pick a range' }));
+      const w = getStaticChild(result, 0) as { props?: { separator?: string; hint?: string } };
+
+      expect(w.props?.separator).toBe('→');
+      expect(w.props?.hint).toBe('Pick a range');
+    });
+
+    it('applies GSL decorator override', () => {
+      const result = processDx(
+        _guiRangeDateInput('dates'),
+        [_gslRangeDateInput({ decorator: { hint: 'Select dates' } })],
+      );
+      const w = getStaticChild(result, 0) as { props?: { hint?: string } };
+
+      expect(w.props?.hint).toBe('Select dates');
+    });
+  });
+
+  describe('RangeDatePicker', () => {
+    it('expands _guiRangeDatePicker into a rangeDatePicker widget', () => {
+      const result = processDx(_guiRangeDatePicker('bookingRange'));
+      const w = getStaticChild(result, 0) as { kind?: string; type?: string; path?: string };
+
+      expect(w.kind).toBe('input');
+      expect(w.type).toBe('rangeDatePicker');
+      expect(w.path).toBe('bookingRange');
+    });
+
+    it('auto-generates label from path', () => {
+      const result = processDx(_guiRangeDatePicker('bookingRange'));
+      const w = getStaticChild(result, 0) as { label?: string };
+
+      expect(w.label).toBe('Booking Range');
+    });
+
+    it('passes range-date-picker-specific props', () => {
+      const result = processDx(
+        _guiRangeDatePicker('range', {
+          numberOfMonths: 2,
+          minDate: '2026-01-01',
+          maxDate: '2026-12-31',
+        }),
+      );
+      const w = getStaticChild(result, 0) as {
+        props?: { numberOfMonths?: number; minDate?: string; maxDate?: string };
+      };
+
+      expect(w.props?.numberOfMonths).toBe(2);
+      expect(w.props?.minDate).toBe('2026-01-01');
+      expect(w.props?.maxDate).toBe('2026-12-31');
+    });
+
+    it('applies GSL decorator override', () => {
+      const result = processDx(
+        _guiRangeDatePicker('range'),
+        [_gslRangeDatePicker({ decorator: { numberOfMonths: 3 } })],
       );
       const w = getStaticChild(result, 0) as { props?: { numberOfMonths?: number } };
 

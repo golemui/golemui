@@ -27,6 +27,9 @@ export { _guiDatePicker } from './shortcuts/date-picker/guiDatePicker.impl';
 export { _guiDropdown } from './shortcuts/dropdown/guiDropdown.impl';
 export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
 export { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
+export { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
+export { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
+export { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDatePicker.impl';
 
 // ─── GSL selectors (behavior) ───
 
@@ -51,6 +54,9 @@ export { _gslDatePicker, _gslDatePickerById } from './shortcuts/date-picker/regi
 export { _gslDropdown, _gslDropdownById } from './shortcuts/dropdown/register';
 export { _gslAccordions, _gslAccordionById } from './shortcuts/accordion/register';
 export { _gslRepeaters, _gslRepeaterById } from './shortcuts/repeater/register';
+export { _gslMarkdown, _gslMarkdownById } from './shortcuts/markdown/register';
+export { _gslRangeDateInput, _gslRangeDateInputById } from './shortcuts/range-date-input/register';
+export { _gslRangeDatePicker, _gslRangeDatePickerById } from './shortcuts/range-date-picker/register';
 
 // ─── Scope selectors ───
 
@@ -60,7 +66,7 @@ export { _gslTag } from './shortcuts/scopes/gslTag.impl';
 // ─── Public types ───
 
 export type { DxRuntimeParams } from './core/dxUtilityTypes';
-export type { DxDefinitions, DxDefinitionItem, FormEvents, DxDisplayRenderFn } from './formDef.domain';
+export type { DxDefinitions, DxDefinitionItem, FormEvents, DxDisplayRenderFn, DxResult } from './formDef.domain';
 export type {
   TextDataInputDecorator,
   NumberDataInputDecorator,
@@ -96,6 +102,9 @@ export type { DatePickerDecorator, GslDatePickerConfig } from './shortcuts/date-
 export type { DropdownDecorator, GslDropdownConfig } from './shortcuts/dropdown/dropdown.domain';
 export type { AccordionDecorator, GslAccordionConfig } from './shortcuts/accordion/accordion.domain';
 export type { RepeaterDecorator, GslRepeaterConfig } from './shortcuts/repeater/repeater.domain';
+export type { MarkdownDecorator, GslMarkdownConfig } from './shortcuts/markdown/markdown.domain';
+export type { RangeDateInputDecorator, GslRangeDateInputConfig } from './shortcuts/range-date-input/rangeDateInput.domain';
+export type { RangeDatePickerDecorator, GslRangeDatePickerConfig } from './shortcuts/range-date-picker/rangeDatePicker.domain';
 export type { GslSelectorsInput } from './core/dx.domain';
 export { formDefs } from './dx.service';
 

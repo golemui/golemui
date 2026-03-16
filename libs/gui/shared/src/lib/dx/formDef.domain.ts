@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { ValidGuiShortcut } from './core/dx.domain';
 import { DxCommonFields, DxInternalFields } from './core/dxBase.types';
 import { DxRuntimeParams } from './core/dxUtilityTypes';
+import { Dependencies } from '../shared';
 
 // ═══════════════════════════════════════════════════
 // Base Types (owned here)
@@ -27,6 +28,15 @@ export type DxDefinitionItem = ValidGuiShortcut | DxDisplayRenderFn;
 export type DxDefinitions = DxDefinitionItem | DxDefinitionItem[];
 
 export type FormEvents = (event: Core.FormEvent) => void;
+
+export interface DxResult<
+  S extends Core.UiState = never,
+  F extends Record<string, any> = any,
+> {
+  form: Core.Form<S, F>;
+  events?: FormEvents;
+  dependencies?: Dependencies;
+}
 
 // ═══════════════════════════════════════════════════
 // Re-exports from shortcut folders (backward compat)
@@ -74,6 +84,9 @@ export type { DatePickerDecorator } from './shortcuts/date-picker/datePicker.dom
 export type { DropdownDecorator } from './shortcuts/dropdown/dropdown.domain';
 export type { AccordionDecorator } from './shortcuts/accordion/accordion.domain';
 export type { RepeaterDecorator } from './shortcuts/repeater/repeater.domain';
+export type { MarkdownDecorator } from './shortcuts/markdown/markdown.domain';
+export type { RangeDateInputDecorator } from './shortcuts/range-date-input/rangeDateInput.domain';
+export type { RangeDatePickerDecorator } from './shortcuts/range-date-picker/rangeDatePicker.domain';
 
 export type {
   GslDecoratorCallback,

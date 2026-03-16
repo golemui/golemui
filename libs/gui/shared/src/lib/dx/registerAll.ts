@@ -19,3 +19,6 @@ import './shortcuts/date-picker/register';
 import './shortcuts/dropdown/register';
 import './shortcuts/accordion/register';
 import './shortcuts/repeater/register';
+import './shortcuts/markdown/register';
+import './shortcuts/range-date-input/register';
+import './shortcuts/range-date-picker/register';

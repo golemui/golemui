@@ -24,8 +24,7 @@ export function processDx(
   defs: DxDefinitions,
   selectors?: GslSelectorsInput,
 ): LayoutWidget {
-  const result = formDefs.processDxFacade(defs, selectors);
-  const form = Array.isArray(result) ? result[0] : result;
+  const { form } = formDefs.processDxFacade(defs, selectors);
   const root = form.form as LayoutWidget;
 
   // Canary: verify the auto-stack produced the expected root

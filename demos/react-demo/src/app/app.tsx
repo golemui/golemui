@@ -17,6 +17,9 @@ import {
   accordionDemo,
   repeaterDemo,
   nestedRepeaterDemo,
+  markdownDemo,
+  rangeDateInputDemo,
+  rangeDatePickerDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -57,6 +60,9 @@ formRegistry.registerAll([
   accordionDemo,
   repeaterDemo,
   nestedRepeaterDemo,
+  markdownDemo,
+  rangeDateInputDemo,
+  rangeDatePickerDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,

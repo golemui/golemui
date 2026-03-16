@@ -7,8 +7,7 @@ import { _gslRoot } from '../shortcuts/scopes/gslRoot.impl';
 import { formDefs } from '../dx.service';
 
 function getRootFromFacadeResult(result: ReturnType<typeof formDefs.processDxFacade>): LayoutWidget {
-  const form = Array.isArray(result) ? result[0] : result;
-  return form.form as LayoutWidget;
+  return result.form.form as LayoutWidget;
 }
 
 describe('DX Pipeline — Actions', () => {
@@ -103,11 +102,10 @@ describe('DX Pipeline — Actions', () => {
         [_gslRoot({ onSubmit: submitFn, suppressAutomaticSubmit: true })],
       );
 
-      expect(Array.isArray(result)).toBe(true);
-      const tuple = result as [any, (event: { name: string; data: any }) => void];
-      expect(typeof tuple[1]).toBe('function');
+      expect(result.events).toBeDefined();
+      expect(typeof result.events).toBe('function');
 
-      tuple[1]({ name: 'submit', data: { ok: true } });
+      result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
       expect(submitFn).toHaveBeenCalledWith({ ok: true });
     });
 
@@ -119,15 +117,14 @@ describe('DX Pipeline — Actions', () => {
         [_gslRoot({ onSubmit: submitFn, suppressAutomaticSubmit: true })],
       );
 
-      expect(Array.isArray(result)).toBe(true);
-      const tuple = result as [any, (event: { name: string; data: any }) => void];
-      const root = tuple[0].form as LayoutWidget;
+      expect(result.events).toBeDefined();
+      const root = result.form.form as LayoutWidget;
       const customButton = root.children?.find(
         (child) => typeof child !== 'function' && (child as { label?: string }).label === 'Custom',
       ) as { on?: { click?: string } };
 
       expect(typeof customButton.on?.click).toBe('string');
-      tuple[1]({ name: customButton.on?.click ?? '', data: { a: 1 } });
+      result.events!({ name: customButton.on?.click ?? '', data: { a: 1 }, callback: vi.fn() });
 
       expect(myFn).toHaveBeenCalledWith({ a: 1 });
       expect(submitFn).not.toHaveBeenCalled();
@@ -202,25 +199,45 @@ describe('DX Pipeline — Actions', () => {
   });
 
   describe('Return type handling', () => {
-    it('returns [Form, FormEvents] tuple when at least one onClick callback exists', () => {
+    it('includes events in DxResult when at least one onClick callback exists', () => {
       const result = formDefs.processDxFacade(
         [_guiButton({ label: 'Go', onClick: () => null })],
         [],
       );
 
-      expect(Array.isArray(result)).toBe(true);
-      expect((result as any[]).length).toBe(2);
-      expect(typeof (result as any[])[1]).toBe('function');
+      expect(result.form).toBeDefined();
+      expect(result.events).toBeDefined();
+      expect(typeof result.events).toBe('function');
     });
 
-    it('returns Form object directly when no onClick callback is wired', () => {
+    it('omits events from DxResult when no onClick callback is wired', () => {
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' })],
         [_gslRoot({ suppressAutomaticSubmit: true })],
       );
 
-      expect(Array.isArray(result)).toBe(false);
-      expect((result as any).form).toBeDefined();
+      expect(result.form).toBeDefined();
+      expect(result.events).toBeUndefined();
+    });
+
+    it('includes dependencies in DxResult when _gslRoot provides them', () => {
+      const mockParse = (md: string) => `<p>${md}</p>`;
+      const result = formDefs.processDxFacade(
+        [_guiInputs({ name: 'string' })],
+        [_gslRoot({ dependencies: { markdown: { parse: mockParse } } })],
+      );
+
+      expect(result.dependencies).toBeDefined();
+      expect(result.dependencies!.markdown!.parse).toBe(mockParse);
+    });
+
+    it('omits dependencies from DxResult when _gslRoot has none', () => {
+      const result = formDefs.processDxFacade(
+        [_guiInputs({ name: 'string' })],
+        [_gslRoot({ suppressAutomaticSubmit: true })],
+      );
+
+      expect(result.dependencies).toBeUndefined();
     });
   });
 });

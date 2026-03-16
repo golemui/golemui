@@ -20,12 +20,16 @@ import {
   _guiDisplay,
   _guiAccordion,
   _guiRepeater,
+  _guiMarkdown,
+  _guiRangeDateInput,
+  _guiRangeDatePicker,
   _gslTag,
   _gslInputs,
   _gslRoot,
   _gslActionById,
   _gslLayoutById,
 } from '@golemui/gui-shared';
+import snarkdown from 'snarkdown';
 
 export const completeFormDemo: FormDemoDefinition = {
   title: '15. The Complete Form',
@@ -59,6 +63,8 @@ export const completeFormDemo: FormDemoDefinition = {
         _guiDateInput('arrivalDate', { icon: 'calendar' }),
         _guiCurrency('budget', { currency: 'EUR', step: 0.5 }),
         _guiRangeCalendar('stayRange', { numberOfMonths: 2 }),
+        _guiRangeDateInput('checkInOut', { separator: '→', hint: 'Check-in / Check-out' }),
+        _guiRangeDatePicker('conferenceRange', { numberOfMonths: 2 }),
 
         _guiSelect('dietaryPreference', {
           options: [
@@ -122,6 +128,8 @@ export const completeFormDemo: FormDemoDefinition = {
         : 'Event date',
     })),
 
+    _guiMarkdown('additionalInfo', { tools: ['H', 'B', 'I', 'L'], placeholder: 'Add details in markdown...' }),
+
     _guiTextarea('notes', (params) => ({
       placeholder: params?.$form?.firstName
         ? `Any notes, ${params.$form.firstName}?`
@@ -153,6 +161,7 @@ export const completeFormDemo: FormDemoDefinition = {
     _gslRoot({
       suppressAutomaticSubmit: true,
       onSubmit: (data) => alert(JSON.stringify(data, null, 2)),
+      dependencies: { markdown: { parse: snarkdown } },
     }),
 
     _gslActionById('#submit', { decorator: { label: 'Complete registration' } }),

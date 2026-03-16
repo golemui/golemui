@@ -1,5 +1,6 @@
 import { FunctionWidgetParams } from '@golemui/core';
 import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
+import { Dependencies } from '../../shared';
 
 export type { GslItemType } from '../formDef.domain';
 
@@ -66,6 +67,7 @@ export interface GslRootDefaults {
   suppressAutomaticStack?: boolean;
   suppressAutomaticSubmit?: boolean;
   onSubmit?: (data: any) => void;
+  dependencies?: Dependencies;
 }
 
 export interface GslAggregatedSelector {

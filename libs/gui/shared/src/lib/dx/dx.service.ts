@@ -1,14 +1,6 @@
 import * as Core from '@golemui/core';
-import {
-  Form,
-  LayoutWidget,
-  UiState,
-} from '@golemui/core';
-import {
-  DxDefinitionItem,
-  DxDefinitions,
-  FormEvents,
-} from './formDef.domain';
+import { LayoutWidget, UiState } from '@golemui/core';
+import { DxDefinitionItem, DxDefinitions, DxResult } from './formDef.domain';
 import {
   GslRootDefaults,
   GslSelector,
@@ -53,18 +45,30 @@ export class DxService {
   processDxFacade<STATE_KEYS extends UiState = never, FORM_DATA extends Record<string, any> = any>(
     dxDefinitionsRaw: DxDefinitions,
     gslSelectorsInput: GslSelectorsInput = [],
-  ): Form<STATE_KEYS, FORM_DATA> | [Form<STATE_KEYS, FORM_DATA>, FormEvents] {
+  ): DxResult<STATE_KEYS, FORM_DATA> {
     // ── 1. Prepare: normalize, auto-submit, auto-stack ──
-    const { defs, gslSelectors, rootDefaults } = this.applyFormDefaults(dxDefinitionsRaw, gslSelectorsInput);
+    const { defs, gslSelectors, rootDefaults } = this.applyFormDefaults(
+      dxDefinitionsRaw,
+      gslSelectorsInput,
+    );
 
     // ── 2. Walk the _gui* tree and map each widget ──
     const onClickRegistry: OnClickRegistry = new Map();
     this.actionOnClick.resetCounter();
-    const widgets = this.walker.walkAndMap<STATE_KEYS, FORM_DATA>(defs, gslSelectors, onClickRegistry, rootDefaults);
+    const widgets = this.walker.walkAndMap<STATE_KEYS, FORM_DATA>(
+      defs,
+      gslSelectors,
+      onClickRegistry,
+      rootDefaults,
+    );
 
     // ── 3. Build result ──
     const rootLayout = widgets[0] as LayoutWidget<STATE_KEYS, FORM_DATA>;
-    return this.buildResult<STATE_KEYS, FORM_DATA>({ form: rootLayout }, onClickRegistry);
+    return this.buildResult<STATE_KEYS, FORM_DATA>(
+      { form: rootLayout },
+      onClickRegistry,
+      rootDefaults,
+    );
   }
 
   private applyFormDefaults(
@@ -88,7 +92,7 @@ export class DxService {
     if (submitCount > 1) {
       throw new Error(
         `Only one submit button is allowed per form, but ${submitCount} were found. ` +
-        `A button is a submit button if it has uid: '#submit' or onClick: 'submit'.`,
+          `A button is a submit button if it has uid: '#submit' or onClick: 'submit'.`,
       );
     }
     if (!rootDefaults.suppressAutomaticSubmit && submitCount === 0) {
@@ -115,19 +119,26 @@ export class DxService {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    form: Form<StateKeys, FormData>,
+    form: Core.Form<StateKeys, FormData>,
     onClickRegistry: OnClickRegistry,
-  ): Form<StateKeys, FormData> | [Form<StateKeys, FormData>, FormEvents] {
-    if (onClickRegistry.size === 0) {
-      return form;
+    rootDefaults: GslRootDefaults,
+  ): DxResult<StateKeys, FormData> {
+    const result: DxResult<StateKeys, FormData> = { form };
+
+    if (onClickRegistry.size > 0) {
+      result.events = (event: Core.FormEvent) => {
+        const handler = onClickRegistry.get(event.name);
+        if (handler) {
+          handler(event.data);
+        }
+      };
     }
-    const formEvents: FormEvents = (event: Core.FormEvent) => {
-      const handler = onClickRegistry.get(event.name);
-      if (handler) {
-        handler(event.data);
-      }
-    };
-    return [form, formEvents];
+
+    if (rootDefaults.dependencies) {
+      result.dependencies = rootDefaults.dependencies;
+    }
+
+    return result;
   }
 }
 

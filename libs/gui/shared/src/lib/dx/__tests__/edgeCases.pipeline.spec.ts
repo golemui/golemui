@@ -63,8 +63,7 @@ describe('DX Pipeline — Edge Cases', () => {
 
   describe('Display-only form', () => {
     it('auto-injects submit button even when form has no inputs', () => {
-      const result = formDefs.processDxFacade([_guiDisplay(() => 'info')], []);
-      const form = Array.isArray(result) ? result[0] : result;
+      const { form } = formDefs.processDxFacade([_guiDisplay(() => 'info')], []);
       const root = form.form as LayoutWidget;
       const lastChild = root.children?.[root.children.length - 1] as {
         uid?: string;
