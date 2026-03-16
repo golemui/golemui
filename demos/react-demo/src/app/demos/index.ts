@@ -12,6 +12,7 @@ export { datePickerDemo } from './01_first_form/20_datePicker';
 export { dropdownDemo } from './01_first_form/21_dropdown';
 export { accordionDemo } from './01_first_form/22_accordion';
 export { repeaterDemo } from './01_first_form/23_repeater';
+export { nestedRepeaterDemo } from './01_first_form/24_nestedRepeater';
 
 // Chapter 2: Making It Dynamic
 export { dynamicInputDemo } from './02_dynamic/06_dynamicInput';

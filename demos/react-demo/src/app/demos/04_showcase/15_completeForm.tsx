@@ -109,8 +109,8 @@ export const completeFormDemo: FormDemoDefinition = {
     _guiRepeater('attendees', { addLabel: 'Add Attendee', limit: 5 }, [
       _guiHorizontalStack([
         _guiInputs({
-          'attendees.items.name': ['string', 'required'],
-          'attendees.items.email': 'string',
+          name: ['string', 'required'],
+          email: 'string',
         }),
       ]),
     ]),

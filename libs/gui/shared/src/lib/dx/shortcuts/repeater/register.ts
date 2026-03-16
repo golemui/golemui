@@ -38,11 +38,43 @@ function mapToWidget(def: Record<string, any>): NonFunctionWidget {
   } as NonFunctionWidget;
 }
 
+function prefixTemplatePaths(widgets: FormWidget[], prefix: string): void {
+  for (const widget of widgets) {
+    if (typeof widget === 'function') continue;
+    const w = widget as NonFunctionWidget & { path?: string };
+    if (typeof w.path === 'string' && w.path) {
+      w.path = prefix + w.path;
+    }
+    // Recurse into layout children (e.g. horizontal/vertical stacks)
+    if ('children' in w && Array.isArray(w.children)) {
+      prefixTemplatePaths(w.children as FormWidget[], prefix);
+    }
+    // Recurse into nested repeater templates — each nesting level uses a
+    // different prefix so this is additive, not double-prefixing.
+    const props = (w as any).props;
+    if (props?.template?.children && Array.isArray(props.template.children)) {
+      prefixTemplatePaths(props.template.children as FormWidget[], prefix);
+    }
+  }
+}
+
 function buildWidget(
   mergeResult: MergeResult,
   context: BuildWidgetContext,
 ): FormWidget {
   const walkedChildren = context.walkChildren(context.children ?? []);
+
+  // Auto-prefix: prepend {path}.items. to all template children paths.
+  // The path is always static (entry.key) — for dynamic mergeResults
+  // the walker bakes it into the fn return, so we can extract it safely.
+  const repeaterPath =
+    mergeResult.kind === 'static'
+      ? (mergeResult.def['path'] as string) ?? ''
+      : (mergeResult.fn({} as FunctionWidgetParams<any>)?.['path'] as string) ?? '';
+  if (repeaterPath) {
+    prefixTemplatePaths(walkedChildren, repeaterPath + '.items.');
+  }
+
   const template: LayoutWidget = {
     kind: 'layout',
     type: 'flex',

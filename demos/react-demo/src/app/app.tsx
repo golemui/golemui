@@ -16,6 +16,7 @@ import {
   dropdownDemo,
   accordionDemo,
   repeaterDemo,
+  nestedRepeaterDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -55,6 +56,7 @@ formRegistry.registerAll([
   dropdownDemo,
   accordionDemo,
   repeaterDemo,
+  nestedRepeaterDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,

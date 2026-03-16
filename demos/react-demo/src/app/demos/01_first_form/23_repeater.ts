@@ -14,8 +14,8 @@ export const repeaterDemo: FormDemoDefinition = {
       { addLabel: 'Add User', removeLabel: 'Remove', limit: 5 },
       [
         _guiInputs({
-          'users.items.name': 'string',
-          'users.items.email': 'string',
+          name: 'string',
+          email: 'string',
         }),
       ],
     ),
