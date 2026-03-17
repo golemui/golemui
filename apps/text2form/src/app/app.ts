@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as Gui from '@golemui/gui-angular';
@@ -43,11 +43,11 @@ export class App {
     { role: 'assistant', content: 'Hello! Describe the form you want to build.' },
   ];
   protected error = '';
-  protected formJson = JSON.stringify(initialFormJson, undefined, 2);
+  protected formJson = signal(JSON.stringify(initialFormJson, undefined, 2));
   protected thinking = false;
 
   protected onJsonChange(value: string) {
-    this.formJson = value;
+    this.formJson.set(value);
   }
 
   protected onChatInputChange(value: string) {
@@ -76,7 +76,7 @@ export class App {
     const response = await this.ai.sendMessage(userMessage);
     this.thinking = false;
     if (response) {
-      this.formJson = JSON.stringify(response, undefined, 2);
+      this.formJson.set(JSON.stringify(response, undefined, 2));
     }
   }
 

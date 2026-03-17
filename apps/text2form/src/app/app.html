@@ -56,7 +56,7 @@
       <div *ngSwitchCase="'form'" class="form-preview-container">
         <div class="form-wrapper">
           <gui-form
-            [formDef]="formJson"
+            [formDef]="formJson()"
             [data]="{}"
             [widgetLoaders]="{}"
             [validators]="{}"
@@ -69,7 +69,7 @@
 
       <!-- JSON Tab -->
       <div *ngSwitchCase="'json'" class="json-editor-container">
-        <textarea class="json-editor" [ngModel]="formJson" (ngModelChange)="onJsonChange($event)">
+        <textarea class="json-editor" [ngModel]="formJson()" (ngModelChange)="onJsonChange($event)">
         </textarea>
       </div>
     </div>
