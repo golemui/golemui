@@ -1,6 +1,7 @@
 // @ts-check
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
+import { frameworkRoutesPlugin } from './src/plugins/framework-routes';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,6 +9,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'GolemUI',
+      plugins: [frameworkRoutesPlugin()],
       customCss: ['./src/styles/custom.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/golemui/golemui' }],
       head: [

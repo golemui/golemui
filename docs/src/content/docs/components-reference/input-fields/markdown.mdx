@@ -5,7 +5,8 @@ description: A Markdown editor component with a formatting toolbar and live prev
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
-import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Code } from '@astrojs/starlight/components';
+import FrameworkTabs from '../../../../../src/components/FrameworkTabs.astro';
 import markdownJson from '../../../../../public/template/components/markdown/markdown.json?raw';
 import markdownPlaceholderJson from '../../../../../public/template/components/markdown/markdown-placeholder.json?raw';
 import markdownHintJson from '../../../../../public/template/components/markdown/markdown-hint.json?raw';
@@ -35,8 +36,28 @@ The Markdown component requires a markdown parser to power its live preview. Sin
 
 Pass `dependencies` as a property on the form component itself, not inside the widget's `props`:
 
-<Tabs>
-  <TabItem label="Angular">
+<FrameworkTabs>
+  <Fragment slot="react">
+    ```tsx
+    import snarkdown from 'snarkdown';
+    import { Dependencies } from '@golemui/gui-shared';
+
+    const deps: Dependencies = {
+      markdown: {
+        parse: (md: string) => snarkdown(md),
+      },
+    };
+
+    <GolemForm
+      formDef={formDef}
+      data={formData}
+      dependencies={deps}
+      ...
+    />
+    ```
+
+  </Fragment>
+  <Fragment slot="angular">
     ```typescript
     import snarkdown from 'snarkdown';
     import { Dependencies } from '@golemui/gui-shared';
@@ -56,28 +77,8 @@ Pass `dependencies` as a property on the form component itself, not inside the w
     ></gui-form>
     ```
 
-  </TabItem>
-  <TabItem label="React">
-    ```tsx
-    import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
-
-    const deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
-      },
-    };
-
-    <GolemForm
-      formDef={formDef}
-      data={formData}
-      dependencies={deps}
-      ...
-    />
-    ```
-
-  </TabItem>
-  <TabItem label="Lit">
+  </Fragment>
+  <Fragment slot="lit">
     ```typescript
     import snarkdown from 'snarkdown';
     import { Dependencies } from '@golemui/gui-shared';
@@ -97,8 +98,8 @@ Pass `dependencies` as a property on the form component itself, not inside the w
     ></golem-form>
     ```
 
-  </TabItem>
-</Tabs>
+  </Fragment>
+</FrameworkTabs>
 
 <Aside>The live preview will only render parsed HTML when a `dependencies.markdown.parse` function is provided. Without it, the toolbar and editor still work, but the preview panel will be empty.</Aside>
 

@@ -4,7 +4,7 @@ description: Learn how to validate dynamic forms and create custom validators fo
 ---
 import Demo from '../../../../src/components/landing/Demo.astro';
 
-import { TabItem, Tabs } from '@astrojs/starlight/components';
+import FrameworkTabs from '../../../../src/components/FrameworkTabs.astro';
 
 ### Adding validators to your Control Fields
 
@@ -80,8 +80,8 @@ export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
 
 Next, inform the form that it should use the custom validator when it encounters a specific key in the `validator` declaration within your JSON. To do this, create a `CustomValidatorSchemas` object and pass it to the form through its `customValidators` input.
 
-<Tabs syncKey="framework">
-  <TabItem label="React">
+<FrameworkTabs>
+  <Fragment slot="react">
     ```tsx
     import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
@@ -102,8 +102,8 @@ Next, inform the form that it should use the custom validator when it encounters
     }
     ```
 
-  </TabItem>
-  <TabItem label="Angular">
+  </Fragment>
+  <Fragment slot="angular">
     ```ts
     import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
@@ -123,8 +123,8 @@ Next, inform the form that it should use the custom validator when it encounters
     }
     ```
 
-  </TabItem>
-  <TabItem label="Lit">
+  </Fragment>
+  <Fragment slot="lit">
     ```ts
     import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
@@ -146,8 +146,8 @@ Next, inform the form that it should use the custom validator when it encounters
     }
     ```
 
-  </TabItem>
-</Tabs>
+  </Fragment>
+</FrameworkTabs>
 
 Finally, declare your validator:
 
@@ -201,8 +201,8 @@ When not set, the default `validateOn` behaviour is `'eager'`.
 
 - `'eager'`: Validates when any of the above happens.
 
-<Tabs syncKey="framework">
-  <TabItem label="React">
+<FrameworkTabs>
+  <Fragment slot="react">
     ```tsx
     import * as Core from '@golemui/core';
 
@@ -218,8 +218,8 @@ When not set, the default `validateOn` behaviour is `'eager'`.
     }
     ```
 
-  </TabItem>
-  <TabItem label="Angular">
+  </Fragment>
+  <Fragment slot="angular">
     ```ts
     import * as Core from '@golemui/core';
 
@@ -236,8 +236,8 @@ When not set, the default `validateOn` behaviour is `'eager'`.
     }
     ```
 
-  </TabItem>
-  <TabItem label="Lit">
+  </Fragment>
+  <Fragment slot="lit">
     ```ts
     import * as Core from '@golemui/core';
 
@@ -256,8 +256,8 @@ When not set, the default `validateOn` behaviour is `'eager'`.
     }
     ```
 
-  </TabItem>
-</Tabs>
+  </Fragment>
+</FrameworkTabs>
 
 ### JsonSchema support
 

@@ -1,0 +1,43 @@
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+const locale = Astro.locals.starlightRoute?.locale;
+const isReact = locale === 'react';
+const isAngular = locale === 'angular';
+const isLit = locale === 'lit';
+const isFrameworkRoute = isReact || isAngular || isLit;
+---
+
+{
+  isFrameworkRoute ? (
+    <>
+      <div class:list={['framework-slot', { 'framework-hidden': !isReact }]}>
+        <slot name="react" />
+      </div>
+      <div class:list={['framework-slot', { 'framework-hidden': !isAngular }]}>
+        <slot name="angular" />
+      </div>
+      <div class:list={['framework-slot', { 'framework-hidden': !isLit }]}>
+        <slot name="lit" />
+      </div>
+    </>
+  ) : (
+    <Tabs syncKey="framework">
+      <TabItem label="React">
+        <slot name="react" />
+      </TabItem>
+      <TabItem label="Angular">
+        <slot name="angular" />
+      </TabItem>
+      <TabItem label="Lit">
+        <slot name="lit" />
+      </TabItem>
+    </Tabs>
+  )
+}
+
+<style>
+  .framework-hidden {
+    display: none !important;
+  }
+</style>
