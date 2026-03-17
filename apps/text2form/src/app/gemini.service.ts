@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { GoogleGenerativeAI, ChatSession, GenerativeModel, Schema } from '@google/generative-ai';
-import { GOLEM_LLM_SCHEMA, GOLEM_SYSTEM_PROMPT } from './gemini-llm-schema';
+import { GoogleGenerativeAI, ChatSession, GenerativeModel } from '@google/generative-ai';
+import { generatePrompt } from './golem-prompt';
+import { parseLlmResponse, GolemFormDef } from './llm-postprocess';
 
 @Injectable({
   providedIn: 'root',
@@ -25,12 +26,13 @@ export class GeminiService {
     }
     this.genAI = new GoogleGenerativeAI(apiKey);
     const model = { fast: 'gemini-2.5-flash', think: 'gemini-2.5-pro' };
+    const systemInstruction = generatePrompt();
+    console.log('systemInstruction', systemInstruction);
     this.model = this.genAI.getGenerativeModel({
       model: model.fast,
-      systemInstruction: GOLEM_SYSTEM_PROMPT,
+      systemInstruction,
       generationConfig: {
         responseMimeType: 'application/json',
-        responseSchema: GOLEM_LLM_SCHEMA as Schema,
         maxOutputTokens: 2000,
       },
     });
@@ -39,22 +41,23 @@ export class GeminiService {
     });
   }
 
-  async sendMessage(message: string) {
+  async sendMessage(message: string): Promise<GolemFormDef | undefined> {
     if (!this.genAI) {
       console.warn(`genAI hasn't been initialized. Restart the app and enter the API key`);
       return;
     }
     const result = await this.chat.sendMessage(message);
-    const response = await result.response;
-    return response.text();
+    const response = result.response.text();
+    const parsedLlmResponse = parseLlmResponse(response);
+    console.log('response', response);
+    console.log('parsedLlmResponse', parsedLlmResponse);
+    return parsedLlmResponse;
   }
 
   estimateTokens(message: string, history: { role: string; content: string }[] = []): number {
-    // Static context sent with every request: system prompt + response schema
-    const staticContext = GOLEM_SYSTEM_PROMPT + JSON.stringify(GOLEM_LLM_SCHEMA);
+    const staticContext = generatePrompt();
     const historyText = history.map((m) => m.content).join(' ');
     const totalChars = staticContext.length + historyText.length + message.length;
-    // ~4 characters per token (common heuristic for LLMs)
     return Math.ceil(totalChars / 4);
   }
 }

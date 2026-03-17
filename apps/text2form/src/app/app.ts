@@ -73,9 +73,11 @@ export class App {
     const userMessage = this.chatInput;
     this.chatInput = '';
 
-    const response = (await this.ai.sendMessage(userMessage)) as string;
+    const response = await this.ai.sendMessage(userMessage);
     this.thinking = false;
-    this.formJson = JSON.stringify(JSON.parse(response), undefined, 2);
+    if (response) {
+      this.formJson = JSON.stringify(response, undefined, 2);
+    }
   }
 
   protected onFormHealth(formHealth: Core.FormHealth) {
