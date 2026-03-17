@@ -47,6 +47,10 @@ body {
   white-space: pre;
 }
 
+.framework-slot {
+  margin-bottom: 1.25rem;
+}
+
 /* --- Responsive Layout Utilities (Mobile-First) --- */
 
 /* Grid Utility for Landing Pages */
