@@ -5,7 +5,8 @@ sidebar:
   order: 4
 ---
 
-import { Aside, TabItem, Tabs } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import FrameworkTabs from '../../../../src/components/FrameworkTabs.astro';
 import Demo from '../../../../src/components/landing/Demo.astro';
 
 GolemUI adapts to different screen sizes using two complementary strategies: **media queries** for global token scaling, and **container queries** for component-level layout adaptation.
@@ -75,8 +76,8 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
 
 When you set in the `localization` property a `RTL` language like Persian or Hebrew, then the form will display automatically as `RTL`.
 
-<Tabs syncKey="framework">
-  <TabItem label="React">
+<FrameworkTabs>
+  <Fragment slot="react">
     ```ts
     i18next.init({
       fallbackLng: 'fa',
@@ -102,8 +103,8 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
       );
     }
     ```
-  </TabItem>
-  <TabItem label="Angular">
+  </Fragment>
+  <Fragment slot="angular">
     ```ts
     @Component({
       imports: [CommonModule, Angular.FormComponent],
@@ -130,8 +131,8 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
       }
     }
   ```
-  </TabItem>
-  <TabItem label="Lit">
+  </Fragment>
+  <Fragment slot="lit">
     ```ts
     @customElement('lit-form')
     export class FormElement extends LitElement {
@@ -163,8 +164,8 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
     }
     ```
 
-  </TabItem>
-</Tabs>
+  </Fragment>
+</FrameworkTabs>
 
 Yes, it's that easy. Nothing else on your side has to be handled.
 
