@@ -25,7 +25,7 @@ interface ShortcutTypeConfig<TEntry, TDecorator, TConfig> {
   mapToWidget: (def: TDecorator) => NonFunctionWidget;
   sensibleDefaults?: SensibleDefaultsSpec<TDecorator, TConfig>;
   afterMerge?: (mergeResult: MergeResult, context: AfterMergeContext) => MergeResult;
-  buildWidget?: (mergeResult: MergeResult, context: BuildWidgetContext) => FormWidget;
+  buildCustomWidget?: (mergeResult: MergeResult, context: BuildWidgetContext) => FormWidget;
   getChildren?: (entry: TEntry) => any[] | undefined;
 }
 
@@ -34,6 +34,18 @@ export interface ShortcutTypeSelectors<TDecorator, TConfig extends GslConfigBase
   gslById: (id: string, config: TConfig) => GslLeafSelector;
 }
 
+/**
+ * Convenience factory for registering a new widget type into the DX pipeline.
+ *
+ * Accepts a simple config object (entry shape, mapToWidget, optional hooks) and
+ * assembles a full {@link ItemTypeHandler} from it — generating `parseEntry`,
+ * `rollUpSensibleDefaults`, and `applySensibleDefaults` automatically.
+ * The handler is registered in the global registry so the pipeline can look it up
+ * by `itemType` at runtime.
+ *
+ * Returns GSL selector factories (`gsl`, `gslById`) for styling/configuring
+ * widgets of this type.
+ */
 export function defineShortcutType<
   TEntry,
   TDecorator extends DxCommonFields,
@@ -92,13 +104,24 @@ export function defineShortcutType<
     }
   };
 
+  // Assemble the full ItemTypeHandler from the config above.
+  // The generated functions (parseEntry, rollUpSensibleDefaults, applySensibleDefaults)
+  // are combined with pass-through hooks from the caller (mapToWidget, afterMerge, etc.).
+  //
+  // See ItemTypeHandler in itemTypeRegistry.ts for the contract and pipeline stages.
+  // The pipeline that consumes this handler lives in ItemWalker.processItem.
+  //
+  // Examples of registrations that show different capabilities:
+  //   - shortcuts/inputs/register.ts   — keyed entries + sensibleDefaults (simplest full example)
+  //   - shortcuts/actions/register.ts  — bare entries + afterMerge hook (onClick wiring)
+  //   - shortcuts/layouts/register.ts  — compound entries + buildCustomWidget + getChildren (recursive)
   const handler: ItemTypeHandler<TEntry, TDecorator, TConfig> = {
     rollUpSensibleDefaults,
     applySensibleDefaults,
     mapToWidget: config.mapToWidget as any,
     parseEntry,
     ...(config.afterMerge ? { afterMerge: config.afterMerge } : {}),
-    ...(config.buildWidget ? { buildWidget: config.buildWidget } : {}),
+    ...(config.buildCustomWidget ? { buildCustomWidget: config.buildCustomWidget } : {}),
     ...(config.getChildren ? { getChildren: config.getChildren } : {}),
   };
 

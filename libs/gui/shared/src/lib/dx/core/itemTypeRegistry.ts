@@ -6,7 +6,7 @@ import {
 import { DxRuntimeParams } from './dxUtilityTypes';
 import {
   GslLeafSelector,
-  GslRootDefaults,
+  FormConfig,
   MergeResult,
   ValidGuiShortcut,
 } from './dx.domain';
@@ -27,9 +27,14 @@ export interface ParsedEntry<
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 
+export interface ActionIdGenerator {
+  next(): string;
+}
+
 export interface AfterMergeContext {
   onClickRegistry: OnClickRegistry;
-  rootDefaults: GslRootDefaults;
+  formConfig: FormConfig;
+  actionIdGenerator: ActionIdGenerator;
 }
 
 export interface BuildWidgetContext {
@@ -39,6 +44,26 @@ export interface BuildWidgetContext {
 }
 
 /**
+ * Strategy interface for a widget type (inputs, actions, layouts, calendars, etc.).
+ *
+ * The DX pipeline (`ItemWalker.processItem`) is generic — it walks the widget tree,
+ * resolves selectors, merges definitions, and maps to framework widgets. But each
+ * widget type has its own entry shape, its own sensible defaults, and sometimes
+ * custom post-merge or widget-building logic. The handler provides these type-specific
+ * behaviors at well-defined extension points in the pipeline:
+ *
+ *   1. `parseEntry`             — parse raw entry into a normalized `ParsedEntry`
+ *   2. `rollUpSensibleDefaults` — aggregate config from matching leaf selectors
+ *   3. `applySensibleDefaults`  — apply aggregated config to a merged decorator
+ *   4. `mapToWidget`            — map a decorator to a core `FormWidget`
+ *   5. `afterMerge` (optional)  — post-merge hook (e.g. actions use this to wire onClick)
+ *   6. `buildCustomWidget` (optional) — custom widget building for compound types (e.g. layouts
+ *                                  that need to recursively walk children)
+ *
+ * Shortcut authors do NOT implement this interface directly. Instead, they call
+ * {@link defineShortcutType} with a simple config object, and it assembles the full
+ * handler and registers it in the global registry.
+ *
  * Entry shape taxonomy:
  *
  * 1. Keyed entries — { key, def } — path derived from key
@@ -79,7 +104,18 @@ export interface ItemTypeHandler<
     context: AfterMergeContext,
   ): MergeResult;
 
-  buildWidget?(
+  /**
+   * Optional override for widget types that need custom construction beyond the
+   * generic mapToWidget path. Two flavors:
+   *
+   * - Compound types (layouts, accordion, tabs, repeater): use `context.walkChildren`
+   *   to recursively process child widgets and attach them to the result.
+   * - Custom rendering (displays): wrap a render function into a specialized widget
+   *   shape that the generic mapper can't produce.
+   *
+   * If not provided, the pipeline falls back to `mapToWidget` for simple leaf types.
+   */
+  buildCustomWidget?(
     mergeResult: MergeResult,
     context: BuildWidgetContext,
   ): FormWidget;

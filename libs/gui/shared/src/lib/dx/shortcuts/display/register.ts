@@ -21,7 +21,7 @@ function mapToWidget<
   } as unknown as NonFunctionWidget<StateKeys, FormData>;
 }
 
-function buildWidget(
+function buildCustomWidget(
   mergeResult: MergeResult,
   _context: BuildWidgetContext,
 ): FormWidget {
@@ -52,5 +52,5 @@ export const { gsl: _gslDisplays, gslById: _gslDisplayById } =
     itemType: 'DISPLAYS',
     entryShape: 'bare',
     mapToWidget,
-    buildWidget,
+    buildCustomWidget,
   });

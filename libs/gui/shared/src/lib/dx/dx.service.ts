@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { LayoutWidget, UiState } from '@golemui/core';
 import { DxDefinitionItem, DxDefinitions, DxResult } from './formDef.domain';
 import {
-  GslRootDefaults,
+  FormConfig,
   GslSelector,
   GslSelectorsInput,
   GuiItemTypes,
@@ -23,17 +23,25 @@ import './registerAll';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
 
+/**
+ * The output of {@link DxService.prepareForm}: a fully normalized form
+ * ready for the walk-and-map phase.
+ *
+ * - `defs` — widget definitions, possibly wrapped in a synthetic root layout
+ * - `gslSelectors` — normalized selectors (always aggregated shape)
+ * - `formConfig` — form-level behavioral settings (auto-submit, auto-stack, onSubmit, etc.)
+ */
 interface PreparedForm {
   defs: ValidGuiShortcut[];
   gslSelectors: GslSelector[];
-  rootDefaults: GslRootDefaults;
+  formConfig: FormConfig;
 }
 
 /**
  * Transforms a developer-friendly form definition into a fully-fledged form definition
  * usable by the framework ({@link Form}<STATE_KEYS, FORM_DATA>).
  *
- * Orchestrates: applyFormDefaults → walkAndMap → buildResult.
+ * Orchestrates: prepareForm → walkAndMap → buildResult.
  */
 export class DxService {
   constructor(
@@ -47,19 +55,16 @@ export class DxService {
     gslSelectorsInput: GslSelectorsInput = [],
   ): DxResult<STATE_KEYS, FORM_DATA> {
     // ── 1. Prepare: normalize, auto-submit, auto-stack ──
-    const { defs, gslSelectors, rootDefaults } = this.applyFormDefaults(
+    const { defs, gslSelectors, formConfig } = this.prepareForm(
       dxDefinitionsRaw,
       gslSelectorsInput,
     );
 
     // ── 2. Walk the _gui* tree and map each widget ──
-    const onClickRegistry: OnClickRegistry = new Map();
-    this.actionOnClick.resetCounter();
-    const widgets = this.walker.walkAndMap<STATE_KEYS, FORM_DATA>(
+    const { widgets, onClickRegistry } = this.walker.walkAndMap<STATE_KEYS, FORM_DATA>(
       defs,
       gslSelectors,
-      onClickRegistry,
-      rootDefaults,
+      formConfig,
     );
 
     // ── 3. Build result ──
@@ -67,15 +72,27 @@ export class DxService {
     return this.buildResult<STATE_KEYS, FORM_DATA>(
       { form: rootLayout },
       onClickRegistry,
-      rootDefaults,
+      formConfig,
     );
   }
 
-  private applyFormDefaults(
+  /**
+   * Normalizes raw form definitions and applies form-level defaults.
+   *
+   * Steps:
+   *  1. Normalize definitions — ensure a flat array; convert bare functions to display widgets.
+   *  2. Normalize selectors — convert mixed leaf/aggregated selectors into a uniform
+   *     aggregated shape, and extract form-level config (see {@link FormConfig}).
+   *  3. Auto-submit — unless suppressed, append a submit button if none was declared.
+   *     Throws if more than one submit button is found.
+   *  4. Auto-stack — unless suppressed, wrap all definitions in a synthetic root
+   *     flex column layout so the form renders as a single vertical container.
+   */
+  private prepareForm(
     dxDefinitionsRaw: DxDefinitions,
     gslSelectorsInput: GslSelectorsInput,
   ): PreparedForm {
-    // Normalize raw defs
+    // 1. Normalize definitions
     const rawItems: DxDefinitionItem[] = Array.isArray(dxDefinitionsRaw)
       ? [...dxDefinitionsRaw]
       : [dxDefinitionsRaw];
@@ -83,11 +100,11 @@ export class DxService {
       typeof item === 'function' ? _guiDisplay(item) : item,
     );
 
-    // Normalize selectors + extract root defaults
+    // 2. Normalize selectors + extract form config
     const gslSelectors = this.selectorNormalizer.normalizeSelectors(gslSelectorsInput);
-    const rootDefaults = this.selectorNormalizer.extractRootDefaults(gslSelectors);
+    const formConfig = this.selectorNormalizer.extractFormConfig(gslSelectors);
 
-    // Auto-submit
+    // 3. Auto-submit
     const submitCount = this.actionOnClick.countSubmitButtons(defs);
     if (submitCount > 1) {
       throw new Error(
@@ -95,12 +112,12 @@ export class DxService {
           `A button is a submit button if it has uid: '#submit' or onClick: 'submit'.`,
       );
     }
-    if (!rootDefaults.suppressAutomaticSubmit && submitCount === 0) {
+    if (!formConfig.suppressAutomaticSubmit && submitCount === 0) {
       defs.push(_guiSubmitButton());
     }
 
-    // Auto-stack: wrap all defs in a synthetic root layout
-    if (!rootDefaults.suppressAutomaticStack) {
+    // 4. Auto-stack: wrap all defs in a synthetic root layout
+    if (!formConfig.suppressAutomaticStack) {
       const rootEntry: LayoutEntry = {
         def: { uid: '#root', direction: 'column', widgetName: 'flex' },
         children: defs,
@@ -108,11 +125,11 @@ export class DxService {
       return {
         defs: [{ type: 'ITEMS', itemType: GuiItemTypes.LAYOUTS, items: [rootEntry], tags: [] }],
         gslSelectors,
-        rootDefaults,
+        formConfig,
       };
     }
 
-    return { defs, gslSelectors, rootDefaults };
+    return { defs, gslSelectors, formConfig };
   }
 
   private buildResult<
@@ -121,7 +138,7 @@ export class DxService {
   >(
     form: Core.Form<StateKeys, FormData>,
     onClickRegistry: OnClickRegistry,
-    rootDefaults: GslRootDefaults,
+    formConfig: FormConfig,
   ): DxResult<StateKeys, FormData> {
     const result: DxResult<StateKeys, FormData> = { form };
 
@@ -134,8 +151,8 @@ export class DxService {
       };
     }
 
-    if (rootDefaults.dependencies) {
-      result.dependencies = rootDefaults.dependencies;
+    if (formConfig.dependencies) {
+      result.dependencies = formConfig.dependencies;
     }
 
     return result;

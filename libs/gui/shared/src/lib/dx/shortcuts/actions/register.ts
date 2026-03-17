@@ -46,6 +46,7 @@ export const { gsl: _gslActions, gslById: _gslActionById } =
       actionOnClickService.extractOnClickFromMergeResult(
         mergeResult,
         context.onClickRegistry,
-        context.rootDefaults,
+        context.formConfig,
+        context.actionIdGenerator,
       ),
   });

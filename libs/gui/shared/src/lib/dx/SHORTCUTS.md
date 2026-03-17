@@ -246,7 +246,7 @@ services/dx/
 │   │   └── gslDisplays.impl.ts        ← _gslDisplays()
 │   │
 │   └── scopes/                        ← Scope selectors (root, tag)
-│       ├── scopes.domain.ts           ← GslScopeSelector, GslRootDefaults
+│       ├── scopes.domain.ts           ← GslScopeSelector, FormConfig
 │       ├── gslRoot.impl.ts            ← _gslRoot()
 │       └── gslTag.impl.ts             ← _gslTag()
 │
@@ -312,7 +312,7 @@ Same 3 files. In `defineShortcutType`, use `entryShape: 'keyed'`.
 Same 3 files. Add only the hooks you need in `defineShortcutType`:
 
 - `afterMerge` (actions)
-- `buildWidget` (layouts/displays)
+- `buildCustomWidget` (layouts/displays)
 - `getChildren` (layouts)
 
 ### Copy-paste template — simplest bare type (no sensible defaults)

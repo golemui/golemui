@@ -333,9 +333,9 @@ describe('DX Pipeline — Repeater', () => {
       // This is the critical correctness test.
       // Each nesting level's prefixTemplatePaths applies its OWN prefix to everything
       // in scope — including nested template children. This is additive, not duplicative,
-      // because each level uses a different prefix string. Inner buildWidget runs first
+      // because each level uses a different prefix string. Inner buildCustomWidget runs first
       // (depth-first walker) and applies 'b.items.' to 'x' → 'b.items.x'. Then outer
-      // buildWidget applies 'a.items.' to both the inner repeater's path ('b' → 'a.items.b')
+      // buildCustomWidget applies 'a.items.' to both the inner repeater's path ('b' → 'a.items.b')
       // AND the inner template child ('b.items.x' → 'a.items.b.items.x').
       const result = processDx(
         _guiRepeater('a', { addLabel: 'A' }, [

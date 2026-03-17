@@ -63,7 +63,7 @@ export interface GslLeafSelector {
 // Aggregated Selectors
 // ═══════════════════════════════════════════════════
 
-export interface GslRootDefaults {
+export interface FormConfig {
   suppressAutomaticStack?: boolean;
   suppressAutomaticSubmit?: boolean;
   onSubmit?: (data: any) => void;
@@ -74,7 +74,7 @@ export interface GslAggregatedSelector {
   kind: 'aggregated';
   matcher: GslMatcher;
   children: GslLeafSelector[];
-  rootDefaults?: GslRootDefaults;
+  formConfig?: FormConfig;
 }
 
 // ═══════════════════════════════════════════════════

@@ -1,18 +1,27 @@
 import {
   GslLeafSelector,
-  GslRootDefaults,
+  FormConfig,
   GslSelector,
   GslSelectorsInput,
 } from './dx.domain';
 
 export class SelectorNormalizer {
 
+  /**
+   * Ensures the output is always a uniform GslSelector[] of aggregated selectors.
+   *
+   * Callers can pass flat leaf selectors (single styling rules) or pre-grouped
+   * aggregated selectors. This method separates them into two buckets, then wraps
+   * any bare leaves into a catch-all aggregated selector so downstream code only
+   * deals with one shape.
+   */
   normalizeSelectors(input: GslSelectorsInput): GslSelector[] {
     const items = Array.isArray(input) ? input : [input];
 
     const gslSelectors: GslSelector[] = [];
     const bareLeafSelectors: GslLeafSelector[] = [];
 
+    // Separate leaves (single rules) from aggregated selectors (grouped rules)
     for (const item of items) {
       if (item.kind === 'leaf') {
         bareLeafSelectors.push(item);
@@ -21,6 +30,9 @@ export class SelectorNormalizer {
       }
     }
 
+    // Wrap bare leaves in a catch-all aggregated selector (matcher: () => true)
+    // and prepend them so they act as lowest-precedence defaults — explicit
+    // aggregated selectors that come later will override them during merging.
     if (bareLeafSelectors.length > 0) {
       gslSelectors.unshift({
         kind: 'aggregated',
@@ -32,15 +44,15 @@ export class SelectorNormalizer {
     return gslSelectors;
   }
 
-  extractRootDefaults(selectors: GslSelector[]): GslRootDefaults {
-    let defaults: GslRootDefaults = {
+  extractFormConfig(selectors: GslSelector[]): FormConfig {
+    let defaults: FormConfig = {
       suppressAutomaticStack: false,
       suppressAutomaticSubmit: false,
       onSubmit: (data: any) => console.log('Form submitted:', data),
     };
     for (const sel of selectors) {
-      if (sel.kind === 'aggregated' && sel.rootDefaults) {
-        defaults = { ...defaults, ...sel.rootDefaults };
+      if (sel.kind === 'aggregated' && sel.formConfig) {
+        defaults = { ...defaults, ...sel.formConfig };
       }
     }
     return defaults;

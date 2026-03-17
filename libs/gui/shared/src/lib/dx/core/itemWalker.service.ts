@@ -1,24 +1,28 @@
-import {
-  FormWidget,
-  FunctionWidgetParams,
-  UiState,
-} from '@golemui/core';
-import {
-  GslRootDefaults,
-  GslSelector,
-  RuntimeFunction,
-  ValidGuiShortcut,
-} from './dx.domain';
-import type { DxCommonFields, DxInternalFields } from './dxBase.types';
+import { FormWidget, FunctionWidgetParams, UiState } from '@golemui/core';
 import type { GuiItemType } from './dx.domain';
+import { FormConfig, GslSelector, MergeResult, RuntimeFunction, ValidGuiShortcut } from './dx.domain';
+import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import type { GslItemType } from '../formDef.domain';
 import { SelectorResolver } from './selectorResolver.service';
 import { WidgetMerger } from './widgetMerger.service';
 import { WidgetMapper } from './widgetMapper.service';
-import { getItemTypeHandler } from './itemTypeRegistry';
+import { ActionIdGenerator, BuildWidgetContext, getItemTypeHandler, ItemTypeHandler, ParsedEntry } from './itemTypeRegistry';
 
 type OnClickRegistry = Map<string, (data: any) => void>;
+
+function createActionIdGenerator(): ActionIdGenerator {
+  let count = 0;
+  return { next: () => `action_${count++}` };
+}
 type DecoratorForMatching = DxInternalFields & DxCommonFields;
+
+export interface WalkResult<
+  StateKeys extends UiState = never,
+  FormData extends Record<string, any> = any,
+> {
+  widgets: FormWidget<StateKeys, FormData>[];
+  onClickRegistry: OnClickRegistry;
+}
 
 export class ItemWalker {
   constructor(
@@ -27,14 +31,29 @@ export class ItemWalker {
     private readonly mapper: WidgetMapper,
   ) {}
 
-  walkAndMap<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
+  walkAndMap<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+    guiShortcuts: ValidGuiShortcut[],
+    gslSelectors: GslSelector[],
+    formConfig: FormConfig,
+  ): WalkResult<StateKeys, FormData> {
+    const onClickRegistry: OnClickRegistry = new Map();
+    const actionIdGenerator = createActionIdGenerator();
+    const widgets = this.walkItems<StateKeys, FormData>(
+      guiShortcuts,
+      gslSelectors,
+      onClickRegistry,
+      formConfig,
+      actionIdGenerator,
+    );
+    return { widgets, onClickRegistry };
+  }
+
+  private walkItems<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     guiShortcuts: ValidGuiShortcut[],
     gslSelectors: GslSelector[],
     onClickRegistry: OnClickRegistry,
-    rootDefaults: GslRootDefaults,
+    formConfig: FormConfig,
+    actionIdGenerator: ActionIdGenerator,
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((shortcut) => {
       if (shortcut.type !== 'ITEMS') {
@@ -48,7 +67,8 @@ export class ItemWalker {
           shortcut.tags,
           gslSelectors,
           onClickRegistry,
-          rootDefaults,
+          formConfig,
+          actionIdGenerator,
         );
       });
     });
@@ -63,47 +83,81 @@ export class ItemWalker {
     parentTags: string[],
     gslSelectors: GslSelector[],
     onClickRegistry: OnClickRegistry,
-    rootDefaults: GslRootDefaults,
+    formConfig: FormConfig,
+    actionIdGenerator: ActionIdGenerator,
   ): FormWidget<StateKeys, FormData> {
     const gslItemType: GslItemType = itemType;
+    // Look up the type-specific strategy for this widget type (inputs, actions, layouts, etc.).
+    // Each widget type registers a handler via defineShortcutType (see ItemTypeHandler for the contract).
+    // Examples of registrations showing different capabilities:
+    //   - inputs/register.ts   — keyed entries + sensibleDefaults (simplest full example)
+    //   - actions/register.ts  — bare entries + afterMerge hook (onClick wiring)
+    //   - layouts/register.ts  — compound entries + buildCustomWidget + getChildren (recursive)
     const handler = getItemTypeHandler(itemType);
     const parsed = handler.parseEntry(entry);
+    const baseDef = this.buildBaseDef(parsed);
+
+    const decoratorForMatching = this.buildDecoratorForMatching(baseDef, gslItemType, parentTags);
+    const resolved = this.resolver.resolve(decoratorForMatching, gslSelectors);
+    let mergeResult = this.merger.merge(baseDef, gslItemType, resolved);
+
+    if (handler.afterMerge) {
+      mergeResult = handler.afterMerge(mergeResult, { onClickRegistry, formConfig, actionIdGenerator });
+    }
+
+    if (handler.buildCustomWidget) {
+      const context = this.buildCustomWidgetContext(
+        parsed.children, gslSelectors, onClickRegistry, formConfig, actionIdGenerator,
+      );
+      return this.buildCustomWidget<StateKeys, FormData>(handler, mergeResult, context);
+    } else {
+      return this.mapper.mapToWidget<StateKeys, FormData>(mergeResult, gslItemType);
+    }
+  }
+
+  private buildCustomWidgetContext(
+    children: ValidGuiShortcut[] | undefined,
+    gslSelectors: GslSelector[],
+    onClickRegistry: OnClickRegistry,
+    formConfig: FormConfig,
+    actionIdGenerator: ActionIdGenerator,
+  ): BuildWidgetContext {
+    return {
+      children,
+      mapStaticDef: (def, type) => this.mapper.mapStaticDef(def, type),
+      walkChildren: (c) =>
+        this.walkItems(c, gslSelectors, onClickRegistry, formConfig, actionIdGenerator),
+    };
+  }
+
+  private buildCustomWidget<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    handler: ItemTypeHandler,
+    mergeResult: MergeResult,
+    context: BuildWidgetContext,
+  ): FormWidget<StateKeys, FormData> {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- caller guards this
+    return handler.buildCustomWidget!(mergeResult, context) as FormWidget<StateKeys, FormData>;
+  }
+
+  /**
+   * Resolves the base definition from a parsed entry, injecting the path for keyed entries.
+   * For runtime (function) providers, wraps them to inject the path at evaluation time.
+   */
+  private buildBaseDef(parsed: ParsedEntry): Record<string, any> | RuntimeFunction {
     const baseProvider = parsed.baseDef;
 
-    // Build the baseDef — either static or a RuntimeFunction
-    let baseDef: Record<string, any> | RuntimeFunction;
     if (typeof baseProvider === 'function') {
-      baseDef = (params: FunctionWidgetParams<any>) => {
+      return (params: FunctionWidgetParams<any>) => {
         const safeParams = params ?? ({} as FunctionWidgetParams<any>);
         const hotMapping = baseProvider(safeParams);
         return parsed.path != null ? { ...hotMapping, path: parsed.path } : hotMapping;
       };
-    } else {
-      baseDef = parsed.path != null ? { ...baseProvider, path: parsed.path } : baseProvider;
     }
 
-    // Populate decorator properties for selector matching
-    const decoratorForMatching = this.buildDecoratorForMatching(baseDef, gslItemType, parentTags);
-
-    // Resolve applicable selectors
-    const resolved = this.resolver.resolve(decoratorForMatching, gslSelectors);
-
-    // Merge (handles both static and runtime baseDef)
-    let mergeResult = this.merger.merge(baseDef, gslItemType, resolved);
-
-    if (handler.afterMerge) {
-      mergeResult = handler.afterMerge(mergeResult, { onClickRegistry, rootDefaults });
-    }
-
-    if (handler.buildWidget) {
-      return handler.buildWidget(mergeResult, {
-        children: parsed.children,
-        mapStaticDef: (def, type) => this.mapper.mapStaticDef(def, type),
-        walkChildren: (children) => this.walkAndMap(children, gslSelectors, onClickRegistry, rootDefaults),
-      }) as FormWidget<StateKeys, FormData>;
-    }
-
-    return this.mapper.mapToWidget<StateKeys, FormData>(mergeResult, gslItemType);
+    return parsed.path != null ? { ...baseProvider, path: parsed.path } : baseProvider;
   }
 
   private buildDecoratorForMatching(

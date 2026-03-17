@@ -28,7 +28,7 @@ function mapToWidget<
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function buildWidget(
+function buildCustomWidget(
   mergeResult: MergeResult,
   context: BuildWidgetContext,
 ): FormWidget {
@@ -56,6 +56,6 @@ export const { gsl: _gslAccordions, gslById: _gslAccordionById } =
     itemType: 'ACCORDION',
     entryShape: 'compound',
     mapToWidget,
-    buildWidget,
+    buildCustomWidget,
     getChildren,
   });

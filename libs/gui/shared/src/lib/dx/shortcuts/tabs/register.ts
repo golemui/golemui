@@ -27,7 +27,7 @@ function mapToWidget<
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function buildWidget(
+function buildCustomWidget(
   mergeResult: MergeResult,
   context: BuildWidgetContext,
 ): FormWidget {
@@ -55,6 +55,6 @@ export const { gsl: _gslTabs, gslById: _gslTabsById } =
     itemType: 'TABS',
     entryShape: 'compound',
     mapToWidget,
-    buildWidget,
+    buildCustomWidget,
     getChildren,
   });

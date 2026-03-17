@@ -1,18 +1,18 @@
 import {
   GslAggregatedSelector,
   GslLeafSelector,
-  GslRootDefaults,
+  FormConfig,
 } from '../../core/dx.domain';
 
-function isGslLeafSelector(arg: GslLeafSelector | GslRootDefaults): arg is GslLeafSelector {
+function isGslLeafSelector(arg: GslLeafSelector | FormConfig): arg is GslLeafSelector {
   return 'kind' in arg && arg.kind === 'leaf';
 }
 
 export function _gslRoot(
-  ...args: [...GslLeafSelector[], GslRootDefaults] | GslLeafSelector[]
+  ...args: [...GslLeafSelector[], FormConfig] | GslLeafSelector[]
 ): GslAggregatedSelector {
   let children: GslLeafSelector[] = [];
-  let rootDefaults: GslRootDefaults | undefined;
+  let formConfig: FormConfig | undefined;
 
   if (args.length === 0) {
     return {
@@ -24,7 +24,7 @@ export function _gslRoot(
 
   const lastArg = args[args.length - 1];
   if (!isGslLeafSelector(lastArg)) {
-    rootDefaults = lastArg as GslRootDefaults;
+    formConfig = lastArg as FormConfig;
     children = args.slice(0, -1) as GslLeafSelector[];
   } else {
     children = args as GslLeafSelector[];
@@ -34,6 +34,6 @@ export function _gslRoot(
     kind: 'aggregated',
     matcher: () => true,
     children,
-    rootDefaults,
+    formConfig,
   };
 }

@@ -58,7 +58,7 @@ function prefixTemplatePaths(widgets: FormWidget[], prefix: string): void {
   }
 }
 
-function buildWidget(
+function buildCustomWidget(
   mergeResult: MergeResult,
   context: BuildWidgetContext,
 ): FormWidget {
@@ -119,7 +119,7 @@ const handler: ItemTypeHandler<RepeaterEntry, RepeaterDecorator, GslRepeaterConf
   rollUpSensibleDefaults: () => ({}) as GslRepeaterConfig,
   applySensibleDefaults: (def) => def,
   mapToWidget: mapToWidget as any,
-  buildWidget,
+  buildCustomWidget,
   getChildren,
 };
 
