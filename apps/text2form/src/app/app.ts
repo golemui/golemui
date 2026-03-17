@@ -1,4 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, signal } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  signal,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as Gui from '@golemui/gui-angular';
@@ -33,6 +39,7 @@ const initialFormJson = golemForm().create({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class App {
+  private cdr = inject(ChangeDetectorRef);
   private ai = inject(GeminiService);
   protected activeTab: 'form' | 'json' = 'form';
   protected chatInput =
@@ -77,6 +84,7 @@ export class App {
     this.thinking = false;
     if (response) {
       this.formJson.set(JSON.stringify(response, undefined, 2));
+      this.cdr.detectChanges();
     }
   }
 
