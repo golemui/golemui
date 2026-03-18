@@ -11,7 +11,7 @@ import * as Gui from '@golemui/gui-angular';
 import { golemForm } from '@golemui/gui-shared';
 import * as Core from '@golemui/core';
 import { GeminiService } from './gemini.service';
-//import { AnthropicService } from './anthropic.service';
+// import { AnthropicService } from './anthropic.service';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -41,6 +41,7 @@ const initialFormJson = golemForm().create({
 export class App {
   private cdr = inject(ChangeDetectorRef);
   private ai = inject(GeminiService);
+  // private ai = inject(AnthropicService);
   protected activeTab: 'form' | 'json' = 'form';
   protected chatInput =
     'Create a registration form with email, password, confirm password and a submit button';

@@ -246,6 +246,8 @@
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid #334155;
+  overflow: scroll;
+
 
   ::ng-deep {
     /* Basic overrides to fit GUI form into dark mode */

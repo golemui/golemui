@@ -27,10 +27,10 @@ const button = (uid: string, label: string): LlmElement => ({
   label,
 });
 
-const stack = (uid: string, children: string[]): LlmFlatOutput['elements'][string] => ({
+const flex = (uid: string, children: string[]): LlmFlatOutput['elements'][string] => ({
   uid,
   kind: 'layout',
-  type: 'stack',
+  type: 'flex',
   children,
 });
 
@@ -40,11 +40,11 @@ const stack = (uid: string, children: string[]): LlmFlatOutput['elements'][strin
 
 describe('flatToGolemForm', () => {
   describe('plain wrapper unwrapping', () => {
-    it('unwraps a bare root stack so form contains the children directly', () => {
+    it('unwraps a bare root flex so form contains the children directly', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: stack('root', ['email', 'submit']),
+          root: flex('root', ['email', 'submit']),
           email: textinput('email', 'email', 'Email'),
           submit: button('submit', 'Sign In'),
         },
@@ -57,11 +57,11 @@ describe('flatToGolemForm', () => {
       expect(form[1]).toMatchObject({ uid: 'submit', kind: 'action', type: 'button' });
     });
 
-    it('keeps a stack as the root when it has props', () => {
+    it('keeps a flex as the root when it has props', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: { ...stack('root', ['email']), props: { gap: 2 } },
+          root: { ...flex('root', ['email']), props: { gap: 2 } },
           email: textinput('email', 'email'),
         },
       };
@@ -69,24 +69,24 @@ describe('flatToGolemForm', () => {
       const { form } = flatToGolemForm(input);
 
       expect(form).toHaveLength(1);
-      expect(form[0].type).toBe('stack');
+      expect(form[0].type).toBe('flex');
     });
 
-    it('keeps a stack as the root when it has a size', () => {
+    it('keeps a flex as the root when it has a size', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: { ...stack('root', ['email']), size: 6 },
+          root: { ...flex('root', ['email']), size: 6 },
           email: textinput('email', 'email'),
         },
       };
 
       const { form } = flatToGolemForm(input);
 
-      expect(form[0].type).toBe('stack');
+      expect(form[0].type).toBe('flex');
     });
 
-    it('keeps a non-stack root as is', () => {
+    it('keeps a non-flex root as is', () => {
       const input: LlmFlatOutput = {
         root: 'field',
         elements: { field: textinput('field', 'name', 'Name') },
@@ -100,12 +100,12 @@ describe('flatToGolemForm', () => {
   });
 
   describe('nested resolution', () => {
-    it('resolves deeply nested stacks', () => {
+    it('resolves deeply nested flexs', () => {
       const input: LlmFlatOutput = {
         root: 'outer',
         elements: {
-          outer: stack('outer', ['inner']),
-          inner: stack('inner', ['field']),
+          outer: flex('outer', ['inner']),
+          inner: flex('inner', ['field']),
           field: textinput('field', 'name'),
         },
       };
@@ -113,7 +113,7 @@ describe('flatToGolemForm', () => {
       const { form } = flatToGolemForm(input);
       // outer is a plain wrapper -> unwrapped, inner becomes form[0]
       const inner = form[0] as GolemWidget & { children: GolemWidget[] };
-      expect(inner.type).toBe('stack');
+      expect(inner.type).toBe('flex');
       expect(inner.children).toHaveLength(1);
       expect(inner.children[0]).toMatchObject({ uid: 'field', type: 'textinput' });
     });
@@ -122,7 +122,7 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: stack('root', ['field']),
+          root: flex('root', ['field']),
           field: {
             uid: 'field',
             kind: 'input',
@@ -149,7 +149,7 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: stack('root', ['btn']),
+          root: flex('root', ['btn']),
           btn: { uid: 'btn', kind: 'action', type: 'button', label: 'Go', children: ['orphan'] },
         },
       };
@@ -162,7 +162,7 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: { uid: 'root', kind: 'layout', type: 'stack' } as LlmFlatOutput['elements'][string],
+          root: { uid: 'root', kind: 'layout', type: 'flex' } as LlmFlatOutput['elements'][string],
         },
       };
 
@@ -189,7 +189,7 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: stack('root', ['exists', 'ghost']),
+          root: flex('root', ['exists', 'ghost']),
           exists: textinput('exists', 'name'),
         },
       };
@@ -207,8 +207,8 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'a',
         elements: {
-          a: stack('a', ['b']),
-          b: stack('b', ['a']), // cycle: b -> a
+          a: flex('a', ['b']),
+          b: flex('b', ['a']), // cycle: b -> a
         },
       };
 
@@ -219,7 +219,7 @@ describe('flatToGolemForm', () => {
 
       // b is kept (it's a valid layout), but its child 'a' is skipped
       const bWidget = form[0] as GolemWidget & { children: GolemWidget[] };
-      expect(bWidget.type).toBe('stack');
+      expect(bWidget.type).toBe('flex');
       expect(bWidget.children).toHaveLength(0);
     });
 
@@ -228,9 +228,9 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'a',
         elements: {
-          a: stack('a', ['b', 'c']),
-          b: stack('b', ['d']),
-          c: stack('c', ['d']),
+          a: flex('a', ['b', 'c']),
+          b: flex('b', ['d']),
+          c: flex('c', ['d']),
           d: textinput('d', 'shared'),
         },
       };
@@ -250,7 +250,7 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: stack('root', ['code']),
+          root: flex('root', ['code']),
           code: {
             uid: 'code',
             kind: 'input',
@@ -269,7 +269,7 @@ describe('flatToGolemForm', () => {
       const input: LlmFlatOutput = {
         root: 'root',
         elements: {
-          root: stack('root', ['btn']),
+          root: flex('root', ['btn']),
           btn: {
             uid: 'btn',
             kind: 'action',
@@ -295,7 +295,7 @@ describe('parseLlmResponse', () => {
     const llmOutput: LlmFlatOutput = {
       root: 'root',
       elements: {
-        root: stack('root', ['name']),
+        root: flex('root', ['name']),
         name: textinput('name', 'name', 'Name'),
       },
     };

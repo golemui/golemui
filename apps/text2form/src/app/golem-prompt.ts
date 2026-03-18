@@ -125,7 +125,7 @@ Output a single JSON object with this shape:
 }
 
 - Every widget must have a globally unique \`uid\` string (e.g. \`"name-input"\`, \`"submit-btn"\`).
-- Layout widgets (\`stack\`) list their children as an array of UIDs: \`"children": ["uid-a", "uid-b"]\`.
+- Layout widgets (\`flex\`, \`accordion\`, \`tabs\`) list their children as an array of UIDs: \`"children": ["uid-a", "uid-b"]\`.
   Children are never inlined as objects — always reference them by UID in \`elements\`.
 - All input widgets require \`path\`: a dot-separated string binding to the form data field (e.g. \`"user.email"\`).
 
@@ -135,7 +135,7 @@ Output a single JSON object with this shape:
 {
   "root": "root",
   "elements": {
-    "root":        { "uid": "root",        "kind": "layout", "type": "stack", "children": ["email", "pwd", "submit"] },
+    "root":        { "uid": "root",        "kind": "layout", "type": "flex", "children": ["email", "pwd", "submit"] },
     "email":       { "uid": "email",       "kind": "input",  "type": "textinput",  "path": "email",    "label": "Email",    "props": { "placeholder": "you@example.com" } },
     "pwd":         { "uid": "pwd",         "kind": "input",  "type": "password",   "path": "password", "label": "Password" },
     "submit":      { "uid": "submit",      "kind": "action", "type": "button",     "label": "Sign In", "on": { "click": "submit" } }
@@ -149,11 +149,11 @@ Output a single JSON object with this shape:
 {
   "root": "root",
   "elements": {
-    "root":       { "uid": "root",       "kind": "layout", "type": "stack", "children": ["role", "code", "btn"] },
-    "role":       { "uid": "role",       "kind": "input",  "type": "select", "path": "role", "label": "Role",
+    "root":       { "uid": "root",       "kind": "layout", "type": "flex", "children": ["role", "code", "btn"] },
+    "role":       { "uid": "role",       "kind": "input",  "type": "select", "path": "config.user.role", "label": "Role",
                     "props": { "options": [{ "label": "User", "value": "user" }, { "label": "Admin", "value": "admin" }] } },
     "code":       { "uid": "code",       "kind": "input",  "type": "textinput", "path": "adminCode", "label": "Admin Code",
-                    "include": { "when": "$form.role === 'admin'" } },
+                    "include": { "when": "$form.config?.user?.role === 'admin'" } },
     "btn":        { "uid": "btn",        "kind": "action", "type": "button", "label": "Submit", "on": { "click": "submit" } }
   }
 }
@@ -164,14 +164,18 @@ Output a single JSON object with this shape:
 - Always include \`uid\`, \`kind\`, and \`type\` on every widget.
 - All \`input\` widgets also require \`path\` (dot notation, e.g. \`"address.city"\`).
 - \`disabled\` and \`readonly\` accept a plain boolean.
-- \`include\` / \`exclude\` accept \`{ "when": "<expression>" }\` to conditionally show/hide a widget.
-- Use \`$form.fieldPath\` in expressions to read sibling field values.
+- \`include\` / \`exclude\` accept \`{ "when": "<expression>" }\` to conditionally show/hide a widget. These expressions can only be placed at the root level of the widget, never inside "props".
+- Use \`$form.fieldPath\` in expressions to read sibling field values. Always use optional chaining (\`?.\`) for nested paths (e.g. \`$form.config?.screen\`, never \`$form.config.screen\`).
+- When doing comparisons in "include" or "exclude" conditions, always return boolean values (e.g. \`$form.config?.size !== undefined\`, never just \`$form.config?.size\`).
 - \`size\` is an optional grid column span (1–12). Omit for full width.
 - \`on\` holds event handlers: \`{ "click": "submit" }\`, \`{ "change": "reload" }\`, etc.
 - Use \`select\` or \`radiogroup\` for short static option lists (provide \`props.options\`).
-- \`alert\` requires \`props.text\`. \`select\`/\`radiogroup\` require \`props.options\`.
+- \`alert\` requires \`props.text\`.
 - \`button\` is \`kind: "action"\`; all other widgets that collect data are \`kind: "input"\`.
-- \`stack\` is the only layout widget. Nest layouts by having a stack reference other stacks as children.
+- \`flex\` is the default layout widget. Use \`props.direction\` for rows/columns and \`props.gap\` for spacing.
+- \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID.
+- \`tabs\` requires \`props.tabs\` (array of \`{ label, uid }\`). Each tab uid must match a child UID.
+- \`repeater\` is \`kind: "input"\`. Its \`props.template\` is the UID of a \`flex\` element that defines the repeatable row layout.
 
 ${generateComponentsSection()}
 `;

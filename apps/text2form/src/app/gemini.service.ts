@@ -33,7 +33,6 @@ export class GeminiService {
       systemInstruction,
       generationConfig: {
         responseMimeType: 'application/json',
-        maxOutputTokens: 2000,
       },
     });
     this.chat = this.model.startChat({

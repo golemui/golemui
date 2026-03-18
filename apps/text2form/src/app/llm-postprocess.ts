@@ -87,6 +87,16 @@ function resolveElement(
     return { ...rest, children: resolvedChildren };
   }
 
+  // Repeater: resolve props.template UID into a nested flex widget.
+  if (el.type === 'repeater' && rest['props'] && typeof (rest['props'] as Record<string, unknown>)['template'] === 'string') {
+    const props = rest['props'] as Record<string, unknown>;
+    const templateUid = props['template'] as string;
+    const resolved = resolveElement(templateUid, elements, branch);
+    if (resolved) {
+      return { ...rest, props: { ...props, template: resolved } };
+    }
+  }
+
   // Non-layout widgets: drop `children` entirely even if the LLM hallucinated it.
   return rest;
 }
@@ -100,7 +110,7 @@ function resolveElement(
  *
  * @example
  * const golemForm = flatToGolemForm(llmOutput);
- * // -> { form: [{ uid: "root", kind: "layout", type: "stack", children: [...] }] }
+ * // -> { form: [{ uid: "root", kind: "layout", type: "flex", children: [...] }] }
  */
 export function flatToGolemForm(llmOutput: LlmFlatOutput): GolemFormDef {
   const root = resolveElement(llmOutput.root, llmOutput.elements, new Set());
@@ -110,10 +120,10 @@ export function flatToGolemForm(llmOutput: LlmFlatOutput): GolemFormDef {
     return { form: [] };
   }
 
-  // If the root is a plain stack wrapping the whole form, unwrap it so the
+  // If the root is a plain flex wrapping the whole form, unwrap it so the
   // form array contains the top-level widgets directly (matches Golem conventions).
-  // Keep the stack if it has props/on/include/etc. that the developer may need.
-  if (root.kind === 'layout' && root.type === 'stack' && isPlainWrapper(root)) {
+  // Keep the wrapper if it has props/on/include/etc. that the developer may need.
+  if (root.kind === 'layout' && root.type === 'flex' && isPlainWrapper(root)) {
     return { form: root.children ?? [] };
   }
 
@@ -124,7 +134,9 @@ export function flatToGolemForm(llmOutput: LlmFlatOutput): GolemFormDef {
  * Parses a raw JSON string from the LLM and converts it to a Golem form definition.
  * Throws if the JSON is malformed.
  */
-export function parseLlmResponse(json: string): GolemFormDef {
+export function parseLlmResponse(raw: string): GolemFormDef {
+  const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const json = match ? match[1].trim() : raw.trim();
   const parsed = JSON.parse(json) as LlmFlatOutput;
   return flatToGolemForm(parsed);
 }
@@ -134,9 +146,9 @@ export function parseLlmResponse(json: string): GolemFormDef {
 // ---------------------------------------------------------------------------
 
 /**
- * Returns true if a stack widget is a plain wrapper with no extra configuration
+ * Returns true if a layout widget is a plain wrapper with no extra configuration
  * (no props, no on-handlers, no include/exclude, no size).
- * Used to decide whether to unwrap the root stack.
+ * Used to decide whether to unwrap the root flex.
  */
 function isPlainWrapper(widget: GolemWidget): boolean {
   return (
