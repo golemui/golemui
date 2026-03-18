@@ -295,6 +295,38 @@
   }
 }
 
+/* --- Spinner --- */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.25);
+  border-top-color: #fff;
+  animation: spin 0.6s linear infinite;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-tab {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border-color: rgba(148, 163, 184, 0.3);
+  border-top-color: #3b82f6;
+}
+
 .error-container {
   padding: 1rem;
 }

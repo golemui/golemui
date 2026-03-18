@@ -28,7 +28,7 @@
         </div>
         <button (click)="sendMessage()" [disabled]="!chatInput.trim() || thinking">
           @if (thinking) {
-          <span class="icon-loading">⏳</span>
+          <span class="spinner spinner-sm"></span>
           } @else {
           <span class="icon-send">➤</span>
           }
@@ -40,8 +40,16 @@
   <!-- Right Column: Form/JSON Viewer -->
   <main class="content-main">
     <header class="tabs-header">
-      <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">Preview</button>
+      <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        }
+        Preview
+      </button>
       <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        }
         Schema (JSON)
       </button>
     </header>
@@ -54,7 +62,10 @@
       }
       <!-- Form Tab -->
       <div *ngSwitchCase="'form'" class="form-preview-container">
-        <div class="form-wrapper">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } @else {
+          <div class="form-wrapper">
           <gui-form
             [formDef]="formJson()"
             [data]="{}"
@@ -65,12 +76,16 @@
             (formEvent)="onFormEvent($event)"
           ></gui-form>
         </div>
+        }
       </div>
 
       <!-- JSON Tab -->
       <div *ngSwitchCase="'json'" class="json-editor-container">
-        <textarea class="json-editor" [ngModel]="formJson()" (ngModelChange)="onJsonChange($event)">
-        </textarea>
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } @else {
+          <textarea class="json-editor" [ngModel]="formJson()" (ngModelChange)="onJsonChange($event)"></textarea>
+        }
       </div>
     </div>
   </main>
