@@ -1,0 +1,110 @@
+:host {
+  display: contents;
+}
+
+.comp-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  box-sizing: border-box;
+
+  &--hover {
+    border: 1px dashed #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  &--selected {
+    border: 2px solid #f59e0b;
+    background: rgba(245, 158, 11, 0.04);
+  }
+}
+
+.comp-overlay__breadcrumbs {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 3px 6px;
+  white-space: nowrap;
+  pointer-events: auto;
+
+  .comp-overlay--selected & {
+    border-color: #f59e0b;
+  }
+}
+
+.comp-overlay__crumb {
+  all: unset;
+  font-size: 11px;
+  font-family: monospace;
+  line-height: 16px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 2px;
+
+  &:hover {
+    color: #94a3b8;
+    background: #334155;
+  }
+
+  &--current {
+    color: #94a3b8;
+    cursor: default;
+
+    .comp-overlay--selected & {
+      color: #f59e0b;
+    }
+  }
+}
+
+.comp-overlay__sep {
+  font-size: 11px;
+  font-family: monospace;
+  color: #475569;
+  user-select: none;
+}
+
+.design-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  background-color: var(--gui-bg-default);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #334155;
+  overflow: scroll;
+
+  ::ng-deep {
+    .gui-form-control label {
+      color: var(--gui-color-primary);
+    }
+    .gui-input,
+    .gui-select,
+    .gui-textarea {
+      background-color: #0f172a;
+      border: 1px solid #475569;
+      color: #f8fafc;
+      border-radius: 6px;
+      padding: 10px 12px;
+      &:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 1px #3b82f6;
+      }
+    }
+  }
+}
+
+.design-capture {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}

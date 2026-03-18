@@ -270,6 +270,14 @@
   }
 }
 
+.design-tab-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+}
+
 .json-editor-container {
   flex: 1;
   display: flex;

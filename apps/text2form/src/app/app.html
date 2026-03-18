@@ -43,14 +43,17 @@
       <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
-        }
-        Preview
+        } Preview
       </button>
       <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
-        }
-        Schema (JSON)
+        } Edit
+      </button>
+      <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Design
       </button>
     </header>
 
@@ -65,7 +68,7 @@
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
         } @else {
-          <div class="form-wrapper">
+        <div class="form-wrapper">
           <gui-form
             [formDef]="formJson()"
             [data]="{}"
@@ -84,7 +87,20 @@
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
         } @else {
-          <textarea class="json-editor" [ngModel]="formJson()" (ngModelChange)="onJsonChange($event)"></textarea>
+        <textarea
+          class="json-editor"
+          [ngModel]="formJson()"
+          (ngModelChange)="onJsonChange($event)"
+        ></textarea>
+        }
+      </div>
+
+      <!-- Design Tab -->
+      <div *ngSwitchCase="'design'" class="design-tab-container">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } @else {
+        <app-design [formDef]="formJson()"></app-design>
         }
       </div>
     </div>
