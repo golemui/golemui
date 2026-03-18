@@ -36,7 +36,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
   @state() private _isSelecting = false;
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
-  @state() private _showPillsList = false;
 
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
@@ -321,7 +320,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.disconnectObservers();
-    document.removeEventListener('click', this.handleDocumentClick);
   }
 
   override renderAboveCalendar() {
@@ -346,15 +344,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
           <span class="gui-sentinel gui-sentinel__end"></span>
         </div>
       </div>
-      ${this._showPillsList && pills.length > 0
-        ? html`<div class="gui-range-calendar__pills-dropdown" role="list">
-            ${repeat(
-              pills,
-              (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-              (pill, index) => this.renderPill(pill, index),
-            )}
-          </div>`
-        : nothing}
     `;
   }
 
@@ -416,22 +405,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
         composed: true,
       }),
     );
-
-    if (this._showPillsList && sorted.length === 0) {
-      this._showPillsList = false;
-      document.removeEventListener('click', this.handleDocumentClick);
-    }
-
-    requestAnimationFrame(() => {
-      const selector = this._showPillsList
-        ? '.gui-range-calendar__pills-dropdown .gui-range-calendar__pill'
-        : '.gui-range-calendar__pills .gui-range-calendar__pill';
-      const pills = this.querySelectorAll<HTMLElement>(selector);
-      if (pills.length > 0) {
-        const focusIndex = Math.min(index, pills.length - 1);
-        pills[focusIndex].focus();
-      }
-    });
   }
 
   private handlePillKeydown(e: KeyboardEvent, index: number) {
@@ -441,46 +414,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
       return;
     }
 
-    const isDropdown = this._showPillsList;
-    const prevKey = isDropdown ? 'ArrowUp' : 'ArrowLeft';
-    const nextKey = isDropdown ? 'ArrowDown' : 'ArrowRight';
-
-    if (e.key === prevKey || e.key === nextKey) {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
-      const selector = isDropdown
-        ? '.gui-range-calendar__pills-dropdown .gui-range-calendar__pill'
-        : '.gui-range-calendar__pills .gui-range-calendar__pill';
-      const pills = this.querySelectorAll<HTMLElement>(selector);
-      const newIndex = e.key === prevKey ? index - 1 : index + 1;
+      const pills = this.querySelectorAll<HTMLElement>('.gui-range-calendar__pills .gui-range-calendar__pill');
+      const newIndex = e.key === 'ArrowLeft' ? index - 1 : index + 1;
       if (newIndex >= 0 && newIndex < pills.length) {
         pills[newIndex].focus();
       }
     }
   }
-
-  private togglePillsList() {
-    this._showPillsList = !this._showPillsList;
-    if (this._showPillsList) {
-      requestAnimationFrame(() => {
-        document.addEventListener('click', this.handleDocumentClick);
-      });
-    } else {
-      document.removeEventListener('click', this.handleDocumentClick);
-    }
-  }
-
-  private handleDocumentClick = (e: MouseEvent) => {
-    const compact = this.querySelector('.gui-range-calendar__pills-compact');
-    const dropdown = this.querySelector('.gui-range-calendar__pills-dropdown');
-    const target = e.target as Node;
-    if (
-      compact && !compact.contains(target) &&
-      dropdown && !dropdown.contains(target)
-    ) {
-      this._showPillsList = false;
-      document.removeEventListener('click', this.handleDocumentClick);
-    }
-  };
 
   private setupObservers() {
     const startSentinel = this.querySelector('.gui-sentinel__start');
