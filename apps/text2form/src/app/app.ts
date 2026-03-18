@@ -1,41 +1,51 @@
+import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
   signal,
-  ChangeDetectorRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
 import { golemForm } from '@golemui/gui-shared';
-import * as Core from '@golemui/core';
-import { GeminiService, GEMINI_INPUT_BUDGET } from './gemini.service';
+import { GEMINI_INPUT_BUDGET, GeminiService } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
-import { TokenMeterComponent } from './token-meter/token-meter.component';
 import { EditorComponent } from './editor/editor.component';
+import { TokenMeterComponent } from './token-meter/token-meter.component';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const initialFormJson = golemForm().create({
-  form: [
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Use the prompt to update the form',
-        level: 'info',
+const initialFormJson = () => {
+  const form = golemForm().create({
+    form: [
+      {
+        kind: 'display',
+        type: 'alert',
+        props: {
+          text: 'Use the prompt to update the form',
+          level: 'info',
+        },
       },
-    },
-  ],
-});
+    ],
+  });
+  return { form: form.form.children };
+};
 
 @Component({
-  imports: [CommonModule, FormsModule, Gui.FormComponent, DesignComponent, TokenMeterComponent, EditorComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Gui.FormComponent,
+    DesignComponent,
+    TokenMeterComponent,
+    EditorComponent,
+  ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -55,7 +65,7 @@ export class App {
     { role: 'assistant', content: 'Hello! Describe the form you want to build.' },
   ];
   protected error = '';
-  protected formJson = signal(JSON.stringify(initialFormJson, undefined, 2));
+  protected formJson = signal(JSON.stringify(initialFormJson(), undefined, 2));
   protected thinking = false;
 
   protected onJsonChange(value: string) {

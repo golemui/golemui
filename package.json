@@ -41,6 +41,7 @@
     "@standard-schema/spec": "^1.0.0",
     "i18next": "^25.7.4",
     "lit": "^3.3.1",
+    "monaco-editor": "^0.55.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router": "^7.9.3",
