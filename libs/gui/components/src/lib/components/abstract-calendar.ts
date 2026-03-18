@@ -96,7 +96,7 @@ export abstract class AbstractCalendar extends LitElement {
 
       <div class="gui-widget">
         <div
-          class=${`gui-calendar-input ${monthsToRender.length > 1 ? 'gui-calendar-input--multimonth' : ''}`}
+          class="gui-calendar-input"
           role="group"
           aria-labelledby=${this.label ? `${this.uid}_calendar_label` : nothing}
         >
