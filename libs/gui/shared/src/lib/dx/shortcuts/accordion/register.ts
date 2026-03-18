@@ -1,3 +1,5 @@
+// Complexity: COMPOUND — recursive children via buildCustomWidget + getChildren hooks.
+// Same pattern as tabs/ and layouts/.
 import {
   FormWidget,
   FunctionWidgetParams,

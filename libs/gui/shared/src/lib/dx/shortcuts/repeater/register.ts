@@ -1,3 +1,7 @@
+// Complexity: CUSTOM — bypasses defineShortcutType entirely. Uses registerItemType
+// directly because the repeater is both keyed (has a data path) and compound (has
+// children) — a hybrid that doesn't fit any standard entry shape. Also implements
+// auto-prefixing of child paths. You almost certainly don't need this pattern.
 import {
   FormWidget,
   FunctionWidgetParams,

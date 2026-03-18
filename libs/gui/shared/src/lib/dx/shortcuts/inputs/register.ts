@@ -1,3 +1,6 @@
+// Complexity: COMPLEX — batch factory with 3 sub-types (text, number, boolean).
+// This is NOT representative of a typical shortcut. If you're learning the system,
+// start with alert/ (minimal) or date-picker/ (standard keyed type).
 import {
   InputWidget,
   NonFunctionWidget,

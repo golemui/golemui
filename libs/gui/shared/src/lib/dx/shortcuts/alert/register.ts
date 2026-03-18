@@ -1,3 +1,5 @@
+// Complexity: MINIMAL — the simplest shortcut. Start here when learning the pattern.
+// See SHORTCUTS.md "Onboarding: Where to Start" for the full progression.
 import { defineShortcutType } from '../../core/defineShortcutType';
 import type { AlertDecorator, AlertEntry, GslAlertsConfig } from './alert.domain';
 

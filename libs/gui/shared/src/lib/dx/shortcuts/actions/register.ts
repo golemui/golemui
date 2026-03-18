@@ -1,3 +1,5 @@
+// Complexity: MODERATE — bare entry shape with afterMerge hook for onClick wiring.
+// The hook pattern is straightforward; the onClick service does the heavy lifting.
 import {
   ActionWidget,
   NonFunctionWidget,

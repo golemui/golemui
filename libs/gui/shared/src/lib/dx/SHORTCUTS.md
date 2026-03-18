@@ -1,5 +1,59 @@
 # DX Shortcuts — Architecture & Developer Guide
 
+## Onboarding: Where to Start
+
+If you're new to the shortcut system, **don't start by reading `inputs/`**. It's the most complex shortcut and will mislead you about what's typical. Instead, follow this progression:
+
+### 1. Start here → `alert/`
+The simplest complete shortcut. Bare entry shape, no sensible defaults, no hooks. Three files, minimal code. This is the template you'll copy for most new types.
+
+### 2. Standard keyed type → `date-picker/` or `currency/`
+Adds a data path (keyed entry shape) and sensible defaults (autoLabel, autoPlaceholder). This is the most common pattern — most widget shortcuts look like this. The props pass through from the core widget type via `extractWidgetProps`.
+
+### 3. Compound type → `tabs/` or `accordion/`
+Adds recursive children. The `buildCustomWidget` hook walks children through the pipeline and assembles them into the parent widget. `getChildren` extracts children for the walker. If your widget contains other widgets, study this pattern.
+
+### 4. Action type → `actions/`
+Adds the `afterMerge` hook for onClick wiring. This is the only type that needs post-merge processing. Moderate complexity, but the hook pattern is straightforward.
+
+### 5. Complex outliers (understand, don't copy)
+
+**`inputs/`** — The batch factory (`_guiInputs`) handles three sub-types (text, number, boolean) behind one API. It has its own key expansion service, type defaults service, and three decorator sub-types. This complexity exists to make the developer API ergonomic for the most common case (declaring many fields at once). You won't need any of this for a normal shortcut.
+
+**`display/`** — Always produces a `FunctionWidget` (dynamic). The `buildCustomWidget` hook wraps the developer's render function. Unique because every display widget re-evaluates on form state changes.
+
+**`repeater/`** — The only type that bypasses `defineShortcutType` and registers a custom `ItemTypeHandler` directly. It's both keyed (has a data path) and compound (has children) — a hybrid that doesn't fit any standard entry shape. Also implements auto-prefixing of child paths. You'll probably never need this pattern.
+
+### Quick reference: complexity by folder
+
+| Folder | Complexity | Entry Shape | Hooks Used | Why |
+|---|---|---|---|---|
+| `alert/` | Minimal | bare | none | Bare display, no defaults |
+| `date-picker/` | Standard | keyed | sensibleDefaults | Typical keyed input with pass-through props |
+| `currency/` | Standard | keyed | sensibleDefaults | Same pattern, different props |
+| `dropdown/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `markdown/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `checkbox/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `password/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `textarea/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `select/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `radiogroup/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `list/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `calendar/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `range-calendar/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `date-input/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `range-date-input/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `range-date-picker/` | Standard | keyed | sensibleDefaults | Same pattern |
+| `tabs/` | Compound | compound | buildCustomWidget, getChildren | Recursive children |
+| `accordion/` | Compound | compound | buildCustomWidget, getChildren | Recursive children |
+| `actions/` | Moderate | bare | afterMerge | onClick wiring |
+| `display/` | Moderate | bare | buildCustomWidget | Always dynamic (FunctionWidget) |
+| `layouts/` | Compound | compound | buildCustomWidget, getChildren | Recursive children |
+| `inputs/` | Complex | keyed | sensibleDefaults | Batch factory, 3 sub-types, key expansion |
+| `repeater/` | Custom | hybrid | buildCustomWidget, getChildren, custom parseEntry | Bypasses defineShortcutType, auto-prefixing |
+
+---
+
 The DX (Developer Experience) layer provides shortcuts on top of the JSON-based form framework. It has two complementary layers:
 
 - **GUI shortcuts** (`_gui*`) define the **structure** of the form (what widgets exist, in what order).

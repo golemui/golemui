@@ -1,3 +1,5 @@
+// Complexity: STANDARD — typical keyed input with sensible defaults and pass-through props.
+// This is the pattern most new shortcuts follow. See SHORTCUTS.md for the progression.
 import { defineShortcutType } from '../../core/defineShortcutType';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import {

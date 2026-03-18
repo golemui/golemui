@@ -1,3 +1,5 @@
+// Complexity: MODERATE — always produces a FunctionWidget (dynamic). The buildCustomWidget
+// hook wraps the developer's render function so it re-evaluates on form state changes.
 import {
   FormWidget,
   FunctionWidgetParams,

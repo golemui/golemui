@@ -1,3 +1,5 @@
+// Complexity: COMPOUND — recursive children via buildCustomWidget + getChildren hooks.
+// Study this when your widget contains other widgets. See also accordion/ (same pattern).
 import {
   FormWidget,
   FunctionWidgetParams,
