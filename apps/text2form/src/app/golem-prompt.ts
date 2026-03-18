@@ -165,6 +165,7 @@ Output a single JSON object with this shape:
 - All \`input\` widgets also require \`path\` (dot notation, e.g. \`"address.city"\`).
 - \`disabled\` and \`readonly\` accept a plain boolean.
 - \`include\` / \`exclude\` accept \`{ "when": "<expression>" }\` to conditionally show/hide a widget. These expressions can only be placed at the root level of the widget, never inside "props".
+- Properties inside \`props\` don't accept expressions, just values.
 - Use \`$form.fieldPath\` in expressions to read sibling field values. Always use optional chaining (\`?.\`) for nested paths (e.g. \`$form.config?.screen\`, never \`$form.config.screen\`).
 - When doing comparisons in "include" or "exclude" conditions, always return boolean values (e.g. \`$form.config?.size !== undefined\`, never just \`$form.config?.size\`).
 - \`size\` is an optional grid column span (1–12). Omit for full width.
