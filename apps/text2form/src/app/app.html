@@ -98,7 +98,7 @@
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
         } @else {
-        <app-design [formDef]="formJson()"></app-design>
+        <app-design [formDef]="formJson()" (formDefChange)="onFormDefChange($event)"></app-design>
         }
       </div>
     </div>

@@ -113,4 +113,8 @@ export class App {
   protected onFormEvent(event: Core.FormEvent) {
     console.log('onFormEvent', event);
   }
+
+  protected onFormDefChange(newJson: string) {
+    this.formJson.set(newJson);
+  }
 }

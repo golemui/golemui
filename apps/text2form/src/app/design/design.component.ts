@@ -6,10 +6,13 @@ import {
   HostListener,
   inject,
   input,
+  output,
   signal,
 } from '@angular/core';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
+import { PropertiesPanelComponent } from './properties-panel.component';
+import { findWidgetByUid, replaceWidgetByUid, updateWidgetFromFlatData } from './widget-forms';
 
 interface BreadcrumbItem {
   uid: string;
@@ -28,7 +31,7 @@ interface ComponentHighlight {
 }
 
 @Component({
-  imports: [Gui.FormComponent],
+  imports: [Gui.FormComponent, PropertiesPanelComponent],
   selector: 'app-design',
   templateUrl: './design.component.html',
   styleUrl: './design.component.scss',
@@ -36,11 +39,15 @@ interface ComponentHighlight {
 })
 export class DesignComponent {
   formDef = input<string>('');
+  formDefChange = output<string>();
 
   private elRef = inject(ElementRef);
 
   hoveredHighlight = signal<ComponentHighlight | null>(null);
   selectedHighlight = signal<ComponentHighlight | null>(null);
+  // Snapshot of the selected widget — set on selection, NOT updated when formDef changes,
+  // so the properties panel stays stable while the user types.
+  selectedWidget = signal<Record<string, unknown> | null>(null);
 
   constructor() {
     afterNextRender(() => {
@@ -72,10 +79,17 @@ export class DesignComponent {
     if (el) {
       const hl = this.makeHighlight(el);
       const current = this.selectedHighlight();
-      this.selectedHighlight.set(current?.uid === hl.uid ? null : hl);
+      if (current?.uid === hl.uid) {
+        this.selectedHighlight.set(null);
+        this.selectedWidget.set(null);
+      } else {
+        this.selectedHighlight.set(hl);
+        this.selectedWidget.set(this.snapshotWidget(hl.prettyUid));
+      }
       event.stopPropagation();
     } else {
       this.selectedHighlight.set(null);
+      this.selectedWidget.set(null);
     }
   }
 
@@ -87,7 +101,36 @@ export class DesignComponent {
   protected selectBreadcrumb(item: BreadcrumbItem, event: MouseEvent) {
     event.stopPropagation();
     const current = this.selectedHighlight();
-    this.selectedHighlight.set(current?.uid === item.uid ? null : this.makeHighlight(item.el));
+    if (current?.uid === item.uid) {
+      this.selectedHighlight.set(null);
+      this.selectedWidget.set(null);
+    } else {
+      this.selectedHighlight.set(this.makeHighlight(item.el));
+      this.selectedWidget.set(this.snapshotWidget(item.prettyUid));
+    }
+  }
+
+  protected onWidgetChange(flatData: Record<string, unknown>) {
+    const hl = this.selectedHighlight();
+    if (!hl) return;
+    try {
+      const parsed = JSON.parse(this.formDef());
+      const original = findWidgetByUid(parsed, hl.prettyUid);
+      if (!original) return;
+      const updated = updateWidgetFromFlatData(original, flatData);
+      const newFormDef = replaceWidgetByUid(parsed, hl.prettyUid, updated);
+      this.formDefChange.emit(JSON.stringify(newFormDef, null, 2));
+    } catch (e) {
+      console.error('[design] Failed to update widget', e);
+    }
+  }
+
+  private snapshotWidget(prettyUid: string): Record<string, unknown> | null {
+    try {
+      return findWidgetByUid(JSON.parse(this.formDef()), prettyUid);
+    } catch {
+      return null;
+    }
   }
 
   private refreshSelectedRect() {
