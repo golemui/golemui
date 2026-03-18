@@ -12,6 +12,7 @@ import rangeCalendarMinMaxJson from '../../../../../public/template/components/r
 import rangeCalendarMonthsJson from '../../../../../public/template/components/range-calendar/range-calendar-months.json?raw';
 import rangeCalendarDisabledJson from '../../../../../public/template/components/range-calendar/range-calendar-disabled.json?raw';
 import rangeCalendarIconsJson from '../../../../../public/template/components/range-calendar/range-calendar-icons.json?raw';
+import rangeCalendarAriaLabelsJson from '../../../../../public/template/components/range-calendar/range-calendar-aria-labels.json?raw';
 import rangeCalendarAnatomyHtml from '../../../../../public/template/components/range-calendar/range-calendar-anatomy.html?raw';
 export const configJson = 'range-calendar.json';
 export const anatomy = 'range-calendar-anatomy.html';
@@ -83,6 +84,15 @@ Use `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel` and `nextMonthAriaLab
 <Code code={rangeCalendarIconsJson} lang="js" title={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-icons.json"
+/>
+
+### Aria Labels
+
+Use `prevMonthAriaLabel`, `nextMonthAriaLabel` and `removePillAriaLabel` to provide accessible labels for the navigation buttons and the remove button on date range pills.
+
+<Code code={rangeCalendarAriaLabelsJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/range-calendar/range-calendar-aria-labels.json"
 />
 
 ## Styling
