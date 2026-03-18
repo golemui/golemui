@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { GoogleGenerativeAI, ChatSession, GenerativeModel } from '@google/generative-ai';
+import { ChatSession, GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { generatePrompt } from './golem-prompt';
-import { parseLlmResponse, GolemFormDef } from './llm-postprocess';
+import { GolemFormDef, parseLlmResponse } from './llm-postprocess';
+
+export const GEMINI_MAX_TOKENS = 1_048_576; // gemini-2.5-flash context window
+export const GEMINI_MAX_OUTPUT_TOKENS = 65_536; // reserved for model output
+export const GEMINI_INPUT_BUDGET = GEMINI_MAX_TOKENS - GEMINI_MAX_OUTPUT_TOKENS;
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +31,6 @@ export class GeminiService {
     this.genAI = new GoogleGenerativeAI(apiKey);
     const model = { fast: 'gemini-2.5-flash', think: 'gemini-2.5-pro' };
     const systemInstruction = generatePrompt();
-    console.log('systemInstruction', systemInstruction);
     this.model = this.genAI.getGenerativeModel({
       model: model.fast,
       systemInstruction,
@@ -48,8 +51,8 @@ export class GeminiService {
     const result = await this.chat.sendMessage(message);
     const response = result.response.text();
     const parsedLlmResponse = parseLlmResponse(response);
-    console.log('response', response);
-    console.log('parsedLlmResponse', parsedLlmResponse);
+    // console.log('response', response);
+    // console.log('parsedLlmResponse', parsedLlmResponse);
     return parsedLlmResponse;
   }
 

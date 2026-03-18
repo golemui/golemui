@@ -10,9 +10,10 @@ import { FormsModule } from '@angular/forms';
 import * as Gui from '@golemui/gui-angular';
 import { golemForm } from '@golemui/gui-shared';
 import * as Core from '@golemui/core';
-import { GeminiService } from './gemini.service';
+import { GeminiService, GEMINI_INPUT_BUDGET } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
+import { TokenMeterComponent } from './token-meter/token-meter.component';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -33,7 +34,7 @@ const initialFormJson = golemForm().create({
 });
 
 @Component({
-  imports: [CommonModule, FormsModule, Gui.FormComponent, DesignComponent],
+  imports: [CommonModule, FormsModule, Gui.FormComponent, DesignComponent, TokenMeterComponent],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -47,6 +48,7 @@ export class App {
   protected chatInput =
     'Create a registration form with email, password, confirm password and a submit button';
   protected tokenCount = 0;
+  protected readonly maxTokens = GEMINI_INPUT_BUDGET;
   private tokenDebounce: ReturnType<typeof setTimeout> | null = null;
   protected messages: ChatMessage[] = [
     { role: 'assistant', content: 'Hello! Describe the form you want to build.' },
