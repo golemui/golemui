@@ -5,7 +5,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { toISODateString } from '../utils/date';
+import { mergeDateRanges, toISODateString } from '../utils/date';
 import { createIntersectionObserver } from './tabs';
 import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
 
@@ -650,10 +650,7 @@ export class GuiRangeDateInput extends LitElement {
     const currentRanges = this.value ? [...this.value] : [];
     currentRanges.push(newRange);
 
-    // Sort by chronological order
-    this.value = currentRanges.sort(
-      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-    );
+    this.value = mergeDateRanges(currentRanges);
 
     // Clear the inputs
     this._startDate = { day: '', month: '', year: '' };
