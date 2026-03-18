@@ -155,6 +155,10 @@ export class DxService {
       result.dependencies = formConfig.dependencies;
     }
 
+    if (formConfig.widgetLoaders) {
+      result.widgetLoaders = formConfig.widgetLoaders;
+    }
+
     return result;
   }
 }

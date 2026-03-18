@@ -21,6 +21,10 @@ export const GuiItemTypes = {
   ACTIONS: 'ACTIONS',
   LAYOUTS: 'LAYOUTS',
   DISPLAYS: 'DISPLAYS',
+  CUSTOM_DISPLAY: 'CUSTOM_DISPLAY',
+  CUSTOM_INPUT: 'CUSTOM_INPUT',
+  CUSTOM_ACTION: 'CUSTOM_ACTION',
+  CUSTOM_LAYOUT: 'CUSTOM_LAYOUT',
 } as const satisfies Record<string, string>;
 
 // ═══════════════════════════════════════════════════
@@ -68,6 +72,7 @@ export interface FormConfig {
   suppressAutomaticSubmit?: boolean;
   onSubmit?: (data: any) => void;
   dependencies?: Dependencies;
+  widgetLoaders?: Record<string, () => Promise<unknown>>;
 }
 
 export interface GslAggregatedSelector {

@@ -38,7 +38,7 @@ export interface GolemFormProps<T extends Record<string, any>> {
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
-  const { form, events, dependencies } = useMemo(
+  const { form, events, dependencies, widgetLoaders } = useMemo(
     () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formSelectors),
     [props.formDef, props.formSelectors],
   );
@@ -72,6 +72,7 @@ export function GolemForm<FormData extends Record<string, any> = any>(
       middlewares={import.meta.env.DEV ? [golemLogMiddleware] : []}
       formEvent={fwFormEvents}
       dependencies={dependencies}
+      widgetLoaders={widgetLoaders as any}
     />
   );
 }

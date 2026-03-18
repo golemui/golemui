@@ -20,6 +20,9 @@ import {
   markdownDemo,
   rangeDateInputDemo,
   rangeDatePickerDemo,
+  customDisplayDemo,
+  customInputDemo,
+  customActionDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,
@@ -63,6 +66,9 @@ formRegistry.registerAll([
   markdownDemo,
   rangeDateInputDemo,
   rangeDatePickerDemo,
+  customDisplayDemo,
+  customInputDemo,
+  customActionDemo,
   // Chapter 2: Making It Dynamic
   dynamicInputDemo,
   dynamicButtonDemo,

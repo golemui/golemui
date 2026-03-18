@@ -16,6 +16,9 @@ export { nestedRepeaterDemo } from './01_first_form/24_nestedRepeater';
 export { markdownDemo } from './01_first_form/25_markdown';
 export { rangeDateInputDemo } from './01_first_form/26_rangeDateInput';
 export { rangeDatePickerDemo } from './01_first_form/27_rangeDatePicker';
+export { customDisplayDemo } from './01_first_form/28_customDisplay';
+export { customInputDemo } from './01_first_form/29_customInput';
+export { customActionDemo } from './01_first_form/30_customAction';
 
 // Chapter 2: Making It Dynamic
 export { dynamicInputDemo } from './02_dynamic/06_dynamicInput';

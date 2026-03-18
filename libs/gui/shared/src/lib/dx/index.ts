@@ -30,6 +30,10 @@ export { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 export { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
 export { _guiRangeDateInput } from './shortcuts/range-date-input/guiRangeDateInput.impl';
 export { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDatePicker.impl';
+export { _guiCustomDisplay } from './shortcuts/custom-display/guiCustomDisplay.impl';
+export { _guiCustomInput } from './shortcuts/custom-input/guiCustomInput.impl';
+export { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
+export { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl';
 
 // ─── GSL selectors (behavior) ───
 
@@ -57,6 +61,10 @@ export { _gslRepeaters, _gslRepeaterById } from './shortcuts/repeater/register';
 export { _gslMarkdown, _gslMarkdownById } from './shortcuts/markdown/register';
 export { _gslRangeDateInput, _gslRangeDateInputById } from './shortcuts/range-date-input/register';
 export { _gslRangeDatePicker, _gslRangeDatePickerById } from './shortcuts/range-date-picker/register';
+export { _gslCustomDisplays, _gslCustomDisplayById } from './shortcuts/custom-display/register';
+export { _gslCustomInputs, _gslCustomInputById } from './shortcuts/custom-input/register';
+export { _gslCustomActions, _gslCustomActionById } from './shortcuts/custom-action/register';
+export { _gslCustomLayouts, _gslCustomLayoutById } from './shortcuts/custom-layout/register';
 
 // ─── Scope selectors ───
 
@@ -105,6 +113,10 @@ export type { RepeaterDecorator, GslRepeaterConfig } from './shortcuts/repeater/
 export type { MarkdownDecorator, GslMarkdownConfig } from './shortcuts/markdown/markdown.domain';
 export type { RangeDateInputDecorator, GslRangeDateInputConfig } from './shortcuts/range-date-input/rangeDateInput.domain';
 export type { RangeDatePickerDecorator, GslRangeDatePickerConfig } from './shortcuts/range-date-picker/rangeDatePicker.domain';
+export type { CustomDisplayDecorator, GslCustomDisplayConfig } from './shortcuts/custom-display/customDisplay.domain';
+export type { CustomInputDecorator, GslCustomInputConfig } from './shortcuts/custom-input/customInput.domain';
+export type { CustomActionDecorator, GslCustomActionConfig } from './shortcuts/custom-action/customAction.domain';
+export type { CustomLayoutDecorator, GslCustomLayoutConfig } from './shortcuts/custom-layout/customLayout.domain';
 export type { GslSelectorsInput } from './core/dx.domain';
 export { formDefs } from './dx.service';
 

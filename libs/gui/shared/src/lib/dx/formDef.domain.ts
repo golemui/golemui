@@ -36,6 +36,7 @@ export interface DxResult<
   form: Core.Form<S, F>;
   events?: FormEvents;
   dependencies?: Dependencies;
+  widgetLoaders?: Record<string, () => Promise<unknown>>;
 }
 
 // ═══════════════════════════════════════════════════

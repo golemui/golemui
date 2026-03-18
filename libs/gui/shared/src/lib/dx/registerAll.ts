@@ -22,3 +22,7 @@ import './shortcuts/repeater/register';
 import './shortcuts/markdown/register';
 import './shortcuts/range-date-input/register';
 import './shortcuts/range-date-picker/register';
+import './shortcuts/custom-display/register';
+import './shortcuts/custom-input/register';
+import './shortcuts/custom-action/register';
+import './shortcuts/custom-layout/register';

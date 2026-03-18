@@ -23,6 +23,9 @@ import {
   _guiMarkdown,
   _guiRangeDateInput,
   _guiRangeDatePicker,
+  _guiCustomDisplay,
+  _guiCustomInput,
+  _guiCustomAction,
   _gslTag,
   _gslInputs,
   _gslRoot,
@@ -38,7 +41,7 @@ export const completeFormDemo: FormDemoDefinition = {
     'Every feature in one form. Structure, dynamics, selectors, tags, layouts, and displays working together. '
     + 'This is what a production form looks like.',
   formDef: () => [
-    () => <h2>Event Registration</h2>,
+    _guiCustomDisplay('heading', { text: 'Event Registration', level: 2 }),
 
     _guiTabs({
       Details: [
@@ -121,6 +124,8 @@ export const completeFormDemo: FormDemoDefinition = {
       ]),
     ]),
 
+    _guiCustomInput('simpleInput', 'referralCode', { label: 'Referral Code' }),
+
     _guiCalendar('eventDate', (params) => ({
       minDate: new Date().toISOString().slice(0, 10),
       label: params?.$form?.firstName
@@ -162,6 +167,12 @@ export const completeFormDemo: FormDemoDefinition = {
       suppressAutomaticSubmit: true,
       onSubmit: (data) => alert(JSON.stringify(data, null, 2)),
       dependencies: { markdown: { parse: snarkdown } },
+      widgetLoaders: {
+        heading: async () =>
+          (await import('../../custom-widgets/heading.component')).HeadingComponent,
+        simpleInput: async () =>
+          (await import('../../custom-widgets/simpleInput.component')).SimpleInputComponent,
+      },
     }),
 
     _gslActionById('#submit', { decorator: { label: 'Complete registration' } }),
