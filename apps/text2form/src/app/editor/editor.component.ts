@@ -40,6 +40,13 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.initializeEditor();
   }
 
+  protected formatDocument() {
+    if (this.editor) {
+      // This triggers the same logic as 'Alt + Shift + F' or the Context Menu
+      this.editor.getAction('editor.action.formatDocument')?.run();
+    }
+  }
+
   private configureJsonSchema() {
     monaco.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
