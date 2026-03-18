@@ -1,24 +1,26 @@
 import {
-  Component,
-  input,
-  CUSTOM_ELEMENTS_SCHEMA,
-  signal,
-  HostListener,
-  ElementRef,
-  inject,
   afterNextRender,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  signal,
 } from '@angular/core';
-import * as Gui from '@golemui/gui-angular';
 import * as Core from '@golemui/core';
+import * as Gui from '@golemui/gui-angular';
 
 interface BreadcrumbItem {
   uid: string;
+  prettyUid: string;
   type: string;
   el: Element;
 }
 
 interface ComponentHighlight {
   uid: string;
+  prettyUid: string;
   type: string;
   el: Element;
   rect: DOMRect;
@@ -49,7 +51,9 @@ export class DesignComponent {
 
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    if ((event.target as Element).closest('.comp-overlay')) return;
+    if ((event.target as Element).closest('.comp-overlay')) {
+      return;
+    }
     const el = this.findGolemHostAtPoint(event.clientX, event.clientY);
     this.hoveredHighlight.set(el ? this.makeHighlight(el) : null);
   }
@@ -61,7 +65,9 @@ export class DesignComponent {
 
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent) {
-    if ((event.target as Element).closest('.comp-overlay')) return;
+    if ((event.target as Element).closest('.comp-overlay')) {
+      return;
+    }
     const el = this.findGolemHostAtPoint(event.clientX, event.clientY);
     if (el) {
       const hl = this.makeHighlight(el);
@@ -81,9 +87,7 @@ export class DesignComponent {
   protected selectBreadcrumb(item: BreadcrumbItem, event: MouseEvent) {
     event.stopPropagation();
     const current = this.selectedHighlight();
-    this.selectedHighlight.set(
-      current?.uid === item.uid ? null : this.makeHighlight(item.el),
-    );
+    this.selectedHighlight.set(current?.uid === item.uid ? null : this.makeHighlight(item.el));
   }
 
   private refreshSelectedRect() {
@@ -95,7 +99,9 @@ export class DesignComponent {
 
   private findGolemHostAtPoint(x: number, y: number): Element | null {
     for (const el of document.elementsFromPoint(x, y)) {
-      if (el.id?.startsWith('host-')) return el;
+      if (el.id?.startsWith('host-')) {
+        return el;
+      }
     }
     return null;
   }
@@ -106,8 +112,12 @@ export class DesignComponent {
     while (current && current !== this.elRef.nativeElement) {
       if (current.id?.startsWith('host-')) {
         crumbs.unshift({
-          uid: current.id.replace('host-', ''),
-          type: current.tagName.toLowerCase().replace('gui-', ''),
+          uid: current.id,
+          prettyUid: current.id.replace('host-', ''),
+          type: current.tagName
+            .toLowerCase()
+            .replace(/^gui-/, '')
+            .replace(/-(display|action|input|layout)$/, ''),
           el: current,
         });
       }
@@ -118,8 +128,12 @@ export class DesignComponent {
 
   private makeHighlight(el: Element): ComponentHighlight {
     return {
-      uid: el.id.replace('host-', ''),
-      type: el.tagName.toLowerCase().replace('gui-', ''),
+      uid: el.id,
+      prettyUid: el.id.replace('host-', ''),
+      type: el.tagName
+        .toLowerCase()
+        .replace(/^gui-/, '')
+        .replace(/-(display|action|input|layout)$/, ''),
       el,
       rect: el.getBoundingClientRect(),
       breadcrumbs: this.collectBreadcrumbs(el),

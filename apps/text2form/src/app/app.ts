@@ -25,6 +25,7 @@ const initialFormJson = () => {
   const form = golemForm().create({
     form: [
       {
+        uid: 'default-message',
         kind: 'display',
         type: 'alert',
         props: {

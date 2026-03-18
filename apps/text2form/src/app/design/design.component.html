@@ -28,7 +28,7 @@
           <span class="comp-overlay__sep">›</span>
         }
         <span class="comp-overlay__crumb comp-overlay__crumb--current">
-          {{ h.type }}
+          {{ h.type + '#' + h.prettyUid }}
         </span>
       </div>
     </div>
@@ -51,7 +51,7 @@
         <span class="comp-overlay__sep">›</span>
       }
       <span class="comp-overlay__crumb comp-overlay__crumb--current">
-        {{ s.type }}
+        {{ s.type + '#' + s.prettyUid }}
       </span>
     </div>
   </div>
