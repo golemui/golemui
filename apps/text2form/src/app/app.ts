@@ -14,6 +14,7 @@ import { GeminiService, GEMINI_INPUT_BUDGET } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
 import { TokenMeterComponent } from './token-meter/token-meter.component';
+import { EditorComponent } from './editor/editor.component';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -34,7 +35,7 @@ const initialFormJson = golemForm().create({
 });
 
 @Component({
-  imports: [CommonModule, FormsModule, Gui.FormComponent, DesignComponent, TokenMeterComponent],
+  imports: [CommonModule, FormsModule, Gui.FormComponent, DesignComponent, TokenMeterComponent, EditorComponent],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',

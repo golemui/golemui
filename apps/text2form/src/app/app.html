@@ -89,11 +89,7 @@
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
         } @else {
-        <textarea
-          class="json-editor"
-          [ngModel]="formJson()"
-          (ngModelChange)="onJsonChange($event)"
-        ></textarea>
+        <app-editor [value]="formJson()" (valueChange)="onJsonChange($event)" />
         }
       </div>
 

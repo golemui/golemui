@@ -1,0 +1,23 @@
+:host {
+  flex: 1;
+  display: flex;
+}
+
+.json-editor {
+  flex: 1;
+  background-color: #1e293b;
+  color: #a78bfa;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 24px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  &:focus {
+    border-color: #3b82f6;
+  }
+}
