@@ -6,6 +6,7 @@ import {
   HostListener,
   inject,
   input,
+  linkedSignal,
   output,
   signal,
 } from '@angular/core';
@@ -48,6 +49,8 @@ export class DesignComponent {
   // Snapshot of the selected widget — set on selection, NOT updated when formDef changes,
   // so the properties panel stays stable while the user types.
   selectedWidget = signal<Record<string, unknown> | null>(null);
+  protected liveFormDef = linkedSignal(() => this.formDef());
+  protected formVersion = signal(0);
 
   constructor() {
     afterNextRender(() => {
@@ -114,12 +117,15 @@ export class DesignComponent {
     const hl = this.selectedHighlight();
     if (!hl) return;
     try {
-      const parsed = JSON.parse(this.formDef());
+      const parsed = JSON.parse(this.liveFormDef());
       const original = findWidgetByUid(parsed, hl.prettyUid);
       if (!original) return;
       const updated = updateWidgetFromFlatData(original, flatData);
       const newFormDef = replaceWidgetByUid(parsed, hl.prettyUid, updated);
-      this.formDefChange.emit(JSON.stringify(newFormDef, null, 2));
+      const newFormDefStr = JSON.stringify(newFormDef, null, 2);
+      this.liveFormDef.set(newFormDefStr);
+      this.formVersion.update((v) => v + 1);
+      this.formDefChange.emit(newFormDefStr);
     } catch (e) {
       console.error('[design] Failed to update widget', e);
     }
@@ -127,7 +133,7 @@ export class DesignComponent {
 
   private snapshotWidget(prettyUid: string): Record<string, unknown> | null {
     try {
-      return findWidgetByUid(JSON.parse(this.formDef()), prettyUid);
+      return findWidgetByUid(JSON.parse(this.liveFormDef()), prettyUid);
     } catch {
       return null;
     }

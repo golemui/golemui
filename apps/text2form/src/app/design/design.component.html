@@ -1,15 +1,17 @@
 <div class="design-layout">
   <div class="design-container">
     <div class="design-capture"></div>
-    <gui-form
-      [formDef]="formDef()"
-      [data]="{}"
-      [widgetLoaders]="{}"
-      [validators]="{}"
-      [validateOn]="'eager'"
-      (formHealth)="onFormHealth($event)"
-      (formEvent)="onFormEvent($event)"
-    ></gui-form>
+    @for (v of [formVersion()]; track v) {
+      <gui-form
+        [formDef]="liveFormDef()"
+        [data]="{}"
+        [widgetLoaders]="{}"
+        [validators]="{}"
+        [validateOn]="'eager'"
+        (formHealth)="onFormHealth($event)"
+        (formEvent)="onFormEvent($event)"
+      ></gui-form>
+    }
   </div>
   @if (selectedWidget(); as w) {
     <app-properties-panel
