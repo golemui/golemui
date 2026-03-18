@@ -14,6 +14,7 @@ gui-calendar {
     }
 
     .gui-calendar__container {
+      position: relative;
       display: flex;
       gap: 2rem;
     }
@@ -42,13 +43,13 @@ gui-calendar {
 
       &--prev {
         position: absolute;
-        top: 16px;
-        left: 16px;
+        top: 8px;
+        left: 0;
       }
       &--next {
         position: absolute;
-        top: 16px;
-        right: 16px;
+        top: 8px;
+        right: 0;
       }
 
       &:focus {

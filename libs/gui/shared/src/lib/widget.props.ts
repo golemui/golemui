@@ -255,6 +255,10 @@ export type RangeCalendarProps = {
    * Default is 1.
    */
   numberOfMonths?: number;
+  /**
+   * An optional string used as the ARIA label prefix for the remove button on each date range pill.
+   */
+  removePillAriaLabel?: string;
 };
 
 export type DateinputProps = {

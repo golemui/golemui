@@ -61,6 +61,10 @@ export abstract class AbstractCalendar extends LitElement {
   protected abstract renderDay(day: AbstractCalendarDay): TemplateResult;
   protected abstract selectDate(day: AbstractCalendarDay, event?: MouseEvent | KeyboardEvent): void;
 
+  protected renderAboveCalendar(): TemplateResult | typeof nothing {
+    return nothing;
+  }
+
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
     getState: () => ({
@@ -96,6 +100,7 @@ export abstract class AbstractCalendar extends LitElement {
           role="group"
           aria-labelledby=${this.label ? `${this.uid}_calendar_label` : nothing}
         >
+          ${this.renderAboveCalendar()}
           <div class="gui-calendar__container">
             <button
               type="button"

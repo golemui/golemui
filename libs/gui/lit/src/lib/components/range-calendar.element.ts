@@ -59,6 +59,8 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
         .maxDate=${this.adapter.templateData.maxDate}
         .disabledRanges=${this.adapter.templateData.disabledRanges}
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
+        .hidePills=${false}
+        .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
       ></gui-range-calendar>

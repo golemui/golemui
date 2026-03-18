@@ -32,6 +32,7 @@ export const calendar = (): any => ({
       path: 'rangeDatePicker',
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }, { start: '2026-07-20', end: '2026-07-26' }, { start: '2024-12-02', end: '2024-12-06' }],
       props: {
+        numberOfMonths: 1,
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
@@ -56,6 +57,7 @@ export const calendar = (): any => ({
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
+        removePillAriaLabel: 'Delete holiday period',
         prevMonthAriaLabel: 'Go To Previous Month',
         nextMonthAriaLabel: 'Go To Next Month',
         disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],

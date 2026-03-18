@@ -235,6 +235,7 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
             disabledRanges={disabledRanges}
             numberOfMonths={numberOfMonths}
             localeId={lang}
+            hidePills={true}
           />
         )}
       </div>
