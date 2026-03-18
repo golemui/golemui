@@ -32,6 +32,7 @@ export const calendar = (): any => ({
       path: 'rangeDatePicker',
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }, { start: '2026-07-20', end: '2026-07-26' }, { start: '2024-12-02', end: '2024-12-06' }],
       props: {
+        numberOfMonths: 1,
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',

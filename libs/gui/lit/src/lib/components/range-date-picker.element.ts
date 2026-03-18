@@ -108,6 +108,7 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
           .disabledRanges=${this.adapter.templateData.disabledRanges}
           .numberOfMonths=${this.adapter.templateData.numberOfMonths}
           .localeId=${this.adapter.templateData.lang}
+          .hidePills=${true}
           @blur=${this.onBlurCalendar}
           @change=${this.valueChanged}
         ></gui-range-calendar>`

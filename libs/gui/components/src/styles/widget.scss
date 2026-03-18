@@ -46,6 +46,7 @@
     font-family: var(--gui-font-family);
     font-size: var(--gui-font-sm);
     padding: var(--gui-space-3);
+    min-height: calc(41px - (var(--gui-space-3) * 2));
     border-radius: var(--gui-radius-md);
     background: var(--gui-bg-surface);
     border: 1px solid var(--gui-border-default);

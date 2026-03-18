@@ -7,6 +7,11 @@
 }
 
 /* ── Responsive Token Overrides ── */
+@media (max-width: 400px) {
+  :root {
+    --gui-space-3: 0.25rem; /* 12→4 */
+  }
+}
 @media (max-width: 768px) {
   :root {
     --gui-space-6: 1.25rem; /* 24→20 */
