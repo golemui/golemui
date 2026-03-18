@@ -10,7 +10,14 @@ const CHANGE_ON = { change: 'propChanged' };
 // ---------------------------------------------------------------------------
 
 function textField(uid: string, path: string, label: string, readonly = false) {
-  return { uid, kind: 'input', type: 'textinput', path, label, ...(readonly ? { readonly: true } : { on: CHANGE_ON }) };
+  return {
+    uid,
+    kind: 'input',
+    type: 'textinput',
+    path,
+    label,
+    ...(readonly ? { readonly: true } : { on: CHANGE_ON }),
+  };
 }
 
 function numberField(uid: string, path: string, label: string) {
@@ -21,12 +28,25 @@ function checkboxField(uid: string, path: string, label: string) {
   return { uid, kind: 'input', type: 'checkbox', path, label, on: CHANGE_ON };
 }
 
-function selectField(uid: string, path: string, label: string, options: { label: string; value: string }[]) {
+function selectField(
+  uid: string,
+  path: string,
+  label: string,
+  options: { label: string; value: string }[],
+) {
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
 }
 
 function jsonField(uid: string, path: string, label: string) {
-  return { uid, kind: 'input', type: 'textarea', path, label, readonly: true, props: { minimumHeight: 60 } };
+  return {
+    uid,
+    kind: 'input',
+    type: 'textarea',
+    path,
+    label,
+    readonly: true,
+    props: { minimumHeight: 60 },
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -130,10 +150,7 @@ const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
     numberField('prop-itemHeight', 'itemHeight', 'Item Height (px)'),
     jsonField('prop-items', 'items', 'Items (JSON)'),
   ],
-  dateInput: [
-    textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-icon', 'icon', 'Icon'),
-  ],
+  dateInput: [textField('prop-hint', 'hint', 'Hint'), textField('prop-icon', 'icon', 'Icon')],
   datePicker: [
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -273,7 +290,9 @@ export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): s
  * Props are hoisted to the top level so path: 'hint' maps to widget.props.hint.
  */
 export function flattenWidgetData(widget: Record<string, unknown>): Record<string, unknown> {
-  const { props, ...rest } = widget as Record<string, unknown> & { props?: Record<string, unknown> };
+  const { props, ...rest } = widget as Record<string, unknown> & {
+    props?: Record<string, unknown>;
+  };
   const data: Record<string, unknown> = { ...rest };
 
   // Hoist props to top level
@@ -300,7 +319,10 @@ export function flattenWidgetData(widget: Record<string, unknown>): Record<strin
 
 // Prop keys per widget type (used to route flat data back into widget.props)
 const PROP_KEYS_BY_TYPE: Record<string, string[]> = Object.fromEntries(
-  Object.entries(PROP_FIELDS).map(([type, fields]) => [type, fields.map((f) => f['path'] as string)]),
+  Object.entries(PROP_FIELDS).map(([type, fields]) => [
+    type,
+    fields.map((f) => f['path'] as string),
+  ]),
 );
 
 // Base fields editable in the panel (uid/type/kind are readonly, not editable)

@@ -328,7 +328,9 @@ export const listSchema = z.object({
   props: z
     .object({
       hint: z.string().optional(),
-      items: z.array(z.object({ label: z.string(), value: z.union([z.string(), z.number()]) })).optional(),
+      items: z
+        .array(z.object({ label: z.string(), value: z.union([z.string(), z.number()]) }))
+        .optional(),
       labelField: z.string().optional(),
       valueField: z.string().optional(),
       height: z.number().optional(),
@@ -452,14 +454,29 @@ export const catalog = {
   checkbox: { schema: checkboxSchema, description: 'Boolean checkbox' },
   toggle: { schema: toggleSchema, description: 'Boolean toggle switch' },
   select: { schema: selectSchema, description: 'Dropdown select from a list of options' },
-  radiogroup: { schema: radiogroupSchema, description: 'Radio button group for selecting one option' },
+  radiogroup: {
+    schema: radiogroupSchema,
+    description: 'Radio button group for selecting one option',
+  },
   dateinput: { schema: dateinputSchema, description: 'Date text input (ISO string)' },
   datepicker: { schema: datepickerSchema, description: 'Date picker with calendar popup' },
   calendar: { schema: calendarSchema, description: 'Inline calendar widget for picking a date' },
-  rangecalendar: { schema: rangecalendarSchema, description: 'Inline calendar for picking a date range' },
-  rangedateinput: { schema: rangedateinputSchema, description: 'Text input for a date range (start–end)' },
-  rangedatepicker: { schema: rangedatepickerSchema, description: 'Date range picker with calendar popup' },
-  dropdown: { schema: dropdownSchema, description: 'Searchable dropdown with custom item templates' },
+  rangecalendar: {
+    schema: rangecalendarSchema,
+    description: 'Inline calendar for picking a date range',
+  },
+  rangedateinput: {
+    schema: rangedateinputSchema,
+    description: 'Text input for a date range (start–end)',
+  },
+  rangedatepicker: {
+    schema: rangedatepickerSchema,
+    description: 'Date range picker with calendar popup',
+  },
+  dropdown: {
+    schema: dropdownSchema,
+    description: 'Searchable dropdown with custom item templates',
+  },
   list: { schema: listSchema, description: 'Scrollable list for picking one item' },
   markdown: { schema: markdownSchema, description: 'Markdown editor with preview' },
   repeater: { schema: repeaterSchema, description: 'Repeatable section; template is a flex UID' },
@@ -472,7 +489,10 @@ export const catalog = {
 
   // layouts
   flex: { schema: flexSchema, description: 'Flex container; children are widget UIDs' },
-  accordion: { schema: accordionSchema, description: 'Collapsible accordion; sections map UIDs to panels' },
+  accordion: {
+    schema: accordionSchema,
+    description: 'Collapsible accordion; sections map UIDs to panels',
+  },
   tabs: { schema: tabsSchema, description: 'Tabbed container; tabs map UIDs to tab panels' },
 } as const;
 

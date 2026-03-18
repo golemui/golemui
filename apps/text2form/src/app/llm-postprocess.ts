@@ -88,7 +88,11 @@ function resolveElement(
   }
 
   // Repeater: resolve props.template UID into a nested flex widget.
-  if (el.type === 'repeater' && rest['props'] && typeof (rest['props'] as Record<string, unknown>)['template'] === 'string') {
+  if (
+    el.type === 'repeater' &&
+    rest['props'] &&
+    typeof (rest['props'] as Record<string, unknown>)['template'] === 'string'
+  ) {
     const props = rest['props'] as Record<string, unknown>;
     const templateUid = props['template'] as string;
     const resolved = resolveElement(templateUid, elements, branch);

@@ -132,7 +132,6 @@
         color: #64748b;
       }
     }
-
   }
 
   .send-column {
@@ -250,7 +249,6 @@
   border: 1px solid #334155;
   overflow: scroll;
 
-
   ::ng-deep {
     /* Basic overrides to fit GUI form into dark mode */
     .gui-form-control label {
@@ -285,7 +283,6 @@
   display: flex;
   padding: 24px;
 }
-
 
 /* --- Spinner --- */
 @keyframes spin {
