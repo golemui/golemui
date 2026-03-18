@@ -44,6 +44,7 @@ export function RangeCalendar(widgetInstance: Core.WithWidget) {
   const maxDate = templateData.maxDate;
   const disabledRanges = templateData.disabledRanges;
   const numberOfMonths = templateData.numberOfMonths;
+  const removePillAriaLabel = templateData.removePillAriaLabel;
   const lang = templateData.lang;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -73,6 +74,8 @@ export function RangeCalendar(widgetInstance: Core.WithWidget) {
         maxDate={maxDate}
         disabledRanges={disabledRanges}
         numberOfMonths={numberOfMonths}
+        hidePills={false}
+        removePillAriaLabel={removePillAriaLabel}
         localeId={lang}
       />
     </div>

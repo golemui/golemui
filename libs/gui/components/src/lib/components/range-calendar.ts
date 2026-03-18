@@ -1,13 +1,16 @@
-import { html, PropertyValues, TemplateResult } from 'lit';
+import { html, nothing, PropertyValues, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit-html/directives/repeat.js';
 import {
+  createDateRange,
   getDayLabel,
   isDateInVisibleMonths,
   isSameDay,
   isToday,
-  toISODateString,
+  mergeDateRanges,
 } from '../utils/date';
+import { createIntersectionObserver } from './tabs';
 import { AbstractCalendar, AbstractCalendarDay } from './abstract-calendar';
 import { DateRange } from '@golemui/gui-shared';
 
@@ -25,10 +28,17 @@ export interface RangeCalendarDay extends AbstractCalendarDay {
 export class GuiRangeCalendar extends AbstractCalendar {
   @property({ type: Array }) value: DateRange[] | undefined = [];
   @property({ type: String }) focusDate: string | undefined = undefined;
+  @property({ type: Boolean }) hidePills = false;
+  @property({ type: String }) removePillAriaLabel: string | undefined = undefined;
 
   @state() private _anchorDate: Date | null = null;
   @state() private _nextDate: RangeCalendarDay | null = null;
   @state() private _isSelecting = false;
+  @state() private _isStartVisible = true;
+  @state() private _isEndVisible = true;
+
+  private startObserver: IntersectionObserver | undefined;
+  private endObserver: IntersectionObserver | undefined;
 
   override createRenderRoot() {
     return this;
@@ -204,22 +214,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
     return { isRangeStart, isRangeEnd, isInRange, isSelecting };
   }
 
-  override selectDate(day: RangeCalendarDay, e: MouseEvent | KeyboardEvent | null = null) {
+  override selectDate(day: RangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
     if (!day.isCurrentMonth || this.disabled || this.readOnly) return;
 
     const clickedDate = day.date;
-    const isShiftPressed = e?.shiftKey;
 
     // Start selection
     if (!this._anchorDate) {
       this._isSelecting = true;
       this._anchorDate = clickedDate;
-
-      // No shift pressed, clean selection and start a new one
-      if (!isShiftPressed) {
-        this.value = [];
-        this.dispatchEvent(new CustomEvent('change', { detail: { value: [] } }));
-      }
       return;
     }
 
@@ -236,7 +239,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
     // Calculate ranges based on disabled days
     const newRanges = this.calculateValidRanges(startDate, endDate);
     const combinedRanges = [...(this.value || []), ...newRanges];
-    this.value = this.mergeDateRanges(combinedRanges);
+    this.value = mergeDateRanges(combinedRanges);
 
     this._isSelecting = false;
     this._nextDate = null;
@@ -249,48 +252,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
         composed: true,
       }),
     );
-  }
-
-  /**
-   * Merges overlapping or adjacent date ranges into a single range.
-   *
-   * @param {DateRange[]} ranges - An array of date range objects, where each object contains a start date and an optional end date. If no end date is specified, the start date is used as the range.
-   * @return {DateRange[]} An array of merged date ranges, sorted by their start dates.
-   */
-  private mergeDateRanges(ranges: DateRange[]): DateRange[] {
-    if (!ranges.length) return [];
-
-    // Sort dates by "start"
-    const sorted = ranges
-      .map((r) => ({
-        start: new Date(r.start).getTime(),
-        end: new Date(r.end ?? r.start).getTime(),
-      }))
-      .sort((a, b) => a.start - b.start);
-
-    const merged = sorted.reduce(
-      (acc, next) => {
-        const current = acc[acc.length - 1];
-
-        // We ignore the first element
-        if (current) {
-          const currentEndDate = new Date(current.end);
-          currentEndDate.setDate(currentEndDate.getDate() + 1);
-
-          // Dates are overlapping, so we extend the "end"
-          if (next.start <= currentEndDate.getTime()) {
-            current.end = Math.max(current.end, next.end);
-            return acc;
-          }
-        }
-
-        return [...acc, next];
-      },
-      [] as { start: number; end: number }[],
-    );
-
-    // Return a DateRange[]
-    return merged.map((m) => this.createRangeObject(new Date(m.start), new Date(m.end)));
   }
 
   /**
@@ -325,7 +286,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
           const rangeEnd = new Date(iterator);
           rangeEnd.setDate(iterator.getDate() - 1);
 
-          validRanges.push(this.createRangeObject(currentRangeStart, rangeEnd));
+          validRanges.push(createDateRange(currentRangeStart, rangeEnd));
           currentRangeStart = null;
         }
       }
@@ -336,31 +297,185 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
     // Close range
     if (currentRangeStart) {
-      validRanges.push(this.createRangeObject(currentRangeStart, endDate));
+      validRanges.push(createDateRange(currentRangeStart, endDate));
     }
 
     return validRanges;
-  }
-
-  /**
-   * Creates a range object representing a single date or a date range.
-   *
-   * @param {Date} start - The start date of the range.
-   * @param {Date} end - The end date of the range.
-   * @return {DateRange} An object containing the start date and optionally the end date if it differs from the start date.
-   */
-  private createRangeObject(start: Date, end: Date): DateRange {
-    const sStr = toISODateString(start);
-    const eStr = toISODateString(end);
-
-    // It's one date or a range of dates
-    return sStr === eStr ? { start: sStr } : { start: sStr, end: eStr };
   }
 
   private onMouseOver(day: RangeCalendarDay) {
     if (this._isSelecting) {
       this._nextDate = day;
     }
+  }
+
+  // --- Pills ---
+
+  override updated() {
+    if (!this.hidePills) {
+      this.setupObservers();
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.disconnectObservers();
+  }
+
+  override renderAboveCalendar() {
+    if (this.hidePills) return nothing;
+
+    const pills = this.getSortedPills();
+    if (pills.length === 0) return nothing;
+
+    return html`
+      <div class=${classMap({
+        'gui-range-calendar__pills-wrapper': true,
+        'gui-range-calendar--start-shadow': !this._isStartVisible,
+        'gui-range-calendar--end-shadow': !this._isEndVisible,
+      })}>
+        <div class="gui-range-calendar__pills" role="list">
+          <span class="gui-sentinel gui-sentinel__start"></span>
+          ${repeat(
+            pills,
+            (pill) => `${pill.start}-${pill.end ?? pill.start}`,
+            (pill, index) => this.renderPill(pill, index),
+          )}
+          <span class="gui-sentinel gui-sentinel__end"></span>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderPill(pill: DateRange, index: number) {
+    const startFormatted = this.formatDateForDisplay(pill.start);
+    const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
+    const pillLabel = `${startFormatted} - ${endFormatted}`;
+
+    return html`
+      <div
+        class="gui-range-calendar__pill"
+        role="listitem"
+        tabindex="0"
+        aria-label="${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}"
+        @click=${() => this.navigateToDate(pill.start)}
+        @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
+      >
+        <span class="gui-range-calendar__pill-text">${pillLabel}</span>
+        <button
+          type="button"
+          class="gui-range-calendar__pill-remove"
+          tabindex="-1"
+          ?disabled=${this.disabled || this.readOnly}
+          @click=${(e: Event) => { e.stopPropagation(); this.removePill(index); }}
+        >
+          &times;
+        </button>
+      </div>
+    `;
+  }
+
+  private formatDateForDisplay(isoDate: string): string {
+    const date = new Date(isoDate);
+    if (isNaN(date.getTime())) return isoDate;
+    return new Intl.DateTimeFormat(this.localeId ?? 'en', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(date);
+  }
+
+  private getSortedPills(): DateRange[] {
+    if (!this.value || !Array.isArray(this.value)) return [];
+    return [...this.value].sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    );
+  }
+
+  private removePill(index: number) {
+    if (this.disabled || this.readOnly) return;
+
+    const sorted = this.getSortedPills();
+    sorted.splice(index, 1);
+    this.value = [...sorted];
+
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private handlePillKeydown(e: KeyboardEvent, index: number) {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      this.removePill(index);
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const sorted = this.getSortedPills();
+      if (sorted[index]) {
+        this.navigateToDate(sorted[index].start);
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      const pills = this.querySelectorAll<HTMLElement>('.gui-range-calendar__pills .gui-range-calendar__pill');
+      const newIndex = e.key === 'ArrowLeft' ? index - 1 : index + 1;
+      if (newIndex >= 0 && newIndex < pills.length) {
+        pills[newIndex].focus();
+      }
+    }
+  }
+
+  private navigateToDate(isoDate: string) {
+    const date = new Date(isoDate);
+    if (!isNaN(date.getTime()) && !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)) {
+      this._currentDate = date;
+    }
+  }
+
+  private setupObservers() {
+    const startSentinel = this.querySelector('.gui-sentinel__start');
+    const endSentinel = this.querySelector('.gui-sentinel__end');
+
+    if (startSentinel && !this.startObserver) {
+      this.startObserver = createIntersectionObserver(
+        startSentinel,
+        (isIntersecting) => (this._isStartVisible = isIntersecting),
+      );
+    }
+
+    if (endSentinel && !this.endObserver) {
+      this.endObserver = createIntersectionObserver(
+        endSentinel,
+        (isIntersecting) => (this._isEndVisible = isIntersecting),
+      );
+    }
+
+    if (!startSentinel && this.startObserver) {
+      this.startObserver.disconnect();
+      this.startObserver = undefined;
+      this._isStartVisible = true;
+    }
+    if (!endSentinel && this.endObserver) {
+      this.endObserver.disconnect();
+      this.endObserver = undefined;
+      this._isEndVisible = true;
+    }
+  }
+
+  private disconnectObservers() {
+    this.startObserver?.disconnect();
+    this.endObserver?.disconnect();
+    this.startObserver = undefined;
+    this.endObserver = undefined;
   }
 }
 
