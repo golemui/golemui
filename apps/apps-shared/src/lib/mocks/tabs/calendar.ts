@@ -57,6 +57,7 @@ export const calendar = (): any => ({
         icon: 'material-icons material-icons-calendar_month',
         prevMonthIcon: 'material-icons material-icons-chevron_left',
         nextMonthIcon: 'material-icons material-icons-chevron_right',
+        removePillAriaLabel: 'Delete holiday period',
         prevMonthAriaLabel: 'Go To Previous Month',
         nextMonthAriaLabel: 'Go To Next Month',
         disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],

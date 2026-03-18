@@ -27,13 +27,16 @@ Range Calendar components are [Input Fields](/components-reference/input-fields/
 
 Use these `props` to customize your Range Calendar component. Range Calendars share all properties with standard [Calendars](/components-reference/input-fields/calendar).
 
-| prop             | type   | description                                                                        |
-| ---------------- | ------ | ---------------------------------------------------------------------------------- |
-| `hint`           | string | A description to display below the range calendar                                  |
-| `minDate`        | string | Minimum allowable date in ISO format                                               |
-| `maxDate`        | string | Maximum allowable date in ISO format                                               |
-| `numberOfMonths` | number | Number of months to display simultaneously. Defaults to 2 for range calendars      |
-| `disabledRanges` | array  | Array of objects (`{ start: string, end?: string }`) defining disabled date ranges |
+| prop                  | type   | description                                                                        |
+| --------------------- | ------ | ---------------------------------------------------------------------------------- |
+| `hint`                | string | A description to display below the range calendar                                  |
+| `minDate`             | string | Minimum allowable date in ISO format                                               |
+| `maxDate`             | string | Maximum allowable date in ISO format                                               |
+| `numberOfMonths`      | number | Number of months to display simultaneously. Defaults to 2 for range calendars      |
+| `disabledRanges`      | array  | Array of objects (`{ start: string, end?: string }`) defining disabled date ranges |
+| `prevMonthAriaLabel`  | string | Accessible label for the previous month navigation button                          |
+| `nextMonthAriaLabel`  | string | Accessible label for the next month navigation button                              |
+| `removePillAriaLabel` | string | Accessible label for the remove button on date range pills                         |
 
 ### Hint
 

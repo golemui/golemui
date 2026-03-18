@@ -358,6 +358,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
         role="listitem"
         tabindex="0"
         aria-label="${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}"
+        @click=${() => this.navigateToDate(pill.start)}
         @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
       >
         <span class="gui-range-calendar__pill-text">${pillLabel}</span>
@@ -414,6 +415,15 @@ export class GuiRangeCalendar extends AbstractCalendar {
       return;
     }
 
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const sorted = this.getSortedPills();
+      if (sorted[index]) {
+        this.navigateToDate(sorted[index].start);
+      }
+      return;
+    }
+
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
       const pills = this.querySelectorAll<HTMLElement>('.gui-range-calendar__pills .gui-range-calendar__pill');
@@ -421,6 +431,13 @@ export class GuiRangeCalendar extends AbstractCalendar {
       if (newIndex >= 0 && newIndex < pills.length) {
         pills[newIndex].focus();
       }
+    }
+  }
+
+  private navigateToDate(isoDate: string) {
+    const date = new Date(isoDate);
+    if (!isNaN(date.getTime()) && !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)) {
+      this._currentDate = date;
     }
   }
 
