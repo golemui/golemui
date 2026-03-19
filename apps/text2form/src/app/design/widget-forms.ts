@@ -37,16 +37,52 @@ function selectField(
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
 }
 
-function jsonField(uid: string, path: string, label: string) {
+function repeaterField(
+  uid: string,
+  path: string,
+  label: string,
+  fields: { uid: string; path: string; label: string }[],
+) {
   return {
     uid,
     kind: 'input',
-    type: 'textarea',
+    type: 'repeater',
     path,
     label,
-    readonly: true,
-    props: { minimumHeight: 60 },
+    on: CHANGE_ON,
+    props: {
+      addLabel: 'Add',
+      removeLabel: 'Remove',
+      template: {
+        uid: `${uid}-tpl`,
+        kind: 'layout',
+        type: 'flex',
+        props: { direction: 'row', gap: 8 },
+        children: fields.map((f) => ({
+          uid: f.uid,
+          kind: 'input',
+          type: 'textinput',
+          path: `${path}.items.${f.path}`,
+          label: f.label,
+          on: CHANGE_ON,
+        })),
+      },
+    },
   };
+}
+
+function optionsRepeater(uid: string, path: string, label = 'Options') {
+  return repeaterField(uid, path, label, [
+    { uid: `${uid}-label`, path: 'label', label: 'Label' },
+    { uid: `${uid}-value`, path: 'value', label: 'Value' },
+  ]);
+}
+
+function labelUidRepeater(uid: string, path: string, label: string) {
+  return repeaterField(uid, path, label, [
+    { uid: `${uid}-label`, path: 'label', label: 'Label' },
+    { uid: `${uid}-uid`, path: 'uid', label: 'UID' },
+  ]);
 }
 
 // ---------------------------------------------------------------------------
@@ -64,7 +100,7 @@ const COMMON_FIELDS = [
 // Widget-type-specific prop fields
 // ---------------------------------------------------------------------------
 
-const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
+const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   // ---- Input widgets ----
   textinput: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -125,13 +161,13 @@ const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
     textField('prop-icon', 'icon', 'Icon'),
     textField('prop-labelField', 'labelField', 'Label Field'),
     textField('prop-valueField', 'valueField', 'Value Field'),
-    jsonField('prop-options', 'options', 'Options (JSON)'),
+    optionsRepeater('prop-options', 'options'),
   ],
   radiogroup: [
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-labelField', 'labelField', 'Label Field'),
     textField('prop-valueField', 'valueField', 'Value Field'),
-    jsonField('prop-options', 'options', 'Options (JSON)'),
+    optionsRepeater('prop-options', 'options'),
   ],
   dropdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -140,7 +176,7 @@ const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
     textField('prop-valueField', 'valueField', 'Value Field'),
     numberField('prop-height', 'height', 'Height (px)'),
     numberField('prop-itemHeight', 'itemHeight', 'Item Height (px)'),
-    jsonField('prop-items', 'items', 'Items (JSON)'),
+    optionsRepeater('prop-items', 'items', 'Items'),
   ],
   list: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -148,7 +184,7 @@ const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
     textField('prop-valueField', 'valueField', 'Value Field'),
     numberField('prop-height', 'height', 'Height (px)'),
     numberField('prop-itemHeight', 'itemHeight', 'Item Height (px)'),
-    jsonField('prop-items', 'items', 'Items (JSON)'),
+    optionsRepeater('prop-items', 'items', 'Items'),
   ],
   dateInput: [textField('prop-hint', 'hint', 'Hint'), textField('prop-icon', 'icon', 'Icon')],
   datePicker: [
@@ -241,7 +277,7 @@ const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
       { label: 'All', value: 'all' },
       { label: 'Active Only', value: 'activeOnly' },
     ]),
-    jsonField('prop-sections', 'sections', 'Sections (JSON)'),
+    labelUidRepeater('prop-sections', 'sections', 'Sections'),
   ],
   tabs: [
     textField('prop-defaultOpen', 'defaultOpen', 'Default Open (UID)'),
@@ -249,7 +285,7 @@ const PROP_FIELDS: Record<string, ReturnType<typeof textField>[]> = {
       { label: 'All', value: 'all' },
       { label: 'Active Only', value: 'activeOnly' },
     ]),
-    jsonField('prop-tabs', 'tabs', 'Tabs (JSON)'),
+    labelUidRepeater('prop-tabs', 'tabs', 'Tabs'),
   ],
 };
 
@@ -290,26 +326,22 @@ export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): s
  * Props are hoisted to the top level so path: 'hint' maps to widget.props.hint.
  */
 export function flattenWidgetData(widget: Record<string, unknown>): Record<string, unknown> {
-  const { props, ...rest } = widget as Record<string, unknown> & {
+  const { props, children, ...rest } = widget as Record<string, unknown> & {
     props?: Record<string, unknown>;
+    children?: unknown[];
   };
   const data: Record<string, unknown> = { ...rest };
 
   // Hoist props to top level
   if (props && typeof props === 'object') {
     for (const [key, value] of Object.entries(props)) {
-      // Serialize complex values (arrays/objects) as JSON strings for textarea display
-      if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
-        data[key] = JSON.stringify(value, null, 2);
-      } else {
-        data[key] = value;
-      }
+      data[key] = value;
     }
   }
 
   // children UIDs for layout widgets (informational, serialized)
-  if (Array.isArray(data['children'])) {
-    data['children'] = (data['children'] as unknown[])
+  if (Array.isArray(children)) {
+    data['children'] = children
       .map((c) => (typeof c === 'string' ? c : (c as Record<string, unknown>)?.['uid']))
       .join(', ');
   }
@@ -360,12 +392,6 @@ export function updateWidgetFromFlatData(
         const val = flatData[propKey];
         if (val === undefined || val === null || val === '') {
           delete newProps[propKey];
-        } else if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
-          try {
-            newProps[propKey] = JSON.parse(val);
-          } catch {
-            newProps[propKey] = val;
-          }
         } else {
           newProps[propKey] = val;
         }
