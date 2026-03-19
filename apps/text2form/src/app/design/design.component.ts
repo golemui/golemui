@@ -1,6 +1,7 @@
 import {
   afterNextRender,
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
@@ -12,7 +13,12 @@ import {
 } from '@angular/core';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
-import { findWidgetByUid, replaceWidgetByUid, updateWidgetFromFlatData } from './widget-forms';
+import {
+  findWidgetByUid,
+  replaceWidgetByUid,
+  stripVisibilityRules,
+  updateWidgetFromFlatData,
+} from './widget-forms';
 
 interface BreadcrumbItem {
   uid: string;
@@ -50,14 +56,23 @@ export class DesignComponent {
   // so the properties panel stays stable while the user types.
   selectedWidget = signal<Record<string, unknown> | null>(null);
   protected liveFormDef = linkedSignal(() => this.formDef());
+  protected designFormDef = computed(() => {
+    try {
+      const parsed = JSON.parse(this.liveFormDef());
+      return JSON.stringify(stripVisibilityRules(parsed));
+    } catch {
+      return this.liveFormDef();
+    }
+  });
   protected formVersion = signal(0);
 
   constructor() {
     afterNextRender(() => {
-      const container = this.elRef.nativeElement.querySelector('.design-container');
-      container?.addEventListener('scroll', () => this.refreshSelectedRect());
+      this.layoutEl = this.elRef.nativeElement.querySelector('.design-layout');
     });
   }
+
+  private layoutEl: HTMLElement | null = null;
 
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
@@ -98,7 +113,18 @@ export class DesignComponent {
 
   @HostListener('window:resize')
   onResize() {
-    this.refreshSelectedRect();
+    this.refreshHighlights();
+  }
+
+  private refreshHighlights() {
+    const hov = this.hoveredHighlight();
+    if (hov) {
+      this.hoveredHighlight.set({ ...hov, rect: this.getLayoutRelativeRect(hov.el) });
+    }
+    const sel = this.selectedHighlight();
+    if (sel) {
+      this.selectedHighlight.set({ ...sel, rect: this.getLayoutRelativeRect(sel.el) });
+    }
   }
 
   protected selectBreadcrumb(item: BreadcrumbItem, event: MouseEvent) {
@@ -120,7 +146,7 @@ export class DesignComponent {
     // When the panel first appears it shifts the flex layout, making the
     // already-captured rect stale.  Refresh after the browser has laid out.
     if (widget && wasNull) {
-      setTimeout(() => this.refreshSelectedRect(), 1);
+      setTimeout(() => this.refreshHighlights(), 1);
     }
   }
 
@@ -150,11 +176,16 @@ export class DesignComponent {
     }
   }
 
-  private refreshSelectedRect() {
-    const sel = this.selectedHighlight();
-    if (sel) {
-      this.selectedHighlight.set({ ...sel, rect: sel.el.getBoundingClientRect() });
-    }
+  private getLayoutRelativeRect(el: Element): DOMRect {
+    const elRect = el.getBoundingClientRect();
+    if (!this.layoutEl) return elRect;
+    const layoutRect = this.layoutEl.getBoundingClientRect();
+    return new DOMRect(
+      elRect.left - layoutRect.left - this.layoutEl.clientLeft + this.layoutEl.scrollLeft,
+      elRect.top - layoutRect.top - this.layoutEl.clientTop + this.layoutEl.scrollTop,
+      elRect.width,
+      elRect.height,
+    );
   }
 
   private findGolemHostAtPoint(x: number, y: number): Element | null {
@@ -195,7 +226,7 @@ export class DesignComponent {
         .replace(/^gui-/, '')
         .replace(/-(display|action|input|layout)$/, ''),
       el,
-      rect: el.getBoundingClientRect(),
+      rect: this.getLayoutRelativeRect(el),
       breadcrumbs: this.collectBreadcrumbs(el),
     };
   }

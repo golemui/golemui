@@ -5,6 +5,7 @@
 }
 
 .design-layout {
+  position: relative;
   display: flex;
   gap: 16px;
   align-items: flex-start;
@@ -15,7 +16,7 @@
 }
 
 .comp-overlay {
-  position: fixed;
+  position: absolute;
   pointer-events: none;
   z-index: 9999;
   box-sizing: border-box;

@@ -3,7 +3,7 @@
     <div class="design-capture"></div>
     @for (v of [formVersion()]; track v) {
       <gui-form
-        [formDef]="liveFormDef()"
+        [formDef]="designFormDef()"
         [data]="{}"
         [widgetLoaders]="{}"
         [validators]="{}"
@@ -13,33 +13,31 @@
       ></gui-form>
     }
   </div>
-</div>
-
-@if (hoveredHighlight(); as h) {
+  @if (hoveredHighlight(); as h) {
   @if (h.uid !== selectedHighlight()?.uid) {
-    <div
-      class="comp-overlay comp-overlay--hover"
-      [style.top.px]="h.rect.top"
-      [style.left.px]="h.rect.left"
-      [style.width.px]="h.rect.width"
-      [style.height.px]="h.rect.height"
-    >
-      <div class="comp-overlay__breadcrumbs">
-        @for (crumb of h.breadcrumbs; track crumb.uid) {
-          <button class="comp-overlay__crumb" (click)="selectBreadcrumb(crumb, $event)">
-            {{ crumb.type }}
-          </button>
-          <span class="comp-overlay__sep">›</span>
-        }
-        <span class="comp-overlay__crumb comp-overlay__crumb--current">
+  <div
+    class="comp-overlay comp-overlay--hover"
+    [style.top.px]="h.rect.top"
+    [style.left.px]="h.rect.left"
+    [style.width.px]="h.rect.width"
+    [style.height.px]="h.rect.height"
+  >
+    <div class="comp-overlay__breadcrumbs">
+      @for (crumb of h.breadcrumbs; track crumb.uid) {
+      <button class="comp-overlay__crumb" (click)="selectBreadcrumb(crumb, $event)">
+        {{ crumb.type }}
+      </button>
+      <span class="comp-overlay__sep">›</span>
+      }
+      <span class="comp-overlay__crumb comp-overlay__crumb--current">
           {{ h.type + '#' + h.prettyUid }}
         </span>
-      </div>
     </div>
+  </div>
   }
-}
+  }
 
-@if (selectedHighlight(); as s) {
+  @if (selectedHighlight(); as s) {
   <div
     class="comp-overlay comp-overlay--selected"
     [style.top.px]="s.rect.top"
@@ -49,14 +47,15 @@
   >
     <div class="comp-overlay__breadcrumbs">
       @for (crumb of s.breadcrumbs; track crumb.uid) {
-        <button class="comp-overlay__crumb" (click)="selectBreadcrumb(crumb, $event)">
-          {{ crumb.type }}
-        </button>
-        <span class="comp-overlay__sep">›</span>
+      <button class="comp-overlay__crumb" (click)="selectBreadcrumb(crumb, $event)">
+        {{ crumb.type }}
+      </button>
+      <span class="comp-overlay__sep">›</span>
       }
       <span class="comp-overlay__crumb comp-overlay__crumb--current">
         {{ s.type + '#' + s.prettyUid }}
       </span>
     </div>
   </div>
-}
+  }
+</div>

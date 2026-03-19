@@ -382,6 +382,28 @@ export function updateWidgetFromFlatData(
 }
 
 /**
+ * Recursively strips `include` and `exclude` from all widgets so that
+ * every field is visible in design mode.
+ */
+export function stripVisibilityRules(root: unknown): unknown {
+  if (Array.isArray(root)) {
+    return root.map((item) => stripVisibilityRules(item));
+  }
+  if (root && typeof root === 'object') {
+    const { include: _include, exclude: _exclude, ...rest } = root as Record<string, unknown>;
+    const node: Record<string, unknown> = { ...rest };
+    if (node['children']) {
+      node['children'] = stripVisibilityRules(node['children']);
+    }
+    if (node['form']) {
+      node['form'] = stripVisibilityRules(node['form']);
+    }
+    return node;
+  }
+  return root;
+}
+
+/**
  * Recursively replaces a widget with a given uid with the replacement object.
  */
 export function replaceWidgetByUid(
