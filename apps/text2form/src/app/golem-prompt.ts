@@ -176,7 +176,7 @@ Output a single JSON object with this shape:
 - \`flex\` is the default layout widget. Use \`props.direction\` for rows/columns and \`props.gap\` for spacing.
 - \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID.
 - \`tabs\` requires \`props.tabs\` (array of \`{ label, uid }\`). Each tab uid must match a child UID.
-- \`repeater\` is \`kind: "input"\`. Its \`props.template\` is the UID of a \`flex\` element that defines the repeatable row layout.
+- \`repeater\` is \`kind: "input"\`. Its \`props.template\` is the UID of a \`flex\` element that defines the repeatable row layout. The widgets inside repeater will have a \`path\` equal to \`repeaterPath.items.fieldName\` where \`repeaterPath\` is the path of the repeater widget. For example, if the repeater path is \`users\` and the field name is \`name\`, the path of the text input will be \`users.items.name\`. Properties like \`include\` and \`exclude\` will follow the same rules for paths in the \`when\` expression.
 
 ${generateComponentsSection()}
 `;

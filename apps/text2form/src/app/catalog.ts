@@ -458,18 +458,18 @@ export const catalog = {
     schema: radiogroupSchema,
     description: 'Radio button group for selecting one option',
   },
-  dateinput: { schema: dateinputSchema, description: 'Date text input (ISO string)' },
-  datepicker: { schema: datepickerSchema, description: 'Date picker with calendar popup' },
+  dateInput: { schema: dateinputSchema, description: 'Date text input (ISO string)' },
+  datePicker: { schema: datepickerSchema, description: 'Date picker with calendar popup' },
   calendar: { schema: calendarSchema, description: 'Inline calendar widget for picking a date' },
-  rangecalendar: {
+  rangeCalendar: {
     schema: rangecalendarSchema,
     description: 'Inline calendar for picking a date range',
   },
-  rangedateinput: {
+  rangeDateInput: {
     schema: rangedateinputSchema,
     description: 'Text input for a date range (start–end)',
   },
-  rangedatepicker: {
+  rangeDatePicker: {
     schema: rangedatepickerSchema,
     description: 'Date range picker with calendar popup',
   },
