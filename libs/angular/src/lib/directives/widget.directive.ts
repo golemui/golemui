@@ -37,12 +37,14 @@ export class WidgetDirective implements OnInit {
     try {
       this.createComponent(await this.formContext.widgetRegistry.loadWidget(this.widget().type));
     } catch {
+      const code = 1001;
       this.formContext.store.dispatch({
         type: 'SET_FORM_HEALTH',
         payload: {
           formHealth: {
             status: 'errored',
-            message: `Widget "${this.widget().type}" could not be loaded`,
+            message: `[${code}] Widget "${this.widget().type}" could not be loaded`,
+            code,
           },
         },
       });
