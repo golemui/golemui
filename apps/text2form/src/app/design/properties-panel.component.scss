@@ -2,12 +2,12 @@
   display: block;
   width: 300px;
   flex-shrink: 0;
+  height: 100vh;
+  border-left: 1px solid #334155;
 }
 
 .properties-panel {
   background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 12px;
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -39,35 +39,11 @@
 .properties-form {
   flex: 1;
   overflow-y: auto;
-  padding: 12px;
 
   ::ng-deep {
-    .gui-form-control label {
-      font-size: 11px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .gui-input,
-    .gui-select,
-    .gui-textarea {
-      background-color: #0f172a;
-      border: 1px solid #334155;
-      color: #f8fafc;
-      border-radius: 6px;
-      padding: 7px 10px;
-      font-size: 13px;
-
-      &:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 1px #3b82f6;
-        outline: none;
-      }
-    }
-
-    .gui-form-control {
-      margin-bottom: 10px;
+    .gui-form {
+      padding: 12px;
+      margin: 0;
     }
   }
 }

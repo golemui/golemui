@@ -13,13 +13,6 @@
       ></gui-form>
     }
   </div>
-  @if (selectedWidget(); as w) {
-    <app-properties-panel
-      [widget]="w"
-      (widgetChange)="onWidgetChange($event)"
-      (click)="$event.stopPropagation()"
-    />
-  }
 </div>
 
 @if (hoveredHighlight(); as h) {

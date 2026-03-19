@@ -5,6 +5,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as Core from '@golemui/core';
@@ -13,6 +14,7 @@ import { golemForm } from '@golemui/gui-shared';
 import { GEMINI_INPUT_BUDGET, GeminiService } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
+import { PropertiesPanelComponent } from './design/properties-panel.component';
 import { EditorComponent } from './editor/editor.component';
 import { TokenMeterComponent } from './token-meter/token-meter.component';
 
@@ -44,6 +46,7 @@ const initialFormJson = () => {
     FormsModule,
     Gui.FormComponent,
     DesignComponent,
+    PropertiesPanelComponent,
     TokenMeterComponent,
     EditorComponent,
   ],
@@ -56,7 +59,9 @@ export class App {
   private cdr = inject(ChangeDetectorRef);
   private ai = inject(GeminiService);
   // private ai = inject(AnthropicService);
+  private designComp = viewChild<DesignComponent>('designComp');
   protected activeTab: 'form' | 'json' | 'design' = 'form';
+  protected designSelectedWidget: Record<string, unknown> | null = null;
   protected chatInput =
     'Create a registration form with email, password, confirm password and a submit button';
   protected tokenCount = 0;
@@ -112,6 +117,10 @@ export class App {
 
   protected onFormEvent(event: Core.FormEvent) {
     console.log('onFormEvent', event);
+  }
+
+  protected onDesignWidgetChange(flatData: Record<string, unknown>) {
+    this.designComp()?.onWidgetChange(flatData);
   }
 
   protected onFormDefChange(newJson: string) {

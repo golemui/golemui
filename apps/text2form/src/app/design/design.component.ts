@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
-import { PropertiesPanelComponent } from './properties-panel.component';
 import { findWidgetByUid, replaceWidgetByUid, updateWidgetFromFlatData } from './widget-forms';
 
 interface BreadcrumbItem {
@@ -32,7 +31,7 @@ interface ComponentHighlight {
 }
 
 @Component({
-  imports: [Gui.FormComponent, PropertiesPanelComponent],
+  imports: [Gui.FormComponent],
   selector: 'app-design',
   templateUrl: './design.component.html',
   styleUrl: './design.component.scss',
@@ -41,6 +40,7 @@ interface ComponentHighlight {
 export class DesignComponent {
   formDef = input<string>('');
   formDefChange = output<string>();
+  selectedWidgetChange = output<Record<string, unknown> | null>();
 
   private elRef = inject(ElementRef);
 
@@ -84,15 +84,15 @@ export class DesignComponent {
       const current = this.selectedHighlight();
       if (current?.uid === hl.uid) {
         this.selectedHighlight.set(null);
-        this.selectedWidget.set(null);
+        this.setSelectedWidget(null);
       } else {
         this.selectedHighlight.set(hl);
-        this.selectedWidget.set(this.snapshotWidget(hl.prettyUid));
+        this.setSelectedWidget(this.snapshotWidget(hl.prettyUid));
       }
       event.stopPropagation();
     } else {
       this.selectedHighlight.set(null);
-      this.selectedWidget.set(null);
+      this.setSelectedWidget(null);
     }
   }
 
@@ -106,14 +106,25 @@ export class DesignComponent {
     const current = this.selectedHighlight();
     if (current?.uid === item.uid) {
       this.selectedHighlight.set(null);
-      this.selectedWidget.set(null);
+      this.setSelectedWidget(null);
     } else {
       this.selectedHighlight.set(this.makeHighlight(item.el));
-      this.selectedWidget.set(this.snapshotWidget(item.prettyUid));
+      this.setSelectedWidget(this.snapshotWidget(item.prettyUid));
     }
   }
 
-  protected onWidgetChange(flatData: Record<string, unknown>) {
+  private setSelectedWidget(widget: Record<string, unknown> | null) {
+    const wasNull = this.selectedWidget() === null;
+    this.selectedWidget.set(widget);
+    this.selectedWidgetChange.emit(widget);
+    // When the panel first appears it shifts the flex layout, making the
+    // already-captured rect stale.  Refresh after the browser has laid out.
+    if (widget && wasNull) {
+      setTimeout(() => this.refreshSelectedRect(), 1);
+    }
+  }
+
+  onWidgetChange(flatData: Record<string, unknown>) {
     const hl = this.selectedHighlight();
     if (!hl) return;
     try {

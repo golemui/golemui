@@ -4,13 +4,15 @@
     <span class="properties-uid">#{{ widget()['uid'] }}</span>
   </div>
   <div class="properties-form">
-    <gui-form
-      [formDef]="propertiesFormDef()"
-      [data]="propertiesData()"
-      [widgetLoaders]="{}"
-      [validators]="{}"
-      [validateOn]="'eager'"
-      (formEvent)="onFormEvent($event)"
-    />
+    @for (uid of [widget()['uid']]; track uid) {
+      <gui-form
+        [formDef]="propertiesFormDef()"
+        [data]="propertiesData()"
+        [widgetLoaders]="{}"
+        [validators]="{}"
+        [validateOn]="'eager'"
+        (formEvent)="onFormEvent($event)"
+      />
+    }
   </div>
 </div>
