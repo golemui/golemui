@@ -1691,8 +1691,14 @@ export const MATERIAL_ICONS: { label: string; value: string }[] = [
   { label: 'signal cellular alt', value: 'signal_cellular_alt' },
   { label: 'signal cellular alt 1 bar', value: 'signal_cellular_alt_1_bar' },
   { label: 'signal cellular alt 2 bar', value: 'signal_cellular_alt_2_bar' },
-  { label: 'signal cellular connected no internet 0 bar', value: 'signal_cellular_connected_no_internet_0_bar' },
-  { label: 'signal cellular connected no internet 4 bar', value: 'signal_cellular_connected_no_internet_4_bar' },
+  {
+    label: 'signal cellular connected no internet 0 bar',
+    value: 'signal_cellular_connected_no_internet_0_bar',
+  },
+  {
+    label: 'signal cellular connected no internet 4 bar',
+    value: 'signal_cellular_connected_no_internet_4_bar',
+  },
   { label: 'signal cellular no sim', value: 'signal_cellular_no_sim' },
   { label: 'signal cellular nodata', value: 'signal_cellular_nodata' },
   { label: 'signal cellular null', value: 'signal_cellular_null' },
@@ -1704,7 +1710,10 @@ export const MATERIAL_ICONS: { label: string; value: string }[] = [
   { label: 'signal wifi connected no internet 4', value: 'signal_wifi_connected_no_internet_4' },
   { label: 'signal wifi off', value: 'signal_wifi_off' },
   { label: 'signal wifi statusbar 4 bar', value: 'signal_wifi_statusbar_4_bar' },
-  { label: 'signal wifi statusbar connected no internet 4', value: 'signal_wifi_statusbar_connected_no_internet_4' },
+  {
+    label: 'signal wifi statusbar connected no internet 4',
+    value: 'signal_wifi_statusbar_connected_no_internet_4',
+  },
   { label: 'signal wifi statusbar null', value: 'signal_wifi_statusbar_null' },
   { label: 'signpost', value: 'signpost' },
   { label: 'sim card', value: 'sim_card' },

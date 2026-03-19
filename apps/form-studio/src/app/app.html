@@ -98,16 +98,21 @@
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
         } @else {
-        <app-design #designComp [formDef]="formJson()" (formDefChange)="onFormDefChange($event)" (selectedWidgetChange)="designSelectedWidget = $event"></app-design>
+        <app-design
+          #designComp
+          [formDef]="formJson()"
+          (formDefChange)="onFormDefChange($event)"
+          (selectedWidgetChange)="designSelectedWidget = $event"
+        ></app-design>
         }
       </div>
     </div>
   </main>
   @if (activeTab === 'design' && designSelectedWidget; as w) {
-    <app-properties-panel
-      [widget]="w"
-      (widgetChange)="onDesignWidgetChange($event)"
-      (click)="$event.stopPropagation()"
-    />
+  <app-properties-panel
+    [widget]="w"
+    (widgetChange)="onDesignWidgetChange($event)"
+    (click)="$event.stopPropagation()"
+  />
   }
 </div>
