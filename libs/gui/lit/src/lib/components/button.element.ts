@@ -59,7 +59,7 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
     };
 
     const iconTemplate = icon
-      ? html`<span class="gui-button-icon ${icon}"></span>`
+      ? html`<span class="gui-widget-icon gui-button-icon ${icon}" data-icon=${icon}></span>`
       : nothing;
 
     return html`
