@@ -48,11 +48,14 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
         this.replaceWith(element);
       } catch (err) {
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
+
+        const code = Core.errorCodes.widgetCouldNotBeLoaded;
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Widget "${this.widget.type}" could not be loaded`,
+              message: `[${code}] Widget "${this.widget.type}" could not be loaded`,
+              code,
             },
             bubbles: true,
             composed: true,

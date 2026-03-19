@@ -37,12 +37,14 @@ function WidgetRenderer(props: Props) {
           setComponent(() => loadedComponent);
         }
       } catch {
+        const code = Core.errorCodes.widgetCouldNotBeLoaded;
         formContext.store.dispatch({
           type: 'SET_FORM_HEALTH',
           payload: {
             formHealth: {
               status: 'errored',
-              message: `Widget "${props.widget.type}" could not be loaded`,
+              message: `[${code}] Widget "${props.widget.type}" could not be loaded`,
+              code,
             },
           },
         });

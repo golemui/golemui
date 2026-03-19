@@ -6,4 +6,5 @@ export const errorCodes = {
   initializeParseError: 20,
   initializeUidCollisionError: 21,
   initializeUnknownError: 22,
+  widgetCouldNotBeLoaded: 30,
 };
