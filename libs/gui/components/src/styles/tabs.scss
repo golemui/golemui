@@ -22,6 +22,7 @@
       overflow: hidden;
       padding: 0;
       margin-bottom: -1px;
+      justify-content: start;
 
       &::before,
       &::after {
@@ -55,6 +56,7 @@
       }
 
       ul[role='tablist'] {
+        width: 100%;
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;
