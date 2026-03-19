@@ -1,0 +1,55 @@
+:host {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+.json-editor {
+  flex: 1;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  &:focus-within {
+    border-color: #3b82f6;
+  }
+}
+
+.format-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #334155;
+    border-color: #64748b;
+    color: #e2e8f0;
+  }
+
+  &:active {
+    background: #0f172a;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+::ng-deep .monaco-editor {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}

@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  effect,
   inject,
   input,
   OnDestroy,
@@ -54,6 +55,25 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // PRIVATE
   private destroyRef = inject(DestroyRef);
   private unsubscribeI18n: () => void = () => undefined;
+  private _formDefInitialized = false;
+
+  constructor() {
+    effect(() => {
+      const formDef = this.formDef();
+      if (!this._formDefInitialized) {
+        this._formDefInitialized = true;
+        return;
+      }
+      this.context.store.dispatch({
+        type: 'INITIALIZE',
+        payload: { formName: this.formName(), formDef },
+      });
+      this.context.store.dispatch({
+        type: 'SET_DATA',
+        payload: { data: this.data() },
+      });
+    });
+  }
 
   // LIFE CYCLE
   ngOnInit(): void {

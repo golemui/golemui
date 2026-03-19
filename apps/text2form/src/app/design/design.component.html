@@ -1,0 +1,61 @@
+<div class="design-layout">
+  <div class="design-container">
+    <div class="design-capture"></div>
+    @for (v of [formVersion()]; track v) {
+      <gui-form
+        [formDef]="designFormDef()"
+        [data]="{}"
+        [widgetLoaders]="{}"
+        [validators]="{}"
+        [validateOn]="'eager'"
+        (formHealth)="onFormHealth($event)"
+        (formEvent)="onFormEvent($event)"
+      ></gui-form>
+    }
+  </div>
+  @if (hoveredHighlight(); as h) {
+  @if (h.uid !== selectedHighlight()?.uid) {
+  <div
+    class="comp-overlay comp-overlay--hover"
+    [style.top.px]="h.rect.top"
+    [style.left.px]="h.rect.left"
+    [style.width.px]="h.rect.width"
+    [style.height.px]="h.rect.height"
+  >
+    <div class="comp-overlay__breadcrumbs">
+      @for (crumb of h.breadcrumbs; track crumb.uid) {
+      <button class="comp-overlay__crumb" (click)="selectBreadcrumb(crumb, $event)">
+        {{ crumb.type }}
+      </button>
+      <span class="comp-overlay__sep">›</span>
+      }
+      <span class="comp-overlay__crumb comp-overlay__crumb--current">
+          {{ h.type + '#' + h.prettyUid }}
+        </span>
+    </div>
+  </div>
+  }
+  }
+
+  @if (selectedHighlight(); as s) {
+  <div
+    class="comp-overlay comp-overlay--selected"
+    [style.top.px]="s.rect.top"
+    [style.left.px]="s.rect.left"
+    [style.width.px]="s.rect.width"
+    [style.height.px]="s.rect.height"
+  >
+    <div class="comp-overlay__breadcrumbs">
+      @for (crumb of s.breadcrumbs; track crumb.uid) {
+      <button class="comp-overlay__crumb" (click)="selectBreadcrumb(crumb, $event)">
+        {{ crumb.type }}
+      </button>
+      <span class="comp-overlay__sep">›</span>
+      }
+      <span class="comp-overlay__crumb comp-overlay__crumb--current">
+        {{ s.type + '#' + s.prettyUid }}
+      </span>
+    </div>
+  </div>
+  }
+</div>

@@ -1,0 +1,113 @@
+<div class="app-layout">
+  <!-- Left Column: Chat -->
+  <aside class="chat-sidebar">
+    <div class="chat-header">
+      <h2>Text2Form</h2>
+      <p>Powered by GolemUI</p>
+    </div>
+
+    <div class="chat-history">
+      <div *ngFor="let msg of messages" [ngClass]="['chat-message', msg.role]">
+        <div class="message-bubble">{{ msg.content }}</div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="input-wrapper">
+        <div class="textarea-container">
+          <textarea
+            [ngModel]="chatInput"
+            (ngModelChange)="onChatInputChange($event)"
+            placeholder="Ask me to create a form..."
+            (keydown.enter)="$event.preventDefault(); sendMessage()"
+          >
+          </textarea>
+        </div>
+        <div class="send-column">
+          @if (tokenCount > 0) {
+          <app-token-meter [current]="tokenCount" [max]="maxTokens" />
+          }
+          <button (click)="sendMessage()" [disabled]="!chatInput.trim() || thinking">
+            @if (thinking) {
+            <span class="spinner spinner-sm"></span>
+            } @else {
+            <span class="icon-send">➤</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Column: Form/JSON Viewer -->
+  <main class="content-main">
+    <header class="tabs-header">
+      <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Preview
+      </button>
+      <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Edit
+      </button>
+      <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Design
+      </button>
+    </header>
+
+    <div class="tab-content" [ngSwitch]="activeTab">
+      @if (error) {
+      <div class="error-container">
+        <p class="error">{{ error }}</p>
+      </div>
+      }
+      <!-- Form Tab -->
+      <div *ngSwitchCase="'form'" class="form-preview-container">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } @else {
+        <div class="form-wrapper">
+          <gui-form
+            [formDef]="formJson()"
+            [data]="{}"
+            [widgetLoaders]="{}"
+            [validators]="{}"
+            [validateOn]="'eager'"
+            (formHealth)="onFormHealth($event)"
+            (formEvent)="onFormEvent($event)"
+          ></gui-form>
+        </div>
+        }
+      </div>
+
+      <!-- JSON Tab -->
+      <div *ngSwitchCase="'json'" class="json-editor-container">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } @else {
+        <app-editor [value]="formJson()" (valueChange)="onJsonChange($event)" />
+        }
+      </div>
+
+      <!-- Design Tab -->
+      <div *ngSwitchCase="'design'" class="design-tab-container">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } @else {
+        <app-design #designComp [formDef]="formJson()" (formDefChange)="onFormDefChange($event)" (selectedWidgetChange)="designSelectedWidget = $event"></app-design>
+        }
+      </div>
+    </div>
+  </main>
+  @if (activeTab === 'design' && designSelectedWidget; as w) {
+    <app-properties-panel
+      [widget]="w"
+      (widgetChange)="onDesignWidgetChange($event)"
+      (click)="$event.stopPropagation()"
+    />
+  }
+</div>
