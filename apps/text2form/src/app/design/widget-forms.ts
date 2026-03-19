@@ -3,6 +3,8 @@
  * based on the selected widget's kind and type.
  */
 
+import { MATERIAL_ICONS } from './material-icons';
+
 const CHANGE_ON = { change: 'propChanged' };
 
 // ---------------------------------------------------------------------------
@@ -35,6 +37,25 @@ function selectField(
   options: { label: string; value: string }[],
 ) {
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
+}
+
+function iconField(uid: string, path: string) {
+  return {
+    uid,
+    kind: 'input',
+    type: 'dropdown',
+    path,
+    label: 'Icon',
+    on: CHANGE_ON,
+    props: {
+      placeholder: 'Search icon...',
+      items: MATERIAL_ICONS,
+      labelField: 'label',
+      valueField: 'value',
+      height: 200,
+      itemHeight: 36,
+    },
+  };
 }
 
 function repeaterField(
@@ -105,13 +126,13 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   textinput: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   password: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   number: [
@@ -125,7 +146,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-currency', 'currency', 'Currency Code'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     numberField('prop-step', 'step', 'Step'),
     numberField('prop-maximumFractionDigits', 'maximumFractionDigits', 'Max Fraction Digits'),
     numberField('prop-minimumFractionDigits', 'minimumFractionDigits', 'Min Fraction Digits'),
@@ -158,7 +179,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   select: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     textField('prop-labelField', 'labelField', 'Label Field'),
     textField('prop-valueField', 'valueField', 'Value Field'),
     optionsRepeater('prop-options', 'options'),
@@ -186,11 +207,11 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     numberField('prop-itemHeight', 'itemHeight', 'Item Height (px)'),
     optionsRepeater('prop-items', 'items', 'Items'),
   ],
-  dateInput: [textField('prop-hint', 'hint', 'Hint'), textField('prop-icon', 'icon', 'Icon')],
+  dateInput: [textField('prop-hint', 'hint', 'Hint'), iconField('prop-icon', 'icon')],
   datePicker: [
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
   ],
   calendar: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -206,12 +227,12 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   ],
   rangeDateInput: [
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     textField('prop-separator', 'separator', 'Separator'),
   ],
   rangeDatePicker: [
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     textField('prop-separator', 'separator', 'Separator'),
   ],
   markdown: [
@@ -235,7 +256,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
       { label: 'Filled', value: 'filled' },
       { label: 'Outlined', value: 'outlined' },
     ]),
-    textField('prop-icon', 'icon', 'Icon'),
+    iconField('prop-icon', 'icon'),
     selectField('prop-iconPosition', 'iconPosition', 'Icon Position', [
       { label: 'Left', value: 'left' },
       { label: 'Right', value: 'right' },
