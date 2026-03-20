@@ -42,7 +42,7 @@ export const textinput = (): any => ({
       type: 'textinput',
       path: 'textinputWithIcon',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
       },
@@ -53,7 +53,7 @@ export const textinput = (): any => ({
       type: 'textinput',
       path: 'textinputIconRight',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
       },

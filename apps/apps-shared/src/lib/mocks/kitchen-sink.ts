@@ -89,7 +89,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       type: 'button',
       label: 'Create',
       props: {
-        icon: 'material-icons material-icons-save',
+        icon: 'save',
         iconPosition: 'right',
       },
       on: {

@@ -70,9 +70,9 @@ const form = defineForm({
       path: 'dates',
       label: 'Outbound/Return Dates',
       props: {
-        icon: 'material-icons material-icons-calendar_month',
-        prevMonthIcon: 'material-icons material-icons-chevron_left',
-        nextMonthIcon: 'material-icons material-icons-chevron_right',
+        icon: 'calendar_month',
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
         minDate: new Date().toISOString().split('T')[0],
         maxDate: '2026-12-31',
         disabledRanges: [],

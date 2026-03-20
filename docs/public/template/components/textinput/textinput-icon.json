@@ -7,7 +7,7 @@
       "path": "phoneNumber",
       "label": "Phone Number",
       "props": {
-        "icon": "material-icons material-icons-phone_callback"
+        "icon": "phone_callback"
       }
     },
     {
@@ -17,7 +17,7 @@
       "path": "email",
       "label": "Email",
       "props": {
-        "icon": "material-icons material-icons-alternate_email"
+        "icon": "alternate_email"
       }
     }
   ]

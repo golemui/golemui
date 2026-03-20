@@ -7,7 +7,7 @@
       "path": "price",
       "label": "Price",
       "props": {
-        "icon": "material-icons material-icons-attach_money"
+        "icon": "attach_money"
       }
     }
   ]

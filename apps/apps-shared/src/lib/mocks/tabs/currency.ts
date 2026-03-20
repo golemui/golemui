@@ -43,7 +43,7 @@ export const currency = (): any => ({
       type: 'currency',
       path: 'currencyWithIcon',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter price in USD',
       },
@@ -55,7 +55,7 @@ export const currency = (): any => ({
       path: 'currencyIconRightWithEUR',
       props: {
         currency: 'EUR',
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter price in EUR',
       },

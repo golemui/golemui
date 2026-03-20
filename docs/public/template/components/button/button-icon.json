@@ -6,7 +6,7 @@
       "type": "button",
       "label": "Save",
       "props": {
-        "icon": "material-icons material-icons-save"
+        "icon": "save"
       }
     }
   ]

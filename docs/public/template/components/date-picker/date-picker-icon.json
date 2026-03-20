@@ -7,7 +7,7 @@
       "path": "startDate",
       "label": "Start Date",
       "props": {
-        "icon": "material-icons material-icons-calendar_month"
+        "icon": "calendar_month"
       }
     }
   ]

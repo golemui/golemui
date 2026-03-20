@@ -3,8 +3,7 @@
 @use '../../../libs/gui/components/src/styles/themes/clay';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-[dir="rtl"] .material-icons,
-[dir="rtl"] .material-symbols-outlined {
+[dir="rtl"] .gui-widget-icon {
   direction: rtl;
 }
 
@@ -68,67 +67,14 @@ lit-root {
 }
 
 // Custom icons
-.material-icons {
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
   font-family: 'Material Icons';
-  font-size: medium;
-
-  &-phone_callback::before {
-    content: 'phone_callback';
-  }
-
-  &-alternate_email::before {
-    content: 'alternate_email';
-  }
-
-  &-calendar_month::before {
-    content: 'calendar_month';
-  }
-
-  &-chevron_right::before {
-    content: 'chevron_right';
-    font-size: 1.8rem;
-  }
-
-  &-chevron_left::before {
-    content: 'chevron_left';
-    font-size: 1.8rem;
-  }
-
-  &-password::before {
-    content: 'password';
-    font-size: 1.2rem;
-  }
-
-  &-visibility::before {
-    content: 'visibility';
-    font-size: 1.2rem;
-  }
-
-  &-visibility_off::before {
-    content: 'visibility_off';
-    font-size: 1.2rem;
-  }
-
-  &-attach_money::before {
-    content: 'attach_money';
-    font-size: 1.2rem;
-  }
-
-  &-edit_note::before {
-    content: 'edit_note';
-  }
-
-  &-save::before {
-    content: 'save';
-  }
-
-  &-remove::before {
-    content: 'remove';
-  }
-
-  &-add::before {
-    content: 'add';
-  }
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
 }
 
 // List Item Renderer

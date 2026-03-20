@@ -119,7 +119,7 @@ const form = defineForm({
               path: 'dateInput',
               label: 'Date of Birth',
               props: {
-                icon: 'material-icons material-icons-calendar_month',
+                icon: 'calendar_month',
               },
             },
             {

@@ -116,7 +116,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                     >
                       ${this.adapter.templateData.removeButtonIcon
                         ? html`<span
-                            class="gui-button-icon ${this.adapter.templateData.removeButtonIcon}"
+                            class="gui-widget-icon gui-button-icon ${this.adapter.templateData.removeButtonIcon}"
+                            data-icon=${this.adapter.templateData.removeButtonIcon}
                           ></span>`
                         : nothing}
                       ${this.adapter.templateData.removeLabel ?? 'Remove'}
@@ -141,7 +142,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
           )}
         >
           ${this.adapter.templateData.addButtonIcon
-            ? html`<span class="gui-button-icon ${this.adapter.templateData.addButtonIcon}"></span>`
+            ? html`<span class="gui-widget-icon gui-button-icon ${this.adapter.templateData.addButtonIcon}" data-icon=${this.adapter.templateData.addButtonIcon}></span>`
             : nothing}
           ${this.adapter.templateData.addLabel ?? 'Add'}
         </button>

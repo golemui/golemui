@@ -23,63 +23,12 @@ body {
 }
 
 // Custom icons
-.material-icons {
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
   font-family: 'Material Icons';
-  font-size: medium;
-
-  &-phone_callback::before {
-    content: 'phone_callback';
-  }
-
-  &-alternate_email::before {
-    content: 'alternate_email';
-  }
-
-  &-calendar_month::before {
-    content: 'calendar_month';
-  }
-
-  &-chevron_right::before {
-    content: 'chevron_right';
-    font-size: 1.8rem;
-  }
-
-  &-chevron_left::before {
-    content: 'chevron_left';
-    font-size: 1.8rem;
-  }
-  &-password::before {
-    content: 'password';
-    font-size: 1.2rem;
-  }
-
-  &-visibility::before {
-    content: 'visibility';
-    font-size: 1.2rem;
-  }
-
-  &-visibility_off::before {
-    content: 'visibility_off';
-    font-size: 1.2rem;
-  }
-
-  &-save::before {
-    content: 'save';
-  }
-
-  &-remove::before {
-    content: 'remove';
-  }
-
-  &-add::before {
-    content: 'add';
-  }
-
-  &-person_add::before {
-    content: 'person_add';
-  }
-
-  &-delete::before {
-    content: 'delete';
-  }
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
 }

@@ -7,7 +7,7 @@
       "path": "dateRanges",
       "label": "Date Ranges",
       "props": {
-        "icon": "material-icons material-icons-calendar_month"
+        "icon": "calendar_month"
       }
     }
   ]
