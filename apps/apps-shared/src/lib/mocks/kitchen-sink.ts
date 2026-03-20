@@ -16,6 +16,7 @@ import { toggle } from './tabs/toggle';
 import { Example } from './types';
 import { golemForm } from '@golemui/gui-shared';
 import * as Core from '@golemui/core';
+import { password } from './tabs/password';
 
 const states = {
   limitReached: '$form.repeaters.users?.length === 5',
@@ -46,7 +47,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab12',
+        defaultOpen: 'tab16',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
           { label: 'Flex Layout', uid: 'tab2' },
@@ -63,6 +64,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
           { label: 'Currency Component', uid: 'tab13' },
           { label: 'List Component', uid: 'tab14' },
           { label: 'Dropdown Component', uid: 'tab15' },
+          { label: 'Password Component', uid: 'tab16' },
         ],
       },
       on: { change: 'onTabEvent' },
@@ -82,6 +84,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
         currency(),
         list(),
         dropdown(),
+        password(),
       ],
     },
     {

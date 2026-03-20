@@ -44,7 +44,8 @@ gui-list {
     }
 
     &-focused {
-      border: 1px solid var(--gui-intent-primary);
+      box-shadow: var(--gui-shadow-focus);
+      background-color: var(--gui-intent-primary-hover);
     }
 
     &:hover {
