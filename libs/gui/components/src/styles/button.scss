@@ -18,11 +18,14 @@
     transition: background-color var(--gui-transition-normal, 0.2s);
 
     .gui-button-icon {
-      padding: 0 var(--gui-space-2);
-      color: inherit;
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 0;
+      height: 0;
+      margin: 0 var(--gui-space-3);
+      color: inherit;
+      position: relative;
     }
 
     &:focus {

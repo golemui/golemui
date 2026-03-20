@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { ButtonProps } from '@golemui/gui-shared';
@@ -7,13 +6,13 @@ import { ButtonProps } from '@golemui/gui-shared';
 @Component({
   standalone: true,
   selector: 'gui-button-interactive',
-  imports: [CommonModule],
   providers: [Angular.ActionWidgetAdapter],
   templateUrl: './button.component.html',
   host: {
     class: 'gui-button',
     '[style.flex]': 'this.adapter.templateData().size',
   },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ButtonComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.ActionWidget;

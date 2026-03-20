@@ -6,31 +6,20 @@ import { ButtonProps } from '@golemui/gui-shared';
 export function Button(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.ActionWidget;
   const { uid, templateData, onClick } = useActionWidget<ButtonProps>(widget);
-  const isDisabled = templateData.disabled as boolean;
-  const icon = templateData.icon;
-  const label = templateData.label as string;
-  const iconPosition = templateData.iconPosition || 'left';
-
-  const iconElement = icon ? <span className={`gui-button-icon ${icon}`}></span> : null;
 
   return (
     <div
-      className={`gui-button ${icon ? 'gui-button-with-icon' : ''} gui-button-icon-${iconPosition}`}
+      className="gui-button"
       style={{ flex: templateData.size }}
     >
-      <div className="gui-widget">
-        <button
-          type="button"
-          id={uid}
-          data-cy={`${uid}_button`}
-          onClick={onClick}
-          disabled={isDisabled}
-        >
-          {iconPosition === 'left' && iconElement}
-          {label && <span>{label}</span>}
-          {iconPosition === 'right' && iconElement}
-        </button>
-      </div>
+      <gui-button
+        uid={uid}
+        label={templateData.label as string}
+        disabled={templateData.disabled as boolean}
+        icon={templateData.icon}
+        iconPosition={templateData.iconPosition}
+        onClick={onClick}
+      />
     </div>
   );
 }
