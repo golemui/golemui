@@ -8,6 +8,7 @@ export class GuiButton extends LitElement {
   @property({ type: String }) label: string | undefined = undefined;
   @property({ type: Boolean }) disabled: boolean | undefined = false;
   @property({ type: String }) icon: string | undefined = undefined;
+  @property({ type: String }) variant: 'filled' | 'outlined' | 'link' = 'filled';
   @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
 
   override createRenderRoot() {
@@ -21,6 +22,8 @@ export class GuiButton extends LitElement {
     const buttonClasses = {
       'gui-button-with-icon': !!icon,
       [`gui-button-icon-${iconPosition}`]: true,
+      'gui-button--outlined': this.variant === 'outlined',
+      'gui-button--link': this.variant === 'link',
     };
 
     const iconTemplate = icon

@@ -52,6 +52,7 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
         .uid=${this.widget.uid}
         .label=${this.adapter.templateData.label}
         ?disabled=${this.adapter.templateData.disabled === true}
+        .variant=${this.adapter.templateData.variant}
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
         @click=${() => this.adapter.click()}

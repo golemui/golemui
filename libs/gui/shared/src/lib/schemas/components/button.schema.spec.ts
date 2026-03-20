@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
 import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
 import { golemForm } from '../../golem-form';
+import { ButtonProps } from '@golemui/gui-shared';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/button.schema.json';
 
@@ -29,7 +30,6 @@ describe('Button schema validation', () => {
           {
             kind: 'action',
             type: 'button',
-            props: {},
           },
         ],
       });
@@ -52,6 +52,27 @@ describe('Button schema validation', () => {
               variant: 'filled',
               icon: 'settings_icon',
               iconPosition: 'right',
+            },
+          },
+        ],
+      });
+
+      const validButton = formDef.form.children[0];
+      const isValid = validate(validButton);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, validButton);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate link variant', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            kind: 'action',
+            type: 'button',
+            props: {
+              variant: 'link',
             },
           },
         ],

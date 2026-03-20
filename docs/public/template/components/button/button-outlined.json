@@ -1,0 +1,13 @@
+{
+  "form": [
+    {
+      "uid": "button_outlined",
+      "kind": "action",
+      "type": "button",
+      "label": "Click Me",
+      "props": {
+        "variant": "outlined"
+      }
+    }
+  ]
+}

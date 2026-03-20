@@ -194,7 +194,7 @@ type GuiAlert<FormType extends Record<string, any>, States extends string> = Cor
 type GuiButton<FormType extends Record<string, any>, States extends string> = Core.ActionWidget<
   States,
   FormType,
-  never
+  Props.ButtonProps
 > & { type: 'button' };
 
 type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
