@@ -130,7 +130,16 @@ export type Middleware<S, A> = (
  * When in an errored state, the form is considered non-operational
  * until the error is cleared.
  */
-export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
+export type FormHealth =
+  | { status: 'ok' }
+  | {
+      status: 'errored';
+      message: string;
+      /**
+       * error codes below 1000 are reserved for the core
+       */
+      code: number;
+    };
 
 /**
  * Represents a form widget whose value is derived from a computation

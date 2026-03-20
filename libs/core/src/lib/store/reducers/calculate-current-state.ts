@@ -1,5 +1,6 @@
 import { compile, parse } from 'subscript/justin';
 import { FormHealth, State } from '../model';
+import { errorCodes } from '../../errors';
 
 export const calculateCurrentState = (state: State): State => {
   let stateExpressions = state.formDef.states;
@@ -22,24 +23,32 @@ export const calculateCurrentState = (state: State): State => {
         const expression = stateExpressions[stateName];
         const ast = parse(expression);
         const evaluate = compile(ast);
-        const result = evaluate({
-          $form: state.data,
-          $log: (value: any, label?: string) => {
-            if (label) {
-              console.log(label, value);
-            } else {
-              console.log(value);
-            }
-            return value;
-          },
-        });
+        let result: boolean;
+        try {
+          result = evaluate({
+            $form: state.data,
+            $log: (value: any, label?: string) => {
+              if (label) {
+                console.log(label, value);
+              } else {
+                console.log(value);
+              }
+              return value;
+            },
+          });
+        } catch {
+          result = false;
+        }
         return result === true ? stateName : undefined;
       })
       .filter((stateName) => stateName !== undefined);
-  } catch (err: unknown) {
+  } catch (err) {
+    const error = err as Error;
+    const code = errorCodes.calculateCurrentStateError;
     formHealth = {
       status: 'errored',
-      message: (err as Error).message,
+      message: `[${code}] ${error.message}`,
+      code,
     };
   }
 
