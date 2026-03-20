@@ -7,7 +7,7 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 /** @type {import('vite').UserConfig} */
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/text2form',
+  cacheDir: '../../node_modules/.vite/apps/form-studio',
   plugins: [angular(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
   resolve: {
     alias: {
@@ -15,7 +15,7 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: 'text2form',
+    name: 'form-studio',
     watch: false,
     globals: true,
     environment: 'jsdom',
@@ -23,7 +23,7 @@ export default defineConfig(() => ({
     setupFiles: ['src/test-setup.ts'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/apps/text2form',
+      reportsDirectory: '../../coverage/apps/form-studio',
       provider: 'v8' as const,
     },
   },

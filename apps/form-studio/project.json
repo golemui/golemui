@@ -1,28 +1,28 @@
 {
-  "name": "text2form",
+  "name": "form-studio",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/text2form/src",
+  "sourceRoot": "apps/form-studio/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/text2form",
-        "index": "apps/text2form/src/index.html",
-        "main": "apps/text2form/src/main.ts",
+        "outputPath": "dist/apps/form-studio",
+        "index": "apps/form-studio/src/index.html",
+        "main": "apps/form-studio/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "apps/text2form/tsconfig.app.json",
+        "tsConfig": "apps/form-studio/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/text2form/public"
+            "input": "apps/form-studio/public"
           }
         ],
-        "styles": ["libs/gui/components/src/styles/index.scss", "apps/text2form/src/styles.scss"]
+        "styles": ["libs/gui/components/src/styles/index.scss", "apps/form-studio/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -56,10 +56,10 @@
       },
       "configurations": {
         "production": {
-          "buildTarget": "text2form:build:production"
+          "buildTarget": "form-studio:build:production"
         },
         "development": {
-          "buildTarget": "text2form:build:development"
+          "buildTarget": "form-studio:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -67,7 +67,7 @@
     "extract-i18n": {
       "executor": "@angular/build:extract-i18n",
       "options": {
-        "buildTarget": "text2form:build"
+        "buildTarget": "form-studio:build"
       }
     },
     "lint": {
@@ -77,9 +77,9 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "text2form:build",
+        "buildTarget": "form-studio:build",
         "port": 5200,
-        "staticFilePath": "dist/apps/text2form/browser",
+        "staticFilePath": "dist/apps/form-studio/browser",
         "spa": true
       }
     }
