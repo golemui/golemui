@@ -127,7 +127,7 @@ export class TabsElement extends LitElement implements Core.WithWidget {
                 `,
               )
             : nothing}
-          <li role="presentation" id="end-sentinel" class="gui-sentinel"></li>
+          <li role="presentation" id="end-sentinel" class="gui-sentinel gui-sentinel__end"></li>
         </ul>
       </nav>
       ${repeat(
