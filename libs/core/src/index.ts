@@ -14,6 +14,7 @@ export * from './lib/store/selectors';
 export * from './lib/context';
 
 export * from './lib/shared';
+export * from './lib/errors';
 
 export * from './lib/middleware';
 

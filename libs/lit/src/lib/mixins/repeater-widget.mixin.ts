@@ -33,18 +33,26 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
         const element = new component();
 
         const repeaterIndexes = [...(this.parentRepeaterIndexes ?? []), repeaterIndex];
-        new ContextProvider(element, { context: repeaterIndexesContext, initialValue: repeaterIndexes });
+        new ContextProvider(element, {
+          context: repeaterIndexesContext,
+          initialValue: repeaterIndexes,
+        });
 
-        element.widget = Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), repeaterIndexes);
+        element.widget = Core.makeRepeaterItemConfig(
+          Core.cloneObject(this.widget),
+          repeaterIndexes,
+        );
         element.id = `host-${this.widget.uid}`;
         this.replaceWith(element);
       } catch (err) {
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
+        const code = Core.errorCodes.widgetCouldNotBeLoaded;
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Widget "${this.widget.type}" could not be loaded`,
+              message: `[${code}] Widget "${this.widget.type}" could not be loaded`,
+              code,
             },
             bubbles: true,
             composed: true,
