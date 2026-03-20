@@ -82,7 +82,7 @@ export class GuiTextarea extends LitElement {
         'gui-widget-icon': true,
         [templateData.icon]: true,
       };
-      textareaIcon = html`<span class=${classMap(classes)}></span>`;
+      textareaIcon = html`<span class=${classMap(classes)} data-icon=${templateData.icon}></span>`;
     }
 
     // Counter

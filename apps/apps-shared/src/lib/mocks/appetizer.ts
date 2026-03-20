@@ -168,9 +168,9 @@ const form = defineForm({
       },
       props: {
         minDate: minDate,
-        icon: 'material-icons material-icons-calendar_month',
-        prevMonthIcon: 'material-icons material-icons-chevron_left',
-        nextMonthIcon: 'material-icons material-icons-chevron_right',
+        icon: 'calendar_month',
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
         prevMonthAriaLabel: {
           key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
           default: 'Previous Month',

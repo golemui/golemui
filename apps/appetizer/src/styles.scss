@@ -28,31 +28,14 @@ lit-root {
 }
 
 // Custom icons
-.material-icons {
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
   font-family: 'Material Icons';
-  font-size: medium;
-
-  &-phone_callback::before {
-    content: 'phone_callback';
-  }
-
-  &-alternate_email::before {
-    content: 'alternate_email';
-  }
-
-  &-calendar_month::before {
-    content: 'calendar_month';
-  }
-
-  &-chevron_right::before {
-    content: 'chevron_right';
-    font-size: 1.8rem;
-  }
-
-  &-chevron_left::before {
-    content: 'chevron_left';
-    font-size: 1.8rem;
-  }
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
 }
 
 // List Item Renderer

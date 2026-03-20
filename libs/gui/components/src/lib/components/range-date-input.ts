@@ -119,7 +119,7 @@ export class GuiRangeDateInput extends LitElement {
 
       <div class="gui-widget">
         <div class="gui-range-date-input ${this.icon ? 'gui-range-date-input--icon' : ''}" role="group" aria-label=${this.label ?? 'Date range input'}>
-          ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
+          ${this.icon ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>` : nothing}
           ${pills.length > 0
             ? html`<div class=${classMap({
                 'gui-range-date-input__pills-wrapper': true,

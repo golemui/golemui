@@ -20,8 +20,8 @@
         "default": "Password"
       },
       "props": {
-        "showPasswordIcon": "material-icons material-icons-visibility",
-        "hidePasswordIcon": "material-icons material-icons-visibility_off"
+        "showPasswordIcon": "visibility",
+        "hidePasswordIcon": "visibility_off"
       }
     }
   ]

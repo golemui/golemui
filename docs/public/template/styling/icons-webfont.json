@@ -4,8 +4,8 @@
       "uid": "",
       "kind": "input",
       "type": "textinput",
-      "path": "phoneNumber",
-      "label": "Phone Number",
+      "path": "phone",
+      "label": "Phone",
       "props": {
         "icon": "phone_callback"
       }
@@ -18,6 +18,15 @@
       "label": "Email",
       "props": {
         "icon": "alternate_email"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "props": {
+        "icon": "save"
       }
     }
   ]

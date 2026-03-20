@@ -9,8 +9,8 @@
       "props": {
         "addLabel": "Add Guest",
         "removeLabel": "Remove",
-        "addButtonIcon": "material-icons material-icons-add",
-        "removeButtonIcon": "material-icons material-icons-remove",
+        "addButtonIcon": "add",
+        "removeButtonIcon": "remove",
         "template": {
           "kind": "layout",
           "type": "flex",

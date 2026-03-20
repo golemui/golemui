@@ -3,8 +3,7 @@
 @use '../../../libs/gui/components/src/styles/themes/clay';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-[dir="rtl"] .material-icons,
-[dir="rtl"] .material-symbols-outlined {
+[dir="rtl"] .gui-widget-icon {
   direction: rtl;
 }
 
@@ -68,67 +67,37 @@ lit-root {
 }
 
 // Custom icons
-.material-icons {
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
   font-family: 'Material Icons';
-  font-size: medium;
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
 
-  &-phone_callback::before {
-    content: 'phone_callback';
-  }
+// SVG Icons
+.gui-widget-icon.my-custom-icon::before {
+  content: '';
+}
+.gui-widget-icon.my-custom-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23aaa' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
-  &-alternate_email::before {
-    content: 'alternate_email';
-  }
+// Image Icons
+.gui-widget-icon.my-logo-icon::before {
+  content: '';
+}
 
-  &-calendar_month::before {
-    content: 'calendar_month';
-  }
-
-  &-chevron_right::before {
-    content: 'chevron_right';
-    font-size: 1.8rem;
-  }
-
-  &-chevron_left::before {
-    content: 'chevron_left';
-    font-size: 1.8rem;
-  }
-
-  &-password::before {
-    content: 'password';
-    font-size: 1.2rem;
-  }
-
-  &-visibility::before {
-    content: 'visibility';
-    font-size: 1.2rem;
-  }
-
-  &-visibility_off::before {
-    content: 'visibility_off';
-    font-size: 1.2rem;
-  }
-
-  &-attach_money::before {
-    content: 'attach_money';
-    font-size: 1.2rem;
-  }
-
-  &-edit_note::before {
-    content: 'edit_note';
-  }
-
-  &-save::before {
-    content: 'save';
-  }
-
-  &-remove::before {
-    content: 'remove';
-  }
-
-  &-add::before {
-    content: 'add';
-  }
+.gui-widget-icon.my-logo-icon {
+  background-image: url('icons/github.png');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 // List Item Renderer

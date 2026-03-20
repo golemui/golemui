@@ -1,6 +1,14 @@
 gui-textarea {
   display: block;
 
+  .gui-widget {
+    justify-content: flex-start;
+  }
+
+  .gui-widget-icon {
+    top: var(--gui-space-1);
+  }
+
   textarea {
     &.gui-textarea--icon {
       padding-inline-start: var(--gui-space-10);

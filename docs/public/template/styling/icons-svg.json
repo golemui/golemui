@@ -1,0 +1,20 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textinput",
+      "path": "search",
+      "label": "Search",
+      "props": {
+        "icon": "my-custom-icon"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "action",
+      "type": "button",
+      "label": "Submit"
+    }
+  ]
+}

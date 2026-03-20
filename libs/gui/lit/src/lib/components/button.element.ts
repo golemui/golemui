@@ -1,13 +1,12 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { Subscription } from 'rxjs';
 import { ButtonProps } from '@golemui/gui-shared';
 
-@customElement('gui-button-action')
+@customElement('gui-button-interactive')
 export class ButtonElement extends LitElement implements Core.WithWidget {
   widget!: Core.ActionWidget;
 
@@ -48,35 +47,15 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
   }
 
   override render() {
-    const templateData = this.adapter.templateData;
-    const icon = templateData.icon;
-    const label = templateData.label;
-    const iconPosition = templateData.iconPosition || 'left';
-
-    const buttonClasses = {
-      'gui-button-with-icon': !!icon,
-      [`gui-button-icon-${iconPosition}`]: !!icon,
-    };
-
-    const iconTemplate = icon
-      ? html`<span class="gui-widget-icon gui-button-icon ${icon}" data-icon=${icon}></span>`
-      : nothing;
-
     return html`
-      <div class="gui-widget">
-        <button
-          type="button"
-          id=${this.widget.uid}
-          class=${classMap(buttonClasses)}
-          data-cy=${`${this.widget.uid}_button`}
-          @click=${() => this.adapter.click()}
-          ?disabled=${templateData.disabled === true}
-        >
-          ${iconPosition === 'left' ? iconTemplate : nothing}
-          ${label ? html`<span>${label}</span>` : nothing}
-          ${iconPosition === 'right' ? iconTemplate : nothing}
-        </button>
-      </div>
+      <gui-button
+        .uid=${this.widget.uid}
+        .label=${this.adapter.templateData.label}
+        ?disabled=${this.adapter.templateData.disabled === true}
+        .icon=${this.adapter.templateData.icon}
+        .iconPosition=${this.adapter.templateData.iconPosition}
+        @click=${() => this.adapter.click()}
+      ></gui-button>
     `;
   }
 

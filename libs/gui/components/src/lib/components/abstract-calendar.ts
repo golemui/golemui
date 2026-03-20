@@ -109,7 +109,7 @@ export abstract class AbstractCalendar extends LitElement {
               @click=${this.prevMonth}
               aria-label=${this.prevMonthAriaLabel ?? 'Previous month'}
             >
-              ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
+              ${this.prevMonthIcon ? html`<span class=${`gui-widget-icon ${this.prevMonthIcon}`} data-icon=${this.prevMonthIcon}></span>` : '<'}
             </button>
 
             <div class="gui-calendar__months-grid">
@@ -123,7 +123,7 @@ export abstract class AbstractCalendar extends LitElement {
               @click=${this.nextMonth}
               aria-label=${this.nextMonthAriaLabel ?? 'Next month'}
             >
-              ${this.nextMonthIcon ? html`<span class="${this.nextMonthIcon}"></span>` : '>'}
+              ${this.nextMonthIcon ? html`<span class=${`gui-widget-icon ${this.nextMonthIcon}`} data-icon=${this.nextMonthIcon}></span>` : '>'}
             </button>
           </div>
         </div>

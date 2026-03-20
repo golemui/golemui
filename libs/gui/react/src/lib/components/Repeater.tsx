@@ -76,7 +76,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
                 onClick={() => removeItem(value, index)}
               >
                 {templateData.removeButtonIcon && (
-                  <span className={`gui-button-icon ${templateData.removeButtonIcon}`}></span>
+                  <span className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`} data-icon={templateData.removeButtonIcon}></span>
                 )}
                 {templateData.removeLabel ?? 'Remove'}
               </button>
@@ -123,7 +123,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
           disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
         >
           {templateData.addButtonIcon && (
-            <span className={`gui-button-icon ${templateData.addButtonIcon}`}></span>
+            <span className={`gui-widget-icon gui-button-icon ${templateData.addButtonIcon}`} data-icon={templateData.addButtonIcon}></span>
           )}
           {templateData.addLabel ?? 'Add'}
         </button>

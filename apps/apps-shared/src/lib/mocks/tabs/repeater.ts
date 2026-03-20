@@ -10,8 +10,8 @@ export const repeater = (): any => ({
       path: 'repeaters.users',
       props: {
         title: 'Developer',
-        addButtonIcon: 'material-icons material-icons-person_add',
-        removeButtonIcon: 'material-icons material-icons-delete',
+        addButtonIcon: 'person_add',
+        removeButtonIcon: 'delete',
         addLabel: 'Add new developer',
         'addLabel.limitReached': `'Limit Reached, you can't add more'`,
         removeLabel: 'Delete',

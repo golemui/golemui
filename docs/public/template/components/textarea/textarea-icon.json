@@ -7,7 +7,7 @@
       "path": "comments",
       "label": "Comments",
       "props": {
-        "icon": "material-icons material-icons-edit_note",
+        "icon": "edit_note",
         "hint": "With an icon in the textarea"
       }
     }

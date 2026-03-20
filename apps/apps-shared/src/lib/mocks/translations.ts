@@ -77,8 +77,8 @@ const form = golemForm<typeof data, CustomHeadingWidget>().create({
         default: 'Select a Date',
       },
       props: {
-        prevMonthIcon: 'material-icons material-icons-chevron_left',
-        nextMonthIcon: 'material-icons material-icons-chevron_right',
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
       },
       validator: { type: 'string', required: true, format: 'date-time' },
     },

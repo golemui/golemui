@@ -11,7 +11,7 @@ body {
 .gui-widget-icon[data-icon]::before {
   content: attr(data-icon);
   font-family: 'Material Icons';
-  font-size: 24px;
+  font-size: var(--gui-font-lg);
   font-style: normal;
   font-weight: normal;
   line-height: 1;
