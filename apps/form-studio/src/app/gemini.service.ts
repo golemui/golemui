@@ -36,23 +36,43 @@ export class GeminiService {
       systemInstruction,
       generationConfig: {
         responseMimeType: 'application/json',
-      },
+        thinkingConfig: {
+          includeThoughts: true,
+        },
+      } as any,
     });
     this.chat = this.model.startChat({
       history: [],
     });
   }
 
-  async sendMessage(message: string): Promise<GolemFormDef | undefined> {
+  async sendMessage(
+    message: string,
+    onThought?: (text: string) => void,
+  ): Promise<GolemFormDef | undefined> {
     if (!this.genAI) {
       console.warn(`genAI hasn't been initialized. Restart the app and enter the API key`);
       return;
     }
-    const result = await this.chat.sendMessage(message);
-    const response = result.response.text();
-    const parsedLlmResponse = parseLlmResponse(response);
-    // console.log('response', response);
-    // console.log('parsedLlmResponse', parsedLlmResponse);
+
+    let jsonResponse = '';
+
+    const result = await this.chat.sendMessageStream(message);
+
+    for await (const chunk of result.stream) {
+      const candidate = chunk.candidates?.[0];
+      if (!candidate?.content?.parts) continue;
+
+      for (const part of candidate.content.parts) {
+        if ((part as any).thought && part.text) {
+          onThought?.(part.text);
+        } else if (part.text) {
+          jsonResponse += part.text;
+        }
+      }
+    }
+
+    const parsedLlmResponse = parseLlmResponse(jsonResponse);
     return parsedLlmResponse;
   }
 

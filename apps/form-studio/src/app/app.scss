@@ -85,6 +85,46 @@
   font-size: 0.95rem;
   line-height: 1.5;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &.thinking-bubble {
+    background-color: #1e293b;
+    border: 1px solid #475569;
+
+    .thinking-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #3b82f6;
+      margin-bottom: 8px;
+    }
+
+    .thinking-content {
+      display: block;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+}
+
+.thinking-toggle {
+  background: none;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+
+  &:hover {
+    color: #cbd5e1;
+    border-color: #64748b;
+  }
 }
 
 .chat-input-area {

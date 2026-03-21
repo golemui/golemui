@@ -6,10 +6,37 @@
       <p>Powered by GolemUI</p>
     </div>
 
-    <div class="chat-history">
-      <div *ngFor="let msg of messages" [ngClass]="['chat-message', msg.role]">
-        <div class="message-bubble">{{ msg.content }}</div>
-      </div>
+    <div class="chat-history" #chatHistory>
+      <ng-container *ngFor="let msg of messages; let i = index; let last = last">
+        @if (msg.role === 'thinking') {
+          @if (i === 0 || messages[i - 1].thinkingGroupId !== msg.thinkingGroupId) {
+          <button class="thinking-toggle" (click)="toggleThinkingGroup(msg.thinkingGroupId!)">
+            @if (collapsedGroups.has(msg.thinkingGroupId!)) {
+            Show thought process ({{ getThinkingGroupCount(msg.thinkingGroupId!) }} statements)
+            } @else {
+            Hide thought process
+            }
+          </button>
+          }
+          @if (!collapsedGroups.has(msg.thinkingGroupId!)) {
+          <div class="chat-message assistant">
+            <div class="message-bubble thinking-bubble">
+              <span class="thinking-label">
+                @if (thinking && last) {
+                <span class="spinner spinner-sm"></span>
+                }
+                Thinking
+              </span>
+              <span class="thinking-content">{{ msg.content }}</span>
+            </div>
+          </div>
+          }
+        } @else {
+        <div [ngClass]="['chat-message', msg.role]">
+          <div class="message-bubble">{{ msg.content }}</div>
+        </div>
+        }
+      </ng-container>
     </div>
 
     <div class="chat-input-area">
