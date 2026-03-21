@@ -263,7 +263,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           type="text"
           id=${this.widget.uid}
           data-cy=${`${this.widget.uid}_textinput`}
-          .value=${selectedItemValue ?? ''}
+          .value=${selectedItemValue ?? templateData.value ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
