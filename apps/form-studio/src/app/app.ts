@@ -10,13 +10,14 @@ import {
 import { FormsModule } from '@angular/forms';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
-import { golemForm } from '@golemui/gui-shared';
+import { Dependencies, golemForm } from '@golemui/gui-shared';
 import { GEMINI_INPUT_BUDGET, GeminiService } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
 import { PropertiesPanelComponent } from './design/properties-panel.component';
 import { EditorComponent } from './editor/editor.component';
 import { TokenMeterComponent } from './token-meter/token-meter.component';
+import snarkdown from 'snarkdown';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -72,6 +73,11 @@ export class App {
   ];
   protected error = '';
   protected formJson = signal(JSON.stringify(initialFormJson(), undefined, 2));
+  protected deps: Dependencies = {
+    markdown: {
+      parse: (md: string) => snarkdown(md),
+    },
+  };
   protected thinking = false;
 
   protected onJsonChange(value: string) {
