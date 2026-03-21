@@ -8,16 +8,16 @@ gui-markdown {
       display: block;
     }
     .gui-markdown__toolbar {
-      width: calc(50% - (var(--gui-space-3) * 2));
+      width: 50%;
     }
     textarea {
-      width: calc(50% - (var(--gui-space-3) * 2));
+      width: 50%;
     }
   }
 
   .gui-widget {
     display: inline-flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
     gap: 0;
     overflow: hidden;
@@ -53,7 +53,7 @@ gui-markdown {
     textarea {
       border-radius: 0;
       border: 0;
-      padding-top: var(--gui-space-12);
+      padding: var(--gui-space-2) var(--gui-space-3);
       width: 100%;
       resize: vertical;
     }
@@ -156,12 +156,11 @@ gui-markdown {
       width: calc(100% - var(--gui-space-3) * 2);
     }
     .gui-markdown__toolbar {
-      width: calc(100% - var(--gui-space-3) * 2);
+      width: 100%;
       z-index: 1;
     }
     textarea {
       margin-inline-start: -100%;
-      padding: var(--gui-space-12) 0 var(--gui-space-3);
     }
   }
 }
