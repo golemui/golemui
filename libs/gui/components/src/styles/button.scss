@@ -8,7 +8,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    height: 43px;
+    height: 42px;
     background: var(--gui-intent-primary);
     color: var(--gui-intent-primary-text);
     border-radius: var(--gui-radius-md);
@@ -53,6 +53,38 @@
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+    }
+
+    &.gui-button--outlined {
+      background: transparent;
+      border: 1px solid var(--gui-intent-primary);
+      color: var(--gui-intent-primary);
+
+      &:hover {
+        background: color-mix(in srgb, var(--gui-intent-primary) 10%, transparent);
+      }
+
+      &:active {
+        background: color-mix(in srgb, var(--gui-intent-primary) 20%, transparent);
+      }
+    }
+
+    &.gui-button--link {
+      background: transparent;
+      border: 0;
+      color: var(--gui-intent-primary);
+      padding: 0;
+      border-radius: 0;
+
+      &:hover {
+        background: transparent;
+        text-decoration: underline;
+      }
+
+      &:active {
+        background: transparent;
+        color: var(--gui-intent-primary-active);
+      }
     }
   }
 }

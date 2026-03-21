@@ -29,7 +29,6 @@ describe('Button schema validation', () => {
           {
             kind: 'action',
             type: 'button',
-            props: {},
           },
         ],
       });
@@ -52,6 +51,27 @@ describe('Button schema validation', () => {
               variant: 'filled',
               icon: 'settings_icon',
               iconPosition: 'right',
+            },
+          },
+        ],
+      });
+
+      const validButton = formDef.form.children[0];
+      const isValid = validate(validButton);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, validButton);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate link variant', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            kind: 'action',
+            type: 'button',
+            props: {
+              variant: 'link',
             },
           },
         ],

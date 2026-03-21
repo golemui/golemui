@@ -9,6 +9,7 @@ import { Aside, Code } from '@astrojs/starlight/components';
 import Demo from '../../../../src/components/landing/Demo.astro';
 import iconsWebfontJson from '../../../../public/template/styling/icons-webfont.json?raw';
 import iconsSvgJson from '../../../../public/template/styling/icons-svg.json?raw';
+import iconsImageJson from '../../../../public/template/styling/icons-image.json?raw';
 
 GolemUI components accept an `icon` prop and render it as a `<span>` element with predictable CSS hooks. GolemUI does not prescribe any specific icon library — it provides the HTML structure, and you bring the CSS to render whatever icon you want.
 
@@ -151,14 +152,7 @@ Use `background-image` with image URLs (PNG, SVG files, etc.) — the same CSS t
 
 Then use it in your form config:
 
-```json
-{
-  "props": {
-    "icon": "my-logo-icon"
-  }
-}
-```
-
+<Code code={iconsImageJson} lang="json" title="icons-image.json" />
 <Demo src="/template/index.html?form=template/styling/icons-image.json" />
 
 ## Mixing icon methods

@@ -11,6 +11,8 @@ import buttonDisabledJson from '../../../../../public/template/components/button
 import buttonIconJson from '../../../../../public/template/components/button/button-icon.json?raw';
 import buttonIconRightJson from '../../../../../public/template/components/button/button-icon-right.json?raw';
 import buttonIconOnlyJson from '../../../../../public/template/components/button/button-icon-only.json?raw';
+import buttonOutlinedJson from '../../../../../public/template/components/button/button-outlined.json?raw';
+import buttonLinkJson from '../../../../../public/template/components/button/button-link.json?raw';
 import buttonAnatomyHtml from '../../../../../public/template/components/button/button-anatomy.html?raw';
 export const configJson = 'button.json';
 export const anatomy = 'button-anatomy.html';
@@ -26,12 +28,31 @@ Button components are [Interactive Fields](/components-reference/interactive-fie
 
 Use these `props` to customize your Button component.
 
-| prop           | type                | description                                                                |
-| -------------- | ------------------- | -------------------------------------------------------------------------- |
-| `label`        | string              | The text displayed inside the button (Optional if icon is present)         |
-| `disabled`     | boolean             | Whether the button is interactive or not                                   |
-| `icon`         | string              | Optional CSS class for an icon (Implementation may vary by framework)      |
-| `iconPosition` | `'left' \| 'right'` | **Optional**. Position of the icon relative to the label (Default: `left`) |
+| prop           | type                                  | description                                                                |
+| -------------- | ------------------------------------- | -------------------------------------------------------------------------- |
+| `label`        | string                                | The text displayed inside the button (Optional if icon is present)         |
+| `disabled`     | boolean                               | Whether the button is interactive or not                                   |
+| `variant`      | `'filled' \| 'outlined' \| 'link'`    | **Optional**. Button style variant (Default: `filled`)                     |
+| `icon`         | string                                | Optional CSS class for an icon (Implementation may vary by framework)      |
+| `iconPosition` | `'left' \| 'right'`                   | **Optional**. Position of the icon relative to the label (Default: `left`) |
+
+### Variants
+
+Buttons support three style variants: `filled` (default), `outlined`, and `link`.
+
+#### Outlined
+
+<Code code={buttonOutlinedJson} lang="js" title="button-outlined.json" />
+<Demo
+  src="/template/index.html?form=template/components/button/button-outlined.json"
+/>
+
+#### Link
+
+<Code code={buttonLinkJson} lang="js" title="button-link.json" />
+<Demo
+  src="/template/index.html?form=template/components/button/button-link.json"
+/>
 
 ### Icons
 

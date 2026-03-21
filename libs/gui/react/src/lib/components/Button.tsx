@@ -16,6 +16,7 @@ export function Button(widgetInstance: Core.WithWidget) {
         uid={uid}
         label={templateData.label as string}
         disabled={templateData.disabled as boolean}
+        variant={templateData.variant}
         icon={templateData.icon}
         iconPosition={templateData.iconPosition}
         onClick={onClick}
