@@ -38,7 +38,31 @@ export class WidgetMapper {
     def: Record<string, any>,
     itemType: GslItemType,
   ): NonFunctionWidget<StateKeys, FormData> {
-    return getItemTypeHandler(itemType).mapToWidget<StateKeys, FormData>(def);
+    const widget = getItemTypeHandler(itemType).mapToWidget<StateKeys, FormData>(def);
+    return this.applyBaseWidgetFields(widget, def);
+  }
+
+  /**
+   * Injects BaseWidget-level fields that all widget types share.
+   * Centralized here so individual mappers don't need to repeat the pattern.
+   */
+  private applyBaseWidgetFields<
+    StateKeys extends UiState = never,
+    FormData extends Record<string, any> = any,
+  >(
+    widget: NonFunctionWidget<StateKeys, FormData>,
+    def: Record<string, any>,
+  ): NonFunctionWidget<StateKeys, FormData> {
+    if (def['size'] != null) {
+      (widget as any).size = def['size'];
+    }
+    if (def['defaultValue'] != null && (widget as any).kind === 'input') {
+      (widget as any).defaultValue = def['defaultValue'];
+    }
+    if (def['on'] != null) {
+      (widget as any).on = def['on'];
+    }
+    return widget;
   }
 }
 

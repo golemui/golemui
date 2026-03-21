@@ -1,6 +1,6 @@
 import {
-  GslLeafSelector,
   FormConfig,
+  GslLeafSelector,
   GslSelector,
   GslSelectorsInput,
 } from './dx.domain';
@@ -44,18 +44,12 @@ export class SelectorNormalizer {
     return gslSelectors;
   }
 
-  extractFormConfig(selectors: GslSelector[]): FormConfig {
-    let defaults: FormConfig = {
+  extractFormConfig(): FormConfig {
+    return {
       suppressAutomaticStack: false,
       suppressAutomaticSubmit: false,
       onSubmit: (data: any) => console.log('Form submitted:', data),
     };
-    for (const sel of selectors) {
-      if (sel.kind === 'aggregated' && sel.formConfig) {
-        defaults = { ...defaults, ...sel.formConfig };
-      }
-    }
-    return defaults;
   }
 }
 

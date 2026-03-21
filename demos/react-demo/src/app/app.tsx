@@ -2,39 +2,57 @@ import * as React from '@golemui/react';
 import { useState } from 'react';
 import DemoFormDisplay from '../components/DemoFormDisplay';
 import {
-  // Chapter 1: Your First Form
+  // Chapter 1: Getting Started
   fourLinerDemo,
   moreWidgetsDemo,
   customFieldsDemo,
   layoutsDemo,
   buttonsDemo,
+  // Chapter 2: Input Widgets
   moreInputTypesDemo,
   selectAndRadioDemo,
-  tabsAndListDemo,
-  alertDemo,
   datePickerDemo,
   dropdownDemo,
-  accordionDemo,
-  repeaterDemo,
-  nestedRepeaterDemo,
   markdownDemo,
   rangeDateInputDemo,
   rangeDatePickerDemo,
+  alertDemo,
+  widgetFieldPlumbingDemo,
+  // Chapter 3: Compound Widgets
+  tabsAndListDemo,
+  accordionDemo,
+  repeaterDemo,
+  nestedRepeaterDemo,
+  // Chapter 4: Custom Widgets
   customDisplayDemo,
   customInputDemo,
   customActionDemo,
-  // Chapter 2: Making It Dynamic
-  dynamicInputDemo,
-  dynamicButtonDemo,
-  dynamicDisplayDemo,
-  dynamicCalendarTextareaDemo,
-  // Chapter 3: Selectors
+  // Chapter 5: Selectors
   globalConfigDemo,
   decoratorOverridesDemo,
   tagsDemo,
   byIdAndByTypeDemo,
   runtimePromotionDemo,
-  // Chapter 4: Showcase
+  // Chapter 6: Events
+  onChangeCascadingSelectsDemo,
+  onLoadInitializationDemo,
+  onFilterDropdownDemo,
+  onChangeLayoutDemo,
+  // Chapter 7: Dynamic
+  dynamicInputDemo,
+  dynamicButtonDemo,
+  dynamicDisplayDemo,
+  dynamicCalendarTextareaDemo,
+  // Chapter 8: States
+  perWidgetOverridesDemo,
+  visibilityWithStatesDemo,
+  inlineWhenDemo,
+  hierarchicalStatesDemo,
+  gslStatesDemo,
+  eventRegistrationDemo,
+  rpgCharacterCreatorDemo,
+  flightBookingDemo,
+  // Chapter 9: Showcase
   completeFormDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
@@ -48,39 +66,57 @@ export interface FormData {
 
 // Register all forms
 formRegistry.registerAll([
-  // Chapter 1: Your First Form
+  // Chapter 1: Getting Started
   fourLinerDemo,
   moreWidgetsDemo,
   customFieldsDemo,
   layoutsDemo,
   buttonsDemo,
+  // Chapter 2: Input Widgets
   moreInputTypesDemo,
   selectAndRadioDemo,
-  tabsAndListDemo,
-  alertDemo,
   datePickerDemo,
   dropdownDemo,
-  accordionDemo,
-  repeaterDemo,
-  nestedRepeaterDemo,
   markdownDemo,
   rangeDateInputDemo,
   rangeDatePickerDemo,
+  alertDemo,
+  widgetFieldPlumbingDemo,
+  // Chapter 3: Compound Widgets
+  tabsAndListDemo,
+  accordionDemo,
+  repeaterDemo,
+  nestedRepeaterDemo,
+  // Chapter 4: Custom Widgets
   customDisplayDemo,
   customInputDemo,
   customActionDemo,
-  // Chapter 2: Making It Dynamic
-  dynamicInputDemo,
-  dynamicButtonDemo,
-  dynamicDisplayDemo,
-  dynamicCalendarTextareaDemo,
-  // Chapter 3: Selectors
+  // Chapter 5: Selectors
   globalConfigDemo,
   decoratorOverridesDemo,
   tagsDemo,
   byIdAndByTypeDemo,
   runtimePromotionDemo,
-  // Chapter 4: Showcase
+  // Chapter 6: Events
+  onChangeCascadingSelectsDemo,
+  onLoadInitializationDemo,
+  onFilterDropdownDemo,
+  onChangeLayoutDemo,
+  // Chapter 7: Dynamic
+  dynamicInputDemo,
+  dynamicButtonDemo,
+  dynamicDisplayDemo,
+  dynamicCalendarTextareaDemo,
+  // Chapter 8: States
+  perWidgetOverridesDemo,
+  visibilityWithStatesDemo,
+  inlineWhenDemo,
+  hierarchicalStatesDemo,
+  gslStatesDemo,
+  eventRegistrationDemo,
+  rpgCharacterCreatorDemo,
+  flightBookingDemo,
+  // Chapter 9: Showcase
   completeFormDemo,
 ]);
 
@@ -105,6 +141,7 @@ export function App() {
           formKey={entry.key}
           showingSingleForm={true}
           formSelectors={entry.formSelectors}
+          formConfig={entry.formConfig}
         />
       );
     }
@@ -158,6 +195,7 @@ function CategoryGroupedDemos() {
                   formKey={entry.key}
                   showingSingleForm={false}
                   formSelectors={entry.formSelectors}
+                  formConfig={entry.formConfig}
                 />
               ))}
             </div>

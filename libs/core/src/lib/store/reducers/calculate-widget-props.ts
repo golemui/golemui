@@ -223,7 +223,8 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
       ((property as string) === 'disabled' || (property as string) === 'readonly') &&
       hasWhen(propValue)
     ) {
-      propValue = widgetFlags[derivedWidget.current.uid][property as 'disabled' | 'readonly'];
+      const flags = widgetFlags[derivedWidget.current.uid];
+      propValue = flags ? flags[property as 'disabled' | 'readonly'] : false;
     }
     set(derivedWidget.current, dotPath, propValue);
   }

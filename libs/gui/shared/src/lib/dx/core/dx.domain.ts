@@ -1,4 +1,4 @@
-import { FunctionWidgetParams } from '@golemui/core';
+import { FunctionWidgetParams, ValidateOn } from '@golemui/core';
 import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
 import { Dependencies } from '../../shared';
 
@@ -61,6 +61,8 @@ export interface GslLeafSelector {
   selectorType: GslItemType;
   matcher: (decorator: any) => boolean;
   config: GslLeafConfig;
+  /** When set by `_gslStates`, config is applied as state-suffixed overrides. */
+  targetState?: string;
 }
 
 // ═══════════════════════════════════════════════════
@@ -73,13 +75,25 @@ export interface FormConfig {
   onSubmit?: (data: any) => void;
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
+  validateOn?: ValidateOn;
+  states?: Record<string, string>;
 }
+
+/**
+ * Public-facing form config type for `processDxFacade`'s third argument.
+ * Generic over state keys — TypeScript enforces that every declared state name
+ * has a corresponding expression.
+ *
+ * Usage: `processDxFacade<typeof states[number], FormData>(defs, selectors, formConfig)`
+ */
+export type DxFormConfig<S extends string = string> = Omit<FormConfig, 'states'> & {
+  states?: Record<S, string>;
+};
 
 export interface GslAggregatedSelector {
   kind: 'aggregated';
   matcher: GslMatcher;
   children: GslLeafSelector[];
-  formConfig?: FormConfig;
 }
 
 // ═══════════════════════════════════════════════════

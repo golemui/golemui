@@ -1,4 +1,5 @@
 import * as Core from '@golemui/core';
+import { ValidateOn } from '@golemui/core';
 import { ValidGuiShortcut } from './core/dx.domain';
 import { DxCommonFields, DxInternalFields } from './core/dxBase.types';
 import { DxRuntimeParams } from './core/dxUtilityTypes';
@@ -37,6 +38,7 @@ export interface DxResult<
   events?: FormEvents;
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
+  validateOn?: ValidateOn;
 }
 
 // ═══════════════════════════════════════════════════
@@ -44,6 +46,7 @@ export interface DxResult<
 // ═══════════════════════════════════════════════════
 
 export type {
+  DxEventHandler,
   DxInternalFields,
   DxCommonFields,
   DxInputBase,

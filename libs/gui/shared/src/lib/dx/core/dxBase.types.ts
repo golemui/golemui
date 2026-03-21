@@ -2,6 +2,26 @@
 // DX Base Types — public and internal decorator bases
 // ═══════════════════════════════════════════════════
 
+import type { FormEvent } from '@golemui/core';
+
+/**
+ * DX-enriched FormEvent. Extends the core FormEvent with `update()` — the
+ * recommended way for DX event handlers to push widget property changes.
+ *
+ * `update({ path: 'widget', options: [...] })` translates to OVERRIDE_WIDGET_PROP
+ * dispatches under the hood. `callback` is also available for raw/backward-compat use.
+ */
+export type DxFormEvent = FormEvent & {
+  update: (arg: { path: string; [prop: string]: any }) => void;
+};
+
+/**
+ * Event handler type for DX event properties.
+ * - Function: handler invoked with a DxFormEvent (use event.update to push widget changes).
+ * - String: pass-through event name for host-managed dispatch.
+ */
+export type DxEventHandler = string | ((event: DxFormEvent) => void);
+
 /**
  * INTERNAL decorator fields — used by the pipeline, NOT by form authors.
  * Contains fields that the pipeline needs but users should never set.
@@ -12,11 +32,23 @@ export interface DxInternalFields {
 }
 
 /**
+ * A `when` condition tuple: `[expression, overrideObject]`.
+ * Single or array form accepted on decorators.
+ */
+export type DxWhenTuple = [string, Record<string, any>];
+export type DxWhenCondition = DxWhenTuple | DxWhenTuple[];
+
+/**
  * User-settable common fields available on ALL decorator types.
  */
 export interface DxCommonFields {
   uid?: string;
   tags?: string[];
+  size?: number;
+  /** Per-state property overrides. Keys are state names (use `$` for hierarchy). */
+  states?: Record<string, Record<string, any>>;
+  /** Inline condition: `[expr, overrides]` or `[[expr, overrides], ...]`. */
+  when?: DxWhenCondition;
 }
 
 /**
@@ -29,6 +61,9 @@ export interface DxInputBase {
   disabled?: boolean;
   readonly?: boolean;
   defaultValue?: unknown;
+  onLoad?: DxEventHandler;
+  onChange?: DxEventHandler;
+  onFilter?: DxEventHandler;
 }
 
 /**
@@ -41,11 +76,9 @@ export interface DxActionBase {
 
 /**
  * PUBLIC base for layout decorators.
- * Currently empty — layouts only have children (structural) and props (type-specific).
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-empty-interface
 export interface DxLayoutBase {
-  // intentionally empty
+  onChange?: DxEventHandler;
 }
 
 /**

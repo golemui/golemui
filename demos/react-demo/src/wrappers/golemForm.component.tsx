@@ -3,7 +3,7 @@ import * as Core from '@golemui/core';
 import { FormComponent } from '@golemui/gui-react';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import * as AppsShared from '@golemui/apps-shared';
-import { DxDefinitions, formDefs, FormEvents, GslSelectorsInput } from '@golemui/gui-shared';
+import { DxDefinitions, formDefs, FormEvents, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
 
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
@@ -28,19 +28,23 @@ const golemLogMiddleware: Core.Middleware<Core.State, Core.Action> =
     }
   };
 
+const devMiddlewares: Core.Middleware<Core.State, Core.Action>[] = [golemLogMiddleware];
+const prodMiddlewares: Core.Middleware<Core.State, Core.Action>[] = [];
+
 export interface GolemFormProps<T extends Record<string, any>> {
   formDef: DxDefinitions;
   formData?: T;
   onConfigProcessed?: (config: any) => void;
   formSelectors?: GslSelectorsInput;
+  formConfig?: DxFormConfig;
 }
 
 export function GolemForm<FormData extends Record<string, any> = any>(
   props: GolemFormProps<FormData>,
 ): ReactElement {
-  const { form, events, dependencies, widgetLoaders } = useMemo(
-    () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formSelectors),
-    [props.formDef, props.formSelectors],
+  const { form, events, dependencies, widgetLoaders, validateOn } = useMemo(
+    () => formDefs.processDxFacade<never, FormData>(props.formDef, props.formSelectors, props.formConfig),
+    [props.formDef, props.formSelectors, props.formConfig],
   );
 
   const fwFormDef = form;
@@ -57,22 +61,23 @@ export function GolemForm<FormData extends Record<string, any> = any>(
     }
   }, [fwFormDef]);
 
-  // Call the callback with the processed config
+  // Call the callback with the full DxResult
   useEffect(() => {
     if (props.onConfigProcessed) {
-      props.onConfigProcessed(fwFormDef);
+      props.onConfigProcessed({ form, events, dependencies, validateOn });
     }
-  }, [fwFormDef]);
+  }, [form, events, dependencies, validateOn]);
 
   return (
     <FormComponent
       formDef={fwFormDef}
       data={props.formData as Record<string, string>}
       validators={validators}
-      middlewares={import.meta.env.DEV ? [golemLogMiddleware] : []}
+      middlewares={import.meta.env.DEV ? devMiddlewares : prodMiddlewares}
       formEvent={fwFormEvents}
       dependencies={dependencies}
       widgetLoaders={widgetLoaders as any}
+      validateOn={validateOn}
     />
   );
 }

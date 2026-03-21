@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiButton, _guiButtons } from '../shortcuts/actions/guiActions.impl';
-import { _gslRoot } from '../shortcuts/scopes/gslRoot.impl';
 import { formDefs } from '../dx.service';
 
 function getRootFromFacadeResult(result: ReturnType<typeof formDefs.processDxFacade>): LayoutWidget {
@@ -71,7 +70,8 @@ describe('DX Pipeline — Actions', () => {
     it("promotes onClick: 'submit' action to #submit with submit event", () => {
       const result = formDefs.processDxFacade(
         [_guiButton({ label: 'Go', onClick: 'submit' })],
-        [_gslRoot({ suppressAutomaticSubmit: true })],
+        [],
+        { suppressAutomaticSubmit: true },
       );
       const root = getRootFromFacadeResult(result);
       const submit = root.children?.find(
@@ -85,7 +85,8 @@ describe('DX Pipeline — Actions', () => {
     it("treats uid '#submit' action as submit and wires submit event", () => {
       const result = formDefs.processDxFacade(
         [_guiButton({ uid: '#submit', label: 'Send' })],
-        [_gslRoot({ suppressAutomaticSubmit: true })],
+        [],
+        { suppressAutomaticSubmit: true },
       );
       const root = getRootFromFacadeResult(result);
       const submit = root.children?.find(
@@ -99,7 +100,8 @@ describe('DX Pipeline — Actions', () => {
       const submitFn = vi.fn();
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' }), _guiButton({ label: 'Go', onClick: 'submit' })],
-        [_gslRoot({ onSubmit: submitFn, suppressAutomaticSubmit: true })],
+        [],
+        { onSubmit: submitFn, suppressAutomaticSubmit: true },
       );
 
       expect(result.events).toBeDefined();
@@ -114,7 +116,8 @@ describe('DX Pipeline — Actions', () => {
       const submitFn = vi.fn();
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' }), _guiButton({ label: 'Custom', onClick: myFn })],
-        [_gslRoot({ onSubmit: submitFn, suppressAutomaticSubmit: true })],
+        [],
+        { onSubmit: submitFn, suppressAutomaticSubmit: true },
       );
 
       expect(result.events).toBeDefined();
@@ -147,7 +150,8 @@ describe('DX Pipeline — Actions', () => {
     it('does not inject auto-submit when suppressAutomaticSubmit is true', () => {
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' })],
-        [_gslRoot({ suppressAutomaticSubmit: true })],
+        [],
+        { suppressAutomaticSubmit: true },
       );
       const root = getRootFromFacadeResult(result);
       const hasSubmit = (root.children ?? []).some(
@@ -213,7 +217,8 @@ describe('DX Pipeline — Actions', () => {
     it('omits events from DxResult when no onClick callback is wired', () => {
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' })],
-        [_gslRoot({ suppressAutomaticSubmit: true })],
+        [],
+        { suppressAutomaticSubmit: true },
       );
 
       expect(result.form).toBeDefined();
@@ -224,7 +229,8 @@ describe('DX Pipeline — Actions', () => {
       const mockParse = (md: string) => `<p>${md}</p>`;
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' })],
-        [_gslRoot({ dependencies: { markdown: { parse: mockParse } } })],
+        [],
+        { dependencies: { markdown: { parse: mockParse } } },
       );
 
       expect(result.dependencies).toBeDefined();
@@ -234,7 +240,8 @@ describe('DX Pipeline — Actions', () => {
     it('omits dependencies from DxResult when _gslRoot has none', () => {
       const result = formDefs.processDxFacade(
         [_guiInputs({ name: 'string' })],
-        [_gslRoot({ suppressAutomaticSubmit: true })],
+        [],
+        { suppressAutomaticSubmit: true },
       );
 
       expect(result.dependencies).toBeUndefined();

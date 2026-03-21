@@ -1,18 +1,18 @@
-import { FormWidget, FunctionWidgetParams, UiState } from '@golemui/core';
+import { FormWidget, FunctionWidgetParams, NonFunctionWidget, UiState } from '@golemui/core';
 import type { GuiItemType } from './dx.domain';
-import { FormConfig, GslSelector, MergeResult, RuntimeFunction, ValidGuiShortcut } from './dx.domain';
+import { FormConfig, GslSelector, MergeResult, ResolvedSelectors, RuntimeFunction, ValidGuiShortcut } from './dx.domain';
 import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import type { GslItemType } from '../formDef.domain';
 import { SelectorResolver } from './selectorResolver.service';
 import { WidgetMerger } from './widgetMerger.service';
 import { WidgetMapper } from './widgetMapper.service';
-import { ActionIdGenerator, BuildWidgetContext, getItemTypeHandler, ItemTypeHandler, ParsedEntry } from './itemTypeRegistry';
+import { EventIdGenerator, EventRegistry, BuildWidgetContext, getItemTypeHandler, ItemTypeHandler, ParsedEntry } from './itemTypeRegistry';
+import { EventWiringService } from './eventWiring.service';
+import { StateExpansionService } from './stateExpansion.service';
 
-type OnClickRegistry = Map<string, (data: any) => void>;
-
-function createActionIdGenerator(): ActionIdGenerator {
+function createEventIdGenerator(): EventIdGenerator {
   let count = 0;
-  return { next: () => `action_${count++}` };
+  return { next: () => `event_${count++}` };
 }
 type DecoratorForMatching = DxInternalFields & DxCommonFields;
 
@@ -21,7 +21,7 @@ export interface WalkResult<
   FormData extends Record<string, any> = any,
 > {
   widgets: FormWidget<StateKeys, FormData>[];
-  onClickRegistry: OnClickRegistry;
+  eventRegistry: EventRegistry;
 }
 
 export class ItemWalker {
@@ -29,6 +29,8 @@ export class ItemWalker {
     private readonly resolver: SelectorResolver,
     private readonly merger: WidgetMerger,
     private readonly mapper: WidgetMapper,
+    private readonly eventWiring: EventWiringService,
+    private readonly stateExpansion: StateExpansionService,
   ) {}
 
   walkAndMap<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
@@ -36,24 +38,27 @@ export class ItemWalker {
     gslSelectors: GslSelector[],
     formConfig: FormConfig,
   ): WalkResult<StateKeys, FormData> {
-    const onClickRegistry: OnClickRegistry = new Map();
-    const actionIdGenerator = createActionIdGenerator();
+    const eventRegistry: EventRegistry = new Map();
+    const eventIdGenerator = createEventIdGenerator();
+    const widgetUidCounter = { value: 0 };
     const widgets = this.walkItems<StateKeys, FormData>(
       guiShortcuts,
       gslSelectors,
-      onClickRegistry,
+      eventRegistry,
       formConfig,
-      actionIdGenerator,
+      eventIdGenerator,
+      widgetUidCounter,
     );
-    return { widgets, onClickRegistry };
+    return { widgets, eventRegistry };
   }
 
   private walkItems<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     guiShortcuts: ValidGuiShortcut[],
     gslSelectors: GslSelector[],
-    onClickRegistry: OnClickRegistry,
+    eventRegistry: EventRegistry,
     formConfig: FormConfig,
-    actionIdGenerator: ActionIdGenerator,
+    eventIdGenerator: EventIdGenerator,
+    widgetUidCounter: { value: number },
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((shortcut) => {
       if (shortcut.type !== 'ITEMS') {
@@ -66,9 +71,10 @@ export class ItemWalker {
           shortcut.itemType,
           shortcut.tags,
           gslSelectors,
-          onClickRegistry,
+          eventRegistry,
           formConfig,
-          actionIdGenerator,
+          eventIdGenerator,
+          widgetUidCounter,
         );
       });
     });
@@ -82,51 +88,91 @@ export class ItemWalker {
     itemType: GuiItemType,
     parentTags: string[],
     gslSelectors: GslSelector[],
-    onClickRegistry: OnClickRegistry,
+    eventRegistry: EventRegistry,
     formConfig: FormConfig,
-    actionIdGenerator: ActionIdGenerator,
+    eventIdGenerator: EventIdGenerator,
+    widgetUidCounter: { value: number },
   ): FormWidget<StateKeys, FormData> {
     const gslItemType: GslItemType = itemType;
     // Look up the type-specific strategy for this widget type (inputs, actions, layouts, etc.).
-    // Each widget type registers a handler via defineShortcutType (see ItemTypeHandler for the contract).
-    // Examples of registrations showing different capabilities:
-    //   - inputs/register.ts   — keyed entries + sensibleDefaults (simplest full example)
-    //   - actions/register.ts  — bare entries + afterMerge hook (onClick wiring)
-    //   - layouts/register.ts  — compound entries + buildCustomWidget + getChildren (recursive)
     const handler = getItemTypeHandler(itemType);
     const parsed = handler.parseEntry(entry);
     const baseDef = this.buildBaseDef(parsed);
 
     const decoratorForMatching = this.buildDecoratorForMatching(baseDef, gslItemType, parentTags);
     const resolved = this.resolver.resolve(decoratorForMatching, gslSelectors);
-    let mergeResult = this.merger.merge(baseDef, gslItemType, resolved);
+
+    // Separate state-targeted selectors (from _gslStates) from regular ones
+    const stateLeafs = resolved.leafSelectors.filter(s => s.targetState != null);
+    const regularResolved: ResolvedSelectors = {
+      leafSelectors: resolved.leafSelectors.filter(s => s.targetState == null),
+      sensibleDefaults: resolved.sensibleDefaults,
+    };
+
+    let mergeResult = this.merger.merge(baseDef, gslItemType, regularResolved);
 
     if (handler.afterMerge) {
-      mergeResult = handler.afterMerge(mergeResult, { onClickRegistry, formConfig, actionIdGenerator });
+      mergeResult = handler.afterMerge(mergeResult, { eventRegistry, formConfig, eventIdGenerator });
     }
 
+    // Universal event wiring: onLoad, onChange, onFilter → core on: { ... }
+    mergeResult = this.eventWiring.wireInputLayoutEvents(mergeResult, eventRegistry, eventIdGenerator);
+
+    // Extract states/when from merged def, combine with _gslStates overrides
+    const { cleanedResult, stateData } = this.stateExpansion.extractFromMergeResult(mergeResult, stateLeafs);
+
+    let widget: FormWidget<StateKeys, FormData>;
     if (handler.buildCustomWidget) {
       const context = this.buildCustomWidgetContext(
-        parsed.children, gslSelectors, onClickRegistry, formConfig, actionIdGenerator,
+        parsed.children, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter,
       );
-      return this.buildCustomWidget<StateKeys, FormData>(handler, mergeResult, context);
+      widget = this.buildCustomWidget<StateKeys, FormData>(handler, cleanedResult, context);
     } else {
-      return this.mapper.mapToWidget<StateKeys, FormData>(mergeResult, gslItemType);
+      widget = this.mapper.mapToWidget<StateKeys, FormData>(cleanedResult, gslItemType);
     }
+
+    // Assign deterministic uids to widgets that don't have one.
+    // Input widgets use their path; others get a counter-based id.
+    // This ensures multiple INITIALIZE decodes produce matching uids
+    // between flatForm and the rendered form tree.
+    if (typeof widget !== 'function') {
+      const w = widget as NonFunctionWidget & { path?: string };
+      if (!w.uid) {
+        w.uid = w.path || `dx_${widgetUidCounter.value++}`;
+      }
+    }
+
+    // Apply state overrides to the core widget
+    if (this.stateExpansion.hasStateData(stateData)) {
+      if (typeof widget === 'function') {
+        const originalFn = widget;
+        widget = ((params: FunctionWidgetParams<any>) => {
+          const resolved = originalFn(params) as NonFunctionWidget;
+          return this.stateExpansion.applyToWidget(resolved, stateData, eventRegistry, eventIdGenerator);
+        }) as FormWidget<StateKeys, FormData>;
+      } else {
+        widget = this.stateExpansion.applyToWidget(
+          widget as NonFunctionWidget, stateData, eventRegistry, eventIdGenerator,
+        ) as FormWidget<StateKeys, FormData>;
+      }
+    }
+
+    return widget;
   }
 
   private buildCustomWidgetContext(
     children: ValidGuiShortcut[] | undefined,
     gslSelectors: GslSelector[],
-    onClickRegistry: OnClickRegistry,
+    eventRegistry: EventRegistry,
     formConfig: FormConfig,
-    actionIdGenerator: ActionIdGenerator,
+    eventIdGenerator: EventIdGenerator,
+    widgetUidCounter: { value: number },
   ): BuildWidgetContext {
     return {
       children,
       mapStaticDef: (def, type) => this.mapper.mapStaticDef(def, type),
       walkChildren: (c) =>
-        this.walkItems(c, gslSelectors, onClickRegistry, formConfig, actionIdGenerator),
+        this.walkItems(c, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter),
     };
   }
 

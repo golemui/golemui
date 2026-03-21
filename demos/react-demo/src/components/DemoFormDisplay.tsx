@@ -1,18 +1,20 @@
 import * as React from '@golemui/react';
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { DxDefinitions, GslSelectorsInput } from '@golemui/gui-shared';
+import { DxDefinitions, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
+import { DemoLogFn } from '../utils/demoLog';
 import { FormDisplayLayout } from './FormDisplayLayout';
 
 interface DemoFormDisplayProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: DxDefinitions | (() => DxDefinitions);
+  formDef?: DxDefinitions | ((log: DemoLogFn) => DxDefinitions);
   formDefSource?: string;
   formData?: T;
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
   formSelectors?: () => GslSelectorsInput;
+  formConfig?: () => DxFormConfig;
 }
 
 class DemoErrorBoundary extends Component<
@@ -97,6 +99,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
   formKey,
   showingSingleForm = false,
   formSelectors,
+  formConfig,
 }: DemoFormDisplayProps<T>) {
   return (
     <DemoErrorBoundary title={title} formKey={formKey} showingSingleForm={showingSingleForm}>
@@ -110,6 +113,7 @@ export function DemoFormDisplay<T extends Record<string, any>>({
         formKey={formKey}
         showingSingleForm={showingSingleForm}
         formSelectors={formSelectors}
+        formConfig={formConfig}
       />
     </DemoErrorBoundary>
   );

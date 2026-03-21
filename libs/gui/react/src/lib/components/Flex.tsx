@@ -9,6 +9,7 @@ export function Flex(widgetInstance: Core.WithWidget) {
   const { uid, children, templateData } = useLayoutWidget<FlexProps>(widget);
 
   const renderWidgets = useCallback(() => {
+    if (!children) return null;
     return children.map((widget) => (
       <WidgetRenderer key={widget.uid} widget={widget as Core.NonFunctionWidget<string>} />
     ));

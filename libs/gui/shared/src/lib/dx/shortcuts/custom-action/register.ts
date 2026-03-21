@@ -4,7 +4,7 @@ import type {
   CustomActionEntry,
   GslCustomActionConfig,
 } from './customAction.domain';
-import actionOnClickService from '../../core/actionOnClick.service';
+import eventWiringService from '../../core/eventWiring.service';
 
 export const { gsl: _gslCustomActions, gslById: _gslCustomActionById } = defineShortcutType<
   CustomActionEntry,
@@ -23,6 +23,7 @@ export const { gsl: _gslCustomActions, gslById: _gslCustomActionById } = defineS
       data: _data,
       customType: _customType,
       tags: _tags,
+      size: _size,
       props: customProps,
       ...rest
     } = def;
@@ -37,10 +38,10 @@ export const { gsl: _gslCustomActions, gslById: _gslCustomActionById } = defineS
     };
   },
   afterMerge: (mergeResult, context) =>
-    actionOnClickService.extractOnClickFromMergeResult(
+    eventWiringService.extractOnClickFromMergeResult(
       mergeResult,
-      context.onClickRegistry,
+      context.eventRegistry,
       context.formConfig,
-      context.actionIdGenerator,
+      context.eventIdGenerator,
     ),
 });

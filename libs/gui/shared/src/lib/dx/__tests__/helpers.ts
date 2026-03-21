@@ -5,7 +5,7 @@ import {
   NonFunctionWidget,
 } from '@golemui/core';
 import { DxDefinitions } from '../formDef.domain';
-import { GslSelectorsInput } from '../core/dx.domain';
+import { FormConfig, GslSelectorsInput } from '../core/dx.domain';
 import { formDefs } from '../dx.service';
 
 /**
@@ -23,8 +23,9 @@ import { formDefs } from '../dx.service';
 export function processDx(
   defs: DxDefinitions,
   selectors?: GslSelectorsInput,
+  formConfig?: FormConfig,
 ): LayoutWidget {
-  const { form } = formDefs.processDxFacade(defs, selectors);
+  const { form } = formDefs.processDxFacade(defs, selectors, formConfig);
   const root = form.form as LayoutWidget;
 
   // Canary: verify the auto-stack produced the expected root

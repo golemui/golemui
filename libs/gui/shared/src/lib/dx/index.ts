@@ -70,6 +70,7 @@ export { _gslCustomLayouts, _gslCustomLayoutById } from './shortcuts/custom-layo
 
 export { _gslRoot } from './shortcuts/scopes/gslRoot.impl';
 export { _gslTag } from './shortcuts/scopes/gslTag.impl';
+export { _gslStates } from './shortcuts/scopes/gslStates.impl';
 
 // ─── Public types ───
 
@@ -117,7 +118,7 @@ export type { CustomDisplayDecorator, GslCustomDisplayConfig } from './shortcuts
 export type { CustomInputDecorator, GslCustomInputConfig } from './shortcuts/custom-input/customInput.domain';
 export type { CustomActionDecorator, GslCustomActionConfig } from './shortcuts/custom-action/customAction.domain';
 export type { CustomLayoutDecorator, GslCustomLayoutConfig } from './shortcuts/custom-layout/customLayout.domain';
-export type { GslSelectorsInput } from './core/dx.domain';
+export type { GslSelectorsInput, FormConfig, DxFormConfig } from './core/dx.domain';
 export { formDefs } from './dx.service';
 
 // ─── Extension API (for adding custom shortcut types) ───
@@ -128,4 +129,4 @@ export { createGslSelector } from './core/dxUtilityTypes';
 export type { GslConfigBase, GslDecoratorCallback, DefOrCallback, GuiShortcutOf } from './core/dxUtilityTypes';
 export { processAutoLabel, processAutoPlaceholder } from './core/sharedSensibleDefaults.service';
 export { extractWidgetProps } from './core/dxPropsHelper';
-export type { DxCommonFields, DxInputBase, DxActionBase, DxLayoutBase, DxDisplayBase, DxInternalFields } from './core/dxBase.types';
+export type { DxCommonFields, DxInputBase, DxActionBase, DxLayoutBase, DxDisplayBase, DxInternalFields, DxFormEvent } from './core/dxBase.types';

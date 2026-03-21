@@ -25,16 +25,18 @@ export interface ParsedEntry<
   children?: ValidGuiShortcut[];
 }
 
-type OnClickRegistry = Map<string, (data: any) => void>;
+import type { FormEvent } from '@golemui/core';
 
-export interface ActionIdGenerator {
+export type EventRegistry = Map<string, (event: FormEvent) => void>;
+
+export interface EventIdGenerator {
   next(): string;
 }
 
 export interface AfterMergeContext {
-  onClickRegistry: OnClickRegistry;
+  eventRegistry: EventRegistry;
   formConfig: FormConfig;
-  actionIdGenerator: ActionIdGenerator;
+  eventIdGenerator: EventIdGenerator;
 }
 
 export interface BuildWidgetContext {

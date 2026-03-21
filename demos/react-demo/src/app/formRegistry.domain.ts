@@ -1,14 +1,16 @@
-import { DxDefinitions, GslSelectorsInput } from '@golemui/gui-shared';
+import { DxDefinitions, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
+import { DemoLogFn } from '../utils/demoLog';
 
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;
   description: string;
   category?: string;
-  formDef: DxDefinitions | (() => DxDefinitions);
+  formDef: DxDefinitions | ((log: DemoLogFn) => DxDefinitions);
   formDefSource?: string;
   formData?: T;
   warnings?: string[];
   formSelectors?: () => GslSelectorsInput;
+  formConfig?: () => DxFormConfig;
 }
 
 export type FormRegistryEntry<T extends Record<string, any> = any> = FormDemoDefinition<T> & {

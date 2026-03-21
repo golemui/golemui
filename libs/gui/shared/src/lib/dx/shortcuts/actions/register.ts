@@ -11,7 +11,7 @@ import {
   ActionEntry,
   GslActionsConfig,
 } from './actions.domain';
-import actionOnClickService from '../../core/actionOnClick.service';
+import eventWiringService from '../../core/eventWiring.service';
 
 function mapToWidget<
   StateKeys extends UiState = never,
@@ -26,6 +26,7 @@ function mapToWidget<
     data: _data,
     type: _type,
     tags: _tags,
+    size: _size,
     ...buttonProps
   } = def;
   return {
@@ -45,10 +46,10 @@ export const { gsl: _gslActions, gslById: _gslActionById } =
     entryShape: 'bare',
     mapToWidget,
     afterMerge: (mergeResult, context) =>
-      actionOnClickService.extractOnClickFromMergeResult(
+      eventWiringService.extractOnClickFromMergeResult(
         mergeResult,
-        context.onClickRegistry,
+        context.eventRegistry,
         context.formConfig,
-        context.actionIdGenerator,
+        context.eventIdGenerator,
       ),
   });

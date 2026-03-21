@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import GolemForm from '../wrappers/golemForm.component';
-import { DxDefinitions, GslSelectorsInput } from '@golemui/gui-shared';
+import { DxDefinitions, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
+import { DemoLogEntry, DemoLogFn } from '../utils/demoLog';
 import styles from './FormDisplayLayout.module.css';
 
 class FormErrorBoundary extends Component<
@@ -41,13 +42,14 @@ class FormErrorBoundary extends Component<
 export interface FormDisplayLayoutProps<T extends Record<string, any>> {
   title: string;
   description: string;
-  formDef?: DxDefinitions | (() => DxDefinitions);
+  formDef?: DxDefinitions | ((log: DemoLogFn) => DxDefinitions);
   formDefSource?: string;
   formData?: T;
   warnings?: string[];
   formKey?: string;
   showingSingleForm?: boolean;
   formSelectors?: () => GslSelectorsInput;
+  formConfig?: () => DxFormConfig;
 }
 
 export function FormDisplayLayout<T extends Record<string, any>>({
@@ -60,15 +62,31 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   formKey,
   showingSingleForm = false,
   formSelectors,
+  formConfig,
 }: FormDisplayLayoutProps<T>) {
   const [processedConfig, setProcessedConfig] = React.useState<any>(null);
   const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
+  const [logEntries, setLogEntries] = React.useState<DemoLogEntry[]>([]);
+  const logPanelRef = React.useRef<HTMLDivElement>(null);
+
+  const demoLog: DemoLogFn = React.useCallback((label: string, ...args: any[]) => {
+    setLogEntries((prev) => [
+      ...prev,
+      { timestamp: new Date().toLocaleTimeString(), label, args },
+    ]);
+  }, []);
+
+  React.useEffect(() => {
+    if (logPanelRef.current) {
+      logPanelRef.current.scrollTop = logPanelRef.current.scrollHeight;
+    }
+  }, [logEntries]);
 
   // Check if dx is a function to get source code with helper functions
   const isFormDefFunction = typeof formDef === 'function';
   const resolvedFormDef = React.useMemo(
-    () => (isFormDefFunction ? (formDef as () => DxDefinitions)() : formDef),
-    [formDef, isFormDefFunction]
+    () => (isFormDefFunction ? (formDef as (log: DemoLogFn) => DxDefinitions)(demoLog) : formDef),
+    [formDef, isFormDefFunction, demoLog]
   );
 
   // For display: show function source if it's a function, otherwise serialize the value
@@ -84,9 +102,17 @@ export function FormDisplayLayout<T extends Record<string, any>>({
     () => (formSelectors ? formSelectors() : undefined),
     [formSelectors]
   );
+  const resolvedFormConfig = React.useMemo(
+    () => (formConfig ? formConfig() : undefined),
+    [formConfig]
+  );
 
   const serializedFormSelectors = formSelectors
     ? formSelectors.toString().replace(/^\(\)\s*=>\s*/, '')
+    : '';
+
+  const serializedFormConfig = formConfig
+    ? formConfig.toString().replace(/^\(\)\s*=>\s*/, '')
     : '';
 
   const handleConfigProcessed = React.useCallback((config: any) => {
@@ -132,6 +158,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
                   formData={formData}
                   onConfigProcessed={handleConfigProcessed}
                   formSelectors={resolvedFormSelectors}
+                  formConfig={resolvedFormConfig}
                 />
               </FormErrorBoundary>
             </div>
@@ -156,6 +183,38 @@ export function FormDisplayLayout<T extends Record<string, any>>({
                 </pre>
               </div>
             )}
+
+            {serializedFormConfig && (
+              <div>
+                <h4 className={styles.sectionTitle}>formConfig</h4>
+                <pre className={styles.codeBlock}>
+                  <code>{serializedFormConfig}</code>
+                </pre>
+              </div>
+            )}
+
+            <div>
+              <h4 className={styles.sectionTitle}>Log</h4>
+              <div ref={logPanelRef} className={styles.logPanel}>
+                {logEntries.length === 0 ? (
+                  <span className={styles.logEmpty}>No log entries yet.</span>
+                ) : (
+                  logEntries.map((entry, i) => (
+                    <div key={i} className={styles.logEntry}>
+                      <span className={styles.logTimestamp}>{entry.timestamp}</span>
+                      <span className={styles.logLabel}>{entry.label}</span>
+                      {entry.args.length > 0 && (
+                        <span className={styles.logArgs}>
+                          {entry.args.map((a) =>
+                            typeof a === 'object' ? JSON.stringify(a) : String(a)
+                          ).join(' ')}
+                        </span>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
 
             {warnings && warnings.length > 0 && (
               <div className={styles.warningsContainer}>
@@ -182,12 +241,39 @@ export function FormDisplayLayout<T extends Record<string, any>>({
             className={styles.configToggle}
           >
             <span className={styles.configToggleIcon}>{isConfigExpanded ? '▼' : '▶'}</span>
-            Processed Config (console.log output)
+            DxResult (processDxFacade output)
           </button>
           {isConfigExpanded && (
-            <pre className={styles.codeBlock}>
-              <code>{serializeFormDefForDisplay(processedConfig)}</code>
-            </pre>
+            <div>
+              <h5 className={styles.sectionTitle}>form</h5>
+              <pre className={styles.codeBlock}>
+                <code>{serializeFormDefForDisplay(processedConfig.form)}</code>
+              </pre>
+              {processedConfig.events && (
+                <>
+                  <h5 className={styles.sectionTitle}>events</h5>
+                  <pre className={styles.codeBlock}>
+                    <code>{processedConfig.events.toString()}</code>
+                  </pre>
+                </>
+              )}
+              {processedConfig.dependencies && (
+                <>
+                  <h5 className={styles.sectionTitle}>dependencies</h5>
+                  <pre className={styles.codeBlock}>
+                    <code>{serializeFormDefForDisplay(processedConfig.dependencies)}</code>
+                  </pre>
+                </>
+              )}
+              {processedConfig.validateOn && (
+                <>
+                  <h5 className={styles.sectionTitle}>validateOn</h5>
+                  <pre className={styles.codeBlock}>
+                    <code>{JSON.stringify(processedConfig.validateOn)}</code>
+                  </pre>
+                </>
+              )}
+            </div>
           )}
         </div>
       )}
