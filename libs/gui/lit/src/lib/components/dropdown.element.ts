@@ -97,7 +97,18 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
   }
 
   private _onUpdateItems(e: CustomEvent) {
-    this._listItems = e.detail || [];
+    const items = e.detail || [];
+    this._listItems = items;
+
+    // Resolve selected item on initial load when a default value is set
+    if (!this._selectedItem && this.adapter.templateData.value != null) {
+      const match = items.find(
+        (item: ListItem<never>) => item.value === this.adapter.templateData.value,
+      );
+      if (match) {
+        this._selectedItem = match;
+      }
+    }
   }
 
   private _onFocusChange(e: CustomEvent) {
@@ -302,8 +313,10 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
-            const template = templateData.labelField && !templateData.itemRenderer
-              ? item.template[templateData.labelField]
+            const labelField = templateData.labelField ?? 'label';
+            const isObject = item.template !== null && typeof item.template === 'object';
+            const template = isObject && labelField && !templateData.itemRenderer
+              ? item.template[labelField]
               : item.template;
 
             return html`

@@ -229,6 +229,16 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
   protected onUpdateItems(event: Event) {
     const items = (event as CustomEvent).detail;
     this.listItems.set(items ? [...items] : []);
+
+    // Resolve selected item on initial load when a default value is set
+    if (!this.selectedItem() && this.adapter.templateData().value != null) {
+      const match = (items ?? []).find(
+        (item: ListItem<never>) => item.value === this.adapter.templateData().value,
+      );
+      if (match) {
+        this.selectedItem.set(match);
+      }
+    }
   }
 
   protected onRangeChange(event: Event) {

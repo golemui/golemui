@@ -134,8 +134,10 @@ export function List(widgetInstance: Core.WithWidget) {
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
 
-            const template = item.template && templateData.labelField && !templateData.itemRenderer
-              ? item.template[templateData.labelField]
+            const labelField = templateData.labelField ?? 'label';
+            const isObject = item.template !== null && typeof item.template === 'object';
+            const template = isObject && labelField && !templateData.itemRenderer
+              ? item.template[labelField]
               : item.template;
 
             return (

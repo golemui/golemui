@@ -97,6 +97,16 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
     const handleUpdateItems = (e: Event) => {
       const items = (e as CustomEvent).detail;
       setListItems(items ? [...items] : []);
+
+      // Resolve selected item on initial load when a default value is set
+      if (!selectedItem && value != null && items) {
+        const match = items.find(
+          (item: ListItem<never>) => item.value === value,
+        );
+        if (match) {
+          setSelectedItem(match);
+        }
+      }
     };
 
     const handleFocusChange = (e: Event) => {
@@ -332,9 +342,11 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
 
+            const labelField = templateData.labelField ?? 'label';
+            const isObject = item.template !== null && typeof item.template === 'object';
             const template =
-              templateData.labelField && !templateData.itemRenderer
-                ? item.template[templateData.labelField]
+              isObject && labelField && !templateData.itemRenderer
+                ? item.template[labelField]
                 : item.template;
 
             return (

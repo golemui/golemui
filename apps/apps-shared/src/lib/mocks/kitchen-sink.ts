@@ -108,7 +108,7 @@ const data = {
   dropdowns: {
     defaultListRenderer: 0,
     disabledList: 0,
-    customItemRenderer: 'one',
+    customItemRenderer: 'two',
   },
   lists: {
     defaultListRenderer: 0,
