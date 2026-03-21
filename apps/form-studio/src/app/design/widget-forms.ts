@@ -445,6 +445,19 @@ export function stripVisibilityRules(root: unknown): unknown {
     if (node['form']) {
       node['form'] = stripVisibilityRules(node['form']);
     }
+    // Recurse into repeater templates so nested repeaters are also processed.
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = { ...(node['props'] as Record<string, unknown>) };
+      if (props['template']) {
+        props['template'] = stripVisibilityRules(props['template']);
+      }
+      node['props'] = props;
+    }
+    // In design mode, repeaters need at least one empty item so users
+    // can interact with the inner elements.
+    if (node['type'] === 'repeater' && !node['defaultValue']) {
+      node['defaultValue'] = [{}];
+    }
     return node;
   }
   return root;
@@ -464,12 +477,24 @@ export function replaceWidgetByUid(
   if (root && typeof root === 'object') {
     const node = root as Record<string, unknown>;
     if (node['uid'] === uid) return replacement;
+    const updated: Record<string, unknown> = { ...node };
+    let changed = false;
     if (node['children']) {
-      return { ...node, children: replaceWidgetByUid(node['children'], uid, replacement) };
+      updated['children'] = replaceWidgetByUid(node['children'], uid, replacement);
+      changed = true;
     }
     if (node['form']) {
-      return { ...node, form: replaceWidgetByUid(node['form'], uid, replacement) };
+      updated['form'] = replaceWidgetByUid(node['form'], uid, replacement);
+      changed = true;
     }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = { ...props, template: replaceWidgetByUid(props['template'], uid, replacement) };
+        changed = true;
+      }
+    }
+    if (changed) return updated;
   }
   return root;
 }
@@ -498,7 +523,16 @@ export function findWidgetByUid(root: unknown, uid: string): Record<string, unkn
   }
 
   if (node['form']) {
-    return findWidgetByUid(node['form'], uid);
+    const result = findWidgetByUid(node['form'], uid);
+    if (result) return result;
+  }
+
+  if (node['props'] && typeof node['props'] === 'object') {
+    const props = node['props'] as Record<string, unknown>;
+    if (props['template']) {
+      const result = findWidgetByUid(props['template'], uid);
+      if (result) return result;
+    }
   }
 
   return null;
