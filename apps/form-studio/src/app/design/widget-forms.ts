@@ -39,13 +39,13 @@ function selectField(
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
 }
 
-function iconField(uid: string, path: string) {
+function iconField(uid: string, path: string, label = 'Icon') {
   return {
     uid,
     kind: 'input',
     type: 'dropdown',
     path,
-    label: 'Icon',
+    label,
     on: CHANGE_ON,
     props: {
       placeholder: 'Search icon...',
@@ -245,8 +245,11 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   repeater: [
+    textField('prop-title', 'title', 'Title'),
     textField('prop-addLabel', 'addLabel', 'Add Label'),
+    iconField('prop-addButtonIcon', 'addButtonIcon', 'Add Button Icon'),
     textField('prop-removeLabel', 'removeLabel', 'Remove Label'),
+    iconField('prop-removeButtonIcon', 'removeButtonIcon', 'Remove Button Icon'),
     numberField('prop-limit', 'limit', 'Limit'),
   ],
 
