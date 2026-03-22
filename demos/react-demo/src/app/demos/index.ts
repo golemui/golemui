@@ -52,9 +52,9 @@ export { visibilityWithStatesDemo } from './08_states/36_visibilityWithStates';
 export { inlineWhenDemo } from './08_states/37_inlineWhen';
 export { hierarchicalStatesDemo } from './08_states/38_hierarchicalStates';
 export { gslStatesDemo } from './08_states/39_gslStates';
-export { eventRegistrationDemo } from './08_states/40_eventRegistration';
-export { rpgCharacterCreatorDemo } from './08_states/41_rpgCharacterCreator';
-export { flightBookingDemo } from './08_states/42_flightBooking';
 
-// Chapter 9: Showcase
-export { completeFormDemo } from './09_showcase/43_completeForm';
+// Chapter 9: Real World
+export { employeeOnboardingDemo } from './09_real_world/40_employeeOnboarding';
+export { supportTicketDemo } from './09_real_world/41_supportTicket';
+export { bookingRequestDemo } from './09_real_world/42_bookingRequest';
+export { eventRegistrationDemo } from './09_real_world/43_eventRegistration';

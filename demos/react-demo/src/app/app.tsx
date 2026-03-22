@@ -49,11 +49,11 @@ import {
   inlineWhenDemo,
   hierarchicalStatesDemo,
   gslStatesDemo,
+  // Chapter 9: Real World
+  employeeOnboardingDemo,
+  supportTicketDemo,
+  bookingRequestDemo,
   eventRegistrationDemo,
-  rpgCharacterCreatorDemo,
-  flightBookingDemo,
-  // Chapter 9: Showcase
-  completeFormDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
 import styles from './app.module.css';
@@ -113,11 +113,11 @@ formRegistry.registerAll([
   inlineWhenDemo,
   hierarchicalStatesDemo,
   gslStatesDemo,
+  // Chapter 9: Real World
+  employeeOnboardingDemo,
+  supportTicketDemo,
+  bookingRequestDemo,
   eventRegistrationDemo,
-  rpgCharacterCreatorDemo,
-  flightBookingDemo,
-  // Chapter 9: Showcase
-  completeFormDemo,
 ]);
 
 export function App() {

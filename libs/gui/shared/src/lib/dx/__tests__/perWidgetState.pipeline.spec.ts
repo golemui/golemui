@@ -487,6 +487,25 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       expect(innerStack.props?.['direction.compact']).toBe('column');
     });
 
+    it('_gslStates applies direction override to _guiHorizontalStack (demo 39 pattern)', () => {
+      const root = processDx(
+        [
+          _guiHorizontalStack([
+            _guiInputs({ a: 'string', b: 'string' }),
+          ]),
+        ],
+        _gslRoot(
+          _gslStates('locked', _gslLayouts({ decorator: { direction: 'column' } })),
+        ),
+        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+      );
+
+      const hstack = getStaticChild(root, 0) as LayoutWidget;
+      expect(hstack.kind).toBe('layout');
+      expect(hstack.props?.['direction']).toBe('row');
+      expect(hstack.props?.['direction.locked']).toBe('column');
+    });
+
     it('_gslStates applies label to actions', () => {
       const root = processDx(
         [_guiButton({ label: 'Save' })],
