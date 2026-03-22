@@ -155,10 +155,11 @@ export class DesignComponent {
     if (!hl) return;
     try {
       const parsed = JSON.parse(this.liveFormDef());
-      const original = findWidgetByUid(parsed, hl.prettyUid);
+      const baseUid = hl.prettyUid.replace(/\[\d+\]/g, '');
+      const original = findWidgetByUid(parsed, baseUid);
       if (!original) return;
       const updated = updateWidgetFromFlatData(original, flatData);
-      const newFormDef = replaceWidgetByUid(parsed, hl.prettyUid, updated);
+      const newFormDef = replaceWidgetByUid(parsed, baseUid, updated);
       const newFormDefStr = JSON.stringify(newFormDef, null, 2);
       this.liveFormDef.set(newFormDefStr);
       this.formVersion.update((v) => v + 1);
@@ -170,7 +171,9 @@ export class DesignComponent {
 
   private snapshotWidget(prettyUid: string): Record<string, unknown> | null {
     try {
-      return findWidgetByUid(JSON.parse(this.liveFormDef()), prettyUid);
+      // Strip repeater index brackets (e.g. "name-input[0]" → "name-input")
+      const baseUid = prettyUid.replace(/\[\d+\]/g, '');
+      return findWidgetByUid(JSON.parse(this.liveFormDef()), baseUid);
     } catch {
       return null;
     }

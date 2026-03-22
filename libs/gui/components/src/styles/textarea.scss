@@ -3,6 +3,11 @@ gui-textarea {
 
   .gui-widget {
     justify-content: flex-start;
+
+    textarea {
+      padding: var(--gui-space-2) var(--gui-space-3);
+      resize: vertical;
+    }
   }
 
   .gui-widget-icon {

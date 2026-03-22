@@ -39,13 +39,13 @@ function selectField(
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
 }
 
-function iconField(uid: string, path: string) {
+function iconField(uid: string, path: string, label = 'Icon') {
   return {
     uid,
     kind: 'input',
     type: 'dropdown',
     path,
-    label: 'Icon',
+    label,
     on: CHANGE_ON,
     props: {
       placeholder: 'Search icon...',
@@ -245,8 +245,11 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   repeater: [
+    textField('prop-title', 'title', 'Title'),
     textField('prop-addLabel', 'addLabel', 'Add Label'),
+    iconField('prop-addButtonIcon', 'addButtonIcon', 'Add Button Icon'),
     textField('prop-removeLabel', 'removeLabel', 'Remove Label'),
+    iconField('prop-removeButtonIcon', 'removeButtonIcon', 'Remove Button Icon'),
     numberField('prop-limit', 'limit', 'Limit'),
   ],
 
@@ -445,6 +448,19 @@ export function stripVisibilityRules(root: unknown): unknown {
     if (node['form']) {
       node['form'] = stripVisibilityRules(node['form']);
     }
+    // Recurse into repeater templates so nested repeaters are also processed.
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = { ...(node['props'] as Record<string, unknown>) };
+      if (props['template']) {
+        props['template'] = stripVisibilityRules(props['template']);
+      }
+      node['props'] = props;
+    }
+    // In design mode, repeaters need at least one empty item so users
+    // can interact with the inner elements.
+    if (node['type'] === 'repeater' && !node['defaultValue']) {
+      node['defaultValue'] = [{}];
+    }
     return node;
   }
   return root;
@@ -464,12 +480,24 @@ export function replaceWidgetByUid(
   if (root && typeof root === 'object') {
     const node = root as Record<string, unknown>;
     if (node['uid'] === uid) return replacement;
+    const updated: Record<string, unknown> = { ...node };
+    let changed = false;
     if (node['children']) {
-      return { ...node, children: replaceWidgetByUid(node['children'], uid, replacement) };
+      updated['children'] = replaceWidgetByUid(node['children'], uid, replacement);
+      changed = true;
     }
     if (node['form']) {
-      return { ...node, form: replaceWidgetByUid(node['form'], uid, replacement) };
+      updated['form'] = replaceWidgetByUid(node['form'], uid, replacement);
+      changed = true;
     }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = { ...props, template: replaceWidgetByUid(props['template'], uid, replacement) };
+        changed = true;
+      }
+    }
+    if (changed) return updated;
   }
   return root;
 }
@@ -498,7 +526,16 @@ export function findWidgetByUid(root: unknown, uid: string): Record<string, unkn
   }
 
   if (node['form']) {
-    return findWidgetByUid(node['form'], uid);
+    const result = findWidgetByUid(node['form'], uid);
+    if (result) return result;
+  }
+
+  if (node['props'] && typeof node['props'] === 'object') {
+    const props = node['props'] as Record<string, unknown>;
+    if (props['template']) {
+      const result = findWidgetByUid(props['template'], uid);
+      if (result) return result;
+    }
   }
 
   return null;

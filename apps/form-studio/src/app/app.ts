@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
   inject,
   signal,
   viewChild,
@@ -10,17 +11,19 @@ import {
 import { FormsModule } from '@angular/forms';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
-import { golemForm } from '@golemui/gui-shared';
+import { Dependencies, golemForm } from '@golemui/gui-shared';
 import { GEMINI_INPUT_BUDGET, GeminiService } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
 import { PropertiesPanelComponent } from './design/properties-panel.component';
 import { EditorComponent } from './editor/editor.component';
 import { TokenMeterComponent } from './token-meter/token-meter.component';
+import snarkdown from 'snarkdown';
 
 interface ChatMessage {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'thinking';
   content: string;
+  thinkingGroupId?: number;
 }
 
 const initialFormJson = () => {
@@ -60,6 +63,7 @@ export class App {
   private ai = inject(GeminiService);
   // private ai = inject(AnthropicService);
   private designComp = viewChild<DesignComponent>('designComp');
+  private chatHistory = viewChild<ElementRef<HTMLElement>>('chatHistory');
   protected activeTab: 'form' | 'json' | 'design' = 'form';
   protected designSelectedWidget: Record<string, unknown> | null = null;
   protected chatInput =
@@ -72,7 +76,14 @@ export class App {
   ];
   protected error = '';
   protected formJson = signal(JSON.stringify(initialFormJson(), undefined, 2));
+  protected deps: Dependencies = {
+    markdown: {
+      parse: (md: string) => snarkdown(md),
+    },
+  };
   protected thinking = false;
+  protected collapsedGroups = new Set<number>();
+  private thinkingGroupId = 0;
 
   protected onJsonChange(value: string) {
     this.formJson.set(value);
@@ -95,14 +106,21 @@ export class App {
       return;
     }
 
+    this.thinkingGroupId++;
+
     // Add user message
     this.messages.push({ role: 'user', content: this.chatInput });
     this.thinking = true;
     const userMessage = this.chatInput;
     this.chatInput = '';
 
-    const response = await this.ai.sendMessage(userMessage);
+    const groupId = this.thinkingGroupId;
+    const response = await this.ai.sendMessage(userMessage, (thought) => {
+      this.messages.push({ role: 'thinking', content: thought, thinkingGroupId: groupId });
+      this.scrollChatToBottom();
+    });
     this.thinking = false;
+    this.collapsedGroups.add(groupId);
     if (response) {
       this.formJson.set(JSON.stringify(response, undefined, 2));
       this.cdr.detectChanges();
@@ -125,5 +143,24 @@ export class App {
 
   protected onFormDefChange(newJson: string) {
     this.formJson.set(newJson);
+  }
+
+  protected toggleThinkingGroup(groupId: number) {
+    if (this.collapsedGroups.has(groupId)) {
+      this.collapsedGroups.delete(groupId);
+    } else {
+      this.collapsedGroups.add(groupId);
+    }
+  }
+
+  protected getThinkingGroupCount(groupId: number): number {
+    return this.messages.filter((m) => m.thinkingGroupId === groupId).length;
+  }
+
+  private scrollChatToBottom() {
+    const el = this.chatHistory()?.nativeElement;
+    if (el) {
+      setTimeout(() => (el.scrollTop = el.scrollHeight));
+    }
   }
 }
