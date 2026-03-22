@@ -14,7 +14,7 @@ import { CountryItemRenderer } from '../../item-renderers/country.item-renderer'
 import { Dependencies } from '@golemui/gui-shared';
 import snarkdown from 'snarkdown';
 
-const mock = AppsShared.kitchenSink;
+const mock = AppsShared.tests;
 
 @Component({
   imports: [CommonModule, Vanilla.FormComponent],

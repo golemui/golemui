@@ -52,6 +52,7 @@ export const calculateCurrentState = (state: State): State => {
     };
   }
 
+  console.log('currentStates', currentStates);
   return { ...state, currentStates, formHealth };
 };
 
