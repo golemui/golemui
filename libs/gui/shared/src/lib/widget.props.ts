@@ -433,6 +433,12 @@ export type FlexProps = {
   gap?: number;
 };
 
+export type GridProps = {
+  direction?: 'row' | 'column';
+  columnGap?: number;
+  rowGap?: number;
+};
+
 export type TabsProps = {
   defaultOpen?: string;
   renderMode?: 'all' | 'activeOnly';

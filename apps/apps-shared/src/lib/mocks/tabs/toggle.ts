@@ -1,7 +1,7 @@
 export const toggle = (): any => ({
   uid: 'tab10',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

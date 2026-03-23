@@ -1,7 +1,7 @@
 export const currency = (): any => ({
   uid: 'tab13',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

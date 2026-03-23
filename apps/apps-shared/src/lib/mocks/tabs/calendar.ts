@@ -1,7 +1,7 @@
 export const calendar = (): any => ({
   uid: 'tab12',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       kind: 'display',

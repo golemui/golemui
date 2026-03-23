@@ -1,7 +1,7 @@
 import { GUIAriaController } from '../controllers/aria.controller';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { addLabel, ControlTemplateData } from '../utils/templates';
+import { addErrors, addHint, addLabel, ControlTemplateData } from '../utils/templates';
 import { CheckboxProps } from '@golemui/gui-shared';
 
 @customElement('gui-checkbox')
@@ -61,20 +61,32 @@ export class GuiCheckbox extends LitElement {
     }
 
     return html`
-      ${addLabel(this.uid as string, templateData, true)}
+      <label
+        class="gui-label"
+        for=${this.uid}
+        data-cy=${`${this.uid}_label`}
+        id=${`${this.uid}_label`}
+      >
+        <span class="gui-label__container">
+          ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(this.uid as string, templateData)}
+        </span>
 
-      <div class="gui-widget gui-widget--horizontal">
-        <input
-          type="checkbox"
-          id=${this.uid}
-          data-cy=${`${this.uid}_checkbox`}
-          ?checked=${this.value}
-          ?required=${this.required}
-          ?disabled=${this.disabled || this.readOnly}
-          @change=${this.valueChanged}
-          @blur=${this.onBlur}
-        />
-      </div>
+
+        <div class="gui-widget gui-widget--horizontal">
+          <input
+            type="checkbox"
+            id=${this.uid}
+            data-cy=${`${this.uid}_checkbox`}
+            ?checked=${this.value}
+            ?required=${this.required}
+            ?disabled=${this.disabled || this.readOnly}
+            @change=${this.valueChanged}
+            @blur=${this.onBlur}
+          />
+        </div>
+      </label>
+
+      ${addErrors(this.uid as string, templateData)}
     `;
   }
 

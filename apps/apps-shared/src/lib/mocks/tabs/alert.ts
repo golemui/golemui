@@ -1,7 +1,7 @@
 export const alert = (): any => ({
   uid: 'tab1',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

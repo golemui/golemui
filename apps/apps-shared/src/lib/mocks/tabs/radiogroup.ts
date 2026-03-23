@@ -1,7 +1,7 @@
 export const radiogroup = (): any => ({
   uid: 'tab9',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

@@ -19,7 +19,7 @@ export const inputWidgets = [
   'textinput',
   'toggle',
 ] as const;
-export const layoutWidgets = ['accordion', 'flex', 'tabs'] as const;
+export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;
 export const displayWidgets = ['alert', 'renderer'] as const;
 export const actionWidgets = ['button'] as const;
 

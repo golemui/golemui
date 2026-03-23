@@ -4,7 +4,7 @@ const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({ label: 
 export const dropdown = (): any => ({
   uid: 'tab15',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

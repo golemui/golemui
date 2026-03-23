@@ -3,7 +3,22 @@ gui-toggle {
   align-items: start;
   gap: 0.5rem;
 
-  &.gui-toggle--left {
+  .gui-label {
+    flex-direction: row;
+    grid-row: 2;
+    align-self: center;
+
+    &__container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .gui-widget {
+    align-self: center;
+  }
+
+  &.gui-toggle--left .gui-label {
     flex-direction: row-reverse;
     justify-content: flex-end;
   }

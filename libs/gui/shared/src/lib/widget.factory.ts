@@ -117,6 +117,16 @@ export const Vanilla = {
     ...(props && { props }),
     ...config,
   }),
+  grid: <StateKeys extends Core.UiState = string>(
+    config: LayoutWidgetConfig,
+    props?: Props.GridProps,
+  ): Core.LayoutWidget<StateKeys> => ({
+    uid: '',
+    kind: 'layout',
+    type: 'grid',
+    ...(props && { props }),
+    ...config,
+  }),
   tabs: <StateKeys extends Core.UiState = string>(
     config: LayoutWidgetConfig,
     props?: Props.TabsProps,

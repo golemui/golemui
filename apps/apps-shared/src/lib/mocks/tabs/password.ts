@@ -1,7 +1,7 @@
 export const password = (): any => ({
   uid: 'tab16',
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

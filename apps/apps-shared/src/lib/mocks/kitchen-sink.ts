@@ -9,7 +9,7 @@ import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
 import { repeater } from './tabs/repeater';
 import { select } from './tabs/select';
-import { flex } from './tabs/flex';
+import { grid } from './tabs/grid';
 import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
@@ -47,10 +47,10 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab16',
+        defaultOpen: 'tab2',
         tabs: [
           { label: 'Alert Component', uid: 'tab1' },
-          { label: 'Flex Layout', uid: 'tab2' },
+          { label: 'Grid Layout', uid: 'tab2' },
           { label: 'Repeater Component', uid: 'tab3' },
           { label: 'Checkbox Component', uid: 'tab4' },
           { label: 'Accordion Layout', uid: 'tab5' },
@@ -70,7 +70,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       on: { change: 'onTabEvent' },
       children: [
         alert(),
-        flex(),
+        grid(),
         repeater(),
         checkbox(),
         accordion(),

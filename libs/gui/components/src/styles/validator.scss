@@ -1,6 +1,6 @@
 .gui-form {
   .gui-validator {
-    margin-top: var(--gui-space-2);
+    grid-row: 3;
     padding: 0;
 
     &__error {
