@@ -27,7 +27,7 @@ export class FlexElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-flex');
+    this.classList.add('gui-flex gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

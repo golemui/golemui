@@ -11,8 +11,7 @@ import { TextinputProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './textinput.component.html',
   host: {
-    class: 'gui-textinput',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-textinput gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

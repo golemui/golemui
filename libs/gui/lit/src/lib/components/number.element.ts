@@ -25,7 +25,7 @@ export class NumberElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-number');
+    this.classList.add('gui-number gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

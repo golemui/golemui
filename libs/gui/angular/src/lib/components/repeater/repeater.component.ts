@@ -11,8 +11,7 @@ import { RepeaterProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter, Angular.RepeaterWidgetDirective],
   templateUrl: './repeater.component.html',
   host: {
-    class: 'gui-repeater',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-repeater gui-field',
   },
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {

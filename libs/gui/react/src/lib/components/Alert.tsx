@@ -7,7 +7,7 @@ export function Alert(widgetInstance: Core.WithWidget) {
   const { uid, templateData } = useDisplayWdiget<AlertProps>(widget);
 
   return (
-    <div className="gui-alert" style={{ flex: templateData.size }}>
+    <div className="gui-alert gui-field" style={{ flex: templateData.size }}>
       <div className="gui-widget" id={uid}>
         <div
           role="alert"

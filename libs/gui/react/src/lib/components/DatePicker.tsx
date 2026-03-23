@@ -142,7 +142,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   return (
     <div
       ref={containerRef}
-      className="gui-date-picker"
+      className="gui-date-picker gui-field"
       style={{ flex: templateData.size }}
       onBlur={onFocusOut}
     >

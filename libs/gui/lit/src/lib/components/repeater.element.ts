@@ -34,7 +34,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-repeater');
+    this.classList.add('gui-repeater gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

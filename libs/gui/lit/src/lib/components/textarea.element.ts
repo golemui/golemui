@@ -25,7 +25,7 @@ export class TextareaElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-textarea');
+    this.classList.add('gui-textarea gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

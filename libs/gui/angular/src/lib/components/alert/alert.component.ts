@@ -11,8 +11,7 @@ import { AlertProps } from '@golemui/gui-shared';
   providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './alert.component.html',
   host: {
-    class: 'gui-alert',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-alert gui-field',
   },
 })
 export class AlertComponent implements OnInit, OnDestroy, Core.WithWidget {

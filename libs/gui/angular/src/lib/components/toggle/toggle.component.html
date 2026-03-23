@@ -1,6 +1,7 @@
 @let templateData = adapter.templateData();
 
 <gui-toggle
+  class="gui-field"
   [uid]="widget.uid"
   [label]="templateData.label"
   [errors]="templateData.errors"
@@ -14,3 +15,4 @@
   (change)="valueChanged($event)"
   (blur)="adapter.onBlur()"
 ></gui-toggle>
+

@@ -6,7 +6,8 @@ gui-toggle {
   .gui-label {
     flex-direction: row;
     grid-row: 2;
-    align-self: center;
+    align-self: start;
+    margin-top: 11px;
 
     &__container {
       display: flex;
@@ -16,6 +17,10 @@ gui-toggle {
 
   .gui-widget {
     align-self: center;
+  }
+
+  .gui-widget-hint {
+    grid-row: 3;
   }
 
   &.gui-toggle--left .gui-label {
@@ -32,6 +37,7 @@ gui-toggle {
     height: var(--gui-toggle-height);
     min-width: var(--gui-toggle-width);
     min-height: var(--gui-toggle-height);
+    align-self: start;
 
     /* Hide default HTML checkbox */
     input {

@@ -11,8 +11,7 @@ import { GridProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './grid.component.html',
   host: {
-    class: 'gui-grid',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-grid gui-field',
   },
 })
 export class GridComponent implements OnInit, OnDestroy, Core.WithWidget {

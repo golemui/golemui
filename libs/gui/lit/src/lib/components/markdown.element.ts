@@ -25,7 +25,7 @@ export class MarkdownElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-markdown');
+    this.classList.add('gui-markdown gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

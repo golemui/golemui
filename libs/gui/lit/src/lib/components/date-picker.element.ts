@@ -57,7 +57,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
     this.addEventListener('focusout', this.onFocusOut);
-    this.classList.add('gui-date-picker');
+    this.classList.add('gui-date-picker gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

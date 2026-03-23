@@ -12,8 +12,7 @@ import { AccordionProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './accordion.component.html',
   host: {
-    class: 'gui-accordion',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-accordion gui-field',
   },
 })
 export class AccordionComponent implements OnInit, OnDestroy, Core.WithWidget {

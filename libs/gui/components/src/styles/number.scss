@@ -6,6 +6,7 @@ gui-number {
     flex-direction: row;
     align-items: stretch;
     gap: 0;
+    width: fit-content;
     height: 40px;
     overflow: hidden;
 
@@ -49,7 +50,7 @@ gui-number {
       padding-bottom: 0;
       font-size: 20px;
       width: 100%;
-      max-width: 100px;
+      max-width: 80px;
       height: 40px;
       font-variant-numeric: tabular-nums;
 

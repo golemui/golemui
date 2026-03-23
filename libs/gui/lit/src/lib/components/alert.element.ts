@@ -25,7 +25,7 @@ export class AlertElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-alert');
+    this.classList.add('gui-alert gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

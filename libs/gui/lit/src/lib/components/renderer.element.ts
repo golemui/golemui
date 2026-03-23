@@ -25,7 +25,7 @@ export class RendererElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-renderer');
+    this.classList.add('gui-renderer gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

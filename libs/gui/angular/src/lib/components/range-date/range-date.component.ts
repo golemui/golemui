@@ -11,8 +11,7 @@ import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './range-date.component.html',
   host: {
-    class: 'gui-range-date',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-range-date gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

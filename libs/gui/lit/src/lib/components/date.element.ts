@@ -27,7 +27,7 @@ export class DateElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-date');
+    this.classList.add('gui-date gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

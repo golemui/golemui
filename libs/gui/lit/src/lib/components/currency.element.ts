@@ -25,7 +25,7 @@ export class CurrencyElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-currency');
+    this.classList.add('gui-currency gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

@@ -11,8 +11,7 @@ import { CheckboxProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './checkbox.component.html',
   host: {
-    class: 'gui-checkbox',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-checkbox gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

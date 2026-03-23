@@ -22,8 +22,7 @@ import { TabsProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './tabs.component.html',
   host: {
-    class: 'gui-tabs',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-tabs gui-field',
   },
 })
 export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithWidget {

@@ -1,5 +1,5 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { addErrors, addHint, addLabel, ControlTemplateData } from '../utils/templates';
 import { CheckboxProps } from '@golemui/gui-shared';
@@ -68,9 +68,8 @@ export class GuiCheckbox extends LitElement {
         id=${`${this.uid}_label`}
       >
         <span class="gui-label__container">
-          ${templateData.label + (templateData.required ? ' *' : '')} ${addHint(this.uid as string, templateData)}
+          ${templateData.label + (templateData.required ? ' *' : '')}
         </span>
-
 
         <div class="gui-widget gui-widget--horizontal">
           <input
@@ -86,7 +85,9 @@ export class GuiCheckbox extends LitElement {
         </div>
       </label>
 
-      ${addErrors(this.uid as string, templateData)}
+      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
+        ${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}
+      </div>
     `;
   }
 

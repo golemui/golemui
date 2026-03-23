@@ -29,7 +29,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-accordion');
+    this.classList.add('gui-accordion gui-field');
     const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);

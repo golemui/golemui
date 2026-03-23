@@ -22,8 +22,7 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './list.component.html',
   host: {
-    class: 'gui-list',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-list gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -25,7 +25,7 @@ export class ButtonElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-button');
+    this.classList.add('gui-button gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

@@ -67,7 +67,7 @@ export const grid = (): any => ({
           path: 'tg1',
           props: {
             togglePosition: 'left',
-            hint: 'Long hints are discouraged with checkboxes and toggles',
+            hint: 'Long hints are discouraged with checkboxes and toggles when these share a row with a text input',
           },
           validator: { type: 'boolean', required: true },
         },
@@ -79,7 +79,7 @@ export const grid = (): any => ({
           path: 'cb1',
           props: {
             checkboxPosition: 'left',
-            hint: 'Long hints are discouraged with checkboxes and toggles',
+            hint: 'Long hints are discouraged with checkboxes and toggles when these share a row with a text input',
           },
           validator: { type: 'boolean', required: true },
         },

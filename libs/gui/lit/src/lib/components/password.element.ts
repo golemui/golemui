@@ -25,7 +25,7 @@ export class PasswordElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-password');
+    this.classList.add('gui-password gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

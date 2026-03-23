@@ -25,7 +25,7 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-textinput');
+    this.classList.add('gui-textinput gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

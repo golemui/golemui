@@ -11,8 +11,7 @@ import { CalendarProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './calendar.component.html',
   host: {
-    class: 'gui-calendar',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-calendar gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

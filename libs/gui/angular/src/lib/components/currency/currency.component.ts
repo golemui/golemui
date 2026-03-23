@@ -11,8 +11,7 @@ import { CurrencyProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './currency.component.html',
   host: {
-    class: 'gui-currency',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-currency gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

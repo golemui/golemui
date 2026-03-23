@@ -11,8 +11,7 @@ import { OptionValue, RadiogroupProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './radiogroup.component.html',
   host: {
-    class: 'gui-radiogroup',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-radiogroup gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

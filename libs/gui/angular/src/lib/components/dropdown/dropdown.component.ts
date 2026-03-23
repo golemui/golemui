@@ -29,8 +29,7 @@ interface GuiListElement extends HTMLElement {
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './dropdown.component.html',
   host: {
-    class: 'gui-dropdown',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-dropdown gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

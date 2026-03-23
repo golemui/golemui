@@ -11,8 +11,7 @@ import { SelectProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './select.component.html',
   host: {
-    class: 'gui-select',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-select gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -25,7 +25,7 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-calendar');
+    this.classList.add('gui-calendar gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

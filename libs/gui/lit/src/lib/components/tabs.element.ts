@@ -43,7 +43,7 @@ export class TabsElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-tabs');
+    this.classList.add('gui-tabs gui-field');
     const props: TabsProps = this.widget.props as TabsProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);

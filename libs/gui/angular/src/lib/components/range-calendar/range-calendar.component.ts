@@ -11,8 +11,7 @@ import { RangeCalendarProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './range-calendar.component.html',
   host: {
-    class: 'gui-range-calendar',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-range-calendar gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

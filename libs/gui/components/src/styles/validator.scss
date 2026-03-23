@@ -1,7 +1,9 @@
 .gui-form {
   .gui-validator {
     grid-row: 3;
+    margin: 0;
     padding: 0;
+    font-size: var(--gui-font-xs);
 
     &__error {
       list-style: none;

@@ -10,7 +10,8 @@ gui-checkbox {
   .gui-label {
     flex-direction: row;
     grid-row: 2;
-    align-self: center;
+    align-self: start;
+    margin-top: 11px;
 
     &__container {
       display: flex;
@@ -19,7 +20,11 @@ gui-checkbox {
   }
 
   .gui-widget {
-    align-self: center;
+    align-self: start;
+  }
+
+  .gui-widget-hint {
+    grid-row: 3;
   }
 
   &.gui-checkbox--left .gui-label {

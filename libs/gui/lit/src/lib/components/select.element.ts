@@ -25,7 +25,7 @@ export class SelectElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-select');
+    this.classList.add('gui-select gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

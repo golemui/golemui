@@ -30,7 +30,7 @@ export function Password(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-password" style={{ flex: templateData.size }}>
+    <div className="gui-password gui-field" style={{ flex: templateData.size }}>
       <gui-password
         uid={uid}
         label={label}

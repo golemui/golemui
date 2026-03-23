@@ -58,7 +58,7 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
     this.addEventListener('focusout', this.onFocusOut);
-    this.classList.add('gui-range-date-picker');
+    this.classList.add('gui-range-date-picker gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

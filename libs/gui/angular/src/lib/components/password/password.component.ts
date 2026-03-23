@@ -11,8 +11,7 @@ import { PasswordProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './password.component.html',
   host: {
-    class: 'gui-password',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-password gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

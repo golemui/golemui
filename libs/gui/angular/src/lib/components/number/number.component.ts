@@ -11,8 +11,7 @@ import { NumberinputProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './number.component.html',
   host: {
-    class: 'gui-number',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-number gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
