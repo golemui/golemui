@@ -21,6 +21,7 @@ gui-textarea {
   }
 
   .gui-textarea--validation {
+    grid-row: 3;
     display: flex;
     justify-content: space-between;
   }

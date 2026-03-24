@@ -31,7 +31,7 @@ export function Currency(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-currency gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-currency gui-field">
       <gui-currency
         uid={uid}
         label={label}

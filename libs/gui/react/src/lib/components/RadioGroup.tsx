@@ -27,7 +27,7 @@ export function RadioGroup(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-radiogroup gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-radiogroup gui-field">
       <gui-radiogroup
         uid={uid}
         label={label}

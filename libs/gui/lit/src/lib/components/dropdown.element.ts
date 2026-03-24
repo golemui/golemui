@@ -51,7 +51,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
   override connectedCallback() {
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
-    this.classList.add('gui-dropdown gui-field');
+    this.classList.add('gui-dropdown', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -72,18 +72,6 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           this._filterItems(value);
         }),
     );
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override disconnectedCallback() {

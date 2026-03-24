@@ -54,7 +54,7 @@ export function Select(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-select gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-select gui-field">
       <gui-select
         ref={handleRef}
         uid={uid}

@@ -80,7 +80,7 @@ export function Accordion(widgetInstance: Core.WithWidget) {
   }, [templateData.sections, activeSections, renderContent, onClickButton]);
 
   return (
-    <div className="gui-accordion gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-accordion gui-field">
       <div className="gui-widget" id={uid}>
         {renderAccordion()}
       </div>

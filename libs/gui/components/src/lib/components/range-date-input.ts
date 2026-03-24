@@ -78,6 +78,11 @@ export class GuiRangeDateInput extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override updated() {
     this.setupObservers();
   }

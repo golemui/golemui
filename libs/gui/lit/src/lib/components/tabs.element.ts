@@ -43,7 +43,7 @@ export class TabsElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-tabs gui-field');
+    this.classList.add('gui-tabs', 'gui-field');
     const props: TabsProps = this.widget.props as TabsProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
@@ -54,18 +54,6 @@ export class TabsElement extends LitElement implements Core.WithWidget {
         this.requestUpdate();
       }),
     );
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   protected override firstUpdated(_changedProperties: PropertyValues) {

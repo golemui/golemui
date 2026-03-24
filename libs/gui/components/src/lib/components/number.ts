@@ -44,6 +44,7 @@ export class GuiNumber extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.classList.add('gui-field');
   }
 
   override render() {

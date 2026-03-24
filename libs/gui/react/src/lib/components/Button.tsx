@@ -10,7 +10,7 @@ export function Button(widgetInstance: Core.WithWidget) {
   return (
     <div
       className="gui-button gui-field"
-      style={{ flex: templateData.size }}
+
     >
       <gui-button
         uid={uid}

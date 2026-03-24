@@ -57,25 +57,13 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
     this.addEventListener('focusout', this.onFocusOut);
-    this.classList.add('gui-date-picker gui-field');
+    this.classList.add('gui-date-picker', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override render() {

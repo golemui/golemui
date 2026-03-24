@@ -62,6 +62,11 @@ export class GuiDate extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
       this.parseValue(this.value ?? '');

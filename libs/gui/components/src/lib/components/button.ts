@@ -15,6 +15,11 @@ export class GuiButton extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     const icon = this.icon;
     const iconPosition = this.iconPosition || 'left';

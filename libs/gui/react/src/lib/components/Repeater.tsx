@@ -93,7 +93,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
   }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
 
   return (
-    <div className="gui-repeater gui-field" style={{ flex: templateData.size }}>
+    <div className="gui-repeater gui-field">
       <div
         id={uid}
         className={`gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`}

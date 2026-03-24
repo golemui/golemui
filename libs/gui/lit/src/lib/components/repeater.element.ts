@@ -34,25 +34,13 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-repeater gui-field');
+    this.classList.add('gui-repeater', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
     );
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   onFocusIn(event: FocusEvent) {
