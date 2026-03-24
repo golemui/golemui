@@ -51,7 +51,7 @@ export function RangeCalendar(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-range-calendar gui-field">
+    <div className="gui-range-calendar gui-field" style={{ flex: templateData.size }}>
       <gui-range-calendar
         ref={handleRef}
         uid={uid}

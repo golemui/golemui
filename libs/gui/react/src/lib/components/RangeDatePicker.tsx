@@ -162,7 +162,7 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
     <div
       ref={containerRef}
       className="gui-range-date-picker gui-field"
-
+      style={{ flex: templateData.size }}
       onBlur={onFocusOut}
     >
       {templateData.label && (

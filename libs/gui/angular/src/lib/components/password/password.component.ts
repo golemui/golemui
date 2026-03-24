@@ -12,6 +12,7 @@ import { PasswordProps } from '@golemui/gui-shared';
   templateUrl: './password.component.html',
   host: {
     class: 'gui-password gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

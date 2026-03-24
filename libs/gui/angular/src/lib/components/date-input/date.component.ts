@@ -12,6 +12,7 @@ import { DatePickerProps } from '@golemui/gui-shared';
   templateUrl: './date.component.html',
   host: {
     class: 'gui-date gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

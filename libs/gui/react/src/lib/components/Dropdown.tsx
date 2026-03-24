@@ -284,7 +284,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
   const asyncFiltering = !!widget.on?.filter;
 
   return (
-    <div className="gui-dropdown gui-field">
+    <div className="gui-dropdown gui-field" style={{ flex: templateData.size }}>
       <gui-label
         ref={labelRef}
         uid={uid}

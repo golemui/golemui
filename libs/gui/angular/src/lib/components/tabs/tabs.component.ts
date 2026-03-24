@@ -23,6 +23,7 @@ import { TabsProps } from '@golemui/gui-shared';
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithWidget {

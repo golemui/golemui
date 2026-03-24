@@ -59,7 +59,7 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-range-date-input gui-field">
+    <div className="gui-range-date-input gui-field" style={{ flex: templateData.size }}>
       <gui-range-date
         ref={handleRef}
         uid={uid}

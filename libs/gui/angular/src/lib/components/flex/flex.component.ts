@@ -12,6 +12,7 @@ import { FlexProps } from '@golemui/gui-shared';
   templateUrl: './flex.component.html',
   host: {
     class: 'gui-flex gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class FlexComponent implements OnInit, OnDestroy, Core.WithWidget {

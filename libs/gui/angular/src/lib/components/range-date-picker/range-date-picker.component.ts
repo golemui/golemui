@@ -23,6 +23,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
   templateUrl: './range-date-picker.component.html',
   host: {
     class: 'gui-range-date-picker gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
     '(document:click)': 'onDocumentClick($event)',
     '(focusout)': 'onFocusOut($event)',
   },

@@ -13,6 +13,7 @@ import { AccordionProps } from '@golemui/gui-shared';
   templateUrl: './accordion.component.html',
   host: {
     class: 'gui-accordion gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class AccordionComponent implements OnInit, OnDestroy, Core.WithWidget {

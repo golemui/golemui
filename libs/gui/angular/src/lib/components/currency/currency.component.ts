@@ -12,6 +12,7 @@ import { CurrencyProps } from '@golemui/gui-shared';
   templateUrl: './currency.component.html',
   host: {
     class: 'gui-currency gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

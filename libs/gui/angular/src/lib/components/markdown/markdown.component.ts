@@ -18,6 +18,7 @@ import { MarkdownProps } from '@golemui/gui-shared';
   templateUrl: './markdown.component.html',
   host: {
     class: 'gui-markdown gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -152,7 +152,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
   }, [children, activeTab, widget]);
 
   return (
-    <div className="gui-tabs gui-field">
+    <div className="gui-tabs gui-field" style={{ flex: templateData.size }}>
       <nav
         className={cn({
           'gui-widget': true,

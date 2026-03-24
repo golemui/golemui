@@ -12,6 +12,7 @@ import { GridProps } from '@golemui/gui-shared';
   templateUrl: './grid.component.html',
   host: {
     class: 'gui-grid gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class GridComponent implements OnInit, OnDestroy, Core.WithWidget {

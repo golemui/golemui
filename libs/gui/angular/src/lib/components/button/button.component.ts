@@ -10,6 +10,7 @@ import { ButtonProps } from '@golemui/gui-shared';
   templateUrl: './button.component.html',
   host: {
     class: 'gui-button gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

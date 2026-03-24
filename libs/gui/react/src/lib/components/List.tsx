@@ -101,7 +101,7 @@ export function List(widgetInstance: Core.WithWidget) {
   const isReadOnly = templateData.readonly as boolean;
 
   return (
-    <div className="gui-list gui-field">
+    <div className="gui-list gui-field" style={{ flex: templateData.size }}>
       <gui-label
         targetElement={listRef.current || undefined}
         uid={uid}

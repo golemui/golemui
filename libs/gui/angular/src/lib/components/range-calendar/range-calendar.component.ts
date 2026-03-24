@@ -12,6 +12,7 @@ import { RangeCalendarProps } from '@golemui/gui-shared';
   templateUrl: './range-calendar.component.html',
   host: {
     class: 'gui-range-calendar gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

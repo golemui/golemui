@@ -28,7 +28,7 @@ export function Grid(widgetInstance: Core.WithWidget) {
   if (templateData.rowGap !== undefined) style.rowGap = `${templateData.rowGap}px`;
 
   return (
-    <div className="gui-grid gui-field">
+    <div className="gui-grid gui-field" style={{ flex: templateData.size }}>
       <div className={`gui-grid__widget ${direction}`} style={style} id={uid}>
         {renderWidgets()}
       </div>

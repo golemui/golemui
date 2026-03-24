@@ -40,7 +40,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-markdown gui-field">
+    <div className="gui-markdown gui-field" style={{ flex: templateData.size }}>
       <gui-markdown
         uid={uid}
         label={label}

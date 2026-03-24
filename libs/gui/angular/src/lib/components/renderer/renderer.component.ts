@@ -12,6 +12,7 @@ import { ComponentRendererProps } from '@golemui/gui-shared';
   templateUrl: './renderer.component.html',
   host: {
     class: 'gui-renderer gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class RendererComponent implements OnInit, OnDestroy, Core.WithWidget {
