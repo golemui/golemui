@@ -1,5 +1,5 @@
-export const password = (): any => ({
-  uid: 'tab16',
+export const password = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   children: [

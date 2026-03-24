@@ -1,5 +1,5 @@
-export const checkbox = (): any => ({
-  uid: 'tab4',
+export const checkbox = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   children: [

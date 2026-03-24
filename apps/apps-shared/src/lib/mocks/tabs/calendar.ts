@@ -1,5 +1,5 @@
-export const calendar = (): any => ({
-  uid: 'tab12',
+export const calendar = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   children: [

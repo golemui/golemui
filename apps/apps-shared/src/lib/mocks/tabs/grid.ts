@@ -1,5 +1,5 @@
-export const grid = (): any => ({
-  uid: 'tab2',
+export const grid = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   props: {

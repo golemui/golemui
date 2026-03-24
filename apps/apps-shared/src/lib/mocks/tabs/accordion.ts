@@ -1,5 +1,5 @@
-export const accordion = (): any => ({
-  uid: 'tab5',
+export const accordion = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'accordion',
   props: {

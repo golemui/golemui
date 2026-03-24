@@ -1,5 +1,5 @@
-export const repeater = (): any => ({
-  uid: 'tab3',
+export const repeater = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   children: [

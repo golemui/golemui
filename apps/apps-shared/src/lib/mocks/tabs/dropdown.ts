@@ -1,8 +1,8 @@
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
 
-export const dropdown = (): any => ({
-  uid: 'tab15',
+export const dropdown = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   children: [

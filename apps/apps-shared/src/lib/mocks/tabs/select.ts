@@ -1,5 +1,5 @@
-export const select = (): any => ({
-  uid: 'tab7',
+export const select = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'grid',
   children: [
