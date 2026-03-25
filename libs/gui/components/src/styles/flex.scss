@@ -8,6 +8,7 @@
       flex-direction: column;
       column-gap: var(--gui-space-4);
       row-gap: var(--gui-space-4);
+      min-width: 0;
 
       &--row { flex-direction: row; }
       &--row-reverse { flex-direction: row-reverse; }

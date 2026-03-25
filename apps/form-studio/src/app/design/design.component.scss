@@ -95,25 +95,6 @@
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid #334155;
   overflow: scroll;
-
-  ::ng-deep {
-    .gui-form-control label {
-      color: var(--gui-color-primary);
-    }
-    .gui-input,
-    .gui-select,
-    .gui-textarea {
-      background-color: #0f172a;
-      border: 1px solid #475569;
-      color: #f8fafc;
-      border-radius: 6px;
-      padding: 10px 12px;
-      &:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 1px #3b82f6;
-      }
-    }
-  }
 }
 
 .design-capture {

@@ -7,6 +7,28 @@ import { MATERIAL_ICONS } from './material-icons';
 
 const CHANGE_ON = { change: 'propChanged' };
 
+const VALIDATOR_TYPE_BY_WIDGET: Record<string, string> = {
+  textinput: 'string',
+  password: 'string',
+  textarea: 'string',
+  markdown: 'string',
+  dateInput: 'string',
+  datePicker: 'string',
+  calendar: 'string',
+  select: 'string',
+  radiogroup: 'string',
+  dropdown: 'string',
+  list: 'string',
+  number: 'number',
+  currency: 'number',
+  checkbox: 'boolean',
+  toggle: 'boolean',
+  rangeCalendar: 'array',
+  rangeDateInput: 'array',
+  rangeDatePicker: 'array',
+  repeater: 'array',
+};
+
 // ---------------------------------------------------------------------------
 // Field builders
 // ---------------------------------------------------------------------------
@@ -133,6 +155,8 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
     iconField('prop-icon', 'icon'),
+    iconField('prop-showPasswordIcon', 'showPasswordIcon', 'Show Password Icon'),
+    iconField('prop-hidePasswordIcon', 'hidePasswordIcon', 'Hide Password Icon'),
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   number: [
@@ -141,6 +165,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     numberField('prop-step', 'step', 'Step'),
     numberField('prop-minimum', 'minimum', 'Minimum'),
     numberField('prop-maximum', 'maximum', 'Maximum'),
+    checkboxField('prop-autoGrow', 'autoGrow', 'Auto Grow'),
   ],
   currency: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -212,28 +237,57 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     iconField('prop-icon', 'icon'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
   ],
   calendar: [
     textField('prop-hint', 'hint', 'Hint'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
     numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
     textField('prop-minDate', 'minDate', 'Min Date'),
     textField('prop-maxDate', 'maxDate', 'Max Date'),
+    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeCalendar: [
     textField('prop-hint', 'hint', 'Hint'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
+    textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
     numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
     textField('prop-minDate', 'minDate', 'Min Date'),
     textField('prop-maxDate', 'maxDate', 'Max Date'),
+    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeDateInput: [
     textField('prop-hint', 'hint', 'Hint'),
     iconField('prop-icon', 'icon'),
     textField('prop-separator', 'separator', 'Separator'),
+    textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
+    textField('prop-startDateAriaLabel', 'startDateAriaLabel', 'Start Date Aria Label'),
+    textField('prop-endDateAriaLabel', 'endDateAriaLabel', 'End Date Aria Label'),
   ],
   rangeDatePicker: [
     textField('prop-hint', 'hint', 'Hint'),
     iconField('prop-icon', 'icon'),
     textField('prop-separator', 'separator', 'Separator'),
+    textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
+    textField('prop-startDateAriaLabel', 'startDateAriaLabel', 'Start Date Aria Label'),
+    textField('prop-endDateAriaLabel', 'endDateAriaLabel', 'End Date Aria Label'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
+    textField('prop-minDate', 'minDate', 'Min Date'),
+    textField('prop-maxDate', 'maxDate', 'Max Date'),
+    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
+    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
   ],
   markdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -295,6 +349,14 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     ]),
     numberField('prop-gap', 'gap', 'Gap'),
   ],
+  grid: [
+    selectField('prop-direction', 'direction', 'Direction', [
+      { label: 'Column', value: 'column' },
+      { label: 'Row', value: 'row' },
+    ]),
+    numberField('prop-columnGap', 'columnGap', 'Column Gap'),
+    numberField('prop-rowGap', 'rowGap', 'Row Gap'),
+  ],
   accordion: [
     checkboxField('prop-singleOpen', 'singleOpen', 'Single Open'),
     selectField('prop-renderMode', 'renderMode', 'Render Mode', [
@@ -331,6 +393,9 @@ export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): s
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
       checkboxField('prop-readonly', 'readonly', 'Read Only'),
     );
+    if (VALIDATOR_TYPE_BY_WIDGET[widget['type'] as string]) {
+      fields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
+    }
   } else if (widget['kind'] === 'action') {
     fields.push(
       textField('prop-label', 'label', 'Label'),
@@ -355,6 +420,13 @@ export function flattenWidgetData(widget: Record<string, unknown>): Record<strin
     children?: unknown[];
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // Flatten validator.required → validatorRequired
+  if (data['validator'] && typeof data['validator'] === 'object') {
+    const v = data['validator'] as Record<string, unknown>;
+    data['validatorRequired'] = v['required'] === true;
+  }
+  delete data['validator'];
 
   // Hoist props to top level
   if (props && typeof props === 'object') {
@@ -403,6 +475,23 @@ export function updateWidgetFromFlatData(
         delete updated[key];
       } else {
         updated[key] = val;
+      }
+    }
+  }
+
+  // Reconstruct validator from flat validatorRequired
+  if ('validatorRequired' in flatData) {
+    const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
+    if (validatorType && flatData['validatorRequired']) {
+      const existing = (original['validator'] as Record<string, unknown>) ?? {};
+      updated['validator'] = { ...existing, type: validatorType, required: true };
+    } else {
+      const existing = (original['validator'] as Record<string, unknown>) ?? {};
+      const { required: _, ...rest } = existing;
+      if (Object.keys(rest).length > 1) {
+        updated['validator'] = { ...rest, type: validatorType };
+      } else {
+        delete updated['validator'];
       }
     }
   }

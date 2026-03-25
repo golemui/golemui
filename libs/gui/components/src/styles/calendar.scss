@@ -4,6 +4,10 @@ gui-calendar {
   width: fit-content;
   max-width: 100%;
 
+  &.gui-field {
+    width: fit-content;
+  }
+
   .gui-widget {
     // Month Calendar
     .gui-calendar-input {

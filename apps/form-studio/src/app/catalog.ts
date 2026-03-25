@@ -24,6 +24,11 @@ const tabDefSchema = z.object({
   uid: z.string(),
 });
 
+const validatorSchema = z.object({
+  type: z.enum(['string', 'number', 'integer', 'boolean', 'array']),
+  required: z.boolean().optional(),
+});
+
 // ---------------------------------------------------------------------------
 // Shared base field groups (spread into each widget schema)
 // ---------------------------------------------------------------------------
@@ -40,6 +45,7 @@ const inputFields = {
   label: z.string().optional(),
   disabled: z.boolean().optional(),
   readonly: z.boolean().optional(),
+  validator: validatorSchema.optional(),
 };
 
 const actionFields = {

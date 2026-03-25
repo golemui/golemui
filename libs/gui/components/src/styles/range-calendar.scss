@@ -3,6 +3,10 @@
 }
 
 gui-range-calendar {
+  &.gui-field {
+    width: fit-content;
+  }
+
   .gui-calendar__day-button {
     &.in-range {
       background-color: color-mix(in srgb, var(--gui-intent-primary), transparent 50%);
