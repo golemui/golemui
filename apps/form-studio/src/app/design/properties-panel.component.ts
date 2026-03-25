@@ -1,7 +1,7 @@
-import { Component, computed, CUSTOM_ELEMENTS_SCHEMA, input, output } from '@angular/core';
+import { Component, computed, CUSTOM_ELEMENTS_SCHEMA, input, output, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
-import { buildWidgetPropertiesFormDef, flattenWidgetData } from './widget-forms';
+import { buildWidgetPropertyGroups, flattenWidgetData } from './widget-forms';
 
 @Component({
   imports: [Gui.FormComponent],
@@ -14,8 +14,29 @@ export class PropertiesPanelComponent {
   widget = input.required<Record<string, unknown>>();
   widgetChange = output<Record<string, unknown>>();
 
-  propertiesFormDef = computed(() => buildWidgetPropertiesFormDef(this.widget()));
   propertiesData = computed(() => flattenWidgetData(this.widget()));
+
+  propertyGroups = computed(() => {
+    const groups = buildWidgetPropertyGroups(this.widget());
+    return groups
+      .filter((g) => g.fields.length > 0)
+      .map((g) => ({
+        ...g,
+        formDef: JSON.stringify({ form: g.fields }),
+      }));
+  });
+
+  private openGroups = signal<Record<string, boolean>>({});
+
+  isGroupOpen(key: string, defaultOpen: boolean): boolean {
+    const state = this.openGroups();
+    return key in state ? state[key] : defaultOpen;
+  }
+
+  toggleGroup(key: string, defaultOpen: boolean): void {
+    const current = this.isGroupOpen(key, defaultOpen);
+    this.openGroups.update((s) => ({ ...s, [key]: !current }));
+  }
 
   protected onFormEvent(event: Core.FormEvent) {
     if (event.name === 'propChanged') {
