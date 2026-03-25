@@ -7,9 +7,29 @@ gui-checkbox {
   align-items: start;
   gap: 0.5rem;
 
-  &.gui-checkbox--left {
+  .gui-label {
+    flex-direction: row;
+    grid-row: 2;
+    align-self: start;
+    margin-top: 11px;
+
+    &__container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .gui-widget {
+    align-self: start;
+  }
+
+  .gui-widget-hint {
+    grid-row: 3;
+  }
+
+  &.gui-checkbox--left .gui-label {
     flex-direction: row-reverse;
-    align-self: flex-start;
+    justify-content: flex-end;
   }
 
   input[type='checkbox'] {

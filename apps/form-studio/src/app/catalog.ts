@@ -417,6 +417,19 @@ export const flexSchema = z.object({
     .optional(),
 });
 
+export const gridSchema = z.object({
+  ...layoutFields,
+  type: z.literal('grid'),
+  children: z.array(z.string()),
+  props: z
+    .object({
+      direction: z.enum(['row', 'column']).optional(),
+      columnGap: z.number().optional(),
+      rowGap: z.number().optional(),
+    })
+    .optional(),
+});
+
 export const accordionSchema = z.object({
   ...layoutFields,
   type: z.literal('accordion'),
@@ -489,6 +502,7 @@ export const catalog = {
 
   // layouts
   flex: { schema: flexSchema, description: 'Flex container; children are widget UIDs' },
+  grid: { schema: gridSchema, description: 'Grid container with subgrid alignment; children are widget UIDs' },
   accordion: {
     schema: accordionSchema,
     description: 'Collapsible accordion; sections map UIDs to panels',

@@ -1,0 +1,78 @@
+---
+title: Grid
+description: A Layout component for creating grid-based, responsive form layouts with subgrid alignment
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import gridJson from '../../../../../public/template/components/grid/grid.json?raw';
+import gridRowJson from '../../../../../public/template/components/grid/grid-row.json?raw';
+import gridSizesJson from '../../../../../public/template/components/grid/grid-sizes.json?raw';
+import gridNestedJson from '../../../../../public/template/components/grid/grid-nested.json?raw';
+import gridAnatomyHtml from '../../../../../public/template/components/grid/grid-anatomy.html?raw';
+export const configJson = 'grid.json';
+export const anatomy = 'grid-anatomy.html';
+
+Grid components are [Layout Fields](/components-reference/layout-fields/overview) that use CSS Grid to arrange child widgets in rows or columns. Unlike Flex, Grid leverages CSS subgrid to keep labels, inputs, and validation messages aligned across all children in a row.
+
+<Code code={gridJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/grid/grid.json"
+/>
+
+## Props
+
+Use these `props` to customize your Grid component.
+
+| prop        | type   | description                                                                                   |
+| ----------- | ------ | --------------------------------------------------------------------------------------------- |
+| `direction` | string | Grid direction: `'row'` or `'column'`. Defaults to `'column'`                                 |
+| `columnGap` | number | Space between columns in pixels. Defaults to `--gui-space-4`                                  |
+| `rowGap`    | number | Space between rows in pixels. Defaults to `--gui-space-2`                                     |
+
+### Row Layout
+
+Set `direction` to `"row"` to place child widgets side-by-side in equal columns. On small screens (max-width: 480px), row layouts automatically stack vertically for better mobile usability.
+
+<Code code={gridRowJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/grid/grid-row.json"
+/>
+
+### Child Sizes
+
+Use the `size` property on child widgets to control how many columns they span. A child with `size: 2` takes up twice the space of a default child.
+
+<Code code={gridSizesJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/grid/grid-sizes.json"
+/>
+
+### Nested Grids
+
+Combine a column Grid with row Grid children to build complex form layouts. Each row aligns its labels, inputs, and validation messages independently through subgrid.
+
+<Code code={gridNestedJson} lang="js" title={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/grid/grid-nested.json"
+/>
+
+## Styling
+
+Grid layouts can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables used to control spacing within the Grid component.
+
+| CSS Variable    | Description                          |
+| --------------- | ------------------------------------ |
+| `--gui-space-4` | Default column gap between widgets   |
+| `--gui-space-2` | Default row gap between widgets      |
+| `--gui-space-1` | Gap inside each grid cell (subgrid)  |
+
+### Anatomy
+
+This is the anatomy of the Grid Component in case you want to use your CSS styles.
+
+<Code code={gridAnatomyHtml} lang="html" title={anatomy} />

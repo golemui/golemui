@@ -72,6 +72,11 @@ export class GuiMarkdown extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override updated() {
     this.recalculateAutoGrow();
   }

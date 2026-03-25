@@ -11,7 +11,7 @@ import { TextareaProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './textarea.component.html',
   host: {
-    class: 'gui-textarea',
+    class: 'gui-textarea gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

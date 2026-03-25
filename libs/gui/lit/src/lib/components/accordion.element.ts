@@ -27,9 +27,21 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-accordion');
+    this.classList.add('gui-accordion', 'gui-field');
     const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
@@ -57,18 +69,6 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
 
   getChild(uid: string) {
     return this.widget.children.find((section) => section.uid === uid) as Core.FormWidget<string>;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override render() {

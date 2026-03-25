@@ -52,7 +52,7 @@ export function DateInput(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-date" style={{ flex: templateData.size }}>
+    <div className="gui-date gui-field" style={{ flex: templateData.size }}>
       <gui-date
         ref={handleRef}
         uid={uid}

@@ -11,7 +11,7 @@ import { AlertProps } from '@golemui/gui-shared';
   providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './alert.component.html',
   host: {
-    class: 'gui-alert',
+    class: 'gui-alert gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })

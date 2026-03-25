@@ -1,7 +1,7 @@
-export const repeater = (): any => ({
-  uid: 'tab3',
+export const repeater = (uid: string): any => ({
+  uid,
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',
@@ -19,7 +19,7 @@ export const repeater = (): any => ({
         template: {
           uid: '',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
           children: [
             {
               uid: '',

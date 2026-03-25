@@ -1,7 +1,7 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { addLabel, ControlTemplateData } from '../utils/templates';
+import { addErrors, ControlTemplateData } from '../utils/templates';
 import { ToggleProps } from '@golemui/gui-shared';
 
 @customElement('gui-toggle')
@@ -38,6 +38,11 @@ export class GuiToggle extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     super.render();
 
@@ -61,22 +66,33 @@ export class GuiToggle extends LitElement {
     }
 
     return html`
-      ${addLabel(this.uid as string, templateData, true)}
+      <label
+        class="gui-label"
+        for=${this.uid}
+        data-cy=${`${this.uid}_label`}
+        id=${`${this.uid}_label`}
+      >
+        <span class="gui-label__container">
+          ${templateData.label + (templateData.required ? ' *' : '')}
+        </span>
 
-      <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
-        <input
-          type="checkbox"
-          id=${this.uid}
-          data-cy=${`${this.uid}_toggle`}
-          ?checked=${templateData.value}
-          ?required=${templateData.required}
-          ?disabled=${templateData.disabled || templateData.readonly}
-          @change=${this.valueChanged}
-          @blur=${this.onBlur}
-        />
+        <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
+          <input
+            type="checkbox"
+            id=${this.uid}
+            data-cy=${`${this.uid}_toggle`}
+            ?checked=${templateData.value}
+            ?required=${templateData.required}
+            ?disabled=${templateData.disabled || templateData.readonly}
+            @change=${this.valueChanged}
+            @blur=${this.onBlur}
+          />
 
-        <span class="gui-toggle--slider" role="presentation"></span>
-      </div>
+          <span class="gui-toggle--slider" role="presentation"></span>
+        </div>
+      </label>
+
+      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}</div>
     `;
   }
 

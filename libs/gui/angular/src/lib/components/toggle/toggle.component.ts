@@ -11,7 +11,7 @@ import { ToggleProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './toggle.component.html',
   host: {
-    class: 'gui-toggle',
+    class: 'gui-toggle gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

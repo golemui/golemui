@@ -35,7 +35,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       props: {
         direction: 'row',
         gap: 50,
@@ -139,7 +139,7 @@ const form = defineForm({
     {
       uid: '',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       props: {
         direction: 'row',
         align: 'end',

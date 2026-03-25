@@ -12,7 +12,7 @@ import { AccordionProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './accordion.component.html',
   host: {
-    class: 'gui-accordion',
+    class: 'gui-accordion gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })

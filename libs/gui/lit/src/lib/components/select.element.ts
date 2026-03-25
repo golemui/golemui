@@ -23,17 +23,6 @@ export class SelectElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.classList.add('gui-select');
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -44,6 +33,17 @@ export class SelectElement extends LitElement implements Core.WithWidget {
     } else {
       this.style.removeProperty('flex');
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-select', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
   }
 
   override render() {

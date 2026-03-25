@@ -30,9 +30,21 @@ export class ListElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-list');
+    this.classList.add('gui-list', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -51,18 +63,6 @@ export class ListElement extends LitElement implements Core.WithWidget {
     super.disconnectedCallback();
     this.adapter.destroy();
     this.subscriptions.forEach((s) => s.unsubscribe());
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override render() {

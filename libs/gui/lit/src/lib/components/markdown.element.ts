@@ -23,17 +23,6 @@ export class MarkdownElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.classList.add('gui-markdown');
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -44,6 +33,17 @@ export class MarkdownElement extends LitElement implements Core.WithWidget {
     } else {
       this.style.removeProperty('flex');
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-markdown', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
   }
 
   override render() {

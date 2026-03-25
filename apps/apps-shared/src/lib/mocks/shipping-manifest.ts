@@ -8,7 +8,7 @@ const form = {
   ...shippingManifestForm,
   form: {
     uid: '',
-    type: 'flex',
+    type: 'grid',
     kind: 'layout',
     children: shippingManifestForm.form,
   },
