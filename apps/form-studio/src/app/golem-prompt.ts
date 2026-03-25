@@ -137,7 +137,7 @@ Output a single JSON object with this shape:
   "elements": {
     "root":        { "uid": "root",        "kind": "layout", "type": "flex", "children": ["fields", "submit"] },
     "fields":      { "uid": "fields",      "kind": "layout", "type": "grid", "children": ["email", "pwd"], "props": { "direction": "row" } },
-    "email":       { "uid": "email",       "kind": "input",  "type": "textinput",  "path": "email",    "label": "Email",    "props": { "placeholder": "you@example.com" } },
+    "email":       { "uid": "email",       "kind": "input",  "type": "textinput",  "path": "email",    "label": "Email",    "props": { "placeholder": "you@example.com" }, "validator": { "type": "string", "required": true } },
     "pwd":         { "uid": "pwd",         "kind": "input",  "type": "password",   "path": "password", "label": "Password" },
     "submit":      { "uid": "submit",      "kind": "action", "type": "button",     "label": "Sign In", "on": { "click": "submit" } }
   }
@@ -180,6 +180,11 @@ Output a single JSON object with this shape:
 - \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID.
 - \`tabs\` requires \`props.tabs\` (array of \`{ label, uid }\`). Each tab uid must match a child UID.
 - \`repeater\` is \`kind: "input"\`. Its \`props.template\` is the UID of a \`flex\` element that defines the repeatable row layout. The widgets inside repeater will have a \`path\` equal to \`repeaterPath.items.fieldName\` where \`repeaterPath\` is the path of the repeater widget. For example, if the repeater path is \`users\` and the field name is \`name\`, the path of the text input will be \`users.items.name\`. Properties like \`include\` and \`exclude\` will follow the same rules for paths in the \`when\` expression.
+- Input widgets accept an optional \`validator\` object at the root (not inside props). The \`type\` field is required, all other fields are optional. Examples:
+  - String: \`{ "type": "string", "required": true }\`
+  - Number: \`{ "type": "number", "required": true }\`
+  - Boolean: \`{ "type": "boolean", "required": true }\`
+  - Array: \`{ "type": "array", "required": true }\`
 - For icons use google material icons names
 
 ${generateComponentsSection()}

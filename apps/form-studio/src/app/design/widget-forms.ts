@@ -7,6 +7,28 @@ import { MATERIAL_ICONS } from './material-icons';
 
 const CHANGE_ON = { change: 'propChanged' };
 
+const VALIDATOR_TYPE_BY_WIDGET: Record<string, string> = {
+  textinput: 'string',
+  password: 'string',
+  textarea: 'string',
+  markdown: 'string',
+  dateInput: 'string',
+  datePicker: 'string',
+  calendar: 'string',
+  select: 'string',
+  radiogroup: 'string',
+  dropdown: 'string',
+  list: 'string',
+  number: 'number',
+  currency: 'number',
+  checkbox: 'boolean',
+  toggle: 'boolean',
+  rangeCalendar: 'array',
+  rangeDateInput: 'array',
+  rangeDatePicker: 'array',
+  repeater: 'array',
+};
+
 // ---------------------------------------------------------------------------
 // Field builders
 // ---------------------------------------------------------------------------
@@ -371,6 +393,9 @@ export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): s
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
       checkboxField('prop-readonly', 'readonly', 'Read Only'),
     );
+    if (VALIDATOR_TYPE_BY_WIDGET[widget['type'] as string]) {
+      fields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
+    }
   } else if (widget['kind'] === 'action') {
     fields.push(
       textField('prop-label', 'label', 'Label'),
@@ -395,6 +420,13 @@ export function flattenWidgetData(widget: Record<string, unknown>): Record<strin
     children?: unknown[];
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // Flatten validator.required → validatorRequired
+  if (data['validator'] && typeof data['validator'] === 'object') {
+    const v = data['validator'] as Record<string, unknown>;
+    data['validatorRequired'] = v['required'] === true;
+  }
+  delete data['validator'];
 
   // Hoist props to top level
   if (props && typeof props === 'object') {
@@ -443,6 +475,23 @@ export function updateWidgetFromFlatData(
         delete updated[key];
       } else {
         updated[key] = val;
+      }
+    }
+  }
+
+  // Reconstruct validator from flat validatorRequired
+  if ('validatorRequired' in flatData) {
+    const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
+    if (validatorType && flatData['validatorRequired']) {
+      const existing = (original['validator'] as Record<string, unknown>) ?? {};
+      updated['validator'] = { ...existing, type: validatorType, required: true };
+    } else {
+      const existing = (original['validator'] as Record<string, unknown>) ?? {};
+      const { required: _, ...rest } = existing;
+      if (Object.keys(rest).length > 1) {
+        updated['validator'] = { ...rest, type: validatorType };
+      } else {
+        delete updated['validator'];
       }
     }
   }

@@ -67,7 +67,7 @@ export class App {
   protected activeTab: 'form' | 'json' | 'design' = 'form';
   protected designSelectedWidget: Record<string, unknown> | null = null;
   protected chatInput =
-    'Create a registration form with email, password, confirm password and a submit button';
+    'Create a registration form with required fields email, password, confirm password and a submit button';
   protected tokenCount = 0;
   protected readonly maxTokens = GEMINI_INPUT_BUDGET;
   private tokenDebounce: ReturnType<typeof setTimeout> | null = null;
