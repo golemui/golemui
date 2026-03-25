@@ -125,7 +125,7 @@ Output a single JSON object with this shape:
 }
 
 - Every widget must have a globally unique \`uid\` string (e.g. \`"name-input"\`, \`"submit-btn"\`).
-- Layout widgets (\`flex\`, \`accordion\`, \`tabs\`) list their children as an array of UIDs: \`"children": ["uid-a", "uid-b"]\`.
+- Layout widgets (\`flex\`, \`grid\`, \`accordion\`, \`tabs\`) list their children as an array of UIDs: \`"children": ["uid-a", "uid-b"]\`.
   Children are never inlined as objects — always reference them by UID in \`elements\`.
 - All input widgets require \`path\`: a dot-separated string binding to the form data field (e.g. \`"user.email"\`).
 
@@ -135,7 +135,8 @@ Output a single JSON object with this shape:
 {
   "root": "root",
   "elements": {
-    "root":        { "uid": "root",        "kind": "layout", "type": "flex", "children": ["email", "pwd", "submit"] },
+    "root":        { "uid": "root",        "kind": "layout", "type": "flex", "children": ["fields", "submit"] },
+    "fields":      { "uid": "fields",      "kind": "layout", "type": "grid", "children": ["email", "pwd"], "props": { "direction": "row" } },
     "email":       { "uid": "email",       "kind": "input",  "type": "textinput",  "path": "email",    "label": "Email",    "props": { "placeholder": "you@example.com" } },
     "pwd":         { "uid": "pwd",         "kind": "input",  "type": "password",   "path": "password", "label": "Password" },
     "submit":      { "uid": "submit",      "kind": "action", "type": "button",     "label": "Sign In", "on": { "click": "submit" } }
@@ -149,7 +150,8 @@ Output a single JSON object with this shape:
 {
   "root": "root",
   "elements": {
-    "root":       { "uid": "root",       "kind": "layout", "type": "flex", "children": ["role", "code", "btn"] },
+    "root":       { "uid": "root",       "kind": "layout", "type": "flex", "children": ["fields", "btn"] },
+    "fields":     { "uid": "fields",     "kind": "layout", "type": "grid", "children": ["role", "code"] },
     "role":       { "uid": "role",       "kind": "input",  "type": "select", "path": "config.user.role", "label": "Role",
                     "props": { "options": [{ "label": "User", "value": "user" }, { "label": "Admin", "value": "admin" }] } },
     "code":       { "uid": "code",       "kind": "input",  "type": "textinput", "path": "adminCode", "label": "Admin Code",
@@ -173,7 +175,8 @@ Output a single JSON object with this shape:
 - Use \`select\` or \`radiogroup\` for short static option lists (provide \`props.options\`).
 - \`alert\` requires \`props.text\`.
 - \`button\` is \`kind: "action"\`; all other widgets that collect data are \`kind: "input"\`.
-- \`flex\` is the default layout widget. Use \`props.direction\` for rows/columns and \`props.gap\` for spacing.
+- \`flex\` is for page scaffolding and grouping sections. Use \`props.direction\` for rows/columns and \`props.gap\` for spacing.
+- \`grid\` is for containing inputs. It uses CSS subgrid so labels, inputs, and error messages align across sibling fields. Use \`props.direction: "row"\` for side-by-side inputs. Children use \`size\` (1–12) for column span.
 - \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID.
 - \`tabs\` requires \`props.tabs\` (array of \`{ label, uid }\`). Each tab uid must match a child UID.
 - \`repeater\` is \`kind: "input"\`. Its \`props.template\` is the UID of a \`flex\` element that defines the repeatable row layout. The widgets inside repeater will have a \`path\` equal to \`repeaterPath.items.fieldName\` where \`repeaterPath\` is the path of the repeater widget. For example, if the repeater path is \`users\` and the field name is \`name\`, the path of the text input will be \`users.items.name\`. Properties like \`include\` and \`exclude\` will follow the same rules for paths in the \`when\` expression.
