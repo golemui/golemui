@@ -6,7 +6,6 @@ import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
-import { ifDefined } from 'lit-html/directives/if-defined.js';
 
 /**
  * Monotonically increasing counter for generating unique repeater item IDs.
