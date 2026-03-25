@@ -139,7 +139,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
         </gui-list>
       </div>
 
-      <gui-errors .errors=${data.errors} .touched=${data.touched}></gui-errors>
+      <gui-errors .uid=${this.widget.uid} .errors=${data.errors} .touched=${data.touched}></gui-errors>
     `;
   }
 
