@@ -4,8 +4,9 @@ import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
 
 /**
  * Monotonically increasing counter for generating unique repeater item IDs.
@@ -25,6 +26,8 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
 
   @state() isFocused = false;
+
+  @query('.gui-repeater__main-card') private _repeaterRef!: any;
 
   subscriptions: Subscription[] = [];
 
@@ -62,6 +65,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
   onFocusOut(event: FocusEvent) {
     event.stopPropagation();
+    this.adapter.onBlur();
     this.isFocused = false;
   }
 
@@ -71,32 +75,19 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
     return html`
       <div
         id=${this.widget.uid}
-        class=${`gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`}
+        class=${`gui-repeater__main-card gui-repeater__card ${this.isFocused ? 'gui-repeater__card--focused' : ''}`}
         @focusin=${this.onFocusIn}
         @focusout=${this.onFocusOut}
       >
-        ${this.adapter.templateData.label
-          ? html`<h2>${this.adapter.templateData.label}</h2>`
-          : nothing}
-        ${this.adapter.templateData.touched && this.adapter.templateData.errors?.length
-          ? html` <ul
-              class="gui-validator"
-              id="${this.widget.uid}_errors"
-              data-cy="${this.widget.uid}_validator-errors"
-            >
-              ${this.adapter.templateData.errors.map(
-                (error: string) => html`
-                  <li
-                    class="gui-validator__error"
-                    role="alert"
-                    data-cy="${this.widget.uid}_validator-error"
-                  >
-                    ${error}
-                  </li>
-                `,
-              )}
-            </ul>`
-          : nothing}
+        <gui-label
+          .targetElement=${[this._repeaterRef]}
+          .uid=${this.widget.uid}
+          .label=${this.adapter.templateData.label}
+          .errors=${this.adapter.templateData.errors}
+          .touched=${this.adapter.templateData.touched}
+          .required=${this.adapter.templateData.validator?.required}
+          .native=${false}
+        ></gui-label>
         ${this.adapter.templateData.value
           ? repeat(
               this.adapter.templateData.value,
@@ -111,12 +102,13 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                       : nothing}
                     <button
                       type="button"
-                      class="gui-button gui-repeater__remove-btn"
+                      class="gui-button gui-button--sm gui-repeater__remove-btn"
                       @click=${() => this.removeItem(index)}
                     >
                       ${this.adapter.templateData.removeButtonIcon
                         ? html`<span
-                            class="gui-widget-icon gui-button-icon ${this.adapter.templateData.removeButtonIcon}"
+                            class="gui-widget-icon gui-button-icon ${this.adapter.templateData
+                              .removeButtonIcon}"
                             data-icon=${this.adapter.templateData.removeButtonIcon}
                           ></span>`
                         : nothing}
@@ -142,11 +134,19 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
           )}
         >
           ${this.adapter.templateData.addButtonIcon
-            ? html`<span class="gui-widget-icon gui-button-icon ${this.adapter.templateData.addButtonIcon}" data-icon=${this.adapter.templateData.addButtonIcon}></span>`
+            ? html`<span
+                class="gui-widget-icon gui-button-icon ${this.adapter.templateData.addButtonIcon}"
+                data-icon=${this.adapter.templateData.addButtonIcon}
+              ></span>`
             : nothing}
           ${this.adapter.templateData.addLabel ?? 'Add'}
         </button>
       </div>
+      <gui-errors
+        .uid=${this.widget.uid}
+        .errors=${this.adapter.templateData.errors}
+        .touched=${this.adapter.templateData.touched}
+      ></gui-errors>
     `;
   }
 

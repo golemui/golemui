@@ -8,6 +8,7 @@ export const repeater = (uid: string): any => ({
       kind: 'input',
       type: 'repeater',
       path: 'repeaters.users',
+      label: 'Team Members',
       props: {
         title: 'Developer',
         addButtonIcon: 'person_add',
@@ -36,6 +37,12 @@ export const repeater = (uid: string): any => ({
             },
           ],
         },
+      },
+      validator: {
+        type: 'array',
+        required: true,
+        minItems: 1,
+        maxItems: 2,
       },
     },
   ],

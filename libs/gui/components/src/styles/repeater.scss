@@ -1,12 +1,20 @@
 .gui-form {
   .gui-repeater {
     &__card {
+      &.gui-repeater__main-card {
+        margin-bottom: 0;
+      }
+      
       margin-bottom: var(--gui-space-3);
       padding: var(--gui-space-3);
       border: 1px solid var(--gui-border-default);
       border-radius: var(--gui-radius-md);
       background: var(--gui-bg-default);
       color: var(--gui-text-default);
+
+      &[aria-invalid='true'] {
+        border-color: var(--gui-intent-error);
+      }
 
       &-header {
         display: flex;
@@ -23,6 +31,12 @@
         outline: 0;
         border-color: var(--gui-border-focus);
         box-shadow: var(--gui-shadow-focus);
+
+        &[aria-invalid='true'] {
+          outline: 0;
+          border-color: var(--gui-intent-error);
+          box-shadow: var(--gui-shadow-focus-error);
+        }
       }
 
       &-title {
