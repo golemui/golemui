@@ -27,6 +27,14 @@ const tabDefSchema = z.object({
 const validatorSchema = z.object({
   type: z.enum(['string', 'number', 'integer', 'boolean', 'array']),
   required: z.boolean().optional(),
+  minLength: z.number().optional(),
+  maxLength: z.number().optional(),
+  pattern: z.string().optional(),
+  format: z.string().optional(),
+  minimum: z.number().optional(),
+  maximum: z.number().optional(),
+  minItems: z.number().optional(),
+  maxItems: z.number().optional(),
 });
 
 // ---------------------------------------------------------------------------
