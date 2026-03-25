@@ -29,6 +29,50 @@ const VALIDATOR_TYPE_BY_WIDGET: Record<string, string> = {
   repeater: 'array',
 };
 
+interface ValidatorFieldConfig {
+  validatorKey: string;
+  label: string;
+  inputType: 'number' | 'text' | 'select';
+  options?: { label: string; value: string }[];
+  hasEnableCheckbox: boolean;
+}
+
+const VALIDATOR_FIELDS: Record<string, ValidatorFieldConfig[]> = {
+  string: [
+    { validatorKey: 'minLength', label: 'Min Length', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'maxLength', label: 'Max Length', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'pattern', label: 'Pattern', inputType: 'text', hasEnableCheckbox: true },
+    {
+      validatorKey: 'format',
+      label: 'Format',
+      inputType: 'select',
+      hasEnableCheckbox: false,
+      options: [
+        { label: '(none)', value: '' },
+        { label: 'Email', value: 'email' },
+        { label: 'URL', value: 'url' },
+        { label: 'UUID', value: 'uuid' },
+        { label: 'Date', value: 'date' },
+        { label: 'Time', value: 'time' },
+        { label: 'Date-Time', value: 'date-time' },
+        { label: 'Duration', value: 'duration' },
+        { label: 'Hostname', value: 'hostname' },
+        { label: 'IPv4', value: 'ipv4' },
+        { label: 'IPv6', value: 'ipv6' },
+      ],
+    },
+  ],
+  number: [
+    { validatorKey: 'minimum', label: 'Validate Min', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'maximum', label: 'Validate Max', inputType: 'number', hasEnableCheckbox: true },
+  ],
+  boolean: [],
+  array: [
+    { validatorKey: 'minItems', label: 'Min Items', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'maxItems', label: 'Max Items', inputType: 'number', hasEnableCheckbox: true },
+  ],
+};
+
 // ---------------------------------------------------------------------------
 // Field builders
 // ---------------------------------------------------------------------------
@@ -112,6 +156,30 @@ function repeaterField(
       },
     },
   };
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function validatorFieldDefs(config: ValidatorFieldConfig): Record<string, unknown>[] {
+  const cap = capitalize(config.validatorKey);
+  const enabledPath = `validator${cap}Enabled`;
+  const valuePath = `validator${cap}`;
+  const fields: Record<string, unknown>[] = [];
+
+  if (config.hasEnableCheckbox) {
+    fields.push(checkboxField(`prop-${enabledPath}`, enabledPath, config.label));
+    const valueField =
+      config.inputType === 'number'
+        ? numberField(`prop-${valuePath}`, valuePath, `${config.label} Value`)
+        : textField(`prop-${valuePath}`, valuePath, `${config.label} Value`);
+    fields.push({ ...valueField, include: { when: `$form.${enabledPath} === true` } });
+  } else if (config.inputType === 'select' && config.options) {
+    fields.push(selectField(`prop-${valuePath}`, valuePath, config.label, config.options));
+  }
+
+  return fields;
 }
 
 function optionsRepeater(uid: string, path: string, label = 'Options') {
@@ -393,8 +461,12 @@ export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): s
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
       checkboxField('prop-readonly', 'readonly', 'Read Only'),
     );
-    if (VALIDATOR_TYPE_BY_WIDGET[widget['type'] as string]) {
+    const validatorType = VALIDATOR_TYPE_BY_WIDGET[widget['type'] as string];
+    if (validatorType) {
       fields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
+      for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+        fields.push(...validatorFieldDefs(config));
+      }
     }
   } else if (widget['kind'] === 'action') {
     fields.push(
@@ -421,10 +493,23 @@ export function flattenWidgetData(widget: Record<string, unknown>): Record<strin
   };
   const data: Record<string, unknown> = { ...rest };
 
-  // Flatten validator.required → validatorRequired
+  // Flatten validator → flat keys
   if (data['validator'] && typeof data['validator'] === 'object') {
     const v = data['validator'] as Record<string, unknown>;
     data['validatorRequired'] = v['required'] === true;
+
+    const validatorType = v['type'] as string;
+    for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+      const cap = capitalize(config.validatorKey);
+      const rawValue = v[config.validatorKey];
+      if (config.hasEnableCheckbox) {
+        const hasValue = rawValue !== undefined && rawValue !== null;
+        data[`validator${cap}Enabled`] = hasValue;
+        if (hasValue) data[`validator${cap}`] = rawValue;
+      } else {
+        data[`validator${cap}`] = rawValue ?? '';
+      }
+    }
   }
   delete data['validator'];
 
@@ -479,20 +564,36 @@ export function updateWidgetFromFlatData(
     }
   }
 
-  // Reconstruct validator from flat validatorRequired
-  if ('validatorRequired' in flatData) {
-    const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
-    if (validatorType && flatData['validatorRequired']) {
-      const existing = (original['validator'] as Record<string, unknown>) ?? {};
-      updated['validator'] = { ...existing, type: validatorType, required: true };
-    } else {
-      const existing = (original['validator'] as Record<string, unknown>) ?? {};
-      const { required: _, ...rest } = existing;
-      if (Object.keys(rest).length > 1) {
-        updated['validator'] = { ...rest, type: validatorType };
+  // Reconstruct validator from flat keys
+  const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
+  if (validatorType) {
+    const validator: Record<string, unknown> = { type: validatorType };
+
+    if (flatData['validatorRequired']) {
+      validator['required'] = true;
+    }
+
+    for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+      const cap = capitalize(config.validatorKey);
+      if (config.hasEnableCheckbox) {
+        if (flatData[`validator${cap}Enabled`] === true) {
+          const value = flatData[`validator${cap}`];
+          if (value !== undefined && value !== null && value !== '') {
+            validator[config.validatorKey] = value;
+          }
+        }
       } else {
-        delete updated['validator'];
+        const value = flatData[`validator${cap}`];
+        if (value !== undefined && value !== null && value !== '') {
+          validator[config.validatorKey] = value;
+        }
       }
+    }
+
+    if (Object.keys(validator).length > 1) {
+      updated['validator'] = validator;
+    } else {
+      delete updated['validator'];
     }
   }
 
