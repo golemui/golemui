@@ -343,7 +343,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
         </gui-list>
       </div>
 
-      <gui-errors .errors=${templateData.errors} .touched=${templateData.touched}></gui-errors>
+      <gui-errors .uid=${this.widget.uid} .errors=${templateData.errors} .touched=${templateData.touched}></gui-errors>
     `;
   }
 }

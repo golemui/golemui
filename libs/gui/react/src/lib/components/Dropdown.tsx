@@ -374,7 +374,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         </gui-list>
       </div>
 
-      <gui-errors errors={errors} touched={isTouched}></gui-errors>
+      <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>
     </div>
   );
 }
