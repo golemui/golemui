@@ -9,6 +9,11 @@
   color: var(--gui-text-default);
 }
 
+.gui-field {
+  width: 100%;
+  min-width: 0;
+}
+
 .gui-widget {
   grid-row: 2;
   position: relative;
@@ -17,6 +22,7 @@
   flex-direction: column;
   column-gap: var(--gui-space-2);
   row-gap: var(--gui-space-2);
+  min-width: 0;
 
   &.gui-widget--horizontal {
     flex-direction: row;
