@@ -17,7 +17,7 @@ export class GuiToggle extends LitElement {
   @property({ type: String }) value: boolean | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) togglePosition: 'left' | 'right' | undefined = 'right';
+  @property({ type: String }) togglePosition: 'left' | 'right' | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`span[role="presentation"]`),
@@ -59,10 +59,10 @@ export class GuiToggle extends LitElement {
       togglePosition: this.togglePosition,
     };
 
-    if (templateData.togglePosition === 'left') {
-      this.classList.add('gui-toggle--left');
-    } else if (this.classList.contains('gui-toggle--left')) {
-      this.classList.remove('gui-toggle--left');
+    if (templateData.togglePosition === 'right') {
+      this.classList.add('gui-toggle--right');
+    } else if (this.classList.contains('gui-toggle--right')) {
+      this.classList.remove('gui-toggle--right');
     }
 
     return html`
@@ -72,10 +72,6 @@ export class GuiToggle extends LitElement {
         data-cy=${`${this.uid}_label`}
         id=${`${this.uid}_label`}
       >
-        <span class="gui-label__container">
-          ${templateData.label + (templateData.required ? ' *' : '')}
-        </span>
-
         <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
           <input
             type="checkbox"
@@ -90,6 +86,10 @@ export class GuiToggle extends LitElement {
 
           <span class="gui-toggle--slider" role="presentation"></span>
         </div>
+
+        <span class="gui-label__container">
+          ${templateData.label + (templateData.required ? ' *' : '')}
+        </span>
       </label>
 
       <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}</div>
