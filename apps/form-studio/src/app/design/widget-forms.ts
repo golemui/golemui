@@ -485,11 +485,19 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
     }
   }
 
+  const visibilityFields: unknown[] = [
+    checkboxField('prop-includeEnabled', 'includeEnabled', 'Include'),
+    { ...textField('prop-includeWhen', 'includeWhen', 'When'), include: { when: '$form.includeEnabled === true' } },
+    checkboxField('prop-excludeEnabled', 'excludeEnabled', 'Exclude'),
+    { ...textField('prop-excludeWhen', 'excludeWhen', 'When'), include: { when: '$form.excludeEnabled === true' } },
+  ];
+
   return [
     { key: 'identity', label: 'Identity', defaultOpen: false, fields: identityFields },
     { key: 'common', label: 'Common Properties', defaultOpen: true, fields: commonFields },
     { key: 'component', label: 'Component Properties', defaultOpen: true, fields: componentFields },
     { key: 'validations', label: 'Validations', defaultOpen: true, fields: validationFields },
+    { key: 'visibility', label: 'Visibility', defaultOpen: true, fields: visibilityFields },
   ];
 }
 
@@ -498,11 +506,19 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
  * Props are hoisted to the top level so path: 'hint' maps to widget.props.hint.
  */
 export function flattenWidgetData(widget: Record<string, unknown>): Record<string, unknown> {
-  const { props, children, ...rest } = widget as Record<string, unknown> & {
+  const { props, children, include, exclude, ...rest } = widget as Record<string, unknown> & {
     props?: Record<string, unknown>;
     children?: unknown[];
+    include?: { when?: string };
+    exclude?: { when?: string };
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // Flatten include/exclude → flat keys
+  data['includeEnabled'] = !!include?.when;
+  if (include?.when) data['includeWhen'] = include.when;
+  data['excludeEnabled'] = !!exclude?.when;
+  if (exclude?.when) data['excludeWhen'] = exclude.when;
 
   // Flatten validator → flat keys
   if (data['validator'] && typeof data['validator'] === 'object') {
@@ -608,6 +624,18 @@ export function updateWidgetFromFlatData(
     }
   }
 
+  // Reconstruct include/exclude from flat keys
+  if (flatData['includeEnabled'] === true && flatData['includeWhen']) {
+    updated['include'] = { when: flatData['includeWhen'] };
+  } else {
+    delete updated['include'];
+  }
+  if (flatData['excludeEnabled'] === true && flatData['excludeWhen']) {
+    updated['exclude'] = { when: flatData['excludeWhen'] };
+  } else {
+    delete updated['exclude'];
+  }
+
   if (propKeys.size > 0) {
     const newProps: Record<string, unknown> = {
       ...((original['props'] as Record<string, unknown>) ?? {}),
@@ -699,6 +727,35 @@ export function replaceWidgetByUid(
       }
     }
     if (changed) return updated;
+  }
+  return root;
+}
+
+/**
+ * Recursively removes a widget with the given uid from the tree.
+ */
+export function removeWidgetByUid(root: unknown, uid: string): unknown {
+  if (Array.isArray(root)) {
+    return root
+      .filter((item) => !(item && typeof item === 'object' && (item as Record<string, unknown>)['uid'] === uid))
+      .map((item) => removeWidgetByUid(item, uid));
+  }
+  if (root && typeof root === 'object') {
+    const node = root as Record<string, unknown>;
+    const updated: Record<string, unknown> = { ...node };
+    if (node['children']) {
+      updated['children'] = removeWidgetByUid(node['children'], uid);
+    }
+    if (node['form']) {
+      updated['form'] = removeWidgetByUid(node['form'], uid);
+    }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = { ...props, template: removeWidgetByUid(props['template'], uid) };
+      }
+    }
+    return updated;
   }
   return root;
 }

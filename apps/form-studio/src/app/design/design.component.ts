@@ -15,6 +15,7 @@ import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
 import {
   findWidgetByUid,
+  removeWidgetByUid,
   replaceWidgetByUid,
   stripVisibilityRules,
   updateWidgetFromFlatData,
@@ -111,6 +112,14 @@ export class DesignComponent {
     }
   }
 
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedHighlight()) {
+      event.preventDefault();
+      this.deleteSelectedWidget();
+    }
+  }
+
   @HostListener('window:resize')
   onResize() {
     this.refreshHighlights();
@@ -147,6 +156,25 @@ export class DesignComponent {
     // already-captured rect stale.  Refresh after the browser has laid out.
     if (widget && wasNull) {
       setTimeout(() => this.refreshHighlights(), 1);
+    }
+  }
+
+  private deleteSelectedWidget() {
+    const hl = this.selectedHighlight();
+    if (!hl) return;
+    try {
+      const parsed = JSON.parse(this.liveFormDef());
+      const baseUid = hl.prettyUid.replace(/\[\d+\]/g, '');
+      const newFormDef = removeWidgetByUid(parsed, baseUid);
+      const newFormDefStr = JSON.stringify(newFormDef, null, 2);
+      this.liveFormDef.set(newFormDefStr);
+      this.formVersion.update((v) => v + 1);
+      this.formDefChange.emit(newFormDefStr);
+      this.selectedHighlight.set(null);
+      this.setSelectedWidget(null);
+      this.hoveredHighlight.set(null);
+    } catch (e) {
+      console.error('[design] Failed to delete widget', e);
     }
   }
 
