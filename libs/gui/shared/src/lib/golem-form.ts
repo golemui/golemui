@@ -167,6 +167,7 @@ type GolemWidget<
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
   | GuiFlex<FormType, States, V, CustomWidget>
+  | GuiGrid<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
@@ -350,6 +351,18 @@ type GuiFlex<
   Props.FlexProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'flex' };
+
+type GuiGrid<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
+> = Core.LayoutWidget<
+  States,
+  FormType,
+  Props.GridProps,
+  GolemWidget<FormType, States, V, CustomWidget>[]
+> & { type: 'grid' };
 
 type GuiTabs<
   FormType extends Record<string, any>,

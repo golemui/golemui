@@ -1,0 +1,61 @@
+.gui-form {
+  .gui-grid {
+    .gui-grid__widget {
+      display: grid;
+      column-gap: var(--gui-space-4);
+      row-gap: var(--gui-space-2);
+
+      &--row {
+        grid-template-rows: auto auto auto;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      }
+
+      &--column {
+        grid-template-columns: 1fr;
+      }
+
+      .gui-grid__cell {
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 3;
+        gap: var(--gui-space-1);
+        align-items: start;
+
+        .gui-field {
+          display: grid;
+          grid-template-rows: subgrid;
+          grid-row: span 3;
+          gap: var(--gui-space-1);
+          align-items: start;
+        }
+      }
+    }
+  }
+}
+
+.gui-grid__widget--row {
+  .gui-label { margin-bottom: 0; }
+  .gui-validator { margin-top: 0; }
+
+  gui-checkbox::after,
+  gui-toggle::after {
+    content: '';
+    display: block;
+  }
+}
+
+@container gui-form (max-width: 480px) {
+  .gui-form .gui-grid .gui-grid__widget--row {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+
+    .gui-grid__cell {
+      grid-row: auto;
+      grid-column: auto !important;
+
+      .gui-field { display: block; }
+    }
+    .gui-label { margin-bottom: var(--gui-space-2); }
+    .gui-validator { margin-top: var(--gui-space-2); }
+  }
+}

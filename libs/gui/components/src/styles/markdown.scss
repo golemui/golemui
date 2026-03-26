@@ -20,7 +20,6 @@ gui-markdown {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    overflow: hidden;
     width: 100%;
 
     border-radius: var(--gui-radius-md);
@@ -54,7 +53,7 @@ gui-markdown {
       border-radius: 0;
       border: 0;
       padding: var(--gui-space-2) var(--gui-space-3);
-      width: 100%;
+      width: calc(100% - (var(--gui-space-3) * 2));
       resize: vertical;
     }
   }
@@ -83,7 +82,8 @@ gui-markdown {
 
   .gui-markdown__toolbar {
     position: absolute;
-    width: 100%;
+    top: 0;
+    width: calc(100% - (var(--gui-space-3) * 2));
     display: flex;
     justify-content: space-between;
     padding: var(--gui-space-1) var(--gui-space-3) var(--gui-space-1);

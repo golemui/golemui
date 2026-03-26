@@ -34,6 +34,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<
 
   // LAYOUTS
   flex: async () => (await import('./components/Flex')).Flex,
+  grid: async () => (await import('./components/Grid')).Grid,
   tabs: async () => (await import('./components/Tabs')).Tabs,
   accordion: async () => (await import('./components/Accordion')).Accordion,
 

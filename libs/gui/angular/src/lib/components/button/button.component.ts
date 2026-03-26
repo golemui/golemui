@@ -9,7 +9,7 @@ import { ButtonProps } from '@golemui/gui-shared';
   providers: [Angular.ActionWidgetAdapter],
   templateUrl: './button.component.html',
   host: {
-    class: 'gui-button',
+    class: 'gui-button gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

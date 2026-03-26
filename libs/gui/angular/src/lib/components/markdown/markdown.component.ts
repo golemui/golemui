@@ -17,7 +17,7 @@ import { MarkdownProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './markdown.component.html',
   host: {
-    class: 'gui-markdown',
+    class: 'gui-markdown gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

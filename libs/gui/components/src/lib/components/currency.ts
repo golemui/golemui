@@ -47,6 +47,11 @@ export class GuiCurrency extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('value')) {
       if (document.activeElement !== this.inputElement) {

@@ -238,7 +238,7 @@ function fromArrayValidator(v: ArrayValidator) {
     let schema = array(any());
 
     if (v.required === true) {
-      schema = schema.check(minLength(1));
+      schema = schema.check(refine((val) => val.length > 0, { error: 'This field is required' }));
     }
 
     if (typeof v.minItems === 'number') {

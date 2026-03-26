@@ -24,6 +24,19 @@ const tabDefSchema = z.object({
   uid: z.string(),
 });
 
+const validatorSchema = z.object({
+  type: z.enum(['string', 'number', 'integer', 'boolean', 'array']),
+  required: z.boolean().optional(),
+  minLength: z.number().optional(),
+  maxLength: z.number().optional(),
+  pattern: z.string().optional(),
+  format: z.string().optional(),
+  minimum: z.number().optional(),
+  maximum: z.number().optional(),
+  minItems: z.number().optional(),
+  maxItems: z.number().optional(),
+});
+
 // ---------------------------------------------------------------------------
 // Shared base field groups (spread into each widget schema)
 // ---------------------------------------------------------------------------
@@ -40,6 +53,7 @@ const inputFields = {
   label: z.string().optional(),
   disabled: z.boolean().optional(),
   readonly: z.boolean().optional(),
+  validator: validatorSchema.optional(),
 };
 
 const actionFields = {
@@ -417,6 +431,19 @@ export const flexSchema = z.object({
     .optional(),
 });
 
+export const gridSchema = z.object({
+  ...layoutFields,
+  type: z.literal('grid'),
+  children: z.array(z.string()),
+  props: z
+    .object({
+      direction: z.enum(['row', 'column']).optional(),
+      columnGap: z.number().optional(),
+      rowGap: z.number().optional(),
+    })
+    .optional(),
+});
+
 export const accordionSchema = z.object({
   ...layoutFields,
   type: z.literal('accordion'),
@@ -489,6 +516,7 @@ export const catalog = {
 
   // layouts
   flex: { schema: flexSchema, description: 'Flex container; children are widget UIDs' },
+  grid: { schema: gridSchema, description: 'Grid container with subgrid alignment; children are widget UIDs' },
   accordion: {
     schema: accordionSchema,
     description: 'Collapsible accordion; sections map UIDs to panels',

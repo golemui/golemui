@@ -11,7 +11,7 @@ import { FlexProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './flex.component.html',
   host: {
-    class: 'gui-flex',
+    class: 'gui-flex gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })

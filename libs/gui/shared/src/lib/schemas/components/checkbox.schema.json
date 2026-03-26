@@ -14,7 +14,8 @@
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "checkboxPositionProp": {
-      "enum": ["left", "right"]
+      "enum": ["left", "right"],
+      "default": "left"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"

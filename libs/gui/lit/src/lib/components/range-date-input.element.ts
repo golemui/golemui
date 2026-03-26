@@ -23,9 +23,21 @@ export class RangeDateInputElement extends LitElement implements Core.WithWidget
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-range-date');
+    this.classList.add('gui-range-date', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 

@@ -44,6 +44,11 @@ export class GuiRangeCalendar extends AbstractCalendar {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value') && !changedProperties.has('focusDate')) {
       if (this.value) {

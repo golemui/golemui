@@ -1,7 +1,7 @@
-export const number = (): any => ({
-  uid: 'tab8',
+export const number = (uid: string): any => ({
+  uid,
   kind: 'layout',
-  type: 'flex',
+  type: 'grid',
   children: [
     {
       uid: '',

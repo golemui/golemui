@@ -54,19 +54,6 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    document.addEventListener('click', this.onDocumentClick);
-    this.addEventListener('focusout', this.onFocusOut);
-    this.classList.add('gui-range-date-picker');
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -77,6 +64,19 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
     } else {
       this.style.removeProperty('flex');
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener('click', this.onDocumentClick);
+    this.addEventListener('focusout', this.onFocusOut);
+    this.classList.add('gui-range-date-picker', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
   }
 
   override render() {

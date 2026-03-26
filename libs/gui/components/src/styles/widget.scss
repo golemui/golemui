@@ -1,20 +1,28 @@
 .gui-label {
+  grid-row: 1;
+  align-self: end;
   display: flex;
   flex-direction: column;
-  gap: var(--gui-space-2);
+  gap: var(--gui-space-1);
   margin-bottom: var(--gui-space-2);
   font-weight: 500;
   color: var(--gui-text-default);
 }
 
+.gui-field {
+  width: 100%;
+  min-width: 0;
+}
+
 .gui-widget {
+  grid-row: 2;
   position: relative;
   display: flex;
   justify-content: center;
   flex-direction: column;
   column-gap: var(--gui-space-2);
   row-gap: var(--gui-space-2);
-  flex: 1;
+  min-width: 0;
 
   &.gui-widget--horizontal {
     flex-direction: row;

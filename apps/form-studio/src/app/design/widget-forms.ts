@@ -7,6 +7,72 @@ import { MATERIAL_ICONS } from './material-icons';
 
 const CHANGE_ON = { change: 'propChanged' };
 
+const VALIDATOR_TYPE_BY_WIDGET: Record<string, string> = {
+  textinput: 'string',
+  password: 'string',
+  textarea: 'string',
+  markdown: 'string',
+  dateInput: 'string',
+  datePicker: 'string',
+  calendar: 'string',
+  select: 'string',
+  radiogroup: 'string',
+  dropdown: 'string',
+  list: 'string',
+  number: 'number',
+  currency: 'number',
+  checkbox: 'boolean',
+  toggle: 'boolean',
+  rangeCalendar: 'array',
+  rangeDateInput: 'array',
+  rangeDatePicker: 'array',
+  repeater: 'array',
+};
+
+interface ValidatorFieldConfig {
+  validatorKey: string;
+  label: string;
+  inputType: 'number' | 'text' | 'select';
+  options?: { label: string; value: string }[];
+  hasEnableCheckbox: boolean;
+}
+
+const VALIDATOR_FIELDS: Record<string, ValidatorFieldConfig[]> = {
+  string: [
+    { validatorKey: 'minLength', label: 'Min Length', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'maxLength', label: 'Max Length', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'pattern', label: 'Pattern', inputType: 'text', hasEnableCheckbox: true },
+    {
+      validatorKey: 'format',
+      label: 'Format',
+      inputType: 'select',
+      hasEnableCheckbox: false,
+      options: [
+        { label: '(none)', value: '' },
+        { label: 'Email', value: 'email' },
+        { label: 'URL', value: 'url' },
+        { label: 'UUID', value: 'uuid' },
+        { label: 'Date', value: 'date' },
+        { label: 'Time', value: 'time' },
+        { label: 'Date-Time', value: 'date-time' },
+        { label: 'Duration', value: 'duration' },
+        { label: 'Hostname', value: 'hostname' },
+        { label: 'IPv4', value: 'ipv4' },
+        { label: 'IPv6', value: 'ipv6' },
+      ],
+    },
+  ],
+  number: [
+    { validatorKey: 'minimum', label: 'Validate Min', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'maximum', label: 'Validate Max', inputType: 'number', hasEnableCheckbox: true },
+  ],
+  boolean: [],
+  array: [
+    { validatorKey: 'minItems', label: 'Min Items', inputType: 'number', hasEnableCheckbox: true },
+    { validatorKey: 'maxItems', label: 'Max Items', inputType: 'number', hasEnableCheckbox: true },
+  ],
+};
+
 // ---------------------------------------------------------------------------
 // Field builders
 // ---------------------------------------------------------------------------
@@ -92,6 +158,30 @@ function repeaterField(
   };
 }
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function validatorFieldDefs(config: ValidatorFieldConfig): Record<string, unknown>[] {
+  const cap = capitalize(config.validatorKey);
+  const enabledPath = `validator${cap}Enabled`;
+  const valuePath = `validator${cap}`;
+  const fields: Record<string, unknown>[] = [];
+
+  if (config.hasEnableCheckbox) {
+    fields.push(checkboxField(`prop-${enabledPath}`, enabledPath, config.label));
+    const valueField =
+      config.inputType === 'number'
+        ? numberField(`prop-${valuePath}`, valuePath, `${config.label} Value`)
+        : textField(`prop-${valuePath}`, valuePath, `${config.label} Value`);
+    fields.push({ ...valueField, include: { when: `$form.${enabledPath} === true` } });
+  } else if (config.inputType === 'select' && config.options) {
+    fields.push(selectField(`prop-${valuePath}`, valuePath, config.label, config.options));
+  }
+
+  return fields;
+}
+
 function optionsRepeater(uid: string, path: string, label = 'Options') {
   return repeaterField(uid, path, label, [
     { uid: `${uid}-label`, path: 'label', label: 'Label' },
@@ -105,17 +195,6 @@ function labelUidRepeater(uid: string, path: string, label: string) {
     { uid: `${uid}-uid`, path: 'uid', label: 'UID' },
   ]);
 }
-
-// ---------------------------------------------------------------------------
-// Common fields shared by all widgets
-// ---------------------------------------------------------------------------
-
-const COMMON_FIELDS = [
-  textField('prop-uid', 'uid', 'ID', true),
-  textField('prop-type', 'type', 'Type', true),
-  textField('prop-kind', 'kind', 'Kind', true),
-  numberField('prop-size', 'size', 'Size (grid span)'),
-];
 
 // ---------------------------------------------------------------------------
 // Widget-type-specific prop fields
@@ -133,6 +212,8 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
     iconField('prop-icon', 'icon'),
+    iconField('prop-showPasswordIcon', 'showPasswordIcon', 'Show Password Icon'),
+    iconField('prop-hidePasswordIcon', 'hidePasswordIcon', 'Hide Password Icon'),
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   number: [
@@ -141,6 +222,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     numberField('prop-step', 'step', 'Step'),
     numberField('prop-minimum', 'minimum', 'Minimum'),
     numberField('prop-maximum', 'maximum', 'Maximum'),
+    checkboxField('prop-autoGrow', 'autoGrow', 'Auto Grow'),
   ],
   currency: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -212,28 +294,57 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     iconField('prop-icon', 'icon'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
   ],
   calendar: [
     textField('prop-hint', 'hint', 'Hint'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
     numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
     textField('prop-minDate', 'minDate', 'Min Date'),
     textField('prop-maxDate', 'maxDate', 'Max Date'),
+    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeCalendar: [
     textField('prop-hint', 'hint', 'Hint'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
+    textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
     numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
     textField('prop-minDate', 'minDate', 'Min Date'),
     textField('prop-maxDate', 'maxDate', 'Max Date'),
+    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeDateInput: [
     textField('prop-hint', 'hint', 'Hint'),
     iconField('prop-icon', 'icon'),
     textField('prop-separator', 'separator', 'Separator'),
+    textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
+    textField('prop-startDateAriaLabel', 'startDateAriaLabel', 'Start Date Aria Label'),
+    textField('prop-endDateAriaLabel', 'endDateAriaLabel', 'End Date Aria Label'),
   ],
   rangeDatePicker: [
     textField('prop-hint', 'hint', 'Hint'),
     iconField('prop-icon', 'icon'),
     textField('prop-separator', 'separator', 'Separator'),
+    textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
+    textField('prop-startDateAriaLabel', 'startDateAriaLabel', 'Start Date Aria Label'),
+    textField('prop-endDateAriaLabel', 'endDateAriaLabel', 'End Date Aria Label'),
+    iconField('prop-prevMonthIcon', 'prevMonthIcon', 'Prev Month Icon'),
+    iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
+    textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
+    textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
+    textField('prop-minDate', 'minDate', 'Min Date'),
+    textField('prop-maxDate', 'maxDate', 'Max Date'),
+    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
+    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
   ],
   markdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -295,6 +406,14 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     ]),
     numberField('prop-gap', 'gap', 'Gap'),
   ],
+  grid: [
+    selectField('prop-direction', 'direction', 'Direction', [
+      { label: 'Column', value: 'column' },
+      { label: 'Row', value: 'row' },
+    ]),
+    numberField('prop-columnGap', 'columnGap', 'Column Gap'),
+    numberField('prop-rowGap', 'rowGap', 'Row Gap'),
+  ],
   accordion: [
     checkboxField('prop-singleOpen', 'singleOpen', 'Single Open'),
     selectField('prop-renderMode', 'renderMode', 'Render Mode', [
@@ -317,32 +436,61 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
 // Public API
 // ---------------------------------------------------------------------------
 
+export interface PropertyGroup {
+  key: string;
+  label: string;
+  defaultOpen: boolean;
+  fields: unknown[];
+}
+
 /**
- * Builds a gui-form formDef JSON string for a given widget object.
- * The generated form contains fields for the widget's properties.
+ * Builds grouped property definitions for the properties panel accordion.
+ * Returns groups: Identity, Common Properties, Component Properties, Validations.
+ * Groups with no fields are still returned (filtered in the component).
  */
-export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): string {
-  const fields: unknown[] = [...COMMON_FIELDS];
+export function buildWidgetPropertyGroups(widget: Record<string, unknown>): PropertyGroup[] {
+  const identityFields: unknown[] = [
+    textField('prop-uid', 'uid', 'ID', true),
+    textField('prop-type', 'type', 'Type', true),
+    textField('prop-kind', 'kind', 'Kind', true),
+  ];
+
+  const commonFields: unknown[] = [numberField('prop-size', 'size', 'Size (grid span)')];
 
   if (widget['kind'] === 'input') {
-    fields.push(
+    commonFields.push(
       textField('prop-path', 'path', 'Path'),
       textField('prop-label', 'label', 'Label'),
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
       checkboxField('prop-readonly', 'readonly', 'Read Only'),
     );
   } else if (widget['kind'] === 'action') {
-    fields.push(
+    commonFields.push(
       textField('prop-label', 'label', 'Label'),
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
     );
   }
 
   const typeKey = widget['type'] as string;
-  const propFields = PROP_FIELDS[typeKey] ?? [];
-  fields.push(...propFields);
+  const componentFields: unknown[] = [...(PROP_FIELDS[typeKey] ?? [])];
 
-  return JSON.stringify({ form: fields });
+  const validationFields: unknown[] = [];
+  if (widget['kind'] === 'input') {
+    const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
+    if (validatorType) {
+      validationFields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
+      for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+        validationFields.push(...validatorFieldDefs(config));
+      }
+    }
+  }
+
+  return [
+    { key: 'identity', label: 'Identity', defaultOpen: false, fields: identityFields },
+    { key: 'common', label: 'Common Properties', defaultOpen: true, fields: commonFields },
+    { key: 'component', label: 'Component Properties', defaultOpen: true, fields: componentFields },
+    { key: 'validations', label: 'Validations', defaultOpen: true, fields: validationFields },
+  ];
 }
 
 /**
@@ -355,6 +503,26 @@ export function flattenWidgetData(widget: Record<string, unknown>): Record<strin
     children?: unknown[];
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // Flatten validator → flat keys
+  if (data['validator'] && typeof data['validator'] === 'object') {
+    const v = data['validator'] as Record<string, unknown>;
+    data['validatorRequired'] = v['required'] === true;
+
+    const validatorType = v['type'] as string;
+    for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+      const cap = capitalize(config.validatorKey);
+      const rawValue = v[config.validatorKey];
+      if (config.hasEnableCheckbox) {
+        const hasValue = rawValue !== undefined && rawValue !== null;
+        data[`validator${cap}Enabled`] = hasValue;
+        if (hasValue) data[`validator${cap}`] = rawValue;
+      } else {
+        data[`validator${cap}`] = rawValue ?? '';
+      }
+    }
+  }
+  delete data['validator'];
 
   // Hoist props to top level
   if (props && typeof props === 'object') {
@@ -404,6 +572,39 @@ export function updateWidgetFromFlatData(
       } else {
         updated[key] = val;
       }
+    }
+  }
+
+  // Reconstruct validator from flat keys
+  const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
+  if (validatorType) {
+    const validator: Record<string, unknown> = { type: validatorType };
+
+    if (flatData['validatorRequired']) {
+      validator['required'] = true;
+    }
+
+    for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+      const cap = capitalize(config.validatorKey);
+      if (config.hasEnableCheckbox) {
+        if (flatData[`validator${cap}Enabled`] === true) {
+          const value = flatData[`validator${cap}`];
+          if (value !== undefined && value !== null && value !== '') {
+            validator[config.validatorKey] = value;
+          }
+        }
+      } else {
+        const value = flatData[`validator${cap}`];
+        if (value !== undefined && value !== null && value !== '') {
+          validator[config.validatorKey] = value;
+        }
+      }
+    }
+
+    if (Object.keys(validator).length > 1) {
+      updated['validator'] = validator;
+    } else {
+      delete updated['validator'];
     }
   }
 

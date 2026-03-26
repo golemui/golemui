@@ -50,7 +50,7 @@ export function Calendar(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-calendar">
+    <div className="gui-calendar gui-field" style={{ flex: templateData.size }}>
       <gui-calendar
         ref={handleRef}
         uid={uid}

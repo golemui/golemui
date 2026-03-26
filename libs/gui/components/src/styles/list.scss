@@ -11,6 +11,10 @@ gui-list {
   border-radius: var(--gui-radius-md);
   overflow: hidden;
 
+  &[aria-invalid='true'] {
+    border-color: var(--gui-intent-error);
+  }
+
   ul {
     margin: 0;
     padding: 0;

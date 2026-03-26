@@ -47,6 +47,11 @@ export class GuiSelect extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     super.render();
 

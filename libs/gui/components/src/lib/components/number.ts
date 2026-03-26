@@ -44,6 +44,7 @@ export class GuiNumber extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.classList.add('gui-field');
   }
 
   override render() {
@@ -61,6 +62,7 @@ export class GuiNumber extends LitElement {
         inputElement.style.width = '0px';
         const newWidth = Math.max(23, inputElement.scrollWidth);
         inputStyles.width = `${newWidth}px`;
+        inputStyles.maxWidth = `${newWidth}px`;
         inputElement.style.width = '';
       } else {
         inputStyles.width = '47px';

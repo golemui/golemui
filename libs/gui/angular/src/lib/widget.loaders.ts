@@ -45,6 +45,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
 
   // LAYOUT WIDGETS
   flex: async () => (await import('./components/flex/flex.component')).FlexComponent,
+  grid: async () => (await import('./components/grid/grid.component')).GridComponent,
   tabs: async () => (await import('./components/tabs/tabs.component')).TabsComponent,
   accordion: async () =>
     (await import('./components/accordion/accordion.component')).AccordionComponent,

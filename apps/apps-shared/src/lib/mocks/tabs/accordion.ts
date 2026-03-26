@@ -1,5 +1,5 @@
-export const accordion = (): any => ({
-  uid: 'tab5',
+export const accordion = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'accordion',
   props: {
@@ -18,7 +18,7 @@ export const accordion = (): any => ({
     {
       uid: 'section1',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       children: [
         {
           uid: '',
@@ -39,7 +39,7 @@ export const accordion = (): any => ({
     {
       uid: 'section2',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       children: [
         {
           uid: '',
@@ -60,7 +60,7 @@ export const accordion = (): any => ({
     {
       uid: 'section3',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       children: [
         {
           uid: '',

@@ -1,7 +1,7 @@
 import { GUIAriaController } from '../controllers/aria.controller';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { addLabel, ControlTemplateData } from '../utils/templates';
+import { addErrors, ControlTemplateData } from '../utils/templates';
 import { CheckboxProps } from '@golemui/gui-shared';
 
 @customElement('gui-checkbox')
@@ -17,7 +17,7 @@ export class GuiCheckbox extends LitElement {
   @property({ type: String }) value: boolean | undefined = undefined;
 
   @property({ type: String }) hint: string | undefined = undefined;
-  @property({ type: String }) checkboxPosition: 'left' | 'right' | undefined = 'right';
+  @property({ type: String }) checkboxPosition: 'left' | 'right' | undefined = 'left';
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
@@ -38,6 +38,11 @@ export class GuiCheckbox extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     super.render();
 
@@ -54,26 +59,39 @@ export class GuiCheckbox extends LitElement {
       checkboxPosition: this.checkboxPosition,
     };
 
-    if (templateData.checkboxPosition === 'left') {
-      this.classList.add('gui-checkbox--left');
-    } else if (this.classList.contains('gui-checkbox--left')) {
-      this.classList.remove('gui-checkbox--left');
+    if (templateData.checkboxPosition === 'right') {
+      this.classList.add('gui-checkbox--right');
+    } else if (this.classList.contains('gui-checkbox--right')) {
+      this.classList.remove('gui-checkbox--right');
     }
 
     return html`
-      ${addLabel(this.uid as string, templateData, true)}
+      <label
+        class="gui-label"
+        for=${this.uid}
+        data-cy=${`${this.uid}_label`}
+        id=${`${this.uid}_label`}
+      >
+        <div class="gui-widget gui-widget--horizontal">
+          <input
+            type="checkbox"
+            id=${this.uid}
+            data-cy=${`${this.uid}_checkbox`}
+            ?checked=${this.value}
+            ?required=${this.required}
+            ?disabled=${this.disabled || this.readOnly}
+            @change=${this.valueChanged}
+            @blur=${this.onBlur}
+          />
+        </div>
 
-      <div class="gui-widget gui-widget--horizontal">
-        <input
-          type="checkbox"
-          id=${this.uid}
-          data-cy=${`${this.uid}_checkbox`}
-          ?checked=${this.value}
-          ?required=${this.required}
-          ?disabled=${this.disabled || this.readOnly}
-          @change=${this.valueChanged}
-          @blur=${this.onBlur}
-        />
+        <span class="gui-label__container">
+          ${templateData.label + (templateData.required ? ' *' : '')}
+        </span>
+      </label>
+
+      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
+        ${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}
       </div>
     `;
   }
