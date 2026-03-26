@@ -436,6 +436,38 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
 // Public API
 // ---------------------------------------------------------------------------
 
+/**
+ * Creates a default widget definition for a given kind and type.
+ */
+export function createDefaultWidget(kind: string, type: string): Record<string, unknown> {
+  const uid = `${type}-${Date.now().toString(36)}`;
+  const widget: Record<string, unknown> = { uid, kind, type };
+
+  if (kind === 'input' && type === 'repeater') {
+    widget['label'] = capitalize(type);
+    widget['path'] = uid;
+    widget['props'] = {
+      template: { uid: uid + '-tpl', kind: 'layout', type: 'flex', children: [] },
+      addLabel: 'Add',
+      removeLabel: 'Remove',
+    };
+    widget['defaultValue'] = [{}];
+  } else if (kind === 'input') {
+    widget['label'] = capitalize(type);
+    widget['path'] = uid;
+  } else if (kind === 'action') {
+    widget['label'] = capitalize(type);
+  } else if (kind === 'display' && type === 'alert') {
+    widget['props'] = { text: 'Alert message', level: 'info' };
+  }
+
+  if (kind === 'layout') {
+    widget['children'] = [];
+  }
+
+  return widget;
+}
+
 export interface PropertyGroup {
   key: string;
   label: string;
@@ -756,6 +788,80 @@ export function removeWidgetByUid(root: unknown, uid: string): unknown {
       }
     }
     return updated;
+  }
+  return root;
+}
+
+/**
+ * Inserts a widget into a container at a given index.
+ * If containerUid is null, inserts into the root `form` array.
+ * For accordion containers, also adds a section entry in props.sections.
+ */
+export function insertWidgetAt(
+  root: unknown,
+  containerUid: string | null,
+  widget: Record<string, unknown>,
+  index: number,
+): unknown {
+  if (containerUid === null) {
+    // Insert into root form array
+    if (root && typeof root === 'object' && !Array.isArray(root)) {
+      const obj = root as Record<string, unknown>;
+      if (Array.isArray(obj['form'])) {
+        const form = [...(obj['form'] as unknown[])];
+        form.splice(index, 0, widget);
+        return { ...obj, form };
+      }
+    }
+    return root;
+  }
+
+  if (Array.isArray(root)) {
+    return root.map((item) => insertWidgetAt(item, containerUid, widget, index));
+  }
+  if (root && typeof root === 'object') {
+    const node = root as Record<string, unknown>;
+    const updated: Record<string, unknown> = { ...node };
+    let found = false;
+
+    if (node['uid'] === containerUid) {
+      const children = [...((node['children'] as unknown[]) ?? [])];
+      children.splice(index, 0, widget);
+      updated['children'] = children;
+
+      // Accordion: also add section metadata
+      if (node['type'] === 'accordion' && node['props']) {
+        const props = { ...(node['props'] as Record<string, unknown>) };
+        const sections = [...((props['sections'] as unknown[]) ?? [])];
+        sections.splice(index, 0, {
+          label: (widget['label'] as string) || (widget['type'] as string) || 'Section',
+          uid: widget['uid'] as string,
+        });
+        props['sections'] = sections;
+        updated['props'] = props;
+      }
+      return updated;
+    }
+
+    if (node['children']) {
+      updated['children'] = insertWidgetAt(node['children'], containerUid, widget, index);
+      found = true;
+    }
+    if (node['form']) {
+      updated['form'] = insertWidgetAt(node['form'], containerUid, widget, index);
+      found = true;
+    }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = {
+          ...props,
+          template: insertWidgetAt(props['template'], containerUid, widget, index),
+        };
+        found = true;
+      }
+    }
+    if (found) return updated;
   }
   return root;
 }

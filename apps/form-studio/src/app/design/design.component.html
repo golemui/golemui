@@ -1,4 +1,9 @@
-<div class="design-layout">
+<div
+  class="design-layout"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
   <div class="design-container">
     <div class="design-capture"></div>
     @for (v of [formVersion()]; track v) {
@@ -29,7 +34,11 @@
             </button>
             <span class="comp-overlay__sep">›</span>
           }
-          <span class="comp-overlay__crumb comp-overlay__crumb--current">
+          <span
+            class="comp-overlay__crumb comp-overlay__crumb--current"
+            draggable="true"
+            (dragstart)="onBreadcrumbDragStart($event, h.prettyUid)"
+          >
             {{ h.type + '#' + h.prettyUid }}
           </span>
         </div>
@@ -52,10 +61,26 @@
           </button>
           <span class="comp-overlay__sep">›</span>
         }
-        <span class="comp-overlay__crumb comp-overlay__crumb--current">
+        <span
+          class="comp-overlay__crumb comp-overlay__crumb--current"
+          draggable="true"
+          (dragstart)="onBreadcrumbDragStart($event, s.prettyUid)"
+        >
           {{ s.type + '#' + s.prettyUid }}
         </span>
       </div>
     </div>
+  }
+
+  @if (dropIndicator(); as d) {
+    <div
+      class="drop-indicator"
+      [class.drop-indicator--horizontal]="d.direction === 'column'"
+      [class.drop-indicator--vertical]="d.direction === 'row'"
+      [style.top.px]="d.rect.top"
+      [style.left.px]="d.rect.left"
+      [style.width.px]="d.rect.width"
+      [style.height.px]="d.rect.height"
+    ></div>
   }
 </div>

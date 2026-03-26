@@ -68,7 +68,11 @@
 
   &--current {
     color: #94a3b8;
-    cursor: default;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
 
     .comp-overlay--selected & {
       color: #f59e0b;
@@ -95,6 +99,37 @@
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid #334155;
   overflow: scroll;
+
+  // Give empty layout containers a visible drop target area
+  ::ng-deep {
+    gui-flex-layout,
+    gui-grid-layout,
+    gui-accordion-layout {
+      .gui-flex__widget:not(:has(> [id^="host-"])),
+      .gui-grid__widget:not(:has(> .gui-grid__cell)),
+      .gui-accordion__widget:not(:has(> .gui-accordion__section)) {
+        min-height: 41px;
+        border: 1px dashed #475569;
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
+.drop-indicator {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10000;
+  background: #3b82f6;
+  border-radius: 2px;
+
+  &--horizontal {
+    height: 3px;
+  }
+
+  &--vertical {
+    width: 3px;
+  }
 }
 
 .design-capture {
