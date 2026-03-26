@@ -98,6 +98,9 @@ export class App {
   }
 
   protected switchTab(tab: 'form' | 'json' | 'design') {
+    if (this.activeTab === 'design' && tab !== 'design') {
+      this.designSelectedWidget = null;
+    }
     this.activeTab = tab;
   }
 
