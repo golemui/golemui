@@ -197,17 +197,6 @@ function labelUidRepeater(uid: string, path: string, label: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Common fields shared by all widgets
-// ---------------------------------------------------------------------------
-
-const COMMON_FIELDS = [
-  textField('prop-uid', 'uid', 'ID', true),
-  textField('prop-type', 'type', 'Type', true),
-  textField('prop-kind', 'kind', 'Kind', true),
-  numberField('prop-size', 'size', 'Size (grid span)'),
-];
-
-// ---------------------------------------------------------------------------
 // Widget-type-specific prop fields
 // ---------------------------------------------------------------------------
 
@@ -447,39 +436,61 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
 // Public API
 // ---------------------------------------------------------------------------
 
+export interface PropertyGroup {
+  key: string;
+  label: string;
+  defaultOpen: boolean;
+  fields: unknown[];
+}
+
 /**
- * Builds a gui-form formDef JSON string for a given widget object.
- * The generated form contains fields for the widget's properties.
+ * Builds grouped property definitions for the properties panel accordion.
+ * Returns groups: Identity, Common Properties, Component Properties, Validations.
+ * Groups with no fields are still returned (filtered in the component).
  */
-export function buildWidgetPropertiesFormDef(widget: Record<string, unknown>): string {
-  const fields: unknown[] = [...COMMON_FIELDS];
+export function buildWidgetPropertyGroups(widget: Record<string, unknown>): PropertyGroup[] {
+  const identityFields: unknown[] = [
+    textField('prop-uid', 'uid', 'ID', true),
+    textField('prop-type', 'type', 'Type', true),
+    textField('prop-kind', 'kind', 'Kind', true),
+  ];
+
+  const commonFields: unknown[] = [numberField('prop-size', 'size', 'Size (grid span)')];
 
   if (widget['kind'] === 'input') {
-    fields.push(
+    commonFields.push(
       textField('prop-path', 'path', 'Path'),
       textField('prop-label', 'label', 'Label'),
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
       checkboxField('prop-readonly', 'readonly', 'Read Only'),
     );
-    const validatorType = VALIDATOR_TYPE_BY_WIDGET[widget['type'] as string];
-    if (validatorType) {
-      fields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
-      for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
-        fields.push(...validatorFieldDefs(config));
-      }
-    }
   } else if (widget['kind'] === 'action') {
-    fields.push(
+    commonFields.push(
       textField('prop-label', 'label', 'Label'),
       checkboxField('prop-disabled', 'disabled', 'Disabled'),
     );
   }
 
   const typeKey = widget['type'] as string;
-  const propFields = PROP_FIELDS[typeKey] ?? [];
-  fields.push(...propFields);
+  const componentFields: unknown[] = [...(PROP_FIELDS[typeKey] ?? [])];
 
-  return JSON.stringify({ form: fields });
+  const validationFields: unknown[] = [];
+  if (widget['kind'] === 'input') {
+    const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
+    if (validatorType) {
+      validationFields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
+      for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
+        validationFields.push(...validatorFieldDefs(config));
+      }
+    }
+  }
+
+  return [
+    { key: 'identity', label: 'Identity', defaultOpen: false, fields: identityFields },
+    { key: 'common', label: 'Common Properties', defaultOpen: true, fields: commonFields },
+    { key: 'component', label: 'Component Properties', defaultOpen: true, fields: componentFields },
+    { key: 'validations', label: 'Validations', defaultOpen: true, fields: validationFields },
+  ];
 }
 
 /**
