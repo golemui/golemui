@@ -70,6 +70,8 @@
   &--current {
     color: #94a3b8;
     cursor: grab;
+    -webkit-user-drag: element;
+    user-select: none;
 
     &:active {
       cursor: grabbing;
