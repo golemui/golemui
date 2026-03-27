@@ -116,7 +116,9 @@ export class DesignComponent {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedHighlight()) {
+    const tag = (event.target as HTMLElement)?.tagName;
+    const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (event.target as HTMLElement)?.isContentEditable;
+    if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedHighlight() && !isEditable) {
       event.preventDefault();
       this.deleteSelectedWidget();
     }
