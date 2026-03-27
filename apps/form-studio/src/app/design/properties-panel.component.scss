@@ -1,14 +1,15 @@
 :host {
-  display: block;
+  display: flex;
   width: 300px;
   flex-shrink: 0;
-  height: 100vh;
+  height: 100%;
   border-left: 1px solid #334155;
 }
 
 .properties-panel {
   background-color: #1e293b;
   overflow: hidden;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;

@@ -1,17 +1,18 @@
 :host {
-  display: block;
-  width: 100%;
+  display: flex;
+  flex: 1;
   height: 100%;
+  min-width: 0;
 }
 
 .design-layout {
   position: relative;
   display: flex;
+  flex: 1;
   gap: 16px;
   align-items: flex-start;
   padding: 24px;
   overflow: auto;
-  height: 100%;
   box-sizing: border-box;
 }
 

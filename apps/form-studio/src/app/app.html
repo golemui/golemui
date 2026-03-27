@@ -1,11 +1,12 @@
 <div class="app-layout">
-  <!-- Left Column: Chat -->
-  <aside class="chat-sidebar">
+  <!-- Left Column: Chat / Widget Toolbar -->
+  <aside class="chat-sidebar" [class.design-mode]="activeTab === 'design'">
     <div class="chat-header">
       <h2>Form Studio</h2>
       <p>Powered by GolemUI</p>
     </div>
 
+    @if (activeTab !== 'design') {
     <div class="chat-history" #chatHistory>
       <ng-container *ngFor="let msg of messages; let i = index; let last = last">
         @if (msg.role === 'thinking') {
@@ -64,32 +65,16 @@
         </div>
       </div>
     </div>
-  </aside>
-
-  <!-- Right Column: Form/JSON Viewer -->
-  <main class="content-main">
-    <header class="tabs-header">
-      <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Preview
-      </button>
-      <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Edit
-      </button>
-      <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Design
-      </button>
-    </header>
-
-    @if (activeTab === 'design') {
-    <div class="widget-toolbar">
+    } @else {
+    <!-- Widget Toolbar in Design Mode -->
+    <div class="widget-toolbar-sidebar">
       <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('display')">
-        <button type="button" class="widget-toolbar__group-label" (click)="toggleToolbarGroup('display')">Display</button>
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('display')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Display</span>
+        </button>
         @if (!collapsedToolbarGroups.has('display')) {
         <div class="widget-toolbar__items">
           <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'display', 'alert')">
@@ -98,8 +83,14 @@
         </div>
         }
       </div>
+
       <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('layout')">
-        <button type="button" class="widget-toolbar__group-label" (click)="toggleToolbarGroup('layout')">Layout</button>
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('layout')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Layout</span>
+        </button>
         @if (!collapsedToolbarGroups.has('layout')) {
         <div class="widget-toolbar__items">
           <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'layout', 'accordion')">
@@ -114,8 +105,14 @@
         </div>
         }
       </div>
+
       <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('interactive')">
-        <button type="button" class="widget-toolbar__group-label" (click)="toggleToolbarGroup('interactive')">Interactive</button>
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('interactive')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Interactive</span>
+        </button>
         @if (!collapsedToolbarGroups.has('interactive')) {
         <div class="widget-toolbar__items">
           <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'action', 'button')">
@@ -124,8 +121,14 @@
         </div>
         }
       </div>
+
       <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('inputs')">
-        <button type="button" class="widget-toolbar__group-label" (click)="toggleToolbarGroup('inputs')">Inputs</button>
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('inputs')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Inputs</span>
+        </button>
         @if (!collapsedToolbarGroups.has('inputs')) {
         <div class="widget-toolbar__items">
           <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'textinput')">
@@ -190,6 +193,28 @@
       </div>
     </div>
     }
+  </aside>
+
+  <!-- Right Column: Form/JSON Viewer -->
+  <main class="content-main">
+    <header class="tabs-header">
+      <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Preview
+      </button>
+      <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Edit
+      </button>
+      <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
+        @if (thinking) {
+        <span class="spinner spinner-tab"></span>
+        } Design
+      </button>
+    </header>
+
 
     <div class="tab-content" [ngSwitch]="activeTab">
       @if (error) {
@@ -231,21 +256,23 @@
         @if (thinking) {
         <span class="spinner spinner-tab"></span>
         } @else {
-        <app-design
-          #designComp
-          [formDef]="formJson()"
-          (formDefChange)="onFormDefChange($event)"
-          (selectedWidgetChange)="designSelectedWidget = $event"
-        ></app-design>
+        <div class="design-layout-wrapper">
+          <app-design
+            #designComp
+            [formDef]="formJson()"
+            (formDefChange)="onFormDefChange($event)"
+            (selectedWidgetChange)="designSelectedWidget = $event"
+          ></app-design>
+          @if (designSelectedWidget; as w) {
+          <app-properties-panel
+            [widget]="w"
+            (widgetChange)="onDesignWidgetChange($event)"
+            (click)="$event.stopPropagation()"
+          />
+          }
+        </div>
         }
       </div>
     </div>
   </main>
-  @if (activeTab === 'design' && designSelectedWidget; as w) {
-  <app-properties-panel
-    [widget]="w"
-    (widgetChange)="onDesignWidgetChange($event)"
-    (click)="$event.stopPropagation()"
-  />
-  }
 </div>
