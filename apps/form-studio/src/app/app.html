@@ -199,24 +199,24 @@
   <main class="content-main">
     <header class="tabs-header">
       <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Preview
+        Preview
       </button>
       <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Edit
+        Edit
       </button>
       <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Design
+        Design
       </button>
     </header>
 
 
     <div class="tab-content" [ngSwitch]="activeTab">
+      @if (thinking) {
+      <div class="loading-overlay">
+        <span class="spinner spinner-lg"></span>
+      </div>
+      }
+
       @if (error) {
       <div class="error-container">
         <p class="error">{{ error }}</p>
@@ -224,9 +224,7 @@
       }
       <!-- Form Tab -->
       <div *ngSwitchCase="'form'" class="form-preview-container">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } @else {
+        @if (!thinking) {
         <div class="form-wrapper">
           <gui-form
             [formDef]="formJson()"
@@ -244,18 +242,14 @@
 
       <!-- JSON Tab -->
       <div *ngSwitchCase="'json'" class="json-editor-container">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } @else {
+        @if (!thinking) {
         <app-editor [value]="formJson()" (valueChange)="onJsonChange($event)" />
         }
       </div>
 
       <!-- Design Tab -->
       <div *ngSwitchCase="'design'" class="design-tab-container">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } @else {
+        @if (!thinking) {
         <div class="design-layout-wrapper">
           <app-design
             #designComp

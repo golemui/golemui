@@ -432,14 +432,22 @@
   border-width: 2px;
 }
 
-.spinner-tab {
-  width: 12px;
-  height: 12px;
-  border-width: 2px;
-  margin-right: 6px;
-  vertical-align: middle;
-  border-color: rgba(148, 163, 184, 0.3);
+.spinner-lg {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+  border-color: rgba(148, 163, 184, 0.2);
   border-top-color: #3b82f6;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background: var(--color-background, #0f172a);
 }
 
 .error-container {
