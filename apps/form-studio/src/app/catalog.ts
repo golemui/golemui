@@ -425,7 +425,8 @@ export const flexSchema = z.object({
   props: z
     .object({
       direction: z.enum(['row', 'row-reverse', 'column', 'column-reverse']).optional(),
-      align: z.enum(['center', 'start', 'end', 'space-between', 'space-around']).optional(),
+      justify: z.enum(['center', 'start', 'end']).optional(),
+      align: z.enum(['center', 'start', 'end', 'space-between', 'space-around', 'space-evenly']).optional(),
       gap: z.number().optional(),
     })
     .optional(),

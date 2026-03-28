@@ -68,6 +68,7 @@ describe('Flex schema validation', () => {
             ],
             props: {
               direction: 'row',
+              justify: 'center',
               align: 'center',
               gap: 16,
             },

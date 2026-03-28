@@ -1,11 +1,12 @@
 <div class="app-layout">
-  <!-- Left Column: Chat -->
-  <aside class="chat-sidebar">
+  <!-- Left Column: Chat / Widget Toolbar -->
+  <aside class="chat-sidebar" [class.design-mode]="activeTab === 'design'">
     <div class="chat-header">
       <h2>Form Studio</h2>
       <p>Powered by GolemUI</p>
     </div>
 
+    @if (activeTab !== 'design') {
     <div class="chat-history" #chatHistory>
       <ng-container *ngFor="let msg of messages; let i = index; let last = last">
         @if (msg.role === 'thinking') {
@@ -64,29 +65,158 @@
         </div>
       </div>
     </div>
+    } @else {
+    <!-- Widget Toolbar in Design Mode -->
+    <div class="widget-toolbar-sidebar">
+      <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('display')">
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('display')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Display</span>
+        </button>
+        @if (!collapsedToolbarGroups.has('display')) {
+        <div class="widget-toolbar__items">
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'display', 'alert')">
+            <i class="ph ph-warning"></i><span>Alert</span>
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('layout')">
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('layout')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Layout</span>
+        </button>
+        @if (!collapsedToolbarGroups.has('layout')) {
+        <div class="widget-toolbar__items">
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'layout', 'accordion')">
+            <i class="ph ph-square-split-vertical"></i><span>Accordion</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'layout', 'flex')">
+            <i class="ph ph-layout"></i><span>Flex</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'layout', 'grid')">
+            <i class="ph ph-grid-nine"></i><span>Grid</span>
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('interactive')">
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('interactive')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Interactive</span>
+        </button>
+        @if (!collapsedToolbarGroups.has('interactive')) {
+        <div class="widget-toolbar__items">
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'action', 'button')">
+            <i class="ph ph-cursor-click"></i><span>Button</span>
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="widget-toolbar__group" [class.widget-toolbar__group--collapsed]="collapsedToolbarGroups.has('inputs')">
+        <button type="button" class="widget-toolbar__group-header" (click)="toggleToolbarGroup('inputs')">
+          <svg class="widget-toolbar__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Inputs</span>
+        </button>
+        @if (!collapsedToolbarGroups.has('inputs')) {
+        <div class="widget-toolbar__items">
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'textinput')">
+            <i class="ph ph-text-aa"></i><span>Text</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'password')">
+            <i class="ph ph-password"></i><span>Password</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'number')">
+            <i class="ph ph-hash"></i><span>Number</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'currency')">
+            <i class="ph ph-currency-dollar"></i><span>Currency</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'dateInput')">
+            <i class="ph ph-calendar"></i><span>Date Input</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'datePicker')">
+            <i class="ph ph-calendar-check"></i><span>Date Picker</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'calendar')">
+            <i class="ph ph-calendar-dot"></i><span>Calendar</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'rangeDateInput')">
+            <i class="ph ph-calendar"></i><span>Range Date Input</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'rangeDatePicker')">
+            <i class="ph ph-calendar-check"></i><span>Range Date Picker</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'rangeCalendar')">
+            <i class="ph ph-calendar-dots"></i><span>Range Calendar</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'textarea')">
+            <i class="ph ph-article"></i><span>Textarea</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'markdown')">
+            <i class="ph ph-markdown-logo"></i><span>Markdown</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'checkbox')">
+            <i class="ph ph-check-square"></i><span>Checkbox</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'toggle')">
+            <i class="ph ph-toggle-left"></i><span>Toggle</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'radiogroup')">
+            <i class="ph ph-radio-button"></i><span>Radio Group</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'select')">
+            <i class="ph ph-caret-up-down"></i><span>Select</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'dropdown')">
+            <i class="ph ph-caret-circle-up-down"></i><span>Dropdown</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'list')">
+            <i class="ph ph-list"></i><span>List</span>
+          </div>
+          <div class="widget-toolbar__item" draggable="true" (dragstart)="onToolbarDragStart($event, 'input', 'repeater')">
+            <i class="ph ph-rows-plus-bottom"></i><span>Repeater</span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
   </aside>
 
   <!-- Right Column: Form/JSON Viewer -->
   <main class="content-main">
     <header class="tabs-header">
       <button [class.active]="activeTab === 'form'" (click)="switchTab('form')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Preview
+        Preview
       </button>
       <button [class.active]="activeTab === 'json'" (click)="switchTab('json')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Edit
+        Edit
       </button>
       <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } Design
+        Design
       </button>
     </header>
 
+
     <div class="tab-content" [ngSwitch]="activeTab">
+      @if (thinking) {
+      <div class="loading-overlay">
+        <span class="spinner spinner-lg"></span>
+      </div>
+      }
+
       @if (error) {
       <div class="error-container">
         <p class="error">{{ error }}</p>
@@ -94,9 +224,7 @@
       }
       <!-- Form Tab -->
       <div *ngSwitchCase="'form'" class="form-preview-container">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } @else {
+        @if (!thinking) {
         <div class="form-wrapper">
           <gui-form
             [formDef]="formJson()"
@@ -114,33 +242,31 @@
 
       <!-- JSON Tab -->
       <div *ngSwitchCase="'json'" class="json-editor-container">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } @else {
+        @if (!thinking) {
         <app-editor [value]="formJson()" (valueChange)="onJsonChange($event)" />
         }
       </div>
 
       <!-- Design Tab -->
       <div *ngSwitchCase="'design'" class="design-tab-container">
-        @if (thinking) {
-        <span class="spinner spinner-tab"></span>
-        } @else {
-        <app-design
-          #designComp
-          [formDef]="formJson()"
-          (formDefChange)="onFormDefChange($event)"
-          (selectedWidgetChange)="designSelectedWidget = $event"
-        ></app-design>
+        @if (!thinking) {
+        <div class="design-layout-wrapper">
+          <app-design
+            #designComp
+            [formDef]="formJson()"
+            (formDefChange)="onFormDefChange($event)"
+            (selectedWidgetChange)="designSelectedWidget = $event"
+          ></app-design>
+          @if (designSelectedWidget; as w) {
+          <app-properties-panel
+            [widget]="w"
+            (widgetChange)="onDesignWidgetChange($event)"
+            (click)="$event.stopPropagation()"
+          />
+          }
+        </div>
         }
       </div>
     </div>
   </main>
-  @if (activeTab === 'design' && designSelectedWidget; as w) {
-  <app-properties-panel
-    [widget]="w"
-    (widgetChange)="onDesignWidgetChange($event)"
-    (click)="$event.stopPropagation()"
-  />
-  }
 </div>

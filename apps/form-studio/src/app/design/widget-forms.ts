@@ -403,6 +403,13 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
       { label: 'End', value: 'end' },
       { label: 'Space Between', value: 'space-between' },
       { label: 'Space Around', value: 'space-around' },
+      { label: 'Space Evenly', value: 'space-evenly' },
+    ]),
+    selectField('prop-justify', 'justify', 'Justify', [
+      { label: 'Start', value: 'start' },
+      { label: 'Center', value: 'center' },
+      { label: 'End', value: 'end' },
+      { label: 'Stretch', value: 'stretch' },
     ]),
     numberField('prop-gap', 'gap', 'Gap'),
   ],
@@ -435,6 +442,38 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
+
+/**
+ * Creates a default widget definition for a given kind and type.
+ */
+export function createDefaultWidget(kind: string, type: string): Record<string, unknown> {
+  const uid = `${type}-${Date.now().toString(36)}`;
+  const widget: Record<string, unknown> = { uid, kind, type };
+
+  if (kind === 'input' && type === 'repeater') {
+    widget['label'] = capitalize(type);
+    widget['path'] = uid;
+    widget['props'] = {
+      template: { uid: uid + '-tpl', kind: 'layout', type: 'flex', children: [] },
+      addLabel: 'Add',
+      removeLabel: 'Remove',
+    };
+    widget['defaultValue'] = [{}];
+  } else if (kind === 'input') {
+    widget['label'] = capitalize(type);
+    widget['path'] = uid;
+  } else if (kind === 'action') {
+    widget['label'] = capitalize(type);
+  } else if (kind === 'display' && type === 'alert') {
+    widget['props'] = { text: 'Alert message', level: 'info' };
+  }
+
+  if (kind === 'layout') {
+    widget['children'] = [];
+  }
+
+  return widget;
+}
 
 export interface PropertyGroup {
   key: string;
@@ -485,11 +524,19 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
     }
   }
 
+  const visibilityFields: unknown[] = [
+    checkboxField('prop-includeEnabled', 'includeEnabled', 'Include'),
+    { ...textField('prop-includeWhen', 'includeWhen', 'When'), include: { when: '$form.includeEnabled === true' } },
+    checkboxField('prop-excludeEnabled', 'excludeEnabled', 'Exclude'),
+    { ...textField('prop-excludeWhen', 'excludeWhen', 'When'), include: { when: '$form.excludeEnabled === true' } },
+  ];
+
   return [
     { key: 'identity', label: 'Identity', defaultOpen: false, fields: identityFields },
     { key: 'common', label: 'Common Properties', defaultOpen: true, fields: commonFields },
     { key: 'component', label: 'Component Properties', defaultOpen: true, fields: componentFields },
     { key: 'validations', label: 'Validations', defaultOpen: true, fields: validationFields },
+    { key: 'visibility', label: 'Visibility', defaultOpen: true, fields: visibilityFields },
   ];
 }
 
@@ -498,11 +545,19 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
  * Props are hoisted to the top level so path: 'hint' maps to widget.props.hint.
  */
 export function flattenWidgetData(widget: Record<string, unknown>): Record<string, unknown> {
-  const { props, children, ...rest } = widget as Record<string, unknown> & {
+  const { props, children, include, exclude, ...rest } = widget as Record<string, unknown> & {
     props?: Record<string, unknown>;
     children?: unknown[];
+    include?: { when?: string };
+    exclude?: { when?: string };
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // Flatten include/exclude → flat keys
+  data['includeEnabled'] = !!include?.when;
+  if (include?.when) data['includeWhen'] = include.when;
+  data['excludeEnabled'] = !!exclude?.when;
+  if (exclude?.when) data['excludeWhen'] = exclude.when;
 
   // Flatten validator → flat keys
   if (data['validator'] && typeof data['validator'] === 'object') {
@@ -608,6 +663,18 @@ export function updateWidgetFromFlatData(
     }
   }
 
+  // Reconstruct include/exclude from flat keys
+  if (flatData['includeEnabled'] === true && flatData['includeWhen']) {
+    updated['include'] = { when: flatData['includeWhen'] };
+  } else {
+    delete updated['include'];
+  }
+  if (flatData['excludeEnabled'] === true && flatData['excludeWhen']) {
+    updated['exclude'] = { when: flatData['excludeWhen'] };
+  } else {
+    delete updated['exclude'];
+  }
+
   if (propKeys.size > 0) {
     const newProps: Record<string, unknown> = {
       ...((original['props'] as Record<string, unknown>) ?? {}),
@@ -699,6 +766,109 @@ export function replaceWidgetByUid(
       }
     }
     if (changed) return updated;
+  }
+  return root;
+}
+
+/**
+ * Recursively removes a widget with the given uid from the tree.
+ */
+export function removeWidgetByUid(root: unknown, uid: string): unknown {
+  if (Array.isArray(root)) {
+    return root
+      .filter((item) => !(item && typeof item === 'object' && (item as Record<string, unknown>)['uid'] === uid))
+      .map((item) => removeWidgetByUid(item, uid));
+  }
+  if (root && typeof root === 'object') {
+    const node = root as Record<string, unknown>;
+    const updated: Record<string, unknown> = { ...node };
+    if (node['children']) {
+      updated['children'] = removeWidgetByUid(node['children'], uid);
+    }
+    if (node['form']) {
+      updated['form'] = removeWidgetByUid(node['form'], uid);
+    }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = { ...props, template: removeWidgetByUid(props['template'], uid) };
+      }
+    }
+    return updated;
+  }
+  return root;
+}
+
+/**
+ * Inserts a widget into a container at a given index.
+ * If containerUid is null, inserts into the root `form` array.
+ * For accordion containers, also adds a section entry in props.sections.
+ */
+export function insertWidgetAt(
+  root: unknown,
+  containerUid: string | null,
+  widget: Record<string, unknown>,
+  index: number,
+): unknown {
+  if (containerUid === null) {
+    // Insert into root form array
+    if (root && typeof root === 'object' && !Array.isArray(root)) {
+      const obj = root as Record<string, unknown>;
+      if (Array.isArray(obj['form'])) {
+        const form = [...(obj['form'] as unknown[])];
+        form.splice(index, 0, widget);
+        return { ...obj, form };
+      }
+    }
+    return root;
+  }
+
+  if (Array.isArray(root)) {
+    return root.map((item) => insertWidgetAt(item, containerUid, widget, index));
+  }
+  if (root && typeof root === 'object') {
+    const node = root as Record<string, unknown>;
+    const updated: Record<string, unknown> = { ...node };
+    let found = false;
+
+    if (node['uid'] === containerUid) {
+      const children = [...((node['children'] as unknown[]) ?? [])];
+      children.splice(index, 0, widget);
+      updated['children'] = children;
+
+      // Accordion: also add section metadata
+      if (node['type'] === 'accordion' && node['props']) {
+        const props = { ...(node['props'] as Record<string, unknown>) };
+        const sections = [...((props['sections'] as unknown[]) ?? [])];
+        sections.splice(index, 0, {
+          label: (widget['label'] as string) || (widget['type'] as string) || 'Section',
+          uid: widget['uid'] as string,
+        });
+        props['sections'] = sections;
+        updated['props'] = props;
+      }
+      return updated;
+    }
+
+    if (node['children']) {
+      updated['children'] = insertWidgetAt(node['children'], containerUid, widget, index);
+      found = true;
+    }
+    if (node['form']) {
+      updated['form'] = insertWidgetAt(node['form'], containerUid, widget, index);
+      found = true;
+    }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = {
+          ...props,
+          template: insertWidgetAt(props['template'], containerUid, widget, index),
+        };
+        found = true;
+      }
+    }
+    if (found) return updated;
   }
   return root;
 }
