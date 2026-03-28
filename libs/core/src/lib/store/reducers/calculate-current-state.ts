@@ -1,5 +1,6 @@
 import { compile, parse } from 'subscript/justin';
 import { errorCodes } from '../../errors';
+import { Debug } from '../../utils/debug';
 import { FormHealth, State } from '../model';
 
 export const calculateCurrentState = (state: State): State => {
@@ -28,14 +29,7 @@ export const calculateCurrentState = (state: State): State => {
         try {
           result = evaluate({
             $form: state.data,
-            $log: (value: any, label?: string) => {
-              if (label) {
-                console.log(label, value);
-              } else {
-                console.log(value);
-              }
-              return value;
-            },
+            $log: Debug.log,
           });
         } catch {
           result = false;

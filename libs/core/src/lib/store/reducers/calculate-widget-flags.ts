@@ -1,5 +1,6 @@
 import { compile, parse } from 'subscript/justin';
 import { isActionWidget, isFunctionWidget, isInputWidget } from '../../form-widget';
+import { Debug } from '../../utils/debug';
 import { State } from '../model';
 import { hasWhen } from './utils';
 
@@ -101,14 +102,7 @@ function expressionIsTrue(expression: string, data: State['data']): boolean {
   const evaluate = compile(ast);
   const result = evaluate({
     $form: data,
-    $log: (value: any, label?: string) => {
-      if (label) {
-        console.log(label, value);
-      } else {
-        console.log(value);
-      }
-      return value;
-    },
+    $log: Debug.log,
   });
   return result === true;
 }
