@@ -14,20 +14,21 @@ export const calculateWidgetFlags = (state: State): State => {
 function calculateFlags(state: State): State['widgetFlags'] {
   // TODO: we are not accounting for repeater widgets here
   return (
-    Object.values(state.flatForm)
+    Object.values(state.calculatedWidgets)
       // TODO: use filterMap
-      .map((widget) => {
-        if (isFunctionWidget(widget)) {
-          const widget_ = widget({
+      .map((derived) => {
+        const source = derived.source;
+        if (isFunctionWidget(source)) {
+          const widget_ = source({
             $form: state.data,
             errors: undefined,
             touched: undefined,
             translate: undefined,
           });
-          widget_.uid = widget.uid!;
+          widget_.uid = source.uid!;
           return widget_;
         }
-        return widget;
+        return derived.current;
       })
       .filter((widget) => {
         if (widget.include && ('in' in widget.include || (widget.include && 'when'))) {
@@ -36,7 +37,7 @@ function calculateFlags(state: State): State['widgetFlags'] {
         if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
           return true;
         }
-        if (isInputWidget(widget) || (isActionWidget(widget) && hasWhen(widget.disabled))) {
+        if ((isInputWidget(widget) || isActionWidget(widget)) && hasWhen(widget.disabled)) {
           return true;
         }
         if (isInputWidget(widget) && hasWhen(widget.readonly)) {
