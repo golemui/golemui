@@ -10,7 +10,7 @@
   display: flex;
   flex: 1;
   gap: 16px;
-  align-items: flex-start;
+  justify-content: center;
   padding: 24px;
   overflow: auto;
   box-sizing: border-box;
@@ -92,11 +92,12 @@
 
 .design-container {
   position: relative;
-  width: 100%;
-  max-width: 800px;
+  box-sizing: border-box;
+  width: 800px;
+  min-width: 800px;
   background-color: var(--gui-bg-default);
   border-radius: 12px;
-  padding: 32px;
+  padding: 24px;
   box-shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -105,6 +106,10 @@
 
   // Give empty layout containers a visible drop target area
   ::ng-deep {
+    .gui-date-input__part {
+      pointer-events: none;
+    }
+
     gui-flex-layout,
     gui-grid-layout,
     gui-accordion-layout {
