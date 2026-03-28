@@ -1,6 +1,6 @@
 import { compile, parse } from 'subscript/justin';
-import { FormHealth, State } from '../model';
 import { errorCodes } from '../../errors';
+import { FormHealth, State } from '../model';
 
 export const calculateCurrentState = (state: State): State => {
   let stateExpressions = state.formDef.states;
@@ -17,6 +17,7 @@ export const calculateCurrentState = (state: State): State => {
   let currentStates: string[] = [];
   let formHealth: FormHealth = { status: 'ok' };
   try {
+    // TODO: Use filterMap
     // TODO: Cache compiled expressions
     currentStates = Object.keys(stateExpressions)
       .map((stateName) => {
@@ -52,7 +53,6 @@ export const calculateCurrentState = (state: State): State => {
     };
   }
 
-  console.log('currentStates', currentStates);
   return { ...state, currentStates, formHealth };
 };
 
