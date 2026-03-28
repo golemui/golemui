@@ -22,7 +22,9 @@ export function devToolsMiddleware(name = 'GolemUI Form Store'): Middleware<Stat
 
     return (next) => (action) => {
       next(action);
-      devTools?.send(action, api.getState());
+      if (devTools) {
+        devTools.send(action, api.getState());
+      }
     };
   };
 }
