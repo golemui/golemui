@@ -22,7 +22,7 @@
           "type": "textinput",
           "path": "h2",
           "label": "Right Field",
-          "size": 1
+          "size": 2
         }
       ]
     }
