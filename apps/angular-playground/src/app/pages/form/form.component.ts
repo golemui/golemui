@@ -40,7 +40,7 @@ export class AppFormPage {
     },
   };
 
-  protected middlewares = [AppsShared.loggerMiddleware];
+  protected middlewares = [Core.devToolsMiddleware()];
   protected customWidgetLoaders = {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
