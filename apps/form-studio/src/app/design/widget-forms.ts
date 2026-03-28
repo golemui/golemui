@@ -403,6 +403,13 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
       { label: 'End', value: 'end' },
       { label: 'Space Between', value: 'space-between' },
       { label: 'Space Around', value: 'space-around' },
+      { label: 'Space Evenly', value: 'space-evenly' },
+    ]),
+    selectField('prop-justify', 'justify', 'Justify', [
+      { label: 'Start', value: 'start' },
+      { label: 'Center', value: 'center' },
+      { label: 'End', value: 'end' },
+      { label: 'Stretch', value: 'stretch' },
     ]),
     numberField('prop-gap', 'gap', 'Gap'),
   ],

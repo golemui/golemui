@@ -1,5 +1,7 @@
 .gui-form {
   .gui-accordion {
+    display: block;
+    width: 100%;
     margin: var(--gui-space-3) 0;
 
     > .gui-widget {

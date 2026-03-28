@@ -429,7 +429,8 @@ export type OneOfProps = {
 
 export type FlexProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
-  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
+  justify?: 'center' | 'start' | 'end' | 'stretch';
+  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around' | 'space-evenly';
   gap?: number;
 };
 

@@ -2,6 +2,7 @@
   .gui-flex {
     display: flex;
     flex-direction: column;
+    width: 100%;
 
     .gui-flex__widget {
       display: flex;
@@ -9,6 +10,7 @@
       column-gap: var(--gui-space-4);
       row-gap: var(--gui-space-4);
       min-width: 0;
+      height: 100%;
 
       &--row { flex-direction: row; }
       &--row-reverse { flex-direction: row-reverse; }
@@ -18,6 +20,20 @@
       &--row,
       &--row-reverse {
         align-items: start;
+        justify-content: start;
+
+        &.gui-flex__widget--justify-center {
+          align-items: center;
+        }
+        &.gui-flex__widget--justify-start {
+          align-items: start;
+        }
+        &.gui-flex__widget--justify-end {
+          align-items: end;
+        }
+        &.gui-flex__widget--justify-stretch {
+          align-items: stretch;
+        }
 
         &.gui-flex__widget--align-center {
           justify-content: center;
@@ -34,6 +50,22 @@
         &.gui-flex__widget--align-space-around {
           justify-content: space-around;
         }
+        &.gui-flex__widget--align-space-evenly {
+          justify-content: space-evenly;
+        }
+      }
+
+      &--justify-center {
+        justify-items: center;
+      }
+      &--justify-start {
+        justify-items: start;
+      }
+      &--justify-end {
+        justify-items: end;
+      }
+      &--justify-stretch {
+        justify-items: stretch;
       }
 
       &--align-center {
@@ -50,6 +82,9 @@
       }
       &--align-space-around {
         justify-content: space-around;
+      }
+      &--align-space-evenly {
+        justify-content: space-evenly;
       }
     }
   }
