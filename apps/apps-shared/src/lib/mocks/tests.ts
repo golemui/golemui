@@ -1,7 +1,11 @@
 import * as Core from '@golemui/core';
 import { Example } from './types';
 
-const data = {};
+const data = {
+  repeaters: {
+    teams: [{}],
+  },
+};
 
 const TEAMS_REPEATER_PATH = 'repeaters.teams';
 const DEVELOPERS_REPEATER_PATH = 'repeaters.teams.items.developers';
@@ -13,6 +17,7 @@ const getFormDefinition = () =>
     states: {
       limitReached: `$form.repeaters?.teams?.[0]?.developers?.length === 5`,
       isApple: `$form.company === 'appl'`,
+      isMsoft: `$form.company === 'msf'`,
       companyHasBeenPicked: `$form.company !== undefined`,
     },
     form: [
@@ -48,11 +53,24 @@ const getFormDefinition = () =>
                     kind: 'display',
                     type: 'alert',
                     props: {
+                      level: 'warning',
+                      text: 'Pick a company',
+                    },
+                    exclude: { from: ['companyHasBeenPicked'] },
+                  },
+                  {
+                    kind: 'display',
+                    type: 'alert',
+                    props: {
+                      level: 'error',
+                      'level.companyHasBeenPicked': 'success',
+                      text: 'Company has been picked but is unknown',
                       'text.isApple': 'Company is Apple',
-                      text: 'Company is Msoft',
+                      'text.isMsoft': 'Company is Msoft',
                     },
                     include: { in: ['companyHasBeenPicked'] },
                   },
+
                   {
                     uid: 'teamName',
                     kind: 'input',

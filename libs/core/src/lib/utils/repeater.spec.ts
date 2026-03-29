@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { makeRepeaterItemConfig } from './repeater';
+import { makeRepeaterItemConfig, transformRepeaterItemWhenExpression } from './repeater';
 import { isInputWidget, NonFunctionWidget } from '../form-widget';
 
 // Mock the external dependency to easily control the execution branch
@@ -102,5 +102,27 @@ describe('makeRepeaterItemConfig', () => {
         "Path contains 2 'items' occurrences, but 1 indexes were provided.",
       );
     });
+  });
+});
+
+describe('transformRepeaterItemWhenExpression', () => {
+  it('should return the expression unchanged when it has no .items. token', () => {
+    expect(transformRepeaterItemWhenExpression('form.active', [0])).toBe('form.active');
+  });
+
+  it('should replace a single .items. token with the corresponding index', () => {
+    expect(transformRepeaterItemWhenExpression('users.items.active', [2])).toBe('users.2.active');
+  });
+
+  it('should replace multiple .items. tokens with the corresponding indexes', () => {
+    expect(
+      transformRepeaterItemWhenExpression('users.items.addresses.items.active', [1, 3]),
+    ).toBe('users.1.addresses.3.active');
+  });
+
+  it('should leave excess .items. tokens unreplaced when fewer indexes than tokens are provided', () => {
+    expect(
+      transformRepeaterItemWhenExpression('users.items.addresses.items.active', [1]),
+    ).toBe('users.1.addresses.items.active');
   });
 });
