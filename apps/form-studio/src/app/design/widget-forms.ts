@@ -466,13 +466,17 @@ export function createDefaultWidget(kind: string, type: string): Record<string, 
     widget['label'] = capitalize(type);
   } else if (kind === 'display' && type === 'alert') {
     widget['props'] = { text: 'Alert message', level: 'info' };
+  } else if (kind === 'layout' && type === 'accordion') {
+    const sectionUid = `flex${capitalize(Date.now().toString(36))}`;
+    widget['props'] = { sections: [{ label: 'Section 1', uid: sectionUid }] };
+    widget['children'] = [{ uid: sectionUid, kind: 'layout', type: 'flex', children: [] }];
   } else if (kind === 'layout' && type === 'tabs') {
     const tabUid = `flex${capitalize(Date.now().toString(36))}`;
     widget['props'] = { tabs: [{ label: 'Tab 1', uid: tabUid }] };
     widget['children'] = [{ uid: tabUid, kind: 'layout', type: 'flex', children: [] }];
   }
 
-  if (kind === 'layout' && type !== 'tabs') {
+  if (kind === 'layout' && type !== 'tabs' && type !== 'accordion') {
     widget['children'] = [];
   }
 
@@ -702,6 +706,19 @@ export function updateWidgetFromFlatData(
     }
   }
 
+  // Accordion: sync children and defaultOpen to match props.sections
+  if (typeKey === 'accordion') {
+    const newSections = (((updated['props'] as Record<string, unknown>)?.['sections'] ?? []) as {
+      label: string;
+      uid: string;
+    }[]);
+    const existingChildren = (original['children'] as Record<string, unknown>[]) ?? [];
+    const childByUid = new Map(existingChildren.map((c) => [c['uid'] as string, c]));
+    updated['children'] = newSections.map(
+      (section) => childByUid.get(section.uid) ?? { uid: section.uid, kind: 'layout', type: 'flex', children: [] },
+    );
+  }
+
   // Tabs: sync children to match props.tabs order and membership
   if (typeKey === 'tabs') {
     const newTabs = (((updated['props'] as Record<string, unknown>)?.['tabs'] ?? []) as {
@@ -747,6 +764,18 @@ export function stripVisibilityRules(root: unknown): unknown {
     // can interact with the inner elements.
     if (node['type'] === 'repeater' && !node['defaultValue']) {
       node['defaultValue'] = [{}];
+    }
+    // In design mode, expand all accordion sections so users can drop
+    // content into each child.
+    if (node['type'] === 'accordion' && node['props']) {
+      const props = { ...(node['props'] as Record<string, unknown>) };
+      const sections = (props['sections'] as { uid: string }[]) ?? [];
+      const defaultOpen: Record<string, boolean> = {};
+      for (const section of sections) {
+        defaultOpen[section.uid] = true;
+      }
+      props['defaultOpen'] = defaultOpen;
+      node['props'] = props;
     }
     return node;
   }
