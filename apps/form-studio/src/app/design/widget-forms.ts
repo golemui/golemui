@@ -626,7 +626,7 @@ export function updateWidgetFromFlatData(
   for (const key of EDITABLE_BASE_KEYS) {
     if (key in flatData) {
       const val = flatData[key];
-      if (val === undefined || val === null || val === '') {
+      if (val === undefined || val === null || val === '' || Number.isNaN(val)) {
         delete updated[key];
       } else {
         updated[key] = val;
@@ -686,7 +686,7 @@ export function updateWidgetFromFlatData(
     for (const propKey of propKeys) {
       if (propKey in flatData) {
         const val = flatData[propKey];
-        if (val === undefined || val === null || val === '') {
+        if (val === undefined || val === null || val === '' || Number.isNaN(val)) {
           delete newProps[propKey];
         } else {
           newProps[propKey] = val;
