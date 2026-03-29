@@ -447,18 +447,17 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
  * Creates a default widget definition for a given kind and type.
  */
 export function createDefaultWidget(kind: string, type: string): Record<string, unknown> {
-  const uid = `${type}-${Date.now().toString(36)}`;
+  const uid = `${type}${capitalize(Date.now().toString(36))}`;
   const widget: Record<string, unknown> = { uid, kind, type };
 
   if (kind === 'input' && type === 'repeater') {
     widget['label'] = capitalize(type);
     widget['path'] = uid;
     widget['props'] = {
-      template: { uid: uid + '-tpl', kind: 'layout', type: 'flex', children: [] },
+      template: { uid: uid + 'Tpl', kind: 'layout', type: 'flex', children: [] },
       addLabel: 'Add',
       removeLabel: 'Remove',
     };
-    widget['defaultValue'] = [{}];
   } else if (kind === 'input') {
     widget['label'] = capitalize(type);
     widget['path'] = uid;
@@ -466,9 +465,17 @@ export function createDefaultWidget(kind: string, type: string): Record<string, 
     widget['label'] = capitalize(type);
   } else if (kind === 'display' && type === 'alert') {
     widget['props'] = { text: 'Alert message', level: 'info' };
+  } else if (kind === 'layout' && type === 'accordion') {
+    const sectionUid = `flex${capitalize(Date.now().toString(36))}`;
+    widget['props'] = { sections: [{ label: 'Section 1', uid: sectionUid }] };
+    widget['children'] = [{ uid: sectionUid, kind: 'layout', type: 'flex', children: [] }];
+  } else if (kind === 'layout' && type === 'tabs') {
+    const tabUid = `flex${capitalize(Date.now().toString(36))}`;
+    widget['props'] = { tabs: [{ label: 'Tab 1', uid: tabUid }] };
+    widget['children'] = [{ uid: tabUid, kind: 'layout', type: 'flex', children: [] }];
   }
 
-  if (kind === 'layout') {
+  if (kind === 'layout' && type !== 'tabs' && type !== 'accordion') {
     widget['children'] = [];
   }
 
@@ -494,7 +501,9 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
     textField('prop-kind', 'kind', 'Kind', true),
   ];
 
-  const commonFields: unknown[] = [numberField('prop-size', 'size', 'Size (grid span)')];
+  const commonFields: unknown[] = [
+    { uid: 'prop-size', kind: 'input', type: 'number', path: 'size', label: 'Widget Size', on: CHANGE_ON, props: { minimum: 1 } },
+  ];
 
   if (widget['kind'] === 'input') {
     commonFields.push(
@@ -622,7 +631,7 @@ export function updateWidgetFromFlatData(
   for (const key of EDITABLE_BASE_KEYS) {
     if (key in flatData) {
       const val = flatData[key];
-      if (val === undefined || val === null || val === '') {
+      if (val === undefined || val === null || val === '' || Number.isNaN(val)) {
         delete updated[key];
       } else {
         updated[key] = val;
@@ -682,7 +691,7 @@ export function updateWidgetFromFlatData(
     for (const propKey of propKeys) {
       if (propKey in flatData) {
         const val = flatData[propKey];
-        if (val === undefined || val === null || val === '') {
+        if (val === undefined || val === null || val === '' || Number.isNaN(val)) {
           delete newProps[propKey];
         } else {
           newProps[propKey] = val;
@@ -694,6 +703,32 @@ export function updateWidgetFromFlatData(
     } else {
       delete updated['props'];
     }
+  }
+
+  // Accordion: sync children and defaultOpen to match props.sections
+  if (typeKey === 'accordion') {
+    const newSections = (((updated['props'] as Record<string, unknown>)?.['sections'] ?? []) as {
+      label: string;
+      uid: string;
+    }[]);
+    const existingChildren = (original['children'] as Record<string, unknown>[]) ?? [];
+    const childByUid = new Map(existingChildren.map((c) => [c['uid'] as string, c]));
+    updated['children'] = newSections.map(
+      (section) => childByUid.get(section.uid) ?? { uid: section.uid, kind: 'layout', type: 'flex', children: [] },
+    );
+  }
+
+  // Tabs: sync children to match props.tabs order and membership
+  if (typeKey === 'tabs') {
+    const newTabs = (((updated['props'] as Record<string, unknown>)?.['tabs'] ?? []) as {
+      label: string;
+      uid: string;
+    }[]);
+    const existingChildren = (original['children'] as Record<string, unknown>[]) ?? [];
+    const childByUid = new Map(existingChildren.map((c) => [c['uid'] as string, c]));
+    updated['children'] = newTabs.map(
+      (tab) => childByUid.get(tab.uid) ?? { uid: tab.uid, kind: 'layout', type: 'flex', children: [] },
+    );
   }
 
   return updated;
@@ -728,6 +763,18 @@ export function stripVisibilityRules(root: unknown): unknown {
     // can interact with the inner elements.
     if (node['type'] === 'repeater' && !node['defaultValue']) {
       node['defaultValue'] = [{}];
+    }
+    // In design mode, expand all accordion sections so users can drop
+    // content into each child.
+    if (node['type'] === 'accordion' && node['props']) {
+      const props = { ...(node['props'] as Record<string, unknown>) };
+      const sections = (props['sections'] as { uid: string }[]) ?? [];
+      const defaultOpen: Record<string, boolean> = {};
+      for (const section of sections) {
+        defaultOpen[section.uid] = true;
+      }
+      props['defaultOpen'] = defaultOpen;
+      node['props'] = props;
     }
     return node;
   }
@@ -847,6 +894,17 @@ export function insertWidgetAt(
         props['sections'] = sections;
         updated['props'] = props;
       }
+      // Tabs: also add tab metadata
+      if (node['type'] === 'tabs' && node['props']) {
+        const props = { ...(node['props'] as Record<string, unknown>) };
+        const tabs = [...((props['tabs'] as unknown[]) ?? [])];
+        tabs.splice(index, 0, {
+          label: (widget['label'] as string) || (widget['type'] as string) || 'Tab',
+          uid: widget['uid'] as string,
+        });
+        props['tabs'] = tabs;
+        updated['props'] = props;
+      }
       return updated;
     }
 
@@ -906,6 +964,53 @@ export function findWidgetByUid(root: unknown, uid: string): Record<string, unkn
     if (props['template']) {
       const result = findWidgetByUid(props['template'], uid);
       if (result) return result;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Returns the repeater path prefix for a given container uid.
+ * E.g. if the container is inside a repeater with path "users", returns "users.items".
+ * For nested repeaters, prefixes compound: "users.items.addresses.items".
+ * Returns empty string if the container is not inside any repeater.
+ * Returns null if the container is not found.
+ */
+export function getRepeaterPrefix(root: unknown, containerUid: string): string | null {
+  return walkForRepeaterPrefix(root, containerUid, '');
+}
+
+function walkForRepeaterPrefix(node: unknown, containerUid: string, prefix: string): string | null {
+  if (!node || typeof node !== 'object') return null;
+
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      const result = walkForRepeaterPrefix(item, containerUid, prefix);
+      if (result !== null) return result;
+    }
+    return null;
+  }
+
+  const obj = node as Record<string, unknown>;
+  if (obj['uid'] === containerUid) return prefix;
+
+  if (obj['children']) {
+    const result = walkForRepeaterPrefix(obj['children'], containerUid, prefix);
+    if (result !== null) return result;
+  }
+  if (obj['form']) {
+    const result = walkForRepeaterPrefix(obj['form'], containerUid, prefix);
+    if (result !== null) return result;
+  }
+  if (obj['props'] && typeof obj['props'] === 'object') {
+    const props = obj['props'] as Record<string, unknown>;
+    if (props['template']) {
+      const newPrefix = obj['type'] === 'repeater' && obj['path']
+        ? `${obj['path'] as string}.items`
+        : prefix;
+      const result = walkForRepeaterPrefix(props['template'], containerUid, newPrefix);
+      if (result !== null) return result;
     }
   }
 

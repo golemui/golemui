@@ -250,7 +250,8 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
       defaultListItemRenderer,
     );
 
-    const referenceField = templateData.labelField ?? templateData.valueField;
+    const isSelectedItemObject = this._selectedItem?.template !== null && typeof this._selectedItem?.template === 'object';
+    const referenceField = isSelectedItemObject ? (templateData.labelField ?? 'label') : null;
     const selectedItemValue = referenceField
       ? this._selectedItem?.template[referenceField]
       : this._selectedItem?.template;
