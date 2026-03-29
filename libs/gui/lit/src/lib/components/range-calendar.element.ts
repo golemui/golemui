@@ -75,6 +75,7 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
         .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-range-calendar>
     `;
   }

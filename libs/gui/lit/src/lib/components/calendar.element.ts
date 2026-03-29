@@ -73,6 +73,7 @@ export class CalendarElement extends LitElement implements Core.WithWidget {
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-calendar>
     `;
   }

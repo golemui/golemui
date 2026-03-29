@@ -285,6 +285,10 @@ export type DatePickerProps = {
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  minDate?: string;
+  maxDate?: string;
+  disabledRanges?: DateRange[];
+  numberOfMonths?: number;
 };
 
 export type RangeDatePickerProps = {
