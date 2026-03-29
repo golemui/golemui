@@ -447,14 +447,14 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
  * Creates a default widget definition for a given kind and type.
  */
 export function createDefaultWidget(kind: string, type: string): Record<string, unknown> {
-  const uid = `${type}-${Date.now().toString(36)}`;
+  const uid = `${type}${capitalize(Date.now().toString(36))}`;
   const widget: Record<string, unknown> = { uid, kind, type };
 
   if (kind === 'input' && type === 'repeater') {
     widget['label'] = capitalize(type);
     widget['path'] = uid;
     widget['props'] = {
-      template: { uid: uid + '-tpl', kind: 'layout', type: 'flex', children: [] },
+      template: { uid: uid + 'Tpl', kind: 'layout', type: 'flex', children: [] },
       addLabel: 'Add',
       removeLabel: 'Remove',
     };
@@ -467,7 +467,7 @@ export function createDefaultWidget(kind: string, type: string): Record<string, 
   } else if (kind === 'display' && type === 'alert') {
     widget['props'] = { text: 'Alert message', level: 'info' };
   } else if (kind === 'layout' && type === 'tabs') {
-    const tabUid = `flex-${Date.now().toString(36)}`;
+    const tabUid = `flex${capitalize(Date.now().toString(36))}`;
     widget['props'] = { tabs: [{ label: 'Tab 1', uid: tabUid }] };
     widget['children'] = [{ uid: tabUid, kind: 'layout', type: 'flex', children: [] }];
   }
