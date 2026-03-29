@@ -177,7 +177,7 @@ Output a single JSON object with this shape:
 - \`button\` is \`kind: "action"\`; all other widgets that collect data are \`kind: "input"\`.
 - \`flex\` is for page scaffolding and grouping sections. Use \`props.direction\` for rows/columns and \`props.gap\` for spacing.
 - \`grid\` is for containing inputs. It uses CSS subgrid so labels, inputs, and error messages align across sibling fields. Use \`props.direction: "row"\` for side-by-side inputs. Children use \`size\` (1–12) for column span.
-- \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID.
+- \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID. Property \`defaultOpen\` is a Record<string, boolean> where keys are section uids and values are booleans.
 - \`tabs\` requires \`props.tabs\` (array of \`{ label, uid }\`). Each tab uid must match a child UID.
 - \`repeater\` is \`kind: "input"\`. Its \`props.template\` is the UID of a \`flex\` element that defines the repeatable row layout. The widgets inside repeater will have a \`path\` equal to \`repeaterPath.items.fieldName\` where \`repeaterPath\` is the path of the repeater widget. For example, if the repeater path is \`users\` and the field name is \`name\`, the path of the text input will be \`users.items.name\`. Properties like \`include\` and \`exclude\` will follow the same rules for paths in the \`when\` expression.
 - Input widgets accept an optional \`validator\` object at the root (not inside props). The \`type\` field is required, all other fields are optional. Examples:
