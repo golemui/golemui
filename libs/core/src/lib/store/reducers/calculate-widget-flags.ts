@@ -32,7 +32,7 @@ function calculateFlags(state: State): State['widgetFlags'] {
         return derived.current;
       })
       .filter((widget) => {
-        if (widget.include && ('in' in widget.include || (widget.include && 'when'))) {
+        if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
           return true;
         }
         if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
