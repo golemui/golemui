@@ -106,7 +106,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
         @click=${(e: MouseEvent) => this.selectDate(day, e)}
         @mouseover=${() => this.onMouseOver(day)}
         @focus=${() => this.onMouseOver(day)}
-        @focusout=${this.onFocusOut}
         @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
         aria-selected=${day.isRangeStart || day.isRangeEnd || day.isInRange ? 'true' : 'false'}
       >

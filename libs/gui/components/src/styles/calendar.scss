@@ -15,6 +15,28 @@ gui-calendar {
       background: var(--gui-bg-default);
       border: 1px solid var(--gui-border-default);
       padding: var(--gui-space-3);
+
+      &:focus {
+        outline: 0;
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
+      }
+
+      &[aria-invalid='true'] {
+        border-color: var(--gui-intent-error);
+
+        &:focus {
+          outline: 0;
+          border-color: var(--gui-intent-error);
+          box-shadow: var(--gui-shadow-focus-error);
+        }
+      }
+
+      &[aria-disabled] {
+        background-color: var(--gui-bg-disabled);
+        color: var(--gui-text-disabled);
+        pointer-events: none;
+      }
     }
 
     .gui-calendar__container {

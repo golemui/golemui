@@ -105,6 +105,14 @@ function selectField(
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
 }
 
+function datePickerField(uid: string, path: string, label: string) {
+  return { uid, kind: 'input', type: 'datePicker', path, label, on: CHANGE_ON };
+}
+
+function rangeDatePickerField(uid: string, path: string, label: string) {
+  return { uid, kind: 'input', type: 'rangeDatePicker', path, label, on: CHANGE_ON };
+}
+
 function iconField(uid: string, path: string, label = 'Icon') {
   return {
     uid,
@@ -298,6 +306,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   calendar: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -305,10 +317,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
-    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
-    textField('prop-minDate', 'minDate', 'Min Date'),
-    textField('prop-maxDate', 'maxDate', 'Max Date'),
-    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeCalendar: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -317,10 +329,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
     textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
-    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
-    textField('prop-minDate', 'minDate', 'Min Date'),
-    textField('prop-maxDate', 'maxDate', 'Max Date'),
-    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeDateInput: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -341,10 +353,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
-    textField('prop-minDate', 'minDate', 'Min Date'),
-    textField('prop-maxDate', 'maxDate', 'Max Date'),
-    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
-    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   markdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
