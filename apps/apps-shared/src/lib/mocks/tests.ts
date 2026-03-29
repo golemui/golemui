@@ -8,8 +8,8 @@ const data = {
 };
 
 const TEAMS_REPEATER_PATH = 'repeaters.teams';
-const DEVELOPERS_REPEATER_PATH = 'repeaters.teams.items.developers';
-const SKILLS_REPEATER_PATH = 'repeaters.teams.items.developers.items.skills';
+const DEVELOPERS_REPEATER_PATH = `${TEAMS_REPEATER_PATH}.items.developers`;
+const SKILLS_REPEATER_PATH = `${DEVELOPERS_REPEATER_PATH}.items.skills`;
 const SUBMIT_BUTTON_UID = 'submitBtn';
 
 const getFormDefinition = () =>
@@ -70,7 +70,6 @@ const getFormDefinition = () =>
                     },
                     include: { in: ['companyHasBeenPicked'] },
                   },
-
                   {
                     uid: 'teamName',
                     kind: 'input',
@@ -78,6 +77,15 @@ const getFormDefinition = () =>
                     path: `${TEAMS_REPEATER_PATH}.items.teamName`,
                     label: 'Team Name',
                     validator: { type: 'string', required: true },
+                  },
+                  {
+                    kind: 'display',
+                    type: 'alert',
+                    props: {
+                      level: 'success',
+                      text: 'You typed something',
+                    },
+                    include: { when: `$form.${TEAMS_REPEATER_PATH}.items?.teamName?.length > 0` },
                   },
                   {
                     uid: 'devRepeater',
@@ -93,12 +101,34 @@ const getFormDefinition = () =>
                         type: 'flex',
                         children: [
                           {
+                            kind: 'display',
+                            type: 'alert',
+                            props: {
+                              level: 'success',
+                              text: 'You typed something avobe',
+                            },
+                            include: {
+                              when: `$form.${TEAMS_REPEATER_PATH}.items?.teamName?.length > 0`,
+                            },
+                          },
+                          {
                             uid: 'firstName',
                             kind: 'input',
                             type: 'textinput',
                             label: 'First Name',
                             path: `${DEVELOPERS_REPEATER_PATH}.items.firstName`,
                             validator: { type: 'string', required: true },
+                          },
+                          {
+                            kind: 'display',
+                            type: 'alert',
+                            props: {
+                              level: 'success',
+                              text: 'You typed something here :o',
+                            },
+                            include: {
+                              when: `$form.${TEAMS_REPEATER_PATH}.items?.developers?.items?.firstName?.length > 0`,
+                            },
                           },
                           {
                             uid: 'lastName',

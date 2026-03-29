@@ -1,4 +1,3 @@
-import { compile, parse } from 'subscript/justin';
 import {
   FormWidget,
   InputWidget,
@@ -8,8 +7,8 @@ import {
   LayoutWidget,
   NonFunctionWidget,
 } from '../../form-widget';
-import { Debug } from '../../utils/debug';
 import { flattenForm } from '../../utils/form';
+import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
 import {
   makeRepeaterItemConfig,
@@ -233,15 +232,4 @@ function expandRepeaterFlags(
   });
 
   return flags;
-}
-
-// TODO: caching or memoization or...?
-function expressionIsTrue(expression: string, data: State['data']): boolean {
-  const ast = parse(expression);
-  const evaluate = compile(ast);
-  const result = evaluate({
-    $form: data,
-    $log: Debug.log,
-  });
-  return result === true;
 }

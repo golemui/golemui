@@ -68,12 +68,17 @@ function toRepeaterItemPath(path: DotPath, repeaterIndexes: number[]): string {
 
 /**
  * Replaces `.items.` and `.items?.` tokens in a `when` expression with the
- * concrete repeater indexes so the expression can be evaluated
+ * concrete repeater indexes so the expression can be evaluated.
+ * Multiple `items` tokens are replaced in order, supporting nested repeaters.
  *
  * @example
  * // repeaterIndexes = [2]
- * // "form.items.active" -> "form.2.active"
- * // "form.items?.active" -> "form.2?.active"
+ * // "$form.reptr.items.active" -> "$form.reptr.2.active"
+ * // "$form.reptr.items?.active" -> "$form.reptr.2?.active"
+ *
+ * @example
+ * // repeaterIndexes = [1, 0]
+ * // "$form.reptr.teams.items?.devs?.items?.firstName?.length > 0" -> "$form.reptr.teams.1?.devs?.0?.firstName?.length > 0"
  */
 export function transformRepeaterItemWhenExpression(
   expression: string,
