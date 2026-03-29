@@ -352,6 +352,7 @@ export class DesignComponent {
     'GUI-FLEX-LAYOUT',
     'GUI-GRID-LAYOUT',
     'GUI-ACCORDION-LAYOUT',
+    'GUI-TABS-LAYOUT',
   ]);
 
   private findDropContainer(x: number, y: number): {
@@ -424,7 +425,7 @@ export class DesignComponent {
 
   private getContainerDirection(hostEl: Element): 'row' | 'column' {
     const tag = hostEl.tagName;
-    if (tag === 'GUI-ACCORDION-LAYOUT') return 'column';
+    if (tag === 'GUI-ACCORDION-LAYOUT' || tag === 'GUI-TABS-LAYOUT') return 'column';
 
     // Flex & Grid: check inner element class
     const inner =
@@ -447,6 +448,8 @@ export class DesignComponent {
 
     if (tag === 'GUI-ACCORDION-LAYOUT') {
       children = Array.from(containerEl.querySelectorAll(':scope .gui-accordion__section'));
+    } else if (tag === 'GUI-TABS-LAYOUT') {
+      children = Array.from(containerEl.querySelectorAll(':scope section[role="tabpanel"]'));
     } else if (tag === 'GUI-GRID-LAYOUT') {
       const gridWidget = containerEl.querySelector('.gui-grid__widget');
       if (gridWidget) {

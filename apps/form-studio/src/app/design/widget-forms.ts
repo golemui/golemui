@@ -466,9 +466,13 @@ export function createDefaultWidget(kind: string, type: string): Record<string, 
     widget['label'] = capitalize(type);
   } else if (kind === 'display' && type === 'alert') {
     widget['props'] = { text: 'Alert message', level: 'info' };
+  } else if (kind === 'layout' && type === 'tabs') {
+    const tabUid = `flex-${Date.now().toString(36)}`;
+    widget['props'] = { tabs: [{ label: 'Tab 1', uid: tabUid }] };
+    widget['children'] = [{ uid: tabUid, kind: 'layout', type: 'flex', children: [] }];
   }
 
-  if (kind === 'layout') {
+  if (kind === 'layout' && type !== 'tabs') {
     widget['children'] = [];
   }
 
@@ -696,6 +700,19 @@ export function updateWidgetFromFlatData(
     }
   }
 
+  // Tabs: sync children to match props.tabs order and membership
+  if (typeKey === 'tabs') {
+    const newTabs = (((updated['props'] as Record<string, unknown>)?.['tabs'] ?? []) as {
+      label: string;
+      uid: string;
+    }[]);
+    const existingChildren = (original['children'] as Record<string, unknown>[]) ?? [];
+    const childByUid = new Map(existingChildren.map((c) => [c['uid'] as string, c]));
+    updated['children'] = newTabs.map(
+      (tab) => childByUid.get(tab.uid) ?? { uid: tab.uid, kind: 'layout', type: 'flex', children: [] },
+    );
+  }
+
   return updated;
 }
 
@@ -845,6 +862,17 @@ export function insertWidgetAt(
           uid: widget['uid'] as string,
         });
         props['sections'] = sections;
+        updated['props'] = props;
+      }
+      // Tabs: also add tab metadata
+      if (node['type'] === 'tabs' && node['props']) {
+        const props = { ...(node['props'] as Record<string, unknown>) };
+        const tabs = [...((props['tabs'] as unknown[]) ?? [])];
+        tabs.splice(index, 0, {
+          label: (widget['label'] as string) || (widget['type'] as string) || 'Tab',
+          uid: widget['uid'] as string,
+        });
+        props['tabs'] = tabs;
         updated['props'] = props;
       }
       return updated;
