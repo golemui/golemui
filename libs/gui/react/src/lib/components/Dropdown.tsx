@@ -153,10 +153,11 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
   }, [closeList, isListVisible]);
 
   useEffect(() => {
-    const referenceField = templateData.labelField ?? templateData.valueField;
+    const isObject = selectedItem?.template !== null && typeof selectedItem?.template === 'object';
+    const referenceField = isObject ? (templateData.labelField ?? 'label') : null;
     const val = referenceField ? selectedItem?.template[referenceField] : selectedItem?.template;
     inputRef.current!.value = val ?? '';
-  }, [selectedItem, templateData.labelField, templateData.valueField]);
+  }, [selectedItem, templateData.labelField]);
 
   useEffect(() => {
     if (labelRef.current && inputRef.current && listRef.current) {

@@ -14,7 +14,11 @@ import {
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
 import {
+  createDefaultWidget,
   findWidgetByUid,
+  getRepeaterPrefix,
+  insertWidgetAt,
+  removeWidgetByUid,
   replaceWidgetByUid,
   stripVisibilityRules,
   updateWidgetFromFlatData,
@@ -111,6 +115,16 @@ export class DesignComponent {
     }
   }
 
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    const tag = (event.target as HTMLElement)?.tagName;
+    const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (event.target as HTMLElement)?.isContentEditable;
+    if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedHighlight() && !isEditable) {
+      event.preventDefault();
+      this.deleteSelectedWidget();
+    }
+  }
+
   @HostListener('window:resize')
   onResize() {
     this.refreshHighlights();
@@ -147,6 +161,25 @@ export class DesignComponent {
     // already-captured rect stale.  Refresh after the browser has laid out.
     if (widget && wasNull) {
       setTimeout(() => this.refreshHighlights(), 1);
+    }
+  }
+
+  private deleteSelectedWidget() {
+    const hl = this.selectedHighlight();
+    if (!hl) return;
+    try {
+      const parsed = JSON.parse(this.liveFormDef());
+      const baseUid = hl.prettyUid.replace(/\[\d+\]/g, '');
+      const newFormDef = removeWidgetByUid(parsed, baseUid);
+      const newFormDefStr = JSON.stringify(newFormDef, null, 2);
+      this.liveFormDef.set(newFormDefStr);
+      this.formVersion.update((v) => v + 1);
+      this.formDefChange.emit(newFormDefStr);
+      this.selectedHighlight.set(null);
+      this.setSelectedWidget(null);
+      this.hoveredHighlight.set(null);
+    } catch (e) {
+      console.error('[design] Failed to delete widget', e);
     }
   }
 
@@ -232,6 +265,292 @@ export class DesignComponent {
       rect: this.getLayoutRelativeRect(el),
       breadcrumbs: this.collectBreadcrumbs(el),
     };
+  }
+
+  // ---- Drag & Drop ----
+
+  dropIndicator = signal<{
+    containerUid: string | null;
+    index: number;
+    direction: 'row' | 'column';
+    rect: { top: number; left: number; width: number; height: number };
+  } | null>(null);
+
+  protected onDragOver(event: DragEvent) {
+    const types = event.dataTransfer?.types;
+    if (!types?.includes('application/golem-widget') && !types?.includes('application/golem-widget-move')) {
+      return;
+    }
+    event.preventDefault();
+    event.dataTransfer!.dropEffect = types.includes('application/golem-widget-move') ? 'move' : 'copy';
+
+    const { containerEl, containerUid, direction } = this.findDropContainer(event.clientX, event.clientY);
+    const childRects = this.collectContainerChildRects(containerEl);
+    const index = this.calcInsertionIndex(childRects, direction, event.clientX, event.clientY);
+    const rect = this.calcIndicatorRect(containerEl, childRects, direction, index);
+
+    this.dropIndicator.set({ containerUid, index, direction, rect });
+  }
+
+  protected onDragLeave(event: DragEvent) {
+    const related = event.relatedTarget as Node | null;
+    if (!related || !this.elRef.nativeElement.contains(related)) {
+      this.dropIndicator.set(null);
+    }
+  }
+
+  protected onDrop(event: DragEvent) {
+    const indicator = this.dropIndicator();
+    this.dropIndicator.set(null);
+    if (!indicator) return;
+    event.preventDefault();
+
+    const moveRaw = event.dataTransfer?.getData('application/golem-widget-move');
+    const newRaw = event.dataTransfer?.getData('application/golem-widget');
+
+    try {
+      let parsed = JSON.parse(this.liveFormDef());
+
+      if (moveRaw) {
+        // Move existing widget
+        const { uid } = JSON.parse(moveRaw);
+        const baseUid = uid.replace(/\[\d+\]/g, '');
+        const widget = findWidgetByUid(parsed, baseUid);
+        if (!widget) return;
+        const widgetCopy = JSON.parse(JSON.stringify(widget));
+        parsed = removeWidgetByUid(parsed, baseUid);
+        parsed = insertWidgetAt(parsed, indicator.containerUid, widgetCopy, indicator.index);
+      } else if (newRaw) {
+        // New widget from toolbar
+        const { kind, type } = JSON.parse(newRaw);
+        const widget = createDefaultWidget(kind, type);
+        if (indicator.containerUid && widget['path']) {
+          const prefix = getRepeaterPrefix(parsed, indicator.containerUid);
+          if (prefix) {
+            widget['path'] = `${prefix}.${widget['path']}`;
+          }
+        }
+        parsed = insertWidgetAt(parsed, indicator.containerUid, widget, indicator.index);
+      } else {
+        return;
+      }
+
+      const newFormDefStr = JSON.stringify(parsed, null, 2);
+      this.liveFormDef.set(newFormDefStr);
+      this.formVersion.update((v) => v + 1);
+      this.formDefChange.emit(newFormDefStr);
+      this.selectedHighlight.set(null);
+      this.setSelectedWidget(null);
+    } catch (e) {
+      console.error('[design] Failed to drop widget', e);
+    }
+  }
+
+  protected onBreadcrumbDragStart(event: DragEvent, prettyUid: string) {
+    event.dataTransfer?.setData('application/golem-widget-move', JSON.stringify({ uid: prettyUid }));
+    event.dataTransfer!.effectAllowed = 'move';
+    // Clear selection so overlay doesn't interfere with drop targets
+    this.selectedHighlight.set(null);
+    this.setSelectedWidget(null);
+    this.hoveredHighlight.set(null);
+  }
+
+  private static readonly LAYOUT_TAGS = new Set([
+    'GUI-FLEX-LAYOUT',
+    'GUI-GRID-LAYOUT',
+    'GUI-ACCORDION-LAYOUT',
+    'GUI-TABS-LAYOUT',
+  ]);
+
+  private findDropContainer(x: number, y: number): {
+    containerEl: Element;
+    containerUid: string | null;
+    direction: 'row' | 'column';
+  } {
+    const designContainer = this.elRef.nativeElement.querySelector('.design-container') as Element;
+    const knownLayoutUids = this.collectKnownLayoutUids();
+
+    // Scan ALL layout host elements in the design container and find the
+    // smallest (deepest nested) one whose bounding rect contains the cursor.
+    // This avoids relying on elementsFromPoint which may miss custom elements
+    // that have no painted box of their own.
+    const layoutSelector = Array.from(DesignComponent.LAYOUT_TAGS)
+      .map((tag) => tag.toLowerCase() + '[id^="host-"]')
+      .join(',');
+    const allLayouts = designContainer.querySelectorAll(layoutSelector);
+
+    let best: { el: Element; area: number } | null = null;
+    for (const el of Array.from(allLayouts)) {
+      const uid = el.id.replace('host-', '').replace(/\[\d+\]/g, '');
+      if (!knownLayoutUids.has(uid)) continue;
+      const rect = el.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        const area = rect.width * rect.height;
+        if (!best || area < best.area) {
+          best = { el, area };
+        }
+      }
+    }
+    if (best) {
+      const uid = best.el.id.replace('host-', '').replace(/\[\d+\]/g, '');
+      const direction = this.getContainerDirection(best.el);
+      return { containerEl: best.el, containerUid: uid, direction };
+    }
+
+    // Fallback: root canvas
+    return { containerEl: designContainer, containerUid: null, direction: 'column' };
+  }
+
+  private collectKnownLayoutUids(): Set<string> {
+    const uids = new Set<string>();
+    try {
+      const parsed = JSON.parse(this.liveFormDef());
+      this.walkForLayoutUids(parsed, uids);
+    } catch {
+      // ignore
+    }
+    return uids;
+  }
+
+  private walkForLayoutUids(node: unknown, uids: Set<string>): void {
+    if (Array.isArray(node)) {
+      for (const item of node) this.walkForLayoutUids(item, uids);
+      return;
+    }
+    if (!node || typeof node !== 'object') return;
+    const obj = node as Record<string, unknown>;
+    if (obj['kind'] === 'layout' && obj['uid']) {
+      uids.add(obj['uid'] as string);
+    }
+    if (obj['children']) this.walkForLayoutUids(obj['children'], uids);
+    if (obj['form']) this.walkForLayoutUids(obj['form'], uids);
+    if (obj['props'] && typeof obj['props'] === 'object') {
+      const props = obj['props'] as Record<string, unknown>;
+      if (props['template']) this.walkForLayoutUids(props['template'], uids);
+    }
+  }
+
+  private getContainerDirection(hostEl: Element): 'row' | 'column' {
+    const tag = hostEl.tagName;
+    if (tag === 'GUI-ACCORDION-LAYOUT' || tag === 'GUI-TABS-LAYOUT') return 'column';
+
+    // Flex & Grid: check inner element class
+    const inner =
+      hostEl.querySelector('.gui-flex__widget') || hostEl.querySelector('.gui-grid__widget');
+    if (inner) {
+      if (
+        inner.classList.contains('gui-flex__widget--row') ||
+        inner.classList.contains('gui-flex__widget--row-reverse') ||
+        inner.classList.contains('gui-grid__widget--row')
+      ) {
+        return 'row';
+      }
+    }
+    return 'column';
+  }
+
+  private collectContainerChildRects(containerEl: Element): DOMRect[] {
+    const tag = containerEl.tagName;
+    let children: Element[];
+
+    if (tag === 'GUI-ACCORDION-LAYOUT') {
+      children = Array.from(containerEl.querySelectorAll(':scope .gui-accordion__section'));
+    } else if (tag === 'GUI-TABS-LAYOUT') {
+      children = Array.from(containerEl.querySelectorAll(':scope section[role="tabpanel"]'));
+    } else if (tag === 'GUI-GRID-LAYOUT') {
+      const gridWidget = containerEl.querySelector('.gui-grid__widget');
+      if (gridWidget) {
+        children = Array.from(gridWidget.querySelectorAll(':scope > .gui-grid__cell'));
+      } else {
+        children = [];
+      }
+    } else if (tag === 'GUI-FLEX-LAYOUT') {
+      const flexWidget = containerEl.querySelector('.gui-flex__widget');
+      if (flexWidget) {
+        children = Array.from(flexWidget.children).filter(
+          (c) => c.id?.startsWith('host-'),
+        );
+      } else {
+        children = [];
+      }
+    } else {
+      // Root: direct host-* children inside design-container
+      children = Array.from(containerEl.children).filter(
+        (c) => c.id?.startsWith('host-') || c.tagName === 'GUI-FORM',
+      );
+      // For root, get the children of the gui-form's rendered content
+      const guiForm = containerEl.querySelector('gui-form');
+      if (guiForm) {
+        const formFlex = guiForm.querySelector('.gui-flex__widget');
+        if (formFlex) {
+          children = Array.from(formFlex.children).filter((c) => c.id?.startsWith('host-'));
+        }
+      }
+    }
+
+    return children.map((c) => c.getBoundingClientRect());
+  }
+
+  private calcInsertionIndex(
+    childRects: DOMRect[],
+    direction: 'row' | 'column',
+    x: number,
+    y: number,
+  ): number {
+    let index = childRects.length;
+    for (let i = 0; i < childRects.length; i++) {
+      const r = childRects[i];
+      const mid = direction === 'column' ? r.top + r.height / 2 : r.left + r.width / 2;
+      const cursor = direction === 'column' ? y : x;
+      if (cursor < mid) {
+        index = i;
+        break;
+      }
+    }
+    return index;
+  }
+
+  private calcIndicatorRect(
+    containerEl: Element,
+    childRects: DOMRect[],
+    direction: 'row' | 'column',
+    index: number,
+  ): { top: number; left: number; width: number; height: number } {
+    const containerRect = containerEl.getBoundingClientRect();
+    const layoutRect = this.layoutEl?.getBoundingClientRect() ?? containerRect;
+    const scrollLeft = this.layoutEl?.scrollLeft ?? 0;
+    const scrollTop = this.layoutEl?.scrollTop ?? 0;
+
+    const toRelX = (absX: number) => absX - layoutRect.left - (this.layoutEl?.clientLeft ?? 0) + scrollLeft;
+    const toRelY = (absY: number) => absY - layoutRect.top - (this.layoutEl?.clientTop ?? 0) + scrollTop;
+
+    if (direction === 'column') {
+      const width = containerRect.width;
+      let absY: number;
+      if (childRects.length === 0) {
+        absY = containerRect.top + 4;
+      } else if (index === 0) {
+        absY = childRects[0].top - 2;
+      } else if (index >= childRects.length) {
+        absY = childRects[childRects.length - 1].bottom + 2;
+      } else {
+        absY = (childRects[index - 1].bottom + childRects[index].top) / 2;
+      }
+      return { top: toRelY(absY), left: toRelX(containerRect.left), width, height: 3 };
+    } else {
+      const height = containerRect.height;
+      let absX: number;
+      if (childRects.length === 0) {
+        absX = containerRect.left + 4;
+      } else if (index === 0) {
+        absX = childRects[0].left - 2;
+      } else if (index >= childRects.length) {
+        absX = childRects[childRects.length - 1].right + 2;
+      } else {
+        absX = (childRects[index - 1].right + childRects[index].left) / 2;
+      }
+      return { top: toRelY(containerRect.top), left: toRelX(absX), width: 3, height };
+    }
   }
 
   protected onFormHealth(formHealth: Core.FormHealth) {

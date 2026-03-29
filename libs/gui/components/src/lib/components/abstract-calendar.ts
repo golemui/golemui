@@ -94,11 +94,13 @@ export abstract class AbstractCalendar extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, 'calendar') : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this.onFocusOut}>
         <div
+          id=${this.uid}
           class="gui-calendar-input"
           role="group"
           aria-labelledby=${this.label ? `${this.uid}_calendar_label` : nothing}
+          ?aria-disabled=${this.disabled}
         >
           ${this.renderAboveCalendar()}
           <div class="gui-calendar__container">
@@ -229,7 +231,6 @@ export abstract class AbstractCalendar extends LitElement {
                     tabindex=${year === currentYear ? 0 : -1}
                     data-year=${year}
                     @click=${(e: MouseEvent) => { e.stopPropagation(); this.selectYear(year); }}
-                    @focusout=${this.onFocusOut}
                     aria-selected=${year === currentYear}
                   >
                     ${year}

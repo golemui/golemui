@@ -133,6 +133,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   const dayFormat = templateData.dayFormat;
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
+  const minDate = templateData.minDate;
+  const maxDate = templateData.maxDate;
+  const disabledRanges = templateData.disabledRanges;
+  const numberOfMonths = templateData.numberOfMonths;
   const showErrors = isTouched && errors && errors.length > 0;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -206,6 +210,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
             dayFormat={dayFormat}
             weekdayFormat={weekdayFormat}
             monthFormat={monthFormat}
+            minDate={minDate}
+            maxDate={maxDate}
+            disabledRanges={disabledRanges}
+            numberOfMonths={numberOfMonths}
             localeId={lang}
           />
         )}

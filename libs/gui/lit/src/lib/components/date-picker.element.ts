@@ -101,6 +101,10 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
           .dayFormat=${this.adapter.templateData.dayFormat}
           .weekdayFormat=${this.adapter.templateData.weekdayFormat}
           .monthFormat=${this.adapter.templateData.monthFormat}
+          .minDate=${this.adapter.templateData.minDate}
+          .maxDate=${this.adapter.templateData.maxDate}
+          .disabledRanges=${this.adapter.templateData.disabledRanges}
+          .numberOfMonths=${this.adapter.templateData.numberOfMonths}
           .localeId=${this.adapter.templateData.lang}
           @blur=${this.onBlurCalendar}
           @change=${this.valueChanged}

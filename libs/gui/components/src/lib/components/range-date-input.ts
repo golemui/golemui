@@ -90,7 +90,7 @@ export class GuiRangeDateInput extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.disconnectObservers();
-    document.removeEventListener('click', this.handleDocumentClick);
+    this.removeOutsideListeners();
   }
 
   override render() {
@@ -300,23 +300,33 @@ export class GuiRangeDateInput extends LitElement {
     this._showPillsList = !this._showPillsList;
     if (this._showPillsList) {
       requestAnimationFrame(() => {
-        document.addEventListener('click', this.handleDocumentClick);
+        document.addEventListener('pointerdown', this.handleOutsideInteraction);
+        document.addEventListener('focusin', this.handleOutsideInteraction);
+        const firstPill = this.querySelector<HTMLElement>(
+          '.gui-range-date-input__pills-dropdown .gui-range-date-input__pill',
+        );
+        firstPill?.focus();
       });
     } else {
-      document.removeEventListener('click', this.handleDocumentClick);
+      this.removeOutsideListeners();
     }
   }
 
-  private handleDocumentClick = (e: MouseEvent) => {
+  private removeOutsideListeners() {
+    document.removeEventListener('pointerdown', this.handleOutsideInteraction);
+    document.removeEventListener('focusin', this.handleOutsideInteraction);
+  }
+
+  private handleOutsideInteraction = (e: Event) => {
     const compact = this.querySelector('.gui-range-date-input__pills-compact');
     const dropdown = this.querySelector('.gui-range-date-input__pills-dropdown');
-    const target = e.target as Node;
+    const target = e.composedPath()[0] as Node;
     if (
-      compact && !compact.contains(target) &&
-      dropdown && !dropdown.contains(target)
+      !compact?.contains(target) &&
+      !dropdown?.contains(target)
     ) {
       this._showPillsList = false;
-      document.removeEventListener('click', this.handleDocumentClick);
+      this.removeOutsideListeners();
     }
   };
 
@@ -337,7 +347,7 @@ export class GuiRangeDateInput extends LitElement {
 
     if (this._showPillsList && sorted.length === 0) {
       this._showPillsList = false;
-      document.removeEventListener('click', this.handleDocumentClick);
+      this.removeOutsideListeners();
     }
 
     // Focus next pill or first input
@@ -365,6 +375,7 @@ export class GuiRangeDateInput extends LitElement {
   private handlePillKeydown(e: KeyboardEvent, index: number) {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
+      e.stopPropagation();
       this.removePill(index);
       return;
     }

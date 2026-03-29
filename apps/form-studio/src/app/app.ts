@@ -66,6 +66,15 @@ export class App {
   private chatHistory = viewChild<ElementRef<HTMLElement>>('chatHistory');
   protected activeTab: 'form' | 'json' | 'design' = 'form';
   protected designSelectedWidget: Record<string, unknown> | null = null;
+  protected collapsedToolbarGroups = new Set<string>();
+
+  protected toggleToolbarGroup(group: string) {
+    if (this.collapsedToolbarGroups.has(group)) {
+      this.collapsedToolbarGroups.delete(group);
+    } else {
+      this.collapsedToolbarGroups.add(group);
+    }
+  }
   protected chatInput =
     'Create a registration form with required fields email, password, confirm password and a submit button';
   protected tokenCount = 0;
@@ -98,6 +107,9 @@ export class App {
   }
 
   protected switchTab(tab: 'form' | 'json' | 'design') {
+    if (this.activeTab === 'design' && tab !== 'design') {
+      this.designSelectedWidget = null;
+    }
     this.activeTab = tab;
   }
 
@@ -135,6 +147,11 @@ export class App {
 
   protected onFormEvent(event: Core.FormEvent) {
     console.log('onFormEvent', event);
+  }
+
+  protected onToolbarDragStart(event: DragEvent, kind: string, type: string) {
+    event.dataTransfer?.setData('application/golem-widget', JSON.stringify({ kind, type }));
+    event.dataTransfer!.effectAllowed = 'copy';
   }
 
   protected onDesignWidgetChange(flatData: Record<string, unknown>) {

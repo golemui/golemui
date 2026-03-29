@@ -65,7 +65,6 @@ export class GuiCalendar extends AbstractCalendar {
         ?disabled=${!day.isCurrentMonth || day.isDisabled}
         data-date=${day.date.toISOString()}
         @click=${() => this.selectDate(day)}
-        @focusout=${this.onFocusOut}
         @keydown=${(e: KeyboardEvent) => this.handleKeydown(e, day)}
         aria-selected=${day.isSelected}
       >
@@ -121,7 +120,7 @@ export class GuiCalendar extends AbstractCalendar {
   }
 
   override selectDate(day: CalendarDay) {
-    if (!day.isCurrentMonth || day.isDisabled) return;
+    if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
 
     const isoDate = toISODateString(day.date);
 

@@ -105,6 +105,14 @@ function selectField(
   return { uid, kind: 'input', type: 'select', path, label, props: { options }, on: CHANGE_ON };
 }
 
+function datePickerField(uid: string, path: string, label: string) {
+  return { uid, kind: 'input', type: 'datePicker', path, label, on: CHANGE_ON };
+}
+
+function rangeDatePickerField(uid: string, path: string, label: string) {
+  return { uid, kind: 'input', type: 'rangeDatePicker', path, label, on: CHANGE_ON };
+}
+
 function iconField(uid: string, path: string, label = 'Icon') {
   return {
     uid,
@@ -298,6 +306,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   calendar: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -305,10 +317,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
-    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
-    textField('prop-minDate', 'minDate', 'Min Date'),
-    textField('prop-maxDate', 'maxDate', 'Max Date'),
-    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeCalendar: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -317,10 +329,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
     textField('prop-removePillAriaLabel', 'removePillAriaLabel', 'Remove Pill Aria Label'),
-    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
-    textField('prop-minDate', 'minDate', 'Min Date'),
-    textField('prop-maxDate', 'maxDate', 'Max Date'),
-    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   rangeDateInput: [
     textField('prop-hint', 'hint', 'Hint'),
@@ -341,10 +353,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     iconField('prop-nextMonthIcon', 'nextMonthIcon', 'Next Month Icon'),
     textField('prop-prevMonthAriaLabel', 'prevMonthAriaLabel', 'Prev Month Aria Label'),
     textField('prop-nextMonthAriaLabel', 'nextMonthAriaLabel', 'Next Month Aria Label'),
-    textField('prop-minDate', 'minDate', 'Min Date'),
-    textField('prop-maxDate', 'maxDate', 'Max Date'),
-    textField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
-    numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'),
+    { ...numberField('prop-numberOfMonths', 'numberOfMonths', 'Number of Months'), props: { minimum: 1, maximum: 12 } },
+    datePickerField('prop-minDate', 'minDate', 'Min Date'),
+    datePickerField('prop-maxDate', 'maxDate', 'Max Date'),
+    rangeDatePickerField('prop-disabledRanges', 'disabledRanges', 'Disabled Ranges'),
   ],
   markdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
@@ -403,6 +415,13 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
       { label: 'End', value: 'end' },
       { label: 'Space Between', value: 'space-between' },
       { label: 'Space Around', value: 'space-around' },
+      { label: 'Space Evenly', value: 'space-evenly' },
+    ]),
+    selectField('prop-justify', 'justify', 'Justify', [
+      { label: 'Start', value: 'start' },
+      { label: 'Center', value: 'center' },
+      { label: 'End', value: 'end' },
+      { label: 'Stretch', value: 'stretch' },
     ]),
     numberField('prop-gap', 'gap', 'Gap'),
   ],
@@ -436,6 +455,45 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
 // Public API
 // ---------------------------------------------------------------------------
 
+/**
+ * Creates a default widget definition for a given kind and type.
+ */
+export function createDefaultWidget(kind: string, type: string): Record<string, unknown> {
+  const uid = `${type}${capitalize(Date.now().toString(36))}`;
+  const widget: Record<string, unknown> = { uid, kind, type };
+
+  if (kind === 'input' && type === 'repeater') {
+    widget['label'] = capitalize(type);
+    widget['path'] = uid;
+    widget['props'] = {
+      template: { uid: uid + 'Tpl', kind: 'layout', type: 'flex', children: [] },
+      addLabel: 'Add',
+      removeLabel: 'Remove',
+    };
+  } else if (kind === 'input') {
+    widget['label'] = capitalize(type);
+    widget['path'] = uid;
+  } else if (kind === 'action') {
+    widget['label'] = capitalize(type);
+  } else if (kind === 'display' && type === 'alert') {
+    widget['props'] = { text: 'Alert message', level: 'info' };
+  } else if (kind === 'layout' && type === 'accordion') {
+    const sectionUid = `flex${capitalize(Date.now().toString(36))}`;
+    widget['props'] = { sections: [{ label: 'Section 1', uid: sectionUid }] };
+    widget['children'] = [{ uid: sectionUid, kind: 'layout', type: 'flex', children: [] }];
+  } else if (kind === 'layout' && type === 'tabs') {
+    const tabUid = `flex${capitalize(Date.now().toString(36))}`;
+    widget['props'] = { tabs: [{ label: 'Tab 1', uid: tabUid }] };
+    widget['children'] = [{ uid: tabUid, kind: 'layout', type: 'flex', children: [] }];
+  }
+
+  if (kind === 'layout' && type !== 'tabs' && type !== 'accordion') {
+    widget['children'] = [];
+  }
+
+  return widget;
+}
+
 export interface PropertyGroup {
   key: string;
   label: string;
@@ -455,7 +513,9 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
     textField('prop-kind', 'kind', 'Kind', true),
   ];
 
-  const commonFields: unknown[] = [numberField('prop-size', 'size', 'Size (grid span)')];
+  const commonFields: unknown[] = [
+    { uid: 'prop-size', kind: 'input', type: 'number', path: 'size', label: 'Widget Size', on: CHANGE_ON, props: { minimum: 1 } },
+  ];
 
   if (widget['kind'] === 'input') {
     commonFields.push(
@@ -485,11 +545,19 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
     }
   }
 
+  const visibilityFields: unknown[] = [
+    checkboxField('prop-includeEnabled', 'includeEnabled', 'Include'),
+    { ...textField('prop-includeWhen', 'includeWhen', 'When'), include: { when: '$form.includeEnabled === true' } },
+    checkboxField('prop-excludeEnabled', 'excludeEnabled', 'Exclude'),
+    { ...textField('prop-excludeWhen', 'excludeWhen', 'When'), include: { when: '$form.excludeEnabled === true' } },
+  ];
+
   return [
     { key: 'identity', label: 'Identity', defaultOpen: false, fields: identityFields },
     { key: 'common', label: 'Common Properties', defaultOpen: true, fields: commonFields },
     { key: 'component', label: 'Component Properties', defaultOpen: true, fields: componentFields },
     { key: 'validations', label: 'Validations', defaultOpen: true, fields: validationFields },
+    { key: 'visibility', label: 'Visibility', defaultOpen: true, fields: visibilityFields },
   ];
 }
 
@@ -498,11 +566,19 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
  * Props are hoisted to the top level so path: 'hint' maps to widget.props.hint.
  */
 export function flattenWidgetData(widget: Record<string, unknown>): Record<string, unknown> {
-  const { props, children, ...rest } = widget as Record<string, unknown> & {
+  const { props, children, include, exclude, ...rest } = widget as Record<string, unknown> & {
     props?: Record<string, unknown>;
     children?: unknown[];
+    include?: { when?: string };
+    exclude?: { when?: string };
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // Flatten include/exclude → flat keys
+  data['includeEnabled'] = !!include?.when;
+  if (include?.when) data['includeWhen'] = include.when;
+  data['excludeEnabled'] = !!exclude?.when;
+  if (exclude?.when) data['excludeWhen'] = exclude.when;
 
   // Flatten validator → flat keys
   if (data['validator'] && typeof data['validator'] === 'object') {
@@ -567,7 +643,7 @@ export function updateWidgetFromFlatData(
   for (const key of EDITABLE_BASE_KEYS) {
     if (key in flatData) {
       const val = flatData[key];
-      if (val === undefined || val === null || val === '') {
+      if (val === undefined || val === null || val === '' || Number.isNaN(val)) {
         delete updated[key];
       } else {
         updated[key] = val;
@@ -608,6 +684,18 @@ export function updateWidgetFromFlatData(
     }
   }
 
+  // Reconstruct include/exclude from flat keys
+  if (flatData['includeEnabled'] === true && flatData['includeWhen']) {
+    updated['include'] = { when: flatData['includeWhen'] };
+  } else {
+    delete updated['include'];
+  }
+  if (flatData['excludeEnabled'] === true && flatData['excludeWhen']) {
+    updated['exclude'] = { when: flatData['excludeWhen'] };
+  } else {
+    delete updated['exclude'];
+  }
+
   if (propKeys.size > 0) {
     const newProps: Record<string, unknown> = {
       ...((original['props'] as Record<string, unknown>) ?? {}),
@@ -615,7 +703,7 @@ export function updateWidgetFromFlatData(
     for (const propKey of propKeys) {
       if (propKey in flatData) {
         const val = flatData[propKey];
-        if (val === undefined || val === null || val === '') {
+        if (val === undefined || val === null || val === '' || Number.isNaN(val)) {
           delete newProps[propKey];
         } else {
           newProps[propKey] = val;
@@ -627,6 +715,32 @@ export function updateWidgetFromFlatData(
     } else {
       delete updated['props'];
     }
+  }
+
+  // Accordion: sync children and defaultOpen to match props.sections
+  if (typeKey === 'accordion') {
+    const newSections = (((updated['props'] as Record<string, unknown>)?.['sections'] ?? []) as {
+      label: string;
+      uid: string;
+    }[]);
+    const existingChildren = (original['children'] as Record<string, unknown>[]) ?? [];
+    const childByUid = new Map(existingChildren.map((c) => [c['uid'] as string, c]));
+    updated['children'] = newSections.map(
+      (section) => childByUid.get(section.uid) ?? { uid: section.uid, kind: 'layout', type: 'flex', children: [] },
+    );
+  }
+
+  // Tabs: sync children to match props.tabs order and membership
+  if (typeKey === 'tabs') {
+    const newTabs = (((updated['props'] as Record<string, unknown>)?.['tabs'] ?? []) as {
+      label: string;
+      uid: string;
+    }[]);
+    const existingChildren = (original['children'] as Record<string, unknown>[]) ?? [];
+    const childByUid = new Map(existingChildren.map((c) => [c['uid'] as string, c]));
+    updated['children'] = newTabs.map(
+      (tab) => childByUid.get(tab.uid) ?? { uid: tab.uid, kind: 'layout', type: 'flex', children: [] },
+    );
   }
 
   return updated;
@@ -661,6 +775,18 @@ export function stripVisibilityRules(root: unknown): unknown {
     // can interact with the inner elements.
     if (node['type'] === 'repeater' && !node['defaultValue']) {
       node['defaultValue'] = [{}];
+    }
+    // In design mode, expand all accordion sections so users can drop
+    // content into each child.
+    if (node['type'] === 'accordion' && node['props']) {
+      const props = { ...(node['props'] as Record<string, unknown>) };
+      const sections = (props['sections'] as { uid: string }[]) ?? [];
+      const defaultOpen: Record<string, boolean> = {};
+      for (const section of sections) {
+        defaultOpen[section.uid] = true;
+      }
+      props['defaultOpen'] = defaultOpen;
+      node['props'] = props;
     }
     return node;
   }
@@ -704,6 +830,120 @@ export function replaceWidgetByUid(
 }
 
 /**
+ * Recursively removes a widget with the given uid from the tree.
+ */
+export function removeWidgetByUid(root: unknown, uid: string): unknown {
+  if (Array.isArray(root)) {
+    return root
+      .filter((item) => !(item && typeof item === 'object' && (item as Record<string, unknown>)['uid'] === uid))
+      .map((item) => removeWidgetByUid(item, uid));
+  }
+  if (root && typeof root === 'object') {
+    const node = root as Record<string, unknown>;
+    const updated: Record<string, unknown> = { ...node };
+    if (node['children']) {
+      updated['children'] = removeWidgetByUid(node['children'], uid);
+    }
+    if (node['form']) {
+      updated['form'] = removeWidgetByUid(node['form'], uid);
+    }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = { ...props, template: removeWidgetByUid(props['template'], uid) };
+      }
+    }
+    return updated;
+  }
+  return root;
+}
+
+/**
+ * Inserts a widget into a container at a given index.
+ * If containerUid is null, inserts into the root `form` array.
+ * For accordion containers, also adds a section entry in props.sections.
+ */
+export function insertWidgetAt(
+  root: unknown,
+  containerUid: string | null,
+  widget: Record<string, unknown>,
+  index: number,
+): unknown {
+  if (containerUid === null) {
+    // Insert into root form array
+    if (root && typeof root === 'object' && !Array.isArray(root)) {
+      const obj = root as Record<string, unknown>;
+      if (Array.isArray(obj['form'])) {
+        const form = [...(obj['form'] as unknown[])];
+        form.splice(index, 0, widget);
+        return { ...obj, form };
+      }
+    }
+    return root;
+  }
+
+  if (Array.isArray(root)) {
+    return root.map((item) => insertWidgetAt(item, containerUid, widget, index));
+  }
+  if (root && typeof root === 'object') {
+    const node = root as Record<string, unknown>;
+    const updated: Record<string, unknown> = { ...node };
+    let found = false;
+
+    if (node['uid'] === containerUid) {
+      const children = [...((node['children'] as unknown[]) ?? [])];
+      children.splice(index, 0, widget);
+      updated['children'] = children;
+
+      // Accordion: also add section metadata
+      if (node['type'] === 'accordion' && node['props']) {
+        const props = { ...(node['props'] as Record<string, unknown>) };
+        const sections = [...((props['sections'] as unknown[]) ?? [])];
+        sections.splice(index, 0, {
+          label: (widget['label'] as string) || (widget['type'] as string) || 'Section',
+          uid: widget['uid'] as string,
+        });
+        props['sections'] = sections;
+        updated['props'] = props;
+      }
+      // Tabs: also add tab metadata
+      if (node['type'] === 'tabs' && node['props']) {
+        const props = { ...(node['props'] as Record<string, unknown>) };
+        const tabs = [...((props['tabs'] as unknown[]) ?? [])];
+        tabs.splice(index, 0, {
+          label: (widget['label'] as string) || (widget['type'] as string) || 'Tab',
+          uid: widget['uid'] as string,
+        });
+        props['tabs'] = tabs;
+        updated['props'] = props;
+      }
+      return updated;
+    }
+
+    if (node['children']) {
+      updated['children'] = insertWidgetAt(node['children'], containerUid, widget, index);
+      found = true;
+    }
+    if (node['form']) {
+      updated['form'] = insertWidgetAt(node['form'], containerUid, widget, index);
+      found = true;
+    }
+    if (node['props'] && typeof node['props'] === 'object') {
+      const props = node['props'] as Record<string, unknown>;
+      if (props['template']) {
+        updated['props'] = {
+          ...props,
+          template: insertWidgetAt(props['template'], containerUid, widget, index),
+        };
+        found = true;
+      }
+    }
+    if (found) return updated;
+  }
+  return root;
+}
+
+/**
  * Recursively searches for a widget by uid in a parsed formDef object.
  */
 export function findWidgetByUid(root: unknown, uid: string): Record<string, unknown> | null {
@@ -736,6 +976,53 @@ export function findWidgetByUid(root: unknown, uid: string): Record<string, unkn
     if (props['template']) {
       const result = findWidgetByUid(props['template'], uid);
       if (result) return result;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Returns the repeater path prefix for a given container uid.
+ * E.g. if the container is inside a repeater with path "users", returns "users.items".
+ * For nested repeaters, prefixes compound: "users.items.addresses.items".
+ * Returns empty string if the container is not inside any repeater.
+ * Returns null if the container is not found.
+ */
+export function getRepeaterPrefix(root: unknown, containerUid: string): string | null {
+  return walkForRepeaterPrefix(root, containerUid, '');
+}
+
+function walkForRepeaterPrefix(node: unknown, containerUid: string, prefix: string): string | null {
+  if (!node || typeof node !== 'object') return null;
+
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      const result = walkForRepeaterPrefix(item, containerUid, prefix);
+      if (result !== null) return result;
+    }
+    return null;
+  }
+
+  const obj = node as Record<string, unknown>;
+  if (obj['uid'] === containerUid) return prefix;
+
+  if (obj['children']) {
+    const result = walkForRepeaterPrefix(obj['children'], containerUid, prefix);
+    if (result !== null) return result;
+  }
+  if (obj['form']) {
+    const result = walkForRepeaterPrefix(obj['form'], containerUid, prefix);
+    if (result !== null) return result;
+  }
+  if (obj['props'] && typeof obj['props'] === 'object') {
+    const props = obj['props'] as Record<string, unknown>;
+    if (props['template']) {
+      const newPrefix = obj['type'] === 'repeater' && obj['path']
+        ? `${obj['path'] as string}.items`
+        : prefix;
+      const result = walkForRepeaterPrefix(props['template'], containerUid, newPrefix);
+      if (result !== null) return result;
     }
   }
 

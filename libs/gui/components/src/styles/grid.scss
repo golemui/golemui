@@ -1,5 +1,8 @@
 .gui-form {
   .gui-grid {
+    width: 100%;
+    flex: 1 1 0%;
+
     .gui-grid__widget {
       display: grid;
       column-gap: var(--gui-space-4);
