@@ -499,7 +499,7 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
   ];
 
   const commonFields: unknown[] = [
-    { uid: 'prop-size', kind: 'input', type: 'number', path: 'size', label: 'Size (grid span)', on: CHANGE_ON, props: { minimum: 1 } },
+    { uid: 'prop-size', kind: 'input', type: 'number', path: 'size', label: 'Widget Size', on: CHANGE_ON, props: { minimum: 1 } },
   ];
 
   if (widget['kind'] === 'input') {
