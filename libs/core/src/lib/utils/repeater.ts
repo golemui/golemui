@@ -67,31 +67,24 @@ function toRepeaterItemPath(path: DotPath, repeaterIndexes: number[]): string {
 }
 
 /**
- * Replaces `.items.` tokens in a `when` expression with the concrete repeater
- * indexes so the expression can be evaluated against the actual store path.
+ * Replaces `.items.` and `.items?.` tokens in a `when` expression with the
+ * concrete repeater indexes so the expression can be evaluated
  *
  * @example
  * // repeaterIndexes = [2]
  * // "form.items.active" -> "form.2.active"
+ * // "form.items?.active" -> "form.2?.active"
  */
 export function transformRepeaterItemWhenExpression(
   expression: string,
   repeaterIndexes: number[],
 ): string {
-  const ITEMS_TOKEN_WRAPPED = '.items.';
-  const parts = expression.split(ITEMS_TOKEN_WRAPPED);
-  if (parts.length === 1) {
-    return expression;
-  }
-
-  return parts.reduce((acc, part, i) => {
-    if (i === 0) {
-      return part;
-    }
-    const index = repeaterIndexes[i - 1];
+  let i = 0;
+  return expression.replace(/\.items(\??)\./g, (match, optionalChaining: string) => {
+    const index = repeaterIndexes[i++];
     if (index === undefined) {
-      return `${acc}${ITEMS_TOKEN_WRAPPED}${part}`;
+      return match;
     }
-    return `${acc}.${index}.${part}`;
+    return `.${index}${optionalChaining}.`;
   });
 }
