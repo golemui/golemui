@@ -458,7 +458,6 @@ export function createDefaultWidget(kind: string, type: string): Record<string, 
       addLabel: 'Add',
       removeLabel: 'Remove',
     };
-    widget['defaultValue'] = [{}];
   } else if (kind === 'input') {
     widget['label'] = capitalize(type);
     widget['path'] = uid;
@@ -965,6 +964,53 @@ export function findWidgetByUid(root: unknown, uid: string): Record<string, unkn
     if (props['template']) {
       const result = findWidgetByUid(props['template'], uid);
       if (result) return result;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Returns the repeater path prefix for a given container uid.
+ * E.g. if the container is inside a repeater with path "users", returns "users.items".
+ * For nested repeaters, prefixes compound: "users.items.addresses.items".
+ * Returns empty string if the container is not inside any repeater.
+ * Returns null if the container is not found.
+ */
+export function getRepeaterPrefix(root: unknown, containerUid: string): string | null {
+  return walkForRepeaterPrefix(root, containerUid, '');
+}
+
+function walkForRepeaterPrefix(node: unknown, containerUid: string, prefix: string): string | null {
+  if (!node || typeof node !== 'object') return null;
+
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      const result = walkForRepeaterPrefix(item, containerUid, prefix);
+      if (result !== null) return result;
+    }
+    return null;
+  }
+
+  const obj = node as Record<string, unknown>;
+  if (obj['uid'] === containerUid) return prefix;
+
+  if (obj['children']) {
+    const result = walkForRepeaterPrefix(obj['children'], containerUid, prefix);
+    if (result !== null) return result;
+  }
+  if (obj['form']) {
+    const result = walkForRepeaterPrefix(obj['form'], containerUid, prefix);
+    if (result !== null) return result;
+  }
+  if (obj['props'] && typeof obj['props'] === 'object') {
+    const props = obj['props'] as Record<string, unknown>;
+    if (props['template']) {
+      const newPrefix = obj['type'] === 'repeater' && obj['path']
+        ? `${obj['path'] as string}.items`
+        : prefix;
+      const result = walkForRepeaterPrefix(props['template'], containerUid, newPrefix);
+      if (result !== null) return result;
     }
   }
 

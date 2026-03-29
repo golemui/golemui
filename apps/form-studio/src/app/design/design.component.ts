@@ -16,6 +16,7 @@ import * as Gui from '@golemui/gui-angular';
 import {
   createDefaultWidget,
   findWidgetByUid,
+  getRepeaterPrefix,
   insertWidgetAt,
   removeWidgetByUid,
   replaceWidgetByUid,
@@ -323,6 +324,12 @@ export class DesignComponent {
         // New widget from toolbar
         const { kind, type } = JSON.parse(newRaw);
         const widget = createDefaultWidget(kind, type);
+        if (indicator.containerUid && widget['path']) {
+          const prefix = getRepeaterPrefix(parsed, indicator.containerUid);
+          if (prefix) {
+            widget['path'] = `${prefix}.${widget['path']}`;
+          }
+        }
         parsed = insertWidgetAt(parsed, indicator.containerUid, widget, indicator.index);
       } else {
         return;
