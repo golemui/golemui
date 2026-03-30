@@ -29,13 +29,6 @@
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-
-  &.design-mode {
-    .chat-history,
-    .chat-input-area {
-      display: none;
-    }
-  }
 }
 
 .chat-header {
@@ -276,6 +269,8 @@
   flex-direction: column;
   gap: 0;
   padding: 0;
+  max-width: 150px;
+  border-right: 1px solid #334155;
 }
 
 .widget-toolbar__group {
@@ -334,7 +329,7 @@
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px;
   cursor: grab;
   color: #94a3b8;
   transition: all 0.15s;
@@ -394,7 +389,7 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .design-layout-wrapper {
