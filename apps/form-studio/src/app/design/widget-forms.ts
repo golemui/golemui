@@ -507,6 +507,28 @@ export interface PropertyGroup {
  * Groups with no fields are still returned (filtered in the component).
  */
 export function buildWidgetPropertyGroups(widget: Record<string, unknown>): PropertyGroup[] {
+  if (widget['type'] === '__form__') {
+    return [
+      {
+        key: 'form',
+        label: 'Form Properties',
+        defaultOpen: true,
+        fields: [
+          selectField('prop-validateOn', 'validateOn', 'Validate On', [
+            { label: 'Eager', value: 'eager' },
+            { label: 'Change', value: 'change' },
+            { label: 'Blur', value: 'blur' },
+            { label: 'Submit', value: 'submit' },
+          ]),
+          selectField('prop-direction', 'direction', 'Direction', [
+            { label: 'LTR', value: 'ltr' },
+            { label: 'RTL', value: 'rtl' },
+          ]),
+        ],
+      },
+    ];
+  }
+
   const identityFields: unknown[] = [
     textField('prop-uid', 'uid', 'ID', true),
     textField('prop-type', 'type', 'Type', true),

@@ -25,6 +25,7 @@ export class FormElement extends LitElement {
   @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
+  @property({ type: String }) direction?: 'ltr' | 'rtl';
 
   // TODO: this should be widgetLoaders
   protected customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
@@ -67,6 +68,7 @@ export class FormElement extends LitElement {
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
         .validateOn=${this.validateOn ?? 'eager'}
+        .direction=${this.direction}
       ></gui-core-form>
     `;
   }

@@ -18,6 +18,7 @@ export interface FormComponentProps {
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
   formName?: string;
+  direction?: 'ltr' | 'rtl';
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
 }
@@ -33,6 +34,7 @@ export function FormComponent({
   validateOn,
   data,
   formName,
+  direction: directionProp,
   formHealth,
   formEvent,
 }: FormComponentProps) {
@@ -135,7 +137,7 @@ export function FormComponent({
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
-        <form id={formNameRef.current} noValidate dir={direction}>
+        <form id={formNameRef.current} noValidate dir={directionProp ?? direction}>
           <WidgetErrorBoundary widget={formLayoutField}>
             <WidgetRenderer widget={formLayoutField} />
           </WidgetErrorBoundary>

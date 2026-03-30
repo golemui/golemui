@@ -12,7 +12,8 @@
         [data]="{}"
         [widgetLoaders]="{}"
         [validators]="{}"
-        [validateOn]="'eager'"
+        [validateOn]="formValidateOn()"
+        [direction]="formDirection()"
         (formHealth)="onFormHealth($event)"
         (formEvent)="onFormEvent($event)"
       ></gui-form>

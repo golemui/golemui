@@ -6,10 +6,10 @@ import {
   effect,
   inject,
   input,
+  model,
   OnDestroy,
   OnInit,
   output,
-  signal,
   Type,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -43,7 +43,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
   localization = input<Core.I18nTranslator>();
   dependencies = input<Record<string, unknown>>({});
-  direction = signal<'ltr' | 'rtl'>('ltr');
+  direction = model<'ltr' | 'rtl'>();
 
   // OUTPUTS
   protected formHealth = output<Core.FormHealth>();
@@ -110,7 +110,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.direction.set(Core.getDirectionFromLanguage(this.context.localization.lang));
+    this.direction.set(this.direction() ?? Core.getDirectionFromLanguage(this.context.localization.lang) ?? 'ltr');
 
     this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
       this.direction.set(Core.getDirectionFromLanguage(lang));

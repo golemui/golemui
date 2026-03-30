@@ -21,6 +21,7 @@ export class FormComponent {
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
   localization = input<Core.I18nTranslator>();
   dependencies = input<Dependencies>({});
+  direction = input<'ltr' | 'rtl'>();
 
   protected customWidgetLoaders = computed(() => ({
     ...vanillaWidgetLoaders,

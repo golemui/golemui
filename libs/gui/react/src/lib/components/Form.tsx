@@ -22,6 +22,7 @@ export interface ReactFormComponentProps {
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
   formName?: string;
+  direction?: 'ltr' | 'rtl';
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (formHealth: Core.FormHealth) => void;
 }
@@ -36,6 +37,7 @@ export const FormComponent = ({
   validators = {},
   middlewares = [],
   validateOn = 'eager',
+  direction,
   formHealth = undefined,
   formEvent = undefined,
 }: ReactFormComponentProps) => {
@@ -58,6 +60,7 @@ export const FormComponent = ({
       dependencies={dependencies}
       validators={customValidators}
       validateOn={validateOn}
+      direction={direction}
       formHealth={formHealth}
       formEvent={formEvent}
     />

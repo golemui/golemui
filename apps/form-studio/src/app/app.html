@@ -234,7 +234,8 @@
             [data]="{}"
             [widgetLoaders]="{}"
             [validators]="{}"
-            [validateOn]="'eager'"
+            [validateOn]="formValidateOn()"
+            [direction]="formDirection()"
             [dependencies]="deps"
             (formHealth)="onFormHealth($event)"
             (formEvent)="onFormEvent($event)"
@@ -257,6 +258,8 @@
           <app-design
             #designComp
             [formDef]="formJson()"
+            [formValidateOn]="formValidateOn()"
+            [formDirection]="formDirection()"
             (formDefChange)="onFormDefChange($event)"
             (selectedWidgetChange)="designSelectedWidget = $event"
           ></app-design>
@@ -264,6 +267,12 @@
           <app-properties-panel
             [widget]="w"
             (widgetChange)="onDesignWidgetChange($event)"
+            (click)="$event.stopPropagation()"
+          />
+          } @else {
+          <app-properties-panel
+            [widget]="formPropertiesWidget()"
+            (widgetChange)="onFormPropertiesChange($event)"
             (click)="$event.stopPropagation()"
           />
           }
