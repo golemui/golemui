@@ -4,6 +4,7 @@
  */
 
 import { INTL_LOCALES } from './intl-locales';
+import { ISO_CURRENCIES } from './iso-currencies';
 import { MATERIAL_ICONS } from './material-icons';
 
 const CHANGE_ON = { change: 'propChanged' };
@@ -152,6 +153,25 @@ function localeField(uid: string, path: string, label = 'Locale') {
   };
 }
 
+function currencyField(uid: string, path: string, label = 'Currency') {
+  return {
+    uid,
+    kind: 'input',
+    type: 'dropdown',
+    path,
+    label,
+    on: CHANGE_ON,
+    props: {
+      placeholder: 'Search currency...',
+      items: ISO_CURRENCIES,
+      labelField: 'label',
+      valueField: 'value',
+      height: 200,
+      itemHeight: 36,
+    },
+  };
+}
+
 function repeaterField(
   uid: string,
   path: string,
@@ -255,7 +275,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   currency: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-currency', 'currency', 'Currency Code'),
+    currencyField('prop-currency', 'currency', 'Currency Code'),
     iconField('prop-icon', 'icon'),
     numberField('prop-step', 'step', 'Step'),
     numberField('prop-maximumFractionDigits', 'maximumFractionDigits', 'Max Fraction Digits'),
