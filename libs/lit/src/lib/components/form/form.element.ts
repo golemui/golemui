@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { State, WidgetLoaders, WithWidget } from '@golemui/core';
 import { provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
@@ -26,7 +26,7 @@ export class FormElement extends LitElement {
   @property({ type: String }) locale?: string;
   @property({ type: Object }) dependencies?: Record<string, unknown>;
 
-  @property({ type: String }) direction?: 'ltr' | 'rtl';
+  @state() direction: 'ltr' | 'rtl' = 'ltr';
 
   state: State | undefined;
   subscriptions: Subscription[] = [];
@@ -49,7 +49,7 @@ export class FormElement extends LitElement {
     );
 
     const initialLang = this.locale ?? this.context.localization.lang;
-    this.direction = this.direction ?? Core.getDirectionFromLanguage(initialLang) ?? 'ltr';
+    this.direction = Core.getDirectionFromLanguage(initialLang);
 
     if (this.locale) {
       this.context.store.dispatch({

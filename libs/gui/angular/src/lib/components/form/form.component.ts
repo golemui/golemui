@@ -22,7 +22,6 @@ export class FormComponent {
   localization = input<Core.I18nTranslator>();
   locale = input<string>();
   dependencies = input<Dependencies>({});
-  direction = input<'ltr' | 'rtl'>();
 
   protected customWidgetLoaders = computed(() => ({
     ...vanillaWidgetLoaders,

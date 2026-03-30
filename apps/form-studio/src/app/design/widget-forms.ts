@@ -541,10 +541,6 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
             { label: 'Submit', value: 'submit' },
           ]),
           localeField('prop-locale', 'locale', 'Locale'),
-          selectField('prop-direction', 'direction', 'Direction', [
-            { label: 'LTR', value: 'ltr' },
-            { label: 'RTL', value: 'rtl' },
-          ]),
         ],
       },
     ];

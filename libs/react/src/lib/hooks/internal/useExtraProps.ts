@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { useEffect, useState } from 'react';
-import { Subject, takeUntil } from 'rxjs';
+import { distinctUntilChanged, map, skip, Subject, takeUntil } from 'rxjs';
 import { useReactFormContext } from '../../ReactFormContext';
 
 export type WithFlattenedProps<
@@ -30,6 +30,18 @@ export function useTemplateData<
         } as unknown as WithFlattenedProps<F, ExtraProps>;
         setTemplateData(templateData);
       });
+
+    formContext.store.state$
+      .pipe(
+        takeUntil(destroy$),
+        map((s) => s.lang),
+        distinctUntilChanged(),
+        skip(1),
+      )
+      .subscribe((lang) => {
+        setTemplateData((current) => ({ ...current, lang }));
+      });
+
     return () => destroy$.next();
   }, [widget, formContext]);
 

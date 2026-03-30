@@ -51,7 +51,6 @@ export class DesignComponent {
   formDef = input<string>('');
   formValidateOn = input<Core.ValidateOn>('eager');
   formLocale = input<string>();
-  formDirection = input<'ltr' | 'rtl'>('ltr');
   formDefChange = output<string>();
   selectedWidgetChange = output<Record<string, unknown> | null>();
 

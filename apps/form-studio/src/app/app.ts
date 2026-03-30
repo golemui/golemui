@@ -69,14 +69,12 @@ export class App {
   protected designSelectedWidget: Record<string, unknown> | null = null;
   protected collapsedToolbarGroups = new Set<string>();
   protected formValidateOn = signal<Core.ValidateOn>('eager');
-  protected formDirection = signal<'ltr' | 'rtl'>('ltr');
   protected formLocale = signal<string>('en');
   protected formPropertiesWidget = computed(() => ({
     type: '__form__',
     uid: 'form',
     validateOn: this.formValidateOn(),
     locale: this.formLocale(),
-    direction: this.formDirection(),
   }));
 
   protected toggleToolbarGroup(group: string) {
@@ -171,12 +169,7 @@ export class App {
 
   protected onFormPropertiesChange(flatData: Record<string, unknown>) {
     if ('validateOn' in flatData) this.formValidateOn.set(flatData['validateOn'] as Core.ValidateOn);
-    if ('locale' in flatData) {
-      const locale = flatData['locale'] as string;
-      this.formLocale.set(locale);
-      this.formDirection.set(Core.getDirectionFromLanguage(locale));
-    }
-    if ('direction' in flatData) this.formDirection.set(flatData['direction'] as 'ltr' | 'rtl');
+    if ('locale' in flatData) this.formLocale.set(flatData['locale'] as string);
   }
 
   protected onFormDefChange(newJson: string) {
