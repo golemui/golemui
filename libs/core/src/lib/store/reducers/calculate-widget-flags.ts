@@ -30,24 +30,22 @@ export const calculateWidgetFlags = (state: State): State => {
 
 function calculateFlags(state: State): State['widgetFlags'] {
   return (
-    Object.values(state.calculatedWidgets)
-      // Filters repeater items, because we process them already in calculateRepeaterFlags
-      // TODO: is this check too naive?
-      .filter((derived) => !derived.source.uid?.includes('['))
+    Object.values(state.flatForm)
       // TODO: use filterMap
-      .map((derived) => {
-        const source = derived.source;
-        if (isFunctionWidget(source)) {
-          const widget_ = source({
+      // Filters repeater items, because we process them already in calculateRepeaterFlags
+      .filter((widget) => !widget.uid?.includes('['))
+      .map((widget) => {
+        if (isFunctionWidget(widget)) {
+          const widget_ = widget({
             $form: state.data,
             errors: undefined,
             touched: undefined,
             translate: undefined,
           });
-          widget_.uid = source.uid!;
+          widget_.uid = widget.uid!;
           return widget_;
         }
-        return derived.current;
+        return widget;
       })
       .filter((widget) => {
         if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
