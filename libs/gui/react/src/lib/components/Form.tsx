@@ -16,6 +16,7 @@ export interface ReactFormComponentProps {
   widgetLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
   localization?: Core.I18nTranslator;
+  locale?: string;
   dependencies?: Dependencies;
   validators?: CustomValidatorSchemas;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
@@ -33,6 +34,7 @@ export const FormComponent = ({
   widgetLoaders = {},
   itemRenderers = {},
   localization,
+  locale,
   dependencies = {},
   validators = {},
   middlewares = [],
@@ -57,6 +59,7 @@ export const FormComponent = ({
       middlewares={customMiddlewares}
       itemRenderers={customItemRenderers}
       localization={localization}
+      locale={locale}
       dependencies={dependencies}
       validators={customValidators}
       validateOn={validateOn}

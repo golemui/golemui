@@ -235,6 +235,7 @@
             [widgetLoaders]="{}"
             [validators]="{}"
             [validateOn]="formValidateOn()"
+            [locale]="formLocale()"
             [direction]="formDirection()"
             [dependencies]="deps"
             (formHealth)="onFormHealth($event)"
@@ -259,6 +260,7 @@
             #designComp
             [formDef]="formJson()"
             [formValidateOn]="formValidateOn()"
+            [formLocale]="formLocale()"
             [formDirection]="formDirection()"
             (formDefChange)="onFormDefChange($event)"
             (selectedWidgetChange)="designSelectedWidget = $event"

@@ -20,6 +20,7 @@ export class FormComponent {
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
   localization = input<Core.I18nTranslator>();
+  locale = input<string>();
   dependencies = input<Dependencies>({});
   direction = input<'ltr' | 'rtl'>();
 

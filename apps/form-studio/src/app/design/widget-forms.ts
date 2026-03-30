@@ -3,6 +3,7 @@
  * based on the selected widget's kind and type.
  */
 
+import { INTL_LOCALES } from './intl-locales';
 import { MATERIAL_ICONS } from './material-icons';
 
 const CHANGE_ON = { change: 'propChanged' };
@@ -124,6 +125,25 @@ function iconField(uid: string, path: string, label = 'Icon') {
     props: {
       placeholder: 'Search icon...',
       items: MATERIAL_ICONS,
+      labelField: 'label',
+      valueField: 'value',
+      height: 200,
+      itemHeight: 36,
+    },
+  };
+}
+
+function localeField(uid: string, path: string, label = 'Locale') {
+  return {
+    uid,
+    kind: 'input',
+    type: 'dropdown',
+    path,
+    label,
+    on: CHANGE_ON,
+    props: {
+      placeholder: 'Search locale...',
+      items: INTL_LOCALES,
       labelField: 'label',
       valueField: 'value',
       height: 200,
@@ -520,6 +540,7 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
             { label: 'Blur', value: 'blur' },
             { label: 'Submit', value: 'submit' },
           ]),
+          localeField('prop-locale', 'locale', 'Locale'),
           selectField('prop-direction', 'direction', 'Direction', [
             { label: 'LTR', value: 'ltr' },
             { label: 'RTL', value: 'rtl' },

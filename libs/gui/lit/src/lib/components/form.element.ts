@@ -21,6 +21,7 @@ export class FormElement extends LitElement {
   @property({ type: Object }) widgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
+  @property({ type: String }) locale?: string;
   @property({ type: Object }) dependencies?: Dependencies;
   @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
@@ -64,6 +65,7 @@ export class FormElement extends LitElement {
         .widgetLoaders=${this.customWidgetLoaders}
         .itemRenderers=${this.itemRenderers}
         .localization=${this.localization}
+        .locale=${this.locale}
         .dependencies=${this.dependencies}
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
