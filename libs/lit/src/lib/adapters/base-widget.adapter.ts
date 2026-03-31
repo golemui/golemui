@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { WithWidget } from '@golemui/core';
-import { distinctUntilChanged, map, skip, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { LitFormContext } from '../context/form.context';
 
 export abstract class BaseWidgetAdapter<F extends Core.FormWidget> {
@@ -34,17 +34,6 @@ export abstract class BaseWidgetAdapter<F extends Core.FormWidget> {
           lang: this.context.store.getState().lang,
           deps: this.context.dependencies,
         });
-      });
-
-    this.context.store.state$
-      .pipe(
-        takeUntil(this.destroy$),
-        map((s) => s.lang),
-        distinctUntilChanged(),
-        skip(1),
-      )
-      .subscribe((lang) => {
-        this.setTemplateData({ lang });
       });
   }
 
