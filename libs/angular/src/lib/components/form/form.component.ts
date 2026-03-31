@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  effect,
   inject,
   input,
   OnDestroy,
@@ -42,7 +41,6 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
   localization = input<Core.I18nTranslator>();
-  locale = input<string>();
   dependencies = input<Record<string, unknown>>({});
   protected direction = signal<'ltr' | 'rtl'>('ltr');
 
@@ -56,41 +54,6 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // PRIVATE
   private destroyRef = inject(DestroyRef);
   private unsubscribeI18n: () => void = () => undefined;
-  private _formDefInitialized = false;
-  private _localeInitialized = false;
-
-  constructor() {
-    effect(() => {
-      const formDef = this.formDef();
-      if (!this._formDefInitialized) {
-        this._formDefInitialized = true;
-        return;
-      }
-      this.context.store.dispatch({
-        type: 'INITIALIZE',
-        payload: { formName: this.formName(), formDef },
-      });
-      this.context.store.dispatch({
-        type: 'SET_DATA',
-        payload: { data: this.data() },
-      });
-    });
-
-    effect(() => {
-      const lang = this.locale();
-      if (!this._localeInitialized) {
-        this._localeInitialized = true;
-        return;
-      }
-      if (lang) {
-        this.direction.set(Core.getDirectionFromLanguage(lang));
-        this.context.store.dispatch({
-          type: 'SET_LANGUAGE',
-          payload: { lang },
-        });
-      }
-    });
-  }
 
   // LIFE CYCLE
   ngOnInit(): void {
@@ -127,15 +90,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       },
     });
 
-    const initialLang = this.locale() ?? this.context.localization.lang;
-    this.direction.set(Core.getDirectionFromLanguage(initialLang));
-
-    if (this.locale()) {
-      this.context.store.dispatch({
-        type: 'SET_LANGUAGE',
-        payload: { lang: this.locale()! },
-      });
-    }
+    this.direction.set(Core.getDirectionFromLanguage(this.context.localization.lang));
 
     this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
       this.direction.set(Core.getDirectionFromLanguage(lang));
