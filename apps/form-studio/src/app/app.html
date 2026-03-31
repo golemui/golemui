@@ -78,6 +78,17 @@
       <button [class.active]="activeTab === 'design'" (click)="switchTab('design')">
         Design
       </button>
+      <div class="viewport-switcher" role="group" aria-label="Viewport size">
+        <button [class.active]="viewportSize === 'mobile'" (click)="viewportSize = 'mobile'" title="Mobile (375px)">
+          <i class="ph ph-device-mobile"></i>
+        </button>
+        <button [class.active]="viewportSize === 'tablet'" (click)="viewportSize = 'tablet'" title="Tablet (768px)">
+          <i class="ph ph-device-tablet"></i>
+        </button>
+        <button [class.active]="viewportSize === 'desktop'" (click)="viewportSize = 'desktop'" title="Desktop (1200px)">
+          <i class="ph ph-monitor"></i>
+        </button>
+      </div>
     </header>
 
 
@@ -96,7 +107,7 @@
       <!-- Form Tab -->
       <div *ngSwitchCase="'form'" class="form-preview-container">
         @if (!thinking) {
-        <div class="form-wrapper">
+        <div class="form-wrapper" [style.width]="viewportWidths[viewportSize]" [style.min-width]="viewportWidths[viewportSize]">
           <gui-form
             [formDef]="formJson()"
             [data]="{}"
@@ -253,6 +264,7 @@
           <app-design
             #designComp
             [formDef]="formJson()"
+            [viewportWidth]="viewportWidths[viewportSize]"
             (formDefChange)="onFormDefChange($event)"
             (selectedWidgetChange)="designSelectedWidget = $event"
           ></app-design>

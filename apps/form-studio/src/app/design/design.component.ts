@@ -49,6 +49,7 @@ interface ComponentHighlight {
 })
 export class DesignComponent {
   formDef = input<string>('');
+  viewportWidth = input<string>('100%');
   formDefChange = output<string>();
   selectedWidgetChange = output<Record<string, unknown> | null>();
 
