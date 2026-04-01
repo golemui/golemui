@@ -33,7 +33,7 @@ jobs:
       - run: npm run lint:affected
 
       - name: Cypress component testing
-        run: npx nx affected --target=component-test --parallel=1 --browser chrome --headless
+        run: npx nx affected --target=component-test --parallel=1 --browser chrome
         env:
           # Nx Daemon can sometimes hold onto memory. Forcing it off ensures that every time a task runs, it starts with a clean slate.
           NX_DAEMON: false
