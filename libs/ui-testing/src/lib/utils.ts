@@ -30,7 +30,7 @@ export const memoryCleaner = () => {
       params: {},
     }).catch((e) => {
       // Fail gracefully if the browser doesn't support the command
-      cy.log('⚠️ GC failed:', e);
+      console.warn('⚠️ GC failed:', e);
     });
   }
 };
