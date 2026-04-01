@@ -194,6 +194,21 @@
   --gui-calendar-width: 300px;
   --gui-calendar-change-month-button-width: 36px;
   --gui-calendar-change-month-button-height: 36px;
+
+  /* Markdown Text Typography */
+  --gui-md-text-color: var(--gui-text-default);
+  --gui-md-line-height: 1.6;
+  --gui-md-heading-color: var(--gui-text-default);
+  --gui-md-heading-weight: 600;
+  --gui-md-link-color: var(--gui-intent-primary);
+  --gui-md-link-hover-color: var(--gui-intent-primary-hover);
+  --gui-md-blockquote-bg: var(--gui-bg-surface-hover);
+  --gui-md-blockquote-border-color: var(--gui-border-strong);
+  --gui-md-blockquote-color: var(--gui-text-secondary);
+  --gui-md-code-bg: var(--gui-bg-surface-active);
+  --gui-md-code-color: var(--gui-text-default);
+  --gui-md-code-radius: var(--gui-radius-sm);
+  --gui-md-hr-color: var(--gui-border-default);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -113,6 +113,32 @@ Pass `dependencies` as a property on the form component itself, not inside the w
   ```
 </Aside>
 
+## Styling
+
+Markdown Text can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+The following CSS custom properties control the visual appearance of rendered markdown content. Override them to match your design system.
+
+| CSS Variable                       | Description                                |
+| ---------------------------------- | ------------------------------------------ |
+| `--gui-md-text-color`              | Base text color                            |
+| `--gui-md-line-height`             | Base line height                           |
+| `--gui-md-heading-color`           | Color for h1–h6 headings                   |
+| `--gui-md-heading-weight`          | Font weight for headings                   |
+| `--gui-md-link-color`              | Link text color                            |
+| `--gui-md-link-hover-color`        | Link color on hover                        |
+| `--gui-md-blockquote-bg`           | Blockquote background                      |
+| `--gui-md-blockquote-border-color` | Blockquote left border color               |
+| `--gui-md-blockquote-color`        | Blockquote text color                      |
+| `--gui-md-code-bg`                 | Background for inline code and code blocks |
+| `--gui-md-code-color`              | Text color for inline code and code blocks |
+| `--gui-md-code-radius`             | Border radius for inline code              |
+| `--gui-md-hr-color`                | Color of horizontal rules                  |
+
+All tokens reference semantic tokens from the design system and adapt automatically in dark mode. See the full reference in [Design Tokens — Markdown Text](/styling/design-tokens/#markdown-text).
+
 ## Props
 
 Use these `props` to customize your Markdown Text component.
