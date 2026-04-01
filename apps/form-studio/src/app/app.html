@@ -33,34 +33,72 @@
           }
         } @else {
         <div [ngClass]="['chat-message', msg.role]">
-          <div class="message-bubble">{{ msg.content }}</div>
+          <div class="message-bubble">
+            @if (msg.attachments?.length) {
+            <div class="message-attachments">
+              @for (att of msg.attachments!; track att.name) {
+              <div class="message-attachment-chip">
+                <i class="ph ph-file-pdf"></i><span>{{ att.name }}</span>
+              </div>
+              }
+            </div>
+            }
+            {{ msg.content }}
+          </div>
         </div>
         }
       </ng-container>
     </div>
 
-    <div class="chat-input-area">
+    <div class="chat-input-area"
+      (dragover)="onChatDragOver($event)"
+      (dragleave)="onChatDragLeave($event)"
+      (drop)="onChatDrop($event)"
+      [class.drag-over]="isDragOver">
+      @if (fileError) {
+      <p class="file-error">{{ fileError }}</p>
+      }
       <div class="input-wrapper">
-        <div class="textarea-container">
-          <textarea
-            [ngModel]="chatInput"
-            (ngModelChange)="onChatInputChange($event)"
-            placeholder="Ask me to create a form..."
-            (keydown.enter)="$event.preventDefault(); sendMessage()"
-          >
-          </textarea>
+        @if (pendingFiles.length > 0) {
+        <div class="file-chips">
+          @for (file of pendingFiles; track file.name; let i = $index) {
+          <div class="file-chip">
+            <i class="ph ph-paperclip"></i>
+            <span class="file-chip-name">{{ file.name }}</span>
+            <button type="button" class="file-chip-remove" (click)="removeFile(i)" [attr.aria-label]="'Remove ' + file.name">
+              <i class="ph ph-x"></i>
+            </button>
+          </div>
+          }
         </div>
-        <div class="send-column">
+        }
+        <div class="input-row">
+          <div class="textarea-container">
+            <input #fileInput type="file" accept=".pdf,image/png,image/jpeg" multiple
+              style="display:none" (change)="onFileSelected($event)" />
+            <textarea
+              [ngModel]="chatInput"
+              (ngModelChange)="onChatInputChange($event)"
+              placeholder="Ask me to create a form..."
+              (keydown.enter)="$event.preventDefault(); sendMessage()"
+            >
+            </textarea>
+          </div>
+          <div class="send-column">
           @if (tokenCount > 0) {
           <app-token-meter [current]="tokenCount" [max]="maxTokens" />
           }
-          <button (click)="sendMessage()" [disabled]="!chatInput.trim() || thinking">
+          <button type="button" class="attach-btn" (click)="onAttachClick()" [disabled]="thinking" title="Attach file">
+            <i class="ph ph-paperclip"></i>
+          </button>
+          <button (click)="sendMessage()" [disabled]="!canSend">
             @if (thinking) {
             <span class="spinner spinner-sm"></span>
             } @else {
             <span class="icon-send">➤</span>
             }
           </button>
+          </div>
         </div>
       </div>
     </div>
