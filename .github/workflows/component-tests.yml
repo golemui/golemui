@@ -1,4 +1,4 @@
-name: Component Tests
+name: Cypress Component Tests
 
 on:
   push:
@@ -56,14 +56,14 @@ jobs:
           fi
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Job 2: Run component tests — one dedicated runner per affected project.
+  # Job 2: Run component tests - one dedicated runner per affected project.
   #
   # Each runner is completely isolated, so there is no memory contention
   # between frameworks.  fail-fast: false ensures all shards complete and
   # report results even when one of them fails.
   # ─────────────────────────────────────────────────────────────────────────────
   component-test:
-    name: "${{ matrix.project }}"
+    name: '${{ matrix.project }}'
     needs: determine-matrix
     # Skip entirely when no projects are affected (avoids the empty-matrix error).
     if: needs.determine-matrix.outputs.has-projects == 'true'
