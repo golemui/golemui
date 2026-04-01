@@ -1,6 +1,6 @@
-import { compile, parse } from 'subscript/justin';
-import { FormHealth, State } from '../model';
 import { errorCodes } from '../../errors';
+import { expressionIsTrue } from '../../utils/justin';
+import { FormHealth, State } from '../model';
 
 export const calculateCurrentState = (state: State): State => {
   let stateExpressions = state.formDef.states;
@@ -17,25 +17,13 @@ export const calculateCurrentState = (state: State): State => {
   let currentStates: string[] = [];
   let formHealth: FormHealth = { status: 'ok' };
   try {
-    // TODO: Cache compiled expressions
+    // TODO: Use filterMap
     currentStates = Object.keys(stateExpressions)
       .map((stateName) => {
         const expression = stateExpressions[stateName];
-        const ast = parse(expression);
-        const evaluate = compile(ast);
         let result: boolean;
         try {
-          result = evaluate({
-            $form: state.data,
-            $log: (value: any, label?: string) => {
-              if (label) {
-                console.log(label, value);
-              } else {
-                console.log(value);
-              }
-              return value;
-            },
-          });
+          result = expressionIsTrue(expression, state.data);
         } catch {
           result = false;
         }

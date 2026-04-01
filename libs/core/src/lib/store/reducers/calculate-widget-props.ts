@@ -120,19 +120,14 @@ function calculateProps(state: State, localization: I18nTranslator) {
       // Layout "children" property
       if (isLayoutWidget(originalSource)) {
         const prevChildren = (derivedWidget.previous as LayoutWidget<string>).children || [];
+        const repeaterIndexes = extractRepeaterIndexes(originalSource.uid);
 
         // Calculate visible children based on current flags
         const children = originalSource.children.filter((child) => {
-          // TODO: why were we doing this??? It doesn't make logical sense
-          // if (isFunctionWidget(child)) {
-          //   child = child({
-          //     $form: state.data,
-          //     errors: child.path ? state.validations[child.path] : undefined,
-          //     touched: child.path ? state.touchedControls[child.path] : undefined,
-          //     translate: localization.translate,
-          //   });
-          // }
-          return !state.widgetFlags[child.uid!] || state.widgetFlags[child.uid!].hidden !== true;
+          const uid = child.uid as string;
+          // When children are repeater items, we need to append the repeater indexes
+          const actualUid = uid + repeaterIndexes.map((idx) => `[${idx}]`).join('');
+          return !state.widgetFlags[actualUid] || state.widgetFlags[actualUid].hidden !== true;
         });
 
         (derivedWidget as DerivedWidget<LayoutWidget<string>>).current.children = children;
@@ -218,7 +213,6 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
       );
     }
     // This is for `disabled` an `readonly`
-    // TODO: `disabled` an `readonly` don't need to be kept in state['flags'], we could calculate them right here
     if (
       ((property as string) === 'disabled' || (property as string) === 'readonly') &&
       hasWhen(propValue)
@@ -273,3 +267,10 @@ const resolveI18nParams = (
     return acc;
   }, {} as I18nParams);
 };
+
+/**
+ * Extracts repeater indexes from a UID, e.g. "abc[0][1]" -> [0, 1], "abc" -> []
+ */
+function extractRepeaterIndexes(uid: string): number[] {
+  return [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
+}

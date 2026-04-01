@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
+import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
 import {
   RepeaterIndexesContext,
   useInputWidget,
   useRepeaterIndexes,
   WidgetRenderer,
 } from '@golemui/react';
-import { RepeaterProps, getItemKey } from '@golemui/gui-shared';
 import React, { useCallback, useRef, useState } from 'react';
 import '../styles.scss';
 
@@ -79,7 +79,10 @@ export function Repeater(widgetInstance: Core.WithWidget) {
                 onClick={() => removeItem(value, index)}
               >
                 {templateData.removeButtonIcon && (
-                  <span className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`} data-icon={templateData.removeButtonIcon}></span>
+                  <span
+                    className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`}
+                    data-icon={templateData.removeButtonIcon}
+                  ></span>
                 )}
                 {templateData.removeLabel ?? 'Remove'}
               </button>
@@ -87,7 +90,6 @@ export function Repeater(widgetInstance: Core.WithWidget) {
             <WidgetRenderer
               key={`${uid}-${itemKey}`}
               widget={templateData.template}
-              repeaterIndex={index}
             />
           </div>
         </RepeaterIndexesContext.Provider>
@@ -124,7 +126,10 @@ export function Repeater(widgetInstance: Core.WithWidget) {
           disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
         >
           {templateData.addButtonIcon && (
-            <span className={`gui-widget-icon gui-button-icon ${templateData.addButtonIcon}`} data-icon={templateData.addButtonIcon}></span>
+            <span
+              className={`gui-widget-icon gui-button-icon ${templateData.addButtonIcon}`}
+              data-icon={templateData.addButtonIcon}
+            ></span>
           )}
           {templateData.addLabel ?? 'Add'}
         </button>

@@ -41,7 +41,7 @@ export class FormElement extends LitElement {
     airportItemRenderer: airportItemRenderer,
     countryItemRenderer: countryItemRenderer,
   };
-  middlewares = [AppsShared.loggerMiddleware];
+  middlewares = [Core.devToolsMiddleware()];
   validators: ValidatorsVanilla.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };

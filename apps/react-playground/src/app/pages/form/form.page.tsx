@@ -36,7 +36,7 @@ const customWidgetLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const middlewares = [AppsShared.loggerMiddleware];
+const middlewares = [Core.devToolsMiddleware()];
 const validators: ValidatorsVanilla.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
 };

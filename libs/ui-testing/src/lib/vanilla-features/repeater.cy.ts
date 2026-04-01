@@ -4,8 +4,8 @@ import { MountComponentFn } from '../utils';
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
   describe('Repeater Component', () => {
     const TEAMS_REPEATER_PATH = 'repeaters.teams';
-    const DEVELOPERS_REPEATER_PATH = 'repeaters.teams.items.developers';
-    const SKILLS_REPEATER_PATH = 'repeaters.teams.items.developers.items.skills';
+    const DEVELOPERS_REPEATER_PATH = `${TEAMS_REPEATER_PATH}.items.developers`;
+    const SKILLS_REPEATER_PATH = `${DEVELOPERS_REPEATER_PATH}.items.skills`;
     const SUBMIT_BUTTON_UID = 'submitBtn';
 
     const getFormDefinition = () =>
@@ -261,6 +261,166 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="firstName[0][0]_textinput"]').should('have.value', 'Second');
       cy.get('[data-cy="firstName[0][1]_textinput"]').should('have.value', 'Third');
       cy.get('[data-cy="firstName[0][2]_textinput"]').should('not.exist');
+    });
+
+    describe('states inside repeater items', () => {
+      const getStatesFormDefinition = () =>
+        Core.defineForm({
+          states: {
+            isApple: `$form.company === 'appl'`,
+            isMsoft: `$form.company === 'msf'`,
+            companyHasBeenPicked: `$form.company !== undefined`,
+          },
+          form: [
+            {
+              uid: 'companySelect',
+              kind: 'input',
+              type: 'select',
+              path: 'company',
+              label: 'Company',
+              props: { options: ['msf', 'appl'] },
+            },
+            {
+              uid: 'teamRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: TEAMS_REPEATER_PATH,
+              props: {
+                addLabel: 'Add new team',
+                removeLabel: 'Remove team',
+                template: {
+                  kind: 'layout',
+                  type: 'flex',
+                  children: [
+                    {
+                      uid: 'pickCompanyAlert',
+                      kind: 'display',
+                      type: 'alert',
+                      props: { level: 'warning', text: 'Pick a company' },
+                      exclude: { from: ['companyHasBeenPicked'] },
+                    },
+                    {
+                      uid: 'companyStatusAlert',
+                      kind: 'display',
+                      type: 'alert',
+                      props: {
+                        level: 'error',
+                        'level.companyHasBeenPicked': 'success',
+                        text: 'Company has been picked but is unknown',
+                        'text.isApple': 'Company is Apple',
+                        'text.isMsoft': 'Company is Msoft',
+                      },
+                      include: { in: ['companyHasBeenPicked'] },
+                    },
+                    {
+                      uid: 'teamName',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${TEAMS_REPEATER_PATH}.items.teamName`,
+                      label: 'Team Name',
+                    },
+                    {
+                      uid: 'teamNameTypedAlert',
+                      kind: 'display',
+                      type: 'alert',
+                      props: { level: 'success', text: 'Team name has been typed' },
+                      include: { when: `$form.${TEAMS_REPEATER_PATH}.items?.teamName?.length > 0` },
+                    },
+                    {
+                      uid: 'devRepeater',
+                      kind: 'input',
+                      type: 'repeater',
+                      path: DEVELOPERS_REPEATER_PATH,
+                      props: {
+                        addLabel: 'Add new developer',
+                        removeLabel: 'Remove developer',
+                        template: {
+                          kind: 'layout',
+                          type: 'flex',
+                          children: [
+                            {
+                              uid: 'firstNameAlert',
+                              kind: 'display',
+                              type: 'alert',
+                              props: { level: 'success', text: 'First name has been provided' },
+                              include: {
+                                when: `$form.${DEVELOPERS_REPEATER_PATH}.items?.firstName?.length > 0`,
+                              },
+                            },
+                            {
+                              uid: 'firstName',
+                              kind: 'input',
+                              type: 'textinput',
+                              label: 'First Name',
+                              path: `${DEVELOPERS_REPEATER_PATH}.items.firstName`,
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        });
+
+      it('should show/hide elements inside repeater items based on global states via include.in and exclude.from', () => {
+        mountFn({
+          data: { repeaters: { teams: [{}] } },
+          formDef: getStatesFormDefinition(),
+        });
+
+        // pickCompanyAlert excludes from companyHasBeenPicked -> visible while no company is selected
+        cy.get('[id="pickCompanyAlert[0]"]').should('be.visible');
+        // companyStatusAlert includes in companyHasBeenPicked -> absent while no company is selected
+        cy.get('[id="companyStatusAlert[0]"]').should('not.exist');
+
+        cy.get('[data-cy="companySelect_select"]').select('appl');
+
+        // After picking a company the visibility flips for both alerts
+        cy.get('[id="pickCompanyAlert[0]"]').should('not.exist');
+        cy.get('[id="companyStatusAlert[0]"]').should('be.visible');
+      });
+
+      it('should apply state-suffixed props to elements inside repeater items', () => {
+        mountFn({
+          data: { company: 'appl', repeaters: { teams: [{}] } },
+          formDef: getStatesFormDefinition(),
+        });
+
+        // isApple is active -> 'text.isApple' prop overrides the default text
+        cy.get('[id="companyStatusAlert[0]"]').should('contain.text', 'Company is Apple');
+
+        cy.get('[data-cy="companySelect_select"]').select('msf');
+
+        // isMsoft is now active -> 'text.isMsoft' prop overrides the default text
+        cy.get('[id="companyStatusAlert[0]"]').should('contain.text', 'Company is Msoft');
+      });
+
+      it('should evaluate index-aware include.when expressions independently per repeater item', () => {
+        mountFn({
+          data: {
+            repeaters: {
+              teams: [
+                { teamName: 'Alpha', developers: [{ firstName: 'Alice' }, { firstName: '' }] },
+                { teamName: '', developers: [] },
+              ],
+            },
+          },
+          formDef: getStatesFormDefinition(),
+        });
+
+        // Team at index 0 has a teamName -> alert is present
+        cy.get('[id="teamNameTypedAlert[0]"]').should('be.visible');
+        // Team at index 1 has no teamName -> alert is absent
+        cy.get('[id="teamNameTypedAlert[1]"]').should('not.exist');
+
+        // Developer [0][0] has a firstName -> alert is present for that specific item
+        cy.get('[id="firstNameAlert[0][0]"]').should('be.visible');
+        // Developer [0][1] has no firstName -> alert is absent for that specific item
+        cy.get('[id="firstNameAlert[0][1]"]').should('not.exist');
+      });
     });
   });
 };
