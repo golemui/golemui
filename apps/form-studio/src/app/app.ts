@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import * as Core from '@golemui/core';
 import * as Gui from '@golemui/gui-angular';
 import { Dependencies, golemForm } from '@golemui/gui-shared';
-import { GEMINI_INPUT_BUDGET, GeminiService } from './gemini.service';
+import { FileAttachment, GEMINI_INPUT_BUDGET, GeminiService } from './gemini.service';
 // import { AnthropicService } from './anthropic.service';
 import { DesignComponent } from './design/design.component';
 import { PropertiesPanelComponent } from './design/properties-panel.component';
@@ -21,10 +21,16 @@ import { EditorComponent } from './editor/editor.component';
 import { TokenMeterComponent } from './token-meter/token-meter.component';
 import snarkdown from 'snarkdown';
 
+interface AttachedFile {
+  name: string;
+  mimeType: string;
+}
+
 interface ChatMessage {
   role: 'user' | 'assistant' | 'thinking';
   content: string;
   thinkingGroupId?: number;
+  attachments?: AttachedFile[];
 }
 
 const initialFormJson = () => {
@@ -104,6 +110,11 @@ export class App {
   protected thinking = false;
   protected collapsedGroups = new Set<number>();
   private thinkingGroupId = 0;
+  protected pendingFiles: FileAttachment[] = [];
+  protected fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
+  protected isDragOver = false;
+  protected fileError = '';
+  private readonly MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 
   protected onJsonChange(value: string) {
     this.formJson.set(value);
@@ -124,21 +135,106 @@ export class App {
     this.activeTab = tab;
   }
 
+  protected get canSend(): boolean {
+    return (this.chatInput.trim().length > 0 || this.pendingFiles.length > 0) && !this.thinking;
+  }
+
+  // Gemini supports text/plain, text/html, text/css, text/javascript, text/csv,
+  // text/markdown, text/xml, application/pdf, and image/* / audio* / video/*.
+  // JSON and other unsupported text-based types are normalized to text/plain.
+  private resolveGeminiMimeType(file: File): string {
+    const type = file.type || 'application/octet-stream';
+    const SUPPORTED = new Set([
+      'application/pdf',
+      'text/plain', 'text/html', 'text/css', 'text/javascript',
+      'text/x-typescript', 'text/csv', 'text/markdown',
+      'text/x-python', 'text/xml', 'text/rtf',
+      'application/x-javascript', 'application/x-typescript',
+      'application/x-python', 'application/rtf',
+    ]);
+    if (SUPPORTED.has(type)) return type;
+    if (type.startsWith('image/') || type.startsWith('audio/') || type.startsWith('video/')) return type;
+    // Treat any remaining text-like or structured-text types as plain text
+    if (type.startsWith('text/') || type === 'application/json' || type === 'application/xml') return 'text/plain';
+    return type; // pass through; Gemini will error if truly unsupported
+  }
+
+  private processFiles(files: FileList | File[]): void {
+    this.fileError = '';
+    Array.from(files).forEach((file) => {
+      if (file.size > this.MAX_FILE_SIZE) {
+        this.fileError = `"${file.name}" exceeds the 15 MB limit.`;
+        return;
+      }
+      const mimeType = this.resolveGeminiMimeType(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Data = (reader.result as string).split(',')[1];
+        this.pendingFiles = [...this.pendingFiles, { name: file.name, mimeType, base64Data }];
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  protected onAttachClick(): void {
+    this.fileInput()?.nativeElement.click();
+  }
+
+  protected onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) this.processFiles(input.files);
+    input.value = '';
+  }
+
+  protected removeFile(index: number): void {
+    this.pendingFiles = this.pendingFiles.filter((_, i) => i !== index);
+  }
+
+  protected onChatDragOver(event: DragEvent): void {
+    const hasFiles = event.dataTransfer?.types.includes('Files');
+    if (!hasFiles) return;
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  protected onChatDragLeave(event: DragEvent): void {
+    if (!(event.currentTarget as HTMLElement).contains(event.relatedTarget as Node)) {
+      this.isDragOver = false;
+    }
+  }
+
+  protected onChatDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver = false;
+    if (event.dataTransfer?.files.length) {
+      this.processFiles(event.dataTransfer.files);
+    }
+  }
+
   protected async sendMessage() {
-    if (!this.chatInput.trim()) {
+    if (!this.canSend) {
       return;
     }
 
     this.thinkingGroupId++;
 
-    // Add user message
-    this.messages.push({ role: 'user', content: this.chatInput });
+    const filesToSend = [...this.pendingFiles];
+    const attachments: AttachedFile[] = filesToSend.map(({ name, mimeType }) => ({ name, mimeType }));
+
+    this.messages.push({
+      role: 'user',
+      content: this.chatInput,
+      attachments: attachments.length ? attachments : undefined,
+    });
     this.thinking = true;
+    this.fileError = '';
     const userMessage = this.chatInput;
     this.chatInput = '';
+    this.pendingFiles = [];
 
     const groupId = this.thinkingGroupId;
-    const response = await this.ai.sendMessage(userMessage, (thought) => {
+    const response = await this.ai.sendMessage(userMessage, filesToSend, (thought) => {
       this.messages.push({ role: 'thinking', content: thought, thinkingGroupId: groupId });
       this.scrollChatToBottom();
     });
