@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
-import * as React from '@golemui/react';
-import { ReactItemRenderer } from '@golemui/react';
 import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
   initValidators,
   jsonSchemaValidators,
 } from '@golemui/gui-validators';
+import * as React from '@golemui/react';
+import { ReactItemRenderer } from '@golemui/react';
 import { ComponentType } from 'react';
 import { vanillaWidgetLoaders } from '../widget.loaders';
 

@@ -264,6 +264,8 @@
           <app-design
             #designComp
             [formDef]="formJson()"
+            [formValidateOn]="formValidateOn()"
+            [formLocale]="formLocale()"
             [viewportWidth]="viewportWidths[viewportSize]"
             (formDefChange)="onFormDefChange($event)"
             (selectedWidgetChange)="designSelectedWidget = $event"
@@ -272,6 +274,12 @@
           <app-properties-panel
             [widget]="w"
             (widgetChange)="onDesignWidgetChange($event)"
+            (click)="$event.stopPropagation()"
+          />
+          } @else {
+          <app-properties-panel
+            [widget]="formPropertiesWidget()"
+            (widgetChange)="onFormPropertiesChange($event)"
             (click)="$event.stopPropagation()"
           />
           }

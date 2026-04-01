@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   inject,
@@ -69,6 +70,14 @@ export class App {
   protected readonly viewportWidths = { mobile: '375px', tablet: '768px', desktop: '100%' };
   protected designSelectedWidget: Record<string, unknown> | null = null;
   protected collapsedToolbarGroups = new Set<string>();
+  protected formValidateOn = signal<Core.ValidateOn>('eager');
+  protected formLocale = signal<string>('en');
+  protected formPropertiesWidget = computed(() => ({
+    type: '__form__',
+    uid: 'form',
+    validateOn: this.formValidateOn(),
+    locale: this.formLocale(),
+  }));
 
   protected toggleToolbarGroup(group: string) {
     if (this.collapsedToolbarGroups.has(group)) {
@@ -158,6 +167,11 @@ export class App {
 
   protected onDesignWidgetChange(flatData: Record<string, unknown>) {
     this.designComp()?.onWidgetChange(flatData);
+  }
+
+  protected onFormPropertiesChange(flatData: Record<string, unknown>) {
+    if ('validateOn' in flatData) this.formValidateOn.set(flatData['validateOn'] as Core.ValidateOn);
+    if ('locale' in flatData) this.formLocale.set(flatData['locale'] as string);
   }
 
   protected onFormDefChange(newJson: string) {

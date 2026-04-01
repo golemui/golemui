@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
+  effect,
   ElementRef,
   HostListener,
   inject,
@@ -49,6 +50,8 @@ interface ComponentHighlight {
 })
 export class DesignComponent {
   formDef = input<string>('');
+  formValidateOn = input<Core.ValidateOn>('eager');
+  formLocale = input<string>();
   viewportWidth = input<string>('100%');
   formDefChange = output<string>();
   selectedWidgetChange = output<Record<string, unknown> | null>();
@@ -60,6 +63,7 @@ export class DesignComponent {
   // Snapshot of the selected widget — set on selection, NOT updated when formDef changes,
   // so the properties panel stays stable while the user types.
   selectedWidget = signal<Record<string, unknown> | null>(null);
+  protected formLocalization = signal(Core.identityTranslator(this.formLocale() || 'en-US'));
   protected liveFormDef = linkedSignal(() => this.formDef());
   protected designFormDef = computed(() => {
     try {
@@ -72,6 +76,9 @@ export class DesignComponent {
   protected formVersion = signal(0);
 
   constructor() {
+    effect(() => {
+      this.formLocalization().setLang(this.formLocale() || 'en-US');
+    });
     afterNextRender(() => {
       this.layoutEl = this.elRef.nativeElement.querySelector('.design-layout');
     });
@@ -119,8 +126,13 @@ export class DesignComponent {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     const tag = (event.target as HTMLElement)?.tagName;
-    const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (event.target as HTMLElement)?.isContentEditable;
-    if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedHighlight() && !isEditable) {
+    const isEditable =
+      tag === 'INPUT' || tag === 'TEXTAREA' || (event.target as HTMLElement)?.isContentEditable;
+    if (
+      (event.key === 'Delete' || event.key === 'Backspace') &&
+      this.selectedHighlight() &&
+      !isEditable
+    ) {
       event.preventDefault();
       this.deleteSelectedWidget();
     }
@@ -279,13 +291,21 @@ export class DesignComponent {
 
   protected onDragOver(event: DragEvent) {
     const types = event.dataTransfer?.types;
-    if (!types?.includes('application/golem-widget') && !types?.includes('application/golem-widget-move')) {
+    if (
+      !types?.includes('application/golem-widget') &&
+      !types?.includes('application/golem-widget-move')
+    ) {
       return;
     }
     event.preventDefault();
-    event.dataTransfer!.dropEffect = types.includes('application/golem-widget-move') ? 'move' : 'copy';
+    event.dataTransfer!.dropEffect = types.includes('application/golem-widget-move')
+      ? 'move'
+      : 'copy';
 
-    const { containerEl, containerUid, direction } = this.findDropContainer(event.clientX, event.clientY);
+    const { containerEl, containerUid, direction } = this.findDropContainer(
+      event.clientX,
+      event.clientY,
+    );
     const childRects = this.collectContainerChildRects(containerEl);
     const index = this.calcInsertionIndex(childRects, direction, event.clientX, event.clientY);
     const rect = this.calcIndicatorRect(containerEl, childRects, direction, index);
@@ -348,7 +368,10 @@ export class DesignComponent {
   }
 
   protected onBreadcrumbDragStart(event: DragEvent, prettyUid: string) {
-    event.dataTransfer?.setData('application/golem-widget-move', JSON.stringify({ uid: prettyUid }));
+    event.dataTransfer?.setData(
+      'application/golem-widget-move',
+      JSON.stringify({ uid: prettyUid }),
+    );
     event.dataTransfer!.effectAllowed = 'move';
     // Clear selection so overlay doesn't interfere with drop targets
     this.selectedHighlight.set(null);
@@ -363,7 +386,10 @@ export class DesignComponent {
     'GUI-TABS-LAYOUT',
   ]);
 
-  private findDropContainer(x: number, y: number): {
+  private findDropContainer(
+    x: number,
+    y: number,
+  ): {
     containerEl: Element;
     containerUid: string | null;
     direction: 'row' | 'column';
@@ -468,9 +494,7 @@ export class DesignComponent {
     } else if (tag === 'GUI-FLEX-LAYOUT') {
       const flexWidget = containerEl.querySelector('.gui-flex__widget');
       if (flexWidget) {
-        children = Array.from(flexWidget.children).filter(
-          (c) => c.id?.startsWith('host-'),
-        );
+        children = Array.from(flexWidget.children).filter((c) => c.id?.startsWith('host-'));
       } else {
         children = [];
       }
@@ -522,8 +546,10 @@ export class DesignComponent {
     const scrollLeft = this.layoutEl?.scrollLeft ?? 0;
     const scrollTop = this.layoutEl?.scrollTop ?? 0;
 
-    const toRelX = (absX: number) => absX - layoutRect.left - (this.layoutEl?.clientLeft ?? 0) + scrollLeft;
-    const toRelY = (absY: number) => absY - layoutRect.top - (this.layoutEl?.clientTop ?? 0) + scrollTop;
+    const toRelX = (absX: number) =>
+      absX - layoutRect.left - (this.layoutEl?.clientLeft ?? 0) + scrollLeft;
+    const toRelY = (absY: number) =>
+      absY - layoutRect.top - (this.layoutEl?.clientTop ?? 0) + scrollTop;
 
     if (direction === 'column') {
       const width = containerRect.width;
