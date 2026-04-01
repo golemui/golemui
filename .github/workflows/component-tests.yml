@@ -1,0 +1,94 @@
+name: Component Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 1: Determine which projects are affected and build the matrix.
+  #
+  # Runs nx-set-shas once to establish the affected base SHA, then asks Nx
+  # which projects are affected AND have a component-test target.  The result
+  # is serialised as a JSON object  {"project": ["gui-react", "gui-lit", ...]}
+  # and forwarded to job 2 via outputs.
+  # ─────────────────────────────────────────────────────────────────────────────
+  determine-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has-projects: ${{ steps.build-matrix.outputs.has-projects }}
+    env:
+      NX_DAEMON: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - uses: nrwl/nx-set-shas@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build test matrix from affected projects
+        id: build-matrix
+        run: |
+          PROJECTS=$(npx nx show projects --affected --withTarget=component-test 2>/dev/null \
+            | jq -R -s 'split("\n") | map(select(length > 0)) | {project: .}')
+          COUNT=$(echo "$PROJECTS" | jq '.project | length')
+          echo "matrix=$PROJECTS" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt 0 ]; then
+            echo "has-projects=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-projects=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 2: Run component tests — one dedicated runner per affected project.
+  #
+  # Each runner is completely isolated, so there is no memory contention
+  # between frameworks.  fail-fast: false ensures all shards complete and
+  # report results even when one of them fails.
+  # ─────────────────────────────────────────────────────────────────────────────
+  component-test:
+    name: "${{ matrix.project }}"
+    needs: determine-matrix
+    # Skip entirely when no projects are affected (avoids the empty-matrix error).
+    if: needs.determine-matrix.outputs.has-projects == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.determine-matrix.outputs.matrix) }}
+    env:
+      # Disable the Nx daemon so each runner starts with a clean slate.
+      NX_DAEMON: false
+      # Cap Node's heap at 4 GB, leaving headroom for Chrome and the dev server.
+      NODE_OPTIONS: '--max-old-space-size=4096'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run component tests
+        run: npx nx run ${{ matrix.project }}:component-test --browser chrome
