@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ChatSession, GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
+import { ChatSession, GenerativeModel, GoogleGenerativeAI, Part } from '@google/generative-ai';
 import { generatePrompt } from './golem-prompt';
 import { GolemFormDef, parseLlmResponse } from './llm-postprocess';
+
+export interface FileAttachment {
+  name: string;
+  mimeType: string;
+  base64Data: string;
+}
 
 export const GEMINI_MAX_TOKENS = 1_048_576; // gemini-2.5-flash context window
 export const GEMINI_MAX_OUTPUT_TOKENS = 65_536; // reserved for model output
@@ -29,7 +35,7 @@ export class GeminiService {
       return;
     }
     this.genAI = new GoogleGenerativeAI(apiKey);
-    const model = { fast: 'gemini-2.5-flash', think: 'gemini-2.5-pro' };
+    const model = { fast: 'gemini-3-flash-preview', think: 'gemini-2.5-pro' };
     const systemInstruction = generatePrompt();
     this.model = this.genAI.getGenerativeModel({
       model: model.fast,
@@ -48,6 +54,7 @@ export class GeminiService {
 
   async sendMessage(
     message: string,
+    files: FileAttachment[] = [],
     onThought?: (text: string) => void,
   ): Promise<GolemFormDef | undefined> {
     if (!this.genAI) {
@@ -57,7 +64,14 @@ export class GeminiService {
 
     let jsonResponse = '';
 
-    const result = await this.chat.sendMessageStream(message);
+    const parts: Part[] = files.map((f) => ({
+      inlineData: { mimeType: f.mimeType, data: f.base64Data },
+    }));
+    parts.push({
+      text: message.trim() || 'Analyze the attached document(s) and generate the GolemUI form definition.',
+    });
+
+    const result = await this.chat.sendMessageStream(parts);
 
     for await (const chunk of result.stream) {
       const candidate = chunk.candidates?.[0];
