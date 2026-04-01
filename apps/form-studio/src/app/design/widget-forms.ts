@@ -3,6 +3,8 @@
  * based on the selected widget's kind and type.
  */
 
+import { INTL_LOCALES } from './intl-locales';
+import { ISO_CURRENCIES } from './iso-currencies';
 import { MATERIAL_ICONS } from './material-icons';
 
 const CHANGE_ON = { change: 'propChanged' };
@@ -132,6 +134,44 @@ function iconField(uid: string, path: string, label = 'Icon') {
   };
 }
 
+function localeField(uid: string, path: string, label = 'Locale') {
+  return {
+    uid,
+    kind: 'input',
+    type: 'dropdown',
+    path,
+    label,
+    on: CHANGE_ON,
+    props: {
+      placeholder: 'Search locale...',
+      items: INTL_LOCALES,
+      labelField: 'label',
+      valueField: 'value',
+      height: 200,
+      itemHeight: 36,
+    },
+  };
+}
+
+function currencyField(uid: string, path: string, label = 'Currency') {
+  return {
+    uid,
+    kind: 'input',
+    type: 'dropdown',
+    path,
+    label,
+    on: CHANGE_ON,
+    props: {
+      placeholder: 'Search currency...',
+      items: ISO_CURRENCIES,
+      labelField: 'label',
+      valueField: 'value',
+      height: 200,
+      itemHeight: 36,
+    },
+  };
+}
+
 function repeaterField(
   uid: string,
   path: string,
@@ -235,7 +275,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   currency: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
-    textField('prop-currency', 'currency', 'Currency Code'),
+    currencyField('prop-currency', 'currency', 'Currency Code'),
     iconField('prop-icon', 'icon'),
     numberField('prop-step', 'step', 'Step'),
     numberField('prop-maximumFractionDigits', 'maximumFractionDigits', 'Max Fraction Digits'),
@@ -507,6 +547,25 @@ export interface PropertyGroup {
  * Groups with no fields are still returned (filtered in the component).
  */
 export function buildWidgetPropertyGroups(widget: Record<string, unknown>): PropertyGroup[] {
+  if (widget['type'] === '__form__') {
+    return [
+      {
+        key: 'form',
+        label: 'Form Properties',
+        defaultOpen: true,
+        fields: [
+          selectField('prop-validateOn', 'validateOn', 'Validate On', [
+            { label: 'Eager', value: 'eager' },
+            { label: 'Change', value: 'change' },
+            { label: 'Blur', value: 'blur' },
+            { label: 'Submit', value: 'submit' },
+          ]),
+          localeField('prop-locale', 'locale', 'Locale'),
+        ],
+      },
+    ];
+  }
+
   const identityFields: unknown[] = [
     textField('prop-uid', 'uid', 'ID', true),
     textField('prop-type', 'type', 'Type', true),

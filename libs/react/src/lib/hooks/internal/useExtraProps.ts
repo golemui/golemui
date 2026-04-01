@@ -30,6 +30,7 @@ export function useTemplateData<
         } as unknown as WithFlattenedProps<F, ExtraProps>;
         setTemplateData(templateData);
       });
+
     return () => destroy$.next();
   }, [widget, formContext]);
 

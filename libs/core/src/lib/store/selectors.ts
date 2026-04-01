@@ -1,4 +1,12 @@
-import { distinctUntilChanged, filter, map, Observable, pipe, startWith } from 'rxjs';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  filter,
+  map,
+  Observable,
+  pipe,
+  startWith,
+} from 'rxjs';
 import { LayoutWidget } from '../form-widget';
 import { DotPath, Uid } from '../shared';
 import * as Obj from '../utils/object';
@@ -68,19 +76,30 @@ export const injectedValidationByPath$ = (path: DotPath) =>
 //
 // --------------------------------
 
+const selectLang = pipe(
+  map((store: State) => store.lang),
+  distinctUntilChanged(),
+);
+
 const selectCalculatedWidgets = pipe(
   map((store: State) => store.calculatedWidgets),
   distinctUntilChanged(),
 );
 
-export const calculatedWidgetsByUid$ = (uid: Uid) =>
-  pipe(
-    selectCalculatedWidgets,
-    map((calculatedWidgets) => calculatedWidgets[uid]),
-    filter((derivedWidget) => derivedWidget !== undefined),
-    map((derivedWidget) => derivedWidget.current),
-    distinctUntilChanged(),
+/**
+ * Emits the current calculated widget for the given uid
+ * Re triggers on widget changes OR store.lang changes
+ */
+export const calculatedWidgetsByUid$ = (uid: Uid) => (state$: Observable<State>) => {
+  return combineLatest([state$.pipe(selectLang), state$.pipe(selectCalculatedWidgets)]).pipe(
+    map(([lang, calculatedWidgets]) => ({ lang, widget: calculatedWidgets[uid] })),
+    filter((data) => data.widget !== undefined),
+    distinctUntilChanged((prev, curr) => {
+      return prev.lang === curr.lang && prev.widget === curr.widget;
+    }),
+    map((data) => data.widget.current),
   );
+};
 
 // --------------------------------
 //

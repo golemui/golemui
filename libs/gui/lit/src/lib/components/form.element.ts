@@ -1,6 +1,5 @@
 import * as Core from '@golemui/core';
 import { WidgetLoaders, WithWidget } from '@golemui/core';
-import '@golemui/lit';
 import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
@@ -8,10 +7,11 @@ import {
   jsonSchemaValidators,
   Validator,
 } from '@golemui/gui-validators';
+import '@golemui/lit';
+import { LitItemRenderer, Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { vanillaWidgetLoaders } from '../widget.loaders';
-import { LitItemRenderer, Type } from '@golemui/lit';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
