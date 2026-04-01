@@ -9,6 +9,7 @@ import {
   GuiLabel,
   GuiList,
   GuiMarkdown,
+  GuiMarkdownText,
   GuiNumber,
   GuiPassword,
   GuiRadiogroup,
@@ -46,6 +47,9 @@ declare module 'react' {
 
       'gui-markdown': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiMarkdown>;
+
+      'gui-markdown-text': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiMarkdownText>;
 
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiNumber>;

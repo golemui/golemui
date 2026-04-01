@@ -335,6 +335,10 @@ export type AlertProps = {
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
 
+export type MarkdownTextProps = {
+  md: string;
+};
+
 /**
  * Non-serializable component props. Used to render the provided component.
  * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>

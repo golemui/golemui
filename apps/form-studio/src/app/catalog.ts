@@ -414,6 +414,14 @@ export const alertSchema = z.object({
   }),
 });
 
+export const markdownTextSchema = z.object({
+  ...displayFields,
+  type: z.literal('markdownText'),
+  props: z.object({
+    md: z.string(),
+  }),
+});
+
 // ---------------------------------------------------------------------------
 // Layout widgets (children are UIDs post-processed by the caller)
 // ---------------------------------------------------------------------------
@@ -514,6 +522,10 @@ export const catalog = {
 
   // display
   alert: { schema: alertSchema, description: 'Informational alert / banner message' },
+  markdownText: {
+    schema: markdownTextSchema,
+    description: 'Renders markdown content as formatted HTML for complex or structured text display',
+  },
 
   // layouts
   flex: { schema: flexSchema, description: 'Flex container; children are widget UIDs' },

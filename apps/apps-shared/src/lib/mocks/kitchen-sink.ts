@@ -1,5 +1,6 @@
 import { accordion } from './tabs/accordion';
 import { alert } from './tabs/alert';
+import { markdownText } from './tabs/markdown-text';
 import { calendar } from './tabs/calendar';
 import { checkbox } from './tabs/checkbox';
 import { currency } from './tabs/currency';
@@ -51,6 +52,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
         defaultOpen: 'tabAlert',
         tabs: [
           { label: 'Alert Component', uid: 'tabAlert' },
+          { label: 'Markdown Text Component', uid: 'tabMarkdownText' },
           { label: 'Accordion Layout', uid: 'tabAccordion' },
           { label: 'Flex Layout', uid: 'tabFlex' },
           { label: 'Grid Layout', uid: 'tabGrid' },
@@ -72,6 +74,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       on: { change: 'onTabEvent' },
       children: [
         alert('tabAlert'),
+        markdownText('tabMarkdownText'),
         accordion('tabAccordion'),
         flex('tabFlex'),
         grid('tabGrid'),
