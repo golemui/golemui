@@ -33,4 +33,10 @@ jobs:
       - run: npm run lint:affected
 
       - name: Cypress component testing
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" npx nx affected --target=component-test --parallel=1 --browser chrome
+        run: npx nx affected --target=component-test --parallel=1 --browser chrome --headless
+        env:
+          # Nx Daemon can sometimes hold onto memory. Forcing it off ensures that every time a task runs, it starts with a clean slate.
+          NX_DAEMON: false
+          # Tell Node to cap its heap at 4GB, leaving ~3GB for the OS, the Browser (Chrome), and the Dev Server.
+          # Prevents Node and the Browser from fighting over the last bit of RAM
+          NODE_OPTIONS: '--max-old-space-size=4096'
