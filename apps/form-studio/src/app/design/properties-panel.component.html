@@ -1,7 +1,12 @@
 <div class="properties-panel">
   <div class="properties-header">
-    <span class="properties-type">{{ widget()['type'] }}</span>
-    <span class="properties-uid">#{{ widget()['uid'] }}</span>
+    @if (widget()['type'] === '__form__') {
+      <span class="properties-type">Form</span>
+      <span class="properties-uid">Properties</span>
+    } @else {
+      <span class="properties-type">{{ widget()['type'] }}</span>
+      <span class="properties-uid">#{{ widget()['uid'] }}</span>
+    }
   </div>
   <div class="properties-form">
     @for (uid of [widget()['uid']]; track uid) {

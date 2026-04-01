@@ -106,4 +106,61 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol!');
     });
   });
+
+  describe('identityTranslator', () => {
+    it('should update the form direction to rtl when setLang is called with an rtl language', () => {
+      const translator = Core.identityTranslator('en-US');
+
+      mountFn({
+        localization: translator,
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'date',
+              kind: 'input',
+              type: 'calendar',
+              path: 'date',
+            },
+          ],
+        }),
+      });
+
+      cy.get('form').should('have.attr', 'dir', 'ltr');
+
+      cy.wrap(null).then(() => translator.setLang('ar'));
+
+      cy.get('form').should('have.attr', 'dir', 'rtl');
+    });
+
+    it('should update the calendar locale when setLang is called', () => {
+      const translator = Core.identityTranslator('en-US');
+
+      cy.clock(new Date(2024, 1, 15).getTime()); // February 15, 2024
+
+      mountFn({
+        localization: translator,
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'date',
+              kind: 'input',
+              type: 'calendar',
+              path: 'date',
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-calendar__month-name').should('have.text', 'February');
+
+      // Restore the clock so time flows normally again, otherwise "febrero" never happens
+      cy.clock().then((clock) => {
+        clock.restore();
+      });
+
+      cy.then(() => translator.setLang('es'));
+
+      cy.get('.gui-calendar__month-name').should('have.text', 'febrero');
+    });
+  });
 };

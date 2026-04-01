@@ -29,13 +29,6 @@
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-
-  &.design-mode {
-    .chat-history,
-    .chat-input-area {
-      display: none;
-    }
-  }
 }
 
 .chat-header {
@@ -245,6 +238,7 @@
   gap: 8px;
   padding: 16px 24px 0;
   border-bottom: 1px solid #334155;
+  justify-content: space-between;
 
   button {
     background: transparent;
@@ -269,6 +263,41 @@
   }
 }
 
+.viewport-switcher {
+  display: flex;
+  margin-left: auto;
+  align-self: center;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  overflow: hidden;
+
+  button {
+    background: transparent;
+    border: none;
+    border-right: 1px solid #334155;
+    color: #94a3b8;
+    padding: 6px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    line-height: 1;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &:hover {
+      color: #cbd5e1;
+      background: #1e293b;
+    }
+
+    &.active {
+      color: #3b82f6;
+      background: #1e3a5f;
+    }
+  }
+}
+
 .widget-toolbar-sidebar {
   flex: 1;
   overflow-y: auto;
@@ -276,6 +305,8 @@
   flex-direction: column;
   gap: 0;
   padding: 0;
+  max-width: 150px;
+  border-right: 1px solid #334155;
 }
 
 .widget-toolbar__group {
@@ -334,7 +365,7 @@
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px;
   cursor: grab;
   color: #94a3b8;
   transition: all 0.15s;
@@ -378,8 +409,6 @@
 }
 
 .form-wrapper {
-  width: 800px;
-  min-width: 800px;
   background-color: var(--gui-bg-default);
   border-radius: 12px;
   padding: 24px;
@@ -394,7 +423,7 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .design-layout-wrapper {
