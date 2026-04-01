@@ -46,7 +46,7 @@ jobs:
         id: build-matrix
         run: |
           PROJECTS=$(npx nx show projects --affected --withTarget=component-test 2>/dev/null \
-            | jq -R -s 'split("\n") | map(select(length > 0)) | {project: .}')
+            | jq -Rc -s 'split("\n") | map(select(length > 0)) | {project: .}')
           COUNT=$(echo "$PROJECTS" | jq '.project | length')
           echo "matrix=$PROJECTS" >> "$GITHUB_OUTPUT"
           if [ "$COUNT" -gt 0 ]; then
