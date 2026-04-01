@@ -52,6 +52,7 @@ export class DesignComponent {
   formDef = input<string>('');
   formValidateOn = input<Core.ValidateOn>('eager');
   formLocale = input<string>();
+  viewportWidth = input<string>('100%');
   formDefChange = output<string>();
   selectedWidgetChange = output<Record<string, unknown> | null>();
 

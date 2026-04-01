@@ -8,10 +8,11 @@ gui-markdown {
       display: block;
     }
     .gui-markdown__toolbar {
-      width: 50%;
+      width: calc(50% - (var(--gui-space-2) * 2));
     }
     textarea {
-      width: 50%;
+      padding-top: var(--gui-space-12);
+      width: calc(50% - (var(--gui-space-3) * 2));
     }
   }
 
@@ -52,7 +53,7 @@ gui-markdown {
     textarea {
       border-radius: 0;
       border: 0;
-      padding: var(--gui-space-2) var(--gui-space-3);
+      padding: var(--gui-space-12) var(--gui-space-3) var(--gui-space-2);
       width: calc(100% - (var(--gui-space-3) * 2));
       resize: vertical;
     }
@@ -83,10 +84,10 @@ gui-markdown {
   .gui-markdown__toolbar {
     position: absolute;
     top: 0;
-    width: calc(100% - (var(--gui-space-3) * 2));
+    width: calc(100% - (var(--gui-space-2) * 2));
     display: flex;
     justify-content: space-between;
-    padding: var(--gui-space-1) var(--gui-space-3) var(--gui-space-1);
+    padding: var(--gui-space-1) var(--gui-space-2) var(--gui-space-1);
     background: var(--gui-bg-surface);
     border-bottom: 1px solid var(--gui-border-default);
 
@@ -121,7 +122,7 @@ gui-markdown {
 
     ul {
       display: flex;
-      gap: var(--gui-space-2);
+      gap: var(--gui-space-1);
       list-style: none;
       padding: 0;
       margin: 0;
@@ -156,7 +157,7 @@ gui-markdown {
       width: calc(100% - var(--gui-space-3) * 2);
     }
     .gui-markdown__toolbar {
-      width: 100%;
+      width: calc(100% - var(--gui-space-2) * 2);
       z-index: 1;
     }
     textarea {

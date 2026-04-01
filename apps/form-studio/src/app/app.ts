@@ -66,6 +66,8 @@ export class App {
   private designComp = viewChild<DesignComponent>('designComp');
   private chatHistory = viewChild<ElementRef<HTMLElement>>('chatHistory');
   protected activeTab: 'form' | 'json' | 'design' = 'form';
+  protected viewportSize: 'mobile' | 'tablet' | 'desktop' = 'desktop';
+  protected readonly viewportWidths = { mobile: '375px', tablet: '768px', desktop: '100%' };
   protected designSelectedWidget: Record<string, unknown> | null = null;
   protected collapsedToolbarGroups = new Set<string>();
   protected formValidateOn = signal<Core.ValidateOn>('eager');

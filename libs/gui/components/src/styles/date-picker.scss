@@ -1,5 +1,5 @@
 .gui-form {
-  .gui-date-picker {
+  .gui-date-picker.gui-field {
     display: block;
     container-type: inline-size;
     container-name: gui-date-picker-widget;
@@ -19,10 +19,16 @@
         transform: rotate(180deg);
       }
 
+      gui-date.gui-field {
+        gap: 0;
+      }
+
       gui-calendar {
         position: absolute;
         top: 100%;
         z-index: 10;
+        width: max-content;
+        max-width: none;
       }
     }
 
