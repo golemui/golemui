@@ -5,5 +5,7 @@ export default defineConfig({
   component: {
     ...nxComponentTestingPreset(__filename, { bundler: 'vite' }),
     specPattern: ['cypress/test/**/*.cy.ts'],
+    numTestsKeptInMemory: 0,
+    video: false,
   },
 });

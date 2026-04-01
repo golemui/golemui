@@ -8,5 +8,7 @@ export default defineConfig({
     },
     specPattern: ['cypress/test/**/*.cy.ts'],
     screenshotsFolder: '../../../dist/cypress/libs/gui/lit/screenshots/',
+    numTestsKeptInMemory: 0,
+    video: false,
   },
 });
