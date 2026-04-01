@@ -31,6 +31,6 @@ declare global {
 Cypress.Commands.add('mount', mount);
 
 afterEach(() => {
-  console.log('+++++ LIT run memoryCleaner');
+  cy.log('+++++ LIT run memoryCleaner');
   memoryCleaner();
 });
