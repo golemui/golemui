@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
+import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
-import { ReactFormContextProvider } from './ReactFormContextProvider';
 
 type JsonStringified = string;
 type JsonObject = Record<string, any>;
@@ -18,7 +18,6 @@ export interface FormComponentProps {
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
   formName?: string;
-  locale?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
 }
@@ -28,7 +27,6 @@ export function FormComponent({
   widgetLoaders,
   itemRenderers,
   localization,
-  locale,
   dependencies,
   middlewares,
   validators,
@@ -129,17 +127,6 @@ export function FormComponent({
       sub();
     };
   }, []);
-
-  // LOCALE
-  useEffect(() => {
-    if (locale) {
-      setDirection(Core.getDirectionFromLanguage(locale));
-      formContextRef.current.store.dispatch({
-        type: 'SET_LANGUAGE',
-        payload: { lang: locale },
-      });
-    }
-  }, [locale]);
 
   if (!formLayoutField) {
     return null;

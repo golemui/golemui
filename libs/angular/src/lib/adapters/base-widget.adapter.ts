@@ -1,6 +1,6 @@
 import { inject, WritableSignal } from '@angular/core';
 import * as Core from '@golemui/core';
-import { distinctUntilChanged, map, skip, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
 export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
@@ -32,20 +32,6 @@ export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
             deps: this.context.dependencies,
           };
         });
-      });
-
-    this.context.store.state$
-      .pipe(
-        takeUntil(this.destroy$),
-        map((s) => s.lang),
-        distinctUntilChanged(),
-        skip(1),
-      )
-      .subscribe((lang) => {
-        templateData.update((current) => ({
-          ...current,
-          lang,
-        }));
       });
   }
 

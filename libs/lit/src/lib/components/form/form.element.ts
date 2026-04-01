@@ -23,7 +23,6 @@ export class FormElement extends LitElement {
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
-  @property({ type: String }) locale?: string;
   @property({ type: Object }) dependencies?: Record<string, unknown>;
 
   @state() direction: 'ltr' | 'rtl' = 'ltr';
@@ -48,15 +47,7 @@ export class FormElement extends LitElement {
       this.dependencies || {},
     );
 
-    const initialLang = this.locale ?? this.context.localization.lang;
-    this.direction = Core.getDirectionFromLanguage(initialLang);
-
-    if (this.locale) {
-      this.context.store.dispatch({
-        type: 'SET_LANGUAGE',
-        payload: { lang: this.locale },
-      });
-    }
+    this.direction = Core.getDirectionFromLanguage(this.context.localization.lang);
 
     this.subscriptions.push(
       this.context.store.state$.subscribe((s) => (this.state = s)),
@@ -94,16 +85,6 @@ export class FormElement extends LitElement {
         },
       });
     });
-  }
-
-  override updated(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has('locale') && this.locale) {
-      this.direction = Core.getDirectionFromLanguage(this.locale);
-      this.context.store.dispatch({
-        type: 'SET_LANGUAGE',
-        payload: { lang: this.locale },
-      });
-    }
   }
 
   override createRenderRoot() {

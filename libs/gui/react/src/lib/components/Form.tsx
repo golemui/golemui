@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
-import * as React from '@golemui/react';
-import { ReactItemRenderer } from '@golemui/react';
 import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
   initValidators,
   jsonSchemaValidators,
 } from '@golemui/gui-validators';
+import * as React from '@golemui/react';
+import { ReactItemRenderer } from '@golemui/react';
 import { ComponentType } from 'react';
 import { vanillaWidgetLoaders } from '../widget.loaders';
 
@@ -16,7 +16,6 @@ export interface ReactFormComponentProps {
   widgetLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
   localization?: Core.I18nTranslator;
-  locale?: string;
   dependencies?: Dependencies;
   validators?: CustomValidatorSchemas;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
@@ -33,7 +32,6 @@ export const FormComponent = ({
   widgetLoaders = {},
   itemRenderers = {},
   localization,
-  locale,
   dependencies = {},
   validators = {},
   middlewares = [],
@@ -57,7 +55,6 @@ export const FormComponent = ({
       middlewares={customMiddlewares}
       itemRenderers={customItemRenderers}
       localization={localization}
-      locale={locale}
       dependencies={dependencies}
       validators={customValidators}
       validateOn={validateOn}

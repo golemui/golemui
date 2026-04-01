@@ -1,6 +1,5 @@
 import * as Core from '@golemui/core';
 import { WidgetLoaders, WithWidget } from '@golemui/core';
-import '@golemui/lit';
 import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
@@ -8,10 +7,11 @@ import {
   jsonSchemaValidators,
   Validator,
 } from '@golemui/gui-validators';
+import '@golemui/lit';
+import { LitItemRenderer, Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { vanillaWidgetLoaders } from '../widget.loaders';
-import { LitItemRenderer, Type } from '@golemui/lit';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
@@ -21,7 +21,6 @@ export class FormElement extends LitElement {
   @property({ type: Object }) widgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
-  @property({ type: String }) locale?: string;
   @property({ type: Object }) dependencies?: Dependencies;
   @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
@@ -64,7 +63,6 @@ export class FormElement extends LitElement {
         .widgetLoaders=${this.customWidgetLoaders}
         .itemRenderers=${this.itemRenderers}
         .localization=${this.localization}
-        .locale=${this.locale}
         .dependencies=${this.dependencies}
         .middlewares=${this.customMiddlewares}
         .validators=${this.customValidators}
