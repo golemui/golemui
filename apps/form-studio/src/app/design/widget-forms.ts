@@ -472,6 +472,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     ]),
     numberField('prop-columnGap', 'columnGap', 'Column Gap'),
     numberField('prop-rowGap', 'rowGap', 'Row Gap'),
+    checkboxField('prop-autoFit', 'autoFit', 'Auto Fit'),
   ],
   accordion: [
     checkboxField('prop-singleOpen', 'singleOpen', 'Single Open'),

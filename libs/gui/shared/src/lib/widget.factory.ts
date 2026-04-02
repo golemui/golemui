@@ -151,4 +151,14 @@ export const Vanilla = {
     ...(props && { props }),
     ...config,
   }),
+  markdownText: <StateKeys extends Core.UiState = string>(
+    config: DisplayWidgetConfig,
+    props?: Props.MarkdownTextProps,
+  ): Core.DisplayWidget<StateKeys> => ({
+    uid: '',
+    kind: 'display',
+    type: 'markdownText',
+    ...(props && { props }),
+    ...config,
+  }),
 };

@@ -20,7 +20,7 @@ export const inputWidgets = [
   'toggle',
 ] as const;
 export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;
-export const displayWidgets = ['alert', 'renderer'] as const;
+export const displayWidgets = ['alert', 'markdownText', 'renderer'] as const;
 export const actionWidgets = ['button'] as const;
 
 // TODO: rename to golem (search other vanilla named things accross the repo)

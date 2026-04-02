@@ -41,5 +41,7 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
 
   // DISPLAY
   alert: async () => (await import('./components/alert.element')).AlertElement,
+  markdownText: async () =>
+    (await import('./components/markdown-text.element')).MarkdownTextElement,
   renderer: async () => (await import('./components/renderer.element')).RendererElement,
 };

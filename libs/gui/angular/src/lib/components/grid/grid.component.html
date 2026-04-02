@@ -3,6 +3,7 @@
 <div
   class="gui-grid__widget"
   [class.gui-grid__widget--row]="templateData.direction === 'row'"
+  [class.gui-grid__widget--row--auto-fit]="templateData.direction === 'row' && !!templateData.autoFit"
   [class.gui-grid__widget--column]="!templateData.direction || templateData.direction === 'column'"
   [style.column-gap.px]="templateData.columnGap"
   [style.row-gap.px]="templateData.rowGap"

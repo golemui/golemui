@@ -104,8 +104,14 @@
 
   // Give empty layout containers a visible drop target area
   ::ng-deep {
-    .gui-date-input__part {
+    // Avoid clicks in widgets in design mode
+    .gui-widget {
       pointer-events: none;
+    }
+
+    // Enable navigation in design mode
+    gui-tabs-layout > nav.gui-widget {
+      pointer-events: auto;
     }
 
     gui-flex-layout,

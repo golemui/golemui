@@ -12,6 +12,9 @@
     },
     "rowGapProp": {
       "type": "number"
+    },
+    "autoFitProp": {
+      "type": "boolean"
     }
   },
   "allOf": [
@@ -44,6 +47,9 @@
         },
         "rowGap": {
           "$ref": "#/$defs/rowGapProp"
+        },
+        "autoFit": {
+          "$ref": "#/$defs/autoFitProp"
         }
       },
       "patternProperties": {
@@ -55,6 +61,9 @@
         },
         "^rowGap\\.[^.]+$": {
           "$ref": "#/$defs/rowGapProp"
+        },
+        "^autoFit\\.[^.]+$": {
+          "$ref": "#/$defs/autoFitProp"
         }
       },
       "additionalProperties": false

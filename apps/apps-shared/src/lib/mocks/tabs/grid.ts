@@ -19,6 +19,7 @@ export const grid = (uid: string): any => ({
           type: 'textinput',
           path: 'listName',
           label: 'List Name',
+          size: 4,
           props: {
             hint: 'This is a hint',
           },
@@ -30,7 +31,7 @@ export const grid = (uid: string): any => ({
           type: 'textinput',
           path: 'listOwner',
           label: 'List Owner',
-          size: 2,
+          size: 4,
           validator: { type: 'string', required: true },
         },
       ]
@@ -48,6 +49,7 @@ export const grid = (uid: string): any => ({
           type: 'textinput',
           path: 'listName2',
           label: 'List Name',
+          size: 3,
           validator: { type: 'string', required: true },
         },
         {
@@ -56,7 +58,7 @@ export const grid = (uid: string): any => ({
           type: 'textinput',
           path: 'listOwner2',
           label: 'List Owner',
-          size: 2,
+          size: 3,
           validator: { type: 'string', required: true },
         },
         {
@@ -65,6 +67,7 @@ export const grid = (uid: string): any => ({
           type: 'toggle',
           label: 'Toggle',
           path: 'tg1',
+          size: 3,
           props: {
             togglePosition: 'left',
             hint: 'Long hints are discouraged with checkboxes and toggles when these share a row with a text input',
@@ -77,6 +80,7 @@ export const grid = (uid: string): any => ({
           type: 'checkbox',
           label: 'Checkbox',
           path: 'cb1',
+          size: 3,
           props: {
             checkboxPosition: 'left',
             hint: 'Long hints are discouraged with checkboxes and toggles when these share a row with a text input',
