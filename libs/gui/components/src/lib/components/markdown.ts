@@ -5,8 +5,8 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
 import { Dependencies, MarkdownProps } from '@golemui/gui-shared';
 import { styleMap } from 'lit-html/directives/style-map.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import './markdown-text';
 
 @customElement('gui-markdown')
 export class GuiMarkdown extends LitElement {
@@ -197,7 +197,7 @@ export class GuiMarkdown extends LitElement {
         ${this.splitViewActive
           ? html`
               <section data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)} class="gui-markdown__preview">
-                ${unsafeHTML(this.dependencies?.markdown?.parse(this.value || '') || '')}
+                <gui-markdown-text .md=${this.value || ''} .dependencies=${this.dependencies}></gui-markdown-text>
               </section>
             `
           : nothing}

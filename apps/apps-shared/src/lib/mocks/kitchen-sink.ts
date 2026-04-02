@@ -1,5 +1,6 @@
 import { accordion } from './tabs/accordion';
 import { alert } from './tabs/alert';
+import { markdown } from './tabs/markdown';
 import { markdownText } from './tabs/markdown-text';
 import { calendar } from './tabs/calendar';
 import { checkbox } from './tabs/checkbox';
@@ -61,6 +62,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
           { label: 'Number Component', uid: 'tabNumber' },
           { label: 'Currency Component', uid: 'tabCurrency' },
           { label: 'Date Components', uid: 'tabDate' },
+          { label: 'Markdown Component', uid: 'tabMarkdown' },
           { label: 'Textarea Component', uid: 'tabTextarea' },
           { label: 'Checkbox Component', uid: 'tabCheckbox' },
           { label: 'Toggle Component', uid: 'tabToggle' },
@@ -83,6 +85,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
         number('tabNumber'),
         currency('tabCurrency'),
         calendar('tabDate'),
+        markdown('tabMarkdown'),
         textarea('tabTextarea'),
         checkbox('tabCheckbox'),
         toggle('tabToggle'),
