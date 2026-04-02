@@ -8,6 +8,7 @@
     <div class="design-capture"></div>
     @for (v of [formVersion()]; track v) {
       <gui-form
+        (keydown)="$event.preventDefault()"
         [formDef]="designFormDef()"
         [data]="{}"
         [widgetLoaders]="{}"
