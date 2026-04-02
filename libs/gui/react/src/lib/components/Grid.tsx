@@ -29,7 +29,7 @@ export function Grid(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-grid gui-field" style={{ flex: templateData.size }}>
-      <div className={`gui-grid__widget ${direction}`} style={style} id={uid}>
+      <div className={`gui-grid__widget ${direction} ${isRow && templateData.autoFit ? 'gui-grid__widget--row--auto-fit' : ''}`} style={style} id={uid}>
         {renderWidgets()}
       </div>
     </div>

@@ -446,6 +446,7 @@ export type GridProps = {
   direction?: 'row' | 'column';
   columnGap?: number;
   rowGap?: number;
+  autoFit?: boolean;
 };
 
 export type TabsProps = {

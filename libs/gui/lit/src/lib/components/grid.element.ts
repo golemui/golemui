@@ -53,6 +53,7 @@ export class GridElement extends LitElement implements Core.WithWidget {
     const classes = {
       'gui-grid__widget': true,
       'gui-grid__widget--row': isRow,
+      'gui-grid__widget--row--auto-fit': isRow && !!this.adapter.templateData.autoFit,
       'gui-grid__widget--column': !isRow,
     };
 

@@ -176,7 +176,7 @@ Output a single JSON object with this shape:
 - \`alert\` requires \`props.text\`.
 - \`button\` is \`kind: "action"\`; all other widgets that collect data are \`kind: "input"\`.
 - \`flex\` is for page scaffolding and grouping sections. Use \`props.direction\` for rows/columns and \`props.gap\` for spacing.
-- \`grid\` is for containing inputs. It uses CSS subgrid so labels, inputs, and error messages align across sibling fields. Use \`props.direction: "row"\` for side-by-side inputs. Children use \`size\` (1–12) for column span.
+- \`grid\` is for containing inputs. It uses CSS subgrid so labels, inputs, and error messages align across sibling fields. By default, a row grid divides space into 12 equal columns; children use \`size\` (1–12) for column span. Set \`props.direction: "row"\` for side-by-side inputs. Set \`props.autoFit: true\` (only valid with \`direction: "row"\`) to switch to responsive auto-fit columns (\`repeat(auto-fit, minmax(120px, 1fr))\`), making each child grow to fill available space without needing explicit sizes.
 - \`markdownText\` is for rich text editing. Use \`props.md\` to pass a markdown text.
 - \`accordion\` requires \`props.sections\` (array of \`{ label, uid }\`). Each section uid must match a child UID. Property \`defaultOpen\` is a Record<string, boolean> where keys are section uids and values are booleans.
 - \`tabs\` requires \`props.tabs\` (array of \`{ label, uid }\`). Each tab uid must match a child UID.

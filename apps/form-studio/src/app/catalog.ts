@@ -449,6 +449,7 @@ export const gridSchema = z.object({
       direction: z.enum(['row', 'column']).optional(),
       columnGap: z.number().optional(),
       rowGap: z.number().optional(),
+      autoFit: z.boolean().optional(),
     })
     .optional(),
 });

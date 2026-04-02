@@ -83,6 +83,37 @@ describe('Grid schema validation', () => {
       expect(isValid).toBe(true);
     });
 
+    it('should validate autoFit property with row direction', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              direction: 'row',
+              autoFit: true,
+            },
+          },
+        ],
+      });
+
+      const validGrid = formDef.form.children[0];
+      const isValid = validate(validGrid);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, validGrid);
+      }
+      expect(isValid).toBe(true);
+    });
+
     it('should validate state-scoped properties', () => {
       const formDef = golemForm().create({
         form: [
