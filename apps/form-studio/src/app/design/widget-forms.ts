@@ -594,6 +594,10 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
   const typeKey = widget['type'] as string;
   const componentFields: unknown[] = [...(PROP_FIELDS[typeKey] ?? [])];
 
+  if (widget['kind'] === 'action' && widget['type'] === 'button') {
+    componentFields.push(checkboxField('prop-onClickSubmit', 'onClickSubmit', 'Submit on Click'));
+  }
+
   const validationFields: unknown[] = [];
   if (widget['kind'] === 'input') {
     const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
@@ -633,6 +637,13 @@ export function flattenWidgetData(widget: Record<string, unknown>): Record<strin
     exclude?: { when?: string };
   };
   const data: Record<string, unknown> = { ...rest };
+
+  // For action buttons, extract on.click === 'submit' into flat key
+  if (data['kind'] === 'action' && data['type'] === 'button') {
+    const on = data['on'] as Record<string, unknown> | undefined;
+    data['onClickSubmit'] = on?.['click'] === 'submit';
+  }
+  delete data['on']; // 'on' is never a form field path
 
   // Flatten include/exclude → flat keys
   data['includeEnabled'] = !!include?.when;
@@ -774,6 +785,21 @@ export function updateWidgetFromFlatData(
       updated['props'] = newProps;
     } else {
       delete updated['props'];
+    }
+  }
+
+  // Reconstruct on.click for action buttons
+  if (original['kind'] === 'action' && original['type'] === 'button') {
+    const existingOn = (original['on'] as Record<string, unknown>) ?? {};
+    if (flatData['onClickSubmit'] === true) {
+      updated['on'] = { ...existingOn, click: 'submit' };
+    } else {
+      const { click: _click, ...remainingOn } = existingOn;
+      if (Object.keys(remainingOn).length > 0) {
+        updated['on'] = remainingOn;
+      } else {
+        delete updated['on'];
+      }
     }
   }
 
