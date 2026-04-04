@@ -50,8 +50,8 @@ const form = defineForm({
             key: 'travelPlanner.field.departureCountry.label',
             default: 'Departure Country',
           },
+          size: 4,
           props: {
-            size: 4,
             height: 300,
             itemHeight: 60,
             itemRenderer: 'countryItemRenderer',
@@ -89,8 +89,8 @@ const form = defineForm({
             key: 'travelPlanner.field.budget',
             default: 'Travel Budget',
           },
+          size: 4,
           props: {
-            size: 4,
             step: 100,
             placeholder: (data: FunctionWidgetParams<any> | undefined) =>
               coins[data?.$form?.departureCountry ?? 'US'],
@@ -109,8 +109,8 @@ const form = defineForm({
             key: 'travelPlanner.field.passengers',
             default: 'Passengers',
           },
+          size: 2,
           props: {
-            size: 2,
             minimum: 1,
             maximum: 10,
           },
@@ -126,8 +126,8 @@ const form = defineForm({
             key: 'travelPlanner.field.pets',
             default: 'Pets',
           },
+          size: 2,
           props: {
-            size: 2,
             minimum: 1,
             maximum: 3,
           },
@@ -193,9 +193,6 @@ const form = defineForm({
       label: {
         key: 'travelPlanner.btn.submit',
         default: 'Search My Trip',
-      },
-      props: {
-        size: 0,
       },
     },
   ],
