@@ -4,20 +4,28 @@ description: A Calendar component to allow user to select a single date from an 
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import Demo from '../../../../../src/components/landing/Demo.astro';
 import calendarJson from '../../../../../public/template/components/calendar/calendar.json?raw';
+import calendarDx from '../../../../../public/template/components-dx/calendar/calendar.ts?raw';
 import calendarHintJson from '../../../../../public/template/components/calendar/calendar-hint.json?raw';
+import calendarHintDx from '../../../../../public/template/components-dx/calendar/calendar-hint.ts?raw';
 import calendarMinMaxJson from '../../../../../public/template/components/calendar/calendar-minmax.json?raw';
+import calendarMinMaxDx from '../../../../../public/template/components-dx/calendar/calendar-minmax.ts?raw';
 import calendarMonthsJson from '../../../../../public/template/components/calendar/calendar-months.json?raw';
+import calendarMonthsDx from '../../../../../public/template/components-dx/calendar/calendar-months.ts?raw';
 import calendarDisabledJson from '../../../../../public/template/components/calendar/calendar-disabled.json?raw';
+import calendarDisabledDx from '../../../../../public/template/components-dx/calendar/calendar-disabled.ts?raw';
 import calendarIconsJson from '../../../../../public/template/components/calendar/calendar-icons.json?raw';
+import calendarIconsDx from '../../../../../public/template/components-dx/calendar/calendar-icons.ts?raw';
 import calendarAnatomyHtml from '../../../../../public/template/components/calendar/calendar-anatomy.html?raw';
 export const configJson = 'calendar.json';
+export const configDx = 'calendar.ts';
 export const anatomy = 'calendar-anatomy.html';
 
 Calendar components are [Input Fields](/components-reference/input-fields/overview) that allow the user to select a single date by interacting with a visual calendar grid.
 
-<Code code={calendarJson} lang="js" title={configJson} />
+<DslCode dxCode={calendarDx} jsonCode={calendarJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar.json"
 />
@@ -44,7 +52,7 @@ Use these `props` to customize your Calendar component.
 
 Use the property `hint` to add a description.
 
-<Code code={calendarHintJson} lang="js" title={configJson} />
+<DslCode dxCode={calendarHintDx} jsonCode={calendarHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-hint.json"
 />
@@ -53,7 +61,7 @@ Use the property `hint` to add a description.
 
 Use the properties `minDate` and `maxDate` to specify the boundaries for selectable dates.
 
-<Code code={calendarMinMaxJson} lang="js" title={configJson} />
+<DslCode dxCode={calendarMinMaxDx} jsonCode={calendarMinMaxJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-minmax.json"
 />
@@ -62,7 +70,7 @@ Use the properties `minDate` and `maxDate` to specify the boundaries for selecta
 
 Use the property `numberOfMonths` to display multiple months side-by-side.
 
-<Code code={calendarMonthsJson} lang="js" title={configJson} />
+<DslCode dxCode={calendarMonthsDx} jsonCode={calendarMonthsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-months.json"
 />
@@ -71,7 +79,7 @@ Use the property `numberOfMonths` to display multiple months side-by-side.
 
 Use the property `disabledRanges` to selectively disable specific date blocks within the calendar.
 
-<Code code={calendarDisabledJson} lang="js" title={configJson} />
+<DslCode dxCode={calendarDisabledDx} jsonCode={calendarDisabledJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-disabled.json"
 />
@@ -80,7 +88,7 @@ Use the property `disabledRanges` to selectively disable specific date blocks wi
 
 Use `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel` and `nextMonthAriaLabel` to customize the navigation buttons.
 
-<Code code={calendarIconsJson} lang="js" title={configJson} />
+<DslCode dxCode={calendarIconsDx} jsonCode={calendarIconsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/calendar/calendar-icons.json"
 />

@@ -6,19 +6,27 @@ description: A Range Date Picker component to allow users to enter multiple date
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import rangeDatePickerJson from '../../../../../public/template/components/range-date-picker/range-date-picker.json?raw';
+import rangeDatePickerDx from '../../../../../public/template/components-dx/range-date-picker/range-date-picker.ts?raw';
 import rangeDatePickerHintJson from '../../../../../public/template/components/range-date-picker/range-date-picker-hint.json?raw';
+import rangeDatePickerHintDx from '../../../../../public/template/components-dx/range-date-picker/range-date-picker-hint.ts?raw';
 import rangeDatePickerIconJson from '../../../../../public/template/components/range-date-picker/range-date-picker-icon.json?raw';
+import rangeDatePickerIconDx from '../../../../../public/template/components-dx/range-date-picker/range-date-picker-icon.ts?raw';
 import rangeDatePickerIconsJson from '../../../../../public/template/components/range-date-picker/range-date-picker-icons.json?raw';
+import rangeDatePickerIconsDx from '../../../../../public/template/components-dx/range-date-picker/range-date-picker-icons.ts?raw';
 import rangeDatePickerSeparatorJson from '../../../../../public/template/components/range-date-picker/range-date-picker-separator.json?raw';
+import rangeDatePickerSeparatorDx from '../../../../../public/template/components-dx/range-date-picker/range-date-picker-separator.ts?raw';
 import rangeDatePickerAriaLabelsJson from '../../../../../public/template/components/range-date-picker/range-date-picker-aria-labels.json?raw';
+import rangeDatePickerAriaLabelsDx from '../../../../../public/template/components-dx/range-date-picker/range-date-picker-aria-labels.ts?raw';
 import rangeDatePickerAnatomyHtml from '../../../../../public/template/components/range-date-picker/range-date-picker-anatomy.html?raw';
 export const configJson = 'range-date-picker.json';
+export const configDx = 'range-date-picker.ts';
 export const anatomy = 'range-date-picker-anatomy.html';
 
 Range Date Picker components are [Input Fields](/components-reference/input-fields/overview) that combine the functionality of a [Range Date Input](/components-reference/input-fields/range-date-input) and a [Range Calendar](/components-reference/input-fields/range-calendar). They allow the user to swiftly type date ranges using their keyboard or to open a drop-down calendar popover to select date ranges visually. Clicking a pill or pressing Enter navigates the calendar to that range's month.
 
-<Code code={rangeDatePickerJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDatePickerDx} jsonCode={rangeDatePickerJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-picker/range-date-picker.json"
   minHeight="500"
@@ -47,7 +55,7 @@ Use these `props` to customize your Range Date Picker component. The Range Date 
 
 Use the property `hint` to add descriptive text.
 
-<Code code={rangeDatePickerHintJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDatePickerHintDx} jsonCode={rangeDatePickerHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-picker/range-date-picker-hint.json"
   minHeight="500"
@@ -57,7 +65,7 @@ Use the property `hint` to add descriptive text.
 
 Use the property `icon` to add an icon, which appears next to the toggle chevron.
 
-<Code code={rangeDatePickerIconJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDatePickerIconDx} jsonCode={rangeDatePickerIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-picker/range-date-picker-icon.json"
   minHeight="500"
@@ -67,7 +75,7 @@ Use the property `icon` to add an icon, which appears next to the toggle chevron
 
 Use the properties `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel`, and `nextMonthAriaLabel` to customize the navigation buttons within the calendar popover.
 
-<Code code={rangeDatePickerIconsJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDatePickerIconsDx} jsonCode={rangeDatePickerIconsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-picker/range-date-picker-icons.json"
   minHeight="500"
@@ -77,7 +85,7 @@ Use the properties `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel`, and `
 
 Use the property `separator` to customize the text displayed between the start date and end date fields. By default the separator is `-`.
 
-<Code code={rangeDatePickerSeparatorJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDatePickerSeparatorDx} jsonCode={rangeDatePickerSeparatorJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-picker/range-date-picker-separator.json"
   minHeight="500"
@@ -87,7 +95,7 @@ Use the property `separator` to customize the text displayed between the start d
 
 Use the properties `removePillAriaLabel`, `startDateAriaLabel` and `endDateAriaLabel` to customize the accessibility labels for screen readers. These properties are localizable.
 
-<Code code={rangeDatePickerAriaLabelsJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDatePickerAriaLabelsDx} jsonCode={rangeDatePickerAriaLabelsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-picker/range-date-picker-aria-labels.json"
   minHeight="500"

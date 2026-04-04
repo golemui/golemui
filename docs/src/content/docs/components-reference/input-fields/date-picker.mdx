@@ -6,17 +6,23 @@ description: A Date Picker component to allow user to enter a date via keyboard 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import datePickerJson from '../../../../../public/template/components/date-picker/date-picker.json?raw';
+import datePickerDx from '../../../../../public/template/components-dx/date-picker/date-picker.ts?raw';
 import datePickerHintJson from '../../../../../public/template/components/date-picker/date-picker-hint.json?raw';
+import datePickerHintDx from '../../../../../public/template/components-dx/date-picker/date-picker-hint.ts?raw';
 import datePickerIconJson from '../../../../../public/template/components/date-picker/date-picker-icon.json?raw';
+import datePickerIconDx from '../../../../../public/template/components-dx/date-picker/date-picker-icon.ts?raw';
 import datePickerIconsJson from '../../../../../public/template/components/date-picker/date-picker-icons.json?raw';
+import datePickerIconsDx from '../../../../../public/template/components-dx/date-picker/date-picker-icons.ts?raw';
 import datePickerAnatomyHtml from '../../../../../public/template/components/date-picker/date-picker-anatomy.html?raw';
 export const configJson = 'date-picker.json';
+export const configDx = 'date-picker.ts';
 export const anatomy = 'date-picker-anatomy.html';
 
 Date Picker components are [Input Fields](/components-reference/input-fields/overview) that combine the functionality of a [Date Input](/components-reference/input-fields/dateinput) and a [Calendar](/components-reference/input-fields/calendar). They allow the user to swiftly type a date using their keyboard or to open a drop-down calendar popover to select a date visually.
 
-<Code code={datePickerJson} lang="js" title={configJson} />
+<DslCode dxCode={datePickerDx} jsonCode={datePickerJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker.json"
   minHeight="500"
@@ -41,7 +47,7 @@ Use these `props` to customize your Date Picker component. The Date Picker inher
 
 Use the property `hint` to add descriptive text.
 
-<Code code={datePickerHintJson} lang="js" title={configJson} />
+<DslCode dxCode={datePickerHintDx} jsonCode={datePickerHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-hint.json"
   minHeight="500"
@@ -51,7 +57,7 @@ Use the property `hint` to add descriptive text.
 
 Use the property `icon` to add an icon, which appears next to the toggle chevron.
 
-<Code code={datePickerIconJson} lang="js" title={configJson} />
+<DslCode dxCode={datePickerIconDx} jsonCode={datePickerIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-icon.json"
   minHeight="500"
@@ -61,7 +67,7 @@ Use the property `icon` to add an icon, which appears next to the toggle chevron
 
 Use the properties `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel`, and `nextMonthAriaLabel` to customize the navigation buttons within the calendar popover.
 
-<Code code={datePickerIconsJson} lang="js" title={configJson} />
+<DslCode dxCode={datePickerIconsDx} jsonCode={datePickerIconsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/date-picker/date-picker-icons.json"
   minHeight="500"

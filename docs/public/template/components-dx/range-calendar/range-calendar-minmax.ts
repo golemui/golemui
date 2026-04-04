@@ -1,0 +1,20 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      kind: 'input',
+      type: 'rangeCalendar',
+      path: 'vacationDates',
+      defaultValue: [
+        {
+          start: '2024-06-21',
+        },
+      ],
+      props: {
+        minDate: '2024-06-01T00:00:00.000Z',
+        maxDate: '2024-08-31T23:59:59.999Z',
+      },
+    },
+  ],
+});

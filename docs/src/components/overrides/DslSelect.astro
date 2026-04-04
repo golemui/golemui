@@ -25,8 +25,8 @@ function localizedPathname(targetLocale: string): string {
   config.isMultilingual && (
     <starlight-lang-select>
       <Select
-        icon="seti:code"
-        label="Framework"
+        icon="seti:json"
+        label="DSL"
         options={Object.entries(config.locales)
           .filter(([code]) => code !== 'root')
           .map(([code, locale]) => ({
@@ -34,7 +34,7 @@ function localizedPathname(targetLocale: string): string {
             selected: code === Astro.locals.starlightRoute.locale,
             label: locale!.label,
           }))}
-        width="8em"
+        width="10em"
       />
     </starlight-lang-select>
   )

@@ -1,0 +1,65 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      uid: 'grid_outer',
+      kind: 'layout',
+      type: 'grid',
+      props: {
+        direction: 'column',
+      },
+      children: [
+        {
+          uid: 'grid_row_1',
+          kind: 'layout',
+          type: 'grid',
+          props: {
+            direction: 'row',
+          },
+          children: [
+            {
+              uid: 'n1',
+              kind: 'input',
+              type: 'textinput',
+              path: 'n1',
+              label: 'First Name',
+            },
+            {
+              uid: 'n2',
+              kind: 'input',
+              type: 'textinput',
+              path: 'n2',
+              label: 'Last Name',
+            },
+          ],
+        },
+        {
+          uid: 'grid_row_2',
+          kind: 'layout',
+          type: 'grid',
+          props: {
+            direction: 'row',
+          },
+          children: [
+            {
+              uid: 'n3',
+              kind: 'input',
+              type: 'textinput',
+              path: 'n3',
+              label: 'Email',
+            },
+            {
+              uid: 'n4',
+              kind: 'input',
+              type: 'textinput',
+              path: 'n4',
+              label: 'Phone',
+              size: 2,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});

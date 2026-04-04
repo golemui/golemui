@@ -6,16 +6,21 @@ description: A Radio Group component for selecting a single option from a list o
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import radiogroupJson from '../../../../../public/template/components/radiogroup/radiogroup.json?raw';
+import radiogroupDx from '../../../../../public/template/components-dx/radiogroup/radiogroup.ts?raw';
 import radiogroupHintJson from '../../../../../public/template/components/radiogroup/radiogroup-hint.json?raw';
+import radiogroupHintDx from '../../../../../public/template/components-dx/radiogroup/radiogroup-hint.ts?raw';
 import radiogroupCustomJson from '../../../../../public/template/components/radiogroup/radiogroup-custom.json?raw';
+import radiogroupCustomDx from '../../../../../public/template/components-dx/radiogroup/radiogroup-custom.ts?raw';
 import radiogroupAnatomyHtml from '../../../../../public/template/components/radiogroup/radiogroup-anatomy.html?raw';
 export const configJson = 'radiogroup.json';
+export const configDx = 'radiogroup.ts';
 export const anatomy = 'radiogroup-anatomy.html';
 
 Radio Group components are [Input Fields](/components-reference/input-fields/overview) that present a set of mutually exclusive options. Users can select exactly one option from the group.
 
-<Code code={radiogroupJson} lang="js" title={configJson} />
+<DslCode dxCode={radiogroupDx} jsonCode={radiogroupJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/radiogroup/radiogroup.json"
 />
@@ -38,7 +43,7 @@ Use these `props` to customize your Radio Group component.
 
 Use the property `hint` to provide instructions for the user.
 
-<Code code={radiogroupHintJson} lang="js" title={configJson} />
+<DslCode dxCode={radiogroupHintDx} jsonCode={radiogroupHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/radiogroup/radiogroup-hint.json"
 />
@@ -47,7 +52,7 @@ Use the property `hint` to provide instructions for the user.
 
 You can map different fields for the options using `labelField` and `valueField`.
 
-<Code code={radiogroupCustomJson} lang="js" title={configJson} />
+<DslCode dxCode={radiogroupCustomDx} jsonCode={radiogroupCustomJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/radiogroup/radiogroup-custom.json"
 />

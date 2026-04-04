@@ -5,15 +5,19 @@ description: A Layout component for organizing content into collapsible sections
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import accordionJson from '../../../../../public/template/components/accordion/accordion.json?raw';
+import accordionDx from '../../../../../public/template/components-dx/accordion/accordion.ts?raw';
 import accordionSingleJson from '../../../../../public/template/components/accordion/accordion-single.json?raw';
+import accordionSingleDx from '../../../../../public/template/components-dx/accordion/accordion-single.ts?raw';
 import accordionAnatomyHtml from '../../../../../public/template/components/accordion/accordion-anatomy.html?raw';
 export const configJson = 'accordion.json';
+export const configDx = 'accordion.ts';
 export const anatomy = 'accordion-anatomy.html';
 
 Accordion components are [Layout Fields](/components-reference/layout-fields/overview) that allow users to toggle the visibility of content sections. They are ideal for grouping related fields and saving vertical space in complex forms.
 
-<Code code={accordionJson} lang="js" title={configJson} />
+<DslCode dxCode={accordionDx} jsonCode={accordionJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/accordion/accordion.json"
 />
@@ -33,7 +37,7 @@ Use these `props` to customize your Accordion component.
 
 Use the `singleOpen` property to ensure that opening one section automatically closes others.
 
-<Code code={accordionSingleJson} lang="js" title={configJson} />
+<DslCode dxCode={accordionSingleDx} jsonCode={accordionSingleJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/accordion/accordion-single.json"
 />

@@ -1,0 +1,41 @@
+---
+title: Integration Overview
+description: Integrate GolemUI with React, Angular, or Lit.
+sidebar:
+  order: 0
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+GolemUI is a framework-agnostic form engine. Its core logic and component library are shared across all supported frameworks — only the thin adapter layer differs.
+
+## Supported Frameworks
+
+| Framework | Adapter Package        | Component               |
+| --------- | ---------------------- | ----------------------- |
+| React     | `@golemui/gui-react`   | `<FormComponent />`     |
+| Angular   | `@golemui/gui-angular` | `<gui-form>`            |
+| Lit       | `@golemui/gui-lit`     | `<gui-form>` (web component) |
+
+## Architecture
+
+All frameworks share the same rendering engine (`@golemui/core`) and component set. The adapter packages provide a native wrapper that:
+
+1. Accepts a `formDef` (your form definition, either from `golemForm().create(...)` or parsed JSON)
+2. Accepts `data` (the initial form data object)
+3. Accepts `fieldLoaders` (the set of UI components to render — typically the vanilla set)
+4. Optionally accepts `validators`, `customValidators`, `validateOn`, `dependencies`, and `localization`
+
+<Aside type="tip">
+  Because the core engine is framework-agnostic, switching frameworks only requires changing the adapter package and the component wiring — your form definitions and business logic remain unchanged.
+</Aside>
+
+## Next Steps
+
+Choose your framework to see the full setup guide:
+
+- [React Integration](/integration/react/)
+- [Angular Integration](/integration/angular/)
+- [Lit Integration](/integration/lit/)
+
+Or see [Configuration](/integration/configuration/) for details on passing validators, dependencies, and localization.

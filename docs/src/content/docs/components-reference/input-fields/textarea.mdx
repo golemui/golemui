@@ -6,19 +6,27 @@ description: A Textarea component to allow user to enter multi-line string chain
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import textareaJson from '../../../../../public/template/components/textarea/textarea.json?raw';
+import textareaDx from '../../../../../public/template/components-dx/textarea/textarea.ts?raw';
 import textareaPlaceholderJson from '../../../../../public/template/components/textarea/textarea-placeholder.json?raw';
+import textareaPlaceholderDx from '../../../../../public/template/components-dx/textarea/textarea-placeholder.ts?raw';
 import textareaHintJson from '../../../../../public/template/components/textarea/textarea-hint.json?raw';
+import textareaHintDx from '../../../../../public/template/components-dx/textarea/textarea-hint.ts?raw';
 import textareaIconJson from '../../../../../public/template/components/textarea/textarea-icon.json?raw';
+import textareaIconDx from '../../../../../public/template/components-dx/textarea/textarea-icon.ts?raw';
 import textareaCounterJson from '../../../../../public/template/components/textarea/textarea-counter.json?raw';
+import textareaCounterDx from '../../../../../public/template/components-dx/textarea/textarea-counter.ts?raw';
 import textareaAutogrowJson from '../../../../../public/template/components/textarea/textarea-autogrow.json?raw';
+import textareaAutogrowDx from '../../../../../public/template/components-dx/textarea/textarea-autogrow.ts?raw';
 import textareaAnatomyHtml from '../../../../../public/template/components/textarea/textarea-anatomy.html?raw';
 export const configJson = 'textarea.json';
+export const configDx = 'textarea.ts';
 export const anatomy = 'textarea-anatomy.html';
 
 Textarea components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter multi-line string chains.
 
-<Code code={textareaJson} lang="js" title={configJson} />
+<DslCode dxCode={textareaDx} jsonCode={textareaJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textarea/textarea.json"
 />
@@ -40,7 +48,7 @@ Use these `props` to customize your Textarea component.
 
 Use the property `placeholder` to add a placeholder.
 
-<Code code={textareaPlaceholderJson} lang="js" title={configJson} />
+<DslCode dxCode={textareaPlaceholderDx} jsonCode={textareaPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textarea/textarea-placeholder.json"
 />
@@ -51,7 +59,7 @@ Use the property `placeholder` to add a placeholder.
 
 Use the property `hint` to add a description.
 
-<Code code={textareaHintJson} lang="js" title={configJson} />
+<DslCode dxCode={textareaHintDx} jsonCode={textareaHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textarea/textarea-hint.json"
 />
@@ -60,7 +68,7 @@ Use the property `hint` to add a description.
 
 Use the property `icon` to add an icon to the `textarea`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the textarea on the left.
 
-<Code code={textareaIconJson} lang="js" title={configJson} />
+<DslCode dxCode={textareaIconDx} jsonCode={textareaIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textarea/textarea-icon.json"
 />
@@ -69,7 +77,7 @@ Use the property `icon` to add an icon to the `textarea`. The value of `icon` re
 
 Use the validator `maxLength` to limit the number of characters and display a character counter. You can change how it counts with `counterMode` (`remaining` or `current`).
 
-<Code code={textareaCounterJson} lang="js" title={configJson} />
+<DslCode dxCode={textareaCounterDx} jsonCode={textareaCounterJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textarea/textarea-counter.json"
 />
@@ -78,7 +86,7 @@ Use the validator `maxLength` to limit the number of characters and display a ch
 
 Use the property `autoGrow` to allow the textarea to expand automatically based on content. You can combine it with `minimumHeight` to set its initial size.
 
-<Code code={textareaAutogrowJson} lang="js" title={configJson} />
+<DslCode dxCode={textareaAutogrowDx} jsonCode={textareaAutogrowJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textarea/textarea-autogrow.json"
 />

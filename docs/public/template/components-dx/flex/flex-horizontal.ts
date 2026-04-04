@@ -1,0 +1,32 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      uid: 'flex_horizontal',
+      kind: 'layout',
+      type: 'flex',
+      props: {
+        direction: 'row',
+      },
+      children: [
+        {
+          uid: 'h1',
+          kind: 'input',
+          type: 'textinput',
+          path: 'h1',
+          label: 'Left Field',
+          size: 1,
+        },
+        {
+          uid: 'h2',
+          kind: 'input',
+          type: 'textinput',
+          path: 'h2',
+          label: 'Right Field',
+          size: 2,
+        },
+      ],
+    },
+  ],
+});

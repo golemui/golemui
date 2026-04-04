@@ -6,20 +6,29 @@ description: A Button component for triggering actions within a form
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import buttonJson from '../../../../../public/template/components/button/button.json?raw';
+import buttonDx from '../../../../../public/template/components-dx/button/button.ts?raw';
 import buttonDisabledJson from '../../../../../public/template/components/button/button-disabled.json?raw';
+import buttonDisabledDx from '../../../../../public/template/components-dx/button/button-disabled.ts?raw';
 import buttonIconJson from '../../../../../public/template/components/button/button-icon.json?raw';
+import buttonIconDx from '../../../../../public/template/components-dx/button/button-icon.ts?raw';
 import buttonIconRightJson from '../../../../../public/template/components/button/button-icon-right.json?raw';
+import buttonIconRightDx from '../../../../../public/template/components-dx/button/button-icon-right.ts?raw';
 import buttonIconOnlyJson from '../../../../../public/template/components/button/button-icon-only.json?raw';
+import buttonIconOnlyDx from '../../../../../public/template/components-dx/button/button-icon-only.ts?raw';
 import buttonOutlinedJson from '../../../../../public/template/components/button/button-outlined.json?raw';
+import buttonOutlinedDx from '../../../../../public/template/components-dx/button/button-outlined.ts?raw';
 import buttonLinkJson from '../../../../../public/template/components/button/button-link.json?raw';
+import buttonLinkDx from '../../../../../public/template/components-dx/button/button-link.ts?raw';
 import buttonAnatomyHtml from '../../../../../public/template/components/button/button-anatomy.html?raw';
 export const configJson = 'button.json';
+export const configDx = 'button.ts';
 export const anatomy = 'button-anatomy.html';
 
 Button components are [Interactive Fields](/components-reference/interactive-fields/overview) (Actions) used to trigger events, submit forms, or perform custom logic defined in the form configuration.
 
-<Code code={buttonJson} lang="js" title={configJson} />
+<DslCode dxCode={buttonDx} jsonCode={buttonJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/button/button.json"
 />
@@ -42,14 +51,14 @@ Buttons support three style variants: `filled` (default), `outlined`, and `link`
 
 #### Outlined
 
-<Code code={buttonOutlinedJson} lang="js" title="button-outlined.json" />
+<DslCode dxCode={buttonOutlinedDx} jsonCode={buttonOutlinedJson} dxTitle={"button-outlined.ts"} jsonTitle={"button-outlined.json"} />
 <Demo
   src="/template/index.html?form=template/components/button/button-outlined.json"
 />
 
 #### Link
 
-<Code code={buttonLinkJson} lang="js" title="button-link.json" />
+<DslCode dxCode={buttonLinkDx} jsonCode={buttonLinkJson} dxTitle={"button-link.ts"} jsonTitle={"button-link.json"} />
 <Demo
   src="/template/index.html?form=template/components/button/button-link.json"
 />
@@ -60,21 +69,21 @@ Buttons support icons that can be positioned to the left or right of the label. 
 
 #### Button with Icon (Left)
 
-<Code code={buttonIconJson} lang="js" title="button-icon.json" />
+<DslCode dxCode={buttonIconDx} jsonCode={buttonIconJson} dxTitle={"button-icon.ts"} jsonTitle={"button-icon.json"} />
 <Demo
   src="/template/index.html?form=template/components/button/button-icon.json"
 />
 
 #### Button with Icon (Right)
 
-<Code code={buttonIconRightJson} lang="js" title="button-icon-right.json" />
+<DslCode dxCode={buttonIconRightDx} jsonCode={buttonIconRightJson} dxTitle={"button-icon-right.ts"} jsonTitle={"button-icon-right.json"} />
 <Demo
   src="/template/index.html?form=template/components/button/button-icon-right.json"
 />
 
 #### Icon Only Button
 
-<Code code={buttonIconOnlyJson} lang="js" title="button-icon-only.json" />
+<DslCode dxCode={buttonIconOnlyDx} jsonCode={buttonIconOnlyJson} dxTitle={"button-icon-only.ts"} jsonTitle={"button-icon-only.json"} />
 <Demo
   src="/template/index.html?form=template/components/button/button-icon-only.json"
 />
@@ -83,7 +92,7 @@ Buttons support icons that can be positioned to the left or right of the label. 
 
 You can disable the button by setting the `disabled` property to `true`.
 
-<Code code={buttonDisabledJson} lang="js" title={configJson} />
+<DslCode dxCode={buttonDisabledDx} jsonCode={buttonDisabledJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/button/button-disabled.json"
 />

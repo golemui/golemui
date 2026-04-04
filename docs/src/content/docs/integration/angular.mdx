@@ -1,0 +1,92 @@
+---
+title: Angular
+description: Set up GolemUI with Angular.
+sidebar:
+  order: 2
+---
+
+import DslTabs from '../../../../src/components/DslTabs.astro';
+
+## Installation
+
+```bash
+npm i @golemui/core @golemui/angular @golemui/gui-angular --save
+```
+
+## Styles
+
+Import the core styles in your `styles.scss` or `angular.json`:
+
+```scss
+@import "@golemui/core/styles/index.css";
+```
+
+## Usage
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { golemForm } from '@golemui/gui-shared';
+    import { FormComponent, vanillaFieldLoaders } from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [fieldLoaders]="vanillaFieldLoaders"
+      ></gui-form>`,
+    })
+    export class MyFormComponent {
+      protected formDef = golemForm().create({
+        form: [
+          { kind: 'input', type: 'textinput', path: 'username', label: 'Username' },
+        ],
+      });
+      protected formData = { username: '' };
+      protected vanillaFieldLoaders = { ...vanillaFieldLoaders };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { FormComponent, vanillaFieldLoaders } from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [fieldLoaders]="vanillaFieldLoaders"
+      ></gui-form>`,
+    })
+    export class MyFormComponent {
+      protected formDef = formDef;
+      protected formData = { username: '' };
+      protected vanillaFieldLoaders = { ...vanillaFieldLoaders };
+    }
+    ```
+  </Fragment>
+</DslTabs>
+
+## Component Inputs
+
+| Input              | Type                     | Description                                           |
+| ------------------ | ------------------------ | ----------------------------------------------------- |
+| `formDef`          | `Form`                   | The form definition object                            |
+| `data`             | `object`                 | Initial form data                                     |
+| `fieldLoaders`     | `FieldLoaders`           | Map of widget type loaders (e.g. vanilla components)  |
+| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)          |
+| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                              |
+| `validateOn`       | `ValidateOn`             | When to trigger validation                            |
+| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)          |
+| `localization`     | `Localization`           | i18n/localization configuration                       |
+
+See [Configuration](/integration/configuration/) for details on each optional prop.

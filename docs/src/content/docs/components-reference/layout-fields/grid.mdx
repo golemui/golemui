@@ -5,18 +5,25 @@ description: A Layout component for creating grid-based, responsive form layouts
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import gridJson from '../../../../../public/template/components/grid/grid.json?raw';
+import gridDx from '../../../../../public/template/components-dx/grid/grid.ts?raw';
 import gridRowJson from '../../../../../public/template/components/grid/grid-row.json?raw';
+import gridRowDx from '../../../../../public/template/components-dx/grid/grid-row.ts?raw';
 import gridAutoFitJson from '../../../../../public/template/components/grid/grid-auto-fit.json?raw';
+import gridAutoFitDx from '../../../../../public/template/components-dx/grid/grid-auto-fit.ts?raw';
 import gridSizesJson from '../../../../../public/template/components/grid/grid-sizes.json?raw';
+import gridSizesDx from '../../../../../public/template/components-dx/grid/grid-sizes.ts?raw';
 import gridNestedJson from '../../../../../public/template/components/grid/grid-nested.json?raw';
+import gridNestedDx from '../../../../../public/template/components-dx/grid/grid-nested.ts?raw';
 import gridAnatomyHtml from '../../../../../public/template/components/grid/grid-anatomy.html?raw';
 export const configJson = 'grid.json';
+export const configDx = 'grid.ts';
 export const anatomy = 'grid-anatomy.html';
 
 Grid components are [Layout Fields](/components-reference/layout-fields/overview) that use CSS Grid to arrange child widgets in rows or columns. Unlike Flex, Grid leverages CSS subgrid to keep labels, inputs, and validation messages aligned across all children in a row.
 
-<Code code={gridJson} lang="js" title={configJson} />
+<DslCode dxCode={gridDx} jsonCode={gridJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/grid/grid.json"
 />
@@ -36,7 +43,7 @@ Use these `props` to customize your Grid component.
 
 Set `direction` to `"row"` to place child widgets side-by-side in equal columns. On small screens (max-width: 480px), row layouts automatically stack vertically for better mobile usability.
 
-<Code code={gridRowJson} lang="js" title={configJson} />
+<DslCode dxCode={gridRowDx} jsonCode={gridRowJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/grid/grid-row.json"
 />
@@ -47,7 +54,7 @@ By default, a `direction: "row"` grid divides available space into **12 equal co
 
 Setting `autoFit: true` makes each child grow equally to fill the available space and wrap to the next row when the container gets too narrow — no explicit `size` values needed. If you do set `size` on a child, it will grow proportionally relative to its siblings in the same row.
 
-<Code code={gridAutoFitJson} lang="js" title={configJson} />
+<DslCode dxCode={gridAutoFitDx} jsonCode={gridAutoFitJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/grid/grid-auto-fit.json"
 />
@@ -56,7 +63,7 @@ Setting `autoFit: true` makes each child grow equally to fill the available spac
 
 Use the `size` property on child widgets to control how many columns they span. A child with `size: 2` takes up twice the space of a default child.
 
-<Code code={gridSizesJson} lang="js" title={configJson} />
+<DslCode dxCode={gridSizesDx} jsonCode={gridSizesJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/grid/grid-sizes.json"
 />
@@ -65,7 +72,7 @@ Use the `size` property on child widgets to control how many columns they span. 
 
 Combine a column Grid with row Grid children to build complex form layouts. Each row aligns its labels, inputs, and validation messages independently through subgrid.
 
-<Code code={gridNestedJson} lang="js" title={configJson} />
+<DslCode dxCode={gridNestedDx} jsonCode={gridNestedJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/grid/grid-nested.json"
 />

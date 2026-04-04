@@ -6,13 +6,16 @@ description: A Display component for rendering markdown content as formatted HTM
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import FrameworkTabs from '../../../../../src/components/FrameworkTabs.astro';
+import DslCode from '../../../../components/DslCode.astro';
+import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 import markdowntextJson from '../../../../../public/template/components/markdowntext/markdowntext.json?raw';
+import markdowntextDx from '../../../../../public/template/components-dx/markdowntext/markdowntext.ts?raw';
 export const configJson = 'markdowntext.json';
+export const configDx = 'markdowntext.ts';
 
 Markdown Text components are [Display Fields](/components-reference/display-fields/overview) used to render structured and formatted content as HTML. They are non-interactive and purely informational. Use them when you need to display rich content such as headings, lists, bold text, links, or any other markdown-formatted text — as opposed to `alert`, which is designed for short status messages.
 
-<Code code={markdowntextJson} lang="js" title={configJson} />
+<DslCode dxCode={markdowntextDx} jsonCode={markdowntextJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdowntext/markdowntext.json"
 />
@@ -27,7 +30,7 @@ The Markdown Text component requires a markdown parser to render formatted HTML.
 
 Pass `dependencies` as a property on the form component itself, not inside the widget's `props`:
 
-<FrameworkTabs>
+<IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import snarkdown from 'snarkdown';
@@ -90,7 +93,7 @@ Pass `dependencies` as a property on the form component itself, not inside the w
     ```
 
   </Fragment>
-</FrameworkTabs>
+</IntegrationTabs>
 
 <Aside>The markdown content will only be rendered as HTML when a `dependencies.markdown.parse` function is provided. Without it, the widget renders nothing.</Aside>
 

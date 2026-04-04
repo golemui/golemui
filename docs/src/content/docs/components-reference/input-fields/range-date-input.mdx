@@ -6,18 +6,25 @@ description: A Range Date Input component to allow users to enter multiple date 
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import rangeDateInputJson from '../../../../../public/template/components/range-date-input/range-date-input.json?raw';
+import rangeDateInputDx from '../../../../../public/template/components-dx/range-date-input/range-date-input.ts?raw';
 import rangeDateInputHintJson from '../../../../../public/template/components/range-date-input/range-date-input-hint.json?raw';
+import rangeDateInputHintDx from '../../../../../public/template/components-dx/range-date-input/range-date-input-hint.ts?raw';
 import rangeDateInputIconJson from '../../../../../public/template/components/range-date-input/range-date-input-icon.json?raw';
+import rangeDateInputIconDx from '../../../../../public/template/components-dx/range-date-input/range-date-input-icon.ts?raw';
 import rangeDateInputSeparatorJson from '../../../../../public/template/components/range-date-input/range-date-input-separator.json?raw';
+import rangeDateInputSeparatorDx from '../../../../../public/template/components-dx/range-date-input/range-date-input-separator.ts?raw';
 import rangeDateInputAriaLabelsJson from '../../../../../public/template/components/range-date-input/range-date-input-aria-labels.json?raw';
+import rangeDateInputAriaLabelsDx from '../../../../../public/template/components-dx/range-date-input/range-date-input-aria-labels.ts?raw';
 import rangeDateInputAnatomyHtml from '../../../../../public/template/components/range-date-input/range-date-input-anatomy.html?raw';
 export const configJson = 'range-date-input.json';
+export const configDx = 'range-date-input.ts';
 export const anatomy = 'range-date-input-anatomy.html';
 
 Range Date Input components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter multiple date ranges using segmented keyboard inputs. Each completed range is displayed as a pill that can be removed. The date segments automatically localize based on the user's region and locale.
 
-<Code code={rangeDateInputJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDateInputDx} jsonCode={rangeDateInputJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-input/range-date-input.json"
 />
@@ -41,7 +48,7 @@ Use these `props` to customize your Range Date Input component.
 
 Use the property `hint` to add a description or validation instructions.
 
-<Code code={rangeDateInputHintJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDateInputHintDx} jsonCode={rangeDateInputHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-input/range-date-input-hint.json"
 />
@@ -50,7 +57,7 @@ Use the property `hint` to add a description or validation instructions.
 
 Use the property `icon` to add an icon to the component. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the input border.
 
-<Code code={rangeDateInputIconJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDateInputIconDx} jsonCode={rangeDateInputIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-input/range-date-input-icon.json"
 />
@@ -59,7 +66,7 @@ Use the property `icon` to add an icon to the component. The value of `icon` rep
 
 Use the property `separator` to customize the text displayed between the start date and end date fields. By default the separator is `-`.
 
-<Code code={rangeDateInputSeparatorJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDateInputSeparatorDx} jsonCode={rangeDateInputSeparatorJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-input/range-date-input-separator.json"
 />
@@ -68,7 +75,7 @@ Use the property `separator` to customize the text displayed between the start d
 
 Use the properties `removePillAriaLabel`, `startDateAriaLabel` and `endDateAriaLabel` to customize the accessibility labels for screen readers. These properties are localizable.
 
-<Code code={rangeDateInputAriaLabelsJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeDateInputAriaLabelsDx} jsonCode={rangeDateInputAriaLabelsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-date-input/range-date-input-aria-labels.json"
 />
