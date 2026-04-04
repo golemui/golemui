@@ -1,0 +1,29 @@
+---
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<a href={siteTitleHref} class="site-title sl-flex">
+  <span translate="no">Golem<span class="logo-highlight">UI</span></span>
+</a>
+
+<style>
+  .site-title {
+    align-items: center;
+    gap: var(--sl-nav-gap);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    text-decoration: none;
+    white-space: nowrap;
+    min-width: 0;
+    letter-spacing: -0.02em;
+  }
+
+  span {
+    overflow: hidden;
+  }
+
+  .logo-highlight {
+    color: var(--sl-color-text-accent);
+  }
+</style>
