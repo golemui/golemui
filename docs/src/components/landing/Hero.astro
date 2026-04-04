@@ -5,18 +5,29 @@ import Demo from './Demo.astro';
 <section class="hero">
   <div class="container">
     <div class="content">
+      <span class="hero-badge">Open Source · Framework Agnostic · AI Ready</span>
       <h1 class="title">
         The <span class="gradient-text">Enterprise</span> Forms Library
       </h1>
+      <p class="subtitle">
+        100% serializable, framework agnostic and AI ready. Built for enterprise teams who need
+        performance, extensibility, and control.
+      </p>
+      <div class="cta-group">
+        <a href="/guides/getting-started" class="btn btn-primary">
+          Get Started
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+        <a href="https://github.com/golemui/golemui" class="btn btn-secondary" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          GitHub
+        </a>
+      </div>
     </div>
     <div class="example-container">
       <div class="visual">
         <Demo src="/appetizer/index.html" />
       </div>
-      <p class="subtitle">
-        100% serializable, framework agnostic and AI ready. Built for enterprise teams who need
-        performance, extensibility, and control.
-      </p>
     </div>
   </div>
 </section>
@@ -27,7 +38,7 @@ import Demo from './Demo.astro';
   }
 
   .hero {
-    padding: 8rem 0 6rem;
+    padding: 9rem 0 5rem;
     background: var(--bg-color);
     color: var(--text-color);
     overflow: hidden;
@@ -36,14 +47,16 @@ import Demo from './Demo.astro';
     &::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140%;
+      height: 140%;
       background: radial-gradient(
-        circle at center,
-        rgba(var(--accent-color-rgb), 0.15) 0%,
-        transparent 50%
+        ellipse at center top,
+        rgba(var(--accent-color-rgb), 0.08) 0%,
+        rgba(168, 85, 247, 0.04) 30%,
+        transparent 60%
       );
       z-index: 0;
       pointer-events: none;
@@ -64,82 +77,95 @@ import Demo from './Demo.astro';
   .content {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     align-items: center;
+    max-width: 800px;
+    margin-bottom: 3.5rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--accent-color);
+    background: rgba(var(--accent-color-rgb), 0.06);
+    border: 1px solid rgba(var(--accent-color-rgb), 0.12);
+    padding: 0.5rem 1.25rem;
+    border-radius: 100px;
+    letter-spacing: 0.01em;
   }
 
   .title {
-    font-size: 2.5rem;
-    line-height: 1.1;
+    font-size: 3rem;
+    line-height: 1.05;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.035em;
     text-align: center;
 
     @media (min-width: 768px) {
-      font-size: 7.5rem;
+      font-size: 5rem;
+    }
+
+    @media (min-width: 960px) {
+      font-size: 6rem;
     }
   }
 
   .subtitle {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: 1.7;
     text-align: center;
+    max-width: 580px;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   .cta-group {
     display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
     flex-wrap: wrap;
     justify-content: center;
-
-    @media (min-width: 960px) {
-      justify-content: flex-start;
-    }
   }
 
   .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: 10px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
-    font-size: 1rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.9375rem;
+    border: none;
+    cursor: pointer;
 
     &.btn-primary {
-      background: var(--accent-color);
+      background: linear-gradient(135deg, var(--accent-color) 0%, #7c3aed 100%);
       color: white;
+      box-shadow: 0 2px 8px rgba(var(--accent-color-rgb), 0.3);
+
       &:hover {
-        filter: brightness(1.1);
+        box-shadow: 0 4px 16px rgba(var(--accent-color-rgb), 0.4);
         transform: translateY(-1px);
       }
     }
 
     &.btn-secondary {
-      background: transparent;
+      background: var(--bg-surface);
       border: 1px solid var(--border-color);
       color: var(--text-color);
+
       &:hover {
-        background: var(--bg-surface);
-        border-color: var(--text-color);
+        background: var(--border-color);
+        transform: translateY(-1px);
       }
-    }
-  }
-
-  .frameworks {
-    margin-top: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: var(--text-muted);
-    font-size: 0.875rem;
-
-    .framework-icons {
-      display: flex;
-      gap: 1rem;
-      font-weight: 600;
-      color: var(--text-color);
     }
   }
 
@@ -155,25 +181,23 @@ import Demo from './Demo.astro';
   .visual {
     width: 100%;
     max-width: 1006px;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
     position: relative;
+    border: 1px solid var(--border-color);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 20px 40px -4px rgba(0, 0, 0, 0.08);
 
     .expressive-code {
       border-bottom: 1px solid #3b3e47;
     }
   }
 
-  .angular-logo {
-    width: 45px;
-  }
-
-  .react-logo {
-    width: 45px;
-    color: rgb(88 196 220 / 1);
-  }
-
-  .lit-logo {
-    width: 45px;
+  html.dark .visual {
+    border-color: var(--border-color);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 20px 40px -4px rgba(0, 0, 0, 0.4);
   }
 </style>

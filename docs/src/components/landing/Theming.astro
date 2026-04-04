@@ -4,6 +4,7 @@ import Demo from './Demo.astro';---
 <section class="custom-power">
   <div class="container">
     <div class="content">
+      <span class="section-label">Theming</span>
       <h2>Your <span class="gradient-text">Brand</span>.<br />Your <span class="gradient-text">Rules</span>.</h2>
       <p>
         Style GolemUI effortlessly using native CSS Variables. Quickly override our default tokens to match your brand or author a complete custom theme from scratch. Total design freedom, zero complexity.
@@ -43,13 +44,23 @@ import Demo from './Demo.astro';---
 
   .visual {
     overflow: hidden;
-    border-radius: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  html.dark .visual {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   }
 
   .custom-power {
-    padding: 4rem 0;
-    background: var(--bg-color);
+    padding: 6rem 0;
+    background: var(--bg-surface);
     overflow: hidden;
+
+    @media (min-width: 768px) {
+      padding: 4rem 0;
+    }
   }
 
   .container {
@@ -57,72 +68,63 @@ import Demo from './Demo.astro';---
     flex-direction: column;
   }
 
-  .container-row {
+  .custom-power .container-row {
     display: flex;
     flex-direction: column-reverse;
 
     @media (min-width: 50rem) {
       flex-direction: row;
-      gap: 48px;
+      gap: 3rem;
+      margin-top: 1rem;
     }
   }
 
   h2 {
-    font-size: 5rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
+    line-height: 1.08;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
 
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
+    @media (min-width: 768px) {
+      font-size: 4.5rem;
     }
   }
+
   h3 {
-    font-size: 4rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    margin-top: 1rem;
+    line-height: 1.2;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
 
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
+    @media (min-width: 768px) {
+      font-size: 3.5rem;
     }
   }
 
-  p {
-    font-size: 1.25rem;
+  .content > p,
+  .freedom > p {
+    font-size: 1.125rem;
     color: var(--text-muted);
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   .freedom {
     flex: 3;
   }
+
   .material {
     flex: 2;
     height: 260px;
     overflow: hidden;
-    border-radius: 20px;
-  }
-
-  .features {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    .feature {
-      h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-color);
-      }
-
-      p {
-        font-size: 1rem;
-        margin: 0;
-      }
-    }
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
   }
 
   iframe {
