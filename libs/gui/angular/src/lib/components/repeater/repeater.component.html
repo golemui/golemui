@@ -1,4 +1,5 @@
 @let templateData = adapter.templateData();
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <div
   #repeaterRef
@@ -54,4 +55,6 @@
   </button>
 </div>
 
-<gui-errors [uid]="widget.uid" [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>
+@if (showErrors) {
+  <gui-errors [uid]="widget.uid" [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>
+}
