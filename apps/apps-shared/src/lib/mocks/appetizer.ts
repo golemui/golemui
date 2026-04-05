@@ -38,9 +38,37 @@ const form = defineForm({
       type: 'grid',
       props: {
         direction: 'row',
+        autoFit: true,
         gap: 50,
       },
       children: [
+        {
+          uid: 'preferredDates',
+          kind: 'input',
+          type: 'rangeDatePicker',
+          path: 'preferredDates',
+          label: {
+            key: 'travelPlanner.field.preferredDates.label',
+            default: 'Select Preferred Dates',
+          },
+          size: 3,
+          validator: { type: 'array', required: true, minItems: 1, maxItems: 3 },
+          props: {
+            minDate: minDate,
+            icon: 'calendar_month',
+            prevMonthIcon: 'chevron_left',
+            nextMonthIcon: 'chevron_right',
+            prevMonthAriaLabel: {
+              key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
+              default: 'Previous Month',
+            },
+            nextMonthAriaLabel: {
+              key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
+              default: 'Next Month',
+            },
+            numberOfMonths: 3,
+          },
+        },
         {
           uid: 'departureCountry',
           kind: 'input',
@@ -50,7 +78,8 @@ const form = defineForm({
             key: 'travelPlanner.field.departureCountry.label',
             default: 'Departure Country',
           },
-          size: 4,
+          size: 2,
+          validator: { type: 'string', required: true },
           props: {
             height: 300,
             itemHeight: 60,
@@ -89,7 +118,6 @@ const form = defineForm({
             key: 'travelPlanner.field.budget',
             default: 'Travel Budget',
           },
-          size: 4,
           props: {
             step: 100,
             placeholder: (data: FunctionWidgetParams<any> | undefined) =>
@@ -98,7 +126,19 @@ const form = defineForm({
               coins[data?.$form?.departureCountry ?? 'US'],
           },
           validator: { type: 'number', required: true, minimum: 100 },
-        },
+        }
+      ],
+    },
+    {
+      uid: '',
+      kind: 'layout',
+      type: 'flex',
+      props: {
+        direction: 'column',
+        align: 'end',
+        justify: 'end',
+      },
+      children: [
         {
           uid: 'passengers',
           kind: 'input',
@@ -134,53 +174,18 @@ const form = defineForm({
           validator: { type: 'number', required: true, minimum: 1, maximum: 3 },
           include: { when: '$form.includePets === true' },
         },
-      ],
-    },
-    {
-      uid: '',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'row',
-        align: 'end',
-      },
-      children: [
         {
           uid: 'includePets',
           kind: 'input',
           type: 'toggle',
           path: 'includePets',
+          size: 3,
           label: {
             key: 'travelPlanner.field.includePets',
             default: 'Include Pets',
           },
         },
       ],
-    },
-    {
-      uid: 'preferredDates',
-      kind: 'input',
-      type: 'rangeCalendar',
-      path: 'preferredDates',
-      label: {
-        key: 'travelPlanner.field.preferredDates.label',
-        default: 'Select Preferred Dates',
-      },
-      props: {
-        minDate: minDate,
-        icon: 'calendar_month',
-        prevMonthIcon: 'chevron_left',
-        nextMonthIcon: 'chevron_right',
-        prevMonthAriaLabel: {
-          key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
-          default: 'Previous Month',
-        },
-        nextMonthAriaLabel: {
-          key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
-          default: 'Next Month',
-        },
-        numberOfMonths: 3,
-      },
     },
     // Submit Action
     {

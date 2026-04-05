@@ -21,10 +21,6 @@ export class FormElement extends LitElement {
       value: code,
       label: `${flag} ${label}`,
     }));
-  customWidgetLoaders = {
-    heading: async () =>
-      (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
-  };
   itemRenderers = {
     countryItemRenderer: countryItemRenderer,
   };
@@ -83,7 +79,6 @@ export class FormElement extends LitElement {
         <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
-          .widgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
           .middlewares=${this.middlewares}
