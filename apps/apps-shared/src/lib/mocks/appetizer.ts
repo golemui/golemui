@@ -43,33 +43,6 @@ const form = defineForm({
       },
       children: [
         {
-          uid: 'preferredDates',
-          kind: 'input',
-          type: 'rangeDatePicker',
-          path: 'preferredDates',
-          label: {
-            key: 'travelPlanner.field.preferredDates.label',
-            default: 'Select Preferred Dates',
-          },
-          size: 3,
-          validator: { type: 'array', required: true, minItems: 1, maxItems: 3 },
-          props: {
-            minDate: minDate,
-            icon: 'calendar_month',
-            prevMonthIcon: 'chevron_left',
-            nextMonthIcon: 'chevron_right',
-            prevMonthAriaLabel: {
-              key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
-              default: 'Previous Month',
-            },
-            nextMonthAriaLabel: {
-              key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
-              default: 'Next Month',
-            },
-            numberOfMonths: 3,
-          },
-        },
-        {
           uid: 'departureCountry',
           kind: 'input',
           type: 'dropdown',
@@ -186,6 +159,33 @@ const form = defineForm({
           },
         },
       ],
+    },
+    {
+      uid: 'preferredDates',
+      kind: 'input',
+      type: 'rangeCalendar',
+      path: 'preferredDates',
+      label: {
+        key: 'travelPlanner.field.preferredDates.label',
+        default: 'Select Preferred Dates',
+      },
+      size: 3,
+      validator: { type: 'array', required: true, minItems: 1, maxItems: 3 },
+      props: {
+        minDate: minDate,
+        icon: 'calendar_month',
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
+        prevMonthAriaLabel: {
+          key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
+          default: 'Previous Month',
+        },
+        nextMonthAriaLabel: {
+          key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
+          default: 'Next Month',
+        },
+        numberOfMonths: 3,
+      },
     },
     // Submit Action
     {
