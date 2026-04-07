@@ -22,6 +22,7 @@ export const mountFramework = (options: MountOptions) => {
     <FormComponent
       formDef={options.formDef}
       data={options.data}
+      meta={options.meta}
       middlewares={options.middlewares ?? []}
       validators={options.validators}
       validateOn={options.validateOn ?? 'eager'}
