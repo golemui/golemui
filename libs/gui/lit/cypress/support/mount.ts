@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
+import { Type } from '@golemui/lit';
 import { MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
-import { Type } from '@golemui/lit';
 import '../../src/lib/components/form.element';
 
 export const mountFramework = (options: MountOptions) => {
@@ -33,6 +33,7 @@ export const mountFramework = (options: MountOptions) => {
     html`<gui-form
       .formDef=${options.formDef}
       .data=${options.data}
+      .meta=${options.meta}
       .middlewares=${options.middlewares ?? []}
       .validators=${options.validators}
       .validateOn=${options.validateOn ?? 'eager'}
