@@ -1,17 +1,17 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
+import { Dependencies } from '@golemui/gui-shared';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import snarkdown from 'snarkdown';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
+import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
-import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
-import { Dependencies } from '@golemui/gui-shared';
-import snarkdown from 'snarkdown';
 
 const mock = AppsShared.kitchenSink;
 
@@ -19,6 +19,7 @@ const mock = AppsShared.kitchenSink;
 export class FormElement extends LitElement {
   formDef = mock.form;
   formData = mock.data;
+  formMeta = mock.meta || {};
   localization = AppsShared.initializeI18n(mock.resources);
   deps: Dependencies = {
     markdown: {
@@ -92,6 +93,7 @@ export class FormElement extends LitElement {
         <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
+          .meta=${this.formMeta}
           .widgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
