@@ -69,7 +69,9 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
   }
 
   override render() {
-    super.render();
+    const templateData = this.adapter.templateData;
+    const showErrors =
+      templateData.touched && templateData.errors && templateData.errors.length > 0;
 
     return html`
       <div
@@ -81,22 +83,22 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
         <gui-label
           .targetElement=${[this._repeaterRef]}
           .uid=${this.widget.uid}
-          .label=${this.adapter.templateData.label}
-          .errors=${this.adapter.templateData.errors}
-          .touched=${this.adapter.templateData.touched}
-          .required=${this.adapter.templateData.validator?.required}
+          .label=${templateData.label}
+          .errors=${templateData.errors}
+          .touched=${templateData.touched}
+          .required=${templateData.validator?.required}
           .native=${false}
         ></gui-label>
-        ${this.adapter.templateData.value
+        ${templateData.value
           ? repeat(
-              this.adapter.templateData.value,
+              templateData.value,
               (widget) => getItemKey(widget, idIncrementer),
               (_, index) => html`
                 <div class="gui-repeater__card">
                   <div class="gui-repeater__card-header">
-                    ${this.adapter.templateData.title
+                    ${templateData.title
                       ? html`<span class="gui-repeater__card-title"
-                          >${this.adapter.templateData.title} ${index + 1}</span
+                          >${templateData.title} ${index + 1}</span
                         >`
                       : nothing}
                     <button
@@ -104,19 +106,18 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                       class="gui-button gui-button--sm gui-repeater__remove-btn"
                       @click=${() => this.removeItem(index)}
                     >
-                      ${this.adapter.templateData.removeButtonIcon
+                      ${templateData.removeButtonIcon
                         ? html`<span
-                            class="gui-widget-icon gui-button-icon ${this.adapter.templateData
-                              .removeButtonIcon}"
-                            data-icon=${this.adapter.templateData.removeButtonIcon}
+                            class="gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}"
+                            data-icon=${templateData.removeButtonIcon}
                           ></span>`
                         : nothing}
-                      ${this.adapter.templateData.removeLabel ?? 'Remove'}
+                      ${templateData.removeLabel ?? 'Remove'}
                     </button>
                   </div>
                   <gui-repeater-widget
                     .repeaterIndex=${index}
-                    .widget=${this.adapter.templateData.template}
+                    .widget=${templateData.template}
                   ></gui-repeater-widget>
                 </div>
               `,
@@ -127,25 +128,24 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
           type="button"
           class="gui-button gui-repeater__add-btn"
           @click=${() => this.addItem()}
-          ?disabled=${!!(
-            this.adapter.templateData.limit &&
-            this.adapter.templateData.limit === this.adapter.templateData.value?.length
-          )}
+          ?disabled=${!!(templateData.limit && templateData.limit === templateData.value?.length)}
         >
-          ${this.adapter.templateData.addButtonIcon
+          ${templateData.addButtonIcon
             ? html`<span
-                class="gui-widget-icon gui-button-icon ${this.adapter.templateData.addButtonIcon}"
-                data-icon=${this.adapter.templateData.addButtonIcon}
+                class="gui-widget-icon gui-button-icon ${templateData.addButtonIcon}"
+                data-icon=${templateData.addButtonIcon}
               ></span>`
             : nothing}
-          ${this.adapter.templateData.addLabel ?? 'Add'}
+          ${templateData.addLabel ?? 'Add'}
         </button>
       </div>
-      <gui-errors
-        .uid=${this.widget.uid}
-        .errors=${this.adapter.templateData.errors}
-        .touched=${this.adapter.templateData.touched}
-      ></gui-errors>
+      ${showErrors
+        ? html`<gui-errors
+            .uid=${this.widget.uid}
+            .errors=${templateData.errors}
+            .touched=${templateData.touched}
+          ></gui-errors>`
+        : nothing}
     `;
   }
 

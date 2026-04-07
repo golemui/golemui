@@ -98,6 +98,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
   }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
 
   const isRequired = (templateData.validator as Core.Validator)?.required;
+  const showErrors = isTouched && errors && errors.length > 0;
 
   return (
     <div className="gui-repeater gui-field" style={{ flex: templateData.size }}>
@@ -134,7 +135,8 @@ export function Repeater(widgetInstance: Core.WithWidget) {
           {templateData.addLabel ?? 'Add'}
         </button>
       </div>
-      <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>
+
+      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
     </div>
   );
 }

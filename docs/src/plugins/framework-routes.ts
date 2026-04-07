@@ -14,6 +14,7 @@ export function frameworkRoutesPlugin(): StarlightPlugin {
           },
           components: {
             LanguageSelect: './src/components/overrides/FrameworkSelect.astro',
+            SiteTitle: './src/components/overrides/SiteTitle.astro',
           },
         });
         addRouteMiddleware({

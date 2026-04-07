@@ -112,7 +112,7 @@ export class DatePickerElement extends LitElement implements Core.WithWidget {
       : nothing;
 
     return html`
-      ${addLabel(this.widget.uid, this.adapter.templateData)}
+      ${addLabel(this.widget.uid, { ...this.adapter.templateData, required: this.adapter.templateData.validator?.required })}
 
       <div
         role="button"

@@ -283,6 +283,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
   const asyncFiltering = !!widget.on?.filter;
+  const showErrors = isTouched && errors && errors.length > 0;
 
   return (
     <div className="gui-dropdown gui-field" style={{ flex: templateData.size }}>
@@ -375,7 +376,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         </gui-list>
       </div>
 
-      <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>
+      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
     </div>
   );
 }

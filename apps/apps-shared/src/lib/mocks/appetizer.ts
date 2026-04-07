@@ -38,6 +38,7 @@ const form = defineForm({
       type: 'grid',
       props: {
         direction: 'row',
+        autoFit: true,
         gap: 50,
       },
       children: [
@@ -50,8 +51,9 @@ const form = defineForm({
             key: 'travelPlanner.field.departureCountry.label',
             default: 'Departure Country',
           },
+          size: 2,
+          validator: { type: 'string', required: true },
           props: {
-            size: 4,
             height: 300,
             itemHeight: 60,
             itemRenderer: 'countryItemRenderer',
@@ -90,7 +92,6 @@ const form = defineForm({
             default: 'Travel Budget',
           },
           props: {
-            size: 4,
             step: 100,
             placeholder: (data: FunctionWidgetParams<any> | undefined) =>
               coins[data?.$form?.departureCountry ?? 'US'],
@@ -98,7 +99,19 @@ const form = defineForm({
               coins[data?.$form?.departureCountry ?? 'US'],
           },
           validator: { type: 'number', required: true, minimum: 100 },
-        },
+        }
+      ],
+    },
+    {
+      uid: '',
+      kind: 'layout',
+      type: 'flex',
+      props: {
+        direction: 'column',
+        align: 'end',
+        justify: 'end',
+      },
+      children: [
         {
           uid: 'passengers',
           kind: 'input',
@@ -109,8 +122,8 @@ const form = defineForm({
             key: 'travelPlanner.field.passengers',
             default: 'Passengers',
           },
+          size: 2,
           props: {
-            size: 2,
             minimum: 1,
             maximum: 10,
           },
@@ -126,30 +139,20 @@ const form = defineForm({
             key: 'travelPlanner.field.pets',
             default: 'Pets',
           },
+          size: 2,
           props: {
-            size: 2,
             minimum: 1,
             maximum: 3,
           },
           validator: { type: 'number', required: true, minimum: 1, maximum: 3 },
           include: { when: '$form.includePets === true' },
         },
-      ],
-    },
-    {
-      uid: '',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'row',
-        align: 'end',
-      },
-      children: [
         {
           uid: 'includePets',
           kind: 'input',
           type: 'toggle',
           path: 'includePets',
+          size: 3,
           label: {
             key: 'travelPlanner.field.includePets',
             default: 'Include Pets',
@@ -166,6 +169,8 @@ const form = defineForm({
         key: 'travelPlanner.field.preferredDates.label',
         default: 'Select Preferred Dates',
       },
+      size: 3,
+      validator: { type: 'array', required: true, minItems: 1, maxItems: 3 },
       props: {
         minDate: minDate,
         icon: 'calendar_month',
@@ -193,9 +198,6 @@ const form = defineForm({
       label: {
         key: 'travelPlanner.btn.submit',
         default: 'Search My Trip',
-      },
-      props: {
-        size: 0,
       },
     },
   ],
