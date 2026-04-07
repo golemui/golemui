@@ -1,5 +1,5 @@
-import { isFunctionWidget, isInputWidget } from '../form-widget';
 import { ValidatorFn } from '../form-validator';
+import { isFunctionWidget, isInputWidget } from '../form-widget';
 import { I18nTranslator } from '../i18n';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
@@ -27,6 +27,14 @@ export const reducer =
       case 'SET_DATA':
         return Fn.pipe(
           Reducers.setData(state, action),
+          Reducers.calculateCurrentState,
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
+        );
+
+      case 'SET_META':
+        return Fn.pipe(
+          Reducers.setMeta(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateWidgetFlags,
           Reducers.calculateWidgetProps(localization),
