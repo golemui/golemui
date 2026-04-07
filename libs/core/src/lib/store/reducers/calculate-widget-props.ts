@@ -9,7 +9,7 @@ import {
   NonFunctionWidget,
 } from '../../form-widget';
 import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
-import { isPotentialDotPath } from '../../utils/dot-path';
+import { isPotentialScopePath, scopeResolver } from '../../utils/form';
 import { get, set } from '../../utils/object';
 import { DerivedWidget, State } from '../model';
 import { hasWhen } from './utils';
@@ -77,6 +77,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
             derivedWidget: derivedWidget,
             property: prop as CoreProp,
             $form: state.data,
+            $meta: state.meta,
             widgetFlags: state.widgetFlags,
             localization,
           });
@@ -96,6 +97,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
           property: 'props',
           subProp: prop,
           $form: state.data,
+          $meta: state.meta,
           widgetFlags: state.widgetFlags,
           localization,
         });
@@ -111,6 +113,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
             $form: state.data,
+            $meta: state.meta,
             widgetFlags: state.widgetFlags,
             localization,
           });
@@ -164,6 +167,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
   property,
   subProp,
   $form,
+  $meta,
   widgetFlags,
   localization,
 }: {
@@ -173,6 +177,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
   property: CoreProp;
   subProp?: string;
   $form: State['data'];
+  $meta: State['meta'];
   widgetFlags: State['widgetFlags'];
   localization: I18nTranslator;
 }) {
@@ -208,7 +213,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
     if (isTranslationConfig(propValue)) {
       propValue = localization.translate(
         propValue.key,
-        resolveI18nParams(propValue.params, $form),
+        resolveI18nParams(propValue.params, $form, $meta),
         propValue.default,
       );
     }
@@ -241,7 +246,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
  * Resolves i18n interpolation parameters to concrete values.
  *
  * Each parameter value may either be a literal (string or number) or a
- * property path that is looked up in the provided form state.
+ * property path that is looked up in the provided form state ($form or $meta).
  * References are replaced with their resolved values, while literal
  * values are passed through unchanged.
  *
@@ -249,20 +254,25 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
  */
 const resolveI18nParams = (
   params: I18nParams | undefined,
-  // TODO: if we also target $error and $meta this should be State not State['data']
   data: State['data'],
+  meta: State['meta'],
 ): I18nParams | undefined => {
   if (!params) {
     return params;
   }
   return Object.keys(params).reduce((acc, key) => {
-    const path = String(params[key]);
-    if (isPotentialDotPath(path)) {
-      // TODO: temporary while we accomodate other prefixes
-      const pathWithout$form = path.replace('$form.', '');
-      acc[key] = get(data, pathWithout$form) || path;
+    const param = String(params[key]);
+    if (isPotentialScopePath(param)) {
+      acc[key] = scopeResolver(param, {
+        resolveFormScope(scopePath) {
+          return get(data, scopePath) || param;
+        },
+        resolveMetaScope(scopePath) {
+          return get(meta, scopePath) || param;
+        },
+      });
     } else {
-      acc[key] = path;
+      acc[key] = param;
     }
     return acc;
   }, {} as I18nParams);
@@ -271,6 +281,5 @@ const resolveI18nParams = (
 /**
  * Extracts repeater indexes from a UID, e.g. "abc[0][1]" -> [0, 1], "abc" -> []
  */
-function extractRepeaterIndexes(uid: string): number[] {
-  return [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
-}
+const extractRepeaterIndexes = (uid: string): number[] =>
+  [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
