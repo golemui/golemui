@@ -23,6 +23,49 @@ export const isPotentialScopePath = (path: unknown): path is DotPath => {
   );
 };
 
+export interface ScopeResolvers {
+  resolveFormScope: (path: DotPath) => any;
+  resolveMetaScope: (path: DotPath) => any;
+}
+
+/**
+ * Resolves all scope path placeholders within a string in a single pass.
+ * e.g. "User {{ $form.name }} has status {{ $meta.status }}"
+ *
+ * @returns The string with all valid placeholders replaced by their resolved values
+ */
+export const resolveScopePaths = (input: string, resolvers: ScopeResolvers): string => {
+  if (typeof input !== 'string') {
+    return input;
+  }
+
+  // Fast-path: If no trigger is found, avoid the regex engine entirely.
+  if (!input.includes('{{$')) {
+    return input;
+  }
+
+  const SCOPE_RESOLVER_REGEX = /\{\{\$(form|meta)\.([^}]+)\}\}/g;
+
+  /**
+   * match: The full "{{$form.path}}"
+   * scope: The first capture group (form|meta)
+   * path: The second capture group ([^}]+)
+   */
+  return input.replace(SCOPE_RESOLVER_REGEX, (match, scope, path) => {
+    try {
+      if (scope === 'form') {
+        return resolvers.resolveFormScope(path);
+      }
+      if (scope === 'meta') {
+        return resolvers.resolveMetaScope(path);
+      }
+    } catch {
+      return match;
+    }
+    return match;
+  });
+};
+
 /**
  * Resolves a dot-notation scope path to its underlying value using the
  * appropriate resolver based on the path prefix (`$form.*` or `$meta.*`).
@@ -31,13 +74,7 @@ export const isPotentialScopePath = (path: unknown): path is DotPath => {
  * @param resolvers.resolveFormScope - Resolves a path within the $form scope
  * @param resolvers.resolveMetaScope - Resolves a path within the $meta scope
  */
-export const scopeResolver = (
-  path: DotPath,
-  resolvers: {
-    resolveFormScope: (scopePath: DotPath) => any;
-    resolveMetaScope: (scopePath: DotPath) => any;
-  },
-) => {
+export const scopeResolver = (path: DotPath, resolvers: ScopeResolvers) => {
   if (path.startsWith('$form.')) {
     const pathWithout$form = path.replace('$form.', '');
     return resolvers.resolveFormScope(pathWithout$form);

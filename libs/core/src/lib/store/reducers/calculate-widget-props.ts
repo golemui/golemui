@@ -9,7 +9,7 @@ import {
   NonFunctionWidget,
 } from '../../form-widget';
 import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
-import { isPotentialScopePath, scopeResolver } from '../../utils/form';
+import { isPotentialScopePath, resolveScopePaths, scopeResolver } from '../../utils/form';
 import { get, set } from '../../utils/object';
 import { DerivedWidget, State } from '../model';
 import { hasWhen } from './utils';
@@ -216,13 +216,26 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
         resolveI18nParams(propValue.params, $form, $meta),
         propValue.default,
       );
-    }
-    // This is for `disabled` an `readonly`
-    if (
-      ((property as string) === 'disabled' || (property as string) === 'readonly') &&
-      hasWhen(propValue)
-    ) {
-      propValue = widgetFlags[derivedWidget.current.uid][property as 'disabled' | 'readonly'];
+    } else {
+      // This is for `disabled` an `readonly`
+      if (
+        ((property as string) === 'disabled' || (property as string) === 'readonly') &&
+        hasWhen(propValue)
+      ) {
+        propValue = widgetFlags[derivedWidget.current.uid][property as 'disabled' | 'readonly'];
+      } else if (typeof propValue === 'string') {
+        // Resolves (if present) all scope path placeholders within a string in a single pass.
+        // e.g. "User {{ $form.name }} has status {{ $meta.status }}"
+        // TODO: implement memoization?
+        propValue = resolveScopePaths(propValue, {
+          resolveFormScope(scopePath) {
+            return get($form, scopePath) ?? propValue;
+          },
+          resolveMetaScope(scopePath) {
+            return get($meta, scopePath) ?? propValue;
+          },
+        });
+      }
     }
     set(derivedWidget.current, dotPath, propValue);
   }
@@ -265,10 +278,10 @@ const resolveI18nParams = (
     if (isPotentialScopePath(param)) {
       acc[key] = scopeResolver(param, {
         resolveFormScope(scopePath) {
-          return get(data, scopePath) || param;
+          return get(data, scopePath) ?? param;
         },
         resolveMetaScope(scopePath) {
-          return get(meta, scopePath) || param;
+          return get(meta, scopePath) ?? param;
         },
       });
     } else {
