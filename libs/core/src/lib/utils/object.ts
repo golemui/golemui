@@ -174,36 +174,6 @@ export const set = (object: Record<string, any>, path: DotPath, value: any) => {
   return object;
 };
 
-/**
- * Checks if a value is `null`, `undefined`, or an object with no enumerable properties.
- *
- * @remarks
- * This function returns `false` for arrays, even if they are empty,
- * because arrays are technically objects in JavaScript but often handled differently.
- *
- * @param value - The value to check.
- * @returns `true` if the value is null, undefined, or `{}`; otherwise `false`.
- *
- * @example
- * ```ts
- * isNilOrEmptyObject(null);              // true
- * isNilOrEmptyObject(undefined);         // true
- * isNilOrEmptyObject({});                // true
- * isNilOrEmptyObject({ a: 1 });          // false
- * isNilOrEmptyObject([]);                // false
- * isNilOrEmptyObject(new Date());        // false
- * ```
- */
-export function isNilOrEmptyObject(
-  value: unknown,
-): value is null | undefined | Record<string, never> {
-  return (
-    value === null ||
-    value === undefined ||
-    (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0)
-  );
-}
-
 function isIndex(value: string) {
   const num = Number(value);
   return Number.isInteger(num) && num >= 0 && num.toString() === value;
