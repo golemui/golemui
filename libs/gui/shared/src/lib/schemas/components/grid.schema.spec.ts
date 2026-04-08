@@ -114,6 +114,68 @@ describe('Grid schema validation', () => {
       expect(isValid).toBe(true);
     });
 
+    it('should validate align property', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              direction: 'row',
+              align: 'center',
+            },
+          },
+        ],
+      });
+
+      const validGrid = formDef.form.children[0];
+      const isValid = validate(validGrid);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, validGrid);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate justify property', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              direction: 'row',
+              justify: 'stretch',
+            },
+          },
+        ],
+      });
+
+      const validGrid = formDef.form.children[0];
+      const isValid = validate(validGrid);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, validGrid);
+      }
+      expect(isValid).toBe(true);
+    });
+
     it('should validate state-scoped properties', () => {
       const formDef = golemForm().create({
         form: [
@@ -133,6 +195,8 @@ describe('Grid schema validation', () => {
               'direction.isMobile': 'column',
               'columnGap.isDesktop': 24,
               'rowGap.isDesktop': 12,
+              'align.isMobile': 'center',
+              'justify.isDesktop': 'stretch',
             },
           },
         ],
@@ -176,6 +240,68 @@ describe('Grid schema validation', () => {
       expect(isValid).toBe(false);
       expect(
         validate.errors?.some((e) => e.keyword === 'enum' && e.instancePath === '/props/direction'),
+      ).toBe(true);
+    });
+
+    it('should fail on invalid enum for align', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, align is invalid
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              align: 'diagonal',
+            },
+          },
+        ],
+      });
+
+      const invalidGrid = formDef.form.children[0];
+      const isValid = validate(invalidGrid);
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some((e) => e.keyword === 'enum' && e.instancePath === '/props/align'),
+      ).toBe(true);
+    });
+
+    it('should fail on invalid enum for justify', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, justify is invalid
+          {
+            uid: 'grid-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [
+              {
+                uid: 'grid-child-1',
+                kind: 'input',
+                type: 'textinput',
+                path: 'f1',
+              },
+            ],
+            props: {
+              justify: 'space-between',
+            },
+          },
+        ],
+      });
+
+      const invalidGrid = formDef.form.children[0];
+      const isValid = validate(invalidGrid);
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some((e) => e.keyword === 'enum' && e.instancePath === '/props/justify'),
       ).toBe(true);
     });
 

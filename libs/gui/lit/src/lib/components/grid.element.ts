@@ -49,12 +49,25 @@ export class GridElement extends LitElement implements Core.WithWidget {
   }
 
   override render() {
-    const isRow = this.adapter.templateData.direction === 'row';
+    const isColumn = this.adapter.templateData.direction === 'column';
+    const isRow = !isColumn;
+    const autoFit = this.adapter.templateData.autoFit ?? true;
     const classes = {
       'gui-grid__widget': true,
       'gui-grid__widget--row': isRow,
-      'gui-grid__widget--row--auto-fit': isRow && !!this.adapter.templateData.autoFit,
-      'gui-grid__widget--column': !isRow,
+      'gui-grid__widget--row--auto-fit': isRow && autoFit,
+      'gui-grid__widget--column': isColumn,
+      'gui-grid__widget--align-center': this.adapter.templateData.align === 'center',
+      'gui-grid__widget--align-start': this.adapter.templateData.align === 'start',
+      'gui-grid__widget--align-end': this.adapter.templateData.align === 'end',
+      'gui-grid__widget--align-space-between': this.adapter.templateData.align === 'space-between',
+      'gui-grid__widget--align-space-around': this.adapter.templateData.align === 'space-around',
+      'gui-grid__widget--align-space-evenly': this.adapter.templateData.align === 'space-evenly',
+      'gui-grid__widget--align-stretch': !this.adapter.templateData.align || this.adapter.templateData.align === 'stretch',
+      'gui-grid__widget--justify-center': this.adapter.templateData.justify === 'center',
+      'gui-grid__widget--justify-start': this.adapter.templateData.justify === 'start',
+      'gui-grid__widget--justify-end': this.adapter.templateData.justify === 'end',
+      'gui-grid__widget--justify-stretch': this.adapter.templateData.justify === 'stretch',
     };
 
     const styles: string[] = [];

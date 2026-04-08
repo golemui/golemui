@@ -1,7 +1,7 @@
 export const repeater = (uid: string): any => ({
   uid,
   kind: 'layout',
-  type: 'grid',
+  type: 'flex',
   children: [
     {
       uid: '',

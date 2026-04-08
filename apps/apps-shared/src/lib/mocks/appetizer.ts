@@ -33,13 +33,44 @@ const data = {
 const form = defineForm({
   form: [
     {
+      uid: 'language',
+      kind: 'input',
+      type: 'dropdown',
+      path: 'language',
+      label: {
+        key: 'travelPlanner.field.language.label',
+        default: 'Language',
+      },
+      size: 2,
+      validator: { type: 'string', required: true },
+      defaultValue: 'en',
+      props: {
+        height: 300,
+        placeholder: {
+          key: 'travelPlanner.field.language.placeholder',
+          default: 'Select language',
+        },
+        labelField: 'label',
+        valueField: 'id',
+        items: [
+          { id: 'en', label: 'English' },
+          { id: 'es', label: 'Español' },
+          { id: 'fa', label: 'فارسی' },
+          { id: 'ja', label: '日本語' },
+        ],
+      },
+      on: {
+        change: 'onSelectLanguage',
+      },
+    },
+    {
       uid: '',
       kind: 'layout',
       type: 'grid',
       props: {
         direction: 'row',
         autoFit: true,
-        gap: 50,
+        align: 'stretch',
       },
       children: [
         {
@@ -99,30 +130,50 @@ const form = defineForm({
               coins[data?.$form?.departureCountry ?? 'US'],
           },
           validator: { type: 'number', required: true, minimum: 100 },
-        }
+        },
       ],
     },
     {
       uid: '',
       kind: 'layout',
-      type: 'flex',
+      type: 'grid',
       props: {
-        direction: 'column',
+        direction: 'row',
+        autoFit: true,
         align: 'end',
-        justify: 'end',
       },
       children: [
+        {
+          uid: 'budget2',
+          kind: 'input',
+          type: 'currency',
+          path: 'budget2',
+          label: {
+            key: 'travelPlanner.field.budget',
+            default: 'Travel Budget',
+          },
+          size: 2,
+          props: {
+            hint: 'A very long hint to show how the text wraps in two or more lines even when the input is too small.',
+            step: 100,
+            placeholder: (data: FunctionWidgetParams<any> | undefined) =>
+              coins[data?.$form?.departureCountry ?? 'US'],
+            currency: (data: FunctionWidgetParams<any> | undefined) =>
+              coins[data?.$form?.departureCountry ?? 'US'],
+          },
+          validator: { type: 'number', required: true, minimum: 100 },
+        },
         {
           uid: 'passengers',
           kind: 'input',
           type: 'number',
           path: 'passengers',
           defaultValue: 1,
+          size: 1,
           label: {
             key: 'travelPlanner.field.passengers',
             default: 'Passengers',
           },
-          size: 2,
           props: {
             minimum: 1,
             maximum: 10,
@@ -135,11 +186,11 @@ const form = defineForm({
           type: 'number',
           path: 'pets',
           defaultValue: 1,
+          size: 1,
           label: {
             key: 'travelPlanner.field.pets',
             default: 'Pets',
           },
-          size: 2,
           props: {
             minimum: 1,
             maximum: 3,
@@ -147,6 +198,18 @@ const form = defineForm({
           validator: { type: 'number', required: true, minimum: 1, maximum: 3 },
           include: { when: '$form.includePets === true' },
         },
+      ]
+    },
+    {
+      uid: '',
+      kind: 'layout',
+      type: 'flex',
+      props: {
+        direction: 'column',
+        align: 'end',
+        justify: 'end',
+      },
+      children: [
         {
           uid: 'includePets',
           kind: 'input',
@@ -213,6 +276,10 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
+          language: {
+            label: 'Language',
+            placeholder: 'Select language',
+          },
           departureCountry: {
             label: 'Departure Country',
             placeholder: 'Select a Country',
@@ -239,13 +306,17 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
+          language: {
+            label: 'Idioma',
+            placeholder: 'Seleccione un idioma',
+          },
           departureCountry: {
             label: 'País de origen',
             placeholder: 'Seleccione un país',
           },
           budget: 'Presupuesto de viaje',
-          passengers: 'pasajeros',
-          pets: 'mascotas',
+          passengers: 'Pasajeros',
+          pets: 'Mascotas',
           includePets: 'Incluir mascotas',
           preferredDates: {
             label: 'Seleccionar fechas preferidas',
@@ -265,6 +336,10 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
+          language: {
+            label: '言語',
+            placeholder: '言語を選択',
+          },
           departureCountry: {
             label: '出発国',
             placeholder: '国を選択',
@@ -291,6 +366,10 @@ const resources = {
     translation: {
       travelPlanner: {
         field: {
+          language: {
+            label: 'زبان',
+            placeholder: 'انتخاب زبان'
+          },
           departureCountry: {
             label: 'کشور مبدا',
             placeholder: 'یک کشور را انتخاب کنید',

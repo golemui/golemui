@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--gui-space-1);
-  margin-bottom: var(--gui-space-2);
+  margin-bottom: var(--gui-space-1);
   font-weight: 500;
   color: var(--gui-text-default);
 }
@@ -100,6 +100,8 @@
   &-hint {
     font-size: var(--gui-font-xs);
     color: var(--gui-text-muted);
+    width: 0;
+    min-width: 100%;
   }
 }
 

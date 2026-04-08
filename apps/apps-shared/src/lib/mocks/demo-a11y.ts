@@ -28,7 +28,7 @@ const form = defineForm({
           uid: 'login-flex',
           kind: 'layout',
           type: 'grid',
-          props: { gap: 20 },
+          props: { gap: 20, direction: 'column' },
           children: [
             {
               uid: 'login-email',
@@ -58,7 +58,7 @@ const form = defineForm({
           uid: 'register-flex',
           kind: 'layout',
           type: 'grid',
-          props: { gap: 20 },
+          props: { gap: 20, direction: 'column' },
           children: [
             {
               uid: 'login-firstName',
