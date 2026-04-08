@@ -13,11 +13,19 @@ export const onRequest = defineRouteMiddleware((context) => {
     // Store framework for components like FrameworkTabs to read
     route.framework = locale;
   } else if (!locale) {
-    // Root locale page (no framework prefix): redirect to default framework
-    const frameworkUrl = `/${DEFAULT_FRAMEWORK}${context.url.pathname}`;
-    route.head.push(
-      { tag: 'meta', attrs: { 'http-equiv': 'refresh', content: `0;url=${frameworkUrl}` } },
-      { tag: 'link', attrs: { rel: 'canonical', href: frameworkUrl } },
+    // Root locale page (no framework prefix): redirect to default framework.
+    // Guard against 404 pages that have no locale but already contain a framework
+    // prefix in the URL — without this check a missing page causes an infinite
+    // redirect loop (e.g. /react/asdf → /react/react/asdf → …).
+    const alreadyHasFramework = FRAMEWORKS.some(
+      (fw) => context.url.pathname === `/${fw}` || context.url.pathname.startsWith(`/${fw}/`),
     );
+    if (!alreadyHasFramework) {
+      const frameworkUrl = `/${DEFAULT_FRAMEWORK}${context.url.pathname}`;
+      route.head.push(
+        { tag: 'meta', attrs: { 'http-equiv': 'refresh', content: `0;url=${frameworkUrl}` } },
+        { tag: 'link', attrs: { rel: 'canonical', href: frameworkUrl } },
+      );
+    }
   }
 });
