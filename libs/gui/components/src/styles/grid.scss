@@ -65,16 +65,16 @@
       }
     }
   }
-}
 
-.gui-grid__widget--row {
-  .gui-label { margin-bottom: 0; }
-  .gui-validator { margin-top: 0; }
+  .gui-grid__widget--row {
+    .gui-label { margin-bottom: 0; }
+    .gui-validator { margin-top: 0; }
 
-  gui-checkbox::after,
-  gui-toggle::after {
-    content: '';
-    display: block;
+    gui-checkbox::after,
+    gui-toggle::after {
+      content: '';
+      display: block;
+    }
   }
 }
 
@@ -89,7 +89,5 @@
 
       .gui-field { display: block; }
     }
-    .gui-label { margin-bottom: var(--gui-space-2); }
-    .gui-validator { margin-top: var(--gui-space-2); }
   }
 }

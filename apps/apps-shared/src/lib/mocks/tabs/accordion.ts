@@ -18,7 +18,7 @@ export const accordion = (uid: string): any => ({
     {
       uid: 'section1',
       kind: 'layout',
-      type: 'grid',
+      type: 'flex',
       children: [
         {
           uid: '',

@@ -7,7 +7,7 @@ const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
 export const list = (uid: string): any => ({
   uid,
   kind: 'layout',
-  type: 'grid',
+  type: 'flex',
   children: [
     {
       uid: '',
