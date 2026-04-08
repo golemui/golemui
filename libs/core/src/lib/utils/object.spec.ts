@@ -1,5 +1,34 @@
 import { describe, expect, it } from 'vitest';
-import { get, set } from './object';
+import { get, isNilOrEmptyObject, set } from './object';
+
+describe('isNilOrEmptyObject', () => {
+  it('returns true for null', () => {
+    expect(isNilOrEmptyObject(null)).toBe(true);
+  });
+
+  it('returns true for undefined', () => {
+    expect(isNilOrEmptyObject(undefined)).toBe(true);
+  });
+
+  it('returns true for empty object', () => {
+    expect(isNilOrEmptyObject({})).toBe(true);
+  });
+
+  it('returns false for object with keys', () => {
+    expect(isNilOrEmptyObject({ a: 1 })).toBe(false);
+  });
+
+  it('returns false for arrays', () => {
+    expect(isNilOrEmptyObject([])).toBe(false);
+    expect(isNilOrEmptyObject([1, 2])).toBe(false);
+  });
+
+  it('returns false for primitives', () => {
+    expect(isNilOrEmptyObject(0)).toBe(false);
+    expect(isNilOrEmptyObject('')).toBe(false);
+    expect(isNilOrEmptyObject(false)).toBe(false);
+  });
+});
 
 describe('object.set', () => {
   it('sets dot notation paths', () => {
