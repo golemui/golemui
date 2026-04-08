@@ -32,6 +32,7 @@
 
       &--column {
         grid-template-columns: auto;
+        height: 100%;
 
         &.gui-grid__widget--align-center { align-content: center; }
         &.gui-grid__widget--align-start { align-content: start; }
