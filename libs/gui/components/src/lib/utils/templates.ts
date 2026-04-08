@@ -20,7 +20,6 @@ export const addLabel = <T, ExtraProps extends { hint?: string }>(
   type: string | undefined = undefined,
   isNativeElement = true,
 ) => {
-  console.log(templateData.label, templateData.required);
   if (isNativeElement) {
     return templateData.label
       ? html`<label

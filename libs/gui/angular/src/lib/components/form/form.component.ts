@@ -15,6 +15,7 @@ export class FormComponent {
   formDef = input.required<string | Record<string, any>>();
   widgetLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>({});
   data = input<Record<string, any>>({});
+  meta = input<Record<string, any>>({});
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   validators = input<CustomValidatorSchemas>({});
   validateOn = input<Core.ValidateOn>('eager');

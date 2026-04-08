@@ -17,6 +17,7 @@ import { vanillaWidgetLoaders } from '../widget.loaders';
 export class FormElement extends LitElement {
   @property({ type: Object }) formDef!: string | Record<string, any>;
   @property({ type: Object }) data: any = {};
+  @property({ type: Object }) meta: Record<string, any> = {};
   // TODO: this should be customWidgetLoaders
   @property({ type: Object }) widgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
@@ -60,6 +61,7 @@ export class FormElement extends LitElement {
       <gui-core-form
         .formDef=${this.formDef}
         .data=${this.data}
+        .meta=${this.meta}
         .widgetLoaders=${this.customWidgetLoaders}
         .itemRenderers=${this.itemRenderers}
         .localization=${this.localization}

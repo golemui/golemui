@@ -67,7 +67,18 @@ export type State = {
    */
   widgetPropOverrides: Record<Uid, Record<string, any>>;
 
+  /**
+   * Key-value pairs representing the current state of the form's input fields.
+   * The keys correspond to the control names.
+   */
   data: Record<string, any>;
+
+  /**
+   * Supplemental runtime context used for form logic, calculations, and UI state.
+   * Includes external dependencies like display flags or error messages.
+   * @example { errorMessage: "Invalid credentials", isAuth: true }
+   */
+  meta: Record<string, any>;
 
   /**
    * This reflects whether the form is currently functioning normally
@@ -105,6 +116,7 @@ export const createInitialState = (lang: string): State => ({
   widgetFlags: {},
   widgetPropOverrides: {},
   data: {},
+  meta: {},
   formHealth: { status: 'ok' },
   touched: false,
   lang,

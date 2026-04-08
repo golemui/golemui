@@ -72,7 +72,11 @@ function calculateFlags(state: State): State['widgetFlags'] {
               state.currentStates.includes(widgetState),
             );
           } else if (widget.include && 'when' in widget.include) {
-            flags[widget.uid].hidden = !expressionIsTrue(widget.include.when, state.data);
+            flags[widget.uid].hidden = !expressionIsTrue(
+              widget.include.when,
+              state.data,
+              state.meta,
+            );
           }
 
           // hide
@@ -81,7 +85,11 @@ function calculateFlags(state: State): State['widgetFlags'] {
               state.currentStates.includes(widgetState),
             );
           } else if (widget.exclude && 'when' in widget.exclude) {
-            flags[widget.uid].hidden = expressionIsTrue(widget.exclude.when, state.data);
+            flags[widget.uid].hidden = expressionIsTrue(
+              widget.exclude.when,
+              state.data,
+              state.meta,
+            );
           }
 
           // TODO: We have to document that (disabled|readonly).when is NOT compatible with states e.g. `{'disabled.register': {when: '...'}}`
@@ -93,6 +101,7 @@ function calculateFlags(state: State): State['widgetFlags'] {
               flags[widget.uid].disabled = expressionIsTrue(
                 (widget.disabled as { when: string }).when,
                 state.data,
+                state.meta,
               );
             }
           }
@@ -102,6 +111,7 @@ function calculateFlags(state: State): State['widgetFlags'] {
             flags[widget.uid].readonly = expressionIsTrue(
               (widget.readonly as { when: string }).when,
               state.data,
+              state.meta,
             );
           }
 
@@ -192,6 +202,7 @@ function expandRepeaterFlags(
         flags[uid].hidden = !expressionIsTrue(
           transformRepeaterItemWhenExpression(resolved.include.when, currentIndexes),
           state.data,
+          state.meta,
         );
       }
 
@@ -202,6 +213,7 @@ function expandRepeaterFlags(
         flags[uid].hidden = expressionIsTrue(
           transformRepeaterItemWhenExpression(resolved.exclude.when, currentIndexes),
           state.data,
+          state.meta,
         );
       }
 
@@ -213,6 +225,7 @@ function expandRepeaterFlags(
             currentIndexes,
           ),
           state.data,
+          state.meta,
         );
       }
 
@@ -224,6 +237,7 @@ function expandRepeaterFlags(
             currentIndexes,
           ),
           state.data,
+          state.meta,
         );
       }
     });
