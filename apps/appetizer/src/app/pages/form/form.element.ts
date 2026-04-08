@@ -45,12 +45,16 @@ export class FormElement extends LitElement {
   }
 
   protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
-    await AppsShared.onFormEvent(event.detail);
-    Promise.resolve().then(() => this.requestUpdate());
+    if (event.detail.name === 'onSelectLanguage') {
+      this.onLanguageChanged(event);
+    } else {
+      await AppsShared.onFormEvent(event.detail);
+      Promise.resolve().then(() => this.requestUpdate());
+    }
   }
 
-  protected onLanguageChanged(event: CustomEvent<{ value: string }>) {
-    const code = event.detail.value;
+  protected onLanguageChanged(event: CustomEvent<{ data: any }>) {
+    const code = event.detail.data.language;
     i18next.changeLanguage(code);
   }
 
@@ -58,22 +62,9 @@ export class FormElement extends LitElement {
     i18next.changeLanguage(code);
   }
 
-  private languagePicker() {
-    return html`<div>
-      <gui-select
-        label="Language picker"
-        uid="language"
-        value="en"
-        .options=${this.languages}
-        @change=${this.onLanguageChanged}
-      ></gui-select>
-    </div>`;
-  }
-
   render() {
     return html`
       <div>
-        ${this.languages.length > 0 ? this.languagePicker() : null}
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
         <gui-form
