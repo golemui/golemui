@@ -15,6 +15,12 @@
     },
     "autoFitProp": {
       "type": "boolean"
+    },
+    "alignProp": {
+      "enum": ["center", "start", "end", "space-between", "space-around", "space-evenly", "stretch"]
+    },
+    "justifyProp": {
+      "enum": ["center", "start", "end", "stretch"]
     }
   },
   "allOf": [
@@ -50,6 +56,12 @@
         },
         "autoFit": {
           "$ref": "#/$defs/autoFitProp"
+        },
+        "align": {
+          "$ref": "#/$defs/alignProp"
+        },
+        "justify": {
+          "$ref": "#/$defs/justifyProp"
         }
       },
       "patternProperties": {
@@ -64,6 +76,12 @@
         },
         "^autoFit\\.[^.]+$": {
           "$ref": "#/$defs/autoFitProp"
+        },
+        "^align\\.[^.]+$": {
+          "$ref": "#/$defs/alignProp"
+        },
+        "^justify\\.[^.]+$": {
+          "$ref": "#/$defs/justifyProp"
         }
       },
       "additionalProperties": false

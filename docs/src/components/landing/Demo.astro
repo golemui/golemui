@@ -7,7 +7,7 @@ interface Props {
 
 const { src, title = 'Component Demo', minHeight } = Astro.props;
 
-let minHeightValue = minHeight;
+let minHeightValue = minHeight ?? 0;
 if (typeof minHeight === 'number') {
   minHeightValue = `${minHeight}px`;
 } else if (typeof minHeight === 'string' && /^\d+$/.test(minHeight)) {
@@ -22,16 +22,15 @@ if (typeof minHeight === 'number') {
     class="demo-iframe"
     loading="lazy"
     data-min-height={minHeightValue}
-    style="height: 0px; min-height: 0px;"></iframe>
+    style={`height: 0px; min-height: ${minHeightValue};`}></iframe>
 </div>
 
 <style>
   .demo-container {
     width: 100%;
     border: 0;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 1rem;
   }
 
   .demo-iframe {

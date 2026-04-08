@@ -99,6 +99,7 @@ export function List(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
+  const showErrors = isTouched && errors && errors.length > 0;
 
   return (
     <div className="gui-list gui-field" style={{ flex: templateData.size }}>
@@ -166,7 +167,7 @@ export function List(widgetInstance: Core.WithWidget) {
         </gui-list>
       </div>
 
-      <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>
+      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
     </div>
   );
 }
