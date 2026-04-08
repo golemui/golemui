@@ -100,6 +100,8 @@
   &-hint {
     font-size: var(--gui-font-xs);
     color: var(--gui-text-muted);
+    width: 0;
+    min-width: 100%;
   }
 }
 
