@@ -6,16 +6,21 @@ description: A Checkbox component to allow user to toggle boolean values
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import checkboxJson from '../../../../../public/template/components/checkbox/checkbox.json?raw';
+import checkboxDx from '../../../../../public/template/components-dx/checkbox/checkbox.ts?raw';
 import checkboxHintJson from '../../../../../public/template/components/checkbox/checkbox-hint.json?raw';
+import checkboxHintDx from '../../../../../public/template/components-dx/checkbox/checkbox-hint.ts?raw';
 import checkboxPositionJson from '../../../../../public/template/components/checkbox/checkbox-position.json?raw';
+import checkboxPositionDx from '../../../../../public/template/components-dx/checkbox/checkbox-position.ts?raw';
 import checkboxAnatomyHtml from '../../../../../public/template/components/checkbox/checkbox-anatomy.html?raw';
 export const configJson = 'checkbox.json';
+export const configDx = 'checkbox.ts';
 export const anatomy = 'checkbox-anatomy.html';
 
 Checkbox components are [Input Fields](/components-reference/input-fields/overview) that allow the user to toggle boolean (true/false) values. They are usually used to represent an "on/off" state.
 
-<Code code={checkboxJson} lang="js" title={configJson} />
+<DslCode dxCode={checkboxDx} jsonCode={checkboxJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/checkbox/checkbox.json"
 />
@@ -35,7 +40,7 @@ Use these `props` to customize your Checkbox component.
 
 Use the property `hint` to add a description.
 
-<Code code={checkboxHintJson} lang="js" title={configJson} />
+<DslCode dxCode={checkboxHintDx} jsonCode={checkboxHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/checkbox/checkbox-hint.json"
 />
@@ -44,7 +49,7 @@ Use the property `hint` to add a description.
 
 Use the property `checkboxPosition` to put the checkbox to the `left` (default) or `right` of its label.
 
-<Code code={checkboxPositionJson} lang="js" title={configJson} />
+<DslCode dxCode={checkboxPositionDx} jsonCode={checkboxPositionJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/checkbox/checkbox-position.json"
 />

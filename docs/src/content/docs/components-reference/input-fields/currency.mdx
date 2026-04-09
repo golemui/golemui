@@ -6,20 +6,29 @@ description: A Currency component to allow user to enter monetary values
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import currencyJson from '../../../../../public/template/components/currency/currency.json?raw';
+import currencyDx from '../../../../../public/template/components-dx/currency/currency.ts?raw';
 import currencyPlaceholderJson from '../../../../../public/template/components/currency/currency-placeholder.json?raw';
+import currencyPlaceholderDx from '../../../../../public/template/components-dx/currency/currency-placeholder.ts?raw';
 import currencyHintJson from '../../../../../public/template/components/currency/currency-hint.json?raw';
+import currencyHintDx from '../../../../../public/template/components-dx/currency/currency-hint.ts?raw';
 import currencyIconJson from '../../../../../public/template/components/currency/currency-icon.json?raw';
+import currencyIconDx from '../../../../../public/template/components-dx/currency/currency-icon.ts?raw';
 import currencyFormatJson from '../../../../../public/template/components/currency/currency-format.json?raw';
+import currencyFormatDx from '../../../../../public/template/components-dx/currency/currency-format.ts?raw';
 import currencyPrecisionJson from '../../../../../public/template/components/currency/currency-precision.json?raw';
+import currencyPrecisionDx from '../../../../../public/template/components-dx/currency/currency-precision.ts?raw';
 import currencyStepJson from '../../../../../public/template/components/currency/currency-step.json?raw';
+import currencyStepDx from '../../../../../public/template/components-dx/currency/currency-step.ts?raw';
 import currencyAnatomyHtml from '../../../../../public/template/components/currency/currency-anatomy.html?raw';
 export const configJson = 'currency.json';
+export const configDx = 'currency.ts';
 export const anatomy = 'currency-anatomy.html';
 
 Currency components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter monetary values, displaying a formatted currency string over the input when inactive.
 
-<Code code={currencyJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyDx} jsonCode={currencyJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency.json"
 />
@@ -42,7 +51,7 @@ Use these `props` to customize your Currency component.
 
 Use the property `placeholder` to add a placeholder.
 
-<Code code={currencyPlaceholderJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyPlaceholderDx} jsonCode={currencyPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency-placeholder.json"
 />
@@ -53,7 +62,7 @@ Use the property `placeholder` to add a placeholder.
 
 Use the property `hint` to add a description.
 
-<Code code={currencyHintJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyHintDx} jsonCode={currencyHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency-hint.json"
 />
@@ -62,7 +71,7 @@ Use the property `hint` to add a description.
 
 Use the property `icon` to add an icon to the component. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the input field.
 
-<Code code={currencyIconJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyIconDx} jsonCode={currencyIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency-icon.json"
 />
@@ -71,7 +80,7 @@ Use the property `icon` to add an icon to the component. The value of `icon` rep
 
 Use the properties `currency`, `minimumFractionDigits`, and `maximumFractionDigits` to tightly control how the monetary value is parsed and formatted when not actively being edited. Default for minimum fraction digits is usually 2.
 
-<Code code={currencyFormatJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyFormatDx} jsonCode={currencyFormatJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency-format.json"
 />
@@ -80,7 +89,7 @@ Use the properties `currency`, `minimumFractionDigits`, and `maximumFractionDigi
 
 Use the properties `minimumFractionDigits` and `maximumFractionDigits` to specify the exact number of decimal places for the formatted currency display.
 
-<Code code={currencyPrecisionJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyPrecisionDx} jsonCode={currencyPrecisionJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency-precision.json"
 />
@@ -89,7 +98,7 @@ Use the properties `minimumFractionDigits` and `maximumFractionDigits` to specif
 
 Use the `step` property to define the increment size for numeric input via keyboard (arrows) or browser controls.
 
-<Code code={currencyStepJson} lang="js" title={configJson} />
+<DslCode dxCode={currencyStepDx} jsonCode={currencyStepJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/currency/currency-step.json"
 />

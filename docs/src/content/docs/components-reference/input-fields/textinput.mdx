@@ -6,18 +6,24 @@ description: A Textinput component to allow user to enter string chains
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import textinputJson from '../../../../../public/template/components/textinput/textinput.json?raw';
+import textinputDx from '../../../../../public/template/components-dx/textinput/textinput.ts?raw';
 import textinputPlaceholderJson
 from '../../../../../public/template/components/textinput/textinput-placeholder.json?raw';
+import textinputPlaceholderDx from '../../../../../public/template/components-dx/textinput/textinput-placeholder.ts?raw';
 import textinputHintJson from '../../../../../public/template/components/textinput/textinput-hint.json?raw';
+import textinputHintDx from '../../../../../public/template/components-dx/textinput/textinput-hint.ts?raw';
 import textinputIconJson from '../../../../../public/template/components/textinput/textinput-icon.json?raw';
+import textinputIconDx from '../../../../../public/template/components-dx/textinput/textinput-icon.ts?raw';
 import textinputAnatomyHtml from '../../../../../public/template/components/textinput/textinput-anatomy.html?raw';
 export const configJson = 'textinput.json';
+export const configDx = 'textinput.ts';
 export const anatomy = 'textinput.html';
 
 Textinput components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter string chains.
 
-<Code code={textinputJson} lang="js" title={configJson} />
+<DslCode dxCode={textinputDx} jsonCode={textinputJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textinput/textinput.json"
 />
@@ -36,7 +42,7 @@ Use this `props` to customize your Textinput component.
 
 Use the property `placeholder` to add a placeholder.
 
-<Code code={textinputPlaceholderJson} lang="js" title={configJson} />
+<DslCode dxCode={textinputPlaceholderDx} jsonCode={textinputPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textinput/textinput-placeholder.json"
 />
@@ -47,7 +53,7 @@ Use the property `placeholder` to add a placeholder.
 
 Use the property `hint` to add a description.
 
-<Code code={textinputHintJson} lang="js" title={configJson} />
+<DslCode dxCode={textinputHintDx} jsonCode={textinputHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textinput/textinput-hint.json"
 />
@@ -56,7 +62,7 @@ Use the property `hint` to add a description.
 
 Use the property `icon` to add an icon to the `textinput`. The value of `icon` represents a set of CSS classes separated by spaces.
 
-<Code code={textinputIconJson} lang="js" title={configJson} />
+<DslCode dxCode={textinputIconDx} jsonCode={textinputIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/textinput/textinput-icon.json"
 />

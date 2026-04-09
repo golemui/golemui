@@ -6,16 +6,21 @@ description: A Toggle component to allow user to switch between two states
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import toggleJson from '../../../../../public/template/components/toggle/toggle.json?raw';
+import toggleDx from '../../../../../public/template/components-dx/toggle/toggle.ts?raw';
 import toggleHintJson from '../../../../../public/template/components/toggle/toggle-hint.json?raw';
+import toggleHintDx from '../../../../../public/template/components-dx/toggle/toggle-hint.ts?raw';
 import togglePositionJson from '../../../../../public/template/components/toggle/toggle-position.json?raw';
+import togglePositionDx from '../../../../../public/template/components-dx/toggle/toggle-position.ts?raw';
 import toggleAnatomyHtml from '../../../../../public/template/components/toggle/toggle-anatomy.html?raw';
 export const configJson = 'toggle.json';
+export const configDx = 'toggle.ts';
 export const anatomy = 'toggle-anatomy.html';
 
 Toggle components are [Input Fields](/components-reference/input-fields/overview) that act as visual switches, allowing the user to turn a setting on or off. They represent a boolean value.
 
-<Code code={toggleJson} lang="js" title={configJson} />
+<DslCode dxCode={toggleDx} jsonCode={toggleJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/toggle/toggle.json"
 />
@@ -35,7 +40,7 @@ Use these `props` to customize your Toggle component.
 
 Use the property `hint` to add a description.
 
-<Code code={toggleHintJson} lang="js" title={configJson} />
+<DslCode dxCode={toggleHintDx} jsonCode={toggleHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/toggle/toggle-hint.json"
 />
@@ -44,7 +49,7 @@ Use the property `hint` to add a description.
 
 Use the property `togglePosition` to align the toggle switch to the `left` (default) or `right` of its label.
 
-<Code code={togglePositionJson} lang="js" title={configJson} />
+<DslCode dxCode={togglePositionDx} jsonCode={togglePositionJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/toggle/toggle-position.json"
 />

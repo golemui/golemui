@@ -4,7 +4,7 @@ description: Learn how to validate dynamic forms and create custom validators fo
 ---
 import Demo from '../../../../src/components/landing/Demo.astro';
 
-import FrameworkTabs from '../../../../src/components/FrameworkTabs.astro';
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
 ### Adding validators to your Control Fields
 
@@ -80,7 +80,7 @@ export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
 
 Next, inform the form that it should use the custom validator when it encounters a specific key in the `validator` declaration within your JSON. To do this, create a `CustomValidatorSchemas` object and pass it to the form through its `customValidators` input.
 
-<FrameworkTabs>
+<IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import * as Core from '@golemui/core';
@@ -147,7 +147,7 @@ Next, inform the form that it should use the custom validator when it encounters
     ```
 
   </Fragment>
-</FrameworkTabs>
+</IntegrationTabs>
 
 Finally, declare your validator:
 
@@ -201,7 +201,7 @@ When not set, the default `validateOn` behaviour is `'eager'`.
 
 - `'eager'`: Validates when any of the above happens.
 
-<FrameworkTabs>
+<IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import * as Core from '@golemui/core';
@@ -257,7 +257,7 @@ When not set, the default `validateOn` behaviour is `'eager'`.
     ```
 
   </Fragment>
-</FrameworkTabs>
+</IntegrationTabs>
 
 ### JsonSchema support
 

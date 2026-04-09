@@ -5,19 +5,27 @@ description: A Repeater component to allow the user to enter information as a li
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import repeaterJson from '../../../../../public/template/components/repeater/repeater.json?raw';
+import repeaterDx from '../../../../../public/template/components-dx/repeater/repeater.ts?raw';
 import repeaterLabelsJson from '../../../../../public/template/components/repeater/repeater-labels.json?raw';
+import repeaterLabelsDx from '../../../../../public/template/components-dx/repeater/repeater-labels.ts?raw';
 import repeaterLimitJson from '../../../../../public/template/components/repeater/repeater-limit.json?raw';
+import repeaterLimitDx from '../../../../../public/template/components-dx/repeater/repeater-limit.ts?raw';
 import repeaterTitleJson from '../../../../../public/template/components/repeater/repeater-title.json?raw';
+import repeaterTitleDx from '../../../../../public/template/components-dx/repeater/repeater-title.ts?raw';
 import repeaterIconsJson from '../../../../../public/template/components/repeater/repeater-icons.json?raw';
+import repeaterIconsDx from '../../../../../public/template/components-dx/repeater/repeater-icons.ts?raw';
 import repeaterNestedJson from '../../../../../public/template/components/repeater/repeater-nested.json?raw';
+import repeaterNestedDx from '../../../../../public/template/components-dx/repeater/repeater-nested.ts?raw';
 import repeaterAnatomyHtml from '../../../../../public/template/components/repeater/repeater-anatomy.html?raw';
 export const configJson = 'repeater.json';
+export const configDx = 'repeater.ts';
 export const anatomy = 'repeater.html';
 
 Repeater components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter information as a list given a template. The information will be stored and returned as an array of objects.
 
-<Code code={repeaterJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterDx} jsonCode={repeaterJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater.json"
 />
@@ -40,7 +48,7 @@ Use this `props` to customize your Repeater component.
 
 Use the property `template` to render a tree of Field components for each item in the array of the Repeater component. The `path` in the [Input Fields](/components-reference/input-fields/overview) components inside the `template` will be updated replacing `items` keyword by the index of the array. For example, `users.items.firstName` will be replaced by `users[0].firstName` for the first element and so on.
 
-<Code code={repeaterJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterDx} jsonCode={repeaterJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater.json"
 />
@@ -49,7 +57,7 @@ Use the property `template` to render a tree of Field components for each item i
 
 Use the property `addLabel` and `removeLabel` to set custom labels for the Add and Remove button.
 
-<Code code={repeaterLabelsJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterLabelsDx} jsonCode={repeaterLabelsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-labels.json"
 />
@@ -58,7 +66,7 @@ Use the property `addLabel` and `removeLabel` to set custom labels for the Add a
 
 Use the property `limit` to set a limit to the number of elements that can be added to a repeater.
 
-<Code code={repeaterLimitJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterLimitDx} jsonCode={repeaterLimitJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-limit.json"
 />
@@ -67,7 +75,7 @@ Use the property `limit` to set a limit to the number of elements that can be ad
 
 Use the property `title` to display a static title at the top of each card.
 
-<Code code={repeaterTitleJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterTitleDx} jsonCode={repeaterTitleJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-title.json"
 />
@@ -76,7 +84,7 @@ Use the property `title` to display a static title at the top of each card.
 
 Use the properties `addButtonIcon` and `removeButtonIcon` to display an icon inside the add and remove buttons. Icons are passed as a CSS class string, the same way as other icon props in the library.
 
-<Code code={repeaterIconsJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterIconsDx} jsonCode={repeaterIconsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-icons.json"
 />
@@ -92,7 +100,7 @@ Repeaters can be nested inside other repeaters to model hierarchical data struct
 
 At runtime, each `items` token is replaced by the corresponding array index. For instance, `teams.items.members.items.memberName` becomes `teams[0].members[1].memberName` for the second member of the first team.
 
-<Code code={repeaterNestedJson} lang="js" title={configJson} />
+<DslCode dxCode={repeaterNestedDx} jsonCode={repeaterNestedJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/repeater/repeater-nested.json"
 />

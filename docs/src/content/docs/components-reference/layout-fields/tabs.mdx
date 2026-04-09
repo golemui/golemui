@@ -5,14 +5,17 @@ description: A Layout component for organizing content into separate views acces
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import tabsJson from '../../../../../public/template/components/tabs/tabs.json?raw';
+import tabsDx from '../../../../../public/template/components-dx/tabs/tabs.ts?raw';
 import tabsAnatomyHtml from '../../../../../public/template/components/tabs/tabs-anatomy.html?raw';
 export const configJson = 'tabs.json';
+export const configDx = 'tabs.ts';
 export const anatomy = 'tabs-anatomy.html';
 
 Tabs components are [Layout Fields](/components-reference/layout-fields/overview) that allow users to switch between different content areas within the same context. They are highly effective for breaking down large forms into logical, manageable pieces.
 
-<Code code={tabsJson} lang="js" title={configJson} />
+<DslCode dxCode={tabsDx} jsonCode={tabsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/tabs/tabs.json"
 />

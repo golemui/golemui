@@ -6,20 +6,29 @@ description: A Range Calendar component to allow user to select a range of dates
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import rangeCalendarJson from '../../../../../public/template/components/range-calendar/range-calendar.json?raw';
+import rangeCalendarDx from '../../../../../public/template/components-dx/range-calendar/range-calendar.ts?raw';
 import rangeCalendarHintJson from '../../../../../public/template/components/range-calendar/range-calendar-hint.json?raw';
+import rangeCalendarHintDx from '../../../../../public/template/components-dx/range-calendar/range-calendar-hint.ts?raw';
 import rangeCalendarMinMaxJson from '../../../../../public/template/components/range-calendar/range-calendar-minmax.json?raw';
+import rangeCalendarMinMaxDx from '../../../../../public/template/components-dx/range-calendar/range-calendar-minmax.ts?raw';
 import rangeCalendarMonthsJson from '../../../../../public/template/components/range-calendar/range-calendar-months.json?raw';
+import rangeCalendarMonthsDx from '../../../../../public/template/components-dx/range-calendar/range-calendar-months.ts?raw';
 import rangeCalendarDisabledJson from '../../../../../public/template/components/range-calendar/range-calendar-disabled.json?raw';
+import rangeCalendarDisabledDx from '../../../../../public/template/components-dx/range-calendar/range-calendar-disabled.ts?raw';
 import rangeCalendarIconsJson from '../../../../../public/template/components/range-calendar/range-calendar-icons.json?raw';
+import rangeCalendarIconsDx from '../../../../../public/template/components-dx/range-calendar/range-calendar-icons.ts?raw';
 import rangeCalendarAriaLabelsJson from '../../../../../public/template/components/range-calendar/range-calendar-aria-labels.json?raw';
+import rangeCalendarAriaLabelsDx from '../../../../../public/template/components-dx/range-calendar/range-calendar-aria-labels.ts?raw';
 import rangeCalendarAnatomyHtml from '../../../../../public/template/components/range-calendar/range-calendar-anatomy.html?raw';
 export const configJson = 'range-calendar.json';
+export const configDx = 'range-calendar.ts';
 export const anatomy = 'range-calendar-anatomy.html';
 
 Range Calendar components are [Input Fields](/components-reference/input-fields/overview) that allow the user to visualize and select an inclusive date range (start date and end date).
 
-<Code code={rangeCalendarJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarDx} jsonCode={rangeCalendarJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar.json"
 />
@@ -45,7 +54,7 @@ Use these `props` to customize your Range Calendar component. Range Calendars sh
 
 Use the property `hint` to add a description to the date range selection.
 
-<Code code={rangeCalendarHintJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarHintDx} jsonCode={rangeCalendarHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-hint.json"
 />
@@ -54,7 +63,7 @@ Use the property `hint` to add a description to the date range selection.
 
 Use the properties `minDate` and `maxDate` to specify the boundaries for selectable dates.
 
-<Code code={rangeCalendarMinMaxJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarMinMaxDx} jsonCode={rangeCalendarMinMaxJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-minmax.json"
 />
@@ -63,7 +72,7 @@ Use the properties `minDate` and `maxDate` to specify the boundaries for selecta
 
 Use the property `numberOfMonths` to display multiple months side-by-side to ease selection of larger spans.
 
-<Code code={rangeCalendarMonthsJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarMonthsDx} jsonCode={rangeCalendarMonthsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-months.json"
 />
@@ -72,7 +81,7 @@ Use the property `numberOfMonths` to display multiple months side-by-side to eas
 
 Use the property `disabledRanges` to define dates which cannot be highlighted as part of a range.
 
-<Code code={rangeCalendarDisabledJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarDisabledDx} jsonCode={rangeCalendarDisabledJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-disabled.json"
 />
@@ -81,7 +90,7 @@ Use the property `disabledRanges` to define dates which cannot be highlighted as
 
 Use `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel` and `nextMonthAriaLabel` to customize the navigation buttons.
 
-<Code code={rangeCalendarIconsJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarIconsDx} jsonCode={rangeCalendarIconsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-icons.json"
 />
@@ -90,7 +99,7 @@ Use `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel` and `nextMonthAriaLab
 
 Use `prevMonthAriaLabel`, `nextMonthAriaLabel` and `removePillAriaLabel` to provide accessible labels for the navigation buttons and the remove button on date range pills.
 
-<Code code={rangeCalendarAriaLabelsJson} lang="js" title={configJson} />
+<DslCode dxCode={rangeCalendarAriaLabelsDx} jsonCode={rangeCalendarAriaLabelsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/range-calendar/range-calendar-aria-labels.json"
 />
