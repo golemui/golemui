@@ -6,22 +6,32 @@ description: A Markdown editor component with a formatting toolbar and live prev
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import FrameworkTabs from '../../../../../src/components/FrameworkTabs.astro';
+import DslCode from '../../../../components/DslCode.astro';
+import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 import markdownJson from '../../../../../public/template/components/markdown/markdown.json?raw';
+import markdownDx from '../../../../../public/template/components-dx/markdown/markdown.ts?raw';
 import markdownPlaceholderJson from '../../../../../public/template/components/markdown/markdown-placeholder.json?raw';
+import markdownPlaceholderDx from '../../../../../public/template/components-dx/markdown/markdown-placeholder.ts?raw';
 import markdownHintJson from '../../../../../public/template/components/markdown/markdown-hint.json?raw';
+import markdownHintDx from '../../../../../public/template/components-dx/markdown/markdown-hint.ts?raw';
 import markdownCounterJson from '../../../../../public/template/components/markdown/markdown-counter.json?raw';
+import markdownCounterDx from '../../../../../public/template/components-dx/markdown/markdown-counter.ts?raw';
 import markdownAutogrowJson from '../../../../../public/template/components/markdown/markdown-autogrow.json?raw';
+import markdownAutogrowDx from '../../../../../public/template/components-dx/markdown/markdown-autogrow.ts?raw';
 import markdownToolsJson from '../../../../../public/template/components/markdown/markdown-tools.json?raw';
+import markdownToolsDx from '../../../../../public/template/components-dx/markdown/markdown-tools.ts?raw';
 import markdownTitlesJson from '../../../../../public/template/components/markdown/markdown-titles.json?raw';
+import markdownTitlesDx from '../../../../../public/template/components-dx/markdown/markdown-titles.ts?raw';
 import markdownDefaultOpenPreviewJson from '../../../../../public/template/components/markdown/markdown-default-open-preview.json?raw';
+import markdownDefaultOpenPreviewDx from '../../../../../public/template/components-dx/markdown/markdown-default-open-preview.ts?raw';
 import markdownAnatomyHtml from '../../../../../public/template/components/markdown/markdown-anatomy.html?raw';
 export const configJson = 'markdown.json';
+export const configDx = 'markdown.ts';
 export const anatomy = 'markdown-anatomy.html';
 
 Markdown components are [Input Fields](/components-reference/input-fields/overview) that provide a rich text editing experience with a formatting toolbar and an optional live preview panel. The toolbar lets users apply common markdown formatting (headings, bold, italic, quotes, links, lists) without needing to remember the syntax.
 
-<Code code={markdownJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownDx} jsonCode={markdownJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown.json"
 />
@@ -36,7 +46,7 @@ The Markdown component requires a markdown parser to power its live preview. Sin
 
 Pass `dependencies` as a property on the form component itself, not inside the widget's `props`:
 
-<FrameworkTabs>
+<IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import snarkdown from 'snarkdown';
@@ -99,7 +109,7 @@ Pass `dependencies` as a property on the form component itself, not inside the w
     ```
 
   </Fragment>
-</FrameworkTabs>
+</IntegrationTabs>
 
 <Aside>The live preview will only render parsed HTML when a `dependencies.markdown.parse` function is provided. Without it, the toolbar and editor still work, but the preview panel will be empty.</Aside>
 
@@ -141,7 +151,7 @@ The `tools` prop lets you customize which toolbar buttons are displayed and thei
 | `UL`  | Unordered list | `- some text`         |
 | `\|`  | Separator      | Visual separator only |
 
-<Code code={markdownToolsJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownToolsDx} jsonCode={markdownToolsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-tools.json"
 />
@@ -150,7 +160,7 @@ The `tools` prop lets you customize which toolbar buttons are displayed and thei
 
 Use the title props to customize the tooltip text for each toolbar button.
 
-<Code code={markdownTitlesJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownTitlesDx} jsonCode={markdownTitlesJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-titles.json"
 />
@@ -159,7 +169,7 @@ Use the title props to customize the tooltip text for each toolbar button.
 
 Use the property `placeholder` to add a placeholder.
 
-<Code code={markdownPlaceholderJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownPlaceholderDx} jsonCode={markdownPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-placeholder.json"
 />
@@ -170,7 +180,7 @@ Use the property `placeholder` to add a placeholder.
 
 Use the property `hint` to add a description.
 
-<Code code={markdownHintJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownHintDx} jsonCode={markdownHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-hint.json"
 />
@@ -179,7 +189,7 @@ Use the property `hint` to add a description.
 
 Use the validator `maxLength` to limit the number of characters and display a character counter. You can change how it counts with `counterMode` (`remaining` or `current`).
 
-<Code code={markdownCounterJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownCounterDx} jsonCode={markdownCounterJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-counter.json"
 />
@@ -188,7 +198,7 @@ Use the validator `maxLength` to limit the number of characters and display a ch
 
 Use the property `autoGrow` to allow the editor to expand automatically based on content. You can combine it with `minimumHeight` to set its initial size.
 
-<Code code={markdownAutogrowJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownAutogrowDx} jsonCode={markdownAutogrowJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-autogrow.json"
 />
@@ -197,7 +207,7 @@ Use the property `autoGrow` to allow the editor to expand automatically based on
 
 Use the property `defaultOpenPreview` to open the split view preview panel by default when the component loads.
 
-<Code code={markdownDefaultOpenPreviewJson} lang="js" title={configJson} />
+<DslCode dxCode={markdownDefaultOpenPreviewDx} jsonCode={markdownDefaultOpenPreviewJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/markdown/markdown-default-open-preview.json"
 />

@@ -6,20 +6,29 @@ description: A Number Input component to allow user to enter numeric values
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import numberJson from '../../../../../public/template/components/number/number.json?raw';
+import numberDx from '../../../../../public/template/components-dx/number/number.ts?raw';
 import numberPlaceholderJson from '../../../../../public/template/components/number/number-placeholder.json?raw';
+import numberPlaceholderDx from '../../../../../public/template/components-dx/number/number-placeholder.ts?raw';
 import numberHintJson from '../../../../../public/template/components/number/number-hint.json?raw';
+import numberHintDx from '../../../../../public/template/components-dx/number/number-hint.ts?raw';
 import numberIconJson from '../../../../../public/template/components/number/number-icon.json?raw';
+import numberIconDx from '../../../../../public/template/components-dx/number/number-icon.ts?raw';
 import numberStepJson from '../../../../../public/template/components/number/number-step.json?raw';
+import numberStepDx from '../../../../../public/template/components-dx/number/number-step.ts?raw';
 import numberMinMaxJson from '../../../../../public/template/components/number/number-min-max.json?raw';
+import numberMinMaxDx from '../../../../../public/template/components-dx/number/number-min-max.ts?raw';
 import numberAutogrowJson from '../../../../../public/template/components/number/number-autogrow.json?raw';
+import numberAutogrowDx from '../../../../../public/template/components-dx/number/number-autogrow.ts?raw';
 import numberAnatomyHtml from '../../../../../public/template/components/number/number-anatomy.html?raw';
 export const configJson = 'number.json';
+export const configDx = 'number.ts';
 export const anatomy = 'number-anatomy.html';
 
 Number Input components are [Input Fields](/components-reference/input-fields/overview) that allow the user to enter numeric values. They can include built-in controls (plus/minus buttons) for incrementing and decrementing the number.
 
-<Code code={numberJson} lang="js" title={configJson} />
+<DslCode dxCode={numberDx} jsonCode={numberJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number.json"
 />
@@ -42,7 +51,7 @@ Use these `props` to customize your Number Input component.
 
 Use the property `placeholder` to add a placeholder.
 
-<Code code={numberPlaceholderJson} lang="js" title={configJson} />
+<DslCode dxCode={numberPlaceholderDx} jsonCode={numberPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-placeholder.json"
 />
@@ -53,7 +62,7 @@ Use the property `placeholder` to add a placeholder.
 
 Use the property `hint` to add a description.
 
-<Code code={numberHintJson} lang="js" title={configJson} />
+<DslCode dxCode={numberHintDx} jsonCode={numberHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-hint.json"
 />
@@ -62,7 +71,7 @@ Use the property `hint` to add a description.
 
 Use the property `icon` to add an icon to the component. The value of `icon` represents a set of CSS classes separated by spaces.
 
-<Code code={numberIconJson} lang="js" title={configJson} />
+<DslCode dxCode={numberIconDx} jsonCode={numberIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-icon.json"
 />
@@ -71,7 +80,7 @@ Use the property `icon` to add an icon to the component. The value of `icon` rep
 
 Use the property `step` to define the amount by which the value increases or decreases when interacting with the controls.
 
-<Code code={numberStepJson} lang="js" title={configJson} />
+<DslCode dxCode={numberStepDx} jsonCode={numberStepJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-step.json"
 />
@@ -80,7 +89,7 @@ Use the property `step` to define the amount by which the value increases or dec
 
 Use the `minimum` and `maximum` properties to constrain the accepted range. The plus/minus buttons will be disabled if the limit is reached.
 
-<Code code={numberMinMaxJson} lang="js" title={configJson} />
+<DslCode dxCode={numberMinMaxDx} jsonCode={numberMinMaxJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-min-max.json"
 />
@@ -89,7 +98,7 @@ Use the `minimum` and `maximum` properties to constrain the accepted range. The 
 
 Use the property `autoGrow` to allow the input's width to change dynamically based on its content value.
 
-<Code code={numberAutogrowJson} lang="js" title={configJson} />
+<DslCode dxCode={numberAutogrowDx} jsonCode={numberAutogrowJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/number/number-autogrow.json"
 />

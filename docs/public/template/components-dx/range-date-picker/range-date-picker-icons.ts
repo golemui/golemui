@@ -1,0 +1,18 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      kind: 'input',
+      type: 'rangeDatePicker',
+      path: 'dateRanges',
+      label: 'Date Ranges',
+      props: {
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
+        prevMonthAriaLabel: 'Go to previous month',
+        nextMonthAriaLabel: 'Go to next month',
+      },
+    },
+  ],
+});

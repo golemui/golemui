@@ -6,18 +6,25 @@ description: A Select component to allow user to pick one option from a dropdown
 import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
 import selectJson from '../../../../../public/template/components/select/select.json?raw';
+import selectDx from '../../../../../public/template/components-dx/select/select.ts?raw';
 import selectPlaceholderJson from '../../../../../public/template/components/select/select-placeholder.json?raw';
+import selectPlaceholderDx from '../../../../../public/template/components-dx/select/select-placeholder.ts?raw';
 import selectHintJson from '../../../../../public/template/components/select/select-hint.json?raw';
+import selectHintDx from '../../../../../public/template/components-dx/select/select-hint.ts?raw';
 import selectIconJson from '../../../../../public/template/components/select/select-icon.json?raw';
+import selectIconDx from '../../../../../public/template/components-dx/select/select-icon.ts?raw';
 import selectCustomFieldsJson from '../../../../../public/template/components/select/select-custom-fields.json?raw';
+import selectCustomFieldsDx from '../../../../../public/template/components-dx/select/select-custom-fields.ts?raw';
 import selectAnatomyHtml from '../../../../../public/template/components/select/select-anatomy.html?raw';
 export const configJson = 'select.json';
+export const configDx = 'select.ts';
 export const anatomy = 'select-anatomy.html';
 
 Select components are [Input Fields](/components-reference/input-fields/overview) that allow users to pick a single item from a predefined list of options. They use the native HTML `<select>` element to provide familiar interaction patterns, especially on mobile devices.
 
-<Code code={selectJson} lang="js" title={configJson} />
+<DslCode dxCode={selectDx} jsonCode={selectJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/select/select.json"
 />
@@ -39,7 +46,7 @@ Use these `props` to customize your Select component.
 
 Use the property `placeholder` to define the default empty-state text.
 
-<Code code={selectPlaceholderJson} lang="js" title={configJson} />
+<DslCode dxCode={selectPlaceholderDx} jsonCode={selectPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/select/select-placeholder.json"
 />
@@ -50,7 +57,7 @@ Use the property `placeholder` to define the default empty-state text.
 
 Use the property `hint` to add descriptive text or validation instructions.
 
-<Code code={selectHintJson} lang="js" title={configJson} />
+<DslCode dxCode={selectHintDx} jsonCode={selectHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/select/select-hint.json"
 />
@@ -59,7 +66,7 @@ Use the property `hint` to add descriptive text or validation instructions.
 
 Use the property `icon` to add a visual indicator inside the select input, on the left side.
 
-<Code code={selectIconJson} lang="js" title={configJson} />
+<DslCode dxCode={selectIconDx} jsonCode={selectIconJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/select/select-icon.json"
 />
@@ -68,7 +75,7 @@ Use the property `icon` to add a visual indicator inside the select input, on th
 
 If your data source uses different keys for the label and value (e.g., `name` and `code`), use `labelField` and `valueField` to map them accordingly.
 
-<Code code={selectCustomFieldsJson} lang="js" title={configJson} />
+<DslCode dxCode={selectCustomFieldsDx} jsonCode={selectCustomFieldsJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/select/select-custom-fields.json"
 />

@@ -1,24 +1,23 @@
 import type { StarlightPlugin } from '@astrojs/starlight/types';
 
-export function frameworkRoutesPlugin(): StarlightPlugin {
+export function dslRoutesPlugin(): StarlightPlugin {
   return {
-    name: 'framework-routes',
+    name: 'dsl-routes',
     hooks: {
       'config:setup'({ updateConfig, addRouteMiddleware }) {
         updateConfig({
           locales: {
             root: { label: 'GolemUI', lang: 'en' },
-            react: { label: 'React', lang: 'en' },
-            angular: { label: 'Angular', lang: 'en' },
-            lit: { label: 'Lit', lang: 'en' },
+            dx: { label: 'Programmatic', lang: 'en' },
+            json: { label: 'JSON', lang: 'en' },
           },
           components: {
-            LanguageSelect: './src/components/overrides/FrameworkSelect.astro',
+            LanguageSelect: './src/components/overrides/DslSelect.astro',
             SiteTitle: './src/components/overrides/SiteTitle.astro',
           },
         });
         addRouteMiddleware({
-          entrypoint: './src/route-middleware/framework-filter.ts',
+          entrypoint: './src/route-middleware/dsl-filter.ts',
           order: 'pre',
         });
       },

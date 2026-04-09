@@ -1,0 +1,15 @@
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+---
+
+<Tabs syncKey="framework">
+  <TabItem label="React">
+    <slot name="react" />
+  </TabItem>
+  <TabItem label="Angular">
+    <slot name="angular" />
+  </TabItem>
+  <TabItem label="Lit">
+    <slot name="lit" />
+  </TabItem>
+</Tabs>

@@ -7,7 +7,8 @@ sidebar:
 import Demo from '../../../../src/components/landing/Demo.astro';
 
 import { Steps } from '@astrojs/starlight/components';
-import FrameworkTabs from '../../../../src/components/FrameworkTabs.astro';
+import DslTabs from '../../../../src/components/DslTabs.astro';
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
 GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files or other data sources. It provides a Free and PRO set of UI components with support for React, Angular, Vue and Lit.
 
@@ -21,7 +22,7 @@ Creating a dynamic form has never been this easy.
 
     Choose the framework you want to use for your project.
 
-    <FrameworkTabs>
+    <IntegrationTabs>
       <Fragment slot="react">
         ```bash
         npm i @golemui/core @golemui/react @golemui/gui-react --save
@@ -37,108 +38,113 @@ Creating a dynamic form has never been this easy.
         npm i @golemui/core @golemui/lit @golemui/gui-lit --save
         ```
       </Fragment>
-    </FrameworkTabs>
+    </IntegrationTabs>
 
 2.  ##### Import the Vanilla Components styles:
 
     You can load the CSS file directly in your HTML or import it in your Sass/CSS file.
 
-    <FrameworkTabs>
-      <Fragment slot="react">
-        ```scss
-        @import "@golemui/core/styles/index.css";
-        ```
-      </Fragment>
-      <Fragment slot="angular">
-        ```scss
-        @import "@golemui/core/styles/index.css";
-        ```
-      </Fragment>
-      <Fragment slot="lit">
-        ```scss
-        @import "@golemui/core/styles/index.css";
-        ```
-      </Fragment>
-    </FrameworkTabs>
+    ```scss
+    @import "@golemui/core/styles/index.css";
+    ```
 
 3.  ##### Create your first dynamic form:
 
     Create a component that renders a form using the `FormComponent`.
 
-    <FrameworkTabs>
-      <Fragment slot="react">
-        ```ts
-        const vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
-        const formDef = defineForm({
-          form: [{ uid: '', kind: 'input', widget: 'textinput', path: 'username' }],
-        });
-        const formData = { username: 'golemui' };
+    <DslTabs>
+      <Fragment slot="dx">
+        <IntegrationTabs>
+          <Fragment slot="react">
+            ```ts
+            const vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
+            const formDef = golemForm().create({
+              form: [{ kind: 'input', type: 'textinput', path: 'username' }],
+            });
+            const formData = { username: 'golemui' };
 
-        export function FormPage() {
-          return (
-           <div>
-            <React.FormComponent
-              formDef={formDef}
-              data={formData}
-              fieldLoader={vanillaWidgetLoaders}
-            />
-           </div>
-          );
+            export function FormPage() {
+              return (
+               <div>
+                <React.FormComponent
+                  formDef={formDef}
+                  data={formData}
+                  fieldLoader={vanillaWidgetLoaders}
+                />
+               </div>
+              );
+            }
+            ```
+          </Fragment>
+          <Fragment slot="angular">
+            ```ts
+            @Component({
+              imports: [CommonModule, Angular.FormComponent],
+              selector: 'app-dynamic-form',
+              template: `<gui-form
+                [formDef]="formDef"
+                [data]="formData"
+                [fieldLoaders]="vanillaFieldLoaders"
+              >
+              </gui-form>`,
+            })
+            export class AppFormPage {
+              protected formDef = golemForm().create({
+                form: [{ kind: 'input', type: 'textinput', path: 'username' }],
+              });
+              protected formData = { username: 'golemui' };
+              protected vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
+            }
+            ```
+          </Fragment>
+          <Fragment slot="lit">
+            ```ts
+            @customElement('lit-form')
+            export class FormElement extends LitElement {
+              formDef = golemForm().create({
+                form: [{ kind: 'input', type: 'textinput', path: 'username' }],
+              });
+              formData = { username: 'golemui' };
+              vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
+
+              override createRenderRoot() {
+                return this;
+              }
+
+              render() {
+                return html`
+                  <div>
+                    <gui-form
+                      .formDef=${this.formDef}
+                      .data=${this.formData}
+                      .fieldLoaders=${this.vanillaFieldLoaders}
+                    ></gui-form>
+                  </div>
+                `;
+              }
+            }
+            ```
+          </Fragment>
+        </IntegrationTabs>
+      </Fragment>
+      <Fragment slot="json">
+        Create a JSON file with your form definition:
+
+        ```json
+        {
+          "form": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "username"
+            }
+          ]
         }
         ```
 
+        Then load and render it in your framework. See the [Integration](/integration/overview/) section for framework-specific setup.
       </Fragment>
-      <Fragment slot="angular">
-        ```ts
-        @Component({
-          imports: [CommonModule, Angular.FormComponent],
-          selector: 'app-dynamic-form',
-          template: `<gui-form
-            [formDef]="formDef"
-            [data]="formData"
-            [fieldLoaders]="vanillaFieldLoaders"
-          >
-          </gui-form>`,
-        })
-        export class AppFormPage {
-          protected formDef = defineForm({
-            form: [{ uid: '', kind: 'input', widget: 'textinput', path: 'username' }],
-          });
-          protected formData = { username: 'golemui' };
-          protected vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
-        }
-        ```
-      </Fragment>
-      <Fragment slot="lit">
-        ```ts
-        @customElement('lit-form')
-        export class FormElement extends LitElement {
-          formDef = defineForm({
-            form: [{ uid: '', kind: 'input', widget: 'textinput', path: 'username' }],
-          });
-          formData = { username: 'golemui' };
-          vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
-
-          override createRenderRoot() {
-            return this;
-          }
-
-          render() {
-            return html`
-              <div>
-                <gui-form
-                  .formDef=${this.formDef}
-                  .data=${this.formData}
-                  .fieldLoaders=${this.vanillaFieldLoaders}
-                ></gui-form>
-              </div>
-            `;
-          }
-        }
-        ```
-
-      </Fragment>
-    </FrameworkTabs>
+    </DslTabs>
 
 4.  ##### That's it!
 

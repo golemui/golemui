@@ -1,0 +1,30 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      uid: 'grid_column',
+      kind: 'layout',
+      type: 'grid',
+      props: {
+        direction: 'column',
+      },
+      children: [
+        {
+          uid: 'c1',
+          kind: 'input',
+          type: 'textinput',
+          path: 'c1',
+          label: 'Column Field 1',
+        },
+        {
+          uid: 'c2',
+          kind: 'input',
+          type: 'textinput',
+          path: 'c2',
+          label: 'Column Field 2',
+        },
+      ],
+    },
+  ],
+});

@@ -1,0 +1,36 @@
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+const locale = Astro.locals.starlightRoute?.locale;
+const isDx = locale === 'dx';
+const isJson = locale === 'json';
+const isDslRoute = isDx || isJson;
+---
+
+{
+  isDslRoute ? (
+    <>
+      <div class:list={['dsl-slot', { 'dsl-hidden': !isDx }]}>
+        <slot name="dx" />
+      </div>
+      <div class:list={['dsl-slot', { 'dsl-hidden': !isJson }]}>
+        <slot name="json" />
+      </div>
+    </>
+  ) : (
+    <Tabs syncKey="dsl">
+      <TabItem label="Programmatic">
+        <slot name="dx" />
+      </TabItem>
+      <TabItem label="JSON">
+        <slot name="json" />
+      </TabItem>
+    </Tabs>
+  )
+}
+
+<style>
+  .dsl-hidden {
+    display: none !important;
+  }
+</style>

@@ -6,7 +6,7 @@ sidebar:
 ---
 
 import { Aside } from '@astrojs/starlight/components';
-import FrameworkTabs from '../../../../src/components/FrameworkTabs.astro';
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 import Demo from '../../../../src/components/landing/Demo.astro';
 
 GolemUI adapts to different screen sizes using two complementary strategies: **media queries** for global token scaling, and **container queries** for component-level layout adaptation.
@@ -76,7 +76,7 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
 
 When you set in the `localization` property a `RTL` language like Persian or Hebrew, then the form will display automatically as `RTL`.
 
-<FrameworkTabs>
+<IntegrationTabs>
   <Fragment slot="react">
     ```ts
     i18next.init({
@@ -165,7 +165,7 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
     ```
 
   </Fragment>
-</FrameworkTabs>
+</IntegrationTabs>
 
 Yes, it's that easy. Nothing else on your side has to be handled.
 
