@@ -23,7 +23,7 @@ export const calculateCurrentState = (state: State): State => {
         const expression = stateExpressions[stateName];
         let result: boolean;
         try {
-          result = expressionIsTrue(expression, state.data);
+          result = expressionIsTrue(expression, state.data, state.meta);
         } catch {
           result = false;
         }

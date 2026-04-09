@@ -17,6 +17,7 @@ export interface FormComponentProps {
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
+  meta?: Record<string, any>;
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
@@ -32,6 +33,7 @@ export function FormComponent({
   validators,
   validateOn,
   data,
+  meta,
   formName,
   formHealth,
   formEvent,
@@ -111,6 +113,14 @@ export function FormComponent({
       payload: { data: data || {} },
     });
   }, [data]);
+
+  // SET FORM META
+  useEffect(() => {
+    formContextRef.current.store.dispatch({
+      type: 'SET_META',
+      payload: { meta: meta || {} },
+    });
+  }, [meta]);
 
   // I18n
   useEffect(() => {

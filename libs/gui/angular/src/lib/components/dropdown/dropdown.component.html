@@ -1,5 +1,6 @@
 @let templateData = adapter.templateData();
 @let itemRenderer = adapter.getItemRenderer(templateData.itemRenderer, defaultListItemRenderer);
+@let showErrors = templateData.touched && templateData.errors && templateData.errors.length > 0;
 
 <gui-label
   [targetElement]="[inputRef, listRef]"
@@ -88,4 +89,6 @@
   </gui-list>
 </div>
 
-<gui-errors [uid]="widget.uid" [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>
+@if (showErrors) {
+  <gui-errors [uid]="widget.uid" [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>
+}

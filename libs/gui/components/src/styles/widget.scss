@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--gui-space-1);
-  margin-bottom: var(--gui-space-2);
+  margin-bottom: var(--gui-space-1);
   font-weight: 500;
   color: var(--gui-text-default);
 }
@@ -50,7 +50,7 @@
   .gui-range-date-input {
     font-family: var(--gui-font-family);
     font-size: var(--gui-font-sm);
-    padding: 0 var(--gui-space-3);
+    padding: 0 0.75rem;
     height: 40px;
     border-radius: var(--gui-radius-md);
     background: var(--gui-bg-surface);
@@ -100,6 +100,8 @@
   &-hint {
     font-size: var(--gui-font-xs);
     color: var(--gui-text-muted);
+    width: 0;
+    min-width: 100%;
   }
 }
 

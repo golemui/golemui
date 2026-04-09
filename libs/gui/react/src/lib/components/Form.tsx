@@ -21,6 +21,7 @@ export interface ReactFormComponentProps {
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
+  meta?: Record<string, any>;
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (formHealth: Core.FormHealth) => void;
@@ -29,6 +30,7 @@ export interface ReactFormComponentProps {
 export const FormComponent = ({
   formDef,
   data = undefined,
+  meta = undefined,
   widgetLoaders = {},
   itemRenderers = {},
   localization,
@@ -51,6 +53,7 @@ export const FormComponent = ({
     <React.FormComponent
       formDef={formDef}
       data={data}
+      meta={meta}
       widgetLoaders={customWidgetLoaders}
       middlewares={customMiddlewares}
       itemRenderers={customItemRenderers}

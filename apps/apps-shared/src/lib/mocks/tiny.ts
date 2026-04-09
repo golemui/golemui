@@ -9,6 +9,9 @@ const form = golemForm().create({
       uid: 'login-flex',
       kind: 'layout',
       type: 'grid',
+      props: {
+        direction: 'column',
+      },
       children: [
         {
           uid: 'login-email',

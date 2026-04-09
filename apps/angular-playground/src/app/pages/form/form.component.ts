@@ -34,6 +34,7 @@ export class AppFormPage {
     }));
   protected formDef = mock.form;
   protected formData = mock.data;
+  protected formMeta = mock.meta || {};
   protected deps: Dependencies = {
     markdown: {
       parse: (md: string) => snarkdown(md),

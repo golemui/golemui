@@ -19,11 +19,18 @@ export class FormElement extends LitElement {
     return this;
   }
 
-  setGolemUITheme() {
+  setDefaultTheme() {
+    document.documentElement.removeAttribute('data-theme');
     document.documentElement.removeAttribute('style');
   }
 
+  setClayTheme() {
+    document.documentElement.removeAttribute('style');
+    document.documentElement.setAttribute('data-theme', 'clay');
+  }
+
   setOverrideCSSVariables() {
+    document.documentElement.removeAttribute('data-theme');
     this.updateGuiVariable('--gui-border-default', '#a855f7');
     this.updateGuiVariable('--gui-radius-md', '12px');
     this.updateGuiVariable(
@@ -44,8 +51,18 @@ export class FormElement extends LitElement {
         <div class="theming-options">
           <div class="theming-option">
             <label>
-              <input type="radio" name="theming" checked @click=${() => this.setGolemUITheme()} />
-              <span>Use one of our GolemUI Themes</span>
+              <input type="radio" name="theming" checked @click=${() => this.setDefaultTheme()} />
+              <span>Default theme</span>
+            </label>
+            <pre>
+@import '@golemui/gui-components/styles/index.css';</pre
+            >
+          </div>
+
+          <div class="theming-option">
+            <label>
+              <input type="radio" name="theming" @click=${() => this.setClayTheme()} />
+              <span>Choose one of our available themes</span>
             </label>
             <pre>
 @import '@golemui/gui-components/styles/index.css';
@@ -56,7 +73,7 @@ export class FormElement extends LitElement {
           <div class="theming-option">
             <label>
               <input type="radio" name="theming" @click=${() => this.setOverrideCSSVariables()} />
-              <span>Override GolemUI styles with CSS Variables</span>
+              <span>Override CSS variables and create your own theme</span>
             </label>
             <pre>
 --gui-border-default: #a855f7;

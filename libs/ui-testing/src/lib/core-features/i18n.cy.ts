@@ -7,7 +7,10 @@ i18next.init({
   resources: {
     en: {
       translation: {
-        user: { name: { label: 'Translated User Name Label' }, greeting: '{{hello}}, {{name}}!' },
+        user: {
+          name: { label: 'Translated User Name Label' },
+          greeting: '{{hello}}, {{name}}! You are {{connectionStatus}}.',
+        },
       },
     },
   },
@@ -74,9 +77,10 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       cy.get(`label[for="${uid}"]`).should('exist').contains('This is the default label');
     });
 
-    it('should apply interpolate $form and static params', () => {
+    it('should apply interpolate $form and $meta static params', () => {
       mountFn({
         localization: i18nTranslator,
+        meta: { connectionStatus: 'online' },
         formDef: Core.defineForm({
           form: [
             {
@@ -95,6 +99,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
                   params: {
                     hello: 'Hola',
                     name: '$form.user.firstName',
+                    connectionStatus: '$meta.connectionStatus',
                   },
                 },
               },
@@ -103,7 +108,40 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
         }),
       });
       cy.get(`[data-cy="first-name_textinput"]`).type('Pol');
-      cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol!');
+      cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol! You are online.');
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle zero and false values in i18n params interpolation', () => {
+      i18next.addResourceBundle('en', 'translation', {
+        stats: 'Count: {{count}}, Active: {{isActive}}',
+      }, true, true);
+
+      mountFn({
+        localization: i18nTranslator,
+        data: { count: 0, isActive: false },
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'stats',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'stats',
+                  params: {
+                    count: '$form.count',
+                    isActive: '$form.isActive',
+                  },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-alert [role="alert"]').contains('Count: 0, Active: false');
     });
   });
 

@@ -450,6 +450,8 @@ export const gridSchema = z.object({
       columnGap: z.number().optional(),
       rowGap: z.number().optional(),
       autoFit: z.boolean().optional(),
+      align: z.enum(['center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'stretch']).optional(),
+      justify: z.enum(['center', 'start', 'end', 'stretch']).optional(),
     })
     .optional(),
 });

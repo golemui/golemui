@@ -19,6 +19,7 @@ export class FormElement extends LitElement {
   @property({ attribute: false }) validators!: Core.ValidatorFn<any>;
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: Object }) data: any = {};
+  @property({ type: Object }) meta: Record<string, any> = {};
   @property({ type: String }) formName = Core.shortUUID();
   @property({ converter: ValidateOnConverter }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
@@ -74,6 +75,11 @@ export class FormElement extends LitElement {
     this.context.store.dispatch({
       type: 'SET_DATA',
       payload: { data: this.data },
+    });
+
+    this.context.store.dispatch({
+      type: 'SET_META',
+      payload: { meta: this.meta },
     });
 
     this.unsubscribeI18n = this.context.localization.subscribe((lang) => {

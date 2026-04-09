@@ -26,75 +26,105 @@
 
 <style>
   .cta-section {
-    padding: 8rem 2rem;
+    padding: 6rem 1.5rem;
     display: flex;
     justify-content: center;
   }
 
+  @media (min-width: 768px) {
+    .cta-section {
+      padding: 8rem 2rem;
+    }
+  }
+
   .cta-card {
-    background: linear-gradient(0deg,var(--accent-color) 0%,#bd7dfa 100%);
+    background: linear-gradient(145deg, #3b82f6 0%, #7c3aed 50%, #a855f7 100%);
     padding: 4rem 2rem;
     border-radius: 20px;
     text-align: center;
     max-width: 900px;
     width: 100%;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 20px 40px rgba(59, 130, 246, 0.15),
+      0 8px 16px rgba(124, 58, 237, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cta-content {
+    position: relative;
   }
 
   .cta-content h2 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
-    margin-bottom: 1.5rem;
+    margin: 1.25rem 0;
     line-height: 1.1;
     color: white;
+    letter-spacing: -0.03em;
   }
 
   .cta-content p {
-    font-size: 1.2rem;
-    color: white;
-    max-width: 600px;
-    margin: 0 auto 3rem auto;
-    line-height: 1.6;
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 560px;
+    margin: 0 auto 2.5rem auto;
+    line-height: 1.7;
   }
 
   .cta-buttons {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+    position: relative;
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 2rem;
-    border-radius: 0.75rem;
+    gap: 0.625rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
   }
 
   .btn-docs {
-    color: var(--sl-color-black);
-    background: var(--sl-color-text-accent);
+    color: #0f172a;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .btn-docs:hover {
-    background: var(--sl-color-white);
-    transform: translateY(-3px);
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
 
   .btn-github {
-    background: var(--sl-color-gray-6);
-    color: var(--sl-color-white) !important;
-    border: 1px solid var(--sl-color-gray-5);
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
   }
 
   .btn-github:hover {
-    background: var(--sl-color-gray-5);
-    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
   }
 
   @media (max-width: 640px) {

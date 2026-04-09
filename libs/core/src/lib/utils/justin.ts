@@ -4,11 +4,16 @@ import { State } from '../store/model';
 import { Debug } from './debug';
 
 // TODO: caching or memoization of
-export function expressionIsTrue(expression: ReactiveExpression, $form: State['data']): boolean {
+export function expressionIsTrue(
+  expression: ReactiveExpression,
+  $form: State['data'],
+  $meta: State['meta'],
+): boolean {
   const ast = parse(normalizeArrayIndexes(expression));
   const evaluate = compile(ast);
   const result = evaluate({
     $form,
+    $meta,
     $log: Debug.log,
   });
   return result === true;
