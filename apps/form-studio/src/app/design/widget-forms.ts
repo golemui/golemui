@@ -217,25 +217,25 @@ function validatorFieldDefs(config: ValidatorFieldConfig): Record<string, unknow
   const messagePath = `validator${cap}Message`;
   const fields: Record<string, unknown>[] = [];
 
-  
+
   if (config.hasEnableCheckbox) {
-    const customMessageField = { 
-      ...textField(`prop-${messagePath}`, messagePath, `${config.label} custom message`), 
-      include: { when: `$form.${enabledPath} === true` } 
+    const customMessageField = {
+      ...textField(`prop-${messagePath}`, messagePath, `${config.label} custom message`),
+      include: { when: `$form.${enabledPath} === true` }
     };
     fields.push(checkboxField(`prop-${enabledPath}`, enabledPath, config.label));
     const valueField =
       config.inputType === 'number'
         ? numberField(`prop-${valuePath}`, valuePath, `${config.label} Value`)
-        : textField(`prop-${valuePath}`, valuePath, `${config.label} Value`);    
+        : textField(`prop-${valuePath}`, valuePath, `${config.label} Value`);
     fields.push(
       { ...valueField, include: { when: `$form.${enabledPath} === true` } },
       customMessageField
     );
   } else if (config.inputType === 'select' && config.options) {
-    const customMessageField = { 
-      ...textField(`prop-${messagePath}`, messagePath, `${config.label} custom message`), 
-      include: { when: `!!$form.${valuePath}` } 
+    const customMessageField = {
+      ...textField(`prop-${messagePath}`, messagePath, `${config.label} custom message`),
+      include: { when: `!!$form.${valuePath}` }
     };
     fields.push(
       selectField(`prop-${valuePath}`, valuePath, config.label, config.options),
@@ -767,7 +767,6 @@ export function updateWidgetFromFlatData(
   const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
   if (validatorType) {
     const validator: Record<string, unknown> = { type: validatorType };
-    console.log('validator', validator)
 
     if (flatData['validatorRequired']) {
       validator['required'] = true;

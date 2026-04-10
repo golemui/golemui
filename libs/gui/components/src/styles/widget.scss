@@ -7,6 +7,8 @@
   margin-bottom: var(--gui-space-1);
   font-weight: 500;
   color: var(--gui-text-default);
+  width: 0;
+  min-width: 100%;
 }
 
 .gui-field {
