@@ -1,13 +1,14 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
-import { InputWidget, isInputWidget } from '../../form-widget';
 import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '../../form-validator';
+import { InputWidget, isInputWidget } from '../../form-widget';
+import { I18nTranslator } from '../../i18n';
 import { ValidationStatus } from '../../shared';
 import { filterMap, SKIP, zipEvery } from '../../utils/array';
 import { get } from '../../utils/object';
 import { State } from '../model';
 
 export const validateAll =
-  (validators: ValidatorFn<any>) =>
+  (validators: ValidatorFn<any>, localization: I18nTranslator) =>
   (state: State): State => {
     const controls = filterMap(Object.values(state.calculatedWidgets), ({ current }) =>
       isInputWidget(current) ? current : SKIP,
@@ -26,7 +27,7 @@ export const validateAll =
           newValidations[control.path] = null;
 
           if (control.validator) {
-            const schema: StandardSchemaV1<unknown> = validators(control.validator);
+            const schema: StandardSchemaV1<unknown> = validators(control.validator, localization);
             const controlValue = get(state.data, control.path);
             const result = standardValidate(
               schema,

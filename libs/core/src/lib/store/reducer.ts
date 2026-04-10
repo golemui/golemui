@@ -78,7 +78,10 @@ export const reducer =
           Reducers.calculateWidgetFlags,
           Reducers.calculateWidgetProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
-          reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
+          reduceIf(
+            isControlTouched(action.payload.path),
+            Reducers.validateAll(validators, localization),
+          ),
         );
 
       case 'SET_FORM_HEALTH':
@@ -100,7 +103,7 @@ export const reducer =
               {} as State['touchedControls'],
             ),
           },
-          Reducers.validateAll(validators),
+          Reducers.validateAll(validators, localization),
         );
       }
 
@@ -118,7 +121,7 @@ export const reducer =
               touched: true,
               touchedControls: { ...state.touchedControls, [path]: true },
             },
-            Reducers.validateAll(validators),
+            Reducers.validateAll(validators, localization),
             // TODO: extract this into a separate function
             // When the widget is a Widget Function, we propagate the validation result immediately
             (state) => {

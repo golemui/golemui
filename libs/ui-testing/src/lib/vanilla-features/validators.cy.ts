@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/gui-shared';
 import * as ValidatorsVanilla from '@golemui/gui-validators';
 import * as z from 'zod/mini';
 import { MountComponentFn } from '../utils';
-import { golemForm } from '@golemui/gui-shared';
 
 const allowedNames: ValidatorsVanilla.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
@@ -986,6 +986,625 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="pattern_validator-error"]').contains(
           'Invalid string: must match pattern /CD/',
         );
+      });
+    });
+
+    context('Custom messages', () => {
+      const makeTranslator = (translations: Record<string, string>): Core.I18nTranslator => ({
+        get lang() {
+          return 'en';
+        },
+        translate(key: string, _params?: unknown, defaultValue?: string) {
+          return translations[key] ?? defaultValue ?? key;
+        },
+        subscribe() {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          return function unsubscribe() {};
+        },
+      });
+
+      context('String validators', () => {
+        it('should show custom message for required', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'username',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'username',
+                  validator: {
+                    type: 'string',
+                    required: true,
+                    messages: { required: 'Username is required' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="username_textinput"]').type('a{backspace}');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="username_validator-errors"]').should('exist');
+          cy.get('[data-cy="username_validator-error"]').contains('Username is required');
+        });
+
+        it('should show custom message for minLength', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'username',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'username',
+                  validator: {
+                    type: 'string',
+                    minLength: 4,
+                    messages: { minLength: 'Username must be at least 4 characters' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="username_textinput"]').type('abcd');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="username_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="username_textinput"]').clear();
+          cy.get('[data-cy="username_textinput"]').type('ab');
+          cy.get('[data-cy="username_validator-errors"]').should('exist');
+          cy.get('[data-cy="username_validator-error"]').contains(
+            'Username must be at least 4 characters',
+          );
+        });
+
+        it('should show custom message for maxLength', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'username',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'username',
+                  validator: {
+                    type: 'string',
+                    maxLength: 10,
+                    messages: { maxLength: 'Username must be 10 characters or fewer' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="username_textinput"]').type('1234567890');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="username_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="username_textinput"]').clear();
+          cy.get('[data-cy="username_textinput"]').type('12345678901');
+          cy.get('[data-cy="username_validator-errors"]').should('exist');
+          cy.get('[data-cy="username_validator-error"]').contains(
+            'Username must be 10 characters or fewer',
+          );
+        });
+
+        it('should show translated message for pattern (TranslationConfig)', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'zipCode',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'zipCode',
+                  validator: {
+                    type: 'string',
+                    pattern: '^\\d{5}$',
+                    messages: { pattern: { key: 'validation.zipCode.pattern' } },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+            localization: makeTranslator({
+              'validation.zipCode.pattern': 'ZIP code must be exactly 5 digits',
+            }),
+          });
+          cy.get('[data-cy="zipCode_textinput"]').type('12345');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="zipCode_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="zipCode_textinput"]').clear();
+          cy.get('[data-cy="zipCode_textinput"]').type('1234');
+          cy.get('[data-cy="zipCode_validator-errors"]').should('exist');
+          cy.get('[data-cy="zipCode_validator-error"]').contains(
+            'ZIP code must be exactly 5 digits',
+          );
+        });
+
+        it('should show translated message for format (TranslationConfig)', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'website',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'website',
+                  validator: {
+                    type: 'string',
+                    format: 'url',
+                    messages: { format: { key: 'validation.website.format' } },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+            localization: makeTranslator({
+              'validation.website.format': 'Please enter a valid URL',
+            }),
+          });
+          cy.get('[data-cy="website_textinput"]').type('https://golemui.com');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="website_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="website_textinput"]').clear();
+          cy.get('[data-cy="website_textinput"]').type('not-a-url');
+          cy.get('[data-cy="website_validator-errors"]').should('exist');
+          cy.get('[data-cy="website_validator-error"]').contains('Please enter a valid URL');
+        });
+      });
+
+      context('Number validators', () => {
+        it('should show custom invalid message when value is not a number', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'age',
+                  kind: 'input',
+                  type: 'number',
+                  path: 'age',
+                  validator: {
+                    type: 'number',
+                    required: true,
+                    messages: { invalid: 'Age must be a number' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="age_validator-errors"]').should('exist');
+          cy.get('[data-cy="age_validator-error"]').contains('Age must be a number');
+        });
+
+        it('should show custom message for minimum', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'age',
+                  kind: 'input',
+                  type: 'number',
+                  path: 'age',
+                  validator: {
+                    type: 'number',
+                    minimum: 18,
+                    messages: { minimum: 'You must be at least 18 years old' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="age_number"]').type('18');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="age_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="age_number"]').clear();
+          cy.get('[data-cy="age_number"]').type('17');
+          cy.get('[data-cy="age_validator-errors"]').should('exist');
+          cy.get('[data-cy="age_validator-error"]').contains('You must be at least 18 years old');
+        });
+
+        it('should show custom message for maximum', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'age',
+                  kind: 'input',
+                  type: 'number',
+                  path: 'age',
+                  validator: {
+                    type: 'number',
+                    maximum: 120,
+                    messages: { maximum: 'Age cannot exceed 120' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="age_number"]').type('120');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="age_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="age_number"]').clear();
+          cy.get('[data-cy="age_number"]').type('121');
+          cy.get('[data-cy="age_validator-errors"]').should('exist');
+          cy.get('[data-cy="age_validator-error"]').contains('Age cannot exceed 120');
+        });
+
+        it('should show translated message for exclusiveMinimum (TranslationConfig)', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'score',
+                  kind: 'input',
+                  type: 'number',
+                  path: 'score',
+                  validator: {
+                    type: 'number',
+                    exclusiveMinimum: 0,
+                    messages: {
+                      exclusiveMinimum: { key: 'validation.score.exclusiveMinimum' },
+                    },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+            localization: makeTranslator({
+              'validation.score.exclusiveMinimum': 'Score must be greater than 0',
+            }),
+          });
+          cy.get('[data-cy="score_number"]').type('1');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="score_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="score_number"]').clear();
+          cy.get('[data-cy="score_number"]').type('0');
+          cy.get('[data-cy="score_validator-errors"]').should('exist');
+          cy.get('[data-cy="score_validator-error"]').contains('Score must be greater than 0');
+        });
+
+        it('should show translated message for exclusiveMaximum (TranslationConfig)', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'score',
+                  kind: 'input',
+                  type: 'number',
+                  path: 'score',
+                  validator: {
+                    type: 'number',
+                    exclusiveMaximum: 100,
+                    messages: {
+                      exclusiveMaximum: { key: 'validation.score.exclusiveMaximum' },
+                    },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+            localization: makeTranslator({
+              'validation.score.exclusiveMaximum': 'Score must be less than 100',
+            }),
+          });
+          cy.get('[data-cy="score_number"]').type('99');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="score_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="score_number"]').clear();
+          cy.get('[data-cy="score_number"]').type('100');
+          cy.get('[data-cy="score_validator-errors"]').should('exist');
+          cy.get('[data-cy="score_validator-error"]').contains('Score must be less than 100');
+        });
+
+        it('should show custom message for multipleOf', () => {
+          mountFn({
+            formDef: golemForm().create({
+              form: [
+                {
+                  uid: 'rating',
+                  kind: 'input',
+                  type: 'number',
+                  path: 'rating',
+                  validator: {
+                    type: 'number',
+                    multipleOf: 0.5,
+                    messages: { multipleOf: 'Rating must be a multiple of 0.5' },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="rating_number"]').type('1');
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="rating_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="rating_number"]').clear();
+          cy.get('[data-cy="rating_number"]').type('7.2');
+          cy.get('[data-cy="rating_validator-errors"]').should('exist');
+          cy.get('[data-cy="rating_validator-error"]').contains('Rating must be a multiple of 0.5');
+        });
+      });
+
+      context('Boolean validators', () => {
+        it('should show custom invalid message when value is not a boolean', () => {
+          mountFn({
+            data: { acceptTerms: null },
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'acceptTerms',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'acceptTerms',
+                  label: 'Accept terms',
+                  validator: {
+                    type: 'boolean',
+                    const: true,
+                    messages: {
+                      invalid: 'You must check',
+                      const: 'You must accept the terms and conditions to continue',
+                    },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="acceptTerms_validator-errors"]').should('exist');
+          cy.get('[data-cy="acceptTerms_validator-error"]').contains('You must check');
+        });
+
+        it('should show custom const message when value is false', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'acceptTerms',
+                  kind: 'input',
+                  type: 'checkbox',
+                  path: 'acceptTerms',
+                  label: 'Accept terms',
+                  validator: {
+                    type: 'boolean',
+                    const: true,
+                    messages: {
+                      invalid: 'You must check',
+                      const: 'You must accept the terms and conditions to continue',
+                    },
+                  },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('[data-cy="acceptTerms_checkbox"]').click(); // check → true → valid
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="acceptTerms_validator-errors"]').should('not.exist');
+
+          cy.get('[data-cy="acceptTerms_checkbox"]').click(); // uncheck → false → const fails
+          cy.get('[data-cy="acceptTerms_validator-errors"]').should('exist');
+          cy.get('[data-cy="acceptTerms_validator-error"]').contains(
+            'You must accept the terms and conditions to continue',
+          );
+        });
+      });
+
+      context('Array validators', () => {
+        const repeaterTemplate = {
+          kind: 'layout' as const,
+          type: 'flex' as const,
+          children: [
+            {
+              uid: 'item_name',
+              kind: 'input' as const,
+              type: 'textinput' as const,
+              path: 'tags.items.name',
+              label: 'Name',
+            },
+          ],
+        };
+
+        it('should show translated message for required array (TranslationConfig)', () => {
+          mountFn({
+            data: { tags: [] },
+            formDef: golemForm().create({
+              form: [
+                {
+                  uid: 'tags',
+                  kind: 'input',
+                  type: 'repeater',
+                  path: 'tags',
+                  label: 'Tags',
+                  validator: {
+                    type: 'array',
+                    required: true,
+                    messages: { required: { key: 'validation.tags.required' } },
+                  },
+                  props: { addLabel: 'Add Tag', template: repeaterTemplate },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+            localization: makeTranslator({
+              'validation.tags.required': 'Please select at least one tag',
+            }),
+          });
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="tags_validator-errors"]').should('exist');
+          cy.get('[data-cy="tags_validator-error"]').contains('Please select at least one tag');
+        });
+
+        it('should show translated message for minItems (TranslationConfig)', () => {
+          mountFn({
+            formDef: golemForm().create({
+              form: [
+                {
+                  uid: 'tags',
+                  kind: 'input',
+                  type: 'repeater',
+                  path: 'tags',
+                  label: 'Tags',
+                  validator: {
+                    type: 'array',
+                    minItems: 2,
+                    messages: { minItems: { key: 'validation.tags.minItems' } },
+                  },
+                  props: { addLabel: 'Add Tag', template: repeaterTemplate },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+            localization: makeTranslator({
+              'validation.tags.minItems': 'Please select at least 2 tags',
+            }),
+          });
+          cy.get('.gui-repeater__add-btn').click();
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="tags_validator-errors"]').should('exist');
+          cy.get('[data-cy="tags_validator-error"]').contains('Please select at least 2 tags');
+        });
+
+        it('should show custom message for maxItems', () => {
+          mountFn({
+            formDef: golemForm().create({
+              form: [
+                {
+                  uid: 'tags',
+                  kind: 'input',
+                  type: 'repeater',
+                  path: 'tags',
+                  label: 'Tags',
+                  validator: {
+                    type: 'array',
+                    maxItems: 2,
+                    messages: { maxItems: 'You can select at most 2 tags' },
+                  },
+                  props: { addLabel: 'Add Tag', template: repeaterTemplate },
+                },
+                {
+                  uid: 'testButton',
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+          cy.get('.gui-repeater__add-btn').click();
+          cy.get('.gui-repeater__add-btn').click();
+          cy.get('[data-cy="testButton_button"]').click();
+          cy.get('[data-cy="tags_validator-errors"]').should('not.exist');
+
+          cy.get('.gui-repeater__add-btn').click();
+          cy.get('[data-cy="tags_validator-errors"]').should('exist');
+          cy.get('[data-cy="tags_validator-error"]').contains('You can select at most 2 tags');
+        });
       });
     });
   });
