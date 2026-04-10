@@ -25,6 +25,7 @@ export interface ReactFormComponentProps {
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (formHealth: Core.FormHealth) => void;
+  autocomplete?: string;
 }
 
 export const FormComponent = ({
@@ -40,6 +41,7 @@ export const FormComponent = ({
   validateOn = 'eager',
   formHealth = undefined,
   formEvent = undefined,
+  autocomplete,
 }: ReactFormComponentProps) => {
   // TODO: this should be customWidgetLoaders
   const customWidgetLoaders = { ...vanillaWidgetLoaders, ...widgetLoaders };
@@ -63,6 +65,7 @@ export const FormComponent = ({
       validateOn={validateOn}
       formHealth={formHealth}
       formEvent={formEvent}
+      autocomplete={autocomplete}
     />
   );
 };

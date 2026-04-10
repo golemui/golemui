@@ -21,6 +21,7 @@ export class GuiTextarea extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: String, attribute: 'countermode' }) counterMode:
     | 'remaining'
     | 'current'
@@ -68,6 +69,7 @@ export class GuiTextarea extends LitElement {
       hint: this.hint,
       placeholder: this.placeholder,
       icon: this.icon,
+      autocomplete: this.autocomplete,
       counterMode: this.counterMode ?? 'remaining',
       minimumHeight: this.minimumHeight ?? 120,
       autoGrow: this.autoGrow ?? false,
@@ -141,6 +143,7 @@ export class GuiTextarea extends LitElement {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder || nothing}
+          autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
           @blur=${this.onBlur}
         ></textarea>

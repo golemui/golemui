@@ -70,6 +70,7 @@ export function FormPage() {
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
+        autocomplete={'off'}
         dependencies={deps}
         validators={validators}
         validateOn={validateOn}

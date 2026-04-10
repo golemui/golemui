@@ -15,6 +15,7 @@ export const select = (uid: string): any => ({
         hint: '"bye" should be selected',
         options: ['hello', 'bye'],
         placeholder: 'Please, select an option',
+        autocomplete: 'off',
       },
     },
     {

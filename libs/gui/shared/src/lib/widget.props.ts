@@ -19,16 +19,20 @@ export type ButtonProps = {
   iconPosition?: 'left' | 'right';
 };
 
+export type Autocomplete = 'on' | 'off' | (string & {});
+
 export type TextinputProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
 };
 
 export type PasswordProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
   showPasswordIcon?: string;
   hidePasswordIcon?: string;
   showPasswordLabel?: string;
@@ -43,6 +47,7 @@ export type CurrencyProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
 };
 
 export type TextareaProps = {
@@ -52,6 +57,7 @@ export type TextareaProps = {
    * icon to display inside the textarea on the left-top corner.
    */
   icon?: string;
+  autocomplete?: Autocomplete;
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
@@ -314,6 +320,7 @@ export type RangeDatePickerProps = {
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
+  autocomplete?: Autocomplete;
   step?: number;
   minimum?: number;
   maximum?: number;
@@ -376,6 +383,7 @@ export type Option = {
 export type SelectProps = {
   hint?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
   options: Option[];
   placeholder?: string;
   labelField?: string;
@@ -391,6 +399,7 @@ type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
 export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
+  autocomplete?: Autocomplete;
   items: ListItem<T>[];
   /**
    * Property widget used to display in the input when an item option is selected

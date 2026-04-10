@@ -21,6 +21,9 @@
     },
     "iconProp": {
       "type": "string"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -64,6 +67,9 @@
         },
         "icon": {
           "$ref": "#/$defs/iconProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
@@ -75,6 +81,9 @@
         },
         "^icon\\.[^.]+$": {
           "$ref": "#/$defs/iconProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false

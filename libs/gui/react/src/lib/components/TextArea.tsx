@@ -23,6 +23,7 @@ export function TextArea(widgetInstance: Core.WithWidget) {
   const icon = templateData.icon;
   const maxLength = (templateData.validator as Core.Validator)?.maxLength;
   const counterMode = templateData.counterMode;
+  const autocomplete = templateData.autocomplete;
   const autoGrow = templateData.autoGrow;
   const minimumHeight = templateData.minimumHeight;
   const isDisabled = templateData.disabled as boolean;
@@ -42,6 +43,7 @@ export function TextArea(widgetInstance: Core.WithWidget) {
         value={value}
         hint={hint}
         placeholder={placeholder}
+        autocomplete={autocomplete ?? undefined}
         icon={icon}
         counterMode={counterMode}
         minimumHeight={minimumHeight}

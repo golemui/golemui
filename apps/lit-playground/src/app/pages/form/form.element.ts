@@ -97,6 +97,7 @@ export class FormElement extends LitElement {
           .widgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
+          .autocomplete=${'off'}
           .dependencies=${this.deps}
           .middlewares=${this.middlewares}
           .validators=${this.validators}

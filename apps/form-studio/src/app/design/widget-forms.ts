@@ -269,12 +269,14 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   textinput: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     iconField('prop-icon', 'icon'),
     textField('prop-defaultValue', 'defaultValue', 'Default Value'),
   ],
   password: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     iconField('prop-icon', 'icon'),
     iconField('prop-showPasswordIcon', 'showPasswordIcon', 'Show Password Icon'),
     iconField('prop-hidePasswordIcon', 'hidePasswordIcon', 'Hide Password Icon'),
@@ -283,6 +285,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   number: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     numberField('prop-step', 'step', 'Step'),
     numberField('prop-minimum', 'minimum', 'Minimum'),
     numberField('prop-maximum', 'maximum', 'Maximum'),
@@ -291,6 +294,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   currency: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     currencyField('prop-currency', 'currency', 'Currency Code'),
     iconField('prop-icon', 'icon'),
     numberField('prop-step', 'step', 'Step'),
@@ -300,6 +304,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   textarea: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     numberField('prop-maxLength', 'maxLength', 'Max Length'),
     numberField('prop-minimumHeight', 'minimumHeight', 'Min Height (px)'),
     selectField('prop-counterMode', 'counterMode', 'Counter Mode', [
@@ -325,6 +330,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   select: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     iconField('prop-icon', 'icon'),
     textField('prop-labelField', 'labelField', 'Label Field'),
     textField('prop-valueField', 'valueField', 'Value Field'),
@@ -339,6 +345,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   dropdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     textField('prop-labelField', 'labelField', 'Label Field'),
     textField('prop-valueField', 'valueField', 'Value Field'),
     numberField('prop-height', 'height', 'Height (px)'),
@@ -417,6 +424,7 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
   markdown: [
     textField('prop-placeholder', 'placeholder', 'Placeholder'),
     textField('prop-hint', 'hint', 'Hint'),
+    textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
     numberField('prop-maxLength', 'maxLength', 'Max Length'),
     numberField('prop-minimumHeight', 'minimumHeight', 'Min Height (px)'),
     textField('prop-writeTabLabel', 'writeTabLabel', 'Write Tab Label'),
@@ -593,6 +601,7 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
             { label: 'Submit', value: 'submit' },
           ]),
           localeField('prop-locale', 'locale', 'Locale'),
+          textField('prop-autocomplete', 'autocomplete', 'Autocomplete'),
         ],
       },
     ];

@@ -69,6 +69,9 @@
     },
     "unorderedListTitleProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -157,6 +160,9 @@
         },
         "unorderedListTitle": {
           "$ref": "#/$defs/unorderedListTitleProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
@@ -213,6 +219,9 @@
         },
         "^unorderedListTitle\\.[^.]+$": {
           "$ref": "#/$defs/unorderedListTitleProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false

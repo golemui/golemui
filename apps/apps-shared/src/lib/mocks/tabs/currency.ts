@@ -8,6 +8,9 @@ export const currency = (uid: string): any => ({
       kind: 'input',
       type: 'currency',
       path: 'currency',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',
