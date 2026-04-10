@@ -214,17 +214,33 @@ function validatorFieldDefs(config: ValidatorFieldConfig): Record<string, unknow
   const cap = capitalize(config.validatorKey);
   const enabledPath = `validator${cap}Enabled`;
   const valuePath = `validator${cap}`;
+  const messagePath = `validator${cap}Message`;
   const fields: Record<string, unknown>[] = [];
 
+  
   if (config.hasEnableCheckbox) {
+    const customMessageField = { 
+      ...textField(`prop-${messagePath}`, messagePath, `${config.label} custom message`), 
+      include: { when: `$form.${enabledPath} === true` } 
+    };
     fields.push(checkboxField(`prop-${enabledPath}`, enabledPath, config.label));
     const valueField =
       config.inputType === 'number'
         ? numberField(`prop-${valuePath}`, valuePath, `${config.label} Value`)
-        : textField(`prop-${valuePath}`, valuePath, `${config.label} Value`);
-    fields.push({ ...valueField, include: { when: `$form.${enabledPath} === true` } });
+        : textField(`prop-${valuePath}`, valuePath, `${config.label} Value`);    
+    fields.push(
+      { ...valueField, include: { when: `$form.${enabledPath} === true` } },
+      customMessageField
+    );
   } else if (config.inputType === 'select' && config.options) {
-    fields.push(selectField(`prop-${valuePath}`, valuePath, config.label, config.options));
+    const customMessageField = { 
+      ...textField(`prop-${messagePath}`, messagePath, `${config.label} custom message`), 
+      include: { when: `!!$form.${valuePath}` } 
+    };
+    fields.push(
+      selectField(`prop-${valuePath}`, valuePath, config.label, config.options),
+      customMessageField
+    );
   }
 
   return fields;
@@ -627,6 +643,7 @@ export function buildWidgetPropertyGroups(widget: Record<string, unknown>): Prop
     const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
     if (validatorType) {
       validationFields.push(checkboxField('prop-validatorRequired', 'validatorRequired', 'Required'));
+      // TODO: add invalid validator to all fields
       for (const config of VALIDATOR_FIELDS[validatorType] ?? []) {
         validationFields.push(...validatorFieldDefs(config));
       }
@@ -750,6 +767,7 @@ export function updateWidgetFromFlatData(
   const validatorType = VALIDATOR_TYPE_BY_WIDGET[typeKey];
   if (validatorType) {
     const validator: Record<string, unknown> = { type: validatorType };
+    console.log('validator', validator)
 
     if (flatData['validatorRequired']) {
       validator['required'] = true;
@@ -762,12 +780,15 @@ export function updateWidgetFromFlatData(
           const value = flatData[`validator${cap}`];
           if (value !== undefined && value !== null && value !== '') {
             validator[config.validatorKey] = value;
+            addCustomValidatorMessage(flatData, cap, validator, config);
           }
         }
       } else {
+        // This is for selects only
         const value = flatData[`validator${cap}`];
         if (value !== undefined && value !== null && value !== '') {
           validator[config.validatorKey] = value;
+          addCustomValidatorMessage(flatData, cap, validator, config);
         }
       }
     }
@@ -854,6 +875,16 @@ export function updateWidgetFromFlatData(
   }
 
   return updated;
+}
+
+// Utility function to handle cases where the validator has an associated custom message
+// Used in updateWidgetFromFlatData
+function addCustomValidatorMessage(flatData: Record<string, unknown>, cap: string, validator: Record<string, unknown>, config: ValidatorFieldConfig) {
+  const customMessage = flatData[`validator${cap}Message`] as string;
+  if (customMessage && customMessage.length > 0) {
+    validator['messages'] = validator['messages'] || {};
+    (validator['messages'] as Record<string, any>)[config.validatorKey] = customMessage;
+  }
 }
 
 /**

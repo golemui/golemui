@@ -1,8 +1,15 @@
-import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '@golemui/core';
+import {
+  I18nTranslator,
+  isStandardValidateSuccess,
+  Localizable,
+  standardValidate,
+  ValidatorFn,
+} from '@golemui/core';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import { iso } from 'zod';
 import {
   any,
+  array,
   boolean,
   email,
   hostname,
@@ -18,7 +25,6 @@ import {
   refine,
   regex,
   string,
-  array,
   superRefine,
   url,
   uuid,
@@ -36,6 +42,7 @@ interface BaseValidator {
   const?: unknown; // exactly this value or fails.
   enum?: unknown[]; // exactly one of these values or fails.
   required?: boolean; // when required=true, undefined or empty fails.
+  messages?: Record<string, Localizable>; // per-rule custom error messages.
 }
 
 const stringFormat = {
@@ -109,20 +116,20 @@ export type Validator =
 
 export const initValidators =
   (customValidators?: CustomValidatorSchemas): ValidatorFn<Validator> =>
-  (validator: Validator): StandardSchemaV1 => {
+  (validator: Validator, localization?: I18nTranslator): StandardSchemaV1 => {
     switch (validator.type) {
       case 'string':
-        return fromStringValidator(validator);
+        return fromStringValidator(validator, localization);
 
       case 'integer':
       case 'number':
-        return fromNumberValidator(validator);
+        return fromNumberValidator(validator, localization);
 
       case 'boolean':
-        return fromBooleanValidator(validator);
+        return fromBooleanValidator(validator, localization);
 
       case 'array':
-        return fromArrayValidator(validator);
+        return fromArrayValidator(validator, localization);
 
       case 'custom': {
         if (!customValidators) {
@@ -135,39 +142,86 @@ export const initValidators =
     }
   };
 
-function fromStringValidator(v: StringValidator) {
+function resolveMessage(
+  message: Localizable | undefined,
+  localization: I18nTranslator | undefined,
+): string | undefined {
+  if (message === undefined) {
+    return undefined;
+  }
+  if (typeof message === 'string') {
+    return message;
+  }
+  return localization?.translate(message.key, message.params, message.default) ?? message.default;
+}
+
+function fromStringValidator(v: StringValidator, localization?: I18nTranslator) {
   return withOptional(v, (v) => {
-    let schema = string();
+    const invalidMsg = resolveMessage(v.messages?.['invalid'], localization);
+    let schema = invalidMsg ? string(invalidMsg) : string();
 
     if (v.required === true) {
-      // TODO: Harcoded error message. Bad for i18n
-      schema = schema.check(refine((val) => val.length > 0, { error: 'This field is required' }));
+      const msg =
+        resolveMessage(v.messages?.['required'], localization) ?? 'This field is required';
+      schema = schema.check(refine((val) => val.length > 0, { error: msg }));
     }
 
     if (typeof v.minLength === 'number') {
-      schema = schema.check(minLength(v.minLength));
+      const msg = resolveMessage(v.messages?.['minLength'], localization);
+      const threshold = v.minLength;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as string).length >= threshold, { error: msg })
+          : minLength(threshold),
+      );
     }
 
     if (typeof v.maxLength === 'number') {
-      schema = schema.check(maxLength(v.maxLength));
+      const msg = resolveMessage(v.messages?.['maxLength'], localization);
+      const threshold = v.maxLength;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as string).length <= threshold, { error: msg })
+          : maxLength(threshold),
+      );
     }
 
     if (typeof v.pattern === 'string') {
-      schema = schema.check(regex(new RegExp(v.pattern)));
+      const msg = resolveMessage(v.messages?.['pattern'], localization);
+      const re = new RegExp(v.pattern);
+      schema = schema.check(
+        msg ? refine((val) => re.test(val as string), { error: msg }) : regex(re),
+      );
     }
 
     if (v.enum) {
       const enum_ = v.enum;
-      schema = schema.check(refine((val) => enum_.includes(val)));
+      const msg = resolveMessage(v.messages?.['enum'], localization);
+      schema = schema.check(refine((val) => enum_.includes(val), msg ? { error: msg } : undefined));
     }
 
     if (v.const !== undefined) {
-      schema = schema.check(refine((val) => val === v.const));
+      const msg = resolveMessage(v.messages?.['const'], localization);
+      schema = schema.check(refine((val) => val === v.const, msg ? { error: msg } : undefined));
     }
 
     if (v.format !== undefined) {
       if (stringFormatKeys.includes(v.format)) {
-        schema = schema.check(stringFormat[v.format].schema);
+        const msg = resolveMessage(v.messages?.['format'], localization);
+        schema = schema.check(
+          msg
+            ? superRefine((val, ctx) => {
+                // TODO: fix this `as unknown as StandardSchemaV1.Result<unknown>` typing
+                const result = standardValidate(
+                  stringFormat[v.format!].schema,
+                  val,
+                ) as unknown as StandardSchemaV1.Result<unknown>;
+                if (!isStandardValidateSuccess(result)) {
+                  ctx.addIssue({ code: 'custom', path: [], message: msg });
+                }
+              })
+            : stringFormat[v.format].schema,
+        );
       } else {
         console.error(`The string validation format "${v.format}" is not supported`);
       }
@@ -177,76 +231,117 @@ function fromStringValidator(v: StringValidator) {
   });
 }
 
-function fromNumberValidator(v: NumberValidator) {
+/**
+ * JavaScript uses IEEE 754 floats.
+ * Simple modulo (%) is unreliable for non-integers.
+ */
+const isSafeMultipleOf = (n: number, step: number): boolean => {
+  if (step === 0) {
+    return false;
+  }
+  const division = n / step;
+  return Math.abs(division - Math.round(division)) < 1e-10;
+};
+
+function fromNumberValidator(v: NumberValidator, localization?: I18nTranslator) {
   return withOptional(v, (v) => {
-    let schema = number();
+    const invalidMsg = resolveMessage(v.messages?.['invalid'], localization);
+    let schema = invalidMsg ? number(invalidMsg) : number();
 
     if (v.type === 'integer') {
       schema = schema.check(int());
     }
 
     if (v.minimum !== undefined) {
-      schema = schema.check(minimum(v.minimum));
+      const msg = resolveMessage(v.messages?.['minimum'], localization);
+      const t = v.minimum;
+      schema = schema.check(msg ? refine((n) => n >= t, { error: msg }) : minimum(t));
     }
 
     if (v.maximum !== undefined) {
-      schema = schema.check(maximum(v.maximum));
+      const msg = resolveMessage(v.messages?.['maximum'], localization);
+      const t = v.maximum;
+      schema = schema.check(msg ? refine((n) => n <= t, { error: msg }) : maximum(t));
     }
 
     if (v.exclusiveMinimum !== undefined) {
+      const msg = resolveMessage(v.messages?.['exclusiveMinimum'], localization);
       const t = v.exclusiveMinimum;
-      schema = schema.check(refine((n) => n > t));
+      schema = schema.check(refine((n) => n > t, msg ? { error: msg } : undefined));
     }
 
     if (v.exclusiveMaximum !== undefined) {
+      const msg = resolveMessage(v.messages?.['exclusiveMaximum'], localization);
       const t = v.exclusiveMaximum;
-      schema = schema.check(refine((n) => n < t));
+      schema = schema.check(refine((n) => n < t, msg ? { error: msg } : undefined));
     }
 
     if (v.multipleOf !== undefined) {
+      const msg = resolveMessage(v.messages?.['multipleOf'], localization);
       const t = v.multipleOf;
-      schema = schema.check(refine((n) => n % t === 0));
+      schema = schema.check(
+        refine((n) => isSafeMultipleOf(n, t), msg ? { error: msg } : undefined),
+      );
     }
 
     if (v.enum) {
       const enum_ = v.enum;
-      schema = schema.check(refine((val) => enum_.includes(val)));
+      const msg = resolveMessage(v.messages?.['enum'], localization);
+      schema = schema.check(refine((val) => enum_.includes(val), msg ? { error: msg } : undefined));
     }
 
     if (v.const !== undefined) {
-      schema = schema.check(refine((val) => val === v.const));
+      const msg = resolveMessage(v.messages?.['const'], localization);
+      schema = schema.check(refine((val) => val === v.const, msg ? { error: msg } : undefined));
     }
 
     return schema;
   });
 }
 
-function fromBooleanValidator(v: BooleanValidator) {
+function fromBooleanValidator(v: BooleanValidator, localization?: I18nTranslator) {
   return withOptional(v, (v) => {
-    let schema = boolean();
+    const invalidMsg = resolveMessage(v.messages?.['invalid'], localization);
+    let schema = invalidMsg ? boolean(invalidMsg) : boolean();
 
     if (v.const !== undefined) {
-      schema = schema.check(refine((val) => val === v.const));
+      const msg = resolveMessage(v.messages?.['const'], localization);
+      schema = schema.check(refine((val) => val === v.const, msg ? { error: msg } : undefined));
     }
 
     return schema;
   });
 }
 
-function fromArrayValidator(v: ArrayValidator) {
+function fromArrayValidator(v: ArrayValidator, localization?: I18nTranslator) {
   return withOptional(v, (v) => {
-    let schema = array(any());
+    const invalidMsg = resolveMessage(v.messages?.['invalid'], localization);
+    let schema = invalidMsg ? array(any(), invalidMsg) : array(any());
 
     if (v.required === true) {
-      schema = schema.check(refine((val) => val.length > 0, { error: 'This field is required' }));
+      const msg =
+        resolveMessage(v.messages?.['required'], localization) ?? 'This field is required';
+      schema = schema.check(refine((val) => (val as unknown[]).length > 0, { error: msg }));
     }
 
     if (typeof v.minItems === 'number') {
-      schema = schema.check(minLength(v.minItems));
+      const msg = resolveMessage(v.messages?.['minItems'], localization);
+      const threshold = v.minItems;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as unknown[]).length >= threshold, { error: msg })
+          : minLength(threshold),
+      );
     }
 
     if (typeof v.maxItems === 'number') {
-      schema = schema.check(maxLength(v.maxItems));
+      const msg = resolveMessage(v.messages?.['maxItems'], localization);
+      const threshold = v.maxItems;
+      schema = schema.check(
+        msg
+          ? refine((val) => (val as unknown[]).length <= threshold, { error: msg })
+          : maxLength(threshold),
+      );
     }
 
     return schema;
