@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { State, WidgetLoaders, WithWidget } from '@golemui/core';
 import { provide } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { Subscription } from 'rxjs';
@@ -25,6 +25,7 @@ export class FormElement extends LitElement {
   @property({ type: Object }) itemRenderers: Record<string, Core.ItemRenderer> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
   @property({ type: Object }) dependencies?: Record<string, unknown>;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
 
   @state() direction: 'ltr' | 'rtl' = 'ltr';
 
@@ -101,7 +102,7 @@ export class FormElement extends LitElement {
     const ready = this.state?.formDef && this.context.widgetRegistry.ready;
 
     return html`
-      <form id=${this.formName} novalidate dir=${this.direction}>
+      <form id=${this.formName} novalidate dir=${this.direction} autocomplete=${this.autocomplete || nothing}>
         ${when(
           ready,
           () => html` <gui-widget .widget=${this.state?.formDef.form}></gui-widget>`,

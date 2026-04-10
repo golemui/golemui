@@ -66,6 +66,7 @@ export class CurrencyElement extends LitElement implements Core.WithWidget {
         .minimumFractionDigits=${this.adapter.templateData.minimumFractionDigits}
         .icon=${this.adapter.templateData.icon}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         .localeId=${this.adapter.templateData.lang}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}

@@ -149,6 +149,39 @@ When not set, the default behaviour is `'eager'`.
   </Fragment>
 </IntegrationTabs>
 
+## Autocomplete
+
+Control browser autofill behaviour with the `autocomplete` property on the form element. This sets the `autocomplete` attribute on the underlying `<form>` HTML element.
+
+When not set, the attribute is omitted, leaving the default browser behaviour.
+
+Individual input components also accept an `autocomplete` prop (via `props`) for fine-grained control using any [W3C autofill token](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) (e.g. `'given-name'`, `'street-address'`, `'off'`).
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent
+      (...)
+      autocomplete="off"
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```html
+    <gui-form (...) [autocomplete]="'off'"></gui-form>
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    render() {
+      return html`
+        <gui-form (...) .autocomplete=${'off'}></gui-form>
+      `;
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
 ## Dependencies
 
 Some components require external dependencies that are not bundled with GolemUI. Pass them via the `dependencies` property.

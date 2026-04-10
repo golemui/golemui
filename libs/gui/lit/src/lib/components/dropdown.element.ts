@@ -283,6 +283,7 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder ?? ''}
+          autocomplete=${templateData.autocomplete || nothing}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
           @focusout=${this._onFocusOutInput}

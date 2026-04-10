@@ -65,6 +65,7 @@ export class NumberElement extends LitElement implements Core.WithWidget {
         .maximum=${this.adapter.templateData.maximum}
         .autoGrow=${this.adapter.templateData.autoGrow}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-number>

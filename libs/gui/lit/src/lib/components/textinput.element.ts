@@ -62,6 +62,7 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-textinput>

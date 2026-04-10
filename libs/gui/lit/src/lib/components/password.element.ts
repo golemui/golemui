@@ -62,6 +62,7 @@ export class PasswordElement extends LitElement implements Core.WithWidget {
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         .showPasswordIcon=${this.adapter.templateData.showPasswordIcon}
         .hidePasswordIcon=${this.adapter.templateData.hidePasswordIcon}
         .showPasswordLabel=${this.adapter.templateData.showPasswordLabel}

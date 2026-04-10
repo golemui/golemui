@@ -21,6 +21,7 @@ export interface FormComponentProps {
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
+  autocomplete?: string;
 }
 
 export function FormComponent({
@@ -37,6 +38,7 @@ export function FormComponent({
   formName,
   formHealth,
   formEvent,
+  autocomplete,
 }: FormComponentProps) {
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
     new Core.FormContext(),
@@ -145,7 +147,7 @@ export function FormComponent({
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
-        <form id={formNameRef.current} noValidate dir={direction}>
+        <form id={formNameRef.current} noValidate dir={direction} autoComplete={autocomplete}>
           <WidgetErrorBoundary widget={formLayoutField}>
             <WidgetRenderer widget={formLayoutField} />
           </WidgetErrorBoundary>

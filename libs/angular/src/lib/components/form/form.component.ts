@@ -43,6 +43,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
   localization = input<Core.I18nTranslator>();
   dependencies = input<Record<string, unknown>>({});
+  autocomplete = input<string | undefined>(undefined);
   protected direction = signal<'ltr' | 'rtl'>('ltr');
 
   // OUTPUTS

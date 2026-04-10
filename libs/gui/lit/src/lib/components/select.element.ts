@@ -62,6 +62,7 @@ export class SelectElement extends LitElement implements Core.WithWidget {
         .hint=${this.adapter.templateData.hint}
         .icon=${this.adapter.templateData.icon}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         .options=${this.adapter.templateData.options}
         .labelField=${this.adapter.templateData.labelField}
         .valueField=${this.adapter.templateData.valueField}

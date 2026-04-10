@@ -22,6 +22,7 @@
     [disabled]="templateData.disabled"
     [readonly]="templateData.readonly"
     [placeholder]="templateData.placeholder ?? ''"
+    [attr.autocomplete]="templateData.autocomplete"
     [value]="selectedItemValue() ?? templateData.value ?? ''"
     (keydown)="onInputKeyDown($event)"
     (input)="onInput($event)"

@@ -46,6 +46,7 @@ export function Select(widgetInstance: Core.WithWidget) {
   const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
+  const autocomplete = templateData.autocomplete;
   const icon = templateData.icon;
   const valueField = templateData.valueField;
   const labelField = templateData.labelField;
@@ -67,6 +68,7 @@ export function Select(widgetInstance: Core.WithWidget) {
         value={value}
         hint={hint}
         placeholder={placeholder}
+        autocomplete={autocomplete ?? undefined}
         icon={icon}
         options={options}
         labelField={labelField}

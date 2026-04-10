@@ -22,6 +22,7 @@ export class FormComponent {
   itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
   localization = input<Core.I18nTranslator>();
   dependencies = input<Dependencies>({});
+  autocomplete = input<string | undefined>(undefined);
 
   protected customWidgetLoaders = computed(() => ({
     ...vanillaWidgetLoaders,

@@ -309,6 +309,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
           disabled={isDisabled}
           readOnly={isReadOnly}
           placeholder={templateData.placeholder ?? ''}
+          autoComplete={templateData.autocomplete ?? undefined}
           onKeyDown={handleInputKeyDown}
           onInput={handleInputFilter}
           onFocus={handleInputFocus}

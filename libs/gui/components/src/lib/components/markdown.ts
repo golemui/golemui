@@ -23,6 +23,7 @@ export class GuiMarkdown extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: Array }) tools: string[] | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: String, attribute: 'countermode' }) counterMode:
     | 'remaining'
     | 'current'
@@ -187,6 +188,7 @@ export class GuiMarkdown extends LitElement {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${ifDefined(templateData.placeholder)}
+          autocomplete=${this.autocomplete || nothing}
           .value=${this.value || ''}
           @input=${this.valueChanged}
           @keyup=${this.detectFormats}

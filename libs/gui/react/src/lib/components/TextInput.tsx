@@ -20,6 +20,7 @@ export function TextInput(widgetInstance: Core.WithWidget) {
   const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
+  const autocomplete = templateData.autocomplete;
   const icon = templateData.icon;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -39,6 +40,7 @@ export function TextInput(widgetInstance: Core.WithWidget) {
         value={value}
         icon={icon}
         placeholder={placeholder ?? undefined}
+        autocomplete={autocomplete ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}
       ></gui-textinput>

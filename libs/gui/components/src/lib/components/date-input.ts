@@ -153,6 +153,7 @@ export class GuiDate extends LitElement {
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
+          autocomplete="off"
           .value=${live(val)}
           @keydown=${this.handleKeyDown}
           @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}

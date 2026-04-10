@@ -23,6 +23,7 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
   const step = templateData.step;
   const minimum = templateData.minimum;
   const maximum = templateData.maximum;
+  const autocomplete = templateData.autocomplete;
   const autoGrow = templateData.autoGrow;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -44,6 +45,7 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
         minimum={minimum}
         maximum={maximum}
         autoGrow={autoGrow}
+        autocomplete={autocomplete ?? undefined}
         placeholder={placeholder ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}

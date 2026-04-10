@@ -57,6 +57,9 @@
     },
     "inputDebounceProp": {
       "type": "number"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -119,6 +122,9 @@
         },
         "inputDebounce": {
           "$ref": "#/$defs/inputDebounceProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
@@ -151,6 +157,9 @@
         },
         "^inputDebounce\\.[^.]+$": {
           "$ref": "#/$defs/inputDebounceProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false

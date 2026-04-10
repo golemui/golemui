@@ -20,6 +20,7 @@ export class GuiTextinput extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
 
   private ariaController = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`input[id="${this.uid}"]`),
@@ -59,6 +60,7 @@ export class GuiTextinput extends LitElement {
       value: this.value,
       icon: this.icon,
       placeholder: this.placeholder,
+      autocomplete: this.autocomplete,
     };
 
     // Icon
@@ -82,6 +84,7 @@ export class GuiTextinput extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
+          autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
           @blur=${this.onBlur}
         />
