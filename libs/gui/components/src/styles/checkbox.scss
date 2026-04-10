@@ -10,6 +10,8 @@ gui-checkbox {
     align-self: start;
     margin-top: 11px;
     margin-bottom: 0;
+    width: auto;
+    min-width: auto;
 
     &__container {
       display: flex;
