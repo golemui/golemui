@@ -20,6 +20,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
   const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
+  const autocomplete = templateData.autocomplete;
   const maxLength = (templateData.validator as Core.Validator)?.maxLength;
   const counterMode = templateData.counterMode;
   const autoGrow = templateData.autoGrow;
@@ -52,6 +53,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
         value={value}
         hint={hint}
         placeholder={placeholder}
+        autocomplete={autocomplete ?? undefined}
         counterMode={counterMode}
         minimumHeight={minimumHeight}
         autoGrow={autoGrow}

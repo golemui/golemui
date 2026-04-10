@@ -8,6 +8,9 @@ export const password = (uid: string): any => ({
       kind: 'input',
       type: 'password',
       path: 'password',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',

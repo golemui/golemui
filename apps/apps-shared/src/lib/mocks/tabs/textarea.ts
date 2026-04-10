@@ -8,6 +8,9 @@ export const textarea = (uid: string): any => ({
       kind: 'input',
       type: 'textarea',
       path: 'textarea',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',

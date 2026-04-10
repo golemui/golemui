@@ -16,6 +16,7 @@ export const number = (uid: string): any => ({
         maximum: 42,
         step: 0.5,
         autoGrow: true,
+        autocomplete: 'off',
       },
       validator: { type: 'number', minimum: -45, maximum: 42, required: true },
     },

@@ -21,6 +21,7 @@ export const dropdown = (uid: string): any => ({
         inputDebounce: 300,
         items: [],
         hint: 'Search as you type with server side filtering',
+        autocomplete: 'off',
       },
       on: {
         load: 'searchProductForDropdown',

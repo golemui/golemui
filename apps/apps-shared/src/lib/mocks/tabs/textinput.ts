@@ -8,6 +8,9 @@ export const textinput = (uid: string): any => ({
       kind: 'input',
       type: 'textinput',
       path: 'textinput',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',

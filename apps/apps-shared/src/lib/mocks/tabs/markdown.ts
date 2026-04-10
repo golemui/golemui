@@ -8,6 +8,9 @@ export const markdown = (uid: string): any => ({
       kind: 'input',
       type: 'markdown',
       path: 'markdown',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',
