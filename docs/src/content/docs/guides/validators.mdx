@@ -126,6 +126,7 @@ Each validator type supports a specific set of validation rules. Below are the a
 | Property | Message key | Description |
 |---|---|---|
 | _(type check)_ | `invalid` | Value is not a number |
+| `required` | `required` | Empty string when `required: true` |
 | `minimum` | `minimum` | Value is below the minimum |
 | `maximum` | `maximum` | Value exceeds the maximum |
 | `exclusiveMinimum` | `exclusiveMinimum` | Value is not greater than the exclusive minimum |
@@ -139,6 +140,7 @@ Each validator type supports a specific set of validation rules. Below are the a
 | Property | Message key | Description |
 |---|---|---|
 | _(type check)_ | `invalid` | Value is not a boolean |
+| `required` | `required` | Empty string when `required: true` |
 | `const` | `const` | Value does not match the expected boolean value |
 
 #### Array validator
