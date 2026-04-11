@@ -32,6 +32,17 @@ export class FormElement extends LitElement {
   customWidgetLoaders = {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
+    productCard: async () =>
+      (await import('../../custom-widgets/product-card/product-card.element')).ProductCardElement,
+    productRating: async () =>
+      (await import('../../custom-widgets/product-rating/product-rating.element'))
+        .ProductRatingElement,
+    productDescription: async () =>
+      (await import('../../custom-widgets/product-description/product-description.element'))
+        .ProductDescriptionElement,
+    productShare: async () =>
+      (await import('../../custom-widgets/product-share/product-share.element'))
+        .ProductShareElement,
   };
   itemRenderers = {
     complexListItemRenderer: complexListItemRenderer,
