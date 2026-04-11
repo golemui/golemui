@@ -1,13 +1,167 @@
 ---
-title: Custom components
-description: Learn how to create your custom components for GolemUI.
+title: Custom Widgets
+description: Learn how to create your custom widgets for GolemUI.
 ---
 
-- GolemUI Field
-- Adapters
-- Context
-- Loaders
-- Display Field
-- Control Field
-- Layout Field
-- Interactive Field
+## Introduction
+
+Here we have to explain what we'll do in this section, explaining that there are four types of widgets (display, control, layout, interactive), and that we can create them using several Hooks (in React) or Adapters (in Angular and Lit).
+
+We'll explain briefly also the concept of Contexts and how we use it internally to create widgets for GolemUI.
+
+Lastly, we'll mention that we're going to create a Product Card Rating widget composed by:
+- Layout widget for the product card
+- Control widget for the rating input
+- Display widget for the portrait + description
+- Interactive widget to share in social networks
+
+### Layout Field
+
+Here we'll explain how to make a Product Card widget that will have a signature like this one:
+
+```
+{
+  kind: 'layout',
+  type: 'productCard',
+  props: {
+    title: 'Product Card Name',
+  },
+  children: [
+    {
+      kind: 'display',
+      type: 'productDescription',
+      props: {
+        img: 'assets/product-image.png',
+        description: `### My Cool Product
+My product is the best`
+      }
+    },
+    {
+      kind: 'control',
+      type: 'productRating',
+      props: {
+        maxRating: 10
+      }
+    },
+    {
+      kind: 'interactive',
+      type: 'productShare',
+      props: {
+        click: 'shareEvent'
+      }
+    },
+  ]
+}
+```
+
+This card will allow the user to compose the card with more controls in case they want also a comment message with a textarea and a submit button for example:
+
+```
+{
+  kind: 'layout',
+  type: 'productCard',
+  props: {
+    title: 'Product Card Name',
+  },
+  children: [
+    {
+      kind: 'display',
+      type: 'productDescription',
+      props: {
+        img: 'assets/product-image.png',
+        description: `### My Cool Product
+My product is the best`
+      }
+    },
+    {
+      kind: 'control',
+      type: 'productRating',
+      path: 'product.rating',
+      props: {
+        maxRating: 10
+      },
+      validator: { type: 'number', required: true },
+    },
+    {
+      kind: 'control',
+      type: 'textarea',
+      path: 'product.description',
+      props: {
+        hint: 'Enter your comment (maximum 500 characters)',
+        placeholder: 'Let us know why you love our product',
+        counterMode: 'current',
+      }
+      validator: { type: 'string', maxLength: 500, required: true },
+    },
+    {
+      kind: 'interactive',
+      type: 'productShare',
+      props: {
+        click: 'shareEvent'
+      }
+    },
+    {
+      kind: 'action',
+      type: 'button',
+      label: 'Create',
+      props: {
+        icon: 'save',
+        iconPosition: 'right',
+      },
+      on: {
+        click: 'submit',
+      },
+    },
+  ]
+}
+```
+
+This way we can show them that they can mix custom components with GolemUI components.
+
+### Control Field
+
+Here we'll explain how to make a Product Rating widget that will have a signature like this one:
+
+```
+{
+  kind: 'control',
+  type: 'productRating',
+  props: {
+    maxRating: 10
+  }
+},
+```
+
+The property `maxRating` will display a number of stars equal to the number set in props.maxRating.
+
+### Display Field
+
+Here we'll explain how to make a Product Description widget that will have a signature like this one:
+
+```
+{
+  kind: 'display',
+  type: 'productDescription',
+  props: {
+    img: 'assets/product-image.png',
+    description: `### My Cool Product
+My product is the best`
+  }
+},
+```
+
+Inside this widget we can use our markdown custom element, showing the user that they can also use our library of custom elements.
+
+### Interactive Field
+
+```
+{
+  kind: 'interactive',
+  type: 'productShare',
+  props: {
+    click: 'shareEvent'
+  }
+},
+```
+
+Important here to explain to the user how to catch the event in the form and get the social network selected by the user.
