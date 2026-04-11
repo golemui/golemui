@@ -1,0 +1,56 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      kind: 'input',
+      type: 'textinput',
+      path: 'user.password',
+      label: 'Password',
+      validator: {
+        type: 'string',
+        required: true,
+        minLength: 8,
+        maxLength: 20,
+        pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
+        messages: {
+          required: 'Please enter your password',
+          minLength: 'Password must be at least 8 characters',
+          maxLength: 'Password cannot exceed 20 characters',
+          pattern: 'Password must contain both letters and numbers',
+        },
+      },
+    },
+    {
+      kind: 'input',
+      type: 'numberinput',
+      path: 'user.age',
+      label: 'Age',
+      validator: {
+        type: 'number',
+        required: true,
+        minimum: 18,
+        maximum: 120,
+        messages: {
+          invalid: 'Please enter a valid number',
+          minimum: 'You must be at least 18 years old',
+          maximum: 'Age cannot exceed 120',
+        },
+      },
+    },
+    {
+      kind: 'input',
+      type: 'checkbox',
+      path: 'acceptTerms',
+      label: 'I accept the terms and conditions',
+      validator: {
+        type: 'boolean',
+        const: true,
+        messages: {
+          invalid: 'You must check',
+          const: 'You must accept the terms and conditions to continue',
+        },
+      },
+    },
+  ],
+});

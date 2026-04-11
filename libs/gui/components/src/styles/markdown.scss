@@ -138,6 +138,11 @@ gui-markdown {
     grid-row: 3;
     display: flex;
     justify-content: space-between;
+
+    .gui-validator {
+      width: auto;
+      min-width: auto;
+    }
   }
 
   .gui-markdown--counter {
