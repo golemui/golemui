@@ -5,8 +5,8 @@
     <gui-form
       [formDef]="formDef"
       [data]="{}"
-      [fieldLoaders]="widgetLoaders"
-      [validators]="validators"
+      [customWidgetLoaders]="widgetLoaders"
+      [customValidators]="validators"
     ></gui-form>
   `,
 })

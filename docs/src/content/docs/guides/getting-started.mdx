@@ -84,7 +84,7 @@ Creating a dynamic form has never been this easy.
               template: `<gui-form
                 [formDef]="formDef"
                 [data]="formData"
-                [widgetLoaders]="widgetLoaders"
+                [customWidgetLoaders]="widgetLoaders"
               >
               </gui-form>`,
             })
@@ -116,7 +116,7 @@ Creating a dynamic form has never been this easy.
                     <gui-form
                       .formDef=${this.formDef}
                       .data=${this.formData}
-                      .widgetLoaders=${GuiLit.widgetLoaders}
+                      .customWidgetLoaders=${GuiLit.widgetLoaders}
                     ></gui-form>
                   </div>
                 `;

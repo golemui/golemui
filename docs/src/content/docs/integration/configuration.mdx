@@ -282,7 +282,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <gui-form
       [formDef]="formDef"
       [data]="formData"
-      [widgetLoaders]="widgetLoaders"
+      [customWidgetLoaders]="widgetLoaders"
       [localization]="localization"
     ></gui-form>
     ```
@@ -292,7 +292,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <gui-form
       .formDef=${this.formDef}
       .data=${this.formData}
-      .widgetLoaders=${this.widgetLoaders}
+      .customWidgetLoaders=${this.widgetLoaders}
       .localization=${this.localization}
     ></gui-form>
     ```
