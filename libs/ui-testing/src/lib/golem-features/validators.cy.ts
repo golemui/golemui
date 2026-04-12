@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
 import { golemForm } from '@golemui/gui-shared';
-import * as GolemValidators from '@golemui/gui-validators';
+import * as GuiValidators from '@golemui/gui-validators';
 import * as z from 'zod/mini';
 import { MountComponentFn } from '../utils';
 
-const allowedNames: GolemValidators.CustomValidatorSchemaFn = (names: string[]) =>
+const allowedNames: GuiValidators.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
     z.superRefine((val, ctx) => {
       if (val && names.includes(val) === false) {
@@ -717,7 +717,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     });
 
     context('Custom validators', () => {
-      const validators: GolemValidators.CustomValidatorSchemas = {
+      const validators: GuiValidators.CustomValidatorSchemas = {
         allowedNames: allowedNames,
       };
 
