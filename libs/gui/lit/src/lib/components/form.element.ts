@@ -1,12 +1,7 @@
 import * as Core from '@golemui/core';
 import { WidgetLoaders, WithWidget } from '@golemui/core';
-import { Dependencies, golemSchemaToFieldMap } from '@golemui/gui-shared';
-import {
-  CustomValidatorSchemas,
-  initValidators,
-  jsonSchemaValidators,
-  Validator,
-} from '@golemui/gui-validators';
+import { Dependencies } from '@golemui/gui-shared';
+import { CustomValidatorSchemas, initValidators, Validator } from '@golemui/gui-validators';
 import '@golemui/lit';
 import { LitItemRenderer, Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
@@ -18,26 +13,22 @@ export class FormElement extends LitElement {
   @property({ type: Object }) formDef!: string | Record<string, any>;
   @property({ type: Object }) data: any = {};
   @property({ type: Object }) meta: Record<string, any> = {};
-  // TODO: this should be customWidgetLoaders
-  @property({ type: Object }) widgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
+  @property({ type: Object }) customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
   @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
   @property({ type: Object }) localization?: Core.I18nTranslator;
   @property({ type: Object }) dependencies?: Dependencies;
-  @property({ type: Object, attribute: false }) validators: CustomValidatorSchemas = {};
+  @property({ type: Object, attribute: false }) customValidators: CustomValidatorSchemas = {};
   @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
   @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
-  // TODO: this should be widgetLoaders
-  protected customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
+  protected allWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
     ...widgetLoaders,
-    ...this.widgetLoaders,
+    ...this.customWidgetLoaders,
   };
-  protected customValidators: Core.ValidatorFn<Validator> = initValidators({ ...this.validators });
-  protected customMiddlewares: Core.Middleware<Core.State, Core.Action>[] = [
-    Core.jsonSchemaMiddleware(golemSchemaToFieldMap(jsonSchemaValidators)),
-    ...this.middlewares,
-  ];
+  protected allValidators: Core.ValidatorFn<Validator> = initValidators({
+    ...this.customValidators,
+  });
 
   override createRenderRoot() {
     return this;
@@ -46,15 +37,11 @@ export class FormElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
-    this.customWidgetLoaders = {
+    this.allWidgetLoaders = {
       ...widgetLoaders,
-      ...this.widgetLoaders,
+      ...this.customWidgetLoaders,
     };
-    this.customValidators = initValidators({ ...this.validators });
-    this.customMiddlewares = [
-      Core.jsonSchemaMiddleware(golemSchemaToFieldMap(jsonSchemaValidators)),
-      ...this.middlewares,
-    ];
+    this.allValidators = initValidators({ ...this.customValidators });
   }
 
   override render() {
@@ -63,12 +50,12 @@ export class FormElement extends LitElement {
         .formDef=${this.formDef}
         .data=${this.data}
         .meta=${this.meta}
-        .widgetLoaders=${this.customWidgetLoaders}
+        .widgetLoaders=${this.allWidgetLoaders}
         .itemRenderers=${this.itemRenderers}
         .localization=${this.localization}
         .dependencies=${this.dependencies}
-        .middlewares=${this.customMiddlewares}
-        .validators=${this.customValidators}
+        .middlewares=${this.middlewares}
+        .validators=${this.allValidators}
         .validateOn=${this.validateOn ?? 'eager'}
         .autocomplete=${this.autocomplete}
       ></gui-core-form>
