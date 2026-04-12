@@ -2,7 +2,7 @@ import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { FormComponent } from '@golemui/gui-react';
 import { Dependencies } from '@golemui/gui-shared';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import * as GuiValidators from '@golemui/gui-validators';
 import { ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
 import { useState } from 'react';
@@ -38,7 +38,7 @@ const customWidgetLoaders = {
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
 const middlewares = [Core.devToolsMiddleware()];
-const validators: ValidatorsVanilla.CustomValidatorSchemas = {
+const customValidators: GuiValidators.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
@@ -66,13 +66,13 @@ export function FormPage() {
         formDef={formDef}
         data={formData}
         meta={formMeta}
-        widgetLoaders={customWidgetLoaders}
+        customValidators={customValidators}
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
         autocomplete={'off'}
         dependencies={deps}
-        validators={validators}
+        customWidgetLoaders={customWidgetLoaders}
         validateOn={validateOn}
         formHealth={onFormHealth}
         formEvent={onFormEvent}

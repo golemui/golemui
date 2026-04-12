@@ -28,8 +28,8 @@
               <gui-form
                 [formDef]="group.formDef"
                 [data]="propertiesData()"
-                [widgetLoaders]="{}"
-                [validators]="{}"
+                [customWidgetLoaders]="{}"
+                [customValidators]="{}"
                 [validateOn]="'eager'"
                 (formEvent)="onFormEvent($event)"
               />

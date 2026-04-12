@@ -27,7 +27,11 @@ export type SchemaToWidgetMap = Record<
  * Use this middleware to convert a JSON schema into a JSON form.
  *
  * @example
- *  protected middlewares = jsonSchemaMiddleware(vanillaSchemaToWidgetMap);
+ *  protected middlewares = [
+ *    Core.devToolsMiddleware(),
+ *    Core.jsonSchemaMiddleware(golemSchemaToFieldMap(GolemValidators.jsonSchemaValidators)),
+ *  ];
+  ];
  * @example
  *  <gui-form [middlewares]="middlewares" />
  */

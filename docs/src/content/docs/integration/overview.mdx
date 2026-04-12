@@ -11,10 +11,10 @@ GolemUI is a framework-agnostic form engine. Its core logic and component librar
 
 ## Supported Frameworks
 
-| Framework | Adapter Package        | Component               |
-| --------- | ---------------------- | ----------------------- |
-| React     | `@golemui/gui-react`   | `<FormComponent />`     |
-| Angular   | `@golemui/gui-angular` | `<gui-form>`            |
+| Framework | Adapter Package        | Component                    |
+| --------- | ---------------------- | ---------------------------- |
+| React     | `@golemui/gui-react`   | `<FormComponent />`          |
+| Angular   | `@golemui/gui-angular` | `<gui-form>`                 |
 | Lit       | `@golemui/gui-lit`     | `<gui-form>` (web component) |
 
 ## Architecture
@@ -23,8 +23,8 @@ All frameworks share the same rendering engine (`@golemui/core`) and component s
 
 1. Accepts a `formDef` (your form definition, either from `golemForm().create(...)` or parsed JSON)
 2. Accepts `data` (the initial form data object)
-3. Accepts `fieldLoaders` (the set of UI components to render — typically the vanilla set)
-4. Optionally accepts `validators`, `customValidators`, `validateOn`, `dependencies`, and `localization`
+3. Accepts `customWidgetLoaders` (the set of UI components to render — typically the GolemUI set)
+4. Optionally accepts `customValidators`, `validateOn`, `dependencies`, and `localization`
 
 <Aside type="tip">
   Because the core engine is framework-agnostic, switching frameworks only requires changing the adapter package and the component wiring — your form definitions and business logic remain unchanged.

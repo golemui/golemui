@@ -63,7 +63,7 @@ export class AppElement extends LitElement {
         <gui-form
           .formDef=${this.formDef}
           .data=${this.formData}
-          .widgetLoaders=${this.customWidgetLoaders}
+          .customWidgetLoaders=${this.customWidgetLoaders}
           .validateOn=${this.validateOn}
         ></gui-form>
       </div>

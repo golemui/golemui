@@ -10,9 +10,9 @@ type LayoutWidgetConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'pro
 type DisplayWidgetConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 
 /**
- * Vanilla widget factory
+ * Golem widget factory
  */
-export const Vanilla = {
+export const GolemWidgets = {
   //
   // Input widgets
   //
