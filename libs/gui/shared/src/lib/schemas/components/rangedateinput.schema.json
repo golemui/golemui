@@ -59,6 +59,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "props": {
       "type": "object",
       "properties": {

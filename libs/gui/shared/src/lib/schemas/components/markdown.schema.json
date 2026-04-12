@@ -101,6 +101,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "defaultValue": {
       "type": "string"
     },
