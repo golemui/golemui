@@ -121,6 +121,70 @@ describe('Number schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a number validator with minimum, maximum and plain messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'age',
+            kind: 'input',
+            type: 'number',
+            props: {},
+            validator: {
+              type: 'number',
+              required: true,
+              minimum: 18,
+              maximum: 120,
+              messages: {
+                invalid: 'Age must be a number',
+                minimum: 'You must be at least 18',
+                maximum: 'Age cannot exceed 120',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate an integer validator with exclusive bounds and i18n messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'score',
+            kind: 'input',
+            type: 'number',
+            props: {},
+            validator: {
+              type: 'integer',
+              exclusiveMinimum: 0,
+              exclusiveMaximum: 100,
+              multipleOf: 5,
+              messages: {
+                exclusiveMinimum: { key: 'validation.score.exclusiveMinimum' },
+                exclusiveMaximum: { key: 'validation.score.exclusiveMaximum' },
+                multipleOf: { key: 'validation.score.multipleOf', default: 'Must be a multiple of 5' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for step', () => {
       const formDef = golemForm().create({
@@ -144,6 +208,25 @@ describe('Number schema validation', () => {
       expect(
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/step'),
       ).toBe(true);
+    });
+
+    it('should fail when a number validator uses a non-numeric minimum', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, minimum must be a number
+          {
+            path: 'age',
+            kind: 'input',
+            type: 'number',
+            props: {},
+            validator: { type: 'number', minimum: 'eighteen' },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      expect(isValid).toBe(false);
     });
   });
 });

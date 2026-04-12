@@ -135,6 +135,39 @@ describe('RangeDatePicker schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate an array validator with required and item count constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'dateRanges',
+            kind: 'input',
+            type: 'rangeDatePicker',
+            props: {},
+            validator: {
+              type: 'array',
+              required: true,
+              minItems: 2,
+              maxItems: 2,
+              messages: {
+                required: 'Date range is required',
+                minItems: { key: 'validation.dateRanges.minItems', default: 'Select start and end dates' },
+                maxItems: 'Only a start and end date can be selected',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({

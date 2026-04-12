@@ -118,6 +118,93 @@ describe('Textinput schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with required and length constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'username',
+            kind: 'input',
+            type: 'textinput',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 4,
+              maxLength: 20,
+              messages: {
+                required: 'Username is required',
+                minLength: 'Too short',
+                maxLength: 'Too long',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a string validator with pattern and i18n messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'zipCode',
+            kind: 'input',
+            type: 'textinput',
+            props: {},
+            validator: {
+              type: 'string',
+              pattern: '^\\d{5}$',
+              messages: {
+                pattern: { key: 'validation.zipCode.pattern', default: 'Invalid ZIP code' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a string validator with format', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'website',
+            kind: 'input',
+            type: 'textinput',
+            props: {},
+            validator: {
+              type: 'string',
+              format: 'url',
+              messages: {
+                format: { key: 'validation.website.format' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({
@@ -141,6 +228,50 @@ describe('Textinput schema validation', () => {
       expect(
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/icon'),
       ).toBe(true);
+    });
+
+    it('should fail on an unknown validator type', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, type is not a valid validator type
+          {
+            path: 'firstName',
+            kind: 'input',
+            type: 'textinput',
+            props: {},
+            validator: { type: 'unknown' },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some((e) => e.keyword === 'oneOf' && e.instancePath === '/validator'),
+      ).toBe(true);
+    });
+
+    it('should fail on an unknown message key in a string validator', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, unknownKey is not a valid message key
+          {
+            path: 'firstName',
+            kind: 'input',
+            type: 'textinput',
+            props: {},
+            validator: {
+              type: 'string',
+              messages: { unknownKey: 'This key does not exist' },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      expect(isValid).toBe(false);
     });
   });
 });

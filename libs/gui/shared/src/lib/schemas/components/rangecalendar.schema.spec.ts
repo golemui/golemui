@@ -126,6 +126,68 @@ describe('RangeCalendar schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate an array validator with required and item count constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'dates',
+            kind: 'input',
+            type: 'rangeCalendar',
+            props: {},
+            validator: {
+              type: 'array',
+              required: true,
+              minItems: 2,
+              maxItems: 5,
+              messages: {
+                required: 'Please select a date range',
+                minItems: 'Select at least 2 dates',
+                maxItems: 'You can select at most 5 dates',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate an array validator with i18n messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'dates',
+            kind: 'input',
+            type: 'rangeCalendar',
+            props: {},
+            validator: {
+              type: 'array',
+              required: true,
+              minItems: 2,
+              messages: {
+                required: { key: 'validation.dates.required' },
+                minItems: { key: 'validation.dates.minItems', default: 'Select at least 2 dates' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for numberOfMonths', () => {
       const formDef = golemForm().create({

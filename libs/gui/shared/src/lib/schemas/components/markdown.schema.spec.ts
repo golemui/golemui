@@ -139,6 +139,39 @@ describe('Markdown schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with required and length constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'content',
+            kind: 'input',
+            type: 'markdown',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 10,
+              maxLength: 5000,
+              messages: {
+                required: 'Content is required',
+                minLength: { key: 'validation.content.minLength', default: 'Content is too short' },
+                maxLength: 'Content cannot exceed 5000 characters',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for hint', () => {
       const formDef = golemForm().create({
