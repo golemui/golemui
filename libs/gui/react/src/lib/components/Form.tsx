@@ -8,7 +8,7 @@ import {
 import * as React from '@golemui/react';
 import { ReactItemRenderer } from '@golemui/react';
 import { ComponentType } from 'react';
-import { golemWidgetLoaders } from '../widget.loaders';
+import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;

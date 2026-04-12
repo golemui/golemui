@@ -3,7 +3,7 @@ import '@golemui/gui-components';
 import { GolemWidget } from '@golemui/gui-shared';
 import { Type } from '@golemui/lit';
 
-export const golemWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, GolemWidget> = {
+export const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, GolemWidget> = {
   // ACTION
   button: async () => (await import('./components/button.element')).ButtonElement,
 

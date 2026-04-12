@@ -11,7 +11,7 @@ import '@golemui/lit';
 import { LitItemRenderer, Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { golemWidgetLoaders } from '../widget.loaders';
+import { widgetLoaders } from '../widget.loaders';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
@@ -30,7 +30,7 @@ export class FormElement extends LitElement {
 
   // TODO: this should be widgetLoaders
   protected customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
-    ...golemWidgetLoaders,
+    ...widgetLoaders,
     ...this.widgetLoaders,
   };
   protected customValidators: Core.ValidatorFn<Validator> = initValidators({ ...this.validators });
@@ -47,7 +47,7 @@ export class FormElement extends LitElement {
     super.connectedCallback();
 
     this.customWidgetLoaders = {
-      ...golemWidgetLoaders,
+      ...widgetLoaders,
       ...this.widgetLoaders,
     };
     this.customValidators = initValidators({ ...this.validators });

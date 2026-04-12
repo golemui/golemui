@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import '@golemui/gui-components';
 import { GolemWidget } from '@golemui/gui-shared';
 
-export const golemWidgetLoaders: Core.WidgetLoaders<
+export const widgetLoaders: Core.WidgetLoaders<
   React.ComponentType<Core.WithWidget>,
   GolemWidget
 > = {
