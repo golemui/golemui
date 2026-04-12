@@ -29,7 +29,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { golemForm } from '@golemui/gui-shared';
-    import { FormComponent, golemWidgetLoaders } from '@golemui/gui-angular';
+    import { FormComponent, widgetLoaders } from '@golemui/gui-angular';
 
     @Component({
       imports: [CommonModule, FormComponent],
@@ -37,7 +37,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [fieldLoaders]="golemWidgetLoaders"
+        [widgetLoaders]="widgetLoaders"
       ></gui-form>`,
     })
     export class MyFormComponent {
@@ -47,7 +47,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
         ],
       });
       protected formData = { username: '' };
-      protected golemWidgetLoaders = { ...golemWidgetLoaders };
+      protected widgetLoaders = widgetLoaders;
     }
     ```
 
@@ -56,7 +56,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import { FormComponent, golemWidgetLoaders } from '@golemui/gui-angular';
+    import { FormComponent, widgetLoaders } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
@@ -65,13 +65,13 @@ Import the core styles in your `styles.scss` or `angular.json`:
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [fieldLoaders]="golemWidgetLoaders"
+        [widgetLoaders]="widgetLoaders"
       ></gui-form>`,
     })
     export class MyFormComponent {
       protected formDef = formDef;
       protected formData = { username: '' };
-      protected golemWidgetLoaders = { ...golemWidgetLoaders };
+      protected widgetLoaders = widgetLoaders;
     }
     ```
 
@@ -84,7 +84,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
 | ------------------ | ------------------------ | -------------------------------------------------- |
 | `formDef`          | `Form`                   | The form definition object                         |
 | `data`             | `object`                 | Initial form data                                  |
-| `fieldLoaders`     | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
+| `widgetLoaders`    | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
 | `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)       |
 | `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                           |
 | `validateOn`       | `ValidateOn`             | When to trigger validation                         |

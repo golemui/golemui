@@ -29,7 +29,7 @@ Import the core styles in your application entry point or global stylesheet:
     ```tsx
     import { golemForm } from '@golemui/gui-shared';
     import { FormComponent } from '@golemui/gui-react';
-    import * as GolemReact from '@golemui/gui-react';
+    import * as GuiReact from '@golemui/gui-react';
 
     const formDef = golemForm().create({
       form: [
@@ -42,7 +42,7 @@ Import the core styles in your application entry point or global stylesheet:
         <FormComponent
           formDef={formDef}
           data={{ username: '' }}
-          fieldLoader={{ ...GolemReact.golemWidgetLoaders }}
+          widgetLoaders={{ ...GuiReact.widgetLoaders }}
         />
       );
     }
@@ -52,7 +52,7 @@ Import the core styles in your application entry point or global stylesheet:
   <Fragment slot="json">
     ```tsx
     import { FormComponent } from '@golemui/gui-react';
-    import * as GolemReact from '@golemui/gui-react';
+    import * as GuiReact from '@golemui/gui-react';
     import formDef from './my-form.json';
 
     export function MyForm() {
@@ -60,7 +60,7 @@ Import the core styles in your application entry point or global stylesheet:
         <FormComponent
           formDef={formDef}
           data={{ username: '' }}
-          fieldLoader={{ ...GolemReact.golemWidgetLoaders }}
+          widgetLoaders={{ ...GuiReact.widgetLoaders }}
         />
       );
     }
@@ -75,7 +75,7 @@ Import the core styles in your application entry point or global stylesheet:
 | ------------------ | ------------------------ | -------------------------------------------------- |
 | `formDef`          | `Form`                   | The form definition object                         |
 | `data`             | `object`                 | Initial form data                                  |
-| `fieldLoader`      | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
+| `widgetLoaders`    | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
 | `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)       |
 | `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                           |
 | `validateOn`       | `ValidateOn`             | When to trigger validation                         |

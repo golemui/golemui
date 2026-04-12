@@ -6,7 +6,7 @@ function App() {
       <FormComponent
         formDef={formDef}
         data={{}}
-        fieldLoader={{ ...golemWidgetLoaders }}
+        widgetLoaders={ GuiReact.widgetLoaders }
         validators={validators}
       />
     </>

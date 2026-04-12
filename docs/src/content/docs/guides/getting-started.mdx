@@ -69,7 +69,7 @@ Creating a dynamic form has never been this easy.
                 <React.FormComponent
                   formDef={formDef}
                   data={formData}
-                  fieldLoader={Golem.golemWidgetLoaders}
+                  widgetLoaders={GuiReact.widgetLoaders}
                 />
                </div>
               );
@@ -84,7 +84,7 @@ Creating a dynamic form has never been this easy.
               template: `<gui-form
                 [formDef]="formDef"
                 [data]="formData"
-                [fieldLoaders]="golemWidgetLoaders"
+                [widgetLoaders]="widgetLoaders"
               >
               </gui-form>`,
             })
@@ -93,7 +93,7 @@ Creating a dynamic form has never been this easy.
                 form: [{ kind: 'input', type: 'textinput', path: 'username' }],
               });
               protected formData = { username: 'golemui' };
-              protected golemWidgetLoaders = Golem.golemWidgetLoaders;
+              protected widgetLoaders = GuiAngular.widgetLoaders;
             }
             ```
           </Fragment>
@@ -116,7 +116,7 @@ Creating a dynamic form has never been this easy.
                     <gui-form
                       .formDef=${this.formDef}
                       .data=${this.formData}
-                      .fieldLoaders=${Golem.golemWidgetLoaders}
+                      .widgetLoaders=${GuiLit.widgetLoaders}
                     ></gui-form>
                   </div>
                 `;

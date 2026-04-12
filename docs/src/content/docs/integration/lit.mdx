@@ -29,7 +29,7 @@ Import the core styles in your HTML or application entry point:
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { golemForm } from '@golemui/gui-shared';
-    import { golemWidgetLoaders } from '@golemui/gui-lit';
+    import { widgetLoaders } from '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -39,7 +39,7 @@ Import the core styles in your HTML or application entry point:
         ],
       });
       formData = { username: '' };
-      golemWidgetLoaders = { ...golemWidgetLoaders };
+      widgetLoaders = { ...widgetLoaders };
 
       override createRenderRoot() {
         return this;
@@ -50,7 +50,7 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .fieldLoaders=${this.golemWidgetLoaders}
+            .widgetLoaders=${this.widgetLoaders}
           ></gui-form>
         `;
       }
@@ -62,14 +62,14 @@ Import the core styles in your HTML or application entry point:
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import { golemWidgetLoaders } from '@golemui/gui-lit';
+    import { widgetLoaders } from '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       formDef = formDef;
       formData = { username: '' };
-      golemWidgetLoaders = { ...golemWidgetLoaders };
+      widgetLoaders = { ...widgetLoaders };
 
       override createRenderRoot() {
         return this;
@@ -80,7 +80,7 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .fieldLoaders=${this.golemWidgetLoaders}
+            .widgetLoaders=${this.widgetLoaders}
           ></gui-form>
         `;
       }
@@ -96,7 +96,7 @@ Import the core styles in your HTML or application entry point:
 | ------------------ | ------------------------ | -------------------------------------------------- |
 | `formDef`          | `Form`                   | The form definition object                         |
 | `data`             | `object`                 | Initial form data                                  |
-| `fieldLoaders`     | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
+| `widgetLoaders`    | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
 | `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)       |
 | `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                           |
 | `validateOn`       | `ValidateOn`             | When to trigger validation                         |
