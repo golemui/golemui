@@ -43,7 +43,7 @@ export class FormElement extends LitElement {
     countryItemRenderer: countryItemRenderer,
   };
   middlewares = [Core.devToolsMiddleware()];
-  validators: GuiValidators.CustomValidatorSchemas = {
+  customValidators: GuiValidators.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
   validateOn: Core.ValidateOn = 'eager';
@@ -94,13 +94,13 @@ export class FormElement extends LitElement {
           .formDef=${this.formDef}
           .data=${this.formData}
           .meta=${this.formMeta}
-          .widgetLoaders=${this.customWidgetLoaders}
+          .customWidgetLoaders=${this.customWidgetLoaders}
           .itemRenderers=${this.itemRenderers}
           .localization=${this.localization}
           .autocomplete=${'off'}
           .dependencies=${this.deps}
           .middlewares=${this.middlewares}
-          .validators=${this.validators}
+          .customValidators=${this.customValidators}
           .validateOn=${this.validateOn}
           @formHealth=${this.onFormHealth}
           @formEvent=${this.onFormEvent}

@@ -12,7 +12,7 @@ type DisplayWidgetConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'prop
 /**
  * Golem widget factory
  */
-export const Golem = {
+export const GolemWidgets = {
   //
   // Input widgets
   //

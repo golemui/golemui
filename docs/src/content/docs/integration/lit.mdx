@@ -50,7 +50,7 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .widgetLoaders=${this.widgetLoaders}
+            .customWidgetLoaders=${this.widgetLoaders}
           ></gui-form>
         `;
       }
@@ -80,7 +80,7 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .widgetLoaders=${this.widgetLoaders}
+            .customWidgetLoaders=${this.widgetLoaders}
           ></gui-form>
         `;
       }
@@ -92,15 +92,15 @@ Import the core styles in your HTML or application entry point:
 
 ## Component Properties
 
-| Property           | Type                     | Description                                        |
-| ------------------ | ------------------------ | -------------------------------------------------- |
-| `formDef`          | `Form`                   | The form definition object                         |
-| `data`             | `object`                 | Initial form data                                  |
-| `widgetLoaders`    | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
-| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)       |
-| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                           |
-| `validateOn`       | `ValidateOn`             | When to trigger validation                         |
-| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)       |
-| `localization`     | `Localization`           | i18n/localization configuration                    |
+| Property           | Type                     | Description                                          |
+| ------------------ | ------------------------ | ---------------------------------------------------- |
+| `formDef`          | `Form`                   | The form definition object                           |
+| `data`             | `object`                 | Initial form data                                    |
+| `widgetLoaders`    | `WidgetLoaders`          | Map of widget type loaders (e.g. GolemUI components) |
+| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)         |
+| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                             |
+| `validateOn`       | `ValidateOn`             | When to trigger validation                           |
+| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)         |
+| `localization`     | `Localization`           | i18n/localization configuration                      |
 
 See [Configuration](/integration/configuration/) for details on each optional prop.

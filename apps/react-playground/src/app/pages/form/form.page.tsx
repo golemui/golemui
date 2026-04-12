@@ -38,7 +38,7 @@ const customWidgetLoaders = {
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
 const middlewares = [Core.devToolsMiddleware()];
-const validators: GuiValidators.CustomValidatorSchemas = {
+const customValidators: GuiValidators.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
@@ -66,13 +66,13 @@ export function FormPage() {
         formDef={formDef}
         data={formData}
         meta={formMeta}
-        widgetLoaders={customWidgetLoaders}
+        customValidators={customValidators}
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
         autocomplete={'off'}
         dependencies={deps}
-        validators={validators}
+        customWidgetLoaders={customWidgetLoaders}
         validateOn={validateOn}
         formHealth={onFormHealth}
         formEvent={onFormEvent}
