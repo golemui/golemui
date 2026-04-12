@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
+import { Dependencies, golemSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
   initValidators,
@@ -8,7 +8,7 @@ import {
 import * as React from '@golemui/react';
 import { ReactItemRenderer } from '@golemui/react';
 import { ComponentType } from 'react';
-import { vanillaWidgetLoaders } from '../widget.loaders';
+import { golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
@@ -44,11 +44,11 @@ export const FormComponent = ({
   autocomplete,
 }: ReactFormComponentProps) => {
   // TODO: this should be customWidgetLoaders
-  const customWidgetLoaders = { ...vanillaWidgetLoaders, ...widgetLoaders };
+  const customWidgetLoaders = { ...golemWidgetLoaders, ...widgetLoaders };
   const customItemRenderers = { ...itemRenderers };
   const customValidators = initValidators({ ...validators });
   const customMiddlewares = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
+    Core.jsonSchemaMiddleware(golemSchemaToFieldMap(jsonSchemaValidators)),
     ...middlewares,
   ];
   return (

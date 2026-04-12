@@ -3,9 +3,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AngularItemRenderer } from '@golemui/angular';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import * as Vanilla from '@golemui/gui-angular';
+import * as GolemAngular from '@golemui/gui-angular';
 import { Dependencies } from '@golemui/gui-shared';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import * as GolemValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import snarkdown from 'snarkdown';
 import { APP_CONFIG } from '../../../environments/environment.model';
@@ -17,7 +17,7 @@ import { ProductItemRenderer } from '../../item-renderers/product.item-renderer'
 const mock = AppsShared.kitchenSink;
 
 @Component({
-  imports: [CommonModule, Vanilla.FormComponent],
+  imports: [CommonModule, GolemAngular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
@@ -46,7 +46,7 @@ export class AppFormPage {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
   };
-  protected validators: ValidatorsVanilla.CustomValidatorSchemas = {
+  protected validators: GolemValidators.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {

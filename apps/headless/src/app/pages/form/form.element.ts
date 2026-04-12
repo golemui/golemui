@@ -1,16 +1,16 @@
 import * as AppsShared from '@golemui/apps-shared';
+import { iframeResizer } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import * as GolemValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
+import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
-import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
-import { iframeResizer } from '@golemui/apps-shared';
 
 const mock = AppsShared.template;
 
@@ -38,7 +38,7 @@ export class FormElement extends LitElement {
     countryItemRenderer: countryItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
-  validators: ValidatorsVanilla.CustomValidatorSchemas = {
+  validators: GolemValidators.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
   validateOn: Core.ValidateOn = 'eager';

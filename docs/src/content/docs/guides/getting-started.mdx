@@ -4,6 +4,7 @@ description: Learn how to start creating dynamic forms with GolemUI.
 sidebar:
   order: 0
 ---
+
 import Demo from '../../../../src/components/landing/Demo.astro';
 
 import { Steps } from '@astrojs/starlight/components';
@@ -18,7 +19,7 @@ Creating a dynamic form has never been this easy.
 
 <Steps>
 
-1.  ##### Install GolemUI and the Vanilla Components:
+1.  ##### Install GolemUI and the Golem Components:
 
     Choose the framework you want to use for your project.
 
@@ -40,12 +41,12 @@ Creating a dynamic form has never been this easy.
       </Fragment>
     </IntegrationTabs>
 
-2.  ##### Import the Vanilla Components styles:
+2.  ##### Import the Golem Components styles:
 
     You can load the CSS file directly in your HTML or import it in your Sass/CSS file.
 
     ```scss
-    @import "@golemui/core/styles/index.css";
+    @import '@golemui/core/styles/index.css';
     ```
 
 3.  ##### Create your first dynamic form:
@@ -57,7 +58,6 @@ Creating a dynamic form has never been this easy.
         <IntegrationTabs>
           <Fragment slot="react">
             ```ts
-            const vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
             const formDef = golemForm().create({
               form: [{ kind: 'input', type: 'textinput', path: 'username' }],
             });
@@ -69,7 +69,7 @@ Creating a dynamic form has never been this easy.
                 <React.FormComponent
                   formDef={formDef}
                   data={formData}
-                  fieldLoader={vanillaWidgetLoaders}
+                  fieldLoader={Golem.golemWidgetLoaders}
                 />
                </div>
               );
@@ -84,7 +84,7 @@ Creating a dynamic form has never been this easy.
               template: `<gui-form
                 [formDef]="formDef"
                 [data]="formData"
-                [fieldLoaders]="vanillaFieldLoaders"
+                [fieldLoaders]="golemWidgetLoaders"
               >
               </gui-form>`,
             })
@@ -93,7 +93,7 @@ Creating a dynamic form has never been this easy.
                 form: [{ kind: 'input', type: 'textinput', path: 'username' }],
               });
               protected formData = { username: 'golemui' };
-              protected vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
+              protected golemWidgetLoaders = Golem.golemWidgetLoaders;
             }
             ```
           </Fragment>
@@ -105,7 +105,6 @@ Creating a dynamic form has never been this easy.
                 form: [{ kind: 'input', type: 'textinput', path: 'username' }],
               });
               formData = { username: 'golemui' };
-              vanillaFieldLoaders = { ...Vanilla.vanillaFieldLoaders };
 
               override createRenderRoot() {
                 return this;
@@ -117,7 +116,7 @@ Creating a dynamic form has never been this easy.
                     <gui-form
                       .formDef=${this.formDef}
                       .data=${this.formData}
-                      .fieldLoaders=${this.vanillaFieldLoaders}
+                      .fieldLoaders=${Golem.golemWidgetLoaders}
                     ></gui-form>
                   </div>
                 `;
@@ -126,6 +125,7 @@ Creating a dynamic form has never been this easy.
             ```
           </Fragment>
         </IntegrationTabs>
+
       </Fragment>
       <Fragment slot="json">
         Create a JSON file with your form definition:
@@ -143,6 +143,7 @@ Creating a dynamic form has never been this easy.
         ```
 
         Then load and render it in your framework. See the [Integration](/integration/overview/) section for framework-specific setup.
+
       </Fragment>
     </DslTabs>
 

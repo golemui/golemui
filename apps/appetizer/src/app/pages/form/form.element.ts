@@ -1,12 +1,12 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import * as GolemValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './form.element.scss';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
+import './form.element.scss';
 
 const mock = AppsShared.appetizer;
 
@@ -25,7 +25,7 @@ export class FormElement extends LitElement {
     countryItemRenderer: countryItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
-  validators: ValidatorsVanilla.CustomValidatorSchemas = {
+  validators: GolemValidators.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
   validateOn: Core.ValidateOn = 'eager';

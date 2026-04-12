@@ -52,6 +52,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -72,6 +73,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -94,6 +96,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -112,12 +115,12 @@ type ValidateOn =
 
 When not set, the default behaviour is `'eager'`.
 
-| Mode       | Triggers when                                       |
-| ---------- | --------------------------------------------------- |
-| `'change'` | The user changes the field value                    |
-| `'blur'`   | The user leaves the field                           |
+| Mode       | Triggers when                                              |
+| ---------- | ---------------------------------------------------------- |
+| `'change'` | The user changes the field value                           |
+| `'blur'`   | The user leaves the field                                  |
 | `'submit'` | A `submit` event is emitted (all fields are touched first) |
-| `'eager'`  | Any of the above happens (default)                  |
+| `'eager'`  | Any of the above happens (default)                         |
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -209,6 +212,7 @@ The [Markdown](/components-reference/input-fields/markdown/) and [Markdown Text]
       ...
     />
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```typescript
@@ -229,6 +233,7 @@ The [Markdown](/components-reference/input-fields/markdown/) and [Markdown Text]
       ...
     ></gui-form>
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```typescript
@@ -249,6 +254,7 @@ The [Markdown](/components-reference/input-fields/markdown/) and [Markdown Text]
       ...
     ></golem-form>
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -266,7 +272,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <React.FormComponent
       formDef={formDef}
       data={formData}
-      fieldLoader={vanillaWidgetLoaders}
+      fieldLoader={golemWidgetLoaders}
       localization={localization}
     />
     ```
@@ -276,7 +282,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <gui-form
       [formDef]="formDef"
       [data]="formData"
-      [fieldLoaders]="vanillaFieldLoaders"
+      [fieldLoaders]="golemWidgetLoaders"
       [localization]="localization"
     ></gui-form>
     ```
@@ -286,7 +292,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <gui-form
       .formDef=${this.formDef}
       .data=${this.formData}
-      .fieldLoaders=${this.vanillaFieldLoaders}
+      .fieldLoaders=${this.golemWidgetLoaders}
       .localization=${this.localization}
     ></gui-form>
     ```

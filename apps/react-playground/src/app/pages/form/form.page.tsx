@@ -2,7 +2,7 @@ import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { FormComponent } from '@golemui/gui-react';
 import { Dependencies } from '@golemui/gui-shared';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import * as GolemValidators from '@golemui/gui-validators';
 import { ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
 import { useState } from 'react';
@@ -38,7 +38,7 @@ const customWidgetLoaders = {
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
 const middlewares = [Core.devToolsMiddleware()];
-const validators: ValidatorsVanilla.CustomValidatorSchemas = {
+const validators: GolemValidators.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {

@@ -4,7 +4,7 @@ import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { Dependencies } from '@golemui/gui-shared';
 import { CustomValidatorSchemas, initValidators } from '@golemui/gui-validators';
-import { vanillaWidgetLoaders } from '../../widget.loaders';
+import { golemWidgetLoaders } from '../../widget.loaders';
 
 @Component({
   imports: [CommonModule, Angular.FormCoreComponent],
@@ -25,7 +25,7 @@ export class FormComponent {
   autocomplete = input<string | undefined>(undefined);
 
   protected customWidgetLoaders = computed(() => ({
-    ...vanillaWidgetLoaders,
+    ...golemWidgetLoaders,
     ...this.widgetLoaders(),
   }));
   protected customValidators = computed(() => initValidators({ ...this.validators() }));

@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/gui-shared';
 import '@golemui/gui-components';
+import { GolemWidget } from '@golemui/gui-shared';
 
-export const vanillaWidgetLoaders: Core.WidgetLoaders<
+export const golemWidgetLoaders: Core.WidgetLoaders<
   React.ComponentType<Core.WithWidget>,
-  VanillaWidget
+  GolemWidget
 > = {
   // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,

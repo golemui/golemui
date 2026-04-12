@@ -5,15 +5,15 @@
     <gui-form
       [formDef]="formDef"
       [data]="{}"
-      [fieldLoaders]="vanillaFieldLoaders"
+      [fieldLoaders]="golemWidgetLoaders"
       [validators]="validators"
     ></gui-form>
   `,
 })
 export class MyGolemUIForm {
   formDef = myForm;
-  vanillaFieldLoaders = {
-    ...vanillaFieldLoaders,
+  golemWidgetLoaders = {
+    ...golemWidgetLoaders,
   };
   validators: ValidatorFn<Validator> = initValidators();
 }

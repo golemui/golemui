@@ -18,7 +18,7 @@ npm i @golemui/core @golemui/lit @golemui/gui-lit --save
 Import the core styles in your HTML or application entry point:
 
 ```scss
-@import "@golemui/core/styles/index.css";
+@import '@golemui/core/styles/index.css';
 ```
 
 ## Usage
@@ -29,7 +29,7 @@ Import the core styles in your HTML or application entry point:
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { golemForm } from '@golemui/gui-shared';
-    import { vanillaFieldLoaders } from '@golemui/gui-lit';
+    import { golemWidgetLoaders } from '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -39,7 +39,7 @@ Import the core styles in your HTML or application entry point:
         ],
       });
       formData = { username: '' };
-      vanillaFieldLoaders = { ...vanillaFieldLoaders };
+      golemWidgetLoaders = { ...golemWidgetLoaders };
 
       override createRenderRoot() {
         return this;
@@ -50,25 +50,26 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .fieldLoaders=${this.vanillaFieldLoaders}
+            .fieldLoaders=${this.golemWidgetLoaders}
           ></gui-form>
         `;
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="json">
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import { vanillaFieldLoaders } from '@golemui/gui-lit';
+    import { golemWidgetLoaders } from '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       formDef = formDef;
       formData = { username: '' };
-      vanillaFieldLoaders = { ...vanillaFieldLoaders };
+      golemWidgetLoaders = { ...golemWidgetLoaders };
 
       override createRenderRoot() {
         return this;
@@ -79,26 +80,27 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .fieldLoaders=${this.vanillaFieldLoaders}
+            .fieldLoaders=${this.golemWidgetLoaders}
           ></gui-form>
         `;
       }
     }
     ```
+
   </Fragment>
 </DslTabs>
 
 ## Component Properties
 
-| Property           | Type                     | Description                                           |
-| ------------------ | ------------------------ | ----------------------------------------------------- |
-| `formDef`          | `Form`                   | The form definition object                            |
-| `data`             | `object`                 | Initial form data                                     |
-| `fieldLoaders`     | `FieldLoaders`           | Map of widget type loaders (e.g. vanilla components)  |
-| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)          |
-| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                              |
-| `validateOn`       | `ValidateOn`             | When to trigger validation                            |
-| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)          |
-| `localization`     | `Localization`           | i18n/localization configuration                       |
+| Property           | Type                     | Description                                        |
+| ------------------ | ------------------------ | -------------------------------------------------- |
+| `formDef`          | `Form`                   | The form definition object                         |
+| `data`             | `object`                 | Initial form data                                  |
+| `fieldLoaders`     | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
+| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)       |
+| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                           |
+| `validateOn`       | `ValidateOn`             | When to trigger validation                         |
+| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)       |
+| `localization`     | `Localization`           | i18n/localization configuration                    |
 
 See [Configuration](/integration/configuration/) for details on each optional prop.
