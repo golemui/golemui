@@ -12,7 +12,7 @@ export class MyGolemUIForm extends LitElement {
       <gui-form
         .formDef=${this.formDef}
         .data=${{}}
-        .fieldLoaders=${{ ...vanillaFieldLoaders }}
+        .widgetLoaders=${GuiLit.widgetLoaders}
         .validators=${this.validators}
       ></gui-form>
     `;

@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { WidgetLoaders, WithWidget } from '@golemui/core';
-import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
+import { Dependencies, golemSchemaToFieldMap } from '@golemui/gui-shared';
 import {
   CustomValidatorSchemas,
   initValidators,
@@ -11,7 +11,7 @@ import '@golemui/lit';
 import { LitItemRenderer, Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { vanillaWidgetLoaders } from '../widget.loaders';
+import { widgetLoaders } from '../widget.loaders';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
@@ -30,12 +30,12 @@ export class FormElement extends LitElement {
 
   // TODO: this should be widgetLoaders
   protected customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
-    ...vanillaWidgetLoaders,
+    ...widgetLoaders,
     ...this.widgetLoaders,
   };
   protected customValidators: Core.ValidatorFn<Validator> = initValidators({ ...this.validators });
   protected customMiddlewares: Core.Middleware<Core.State, Core.Action>[] = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
+    Core.jsonSchemaMiddleware(golemSchemaToFieldMap(jsonSchemaValidators)),
     ...this.middlewares,
   ];
 
@@ -47,12 +47,12 @@ export class FormElement extends LitElement {
     super.connectedCallback();
 
     this.customWidgetLoaders = {
-      ...vanillaWidgetLoaders,
+      ...widgetLoaders,
       ...this.widgetLoaders,
     };
     this.customValidators = initValidators({ ...this.validators });
     this.customMiddlewares = [
-      Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
+      Core.jsonSchemaMiddleware(golemSchemaToFieldMap(jsonSchemaValidators)),
       ...this.middlewares,
     ];
   }

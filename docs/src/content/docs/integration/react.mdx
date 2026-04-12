@@ -19,7 +19,7 @@ npm i @golemui/core @golemui/react @golemui/gui-react --save
 Import the core styles in your application entry point or global stylesheet:
 
 ```scss
-@import "@golemui/core/styles/index.css";
+@import '@golemui/core/styles/index.css';
 ```
 
 ## Usage
@@ -29,7 +29,7 @@ Import the core styles in your application entry point or global stylesheet:
     ```tsx
     import { golemForm } from '@golemui/gui-shared';
     import { FormComponent } from '@golemui/gui-react';
-    import * as Vanilla from '@golemui/gui-react';
+    import * as GuiReact from '@golemui/gui-react';
 
     const formDef = golemForm().create({
       form: [
@@ -42,16 +42,17 @@ Import the core styles in your application entry point or global stylesheet:
         <FormComponent
           formDef={formDef}
           data={{ username: '' }}
-          fieldLoader={{ ...Vanilla.vanillaFieldLoaders }}
+          widgetLoaders={{ ...GuiReact.widgetLoaders }}
         />
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="json">
     ```tsx
     import { FormComponent } from '@golemui/gui-react';
-    import * as Vanilla from '@golemui/gui-react';
+    import * as GuiReact from '@golemui/gui-react';
     import formDef from './my-form.json';
 
     export function MyForm() {
@@ -59,25 +60,26 @@ Import the core styles in your application entry point or global stylesheet:
         <FormComponent
           formDef={formDef}
           data={{ username: '' }}
-          fieldLoader={{ ...Vanilla.vanillaFieldLoaders }}
+          widgetLoaders={{ ...GuiReact.widgetLoaders }}
         />
       );
     }
     ```
+
   </Fragment>
 </DslTabs>
 
 ## Component Props
 
-| Prop               | Type                     | Description                                           |
-| ------------------ | ------------------------ | ----------------------------------------------------- |
-| `formDef`          | `Form`                   | The form definition object                            |
-| `data`             | `object`                 | Initial form data                                     |
-| `fieldLoader`      | `FieldLoaders`           | Map of widget type loaders (e.g. vanilla components)  |
-| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)          |
-| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                              |
-| `validateOn`       | `ValidateOn`             | When to trigger validation                            |
-| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)          |
-| `localization`     | `Localization`           | i18n/localization configuration                       |
+| Prop               | Type                     | Description                                        |
+| ------------------ | ------------------------ | -------------------------------------------------- |
+| `formDef`          | `Form`                   | The form definition object                         |
+| `data`             | `object`                 | Initial form data                                  |
+| `widgetLoaders`    | `FieldLoaders`           | Map of widget type loaders (e.g. golem components) |
+| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)       |
+| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                           |
+| `validateOn`       | `ValidateOn`             | When to trigger validation                         |
+| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)       |
+| `localization`     | `Localization`           | i18n/localization configuration                    |
 
 See [Configuration](/integration/configuration/) for details on each optional prop.

@@ -96,13 +96,14 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
           <React.FormComponent
             formDef={formDef}
             data={formData}
-            fieldLoader={vanillaWidgetLoaders}
+            fieldLoader={widgetLoaders}
             localization={localization}
           />
         </div>
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -112,7 +113,7 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [fieldLoaders]="vanillaFieldLoaders"
+        [widgetLoaders]="widgetLoaders"
         [localization]="localization"
       ></gui-form>`,
     })
@@ -130,41 +131,42 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
         });
       }
     }
-  ```
-  </Fragment>
-  <Fragment slot="lit">
-    ```ts
-    @customElement('lit-form')
-    export class FormElement extends LitElement {
-      protected localization = { /* i18next implementation */ };
 
-      constructor() {
-        i18next.init({
-          fallbackLng: 'fa',
-          fa: {
-            translation: {
-              rtl: { username: 'نام کاربری', password: 'رمز عبور', },
-            },
+````
+</Fragment>
+<Fragment slot="lit">
+  ```ts
+  @customElement('lit-form')
+  export class FormElement extends LitElement {
+    protected localization = { /* i18next implementation */ };
+
+    constructor() {
+      i18next.init({
+        fallbackLng: 'fa',
+        fa: {
+          translation: {
+            rtl: { username: 'نام کاربری', password: 'رمز عبور', },
           },
-        });
-      }
-
-      render() {
-        return html`
-          <div>
-            <gui-form
-              .formDef=${this.formDef}
-              .data=${this.formData}
-              .fieldLoaders=${this.vanillaFieldLoaders}
-              .localization=${this.localization}
-            ></gui-form>
-          </div>
-        `;
-      }
+        },
+      });
     }
-    ```
 
-  </Fragment>
+    render() {
+      return html`
+        <div>
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .widgetLoaders=${this.widgetLoaders}
+            .localization=${this.localization}
+          ></gui-form>
+        </div>
+      `;
+    }
+  }
+  ```
+
+</Fragment>
 </IntegrationTabs>
 
 Yes, it's that easy. Nothing else on your side has to be handled.
@@ -183,3 +185,4 @@ All components mirror automatically in RTL mode — no additional CSS needed on 
 | Icons and arrows | Select arrows, date-picker icons, and toggle sliders reposition |
 | Buttons          | Repeater action buttons align to the correct side               |
 | Calendar         | Month navigation arrows mirror direction                        |
+````

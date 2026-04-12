@@ -1,9 +1,9 @@
 import { Type } from '@angular/core';
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/gui-shared';
 import '@golemui/gui-components';
+import { GolemWidget } from '@golemui/gui-shared';
 
-export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
+export const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, GolemWidget> = {
   // ACTION WIDGETS
   button: async () => (await import('./components/button/button.component')).ButtonComponent,
 

@@ -15,11 +15,11 @@ export * from './lib/core-features/uid.cy';
 export * from './lib/core-features/validator-injection.cy';
 export * from './lib/core-features/widget-loaders.cy';
 
-// Vanilla features and components
-export * from './lib/vanilla-features/alert.cy';
-export * from './lib/vanilla-features/repeater.cy';
-export * from './lib/vanilla-features/select.cy';
-export * from './lib/vanilla-features/validators.cy';
+// Golem features and components
+export * from './lib/golem-features/alert.cy';
+export * from './lib/golem-features/repeater.cy';
+export * from './lib/golem-features/select.cy';
+export * from './lib/golem-features/validators.cy';
 
 // Utils
 export * from './lib/utils';
