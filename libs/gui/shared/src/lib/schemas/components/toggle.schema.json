@@ -86,5 +86,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

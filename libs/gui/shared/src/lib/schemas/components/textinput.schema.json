@@ -103,5 +103,6 @@
       "$ref": "#/$defs/labelDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

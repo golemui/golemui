@@ -30,7 +30,8 @@
             "type": "string"
           }
         },
-        "required": ["label", "uid"]
+        "required": ["label", "uid"],
+        "additionalProperties": false
       }
     }
   },
@@ -90,5 +91,6 @@
       "additionalProperties": false
     }
   },
-  "required": ["kind", "type", "children", "props"]
+  "required": ["kind", "type", "children", "props"],
+  "unevaluatedProperties": false
 }

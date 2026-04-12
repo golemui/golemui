@@ -31,7 +31,8 @@
             "type": ["string", "number", "boolean", "null"]
           }
         },
-        "required": ["template", "value"]
+        "required": ["template", "value"],
+        "additionalProperties": false
       }
     },
     "labelFieldProp": {
@@ -179,5 +180,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path", "props"]
+  "required": ["kind", "type", "path", "props"],
+  "unevaluatedProperties": false
 }
