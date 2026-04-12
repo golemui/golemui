@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
-import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { golemForm } from '../../golem-form';
+import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/textinput.schema.json';
 
@@ -203,6 +203,32 @@ describe('Textinput schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate a custom validator with arbitrary rule keys', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'username',
+            kind: 'input',
+            type: 'textinput',
+            props: {},
+            validator: {
+              type: 'custom',
+              required: true,
+              noSpaces: true,
+              alphanumericOnly: true,
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {
@@ -255,7 +281,6 @@ describe('Textinput schema validation', () => {
     it('should fail on an unknown message key in a string validator', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, unknownKey is not a valid message key
           {
             path: 'firstName',
             kind: 'input',
