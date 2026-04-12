@@ -12,7 +12,7 @@
           "type": "productDescription",
           "props": {
             "img": "https://picsum.photos/seed/golemui/240/240",
-            "description": "### GolemUI Pro\nThe most powerful dynamic forms library for JavaScript. Build complex, data-driven forms with zero boilerplate."
+            "description": "### GolemUI\nThe most powerful dynamic forms library for JavaScript. Build complex, data-driven forms with zero boilerplate."
           }
         },
         {
