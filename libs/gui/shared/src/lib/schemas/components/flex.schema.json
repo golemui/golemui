@@ -69,5 +69,6 @@
       "additionalProperties": false
     }
   },
-  "required": ["kind", "type", "children"]
+  "required": ["kind", "type", "children"],
+  "unevaluatedProperties": false
 }

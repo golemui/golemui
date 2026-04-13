@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
-import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { golemForm } from '../../golem-form';
+import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/markdowntext.schema.json';
 
@@ -251,12 +251,12 @@ describe('MarkdownText schema validation', () => {
     it('should invalidate when "props" contains an unknown property', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, unknown property
           {
             kind: 'display',
             type: 'markdownText',
             props: {
               md: 'Some content',
+              // @ts-expect-error Expected, unknown property
               unknownProp: 'not allowed',
             },
           },

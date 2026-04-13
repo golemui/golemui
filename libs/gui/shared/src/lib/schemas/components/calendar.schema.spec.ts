@@ -123,6 +123,37 @@ describe('Calendar schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with format: date', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'meetingDate',
+            kind: 'input',
+            type: 'calendar',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              format: 'date',
+              messages: {
+                required: 'Meeting date is required',
+                format: { key: 'validation.meetingDate.format', default: 'Enter a valid date' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for numberOfMonths', () => {
       const formDef = golemForm().create({

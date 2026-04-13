@@ -121,4 +121,60 @@ describe('Radiogroup schema validation', () => {
       expect(isValid).toBe(true);
     });
   });
+
+  describe('validator field', () => {
+    it('should validate a string validator with required', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'choice',
+            kind: 'input',
+            type: 'radiogroup',
+            props: { options: [] },
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: 'Please select an option',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a string validator with i18n required message', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'choice',
+            kind: 'input',
+            type: 'radiogroup',
+            props: { options: [] },
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: { key: 'validation.choice.required', default: 'Selection required' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
 });

@@ -157,6 +157,7 @@ type GolemWidget<
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
   | GuiMarkdown<FormType, States, V>
+  | GuiMarkdownText<FormType, States>
   | GuiNumberinput<FormType, States, V>
   | GuiPassword<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
@@ -266,6 +267,11 @@ type GuiMarkdown<FormType extends Record<string, any>, States extends string, V>
   Props.MarkdownProps,
   V
 > & { type: 'markdown' };
+
+type GuiMarkdownText<
+  FormType extends Record<string, any>,
+  States extends string,
+> = Core.DisplayWidget<States, FormType, Props.MarkdownTextProps> & { type: 'markdownText' };
 
 type GuiNumberinput<
   FormType extends Record<string, any>,

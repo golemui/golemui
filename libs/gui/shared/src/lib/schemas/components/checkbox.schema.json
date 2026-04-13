@@ -48,6 +48,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "defaultValue": {
       "type": "boolean"
     },
@@ -83,5 +86,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

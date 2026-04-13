@@ -120,6 +120,65 @@ describe('Password schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with required and length constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'secret',
+            kind: 'input',
+            type: 'password',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 8,
+              maxLength: 64,
+              messages: {
+                required: 'Password is required',
+                minLength: 'Password must be at least 8 characters',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a string validator with i18n messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'secret',
+            kind: 'input',
+            type: 'password',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: { key: 'validation.password.required', default: 'Password is required' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for showPasswordIcon', () => {
       const formDef = golemForm().create({

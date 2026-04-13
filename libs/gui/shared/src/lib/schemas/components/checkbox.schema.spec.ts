@@ -112,6 +112,63 @@ describe('Checkbox schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a boolean validator with const: true and plain messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'acceptTerms',
+            kind: 'input',
+            type: 'checkbox',
+            props: {},
+            validator: {
+              type: 'boolean',
+              const: true,
+              messages: {
+                invalid: 'You must check',
+                const: 'You must accept the terms and conditions',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a boolean validator with i18n const message', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'acceptTerms',
+            kind: 'input',
+            type: 'checkbox',
+            props: {},
+            validator: {
+              type: 'boolean',
+              const: true,
+              messages: {
+                const: { key: 'validation.terms.const', default: 'Must accept terms' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid enum for checkboxPosition', () => {
       const formDef = golemForm().create({
