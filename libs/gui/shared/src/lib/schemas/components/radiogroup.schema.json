@@ -37,6 +37,10 @@
     },
     "valueFieldProp": {
       "type": "string"
+    },
+    "directionProp": {
+      "enum": ["row", "column"],
+      "default": "column"
     }
   },
   "allOf": [
@@ -83,6 +87,9 @@
         },
         "valueField": {
           "$ref": "#/$defs/valueFieldProp"
+        },
+        "direction": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "patternProperties": {
@@ -97,6 +104,9 @@
         },
         "^valueField\\.[^.]+$": {
           "$ref": "#/$defs/valueFieldProp"
+        },
+        "^direction\\.[^.]+$": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "additionalProperties": false

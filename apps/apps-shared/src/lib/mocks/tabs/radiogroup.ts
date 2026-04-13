@@ -34,6 +34,7 @@ export const radiogroup = (uid: string): any => ({
       props: {
         hint: 'No option should be selected, and a validation error should be displayed because the field is required',
         options: ['hello', 'bye'],
+        direction: 'row',
       },
       validator: { type: 'string', required: true },
     },

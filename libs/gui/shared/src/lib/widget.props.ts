@@ -437,6 +437,7 @@ export type RadiogroupProps = {
   options: Option[];
   labelField?: string;
   valueField?: string;
+  direction?: 'row' | 'column';
 };
 
 export type OneOfProps = {
