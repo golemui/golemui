@@ -205,6 +205,7 @@ export const radiogroupSchema = z.object({
       hint: z.string().optional(),
       labelField: z.string().optional(),
       valueField: z.string().optional(),
+      direction: z.enum(['row', 'column']).optional(),
     })
     .optional(),
 });

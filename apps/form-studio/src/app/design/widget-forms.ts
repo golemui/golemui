@@ -340,6 +340,10 @@ const PROP_FIELDS: Record<string, Record<string, unknown>[]> = {
     textField('prop-hint', 'hint', 'Hint'),
     textField('prop-labelField', 'labelField', 'Label Field'),
     textField('prop-valueField', 'valueField', 'Value Field'),
+    selectField('prop-direction', 'direction', 'Direction', [
+      { label: 'Column', value: 'column' },
+      { label: 'Row', value: 'row' },
+    ]),
     optionsRepeater('prop-options', 'options'),
   ],
   dropdown: [

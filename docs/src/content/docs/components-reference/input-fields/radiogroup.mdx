@@ -13,6 +13,8 @@ import radiogroupHintJson from '../../../../../public/template/components/radiog
 import radiogroupHintDx from '../../../../../public/template/components-dx/radiogroup/radiogroup-hint.ts?raw';
 import radiogroupCustomJson from '../../../../../public/template/components/radiogroup/radiogroup-custom.json?raw';
 import radiogroupCustomDx from '../../../../../public/template/components-dx/radiogroup/radiogroup-custom.ts?raw';
+import radiogroupDirectionJson from '../../../../../public/template/components/radiogroup/radiogroup-direction.json?raw';
+import radiogroupDirectionDx from '../../../../../public/template/components-dx/radiogroup/radiogroup-direction.ts?raw';
 import radiogroupAnatomyHtml from '../../../../../public/template/components/radiogroup/radiogroup-anatomy.html?raw';
 export const configJson = 'radiogroup.json';
 export const configDx = 'radiogroup.ts';
@@ -36,6 +38,7 @@ Use these `props` to customize your Radio Group component.
 | `hint`       | string           | Description text displayed below the label                                     |
 | `labelField` | string           | Custom key to use for the display label of each option. Defaults to `label`    |
 | `valueField` | string           | Custom key to use for the underlying value of each option. Defaults to `value` |
+| `direction`  | `row` \| `column` | Layout direction for the radio options. Defaults to `column`                  |
 
 ### Hint
 
@@ -55,6 +58,15 @@ You can map different fields for the options using `labelField` and `valueField`
 <DslCode dxCode={radiogroupCustomDx} jsonCode={radiogroupCustomJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/components/radiogroup/radiogroup-custom.json"
+/>
+
+### Direction
+
+Use the `direction` property to display radio options horizontally.
+
+<DslCode dxCode={radiogroupDirectionDx} jsonCode={radiogroupDirectionJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/components/radiogroup/radiogroup-direction.json"
 />
 
 ## Styling
