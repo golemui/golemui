@@ -1,0 +1,12 @@
+{
+  "form": [
+    {
+      "kind": "action",
+      "type": "productShare",
+      "label": "Share",
+      "on": {
+        "click": "shareEvent"
+      }
+    }
+  ]
+}

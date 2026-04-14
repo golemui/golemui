@@ -1,0 +1,29 @@
+.product-card {
+  display: block;
+  width: 100%;
+}
+
+.product-card__widget {
+  background: var(--gui-bg-surface);
+  border: 1px solid var(--gui-border-default);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--gui-text-default) 8%, transparent);
+}
+
+.product-card__title {
+  margin: 0;
+  padding: 16px 20px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gui-text-default);
+  border-bottom: 1px solid var(--gui-border-default);
+  background: color-mix(in srgb, var(--gui-bg-surface) 95%, var(--gui-intent-primary) 5%);
+}
+
+.product-card__content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

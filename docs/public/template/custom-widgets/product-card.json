@@ -1,0 +1,37 @@
+{
+  "form": [
+    {
+      "kind": "layout",
+      "type": "productCard",
+      "props": {
+        "title": "Rate Our Product"
+      },
+      "children": [
+        {
+          "kind": "display",
+          "type": "productDescription",
+          "props": {
+            "img": "https://picsum.photos/seed/golemui/240/240",
+            "description": "### GolemUI\nThe most powerful dynamic forms library for JavaScript. Build complex, data-driven forms with zero boilerplate."
+          }
+        },
+        {
+          "kind": "input",
+          "type": "productRating",
+          "path": "product.rating",
+          "props": {
+            "maxRating": 10
+          }
+        },
+        {
+          "kind": "action",
+          "type": "productShare",
+          "label": "Share",
+          "on": {
+            "click": "shareEvent"
+          }
+        }
+      ]
+    }
+  ]
+}
