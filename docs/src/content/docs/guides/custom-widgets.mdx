@@ -1135,19 +1135,14 @@ Click any of the share buttons to fire the `shareEvent`:
 
 Before GolemUI can render your custom widgets, you need to register them in the **widget loaders** object. Widget loaders map a `type` string to a lazy-loaded widget. This is the same registry that built-in widgets use.
 
-Spread the built-in `vanillaWidgetLoaders` and add your custom entries:
-
 <IntegrationTabs>
   <Fragment slot="react">
     ```ts
-    import * as Vanilla from '@golemui/gui-react';
     import * as Core from '@golemui/core';
 
-    export const widgetLoaders: Core.WidgetLoaders<
+    export const customWidgetLoaders: Core.WidgetLoaders<
       React.ComponentType<Core.WithWidget>
     > = {
-      ...Vanilla.vanillaWidgetLoaders,
-
       // Custom widgets
       productCard: async () =>
         (await import('./widgets/ProductCard')).ProductCard,
@@ -1162,13 +1157,10 @@ Spread the built-in `vanillaWidgetLoaders` and add your custom entries:
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Vanilla from '@golemui/gui-angular';
     import * as Core from '@golemui/core';
     import { Type } from '@angular/core';
 
-    export const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = {
-      ...Vanilla.vanillaWidgetLoaders,
-
+    export const customWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = {
       // Custom widgets
       productCard: async () =>
         (await import('./widgets/product-card/product-card.component'))
@@ -1190,12 +1182,9 @@ Spread the built-in `vanillaWidgetLoaders` and add your custom entries:
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Vanilla from '@golemui/gui-lit';
     import * as Core from '@golemui/core';
 
-    export const widgetLoaders: Core.WidgetLoaders<any> = {
-      ...Vanilla.vanillaWidgetLoaders,
-
+    export const customWidgetLoaders: Core.WidgetLoaders<any> = {
       // Custom widgets
       productCard: async () => {
         await import('./widgets/product-card.element');
@@ -1231,7 +1220,7 @@ With all four widgets implemented and registered, here's the complete form setup
     ```tsx
     import * as Core from '@golemui/core';
     import * as React from '@golemui/react';
-    import { widgetLoaders } from './widget-loaders';
+    import { customWidgetLoaders } from './custom-widget-loaders';
 
     const formDef = {
       form: [
@@ -1288,7 +1277,7 @@ With all four widgets implemented and registered, here's the complete form setup
       return (
         <React.FormComponent
           formDef={formDef}
-          widgetLoaders={widgetLoaders}
+          customWidgetLoaders={customWidgetLoaders}
           data={{}}
           formEvent={handleFormEvent}
         />
@@ -1301,7 +1290,7 @@ With all four widgets implemented and registered, here's the complete form setup
     import { Component } from '@angular/core';
     import * as Angular from '@golemui/angular';
     import * as Core from '@golemui/core';
-    import { widgetLoaders } from './widget-loaders';
+    import { customWidgetLoaders } from './widget-loaders';
 
     @Component({
       standalone: true,
@@ -1309,14 +1298,14 @@ With all four widgets implemented and registered, here's the complete form setup
       template: `
         <gui-form
           [formDef]="formDef"
-          [fieldLoaders]="widgetLoaders"
+          [customWidgetLoaders]="customWidgetLoaders"
           [data]="data"
           (formEvent)="handleFormEvent($event)"
         ></gui-form>
       `,
     })
     export class ProductPage {
-      widgetLoaders = widgetLoaders;
+      customWidgetLoaders = customWidgetLoaders;
       data = {};
       formDef = {
         form: [
@@ -1376,11 +1365,11 @@ With all four widgets implemented and registered, here's the complete form setup
     import { html, LitElement } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import * as Core from '@golemui/core';
-    import { widgetLoaders } from './widget-loaders';
+    import { customWidgetLoaders } from './widget-loaders';
 
     @customElement('app-product-page')
     export class ProductPage extends LitElement {
-      widgetLoaders = widgetLoaders;
+      customWidgetLoaders = customWidgetLoaders;
       data = {};
       formDef = {
         form: [
@@ -1422,7 +1411,7 @@ With all four widgets implemented and registered, here's the complete form setup
         return html`
           <gui-form
             .formDef=${this.formDef}
-            .fieldLoaders=${this.widgetLoaders}
+            .customWidgetLoaders=${this.customWidgetLoaders}
             .data=${this.data}
             @form-event=${(e: CustomEvent<Core.FormEvent>) =>
               this.handleFormEvent(e.detail)}
