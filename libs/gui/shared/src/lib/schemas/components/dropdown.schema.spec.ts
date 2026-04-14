@@ -129,6 +129,62 @@ describe('Dropdown schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with required', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'country',
+            kind: 'input',
+            type: 'dropdown',
+            props: { items: [] },
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: 'Please select a country',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a string validator with i18n required message', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'country',
+            kind: 'input',
+            type: 'dropdown',
+            props: { items: [] },
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: { key: 'validation.country.required', default: 'Country is required' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on missing props', () => {
       const formDef = golemForm().create({

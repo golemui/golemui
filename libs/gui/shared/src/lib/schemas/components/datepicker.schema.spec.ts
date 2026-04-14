@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
-import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { golemForm } from '../../golem-form';
+import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/datepicker.schema.json';
 
@@ -54,7 +54,6 @@ describe('Datepicker schema validation', () => {
             type: 'datePicker',
             props: {
               hint: 'Pick a date',
-              placeholder: 'yyyy-mm-dd',
               icon: 'calendar',
               dayFormat: '2-digit',
               monthFormat: 'long',
@@ -82,7 +81,6 @@ describe('Datepicker schema validation', () => {
             type: 'datePicker',
             props: {
               'hint.hasError': 'Date required',
-              'placeholder.isEmpty': 'Please pick',
             },
           },
         ],
@@ -106,7 +104,6 @@ describe('Datepicker schema validation', () => {
             type: 'datePicker',
             props: {
               hint: { key: 'dp.hint', default: 'Hint' },
-              placeholder: { key: 'dp.ph', default: 'Placeholder' },
             },
           },
         ],
@@ -116,6 +113,37 @@ describe('Datepicker schema validation', () => {
       const isValid = validate(i18nDatepicker);
       if (!isValid) {
         specValidationErrorsLogger(validate, i18nDatepicker);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
+  describe('validator field', () => {
+    it('should validate a string validator with format: date', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'bday',
+            kind: 'input',
+            type: 'datePicker',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              format: 'date',
+              messages: {
+                required: 'Date is required',
+                format: { key: 'validation.bday.format', default: 'Enter a valid date' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
       }
       expect(isValid).toBe(true);
     });

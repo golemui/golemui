@@ -45,5 +45,6 @@
       "additionalProperties": false
     }
   },
-  "required": ["kind", "type", "props"]
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
 }

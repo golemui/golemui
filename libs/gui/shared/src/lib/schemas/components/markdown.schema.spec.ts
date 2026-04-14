@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
-import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { golemForm } from '../../golem-form';
+import { GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/markdown.schema.json';
 
@@ -59,8 +59,6 @@ describe('Markdown schema validation', () => {
               defaultOpenPreview: false,
               maxLength: 5000,
               tools: ['H', 'B', 'I', '|', 'Q', 'L', 'OL', 'UL'],
-              writeTabLabel: 'Write',
-              previewTabLabel: 'Preview',
               headingTitle: 'Heading',
               boldTitle: 'Bold',
               italicTitle: 'Italic',
@@ -115,8 +113,6 @@ describe('Markdown schema validation', () => {
             props: {
               hint: { key: 'md.hint', default: 'Hint' },
               placeholder: { key: 'md.placeholder', default: 'Placeholder' },
-              writeTabLabel: { key: 'md.write', default: 'Write' },
-              previewTabLabel: { key: 'md.preview', default: 'Preview' },
               headingTitle: { key: 'md.heading', default: 'Heading' },
               boldTitle: { key: 'md.bold', default: 'Bold' },
               italicTitle: { key: 'md.italic', default: 'Italic' },
@@ -134,6 +130,39 @@ describe('Markdown schema validation', () => {
       const isValid = validate(i18nMarkdown);
       if (!isValid) {
         specValidationErrorsLogger(validate, i18nMarkdown);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
+  describe('validator field', () => {
+    it('should validate a string validator with required and length constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'content',
+            kind: 'input',
+            type: 'markdown',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 10,
+              maxLength: 5000,
+              messages: {
+                required: 'Content is required',
+                minLength: { key: 'validation.content.minLength', default: 'Content is too short' },
+                maxLength: 'Content cannot exceed 5000 characters',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
       }
       expect(isValid).toBe(true);
     });

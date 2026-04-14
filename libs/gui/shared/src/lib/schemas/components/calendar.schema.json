@@ -74,6 +74,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "props": {
       "type": "object",
       "properties": {
@@ -160,5 +163,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

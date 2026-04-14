@@ -131,6 +131,39 @@ describe('List schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate an array validator with required and minItems', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'tags',
+            kind: 'input',
+            type: 'list',
+            props: { items: [] },
+            validator: {
+              type: 'array',
+              required: true,
+              minItems: 1,
+              maxItems: 10,
+              messages: {
+                required: 'Please select at least one tag',
+                minItems: { key: 'validation.tags.minItems', default: 'Select at least one tag' },
+                maxItems: 'You can select at most 10 tags',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid items type', () => {
       const formDef = golemForm().create({

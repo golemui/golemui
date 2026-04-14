@@ -123,6 +123,39 @@ describe('Textarea schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with required and length constraints', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'comments',
+            kind: 'input',
+            type: 'textarea',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 10,
+              maxLength: 500,
+              messages: {
+                required: 'Comment is required',
+                minLength: 'Comment must be at least 10 characters',
+                maxLength: { key: 'validation.comments.maxLength', default: 'Comment is too long' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid counterMode enum', () => {
       const formDef = golemForm().create({

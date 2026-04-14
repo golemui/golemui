@@ -120,6 +120,65 @@ describe('Currency schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a number validator with minimum bound', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'amount',
+            kind: 'input',
+            type: 'currency',
+            props: {},
+            validator: {
+              type: 'number',
+              required: true,
+              minimum: 0,
+              messages: {
+                minimum: { key: 'validation.amount.minimum', default: 'Amount cannot be negative' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a number validator with exclusive bounds', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'amount',
+            kind: 'input',
+            type: 'currency',
+            props: {},
+            validator: {
+              type: 'number',
+              exclusiveMinimum: 0,
+              maximum: 1000000,
+              messages: {
+                exclusiveMinimum: 'Amount must be greater than 0',
+                maximum: 'Amount cannot exceed 1,000,000',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid enum/type for step', () => {
       const formDef = golemForm().create({
