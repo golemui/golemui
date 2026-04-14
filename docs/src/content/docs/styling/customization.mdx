@@ -11,12 +11,12 @@ import Demo from '../../../../src/components/landing/Demo.astro';
 GolemUI gives you three levels of customization — pick the one that fits your needs:
 
 1. **CSS variable overrides** — Change design tokens for quick, broad adjustments
-2. **Class-based overrides** — Target specific components with standard CSS selectors
+2. **Class-based overrides** — Target specific widgets with standard CSS selectors
 3. **Headless mode** — Drop all default styles and build your own from scratch
 
 ## CSS variable overrides
 
-The fastest way to customize GolemUI. Override any [design token](/styling/design-tokens/) on `:root` or a scoped selector, and every component that references it updates automatically.
+The fastest way to customize GolemUI. Override any [design token](/styling/design-tokens/) on `:root` or a scoped selector, and every widget that references it updates automatically.
 
 ### Global overrides
 
@@ -60,7 +60,7 @@ GolemUI follows the BEM naming convention consistently:
 
 | Pattern            | Example                                          | Description                   |
 | ------------------ | ------------------------------------------------ | ----------------------------- |
-| **Block**          | `.gui-button`, `.gui-form`, `.gui-widget`        | Top-level component class     |
+| **Block**          | `.gui-button`, `.gui-form`, `.gui-widget`        | Top-level widget class        |
 | **Element**        | `.gui-repeater__card`, `.gui-repeater__add-btn`  | Child element within a block  |
 | **Modifier**       | `.gui-widget--horizontal`, `.gui-checkbox--left` | Variant of a block or element |
 | **Custom element** | `gui-textinput`, `gui-select`, `gui-toggle`      | The web component tag itself  |
@@ -107,9 +107,9 @@ Avoid `!important` when possible. GolemUI styles are designed with low specifici
 
 ## Headless mode
 
-For complete control, skip the CSS import entirely. Components still render their full HTML structure with BEM class names, ARIA attributes, and all interactive behavior. You provide all the visual styling.
+For complete control, skip the CSS import entirely. Widgets still render their full HTML structure with BEM class names, ARIA attributes, and all interactive behavior. You provide all the visual styling.
 
-Here's an example of styling a [Textinput](/components-reference/input-fields/textinput) and a [Password](/components-reference/input-fields/password) from scratch in headless mode with SCSS:
+Here's an example of styling a [Textinput](/widgets-reference/input-fields/textinput) and a [Password](/widgets-reference/input-fields/password) from scratch in headless mode with SCSS:
 
 ```scss
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
@@ -183,15 +183,15 @@ Here's an example of styling a [Textinput](/components-reference/input-fields/te
 
 <Demo src="/headless/index.html?form=../template/styling/sample-form.json" />
 
-Components retain all their functionality — ARIA compliance, keyboard interactions, validation, and event handling. You write your own CSS from scratch, targeting the BEM class names that components render.
+Widgets retain all their functionality — ARIA compliance, keyboard interactions, validation, and event handling. You write your own CSS from scratch, targeting the BEM class names that widgets render.
 
 <Aside type="caution">
-  In headless mode, components have no visual styling at all. You will need to provide CSS for every interactive state: focus, hover, active, disabled, and invalid.
+  In headless mode, widgets have no visual styling at all. You will need to provide CSS for every interactive state: focus, hover, active, disabled, and invalid.
 </Aside>
 
-### Component anatomy
+### Widget anatomy
 
-Each component in the [Components Reference](/components-reference/input-fields/overview/) includes an **Anatomy** section that shows the rendered HTML structure. Use these as a guide when writing class-based overrides — they show exactly which elements and class names are available to target.
+Each widget in the [Widgets Reference](/widgets-reference/input-fields/overview/) includes an **Anatomy** section that shows the rendered HTML structure. Use these as a guide when writing class-based overrides — they show exactly which elements and class names are available to target.
 
 <Aside type="tip">
 Even in headless mode, consider defining the same `--gui-*` CSS custom property names on `:root`. This way, if you later decide to opt into parts of the courtesy layer or a theme, the integration will be seamless.

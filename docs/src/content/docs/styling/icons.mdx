@@ -11,7 +11,7 @@ import iconsWebfontJson from '../../../../public/template/styling/icons-webfont.
 import iconsSvgJson from '../../../../public/template/styling/icons-svg.json?raw';
 import iconsImageJson from '../../../../public/template/styling/icons-image.json?raw';
 
-GolemUI components accept an `icon` prop and render it as a `<span>` element with predictable CSS hooks. GolemUI does not prescribe any specific icon library — it provides the HTML structure, and you bring the CSS to render whatever icon you want.
+GolemUI widgets accept an `icon` prop and render it as a `<span>` element with predictable CSS hooks. GolemUI does not prescribe any specific icon library — it provides the HTML structure, and you bring the CSS to render whatever icon you want.
 
 ## How icons are rendered
 
@@ -31,9 +31,9 @@ This gives you three CSS selectors to work with:
 
 GolemUI provides base positioning styles for the icon element (absolute positioning, flexbox centering, 40×40 dimensions), but the actual icon rendering is intentionally left to you. This means you can use any icon system you prefer.
 
-### Components with icon support
+### Widgets with icon support
 
-| Component | Icon props |
+| Widget | Icon props |
 | --- | --- |
 | Textinput | `icon` |
 | Password | `icon`, `showPasswordIcon`, `hidePasswordIcon` |

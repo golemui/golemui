@@ -1,0 +1,21 @@
+---
+title: Overview
+description: A field to display information
+sidebar:
+  order: 0
+---
+
+Display Fields are widgets used to display information in several ways to users. An alert or a custom header are examples of Display Fields.
+
+Display Fields are defined by setting the `kind` property as `display`.
+
+## Main Properties
+
+Use these properties to customize your Fields.
+
+| property | type   | value                                                                                                                      |
+| -------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `uid`    | string | A unique id, if none provided, one will be generated automatically                                                         |
+| `kind`   | string | **MANDATORY** All Display Fields are type `display`                                                                        |
+| `widget` | string | **MANDATORY** The Display Field widget that you want to use (for example: `alert`)                                         |
+| `props`  | object | An object with custom properties defined by each Display Field, check the documentation of each Display Field to know more |
