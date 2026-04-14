@@ -7,7 +7,7 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-GolemUI is a framework-agnostic form engine. Its core logic and component library are shared across all supported frameworks — only the thin adapter layer differs.
+GolemUI is a framework-agnostic form engine. Its core logic and widget library are shared across all supported frameworks — only the thin adapter layer differs.
 
 ## Supported Frameworks
 
@@ -19,11 +19,11 @@ GolemUI is a framework-agnostic form engine. Its core logic and component librar
 
 ## Architecture
 
-All frameworks share the same rendering engine (`@golemui/core`) and component set. The adapter packages provide a native wrapper that:
+All frameworks share the same rendering engine (`@golemui/core`) and widget set. The adapter packages provide a native wrapper that:
 
 1. Accepts a `formDef` (your form definition, either from `golemForm().create(...)` or parsed JSON)
 2. Accepts `data` (the initial form data object)
-3. Accepts `customWidgetLoaders` (the set of UI components to render — typically the GolemUI set)
+3. Accepts `customWidgetLoaders` (the set of UI widgets to render — typically the GolemUI set)
 4. Optionally accepts `customValidators`, `validateOn`, `dependencies`, and `localization`
 
 <Aside type="tip">

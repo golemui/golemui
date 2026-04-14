@@ -56,24 +56,24 @@ export default defineConfig({
           autogenerate: { directory: 'styling' },
         },
         {
-          label: 'Components Reference',
+          label: 'Widgets Reference',
           items: [
             // Each item here is one entry in the navigation menu.
             {
               label: 'Display Fields',
-              autogenerate: { directory: 'components-reference/display-fields' },
+              autogenerate: { directory: 'widgets-reference/display-fields' },
             },
             {
               label: 'Input Fields',
-              autogenerate: { directory: 'components-reference/input-fields' },
+              autogenerate: { directory: 'widgets-reference/input-fields' },
             },
             {
               label: 'Layout Fields',
-              autogenerate: { directory: 'components-reference/layout-fields' },
+              autogenerate: { directory: 'widgets-reference/layout-fields' },
             },
             {
               label: 'Interactive Fields',
-              autogenerate: { directory: 'components-reference/interactive-fields' },
+              autogenerate: { directory: 'widgets-reference/interactive-fields' },
             },
           ],
         },

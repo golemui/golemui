@@ -1,0 +1,72 @@
+---
+title: List
+description: A virtualized List widget for displaying and selecting from large sets of data
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import listJson from '../../../../../public/template/widgets/list/list.json?raw';
+import listDx from '../../../../../public/template/widgets-dx/list/list.ts?raw';
+import listHintJson from '../../../../../public/template/widgets/list/list-hint.json?raw';
+import listHintDx from '../../../../../public/template/widgets-dx/list/list-hint.ts?raw';
+import listAnatomyHtml from '../../../../../public/template/widgets/list/list-anatomy.html?raw';
+export const configJson = 'list.json';
+export const configDx = 'list.ts';
+export const anatomy = 'list-anatomy.html';
+
+List widgets are [Input Fields](/widgets-reference/input-fields/overview) designed to handle selection from potentially thousands of items efficiently. They use virtualization to only render the items currently visible in the viewport, ensuring high performance regardless of the total data volume.
+
+<DslCode dxCode={listDx} jsonCode={listJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/list/list.json"
+/>
+
+## Props
+
+Use these `props` to customize your List widget.
+
+| prop           | type             | description                                                            |
+| -------------- | ---------------- | ---------------------------------------------------------------------- |
+| `items`        | array            | **Required**. Collection of items. Can be strings, numbers, or objects |
+| `value`        | string \| number | The currently selected value                                           |
+| `valueField`   | string           | The key to use for the value if items are objects                      |
+| `height`       | number           | Total height of the scrollable viewport. Defaults to `300`             |
+| `itemHeight`   | number           | Fixed height of each item for virtualization logic. Defaults to `40`   |
+| `hint`         | string           | A description to display for accessibility                             |
+| `itemRenderer` | string           | Key or identifier for a custom item renderer                           |
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to provide additional context for the list.
+
+<DslCode dxCode={listHintDx} jsonCode={listHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/list/list-hint.json"
+/>
+
+## Styling
+
+Lists can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable                 | Description                             |
+| ---------------------------- | --------------------------------------- |
+| `--gui-bg-default`           | Background color for the list container |
+| `--gui-border-default`       | Border color for the list container     |
+| `--gui-radius-md`            | Border radius for the list container    |
+| `--gui-intent-primary`       | Background color for the selected item  |
+| `--gui-intent-primary-hover` | Background color for items on hover     |
+| `--gui-bg-disabled`          | Background color for disabled items     |
+
+### Anatomy
+
+This is the anatomy of the List Component in case you want to use your CSS styles.
+
+<Code code={listAnatomyHtml} lang="html" title={anatomy} />

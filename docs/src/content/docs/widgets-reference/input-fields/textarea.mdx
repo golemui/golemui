@@ -1,0 +1,122 @@
+---
+title: Textarea
+description: A Textarea widget to allow user to enter multi-line string chains
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import textareaJson from '../../../../../public/template/widgets/textarea/textarea.json?raw';
+import textareaDx from '../../../../../public/template/widgets-dx/textarea/textarea.ts?raw';
+import textareaPlaceholderJson from '../../../../../public/template/widgets/textarea/textarea-placeholder.json?raw';
+import textareaPlaceholderDx from '../../../../../public/template/widgets-dx/textarea/textarea-placeholder.ts?raw';
+import textareaHintJson from '../../../../../public/template/widgets/textarea/textarea-hint.json?raw';
+import textareaHintDx from '../../../../../public/template/widgets-dx/textarea/textarea-hint.ts?raw';
+import textareaIconJson from '../../../../../public/template/widgets/textarea/textarea-icon.json?raw';
+import textareaIconDx from '../../../../../public/template/widgets-dx/textarea/textarea-icon.ts?raw';
+import textareaCounterJson from '../../../../../public/template/widgets/textarea/textarea-counter.json?raw';
+import textareaCounterDx from '../../../../../public/template/widgets-dx/textarea/textarea-counter.ts?raw';
+import textareaAutogrowJson from '../../../../../public/template/widgets/textarea/textarea-autogrow.json?raw';
+import textareaAutogrowDx from '../../../../../public/template/widgets-dx/textarea/textarea-autogrow.ts?raw';
+import textareaAnatomyHtml from '../../../../../public/template/widgets/textarea/textarea-anatomy.html?raw';
+export const configJson = 'textarea.json';
+export const configDx = 'textarea.ts';
+export const anatomy = 'textarea-anatomy.html';
+
+Textarea widgets are [Input Fields](/widgets-reference/input-fields/overview) that allow the user to enter multi-line string chains.
+
+<DslCode dxCode={textareaDx} jsonCode={textareaJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/textarea/textarea.json"
+/>
+
+## Props
+
+Use these `props` to customize your Textarea widget.
+
+| prop            | type    | description                                                                                                  |
+| --------------- | ------- | ------------------------------------------------------------------------------------------------------------ |
+| `placeholder`   | string  | A placeholder text to display when the textarea has no value                                                 |
+| `hint`          | string  | A description to display below the textarea                                                                  |
+| `icon`          | string  | A css class to display an icon inside the textarea                                                           |
+| `counterMode`   | string  | Mode for the character counter if `maxLength` is set, possible values are `remaining` (default) or `current` |
+| `minimumHeight` | number  | Minimum height of the textarea in pixels, defaults to 120                                                    |
+| `autoGrow`      | boolean | If true, the textarea will automatically expand its height as the user types                                 |
+| `autocomplete`  | string  | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                                            |
+
+### Placeholder
+
+Use the property `placeholder` to add a placeholder.
+
+<DslCode dxCode={textareaPlaceholderDx} jsonCode={textareaPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/textarea/textarea-placeholder.json"
+/>
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to add a description.
+
+<DslCode dxCode={textareaHintDx} jsonCode={textareaHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/textarea/textarea-hint.json"
+/>
+
+### Icon
+
+Use the property `icon` to add an icon to the `textarea`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the textarea on the left.
+
+<DslCode dxCode={textareaIconDx} jsonCode={textareaIconJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/textarea/textarea-icon.json"
+/>
+
+### Character Counter
+
+Use the validator `maxLength` to limit the number of characters and display a character counter. You can change how it counts with `counterMode` (`remaining` or `current`).
+
+<DslCode dxCode={textareaCounterDx} jsonCode={textareaCounterJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/textarea/textarea-counter.json"
+/>
+
+### Auto Grow
+
+Use the property `autoGrow` to allow the textarea to expand automatically based on content. You can combine it with `minimumHeight` to set its initial size.
+
+<DslCode dxCode={textareaAutogrowDx} jsonCode={textareaAutogrowJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/textarea/textarea-autogrow.json"
+/>
+
+## Styling
+
+Textareas can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable             | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| `--gui-space-10`         | Icon left padding or inline-start space         |
+| `--gui-font-sm`          | Counter text font size                          |
+| `--gui-space-2`          | Counter top margin                              |
+| `--gui-intent-error`     | Counter error color when max length is exceeded |
+| `--gui-space-gap--inner` | Label gap and margin bottom                     |
+| `--gui-padding`          | Input padding                                   |
+| `--gui-color-border`     | Input border color                              |
+| `--gui-radius`           | Input radius                                    |
+| `--gui-color-bg`         | Input background color                          |
+| `--gui-color-fg`         | Input text color                                |
+| `--gui-color-primary`    | Input border color and outline on focus         |
+| `--gui-color-error`      | Input border color when invalid                 |
+
+### Anatomy
+
+This is the anatomy of the Textarea Component in case you want to use your CSS styles.
+
+<Code code={textareaAnatomyHtml} lang="html" title={anatomy} />

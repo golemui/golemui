@@ -1,0 +1,102 @@
+---
+title: Select
+description: A Select widget to allow user to pick one option from a dropdown menu using the native select behavior
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import selectJson from '../../../../../public/template/widgets/select/select.json?raw';
+import selectDx from '../../../../../public/template/widgets-dx/select/select.ts?raw';
+import selectPlaceholderJson from '../../../../../public/template/widgets/select/select-placeholder.json?raw';
+import selectPlaceholderDx from '../../../../../public/template/widgets-dx/select/select-placeholder.ts?raw';
+import selectHintJson from '../../../../../public/template/widgets/select/select-hint.json?raw';
+import selectHintDx from '../../../../../public/template/widgets-dx/select/select-hint.ts?raw';
+import selectIconJson from '../../../../../public/template/widgets/select/select-icon.json?raw';
+import selectIconDx from '../../../../../public/template/widgets-dx/select/select-icon.ts?raw';
+import selectCustomFieldsJson from '../../../../../public/template/widgets/select/select-custom-fields.json?raw';
+import selectCustomFieldsDx from '../../../../../public/template/widgets-dx/select/select-custom-fields.ts?raw';
+import selectAnatomyHtml from '../../../../../public/template/widgets/select/select-anatomy.html?raw';
+export const configJson = 'select.json';
+export const configDx = 'select.ts';
+export const anatomy = 'select-anatomy.html';
+
+Select widgets are [Input Fields](/widgets-reference/input-fields/overview) that allow users to pick a single item from a predefined list of options. They use the native HTML `<select>` element to provide familiar interaction patterns, especially on mobile devices.
+
+<DslCode dxCode={selectDx} jsonCode={selectJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/select/select.json"
+/>
+
+## Props
+
+Use these `props` to customize your Select widget.
+
+| prop          | type   | description                                                                        |
+| ------------- | ------ | ---------------------------------------------------------------------------------- |
+| `options`     | array  | **Required**. Array of objects representing the dropdown choices                   |
+| `placeholder` | string | Text shown when no option is selected. Defaults to "Select an option"              |
+| `hint`        | string | A description to display below the select dropdown                                 |
+| `icon`        | string | Custom icon class to display inside the select box (e.g. `fas fa-globe`)           |
+| `labelField`  | string | Which object key to use as the display label for an option. Defaults to `label`    |
+| `valueField`  | string | Which object key to use as the underlying value for an option. Defaults to `value` |
+| `autocomplete`| string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                  |
+
+### Placeholder
+
+Use the property `placeholder` to define the default empty-state text.
+
+<DslCode dxCode={selectPlaceholderDx} jsonCode={selectPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/select/select-placeholder.json"
+/>
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to add descriptive text or validation instructions.
+
+<DslCode dxCode={selectHintDx} jsonCode={selectHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/select/select-hint.json"
+/>
+
+### Icon
+
+Use the property `icon` to add a visual indicator inside the select input, on the left side.
+
+<DslCode dxCode={selectIconDx} jsonCode={selectIconJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/select/select-icon.json"
+/>
+
+### Custom Option Fields
+
+If your data source uses different keys for the label and value (e.g., `name` and `code`), use `labelField` and `valueField` to map them accordingly.
+
+<DslCode dxCode={selectCustomFieldsDx} jsonCode={selectCustomFieldsJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/select/select-custom-fields.json"
+/>
+
+## Styling
+
+Select widgets can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable             | Description                                |
+| ------------------------ | ------------------------------------------ |
+| `--gui-text-default`     | Dropdown arrow indicator color             |
+| `--gui-space-gap--inner` | Label gap                                  |
+| `--gui-intent-error`     | Border and focus shadow color when invalid |
+
+### Anatomy
+
+This is the anatomy of the Select Component in case you want to use your CSS styles.
+
+<Code code={selectAnatomyHtml} lang="html" title={anatomy} />

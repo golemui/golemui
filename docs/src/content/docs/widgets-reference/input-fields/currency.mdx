@@ -1,0 +1,130 @@
+---
+title: Currency
+description: A Currency widget to allow user to enter monetary values
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import currencyJson from '../../../../../public/template/widgets/currency/currency.json?raw';
+import currencyDx from '../../../../../public/template/widgets-dx/currency/currency.ts?raw';
+import currencyPlaceholderJson from '../../../../../public/template/widgets/currency/currency-placeholder.json?raw';
+import currencyPlaceholderDx from '../../../../../public/template/widgets-dx/currency/currency-placeholder.ts?raw';
+import currencyHintJson from '../../../../../public/template/widgets/currency/currency-hint.json?raw';
+import currencyHintDx from '../../../../../public/template/widgets-dx/currency/currency-hint.ts?raw';
+import currencyIconJson from '../../../../../public/template/widgets/currency/currency-icon.json?raw';
+import currencyIconDx from '../../../../../public/template/widgets-dx/currency/currency-icon.ts?raw';
+import currencyFormatJson from '../../../../../public/template/widgets/currency/currency-format.json?raw';
+import currencyFormatDx from '../../../../../public/template/widgets-dx/currency/currency-format.ts?raw';
+import currencyPrecisionJson from '../../../../../public/template/widgets/currency/currency-precision.json?raw';
+import currencyPrecisionDx from '../../../../../public/template/widgets-dx/currency/currency-precision.ts?raw';
+import currencyStepJson from '../../../../../public/template/widgets/currency/currency-step.json?raw';
+import currencyStepDx from '../../../../../public/template/widgets-dx/currency/currency-step.ts?raw';
+import currencyAnatomyHtml from '../../../../../public/template/widgets/currency/currency-anatomy.html?raw';
+export const configJson = 'currency.json';
+export const configDx = 'currency.ts';
+export const anatomy = 'currency-anatomy.html';
+
+Currency widgets are [Input Fields](/widgets-reference/input-fields/overview) that allow the user to enter monetary values, displaying a formatted currency string over the input when inactive.
+
+<DslCode dxCode={currencyDx} jsonCode={currencyJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency.json"
+/>
+
+## Props
+
+Use these `props` to customize your Currency widget.
+
+| prop                    | type   | description                                                                      |
+| ----------------------- | ------ | -------------------------------------------------------------------------------- |
+| `placeholder`           | string | A placeholder text to display when the currency input has no value               |
+| `hint`                  | string | A description to display below the currency input                                |
+| `icon`                  | string | A css class to display an icon inside the input                                  |
+| `currency`              | string | The ISO 4217 currency code (e.g., `USD`, `EUR`) to format the number as currency |
+| `step`                  | number | Numeric step size for user input                                                 |
+| `maximumFractionDigits` | number | Maximum number of decimal places to include in the formatted string              |
+| `minimumFractionDigits` | number | Minimum number of decimal places to include in the formatted string              |
+| `autocomplete`          | string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                |
+
+### Placeholder
+
+Use the property `placeholder` to add a placeholder.
+
+<DslCode dxCode={currencyPlaceholderDx} jsonCode={currencyPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency-placeholder.json"
+/>
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to add a description.
+
+<DslCode dxCode={currencyHintDx} jsonCode={currencyHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency-hint.json"
+/>
+
+### Icon
+
+Use the property `icon` to add an icon to the widget. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the input field.
+
+<DslCode dxCode={currencyIconDx} jsonCode={currencyIconJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency-icon.json"
+/>
+
+### Currency & Decimal Formatting
+
+Use the properties `currency`, `minimumFractionDigits`, and `maximumFractionDigits` to tightly control how the monetary value is parsed and formatted when not actively being edited. Default for minimum fraction digits is usually 2.
+
+<DslCode dxCode={currencyFormatDx} jsonCode={currencyFormatJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency-format.json"
+/>
+
+### Precision
+
+Use the properties `minimumFractionDigits` and `maximumFractionDigits` to specify the exact number of decimal places for the formatted currency display.
+
+<DslCode dxCode={currencyPrecisionDx} jsonCode={currencyPrecisionJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency-precision.json"
+/>
+
+### Step
+
+Use the `step` property to define the increment size for numeric input via keyboard (arrows) or browser controls.
+
+<DslCode dxCode={currencyStepDx} jsonCode={currencyStepJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/currency/currency-step.json"
+/>
+
+## Styling
+
+Currency inputs can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable           | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `--gui-bg-default`     | Formatted value text background over input |
+| `--gui-font-sm`        | Formatted value text and hint font size    |
+| `--gui-space-10`       | Icon left padding or inline-start space    |
+| `--gui-intent-error`   | Border and text color when invalid         |
+| `--gui-radius-md`      | Input radius                               |
+| `--gui-border-default` | Input border color                         |
+| `--gui-bg-surface`     | Input background color                     |
+| `--gui-text-default`   | Input text color                           |
+
+### Anatomy
+
+This is the anatomy of the Currency Component in case you want to use your CSS styles.
+
+<Code code={currencyAnatomyHtml} lang="html" title={anatomy} />

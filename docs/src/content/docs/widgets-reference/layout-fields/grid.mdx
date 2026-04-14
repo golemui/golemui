@@ -1,0 +1,100 @@
+---
+title: Grid
+description: A Layout widget for creating grid-based, responsive form layouts with subgrid alignment
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import gridJson from '../../../../../public/template/widgets/grid/grid.json?raw';
+import gridDx from '../../../../../public/template/widgets-dx/grid/grid.ts?raw';
+import gridRowJson from '../../../../../public/template/widgets/grid/grid-row.json?raw';
+import gridRowDx from '../../../../../public/template/widgets-dx/grid/grid-row.ts?raw';
+import gridAutoFitJson from '../../../../../public/template/widgets/grid/grid-auto-fit.json?raw';
+import gridAutoFitDx from '../../../../../public/template/widgets-dx/grid/grid-auto-fit.ts?raw';
+import gridSizesJson from '../../../../../public/template/widgets/grid/grid-sizes.json?raw';
+import gridSizesDx from '../../../../../public/template/widgets-dx/grid/grid-sizes.ts?raw';
+import gridNestedJson from '../../../../../public/template/widgets/grid/grid-nested.json?raw';
+import gridNestedDx from '../../../../../public/template/widgets-dx/grid/grid-nested.ts?raw';
+import gridAnatomyHtml from '../../../../../public/template/widgets/grid/grid-anatomy.html?raw';
+export const configJson = 'grid.json';
+export const configDx = 'grid.ts';
+export const anatomy = 'grid-anatomy.html';
+
+Grid widgets are [Layout Fields](/widgets-reference/layout-fields/overview) that use CSS Grid to arrange child widgets in rows or columns. Unlike Flex, Grid leverages CSS subgrid to keep labels, inputs, and validation messages aligned across all children in a row.
+
+<DslCode dxCode={gridDx} jsonCode={gridJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/grid/grid.json"
+/>
+
+## Props
+
+Use these `props` to customize your Grid widget.
+
+| prop        | type    | description                                                                                   |
+| ----------- | ------- | --------------------------------------------------------------------------------------------- |
+| `direction` | string  | Grid direction: `'row'` or `'column'`. Defaults to `'row'`                                    |
+| `columnGap` | number  | Space between columns in pixels. Defaults to `--gui-space-4`                                  |
+| `rowGap`    | number  | Space between rows in pixels. Defaults to `--gui-space-2`                                     |
+| `autoFit`   | boolean | When `true` (requires `direction: "row"`), columns resize automatically to fill available space. Defaults to `true` |
+| `align`     | string  | Main-axis distribution (`justify-content` in row, `align-content` in column). Values: `'start'`, `'end'`, `'center'`, `'space-between'`, `'space-around'`, `'space-evenly'`, `'stretch'`. Defaults to `'stretch'` |
+| `justify`   | string  | Cross-axis alignment (`align-items` in row, `justify-items` in column). Values: `'start'`, `'end'`, `'center'`, `'stretch'` |
+
+### Row Layout
+
+Set `direction` to `"row"` to place child widgets side-by-side in equal columns. On small screens (max-width: 480px), row layouts automatically stack vertically for better mobile usability.
+
+<DslCode dxCode={gridRowDx} jsonCode={gridRowJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/grid/grid-row.json"
+/>
+
+### Auto Fit Columns
+
+By default, a `direction: "row"` grid divides available space into **12 equal columns**. Child widgets use the `size` property (1–12) to span a number of those columns, giving you precise control over the layout.
+
+Setting `autoFit: true` makes each child grow equally to fill the available space and wrap to the next row when the container gets too narrow — no explicit `size` values needed. If you do set `size` on a child, it will grow proportionally relative to its siblings in the same row.
+
+<DslCode dxCode={gridAutoFitDx} jsonCode={gridAutoFitJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/grid/grid-auto-fit.json"
+/>
+
+### Child Sizes
+
+Use the `size` property on child widgets to control how many columns they span. A child with `size: 2` takes up twice the space of a default child.
+
+<DslCode dxCode={gridSizesDx} jsonCode={gridSizesJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/grid/grid-sizes.json"
+/>
+
+### Nested Grids
+
+Combine a column Grid with row Grid children to build complex form layouts. Each row aligns its labels, inputs, and validation messages independently through subgrid.
+
+<DslCode dxCode={gridNestedDx} jsonCode={gridNestedJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/grid/grid-nested.json"
+/>
+
+## Styling
+
+Grid layouts can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables used to control spacing within the Grid widget.
+
+| CSS Variable    | Description                          |
+| --------------- | ------------------------------------ |
+| `--gui-space-4` | Default column gap between widgets   |
+| `--gui-space-2` | Default row gap between widgets      |
+| `--gui-space-1` | Gap inside each grid cell (subgrid)  |
+
+### Anatomy
+
+This is the anatomy of the Grid Component in case you want to use your CSS styles.
+
+<Code code={gridAnatomyHtml} lang="html" title={anatomy} />

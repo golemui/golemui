@@ -1,0 +1,130 @@
+---
+title: Range Date Picker
+description: A Range Date Picker widget to allow users to enter multiple date ranges via keyboard or by picking from an interactive calendar
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import rangeDatePickerJson from '../../../../../public/template/widgets/range-date-picker/range-date-picker.json?raw';
+import rangeDatePickerDx from '../../../../../public/template/widgets-dx/range-date-picker/range-date-picker.ts?raw';
+import rangeDatePickerHintJson from '../../../../../public/template/widgets/range-date-picker/range-date-picker-hint.json?raw';
+import rangeDatePickerHintDx from '../../../../../public/template/widgets-dx/range-date-picker/range-date-picker-hint.ts?raw';
+import rangeDatePickerIconJson from '../../../../../public/template/widgets/range-date-picker/range-date-picker-icon.json?raw';
+import rangeDatePickerIconDx from '../../../../../public/template/widgets-dx/range-date-picker/range-date-picker-icon.ts?raw';
+import rangeDatePickerIconsJson from '../../../../../public/template/widgets/range-date-picker/range-date-picker-icons.json?raw';
+import rangeDatePickerIconsDx from '../../../../../public/template/widgets-dx/range-date-picker/range-date-picker-icons.ts?raw';
+import rangeDatePickerSeparatorJson from '../../../../../public/template/widgets/range-date-picker/range-date-picker-separator.json?raw';
+import rangeDatePickerSeparatorDx from '../../../../../public/template/widgets-dx/range-date-picker/range-date-picker-separator.ts?raw';
+import rangeDatePickerAriaLabelsJson from '../../../../../public/template/widgets/range-date-picker/range-date-picker-aria-labels.json?raw';
+import rangeDatePickerAriaLabelsDx from '../../../../../public/template/widgets-dx/range-date-picker/range-date-picker-aria-labels.ts?raw';
+import rangeDatePickerAnatomyHtml from '../../../../../public/template/widgets/range-date-picker/range-date-picker-anatomy.html?raw';
+export const configJson = 'range-date-picker.json';
+export const configDx = 'range-date-picker.ts';
+export const anatomy = 'range-date-picker-anatomy.html';
+
+Range Date Picker widgets are [Input Fields](/widgets-reference/input-fields/overview) that combine the functionality of a [Range Date Input](/widgets-reference/input-fields/range-date-input) and a [Range Calendar](/widgets-reference/input-fields/range-calendar). They allow the user to swiftly type date ranges using their keyboard or to open a drop-down calendar popover to select date ranges visually. Clicking a pill or pressing Enter navigates the calendar to that range's month.
+
+<DslCode dxCode={rangeDatePickerDx} jsonCode={rangeDatePickerJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/range-date-picker/range-date-picker.json"
+  minHeight="500"
+/>
+
+## Props
+
+Use these `props` to customize your Range Date Picker widget. The Range Date Picker inherits all data-entry properties from the Range Date Input and formatting options from the Range Calendar.
+
+| prop                   | type   | description                                                                     |
+| ---------------------- | ------ | ------------------------------------------------------------------------------- |
+| `hint`                 | string | A description to display below the input fields                                 |
+| `icon`                 | string | Custom icon class to display inside the input visually (e.g. `fas fa-calendar`) |
+| `separator`            | string | The separator between start and end date fields. Defaults to `-`                |
+| `removePillAriaLabel`  | string | Aria label for the remove pill action. Defaults to `Remove date`                |
+| `startDateAriaLabel`   | string | Aria label for the start date field group. Defaults to `Start date`             |
+| `endDateAriaLabel`     | string | Aria label for the end date field group. Defaults to `End date`                 |
+| `prevMonthIcon`        | string | Custom CSS class for the "previous month" button inside the calendar            |
+| `nextMonthIcon`        | string | Custom CSS class for the "next month" button inside the calendar                |
+| `prevMonthAriaLabel`   | string | ARIA label for the previous month button                                        |
+| `nextMonthAriaLabel`   | string | ARIA label for the next month button                                            |
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to add descriptive text.
+
+<DslCode dxCode={rangeDatePickerHintDx} jsonCode={rangeDatePickerHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/range-date-picker/range-date-picker-hint.json"
+  minHeight="500"
+/>
+
+### Icon
+
+Use the property `icon` to add an icon, which appears next to the toggle chevron.
+
+<DslCode dxCode={rangeDatePickerIconDx} jsonCode={rangeDatePickerIconJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/range-date-picker/range-date-picker-icon.json"
+  minHeight="500"
+/>
+
+### Custom Icons
+
+Use the properties `prevMonthIcon`, `nextMonthIcon`, `prevMonthAriaLabel`, and `nextMonthAriaLabel` to customize the navigation buttons within the calendar popover.
+
+<DslCode dxCode={rangeDatePickerIconsDx} jsonCode={rangeDatePickerIconsJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/range-date-picker/range-date-picker-icons.json"
+  minHeight="500"
+/>
+
+### Separator
+
+Use the property `separator` to customize the text displayed between the start date and end date fields. By default the separator is `-`.
+
+<DslCode dxCode={rangeDatePickerSeparatorDx} jsonCode={rangeDatePickerSeparatorJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/range-date-picker/range-date-picker-separator.json"
+  minHeight="500"
+/>
+
+### Aria Labels
+
+Use the properties `removePillAriaLabel`, `startDateAriaLabel` and `endDateAriaLabel` to customize the accessibility labels for screen readers. These properties are localizable.
+
+<DslCode dxCode={rangeDatePickerAriaLabelsDx} jsonCode={rangeDatePickerAriaLabelsJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/range-date-picker/range-date-picker-aria-labels.json"
+  minHeight="500"
+/>
+
+## Styling
+
+Range Date Pickers can be styled as explained in the [Styling Guide](/guides/styling). Because they are composite widgets, they utilize variables from `textinput`, `rangedateinput`, and `rangecalendar`.
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables specific to the Range Date Picker popover positioning and toggle, plus those inherited from its sub-widgets.
+
+| CSS Variable                 | Description                                                                |
+| ---------------------------- | -------------------------------------------------------------------------- |
+| `--gui-radius-md`            | Interactive calendar container, day button, and pill border radius         |
+| `--gui-bg-default`           | Interactive calendar background color                                      |
+| `--gui-border-default`       | Interactive calendar border color, hover day border, pills wrapper border  |
+| `--gui-space-3`              | Internal padding within the calendar view and day buttons                  |
+| `--gui-text-default`         | Input text color and day buttons text color                                |
+| `--gui-bg-disabled`          | Disabled day background color                                              |
+| `--gui-intent-primary`       | Selected day and pill background color                                     |
+| `--gui-intent-primary-hover` | Today's day border color                                                   |
+| `--gui-intent-error`         | Border and focus shadow color when invalid                                 |
+| `--gui-border-focus`         | Border color when a pill or input is focused                               |
+| `--gui-shadow-focus`         | Box shadow when a pill or input is focused                                 |
+
+### Anatomy
+
+This is the anatomy of the Range Date Picker Component in case you want to use your CSS styles.
+
+<Code code={rangeDatePickerAnatomyHtml} lang="html" title={anatomy} />
