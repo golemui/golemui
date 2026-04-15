@@ -1,0 +1,88 @@
+---
+title: Radio Group
+description: A Radio Group widget for selecting a single option from a list of predefined choices
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import radiogroupJson from '../../../../../public/template/widgets/radiogroup/radiogroup.json?raw';
+import radiogroupDx from '../../../../../public/template/widgets-dx/radiogroup/radiogroup.ts?raw';
+import radiogroupHintJson from '../../../../../public/template/widgets/radiogroup/radiogroup-hint.json?raw';
+import radiogroupHintDx from '../../../../../public/template/widgets-dx/radiogroup/radiogroup-hint.ts?raw';
+import radiogroupCustomJson from '../../../../../public/template/widgets/radiogroup/radiogroup-custom.json?raw';
+import radiogroupCustomDx from '../../../../../public/template/widgets-dx/radiogroup/radiogroup-custom.ts?raw';
+import radiogroupDirectionJson from '../../../../../public/template/widgets/radiogroup/radiogroup-direction.json?raw';
+import radiogroupDirectionDx from '../../../../../public/template/widgets-dx/radiogroup/radiogroup-direction.ts?raw';
+import radiogroupAnatomyHtml from '../../../../../public/template/widgets/radiogroup/radiogroup-anatomy.html?raw';
+export const configJson = 'radiogroup.json';
+export const configDx = 'radiogroup.ts';
+export const anatomy = 'radiogroup-anatomy.html';
+
+Radio Group widgets are [Input Fields](/widgets-reference/input-fields/overview) that present a set of mutually exclusive options. Users can select exactly one option from the group.
+
+<DslCode dxCode={radiogroupDx} jsonCode={radiogroupJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/radiogroup/radiogroup.json"
+/>
+
+## Props
+
+Use these `props` to customize your Radio Group widget.
+
+| prop         | type             | description                                                                    |
+| ------------ | ---------------- | ------------------------------------------------------------------------------ |
+| `options`    | array            | **Required**. Collection of options to display                                 |
+| `value`      | string \| number | The value of the currently selected option                                     |
+| `hint`       | string           | Description text displayed below the label                                     |
+| `labelField` | string           | Custom key to use for the display label of each option. Defaults to `label`    |
+| `valueField` | string           | Custom key to use for the underlying value of each option. Defaults to `value` |
+| `direction`  | `row` \| `column` | Layout direction for the radio options. Defaults to `column`                  |
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to provide instructions for the user.
+
+<DslCode dxCode={radiogroupHintDx} jsonCode={radiogroupHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/radiogroup/radiogroup-hint.json"
+/>
+
+### Custom Fields
+
+You can map different fields for the options using `labelField` and `valueField`.
+
+<DslCode dxCode={radiogroupCustomDx} jsonCode={radiogroupCustomJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/radiogroup/radiogroup-custom.json"
+/>
+
+### Direction
+
+Use the `direction` property to display radio options horizontally.
+
+<DslCode dxCode={radiogroupDirectionDx} jsonCode={radiogroupDirectionJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/radiogroup/radiogroup-direction.json"
+/>
+
+## Styling
+
+Radio Groups can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable           | Description                              |
+| ---------------------- | ---------------------------------------- |
+| `--gui-intent-primary` | Color for the inner circle when selected |
+
+### Anatomy
+
+This is the anatomy of the Radio Group Widget in case you want to use your CSS styles.
+
+<Code code={radiogroupAnatomyHtml} lang="html" title={anatomy} />

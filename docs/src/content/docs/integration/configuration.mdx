@@ -158,7 +158,7 @@ Control browser autofill behaviour with the `autocomplete` property on the form 
 
 When not set, the attribute is omitted, leaving the default browser behaviour.
 
-Individual input components also accept an `autocomplete` prop (via `props`) for fine-grained control using any [W3C autofill token](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) (e.g. `'given-name'`, `'street-address'`, `'off'`).
+Individual input widgets also accept an `autocomplete` prop (via `props`) for fine-grained control using any [W3C autofill token](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) (e.g. `'given-name'`, `'street-address'`, `'off'`).
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -187,11 +187,11 @@ Individual input components also accept an `autocomplete` prop (via `props`) for
 
 ## Dependencies
 
-Some components require external dependencies that are not bundled with GolemUI. Pass them via the `dependencies` property.
+Some widgets require external dependencies that are not bundled with GolemUI. Pass them via the `dependencies` property.
 
 ### Markdown Parser
 
-The [Markdown](/components-reference/input-fields/markdown/) and [Markdown Text](/components-reference/display-fields/markdown-text/) components need a markdown parser for live preview rendering.
+The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/widgets-reference/display-fields/markdown-text/) widgets need a markdown parser for live preview rendering.
 
 <IntegrationTabs>
   <Fragment slot="react">

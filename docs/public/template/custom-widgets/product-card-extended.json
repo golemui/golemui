@@ -1,0 +1,79 @@
+{
+  "form": [
+    {
+      "kind": "layout",
+      "type": "productCard",
+      "props": {
+        "title": "Rate Our Product"
+      },
+      "children": [
+        {
+          "kind": "display",
+          "type": "productDescription",
+          "props": {
+            "img": "https://picsum.photos/seed/golemui/240/240",
+            "description": "### GolemUI\nThe most powerful dynamic forms library for JavaScript. Build complex, data-driven forms with zero boilerplate."
+          }
+        },
+        {
+          "kind": "input",
+          "type": "productRating",
+          "path": "product.rating",
+          "label": "Your rating",
+          "props": {
+            "maxRating": 10
+          },
+          "validator": {
+            "type": "number",
+            "required": true,
+            "messages": {
+              "required": "Please rate the product before submitting",
+              "invalid": "Please rate the product before submitting"
+            }
+          }
+        },
+        {
+          "kind": "input",
+          "type": "textarea",
+          "path": "product.comment",
+          "label": "Your comment",
+          "props": {
+            "hint": "Enter your comment (maximum 500 characters)",
+            "placeholder": "Let us know why you love our product",
+            "counterMode": "current"
+          },
+          "validator": {
+            "type": "string",
+            "maxLength": 500,
+            "required": true,
+            "messages": {
+              "required": "Please leave a comment with your rating",
+              "invalid": "Please leave a comment with your rating",
+              "maxLength": "Your comment is too long — keep it under 500 characters"
+            }
+          }
+        },
+        {
+          "kind": "action",
+          "type": "productShare",
+          "label": "Share",
+          "on": {
+            "click": "shareEvent"
+          }
+        },
+        {
+          "kind": "action",
+          "type": "button",
+          "label": "Submit",
+          "props": {
+            "icon": "save",
+            "iconPosition": "right"
+          },
+          "on": {
+            "click": "submit"
+          }
+        }
+      ]
+    }
+  ]
+}

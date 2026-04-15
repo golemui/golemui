@@ -13,7 +13,20 @@ export const onFormEvent = async (event: Core.FormEvent) => {
   }
 };
 
+const SHARE_URLS: Record<string, (url: string) => string> = {
+  twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out GolemUI Pro!')}&url=${encodeURIComponent(url)}`,
+  facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+  linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+};
+
 const eventHandlers = {
+  async shareEvent(event: Core.FormEvent) {
+    const network = event.detail as string;
+    const buildUrl = SHARE_URLS[network];
+    if (buildUrl) {
+      window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
+    }
+  },
   async getSubregionsForSelect(event: Core.FormEvent) {
     getSubregions(event, 'selects.subregion');
   },

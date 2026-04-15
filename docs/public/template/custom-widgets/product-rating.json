@@ -1,0 +1,14 @@
+{
+  "form": [
+    {
+      "kind": "input",
+      "type": "productRating",
+      "path": "product.rating",
+      "label": "Rate this product",
+      "props": {
+        "maxRating": 10
+      },
+      "validator": { "type": "number", "required": true }
+    }
+  ]
+}
