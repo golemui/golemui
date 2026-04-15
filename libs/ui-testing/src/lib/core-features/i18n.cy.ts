@@ -110,6 +110,61 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       cy.get(`[data-cy="first-name_textinput"]`).type('Pol');
       cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol! You are online.');
     });
+
+    it('should interpolate $errors and $formIsInvalid in i18n translation params', () => {
+      i18next.addResourceBundle(
+        'en',
+        'translation',
+        { 'form.status': 'Errors: {{fieldError}}, Invalid: {{isInvalid}}' },
+        true,
+        true,
+      );
+
+      mountFn({
+        localization: i18nTranslator,
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'userName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'userName',
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              on: { click: 'submit' },
+            },
+            {
+              uid: 'status-display',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'form.status',
+                  params: {
+                    fieldError: '$errors.userName',
+                    isInvalid: '$formIsInvalid',
+                  },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      // Before submit: $formIsInvalid is false
+      cy.get('.gui-alert [role="alert"]').contains('Invalid: false');
+
+      // After submit with empty required field: errors populate
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('.gui-alert [role="alert"]').contains(
+        'Errors: Invalid input: expected string, received undefined, Invalid: true',
+      );
+    });
   });
 
   describe('Edge cases', () => {
