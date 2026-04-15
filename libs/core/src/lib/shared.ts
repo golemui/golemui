@@ -30,6 +30,24 @@ export type Uid = string;
  */
 export type ValidationStatus = null | string[];
 
+/**
+ * Represents the hierarchical structure of validation errors.
+ * Each `key` is a segment of a DotPath:
+ * e.g., in '$error.user.profile.name', the scope is '$errors' segments are 'user', 'profile', 'name'
+ *
+ * @example
+ * {
+ *   something: null,
+ *   user: {
+ *    email: ["Invalid format"],
+ *    address: { street: ["Required"] }
+ *   }
+ * }
+ */
+export type $Errors = {
+  [key: string]: ValidationStatus | $Errors;
+};
+
 export type WidgetPropertyFunctionParams<FormType extends Record<string, any>> = {
   $form: ImmutableRecord<FormType>;
   translate?: I18nTranslator['translate'];

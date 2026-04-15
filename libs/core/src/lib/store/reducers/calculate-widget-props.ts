@@ -9,7 +9,13 @@ import {
   NonFunctionWidget,
 } from '../../form-widget';
 import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
-import { isPotentialScopePath, resolveScopePaths, scopeResolver } from '../../utils/form';
+import { $Errors } from '../../shared';
+import {
+  calculateValidationVariables,
+  exprVarResolver,
+  isPotentialExprVar,
+  resolveExprVars,
+} from '../../utils/form';
 import { get, set } from '../../utils/object';
 import { DerivedWidget, State } from '../model';
 import { hasWhen } from './utils';
@@ -37,6 +43,8 @@ function unsuffixedUniqueKeys(keys: string[]): string[] {
 }
 
 function calculateProps(state: State, localization: I18nTranslator) {
+  const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+
   return Object.keys(state.calculatedWidgets).reduce(
     (acc, uid) => {
       if (state.widgetFlags[uid] !== undefined && state.widgetFlags[uid].hidden) {
@@ -78,6 +86,8 @@ function calculateProps(state: State, localization: I18nTranslator) {
             property: prop as CoreProp,
             $form: state.data,
             $meta: state.meta,
+            $formIsInvalid,
+            $errors,
             widgetFlags: state.widgetFlags,
             localization,
           });
@@ -98,6 +108,8 @@ function calculateProps(state: State, localization: I18nTranslator) {
           subProp: prop,
           $form: state.data,
           $meta: state.meta,
+          $formIsInvalid,
+          $errors,
           widgetFlags: state.widgetFlags,
           localization,
         });
@@ -114,6 +126,8 @@ function calculateProps(state: State, localization: I18nTranslator) {
             subProp: prop,
             $form: state.data,
             $meta: state.meta,
+            $formIsInvalid,
+            $errors,
             widgetFlags: state.widgetFlags,
             localization,
           });
@@ -168,6 +182,8 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
   subProp,
   $form,
   $meta,
+  $formIsInvalid,
+  $errors,
   widgetFlags,
   localization,
 }: {
@@ -178,6 +194,8 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
   subProp?: string;
   $form: State['data'];
   $meta: State['meta'];
+  $formIsInvalid: boolean;
+  $errors: $Errors;
   widgetFlags: State['widgetFlags'];
   localization: I18nTranslator;
 }) {
@@ -213,7 +231,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
     if (isTranslationConfig(propValue)) {
       propValue = localization.translate(
         propValue.key,
-        resolveI18nParams(propValue.params, $form, $meta),
+        resolveI18nParams(propValue.params, $form, $meta, $errors, $formIsInvalid),
         propValue.default,
       );
     } else {
@@ -227,12 +245,18 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
         // Resolves (if present) all scope path placeholders within a string in a single pass.
         // e.g. "User {{ $form.name }} has status {{ $meta.status }}"
         // TODO: implement memoization?
-        propValue = resolveScopePaths(propValue, {
-          resolveFormScope(scopePath) {
+        propValue = resolveExprVars(propValue, {
+          resolveFormVar(scopePath) {
             return get($form, scopePath) ?? propValue;
           },
-          resolveMetaScope(scopePath) {
+          resolveMetaVar(scopePath) {
             return get($meta, scopePath) ?? propValue;
+          },
+          resolveErrorsVar(scopePath) {
+            return get($errors, scopePath) ?? propValue;
+          },
+          resolveFormIsInvalidVar() {
+            return String($formIsInvalid);
           },
         });
       }
@@ -269,19 +293,27 @@ const resolveI18nParams = (
   params: I18nParams | undefined,
   data: State['data'],
   meta: State['meta'],
+  errors: $Errors,
+  formIsInvalid: boolean,
 ): I18nParams | undefined => {
   if (!params) {
     return params;
   }
   return Object.keys(params).reduce((acc, key) => {
     const param = String(params[key]);
-    if (isPotentialScopePath(param)) {
-      acc[key] = scopeResolver(param, {
-        resolveFormScope(scopePath) {
+    if (isPotentialExprVar(param)) {
+      acc[key] = exprVarResolver(param, {
+        resolveFormVar(scopePath) {
           return get(data, scopePath) ?? param;
         },
-        resolveMetaScope(scopePath) {
+        resolveMetaVar(scopePath) {
           return get(meta, scopePath) ?? param;
+        },
+        resolveErrorsVar(scopePath) {
+          return get(errors, scopePath) ?? param;
+        },
+        resolveFormIsInvalidVar() {
+          return formIsInvalid;
         },
       });
     } else {

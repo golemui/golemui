@@ -1,8 +1,18 @@
 import * as Widget from '../form-widget';
-import { DotPath } from '../shared';
+import { $Errors, DotPath } from '../shared';
+import { State } from '../store/model';
+import { set } from './object';
+
+// TODO: use this instead of harcoded strings everywhere we ref. scopes
+export const EXPR_SCOPE = {
+  $form: '$form',
+  $meta: '$meta',
+  $errors: '$errors',
+  $formIsInvalid: '$formIsInvalid',
+};
 
 /**
- * Heuristically checks if a value looks like a dot notation path
+ * Heuristically checks if a value looks like an expression variable
  * rather than a standard string.
  * To be considered a "potential" dot path, the value must:
  * 1. Be a string.
@@ -10,31 +20,38 @@ import { DotPath } from '../shared';
  * 3. Not contain any spaces (distinguishing it from sentences).
  *
  * * @example
- * isPotentialScopePath('$form.user.id');   // true
- * isPotentialScopePath('name');      // false (No prefix)
- * isPotentialScopePath('my file');   // false (Contains space)
- * isPotentialScopePath(123);         // false (Not a string)
+ * isPotentialExprVar('$form.user.id');  // true
+ * isPotentialExprVar('name');           // false (No prefix)
+ * isPotentialExprVar('my file');        // false (Contains space)
+ * isPotentialExprVar(123);              // false (Not a string)
  */
-export const isPotentialScopePath = (path: unknown): path is DotPath => {
+export const isPotentialExprVar = (path: unknown): path is DotPath => {
   return (
     typeof path === 'string' &&
     !path.includes(' ') &&
-    (path.startsWith('$form.') || path.startsWith('$meta.'))
+    (path.startsWith('$form.') ||
+      path.startsWith('$meta.') ||
+      path.startsWith('$errors.') ||
+      path === '$formIsInvalid')
   );
 };
 
-export interface ScopeResolvers {
-  resolveFormScope: (path: DotPath) => any;
-  resolveMetaScope: (path: DotPath) => any;
+export interface ExprVarResolvers {
+  resolveFormVar: (expr: string) => any;
+  resolveMetaVar: (expr: string) => any;
+  resolveErrorsVar: (expr: string) => any;
+  resolveFormIsInvalidVar: () => string | boolean;
 }
 
 /**
  * Resolves all scope path placeholders within a string in a single pass.
- * e.g. "User {{ $form.name }} has status {{ $meta.status }}"
+ * e.g. "User {{ $form.name }} has status {{ $meta.status }} or {{ $formIsInvalid }}"
  *
+ * @param input - The template string to process
+ * @param resolvers - Implementation of value resolution logic
  * @returns The string with all valid placeholders replaced by their resolved values
  */
-export const resolveScopePaths = (input: string, resolvers: ScopeResolvers): string => {
+export const resolveExprVars = (input: string, resolvers: ExprVarResolvers): string => {
   if (typeof input !== 'string') {
     return input;
   }
@@ -44,44 +61,74 @@ export const resolveScopePaths = (input: string, resolvers: ScopeResolvers): str
     return input;
   }
 
-  const SCOPE_RESOLVER_REGEX = /\{\{\$(form|meta)\.([^}]+)\}\}/g;
-
   /**
-   * match: The full "{{$form.path}}"
-   * scope: The first capture group (form|meta)
-   * path: The second capture group ([^}]+)
+   * Named Capture Group Regex:
+   * 1. scope: captures 'form', 'meta', or 'errors'
+   * 2. path: captures the property path after the dot
+   * 3. isInvalid: captures the literal '$formIsInvalid'
    */
-  return input.replace(SCOPE_RESOLVER_REGEX, (match, scope, path) => {
+  const EXPR_VAR_RESOLVER_REGEX =
+    /\{\{(?:\$(?<scope>form|meta|errors)\.(?<path>[^}]+)|(?<isInvalid>\$formIsInvalid))\}\}/g;
+
+  return input.replace(EXPR_VAR_RESOLVER_REGEX, (match, ...args) => {
+    // The last argument is the 'groups' object if named groups are used
+    const groups = args[args.length - 1] as {
+      scope?: 'form' | 'meta' | 'errors';
+      path?: string;
+      isInvalid?: string;
+    };
+
+    const { scope, path, isInvalid } = groups;
+
     try {
-      if (scope === 'form') {
-        return resolvers.resolveFormScope(path);
+      if (isInvalid === '$formIsInvalid') {
+        return resolvers.resolveFormIsInvalidVar();
       }
-      if (scope === 'meta') {
-        return resolvers.resolveMetaScope(path);
+
+      if (scope && path) {
+        switch (scope) {
+          case 'form':
+            return resolvers.resolveFormVar(path);
+          case 'meta':
+            return resolvers.resolveMetaVar(path);
+          case 'errors':
+            return resolvers.resolveErrorsVar(path);
+          default:
+            return match;
+        }
       }
-    } catch {
+    } catch (err) {
+      console.error(`Error resolving Expression: '${input}'`, err);
       return match;
     }
+
     return match;
   });
 };
 
 /**
- * Resolves a dot-notation scope path to its underlying value using the
- * appropriate resolver based on the path prefix (`$form.*` or `$meta.*`).
+ * Resolves an expression variable to its underlying value using the
+ * appropriate resolver based on the path prefix (`$form.*`, `$meta.*`, `$errors.*` or , `$forIsInvalid`).
  *
- * @param path - A dot-notation path starting with `$form.` or `$meta.`
- * @param resolvers.resolveFormScope - Resolves a path within the $form scope
- * @param resolvers.resolveMetaScope - Resolves a path within the $meta scope
+ * @param variable - A dot-notation path starting with `$form.`, `$meta.` or `$errors.`, or `$forIsInvalid`.
+ * @param resolvers.resolveFormVar - Resolves a path within the $form scope
+ * @param resolvers.resolveMetaVar - Resolves a path within the $meta scope
  */
-export const scopeResolver = (path: DotPath, resolvers: ScopeResolvers) => {
-  if (path.startsWith('$form.')) {
-    const pathWithout$form = path.replace('$form.', '');
-    return resolvers.resolveFormScope(pathWithout$form);
+export const exprVarResolver = (variable: string, resolvers: ExprVarResolvers) => {
+  if (variable.startsWith('$form.')) {
+    const pathWithout$form = variable.replace('$form.', '');
+    return resolvers.resolveFormVar(pathWithout$form);
   }
-  if (path.startsWith('$meta.')) {
-    const pathWithout$meta = path.replace('$meta.', '');
-    return resolvers.resolveMetaScope(pathWithout$meta);
+  if (variable.startsWith('$meta.')) {
+    const pathWithout$meta = variable.replace('$meta.', '');
+    return resolvers.resolveMetaVar(pathWithout$meta);
+  }
+  if (variable.startsWith('$errors.')) {
+    const pathWithout$errors = variable.replace('$errors.', '');
+    return resolvers.resolveErrorsVar(pathWithout$errors);
+  }
+  if (variable === '$formIsInvalid') {
+    return resolvers.resolveFormIsInvalidVar();
   }
   return undefined;
 };
@@ -109,4 +156,25 @@ export function flattenForm(widgets: Widget.FormWidget[]): Widget.FormWidget[] {
     widget,
     ...(Widget.isLayoutWidget(widget) ? flattenForm(widget.children) : []),
   ]);
+}
+
+/**
+ * Calculates validation variables to be used in reactive expressions
+ * e.g. `{ invalidAge: '!!$errors.age' }` or { disabled { when: '$formIsInvalid' } }
+ */
+export function calculateValidationVariables(state: State): {
+  $formIsInvalid: boolean;
+  $errors: $Errors;
+} {
+  const result = Object.entries(state.validations).reduce(
+    (acc, [dotPath, errors]) => {
+      if (errors !== null) {
+        acc.$formIsInvalid = true;
+        set(acc.$errors, dotPath, errors);
+      }
+      return acc;
+    },
+    { $formIsInvalid: false, $errors: {} },
+  );
+  return result;
 }

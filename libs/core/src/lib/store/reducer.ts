@@ -104,6 +104,10 @@ export const reducer =
             ),
           },
           Reducers.validateAll(validators, localization),
+          // This handles $errors and $formIsValid expressions variables
+          Reducers.calculateCurrentState,
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
         );
       }
 
@@ -122,6 +126,10 @@ export const reducer =
               touchedControls: { ...state.touchedControls, [path]: true },
             },
             Reducers.validateAll(validators, localization),
+            // This handles $errors and $formIsValid expressions variables
+            Reducers.calculateCurrentState,
+            Reducers.calculateWidgetFlags,
+            Reducers.calculateWidgetProps(localization),
             // TODO: extract this into a separate function
             // When the widget is a Widget Function, we propagate the validation result immediately
             (state) => {

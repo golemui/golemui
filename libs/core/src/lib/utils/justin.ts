@@ -1,19 +1,23 @@
 import { compile, parse } from 'subscript/justin';
-import { ReactiveExpression } from '../shared';
+import { $Errors, ReactiveExpression } from '../shared';
 import { State } from '../store/model';
 import { Debug } from './debug';
 
-// TODO: caching or memoization of
+// TODO: caching or memoization
 export function expressionIsTrue(
   expression: ReactiveExpression,
   $form: State['data'],
   $meta: State['meta'],
+  $errors: $Errors,
+  $formIsInvalid: boolean,
 ): boolean {
   const ast = parse(normalizeArrayIndexes(expression));
   const evaluate = compile(ast);
   const result = evaluate({
     $form,
     $meta,
+    $errors,
+    $formIsInvalid,
     $log: Debug.log,
   });
   return result === true;
