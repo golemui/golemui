@@ -3,13 +3,16 @@ import { $Errors, DotPath } from '../shared';
 import { State } from '../store/model';
 import { set } from './object';
 
-// TODO: use this instead of harcoded strings everywhere we ref. scopes
-export const EXPR_SCOPE = {
-  $form: '$form',
-  $meta: '$meta',
-  $errors: '$errors',
-  $formIsInvalid: '$formIsInvalid',
-};
+/**
+ * Expression Scopes define the root namespaces accessible within
+ * reactive expressions and template strings.
+ */
+export const EXPRESSION_SCOPE = {
+  FORM: '$form',
+  META: '$meta',
+  ERRORS: '$errors',
+  FORM_IS_INVALID: '$formIsInvalid',
+} as const;
 
 /**
  * Heuristically checks if a value looks like an expression variable
