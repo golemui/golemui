@@ -528,6 +528,43 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
           cy.get('[data-cy="lock-uid_checkbox"]').click();
           cy.get(selector).should('not.have.attr', 'disabled');
         });
+
+        it('should be disabled via $formIsInvalid when form has validation errors', () => {
+          mountFn({
+            formDef: Core.defineForm({
+              form: [
+                {
+                  uid: 'userName',
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'userName',
+                  validator: { type: 'string', required: true },
+                },
+                {
+                  uid,
+                  kind: 'action',
+                  type: 'button',
+                  label: 'Submit',
+                  disabled: { when: '$formIsInvalid' },
+                  on: { click: 'submit' },
+                },
+              ],
+            }),
+          });
+
+          // Initially $formIsInvalid is false -> button is enabled
+          cy.get(selector).should('not.have.attr', 'disabled');
+
+          // Submit with empty required field -> validation fires -> $formIsInvalid becomes true
+          cy.get(selector).click();
+          cy.get('[data-cy="userName_validator-errors"]').should('exist');
+          cy.get(selector).should('have.attr', 'disabled');
+
+          // Fill the required field -> errors clear -> $formIsInvalid becomes false
+          cy.get('[data-cy="userName_textinput"]').type('Alice');
+          cy.get('[data-cy="userName_validator-errors"]').should('not.exist');
+          cy.get(selector).should('not.have.attr', 'disabled');
+        });
       });
     });
   });
