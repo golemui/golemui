@@ -12,9 +12,9 @@ import { I18nParams, I18nTranslator, isTranslationConfig } from '../../i18n';
 import { $Errors } from '../../shared';
 import {
   calculateValidationVariables,
-  exprVarResolver,
-  isPotentialExprVar,
-  resolveExprVars,
+  isPotentialScopedPath,
+  resolveScopedPath,
+  resolveScopedPaths,
 } from '../../utils/form';
 import { get, set } from '../../utils/object';
 import { DerivedWidget, State } from '../model';
@@ -243,19 +243,19 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
         propValue = widgetFlags[derivedWidget.current.uid][property as 'disabled' | 'readonly'];
       } else if (typeof propValue === 'string') {
         // Resolves (if present) all scope path placeholders within a string in a single pass.
-        // e.g. "User {{ $form.name }} has status {{ $meta.status }}"
+        // e.g. "User {{$form.name}} has status {{$meta.status}}"
         // TODO: implement memoization?
-        propValue = resolveExprVars(propValue, {
-          resolveFormVar(scopePath) {
+        propValue = resolveScopedPaths(propValue, {
+          resolveFormPath(scopePath) {
             return get($form, scopePath) ?? propValue;
           },
-          resolveMetaVar(scopePath) {
+          resolveMetaPath(scopePath) {
             return get($meta, scopePath) ?? propValue;
           },
-          resolveErrorsVar(scopePath) {
+          resolveErrorsPath(scopePath) {
             return get($errors, scopePath) ?? propValue;
           },
-          resolveFormIsInvalidVar() {
+          resolveFormIsInvalid() {
             return String($formIsInvalid);
           },
         });
@@ -301,18 +301,18 @@ const resolveI18nParams = (
   }
   return Object.keys(params).reduce((acc, key) => {
     const param = String(params[key]);
-    if (isPotentialExprVar(param)) {
-      acc[key] = exprVarResolver(param, {
-        resolveFormVar(scopePath) {
+    if (isPotentialScopedPath(param)) {
+      acc[key] = resolveScopedPath(param, {
+        resolveFormPath(scopePath) {
           return get(data, scopePath) ?? param;
         },
-        resolveMetaVar(scopePath) {
+        resolveMetaPath(scopePath) {
           return get(meta, scopePath) ?? param;
         },
-        resolveErrorsVar(scopePath) {
+        resolveErrorsPath(scopePath) {
           return get(errors, scopePath) ?? param;
         },
-        resolveFormIsInvalidVar() {
+        resolveFormIsInvalid() {
           return formIsInvalid;
         },
       });

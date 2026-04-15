@@ -1,128 +1,128 @@
 import { describe, expect, it } from 'vitest';
 import { State } from '../store/model';
 import {
-  ExprVarResolvers,
+  ScopedPathResolvers,
   calculateValidationVariables,
-  exprVarResolver,
   flattenForm,
-  isPotentialExprVar,
-  resolveExprVars,
+  isPotentialScopedPath,
+  resolveScopedPath,
+  resolveScopedPaths,
 } from './form';
 import { get } from './object';
 
 describe('utils.form', () => {
-  describe('resolveExprVars', () => {
+  describe('resolveScopedPaths', () => {
     describe('non string values', () => {
       it('should resolve multiple mixed paths in one pass and resolve non string values', () => {
         const ctx = { form: { count: 900 }, meta: { auth: false } };
         const input = '{{$form.count}} and {{$meta.auth}}';
-        const result = resolveExprVars(input, {
-          resolveFormVar: vi.fn((path) => get(ctx.form, path)),
-          resolveMetaVar: vi.fn((path) => get(ctx.meta, path)),
-          resolveErrorsVar: vi.fn(() => undefined),
-          resolveFormIsInvalidVar: vi.fn(() => false),
+        const result = resolveScopedPaths(input, {
+          resolveFormPath: vi.fn((path) => get(ctx.form, path)),
+          resolveMetaPath: vi.fn((path) => get(ctx.meta, path)),
+          resolveErrorsPath: vi.fn(() => undefined),
+          resolveFormIsInvalid: vi.fn(() => false),
         });
         expect(result).toBe('900 and false');
       });
     });
 
     describe('string values', () => {
-      let mockResolvers: ExprVarResolvers;
+      let mockResolvers: ScopedPathResolvers;
 
       beforeEach(() => {
         mockResolvers = {
-          resolveFormVar: vi.fn((path) => `form_val:${path}`),
-          resolveMetaVar: vi.fn((path) => `meta_val:${path}`),
-          resolveErrorsVar: vi.fn((path) => `errors_val:${path}`),
-          resolveFormIsInvalidVar: vi.fn(() => true),
+          resolveFormPath: vi.fn((path) => `form_val:${path}`),
+          resolveMetaPath: vi.fn((path) => `meta_val:${path}`),
+          resolveErrorsPath: vi.fn((path) => `errors_val:${path}`),
+          resolveFormIsInvalid: vi.fn(() => true),
         };
       });
 
       it('should resolve a single $form path', () => {
-        const result = resolveExprVars('User: {{$form.name}}', mockResolvers);
+        const result = resolveScopedPaths('User: {{$form.name}}', mockResolvers);
         expect(result).toBe('User: form_val:name');
-        expect(mockResolvers.resolveFormVar).toHaveBeenCalledWith('name');
+        expect(mockResolvers.resolveFormPath).toHaveBeenCalledWith('name');
       });
 
       it('should resolve a single $meta path', () => {
-        const result = resolveExprVars('Version: {{$meta.v}}', mockResolvers);
+        const result = resolveScopedPaths('Version: {{$meta.v}}', mockResolvers);
         expect(result).toBe('Version: meta_val:v');
-        expect(mockResolvers.resolveMetaVar).toHaveBeenCalledWith('v');
+        expect(mockResolvers.resolveMetaPath).toHaveBeenCalledWith('v');
       });
 
       it('should resolve a single $errors path', () => {
-        const result = resolveExprVars('Error: {{$errors.age}}', mockResolvers);
+        const result = resolveScopedPaths('Error: {{$errors.age}}', mockResolvers);
         expect(result).toBe('Error: errors_val:age');
-        expect(mockResolvers.resolveErrorsVar).toHaveBeenCalledWith('age');
+        expect(mockResolvers.resolveErrorsPath).toHaveBeenCalledWith('age');
       });
 
       it('should resolve $formIsInvalid', () => {
-        const result = resolveExprVars('Invalid: {{$formIsInvalid}}', mockResolvers);
+        const result = resolveScopedPaths('Invalid: {{$formIsInvalid}}', mockResolvers);
         expect(result).toBe('Invalid: true');
-        expect(mockResolvers.resolveFormIsInvalidVar).toHaveBeenCalled();
+        expect(mockResolvers.resolveFormIsInvalid).toHaveBeenCalled();
       });
 
       it('should resolve multiple mixed paths in one pass', () => {
         const input = '{{$form.user}} is {{$meta.role}}';
-        const result = resolveExprVars(input, mockResolvers);
+        const result = resolveScopedPaths(input, mockResolvers);
         expect(result).toBe('form_val:user is meta_val:role');
       });
 
       it('should resolve $errors and $formIsInvalid together', () => {
         const input = '{{$errors.email}} - valid: {{$formIsInvalid}}';
-        const result = resolveExprVars(input, mockResolvers);
+        const result = resolveScopedPaths(input, mockResolvers);
         expect(result).toBe('errors_val:email - valid: true');
       });
 
       it('should handle complex paths with optional chaining', () => {
         const input = '{{$form.profile?.settings?.theme}}';
-        const result = resolveExprVars(input, mockResolvers);
+        const result = resolveScopedPaths(input, mockResolvers);
         expect(result).toBe('form_val:profile?.settings?.theme');
       });
 
       it('should return original string if no tokens match', () => {
         const input = 'Hello World';
-        expect(resolveExprVars(input, mockResolvers)).toBe(input);
-        expect(mockResolvers.resolveFormVar).not.toHaveBeenCalled();
+        expect(resolveScopedPaths(input, mockResolvers)).toBe(input);
+        expect(mockResolvers.resolveFormPath).not.toHaveBeenCalled();
       });
 
       it('should ignore unsupported scopes like $other', () => {
         const input = '{{$other.value}} and {{$form.ok}}';
-        const result = resolveExprVars(input, mockResolvers);
+        const result = resolveScopedPaths(input, mockResolvers);
         expect(result).toBe('{{$other.value}} and form_val:ok');
       });
 
       it('should handle resolver errors gracefully', () => {
-        const errorResolvers: ExprVarResolvers = {
-          resolveFormVar: () => {
+        const errorResolvers: ScopedPathResolvers = {
+          resolveFormPath: () => {
             throw new Error('Boom');
           },
-          resolveMetaVar: () => 'ok',
-          resolveErrorsVar: () => 'errors_ok',
-          resolveFormIsInvalidVar: () => false,
+          resolveMetaPath: () => 'ok',
+          resolveErrorsPath: () => 'errors_ok',
+          resolveFormIsInvalid: () => false,
         };
-        const result = resolveExprVars('{{$form.err}} and {{$meta.ok}}', errorResolvers);
+        const result = resolveScopedPaths('{{$form.err}} and {{$meta.ok}}', errorResolvers);
         expect(result).toBe('{{$form.err}} and ok');
       });
 
       it('should handle non-string inputs safely', () => {
         // @ts-expect-error - asas
-        expect(resolveExprVars(null, mockResolvers)).toBe(null);
+        expect(resolveScopedPaths(null, mockResolvers)).toBe(null);
         // @ts-expect-error - asdas
-        expect(resolveExprVars(100, mockResolvers)).toBe(100);
+        expect(resolveScopedPaths(100, mockResolvers)).toBe(100);
       });
     });
   });
 
-  describe('isPotentialExprVar', () => {
+  describe('isPotentialScopedPath', () => {
     it.each([
       ['$form.name', true],
       ['$form.user.address.city', true],
       ['$meta.status', true],
       ['$errors.age', true],
       ['$formIsInvalid', true],
-    ])('returns true for valid expression variable "%s"', (input, expected) => {
-      expect(isPotentialExprVar(input)).toBe(expected);
+    ])('returns true for valid scoped path "%s"', (input, expected) => {
+      expect(isPotentialScopedPath(input)).toBe(expected);
     });
 
     it.each([
@@ -136,50 +136,50 @@ describe('utils.form', () => {
       [null, false, 'null'],
       [undefined, false, 'undefined'],
     ])('returns false for "%s" (%s)', (input, expected, _reason) => {
-      expect(isPotentialExprVar(input)).toBe(expected);
+      expect(isPotentialScopedPath(input)).toBe(expected);
     });
   });
 
-  describe('exprVarResolver', () => {
-    let mockResolvers: ExprVarResolvers;
+  describe('resolveScopedPath', () => {
+    let mockResolvers: ScopedPathResolvers;
 
     beforeEach(() => {
       mockResolvers = {
-        resolveFormVar: vi.fn((path) => `form:${path}`),
-        resolveMetaVar: vi.fn((path) => `meta:${path}`),
-        resolveErrorsVar: vi.fn((path) => `errors:${path}`),
-        resolveFormIsInvalidVar: vi.fn(() => false),
+        resolveFormPath: vi.fn((path) => `form:${path}`),
+        resolveMetaPath: vi.fn((path) => `meta:${path}`),
+        resolveErrorsPath: vi.fn((path) => `errors:${path}`),
+        resolveFormIsInvalid: vi.fn(() => false),
       };
     });
 
-    it('resolves a $form.* variable by stripping the prefix', () => {
-      expect(exprVarResolver('$form.user.id', mockResolvers)).toBe('form:user.id');
-      expect(mockResolvers.resolveFormVar).toHaveBeenCalledWith('user.id');
+    it('resolves a $form.* scoped path by stripping the prefix', () => {
+      expect(resolveScopedPath('$form.user.id', mockResolvers)).toBe('form:user.id');
+      expect(mockResolvers.resolveFormPath).toHaveBeenCalledWith('user.id');
     });
 
-    it('resolves a $meta.* variable by stripping the prefix', () => {
-      expect(exprVarResolver('$meta.my.lang', mockResolvers)).toBe('meta:my.lang');
-      expect(mockResolvers.resolveMetaVar).toHaveBeenCalledWith('my.lang');
+    it('resolves a $meta.* scoped path by stripping the prefix', () => {
+      expect(resolveScopedPath('$meta.my.lang', mockResolvers)).toBe('meta:my.lang');
+      expect(mockResolvers.resolveMetaPath).toHaveBeenCalledWith('my.lang');
     });
 
-    it('resolves a $errors.* variable by stripping the prefix', () => {
-      expect(exprVarResolver('$errors.user.age', mockResolvers)).toBe('errors:user.age');
-      expect(mockResolvers.resolveErrorsVar).toHaveBeenCalledWith('user.age');
+    it('resolves a $errors.* scoped path by stripping the prefix', () => {
+      expect(resolveScopedPath('$errors.user.age', mockResolvers)).toBe('errors:user.age');
+      expect(mockResolvers.resolveErrorsPath).toHaveBeenCalledWith('user.age');
     });
 
-    it('resolves a $formIsInvalid variable', () => {
-      expect(exprVarResolver('$formIsInvalid', mockResolvers)).toBe(false);
-      expect(mockResolvers.resolveFormIsInvalidVar).toHaveBeenCalled();
+    it('resolves the $formIsInvalid scoped path', () => {
+      expect(resolveScopedPath('$formIsInvalid', mockResolvers)).toBe(false);
+      expect(mockResolvers.resolveFormIsInvalid).toHaveBeenCalled();
     });
 
-    it('returns undefined when providing a path to the $formIsInvalid variable', () => {
-      expect(exprVarResolver('$formIsInvalid.age', mockResolvers)).toBeUndefined();
+    it('returns undefined when providing a sub-path to the $formIsInvalid scope', () => {
+      expect(resolveScopedPath('$formIsInvalid.age', mockResolvers)).toBeUndefined();
     });
 
     it('returns undefined for unrecognised prefixes', () => {
-      expect(exprVarResolver('$something.plainValue', mockResolvers)).toBeUndefined();
-      expect(exprVarResolver('some.more', mockResolvers)).toBeUndefined();
-      expect(exprVarResolver('plainValue', mockResolvers)).toBeUndefined();
+      expect(resolveScopedPath('$something.plainValue', mockResolvers)).toBeUndefined();
+      expect(resolveScopedPath('some.more', mockResolvers)).toBeUndefined();
+      expect(resolveScopedPath('plainValue', mockResolvers)).toBeUndefined();
     });
   });
 
