@@ -8,7 +8,7 @@ export default defineConfig({
     numTestsKeptInMemory: 0,
     video: false,
     // Docker containers (which GitHub Actions runners use) often have a very
-    // small /dev/shm (shared memory) partition—usually only 64MB.
+    // small /dev/shm (shared memory) partition, usually only 64MB.
     // Chrome uses this space for its rendering process. When it runs out, Chrome crashes instantly.
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {

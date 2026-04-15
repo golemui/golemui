@@ -53,9 +53,9 @@ const dottedScopePattern = [EXPRESSION_SCOPE.FORM, EXPRESSION_SCOPE.META, EXPRES
 /**
  * Matches scoped path placeholders in template strings.
  * Capture groups:
- *   scope    — full scope including $, e.g. '$form', '$meta', '$errors'
- *   path     — property path after the dot, e.g. 'user.id'
- *   isInvalid — the literal '$formIsInvalid'
+ *   scope - full scope including $, e.g. '$form', '$meta', '$errors'
+ *   path - property path after the dot, e.g. 'user.id'
+ *   isInvalid - the literal '$formIsInvalid'
  */
 const SCOPED_PATH_TEMPLATE_REGEX = new RegExp(
   `\\{\\{(?:(?<scope>${dottedScopePattern})\\.(?<path>[^}]+)|(?<isInvalid>\\${EXPRESSION_SCOPE.FORM_IS_INVALID}))\\}\\}`,

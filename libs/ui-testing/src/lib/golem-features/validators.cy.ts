@@ -1471,11 +1471,11 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
               ],
             }),
           });
-          cy.get('[data-cy="acceptTerms_checkbox"]').click(); // check → true → valid
+          cy.get('[data-cy="acceptTerms_checkbox"]').click(); // check -> true -> valid
           cy.get('[data-cy="testButton_button"]').click();
           cy.get('[data-cy="acceptTerms_validator-errors"]').should('not.exist');
 
-          cy.get('[data-cy="acceptTerms_checkbox"]').click(); // uncheck → false → const fails
+          cy.get('[data-cy="acceptTerms_checkbox"]').click(); // uncheck -> false -> const fails
           cy.get('[data-cy="acceptTerms_validator-errors"]').should('exist');
           cy.get('[data-cy="acceptTerms_validator-error"]').contains(
             'You must accept the terms and conditions to continue',
