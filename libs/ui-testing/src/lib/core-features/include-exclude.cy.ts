@@ -370,4 +370,120 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
       cy.get('.gui-alert [role="alert"]').should('not.exist');
     });
   });
+
+  describe('Include.when/Exclude.when with $errors and $formIsInvalid', () => {
+    it('should show element via include.when when $errors exist for a field', () => {
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'userName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'userName',
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              on: { click: 'submit' },
+            },
+            {
+              uid: 'errorAlert',
+              kind: 'display',
+              type: 'alert',
+              props: { text: 'Username is required' },
+              include: { when: '$errors.userName?.length > 0' },
+            },
+          ],
+        }),
+      });
+
+      cy.get('[id="errorAlert"]').should('not.exist');
+
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('[id="errorAlert"]').should('exist');
+
+      cy.get('[data-cy="userName_textinput"]').type('Alice');
+      cy.get('[id="errorAlert"]').should('not.exist');
+    });
+
+    it('should show element via include.when when $formIsInvalid is true', () => {
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'userName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'userName',
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              on: { click: 'submit' },
+            },
+            {
+              uid: 'formErrorBanner',
+              kind: 'display',
+              type: 'alert',
+              props: { text: 'Please fix all errors before submitting' },
+              include: { when: '$formIsInvalid' },
+            },
+          ],
+        }),
+      });
+
+      cy.get('[id="formErrorBanner"]').should('not.exist');
+
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('[id="formErrorBanner"]').should('exist');
+
+      cy.get('[data-cy="userName_textinput"]').type('Alice');
+      cy.get('[id="formErrorBanner"]').should('not.exist');
+    });
+
+    it('should hide element via exclude.when when $errors exist for a field', () => {
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'userName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'userName',
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              on: { click: 'submit' },
+            },
+            {
+              uid: 'successMessage',
+              kind: 'display',
+              type: 'alert',
+              props: { text: 'Form looks good!' },
+              exclude: { when: '$errors.userName?.length > 0' },
+            },
+          ],
+        }),
+      });
+
+      cy.get('[id="successMessage"]').should('exist');
+
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('[id="successMessage"]').should('not.exist');
+
+      cy.get('[data-cy="userName_textinput"]').type('Alice');
+      cy.get('[id="successMessage"]').should('exist');
+    });
+  });
 };

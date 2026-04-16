@@ -1,40 +1,76 @@
 import * as Widget from '../form-widget';
-import { DotPath } from '../shared';
+import { $Errors, DotPath } from '../shared';
+import { State } from '../store/model';
+import { set } from './object';
 
 /**
- * Heuristically checks if a value looks like a dot notation path
+ * Expression Scopes define the root namespaces accessible within
+ * reactive expressions and template strings.
+ */
+export const EXPRESSION_SCOPE = {
+  FORM: '$form',
+  META: '$meta',
+  ERRORS: '$errors',
+  FORM_IS_INVALID: '$formIsInvalid',
+} as const;
+
+/**
+ * Heuristically checks if a value looks like a scoped path
  * rather than a standard string.
- * To be considered a "potential" dot path, the value must:
+ * To be considered a "potential" scoped path, the value must:
  * 1. Be a string.
- * 2. Start with one of the allowed prefixes ($form.* or $meta.*).
+ * 2. Start with one of the allowed prefixes ($form.*, $meta.*, etc..).
  * 3. Not contain any spaces (distinguishing it from sentences).
  *
  * * @example
- * isPotentialScopePath('$form.user.id');   // true
- * isPotentialScopePath('name');      // false (No prefix)
- * isPotentialScopePath('my file');   // false (Contains space)
- * isPotentialScopePath(123);         // false (Not a string)
+ * isPotentialScopedPath('$form.user.id');  // true
+ * isPotentialScopedPath('name');           // false (No prefix)
+ * isPotentialScopedPath('my file');        // false (Contains space)
+ * isPotentialScopedPath(123);              // false (Not a string)
  */
-export const isPotentialScopePath = (path: unknown): path is DotPath => {
+export const isPotentialScopedPath = (path: unknown): path is DotPath => {
   return (
     typeof path === 'string' &&
     !path.includes(' ') &&
-    (path.startsWith('$form.') || path.startsWith('$meta.'))
+    (path.startsWith(`${EXPRESSION_SCOPE.FORM}.`) ||
+      path.startsWith(`${EXPRESSION_SCOPE.META}.`) ||
+      path.startsWith(`${EXPRESSION_SCOPE.ERRORS}.`) ||
+      path === EXPRESSION_SCOPE.FORM_IS_INVALID)
   );
 };
 
-export interface ScopeResolvers {
-  resolveFormScope: (path: DotPath) => any;
-  resolveMetaScope: (path: DotPath) => any;
+export interface ScopedPathResolvers {
+  resolveFormPath: (expr: string) => any;
+  resolveMetaPath: (expr: string) => any;
+  resolveErrorsPath: (expr: string) => any;
+  resolveFormIsInvalid: () => string | boolean;
 }
 
+const dottedScopePattern = [EXPRESSION_SCOPE.FORM, EXPRESSION_SCOPE.META, EXPRESSION_SCOPE.ERRORS]
+  .map((s) => s.replace('$', '\\$'))
+  .join('|');
+
 /**
- * Resolves all scope path placeholders within a string in a single pass.
- * e.g. "User {{ $form.name }} has status {{ $meta.status }}"
+ * Matches scoped path placeholders in template strings.
+ * Capture groups:
+ *   scope - full scope including $, e.g. '$form', '$meta', '$errors'
+ *   path - property path after the dot, e.g. 'user.id'
+ *   isInvalid - the literal '$formIsInvalid'
+ */
+const SCOPED_PATH_TEMPLATE_REGEX = new RegExp(
+  `\\{\\{(?:(?<scope>${dottedScopePattern})\\.(?<path>[^}]+)|(?<isInvalid>\\${EXPRESSION_SCOPE.FORM_IS_INVALID}))\\}\\}`,
+  'g',
+);
+
+/**
+ * Resolves all scoped path placeholders within a string in a single pass.
+ * e.g. "User {{ $form.name }} has status {{ $meta.status }} or {{ $formIsInvalid }}"
  *
+ * @param input - The template string to process
+ * @param resolvers - Implementation of value resolution logic
  * @returns The string with all valid placeholders replaced by their resolved values
  */
-export const resolveScopePaths = (input: string, resolvers: ScopeResolvers): string => {
+export const resolveScopedPaths = (input: string, resolvers: ScopedPathResolvers): string => {
   if (typeof input !== 'string') {
     return input;
   }
@@ -44,44 +80,65 @@ export const resolveScopePaths = (input: string, resolvers: ScopeResolvers): str
     return input;
   }
 
-  const SCOPE_RESOLVER_REGEX = /\{\{\$(form|meta)\.([^}]+)\}\}/g;
+  return input.replace(SCOPED_PATH_TEMPLATE_REGEX, (match, ...args) => {
+    // The last argument is the 'groups' object if named groups are used
+    const groups = args[args.length - 1] as {
+      scope?: '$form' | '$meta' | '$errors';
+      path?: string;
+      isInvalid?: string;
+    };
 
-  /**
-   * match: The full "{{$form.path}}"
-   * scope: The first capture group (form|meta)
-   * path: The second capture group ([^}]+)
-   */
-  return input.replace(SCOPE_RESOLVER_REGEX, (match, scope, path) => {
+    const { scope, path, isInvalid } = groups;
+
     try {
-      if (scope === 'form') {
-        return resolvers.resolveFormScope(path);
+      if (isInvalid === EXPRESSION_SCOPE.FORM_IS_INVALID) {
+        return resolvers.resolveFormIsInvalid();
       }
-      if (scope === 'meta') {
-        return resolvers.resolveMetaScope(path);
+
+      if (scope && path) {
+        switch (scope) {
+          case EXPRESSION_SCOPE.FORM:
+            return resolvers.resolveFormPath(path);
+          case EXPRESSION_SCOPE.META:
+            return resolvers.resolveMetaPath(path);
+          case EXPRESSION_SCOPE.ERRORS:
+            return resolvers.resolveErrorsPath(path);
+          default:
+            return match;
+        }
       }
-    } catch {
+    } catch (err) {
+      console.error(`Error resolving Expression: '${input}'`, err);
       return match;
     }
+
     return match;
   });
 };
 
 /**
- * Resolves a dot-notation scope path to its underlying value using the
- * appropriate resolver based on the path prefix (`$form.*` or `$meta.*`).
+ * Resolves a scoped path to its underlying value using the
+ * appropriate resolver based on the path prefix (`$form.*`, `$meta.*`, `$errors.*` or `$formIsInvalid`).
  *
- * @param path - A dot-notation path starting with `$form.` or `$meta.`
- * @param resolvers.resolveFormScope - Resolves a path within the $form scope
- * @param resolvers.resolveMetaScope - Resolves a path within the $meta scope
+ * @param variable - A dot-notation path starting with `$form.`, `$meta.` or `$errors.`, or `$formIsInvalid`.
+ * @param resolvers.resolveFormPath - Resolves a path within the $form scope
+ * @param resolvers.resolveMetaPath - Resolves a path within the $meta scope
  */
-export const scopeResolver = (path: DotPath, resolvers: ScopeResolvers) => {
-  if (path.startsWith('$form.')) {
-    const pathWithout$form = path.replace('$form.', '');
-    return resolvers.resolveFormScope(pathWithout$form);
+export const resolveScopedPath = (variable: string, resolvers: ScopedPathResolvers) => {
+  const formPrefix = `${EXPRESSION_SCOPE.FORM}.`;
+  if (variable.startsWith(formPrefix)) {
+    return resolvers.resolveFormPath(variable.replace(formPrefix, ''));
   }
-  if (path.startsWith('$meta.')) {
-    const pathWithout$meta = path.replace('$meta.', '');
-    return resolvers.resolveMetaScope(pathWithout$meta);
+  const metaPrefix = `${EXPRESSION_SCOPE.META}.`;
+  if (variable.startsWith(metaPrefix)) {
+    return resolvers.resolveMetaPath(variable.replace(metaPrefix, ''));
+  }
+  const errorsPrefix = `${EXPRESSION_SCOPE.ERRORS}.`;
+  if (variable.startsWith(errorsPrefix)) {
+    return resolvers.resolveErrorsPath(variable.replace(errorsPrefix, ''));
+  }
+  if (variable === EXPRESSION_SCOPE.FORM_IS_INVALID) {
+    return resolvers.resolveFormIsInvalid();
   }
   return undefined;
 };
@@ -109,4 +166,25 @@ export function flattenForm(widgets: Widget.FormWidget[]): Widget.FormWidget[] {
     widget,
     ...(Widget.isLayoutWidget(widget) ? flattenForm(widget.children) : []),
   ]);
+}
+
+/**
+ * Calculates validation variables to be used in reactive expressions
+ * e.g. `{ invalidAge: '!!$errors.age' }` or { disabled { when: '$formIsInvalid' } }
+ */
+export function calculateValidationVariables(state: State): {
+  $formIsInvalid: boolean;
+  $errors: $Errors;
+} {
+  const result = Object.entries(state.validations).reduce(
+    (acc, [dotPath, errors]) => {
+      if (errors !== null) {
+        acc.$formIsInvalid = true;
+        set(acc.$errors, dotPath, errors);
+      }
+      return acc;
+    },
+    { $formIsInvalid: false, $errors: {} },
+  );
+  return result;
 }

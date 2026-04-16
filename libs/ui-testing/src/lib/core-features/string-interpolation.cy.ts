@@ -314,6 +314,162 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('$errors and $formIsInvalid interpolation in text', () => {
+      it('should interpolate $formIsInvalid as "false" when form has no errors', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'status-display',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Invalid: {{$formIsInvalid}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('.gui-alert [role="alert"]').contains('Invalid: false');
+      });
+
+      it('should interpolate $formIsInvalid as "true" after submit with a required field empty', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'submitBtn',
+                kind: 'action',
+                type: 'button',
+                label: 'Submit',
+                on: { click: 'submit' },
+              },
+              {
+                uid: 'status-display',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Invalid: {{$formIsInvalid}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('.gui-alert [role="alert"]').contains('Invalid: false');
+
+        cy.get('[data-cy="submitBtn_button"]').click();
+        cy.get('.gui-alert [role="alert"]').contains('Invalid: true');
+      });
+
+      it('should interpolate $formIsInvalid back to "false" when validation error is resolved', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'submitBtn',
+                kind: 'action',
+                type: 'button',
+                label: 'Submit',
+                on: { click: 'submit' },
+              },
+              {
+                uid: 'status-display',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Invalid: {{$formIsInvalid}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('[data-cy="submitBtn_button"]').click();
+        cy.get('.gui-alert [role="alert"]').contains('Invalid: true');
+
+        cy.get('[data-cy="userName_textinput"]').type('Alice');
+        cy.get('.gui-alert [role="alert"]').contains('Invalid: false');
+      });
+
+      it('should not show an error message in $errors.fieldName placeholder when there are no errors', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'error-display',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Error: {{$errors.userName}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('.gui-alert [role="alert"]').should(
+          'not.contain',
+          'Invalid input: expected string, received undefined',
+        );
+      });
+
+      it('should interpolate $errors.fieldName as the error message after validation fails', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'submitBtn',
+                kind: 'action',
+                type: 'button',
+                label: 'Submit',
+                on: { click: 'submit' },
+              },
+              {
+                uid: 'error-display',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Error: {{$errors.userName}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('[data-cy="submitBtn_button"]').click();
+        cy.get('.gui-alert [role="alert"]').contains(
+          'Error: Invalid input: expected string, received undefined',
+        );
+      });
+    });
+
     describe('Edge cases', () => {
       it('should handle nested path with numbers in property names', () => {
         mountFn({

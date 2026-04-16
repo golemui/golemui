@@ -263,6 +263,65 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
       cy.get('[data-cy="firstName[0][2]_textinput"]').should('not.exist');
     });
 
+    it('should expose $formIsInvalid as true when a repeater item field has a validation error', () => {
+      mountFn({
+        data: {
+          repeaters: {
+            teams: [{ teamName: '' }],
+          },
+        },
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'teamRepeater',
+              kind: 'input',
+              type: 'repeater',
+              path: TEAMS_REPEATER_PATH,
+              props: {
+                addLabel: 'Add new team',
+                removeLabel: 'Remove team',
+                template: {
+                  kind: 'layout',
+                  type: 'flex',
+                  children: [
+                    {
+                      uid: 'teamName',
+                      kind: 'input',
+                      type: 'textinput',
+                      path: `${TEAMS_REPEATER_PATH}.items.teamName`,
+                      label: 'Team Name',
+                      validator: { type: 'string', required: true },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              uid: SUBMIT_BUTTON_UID,
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              disabled: { when: '$formIsInvalid' },
+              on: { click: 'submit' },
+            },
+          ],
+        }),
+      });
+
+      // Initially $formIsInvalid is false -> submit button is enabled
+      cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).should('not.have.attr', 'disabled');
+
+      // Click submit with empty required teamName -> validation fires -> $formIsInvalid becomes true
+      cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).click();
+      cy.get('[data-cy="teamName[0]_validator-error"]').should('be.visible');
+      cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).should('have.attr', 'disabled');
+
+      // Fill the teamName field -> errors clear -> $formIsInvalid becomes false -> button re-enabled
+      cy.get('[data-cy="teamName[0]_textinput"]').type('Alpha');
+      cy.get('[data-cy="teamName[0]_validator-error"]').should('not.exist');
+      cy.get(`[data-cy="${SUBMIT_BUTTON_UID}_button"]`).should('not.have.attr', 'disabled');
+    });
+
     describe('states inside repeater items', () => {
       const getStatesFormDefinition = () =>
         Core.defineForm({

@@ -7,7 +7,8 @@ import {
   LayoutWidget,
   NonFunctionWidget,
 } from '../../form-widget';
-import { flattenForm } from '../../utils/form';
+import { $Errors } from '../../shared';
+import { calculateValidationVariables, flattenForm } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
 import {
@@ -19,16 +20,23 @@ import { State } from '../model';
 import { hasWhen } from './utils';
 
 export const calculateWidgetFlags = (state: State): State => {
+  // Precalculate the validation variables for all the following steps
+  const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+
   return {
     ...state,
     widgetFlags: {
-      ...calculateFlags(state),
-      ...calculateRepeaterFlags(state),
+      ...calculateFlags(state, $errors, $formIsInvalid),
+      ...calculateRepeaterFlags(state, $errors, $formIsInvalid),
     },
   };
 };
 
-function calculateFlags(state: State): State['widgetFlags'] {
+function calculateFlags(
+  state: State,
+  $errors: $Errors,
+  $formIsInvalid: boolean,
+): State['widgetFlags'] {
   return (
     Object.values(state.flatForm)
       // TODO: use filterMap
@@ -76,6 +84,8 @@ function calculateFlags(state: State): State['widgetFlags'] {
               widget.include.when,
               state.data,
               state.meta,
+              $errors,
+              $formIsInvalid,
             );
           }
 
@@ -89,6 +99,8 @@ function calculateFlags(state: State): State['widgetFlags'] {
               widget.exclude.when,
               state.data,
               state.meta,
+              $errors,
+              $formIsInvalid,
             );
           }
 
@@ -102,6 +114,8 @@ function calculateFlags(state: State): State['widgetFlags'] {
                 (widget.disabled as { when: string }).when,
                 state.data,
                 state.meta,
+                $errors,
+                $formIsInvalid,
               );
             }
           }
@@ -112,6 +126,8 @@ function calculateFlags(state: State): State['widgetFlags'] {
               (widget.readonly as { when: string }).when,
               state.data,
               state.meta,
+              $errors,
+              $formIsInvalid,
             );
           }
 
@@ -129,14 +145,18 @@ function calculateFlags(state: State): State['widgetFlags'] {
 // -----------------------
 
 // TODO: this is Golem specific. We should either move this to a middleware or make the repeater contract part of the core
-function calculateRepeaterFlags(state: State): State['widgetFlags'] {
+function calculateRepeaterFlags(
+  state: State,
+  $errors: $Errors,
+  $formIsInvalid: boolean,
+): State['widgetFlags'] {
   // TODO: should we collect the active repeater templates on addWidget so we don't have to iterate so much?
   return Object.values(state.flatForm)
     .filter((w): w is NonFunctionWidget<string> => !isFunctionWidget(w) && w.type === 'repeater')
     .reduce(
       (flags, repeater) => ({
         ...flags,
-        ...expandRepeaterFlags(state, repeater as RepeaterContract, []),
+        ...expandRepeaterFlags(state, repeater as RepeaterContract, [], $errors, $formIsInvalid),
       }),
       {} as State['widgetFlags'],
     );
@@ -153,6 +173,8 @@ function expandRepeaterFlags(
   state: State,
   repeaterWidget: RepeaterContract,
   outerIndexes: number[],
+  $errors: $Errors,
+  $formIsInvalid: boolean,
 ): State['widgetFlags'] {
   const template = repeaterWidget.props.template;
   const arrayData = get(state.data, (repeaterWidget as any).path as string);
@@ -186,7 +208,16 @@ function expandRepeaterFlags(
           currentIndexes,
         ) as RepeaterContract;
         // recurse and mutate flags
-        Object.assign(flags, expandRepeaterFlags(state, indexedNestedRepeater, currentIndexes));
+        Object.assign(
+          flags,
+          expandRepeaterFlags(
+            state,
+            indexedNestedRepeater,
+            currentIndexes,
+            $errors,
+            $formIsInvalid,
+          ),
+        );
         return;
       }
 
@@ -203,6 +234,8 @@ function expandRepeaterFlags(
           transformRepeaterItemWhenExpression(resolved.include.when, currentIndexes),
           state.data,
           state.meta,
+          $errors,
+          $formIsInvalid,
         );
       }
 
@@ -214,6 +247,8 @@ function expandRepeaterFlags(
           transformRepeaterItemWhenExpression(resolved.exclude.when, currentIndexes),
           state.data,
           state.meta,
+          $errors,
+          $formIsInvalid,
         );
       }
 
@@ -226,6 +261,8 @@ function expandRepeaterFlags(
           ),
           state.data,
           state.meta,
+          $errors,
+          $formIsInvalid,
         );
       }
 
@@ -238,6 +275,8 @@ function expandRepeaterFlags(
           ),
           state.data,
           state.meta,
+          $errors,
+          $formIsInvalid,
         );
       }
     });

@@ -1,4 +1,5 @@
 import { errorCodes } from '../../errors';
+import { calculateValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { FormHealth, State } from '../model';
 
@@ -12,6 +13,9 @@ export const calculateCurrentState = (state: State): State => {
     return state;
   }
 
+  // Precalculate the validation variables for all the following steps
+  const { $formIsInvalid, $errors } = calculateValidationVariables(state);
+
   stateExpressions = expandStateExpressions(stateExpressions);
 
   let currentStates: string[] = [];
@@ -23,7 +27,7 @@ export const calculateCurrentState = (state: State): State => {
         const expression = stateExpressions[stateName];
         let result: boolean;
         try {
-          result = expressionIsTrue(expression, state.data, state.meta);
+          result = expressionIsTrue(expression, state.data, state.meta, $errors, $formIsInvalid);
         } catch {
           result = false;
         }

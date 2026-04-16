@@ -872,5 +872,105 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         cy.get('[data-cy="regionSelect_select"] option').should('have.length', 4);
       });
     });
+
+    context('$errors and $formIsInvalid in state expressions', () => {
+      it('should activate a state based on $errors field and drive include.in visibility', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              hasErrors: '$errors.userName?.length > 0',
+            },
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'submitBtn',
+                kind: 'action',
+                type: 'button',
+                label: 'Submit',
+                on: { click: 'submit' },
+              },
+              {
+                uid: 'errorSummary',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Form has errors' },
+                include: { in: ['hasErrors'] },
+              },
+            ],
+          }),
+        });
+
+        // 'hasErrors' state is inactive -> errorSummary is hidden
+        cy.get('[id="errorSummary"]').should('not.exist');
+
+        // Submit with empty required field -> $errors.userName gets errors -> 'hasErrors' activates
+        cy.get('[data-cy="submitBtn_button"]').click();
+        cy.get('[id="errorSummary"]').should('exist');
+
+        // Fill the field -> errors clear -> 'hasErrors' deactivates
+        cy.get('[data-cy="userName_textinput"]').type('Alice');
+        cy.get('[id="errorSummary"]').should('not.exist');
+      });
+
+      it('should activate a state based on $formIsInvalid and drive include.in / exclude.from', () => {
+        mountFn({
+          formDef: Core.defineForm({
+            states: {
+              formInvalid: '$formIsInvalid',
+            },
+            form: [
+              {
+                uid: 'userName',
+                kind: 'input',
+                type: 'textinput',
+                path: 'userName',
+                validator: { type: 'string', required: true },
+              },
+              {
+                uid: 'submitBtn',
+                kind: 'action',
+                type: 'button',
+                label: 'Submit',
+                on: { click: 'submit' },
+              },
+              {
+                uid: 'invalidBanner',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Fix all errors to continue' },
+                include: { in: ['formInvalid'] },
+              },
+              {
+                uid: 'validMessage',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'All good!' },
+                exclude: { from: ['formInvalid'] },
+              },
+            ],
+          }),
+        });
+
+        // Initially 'formInvalid' is inactive
+        cy.get('[id="invalidBanner"]').should('not.exist');
+        cy.get('[id="validMessage"]').should('exist');
+
+        // After submit with errors: 'formInvalid' state activates
+        cy.get('[data-cy="submitBtn_button"]').click();
+        cy.get('[id="invalidBanner"]').should('exist');
+        cy.get('[id="validMessage"]').should('not.exist');
+
+        // After fixing: 'formInvalid' state deactivates
+        cy.get('[data-cy="userName_textinput"]').type('Alice');
+        cy.get('[id="invalidBanner"]').should('not.exist');
+        cy.get('[id="validMessage"]').should('exist');
+      });
+    });
   });
 };
