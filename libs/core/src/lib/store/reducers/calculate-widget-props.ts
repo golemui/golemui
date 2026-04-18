@@ -1,6 +1,4 @@
 import {
-  FormWidget,
-  FunctionWidget,
   isActionWidget,
   isFunctionWidget,
   isInputWidget,
@@ -17,8 +15,15 @@ import {
   resolveScopedPaths,
 } from '../../utils/form';
 import { get, set } from '../../utils/object';
-import { DerivedWidget, State } from '../model';
+import { State } from '../model';
 import { hasWhen } from './utils';
+
+type ComputeCtx<F extends NonFunctionWidget<string>> = {
+  source: F;
+  previous: F;
+  current: F;
+  changed: boolean;
+};
 
 export const calculateWidgetProps =
   (localization: I18nTranslator) =>
@@ -26,13 +31,13 @@ export const calculateWidgetProps =
     return { ...state, calculatedWidgets: calculateProps(state, localization) };
   };
 
-const mkDerivedWidget = <F extends FormWidget<string>>(
+const mkComputeCtx = <F extends NonFunctionWidget<string>>(
   source: F,
-  previous: Exclude<F, FunctionWidget<string>>,
-): DerivedWidget<F> => ({
+  previous: F,
+): ComputeCtx<F> => ({
   source,
   previous,
-  current: {} as Exclude<F, FunctionWidget<string>>,
+  current: {} as F,
   changed: false,
 });
 
@@ -55,22 +60,20 @@ function calculateProps(state: State, localization: I18nTranslator) {
       const originalSource = originalDerivedWidget.source;
 
       if (isFunctionWidget(originalSource)) {
-        originalDerivedWidget.previous = originalDerivedWidget.current;
-        originalDerivedWidget.current = originalSource({
+        const newCurrent = originalSource({
           $form: state.data,
           errors: originalSource.path ? state.validations[originalSource.path] : undefined,
           touched: originalSource.path ? state.touchedControls[originalSource.path] : undefined,
           translate: localization.translate,
         });
-        originalDerivedWidget.current.uid = uid;
+        newCurrent.uid = uid;
         // TODO: structural comparison to avoid change detection
-        acc[uid] = { ...originalDerivedWidget };
+        acc[uid] = { source: originalDerivedWidget.source, current: newCurrent };
         return acc;
       }
 
-      const derivedWidget = mkDerivedWidget(
-        originalSource,
-        // previous is the new current
+      const ctx = mkComputeCtx(
+        originalSource as NonFunctionWidget<string>,
         originalDerivedWidget.current,
       );
 
@@ -82,7 +85,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
           calculateProperty({
             currentStates: state.currentStates,
             widgetPropOverrides: state.widgetPropOverrides,
-            derivedWidget: derivedWidget,
+            derivedWidget: ctx,
             property: prop as CoreProp,
             $form: state.data,
             $meta: state.meta,
@@ -103,7 +106,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
         calculateProperty({
           currentStates: state.currentStates,
           widgetPropOverrides: state.widgetPropOverrides,
-          derivedWidget: derivedWidget,
+          derivedWidget: ctx,
           property: 'props',
           subProp: prop,
           $form: state.data,
@@ -121,7 +124,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
           calculateProperty({
             currentStates: state.currentStates,
             widgetPropOverrides: state.widgetPropOverrides,
-            derivedWidget: derivedWidget,
+            derivedWidget: ctx,
             property: 'on' as CoreProp, // TODO: type hack: "on" is not a CoreProp
             subProp: prop,
             $form: state.data,
@@ -136,7 +139,7 @@ function calculateProps(state: State, localization: I18nTranslator) {
 
       // Layout "children" property
       if (isLayoutWidget(originalSource)) {
-        const prevChildren = (derivedWidget.previous as LayoutWidget<string>).children || [];
+        const prevChildren = (ctx.previous as LayoutWidget<string>).children || [];
         const repeaterIndexes = extractRepeaterIndexes(originalSource.uid);
 
         // Calculate visible children based on current flags
@@ -147,10 +150,10 @@ function calculateProps(state: State, localization: I18nTranslator) {
           return !state.widgetFlags[actualUid] || state.widgetFlags[actualUid].hidden !== true;
         });
 
-        (derivedWidget as DerivedWidget<LayoutWidget<string>>).current.children = children;
+        (ctx as ComputeCtx<LayoutWidget<string>>).current.children = children;
 
         // Reflect structural equality changes
-        derivedWidget.changed =
+        ctx.changed =
           prevChildren.length !== children.length ||
           !children.every(
             (_, index) => prevChildren[index] && prevChildren[index].uid === children[index].uid,
@@ -158,8 +161,9 @@ function calculateProps(state: State, localization: I18nTranslator) {
       }
 
       // If there are no changes we can keep the old widget reference to avoid unnecessary rerendering
-      acc[uid] = derivedWidget.changed ? derivedWidget : originalDerivedWidget;
-      delete acc[uid].changed;
+      acc[uid] = ctx.changed
+        ? { source: originalDerivedWidget.source, current: ctx.current }
+        : originalDerivedWidget;
       return acc;
     },
     {} as State['calculatedWidgets'],
@@ -189,7 +193,7 @@ function calculateProperty<F extends NonFunctionWidget<string>>({
 }: {
   currentStates: string[];
   widgetPropOverrides: State['widgetPropOverrides'];
-  derivedWidget: DerivedWidget<F>;
+  derivedWidget: ComputeCtx<F>;
   property: CoreProp;
   subProp?: string;
   $form: State['data'];

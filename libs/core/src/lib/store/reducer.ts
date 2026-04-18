@@ -149,8 +149,7 @@ export const reducer =
                   calculatedWidgets: {
                     ...state.calculatedWidgets,
                     [uid]: {
-                      ...originalDerivedWidget,
-                      previous: originalDerivedWidget.current,
+                      source: originalDerivedWidget.source,
                       current,
                     },
                   },

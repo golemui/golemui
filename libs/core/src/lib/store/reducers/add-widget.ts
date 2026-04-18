@@ -10,7 +10,6 @@ export function addWidget(state: State, action: ADD_WIDGET): State {
       [action.payload.widget.uid!]: {
         source: action.payload.widget,
         current: {} as NonFunctionWidget,
-        previous: {} as NonFunctionWidget,
       },
     },
   };

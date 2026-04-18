@@ -154,20 +154,15 @@ export type FormHealth =
     };
 
 /**
- * Represents a form widget whose value is derived from a computation
- * and evaluated against its previous derived state.
+ * Represents a form widget whose value is derived from a computation.
  *
- * A `DerivedWidget<T>` captures the source widget, the previous derived value,
- * the newly derived value, and whether a structural change occurred between
- * derivations.
+ * A `DerivedWidget<T>` captures the source widget definition and the most
+ * recently computed, fully resolved widget. Reference identity is used for
+ * change detection: a new object is created only when a property has changed.
  */
 export type DerivedWidget<F extends Widget.FormWidget<string>> = {
   /** The source widget from which the derived value is computed */
   source: F;
-  /** The previously derived value */
-  previous: Exclude<F, Widget.FunctionWidget<string>>;
-  /** The newly derived value */
+  /** The most recently computed, fully resolved widget */
   current: Exclude<F, Widget.FunctionWidget<string>>;
-  /** Indicates whether the newly derived value changed structurally */
-  changed?: boolean;
 };
