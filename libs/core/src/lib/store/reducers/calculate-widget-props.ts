@@ -100,6 +100,11 @@ function computeNonFunctionWidget(
 ): DerivedWidget<NonFunctionWidget<string>> {
   const tracker = new ChangeTracker(source, prev.current);
 
+  // Identity fields never come from expressions/overrides/suffixes, copy directly.
+  tracker.write('uid', source.uid);
+  tracker.write('type', source.type);
+  tracker.write('kind', source.kind);
+
   if (isDisplayWidget(source)) {
     computeDisplayFields(tracker, ctx);
   } else if (isActionWidget(source)) {
@@ -130,18 +135,12 @@ function computeNonFunctionWidget(
 // -----------------------------------------------------------------------------
 
 function computeDisplayFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'uid');
-  applyCoreField(t, ctx, 'type');
-  applyCoreField(t, ctx, 'kind');
   applyCoreField(t, ctx, 'size');
   applyCoreField(t, ctx, 'include');
   applyCoreField(t, ctx, 'exclude');
 }
 
 function computeActionFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'uid');
-  applyCoreField(t, ctx, 'type');
-  applyCoreField(t, ctx, 'kind');
   applyCoreField(t, ctx, 'size');
   applyCoreField(t, ctx, 'include');
   applyCoreField(t, ctx, 'exclude');
@@ -150,9 +149,6 @@ function computeActionFields(t: ChangeTracker, ctx: ResolverCtx): void {
 }
 
 function computeInputFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'uid');
-  applyCoreField(t, ctx, 'type');
-  applyCoreField(t, ctx, 'kind');
   applyCoreField(t, ctx, 'size');
   applyCoreField(t, ctx, 'include');
   applyCoreField(t, ctx, 'exclude');
@@ -165,9 +161,6 @@ function computeInputFields(t: ChangeTracker, ctx: ResolverCtx): void {
 }
 
 function computeLayoutFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'uid');
-  applyCoreField(t, ctx, 'type');
-  applyCoreField(t, ctx, 'kind');
   applyCoreField(t, ctx, 'size');
   applyCoreField(t, ctx, 'include');
   applyCoreField(t, ctx, 'exclude');
@@ -223,9 +216,6 @@ function computeChildren(source: LayoutWidget<string>, tracker: ChangeTracker, s
 // -----------------------------------------------------------------------------
 
 type CoreField =
-  | 'uid'
-  | 'type'
-  | 'kind'
   | 'size'
   | 'include'
   | 'exclude'
