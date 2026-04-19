@@ -213,7 +213,7 @@ function computeChildren(source: LayoutWidget<string>, tracker: ChangeTracker, s
     visible.every((_, i) => prevChildren[i] && prevChildren[i].uid === visible[i].uid);
 
   if (!structurallyEqual) {
-    tracker.setChanged(true);
+    tracker.markChanged();
   }
 }
 
@@ -242,19 +242,16 @@ function applyCoreField(t: ChangeTracker, ctx: ResolverCtx, field: CoreField): v
     return;
   }
 
-  const raw = pickSuffixedValue(source, field, ctx.currentStates);
+  const raw = pickSuffixedValue(source, field, ctx.sortedStates);
   let resolved: unknown;
 
   switch (field) {
-    case 'label':
-      resolved = resolveLocalizable(raw, ctx);
-      break;
     case 'disabled':
     case 'readonly':
       resolved = resolveBoolOrWhen(raw, ctx, t.source.uid, field);
       break;
     default:
-      resolved = resolvePropValue(raw, ctx);
+      resolved = resolveValue(raw, ctx);
   }
 
   t.write(field, resolved);
@@ -262,8 +259,8 @@ function applyCoreField(t: ChangeTracker, ctx: ResolverCtx, field: CoreField): v
 
 function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void {
   const sourceProps = (t.source as { props?: Record<string, unknown> }).props;
-  const raw = pickSuffixedValue(sourceProps, subProp, ctx.currentStates);
-  let resolved = resolvePropValue(raw, ctx);
+  const raw = pickSuffixedValue(sourceProps, subProp, ctx.sortedStates);
+  let resolved = resolveValue(raw, ctx);
 
   // widgetPropOverrides takes precedence over everything - applied AFTER function evaluation,
   // i18n translation, and template substitution.
@@ -277,7 +274,7 @@ function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): v
 
 function applyOnField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void {
   const sourceOn = (t.source as { on?: Record<string, unknown> }).on;
-  const raw = pickSuffixedValue(sourceOn, subProp, ctx.currentStates);
+  const raw = pickSuffixedValue(sourceOn, subProp, ctx.sortedStates);
   t.write(`on.${subProp}`, resolveOnValue(raw, ctx));
 }
 
@@ -304,8 +301,8 @@ function resolveString(input: string, ctx: ResolverCtx): string {
   });
 }
 
-/** For `label` - function | TranslationConfig | string-template | passthrough. */
-function resolveLocalizable(value: unknown, ctx: ResolverCtx): unknown {
+/** function | TranslationConfig | string-template | passthrough. */
+function resolveValue(value: unknown, ctx: ResolverCtx): unknown {
   if (typeof value === 'function') {
     return resolveFunctionProp(value as WidgetFn, ctx);
   }
@@ -337,20 +334,6 @@ function resolveBoolOrWhen(
   return value;
 }
 
-/** Generic - function | TranslationConfig | string-template | passthrough. */
-function resolvePropValue(value: unknown, ctx: ResolverCtx): unknown {
-  if (typeof value === 'function') {
-    return resolveFunctionProp(value as WidgetFn, ctx);
-  }
-  if (isTranslationConfig(value)) {
-    return resolveTranslationConfig(value, ctx);
-  }
-  if (typeof value === 'string') {
-    return resolveString(value, ctx);
-  }
-  return value;
-}
-
 /**
  * For `on.<handler>` - function | passthrough.
  *
@@ -370,21 +353,18 @@ function resolveOnValue(value: unknown, ctx: ResolverCtx): unknown {
 
 /**
  * Picks the longest matching state suffix for `baseKey` on `fieldSource`; falls back
- * to the base key when no state matches.
- *
- * Sorts a COPY of `currentStates` to avoid mutating shared state
- * (the original code sorted `state.currentStates` in place).
+ * to the base key when no state matches. `sortedStates` is expected to be
+ * pre-sorted longest-first (see `makeResolverCtx`).
  */
 function pickSuffixedValue<V = unknown>(
   fieldSource: Record<string, unknown> | undefined,
   baseKey: string,
-  currentStates: string[],
+  sortedStates: string[],
 ): V | undefined {
   if (!fieldSource) {
     return undefined;
   }
-  const ordered = [...currentStates].sort((a, b) => b.length - a.length);
-  for (const s of ordered) {
+  for (const s of sortedStates) {
     const suffixed = fieldSource[`${baseKey}.${s}`];
     if (suffixed !== undefined) {
       return suffixed as V;
@@ -442,8 +422,8 @@ class ChangeTracker<F extends NonFunctionWidget<string> = NonFunctionWidget<stri
     this.current = {} as F;
   }
 
-  setChanged(value: boolean) {
-    this._changed = value;
+  markChanged(): void {
+    this._changed = true;
   }
 
   write(dotPath: string, value: unknown): void {
@@ -451,8 +431,7 @@ class ChangeTracker<F extends NonFunctionWidget<string> = NonFunctionWidget<stri
     // TODO: only primitive-level reference equality; structurally equivalent
     // objects/arrays will still trip `changed`.
     const prev = get(this.previous as Record<string, unknown>, dotPath);
-    const next = get(this.current as Record<string, unknown>, dotPath);
-    if (prev !== next) {
+    if (prev !== value) {
       this._changed = true;
     }
   }
@@ -463,7 +442,8 @@ class ChangeTracker<F extends NonFunctionWidget<string> = NonFunctionWidget<stri
 // -----------------------------------------------------------------------------
 
 interface ResolverCtx {
-  currentStates: string[];
+  /** `currentStates` pre-sorted longest-first, so `pickSuffixedValue` can iterate directly. */
+  sortedStates: string[];
   widgetPropOverrides: State['widgetPropOverrides'];
   widgetFlags: State['widgetFlags'];
   $form: State['data'];
@@ -480,7 +460,7 @@ function makeResolverCtx(
   $errors: $Errors,
 ): ResolverCtx {
   return {
-    currentStates: state.currentStates,
+    sortedStates: [...state.currentStates].sort((a, b) => b.length - a.length),
     widgetPropOverrides: state.widgetPropOverrides,
     widgetFlags: state.widgetFlags,
     $form: state.data,
