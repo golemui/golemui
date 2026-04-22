@@ -39,7 +39,7 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
         });
 
         element.widget = Core.makeRepeaterItemConfig(
-          Core.cloneObject(this.widget),
+          Core.cloneObject(this.widget as Core.NonFunctionWidget<string>),
           repeaterIndexes,
         );
         element.id = `host-${this.widget.uid}`;

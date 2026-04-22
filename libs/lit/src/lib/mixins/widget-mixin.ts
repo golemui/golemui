@@ -40,7 +40,10 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
 
         element.widget =
           indexes.length > 0
-            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), indexes)
+            ? Core.makeRepeaterItemConfig(
+                Core.cloneObject(this.widget as Core.NonFunctionWidget<string>),
+                indexes,
+              )
             : this.widget;
 
         element.id = `host-${this.widget.uid}`;
