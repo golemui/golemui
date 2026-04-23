@@ -90,6 +90,7 @@ gui-markdown {
     padding: var(--gui-space-1) var(--gui-space-2) var(--gui-space-1);
     background: var(--gui-bg-surface);
     border-bottom: 1px solid var(--gui-border-default);
+    overflow: scroll;
 
     &-separator {
       fill: var(--gui-text-default);
