@@ -198,10 +198,21 @@ export const deleteKey = (object: Record<string, any>, key: string) => {
   return object;
 };
 
-// FIXME: This should into account function cloning, because now we have reactive functions
 /**
- * Cheap JSON.stringify-based clone object utility
+ * Deep-clones plain objects and arrays while preserving function references
+ * (and other non-plain values) by reference. Functions are stateless widget
+ * resolvers and only need to survive the trip into repeater item configs.
  */
-export function cloneObject(obj: Record<string, any>) {
-  return JSON.parse(JSON.stringify(obj));
+export function cloneObject<T>(value: T): T {
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => cloneObject(item)) as unknown as T;
+  }
+  const out: Record<string, unknown> = {};
+  for (const key of Object.keys(value as Record<string, unknown>)) {
+    out[key] = cloneObject((value as Record<string, unknown>)[key]);
+  }
+  return out as T;
 }

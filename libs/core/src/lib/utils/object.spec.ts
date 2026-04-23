@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { get, set } from './object';
+import { cloneObject, get, set } from './object';
 
 describe('object.set', () => {
   it('sets dot notation paths', () => {
@@ -255,5 +255,48 @@ describe('object.get', () => {
       expect(get(numericPropObj, '1.nested')).toBe('value');
       expect(get(numericPropObj, 'normal')).toBe('property');
     });
+  });
+});
+
+describe('object.cloneObject', () => {
+  it('returns primitives and null unchanged', () => {
+    expect(cloneObject(42)).toBe(42);
+    expect(cloneObject('hello')).toBe('hello');
+    expect(cloneObject(true)).toBe(true);
+    expect(cloneObject(null)).toBeNull();
+    expect(cloneObject(undefined)).toBeUndefined();
+  });
+
+  it('deep-clones nested objects with separate references', () => {
+    const source = { a: 1, b: { c: 2, d: [3, 4] } };
+    const clone = cloneObject(source);
+    expect(clone).toEqual(source);
+    expect(clone).not.toBe(source);
+    expect(clone.b).not.toBe(source.b);
+    expect(clone.b.d).not.toBe(source.b.d);
+  });
+
+  it('deep-clones arrays', () => {
+    const source = [{ a: 1 }, { a: 2 }];
+    const clone = cloneObject(source);
+    expect(clone).toEqual(source);
+    expect(clone).not.toBe(source);
+    expect(clone[0]).not.toBe(source[0]);
+  });
+
+  it('preserves function values by reference', () => {
+    const fn = (x: number) => x + 1;
+    const source = { handler: fn, nested: { callback: fn } };
+    const clone = cloneObject(source);
+    expect(clone.handler).toBe(fn);
+    expect(clone.nested.callback).toBe(fn);
+  });
+
+  it('preserves functions nested inside arrays', () => {
+    const fn = () => 'hi';
+    const source = { items: [{ resolver: fn }] };
+    const clone = cloneObject(source);
+    expect(clone.items[0].resolver).toBe(fn);
+    expect(clone.items).not.toBe(source.items);
   });
 });
