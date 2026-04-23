@@ -9,6 +9,7 @@ export * from './kitchen-sink';
 export * from './reactive-functions';
 export * from './selects';
 export * from './signin';
+export * from './software-issue-management';
 export * from './tabs';
 export * from './template';
 export * from './tests';
