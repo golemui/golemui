@@ -35,6 +35,9 @@ function mapToWidget(def: Record<string, any>): NonFunctionWidget {
     kind: 'input',
     type: 'repeater',
     path: def['path'] ?? '',
+    ...(def['label'] != null ? { label: def['label'] } : {}),
+    ...(def['disabled'] != null ? { disabled: def['disabled'] } : {}),
+    ...(def['readonly'] != null ? { readonly: def['readonly'] } : {}),
     props: {
       ...buildRepeaterProps(def as RepeaterDecorator),
       template: { kind: 'layout', type: 'flex', children: [], props: { direction: 'column' } },

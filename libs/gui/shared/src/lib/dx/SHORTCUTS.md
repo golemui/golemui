@@ -277,27 +277,29 @@ services/dx/
 │   ├── inputs/                        ← Input shortcut (text, number, boolean)
 │   │   ├── inputs.domain.ts           ← InputDecorator, InputEntry, GuiInputsShortcut, GslInputsConfig
 │   │   ├── guiInputs.impl.ts          ← _guiInputs()
-│   │   ├── gslInputs.impl.ts          ← _gslInputs()
+│   │   ├── guiTextInput.impl.ts       ← _guiTextInput()
+│   │   ├── guiNumberInput.impl.ts     ← _guiNumberInput()
+│   │   ├── guiBooleanInput.impl.ts    ← _guiBooleanInput()
+│   │   ├── register.ts                ← _gslInputs(), _gslInputByUid()
+│   │   ├── gslInputSubtypes.ts        ← _gslTextInputs(), _gslNumberInputs(), _gslBooleanInputs()
 │   │   ├── inputSensibleDefaults.service.ts ← processAutomaticLabels, processAutomaticPlaceholders
 │   │   ├── inputDefsByKey.service.ts   ← Field expansion (string shortcuts → InputDecorator)
 │   │   └── inputTypeDefaults.service.ts ← explodeShortcut('string' → TextDataInputDecorator)
 │   │
 │   ├── actions/                       ← Action shortcut (buttons)
 │   │   ├── actions.domain.ts          ← ActionDecorator, ActionEntry, GuiActionsShortcut, GslActionsConfig
-│   │   ├── guiActions.impl.ts         ← _guiButtons(), _guiButton(), _guiSubmitButton()
-│   │   ├── gslActions.impl.ts         ← _gslActions()
-│   │   └── gslActionById.impl.ts      ← _gslActionById()
+│   │   ├── guiActions.impl.ts         ← _guiButton(), _guiSubmitButton()
+│   │   └── register.ts                ← _gslActions(), _gslActionByUid()
 │   │
 │   ├── layouts/                       ← Layout shortcut (flex / grid families)
 │   │   ├── layouts.domain.ts          ← LayoutDecorator, LayoutEntry, GuiLayoutItemsShortcut, GslLayoutsConfig
 │   │   ├── guiFlex.impl.ts            ← _guiFlex(), _guiHorizontalFlex(), _guiVerticalFlex(), _guiGrid(), _guiHorizontalGrid(), _guiVerticalGrid()
-│   │   ├── gslLayouts.impl.ts         ← _gslLayouts()
-│   │   └── gslLayoutById.impl.ts      ← _gslLayoutById()
+│   │   └── register.ts                ← _gslLayouts(), _gslLayoutByUid()
 │   │
 │   ├── display/                       ← Display shortcut (custom renderers)
 │   │   ├── display.domain.ts          ← DisplayDecorator, DisplayEntry, GuiDisplayItemsShortcut, GslDisplaysConfig
 │   │   ├── guiDisplay.impl.ts         ← _guiDisplay()
-│   │   └── gslDisplays.impl.ts        ← _gslDisplays()
+│   │   └── register.ts                ← _gslDisplays(), _gslDisplayByUid()
 │   │
 │   └── scopes/                        ← Scope chain + legacy primitives
 │       ├── scopeChain.ts              ← ScopeChain class — `gui.selectors` root
@@ -322,7 +324,7 @@ A `--` means the shortcut does not implement that piece.
 | **Decorator type** | `InputDecorator` (Text, Number, Boolean) | `ActionDecorator` | `LayoutDecorator` | `DisplayDecorator` |
 | **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButton`, `_guiSubmitButton` | `_guiFlex`, `_guiHorizontalFlex`, `_guiVerticalFlex`, `_guiGrid`, `_guiHorizontalGrid`, `_guiVerticalGrid` | `_guiDisplay(renderFn)` |
 | **GSL widget selector fn** | `_gslInputs(config)` | `_gslActions(config)` | `_gslLayouts(config)` | `_gslDisplays(config)` |
-| **GSL by-id selector fn** | -- | `_gslActionById(id, config)` | `_gslLayoutById(id, config)` | -- |
+| **GSL by-uid selector fn** | `_gslInputByUid(uid, config)` | `_gslActionByUid(uid, config)` | `_gslLayoutByUid(uid, config)` | `_gslDisplayByUid(uid, config)` |
 | **GSL config type** | `GslInputsConfig` (decorator + 2 suppress flags) | `GslActionsConfig` (decorator only) | `GslLayoutsConfig` (decorator only) | `GslDisplaysConfig` (decorator only) |
 | **Sensible defaults config** | `InputSensibleDefaultsConfig` | `ActionSensibleDefaultsConfig` (empty) | `LayoutSensibleDefaultsConfig` (empty) | `DisplaySensibleDefaultsConfig` (empty) |
 | **Sensible defaults processor** | `InputSensibleDefaultsService` | -- | -- | -- |
@@ -336,8 +338,8 @@ A `--` means the shortcut does not implement that piece.
 
 1. **All four widget types** now flow through the same unified `processItem` pipeline.
 2. **Inputs** is the most complete implementation — use it as the primary reference.
-3. **Actions** has a by-id selector and action-specific post-processing (`onClick` wiring) but no sensible defaults processor.
-4. **Layouts** flow through the pipeline and additionally recurse into their children. They support both tag/scope selectors (`_gslLayouts`) and by-id selectors (`_gslLayoutById`).
+3. **Actions** has a by-uid selector and action-specific post-processing (`onClick` wiring) but no sensible defaults processor.
+4. **Layouts** flow through the pipeline and additionally recurse into their children. They support both tag/scope selectors (`_gslLayouts`) and by-uid selectors (`_gslLayoutByUid`).
 5. **Displays** flow through the pipeline and produce function widgets. They support tag/scope selectors (`_gslDisplays`). Plain functions passed in `formDef` are auto-wrapped via `_guiDisplay`.
 6. **Not all pieces are required** — the minimum for a new item type is: Decorator + Entry type alias + `GuiXxxShortcut` sub-interface + mapper fn + `ValidGuiShortcut` union entry.
 

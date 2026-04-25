@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
-import GolemForm from '../wrappers/golemForm.component';
-import { DxDefinitions, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
+import { DxForm } from '@golemui/gui-react';
+import { DxDefinitions, GslSelectorsInput, DxFormConfig, formDefs } from '@golemui/gui-shared';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import { DemoLogEntry, DemoLogFn } from '../utils/demoLog';
 import styles from './FormDisplayLayout.module.css';
@@ -64,7 +64,6 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   formSelectors,
   formConfig,
 }: FormDisplayLayoutProps<T>) {
-  const [processedConfig, setProcessedConfig] = React.useState<any>(null);
   const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
   const [logEntries, setLogEntries] = React.useState<DemoLogEntry[]>([]);
   const logPanelRef = React.useRef<HTMLDivElement>(null);
@@ -115,13 +114,13 @@ export function FormDisplayLayout<T extends Record<string, any>>({
     ? formConfig.toString().replace(/^\(\)\s*=>\s*/, '')
     : '';
 
-  const handleConfigProcessed = React.useCallback((config: any) => {
-    setProcessedConfig((prev: any) => {
-      // Only update if it's actually different to prevent infinite loops
-      if (prev === config) return prev;
-      return config;
-    });
-  }, []);
+  const processedConfig = React.useMemo(
+    () =>
+      resolvedFormDef
+        ? formDefs.processDxFacade(resolvedFormDef, resolvedFormSelectors, resolvedFormConfig)
+        : null,
+    [resolvedFormDef, resolvedFormSelectors, resolvedFormConfig],
+  );
 
   const handleOpenInNewTab = () => {
     if (!formKey) return;
@@ -153,10 +152,9 @@ export function FormDisplayLayout<T extends Record<string, any>>({
             <div className={styles.formSection}>
               <h4 className={styles.sectionTitle}>Form</h4>
               <FormErrorBoundary>
-                <GolemForm<T>
+                <DxForm<T>
                   formDef={resolvedFormDef}
                   formData={formData}
-                  onConfigProcessed={handleConfigProcessed}
                   formSelectors={resolvedFormSelectors}
                   formConfig={resolvedFormConfig}
                 />

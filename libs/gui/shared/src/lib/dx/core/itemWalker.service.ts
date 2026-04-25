@@ -41,6 +41,7 @@ export class ItemWalker {
     const eventRegistry: EventRegistry = new Map();
     const eventIdGenerator = createEventIdGenerator();
     const widgetUidCounter = { value: 0 };
+    const claimedPathUids = new Set<string>();
     const widgets = this.walkItems<StateKeys, FormData>(
       guiShortcuts,
       gslSelectors,
@@ -48,6 +49,7 @@ export class ItemWalker {
       formConfig,
       eventIdGenerator,
       widgetUidCounter,
+      claimedPathUids,
     );
     return { widgets, eventRegistry };
   }
@@ -59,6 +61,7 @@ export class ItemWalker {
     formConfig: FormConfig,
     eventIdGenerator: EventIdGenerator,
     widgetUidCounter: { value: number },
+    claimedPathUids: Set<string>,
   ): FormWidget<StateKeys, FormData>[] {
     return guiShortcuts.flatMap((shortcut) => {
       if (shortcut.type !== 'ITEMS') {
@@ -75,6 +78,7 @@ export class ItemWalker {
           formConfig,
           eventIdGenerator,
           widgetUidCounter,
+          claimedPathUids,
         );
       });
     });
@@ -92,6 +96,7 @@ export class ItemWalker {
     formConfig: FormConfig,
     eventIdGenerator: EventIdGenerator,
     widgetUidCounter: { value: number },
+    claimedPathUids: Set<string>,
   ): FormWidget<StateKeys, FormData> {
     const gslItemType: GslItemType = itemType;
     // Look up the type-specific strategy for this widget type (inputs, actions, layouts, etc.).
@@ -124,7 +129,7 @@ export class ItemWalker {
     let widget: FormWidget<StateKeys, FormData>;
     if (handler.buildCustomWidget) {
       const context = this.buildCustomWidgetContext(
-        parsed.children, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter,
+        parsed.children, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter, claimedPathUids,
       );
       widget = this.buildCustomWidget<StateKeys, FormData>(handler, cleanedResult, context);
     } else {
@@ -132,13 +137,20 @@ export class ItemWalker {
     }
 
     // Assign deterministic uids to widgets that don't have one.
-    // Input widgets use their path; others get a counter-based id.
-    // This ensures multiple INITIALIZE decodes produce matching uids
-    // between flatForm and the rendered form tree.
+    // First widget at a given path keeps `uid = path` (preserves the INITIALIZE
+    // decode invariant — flatForm and rendered tree match for stable paths).
+    // Subsequent widgets at the same path (legitimate when paths repeat across
+    // tabs, e.g., a checkbox and a toggle both binding `isNewUser`) fall back
+    // to the counter to avoid duplicate-uid errors from core.
     if (typeof widget !== 'function') {
       const w = widget as NonFunctionWidget & { path?: string };
       if (!w.uid) {
-        w.uid = w.path || `dx_${widgetUidCounter.value++}`;
+        if (w.path && !claimedPathUids.has(w.path)) {
+          w.uid = w.path;
+          claimedPathUids.add(w.path);
+        } else {
+          w.uid = `dx_${widgetUidCounter.value++}`;
+        }
       }
     }
 
@@ -167,12 +179,13 @@ export class ItemWalker {
     formConfig: FormConfig,
     eventIdGenerator: EventIdGenerator,
     widgetUidCounter: { value: number },
+    claimedPathUids: Set<string>,
   ): BuildWidgetContext {
     return {
       children,
       mapStaticDef: (def, type) => this.mapper.mapStaticDef(def, type),
       walkChildren: (c) =>
-        this.walkItems(c, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter),
+        this.walkItems(c, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter, claimedPathUids),
     };
   }
 

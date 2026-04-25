@@ -16,6 +16,7 @@ export const { gsl: _gslTextareas, gslByUid: _gslTextareaByUid } =
       uid: def.uid ?? '', kind: 'input', type: 'textarea', path: def.path ?? '',
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
+      ...(def.readonly != null ? { readonly: def.readonly } : {}),
       props: extractWidgetProps(def),
     }),
   });
