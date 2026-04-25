@@ -1,9 +1,9 @@
 import * as Core from '@golemui/core';
-import { Type } from '@golemui/lit';
-import { VanillaWidget } from '@golemui/gui-shared';
 import '@golemui/gui-components';
+import { GolemWidget } from '@golemui/gui-shared';
+import { Type } from '@golemui/lit';
 
-export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, VanillaWidget> = {
+export const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, GolemWidget> = {
   // ACTION
   button: async () => (await import('./components/button.element')).ButtonElement,
 
@@ -35,10 +35,13 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, Van
 
   // LAYOUTS
   flex: async () => (await import('./components/flex.element')).FlexElement,
+  grid: async () => (await import('./components/grid.element')).GridElement,
   tabs: async () => (await import('./components/tabs.element')).TabsElement,
   accordion: async () => (await import('./components/accordion.element')).AccordionElement,
 
   // DISPLAY
   alert: async () => (await import('./components/alert.element')).AlertElement,
+  markdownText: async () =>
+    (await import('./components/markdown-text.element')).MarkdownTextElement,
   renderer: async () => (await import('./components/renderer.element')).RendererElement,
 };

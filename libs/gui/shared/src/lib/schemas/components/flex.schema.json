@@ -7,8 +7,11 @@
     "directionProp": {
       "enum": ["row", "row-reverse", "column", "column-reverse"]
     },
+    "justifyProp": {
+      "enum": ["center", "start", "end", "stretch"]
+    },
     "alignProp": {
-      "enum": ["center", "start", "end", "space-between", "space-around"]
+      "enum": ["center", "start", "end", "space-between", "space-around", "space-evenly"]
     },
     "gapProp": {
       "type": "number"
@@ -39,6 +42,9 @@
         "direction": {
           "$ref": "#/$defs/directionProp"
         },
+        "justify": {
+          "$ref": "#/$defs/justifyProp"
+        },
         "align": {
           "$ref": "#/$defs/alignProp"
         },
@@ -50,6 +56,9 @@
         "^direction\\.[^.]+$": {
           "$ref": "#/$defs/directionProp"
         },
+        "^justify\\.[^.]+$": {
+          "$ref": "#/$defs/justifyProp"
+        },
         "^align\\.[^.]+$": {
           "$ref": "#/$defs/alignProp"
         },
@@ -60,5 +69,6 @@
       "additionalProperties": false
     }
   },
-  "required": ["kind", "type", "children"]
+  "required": ["kind", "type", "children"],
+  "unevaluatedProperties": false
 }

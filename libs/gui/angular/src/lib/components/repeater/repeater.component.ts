@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { RepeaterProps } from '@golemui/gui-shared';
@@ -11,9 +11,10 @@ import { RepeaterProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter, Angular.RepeaterWidgetDirective],
   templateUrl: './repeater.component.html',
   host: {
-    class: 'gui-repeater',
+    class: 'gui-repeater gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
   widget!: Core.InputWidget<Record<string, unknown>[]>;
@@ -50,6 +51,7 @@ export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
 
   onFocusOut(event: FocusEvent) {
     event.stopPropagation();
+    this.adapter.onBlur();
     this.isFocused = false;
   }
 

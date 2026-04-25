@@ -23,17 +23,6 @@ export class TextareaElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.classList.add('gui-textarea');
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -44,6 +33,17 @@ export class TextareaElement extends LitElement implements Core.WithWidget {
     } else {
       this.style.removeProperty('flex');
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-textarea', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
   }
 
   override render() {
@@ -61,6 +61,7 @@ export class TextareaElement extends LitElement implements Core.WithWidget {
         .value=${this.adapter.templateData.value}
         .hint=${this.adapter.templateData.hint}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         .icon=${this.adapter.templateData.icon}
         .counterMode=${this.adapter.templateData.counterMode}
         .minimumHeight=${this.adapter.templateData.minimumHeight}

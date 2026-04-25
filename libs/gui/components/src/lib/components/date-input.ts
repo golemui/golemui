@@ -62,6 +62,11 @@ export class GuiDate extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value')) {
       this.parseValue(this.value ?? '');
@@ -119,7 +124,7 @@ export class GuiDate extends LitElement {
             },
           )}
         </div>
-        ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
+        ${this.icon ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>` : nothing}
       </div>
 
       ${this.showErrors && this.errors?.length
@@ -148,6 +153,7 @@ export class GuiDate extends LitElement {
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
+          autocomplete="off"
           .value=${live(val)}
           @keydown=${this.handleKeyDown}
           @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, type)}

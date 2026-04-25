@@ -5,15 +5,13 @@
     <gui-form
       [formDef]="formDef"
       [data]="{}"
-      [fieldLoaders]="vanillaFieldLoaders"
-      [validators]="validators"
+      [customWidgetLoaders]="widgetLoaders"
+      [customValidators]="validators"
     ></gui-form>
   `,
 })
 export class MyGolemUIForm {
   formDef = myForm;
-  vanillaFieldLoaders = {
-    ...vanillaFieldLoaders,
-  };
+  widgetLoaders = GuiAngular.widgetLoaders;
   validators: ValidatorFn<Validator> = initValidators();
 }

@@ -1,3 +1,4 @@
+import { errorCodes } from '../../errors';
 import * as Form from '../../form';
 import * as Widget from '../../form-widget';
 import { flattenForm } from '../../utils/form';
@@ -15,10 +16,13 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
   if (typeof formDef === 'string') {
     try {
       formDef = JSON.parse(formDef);
-    } catch (err: unknown) {
+    } catch (err) {
+      const error = err as Error;
+      const code = errorCodes.initializeParseError;
       formHealth = {
         status: 'errored',
-        message: (err as Error).message,
+        message: `[${code}] ${error.message}`,
+        code,
       };
     }
     if (formHealth.status === 'errored') {
@@ -58,9 +62,11 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
         {} as State['flatForm'],
       );
     } catch (error: any) {
+      const code = errorCodes.initializeUidCollisionError;
       formHealth = {
         status: 'errored',
-        message: uidCollisionErrorMessage(error.existingWidget, error.newWidget),
+        message: `[${code}] ${uidCollisionErrorMessage(error.existingWidget, error.newWidget)}`,
+        code,
       };
       flatForm = {};
     }
@@ -73,11 +79,13 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     };
   }
 
+  const code = errorCodes.initializeUnknownError;
   return {
     ...initialState,
     formHealth: {
       status: 'errored',
-      message: result.error,
+      message: `[${code}] ${result.error}`,
+      code,
     },
   };
 };

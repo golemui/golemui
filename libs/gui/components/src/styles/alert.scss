@@ -1,17 +1,17 @@
 .gui-form {
   .gui-alert {
-    display: flex;
-
     .gui-alert-notification {
-      padding: var(--gui-space-3) var(--gui-space-4);
+      padding: 0 var(--gui-space-4);
+      margin: 0;
+      display: flex;
+      min-height: 40px;
       border-radius: var(--gui-radius-md);
       border: 1px solid;
       font-size: var(--gui-font-sm);
       line-height: 1.4;
-      margin: var(--gui-space-2) 0;
+      align-items: center;
 
       /* Default level */
-
       &.gui-alert-notification--default {
         background-color: var(--gui-bg-surface-hover);
         border-color: var(--gui-border-default);
@@ -19,7 +19,6 @@
       }
 
       /* Info level */
-
       &.gui-alert-notification--info {
         background-color: var(--gui-intent-info-bg);
         border-color: var(--gui-intent-info);
@@ -27,7 +26,6 @@
       }
 
       /* Success level */
-
       &.gui-alert-notification--success {
         background-color: var(--gui-intent-success-bg);
         border-color: var(--gui-intent-success);
@@ -35,7 +33,6 @@
       }
 
       /* Warning level */
-
       &.gui-alert-notification--warning {
         background-color: var(--gui-intent-warning-bg);
         border-color: var(--gui-intent-warning);
@@ -43,7 +40,6 @@
       }
 
       /* Error level */
-
       &.gui-alert-notification--error {
         background-color: var(--gui-intent-error-bg);
         border-color: var(--gui-intent-error);

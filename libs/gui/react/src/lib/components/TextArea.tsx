@@ -23,6 +23,7 @@ export function TextArea(widgetInstance: Core.WithWidget) {
   const icon = templateData.icon;
   const maxLength = (templateData.validator as Core.Validator)?.maxLength;
   const counterMode = templateData.counterMode;
+  const autocomplete = templateData.autocomplete;
   const autoGrow = templateData.autoGrow;
   const minimumHeight = templateData.minimumHeight;
   const isDisabled = templateData.disabled as boolean;
@@ -30,7 +31,7 @@ export function TextArea(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-textarea" style={{ flex: templateData.size }}>
+    <div className="gui-textarea gui-field" style={{ flex: templateData.size }}>
       <gui-textarea
         uid={uid}
         label={label}
@@ -42,6 +43,7 @@ export function TextArea(widgetInstance: Core.WithWidget) {
         value={value}
         hint={hint}
         placeholder={placeholder}
+        autocomplete={autocomplete ?? undefined}
         icon={icon}
         counterMode={counterMode}
         minimumHeight={minimumHeight}

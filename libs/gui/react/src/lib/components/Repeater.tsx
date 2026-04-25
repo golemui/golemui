@@ -1,12 +1,12 @@
 import * as Core from '@golemui/core';
+import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
 import {
   RepeaterIndexesContext,
   useInputWidget,
   useRepeaterIndexes,
   WidgetRenderer,
 } from '@golemui/react';
-import { RepeaterProps, getItemKey } from '@golemui/gui-shared';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import '../styles.scss';
 
 /**
@@ -17,10 +17,12 @@ const idIncrementer = () => nextRepeaterItemId++;
 
 export function Repeater(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
-  const { uid, value, onValueChanged, templateData, errors, isTouched } = useInputWidget<
+  const { uid, value, onValueChanged, templateData, errors, isTouched, onBlur } = useInputWidget<
     Record<string, unknown>[],
     RepeaterProps<any>
   >(widget);
+
+  const repeaterRef = useRef<HTMLDivElement>(null);
 
   const addItem = useCallback(
     (value: Record<string, unknown>[]) => {
@@ -52,6 +54,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
 
   const onFocusOut = useCallback((event: React.FocusEvent) => {
     event.stopPropagation();
+    onBlur();
     setIsFocused(false);
   }, []);
 
@@ -72,11 +75,14 @@ export function Repeater(widgetInstance: Core.WithWidget) {
               )}
               <button
                 type="button"
-                className="gui-button gui-repeater__remove-btn"
+                className="gui-button gui-button--sm gui-repeater__remove-btn"
                 onClick={() => removeItem(value, index)}
               >
                 {templateData.removeButtonIcon && (
-                  <span className={`gui-button-icon ${templateData.removeButtonIcon}`}></span>
+                  <span
+                    className={`gui-widget-icon gui-button-icon ${templateData.removeButtonIcon}`}
+                    data-icon={templateData.removeButtonIcon}
+                  ></span>
                 )}
                 {templateData.removeLabel ?? 'Remove'}
               </button>
@@ -84,7 +90,6 @@ export function Repeater(widgetInstance: Core.WithWidget) {
             <WidgetRenderer
               key={`${uid}-${itemKey}`}
               widget={templateData.template}
-              repeaterIndex={index}
             />
           </div>
         </RepeaterIndexesContext.Provider>
@@ -92,29 +97,28 @@ export function Repeater(widgetInstance: Core.WithWidget) {
     });
   }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
 
+  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const showErrors = isTouched && errors && errors.length > 0;
+
   return (
-    <div className="gui-repeater" style={{ flex: templateData.size }}>
+    <div className="gui-repeater gui-field" style={{ flex: templateData.size }}>
       <div
+        ref={repeaterRef}
         id={uid}
-        className={`gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`}
+        className={`gui-repeater__main-card gui-repeater__card${isFocused ? ' gui-repeater__card--focused' : ''}`}
         onFocus={onFocusIn}
         onBlur={onFocusOut}
       >
-        {templateData.label && <h2 key={`${uid}-title`}>{templateData.label as string}</h2>}
-        {isTouched && errors && errors.length > 0 && (
-          <ul className="gui-validator" id={`${uid}_errors`} data-cy={`${uid}_validator-errors`}>
-            {errors.map((error: string, index: number) => (
-              <li
-                key={index}
-                className="gui-validator__error"
-                role="alert"
-                data-cy={`${uid}_validator-error`}
-              >
-                {error}
-              </li>
-            ))}
-          </ul>
-        )}
+        <gui-label
+          targetElement={repeaterRef.current || undefined}
+          uid={uid}
+          label={templateData.label as string}
+          errors={errors}
+          touched={isTouched}
+          required={isRequired}
+          native={false}
+        ></gui-label>
+
         {renderWidgets()}
         <button
           type="button"
@@ -123,11 +127,16 @@ export function Repeater(widgetInstance: Core.WithWidget) {
           disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}
         >
           {templateData.addButtonIcon && (
-            <span className={`gui-button-icon ${templateData.addButtonIcon}`}></span>
+            <span
+              className={`gui-widget-icon gui-button-icon ${templateData.addButtonIcon}`}
+              data-icon={templateData.addButtonIcon}
+            ></span>
           )}
           {templateData.addLabel ?? 'Add'}
         </button>
       </div>
+
+      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
     </div>
   );
 }

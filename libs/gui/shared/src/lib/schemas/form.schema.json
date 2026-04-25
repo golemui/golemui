@@ -15,9 +15,13 @@
       "items": {
         "$ref": "#/$defs/formWidget"
       }
+    },
+    "autocomplete": {
+      "type": "string"
     }
   },
   "required": ["form"],
+  "additionalProperties": false,
   "$defs": {
     "formWidget": {
       "oneOf": [
@@ -80,6 +84,9 @@
         },
         {
           "$ref": "./components/flex.schema.json"
+        },
+        {
+          "$ref": "./components/grid.schema.json"
         },
         {
           "$ref": "./components/tabs.schema.json"

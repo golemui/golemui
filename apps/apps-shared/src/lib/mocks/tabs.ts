@@ -33,7 +33,7 @@ const form = defineForm({
         {
           uid: 'tab2',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
           props: {
             direction: 'row',
             'direction.limitReached': 'vertical',
@@ -56,7 +56,10 @@ const form = defineForm({
         {
           uid: 'tab3',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
+          props: {
+            direction: 'column',
+          },
           children: [
             {
               uid: '',
@@ -71,7 +74,10 @@ const form = defineForm({
                 template: {
                   uid: '',
                   kind: 'layout',
-                  type: 'flex',
+                  type: 'grid',
+                  props: {
+                    direction: 'column',
+                  },
                   children: [
                     {
                       uid: '',
@@ -94,7 +100,10 @@ const form = defineForm({
         {
           uid: 'tab4',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
+          props: {
+            direction: 'column',
+          },
           children: [
             {
               uid: '',
@@ -124,7 +133,10 @@ const form = defineForm({
             {
               uid: 'section1',
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
+              props: {
+                direction: 'column',
+              },
               children: [
                 {
                   uid: '',
@@ -143,7 +155,10 @@ const form = defineForm({
             {
               uid: 'section2',
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
+              props: {
+                direction: 'column',
+              },
               children: [
                 {
                   uid: '',
@@ -162,7 +177,10 @@ const form = defineForm({
             {
               uid: 'section3',
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
+              props: {
+                direction: 'column',
+              },
               children: [
                 {
                   uid: '',

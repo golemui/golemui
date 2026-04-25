@@ -78,6 +78,19 @@ export type Localizable =
       default?: string;
     };
 
+/**
+ * An `I18nTranslator` that supports runtime language changes.
+ * Call `MutableI18nTranslator.setLang` to change the active language and notify all subscribed listeners.
+ */
+export interface MutableI18nTranslator extends I18nTranslator {
+  /**
+   * Updates the active language and notifies all listeners
+   *
+   * @param lang The new BCP 47 language tag (e.g., 'fr-CA', 'ar')
+   */
+  setLang(lang: string): void;
+}
+
 export const isTranslationConfig = (value: unknown): value is TranslationConfig => {
   if (typeof value !== 'object' || value === null) {
     return false;
@@ -106,30 +119,34 @@ export function getDirectionFromLanguage(lang: string): 'ltr' | 'rtl' {
  *
  * This implementation performs no localization and simply returns the
  * translation key unchanged. It is intended for use as a safe default
- * when no i18n system is configured.
- * @param lang The BCP 47 language tag of the current localeby default `(navigator.language || 'en-US')`.
+ * when no i18n system is configured while still supporting runtime language
+ * changes and subscriber notifications.
+ *
+ * Call `setLang` to change the active language and notify any subscribed listeners.
+ *
+ * @param lang The initial BCP 47 language tag; defaults to `navigator.language || 'en-US'`.
  */
-export const identityTranslator = (lang = navigator.language || 'en-US'): I18nTranslator => ({
-  /**
-   * Returns a generic fallback language code.
-   */
-  get lang() {
-    return lang;
-  },
-  /**
-   * Returns the provided translation key without modification.
-   *
-   * @param key - Translation key
-   * @returns The key itself
-   */
-  translate(key: TranslationKey): string {
-    return key;
-  },
+export const identityTranslator = (lang = navigator.language || 'en-US'): MutableI18nTranslator => {
+  const listeners = new Set<(lang: string) => void>();
 
-  /**
-   * No-op teardown function since state never changes.
-   */
-  subscribe() {
-    return () => undefined;
-  },
-});
+  const translator: MutableI18nTranslator = {
+    get lang() {
+      return lang;
+    },
+    translate(key: TranslationKey): string {
+      return key;
+    },
+    subscribe(listener: (lang: string) => void): () => void {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    setLang(newLang: string): void {
+      lang = newLang;
+      listeners.forEach((l) => l(lang));
+    },
+  };
+
+  return translator;
+};

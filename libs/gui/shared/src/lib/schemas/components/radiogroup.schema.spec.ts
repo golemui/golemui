@@ -59,6 +59,7 @@ describe('Radiogroup schema validation', () => {
               options: [{ label: 'Option A', value: 'A' }],
               labelField: 'label',
               valueField: 'value',
+              direction: 'row',
             },
           },
         ],
@@ -84,6 +85,7 @@ describe('Radiogroup schema validation', () => {
               options: [],
               'hint.hasError': 'Required selection',
               'options.isLoaded': [{ label: 'Option B', value: 'B' }],
+              'direction.mobile': 'column',
             },
           },
         ],
@@ -117,6 +119,62 @@ describe('Radiogroup schema validation', () => {
       const isValid = validate(i18nRadiogroup);
       if (!isValid) {
         specValidationErrorsLogger(validate, i18nRadiogroup);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
+  describe('validator field', () => {
+    it('should validate a string validator with required', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'choice',
+            kind: 'input',
+            type: 'radiogroup',
+            props: { options: [] },
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: 'Please select an option',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a string validator with i18n required message', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'choice',
+            kind: 'input',
+            type: 'radiogroup',
+            props: { options: [] },
+            validator: {
+              type: 'string',
+              required: true,
+              messages: {
+                required: { key: 'validation.choice.required', default: 'Selection required' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
       }
       expect(isValid).toBe(true);
     });

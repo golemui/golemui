@@ -1,0 +1,19 @@
+import { golemForm } from '@golemui/gui-shared';
+
+export default golemForm().create({
+  form: [
+    {
+      uid: 'date-picker-icons',
+      kind: 'input',
+      type: 'datePicker',
+      path: 'date',
+      label: 'Custom Icons Date Picker',
+      props: {
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
+        prevMonthAriaLabel: 'Go to previous month',
+        nextMonthAriaLabel: 'Go to next month',
+      },
+    },
+  ],
+});

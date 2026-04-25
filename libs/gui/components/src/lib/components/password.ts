@@ -20,6 +20,7 @@ export class GuiPassword extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: String }) showPasswordIcon: string | undefined = undefined;
   @property({ type: String }) hidePasswordIcon: string | undefined = undefined;
   @property({ type: String }) showPasswordLabel: string | undefined = undefined;
@@ -45,6 +46,11 @@ export class GuiPassword extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     super.render();
 
@@ -60,6 +66,7 @@ export class GuiPassword extends LitElement {
       value: this.value,
       icon: this.icon,
       placeholder: this.placeholder,
+      autocomplete: this.autocomplete,
       showPasswordIcon: this.showPasswordIcon,
       hidePasswordIcon: this.hidePasswordIcon,
       showPasswordLabel: this.showPasswordLabel,
@@ -87,12 +94,14 @@ export class GuiPassword extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
+          autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
           @blur=${this.onBlur}
         />
         ${passwordIcon.html}
         <button
-          class=${`gui-password__toggle ${this.showPassword && templateData.showPasswordIcon} ${!this.showPassword && templateData.hidePasswordIcon}`}
+          class=${`gui-password__toggle gui-widget-icon ${this.showPassword && templateData.showPasswordIcon ? templateData.showPasswordIcon : ''} ${!this.showPassword && templateData.hidePasswordIcon ? templateData.hidePasswordIcon : '' }`}
+          data-icon=${this.showPassword ? templateData.showPasswordIcon : templateData.hidePasswordIcon}
           type="button"
           tabindex="-1"
           @click=${() => (this.showPassword = !this.showPassword)}

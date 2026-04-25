@@ -1,5 +1,5 @@
-import { isFunctionWidget, isInputWidget } from '../form-widget';
 import { ValidatorFn } from '../form-validator';
+import { isFunctionWidget, isInputWidget } from '../form-widget';
 import { I18nTranslator } from '../i18n';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
@@ -27,6 +27,14 @@ export const reducer =
       case 'SET_DATA':
         return Fn.pipe(
           Reducers.setData(state, action),
+          Reducers.calculateCurrentState,
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
+        );
+
+      case 'SET_META':
+        return Fn.pipe(
+          Reducers.setMeta(state, action),
           Reducers.calculateCurrentState,
           Reducers.calculateWidgetFlags,
           Reducers.calculateWidgetProps(localization),
@@ -70,7 +78,10 @@ export const reducer =
           Reducers.calculateWidgetFlags,
           Reducers.calculateWidgetProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
-          reduceIf(isControlTouched(action.payload.path), Reducers.validateAll(validators)),
+          reduceIf(
+            isControlTouched(action.payload.path),
+            Reducers.validateAll(validators, localization),
+          ),
         );
 
       case 'SET_FORM_HEALTH':
@@ -92,7 +103,11 @@ export const reducer =
               {} as State['touchedControls'],
             ),
           },
-          Reducers.validateAll(validators),
+          Reducers.validateAll(validators, localization),
+          // This handles $errors and $formIsValid expressions variables
+          Reducers.calculateCurrentState,
+          Reducers.calculateWidgetFlags,
+          Reducers.calculateWidgetProps(localization),
         );
       }
 
@@ -110,7 +125,11 @@ export const reducer =
               touched: true,
               touchedControls: { ...state.touchedControls, [path]: true },
             },
-            Reducers.validateAll(validators),
+            Reducers.validateAll(validators, localization),
+            // This handles $errors and $formIsValid expressions variables
+            Reducers.calculateCurrentState,
+            Reducers.calculateWidgetFlags,
+            Reducers.calculateWidgetProps(localization),
             // TODO: extract this into a separate function
             // When the widget is a Widget Function, we propagate the validation result immediately
             (state) => {
@@ -130,8 +149,7 @@ export const reducer =
                   calculatedWidgets: {
                     ...state.calculatedWidgets,
                     [uid]: {
-                      ...originalDerivedWidget,
-                      previous: originalDerivedWidget.current,
+                      source: originalDerivedWidget.source,
                       current,
                     },
                   },

@@ -1,5 +1,7 @@
 import { accordion } from './tabs/accordion';
 import { alert } from './tabs/alert';
+import { markdown } from './tabs/markdown';
+import { markdownText } from './tabs/markdown-text';
 import { calendar } from './tabs/calendar';
 import { checkbox } from './tabs/checkbox';
 import { currency } from './tabs/currency';
@@ -9,13 +11,15 @@ import { number } from './tabs/number';
 import { radiogroup } from './tabs/radiogroup';
 import { repeater } from './tabs/repeater';
 import { select } from './tabs/select';
-import { flex } from './tabs/flex';
+import { grid } from './tabs/grid';
 import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
 import { Example } from './types';
 import { golemForm } from '@golemui/gui-shared';
 import * as Core from '@golemui/core';
+import { password } from './tabs/password';
+import { flex } from './tabs/flex';
 
 const states = {
   limitReached: '$form.repeaters.users?.length === 5',
@@ -46,42 +50,50 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       kind: 'layout',
       type: 'tabs',
       props: {
-        defaultOpen: 'tab12',
+        defaultOpen: 'tabAlert',
         tabs: [
-          { label: 'Alert Component', uid: 'tab1' },
-          { label: 'Flex Layout', uid: 'tab2' },
-          { label: 'Repeater Component', uid: 'tab3' },
-          { label: 'Checkbox Component', uid: 'tab4' },
-          { label: 'Accordion Layout', uid: 'tab5' },
-          { label: 'Textinput Component', uid: 'tab6' },
-          { label: 'Select Component', uid: 'tab7' },
-          { label: 'Number Component', uid: 'tab8' },
-          { label: 'Radiogroup Component', uid: 'tab9' },
-          { label: 'Toggle Component', uid: 'tab10' },
-          { label: 'Textarea Component', uid: 'tab_textarea' },
-          { label: 'Date Components', uid: 'tab12' },
-          { label: 'Currency Component', uid: 'tab13' },
-          { label: 'List Component', uid: 'tab14' },
-          { label: 'Dropdown Component', uid: 'tab15' },
+          { label: 'Alert Component', uid: 'tabAlert' },
+          { label: 'Markdown Text Component', uid: 'tabMarkdownText' },
+          { label: 'Accordion Layout', uid: 'tabAccordion' },
+          { label: 'Flex Layout', uid: 'tabFlex' },
+          { label: 'Grid Layout', uid: 'tabGrid' },
+          { label: 'Textinput Component', uid: 'tabTextinput' },
+          { label: 'Password Component', uid: 'tabPassword' },
+          { label: 'Number Component', uid: 'tabNumber' },
+          { label: 'Currency Component', uid: 'tabCurrency' },
+          { label: 'Date Components', uid: 'tabDate' },
+          { label: 'Markdown Component', uid: 'tabMarkdown' },
+          { label: 'Textarea Component', uid: 'tabTextarea' },
+          { label: 'Checkbox Component', uid: 'tabCheckbox' },
+          { label: 'Toggle Component', uid: 'tabToggle' },
+          { label: 'Radiogroup Component', uid: 'tabRadiogroup' },
+          { label: 'Select Component', uid: 'tabSelect' },
+          { label: 'Dropdown Component', uid: 'tabDropdown' },
+          { label: 'List Component', uid: 'tabList' },
+          { label: 'Repeater Component', uid: 'tabRepeater' },
         ],
       },
       on: { change: 'onTabEvent' },
       children: [
-        alert(),
-        flex(),
-        repeater(),
-        checkbox(),
-        accordion(),
-        textinput(),
-        select(),
-        number(),
-        radiogroup(),
-        toggle(),
-        textarea('tab_textarea'),
-        calendar(),
-        currency(),
-        list(),
-        dropdown(),
+        alert('tabAlert'),
+        markdownText('tabMarkdownText'),
+        accordion('tabAccordion'),
+        flex('tabFlex'),
+        grid('tabGrid'),
+        textinput('tabTextinput'),
+        password('tabPassword'),
+        number('tabNumber'),
+        currency('tabCurrency'),
+        calendar('tabDate'),
+        markdown('tabMarkdown'),
+        textarea('tabTextarea'),
+        checkbox('tabCheckbox'),
+        toggle('tabToggle'),
+        radiogroup('tabRadiogroup'),
+        select('tabSelect'),
+        dropdown('tabDropdown'),
+        list('tabList'),
+        repeater('tabRepeater'),
       ],
     },
     {
@@ -89,7 +101,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       type: 'button',
       label: 'Create',
       props: {
-        icon: 'material-icons material-icons-save',
+        icon: 'save',
         iconPosition: 'right',
       },
       on: {
@@ -105,7 +117,7 @@ const data = {
   dropdowns: {
     defaultListRenderer: 0,
     disabledList: 0,
-    customItemRenderer: 'one',
+    customItemRenderer: 'two',
   },
   lists: {
     defaultListRenderer: 0,

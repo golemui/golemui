@@ -22,10 +22,10 @@ import { LabelComponent } from '../../utils/templates/label.component';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './range-date-picker.component.html',
   host: {
-    class: 'gui-range-date-picker',
+    class: 'gui-range-date-picker gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
     '(document:click)': 'onDocumentClick($event)',
     '(focusout)': 'onFocusOut($event)',
-    '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

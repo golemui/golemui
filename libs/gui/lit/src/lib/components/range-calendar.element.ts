@@ -23,9 +23,21 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-calendar');
+    this.classList.add('gui-calendar', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -59,8 +71,11 @@ export class RangeCalendarElement extends LitElement implements Core.WithWidget 
         .maxDate=${this.adapter.templateData.maxDate}
         .disabledRanges=${this.adapter.templateData.disabledRanges}
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
+        .hidePills=${false}
+        .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-range-calendar>
     `;
   }

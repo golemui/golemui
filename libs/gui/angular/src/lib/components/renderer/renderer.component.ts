@@ -11,7 +11,8 @@ import { ComponentRendererProps } from '@golemui/gui-shared';
   providers: [Angular.DisplayWidgetAdapter],
   templateUrl: './renderer.component.html',
   host: {
-    class: 'gui-renderer',
+    class: 'gui-renderer gui-field',
+    '[style.flex]': 'this.adapter.templateData().size',
   },
 })
 export class RendererComponent implements OnInit, OnDestroy, Core.WithWidget {

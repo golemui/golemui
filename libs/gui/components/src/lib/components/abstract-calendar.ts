@@ -2,7 +2,12 @@ import { html, LitElement, nothing, TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { getMonthName, getWeekdayLabels, toISODateString, weekDaysOrder } from '../utils/date';
+import {
+  getMonthYearParts,
+  getWeekdayLabels,
+  toISODateString,
+  weekDaysOrder,
+} from '../utils/date';
 import { addErrors, addLabel } from '../utils/templates';
 import { DateRange } from '@golemui/gui-shared';
 
@@ -48,12 +53,17 @@ export abstract class AbstractCalendar extends LitElement {
   @property({ type: Number }) numberOfMonths: number | undefined = 1;
 
   @state() _currentDate: Date = new Date();
+  @state() private _yearSelectorOpen = false;
 
   private _blurRafId: number | undefined;
 
   protected abstract getDaysInMonth(offset: number): AbstractCalendarDay[];
   protected abstract renderDay(day: AbstractCalendarDay): TemplateResult;
   protected abstract selectDate(day: AbstractCalendarDay, event?: MouseEvent | KeyboardEvent): void;
+
+  protected renderAboveCalendar(): TemplateResult | typeof nothing {
+    return nothing;
+  }
 
   protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
     getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
@@ -84,12 +94,15 @@ export abstract class AbstractCalendar extends LitElement {
     return html`
       ${this.label ? addLabel(this.uid as string, templateData, false, 'calendar') : nothing}
 
-      <div class="gui-widget">
+      <div class="gui-widget" @focusout=${this.onFocusOut}>
         <div
+          id=${this.uid}
           class="gui-calendar-input"
           role="group"
           aria-labelledby=${this.label ? `${this.uid}_calendar_label` : nothing}
+          ?aria-disabled=${this.disabled}
         >
+          ${this.renderAboveCalendar()}
           <div class="gui-calendar__container">
             <button
               type="button"
@@ -98,7 +111,7 @@ export abstract class AbstractCalendar extends LitElement {
               @click=${this.prevMonth}
               aria-label=${this.prevMonthAriaLabel ?? 'Previous month'}
             >
-              ${this.prevMonthIcon ? html`<span class="${this.prevMonthIcon}"></span>` : '<'}
+              ${this.prevMonthIcon ? html`<span class=${`gui-widget-icon ${this.prevMonthIcon}`} data-icon=${this.prevMonthIcon}></span>` : '<'}
             </button>
 
             <div class="gui-calendar__months-grid">
@@ -112,7 +125,7 @@ export abstract class AbstractCalendar extends LitElement {
               @click=${this.nextMonth}
               aria-label=${this.nextMonthAriaLabel ?? 'Next month'}
             >
-              ${this.nextMonthIcon ? html`<span class="${this.nextMonthIcon}"></span>` : '>'}
+              ${this.nextMonthIcon ? html`<span class=${`gui-widget-icon ${this.nextMonthIcon}`} data-icon=${this.nextMonthIcon}></span>` : '>'}
             </button>
           </div>
         </div>
@@ -135,35 +148,222 @@ export abstract class AbstractCalendar extends LitElement {
 
     return html`
       <div class="gui-calendar__panel">
-        <header class="gui-calendar__header">
-          <h2>${getMonthName(this.localeId, panelDate)}</h2>
-        </header>
+        ${this.renderHeader(panelDate)}
 
-        <div class="gui-calendar__days-grid" role="grid">
-          <div role="row" class="gui-calendar__rows">
-            ${repeat(
-              weekDays,
-              (weekday, i) => i,
-              (weekday) =>
-                html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
-            )}
-          </div>
+        ${this._yearSelectorOpen && offset === 0
+          ? this.renderYearGrid()
+          : html`
+              <div class="gui-calendar__days-grid" role="grid">
+                <div role="row" class="gui-calendar__rows">
+                  ${repeat(
+                    weekDays,
+                    (weekday, i) => i,
+                    (weekday) =>
+                      html`<span class="gui-calendar__weekday" role="gridcell">${weekday}</span>`,
+                  )}
+                </div>
 
-          ${repeat(
-            weeks,
-            (week) => html`
-              <div role="row" class="gui-calendar__rows">
                 ${repeat(
-                  week,
-                  (day) => day.date.toISOString(),
-                  (day) => this.renderDay(day),
+                  weeks,
+                  (week) => html`
+                    <div role="row" class="gui-calendar__rows">
+                      ${repeat(
+                        week,
+                        (day) => day.date.toISOString(),
+                        (day) => this.renderDay(day),
+                      )}
+                    </div>
+                  `,
                 )}
               </div>
-            `,
-          )}
-        </div>
+            `}
       </div>
     `;
+  }
+
+  private renderHeader(panelDate: Date) {
+    const parts = getMonthYearParts(this.localeId, panelDate, this.monthFormat);
+
+    return html`
+      <header class="gui-calendar__header">
+        <h2>
+          ${parts.map((part) =>
+            part.type === 'year'
+              ? html`<button
+                  type="button"
+                  class="gui-calendar__year-selector"
+                  @click=${this.toggleYearSelector}
+                  aria-expanded=${this._yearSelectorOpen}
+                  aria-label="Select year"
+                >
+                  <span class="gui-calendar__year-value">${part.value}</span>
+                  <span class="gui-calendar__year-arrow" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+                  </span>
+                </button>`
+              : html`<span class="gui-calendar__month-name">${part.value}</span>`,
+          )}
+        </h2>
+      </header>
+    `;
+  }
+
+  private renderYearGrid() {
+    const currentYear = this._currentDate.getFullYear();
+    const years = this._yearList;
+
+    return html`
+      <div
+        class="gui-calendar__year-grid"
+        role="grid"
+        aria-label="Year selection"
+        @keydown=${this.handleYearKeydown}
+      >
+        ${this.chunkYears(years).map(
+          (row) => html`
+            <div role="row" class="gui-calendar__year-row">
+              ${row.map(
+                (year) => html`
+                  <button
+                    type="button"
+                    role="gridcell"
+                    class="gui-calendar__year-button ${year === currentYear ? 'current' : ''}"
+                    tabindex=${year === currentYear ? 0 : -1}
+                    data-year=${year}
+                    @click=${(e: MouseEvent) => { e.stopPropagation(); this.selectYear(year); }}
+                    aria-selected=${year === currentYear}
+                  >
+                    ${year}
+                  </button>
+                `,
+              )}
+            </div>
+          `,
+        )}
+      </div>
+    `;
+  }
+
+  private chunkYears(years: number[]): number[][] {
+    const chunks: number[][] = [];
+    for (let i = 0; i < years.length; i += 4) {
+      chunks.push(years.slice(i, i + 4));
+    }
+    return chunks;
+  }
+
+  private toggleYearSelector() {
+    this._yearSelectorOpen = !this._yearSelectorOpen;
+    if (this._yearSelectorOpen) {
+      this.updateComplete.then(() => {
+        this.scrollToCurrentYear();
+        this.focusCurrentYearButton();
+      });
+    }
+  }
+
+  private selectYear(year: number) {
+    // Move focus to the year selector button BEFORE removing the year grid,
+    // so focusout fires with relatedTarget inside the component and date pickers don't close.
+    const yearSelectorBtn = this.querySelector('.gui-calendar__year-selector') as HTMLButtonElement;
+    yearSelectorBtn?.focus();
+
+    const d = this._currentDate;
+    this._currentDate = new Date(year, d.getMonth(), 1);
+    this._yearSelectorOpen = false;
+    this.updateComplete.then(() => {
+      const focusableDay = this.querySelector<HTMLButtonElement>(
+        '.gui-calendar__day-button[tabindex="0"]',
+      );
+      focusableDay?.focus();
+    });
+  }
+
+  private scrollToCurrentYear() {
+    const yearGrid = this.querySelector('.gui-calendar__year-grid');
+    const currentBtn = this.querySelector('.gui-calendar__year-button.current') as HTMLElement;
+    if (yearGrid && currentBtn) {
+      const gridRect = yearGrid.getBoundingClientRect();
+      const btnRect = currentBtn.getBoundingClientRect();
+      const scrollTop =
+        yearGrid.scrollTop + (btnRect.top - gridRect.top) - gridRect.height / 2 + btnRect.height / 2;
+      yearGrid.scrollTop = Math.max(0, scrollTop);
+    }
+  }
+
+  private focusCurrentYearButton() {
+    const currentBtn = this.querySelector(
+      '.gui-calendar__year-button.current',
+    ) as HTMLButtonElement;
+    currentBtn?.focus();
+  }
+
+  private handleYearKeydown(event: KeyboardEvent) {
+    const target = event.target as HTMLButtonElement;
+    if (!target.classList.contains('gui-calendar__year-button')) return;
+
+    const buttons = Array.from(
+      this.querySelectorAll<HTMLButtonElement>('.gui-calendar__year-button'),
+    );
+    const currentIndex = buttons.indexOf(target);
+    const isRTL = window.getComputedStyle(this).direction === 'rtl';
+
+    let step = 0;
+    switch (event.key) {
+      case 'ArrowLeft':
+        step = isRTL ? 1 : -1;
+        break;
+      case 'ArrowRight':
+        step = isRTL ? -1 : 1;
+        break;
+      case 'ArrowUp':
+        step = -4;
+        break;
+      case 'ArrowDown':
+        step = 4;
+        break;
+      case 'Enter':
+      case ' ': {
+        event.preventDefault();
+        const year = parseInt(target.dataset['year'] ?? '', 10);
+        if (!isNaN(year)) this.selectYear(year);
+        return;
+      }
+      case 'Escape': {
+        event.preventDefault();
+        // Move focus to year selector button BEFORE removing the year grid
+        const yearBtn = this.querySelector(
+          '.gui-calendar__year-selector',
+        ) as HTMLButtonElement;
+        yearBtn?.focus();
+        this._yearSelectorOpen = false;
+        return;
+      }
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    const nextIndex = currentIndex + step;
+    if (nextIndex >= 0 && nextIndex < buttons.length) {
+      buttons[nextIndex].focus();
+    }
+  }
+
+  protected get _effectiveMinYear(): number {
+    return this.minDate ? new Date(this.minDate).getFullYear() : 1900;
+  }
+
+  protected get _effectiveMaxYear(): number {
+    return this.maxDate ? new Date(this.maxDate).getFullYear() : 2099;
+  }
+
+  protected get _yearList(): number[] {
+    const years: number[] = [];
+    for (let y = this._effectiveMinYear; y <= this._effectiveMaxYear; y++) {
+      years.push(y);
+    }
+    return years;
   }
 
   protected async handleKeydown(event: KeyboardEvent, day: AbstractCalendarDay) {

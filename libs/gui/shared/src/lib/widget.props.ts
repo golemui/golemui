@@ -14,21 +14,25 @@ export type AccordionProps = {
 
 // TODO: implement this
 export type ButtonProps = {
-  variant?: 'filled' | 'outlined';
+  variant?: 'filled' | 'outlined' | 'link';
   icon?: string;
   iconPosition?: 'left' | 'right';
 };
+
+export type Autocomplete = 'on' | 'off' | (string & {});
 
 export type TextinputProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
 };
 
 export type PasswordProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
   showPasswordIcon?: string;
   hidePasswordIcon?: string;
   showPasswordLabel?: string;
@@ -43,6 +47,7 @@ export type CurrencyProps = {
   hint?: string;
   placeholder?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
 };
 
 export type TextareaProps = {
@@ -52,6 +57,7 @@ export type TextareaProps = {
    * icon to display inside the textarea on the left-top corner.
    */
   icon?: string;
+  autocomplete?: Autocomplete;
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
@@ -255,6 +261,10 @@ export type RangeCalendarProps = {
    * Default is 1.
    */
   numberOfMonths?: number;
+  /**
+   * An optional string used as the ARIA label prefix for the remove button on each date range pill.
+   */
+  removePillAriaLabel?: string;
 };
 
 export type DateinputProps = {
@@ -281,6 +291,10 @@ export type DatePickerProps = {
   dayFormat?: 'numeric' | '2-digit';
   weekdayFormat?: 'short' | 'long' | 'narrow';
   monthFormat?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  minDate?: string;
+  maxDate?: string;
+  disabledRanges?: DateRange[];
+  numberOfMonths?: number;
 };
 
 export type RangeDatePickerProps = {
@@ -306,6 +320,7 @@ export type RangeDatePickerProps = {
 export type NumberinputProps = {
   placeholder?: string;
   hint?: string;
+  autocomplete?: Autocomplete;
   step?: number;
   minimum?: number;
   maximum?: number;
@@ -325,6 +340,10 @@ export type ToggleProps = {
 export type AlertProps = {
   text: string;
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
+};
+
+export type MarkdownTextProps = {
+  md: string;
 };
 
 /**
@@ -364,6 +383,7 @@ export type Option = {
 export type SelectProps = {
   hint?: string;
   icon?: string;
+  autocomplete?: Autocomplete;
   options: Option[];
   placeholder?: string;
   labelField?: string;
@@ -379,6 +399,7 @@ type ItemKeys<T> = T extends Record<string, any> ? keyof T : string;
 export type DropdownProps<T> = {
   placeholder?: string;
   hint?: string;
+  autocomplete?: Autocomplete;
   items: ListItem<T>[];
   /**
    * Property widget used to display in the input when an item option is selected
@@ -416,6 +437,7 @@ export type RadiogroupProps = {
   options: Option[];
   labelField?: string;
   valueField?: string;
+  direction?: 'row' | 'column';
 };
 
 export type OneOfProps = {
@@ -425,8 +447,18 @@ export type OneOfProps = {
 
 export type FlexProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
-  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around';
+  justify?: 'center' | 'start' | 'end' | 'stretch';
+  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around' | 'space-evenly';
   gap?: number;
+};
+
+export type GridProps = {
+  direction?: 'row' | 'column';
+  columnGap?: number;
+  rowGap?: number;
+  autoFit?: boolean;
+  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch';
+  justify?: 'center' | 'start' | 'end' | 'stretch';
 };
 
 export type TabsProps = {

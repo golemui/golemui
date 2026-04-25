@@ -20,6 +20,7 @@ export function Password(widgetInstance: Core.WithWidget) {
   const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
+  const autocomplete = templateData.autocomplete;
   const showPasswordIcon = templateData.showPasswordIcon;
   const hidePasswordIcon = templateData.hidePasswordIcon;
   const showPasswordLabel = templateData.showPasswordLabel;
@@ -30,7 +31,7 @@ export function Password(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-password" style={{ flex: templateData.size }}>
+    <div className="gui-password gui-field" style={{ flex: templateData.size }}>
       <gui-password
         uid={uid}
         label={label}
@@ -43,6 +44,7 @@ export function Password(widgetInstance: Core.WithWidget) {
         value={value}
         icon={icon}
         placeholder={placeholder ?? undefined}
+        autocomplete={autocomplete ?? undefined}
         showPasswordIcon={showPasswordIcon}
         hidePasswordIcon={hidePasswordIcon}
         showPasswordLabel={showPasswordLabel}

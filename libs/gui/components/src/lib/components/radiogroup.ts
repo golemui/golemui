@@ -22,6 +22,7 @@ export class GuiRadiogroup extends LitElement {
   @property({ type: String }) options: Option[] = [];
   @property({ type: String }) labelField: string | undefined = undefined;
   @property({ type: String }) valueField: string | undefined = undefined;
+  @property({ type: String }) direction: 'row' | 'column' | undefined = 'column';
 
   protected optionsLoading = false;
   protected hasMatchingValue = false;
@@ -45,6 +46,11 @@ export class GuiRadiogroup extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     super.render();
 
@@ -61,6 +67,7 @@ export class GuiRadiogroup extends LitElement {
       options: this.options,
       labelField: this.labelField,
       valueField: this.valueField,
+      direction: this.direction,
     };
 
     this.options = updateOptions(this.options, {
@@ -101,7 +108,7 @@ export class GuiRadiogroup extends LitElement {
       ${addLabel(this.uid as string, templateData, false, undefined, false)}
 
       <div
-        class="gui-widget"
+        class="gui-widget${this.direction === 'row' ? ' gui-widget--horizontal' : ''}"
         role="radiogroup"
         id=${this.uid}
         aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}

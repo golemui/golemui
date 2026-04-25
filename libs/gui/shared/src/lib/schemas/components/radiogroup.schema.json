@@ -28,7 +28,8 @@
             "type": ["string", "number", "boolean"]
           }
         },
-        "required": ["label", "value"]
+        "required": ["label", "value"],
+        "additionalProperties": false
       }
     },
     "labelFieldProp": {
@@ -36,6 +37,10 @@
     },
     "valueFieldProp": {
       "type": "string"
+    },
+    "directionProp": {
+      "enum": ["row", "column"],
+      "default": "column"
     }
   },
   "allOf": [
@@ -65,6 +70,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "props": {
       "type": "object",
       "properties": {
@@ -79,6 +87,9 @@
         },
         "valueField": {
           "$ref": "#/$defs/valueFieldProp"
+        },
+        "direction": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "patternProperties": {
@@ -93,6 +104,9 @@
         },
         "^valueField\\.[^.]+$": {
           "$ref": "#/$defs/valueFieldProp"
+        },
+        "^direction\\.[^.]+$": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "additionalProperties": false
@@ -109,5 +123,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

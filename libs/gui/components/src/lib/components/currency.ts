@@ -24,6 +24,7 @@ export class GuiCurrency extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
 
   @state() private displayValue: string | undefined;
 
@@ -45,6 +46,11 @@ export class GuiCurrency extends LitElement {
 
   override createRenderRoot() {
     return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -73,6 +79,7 @@ export class GuiCurrency extends LitElement {
       minimumFractionDigits: this.minimumFractionDigits,
       icon: this.icon,
       placeholder: this.placeholder,
+      autocomplete: this.autocomplete,
     };
 
     this.displayValue = this.formatCurrency(this.value);
@@ -100,6 +107,7 @@ export class GuiCurrency extends LitElement {
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
           placeholder=${this.placeholder || nothing}
+          autocomplete=${this.autocomplete || nothing}
           @input=${this.handleInput}
           @focus=${this.handleFocus}
           @blur=${this.handleBlur}

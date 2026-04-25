@@ -7,7 +7,10 @@ i18next.init({
   resources: {
     en: {
       translation: {
-        user: { name: { label: 'Translated User Name Label' }, greeting: '{{hello}}, {{name}}!' },
+        user: {
+          name: { label: 'Translated User Name Label' },
+          greeting: '{{hello}}, {{name}}! You are {{connectionStatus}}.',
+        },
       },
     },
   },
@@ -74,9 +77,10 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       cy.get(`label[for="${uid}"]`).should('exist').contains('This is the default label');
     });
 
-    it('should apply interpolate $form and static params', () => {
+    it('should apply interpolate $form and $meta static params', () => {
       mountFn({
         localization: i18nTranslator,
+        meta: { connectionStatus: 'online' },
         formDef: Core.defineForm({
           form: [
             {
@@ -95,6 +99,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
                   params: {
                     hello: 'Hola',
                     name: '$form.user.firstName',
+                    connectionStatus: '$meta.connectionStatus',
                   },
                 },
               },
@@ -103,7 +108,152 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
         }),
       });
       cy.get(`[data-cy="first-name_textinput"]`).type('Pol');
-      cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol!');
+      cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol! You are online.');
+    });
+
+    it('should interpolate $errors and $formIsInvalid in i18n translation params', () => {
+      i18next.addResourceBundle(
+        'en',
+        'translation',
+        { 'form.status': 'Errors: {{fieldError}}, Invalid: {{isInvalid}}' },
+        true,
+        true,
+      );
+
+      mountFn({
+        localization: i18nTranslator,
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'userName',
+              kind: 'input',
+              type: 'textinput',
+              path: 'userName',
+              validator: { type: 'string', required: true },
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              on: { click: 'submit' },
+            },
+            {
+              uid: 'status-display',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'form.status',
+                  params: {
+                    fieldError: '$errors.userName',
+                    isInvalid: '$formIsInvalid',
+                  },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      // Before submit: $formIsInvalid is false
+      cy.get('.gui-alert [role="alert"]').contains('Invalid: false');
+
+      // After submit with empty required field: errors populate
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('.gui-alert [role="alert"]').contains(
+        'Errors: Invalid input: expected string, received undefined, Invalid: true',
+      );
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle zero and false values in i18n params interpolation', () => {
+      i18next.addResourceBundle('en', 'translation', {
+        stats: 'Count: {{count}}, Active: {{isActive}}',
+      }, true, true);
+
+      mountFn({
+        localization: i18nTranslator,
+        data: { count: 0, isActive: false },
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'stats',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'stats',
+                  params: {
+                    count: '$form.count',
+                    isActive: '$form.isActive',
+                  },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-alert [role="alert"]').contains('Count: 0, Active: false');
+    });
+  });
+
+  describe('identityTranslator', () => {
+    it('should update the form direction to rtl when setLang is called with an rtl language', () => {
+      const translator = Core.identityTranslator('en-US');
+
+      mountFn({
+        localization: translator,
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'date',
+              kind: 'input',
+              type: 'calendar',
+              path: 'date',
+            },
+          ],
+        }),
+      });
+
+      cy.get('form').should('have.attr', 'dir', 'ltr');
+
+      cy.wrap(null).then(() => translator.setLang('ar'));
+
+      cy.get('form').should('have.attr', 'dir', 'rtl');
+    });
+
+    it('should update the calendar locale when setLang is called', () => {
+      const translator = Core.identityTranslator('en-US');
+
+      cy.clock(new Date(2024, 1, 15).getTime()); // February 15, 2024
+
+      mountFn({
+        localization: translator,
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'date',
+              kind: 'input',
+              type: 'calendar',
+              path: 'date',
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-calendar__month-name').should('have.text', 'February');
+
+      // Restore the clock so time flows normally again, otherwise "febrero" never happens
+      cy.clock().then((clock) => {
+        clock.restore();
+      });
+
+      cy.then(() => translator.setLang('es'));
+
+      cy.get('.gui-calendar__month-name').should('have.text', 'febrero');
     });
   });
 };

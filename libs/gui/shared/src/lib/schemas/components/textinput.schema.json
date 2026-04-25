@@ -21,6 +21,9 @@
     },
     "iconProp": {
       "type": "string"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -50,6 +53,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "defaultValue": {
       "type": "string"
     },
@@ -64,6 +70,9 @@
         },
         "icon": {
           "$ref": "#/$defs/iconProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
@@ -75,6 +84,9 @@
         },
         "^icon\\.[^.]+$": {
           "$ref": "#/$defs/iconProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false
@@ -91,5 +103,6 @@
       "$ref": "#/$defs/labelDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

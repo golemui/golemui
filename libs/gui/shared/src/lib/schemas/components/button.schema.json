@@ -11,7 +11,7 @@
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "variantProp": {
-      "enum": ["filled", "outlined"]
+      "enum": ["filled", "outlined", "link"]
     }
   },
   "allOf": [
@@ -35,8 +35,8 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
-    "additionalProperties": false,
     "props": {
+      "type": "object",
       "properties": {
         "variant": {
           "$ref": "#/$defs/variantProp"
@@ -64,5 +64,6 @@
       "$ref": "#/$defs/labelDef"
     }
   },
-  "required": ["kind", "type"]
+  "required": ["kind", "type"],
+  "unevaluatedProperties": false
 }

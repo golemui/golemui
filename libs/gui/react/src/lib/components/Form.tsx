@@ -1,65 +1,61 @@
 import * as Core from '@golemui/core';
+import { Dependencies } from '@golemui/gui-shared';
+import { CustomValidatorSchemas, initValidators } from '@golemui/gui-validators';
 import * as React from '@golemui/react';
 import { ReactItemRenderer } from '@golemui/react';
-import { Dependencies, vanillaSchemaToFieldMap } from '@golemui/gui-shared';
-import {
-  CustomValidatorSchemas,
-  initValidators,
-  jsonSchemaValidators,
-} from '@golemui/gui-validators';
 import { ComponentType } from 'react';
-import { vanillaWidgetLoaders } from '../widget.loaders';
+import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
   formDef: string | Record<string, any>;
-  // TODO: this should be customWidgetLoaders
-  widgetLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
+  customWidgetLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
   localization?: Core.I18nTranslator;
   dependencies?: Dependencies;
-  validators?: CustomValidatorSchemas;
+  customValidators?: CustomValidatorSchemas;
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
+  meta?: Record<string, any>;
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (formHealth: Core.FormHealth) => void;
+  autocomplete?: string;
 }
 
 export const FormComponent = ({
   formDef,
   data = undefined,
-  widgetLoaders = {},
+  meta = undefined,
+  customWidgetLoaders = {},
   itemRenderers = {},
   localization,
   dependencies = {},
-  validators = {},
+  customValidators = {},
   middlewares = [],
   validateOn = 'eager',
   formHealth = undefined,
   formEvent = undefined,
+  autocomplete,
 }: ReactFormComponentProps) => {
-  // TODO: this should be customWidgetLoaders
-  const customWidgetLoaders = { ...vanillaWidgetLoaders, ...widgetLoaders };
+  const allWidgetLoaders = { ...golemWidgetLoaders, ...customWidgetLoaders };
   const customItemRenderers = { ...itemRenderers };
-  const customValidators = initValidators({ ...validators });
-  const customMiddlewares = [
-    Core.jsonSchemaMiddleware(vanillaSchemaToFieldMap(jsonSchemaValidators)),
-    ...middlewares,
-  ];
+  const allValidators = initValidators({ ...customValidators });
   return (
     <React.FormComponent
       formDef={formDef}
       data={data}
-      widgetLoaders={customWidgetLoaders}
-      middlewares={customMiddlewares}
+      meta={meta}
+      widgetLoaders={allWidgetLoaders}
+      middlewares={middlewares}
       itemRenderers={customItemRenderers}
       localization={localization}
       dependencies={dependencies}
-      validators={customValidators}
+      validators={allValidators}
       validateOn={validateOn}
       formHealth={formHealth}
       formEvent={formEvent}
+      autocomplete={autocomplete}
     />
   );
 };

@@ -157,6 +157,7 @@ type GolemWidget<
   | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
   | GuiMarkdown<FormType, States, V>
+  | GuiMarkdownText<FormType, States>
   | GuiNumberinput<FormType, States, V>
   | GuiPassword<FormType, States, V>
   | GuiRadiogroup<FormType, States, V>
@@ -167,6 +168,7 @@ type GolemWidget<
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
   | GuiFlex<FormType, States, V, CustomWidget>
+  | GuiGrid<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
@@ -194,7 +196,7 @@ type GuiAlert<FormType extends Record<string, any>, States extends string> = Cor
 type GuiButton<FormType extends Record<string, any>, States extends string> = Core.ActionWidget<
   States,
   FormType,
-  never
+  Props.ButtonProps
 > & { type: 'button' };
 
 type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
@@ -265,6 +267,11 @@ type GuiMarkdown<FormType extends Record<string, any>, States extends string, V>
   Props.MarkdownProps,
   V
 > & { type: 'markdown' };
+
+type GuiMarkdownText<
+  FormType extends Record<string, any>,
+  States extends string,
+> = Core.DisplayWidget<States, FormType, Props.MarkdownTextProps> & { type: 'markdownText' };
 
 type GuiNumberinput<
   FormType extends Record<string, any>,
@@ -350,6 +357,18 @@ type GuiFlex<
   Props.FlexProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'flex' };
+
+type GuiGrid<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends Core.FormWidget<any, FormType>,
+> = Core.LayoutWidget<
+  States,
+  FormType,
+  Props.GridProps,
+  GolemWidget<FormType, States, V, CustomWidget>[]
+> & { type: 'grid' };
 
 type GuiTabs<
   FormType extends Record<string, any>,

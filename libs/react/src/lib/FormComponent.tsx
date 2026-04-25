@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
+import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
-import { ReactFormContextProvider } from './ReactFormContextProvider';
 
 type JsonStringified = string;
 type JsonObject = Record<string, any>;
@@ -17,9 +17,11 @@ export interface FormComponentProps {
   middlewares?: Core.Middleware<Core.State, Core.Action>[];
   validateOn?: Core.ValidateOn;
   data?: Record<string, any>;
+  meta?: Record<string, any>;
   formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
+  autocomplete?: string;
 }
 
 export function FormComponent({
@@ -32,9 +34,11 @@ export function FormComponent({
   validators,
   validateOn,
   data,
+  meta,
   formName,
   formHealth,
   formEvent,
+  autocomplete,
 }: FormComponentProps) {
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
     new Core.FormContext(),
@@ -122,6 +126,14 @@ export function FormComponent({
     });
   }, [data]);
 
+  // SET FORM META
+  useEffect(() => {
+    formContextRef.current.store.dispatch({
+      type: 'SET_META',
+      payload: { meta: meta || {} },
+    });
+  }, [meta]);
+
   // I18n
   useEffect(() => {
     const sub = formContextRef.current.localization.subscribe((lang) => {
@@ -145,7 +157,7 @@ export function FormComponent({
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
-        <form id={formNameRef.current} noValidate dir={direction}>
+        <form id={formNameRef.current} noValidate dir={direction} autoComplete={autocomplete}>
           <WidgetErrorBoundary widget={formLayoutField}>
             <WidgetRenderer widget={formLayoutField} />
           </WidgetErrorBoundary>

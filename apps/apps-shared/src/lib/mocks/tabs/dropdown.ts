@@ -1,8 +1,8 @@
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
 const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
 
-export const dropdown = (): any => ({
-  uid: 'tab15',
+export const dropdown = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -21,6 +21,7 @@ export const dropdown = (): any => ({
         inputDebounce: 300,
         items: [],
         hint: 'Search as you type with server side filtering',
+        autocomplete: 'off',
       },
       on: {
         load: 'searchProductForDropdown',
@@ -37,8 +38,6 @@ export const dropdown = (): any => ({
         height: 100,
         hint: 'Virtual scroll list with 1000 items. Default Item height.',
         items: thousandsOfObjectItems,
-        labelField: 'label',
-        valueField: 'value',
       },
     },
     {

@@ -1,3 +1,4 @@
+import { DateRange } from '@golemui/gui-shared';
 import { weekInfoData } from './week-info';
 
 /**
@@ -119,6 +120,27 @@ export function isDateInVisibleMonths(
 }
 
 /**
+ * Returns an ordered array of month and year parts for the given date,
+ * respecting the locale's natural ordering.
+ *
+ * For example, in 'en-US': [{ type: 'month', value: 'March' }, { type: 'year', value: '2026' }]
+ * In 'ja-JP': [{ type: 'year', value: '2026' }, { type: 'month', value: '3月' }]
+ *
+ * @param {string | undefined} localeId - The locale identifier used to format the parts.
+ * @param {Date} date - The date from which month and year will be extracted.
+ * @param {'numeric' | '2-digit' | 'long' | 'short' | 'narrow'} monthFormat - The format style for the month portion.
+ * @return {{ type: string; value: string }[]} An array of month and year parts in locale order.
+ */
+export function getMonthYearParts(
+  localeId: string | undefined,
+  date: Date,
+  monthFormat: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' = 'long',
+): { type: string; value: string }[] {
+  const formatter = new Intl.DateTimeFormat(localeId, { month: monthFormat, year: 'numeric' });
+  return formatter.formatToParts(date).filter((p) => p.type === 'month' || p.type === 'year');
+}
+
+/**
  * Retrieves the numeric day label from a given date formatted based on the specified locale.
  *
  * @param {string | undefined} localeId - The locale identifier to format the day. Defaults to 'en-US' if not provided or undefined.
@@ -132,4 +154,61 @@ export function getDayLabel(localeId: string | undefined, date: Date): string {
   const dayPart = parts.find((part) => part.type === 'day');
 
   return dayPart ? dayPart.value : date.getDate().toString();
+}
+
+/**
+ * Creates a DateRange object from two Date instances.
+ * If both dates represent the same day, only the start property is set.
+ *
+ * @param {Date} start - The start date of the range.
+ * @param {Date} end - The end date of the range.
+ * @return {DateRange} A DateRange with start and optionally end.
+ */
+export function createDateRange(start: Date, end: Date): DateRange {
+  const sStr = toISODateString(start);
+  const eStr = toISODateString(end);
+
+  // It's one date or a range of dates
+  return sStr === eStr ? { start: sStr } : { start: sStr, end: eStr };
+}
+
+/**
+ * Merges overlapping or adjacent date ranges into a single range.
+ *
+ * @param {DateRange[]} ranges - An array of date ranges to merge.
+ * @return {DateRange[]} An array of merged, non-overlapping date ranges sorted by start date.
+ */
+export function mergeDateRanges(ranges: DateRange[]): DateRange[] {
+  if (!ranges.length) return [];
+
+  // Sort dates by "start"
+  const sorted = ranges
+    .map((r) => ({
+      start: new Date(r.start).getTime(),
+      end: new Date(r.end ?? r.start).getTime(),
+    }))
+    .sort((a, b) => a.start - b.start);
+
+  const merged = sorted.reduce(
+    (acc, next) => {
+      const current = acc[acc.length - 1];
+
+      // We ignore the first element
+      if (current) {
+        const currentEndDate = new Date(current.end);
+        currentEndDate.setDate(currentEndDate.getDate() + 1);
+
+        // Dates are overlapping, so we extend the "end"
+        if (next.start <= currentEndDate.getTime()) {
+          current.end = Math.max(current.end, next.end);
+          return acc;
+        }
+      }
+
+      return [...acc, next];
+    },
+    [] as { start: number; end: number }[],
+  );
+
+  return merged.map((m) => createDateRange(new Date(m.start), new Date(m.end)));
 }

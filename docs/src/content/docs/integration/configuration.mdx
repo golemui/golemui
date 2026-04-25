@@ -1,0 +1,302 @@
+---
+title: Configuration
+description: Configure validators, dependencies, and localization across frameworks.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
+
+All configuration properties are passed directly to the form component. This page covers the optional properties that are common across all frameworks.
+
+## Custom Validators
+
+To create custom validators, implement functions that follow the `CustomValidatorSchemaFn` interface. Then pass them to the form component via the `customValidators` property.
+
+```ts
+import * as Core from '@golemui/core';
+
+export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
+  z.string().check(
+    z.superRefine((val, ctx) => {
+      if (val && names.includes(val) === false) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,
+          input: val,
+        });
+      }
+    }),
+  );
+```
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    const customValidators: Core.CustomValidatorSchemas = {
+      allowedNames,
+    };
+
+    export function FormPage() {
+      return (
+        <div>
+        <React.FormComponent
+          (...)
+          customValidators={customValidators}
+        />
+      </div>
+      );
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import * as Core from '@golemui/core';
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    @Component({
+      selector: 'my-form-app',
+      template: `<gui-form
+        (...)
+        [customValidators]="customValidators">
+        </gui-form>
+      `,
+    })
+    class MyFormApp {
+      protected customValidators: Core.CustomValidatorSchemas = {
+        allowedNames,
+      };
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import * as Core from '@golemui/core';
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    @customElement('lit-form')
+    export class FormElement extends LitElement {
+      protected customValidators: Core.CustomValidatorSchemas = {
+        allowedNames,
+      };
+
+      render() {
+        return html`
+            <gui-form
+              (...)
+              .customValidators=${this.customValidators}
+            ></gui-form>
+          `;
+      }
+    }
+    ```
+
+  </Fragment>
+</IntegrationTabs>
+
+## Validation Timing
+
+Control when field validation triggers with the `validateOn` property.
+
+```ts
+type ValidateOn =
+  | 'eager'
+  | 'change'
+  | 'blur'
+  | 'submit'
+  | ('change' | 'blur' | 'submit')[];
+```
+
+When not set, the default behaviour is `'eager'`.
+
+| Mode       | Triggers when                                              |
+| ---------- | ---------------------------------------------------------- |
+| `'change'` | The user changes the field value                           |
+| `'blur'`   | The user leaves the field                                  |
+| `'submit'` | A `submit` event is emitted (all fields are touched first) |
+| `'eager'`  | Any of the above happens (default)                         |
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent
+      (...)
+      validateOn="change"
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    @Component({
+      template: `<gui-form (...) [validateOn]="validateOn"></gui-form>`,
+    })
+    class MyFormApp {
+      protected validateOn: Core.ValidateOn = 'change';
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    render() {
+      return html`
+        <gui-form (...) .validateOn=${'change'}></gui-form>
+      `;
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Autocomplete
+
+Control browser autofill behaviour with the `autocomplete` property on the form element. This sets the `autocomplete` attribute on the underlying `<form>` HTML element.
+
+When not set, the attribute is omitted, leaving the default browser behaviour.
+
+Individual input widgets also accept an `autocomplete` prop (via `props`) for fine-grained control using any [W3C autofill token](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) (e.g. `'given-name'`, `'street-address'`, `'off'`).
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent
+      (...)
+      autocomplete="off"
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```html
+    <gui-form (...) [autocomplete]="'off'"></gui-form>
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    render() {
+      return html`
+        <gui-form (...) .autocomplete=${'off'}></gui-form>
+      `;
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Dependencies
+
+Some widgets require external dependencies that are not bundled with GolemUI. Pass them via the `dependencies` property.
+
+### Markdown Parser
+
+The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/widgets-reference/display-fields/markdown-text/) widgets need a markdown parser for live preview rendering.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import snarkdown from 'snarkdown';
+    import { Dependencies } from '@golemui/gui-shared';
+
+    const deps: Dependencies = {
+      markdown: {
+        parse: (md: string) => snarkdown(md),
+      },
+    };
+
+    <GolemForm
+      formDef={formDef}
+      data={formData}
+      dependencies={deps}
+      ...
+    />
+    ```
+
+  </Fragment>
+  <Fragment slot="angular">
+    ```typescript
+    import snarkdown from 'snarkdown';
+    import { Dependencies } from '@golemui/gui-shared';
+
+    protected deps: Dependencies = {
+      markdown: {
+        parse: (md: string) => snarkdown(md),
+      },
+    };
+    ```
+    ```html
+    <gui-form
+      [formDef]="formDef"
+      [data]="formData"
+      [dependencies]="deps"
+      ...
+    ></gui-form>
+    ```
+
+  </Fragment>
+  <Fragment slot="lit">
+    ```typescript
+    import snarkdown from 'snarkdown';
+    import { Dependencies } from '@golemui/gui-shared';
+
+    const deps: Dependencies = {
+      markdown: {
+        parse: (md: string) => snarkdown(md),
+      },
+    };
+    ```
+    ```html
+    <golem-form
+      .formDef=${formDef}
+      .data=${formData}
+      .dependencies=${deps}
+      ...
+    ></golem-form>
+    ```
+
+  </Fragment>
+</IntegrationTabs>
+
+<Aside type="tip">
+  You can use any markdown parser that exposes a `(markdown: string) => string` function, such as [snarkdown](https://github.com/developit/snarkdown), [marked](https://github.com/markedjs/marked), or [micromark](https://github.com/micromark/micromark).
+</Aside>
+
+## Localization
+
+GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable translations and automatic RTL rendering for languages like Arabic, Hebrew, and Persian.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent
+      formDef={formDef}
+      data={formData}
+      widgetLoaders={widgetLoaders}
+      localization={localization}
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```html
+    <gui-form
+      [formDef]="formDef"
+      [data]="formData"
+      [customWidgetLoaders]="widgetLoaders"
+      [localization]="localization"
+    ></gui-form>
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```html
+    <gui-form
+      .formDef=${this.formDef}
+      .data=${this.formData}
+      .customWidgetLoaders=${this.widgetLoaders}
+      .localization=${this.localization}
+    ></gui-form>
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+See the [Responsive & RTL](/styling/responsive/) guide for full RTL setup details.

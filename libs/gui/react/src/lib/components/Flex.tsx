@@ -16,10 +16,11 @@ export function Flex(widgetInstance: Core.WithWidget) {
   }, [children]);
 
   const direction = `gui-flex__widget--${templateData.direction ?? 'column'}`;
-  const align = templateData.align ? `gui-flex__widget--align-${templateData.align as string}` : '';
+  const justify = `gui-flex__widget--justify-${(templateData.justify as string) ?? 'stretch'}`;
+  const align = `gui-flex__widget--align-${(templateData.align as string) ?? 'start'}`;
   return (
-    <div className="gui-flex" style={{ flex: templateData.size }}>
-      <div className={`gui-flex__widget ${direction} ${align}`} style={templateData.gap ? { gap: `${templateData.gap}px`} : {}} id={uid}>
+    <div className="gui-flex gui-field" style={{ flex: templateData.size }}>
+      <div className={`gui-flex__widget ${direction} ${justify} ${align}`} style={templateData.gap ? { gap: `${templateData.gap}px`} : {}} id={uid}>
         {renderWidgets()}
       </div>
     </div>

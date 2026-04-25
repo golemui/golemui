@@ -2,6 +2,13 @@ gui-radiogroup {
   display: block;
 
   .gui-widget {
+    &--horizontal {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      gap: 1em;
+    }
+
     label {
       display: grid;
       grid-template-columns: 1.6em auto;

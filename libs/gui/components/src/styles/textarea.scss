@@ -1,6 +1,19 @@
 gui-textarea {
   display: block;
 
+  .gui-widget {
+    justify-content: flex-start;
+
+    textarea {
+      padding: var(--gui-space-2) var(--gui-space-3);
+      resize: vertical;
+    }
+  }
+
+  .gui-widget-icon {
+    top: var(--gui-space-1);
+  }
+
   textarea {
     &.gui-textarea--icon {
       padding-inline-start: var(--gui-space-10);
@@ -8,8 +21,14 @@ gui-textarea {
   }
 
   .gui-textarea--validation {
+    grid-row: 3;
     display: flex;
     justify-content: space-between;
+
+    .gui-validator {
+      width: auto;
+      min-width: auto;
+    }
   }
 
   .gui-textarea--counter {

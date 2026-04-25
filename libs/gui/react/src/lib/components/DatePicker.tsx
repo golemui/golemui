@@ -133,6 +133,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   const dayFormat = templateData.dayFormat;
   const weekdayFormat = templateData.weekdayFormat;
   const monthFormat = templateData.monthFormat;
+  const minDate = templateData.minDate;
+  const maxDate = templateData.maxDate;
+  const disabledRanges = templateData.disabledRanges;
+  const numberOfMonths = templateData.numberOfMonths;
   const showErrors = isTouched && errors && errors.length > 0;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -140,7 +144,12 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div ref={containerRef} className="gui-date-picker" style={{ flex: templateData.size }} onBlur={onFocusOut}>
+    <div
+      ref={containerRef}
+      className="gui-date-picker gui-field"
+      style={{ flex: templateData.size }}
+      onBlur={onFocusOut}
+    >
       {templateData.label && (
         <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
           {templateData.label + (isRequired ? ' *' : '')}
@@ -178,6 +187,11 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
           icon={icon}
           localeId={lang}
         />
+        <span className="gui-date-picker__arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
+            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
+          </svg>
+        </span>
 
         {isCalendarOpen && (
           <gui-calendar
@@ -196,6 +210,10 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
             dayFormat={dayFormat}
             weekdayFormat={weekdayFormat}
             monthFormat={monthFormat}
+            minDate={minDate}
+            maxDate={maxDate}
+            disabledRanges={disabledRanges}
+            numberOfMonths={numberOfMonths}
             localeId={lang}
           />
         )}

@@ -1,5 +1,5 @@
-export const radiogroup = (): any => ({
-  uid: 'tab9',
+export const radiogroup = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -34,6 +34,7 @@ export const radiogroup = (): any => ({
       props: {
         hint: 'No option should be selected, and a validation error should be displayed because the field is required',
         options: ['hello', 'bye'],
+        direction: 'row',
       },
       validator: { type: 'string', required: true },
     },

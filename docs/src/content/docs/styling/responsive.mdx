@@ -5,10 +5,11 @@ sidebar:
   order: 4
 ---
 
-import { Aside, TabItem, Tabs } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 import Demo from '../../../../src/components/landing/Demo.astro';
 
-GolemUI adapts to different screen sizes using two complementary strategies: **media queries** for global token scaling, and **container queries** for component-level layout adaptation.
+GolemUI adapts to different screen sizes using two complementary strategies: **media queries** for global token scaling, and **container queries** for widget-level layout adaptation.
 
 ## Breakpoints
 
@@ -49,7 +50,7 @@ At smaller viewport sizes, spacing and typography tokens automatically scale dow
 | `--gui-font-3xl` | `2rem` (32px)   | `1.5rem` (24px)  |
 
 <Aside type="tip">
-Because components use these tokens for their spacing and sizing, they automatically become more compact on small screens — no extra work needed on your part.
+Because widgets use these tokens for their spacing and sizing, they automatically become more compact on small screens — no extra work needed on your part.
 </Aside>
 
 ## Container queries
@@ -58,7 +59,7 @@ GolemUI forms respond to their container width, not just the viewport. This mean
 
 ### What adapts at 480px container width
 
-When the form container is 480px or narrower, several components automatically adjust their layout:
+When the form container is 480px or narrower, several widgets automatically adjust their layout:
 
 | Component         | Behavior                         |
 | ----------------- | -------------------------------- |
@@ -75,8 +76,8 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
 
 When you set in the `localization` property a `RTL` language like Persian or Hebrew, then the form will display automatically as `RTL`.
 
-<Tabs syncKey="framework">
-  <TabItem label="React">
+<IntegrationTabs>
+  <Fragment slot="react">
     ```ts
     i18next.init({
       fallbackLng: 'fa',
@@ -95,15 +96,16 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
           <React.FormComponent
             formDef={formDef}
             data={formData}
-            fieldLoader={vanillaWidgetLoaders}
+            fieldLoader={widgetLoaders}
             localization={localization}
           />
         </div>
       );
     }
     ```
-  </TabItem>
-  <TabItem label="Angular">
+
+  </Fragment>
+  <Fragment slot="angular">
     ```ts
     @Component({
       imports: [CommonModule, Angular.FormComponent],
@@ -111,7 +113,7 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [fieldLoaders]="vanillaFieldLoaders"
+        [customWidgetLoaders]="widgetLoaders"
         [localization]="localization"
       ></gui-form>`,
     })
@@ -129,42 +131,43 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
         });
       }
     }
-  ```
-  </TabItem>
-  <TabItem label="Lit">
-    ```ts
-    @customElement('lit-form')
-    export class FormElement extends LitElement {
-      protected localization = { /* i18next implementation */ };
 
-      constructor() {
-        i18next.init({
-          fallbackLng: 'fa',
-          fa: {
-            translation: {
-              rtl: { username: 'نام کاربری', password: 'رمز عبور', },
-            },
+````
+</Fragment>
+<Fragment slot="lit">
+  ```ts
+  @customElement('lit-form')
+  export class FormElement extends LitElement {
+    protected localization = { /* i18next implementation */ };
+
+    constructor() {
+      i18next.init({
+        fallbackLng: 'fa',
+        fa: {
+          translation: {
+            rtl: { username: 'نام کاربری', password: 'رمز عبور', },
           },
-        });
-      }
-
-      render() {
-        return html`
-          <div>
-            <gui-form
-              .formDef=${this.formDef}
-              .data=${this.formData}
-              .fieldLoaders=${this.vanillaFieldLoaders}
-              .localization=${this.localization}
-            ></gui-form>
-          </div>
-        `;
-      }
+        },
+      });
     }
-    ```
 
-  </TabItem>
-</Tabs>
+    render() {
+      return html`
+        <div>
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            .localization=${this.localization}
+          ></gui-form>
+        </div>
+      `;
+    }
+  }
+  ```
+
+</Fragment>
+</IntegrationTabs>
 
 Yes, it's that easy. Nothing else on your side has to be handled.
 
@@ -174,7 +177,7 @@ Check the [i18n](/guides/i18n) section for more examples and full implementation
 
 ### What adapts automatically
 
-All components mirror automatically in RTL mode — no additional CSS needed on your side.
+All widgets mirror automatically in RTL mode — no additional CSS needed on your side.
 
 | Area             | What adapts                                                     |
 | ---------------- | --------------------------------------------------------------- |
@@ -182,3 +185,4 @@ All components mirror automatically in RTL mode — no additional CSS needed on 
 | Icons and arrows | Select arrows, date-picker icons, and toggle sliders reposition |
 | Buttons          | Repeater action buttons align to the correct side               |
 | Calendar         | Month navigation arrows mirror direction                        |
+````

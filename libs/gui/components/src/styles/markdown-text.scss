@@ -1,0 +1,202 @@
+.gui-form {
+  .gui-markdown,
+  .gui-markdown-text {
+    gui-markdown-text {
+      display: block;
+      color: var(--gui-md-text-color);
+      font-size: var(--gui-font-sm);
+      line-height: var(--gui-md-line-height);
+
+      /* Headings */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: var(--gui-md-heading-color);
+        font-weight: var(--gui-md-heading-weight);
+        line-height: 1.25;
+        margin-top: var(--gui-space-6);
+        margin-bottom: var(--gui-space-2);
+
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+
+      h1 {
+        font-size: var(--gui-font-3xl);
+      }
+
+      h2 {
+        font-size: var(--gui-font-2xl);
+      }
+
+      h3 {
+        font-size: var(--gui-font-xl);
+      }
+
+      h4 {
+        font-size: var(--gui-font-lg);
+      }
+
+      h5,
+      h6 {
+        font-size: var(--gui-font-base);
+      }
+
+      /* Paragraphs */
+      p {
+        margin-top: 0;
+        margin-bottom: var(--gui-space-4);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      /* Links */
+      a {
+        color: var(--gui-md-link-color);
+        text-decoration: underline;
+
+        &:hover,
+        &:visited {
+          color: var(--gui-md-link-hover-color);
+        }
+      }
+
+      /* Bold and italic */
+      strong {
+        font-weight: 600;
+      }
+
+      em {
+        font-style: italic;
+      }
+
+      /* Inline code */
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.875em;
+        background-color: var(--gui-md-code-bg);
+        color: var(--gui-md-code-color);
+        border-radius: var(--gui-md-code-radius);
+        padding: 0.1em var(--gui-space-1);
+      }
+
+      /* Code blocks */
+      pre {
+        background-color: var(--gui-md-code-bg);
+        border-radius: var(--gui-radius-md);
+        padding: var(--gui-space-4);
+        overflow-x: auto;
+        margin-top: 0;
+        margin-bottom: var(--gui-space-4);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        code {
+          background: none;
+          padding: 0;
+          font-size: var(--gui-font-sm);
+          border-radius: 0;
+        }
+      }
+
+      /* Blockquotes */
+      blockquote {
+        margin: 0 0 var(--gui-space-4);
+        padding: var(--gui-space-3) var(--gui-space-4);
+        background-color: var(--gui-md-blockquote-bg);
+        border-inline-start: 4px solid var(--gui-md-blockquote-border-color);
+        border-radius: 0 var(--gui-radius-md) var(--gui-radius-md) 0;
+        color: var(--gui-md-blockquote-color);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      /* Unordered and ordered lists */
+      ul,
+      ol {
+        margin-top: 0;
+        margin-bottom: var(--gui-space-4);
+        padding-inline-start: var(--gui-space-6);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        li {
+          margin-bottom: var(--gui-space-1);
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      ul {
+        list-style-type: disc;
+      }
+
+      ol {
+        list-style-type: decimal;
+      }
+
+      /* Nested lists */
+      li > ul,
+      li > ol {
+        margin-top: var(--gui-space-1);
+        margin-bottom: 0;
+      }
+
+      /* Horizontal rule */
+      hr {
+        border: none;
+        border-top: 1px solid var(--gui-md-hr-color);
+        margin: var(--gui-space-6) 0;
+      }
+
+      /* Images */
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--gui-radius-md);
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: var(--gui-space-4);
+        font-size: var(--gui-font-sm);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      th,
+      td {
+        padding: var(--gui-space-2) var(--gui-space-3);
+        border: 1px solid var(--gui-border-default);
+        text-align: start;
+      }
+
+      th {
+        background-color: var(--gui-bg-surface-hover);
+        font-weight: 600;
+      }
+    }
+  }
+}

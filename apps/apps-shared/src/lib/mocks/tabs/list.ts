@@ -4,8 +4,8 @@ const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
   value: i,
 }));
 
-export const list = (): any => ({
-  uid: 'tab14',
+export const list = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -28,8 +28,6 @@ export const list = (): any => ({
         height: 150,
         hint: 'Virtual scroll list with 1000 items. Default Item height.',
         items: thousandsOfObjectItems,
-        labelField: 'label',
-        valueField: 'value',
       },
     },
     {

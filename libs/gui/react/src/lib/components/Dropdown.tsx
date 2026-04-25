@@ -97,6 +97,16 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
     const handleUpdateItems = (e: Event) => {
       const items = (e as CustomEvent).detail;
       setListItems(items ? [...items] : []);
+
+      // Resolve selected item on initial load when a default value is set
+      if (!selectedItem && value != null && items) {
+        const match = items.find(
+          (item: ListItem<never>) => item.value === value,
+        );
+        if (match) {
+          setSelectedItem(match);
+        }
+      }
     };
 
     const handleFocusChange = (e: Event) => {
@@ -143,10 +153,11 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
   }, [closeList, isListVisible]);
 
   useEffect(() => {
-    const referenceField = templateData.labelField ?? templateData.valueField;
+    const isObject = selectedItem?.template !== null && typeof selectedItem?.template === 'object';
+    const referenceField = isObject ? (templateData.labelField ?? 'label') : null;
     const val = referenceField ? selectedItem?.template[referenceField] : selectedItem?.template;
     inputRef.current!.value = val ?? '';
-  }, [selectedItem, templateData.labelField, templateData.valueField]);
+  }, [selectedItem, templateData.labelField]);
 
   useEffect(() => {
     if (labelRef.current && inputRef.current && listRef.current) {
@@ -272,9 +283,10 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
   const asyncFiltering = !!widget.on?.filter;
+  const showErrors = isTouched && errors && errors.length > 0;
 
   return (
-    <div className="gui-dropdown" style={{ flex: templateData.size }}>
+    <div className="gui-dropdown gui-field" style={{ flex: templateData.size }}>
       <gui-label
         ref={labelRef}
         uid={uid}
@@ -286,7 +298,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         native={false}
       ></gui-label>
 
-      <div className="gui-widget">
+      <div className="gui-widget" aria-expanded={isListVisible}>
         <input
           ref={inputRef}
           type="text"
@@ -297,6 +309,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
           disabled={isDisabled}
           readOnly={isReadOnly}
           placeholder={templateData.placeholder ?? ''}
+          autoComplete={templateData.autocomplete ?? undefined}
           onKeyDown={handleInputKeyDown}
           onInput={handleInputFilter}
           onFocus={handleInputFocus}
@@ -304,6 +317,11 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
           aria-labelledby={templateData.label ? `${uid}_label` : undefined}
           aria-describedby={templateData.hint ? `${uid}_hint` : undefined}
         />
+        <span className="gui-dropdown__arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
+            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
+          </svg>
+        </span>
 
         <gui-list
           ref={listRef}
@@ -327,9 +345,12 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
             const isSelected = value === item.value;
             const isFocused = focusedIndex === absoluteIndex;
 
-            const template = templateData.labelField && !templateData.itemRenderer
-              ? item.template[templateData.labelField]
-              : item.template;
+            const labelField = templateData.labelField ?? 'label';
+            const isObject = item.template !== null && typeof item.template === 'object';
+            const template =
+              isObject && labelField && !templateData.itemRenderer
+                ? item.template[labelField]
+                : item.template;
 
             return (
               <div
@@ -356,7 +377,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
         </gui-list>
       </div>
 
-      <gui-errors errors={errors} touched={isTouched}></gui-errors>
+      {showErrors && <gui-errors uid={uid} errors={errors} touched={isTouched}></gui-errors>}
     </div>
   );
 }

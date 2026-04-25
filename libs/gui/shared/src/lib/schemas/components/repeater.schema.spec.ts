@@ -230,6 +230,44 @@ describe('Repeater schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate an array validator with required and minItems', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'items',
+            kind: 'input',
+            type: 'repeater',
+            props: {
+              template: {
+                uid: 'tpl-1',
+                kind: 'layout',
+                type: 'flex',
+                children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
+              },
+            },
+            validator: {
+              type: 'array',
+              required: true,
+              minItems: 1,
+              messages: {
+                required: 'At least one item is required',
+                minItems: { key: 'validation.items.minItems', default: 'Add at least one item' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for limit', () => {
       const formDef = golemForm().create({

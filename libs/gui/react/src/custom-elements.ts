@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  GuiButton,
   GuiCalendar,
   GuiCheckbox,
   GuiCurrency,
@@ -8,6 +9,7 @@ import {
   GuiLabel,
   GuiList,
   GuiMarkdown,
+  GuiMarkdownText,
   GuiNumber,
   GuiPassword,
   GuiRadiogroup,
@@ -23,6 +25,8 @@ declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
+      'gui-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiButton>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCalendar>;
       'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
@@ -43,6 +47,9 @@ declare module 'react' {
 
       'gui-markdown': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiMarkdown>;
+
+      'gui-markdown-text': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiMarkdownText>;
 
       'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiNumber>;

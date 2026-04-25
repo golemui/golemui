@@ -5,7 +5,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { toISODateString } from '../utils/date';
+import { mergeDateRanges, toISODateString } from '../utils/date';
 import { createIntersectionObserver } from './tabs';
 import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
 
@@ -78,6 +78,11 @@ export class GuiRangeDateInput extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override updated() {
     this.setupObservers();
   }
@@ -85,7 +90,7 @@ export class GuiRangeDateInput extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.disconnectObservers();
-    document.removeEventListener('click', this.handleDocumentClick);
+    this.removeOutsideListeners();
   }
 
   override render() {
@@ -119,7 +124,7 @@ export class GuiRangeDateInput extends LitElement {
 
       <div class="gui-widget">
         <div class="gui-range-date-input ${this.icon ? 'gui-range-date-input--icon' : ''}" role="group" aria-label=${this.label ?? 'Date range input'}>
-          ${this.icon ? html`<span class=${classMap(iconClassMap)}></span>` : nothing}
+          ${this.icon ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>` : nothing}
           ${pills.length > 0
             ? html`<div class=${classMap({
                 'gui-range-date-input__pills-wrapper': true,
@@ -262,6 +267,7 @@ export class GuiRangeDateInput extends LitElement {
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readOnly}
+          autocomplete="off"
           .value=${live(val)}
           @keydown=${this.handleKeyDown}
           @keyup=${(e: KeyboardEvent) => this.handleKeyUp(e, group, type)}
@@ -295,23 +301,33 @@ export class GuiRangeDateInput extends LitElement {
     this._showPillsList = !this._showPillsList;
     if (this._showPillsList) {
       requestAnimationFrame(() => {
-        document.addEventListener('click', this.handleDocumentClick);
+        document.addEventListener('pointerdown', this.handleOutsideInteraction);
+        document.addEventListener('focusin', this.handleOutsideInteraction);
+        const firstPill = this.querySelector<HTMLElement>(
+          '.gui-range-date-input__pills-dropdown .gui-range-date-input__pill',
+        );
+        firstPill?.focus();
       });
     } else {
-      document.removeEventListener('click', this.handleDocumentClick);
+      this.removeOutsideListeners();
     }
   }
 
-  private handleDocumentClick = (e: MouseEvent) => {
+  private removeOutsideListeners() {
+    document.removeEventListener('pointerdown', this.handleOutsideInteraction);
+    document.removeEventListener('focusin', this.handleOutsideInteraction);
+  }
+
+  private handleOutsideInteraction = (e: Event) => {
     const compact = this.querySelector('.gui-range-date-input__pills-compact');
     const dropdown = this.querySelector('.gui-range-date-input__pills-dropdown');
-    const target = e.target as Node;
+    const target = e.composedPath()[0] as Node;
     if (
-      compact && !compact.contains(target) &&
-      dropdown && !dropdown.contains(target)
+      !compact?.contains(target) &&
+      !dropdown?.contains(target)
     ) {
       this._showPillsList = false;
-      document.removeEventListener('click', this.handleDocumentClick);
+      this.removeOutsideListeners();
     }
   };
 
@@ -332,7 +348,7 @@ export class GuiRangeDateInput extends LitElement {
 
     if (this._showPillsList && sorted.length === 0) {
       this._showPillsList = false;
-      document.removeEventListener('click', this.handleDocumentClick);
+      this.removeOutsideListeners();
     }
 
     // Focus next pill or first input
@@ -360,6 +376,7 @@ export class GuiRangeDateInput extends LitElement {
   private handlePillKeydown(e: KeyboardEvent, index: number) {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
+      e.stopPropagation();
       this.removePill(index);
       return;
     }
@@ -650,10 +667,7 @@ export class GuiRangeDateInput extends LitElement {
     const currentRanges = this.value ? [...this.value] : [];
     currentRanges.push(newRange);
 
-    // Sort by chronological order
-    this.value = currentRanges.sort(
-      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-    );
+    this.value = mergeDateRanges(currentRanges);
 
     // Clear the inputs
     this._startDate = { day: '', month: '', year: '' };

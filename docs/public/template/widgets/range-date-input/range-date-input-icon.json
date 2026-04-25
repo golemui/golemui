@@ -1,0 +1,14 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "rangeDateInput",
+      "path": "dateRanges",
+      "label": "Date Ranges",
+      "props": {
+        "icon": "calendar_month"
+      }
+    }
+  ]
+}

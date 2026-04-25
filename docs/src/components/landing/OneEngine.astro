@@ -44,16 +44,26 @@ export const jsonDSL = `const authForm = golemForm().create({
 <section class="one-engine">
   <div class="container">
     <div class="content">
+      <span class="section-label">Architecture</span>
       <h2>One <span class="gradient-text">Engine</span>.<br />Infinite <span class="gradient-text">Composability</span>.</h2>
       <p>
-        GolemUI is built on a “Core-first” philosophy, allowing you to plug in your own implementation for every part of the library.
+        GolemUI is built on a "Core-first" philosophy, allowing you to plug in your own implementation for every part of the library.
       </p>
     </div>
     <div class="visual">
       <ul class="visual-list">
-        <li><strong class="gradient-text">Bring Your Own Validation:</strong> Seamlessly integrate <a href="https://zod.dev/" target="_blank">Zod</a>, <a href="https://valibot.dev/" target="_blank">Valibot</a>, or any library compliant with the <a href="https://standardschema.dev/" target="_blank">@standard-schema/spec</a>.</li>
-        <li><strong class="gradient-text">Bring Your Own Components:</strong> Extend our existing UI toolkit or build your own with minimal boilerplate. Simply map your components to one of our four core widget behaviors: <a href="components-reference/input-fields/overview/">input</a>, <a href="components-reference/action-fields/overview/">action</a>, <a href="components-reference/layout-fields/overview/">layout</a>, or <a href="components-reference/display-fields/overview/">display</a>.</li>
-        <li><strong class="gradient-text">Bring Your Own i18n:</strong> GolemUI is localization-agnostic by design. Implement our Translator interfaces to bridge your preferred library effortlessly.</li>
+        <li>
+          <strong class="gradient-text">Bring Your Own Validation:</strong>
+          <span>Seamlessly integrate <a href="https://zod.dev/" target="_blank">Zod</a>, <a href="https://valibot.dev/" target="_blank">Valibot</a>, or any library compliant with the <a href="https://standardschema.dev/" target="_blank">@standard-schema/spec</a>.</span>
+        </li>
+        <li>
+          <strong class="gradient-text">Bring Your Own Widgets:</strong>
+          <span>Extend our existing UI toolkit or build your own with minimal boilerplate. Simply map your widgets to one of our four core widget behaviors: <a href="widgets-reference/input-fields/overview/">input</a>, <a href="widgets-reference/action-fields/overview/">action</a>, <a href="widgets-reference/layout-fields/overview/">layout</a>, or <a href="widgets-reference/display-fields/overview/">display</a>.</span>
+        </li>
+        <li>
+          <strong class="gradient-text">Bring Your Own i18n:</strong>
+          <span>GolemUI is localization-agnostic by design. Implement our Translator interfaces to bridge your preferred library effortlessly.</span>
+        </li>
       </ul>
     </div>
   </div>
@@ -81,6 +91,11 @@ export const jsonDSL = `const authForm = golemForm().create({
 <style lang="scss">
   a {
     color: var(--accent-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .visual {
@@ -88,18 +103,45 @@ export const jsonDSL = `const authForm = golemForm().create({
   }
 
   .visual-list {
-    font-size: 1.5rem;
-    margin: 2rem 0;
+    font-size: 1.125rem;
+    margin: 1.5rem 0;
+    padding-left: 0;
+    list-style: none;
 
     li {
-      padding: 1rem 0;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border-color);
+      line-height: 1.7;
+      color: var(--text-muted);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      strong {
+        display: block;
+        font-size: 1.25rem;
+        margin-bottom: 0.375rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+
+      li strong {
+        font-size: 1.375rem;
+      }
     }
   }
 
   .one-engine {
-    padding: 4rem 0;
+    padding: 6rem 0;
     background: var(--bg-color);
     overflow: hidden;
+
+    @media (min-width: 768px) {
+      padding: 4rem 0;
+    }
   }
 
   .container {
@@ -113,66 +155,56 @@ export const jsonDSL = `const authForm = golemForm().create({
 
     @media (min-width: 50rem) {
       flex-direction: row;
-      gap: 48px;
+      gap: 3rem;
     }
   }
 
   h2 {
-    font-size: 5rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
+    line-height: 1.08;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
 
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
+    @media (min-width: 768px) {
+      font-size: 4.5rem;
     }
   }
+
   h3 {
-    font-size: 4rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    margin-top: 1rem;
+    line-height: 1.2;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
 
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
+    @media (min-width: 768px) {
+      font-size: 3.5rem;
     }
   }
 
-  p {
-    font-size: 1.25rem;
+  .content > p,
+  .your-strategy > p {
+    font-size: 1.125rem;
     color: var(--text-muted);
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   .your-strategy {
     flex: 4;
   }
+
   .configuration {
     flex: 5;
     overflow: hidden;
-    border-radius: 20px;
+    border-radius: 16px;
     background-color: transparent;
-  }
-
-  .features {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    .feature {
-      h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-color);
-      }
-
-      p {
-        font-size: 1rem;
-        margin: 0;
-      }
-    }
+    border: 1px solid var(--border-color);
   }
 
   iframe {

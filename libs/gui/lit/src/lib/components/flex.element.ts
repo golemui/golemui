@@ -25,17 +25,6 @@ export class FlexElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.classList.add('gui-flex');
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -48,6 +37,17 @@ export class FlexElement extends LitElement implements Core.WithWidget {
     }
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-flex', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
+  }
+
   override render() {
     const classes = {
       'gui-flex__widget': true,
@@ -55,11 +55,16 @@ export class FlexElement extends LitElement implements Core.WithWidget {
       'gui-flex__widget--row-reverse': this.adapter.templateData.direction === 'row-reverse',
       'gui-flex__widget--column': !this.adapter.templateData.direction || this.adapter.templateData.direction === 'column',
       'gui-flex__widget--column-reverse': this.adapter.templateData.direction === 'column-reverse',
-      'gui-flex__widget--align-start': this.adapter.templateData.align === 'start',
+      'gui-flex__widget--justify-center': this.adapter.templateData.justify === 'center',
+      'gui-flex__widget--justify-start': this.adapter.templateData.justify === 'start',
+      'gui-flex__widget--justify-end': this.adapter.templateData.justify === 'end',
+      'gui-flex__widget--justify-stretch': !this.adapter.templateData.justify || this.adapter.templateData.justify === 'stretch',
+      'gui-flex__widget--align-start': !this.adapter.templateData.align || this.adapter.templateData.align === 'start',
       'gui-flex__widget--align-end': this.adapter.templateData.align === 'end',
       'gui-flex__widget--align-center': this.adapter.templateData.align === 'center',
       'gui-flex__widget--align-space-between': this.adapter.templateData.align === 'space-between',
       'gui-flex__widget--align-space-around': this.adapter.templateData.align === 'space-around',
+      'gui-flex__widget--align-space-evenly': this.adapter.templateData.align === 'space-evenly',
     };
 
     return html`

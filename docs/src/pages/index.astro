@@ -144,13 +144,13 @@ import CTA from '../components/landing/CTA.astro';
     --ec-frm-edBg: transparent;
 
     --bg-color: #ffffff;
-    --text-color: #1a1a1a;
-    --text-muted: #666666;
+    --bg-surface: #f8fafc;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
     --secondary-color: #a855f7;
     --accent-color: #3b82f6;
     --accent-color-rgb: 59, 130, 246;
-    --border-color: #e5e5e5;
-    --bg-surface: #f5f5f5;
+    --border-color: #e2e8f0;
 
     /* Colors (dark mode) */
     --sl-color-white: hsl(0, 0%, 100%); /* “white” */
@@ -349,48 +349,69 @@ import CTA from '../components/landing/CTA.astro';
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #a855f7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   html.dark {
-    --bg-color: #23262f;
-    --text-color: #ffffff;
-    --text-muted: #fff;
+    --bg-color: #0a0c10;
+    --bg-surface: #111318;
+    --text-color: #f1f5f9;
+    --text-muted: #94a3b8;
     --accent-color: #60a5fa;
     --accent-color-rgb: 96, 165, 250;
-    --border-color: #3f3f46;
-    --bg-surface: #2d3039;
+    --border-color: #1e293b;
+  }
+
+  /* Section label utility */
+  .section-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    background: rgba(var(--accent-color-rgb), 0.08);
+    padding: 0.375rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
   }
 
   body {
     margin: 0;
     font-family:
       'Inter',
-      'Fira Code',
       system-ui,
       -apple-system,
+      BlinkMacSystemFont,
       sans-serif;
     background: var(--bg-color);
     color: var(--text-color);
     transition:
       background-color 0.3s ease,
       color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 0.25rem;
+    padding: 0 1rem;
 
     @media (min-width: 361px) {
       padding: 0 1.5rem;
     }
+
+    @media (min-width: 768px) {
+      padding: 0 2rem;
+    }
   }
 
   starlight-tabs {
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
   }
 
@@ -408,9 +429,10 @@ import CTA from '../components/landing/CTA.astro';
     left: 0;
     right: 0;
     z-index: 50;
-    background: rgba(var(--bg-color), 0.8);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 
     .container {
       display: flex;
@@ -420,10 +442,11 @@ import CTA from '../components/landing/CTA.astro';
     }
 
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       font-weight: 700;
       text-decoration: none;
       color: var(--text-color);
+      letter-spacing: -0.02em;
 
       .highlight {
         color: var(--accent-color);
@@ -433,12 +456,13 @@ import CTA from '../components/landing/CTA.astro';
     nav {
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 1.75rem;
 
       a {
         color: var(--text-muted);
         text-decoration: none;
         font-weight: 500;
+        font-size: 0.9375rem;
         transition: color 0.2s;
 
         &:hover {
@@ -448,46 +472,61 @@ import CTA from '../components/landing/CTA.astro';
     }
   }
 
+  html.dark .landing-header {
+    background: rgba(10, 12, 16, 0.7);
+    border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+  }
+
   .landing-footer {
-    padding: 4rem 0 2rem;
+    padding: 5rem 0 2.5rem;
     border-top: 1px solid var(--border-color);
     background: var(--bg-surface);
 
     .footer-content {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 3rem;
+      grid-template-columns: 2.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3.5rem;
 
       @media (max-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+
+      @media (max-width: 480px) {
         grid-template-columns: 1fr;
       }
     }
 
     .footer-col {
       h3 {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
         font-weight: 700;
-        margin: 0 0 1rem;
+        margin: 0 0 0.5rem;
+        letter-spacing: -0.02em;
       }
 
       h4 {
-        font-size: 1rem;
+        font-size: 0.8125rem;
         font-weight: 600;
-        margin: 0 0 1rem;
-        color: var(--text-color);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 0 0 1.25rem;
+        color: var(--text-muted);
       }
 
       p {
         color: var(--text-muted);
         line-height: 1.6;
+        font-size: 0.9375rem;
       }
 
       a {
         display: block;
         color: var(--text-muted);
         text-decoration: none;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.625rem;
+        font-size: 0.9375rem;
         transition: color 0.2s;
 
         &:hover {
@@ -499,8 +538,8 @@ import CTA from '../components/landing/CTA.astro';
     .copyright {
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.875rem;
-      padding-top: 2rem;
+      font-size: 0.8125rem;
+      padding-top: 2.5rem;
       border-top: 1px solid var(--border-color);
     }
   }

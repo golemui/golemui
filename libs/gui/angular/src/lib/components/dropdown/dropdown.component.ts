@@ -9,18 +9,13 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { DropdownProps, ListItem } from '@golemui/gui-shared';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
-
-interface GuiListElement extends HTMLElement {
-  focusItemAtIndex(index: number): void;
-  scrollToSelectedIndex(): void;
-}
 
 @Component({
   standalone: true,
@@ -29,7 +24,7 @@ interface GuiListElement extends HTMLElement {
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './dropdown.component.html',
   host: {
-    class: 'gui-dropdown',
+    class: 'gui-dropdown gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -42,8 +37,8 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
   );
   private el = inject(ElementRef);
 
-  @ViewChild('inputRef') inputRef!: ElementRef<HTMLInputElement>;
-  @ViewChild('listRef') listRef!: ElementRef<GuiListElement>;
+  inputRef = viewChild.required<ElementRef>('inputRef');
+  listRef = viewChild.required<ElementRef>('listRef');
 
   protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
 
@@ -76,7 +71,9 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
 
   protected selectedItemValue = computed(() => {
     const data = this.adapter.templateData();
-    const referenceField = data.labelField ?? data.valueField;
+    const isObject = this.selectedItem()?.template !== null && typeof this.selectedItem()?.template === 'object';
+    const referenceField = isObject ? (data.labelField ?? 'label') : null;
+
     return referenceField
       ? this.selectedItem()?.template[referenceField]
       : this.selectedItem()?.template;
@@ -115,8 +112,8 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
     this.isListVisible.set(true);
 
     setTimeout(() => {
-      if (this.listRef?.nativeElement) {
-        this.listRef.nativeElement.scrollToSelectedIndex();
+      if (this.listRef()?.nativeElement) {
+        this.listRef().nativeElement.scrollToSelectedIndex();
       }
     }, 0);
   }
@@ -130,15 +127,15 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
         this.isListVisible.set(true);
 
         setTimeout(() => {
-          if (this.listRef?.nativeElement) {
-            this.listRef.nativeElement.focus();
-            this.listRef.nativeElement.scrollToSelectedIndex();
+          if (this.listRef()?.nativeElement) {
+            this.listRef().nativeElement.focus();
+            this.listRef().nativeElement.scrollToSelectedIndex();
           }
         }, 0);
         break;
       case 'Enter':
         event.preventDefault();
-        if (!this.inputRef.nativeElement.value) {
+        if (!this.inputRef().nativeElement.value) {
           // Field is empty and enter pressed, we clear the selection
           this.adapter.valueChanged(null);
           this.isListVisible.set(false);
@@ -216,8 +213,8 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
     this.isFiltering.set(false);
     this.isListVisible.set(false);
 
-    if (this.listRef?.nativeElement) {
-      this.listRef.nativeElement.focusItemAtIndex(index);
+    if (this.listRef()?.nativeElement) {
+      this.listRef().nativeElement.focusItemAtIndex(index);
     }
   }
 
@@ -229,6 +226,16 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
   protected onUpdateItems(event: Event) {
     const items = (event as CustomEvent).detail;
     this.listItems.set(items ? [...items] : []);
+
+    // Resolve selected item on initial load when a default value is set
+    if (!this.selectedItem() && this.adapter.templateData().value != null) {
+      const match = (items ?? []).find(
+        (item: ListItem<never>) => item.value === this.adapter.templateData().value,
+      );
+      if (match) {
+        this.selectedItem.set(match);
+      }
+    }
   }
 
   protected onRangeChange(event: Event) {

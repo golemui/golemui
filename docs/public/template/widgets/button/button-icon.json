@@ -1,0 +1,13 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "props": {
+        "icon": "save"
+      }
+    }
+  ]
+}

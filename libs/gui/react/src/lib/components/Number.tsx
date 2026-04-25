@@ -23,13 +23,14 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
   const step = templateData.step;
   const minimum = templateData.minimum;
   const maximum = templateData.maximum;
+  const autocomplete = templateData.autocomplete;
   const autoGrow = templateData.autoGrow;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-number" style={{ flex: templateData.size }}>
+    <div className="gui-number gui-field" style={{ flex: templateData.size }}>
       <gui-number
         uid={uid}
         label={label}
@@ -44,6 +45,7 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
         minimum={minimum}
         maximum={maximum}
         autoGrow={autoGrow}
+        autocomplete={autocomplete ?? undefined}
         placeholder={placeholder ?? undefined}
         onInput={handleChange}
         onBlur={onBlur}

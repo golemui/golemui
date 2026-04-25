@@ -40,7 +40,10 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
 
         element.widget =
           indexes.length > 0
-            ? Core.makeRepeaterItemConfig(Core.cloneObject(this.widget), indexes)
+            ? Core.makeRepeaterItemConfig(
+                Core.cloneObject(this.widget as Core.NonFunctionWidget<string>),
+                indexes,
+              )
             : this.widget;
 
         element.id = `host-${this.widget.uid}`;
@@ -48,11 +51,14 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
         this.replaceWith(element);
       } catch (err) {
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
+
+        const code = Core.errorCodes.widgetCouldNotBeLoaded;
         this.dispatchEvent(
           new CustomEvent<Core.FormHealth>('formHealth', {
             detail: {
               status: 'errored',
-              message: `Widget "${this.widget.type}" could not be loaded`,
+              message: `[${code}] Widget "${this.widget.type}" could not be loaded`,
+              code,
             },
             bubbles: true,
             composed: true,

@@ -11,8 +11,8 @@ import { FlexProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './flex.component.html',
   host: {
-    class: 'gui-flex',
-    '[style.flex]': 'this.adapter.templateData().size',
+    class: 'gui-flex gui-field',
+    '[style.flex]': 'this.adapter.templateData().size ?? 1',
   },
 })
 export class FlexComponent implements OnInit, OnDestroy, Core.WithWidget {

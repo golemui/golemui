@@ -1,5 +1,5 @@
-export const checkbox = (): any => ({
-  uid: 'tab4',
+export const checkbox = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -18,6 +18,14 @@ export const checkbox = (): any => ({
       label: 'Disabled checkbox',
       path: 'isDisabled',
       disabled: true,
+      props: {},
+    },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'checkbox',
+      label: 'Readonly checkbox',
+      path: 'isReadonly',
       readonly: true,
       props: {},
     },

@@ -21,6 +21,7 @@ export class GuiSelect extends LitElement {
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) icon: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: String }) options: Option[] = [];
   @property({ type: String }) placeholder: string | undefined = undefined;
   @property({ type: String }) labelField: string | undefined = undefined;
@@ -47,6 +48,11 @@ export class GuiSelect extends LitElement {
     return this;
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
+  }
+
   override render() {
     super.render();
 
@@ -61,6 +67,7 @@ export class GuiSelect extends LitElement {
       value: this.value,
       hint: this.hint,
       icon: this.icon,
+      autocomplete: this.autocomplete,
       options: this.options,
       placeholder: this.placeholder,
       labelField: this.labelField,
@@ -108,11 +115,13 @@ export class GuiSelect extends LitElement {
           class=${classMap(selectIcon.widgetClasses)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled || templateData.readonly}
+          autocomplete=${this.autocomplete || nothing}
           @change=${this.valueChanged}
           @blur=${this.onBlur}
         >
           ${options}
         </select>
+        <span class="gui-select__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
         ${selectIcon.html}
       </div>
 

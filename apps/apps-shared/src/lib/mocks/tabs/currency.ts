@@ -1,5 +1,5 @@
-export const currency = (): any => ({
-  uid: 'tab13',
+export const currency = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -8,6 +8,9 @@ export const currency = (): any => ({
       kind: 'input',
       type: 'currency',
       path: 'currency',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',
@@ -43,7 +46,7 @@ export const currency = (): any => ({
       type: 'currency',
       path: 'currencyWithIcon',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter price in USD',
       },
@@ -55,7 +58,7 @@ export const currency = (): any => ({
       path: 'currencyIconRightWithEUR',
       props: {
         currency: 'EUR',
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter price in EUR',
       },

@@ -28,6 +28,9 @@
     "nextMonthAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "removePillAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "dayFormatProp": {
       "enum": ["numeric", "2-digit"]
     },
@@ -74,6 +77,9 @@
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
     },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
     "props": {
       "type": "object",
       "properties": {
@@ -91,6 +97,9 @@
         },
         "nextMonthAriaLabel": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
         },
         "dayFormat": {
           "$ref": "#/$defs/dayFormatProp"
@@ -127,6 +136,9 @@
         "^nextMonthAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
         },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
         "^dayFormat\\.[^.]+$": {
           "$ref": "#/$defs/dayFormatProp"
         },
@@ -160,5 +172,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path"]
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
 }

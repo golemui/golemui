@@ -23,17 +23,6 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.classList.add('gui-textinput');
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -44,6 +33,17 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
     } else {
       this.style.removeProperty('flex');
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-textinput', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
   }
 
   override render() {
@@ -62,6 +62,7 @@ export class TextinputElement extends LitElement implements Core.WithWidget {
         .value=${this.adapter.templateData.value}
         .icon=${this.adapter.templateData.icon}
         .placeholder=${this.adapter.templateData.placeholder}
+        .autocomplete=${this.adapter.templateData.autocomplete}
         @input=${this.valueChanged}
         @blur=${() => this.adapter.onBlur()}
       ></gui-textinput>

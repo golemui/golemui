@@ -5,8 +5,8 @@ import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
 import { Dependencies, MarkdownProps } from '@golemui/gui-shared';
 import { styleMap } from 'lit-html/directives/style-map.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import './markdown-text';
 
 @customElement('gui-markdown')
 export class GuiMarkdown extends LitElement {
@@ -23,6 +23,7 @@ export class GuiMarkdown extends LitElement {
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: Array }) tools: string[] | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: String, attribute: 'countermode' }) counterMode:
     | 'remaining'
     | 'current'
@@ -70,6 +71,11 @@ export class GuiMarkdown extends LitElement {
 
   override createRenderRoot() {
     return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-field');
   }
 
   override updated() {
@@ -182,6 +188,7 @@ export class GuiMarkdown extends LitElement {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${ifDefined(templateData.placeholder)}
+          autocomplete=${this.autocomplete || nothing}
           .value=${this.value || ''}
           @input=${this.valueChanged}
           @keyup=${this.detectFormats}
@@ -192,7 +199,7 @@ export class GuiMarkdown extends LitElement {
         ${this.splitViewActive
           ? html`
               <section data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)} class="gui-markdown__preview">
-                ${unsafeHTML(this.dependencies?.markdown?.parse(this.value || '') || '')}
+                <gui-markdown-text .md=${this.value || ''} .dependencies=${this.dependencies}></gui-markdown-text>
               </section>
             `
           : nothing}

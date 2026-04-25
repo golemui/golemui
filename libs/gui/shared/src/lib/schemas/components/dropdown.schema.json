@@ -31,7 +31,8 @@
             "type": ["string", "number", "boolean", "null"]
           }
         },
-        "required": ["template", "value"]
+        "required": ["template", "value"],
+        "additionalProperties": false
       }
     },
     "labelFieldProp": {
@@ -57,6 +58,9 @@
     },
     "inputDebounceProp": {
       "type": "number"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -85,6 +89,9 @@
     },
     "on": {
       "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
     },
     "props": {
       "type": "object",
@@ -119,6 +126,9 @@
         },
         "inputDebounce": {
           "$ref": "#/$defs/inputDebounceProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
@@ -151,6 +161,9 @@
         },
         "^inputDebounce\\.[^.]+$": {
           "$ref": "#/$defs/inputDebounceProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false
@@ -167,5 +180,6 @@
       "$ref": "#/$defs/readonlyDef"
     }
   },
-  "required": ["kind", "type", "path", "props"]
+  "required": ["kind", "type", "path", "props"],
+  "unevaluatedProperties": false
 }

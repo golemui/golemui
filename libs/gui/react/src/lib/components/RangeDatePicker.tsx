@@ -130,7 +130,7 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
       if (!isCalendarOpen) setIsCalendarOpen(true);
     } else if (isPillCountClick) {
       if (isCalendarOpen) setIsCalendarOpen(false);
-    }  else {
+    } else {
       setIsCalendarOpen((prev) => !prev);
     }
   };
@@ -159,7 +159,12 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div ref={containerRef} className="gui-range-date-picker" style={{ flex: templateData.size }} onBlur={onFocusOut}>
+    <div
+      ref={containerRef}
+      className="gui-range-date-picker gui-field"
+      style={{ flex: templateData.size }}
+      onBlur={onFocusOut}
+    >
       {templateData.label && (
         <label className="gui-label" htmlFor={uid} data-cy={`${uid}_label`}>
           {templateData.label + (isRequired ? ' *' : '')}
@@ -201,6 +206,11 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
           startDateAriaLabel={startDateAriaLabel}
           endDateAriaLabel={endDateAriaLabel}
         />
+        <span className="gui-range-date-picker__arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
+            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
+          </svg>
+        </span>
 
         {isCalendarOpen && (
           <gui-range-calendar
@@ -225,6 +235,7 @@ export function RangeDatePicker(widgetInstance: Core.WithWidget) {
             disabledRanges={disabledRanges}
             numberOfMonths={numberOfMonths}
             localeId={lang}
+            hidePills={true}
           />
         )}
       </div>

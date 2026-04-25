@@ -20,6 +20,7 @@ export class GuiNumber extends LitElement {
 
   @property({ type: Number }) step: number | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
+  @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: Number }) minimum: number | undefined = undefined;
   @property({ type: Number }) maximum: number | undefined = undefined;
   @property({ type: Number }) autoGrow: boolean | undefined = false;
@@ -44,6 +45,7 @@ export class GuiNumber extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.classList.add('gui-field');
   }
 
   override render() {
@@ -61,6 +63,7 @@ export class GuiNumber extends LitElement {
         inputElement.style.width = '0px';
         const newWidth = Math.max(23, inputElement.scrollWidth);
         inputStyles.width = `${newWidth}px`;
+        inputStyles.maxWidth = `${newWidth}px`;
         inputElement.style.width = '';
       } else {
         inputStyles.width = '47px';
@@ -79,6 +82,7 @@ export class GuiNumber extends LitElement {
       value: this.value,
       step: this.step,
       placeholder: this.placeholder,
+      autocomplete: this.autocomplete,
     };
 
     return html`
@@ -107,6 +111,7 @@ export class GuiNumber extends LitElement {
           ?readonly=${this.readOnly}
           step=${typeof this.step === 'number' ? this.step : nothing}
           placeholder=${this.placeholder || nothing}
+          autocomplete=${this.autocomplete || nothing}
           @input=${this.valueChanged}
           @keydown=${this.keyDown}
           @blur=${this.onBlur}

@@ -1,24 +1,11 @@
 @let templateData = adapter.templateData();
-@let iconPosition = templateData.iconPosition || 'left';
 
-<div class="gui-widget">
-  <button
-    type="button"
-    [id]="widget.uid"
-    (click)="onClick()"
-    [disabled]="templateData.disabled"
-    [attr.data-cy]="widget.uid + '_button'"
-    [class.gui-button-with-icon]="!!templateData.icon"
-    [class]="'gui-button-icon-' + iconPosition"
-  >
-    @if (templateData.icon && iconPosition === 'left') {
-      <span class="gui-button-icon" [ngClass]="templateData.icon"></span>
-    }
-    @if (templateData.label) {
-      <span>{{ templateData.label }}</span>
-    }
-    @if (templateData.icon && iconPosition === 'right') {
-      <span class="gui-button-icon" [ngClass]="templateData.icon"></span>
-    }
-  </button>
-</div>
+<gui-button
+  [uid]="widget.uid"
+  [label]="templateData.label"
+  [disabled]="templateData.disabled"
+  [variant]="templateData.variant"
+  [icon]="templateData.icon"
+  [iconPosition]="templateData.iconPosition"
+  (click)="onClick()"
+></gui-button>

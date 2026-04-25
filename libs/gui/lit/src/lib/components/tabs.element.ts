@@ -41,21 +41,6 @@ export class TabsElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.classList.add('gui-tabs');
-    const props: TabsProps = this.widget.props as TabsProps;
-    this.adapter.context = this.formContext;
-    this.adapter.init(this.widget);
-    this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
-
-    this.subscriptions.push(
-      this.adapter.templateDataChanged$.subscribe(() => {
-        this.requestUpdate();
-      }),
-    );
-  }
-
   override updated(changedProperties: any) {
     super.updated(changedProperties);
 
@@ -66,6 +51,21 @@ export class TabsElement extends LitElement implements Core.WithWidget {
     } else {
       this.style.removeProperty('flex');
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-tabs', 'gui-field');
+    const props: TabsProps = this.widget.props as TabsProps;
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+    this.activeTab = props.defaultOpen ?? props.tabs[0].uid;
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => {
+        this.requestUpdate();
+      }),
+    );
   }
 
   protected override firstUpdated(_changedProperties: PropertyValues) {
@@ -127,7 +127,7 @@ export class TabsElement extends LitElement implements Core.WithWidget {
                 `,
               )
             : nothing}
-          <li role="presentation" id="end-sentinel" class="gui-sentinel"></li>
+          <li role="presentation" id="end-sentinel" class="gui-sentinel gui-sentinel__end"></li>
         </ul>
       </nav>
       ${repeat(

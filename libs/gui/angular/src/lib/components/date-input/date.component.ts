@@ -11,7 +11,7 @@ import { DatePickerProps } from '@golemui/gui-shared';
   providers: [Angular.InputWidgetAdapter],
   templateUrl: './date.component.html',
   host: {
-    class: 'gui-date',
+    class: 'gui-date gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -32,6 +32,7 @@
 
 // Layout Widgets
 @use 'flex';
+@use 'grid';
 @use 'tabs';
 @use 'accordion';
 
@@ -40,6 +41,7 @@
 
 // Display Widgets
 @use 'alert';
+@use 'markdown-text';
 
 // Validators
 @use 'validator';

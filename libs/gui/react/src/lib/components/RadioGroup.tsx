@@ -22,12 +22,13 @@ export function RadioGroup(widgetInstance: Core.WithWidget) {
   const options = templateData.options;
   const labelField = templateData.labelField;
   const valueField = templateData.valueField;
+  const direction = templateData.direction;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-radiogroup" style={{ flex: templateData.size }}>
+    <div className="gui-radiogroup gui-field" style={{ flex: templateData.size }}>
       <gui-radiogroup
         uid={uid}
         label={label}
@@ -41,6 +42,7 @@ export function RadioGroup(widgetInstance: Core.WithWidget) {
         options={options}
         labelField={labelField}
         valueField={valueField}
+        direction={direction}
         onChange={handleChange}
         onBlur={onBlur}
       ></gui-radiogroup>

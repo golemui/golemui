@@ -14,6 +14,7 @@ import { mount } from 'cypress-ct-lit';
 // https://on.cypress.io/configuration
 // ***********************************************************
 // Import commands.ts using ES2015 syntax:
+import { memoryCleaner } from '@golemui/ui-testing';
 import './commands';
 
 // add component testing only related command here, such as mount
@@ -28,3 +29,7 @@ declare global {
 }
 
 Cypress.Commands.add('mount', mount);
+
+afterEach(() => {
+  memoryCleaner();
+});

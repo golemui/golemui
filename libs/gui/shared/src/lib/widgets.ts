@@ -19,21 +19,20 @@ export const inputWidgets = [
   'textinput',
   'toggle',
 ] as const;
-export const layoutWidgets = ['accordion', 'flex', 'tabs'] as const;
-export const displayWidgets = ['alert', 'renderer'] as const;
+export const layoutWidgets = ['accordion', 'flex', 'grid', 'tabs'] as const;
+export const displayWidgets = ['alert', 'markdownText', 'renderer'] as const;
 export const actionWidgets = ['button'] as const;
 
-// TODO: rename to golem (search other vanilla named things accross the repo)
-export const vanillaWidgets = [
+export const golemWidgets = [
   ...inputWidgets,
   ...layoutWidgets,
   ...displayWidgets,
   ...actionWidgets,
 ];
 
-export type VanillaInputWidget = (typeof inputWidgets)[number];
-export type VanillaLayoutWidget = (typeof layoutWidgets)[number];
-export type VanillaDisplayWidget = (typeof displayWidgets)[number];
-export type VanillaActionWidget = (typeof actionWidgets)[number];
+export type GolemInputWidget = (typeof inputWidgets)[number];
+export type GolemLayoutWidget = (typeof layoutWidgets)[number];
+export type GolemDisplayWidget = (typeof displayWidgets)[number];
+export type GolemActionWidget = (typeof actionWidgets)[number];
 
-export type VanillaWidget = (typeof vanillaWidgets)[number];
+export type GolemWidget = (typeof golemWidgets)[number];

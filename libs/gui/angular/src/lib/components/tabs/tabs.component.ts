@@ -22,7 +22,7 @@ import { TabsProps } from '@golemui/gui-shared';
   providers: [Angular.LayoutWidgetAdapter],
   templateUrl: './tabs.component.html',
   host: {
-    class: 'gui-tabs',
+    class: 'gui-tabs gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })

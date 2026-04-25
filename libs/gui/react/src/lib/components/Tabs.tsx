@@ -152,7 +152,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
   }, [children, activeTab, widget]);
 
   return (
-    <div className="gui-tabs" style={{ flex: templateData.size }}>
+    <div className="gui-tabs gui-field" style={{ flex: templateData.size }}>
       <nav
         className={cn({
           'gui-widget': true,
@@ -163,9 +163,9 @@ export function Tabs(widgetInstance: Core.WithWidget) {
         id={uid}
       >
         <ul role="tablist">
-          <li role="presentation" ref={startSentinelRef} className="gui-sentinel"></li>
+          <li role="presentation" ref={startSentinelRef} className="gui-sentinel gui-sentinel__start"></li>
           {renderTabs()}
-          <li role="presentation" ref={endSentinelRef} className="gui-sentinel"></li>
+          <li role="presentation" ref={endSentinelRef} className="gui-sentinel gui-sentinel__end"></li>
         </ul>
       </nav>
       {renderWidgets()}

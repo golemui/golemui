@@ -1,5 +1,5 @@
-export const alert = (): any => ({
-  uid: 'tab1',
+export const alert = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [

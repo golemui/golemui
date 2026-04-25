@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AngularItemRenderer } from '@golemui/angular';
-import * as Vanilla from '@golemui/gui-angular';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import * as GuiAngular from '@golemui/gui-angular';
+import { Dependencies } from '@golemui/gui-shared';
+import * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
+import snarkdown from 'snarkdown';
 import { APP_CONFIG } from '../../../environments/environment.model';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
-import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
-import { Dependencies } from '@golemui/gui-shared';
-import snarkdown from 'snarkdown';
+import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
 const mock = AppsShared.kitchenSink;
 
 @Component({
-  imports: [CommonModule, Vanilla.FormComponent],
+  imports: [CommonModule, GuiAngular.FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
@@ -34,18 +34,19 @@ export class AppFormPage {
     }));
   protected formDef = mock.form;
   protected formData = mock.data;
+  protected formMeta = mock.meta || {};
   protected deps: Dependencies = {
     markdown: {
       parse: (md: string) => snarkdown(md),
     },
   };
 
-  protected middlewares = [AppsShared.loggerMiddleware];
+  protected middlewares = [Core.devToolsMiddleware()];
   protected customWidgetLoaders = {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
   };
-  protected validators: ValidatorsVanilla.CustomValidatorSchemas = {
+  protected validators: GuiValidators.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
   protected itemRenderers: Record<string, AngularItemRenderer<any>> = {

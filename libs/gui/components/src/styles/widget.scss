@@ -1,19 +1,29 @@
 .gui-label {
+  grid-row: 1;
+  align-self: end;
   display: flex;
   flex-direction: column;
-  gap: var(--gui-space-2);
-  margin-bottom: var(--gui-space-2);
+  gap: var(--gui-space-1);
+  margin-bottom: var(--gui-space-1);
   font-weight: 500;
   color: var(--gui-text-default);
+  width: 0;
+  min-width: 100%;
+}
+
+.gui-field {
+  min-width: 0;
 }
 
 .gui-widget {
+  grid-row: 2;
   position: relative;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   column-gap: var(--gui-space-2);
   row-gap: var(--gui-space-2);
-  flex: 1;
+  min-width: 0;
 
   &.gui-widget--horizontal {
     flex-direction: row;
@@ -38,13 +48,12 @@
   input,
   select,
   textarea,
-  gui-list,
   .gui-date-input,
-  .gui-range-date-input,
-  .gui-calendar-input {
+  .gui-range-date-input {
     font-family: var(--gui-font-family);
     font-size: var(--gui-font-sm);
-    padding: var(--gui-space-3);
+    padding: 0 0.75rem;
+    height: 40px;
     border-radius: var(--gui-radius-md);
     background: var(--gui-bg-surface);
     border: 1px solid var(--gui-border-default);
@@ -84,7 +93,7 @@
     position: absolute;
     width: 40px;
     height: 40px;
-    color: var(--gui-text-secondary);
+    color: var(--gui-text-default);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,12 +102,14 @@
   &-hint {
     font-size: var(--gui-font-xs);
     color: var(--gui-text-muted);
+    width: 0;
+    min-width: 100%;
   }
 }
 
 .gui-widget .gui-range-date-input {
   padding: 0;
-  min-height: 41px;
+  min-height: 40px;
   overflow: hidden;
 }
 

@@ -1,3 +1,54 @@
+/* ========================================================
+   GolemUI Theme — Aligned with Homepage Palette
+   ======================================================== */
+
+/* Dark mode (Starlight default, dark-first) */
+:root {
+  --sl-color-white: hsl(0, 0%, 100%);
+  --sl-color-gray-1: hsl(210, 40%, 96%);
+  --sl-color-gray-2: hsl(215, 16%, 77%);
+  --sl-color-gray-3: hsl(215, 14%, 55%);
+  --sl-color-gray-4: hsl(218, 15%, 35%);
+  --sl-color-gray-5: hsl(217, 20%, 17%);
+  --sl-color-gray-6: hsl(223, 17%, 8%);
+  --sl-color-black: hsl(220, 23%, 5%);
+
+  --sl-hue-blue: 217;
+  --sl-color-blue-low: hsl(217, 54%, 20%);
+  --sl-color-blue: hsl(217, 91%, 60%);
+  --sl-color-blue-high: hsl(217, 91%, 87%);
+
+  --sl-color-accent-low: hsl(217, 50%, 18%);
+  --sl-color-accent: hsl(217, 91%, 60%);
+  --sl-color-accent-high: hsl(213, 94%, 68%);
+}
+
+/* Light mode */
+:root[data-theme='light'],
+[data-theme='light'] ::backdrop {
+  --sl-color-white: hsl(222, 47%, 11%);
+  --sl-color-gray-1: hsl(222, 35%, 16%);
+  --sl-color-gray-2: hsl(218, 20%, 25%);
+  --sl-color-gray-3: hsl(217, 14%, 38%);
+  --sl-color-gray-4: hsl(215, 16%, 47%);
+  --sl-color-gray-5: hsl(214, 20%, 77%);
+  --sl-color-gray-6: hsl(214, 32%, 91%);
+  --sl-color-gray-7: hsl(210, 40%, 98%);
+  --sl-color-black: hsl(0, 0%, 100%);
+
+  --sl-color-blue-high: hsl(217, 80%, 30%);
+  --sl-color-blue: hsl(217, 91%, 60%);
+  --sl-color-blue-low: hsl(217, 88%, 90%);
+
+  --sl-color-accent-high: hsl(217, 80%, 30%);
+  --sl-color-accent: hsl(217, 91%, 60%);
+  --sl-color-accent-low: hsl(217, 88%, 93%);
+}
+
+/* ========================================================
+   Base Elements
+   ======================================================== */
+
 iframe {
   border: 0;
 }
@@ -45,6 +96,10 @@ body {
 /* Exception for Expressive Code blocks if they handle their own scrolling */
 .sl-markdown-content .expressive-code pre {
   white-space: pre;
+}
+
+.dsl-slot {
+  margin-bottom: 1.25rem;
 }
 
 /* --- Responsive Layout Utilities (Mobile-First) --- */

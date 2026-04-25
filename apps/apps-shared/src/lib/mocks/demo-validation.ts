@@ -28,7 +28,7 @@ const form = defineForm({
       type: 'dateInput',
       path: 'dateInput',
       props: {
-        icon: 'material-icons material-icons-calendar_month',
+        icon: 'calendar_month',
       },
       validator: { type: 'string', required: true, format: 'date' },
     },

@@ -30,9 +30,21 @@ export class ListElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-list');
+    this.classList.add('gui-list', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -53,50 +65,43 @@ export class ListElement extends LitElement implements Core.WithWidget {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override render() {
-    const data = this.adapter.templateData;
+    const templateData = this.adapter.templateData;
+    const showErrors =
+      templateData.touched && templateData.errors && templateData.errors.length > 0;
     const visibleItems = this._listItems.slice(this._range.start, this._range.end);
 
-    const itemRenderer = this.adapter.getItemRenderer(data.itemRenderer, defaultListItemRenderer);
+    const itemRenderer = this.adapter.getItemRenderer(
+      templateData.itemRenderer,
+      defaultListItemRenderer,
+    );
 
     return html`
       <gui-label
         .targetElement=${this._guiListRef}
         .uid=${this.widget.uid}
-        .label=${data.label}
-        .hint=${data.hint}
-        .errors=${data.errors}
-        .touched=${data.touched}
-        .required=${data.validator?.required}
+        .label=${templateData.label}
+        .hint=${templateData.hint}
+        .errors=${templateData.errors}
+        .touched=${templateData.touched}
+        .required=${templateData.validator?.required}
         .native=${false}
       ></gui-label>
 
       <div class="gui-widget">
         <gui-list
           .uid=${this.widget.uid}
-          .value=${data.value ?? ''}
-          .valueField=${data.valueField as string}
-          .items=${data.items}
-          .itemHeight=${data.itemHeight}
-          .height=${data.height}
-          ?required=${data.validator?.required}
-          ?touched=${data.touched}
-          ?disabled=${data.disabled}
-          ?readonly=${data.readonly}
-          aria-labelledby=${data.label ? `${this.widget.uid}_label` : nothing}
-          aria-describedby=${data.hint ? `${this.widget.uid}_hint` : nothing}
+          .value=${templateData.value ?? ''}
+          .valueField=${templateData.valueField as string}
+          .items=${templateData.items}
+          .itemHeight=${templateData.itemHeight}
+          .height=${templateData.height}
+          ?required=${templateData.validator?.required}
+          ?touched=${templateData.touched}
+          ?disabled=${templateData.disabled}
+          ?readonly=${templateData.readonly}
+          aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
+          aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
           @gui-range-change=${this._onRangeChange}
           @gui-update-items=${this._onUpdateItems}
           @gui-focus-change=${this._onFocusChange}
@@ -105,12 +110,15 @@ export class ListElement extends LitElement implements Core.WithWidget {
         >
           ${visibleItems.map((item, index) => {
             const absoluteIndex = this._range.start + index;
-            const isSelected = data.value === item.value;
+            const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
-            const template = data.labelField && !data.itemRenderer
-              ? item.template[data.labelField]
-              : item.template;
+            const labelField = templateData.labelField ?? 'label';
+            const isObject = item.template !== null && typeof item.template === 'object';
+            const template =
+              isObject && labelField && !templateData.itemRenderer
+                ? item.template[labelField]
+                : item.template;
 
             return html`
               <div
@@ -118,9 +126,9 @@ export class ListElement extends LitElement implements Core.WithWidget {
                 tabindex="-1"
                 class="gui-list__item-wrapper"
                 id="${this.widget.uid}-item-${absoluteIndex}"
-                style="height: ${data.itemHeight || 40}px"
+                style="height: ${templateData.itemHeight || 40}px"
                 aria-selected=${isSelected ? 'true' : 'false'}
-                aria-disabled=${data.disabled ? 'true' : 'false'}
+                aria-disabled=${templateData.disabled ? 'true' : 'false'}
                 @click=${() => this._onClickItem(item, absoluteIndex)}
               >
                 ${itemRenderer({
@@ -128,7 +136,7 @@ export class ListElement extends LitElement implements Core.WithWidget {
                   value: item.value,
                   index: absoluteIndex,
                   selected: isSelected,
-                  disabled: !!data.disabled,
+                  disabled: !!templateData.disabled,
                   focused: isFocused,
                 })}
               </div>
@@ -137,7 +145,13 @@ export class ListElement extends LitElement implements Core.WithWidget {
         </gui-list>
       </div>
 
-      <gui-errors .errors=${data.errors} .touched=${data.touched}></gui-errors>
+      ${showErrors
+        ? html`<gui-errors
+            .uid=${this.widget.uid}
+            .errors=${templateData.errors}
+            .touched=${templateData.touched}
+          ></gui-errors>`
+        : nothing}
     `;
   }
 

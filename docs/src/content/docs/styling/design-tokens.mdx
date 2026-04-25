@@ -7,11 +7,11 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-GolemUI defines its entire visual language through CSS custom properties on `:root`. Override any variable to customize the look of all components at once — no need to hunt through component-specific styles.
+GolemUI defines its entire visual language through CSS custom properties on `:root`. Override any variable to customize the look of all widgets at once — no need to hunt through widget-specific styles.
 
 ## Primitive colors
 
-These are the base color palettes that power the entire design system. Override them to transform the overall look of every component at once.
+These are the base color palettes that power the entire design system. Override them to transform the overall look of every widget at once.
 
 ### Neutral (Slate)
 
@@ -107,7 +107,7 @@ These are the base color palettes that power the entire design system. Override 
 
 ## Semantic tokens
 
-Semantic tokens control how components actually look — backgrounds, text colors, borders, and status indicators. They adapt automatically between light and dark mode.
+Semantic tokens control how widgets actually look — backgrounds, text colors, borders, and status indicators. They adapt automatically between light and dark mode.
 
 <Aside type="tip">
 Override semantic tokens to change specific roles (e.g., what "default background" looks like). Override [primitive colors](#primitive-colors) to change the entire palette at once.
@@ -199,7 +199,7 @@ In dark mode, intent backgrounds use a subtle tinted overlay that works well on 
 
 ## Spacing
 
-A rem-based spacing scale used for padding, margins, and gaps throughout all components.
+A rem-based spacing scale used for padding, margins, and gaps throughout all widgets.
 
 | Token            | Value     | Pixels |
 | ---------------- | --------- | ------ |
@@ -268,7 +268,7 @@ The focus shadow creates a double-ring effect — a solid inner ring matching th
 
 ## Component-specific tokens
 
-Some components expose dedicated tokens for fine-grained control.
+Some widgets expose dedicated tokens for fine-grained control.
 
 ### Toggle
 
@@ -287,6 +287,26 @@ Some components expose dedicated tokens for fine-grained control.
 | `--gui-calendar-width`                      | `300px` | Calendar container width       |
 | `--gui-calendar-change-month-button-width`  | `36px`  | Month navigation button width  |
 | `--gui-calendar-change-month-button-height` | `36px`  | Month navigation button height |
+
+### Markdown Text
+
+These tokens control the typography and visual style of rendered markdown content inside the [Markdown Text](/widgets-reference/display-fields/markdown-text/) widget.
+
+| Token                              | Default                  | Description                              |
+| ---------------------------------- | ------------------------ | ---------------------------------------- |
+| `--gui-md-text-color`              | `--gui-text-default`     | Base text color                          |
+| `--gui-md-line-height`             | `1.6`                    | Base line height                         |
+| `--gui-md-heading-color`           | `--gui-text-default`     | Color for h1–h6 headings                 |
+| `--gui-md-heading-weight`          | `600`                    | Font weight for headings                 |
+| `--gui-md-link-color`              | `--gui-intent-primary`   | Link text color                          |
+| `--gui-md-link-hover-color`        | `--gui-intent-primary-hover` | Link color on hover                  |
+| `--gui-md-blockquote-bg`           | `--gui-bg-surface-hover` | Blockquote background                    |
+| `--gui-md-blockquote-border-color` | `--gui-border-strong`    | Blockquote left border color             |
+| `--gui-md-blockquote-color`        | `--gui-text-secondary`   | Blockquote text color                    |
+| `--gui-md-code-bg`                 | `--gui-bg-surface-active`| Background for inline code and code blocks |
+| `--gui-md-code-color`              | `--gui-text-default`     | Text color for inline code and code blocks |
+| `--gui-md-code-radius`             | `--gui-radius-sm`        | Border radius for inline code            |
+| `--gui-md-hr-color`                | `--gui-border-default`   | Color of horizontal rules (`<hr>`)       |
 
 ## Breakpoints
 

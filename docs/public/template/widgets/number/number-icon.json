@@ -1,0 +1,28 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "number",
+      "path": "number",
+      "label": "Phone Number",
+      "props": {
+        "icon": "phone_callback",
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "number",
+      "path": "number",
+      "label": "Phone Number",
+      "props": {
+        "icon": "phone_callback",
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    }
+  ]
+}

@@ -10,9 +10,9 @@ type LayoutWidgetConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'pro
 type DisplayWidgetConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 
 /**
- * Vanilla widget factory
+ * Golem widget factory
  */
-export const Vanilla = {
+export const GolemWidgets = {
   //
   // Input widgets
   //
@@ -117,6 +117,16 @@ export const Vanilla = {
     ...(props && { props }),
     ...config,
   }),
+  grid: <StateKeys extends Core.UiState = string>(
+    config: LayoutWidgetConfig,
+    props?: Props.GridProps,
+  ): Core.LayoutWidget<StateKeys> => ({
+    uid: '',
+    kind: 'layout',
+    type: 'grid',
+    ...(props && { props }),
+    ...config,
+  }),
   tabs: <StateKeys extends Core.UiState = string>(
     config: LayoutWidgetConfig,
     props?: Props.TabsProps,
@@ -138,6 +148,16 @@ export const Vanilla = {
     uid: '',
     kind: 'display',
     type: 'alert',
+    ...(props && { props }),
+    ...config,
+  }),
+  markdownText: <StateKeys extends Core.UiState = string>(
+    config: DisplayWidgetConfig,
+    props?: Props.MarkdownTextProps,
+  ): Core.DisplayWidget<StateKeys> => ({
+    uid: '',
+    kind: 'display',
+    type: 'markdownText',
     ...(props && { props }),
     ...config,
   }),

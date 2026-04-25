@@ -1,0 +1,187 @@
+---
+title: Icon Customization
+description: Customize form field icons using webfont ligatures, SVGs with custom CSS classes, or images.
+sidebar:
+  order: 5
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import Demo from '../../../../src/components/landing/Demo.astro';
+import iconsWebfontJson from '../../../../public/template/styling/icons-webfont.json?raw';
+import iconsSvgJson from '../../../../public/template/styling/icons-svg.json?raw';
+import iconsImageJson from '../../../../public/template/styling/icons-image.json?raw';
+
+GolemUI widgets accept an `icon` prop and render it as a `<span>` element with predictable CSS hooks. GolemUI does not prescribe any specific icon library — it provides the HTML structure, and you bring the CSS to render whatever icon you want.
+
+## How icons are rendered
+
+When you set `"icon": "save"` in your form configuration, GolemUI renders:
+
+```html
+<span class="gui-widget-icon save" data-icon="save"></span>
+```
+
+This gives you three CSS selectors to work with:
+
+| Selector | Description |
+| --- | --- |
+| `.gui-widget-icon` | Always present on every icon element |
+| `.{icon-name}` (e.g. `.save`) | A class matching the exact icon string you passed |
+| `[data-icon="{icon-name}"]` | A data attribute with the icon string value |
+
+GolemUI provides base positioning styles for the icon element (absolute positioning, flexbox centering, 40×40 dimensions), but the actual icon rendering is intentionally left to you. This means you can use any icon system you prefer.
+
+### Widgets with icon support
+
+| Widget | Icon props |
+| --- | --- |
+| Textinput | `icon` |
+| Password | `icon`, `showPasswordIcon`, `hidePasswordIcon` |
+| Textarea | `icon` |
+| Select | `icon` |
+| Currency | `icon` |
+| Date Input | `icon` |
+| Range Date Input | `icon` |
+| Calendar | `icon`, `prevMonthIcon`, `nextMonthIcon` |
+| Button | `icon`, `iconPosition` (`'left'` \| `'right'`) |
+| Repeater | `addButtonIcon`, `removeButtonIcon` |
+
+## Method 1: Webfont ligatures
+
+The simplest approach. A single CSS rule targets `[data-icon]::before` and uses `content: attr(data-icon)` to render the ligature text from a webfont.
+
+First, load the webfont in your project:
+
+```css
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+```
+
+Then add the icon rendering rule:
+
+```scss
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'Material Icons';
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+```
+
+With this in place, pass any Material Icons ligature name as the `icon` value:
+
+<Code code={iconsWebfontJson} lang="json" title="icons-webfont.json" />
+<Demo src="/template/index.html?form=template/styling/icons-webfont.json" />
+
+<Aside type="tip">
+This approach works with any ligature-based icon font, not just Material Icons. Simply change the `font-family` value to match your preferred icon font.
+</Aside>
+
+## Method 2: SVG with custom CSS class
+
+You can render SVG icons by targeting the icon-specific class on the `<span>`. Since the icon string becomes a CSS class, you can use any class-based icon system.
+
+### Inline SVG via CSS
+
+Pass a custom class name as the icon value:
+
+```json
+{
+  "props": {
+    "icon": "my-custom-icon"
+  }
+}
+```
+
+Then define the icon with CSS `background-image`:
+
+```css
+/* Clear the default ligature text */
+.gui-widget-icon.my-custom-icon::before {
+  content: '';
+}
+
+/* Render an SVG icon */
+.gui-widget-icon.my-custom-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23FFFFFF' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+```
+
+<Code code={iconsSvgJson} lang="json" title="icons-svg.json" />
+<Demo src="/template/index.html?form=template/styling/icons-svg.json" />
+
+### SVG icon libraries
+
+You can also use libraries like FontAwesome by passing their class names directly:
+
+```json
+{
+  "props": {
+    "icon": "fas fa-globe"
+  }
+}
+```
+
+Since the icon string is added as a CSS class, FontAwesome (or similar libraries) will pick it up automatically — as long as you've loaded the library's CSS in your project.
+
+<Aside type="caution">
+When combining ligature-based icons with other icon approaches in the same project, make sure to override the `::before` pseudo-element content for non-ligature icons. Otherwise, the ligature rule may render unwanted text alongside your custom icon.
+</Aside>
+
+## Method 3: Images
+
+Use `background-image` with image URLs (PNG, SVG files, etc.) — the same CSS technique as inline SVGs, but referencing external files:
+
+```css
+.gui-widget-icon.my-logo-icon::before {
+  content: '';
+}
+
+.gui-widget-icon.my-logo-icon {
+  background-image: url('/assets/icons/github.png');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+```
+
+Then use it in your form config:
+
+<Code code={iconsImageJson} lang="json" title="icons-image.json" />
+<Demo src="/template/index.html?form=template/styling/icons-image.json" />
+
+## Mixing icon methods
+
+Since each icon is independently styled via its unique CSS class, you can freely mix approaches in the same form. One field can use Material Icons ligatures, another can use an SVG, and a third can use an image.
+
+<Aside type="tip">
+Use a naming convention for custom icons (e.g. prefix with `custom-`) so they are visually distinct from ligature icon names in your form configurations.
+</Aside>
+
+## Styling icon size and color
+
+Icon size and color can be controlled through standard CSS:
+
+```css
+/* Change icon color globally */
+.gui-widget-icon {
+  color: var(--gui-intent-primary);
+}
+
+/* Change icon size for webfont ligatures */
+.gui-widget-icon[data-icon]::before {
+  font-size: var(--gui-font-xl);
+}
+
+/* Change icon size for background-image icons */
+.gui-widget-icon.my-custom-icon {
+  background-size: 24px 24px;
+}
+```
+
+See [Customization](/styling/customization/) for general CSS override patterns.

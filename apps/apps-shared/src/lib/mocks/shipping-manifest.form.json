@@ -32,7 +32,7 @@
               "props": {
                 "placeholder": "e.g. IMO 9876543"
               },
-              "validator": { "type": "number", "required": true }
+              "validator": { "type": "string", "required": true }
             },
             {
               "uid": "vessel_name",
@@ -69,6 +69,7 @@
               "uid": "departure_port",
               "kind": "input",
               "type": "select",
+              "size": 1,
               "path": "departurePort",
               "label": "Departure Port",
               "props": {
@@ -83,6 +84,7 @@
               "uid": "arrival_port",
               "kind": "input",
               "type": "select",
+              "size": 1,
               "path": "arrivalPort",
               "label": "Arrival Port",
               "props": {
@@ -97,6 +99,7 @@
               "uid": "eta",
               "kind": "input",
               "type": "datePicker",
+              "size": 1,
               "path": "eta",
               "label": "Expected Arrival Date"
             }
@@ -123,14 +126,34 @@
           },
           "children": [
             {
-              "uid": "container_id",
-              "kind": "input",
-              "type": "textinput",
-              "path": "containers.items.containerId",
-              "label": "Container Serial",
+              "kind": "layout",
+              "type": "flex",
               "props": {
-                "placeholder": "ABCD-123456-0"
-              }
+                "direction": "row"
+              },
+              "children": [
+                {
+                  "uid": "container_id",
+                  "kind": "input",
+                  "type": "textinput",
+                  "size": 1,
+                  "path": "containers.items.containerId",
+                  "label": "Container Serial",
+                  "props": {
+                    "placeholder": "ABCD-123456-0"
+                  }
+                },
+                {
+                  "uid": "container_is_hazardous",
+                  "kind": "input",
+                  "type": "toggle",
+                  "label": "Hazardous container",
+                  "include": {
+                    "when": "$form.isHazardous === true"
+                  },
+                  "path": "containers.items.isHazardous"
+                }
+              ]
             },
             {
               "uid": "pallet_repeater",

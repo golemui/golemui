@@ -1,4 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
+import type { I18nTranslator } from './i18n';
 
 export type JsonSchemaValidators<V> = {
   stringValidator: () => V;
@@ -7,7 +8,7 @@ export type JsonSchemaValidators<V> = {
   integerValidator: () => V;
 };
 
-export type ValidatorFn<V> = (validator: V) => StandardSchemaV1;
+export type ValidatorFn<V> = (validator: V, localization?: I18nTranslator) => StandardSchemaV1;
 
 export function standardValidate<T extends StandardSchemaV1>(
   schema: T,

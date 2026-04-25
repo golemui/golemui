@@ -27,9 +27,21 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-accordion');
+    this.classList.add('gui-accordion', 'gui-field');
     const props: AccordionProps = this.widget.props as AccordionProps;
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
@@ -57,18 +69,6 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
 
   getChild(uid: string) {
     return this.widget.children.find((section) => section.uid === uid) as Core.FormWidget<string>;
-  }
-
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
   }
 
   override render() {
@@ -107,7 +107,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
                     aria-expanded=${this.activeSections[section.uid] ? 'true' : 'false'}
                     @click=${() => this.onClickButton(section.uid)}
                   >
-                    ${section.label}<span class="gui-accordion__icon"></span>
+                    ${section.label}<span class="gui-accordion__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
                   </button>
 
                   ${sectionContent}

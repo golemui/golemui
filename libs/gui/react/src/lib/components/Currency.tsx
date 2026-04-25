@@ -24,6 +24,7 @@ export function Currency(widgetInstance: Core.WithWidget) {
   const step = templateData.step;
   const maximumFractionDigits = templateData.maximumFractionDigits;
   const minimumFractionDigits = templateData.minimumFractionDigits;
+  const autocomplete = templateData.autocomplete;
   const icon = templateData.icon;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
@@ -31,7 +32,7 @@ export function Currency(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
 
   return (
-    <div className="gui-currency" style={{ flex: templateData.size }}>
+    <div className="gui-currency gui-field" style={{ flex: templateData.size }}>
       <gui-currency
         uid={uid}
         label={label}
@@ -47,6 +48,7 @@ export function Currency(widgetInstance: Core.WithWidget) {
         maximumFractionDigits={maximumFractionDigits}
         minimumFractionDigits={minimumFractionDigits}
         icon={icon}
+        autocomplete={autocomplete ?? undefined}
         placeholder={placeholder ?? undefined}
         localeId={lang}
         onInput={handleChange}

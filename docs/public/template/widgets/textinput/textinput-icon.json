@@ -1,0 +1,24 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textinput",
+      "path": "phoneNumber",
+      "label": "Phone Number",
+      "props": {
+        "icon": "phone_callback"
+      }
+    },
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "textinput",
+      "path": "email",
+      "label": "Email",
+      "props": {
+        "icon": "alternate_email"
+      }
+    }
+  ]
+}

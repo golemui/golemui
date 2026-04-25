@@ -48,10 +48,22 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     document.addEventListener('click', this.onDocumentClick);
-    this.classList.add('gui-dropdown');
+    this.classList.add('gui-dropdown', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -74,18 +86,6 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
     );
   }
 
-  override updated(changedProperties: any) {
-    super.updated(changedProperties);
-
-    const size = this.adapter.templateData.size;
-
-    if (size) {
-      this.style.flex = String(size);
-    } else {
-      this.style.removeProperty('flex');
-    }
-  }
-
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.adapter.destroy();
@@ -97,7 +97,18 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
   }
 
   private _onUpdateItems(e: CustomEvent) {
-    this._listItems = e.detail || [];
+    const items = e.detail || [];
+    this._listItems = items;
+
+    // Resolve selected item on initial load when a default value is set
+    if (!this._selectedItem && this.adapter.templateData.value != null) {
+      const match = items.find(
+        (item: ListItem<never>) => item.value === this.adapter.templateData.value,
+      );
+      if (match) {
+        this._selectedItem = match;
+      }
+    }
   }
 
   private _onFocusChange(e: CustomEvent) {
@@ -232,6 +243,8 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
 
   override render() {
     const templateData = this.adapter.templateData;
+    const showErrors =
+      templateData.touched && templateData.errors && templateData.errors.length > 0;
     const visibleItems = this._listItems.slice(this._range.start, this._range.end);
 
     const itemRenderer = this.adapter.getItemRenderer(
@@ -239,7 +252,9 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
       defaultListItemRenderer,
     );
 
-    const referenceField = templateData.labelField ?? templateData.valueField;
+    const isSelectedItemObject =
+      this._selectedItem?.template !== null && typeof this._selectedItem?.template === 'object';
+    const referenceField = isSelectedItemObject ? (templateData.labelField ?? 'label') : null;
     const selectedItemValue = referenceField
       ? this._selectedItem?.template[referenceField]
       : this._selectedItem?.template;
@@ -258,16 +273,17 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
         .native=${false}
       ></gui-label>
 
-      <div class="gui-widget">
+      <div class="gui-widget" aria-expanded=${this._isListVisible}>
         <input
           type="text"
           id=${this.widget.uid}
           data-cy=${`${this.widget.uid}_textinput`}
-          .value=${selectedItemValue ?? ''}
+          .value=${selectedItemValue ?? templateData.value ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder ?? ''}
+          autocomplete=${templateData.autocomplete || nothing}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
           @focusout=${this._onFocusOutInput}
@@ -275,6 +291,12 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
           aria-labelledby=${templateData.label ? `${this.widget.uid}_label` : nothing}
           aria-describedby=${templateData.hint ? `${this.widget.uid}_hint` : nothing}
         />
+        <span class="gui-dropdown__arrow"
+          ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
+            <path
+              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+            ></path></svg
+        ></span>
 
         <gui-list
           id=${this.widget.uid}
@@ -301,9 +323,12 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
             const isSelected = templateData.value === item.value;
             const isFocused = this._focusedIndex === absoluteIndex;
 
-            const template = templateData.labelField && !templateData.itemRenderer
-              ? item.template[templateData.labelField]
-              : item.template;
+            const labelField = templateData.labelField ?? 'label';
+            const isObject = item.template !== null && typeof item.template === 'object';
+            const template =
+              isObject && labelField && !templateData.itemRenderer
+                ? item.template[labelField]
+                : item.template;
 
             return html`
               <div
@@ -329,7 +354,13 @@ export class DropdownElement extends LitElement implements Core.WithWidget {
         </gui-list>
       </div>
 
-      <gui-errors .errors=${templateData.errors} .touched=${templateData.touched}></gui-errors>
+      ${showErrors
+        ? html`<gui-errors
+            .uid=${this.widget.uid}
+            .errors=${templateData.errors}
+            .touched=${templateData.touched}
+          ></gui-errors>`
+        : nothing}
     `;
   }
 }

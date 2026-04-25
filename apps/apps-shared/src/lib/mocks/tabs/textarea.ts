@@ -8,6 +8,9 @@ export const textarea = (uid: string): any => ({
       kind: 'input',
       type: 'textarea',
       path: 'textarea',
+      props: {
+        autocomplete: 'off',
+      },
     },
     {
       uid: '',
@@ -44,7 +47,7 @@ export const textarea = (uid: string): any => ({
       type: 'textarea',
       path: 'textareaWithIcon',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
         counterMode: 'current',

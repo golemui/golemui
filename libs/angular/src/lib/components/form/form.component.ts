@@ -37,12 +37,14 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   validators = input.required<Core.ValidatorFn<any>>();
   middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
   data = input<Record<string, any>>({});
+  meta = input<Record<string, any>>({});
   formName = input(Core.shortUUID());
   validateOn = input<Core.ValidateOn>('eager');
   itemRenderers = input<Record<string, Core.ItemRenderer>>({});
   localization = input<Core.I18nTranslator>();
   dependencies = input<Record<string, unknown>>({});
-  direction = signal<'ltr' | 'rtl'>('ltr');
+  autocomplete = input<string | undefined>(undefined);
+  protected direction = signal<'ltr' | 'rtl'>('ltr');
 
   // OUTPUTS
   protected formHealth = output<Core.FormHealth>();
@@ -87,6 +89,13 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       type: 'SET_DATA',
       payload: {
         data: this.data(),
+      },
+    });
+
+    this.context.store.dispatch({
+      type: 'SET_META',
+      payload: {
+        meta: this.meta(),
       },
     });
 

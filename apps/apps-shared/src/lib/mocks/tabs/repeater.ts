@@ -1,5 +1,5 @@
-export const repeater = (): any => ({
-  uid: 'tab3',
+export const repeater = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -8,10 +8,11 @@ export const repeater = (): any => ({
       kind: 'input',
       type: 'repeater',
       path: 'repeaters.users',
+      label: 'Team Members',
       props: {
         title: 'Developer',
-        addButtonIcon: 'material-icons material-icons-person_add',
-        removeButtonIcon: 'material-icons material-icons-delete',
+        addButtonIcon: 'person_add',
+        removeButtonIcon: 'delete',
         addLabel: 'Add new developer',
         'addLabel.limitReached': `'Limit Reached, you can't add more'`,
         removeLabel: 'Delete',
@@ -19,7 +20,7 @@ export const repeater = (): any => ({
         template: {
           uid: '',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
           children: [
             {
               uid: '',
@@ -36,6 +37,12 @@ export const repeater = (): any => ({
             },
           ],
         },
+      },
+      validator: {
+        type: 'array',
+        required: true,
+        minItems: 1,
+        maxItems: 2,
       },
     },
   ],

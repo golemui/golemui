@@ -1,5 +1,5 @@
-export const select = (): any => ({
-  uid: 'tab7',
+export const select = (uid: string): any => ({
+  uid,
   kind: 'layout',
   type: 'flex',
   children: [
@@ -11,10 +11,11 @@ export const select = (): any => ({
       label: 'Greeting',
       readonly: true,
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: '"bye" should be selected',
         options: ['hello', 'bye'],
         placeholder: 'Please, select an option',
+        autocomplete: 'off',
       },
     },
     {
@@ -23,7 +24,7 @@ export const select = (): any => ({
       type: 'select',
       path: 'selects.wrongGreeting',
       props: {
-        icon: 'material-icons material-icons-phone_callback',
+        icon: 'phone_callback',
         hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
         options: ['hello', 'bye'],
       },

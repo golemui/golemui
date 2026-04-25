@@ -1,6 +1,6 @@
 import { DisplayWidget } from '@golemui/core';
-import { Example } from './types';
 import { golemForm } from '@golemui/gui-shared';
+import { Example } from './types';
 
 const data = {
   details: {
@@ -13,6 +13,8 @@ const data = {
 
 const states = {
   remote: '$form.details.isRemote === true',
+  systemMessage: '$meta.systemMessage !== undefined',
+  offline: '$meta.connectionStatus !== "online"',
 };
 type States = keyof typeof states;
 
@@ -37,6 +39,33 @@ const form = golemForm<typeof data, CustomHeadingWidget>().create({
           key: 'consultation.header.remote',
         },
       },
+    },
+
+    // 1.5 System message based on $meta (inlined)
+    {
+      kind: 'display',
+      type: 'alert',
+      props: {
+        text: 'Your connection status is: {{$meta.connectionStatus}}',
+        level: 'success',
+        'level.offline': 'error',
+      },
+    },
+
+    // 1.6 System message based on $meta (via i18n param)
+    {
+      kind: 'display',
+      type: 'alert',
+      props: {
+        text: {
+          key: 'consultation.system.message',
+          params: {
+            message: '$meta.systemMessage',
+          },
+        },
+        level: 'warning',
+      },
+      include: { in: ['systemMessage'] },
     },
 
     // 2. Mode Toggle (The State Switcher)
@@ -77,8 +106,8 @@ const form = golemForm<typeof data, CustomHeadingWidget>().create({
         default: 'Select a Date',
       },
       props: {
-        prevMonthIcon: 'material-icons material-icons-chevron_left',
-        nextMonthIcon: 'material-icons material-icons-chevron_right',
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
       },
       validator: { type: 'string', required: true, format: 'date-time' },
     },
@@ -167,6 +196,9 @@ const resources = {
         mode: {
           label: 'I prefer a remote Zoom meeting',
         },
+        system: {
+          message: '{{message}}',
+        },
         field: {
           name: 'Full Name',
           date: 'Select a Date',
@@ -197,6 +229,9 @@ const resources = {
         },
         mode: {
           label: 'Prefiero una reunión remota por Zoom',
+        },
+        system: {
+          message: '{{message}}',
         },
         field: {
           name: 'Nombre Completo',
@@ -229,6 +264,9 @@ const resources = {
         mode: {
           label: 'Zoomでのリモート会議を希望します',
         },
+        system: {
+          message: '{{message}}',
+        },
         field: {
           name: '氏名',
           date: '日付を選択',
@@ -260,6 +298,9 @@ const resources = {
         mode: {
           label: 'جلسه آنلاین (ریموت) در زوم را ترجیح می‌دهم',
         },
+        system: {
+          message: '{{message}}',
+        },
         field: {
           name: 'نام و نام خانوادگی',
           date: 'انتخاب تاریخ',
@@ -283,6 +324,10 @@ const resources = {
 
 export const translations: Example = {
   data,
+  meta: {
+    systemMessage: 'System maintenance is scheduled for tomorrow',
+    connectionStatus: 'online',
+  },
   form,
   resources,
 };

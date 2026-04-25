@@ -116,6 +116,62 @@ describe('Toggle schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a boolean validator with required', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'active',
+            kind: 'input',
+            type: 'toggle',
+            props: {},
+            validator: {
+              type: 'boolean',
+              required: true,
+              messages: {
+                invalid: 'Must be enabled or disabled',
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate a boolean validator with i18n messages', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'active',
+            kind: 'input',
+            type: 'toggle',
+            props: {},
+            validator: {
+              type: 'boolean',
+              const: true,
+              messages: {
+                const: { key: 'validation.active.const', default: 'Must be enabled' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid togglePosition enum', () => {
       const formDef = golemForm().create({

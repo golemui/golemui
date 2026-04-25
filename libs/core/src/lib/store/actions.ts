@@ -16,6 +16,16 @@ export type SET_DATA = {
 };
 
 /**
+ * Sets supplemental runtime context for the form.
+ *
+ * @param payload.meta An object with contextual data (e.g. session info or external references)
+ */
+export type SET_META = {
+  type: 'SET_META';
+  payload: { meta: Record<string, any> };
+};
+
+/**
  * Sets the i18n language
  */
 export type SET_LANGUAGE = {
@@ -108,6 +118,7 @@ export type Action =
   | INITIALIZE
   | SET_LANGUAGE
   | SET_DATA
+  | SET_META
   | ADD_WIDGET
   | REMOVE_WIDGET
   | SET_WIDGET_INITIAL_DATA

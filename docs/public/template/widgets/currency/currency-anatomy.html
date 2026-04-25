@@ -1,0 +1,23 @@
+<gui-currency>
+  <label for="fieldUid">
+    Label
+    <div class="gui-currency__hint" id="fieldUid_hint">Hint</div>
+  </label>
+
+  <div class="gui-widget">
+    <input
+      type="number"
+      inputmode="decimal"
+      id="fieldUid"
+      class="gui-currency--icon"
+      placeholder="Custom placeholder"
+      aria-required="true"
+      aria-describedby="fieldUid_hint"
+    />
+    <label
+      for="fieldUid"
+      class="gui-currency__format-value gui-currency__format-value--icon"
+    >$1,111.10</label>
+    <span class="gui-widget-icon attach_money"></span>
+  </div>
+</gui-currency>

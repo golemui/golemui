@@ -23,9 +23,21 @@ export class CalendarElement extends LitElement implements Core.WithWidget {
     return this;
   }
 
+  override updated(changedProperties: any) {
+    super.updated(changedProperties);
+
+    const size = this.adapter.templateData.size;
+
+    if (size) {
+      this.style.flex = String(size);
+    } else {
+      this.style.removeProperty('flex');
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-calendar');
+    this.classList.add('gui-calendar', 'gui-field');
     this.adapter.context = this.formContext;
     this.adapter.init(this.widget);
 
@@ -61,6 +73,7 @@ export class CalendarElement extends LitElement implements Core.WithWidget {
         .numberOfMonths=${this.adapter.templateData.numberOfMonths}
         .localeId=${this.adapter.templateData.lang}
         @change=${this.valueChanged}
+        @blur=${() => this.adapter.onBlur()}
       ></gui-calendar>
     `;
   }

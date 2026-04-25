@@ -1,0 +1,63 @@
+.product-share {
+  display: block;
+  width: 100%;
+}
+
+.product-share__widget {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-share__label {
+  font-size: var(--gui-font-sm);
+  font-weight: 500;
+  color: var(--gui-text-default);
+}
+
+.product-share__buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.product-share__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--gui-border-default);
+  border-radius: 8px;
+  background: var(--gui-bg-surface);
+  color: var(--gui-text-default);
+  font-size: var(--gui-font-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--gui-intent-primary);
+    color: var(--gui-intent-primary);
+    background: color-mix(in srgb, var(--gui-bg-surface) 95%, var(--gui-intent-primary) 5%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--gui-text-default) 10%, transparent);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--gui-shadow-focus);
+  }
+}
+
+.product-share__icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.product-share__network {
+  font-weight: 500;
+}

@@ -1,0 +1,127 @@
+---
+title: Number Input
+description: A Number Input widget to allow user to enter numeric values
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import DslCode from '../../../../components/DslCode.astro';
+import numberJson from '../../../../../public/template/widgets/number/number.json?raw';
+import numberDx from '../../../../../public/template/widgets-dx/number/number.ts?raw';
+import numberPlaceholderJson from '../../../../../public/template/widgets/number/number-placeholder.json?raw';
+import numberPlaceholderDx from '../../../../../public/template/widgets-dx/number/number-placeholder.ts?raw';
+import numberHintJson from '../../../../../public/template/widgets/number/number-hint.json?raw';
+import numberHintDx from '../../../../../public/template/widgets-dx/number/number-hint.ts?raw';
+import numberIconJson from '../../../../../public/template/widgets/number/number-icon.json?raw';
+import numberIconDx from '../../../../../public/template/widgets-dx/number/number-icon.ts?raw';
+import numberStepJson from '../../../../../public/template/widgets/number/number-step.json?raw';
+import numberStepDx from '../../../../../public/template/widgets-dx/number/number-step.ts?raw';
+import numberMinMaxJson from '../../../../../public/template/widgets/number/number-min-max.json?raw';
+import numberMinMaxDx from '../../../../../public/template/widgets-dx/number/number-min-max.ts?raw';
+import numberAutogrowJson from '../../../../../public/template/widgets/number/number-autogrow.json?raw';
+import numberAutogrowDx from '../../../../../public/template/widgets-dx/number/number-autogrow.ts?raw';
+import numberAnatomyHtml from '../../../../../public/template/widgets/number/number-anatomy.html?raw';
+export const configJson = 'number.json';
+export const configDx = 'number.ts';
+export const anatomy = 'number-anatomy.html';
+
+Number Input widgets are [Input Fields](/widgets-reference/input-fields/overview) that allow the user to enter numeric values. They can include built-in controls (plus/minus buttons) for incrementing and decrementing the number.
+
+<DslCode dxCode={numberDx} jsonCode={numberJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number.json"
+/>
+
+## Props
+
+Use these `props` to customize your Number Input widget.
+
+| prop           | type    | description                                                                          |
+| -------------- | ------- | ------------------------------------------------------------------------------------ |
+| `placeholder`  | string  | A placeholder text to display when the input has no value                            |
+| `hint`         | string  | A description to display below the input                                             |
+| `step`         | number  | The increment or decrement step size when using the plus/minus buttons or arrow keys |
+| `minimum`      | number  | The minimum allowed value                                                            |
+| `maximum`      | number  | The maximum allowed value                                                            |
+| `autoGrow`     | boolean | If true, the input width expands according to the number of digits                   |
+| `icon`         | string  | A css class to display an icon                                                       |
+| `autocomplete` | string  | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                    |
+
+### Placeholder
+
+Use the property `placeholder` to add a placeholder.
+
+<DslCode dxCode={numberPlaceholderDx} jsonCode={numberPlaceholderJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number-placeholder.json"
+/>
+
+### Hint
+
+<Aside>A `label` is required for the `hint` to be displayed.</Aside>
+
+Use the property `hint` to add a description.
+
+<DslCode dxCode={numberHintDx} jsonCode={numberHintJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number-hint.json"
+/>
+
+### Icon
+
+Use the property `icon` to add an icon to the widget. The value of `icon` represents a set of CSS classes separated by spaces.
+
+<DslCode dxCode={numberIconDx} jsonCode={numberIconJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number-icon.json"
+/>
+
+### Step
+
+Use the property `step` to define the amount by which the value increases or decreases when interacting with the controls.
+
+<DslCode dxCode={numberStepDx} jsonCode={numberStepJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number-step.json"
+/>
+
+### Min & Max
+
+Use the `minimum` and `maximum` properties to constrain the accepted range. The plus/minus buttons will be disabled if the limit is reached.
+
+<DslCode dxCode={numberMinMaxDx} jsonCode={numberMinMaxJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number-min-max.json"
+/>
+
+### Auto Grow
+
+Use the property `autoGrow` to allow the input's width to change dynamically based on its content value.
+
+<DslCode dxCode={numberAutogrowDx} jsonCode={numberAutogrowJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/number/number-autogrow.json"
+/>
+
+## Styling
+
+Number Inputs can be styled as explained in the [Styling Guide](/guides/styling).
+
+### CSS Variables
+
+Following you will find a list with the CSS Variables and a quick description of what you will style.
+
+| CSS Variable             | Description                         |
+| ------------------------ | ----------------------------------- |
+| `--gui-radius-md`        | Overall widget border radius        |
+| `--gui-border-default`   | Default border color                |
+| `--gui-text-default`     | Default text and focus border color |
+| `--gui-intent-error`     | Border color when invalid           |
+| `--gui-space-gap--inner` | Label gap and margin bottom         |
+
+### Anatomy
+
+This is the anatomy of the Number Input Widget in case you want to use your CSS styles.
+
+<Code code={numberAnatomyHtml} lang="html" title={anatomy} />

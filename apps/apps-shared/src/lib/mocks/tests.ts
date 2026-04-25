@@ -1,51 +1,71 @@
-import { golemForm } from '@golemui/gui-shared';
+import * as Core from '@golemui/core';
 import { Example } from './types';
 
-const data = {
-  md: `# Markdown editor with Snarkdown
-## Formatting text
-You can format text using **bold**, _italic_, and ~~strikethrough~~.
-> Blockquotes are also supported.
-You can add also a link to a website: [Golem UI](https://golemui.com).
+const data = { userName: 'Grace', isVip: false };
 
-By adding # you can create a headings 1 to 6.
-
-## Lists
-Unordered lists can be started using the hyphen:
-- **option a**
-- **option b**
-- **option c**
-
-Ordered lists can be started using numbers followed by periods:
-1. **one**
-2. **two**
-3. **three**
-`,
-};
-
-const form = golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'markdown',
-      path: 'md',
-      props: {
-        tools: ['H', 'B', 'I', 'S', '|', 'OL', 'UL', '|', 'L', 'Q', '|'],
-        autoGrow: true,
-        defaultOpenPreview: true,
-      },
-      validator: { type: 'string', required: true, minLength: 2 },
+const getFormDefinition = () =>
+  Core.defineForm({
+    states: {
+      vip: '$form.isVip === true',
     },
-    {
-      kind: 'action',
-      type: 'button',
-      label: 'Login',
-      on: {
-        click: 'submit',
+    form: [
+      {
+        uid: 'user-name',
+        kind: 'input',
+        type: 'textinput',
+        path: 'userName',
+        validator: {
+          type: 'string',
+          required: true,
+          minLength: 3,
+        },
       },
-    },
-  ],
-});
+      {
+        uid: 'is-vip',
+        kind: 'input',
+        label: 'Is VIP',
+        type: 'checkbox',
+        path: 'isVip',
+      },
+      {
+        uid: 'vip-message',
+        kind: 'display',
+        type: 'alert',
+        props: {
+          text: 'Welcome VIP: {{$form.userName}}',
+        },
+        include: { in: ['vip'] },
+      },
+      {
+        uid: 'alert1',
+        kind: 'display',
+        type: 'alert',
+        props: {
+          text: 'One Error: {{$errors.userName}}',
+        },
+        include: { when: '$errors.userName?.length === 1' },
+      },
+      {
+        uid: 'alert2',
+        kind: 'display',
+        type: 'alert',
+        props: {
+          text: 'Two Errors: {{$errors.userName}} becasue form is invalid: {{$formIsInvalid}}',
+        },
+        include: { when: '$errors.userName?.length === 2' },
+      },
+      {
+        uid: 'button',
+        kind: 'action',
+        type: 'button',
+        label: 'Send',
+        disabled: { when: '$formIsInvalid' },
+        on: {
+          click: 'send',
+        },
+      },
+    ],
+  });
 
 /**
  * i18next Resource Bundle
@@ -54,6 +74,6 @@ const resources = {};
 
 export const tests: Example = {
   data,
-  form,
+  form: getFormDefinition(),
   resources,
 };

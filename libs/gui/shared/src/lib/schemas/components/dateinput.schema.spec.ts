@@ -111,6 +111,37 @@ describe('Dateinput schema validation', () => {
     });
   });
 
+  describe('validator field', () => {
+    it('should validate a string validator with format: date', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            path: 'bday',
+            kind: 'input',
+            type: 'dateInput',
+            props: {},
+            validator: {
+              type: 'string',
+              required: true,
+              format: 'date',
+              messages: {
+                required: 'Date of birth is required',
+                format: { key: 'validation.bday.format', default: 'Enter a valid date' },
+              },
+            },
+          },
+        ],
+      });
+
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, widget);
+      }
+      expect(isValid).toBe(true);
+    });
+  });
+
   describe('Invalid configurations', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({

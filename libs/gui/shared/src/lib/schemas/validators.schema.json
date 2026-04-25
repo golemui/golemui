@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/validators.schema.json",
+  "title": "GolemUI Validator Definitions",
+  "$defs": {
+    "localizable": {
+      "$ref": "./common.schema.json#/$defs/localizable"
+    },
+    "stringValidator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "minLength": {
+          "type": "number"
+        },
+        "maxLength": {
+          "type": "number"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "A regular expression pattern the value must match"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "email",
+            "hostname",
+            "ipv4",
+            "ipv6",
+            "url",
+            "uuid",
+            "date",
+            "time",
+            "date-time",
+            "duration"
+          ]
+        },
+        "const": {},
+        "enum": {
+          "type": "array"
+        },
+        "messages": {
+          "type": "object",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable"
+            },
+            "required": {
+              "$ref": "#/$defs/localizable"
+            },
+            "minLength": {
+              "$ref": "#/$defs/localizable"
+            },
+            "maxLength": {
+              "$ref": "#/$defs/localizable"
+            },
+            "pattern": {
+              "$ref": "#/$defs/localizable"
+            },
+            "format": {
+              "$ref": "#/$defs/localizable"
+            },
+            "enum": {
+              "$ref": "#/$defs/localizable"
+            },
+            "const": {
+              "$ref": "#/$defs/localizable"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "numberValidator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["number", "integer"]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "exclusiveMinimum": {
+          "type": "number"
+        },
+        "exclusiveMaximum": {
+          "type": "number"
+        },
+        "multipleOf": {
+          "type": "number"
+        },
+        "const": {},
+        "enum": {
+          "type": "array"
+        },
+        "messages": {
+          "type": "object",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable"
+            },
+            "minimum": {
+              "$ref": "#/$defs/localizable"
+            },
+            "maximum": {
+              "$ref": "#/$defs/localizable"
+            },
+            "exclusiveMinimum": {
+              "$ref": "#/$defs/localizable"
+            },
+            "exclusiveMaximum": {
+              "$ref": "#/$defs/localizable"
+            },
+            "multipleOf": {
+              "$ref": "#/$defs/localizable"
+            },
+            "enum": {
+              "$ref": "#/$defs/localizable"
+            },
+            "const": {
+              "$ref": "#/$defs/localizable"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "booleanValidator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "const": {},
+        "messages": {
+          "type": "object",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable"
+            },
+            "const": {
+              "$ref": "#/$defs/localizable"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "arrayValidator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "array"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "minItems": {
+          "type": "number"
+        },
+        "maxItems": {
+          "type": "number"
+        },
+        "uniqueItems": {
+          "type": "boolean"
+        },
+        "messages": {
+          "type": "object",
+          "properties": {
+            "invalid": {
+              "$ref": "#/$defs/localizable"
+            },
+            "required": {
+              "$ref": "#/$defs/localizable"
+            },
+            "minItems": {
+              "$ref": "#/$defs/localizable"
+            },
+            "maxItems": {
+              "$ref": "#/$defs/localizable"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "customValidator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "custom"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": true
+    },
+    "validator": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/stringValidator"
+        },
+        {
+          "$ref": "#/$defs/numberValidator"
+        },
+        {
+          "$ref": "#/$defs/booleanValidator"
+        },
+        {
+          "$ref": "#/$defs/arrayValidator"
+        },
+        {
+          "$ref": "#/$defs/customValidator"
+        }
+      ]
+    }
+  }
+}

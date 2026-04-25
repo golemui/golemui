@@ -67,7 +67,18 @@ export type State = {
    */
   widgetPropOverrides: Record<Uid, Record<string, any>>;
 
+  /**
+   * Key-value pairs representing the current state of the form's input fields.
+   * The keys correspond to the control names.
+   */
   data: Record<string, any>;
+
+  /**
+   * Supplemental runtime context used for form logic, calculations, and UI state.
+   * Includes external dependencies like display flags or error messages.
+   * @example { errorMessage: "Invalid credentials", isAuth: true }
+   */
+  meta: Record<string, any>;
 
   /**
    * This reflects whether the form is currently functioning normally
@@ -105,6 +116,7 @@ export const createInitialState = (lang: string): State => ({
   widgetFlags: {},
   widgetPropOverrides: {},
   data: {},
+  meta: {},
   formHealth: { status: 'ok' },
   touched: false,
   lang,
@@ -130,23 +142,27 @@ export type Middleware<S, A> = (
  * When in an errored state, the form is considered non-operational
  * until the error is cleared.
  */
-export type FormHealth = { status: 'ok' } | { status: 'errored'; message: string };
+export type FormHealth =
+  | { status: 'ok' }
+  | {
+      status: 'errored';
+      message: string;
+      /**
+       * error codes below 1000 are reserved for the core
+       */
+      code: number;
+    };
 
 /**
- * Represents a form widget whose value is derived from a computation
- * and evaluated against its previous derived state.
+ * Represents a form widget whose value is derived from a computation.
  *
- * A `DerivedWidget<T>` captures the source widget, the previous derived value,
- * the newly derived value, and whether a structural change occurred between
- * derivations.
+ * A `DerivedWidget<T>` captures the source widget definition and the most
+ * recently computed, fully resolved widget. Reference identity is used for
+ * change detection: a new object is created only when a property has changed.
  */
 export type DerivedWidget<F extends Widget.FormWidget<string>> = {
   /** The source widget from which the derived value is computed */
   source: F;
-  /** The previously derived value */
-  previous: Exclude<F, Widget.FunctionWidget<string>>;
-  /** The newly derived value */
+  /** The most recently computed, fully resolved widget */
   current: Exclude<F, Widget.FunctionWidget<string>>;
-  /** Indicates whether the newly derived value changed structurally */
-  changed?: boolean;
 };

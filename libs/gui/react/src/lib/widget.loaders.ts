@@ -1,10 +1,10 @@
 import * as Core from '@golemui/core';
-import { VanillaWidget } from '@golemui/gui-shared';
 import '@golemui/gui-components';
+import { GolemWidget } from '@golemui/gui-shared';
 
-export const vanillaWidgetLoaders: Core.WidgetLoaders<
+export const widgetLoaders: Core.WidgetLoaders<
   React.ComponentType<Core.WithWidget>,
-  VanillaWidget
+  GolemWidget
 > = {
   // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,
@@ -34,10 +34,12 @@ export const vanillaWidgetLoaders: Core.WidgetLoaders<
 
   // LAYOUTS
   flex: async () => (await import('./components/Flex')).Flex,
+  grid: async () => (await import('./components/Grid')).Grid,
   tabs: async () => (await import('./components/Tabs')).Tabs,
   accordion: async () => (await import('./components/Accordion')).Accordion,
 
   // DISPLAY
   alert: async () => (await import('./components/Alert')).Alert,
+  markdownText: async () => (await import('./components/MarkdownText')).MarkdownText,
   renderer: async () => (await import('./components/Renderer')).Renderer,
 };

@@ -28,11 +28,10 @@ export const isProtoListItem = (
     return false;
   }
   const obj = opt as Record<string, unknown>;
+  const field = valueField ?? 'value';
+  const hasValue = Object.prototype.hasOwnProperty.call(obj, field);
 
-  const hasValue = valueField ? Object.prototype.hasOwnProperty.call(obj, valueField) : false;
-
-  if (valueField && !hasValue) {
-    // valueField is provided but hasValue is false → invalid
+  if (!hasValue) {
     return false;
   }
   return true;
@@ -46,9 +45,10 @@ export function createListItemMapper(opt: unknown, { valueField }: ListProps<any
 
   const obj = opt as Record<string, unknown>;
 
-  // Resolve fields: only keep those that exist on the object
+  // Resolve fields: default to 'value' if not provided
+  const field = valueField ?? 'value';
   const resolvedValueField =
-    valueField && Object.prototype.hasOwnProperty.call(obj, valueField) ? valueField : undefined;
+    Object.prototype.hasOwnProperty.call(obj, field) ? field : undefined;
 
   if (!resolvedValueField) {
     throw new Error('No valueField exists on the object');

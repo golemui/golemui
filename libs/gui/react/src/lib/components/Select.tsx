@@ -46,6 +46,7 @@ export function Select(widgetInstance: Core.WithWidget) {
   const label = templateData.label as string;
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
+  const autocomplete = templateData.autocomplete;
   const icon = templateData.icon;
   const valueField = templateData.valueField;
   const labelField = templateData.labelField;
@@ -54,7 +55,7 @@ export function Select(widgetInstance: Core.WithWidget) {
   const isRequired = (templateData.validator as Core.Validator)?.required;
 
   return (
-    <div className="gui-select" style={{ flex: templateData.size }}>
+    <div className="gui-select gui-field" style={{ flex: templateData.size }}>
       <gui-select
         ref={handleRef}
         uid={uid}
@@ -67,6 +68,7 @@ export function Select(widgetInstance: Core.WithWidget) {
         value={value}
         hint={hint}
         placeholder={placeholder}
+        autocomplete={autocomplete ?? undefined}
         icon={icon}
         options={options}
         labelField={labelField}

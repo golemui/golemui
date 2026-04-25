@@ -22,12 +22,13 @@ export const mountFramework = (options: MountOptions) => {
     <FormComponent
       formDef={options.formDef}
       data={options.data}
+      meta={options.meta}
       middlewares={options.middlewares ?? []}
-      validators={options.validators}
+      customValidators={options.validators}
       validateOn={options.validateOn ?? 'eager'}
       localization={options.localization}
       dependencies={options.dependencies}
-      widgetLoaders={widgetLoaders}
+      customWidgetLoaders={widgetLoaders}
       formEvent={handleFormEvent}
       formHealth={handleFormHealth}
     />,

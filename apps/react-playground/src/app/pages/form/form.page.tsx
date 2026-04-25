@@ -1,17 +1,17 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import { ReactItemRenderer } from '@golemui/react';
 import { FormComponent } from '@golemui/gui-react';
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import { Dependencies } from '@golemui/gui-shared';
+import * as GuiValidators from '@golemui/gui-validators';
+import { ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
 import { useState } from 'react';
+import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
+import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 import styles from './form.page.module.scss';
-import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
-import snarkdown from 'snarkdown';
-import { Dependencies } from '@golemui/gui-shared';
 
 async function onFormEvent(event: Core.FormEvent) {
   AppsShared.onFormEvent(event);
@@ -20,6 +20,7 @@ async function onFormEvent(event: Core.FormEvent) {
 const mock = AppsShared.kitchenSink;
 const formDef = mock.form;
 const formData = mock.data;
+const formMeta = mock.meta;
 const localization = AppsShared.initializeI18n(mock.resources);
 const languages = AppsShared.commonLanguages
   .filter(({ code }) => Object.keys(mock.resources).includes(code))
@@ -36,8 +37,8 @@ const customWidgetLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const middlewares = [AppsShared.loggerMiddleware];
-const validators: ValidatorsVanilla.CustomValidatorSchemas = {
+const middlewares = [Core.devToolsMiddleware()];
+const customValidators: GuiValidators.CustomValidatorSchemas = {
   allowedNames: AppsShared.allowedNames,
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
@@ -64,12 +65,14 @@ export function FormPage() {
       <FormComponent
         formDef={formDef}
         data={formData}
-        widgetLoaders={customWidgetLoaders}
+        meta={formMeta}
+        customValidators={customValidators}
         middlewares={middlewares}
         itemRenderers={itemRenderers}
         localization={localization}
+        autocomplete={'off'}
         dependencies={deps}
-        validators={validators}
+        customWidgetLoaders={customWidgetLoaders}
         validateOn={validateOn}
         formHealth={onFormHealth}
         formEvent={onFormEvent}

@@ -27,8 +27,8 @@ const form = defineForm({
         {
           uid: 'login-flex',
           kind: 'layout',
-          type: 'flex',
-          props: { gap: 20 },
+          type: 'grid',
+          props: { gap: 20, direction: 'column' },
           children: [
             {
               uid: 'login-email',
@@ -57,8 +57,8 @@ const form = defineForm({
         {
           uid: 'register-flex',
           kind: 'layout',
-          type: 'flex',
-          props: { gap: 20 },
+          type: 'grid',
+          props: { gap: 20, direction: 'column' },
           children: [
             {
               uid: 'login-firstName',
@@ -119,7 +119,7 @@ const form = defineForm({
               path: 'dateInput',
               label: 'Date of Birth',
               props: {
-                icon: 'material-icons material-icons-calendar_month',
+                icon: 'calendar_month',
               },
             },
             {

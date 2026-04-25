@@ -9,6 +9,7 @@ const metrics = [
 <section class="metrics-section">
   <div class="container">
     <div class="content">
+      <span class="section-label">Performance</span>
       <h2>Built for <span class="gradient-text">Speed</span></h2>
     </div>
   </div>
@@ -33,58 +34,83 @@ const metrics = [
 <style>
   .metrics-section {
     padding: 6rem 2rem;
-    background: var(--bg-color);
+    background: var(--bg-surface);
+  }
+
+  @media (min-width: 768px) {
+    .metrics-section {
+      padding: 4rem 2rem;
+    }
   }
 
   .content {
-    h2 {
-      font-size: 4rem;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      text-align: center;
+    text-align: center;
+  }
 
-      @media (max-width: 768px) {
-        font-size: 2.5rem;
-      }
-    }
+  .content h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
+  }
 
-    p {
-      font-size: 1.25rem;
-      color: var(--text-muted);
-      margin-bottom: 3rem;
+  @media (min-width: 768px) {
+    .content h2 {
+      font-size: 4.5rem;
     }
+  }
+
+  .content .section-label {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    max-width: 1000px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    max-width: 900px;
     margin: 0 auto;
   }
 
   .metric-card {
     text-align: center;
-    padding: 1.5rem;
+    padding: 2.5rem 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  :global(html.dark) .metric-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 
   .metric-label {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8125rem;
     text-transform: uppercase;
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
   }
 
   .metric-value-container {
     font-size: 3.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--accent-color) 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #a855f7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
   }
 
   .suffix {
@@ -93,9 +119,9 @@ const metrics = [
   }
 
   .metric-sub {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-color);
+    margin: 0.75rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
   }
 
   @media (max-width: 640px) {
@@ -142,4 +168,3 @@ const metrics = [
   const section = document.querySelector('.metrics-section');
   if (section) observer.observe(section);
 </script>
-
