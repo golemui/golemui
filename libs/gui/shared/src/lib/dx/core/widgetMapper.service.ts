@@ -62,6 +62,12 @@ export class WidgetMapper {
     if (def['on'] != null) {
       (widget as any).on = def['on'];
     }
+    if (def['include'] != null) {
+      (widget as any).include = def['include'];
+    }
+    if (def['exclude'] != null) {
+      (widget as any).exclude = def['exclude'];
+    }
     return widget;
   }
 }

@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { gui, _gslTag } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const runtimePromotionDemo: FormDemoDefinition = {
   title: '26. Runtime Promotion',
@@ -13,12 +13,13 @@ export const runtimePromotionDemo: FormDemoDefinition = {
     gui.inputs.textInput('email', {}, ['personalized']),
     gui.inputs.numberInput('age', {}, ['personalized']),
   ],
-  formSelectors: () =>
-    _gslTag('personalized', gui.selectors.inputs({
+  formSelectors: () => [
+    gui.selectors.tag('personalized').inputs({
       override: (cur) => (params) => ({
         placeholder: params?.$form?.name
           ? `${cur.path} for ${params.$form.name}`
           : `Enter ${cur.path}`,
       }),
-    })),
+    }),
+  ],
 };

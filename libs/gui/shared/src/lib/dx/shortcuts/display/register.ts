@@ -33,6 +33,8 @@ function buildCustomWidget(
       uid: '',
       kind: 'display' as const,
       type: 'renderer',
+      ...(displayDef.include != null ? { include: displayDef.include } : {}),
+      ...(displayDef.exclude != null ? { exclude: displayDef.exclude } : {}),
       props: { render: displayDef.render(params ?? ({} as FunctionWidgetParams<any>)) },
     })) as FormWidget;
   }
@@ -44,6 +46,8 @@ function buildCustomWidget(
       uid: '',
       kind: 'display' as const,
       type: 'renderer',
+      ...(displayDef.include != null ? { include: displayDef.include } : {}),
+      ...(displayDef.exclude != null ? { exclude: displayDef.exclude } : {}),
       props: { render: displayDef.render(params ?? ({} as FunctionWidgetParams<any>)) },
     };
   }) as FormWidget;

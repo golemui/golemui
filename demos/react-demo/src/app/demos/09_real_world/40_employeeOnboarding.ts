@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { gui, _gslTag } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const departments = [
   { label: 'Engineering', value: 'engineering' },
@@ -130,11 +130,11 @@ export const employeeOnboardingDemo: FormDemoDefinition = {
     ]),
   ],
   formSelectors: () => [
-    _gslTag('required', gui.selectors.inputs({
+    gui.selectors.tag('required').inputs({
       override: (cur) => ({
         placeholder: `${('placeholder' in cur ? cur.placeholder : undefined) ?? cur.path} *`,
       }),
-    })),
+    }),
   ],
   formConfig: () => ({
     onSubmit: (data: any) => console.log('Onboarding submitted:', data),

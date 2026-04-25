@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { gui, _gslRoot, DxRuntimeParams } from '@golemui/gui-shared';
+import { gui, DxRuntimeParams } from '@golemui/gui-shared';
 
 const products = [
   { label: 'Cloud Platform', value: 'cloud' },
@@ -65,7 +65,7 @@ export const supportTicketDemo: FormDemoDefinition = {
     }),
     gui.inputs.textInput('escalationContact', {
       label: 'Escalation contact',
-      when: ['$form.priority === "critical"', { visible: true }],
+      include: { when: '$form.priority === "critical"' },
     }),
     gui.inputs.textInput('subject', { label: 'Subject', uid: 'subject' }),
     gui.inputs.textarea('description', { label: 'Description', uid: 'description' }),
@@ -93,10 +93,9 @@ export const supportTicketDemo: FormDemoDefinition = {
       states: { urgent: { label: 'Submit Urgent Ticket' } },
     }),
   ],
-  formSelectors: () =>
-    _gslRoot(
-      gui.selectors.inputByUid('description', { override: { placeholder: 'Describe the issue in detail…' } }),
-    ),
+  formSelectors: () => [
+    gui.selectors.inputByUid('description', { override: { placeholder: 'Describe the issue in detail…' } }),
+  ],
   formConfig: () => ({
     states: {
       urgent: '$form.priority === "critical"',

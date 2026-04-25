@@ -1,20 +1,15 @@
 import { ValidGuiShortcut, GuiItemTypes } from '../../core/dx.domain';
-import { GuiLayoutItemsShortcut, LayoutDecorator } from './layouts.domain';
-import type { GridProps } from '../../../widget.props';
-
-// Props slot accepts the full LayoutDecorator shape (FlexProps already mixed in
-// via `LayoutDecorator extends Partial<FlexProps>`) so demos can pass
-// per-widget state overrides, when, size, uid, etc., alongside layout-specific
-// flex/grid props.
-type LayoutPropsBase = Omit<LayoutDecorator, 'widgetName'>;
-type FlexPropsAll = LayoutPropsBase;
-type GridPropsAll = LayoutPropsBase & Partial<GridProps>;
+import {
+  FlexFamilyProps,
+  GridFamilyProps,
+  GuiLayoutItemsShortcut,
+} from './layouts.domain';
 
 // ── Flex family — uniform (children, props?, tags?) ──
 
 export const _guiFlex = (
   children: ValidGuiShortcut[],
-  props?: FlexPropsAll,
+  props?: FlexFamilyProps,
   tags?: string[],
 ): GuiLayoutItemsShortcut => ({
   type: 'ITEMS',
@@ -25,14 +20,14 @@ export const _guiFlex = (
 
 export const _guiHorizontalFlex = (
   children: ValidGuiShortcut[],
-  props?: Omit<FlexPropsAll, 'direction'>,
+  props?: Omit<FlexFamilyProps, 'direction'>,
   tags?: string[],
 ): GuiLayoutItemsShortcut =>
   _guiFlex(children, { direction: 'row', ...(props ?? {}) }, tags);
 
 export const _guiVerticalFlex = (
   children: ValidGuiShortcut[],
-  props?: Omit<FlexPropsAll, 'direction'>,
+  props?: Omit<FlexFamilyProps, 'direction'>,
   tags?: string[],
 ): GuiLayoutItemsShortcut =>
   _guiFlex(children, { direction: 'column', ...(props ?? {}) }, tags);
@@ -41,7 +36,7 @@ export const _guiVerticalFlex = (
 
 export const _guiGrid = (
   children: ValidGuiShortcut[],
-  props?: GridPropsAll,
+  props?: GridFamilyProps,
   tags?: string[],
 ): GuiLayoutItemsShortcut => ({
   type: 'ITEMS',
@@ -52,14 +47,14 @@ export const _guiGrid = (
 
 export const _guiHorizontalGrid = (
   children: ValidGuiShortcut[],
-  props?: Omit<GridPropsAll, 'direction'>,
+  props?: Omit<GridFamilyProps, 'direction'>,
   tags?: string[],
 ): GuiLayoutItemsShortcut =>
   _guiGrid(children, { direction: 'row', ...(props ?? {}) }, tags);
 
 export const _guiVerticalGrid = (
   children: ValidGuiShortcut[],
-  props?: Omit<GridPropsAll, 'direction'>,
+  props?: Omit<GridFamilyProps, 'direction'>,
   tags?: string[],
 ): GuiLayoutItemsShortcut =>
   _guiGrid(children, { direction: 'column', ...(props ?? {}) }, tags);

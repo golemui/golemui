@@ -99,12 +99,12 @@ export const eventRegistrationDemo: FormDemoDefinition = {
     gui.inputs.checkbox('hasPlusOne', { label: 'Bringing a plus-one' }),
     gui.inputs.textInput('plusOneName', {
       label: 'Plus-one name',
-      when: ['!!$form.hasPlusOne', { visible: true }],
+      include: { when: '!!$form.hasPlusOne' },
     }),
     gui.inputs.select('plusOneDietary', {
       options: dietaryOptions,
       label: 'Plus-one dietary',
-      when: ['!!$form.hasPlusOne', { visible: true }],
+      include: { when: '!!$form.hasPlusOne' },
     }),
     gui.inputs.repeater('additionalGuests', {
       addLabel: 'Add guest',

@@ -6,8 +6,8 @@ import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
 import { _guiRepeater } from '../shortcuts/repeater/guiRepeater.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
-import { _guiVerticalStack, _guiHorizontalStack } from '../shortcuts/layouts/guiStack.impl';
-import { _gslRoot } from '../shortcuts/scopes/gslRoot.impl';
+import { _guiAlert } from '../shortcuts/alert/guiAlert.impl';
+import { _guiVerticalFlex, _guiHorizontalFlex } from '../shortcuts/layouts/guiFlex.impl';
 import { _gslStates } from '../shortcuts/scopes/gslStates.impl';
 import { _gslInputs } from '../shortcuts/inputs/register';
 import { _gslLayouts } from '../shortcuts/layouts/register';
@@ -94,20 +94,22 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('states block — layout decorator', () => {
     it('produces state-suffixed custom props (direction) in props', () => {
       const root = processDx(
-        _guiVerticalStack({
-          direction: 'row',
-          children: [_guiTextInput('a')],
-          states: { compact: { direction: 'column' } },
-        }),
+        _guiVerticalFlex(
+          [_guiTextInput('a')],
+          {
+            direction: 'row',
+            states: { compact: { direction: 'column' } },
+          },
+        ),
         undefined,
         { suppressAutomaticSubmit: true, states: { compact: '!!$form.compact' } },
       );
 
-      // The root IS the vertical stack (wrapped in auto-stack root)
-      const innerStack = getStaticChild(root, 0) as LayoutWidget;
-      expect(innerStack.kind).toBe('layout');
-      expect(innerStack.props?.['direction']).toBe('row');
-      expect(innerStack.props?.['direction.compact']).toBe('column');
+      // The root IS the vertical flex (wrapped in auto-stack root)
+      const innerLayout = getStaticChild(root, 0) as LayoutWidget;
+      expect(innerLayout.kind).toBe('layout');
+      expect(innerLayout.props?.['direction']).toBe('row');
+      expect(innerLayout.props?.['direction.compact']).toBe('column');
     });
   });
 
@@ -131,7 +133,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
         [
           _guiTextInput('name'),
           _guiTextInput('email'),
-          _guiHorizontalStack([
+          _guiHorizontalFlex([
             _guiButton({ label: 'Create', states: { editing: { label: 'Update' } } }),
             _guiButton({ label: 'Reset', disabled: true, states: { editing: { disabled: false } } }),
           ]),
@@ -242,27 +244,29 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('state-suffixed properties — core vs custom', () => {
     it('disabled (core suffixable) goes on widget root, direction (custom) goes in props', () => {
       const root = processDx(
-        _guiVerticalStack({
-          direction: 'row',
-          children: [
+        _guiVerticalFlex(
+          [
             _guiTextInput('name', {
               disabled: false,
               states: { locked: { disabled: true } },
             }),
           ],
-          states: { locked: { direction: 'column' } },
-        }),
+          {
+            direction: 'row',
+            states: { locked: { direction: 'column' } },
+          },
+        ),
         undefined,
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
 
       // Input: disabled.locked at root level
-      const innerStack = getStaticChild(root, 0) as LayoutWidget;
-      const input = innerStack.children?.[0] as NonFunctionWidget;
+      const innerLayout = getStaticChild(root, 0) as LayoutWidget;
+      const input = innerLayout.children?.[0] as NonFunctionWidget;
       expect((input as any)['disabled.locked']).toBe(true);
 
       // Layout: direction.locked in props
-      expect(innerStack.props?.['direction.locked']).toBe('column');
+      expect(innerLayout.props?.['direction.locked']).toBe('column');
     });
 
     it('validator (core suffixable) gets state-suffixed on input', () => {
@@ -372,15 +376,15 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   });
 
   // ═══════════════════════════════════════════════════
-  // Concern 4: when inline conditions
+  // Concern 4: include / exclude / disabled / readonly conditional fields
   // ═══════════════════════════════════════════════════
 
-  describe('when — single tuple', () => {
-    it('when with visible: true produces include: { when }', () => {
+  describe('conditional fields — discriminated unions', () => {
+    it('include: { when } passes through to the widget unchanged', () => {
       const root = processDx(
         [_guiSelect('subregion', {
           options: opts,
-          when: ['!!$form.country', { visible: true }],
+          include: { when: '!!$form.country' },
         })],
         undefined,
         { suppressAutomaticSubmit: true },
@@ -390,10 +394,10 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       expect((widget as any).include).toEqual({ when: '!!$form.country' });
     });
 
-    it('when with visible: false produces exclude: { when }', () => {
+    it('exclude: { when } passes through to the widget unchanged', () => {
       const root = processDx(
         [_guiTextInput('hidden', {
-          when: ['$form.hideFields === true', { visible: false }],
+          exclude: { when: '$form.hideFields === true' },
         })],
         undefined,
         { suppressAutomaticSubmit: true },
@@ -403,10 +407,10 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       expect((widget as any).exclude).toEqual({ when: '$form.hideFields === true' });
     });
 
-    it('when with disabled: true produces disabled: { when }', () => {
+    it('disabled: { when } passes through to the widget unchanged', () => {
       const root = processDx(
         [_guiTextInput('name', {
-          when: ['$form.quantity > 100', { disabled: true }],
+          disabled: { when: '$form.quantity > 100' },
         })],
         undefined,
         { suppressAutomaticSubmit: true },
@@ -416,10 +420,10 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       expect((widget as any).disabled).toEqual({ when: '$form.quantity > 100' });
     });
 
-    it('when with readonly: true produces readonly: { when }', () => {
+    it('readonly: { when } passes through to the widget unchanged', () => {
       const root = processDx(
         [_guiTextInput('name', {
-          when: ['!!$form.isViewer', { readonly: true }],
+          readonly: { when: '!!$form.isViewer' },
         })],
         undefined,
         { suppressAutomaticSubmit: true },
@@ -428,16 +432,42 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const widget = getStaticChild(root, 0);
       expect((widget as any).readonly).toEqual({ when: '!!$form.isViewer' });
     });
-  });
 
-  describe('when — array of tuples', () => {
-    it('multiple when conditions each produce their effect', () => {
+    it('include: { in } and exclude: { from } pass through with their state lists', () => {
+      const root = processDx(
+        [_guiTextInput('guardianName', {
+          include: { in: ['register:minor'] },
+        }),
+         _guiTextInput('debugId', {
+          exclude: { from: ['production'] },
+        })],
+        undefined,
+        { suppressAutomaticSubmit: true },
+      );
+
+      const guardian = getStaticChild(root, 0);
+      const debug = getStaticChild(root, 1);
+      expect((guardian as any).include).toEqual({ in: ['register:minor'] });
+      expect((debug as any).exclude).toEqual({ from: ['production'] });
+    });
+
+    it('disabled: true / readonly: true (boolean form) still work', () => {
+      const root = processDx(
+        [_guiTextInput('name', { disabled: true, readonly: true })],
+        undefined,
+        { suppressAutomaticSubmit: true },
+      );
+
+      const widget = getStaticChild(root, 0);
+      expect((widget as any).disabled).toBe(true);
+      expect((widget as any).readonly).toBe(true);
+    });
+
+    it('multiple conditional fields can coexist on one widget', () => {
       const root = processDx(
         [_guiTextInput('notes', {
-          when: [
-            ['$form.quantity > 100', { disabled: true }],
-            ['!!$form.isViewer', { readonly: true }],
-          ],
+          disabled: { when: '$form.quantity > 100' },
+          readonly: { when: '!!$form.isViewer' },
         })],
         undefined,
         { suppressAutomaticSubmit: true },
@@ -460,9 +490,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           _guiTextInput('name'),
           _guiTextInput('email'),
         ],
-        _gslRoot(
-          _gslStates('locked', _gslInputs({ override: { disabled: true } })),
-        ),
+        _gslStates('locked', _gslInputs({ override: { disabled: true } })),
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
 
@@ -474,46 +502,37 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('_gslStates applies custom props to layouts in props', () => {
       const root = processDx(
-        _guiVerticalStack({
-          direction: 'row',
-          children: [_guiTextInput('a')],
-        }),
-        _gslRoot(
-          _gslStates('compact', _gslLayouts({ override: { direction: 'column' } })),
-        ),
+        _guiVerticalFlex([_guiTextInput('a')], { direction: 'row' }),
+        _gslStates('compact', _gslLayouts({ override: { direction: 'column' } })),
         { suppressAutomaticSubmit: true, states: { compact: '!!$form.compact' } },
       );
 
-      const innerStack = getStaticChild(root, 0) as LayoutWidget;
-      expect(innerStack.props?.['direction.compact']).toBe('column');
+      const innerLayout = getStaticChild(root, 0) as LayoutWidget;
+      expect(innerLayout.props?.['direction.compact']).toBe('column');
     });
 
-    it('_gslStates applies direction override to _guiHorizontalStack (demo 39 pattern)', () => {
+    it('_gslStates applies direction override to _guiHorizontalFlex (demo 39 pattern)', () => {
       const root = processDx(
         [
-          _guiHorizontalStack([
+          _guiHorizontalFlex([
             _guiTextInput('a'),
             _guiTextInput('b'),
           ]),
         ],
-        _gslRoot(
-          _gslStates('locked', _gslLayouts({ override: { direction: 'column' } })),
-        ),
+        _gslStates('locked', _gslLayouts({ override: { direction: 'column' } })),
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
 
-      const hstack = getStaticChild(root, 0) as LayoutWidget;
-      expect(hstack.kind).toBe('layout');
-      expect(hstack.props?.['direction']).toBe('row');
-      expect(hstack.props?.['direction.locked']).toBe('column');
+      const hFlex = getStaticChild(root, 0) as LayoutWidget;
+      expect(hFlex.kind).toBe('layout');
+      expect(hFlex.props?.['direction']).toBe('row');
+      expect(hFlex.props?.['direction.locked']).toBe('column');
     });
 
     it('_gslStates applies label to actions', () => {
       const root = processDx(
         [_guiButton({ label: 'Save' })],
-        _gslRoot(
-          _gslStates('saving', _gslActions({ override: { label: 'Saving...' } })),
-        ),
+        _gslStates('saving', _gslActions({ override: { label: 'Saving...' } })),
         { suppressAutomaticSubmit: true, states: { saving: '!!$form.saving' } },
       );
 
@@ -527,9 +546,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           _guiTextInput('name'),
           _guiTextInput('email'),
         ],
-        _gslRoot(
-          _gslStates('hidden', _gslInputs({ override: { visible: false } as any })),
-        ),
+        _gslStates('hidden', _gslInputs({ override: { visible: false } as any })),
         { suppressAutomaticSubmit: true, states: { hidden: '!!$form.hidden' } },
       );
 
@@ -542,9 +559,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
         [_guiTextInput('name', {
           states: { locked: { label: 'Inline label' } },
         })],
-        _gslRoot(
-          _gslStates('locked', _gslInputs({ override: { label: 'GSL label', disabled: true } })),
-        ),
+        _gslStates('locked', _gslInputs({ override: { label: 'GSL label', disabled: true } })),
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
 
@@ -557,10 +572,10 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
     it('multiple _gslStates for different state names both apply', () => {
       const root = processDx(
         [_guiTextInput('name')],
-        _gslRoot(
-          _gslStates('locked', _gslInputs({ override: { disabled: true } })),
-          _gslStates('editing', _gslInputs({ override: { label: 'Edit name' } })),
-        ),
+        [
+          ..._gslStates('locked', _gslInputs({ override: { disabled: true } })),
+          ..._gslStates('editing', _gslInputs({ override: { label: 'Edit name' } })),
+        ],
         {
           suppressAutomaticSubmit: true,
           states: { locked: '!!$form.locked', editing: '!!$form.editing' },
@@ -575,10 +590,10 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
     it('_gslStates works alongside non-state GSL selectors', () => {
       const root = processDx(
         [_guiTextInput('name')],
-        _gslRoot(
-          _gslStates('locked', _gslInputs({ override: { disabled: true } })),
+        [
+          ..._gslStates('locked', _gslInputs({ override: { disabled: true } })),
           _gslInputs({ override: { size: 6 } }),
-        ),
+        ],
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
 
@@ -593,12 +608,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   // ═══════════════════════════════════════════════════
 
   describe('combined usage', () => {
-    it('states block and when condition coexist on the same widget', () => {
+    it('states block and inline conditional coexist on the same widget', () => {
       const root = processDx(
         [_guiSelect('subregion', {
           options: opts,
           states: { hasCountry: { visible: true } },
-          when: ['$form.quantity > 100', { disabled: true }],
+          disabled: { when: '$form.quantity > 100' },
         })],
         undefined,
         { suppressAutomaticSubmit: true, states: { hasCountry: '!!$form.country' } },
@@ -609,16 +624,14 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       expect((widget as any).disabled).toEqual({ when: '$form.quantity > 100' });
     });
 
-    it('_gslStates + inline states + when all combine correctly', () => {
+    it('_gslStates + inline states + readonly { when } all combine correctly', () => {
       const root = processDx(
         [_guiTextInput('name', {
           label: 'Name',
           states: { editing: { label: 'Edit name' } },
-          when: ['!!$form.isViewer', { readonly: true }],
+          readonly: { when: '!!$form.isViewer' },
         })],
-        _gslRoot(
-          _gslStates('locked', _gslInputs({ override: { disabled: true } })),
-        ),
+        _gslStates('locked', _gslInputs({ override: { disabled: true } })),
         {
           suppressAutomaticSubmit: true,
           states: {
@@ -681,18 +694,112 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       expect(widget.props?.['states']).toBeUndefined();
     });
 
-    it('when does not leak into widget props', () => {
+    it('include / exclude do not leak into widget props', () => {
       const root = processDx(
         [_guiTextInput('name', {
-          when: ['!!$form.name', { visible: true }],
+          include: { when: '!!$form.name' },
+          exclude: { from: ['hidden'] },
         })],
+        undefined,
+        { suppressAutomaticSubmit: true, states: { hidden: '!!$form.hide' } },
+      );
+
+      const widget = getStaticChild(root, 0) as any;
+      expect(widget.include).toEqual({ when: '!!$form.name' });
+      expect(widget.exclude).toEqual({ from: ['hidden'] });
+      expect(widget.props?.['include']).toBeUndefined();
+      expect(widget.props?.['exclude']).toBeUndefined();
+    });
+  });
+
+  // ═══════════════════════════════════════════════════
+  // Concern 6: Conditional fields across kinds
+  // (Phase 20 — universal include/exclude/disabled/readonly)
+  // ═══════════════════════════════════════════════════
+
+  describe('conditional fields — actions', () => {
+    it('disabled: { when } passes through to the action widget', () => {
+      const root = processDx(
+        [_guiButton({ label: 'Save', disabled: { when: '!$form.country' } })],
         undefined,
         { suppressAutomaticSubmit: true },
       );
 
-      const widget = getStaticChild(root, 0);
-      expect((widget as any).when).toBeUndefined();
-      expect((widget as any).props?.['when']).toBeUndefined();
+      const widget = getStaticChild(root, 0) as any;
+      expect(widget.kind).toBe('action');
+      expect(widget.disabled).toEqual({ when: '!$form.country' });
+      expect(widget.props?.['disabled']).toBeUndefined();
+    });
+
+    it('include: { when } passes through to the action widget', () => {
+      const root = processDx(
+        [_guiButton({ label: 'Reset', include: { when: '!!$form.debug' } })],
+        undefined,
+        { suppressAutomaticSubmit: true },
+      );
+
+      const widget = getStaticChild(root, 0) as any;
+      expect(widget.include).toEqual({ when: '!!$form.debug' });
+      expect(widget.props?.['include']).toBeUndefined();
+    });
+  });
+
+  describe('conditional fields — layouts', () => {
+    it('include: { in } passes through to the layout widget', () => {
+      const root = processDx(
+        _guiVerticalFlex(
+          [_guiTextInput('a')],
+          { include: { in: ['debugMode'] } },
+        ),
+        undefined,
+        { suppressAutomaticSubmit: true, states: { debugMode: '!!$form.debug' } },
+      );
+
+      const layout = getStaticChild(root, 0) as LayoutWidget & { include?: any };
+      expect(layout.kind).toBe('layout');
+      expect(layout.include).toEqual({ in: ['debugMode'] });
+      expect(layout.props?.['include']).toBeUndefined();
+    });
+
+    it('exclude: { when } passes through to the layout widget', () => {
+      const root = processDx(
+        _guiHorizontalFlex(
+          [_guiTextInput('a')],
+          { exclude: { when: '$form.compact === true' } },
+        ),
+        undefined,
+        { suppressAutomaticSubmit: true },
+      );
+
+      const layout = getStaticChild(root, 0) as LayoutWidget & { exclude?: any };
+      expect(layout.exclude).toEqual({ when: '$form.compact === true' });
+      expect(layout.props?.['exclude']).toBeUndefined();
+    });
+  });
+
+  describe('conditional fields — displays (alert)', () => {
+    it('include: { when } passes through to the alert widget', () => {
+      const root = processDx(
+        [_guiAlert({ text: 'Heads up', include: { when: '!!$form.show' } })],
+        undefined,
+        { suppressAutomaticSubmit: true },
+      );
+
+      const widget = getStaticChild(root, 0) as any;
+      expect(widget.kind).toBe('display');
+      expect(widget.include).toEqual({ when: '!!$form.show' });
+      expect(widget.props?.['include']).toBeUndefined();
+    });
+
+    it('exclude: { from } passes through to the alert widget', () => {
+      const root = processDx(
+        [_guiAlert({ text: 'Hide in production', exclude: { from: ['production'] } })],
+        undefined,
+        { suppressAutomaticSubmit: true, states: { production: '$form.env === "prod"' } },
+      );
+
+      const widget = getStaticChild(root, 0) as any;
+      expect(widget.exclude).toEqual({ from: ['production'] });
     });
   });
 });

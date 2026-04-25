@@ -58,3 +58,11 @@ export { employeeOnboardingDemo } from './09_real_world/40_employeeOnboarding';
 export { supportTicketDemo } from './09_real_world/41_supportTicket';
 export { bookingRequestDemo } from './09_real_world/42_bookingRequest';
 export { eventRegistrationDemo } from './09_real_world/43_eventRegistration';
+
+// Chapter 10: Selector Grammar
+export { chainingDemo } from './10_selector_grammar/44_chaining';
+export { reusableScopeVariablesDemo } from './10_selector_grammar/45_reusableScopeVariables';
+export { tagsMultiValueDemo } from './10_selector_grammar/46_tagsMultiValue';
+export { singleStateOperatorDemo } from './10_selector_grammar/47_singleStateOperator';
+export { perWidgetVsSelectorPrecedenceDemo } from './10_selector_grammar/48_perWidgetVsSelectorPrecedence';
+export { commutativityDemo } from './10_selector_grammar/49_commutativity';

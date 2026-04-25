@@ -25,7 +25,8 @@ export function extractWidgetProps<D extends DxInputBase & DxCommonFields>(
     onFilter: _onFilter,
     on: _on,
     states: _states,
-    when: _when,
+    include: _include,
+    exclude: _exclude,
     ...widgetProps
   } = def as any;
   return widgetProps;

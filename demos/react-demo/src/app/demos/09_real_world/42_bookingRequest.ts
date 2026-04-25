@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { gui, _gslRoot, _gslStates } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const rooms = [
   { label: 'Room A — 4 seats', value: 'room-a' },
@@ -50,7 +50,7 @@ export const bookingRequestDemo: FormDemoDefinition = {
     gui.inputs.numberInput('attendees', { label: 'Expected attendees' }),
     gui.inputs.currency('cateringBudget', {
       label: 'Catering budget',
-      when: ['$form.attendees > 10', { visible: true }],
+      include: { when: '$form.attendees > 10' },
     }),
     gui.inputs.checkbox('isRecurring', { label: 'Recurring booking' }),
     gui.inputs.select('recurrencePattern', {
@@ -75,10 +75,9 @@ export const bookingRequestDemo: FormDemoDefinition = {
       },
     }),
   ],
-  formSelectors: () =>
-    _gslRoot(
-      _gslStates('pending', gui.selectors.inputs({ override: { disabled: true } })),
-    ),
+  formSelectors: () => [
+    gui.selectors.state('pending').inputs({ override: { disabled: true } }),
+  ],
   formConfig: () => ({
     states: {
       recurring: '!!$form.isRecurring',

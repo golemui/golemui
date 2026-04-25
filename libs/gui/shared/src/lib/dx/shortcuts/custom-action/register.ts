@@ -24,6 +24,9 @@ export const { gsl: _gslCustomActions, gslByUid: _gslCustomActionByUid } = defin
       customType: _customType,
       tags: _tags,
       size: _size,
+      include: _include,
+      exclude: _exclude,
+      states: _states,
       props: customProps,
       ...rest
     } = def;

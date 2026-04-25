@@ -2,7 +2,7 @@
 // DX Base Types — public and internal decorator bases
 // ═══════════════════════════════════════════════════
 
-import type { FormEvent } from '@golemui/core';
+import type { FormEvent, ReactiveExpression } from '@golemui/core';
 
 /**
  * DX-enriched FormEvent. Extends the core FormEvent with `update()` — the
@@ -32,11 +32,20 @@ export interface DxInternalFields {
 }
 
 /**
- * A `when` condition tuple: `[expression, overrideObject]`.
- * Single or array form accepted on decorators.
+ * Conditional inclusion: state-list or reactive expression form.
+ * Mirrors core's `include` shape on `BaseWidget`.
  */
-export type DxWhenTuple = [string, Record<string, any>];
-export type DxWhenCondition = DxWhenTuple | DxWhenTuple[];
+export type DxIncludeCondition =
+  | { in: string[] }
+  | { when: ReactiveExpression };
+
+/**
+ * Conditional exclusion: state-list or reactive expression form.
+ * Mirrors core's `exclude` shape on `BaseWidget`.
+ */
+export type DxExcludeCondition =
+  | { from: string[] }
+  | { when: ReactiveExpression };
 
 /**
  * User-settable common fields available on ALL decorator types.
@@ -45,10 +54,12 @@ export interface DxCommonFields {
   uid?: string;
   tags?: string[];
   size?: number;
-  /** Per-state property overrides. Keys are state names (use `$` for hierarchy). */
+  /** Per-state property overrides. Keys are state names (use `:` for hierarchy). */
   states?: Record<string, Record<string, any>>;
-  /** Inline condition: `[expr, overrides]` or `[[expr, overrides], ...]`. */
-  when?: DxWhenCondition;
+  /** Conditionally include the widget — by active state list or reactive expression. */
+  include?: DxIncludeCondition;
+  /** Conditionally exclude the widget — by active state list or reactive expression. */
+  exclude?: DxExcludeCondition;
 }
 
 /**
@@ -58,8 +69,8 @@ export interface DxCommonFields {
 export interface DxInputBase {
   path?: string;
   label?: string | null;
-  disabled?: boolean;
-  readonly?: boolean;
+  disabled?: boolean | { when: ReactiveExpression };
+  readonly?: boolean | { when: ReactiveExpression };
   defaultValue?: unknown;
   onLoad?: DxEventHandler;
   onChange?: DxEventHandler;
@@ -71,7 +82,7 @@ export interface DxInputBase {
  */
 export interface DxActionBase {
   label?: string;
-  disabled?: boolean;
+  disabled?: boolean | { when: ReactiveExpression };
 }
 
 /**

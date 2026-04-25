@@ -276,7 +276,7 @@ describe('DX Pipeline — Custom Layout', () => {
 });
 
 describe('DX Pipeline — widgetLoaders transport', () => {
-  it('includes widgetLoaders in DxResult when _gslRoot provides them', () => {
+  it('includes widgetLoaders in DxResult when formConfig provides them', () => {
     const loader = async () => ({ default: {} });
     const result = formDefs.processDxFacade(
       [_guiTextInput('name')],
@@ -288,7 +288,7 @@ describe('DX Pipeline — widgetLoaders transport', () => {
     expect(result.widgetLoaders!['heading']).toBe(loader);
   });
 
-  it('omits widgetLoaders from DxResult when _gslRoot has none', () => {
+  it('omits widgetLoaders from DxResult when formConfig has none', () => {
     const result = formDefs.processDxFacade(
       [_guiTextInput('name')],
       [],

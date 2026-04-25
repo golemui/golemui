@@ -31,8 +31,6 @@ export {
   _guiHorizontalGrid,
   _guiVerticalGrid,
 } from './shortcuts/layouts/guiFlex.impl';
-// Deprecated legacy stack family — superseded by the flex family above. Kept for backward compat.
-export { _guiStack, _guiHorizontalStack, _guiVerticalStack } from './shortcuts/layouts/guiStack.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
 export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
 export { _guiDatePicker } from './shortcuts/date-picker/guiDatePicker.impl';
@@ -79,8 +77,12 @@ export { _gslCustomActions, _gslCustomActionByUid } from './shortcuts/custom-act
 export { _gslCustomLayouts, _gslCustomLayoutByUid } from './shortcuts/custom-layout/register';
 
 // ─── Scope selectors ───
+//
+// `_gslTag` and `_gslStates` are kept as internal underscore-era primitives
+// pending focus-closeout removal. They are not part of the spec entrance
+// (`gui.selectors.tag(...)` / `.state(...)` are). `_gslRoot` retired in
+// Phase 15 — the chain emits combined-matcher leaves directly, no wrap step.
 
-export { _gslRoot } from './shortcuts/scopes/gslRoot.impl';
 export { _gslTag } from './shortcuts/scopes/gslTag.impl';
 export { _gslStates } from './shortcuts/scopes/gslStates.impl';
 

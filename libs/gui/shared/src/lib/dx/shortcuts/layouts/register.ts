@@ -16,7 +16,16 @@ function mapToWidget<
   StateKeys extends UiState = never,
   FormData extends Record<string, any> = any,
 >(def: LayoutDecorator): NonFunctionWidget<StateKeys, FormData> {
-  const { uid, widgetName, tags: _tags, size: _size, onChange: _onChange, ...layoutProps } = def;
+  const {
+    uid,
+    widgetName,
+    tags: _tags,
+    size: _size,
+    onChange: _onChange,
+    include: _include,
+    exclude: _exclude,
+    ...layoutProps
+  } = def;
   const { on: _on, ...cleanLayoutProps } = layoutProps as any;
   return {
     uid: uid ?? '',

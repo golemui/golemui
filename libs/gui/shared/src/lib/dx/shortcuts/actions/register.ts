@@ -27,6 +27,9 @@ function mapToWidget<
     type: _type,
     tags: _tags,
     size: _size,
+    include: _include,
+    exclude: _exclude,
+    states: _states,
     ...buttonProps
   } = def;
   return {

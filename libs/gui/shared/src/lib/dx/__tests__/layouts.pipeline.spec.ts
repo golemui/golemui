@@ -8,17 +8,17 @@ import {
   resolveDynamic,
 } from './helpers';
 import {
-  _guiHorizontalStack,
-  _guiVerticalStack,
-  _guiStack,
-} from '../shortcuts/layouts/guiStack.impl';
+  _guiHorizontalFlex,
+  _guiVerticalFlex,
+  _guiFlex,
+} from '../shortcuts/layouts/guiFlex.impl';
 import { _gslLayoutByUid } from '../shortcuts/layouts/register';
 import { _guiTextInput, _guiNumberInput } from '../index';
 
 describe('DX Pipeline — Layouts', () => {
   describe('Basic layout structure', () => {
-    it('maps _guiHorizontalStack to a horizontal flex layout', () => {
-      const root = processDx(_guiHorizontalStack(_guiTextInput('a')));
+    it('maps _guiHorizontalFlex to a horizontal flex layout', () => {
+      const root = processDx(_guiHorizontalFlex([_guiTextInput('a')]));
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.kind).toBe('layout');
@@ -26,16 +26,16 @@ describe('DX Pipeline — Layouts', () => {
       expect((layout.props as { direction?: string }).direction).toBe('row');
     });
 
-    it('maps _guiVerticalStack to a vertical layout', () => {
-      const root = processDx(_guiVerticalStack([_guiTextInput('a')]));
+    it('maps _guiVerticalFlex to a vertical layout', () => {
+      const root = processDx(_guiVerticalFlex([_guiTextInput('a')]));
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.kind).toBe('layout');
       expect((layout.props as { direction?: string }).direction).toBe('column');
     });
 
-    it('maps _guiStack direction to layout direction', () => {
-      const root = processDx(_guiStack('row', [_guiTextInput('a')]));
+    it('maps _guiFlex direction prop to layout direction', () => {
+      const root = processDx(_guiFlex([_guiTextInput('a')], { direction: 'row' }));
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.kind).toBe('layout');
@@ -46,7 +46,7 @@ describe('DX Pipeline — Layouts', () => {
 
   describe('Children recursion', () => {
     it('recursively maps children inside layout', () => {
-      const root = processDx(_guiHorizontalStack([_guiTextInput('a'), _guiNumberInput('b')]));
+      const root = processDx(_guiHorizontalFlex([_guiTextInput('a'), _guiNumberInput('b')]));
       const innerLayout = getStaticChild(root, 0) as LayoutWidget;
       const first = innerLayout.children?.[0] as { kind?: string; path?: string };
       const second = innerLayout.children?.[1] as { kind?: string; path?: string };
@@ -60,7 +60,7 @@ describe('DX Pipeline — Layouts', () => {
 
     it('supports nested layouts and preserves hierarchy', () => {
       const root = processDx(
-        _guiVerticalStack([_guiHorizontalStack(_guiTextInput('a'))]),
+        _guiVerticalFlex([_guiHorizontalFlex([_guiTextInput('a')])]),
       );
       const outer = getStaticChild(root, 0) as LayoutWidget;
       const inner = outer.children?.[0] as LayoutWidget;

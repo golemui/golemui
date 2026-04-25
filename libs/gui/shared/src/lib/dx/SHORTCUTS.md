@@ -95,9 +95,9 @@ Bare types: **calendar**
 
 Container types with children. No path.
 
-Example — `_guiStack`:
+Example — `_guiFlex`:
 ```ts
-_guiStack('row', [...children])
+_guiFlex([...children], { direction: 'row' })
 // → items: [{ def: { widgetName: 'flex', direction: 'row' }, children: [...] }]
 ```
 
@@ -193,7 +193,7 @@ Container with nested shortcuts. Children are structural — they're walked recu
 **Used by:** Layouts (`LayoutEntry`). Future: tabs, accordion.
 
 ```ts
-// _guiStack('row', [_guiInputs({...}), _guiButton({...})])
+// _guiFlex([_guiInputs({...}), _guiButton({...})], { direction: 'row' })
 // Entry is { def: { direction: 'row' }, children: [...] }
 ```
 
@@ -288,9 +288,9 @@ services/dx/
 │   │   ├── gslActions.impl.ts         ← _gslActions()
 │   │   └── gslActionById.impl.ts      ← _gslActionById()
 │   │
-│   ├── layouts/                       ← Layout shortcut (stacks)
+│   ├── layouts/                       ← Layout shortcut (flex / grid families)
 │   │   ├── layouts.domain.ts          ← LayoutDecorator, LayoutEntry, GuiLayoutItemsShortcut, GslLayoutsConfig
-│   │   ├── guiStack.impl.ts           ← _guiStack(), _guiHorizontalStack(), _guiVerticalStack()
+│   │   ├── guiFlex.impl.ts            ← _guiFlex(), _guiHorizontalFlex(), _guiVerticalFlex(), _guiGrid(), _guiHorizontalGrid(), _guiVerticalGrid()
 │   │   ├── gslLayouts.impl.ts         ← _gslLayouts()
 │   │   └── gslLayoutById.impl.ts      ← _gslLayoutById()
 │   │
@@ -299,10 +299,10 @@ services/dx/
 │   │   ├── guiDisplay.impl.ts         ← _guiDisplay()
 │   │   └── gslDisplays.impl.ts        ← _gslDisplays()
 │   │
-│   └── scopes/                        ← Scope selectors (root, tag)
-│       ├── scopes.domain.ts           ← GslScopeSelector, FormConfig
-│       ├── gslRoot.impl.ts            ← _gslRoot()
-│       └── gslTag.impl.ts             ← _gslTag()
+│   └── scopes/                        ← Scope chain + legacy primitives
+│       ├── scopeChain.ts              ← ScopeChain class — `gui.selectors` root
+│       ├── gslTag.impl.ts             ← _gslTag()  (internal, focus-closeout removal)
+│       └── gslStates.impl.ts          ← _gslStates() (internal, focus-closeout removal)
 │
 ├── dx.service.ts                      ← Orchestration: walks GUI tree, calls pipeline
 ├── formDef.domain.ts                  ← Base WidgetItemDecorator + DxDefinitions + re-exports
@@ -320,7 +320,7 @@ A `--` means the shortcut does not implement that piece.
 | **Sub-interface** | `GuiInputsShortcut` | `GuiActionsShortcut` | `GuiLayoutItemsShortcut` | `GuiDisplayItemsShortcut` |
 | **Entry type** | `InputEntry` (keyed: `{key, def}`) | `ActionEntry` (bare: decorator or callback) | `LayoutEntry` (`{def, children}`) | `DisplayEntry` (bare: `DisplayDecorator`) |
 | **Decorator type** | `InputDecorator` (Text, Number, Boolean) | `ActionDecorator` | `LayoutDecorator` | `DisplayDecorator` |
-| **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButton`, `_guiSubmitButton` | `_guiFlex`, `_guiHorizontalFlex`, `_guiVerticalFlex`, `_guiGrid`, `_guiHorizontalGrid`, `_guiVerticalGrid` (legacy `_guiStack` family preserved as deprecated) | `_guiDisplay(renderFn)` |
+| **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButton`, `_guiSubmitButton` | `_guiFlex`, `_guiHorizontalFlex`, `_guiVerticalFlex`, `_guiGrid`, `_guiHorizontalGrid`, `_guiVerticalGrid` | `_guiDisplay(renderFn)` |
 | **GSL widget selector fn** | `_gslInputs(config)` | `_gslActions(config)` | `_gslLayouts(config)` | `_gslDisplays(config)` |
 | **GSL by-id selector fn** | -- | `_gslActionById(id, config)` | `_gslLayoutById(id, config)` | -- |
 | **GSL config type** | `GslInputsConfig` (decorator + 2 suppress flags) | `GslActionsConfig` (decorator only) | `GslLayoutsConfig` (decorator only) | `GslDisplaysConfig` (decorator only) |

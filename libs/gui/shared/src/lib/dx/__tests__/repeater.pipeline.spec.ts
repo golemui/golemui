@@ -4,7 +4,7 @@ import {
   _guiRepeater,
     _guiSelect,
   _guiCurrency,
-  _guiHorizontalStack,
+  _guiHorizontalFlex,
   _gslRepeaters,
   _gslRepeaterByUid,
 } from '../index';
@@ -337,7 +337,7 @@ describe('DX Pipeline — Repeater', () => {
         _guiRepeater('users', {
           addLabel: 'Add',
           template: [
-            _guiHorizontalStack([
+            _guiHorizontalFlex([
               _guiTextInput('firstName'),
               _guiTextInput('lastName'),
             ]),
@@ -349,13 +349,13 @@ describe('DX Pipeline — Repeater', () => {
       };
       const template = w.props?.template as LayoutWidget;
 
-      // The horizontal stack is the first child of the template
-      const hStack = template.children?.[0] as LayoutWidget;
-      expect(hStack.kind).toBe('layout');
+      // The horizontal flex layout is the first child of the template
+      const hFlex = template.children?.[0] as LayoutWidget;
+      expect(hFlex.kind).toBe('layout');
 
-      // Inputs inside the stack should be prefixed
-      const firstNameInput = hStack.children?.[0] as NonFunctionWidget & { path?: string };
-      const lastNameInput = hStack.children?.[1] as NonFunctionWidget & { path?: string };
+      // Inputs inside the layout should be prefixed
+      const firstNameInput = hFlex.children?.[0] as NonFunctionWidget & { path?: string };
+      const lastNameInput = hFlex.children?.[1] as NonFunctionWidget & { path?: string };
       expect(firstNameInput.path).toBe('users.items.firstName');
       expect(lastNameInput.path).toBe('users.items.lastName');
     });

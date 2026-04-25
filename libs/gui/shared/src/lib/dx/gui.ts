@@ -2,8 +2,9 @@
 // gui — Public namespace façade
 //
 // Aggregates DX factory and selector exports under spec-correct names.
-// Type selectors and ByUid variants. Scope operators (tag, state) are
-// wrapping functions — chaining engine lands in Phase 15.
+// `gui.selectors` is a `ScopeChain` root instance: type-selector methods
+// (`inputs`, `inputByUid`, …) emit `GslLeafSelector`s, scope methods
+// (`tag`, `state`, `tagsAnd`, `tagsOr`) extend the chain immutably.
 // ═══════════════════════════════════════════════════
 
 // ─── Inputs ───
@@ -52,41 +53,8 @@ import { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl
 // ─── Repeater ───
 import { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 
-// ─── Selectors — type selectors ───
-import { _gslInputs, _gslInputByUid } from './shortcuts/inputs/register';
-import { _gslTextInputs, _gslNumberInputs, _gslBooleanInputs } from './shortcuts/inputs/gslInputSubtypes';
-import { _gslSelects, _gslSelectByUid } from './shortcuts/select/register';
-import { _gslDropdowns, _gslDropdownByUid } from './shortcuts/dropdown/register';
-import { _gslRadiogroups, _gslRadiogroupByUid } from './shortcuts/radiogroup/register';
-import { _gslCheckboxes, _gslCheckboxByUid } from './shortcuts/checkbox/register';
-import { _gslTextareas, _gslTextareaByUid } from './shortcuts/textarea/register';
-import { _gslPasswords, _gslPasswordByUid } from './shortcuts/password/register';
-import { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
-import { _gslMarkdowns, _gslMarkdownByUid } from './shortcuts/markdown/register';
-import { _gslLists, _gslListByUid } from './shortcuts/list/register';
-import { _gslCalendars, _gslCalendarByUid } from './shortcuts/calendar/register';
-import { _gslDateInputs, _gslDateInputByUid } from './shortcuts/date-input/register';
-import { _gslDatePickers, _gslDatePickerByUid } from './shortcuts/date-picker/register';
-import { _gslRangeCalendars, _gslRangeCalendarByUid } from './shortcuts/range-calendar/register';
-import { _gslRangeDateInputs, _gslRangeDateInputByUid } from './shortcuts/range-date-input/register';
-import { _gslRangeDatePickers, _gslRangeDatePickerByUid } from './shortcuts/range-date-picker/register';
-import { _gslRepeaters, _gslRepeaterByUid } from './shortcuts/repeater/register';
-import { _gslActions, _gslActionByUid } from './shortcuts/actions/register';
-import { _gslLayouts, _gslLayoutByUid } from './shortcuts/layouts/register';
-import { _gslDisplays, _gslDisplayByUid } from './shortcuts/display/register';
-import { _gslAlerts, _gslAlertByUid } from './shortcuts/alert/register';
-import { _gslTabs, _gslTabsByUid } from './shortcuts/tabs/register';
-import { _gslAccordions, _gslAccordionByUid } from './shortcuts/accordion/register';
-import { _gslCustomInputs, _gslCustomInputByUid } from './shortcuts/custom-input/register';
-import { _gslCustomActions, _gslCustomActionByUid } from './shortcuts/custom-action/register';
-import { _gslCustomDisplays, _gslCustomDisplayByUid } from './shortcuts/custom-display/register';
-import { _gslCustomLayouts, _gslCustomLayoutByUid } from './shortcuts/custom-layout/register';
-
-// Scope operators (`_gslTag`, `_gslStates`, `_gslRoot`) are not part of the
-// Phase 1 façade. They remain as deprecated `_gsl*` exports in `lib/dx/index.ts`,
-// used by the 3 demos that compose scope-bearing selectors until Phase 15
-// (selector chaining engine) replaces them with chain-method entrypoints on
-// this same `gui.selectors` root instance.
+// ─── Selectors — chain root ───
+import { ScopeChain } from './shortcuts/scopes/scopeChain';
 
 export const gui = {
   inputs: {
@@ -132,63 +100,5 @@ export const gui = {
     accordion: _guiAccordion,
     custom: _guiCustomLayout,
   },
-  selectors: {
-    inputs: _gslInputs,
-    inputByUid: _gslInputByUid,
-    textInputs: _gslTextInputs,
-    numberInputs: _gslNumberInputs,
-    booleanInputs: _gslBooleanInputs,
-    selects: _gslSelects,
-    selectByUid: _gslSelectByUid,
-    dropdowns: _gslDropdowns,
-    dropdownByUid: _gslDropdownByUid,
-    radiogroups: _gslRadiogroups,
-    radiogroupByUid: _gslRadiogroupByUid,
-    checkboxes: _gslCheckboxes,
-    checkboxByUid: _gslCheckboxByUid,
-    textareas: _gslTextareas,
-    textareaByUid: _gslTextareaByUid,
-    passwords: _gslPasswords,
-    passwordByUid: _gslPasswordByUid,
-    currencies: _gslCurrencies,
-    currencyByUid: _gslCurrencyByUid,
-    markdowns: _gslMarkdowns,
-    markdownByUid: _gslMarkdownByUid,
-    lists: _gslLists,
-    listByUid: _gslListByUid,
-    calendars: _gslCalendars,
-    calendarByUid: _gslCalendarByUid,
-    dateInputs: _gslDateInputs,
-    dateInputByUid: _gslDateInputByUid,
-    datePickers: _gslDatePickers,
-    datePickerByUid: _gslDatePickerByUid,
-    rangeCalendars: _gslRangeCalendars,
-    rangeCalendarByUid: _gslRangeCalendarByUid,
-    rangeDateInputs: _gslRangeDateInputs,
-    rangeDateInputByUid: _gslRangeDateInputByUid,
-    rangeDatePickers: _gslRangeDatePickers,
-    rangeDatePickerByUid: _gslRangeDatePickerByUid,
-    repeaters: _gslRepeaters,
-    repeaterByUid: _gslRepeaterByUid,
-    actions: _gslActions,
-    actionByUid: _gslActionByUid,
-    layouts: _gslLayouts,
-    layoutByUid: _gslLayoutByUid,
-    displays: _gslDisplays,
-    displayByUid: _gslDisplayByUid,
-    alerts: _gslAlerts,
-    alertByUid: _gslAlertByUid,
-    tabs: _gslTabs,
-    tabsByUid: _gslTabsByUid,
-    accordions: _gslAccordions,
-    accordionByUid: _gslAccordionByUid,
-    customInputs: _gslCustomInputs,
-    customInputByUid: _gslCustomInputByUid,
-    customActions: _gslCustomActions,
-    customActionByUid: _gslCustomActionByUid,
-    customDisplays: _gslCustomDisplays,
-    customDisplayByUid: _gslCustomDisplayByUid,
-    customLayouts: _gslCustomLayouts,
-    customLayoutByUid: _gslCustomLayoutByUid,
-  },
+  selectors: ScopeChain.root(),
 } as const;

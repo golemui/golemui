@@ -4,9 +4,9 @@ import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helper
 import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import {
-  _guiHorizontalStack,
-  _guiVerticalStack,
-} from '../shortcuts/layouts/guiStack.impl';
+  _guiHorizontalFlex,
+  _guiVerticalFlex,
+} from '../shortcuts/layouts/guiFlex.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
 import { formDefs } from '../dx.service';
 import { _guiTextInput } from '../index';
@@ -15,10 +15,10 @@ describe('DX Pipeline — Edge Cases', () => {
   describe('Deeply nested layouts', () => {
     it('recurses through 3+ levels of nested layouts', () => {
       const root = processDx(
-        _guiVerticalStack([
-          _guiHorizontalStack(
-            _guiVerticalStack([_guiTextInput('deep')]),
-          ),
+        _guiVerticalFlex([
+          _guiHorizontalFlex([
+            _guiVerticalFlex([_guiTextInput('deep')]),
+          ]),
         ]),
       );
 
@@ -76,21 +76,21 @@ describe('DX Pipeline — Edge Cases', () => {
   });
 
   describe('Container nesting', () => {
-    it('processes tabs nested inside a horizontal stack', () => {
+    it('processes tabs nested inside a horizontal flex layout', () => {
       const root = processDx(
-        _guiHorizontalStack(
+        _guiHorizontalFlex([
           _guiTabs([
             { label: 'Tab A', children: [_guiTextInput('a')] },
             { label: 'Tab B', children: [_guiTextInput('b')] },
           ]),
-        ),
+        ]),
       );
 
-      const stack = getStaticChild(root, 0) as LayoutWidget;
-      expect(stack.kind).toBe('layout');
-      expect(stack.type).toBe('flex');
+      const flex = getStaticChild(root, 0) as LayoutWidget;
+      expect(flex.kind).toBe('layout');
+      expect(flex.type).toBe('flex');
 
-      const tabs = stack.children?.[0] as LayoutWidget;
+      const tabs = flex.children?.[0] as LayoutWidget;
       expect(tabs.kind).toBe('layout');
       expect(tabs.type).toBe('tabs');
     });

@@ -54,6 +54,13 @@ import {
   supportTicketDemo,
   bookingRequestDemo,
   eventRegistrationDemo,
+  // Chapter 10: Selector Grammar
+  chainingDemo,
+  reusableScopeVariablesDemo,
+  tagsMultiValueDemo,
+  singleStateOperatorDemo,
+  perWidgetVsSelectorPrecedenceDemo,
+  commutativityDemo,
 } from './demos';
 import formRegistry from './formRegistry.domain';
 import styles from './app.module.css';
@@ -118,6 +125,13 @@ formRegistry.registerAll([
   supportTicketDemo,
   bookingRequestDemo,
   eventRegistrationDemo,
+  // Chapter 10: Selector Grammar
+  chainingDemo,
+  reusableScopeVariablesDemo,
+  tagsMultiValueDemo,
+  singleStateOperatorDemo,
+  perWidgetVsSelectorPrecedenceDemo,
+  commutativityDemo,
 ]);
 
 export function App() {

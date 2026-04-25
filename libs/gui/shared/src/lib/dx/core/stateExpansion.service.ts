@@ -5,10 +5,11 @@ import { EventIdGenerator, EventRegistry } from './itemTypeRegistry';
 // ═══════════════════════════════════════════════════
 // State Expansion Service
 //
-// Processes per-widget `states` blocks, `when` inline
-// conditions, and `_gslStates` overrides into core's
-// state-suffixed properties, include/exclude, and
-// conditional { when } forms.
+// Processes per-widget `states` blocks and `_gslStates`
+// overrides into core's state-suffixed properties and
+// `include` / `exclude` lists. The shorthand `visible: true`
+// / `visible: false` inside a `states:` block translates to
+// `include: { in }` / `exclude: { from }` on the widget.
 // ═══════════════════════════════════════════════════
 
 /**
@@ -32,20 +33,17 @@ const EVENT_PROPS: Record<string, string> = {
   onClick: 'click',
 };
 
-export type DxWhenTuple = [string, Record<string, any>];
-
 export interface StateData {
   stateOverrides: Record<string, Record<string, any>>;
-  whenConditions: DxWhenTuple[];
 }
 
 export class StateExpansionService {
 
   /**
-   * Extracts `states` and `when` from a merge result, combining with
-   * state-targeted GSL leaf selectors from `_gslStates`.
+   * Extracts `states` from a merge result, combining with state-targeted
+   * GSL leaf selectors from `_gslStates`.
    *
-   * Returns a cleaned merge result (no states/when) and accumulated state data.
+   * Returns a cleaned merge result (no states) and accumulated state data.
    */
   extractFromMergeResult(
     mergeResult: MergeResult,
@@ -71,17 +69,17 @@ export class StateExpansionService {
       const originalFn = mergeResult.fn;
       const wrappedFn: RuntimeFunction = (params: FunctionWidgetParams<any>) => {
         const result = originalFn(params);
-        const { states: _, when: __, ...clean } = result;
+        const { states: _, ...clean } = result;
         return clean;
       };
       return {
         cleanedResult: { kind: 'dynamic', fn: wrappedFn },
-        stateData: { stateOverrides: gslStateOverrides, whenConditions: [] },
+        stateData: { stateOverrides: gslStateOverrides },
       };
     }
 
     // Static path
-    const { states: inlineStates, when: inlineWhen, ...cleanDef } = mergeResult.def;
+    const { states: inlineStates, ...cleanDef } = mergeResult.def;
 
     // GSL state overrides are base; inline states override (per-widget > GSL)
     const allOverrides: Record<string, Record<string, any>> = {};
@@ -94,36 +92,18 @@ export class StateExpansionService {
       }
     }
 
-    // Parse when conditions
-    const whenConditions: DxWhenTuple[] = [];
-    if (inlineWhen) {
-      if (Array.isArray(inlineWhen[0])) {
-        whenConditions.push(...(inlineWhen as DxWhenTuple[]));
-      } else if (typeof inlineWhen[0] === 'string') {
-        whenConditions.push(inlineWhen as DxWhenTuple);
-      }
-    }
-
     return {
       cleanedResult: { kind: 'static', def: cleanDef },
-      stateData: { stateOverrides: allOverrides, whenConditions },
+      stateData: { stateOverrides: allOverrides },
     };
   }
 
   /**
-   * Applies state overrides and when conditions to a core widget.
-   *
-   * State overrides produce:
+   * Applies state overrides to a core widget. Each override produces:
    * - `visible: true/false` → `include: { in }` / `exclude: { from }`
    * - Core suffixable props → `'prop.stateName': value` at widget root
    * - Event handlers → `on: { 'eventType.stateName': eventId }` with registry wiring
    * - Custom props → `props: { 'prop.stateName': value }`
-   *
-   * When conditions produce:
-   * - `visible: true` → `include: { when: condition }`
-   * - `visible: false` → `exclude: { when: condition }`
-   * - `disabled: true` → `disabled: { when: condition }`
-   * - `readonly: true` → `readonly: { when: condition }`
    */
   applyToWidget(
     widget: NonFunctionWidget,
@@ -131,9 +111,9 @@ export class StateExpansionService {
     eventRegistry: EventRegistry,
     eventIdGenerator: EventIdGenerator,
   ): NonFunctionWidget {
-    const { stateOverrides, whenConditions } = stateData;
+    const { stateOverrides } = stateData;
 
-    if (Object.keys(stateOverrides).length === 0 && whenConditions.length === 0) {
+    if (Object.keys(stateOverrides).length === 0) {
       return widget;
     }
 
@@ -162,28 +142,11 @@ export class StateExpansionService {
       }
     }
 
-    // ── Inline when conditions ──
-    for (const [condition, overrides] of whenConditions) {
-      for (const [prop, value] of Object.entries(overrides)) {
-        if (prop === 'visible') {
-          if (value) {
-            result['include'] = { ...(result['include'] || {}), when: condition };
-          } else {
-            result['exclude'] = { ...(result['exclude'] || {}), when: condition };
-          }
-        } else if (prop === 'disabled' && value) {
-          result['disabled'] = { when: condition };
-        } else if (prop === 'readonly' && value) {
-          result['readonly'] = { when: condition };
-        }
-      }
-    }
-
     return result as NonFunctionWidget;
   }
 
   hasStateData(stateData: StateData): boolean {
-    return Object.keys(stateData.stateOverrides).length > 0 || stateData.whenConditions.length > 0;
+    return Object.keys(stateData.stateOverrides).length > 0;
   }
 
   // ── Visibility helpers ──

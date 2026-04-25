@@ -223,7 +223,7 @@ describe('DX Pipeline — Actions', () => {
       expect(result.events).toBeUndefined();
     });
 
-    it('includes dependencies in DxResult when _gslRoot provides them', () => {
+    it('includes dependencies in DxResult when formConfig provides them', () => {
       const mockParse = (md: string) => `<p>${md}</p>`;
       const result = formDefs.processDxFacade(
         [_guiTextInput('name')],
@@ -235,7 +235,7 @@ describe('DX Pipeline — Actions', () => {
       expect(result.dependencies!.markdown!.parse).toBe(mockParse);
     });
 
-    it('omits dependencies from DxResult when _gslRoot has none', () => {
+    it('omits dependencies from DxResult when formConfig has none', () => {
       const result = formDefs.processDxFacade(
         [_guiTextInput('name')],
         [],

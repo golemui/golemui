@@ -1,4 +1,4 @@
-import { FlexProps } from '../../../widget.props';
+import { FlexProps, GridProps } from '../../../widget.props';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import { ValidGuiShortcut } from '../../core/dx.domain';
 import { DxCommonFields, DxInternalFields, DxLayoutBase } from '../../core/dxBase.types';
@@ -11,10 +11,32 @@ import {
 // ═══════════════════════════════════════════════════
 // Layout Decorator (DX-level type for layouts)
 // ═══════════════════════════════════════════════════
+//
+// Pipeline-internal decorator. The `widgetName` discriminator selects the
+// underlying layout shape; per-family props are typed at the façade
+// (`FlexFamilyProps` / `GridFamilyProps`) and flow through this decorator
+// at runtime via the spread in `_guiFlex` / `_guiGrid`.
 
-export interface LayoutDecorator extends DxLayoutBase, DxCommonFields, Partial<FlexProps> {
+export interface LayoutDecorator extends DxLayoutBase, DxCommonFields {
   widgetName?: string;
+  direction?: FlexProps['direction'] | GridProps['direction'];
+  justify?: FlexProps['justify'];
+  align?: FlexProps['align'] | GridProps['align'];
+  gap?: FlexProps['gap'];
+  columnGap?: GridProps['columnGap'];
+  rowGap?: GridProps['rowGap'];
+  autoFit?: GridProps['autoFit'];
 }
+
+// ═══════════════════════════════════════════════════
+// Per-family façade prop types (spec-strict)
+// ═══════════════════════════════════════════════════
+
+/** User-facing prop slot for the flex family (`gui.layouts.flex` and variants). */
+export type FlexFamilyProps = FlexProps & DxLayoutBase & DxCommonFields;
+
+/** User-facing prop slot for the grid family (`gui.layouts.grid` and variants). */
+export type GridFamilyProps = GridProps & DxLayoutBase & DxCommonFields;
 
 /**
  * Full decorator type including pipeline-internal fields.
