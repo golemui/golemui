@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { _guiAlert, _gslAlerts, _gslAlertById } from '../index';
+import { _guiAlert, _gslAlerts, _gslAlertByUid } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
 describe('DX Pipeline — Alert', () => {
@@ -50,7 +50,7 @@ describe('DX Pipeline — Alert', () => {
   it('applies GSL broad selector override', () => {
     const result = processDx(
       _guiAlert({ text: 'Original', level: 'info' }),
-      [_gslAlerts({ decorator: { level: 'error' } })],
+      [_gslAlerts({ override: { level: 'error' } })],
     );
     const w = getStaticChild(result, 0) as {
       props?: { level?: string };
@@ -62,7 +62,7 @@ describe('DX Pipeline — Alert', () => {
   it('applies GSL byId selector override', () => {
     const result = processDx(
       _guiAlert({ text: 'With uid', uid: 'main-alert', level: 'info' }),
-      [_gslAlertById('main-alert', { decorator: { level: 'success' } })],
+      [_gslAlertByUid('main-alert', { override: { level: 'success' } })],
     );
     const w = getStaticChild(result, 0) as {
       props?: { level?: string };

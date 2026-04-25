@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiRepeater, _guiInputs } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const repeaterDemo: FormDemoDefinition = {
   title: '17. Repeater',
@@ -9,16 +9,15 @@ export const repeaterDemo: FormDemoDefinition = {
     + 'The repeater owns an array path in the form model and clones its children for each element. '
     + 'Supports addLabel, removeLabel, limit, and nested repeaters.',
   formDef: () => [
-    _guiRepeater(
-      'users',
-      { addLabel: 'Add User', removeLabel: 'Remove', limit: 5 },
-      [
-        _guiInputs({
-          name: 'string',
-          email: 'string',
-        }),
+    gui.inputs.repeater('users', {
+      addLabel: 'Add User',
+      removeLabel: 'Remove',
+      limit: 5,
+      template: [
+        gui.inputs.textInput('name'),
+        gui.inputs.textInput('email'),
       ],
-    ),
+    }),
   ],
   formConfig: () => ({
     onSubmit: (data: any) => console.log('Form submitted:', data),

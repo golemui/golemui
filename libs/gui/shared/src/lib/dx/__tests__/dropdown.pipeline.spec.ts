@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { _guiDropdown, _gslDropdown, _gslDropdownById } from '../index';
+import { _guiDropdown, _gslDropdowns, _gslDropdownByUid } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
 const sampleItems = [
@@ -99,7 +99,7 @@ describe('DX Pipeline — Dropdown', () => {
   it('applies GSL broad selector override', () => {
     const result = processDx(
       _guiDropdown('country', { items: sampleItems }),
-      [_gslDropdown({ decorator: { hint: 'Pick one' } })],
+      [_gslDropdowns({ override: { hint: 'Pick one' } })],
     );
     const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
@@ -109,7 +109,7 @@ describe('DX Pipeline — Dropdown', () => {
   it('applies GSL byId selector override', () => {
     const result = processDx(
       _guiDropdown('country', { items: sampleItems, uid: 'country-dd' }),
-      [_gslDropdownById('country-dd', { decorator: { hint: 'By-id hint' } })],
+      [_gslDropdownByUid('country-dd', { override: { hint: 'By-id hint' } })],
     );
     const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
@@ -119,7 +119,7 @@ describe('DX Pipeline — Dropdown', () => {
   it('suppresses auto-label via GSL config', () => {
     const result = processDx(
       _guiDropdown('homeCountry', { items: sampleItems }),
-      [_gslDropdown({ suppressAutomaticLabels: true })],
+      [_gslDropdowns({ suppressAutomaticLabels: true })],
     );
     const w = getStaticChild(result, 0) as { label?: string };
 

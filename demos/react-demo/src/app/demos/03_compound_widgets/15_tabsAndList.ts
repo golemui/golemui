@@ -1,11 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiTabs,
-  _guiList,
-  _guiInputs,
-  _guiDateInput,
-  _guiCheckbox,
-} from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const tabsAndListDemo: FormDemoDefinition = {
   title: '15. Tabs & List',
@@ -13,22 +7,29 @@ export const tabsAndListDemo: FormDemoDefinition = {
   description:
     'Tabbed layouts with nested content and list inputs with item templates.',
   formDef: () => [
-    _guiTabs({
-      Personal: [
-        _guiInputs({ firstName: 'string', lastName: 'string' }),
-        _guiDateInput('birthday'),
-      ],
-      Preferences: [
-        _guiList('favoriteColors', {
-          items: [
-            { template: 'Red', value: 'red' },
-            { template: 'Blue', value: 'blue' },
-            { template: 'Green', value: 'green' },
-          ],
-        }),
-        _guiCheckbox('newsletter'),
-      ],
-    }),
+    gui.layouts.tabs([
+      {
+        label: 'Personal',
+        children: [
+          gui.inputs.textInput('firstName'),
+          gui.inputs.textInput('lastName'),
+          gui.inputs.dateInput('birthday'),
+        ],
+      },
+      {
+        label: 'Preferences',
+        children: [
+          gui.inputs.list('favoriteColors', {
+            items: [
+              { template: 'Red', value: 'red' },
+              { template: 'Blue', value: 'blue' },
+              { template: 'Green', value: 'green' },
+            ],
+          }),
+          gui.inputs.checkbox('newsletter'),
+        ],
+      },
+    ]),
   ],
   formConfig: () => ({
     onSubmit: (data: any) => console.log('Form submitted:', data),

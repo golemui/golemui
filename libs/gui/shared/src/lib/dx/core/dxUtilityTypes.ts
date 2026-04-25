@@ -26,12 +26,12 @@ export type DefOrCallback<D, TForm = any> =
   D | ((params: DxRuntimeParams<TForm>) => Partial<D>);
 
 /**
- * Standard GSL config shape — decorator override + optional suppress flags.
+ * Standard GSL config shape — override + optional suppress flags.
  * Extend this for types that have additional GSL config fields.
  * Usage: replace per-type `GslCalendarConfig`, `GslInputConfig`, etc. base shape.
  */
 export interface GslConfigBase<D> {
-  decorator?: Partial<D> | GslDecoratorCallback<D>;
+  override?: Partial<D> | GslDecoratorCallback<D>;
 }
 
 /**
@@ -52,7 +52,7 @@ export interface GuiShortcutOf<
  *
  * @example
  * ```ts
- * export const _gslCalendar = createGslSelector<CalendarDecorator, GslCalendarConfig>('CALENDAR');
+ * export const _gslCalendars = createGslSelector<CalendarDecorator, GslCalendarConfig>('CALENDAR');
  * // Equivalent to the hand-written gslCalendar.impl.ts factory
  * ```
  */

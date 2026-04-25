@@ -8,14 +8,14 @@ import {
   _guiMarkdown,
   _guiRangeDateInput,
   _guiRangeDatePicker,
-  _gslPassword,
-  _gslCheckbox,
-  _gslDateInput,
-  _gslCurrency,
-  _gslRangeCalendar,
-  _gslMarkdown,
-  _gslRangeDateInput,
-  _gslRangeDatePicker,
+  _gslPasswords,
+  _gslCheckboxes,
+  _gslDateInputs,
+  _gslCurrencies,
+  _gslRangeCalendars,
+  _gslMarkdowns,
+  _gslRangeDateInputs,
+  _gslRangeDatePickers,
 } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
@@ -54,7 +54,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiPassword('pw'),
-        [_gslPassword({ decorator: { label: 'Secret code' } })],
+        [_gslPasswords({ override: { label: 'Secret code' } })],
       );
       const w = getStaticChild(result, 0) as { label?: string };
 
@@ -105,7 +105,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiCheckbox('agree'),
-        [_gslCheckbox({ decorator: { label: 'I agree' } })],
+        [_gslCheckboxes({ override: { label: 'I agree' } })],
       );
       const w = getStaticChild(result, 0) as { label?: string };
 
@@ -140,7 +140,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiDateInput('date'),
-        [_gslDateInput({ decorator: { hint: 'YYYY-MM-DD' } })],
+        [_gslDateInputs({ override: { hint: 'YYYY-MM-DD' } })],
       );
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
@@ -183,7 +183,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiCurrency('amount'),
-        [_gslCurrency({ decorator: { currency: 'GBP' } })],
+        [_gslCurrencies({ override: { currency: 'GBP' } })],
       );
       const w = getStaticChild(result, 0) as { props?: { currency?: string } };
 
@@ -237,7 +237,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiRangeCalendar('range'),
-        [_gslRangeCalendar({ decorator: { numberOfMonths: 3 } })],
+        [_gslRangeCalendars({ override: { numberOfMonths: 3 } })],
       );
       const w = getStaticChild(result, 0) as { props?: { numberOfMonths?: number } };
 
@@ -272,7 +272,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiMarkdown('bio'),
-        [_gslMarkdown({ decorator: { label: 'Biography' } })],
+        [_gslMarkdowns({ override: { label: 'Biography' } })],
       );
       const w = getStaticChild(result, 0) as { label?: string };
 
@@ -323,7 +323,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiRangeDateInput('dates'),
-        [_gslRangeDateInput({ decorator: { hint: 'Select dates' } })],
+        [_gslRangeDateInputs({ override: { hint: 'Select dates' } })],
       );
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
@@ -368,7 +368,7 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiRangeDatePicker('range'),
-        [_gslRangeDatePicker({ decorator: { numberOfMonths: 3 } })],
+        [_gslRangeDatePickers({ override: { numberOfMonths: 3 } })],
       );
       const w = getStaticChild(result, 0) as { props?: { numberOfMonths?: number } };
 

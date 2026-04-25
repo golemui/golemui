@@ -1,24 +1,20 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiCustomAction,
-  _guiCustomDisplay,
-  _guiCustomInput,
-} from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const customActionDemo: FormDemoDefinition = {
   title: '21. Custom Action',
   category: 'Ch4: Custom Widgets',
   description:
-    'Use _guiCustomAction to render a custom action widget with onClick wiring. '
-    + 'Click handling goes through DxResult.events, same as built-in _guiButton.',
+    'Use gui.actions.custom to render a custom action widget with onClick wiring. '
+    + 'Click handling goes through DxResult.events, same as built-in gui.actions.button.',
   formDef: () => [
-    _guiCustomDisplay('heading', { text: 'Custom Action Demo', level: 2 }),
-    _guiCustomInput('simpleInput', 'message', { label: 'Your message' }),
-    _guiCustomAction('simpleButton', {
+    gui.displays.custom('heading', { text: 'Custom Action Demo', level: 2 }),
+    gui.inputs.custom('simpleInput', 'message', { label: 'Your message' }),
+    gui.actions.custom('simpleButton', {
       label: 'Send Message',
       onClick: (data: any) => alert(`Message sent: ${JSON.stringify(data)}`),
     }),
-    _guiCustomAction('simpleButton', {
+    gui.actions.custom('simpleButton', {
       label: 'Submit Form',
       onClick: 'submit',
     }),

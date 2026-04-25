@@ -2,9 +2,12 @@
 // FormForge DX — Public API
 // ═══════════════════════════════════════════════════
 
+// ─── Public namespace ───
+
+export { gui } from './gui';
+
 // ─── GUI factories (structure) ───
 
-export { _guiInputs } from './shortcuts/inputs/guiInputs.impl';
 export { _guiTextInput } from './shortcuts/inputs/guiTextInput.impl';
 export { _guiNumberInput } from './shortcuts/inputs/guiNumberInput.impl';
 export { _guiBooleanInput } from './shortcuts/inputs/guiBooleanInput.impl';
@@ -19,7 +22,16 @@ export { _guiSelect } from './shortcuts/select/guiSelect.impl';
 export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
 export { _guiTabs } from './shortcuts/tabs/guiTabs.impl';
 export { _guiList } from './shortcuts/list/guiList.impl';
-export { _guiButton, _guiButtons, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
+export { _guiButton, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
+export {
+  _guiFlex,
+  _guiHorizontalFlex,
+  _guiVerticalFlex,
+  _guiGrid,
+  _guiHorizontalGrid,
+  _guiVerticalGrid,
+} from './shortcuts/layouts/guiFlex.impl';
+// Deprecated legacy stack family — superseded by the flex family above. Kept for backward compat.
 export { _guiStack, _guiHorizontalStack, _guiVerticalStack } from './shortcuts/layouts/guiStack.impl';
 export { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
 export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
@@ -37,34 +49,34 @@ export { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl
 
 // ─── GSL selectors (behavior) ───
 
-export { _gslInputs, _gslInputById } from './shortcuts/inputs/register';
+export { _gslInputs, _gslInputByUid } from './shortcuts/inputs/register';
 export { _gslTextInputs, _gslNumberInputs, _gslBooleanInputs } from './shortcuts/inputs/gslInputSubtypes';
-export { _gslCalendar, _gslCalendarById } from './shortcuts/calendar/register';
-export { _gslTextarea, _gslTextareaById } from './shortcuts/textarea/register';
-export { _gslPassword, _gslPasswordById } from './shortcuts/password/register';
-export { _gslCheckbox, _gslCheckboxById } from './shortcuts/checkbox/register';
-export { _gslDateInput, _gslDateInputById } from './shortcuts/date-input/register';
-export { _gslCurrency, _gslCurrencyById } from './shortcuts/currency/register';
-export { _gslRangeCalendar, _gslRangeCalendarById } from './shortcuts/range-calendar/register';
-export { _gslSelect, _gslSelectById } from './shortcuts/select/register';
-export { _gslRadiogroup, _gslRadiogroupById } from './shortcuts/radiogroup/register';
-export { _gslTabs, _gslTabsById } from './shortcuts/tabs/register';
-export { _gslList, _gslListById } from './shortcuts/list/register';
-export { _gslActions, _gslActionById } from './shortcuts/actions/register';
-export { _gslLayouts, _gslLayoutById } from './shortcuts/layouts/register';
-export { _gslDisplays, _gslDisplayById } from './shortcuts/display/register';
-export { _gslAlerts, _gslAlertById } from './shortcuts/alert/register';
-export { _gslDatePicker, _gslDatePickerById } from './shortcuts/date-picker/register';
-export { _gslDropdown, _gslDropdownById } from './shortcuts/dropdown/register';
-export { _gslAccordions, _gslAccordionById } from './shortcuts/accordion/register';
-export { _gslRepeaters, _gslRepeaterById } from './shortcuts/repeater/register';
-export { _gslMarkdown, _gslMarkdownById } from './shortcuts/markdown/register';
-export { _gslRangeDateInput, _gslRangeDateInputById } from './shortcuts/range-date-input/register';
-export { _gslRangeDatePicker, _gslRangeDatePickerById } from './shortcuts/range-date-picker/register';
-export { _gslCustomDisplays, _gslCustomDisplayById } from './shortcuts/custom-display/register';
-export { _gslCustomInputs, _gslCustomInputById } from './shortcuts/custom-input/register';
-export { _gslCustomActions, _gslCustomActionById } from './shortcuts/custom-action/register';
-export { _gslCustomLayouts, _gslCustomLayoutById } from './shortcuts/custom-layout/register';
+export { _gslCalendars, _gslCalendarByUid } from './shortcuts/calendar/register';
+export { _gslTextareas, _gslTextareaByUid } from './shortcuts/textarea/register';
+export { _gslPasswords, _gslPasswordByUid } from './shortcuts/password/register';
+export { _gslCheckboxes, _gslCheckboxByUid } from './shortcuts/checkbox/register';
+export { _gslDateInputs, _gslDateInputByUid } from './shortcuts/date-input/register';
+export { _gslCurrencies, _gslCurrencyByUid } from './shortcuts/currency/register';
+export { _gslRangeCalendars, _gslRangeCalendarByUid } from './shortcuts/range-calendar/register';
+export { _gslSelects, _gslSelectByUid } from './shortcuts/select/register';
+export { _gslRadiogroups, _gslRadiogroupByUid } from './shortcuts/radiogroup/register';
+export { _gslTabs, _gslTabsByUid } from './shortcuts/tabs/register';
+export { _gslLists, _gslListByUid } from './shortcuts/list/register';
+export { _gslActions, _gslActionByUid } from './shortcuts/actions/register';
+export { _gslLayouts, _gslLayoutByUid } from './shortcuts/layouts/register';
+export { _gslDisplays, _gslDisplayByUid } from './shortcuts/display/register';
+export { _gslAlerts, _gslAlertByUid } from './shortcuts/alert/register';
+export { _gslDatePickers, _gslDatePickerByUid } from './shortcuts/date-picker/register';
+export { _gslDropdowns, _gslDropdownByUid } from './shortcuts/dropdown/register';
+export { _gslAccordions, _gslAccordionByUid } from './shortcuts/accordion/register';
+export { _gslRepeaters, _gslRepeaterByUid } from './shortcuts/repeater/register';
+export { _gslMarkdowns, _gslMarkdownByUid } from './shortcuts/markdown/register';
+export { _gslRangeDateInputs, _gslRangeDateInputByUid } from './shortcuts/range-date-input/register';
+export { _gslRangeDatePickers, _gslRangeDatePickerByUid } from './shortcuts/range-date-picker/register';
+export { _gslCustomDisplays, _gslCustomDisplayByUid } from './shortcuts/custom-display/register';
+export { _gslCustomInputs, _gslCustomInputByUid } from './shortcuts/custom-input/register';
+export { _gslCustomActions, _gslCustomActionByUid } from './shortcuts/custom-action/register';
+export { _gslCustomLayouts, _gslCustomLayoutByUid } from './shortcuts/custom-layout/register';
 
 // ─── Scope selectors ───
 

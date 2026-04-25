@@ -10,7 +10,7 @@ import type {
   RangeDatePickerEntry,
 } from './rangeDatePicker.domain';
 
-export const { gsl: _gslRangeDatePicker, gslById: _gslRangeDatePickerById } =
+export const { gsl: _gslRangeDatePickers, gslByUid: _gslRangeDatePickerByUid } =
   defineShortcutType<RangeDatePickerEntry, RangeDatePickerDecorator, GslRangeDatePickerConfig>({
     itemType: 'RANGE_DATE_PICKER',
     entryShape: 'keyed',

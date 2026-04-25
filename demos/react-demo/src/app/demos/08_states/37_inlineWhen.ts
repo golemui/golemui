@@ -1,10 +1,5 @@
 import { FormDemoDefinition } from '../../../formRegistry.domain';
-import {
-  _guiSelect,
-  _guiTextInput,
-  _guiHorizontalStack,
-  _guiButton,
-} from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const countries = [
   { label: 'United States', value: 'US' },
@@ -21,17 +16,17 @@ export const inlineWhenDemo: FormDemoDefinition = {
     + 'when a country is selected. Unlike named states, "when" is a shorthand for '
     + 'simple conditional overrides that don\'t need a reusable name.',
   formDef: () => [
-    _guiHorizontalStack([
-      _guiSelect('country', { options: countries, label: 'Country' }),
-      _guiTextInput('subregion', {
+    gui.layouts.horizontalFlex([
+      gui.inputs.select('country', { options: countries, label: 'Country' }),
+      gui.inputs.textInput('subregion', {
         label: 'Subregion',
         when: ['!!$form.country', { visible: true }],
       }),
     ]),
-    _guiTextInput('notes', {
+    gui.inputs.textInput('notes', {
       label: 'Notes',
       when: ['!!$form.country', { readonly: true }],
     }),
-    _guiButton({ label: 'Submit', uid: '#submit' }),
+    gui.actions.button({ label: 'Submit', uid: '#submit' }),
   ],
 };

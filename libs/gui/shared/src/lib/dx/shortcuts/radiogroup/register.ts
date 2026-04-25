@@ -7,7 +7,7 @@ import type {
   RadiogroupEntry,
 } from './radiogroup.domain';
 
-export const { gsl: _gslRadiogroup, gslById: _gslRadiogroupById } =
+export const { gsl: _gslRadiogroups, gslByUid: _gslRadiogroupByUid } =
   defineShortcutType<RadiogroupEntry, RadiogroupDecorator, GslRadiogroupConfig>({
     itemType: 'RADIOGROUP',
     entryShape: 'keyed',

@@ -4,9 +4,9 @@ import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helper
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
 import { _guiDropdown } from '../shortcuts/dropdown/guiDropdown.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
+import { _guiTextInput, _guiNumberInput } from '../index';
 
 function getRootFromFacadeResult(result: ReturnType<typeof formDefs.processDxFacade>): LayoutWidget {
   return result.form.form as LayoutWidget;
@@ -181,7 +181,10 @@ describe('DX Pipeline — Event Wiring', () => {
       const changeFn = vi.fn();
       const root = processDx([
         _guiTabs(
-          { 'Tab A': [_guiInputs({ name: 'string' })], 'Tab B': [_guiInputs({ age: 'number' })] },
+          [
+          { label: 'Tab A', children: [_guiTextInput('name')] },
+          { label: 'Tab B', children: [_guiNumberInput('age')] },
+        ],
           { onChange: changeFn },
         ),
       ]);
@@ -197,7 +200,10 @@ describe('DX Pipeline — Event Wiring', () => {
       const changeFn = vi.fn();
       const result = formDefs.processDxFacade(
         [_guiTabs(
-          { 'Tab A': [_guiInputs({ name: 'string' })], 'Tab B': [_guiInputs({ age: 'number' })] },
+          [
+  { label: 'Tab A', children: [_guiTextInput('name')] },
+  { label: 'Tab B', children: [_guiNumberInput('age')] },
+],
           { onChange: changeFn },
         )],
         [],
@@ -247,7 +253,9 @@ describe('DX Pipeline — Event Wiring', () => {
     it('does not include onChange in tabs props', () => {
       const root = processDx([
         _guiTabs(
-          { 'Tab A': [_guiInputs({ name: 'string' })] },
+          [
+          { label: 'Tab A', children: [_guiTextInput('name')] },
+        ],
           { onChange: vi.fn() },
         ),
       ]);
@@ -303,7 +311,7 @@ describe('DX Pipeline — Event Wiring', () => {
     it('onSubmit still receives event.data (backward compat)', () => {
       const submitFn = vi.fn();
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' }), _guiButton({ label: 'Go', onClick: 'submit' })],
+        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
         [],
         { onSubmit: submitFn, suppressAutomaticSubmit: true },
       );

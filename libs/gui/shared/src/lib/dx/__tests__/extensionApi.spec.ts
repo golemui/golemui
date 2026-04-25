@@ -65,7 +65,7 @@ describe('Extension API — defineShortcutType', () => {
   it('applies GSL selector decorator override to custom type', () => {
     const result = processDx(
       _guiCustom('field'),
-      [_gslCustom({ decorator: { customField: 'from-gsl' } })],
+      [_gslCustom({ override: { customField: 'from-gsl' } })],
     );
     const widget = getStaticChild(result, 0) as {
       props?: { customField?: string };

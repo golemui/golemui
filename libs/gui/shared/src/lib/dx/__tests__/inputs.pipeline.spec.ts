@@ -5,14 +5,14 @@ import {
   getRawChild,
   resolveDynamic,
 } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
 import { _gslInputs } from '../shortcuts/inputs/register';
+import { _guiNumberInput, _guiBooleanInput } from '../index';
 
 describe('DX Pipeline — Inputs', () => {
   describe('Basic shortcut expansion', () => {
     it("expands 'string' into a text input with path", () => {
-      const result = processDx(_guiInputs({ name: 'string' }));
+      const result = processDx(_guiTextInput('name'));
       const input = getStaticChild(result, 0) as {
         kind?: string;
         type?: string;
@@ -25,7 +25,7 @@ describe('DX Pipeline — Inputs', () => {
     });
 
     it("expands 'number' into a number input with path", () => {
-      const result = processDx(_guiInputs({ age: 'number' }));
+      const result = processDx(_guiNumberInput('age'));
       const input = getStaticChild(result, 0) as { type?: string; path?: string };
 
       expect(input.type).toBe('number');
@@ -33,24 +33,11 @@ describe('DX Pipeline — Inputs', () => {
     });
 
     it("expands 'boolean' into a toggle input with path", () => {
-      const result = processDx(_guiInputs({ active: 'boolean' }));
+      const result = processDx(_guiBooleanInput('active'));
       const input = getStaticChild(result, 0) as { type?: string; path?: string };
 
       expect(input.type).toBe('toggle');
       expect(input.path).toBe('active');
-    });
-
-    it("expands tuple ['string', 'required'] and keeps required validator", () => {
-      const result = processDx(_guiInputs({ name: ['string', 'required'] }));
-      const input = getStaticChild(result, 0) as {
-        type?: string;
-        path?: string;
-        validator?: { required?: unknown };
-      };
-
-      expect(input.type).toBe('textinput');
-      expect(input.path).toBe('name');
-      expect(input.validator?.required).toBeTruthy();
     });
 
     it('preserves placeholder from _guiTextInput props', () => {
@@ -65,7 +52,7 @@ describe('DX Pipeline — Inputs', () => {
     });
 
     it('expands multiple fields into multiple child widgets with matching paths', () => {
-      const result = processDx(_guiInputs({ first: 'string', last: 'string' }));
+      const result = processDx([_guiTextInput('first'), _guiTextInput('last')]);
       const first = getStaticChild(result, 0) as { path?: string };
       const last = getStaticChild(result, 1) as { path?: string };
 
@@ -77,14 +64,14 @@ describe('DX Pipeline — Inputs', () => {
 
   describe('Sensible defaults', () => {
     it('auto-generates label from key (camelCase to Title Case)', () => {
-      const result = processDx(_guiInputs({ firstName: 'string' }));
+      const result = processDx(_guiTextInput('firstName'));
       const input = getStaticChild(result, 0) as { label?: string };
 
       expect(input.label).toBe('First Name');
     });
 
     it('auto-generates placeholder from key', () => {
-      const result = processDx(_guiInputs({ firstName: 'string' }));
+      const result = processDx(_guiTextInput('firstName'));
       const input = getStaticChild(result, 0) as {
         props?: { placeholder?: string };
       };
@@ -104,7 +91,7 @@ describe('DX Pipeline — Inputs', () => {
 
     it('suppresses automatic labels through GSL config', () => {
       const result = processDx(
-        _guiInputs({ name: 'string' }),
+        _guiTextInput('name'),
         _gslInputs({ suppressAutomaticLabels: true }),
       );
       const input = getStaticChild(result, 0) as { label?: string };
@@ -133,15 +120,6 @@ describe('DX Pipeline — Inputs', () => {
   });
 
   describe('Validators', () => {
-    it('sets required validator from tuple tag', () => {
-      const result = processDx(_guiInputs({ name: ['string', 'required'] }));
-      const input = getStaticChild(result, 0) as {
-        validator?: { required?: unknown };
-      };
-
-      expect(input.validator?.required).toBeTruthy();
-    });
-
     it('keeps explicit validator settings from _guiTextInput props', () => {
       const result = processDx(
         _guiTextInput('email', {
@@ -161,8 +139,8 @@ describe('DX Pipeline — Inputs', () => {
   describe('GSL selector overrides', () => {
     it('applies static GSL decorator override to placeholder', () => {
       const result = processDx(
-        _guiInputs({ name: 'string' }),
-        [_gslInputs({ decorator: { placeholder: 'Override' } })],
+        _guiTextInput('name'),
+        [_gslInputs({ override: { placeholder: 'Override' } })],
       );
       const input = getStaticChild(result, 0) as {
         props?: { placeholder?: string };

@@ -1,13 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiInputs,
-  _guiTextInput,
-  _gslTextInputs,
-  _gslNumberInputs,
-  _gslInputById,
-  _gslLayoutById,
-  _gslActionById,
-} from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const byIdAndByTypeDemo: FormDemoDefinition = {
   title: '25. By-ID & By-Type',
@@ -16,14 +8,16 @@ export const byIdAndByTypeDemo: FormDemoDefinition = {
     'Target a specific widget by its uid, or narrow to a subtype. Every registered type gets a by-ID selector out of the box. '
     + 'Input subtypes get their own type selectors — override all number inputs without touching text inputs.',
   formDef: () => [
-    _guiInputs({ name: 'string', age: 'number', score: 'number' }),
-    _guiTextInput('email', { uid: '#email', placeholder: 'you@example.com' }),
+    gui.inputs.textInput('name'),
+    gui.inputs.numberInput('age'),
+    gui.inputs.numberInput('score'),
+    gui.inputs.textInput('email', { uid: 'email', placeholder: 'you@example.com' }),
   ],
   formSelectors: () => [
-    _gslTextInputs({ decorator: { placeholder: 'Text fields only' } }),
-    _gslNumberInputs({ decorator: { placeholder: 'Numbers only' } }),
-    _gslInputById('#email', { decorator: { readonly: true } }),
-    _gslLayoutById('#root', { decorator: { direction: 'row' } }),
-    _gslActionById('#submit', { decorator: { label: 'Go!' } }),
+    gui.selectors.textInputs({ override: { placeholder: 'Text fields only' } }),
+    gui.selectors.numberInputs({ override: { placeholder: 'Numbers only' } }),
+    gui.selectors.inputByUid('email', { override: { readonly: true } }),
+    gui.selectors.layoutByUid('#root', { override: { direction: 'row' } }),
+    gui.selectors.actionByUid('#submit', { override: { label: 'Go!' } }),
   ],
 };

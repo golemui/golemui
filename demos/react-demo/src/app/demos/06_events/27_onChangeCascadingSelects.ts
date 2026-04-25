@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../../formRegistry.domain';
-import { _guiSelect, _guiHorizontalStack } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const countries = [
   { label: 'United States', value: 'US' },
@@ -33,8 +33,8 @@ export const onChangeCascadingSelectsDemo: FormDemoDefinition = {
     + 'The onChange callback on the country select reads the selected value and '
     + 'calls event.update to update the subregion options dynamically.',
   formDef: () =>
-    _guiHorizontalStack([
-      _guiSelect('country', {
+    gui.layouts.horizontalFlex([
+      gui.inputs.select('country', {
         options: countries,
         label: 'Country',
         onChange: (event) => {
@@ -43,7 +43,7 @@ export const onChangeCascadingSelectsDemo: FormDemoDefinition = {
           event.update({ path: 'subregion', options: subs });
         },
       }),
-      _guiSelect('subregion', {
+      gui.inputs.select('subregion', {
         options: [],
         label: 'Subregion',
       }),

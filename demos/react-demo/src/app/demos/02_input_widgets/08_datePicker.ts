@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiDatePicker, _guiInputs } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const datePickerDemo: FormDemoDefinition = {
   title: '8. Date Picker',
@@ -8,9 +8,9 @@ export const datePickerDemo: FormDemoDefinition = {
     'A calendar-based date picker input. '
     + 'Supports hints, icons, and auto-generated labels from the field path.',
   formDef: () => [
-    _guiInputs({ name: 'string' }),
-    _guiDatePicker('birthDate', { hint: 'Select your date of birth' }),
-    _guiDatePicker('appointmentDate', { icon: 'calendar' }),
+    gui.inputs.textInput('name'),
+    gui.inputs.datePicker('birthDate', { hint: 'Select your date of birth' }),
+    gui.inputs.datePicker('appointmentDate', { icon: 'calendar' }),
   ],
   formConfig: () => ({
     onSubmit: (data: any) => console.log('Form submitted:', data),

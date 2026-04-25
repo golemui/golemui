@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { _guiDatePicker, _gslDatePicker, _gslDatePickerById } from '../index';
+import { _guiDatePicker, _gslDatePickers, _gslDatePickerByUid } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
 describe('DX Pipeline — DatePicker', () => {
@@ -35,7 +35,7 @@ describe('DX Pipeline — DatePicker', () => {
   it('suppresses auto-label via GSL config', () => {
     const result = processDx(
       _guiDatePicker('birthDate', {}),
-      [_gslDatePicker({ suppressAutomaticLabels: true })],
+      [_gslDatePickers({ suppressAutomaticLabels: true })],
     );
     const w = getStaticChild(result, 0) as { label?: string };
 
@@ -45,7 +45,7 @@ describe('DX Pipeline — DatePicker', () => {
   it('suppresses auto-placeholder via GSL config', () => {
     const result = processDx(
       _guiDatePicker('birthDate', {}),
-      [_gslDatePicker({ suppressAutomaticPlaceholders: true })],
+      [_gslDatePickers({ suppressAutomaticPlaceholders: true })],
     );
     const w = getStaticChild(result, 0) as { props?: { placeholder?: string } };
 
@@ -72,7 +72,7 @@ describe('DX Pipeline — DatePicker', () => {
   it('applies GSL decorator override', () => {
     const result = processDx(
       _guiDatePicker('date', { icon: 'original' }),
-      [_gslDatePicker({ decorator: { icon: 'overridden' } })],
+      [_gslDatePickers({ override: { icon: 'overridden' } })],
     );
     const w = getStaticChild(result, 0) as { props?: { icon?: string } };
 
@@ -82,7 +82,7 @@ describe('DX Pipeline — DatePicker', () => {
   it('applies GSL byId selector override', () => {
     const result = processDx(
       _guiDatePicker('date', { uid: 'my-date', icon: 'original' }),
-      [_gslDatePickerById('my-date', { decorator: { icon: 'by-id-override' } })],
+      [_gslDatePickerByUid('my-date', { override: { icon: 'by-id-override' } })],
     );
     const w = getStaticChild(result, 0) as { props?: { icon?: string } };
 

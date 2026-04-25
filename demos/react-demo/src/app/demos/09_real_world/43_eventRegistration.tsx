@@ -1,19 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiInputs,
-  _guiSelect,
-  _guiAccordion,
-  _guiRepeater,
-  _guiCheckbox,
-  _guiTextInput,
-  _guiTextarea,
-  _guiRangeDatePicker,
-  _guiMarkdown,
-  _guiButton,
-  _guiHorizontalStack,
-  _guiDisplay,
-  DxRuntimeParams,
-} from '@golemui/gui-shared';
+import { gui, DxRuntimeParams } from '@golemui/gui-shared';
 import snarkdown from 'snarkdown';
 
 const attendanceModes = [
@@ -65,75 +51,81 @@ export const eventRegistrationDemo: FormDemoDefinition = {
     + 'reveals extra fields. A custom display shows a live cost summary. Markdown '
     + 'for special requests with a dependency on snarkdown.',
   formDef: () => [
-    _guiHorizontalStack([
-      _guiInputs({ fullName: 'string', email: 'string' }),
+    gui.layouts.horizontalFlex([
+      gui.inputs.textInput('fullName'),
+      gui.inputs.textInput('email'),
     ]),
-    _guiHorizontalStack([
-      _guiInputs({ company: 'string', role: 'string' }),
+    gui.layouts.horizontalFlex([
+      gui.inputs.textInput('company'),
+      gui.inputs.textInput('role'),
     ]),
-    _guiSelect('attendanceMode', {
+    gui.inputs.select('attendanceMode', {
       options: attendanceModes,
       label: 'Attendance mode',
     }),
-    _guiAccordion(
-      {
-        'Travel': [
-          _guiRangeDatePicker('travelDates', {
-            label: 'Arrival / Departure',
-            numberOfMonths: 2,
-          }),
-          _guiHorizontalStack([
-            _guiSelect('hotelPreference', {
-              options: hotelPreferences,
-              label: 'Hotel preference',
+    gui.layouts.accordion(
+      [
+        {
+          label: 'Travel',
+          children: [
+            gui.inputs.rangeDatePicker('travelDates', {
+              label: 'Arrival / Departure',
+              numberOfMonths: 2,
             }),
-            _guiSelect('transportMode', {
-              options: transportModes,
-              label: 'Transport',
-            }),
-          ]),
-        ],
-      },
+            gui.layouts.horizontalFlex([
+              gui.inputs.select('hotelPreference', {
+                options: hotelPreferences,
+                label: 'Hotel preference',
+              }),
+              gui.inputs.select('transportMode', {
+                options: transportModes,
+                label: 'Transport',
+              }),
+            ]),
+          ],
+        },
+      ],
       {
-        states: { 'attending$remote': { visible: false } },
+        states: { 'attending:remote': { visible: false } },
       },
     ),
-    _guiHorizontalStack([
-      _guiSelect('dietary', {
+    gui.layouts.horizontalFlex([
+      gui.inputs.select('dietary', {
         options: dietaryOptions,
         label: 'Dietary requirements',
       }),
-      _guiTextarea('accessibilityNeeds', { label: 'Accessibility needs' }),
+      gui.inputs.textarea('accessibilityNeeds', { label: 'Accessibility needs' }),
     ]),
-    _guiCheckbox('hasPlusOne', { label: 'Bringing a plus-one' }),
-    _guiTextInput('plusOneName', {
+    gui.inputs.checkbox('hasPlusOne', { label: 'Bringing a plus-one' }),
+    gui.inputs.textInput('plusOneName', {
       label: 'Plus-one name',
       when: ['!!$form.hasPlusOne', { visible: true }],
     }),
-    _guiSelect('plusOneDietary', {
+    gui.inputs.select('plusOneDietary', {
       options: dietaryOptions,
       label: 'Plus-one dietary',
       when: ['!!$form.hasPlusOne', { visible: true }],
     }),
-    _guiRepeater(
-      'additionalGuests',
-      { addLabel: 'Add guest', removeLabel: 'Remove' },
-      [
-        _guiHorizontalStack([
-          _guiInputs({ guestName: 'string', guestEmail: 'string' }),
+    gui.inputs.repeater('additionalGuests', {
+      addLabel: 'Add guest',
+      removeLabel: 'Remove',
+      template: [
+        gui.layouts.horizontalFlex([
+          gui.inputs.textInput('guestName'),
+          gui.inputs.textInput('guestEmail'),
         ]),
-        _guiSelect('ticketType', {
+        gui.inputs.select('ticketType', {
           options: ticketTypes,
           label: 'Ticket type',
         }),
       ],
-    ),
-    _guiMarkdown('specialRequests', {
+    }),
+    gui.inputs.markdown('specialRequests', {
       label: 'Special requests',
       tools: ['B', 'I', 'L'],
       placeholder: 'Any special requirements…',
     }),
-    _guiDisplay((params: DxRuntimeParams) => {
+    gui.displays.display((params: DxRuntimeParams) => {
       const form = params?.$form;
       if (!form?.attendanceMode) return null;
       const base = baseCost[form.attendanceMode] ?? 0;
@@ -143,7 +135,7 @@ export const eventRegistrationDemo: FormDemoDefinition = {
         : 0;
       const total = base + plusOne + guests;
       return (
-        <div style={{ padding: '0.75rem', background: '#f0f4f8', borderRadius: '4px' }}>
+        <div style={{ padding: '0.75rem', background: 'f0f4f8', borderRadius: '4px' }}>
           <strong>Estimated cost:</strong> ${total}
           <span style={{ color: '#666', marginLeft: '0.5rem' }}>
             (base: ${base}{plusOne > 0 ? `, plus-one: $${plusOne}` : ''}{guests > 0 ? `, guests: $${guests}` : ''})
@@ -151,11 +143,11 @@ export const eventRegistrationDemo: FormDemoDefinition = {
         </div>
       );
     }),
-    _guiButton({
+    gui.actions.button({
       label: 'Register',
       states: {
-        'attending$inPerson': { label: 'Register — In Person' },
-        'attending$remote': { label: 'Register — Remote' },
+        'attending:inPerson': { label: 'Register — In Person' },
+        'attending:remote': { label: 'Register — Remote' },
       },
     }),
   ],

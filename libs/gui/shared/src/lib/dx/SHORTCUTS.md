@@ -109,16 +109,16 @@ Compound types: **layouts**
 - Calendar → **bare** (legacy — the decorator IS the item)
 - Container types with children → **compound**
 
-## GSL Decorator Three-Level Pattern
+## GSL Override Three-Level Pattern
 
-The `decorator` property in a GSL config supports three modes with increasing power:
+The `override` property in a GSL config supports three modes with increasing power:
 
 ### Level 1: Static object
 
 Same override for all matched widgets.
 
 ```ts
-_gslInputs({ decorator: { placeholder: 'fixed value' } })
+_gslInputs({ override: { placeholder: 'fixed value' } })
 ```
 
 ### Level 2: Callback on current state
@@ -126,7 +126,7 @@ _gslInputs({ decorator: { placeholder: 'fixed value' } })
 Computes the override from the current widget's merged state. Receives the widget as it exists after sensible defaults and prior selectors.
 
 ```ts
-_gslInputs({ decorator: (cur) => ({ placeholder: `Enter ${cur.path}` }) })
+_gslInputs({ override: (cur) => ({ placeholder: `Enter ${cur.path}` }) })
 ```
 
 ### Level 3: Callback returning runtime function
@@ -135,7 +135,7 @@ Promotes the widget to a FunctionWidget. It re-renders when form state changes. 
 
 ```ts
 _gslInputs({
-  decorator: (cur) => (params) => ({
+  override: (cur) => (params) => ({
     placeholder: params.$form?.name
       ? `${cur.path} for ${params.$form.name}`
       : `Enter ${cur.path}`,
@@ -320,7 +320,7 @@ A `--` means the shortcut does not implement that piece.
 | **Sub-interface** | `GuiInputsShortcut` | `GuiActionsShortcut` | `GuiLayoutItemsShortcut` | `GuiDisplayItemsShortcut` |
 | **Entry type** | `InputEntry` (keyed: `{key, def}`) | `ActionEntry` (bare: decorator or callback) | `LayoutEntry` (`{def, children}`) | `DisplayEntry` (bare: `DisplayDecorator`) |
 | **Decorator type** | `InputDecorator` (Text, Number, Boolean) | `ActionDecorator` | `LayoutDecorator` | `DisplayDecorator` |
-| **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButtons`, `_guiButton`, `_guiSubmitButton` | `_guiStack`, `_guiHorizontalStack`, `_guiVerticalStack` | `_guiDisplay(renderFn)` |
+| **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButton`, `_guiSubmitButton` | `_guiFlex`, `_guiHorizontalFlex`, `_guiVerticalFlex`, `_guiGrid`, `_guiHorizontalGrid`, `_guiVerticalGrid` (legacy `_guiStack` family preserved as deprecated) | `_guiDisplay(renderFn)` |
 | **GSL widget selector fn** | `_gslInputs(config)` | `_gslActions(config)` | `_gslLayouts(config)` | `_gslDisplays(config)` |
 | **GSL by-id selector fn** | -- | `_gslActionById(id, config)` | `_gslLayoutById(id, config)` | -- |
 | **GSL config type** | `GslInputsConfig` (decorator + 2 suppress flags) | `GslActionsConfig` (decorator only) | `GslLayoutsConfig` (decorator only) | `GslDisplaysConfig` (decorator only) |

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   _guiSelect,
   _guiRadiogroup,
-  _gslSelect,
-  _gslRadiogroup,
+  _gslSelects,
+  _gslRadiogroups,
 } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
@@ -87,7 +87,7 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiSelect('country', { options: sampleOptions }),
-        [_gslSelect({ decorator: { hint: 'Pick one' } })],
+        [_gslSelects({ override: { hint: 'Pick one' } })],
       );
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
@@ -171,7 +171,7 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     it('applies GSL decorator override', () => {
       const result = processDx(
         _guiRadiogroup('priority', { options: sampleOptions }),
-        [_gslRadiogroup({ decorator: { hint: 'Choose carefully' } })],
+        [_gslRadiogroups({ override: { hint: 'Choose carefully' } })],
       );
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 

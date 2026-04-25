@@ -45,7 +45,7 @@ function getChildren(entry: CustomLayoutEntry): ValidGuiShortcut[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslCustomLayouts, gslById: _gslCustomLayoutById } =
+export const { gsl: _gslCustomLayouts, gslByUid: _gslCustomLayoutByUid } =
   defineShortcutType<CustomLayoutEntry, CustomLayoutDecorator, GslCustomLayoutConfig>({
     itemType: 'CUSTOM_LAYOUT',
     entryShape: 'compound',

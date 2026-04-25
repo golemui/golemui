@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiDropdown, _guiInputs } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const dropdownDemo: FormDemoDefinition = {
   title: '9. Dropdown',
@@ -8,8 +8,8 @@ export const dropdownDemo: FormDemoDefinition = {
     'A searchable dropdown with item templates. '
     + 'Unlike select, dropdown uses ListItem (template/value) and supports custom height and search.',
   formDef: () => [
-    _guiInputs({ name: 'string' }),
-    _guiDropdown('country', {
+    gui.inputs.textInput('name'),
+    gui.inputs.dropdown('country', {
       items: [
         { template: 'United States', value: 'us' },
         { template: 'Spain', value: 'es' },
@@ -17,7 +17,7 @@ export const dropdownDemo: FormDemoDefinition = {
       ],
       placeholder: 'Choose a country...',
     }),
-    _guiDropdown('venue', {
+    gui.inputs.dropdown('venue', {
       items: [
         { template: 'Grand Ballroom — 500 seats', value: 'ballroom' },
         { template: 'Conference Hall A — 200 seats', value: 'hall-a' },

@@ -5,7 +5,7 @@ import type {
   GslCustomDisplayConfig,
 } from './customDisplay.domain';
 
-export const { gsl: _gslCustomDisplays, gslById: _gslCustomDisplayById } = defineShortcutType<
+export const { gsl: _gslCustomDisplays, gslByUid: _gslCustomDisplayByUid } = defineShortcutType<
   CustomDisplayEntry,
   CustomDisplayDecorator,
   GslCustomDisplayConfig

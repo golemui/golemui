@@ -40,7 +40,7 @@ function mapToWidget<
   } as ActionWidget<StateKeys, FormData>;
 }
 
-export const { gsl: _gslActions, gslById: _gslActionById } =
+export const { gsl: _gslActions, gslByUid: _gslActionByUid } =
   defineShortcutType<ActionEntry, ActionDecorator, GslActionsConfig>({
     itemType: 'ACTIONS',
     entryShape: 'bare',

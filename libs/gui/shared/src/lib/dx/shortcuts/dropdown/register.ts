@@ -10,7 +10,7 @@ import type {
   GslDropdownConfig,
 } from './dropdown.domain';
 
-export const { gsl: _gslDropdown, gslById: _gslDropdownById } =
+export const { gsl: _gslDropdowns, gslByUid: _gslDropdownByUid } =
   defineShortcutType<DropdownEntry, DropdownDecorator, GslDropdownConfig>({
     itemType: 'DROPDOWN',
     entryShape: 'keyed',

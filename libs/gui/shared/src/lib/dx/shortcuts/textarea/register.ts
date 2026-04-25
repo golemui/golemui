@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { GslTextareaConfig, TextareaDecorator, TextareaEntry } from './textarea.domain';
 
-export const { gsl: _gslTextarea, gslById: _gslTextareaById } =
+export const { gsl: _gslTextareas, gslByUid: _gslTextareaByUid } =
   defineShortcutType<TextareaEntry, TextareaDecorator, GslTextareaConfig>({
     itemType: 'TEXTAREA',
     entryShape: 'keyed',

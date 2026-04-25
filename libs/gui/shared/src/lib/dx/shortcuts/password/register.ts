@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { GslPasswordConfig, PasswordDecorator, PasswordEntry } from './password.domain';
 
-export const { gsl: _gslPassword, gslById: _gslPasswordById } =
+export const { gsl: _gslPasswords, gslByUid: _gslPasswordByUid } =
   defineShortcutType<PasswordEntry, PasswordDecorator, GslPasswordConfig>({
     itemType: 'PASSWORD',
     entryShape: 'keyed',

@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../../formRegistry.domain';
-import { _guiSelect, _guiInputs } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const timezones = [
   { label: 'UTC-8 (Pacific)', value: 'America/Los_Angeles' },
@@ -17,8 +17,8 @@ export const onLoadInitializationDemo: FormDemoDefinition = {
     + 'The onLoad callback simulates fetching options from an external source '
     + 'and uses event.update to populate them on mount.',
   formDef: () => [
-    _guiInputs({ username: 'string' }),
-    _guiSelect('timezone', {
+    gui.inputs.textInput('username'),
+    gui.inputs.select('timezone', {
       label: 'Timezone',
       options: [],
       onLoad: (event) => {

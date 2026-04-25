@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { GslMarkdownConfig, MarkdownDecorator, MarkdownEntry } from './markdown.domain';
 
-export const { gsl: _gslMarkdown, gslById: _gslMarkdownById } =
+export const { gsl: _gslMarkdowns, gslByUid: _gslMarkdownByUid } =
   defineShortcutType<MarkdownEntry, MarkdownDecorator, GslMarkdownConfig>({
     itemType: 'MARKDOWN',
     entryShape: 'keyed',

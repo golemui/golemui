@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
 import type { CheckboxDecorator, CheckboxEntry, GslCheckboxConfig } from './checkbox.domain';
 
-export const { gsl: _gslCheckbox, gslById: _gslCheckboxById } =
+export const { gsl: _gslCheckboxes, gslByUid: _gslCheckboxByUid } =
   defineShortcutType<CheckboxEntry, CheckboxDecorator, GslCheckboxConfig>({
     itemType: 'CHECKBOX',
     entryShape: 'keyed',

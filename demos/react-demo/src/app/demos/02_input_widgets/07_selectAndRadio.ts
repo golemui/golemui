@@ -1,9 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiSelect,
-  _guiRadiogroup,
-  _guiInputs,
-} from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const selectAndRadioDemo: FormDemoDefinition = {
   title: '7. Select & Radiogroup',
@@ -11,8 +7,8 @@ export const selectAndRadioDemo: FormDemoDefinition = {
   description:
     'Select dropdowns and radio button groups — both take an options array.',
   formDef: () => [
-    _guiInputs({ name: 'string' }),
-    _guiSelect('country', {
+    gui.inputs.textInput('name'),
+    gui.inputs.select('country', {
       options: [
         { label: 'United States', value: 'us' },
         { label: 'Spain', value: 'es' },
@@ -20,7 +16,7 @@ export const selectAndRadioDemo: FormDemoDefinition = {
       ],
       placeholder: 'Choose a country...',
     }),
-    _guiRadiogroup('priority', {
+    gui.inputs.radiogroup('priority', {
       options: [
         { label: 'Low', value: 'low' },
         { label: 'Medium', value: 'medium' },

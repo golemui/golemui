@@ -7,18 +7,18 @@ import {
   getRawChild,
   resolveDynamic,
 } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import {
   _guiHorizontalStack,
   _guiVerticalStack,
   _guiStack,
 } from '../shortcuts/layouts/guiStack.impl';
-import { _gslLayoutById } from '../shortcuts/layouts/register';
+import { _gslLayoutByUid } from '../shortcuts/layouts/register';
+import { _guiTextInput, _guiNumberInput } from '../index';
 
 describe('DX Pipeline — Layouts', () => {
   describe('Basic layout structure', () => {
     it('maps _guiHorizontalStack to a horizontal flex layout', () => {
-      const root = processDx(_guiHorizontalStack(_guiInputs({ a: 'string' })));
+      const root = processDx(_guiHorizontalStack(_guiTextInput('a')));
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.kind).toBe('layout');
@@ -27,7 +27,7 @@ describe('DX Pipeline — Layouts', () => {
     });
 
     it('maps _guiVerticalStack to a vertical layout', () => {
-      const root = processDx(_guiVerticalStack([_guiInputs({ a: 'string' })]));
+      const root = processDx(_guiVerticalStack([_guiTextInput('a')]));
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.kind).toBe('layout');
@@ -35,7 +35,7 @@ describe('DX Pipeline — Layouts', () => {
     });
 
     it('maps _guiStack direction to layout direction', () => {
-      const root = processDx(_guiStack('row', [_guiInputs({ a: 'string' })]));
+      const root = processDx(_guiStack('row', [_guiTextInput('a')]));
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.kind).toBe('layout');
@@ -46,7 +46,7 @@ describe('DX Pipeline — Layouts', () => {
 
   describe('Children recursion', () => {
     it('recursively maps children inside layout', () => {
-      const root = processDx(_guiHorizontalStack(_guiInputs({ a: 'string', b: 'number' })));
+      const root = processDx(_guiHorizontalStack([_guiTextInput('a'), _guiNumberInput('b')]));
       const innerLayout = getStaticChild(root, 0) as LayoutWidget;
       const first = innerLayout.children?.[0] as { kind?: string; path?: string };
       const second = innerLayout.children?.[1] as { kind?: string; path?: string };
@@ -60,7 +60,7 @@ describe('DX Pipeline — Layouts', () => {
 
     it('supports nested layouts and preserves hierarchy', () => {
       const root = processDx(
-        _guiVerticalStack([_guiHorizontalStack(_guiInputs({ a: 'string' }))]),
+        _guiVerticalStack([_guiHorizontalStack(_guiTextInput('a'))]),
       );
       const outer = getStaticChild(root, 0) as LayoutWidget;
       const inner = outer.children?.[0] as LayoutWidget;
@@ -84,7 +84,7 @@ describe('DX Pipeline — Layouts', () => {
             def: (params: any) => ({
               direction: params?.$form?.x ? 'row' : 'column',
             }),
-            children: [_guiInputs({ a: 'string' })],
+            children: [_guiTextInput('a')],
           },
         ],
         tags: [],
@@ -105,21 +105,21 @@ describe('DX Pipeline — Layouts', () => {
   });
 
   describe('GSL overrides', () => {
-    it('applies _gslLayoutById decorator override on matching layout uid', () => {
+    it('applies _gslLayoutByUid decorator override on matching layout uid', () => {
       const layoutWithId: ValidGuiShortcut = {
         type: 'ITEMS',
         itemType: GuiItemTypes.LAYOUTS,
         items: [
           {
             def: { uid: '#myLayout', direction: 'column' },
-            children: [_guiInputs({ a: 'string' })],
+            children: [_guiTextInput('a')],
           },
         ],
         tags: [],
       };
 
-      const root = processDx(layoutWithId, [_gslLayoutById('#myLayout', {
-        decorator: { direction: 'row' },
+      const root = processDx(layoutWithId, [_gslLayoutByUid('#myLayout', {
+        override: { direction: 'row' },
       })]);
       const layout = getStaticChild(root, 0) as LayoutWidget;
 

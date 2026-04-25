@@ -3,7 +3,7 @@
 import { defineShortcutType } from '../../core/defineShortcutType';
 import type { AlertDecorator, AlertEntry, GslAlertsConfig } from './alert.domain';
 
-export const { gsl: _gslAlerts, gslById: _gslAlertById } = defineShortcutType<
+export const { gsl: _gslAlerts, gslByUid: _gslAlertByUid } = defineShortcutType<
   AlertEntry,
   AlertDecorator,
   GslAlertsConfig

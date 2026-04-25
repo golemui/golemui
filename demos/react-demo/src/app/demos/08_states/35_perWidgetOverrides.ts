@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../../formRegistry.domain';
-import { _guiInputs, _guiButton, _guiHorizontalStack } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const perWidgetOverridesDemo: FormDemoDefinition = {
   title: '35. Per-Widget State Overrides',
@@ -9,13 +9,14 @@ export const perWidgetOverridesDemo: FormDemoDefinition = {
     + 'from "Create" to "Update" and the reset button becomes enabled. Type in the '
     + 'name field to see the buttons change. Clear it to see them revert.',
   formDef: () => [
-    _guiInputs({ name: 'string', email: 'string' }),
-    _guiHorizontalStack([
-      _guiButton({
+    gui.inputs.textInput('name'),
+    gui.inputs.textInput('email'),
+    gui.layouts.horizontalFlex([
+      gui.actions.button({
         label: 'Create',
         states: { editing: { label: 'Update' } },
       }),
-      _guiButton({
+      gui.actions.button({
         label: 'Reset',
         disabled: true,
         states: { editing: { disabled: false } },

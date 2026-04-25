@@ -132,5 +132,5 @@ registerItemType('REPEATER', handler);
 // GSL selectors
 export const _gslRepeaters = createGslSelector<RepeaterDecorator, GslRepeaterConfig>('REPEATER');
 
-export const _gslRepeaterById = (id: string, config: GslRepeaterConfig) =>
+export const _gslRepeaterByUid = (id: string, config: GslRepeaterConfig) =>
   _gslRepeaters(config, ((d: any) => d.uid === id) as any);

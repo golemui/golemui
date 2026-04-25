@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { GslSelectConfig, SelectDecorator, SelectEntry } from './select.domain';
 
-export const { gsl: _gslSelect, gslById: _gslSelectById } =
+export const { gsl: _gslSelects, gslByUid: _gslSelectByUid } =
   defineShortcutType<SelectEntry, SelectDecorator, GslSelectConfig>({
     itemType: 'SELECT',
     entryShape: 'keyed',

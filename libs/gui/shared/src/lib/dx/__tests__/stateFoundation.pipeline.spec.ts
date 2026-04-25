@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { processDx } from './helpers';
 import { formDefs } from '../dx.service';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
+import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
   describe('Third argument — formConfig', () => {
     it('accepts states in third argument and injects them into form.states', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         {
           suppressAutomaticSubmit: true,
@@ -23,7 +23,7 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
 
     it('produces no form.states when formConfig has no states', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { suppressAutomaticSubmit: true },
       );
@@ -33,7 +33,7 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
 
     it('produces no form.states when states object is empty', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { suppressAutomaticSubmit: true, states: {} },
       );
@@ -43,7 +43,7 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
 
     it('suppressAutomaticSubmit in formConfig suppresses submit button', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { suppressAutomaticSubmit: true },
       );
@@ -57,71 +57,10 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
     });
   });
 
-  describe('$ to : conversion — hierarchical state names', () => {
-    it('converts single $ to : in state name', () => {
-      const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
-        [],
-        {
-          suppressAutomaticSubmit: true,
-          states: {
-            register: '$form.registerMode === true',
-            register$adult: '$form.age >= 18',
-          },
-        },
-      );
-
-      expect(result.form.states).toEqual({
-        register: '$form.registerMode === true',
-        'register:adult': '$form.age >= 18',
-      });
-    });
-
-    it('converts multiple $ to : for deeply nested hierarchy', () => {
-      const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
-        [],
-        {
-          suppressAutomaticSubmit: true,
-          states: {
-            register: '$form.registerMode === true',
-            register$minor: '$form.age < 18',
-            register$minor$tall: '$form.height > 180',
-          },
-        },
-      );
-
-      expect(result.form.states).toEqual({
-        register: '$form.registerMode === true',
-        'register:minor': '$form.age < 18',
-        'register:minor:tall': '$form.height > 180',
-      });
-    });
-
-    it('leaves flat state names (no $) unchanged', () => {
-      const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
-        [],
-        {
-          suppressAutomaticSubmit: true,
-          states: {
-            limitReached: '$form.users?.length >= 5',
-            hasCountry: '!!$form.country',
-          },
-        },
-      );
-
-      expect(result.form.states).toEqual({
-        limitReached: '$form.users?.length >= 5',
-        hasCountry: '!!$form.country',
-      });
-    });
-  });
-
   describe('State expressions — string pass-through', () => {
     it('string expressions pass through unchanged to form.states values', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         {
           suppressAutomaticSubmit: true,
@@ -143,7 +82,7 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
     it('dependencies and validateOn pass through when states are present', () => {
       const deps = { markdown: { parse: (x: string) => x } };
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         {
           suppressAutomaticSubmit: true,
@@ -161,7 +100,7 @@ describe('DX Pipeline — State Foundation (Phase 1.2.2.3)', () => {
     it('widgetLoaders pass through when states are present', () => {
       const loaders = { heading: async () => ({}) };
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         {
           suppressAutomaticSubmit: true,

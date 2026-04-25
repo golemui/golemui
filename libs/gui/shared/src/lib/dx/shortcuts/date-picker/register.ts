@@ -12,7 +12,7 @@ import type {
   GslDatePickerConfig,
 } from './datePicker.domain';
 
-export const { gsl: _gslDatePicker, gslById: _gslDatePickerById } =
+export const { gsl: _gslDatePickers, gslByUid: _gslDatePickerByUid } =
   defineShortcutType<DatePickerEntry, DatePickerDecorator, GslDatePickerConfig>({
     itemType: 'DATE_PICKER',
     entryShape: 'keyed',

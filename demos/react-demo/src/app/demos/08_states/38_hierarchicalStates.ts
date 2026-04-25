@@ -1,12 +1,5 @@
 import { FormDemoDefinition } from '../../../formRegistry.domain';
-import {
-  _guiInputs,
-  _guiTextInput,
-  _guiCheckbox,
-  _guiSelect,
-  _guiVerticalStack,
-  _guiButton,
-} from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const ageGroups = [
   { label: 'Under 18', value: 'minor' },
@@ -14,48 +7,48 @@ const ageGroups = [
 ];
 
 export const hierarchicalStatesDemo: FormDemoDefinition = {
-  title: '38. Hierarchical States with $',
+  title: '38. Hierarchical States',
   category: 'Ch8: States',
   description:
-    'A registration form with hierarchical states: "register", "register$adult", '
-    + 'and "register$minor". The $ separator creates parent/child AND logic — '
-    + 'activating "register$adult" requires both "register" AND "register$adult" '
+    'A registration form with hierarchical states: "register", "register:adult", '
+    + 'and "register:minor". The ":" separator creates parent/child AND logic — '
+    + 'activating "register:adult" requires both "register" AND "register:adult" '
     + 'expressions to be true. Check the registration box, then select an age group '
     + 'to see different overrides appear.',
   formDef: () => [
-    _guiInputs({ name: 'string' }),
-    _guiCheckbox('wantsRegistration', { label: 'Register for account' }),
-    _guiVerticalStack({
-      children: [
-        _guiSelect('ageGroup', {
+    gui.inputs.textInput('name'),
+    gui.inputs.checkbox('wantsRegistration', { label: 'Register for account' }),
+    gui.layouts.verticalFlex(
+      [
+        gui.inputs.select('ageGroup', {
           options: ageGroups,
           label: 'Age group',
         }),
-        _guiTextInput('guardianName', {
+        gui.inputs.textInput('guardianName', {
           label: 'Guardian name',
-          states: { register$minor: { visible: true } },
+          states: { 'register:minor': { visible: true } },
         }),
-        _guiTextInput('driversLicense', {
+        gui.inputs.textInput('driversLicense', {
           label: 'Drivers license number',
-          states: { register$adult: { visible: true } },
+          states: { 'register:adult': { visible: true } },
         }),
       ],
-      states: { register: { visible: true } },
-    }),
-    _guiButton({
+      { states: { register: { visible: true } } },
+    ),
+    gui.actions.button({
       label: 'Continue',
       states: {
         register: { label: 'Register' },
-        register$adult: { label: 'Register (adult)' },
-        register$minor: { label: 'Register (minor — guardian required)' },
+        'register:adult': { label: 'Register (adult)' },
+        'register:minor': { label: 'Register (minor — guardian required)' },
       },
     }),
   ],
   formConfig: () => ({
     states: {
       register: '!!$form.wantsRegistration',
-      register$adult: '$form.ageGroup === "adult"',
-      register$minor: '$form.ageGroup === "minor"',
+      'register:adult': '$form.ageGroup === "adult"',
+      'register:minor': '$form.ageGroup === "minor"',
     },
   }),
 };

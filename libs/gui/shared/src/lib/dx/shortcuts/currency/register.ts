@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { CurrencyDecorator, CurrencyEntry, GslCurrencyConfig } from './currency.domain';
 
-export const { gsl: _gslCurrency, gslById: _gslCurrencyById } =
+export const { gsl: _gslCurrencies, gslByUid: _gslCurrencyByUid } =
   defineShortcutType<CurrencyEntry, CurrencyDecorator, GslCurrencyConfig>({
     itemType: 'CURRENCY',
     entryShape: 'keyed',

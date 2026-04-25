@@ -31,7 +31,7 @@ interface ShortcutTypeConfig<TEntry, TDecorator, TConfig> {
 
 export interface ShortcutTypeSelectors<TDecorator, TConfig extends GslConfigBase<TDecorator>> {
   gsl: (config: TConfig, matcher?: (decorator: TDecorator) => boolean) => GslLeafSelector;
-  gslById: (id: string, config: TConfig) => GslLeafSelector;
+  gslByUid: (uid: string, config: TConfig) => GslLeafSelector;
 }
 
 /**
@@ -43,7 +43,7 @@ export interface ShortcutTypeSelectors<TDecorator, TConfig extends GslConfigBase
  * The handler is registered in the global registry so the pipeline can look it up
  * by `itemType` at runtime.
  *
- * Returns GSL selector factories (`gsl`, `gslById`) for styling/configuring
+ * Returns GSL selector factories (`gsl`, `gslByUid`) for styling/configuring
  * widgets of this type.
  */
 export function defineShortcutType<
@@ -128,8 +128,8 @@ export function defineShortcutType<
   registerItemType(config.itemType, handler);
 
   const gsl = createGslSelector<TDecorator, TConfig>(config.itemType);
-  const gslById = (id: string, gslConfig: TConfig) =>
-    gsl(gslConfig, ((d: any) => d.uid === id) as any);
+  const gslByUid = (uid: string, gslConfig: TConfig) =>
+    gsl(gslConfig, ((d: any) => d.uid === uid) as any);
 
-  return { gsl, gslById };
+  return { gsl, gslByUid };
 }

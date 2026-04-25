@@ -1,7 +1,6 @@
 import { LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import {
@@ -10,6 +9,7 @@ import {
 } from '../shortcuts/layouts/guiStack.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
 import { formDefs } from '../dx.service';
+import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Edge Cases', () => {
   describe('Deeply nested layouts', () => {
@@ -17,7 +17,7 @@ describe('DX Pipeline — Edge Cases', () => {
       const root = processDx(
         _guiVerticalStack([
           _guiHorizontalStack(
-            _guiVerticalStack([_guiInputs({ deep: 'string' })]),
+            _guiVerticalStack([_guiTextInput('deep')]),
           ),
         ]),
       );
@@ -38,7 +38,7 @@ describe('DX Pipeline — Edge Cases', () => {
   describe('Mixed static and dynamic children', () => {
     it('preserves order of static inputs, dynamic display, and static button', () => {
       const root = processDx([
-        _guiInputs({ name: 'string' }),
+        _guiTextInput('name'),
         _guiDisplay(() => 'mid'),
         _guiButton({ label: 'Go', onClick: () => null }),
       ]);
@@ -79,10 +79,10 @@ describe('DX Pipeline — Edge Cases', () => {
     it('processes tabs nested inside a horizontal stack', () => {
       const root = processDx(
         _guiHorizontalStack(
-          _guiTabs({
-            'Tab A': [_guiInputs({ a: 'string' })],
-            'Tab B': [_guiInputs({ b: 'string' })],
-          }),
+          _guiTabs([
+            { label: 'Tab A', children: [_guiTextInput('a')] },
+            { label: 'Tab B', children: [_guiTextInput('b')] },
+          ]),
         ),
       );
 

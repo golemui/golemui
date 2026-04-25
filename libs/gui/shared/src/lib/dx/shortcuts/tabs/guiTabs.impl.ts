@@ -3,6 +3,12 @@ import type { GuiTabsShortcut, TabsDecorator } from './tabs.domain';
 
 type TabsFactoryProps = Omit<TabsDecorator, 'tabs'>;
 
+export interface TabSection {
+  label: string;
+  children: ValidGuiShortcut[];
+  uid?: string;
+}
+
 function slugify(label: string): string {
   return label
     .toLowerCase()
@@ -11,34 +17,34 @@ function slugify(label: string): string {
 }
 
 export function _guiTabs(
-  tabs: Record<string, ValidGuiShortcut[]>,
+  sections: TabSection[],
 ): GuiTabsShortcut;
 export function _guiTabs(
-  tabs: Record<string, ValidGuiShortcut[]>,
+  sections: TabSection[],
   props: TabsFactoryProps,
 ): GuiTabsShortcut;
 export function _guiTabs(
-  tabs: Record<string, ValidGuiShortcut[]>,
+  sections: TabSection[],
   props: TabsFactoryProps,
   tags: string[],
 ): GuiTabsShortcut;
 export function _guiTabs(
-  tabsRecord: Record<string, ValidGuiShortcut[]>,
+  sections: TabSection[],
   props?: TabsFactoryProps,
   tags?: string[],
 ): GuiTabsShortcut {
-  const tabHeaders = Object.keys(tabsRecord).map((label) => ({
-    label,
-    uid: slugify(label),
+  const tabHeaders = sections.map((s) => ({
+    label: s.label,
+    uid: s.uid ?? slugify(s.label),
   }));
 
-  const children: ValidGuiShortcut[] = Object.entries(tabsRecord).map(([label, content]) => ({
+  const children: ValidGuiShortcut[] = sections.map((s) => ({
     type: 'ITEMS',
     itemType: GuiItemTypes.LAYOUTS,
     items: [
       {
-        def: { uid: slugify(label), direction: 'column', widgetName: 'flex' },
-        children: content,
+        def: { uid: s.uid ?? slugify(s.label), direction: 'column', widgetName: 'flex' },
+        children: s.children,
       },
     ],
     tags: [],

@@ -52,7 +52,7 @@ function getChildren(entry: TabsEntry): any[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslTabs, gslById: _gslTabsById } =
+export const { gsl: _gslTabs, gslByUid: _gslTabsByUid } =
   defineShortcutType<TabsEntry, TabsDecorator, GslTabsConfig>({
     itemType: 'TABS',
     entryShape: 'compound',

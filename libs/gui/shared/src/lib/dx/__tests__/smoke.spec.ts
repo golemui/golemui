@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { processDx, getStaticChild } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
+import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Smoke Test', () => {
   it('processes a simple input through the full pipeline', () => {
-    const result = processDx(_guiInputs({ name: 'string' }));
+    const result = processDx(_guiTextInput('name'));
 
     expect(result.kind).toBe('layout');
     expect(result.children?.length).toBeGreaterThan(0);

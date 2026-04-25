@@ -53,7 +53,7 @@ function getChildren(entry: AccordionEntry): any[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslAccordions, gslById: _gslAccordionById } =
+export const { gsl: _gslAccordions, gslByUid: _gslAccordionByUid } =
   defineShortcutType<AccordionEntry, AccordionDecorator, GslAccordionConfig>({
     itemType: 'ACCORDION',
     entryShape: 'compound',

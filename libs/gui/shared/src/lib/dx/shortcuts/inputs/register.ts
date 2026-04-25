@@ -102,7 +102,7 @@ function mapNumberInputDef<
   };
 }
 
-export const { gsl: _gslInputs, gslById: _gslInputById } =
+export const { gsl: _gslInputs, gslByUid: _gslInputByUid } =
   defineShortcutType<InputEntry, InputDecorator, GslInputsConfig>({
     itemType: 'INPUTS',
     entryShape: 'keyed',

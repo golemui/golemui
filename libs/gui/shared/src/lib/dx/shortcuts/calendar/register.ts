@@ -7,7 +7,7 @@ import {
   GslCalendarConfig,
 } from './calendar.domain';
 
-export const { gsl: _gslCalendar, gslById: _gslCalendarById } =
+export const { gsl: _gslCalendars, gslByUid: _gslCalendarByUid } =
   defineShortcutType<CalendarEntry, CalendarDecorator, GslCalendarConfig>({
     itemType: 'CALENDAR',
     entryShape: 'bare',

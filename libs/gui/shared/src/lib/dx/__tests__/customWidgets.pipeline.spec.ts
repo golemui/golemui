@@ -6,17 +6,17 @@ import {
   _guiCustomInput,
   _guiCustomAction,
   _guiCustomLayout,
-  _guiInputs,
-  _gslCustomDisplays,
-  _gslCustomDisplayById,
+    _gslCustomDisplays,
+  _gslCustomDisplayByUid,
   _gslCustomInputs,
-  _gslCustomInputById,
+  _gslCustomInputByUid,
   _gslCustomActions,
-  _gslCustomActionById,
+  _gslCustomActionByUid,
   _gslCustomLayouts,
-  _gslCustomLayoutById,
+  _gslCustomLayoutByUid,
 } from '../index';
 import { formDefs } from '../dx.service';
+import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Custom Display', () => {
   it('expands _guiCustomDisplay into a display widget with custom type', () => {
@@ -55,7 +55,7 @@ describe('DX Pipeline — Custom Display', () => {
   it('applies GSL broad selector override', () => {
     const result = processDx(
       _guiCustomDisplay('heading', { text: 'Original' }),
-      [_gslCustomDisplays({ decorator: { props: { text: 'Overridden' } } })],
+      [_gslCustomDisplays({ override: { props: { text: 'Overridden' } } })],
     );
     const w = getStaticChild(result, 0) as any;
 
@@ -65,7 +65,7 @@ describe('DX Pipeline — Custom Display', () => {
   it('applies GSL byId selector override', () => {
     const result = processDx(
       _guiCustomDisplay('heading', { text: 'Original', uid: 'h1' }),
-      [_gslCustomDisplayById('h1', { decorator: { props: { text: 'ById' } } })],
+      [_gslCustomDisplayByUid('h1', { override: { props: { text: 'ById' } } })],
     );
     const w = getStaticChild(result, 0) as any;
 
@@ -129,7 +129,7 @@ describe('DX Pipeline — Custom Input', () => {
   it('applies GSL broad selector', () => {
     const result = processDx(
       _guiCustomInput('matTextInput', 'email'),
-      [_gslCustomInputs({ decorator: { label: 'Forced Label' } })],
+      [_gslCustomInputs({ override: { label: 'Forced Label' } })],
     );
     const w = getStaticChild(result, 0) as any;
 
@@ -139,7 +139,7 @@ describe('DX Pipeline — Custom Input', () => {
   it('applies GSL byId selector', () => {
     const result = processDx(
       _guiCustomInput('matTextInput', 'email', { uid: 'email-field' }),
-      [_gslCustomInputById('email-field', { decorator: { label: 'By ID' } })],
+      [_gslCustomInputByUid('email-field', { override: { label: 'By ID' } })],
     );
     const w = getStaticChild(result, 0) as any;
 
@@ -207,7 +207,7 @@ describe('DX Pipeline — Custom Action', () => {
   it('applies GSL broad selector', () => {
     const result = processDx(
       _guiCustomAction('matButton', { label: 'Original' }),
-      [_gslCustomActions({ decorator: { label: 'Overridden' } })],
+      [_gslCustomActions({ override: { label: 'Overridden' } })],
     );
     const w = getStaticChild(result, 0) as any;
 
@@ -217,7 +217,7 @@ describe('DX Pipeline — Custom Action', () => {
   it('applies GSL byId selector', () => {
     const result = processDx(
       _guiCustomAction('matButton', { label: 'Original', uid: 'btn1' }),
-      [_gslCustomActionById('btn1', { decorator: { label: 'ById' } })],
+      [_gslCustomActionByUid('btn1', { override: { label: 'ById' } })],
     );
     const w = getStaticChild(result, 0) as any;
 
@@ -229,7 +229,7 @@ describe('DX Pipeline — Custom Layout', () => {
   it('expands _guiCustomLayout with children recursively', () => {
     const result = processDx(
       _guiCustomLayout('card', [
-        _guiInputs({ name: 'string' }),
+        _guiTextInput('name'),
       ]),
     );
     const layout = getStaticChild(result, 0) as LayoutWidget;
@@ -257,7 +257,7 @@ describe('DX Pipeline — Custom Layout', () => {
   it('applies GSL broad selector', () => {
     const result = processDx(
       _guiCustomLayout('card', []),
-      [_gslCustomLayouts({ decorator: { props: { elevation: 4 } } })],
+      [_gslCustomLayouts({ override: { props: { elevation: 4 } } })],
     );
     const layout = getStaticChild(result, 0) as any;
 
@@ -267,7 +267,7 @@ describe('DX Pipeline — Custom Layout', () => {
   it('applies GSL byId selector', () => {
     const result = processDx(
       _guiCustomLayout('card', [], { uid: 'main-card' }),
-      [_gslCustomLayoutById('main-card', { decorator: { props: { elevation: 8 } } })],
+      [_gslCustomLayoutByUid('main-card', { override: { props: { elevation: 8 } } })],
     );
     const layout = getStaticChild(result, 0) as any;
 
@@ -279,7 +279,7 @@ describe('DX Pipeline — widgetLoaders transport', () => {
   it('includes widgetLoaders in DxResult when _gslRoot provides them', () => {
     const loader = async () => ({ default: {} });
     const result = formDefs.processDxFacade(
-      [_guiInputs({ name: 'string' })],
+      [_guiTextInput('name')],
       [],
       { widgetLoaders: { heading: loader } },
     );
@@ -290,7 +290,7 @@ describe('DX Pipeline — widgetLoaders transport', () => {
 
   it('omits widgetLoaders from DxResult when _gslRoot has none', () => {
     const result = formDefs.processDxFacade(
-      [_guiInputs({ name: 'string' })],
+      [_guiTextInput('name')],
       [],
       { suppressAutomaticSubmit: true },
     );

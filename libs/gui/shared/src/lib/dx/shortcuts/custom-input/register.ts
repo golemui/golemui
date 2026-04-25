@@ -6,7 +6,7 @@ import type {
   GslCustomInputConfig,
 } from './customInput.domain';
 
-export const { gsl: _gslCustomInputs, gslById: _gslCustomInputById } = defineShortcutType<
+export const { gsl: _gslCustomInputs, gslByUid: _gslCustomInputByUid } = defineShortcutType<
   CustomInputEntry,
   CustomInputDecorator,
   GslCustomInputConfig

@@ -49,7 +49,7 @@ function buildCustomWidget(
   }) as FormWidget;
 }
 
-export const { gsl: _gslDisplays, gslById: _gslDisplayById } =
+export const { gsl: _gslDisplays, gslByUid: _gslDisplayByUid } =
   defineShortcutType<DisplayEntry, DisplayDecorator, GslDisplaysConfig>({
     itemType: 'DISPLAYS',
     entryShape: 'bare',

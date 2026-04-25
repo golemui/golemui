@@ -1,18 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { processDx, getStaticChild } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
-import { _gslInputs, _gslInputById } from '../shortcuts/inputs/register';
+import { _gslInputs, _gslInputByUid } from '../shortcuts/inputs/register';
 import { _gslTextInputs } from '../shortcuts/inputs/gslInputSubtypes';
 import { _gslTag } from '../shortcuts/scopes/gslTag.impl';
 
 describe('DX Pipeline — GSL Selector Precedence', () => {
   it('later selector decorator overrides earlier for the same property', () => {
     const result = processDx(
-      _guiInputs({ name: 'string' }),
+      _guiTextInput('name'),
       [
-        _gslInputs({ decorator: { placeholder: 'First' } }),
-        _gslInputs({ decorator: { placeholder: 'Second' } }),
+        _gslInputs({ override: { placeholder: 'First' } }),
+        _gslInputs({ override: { placeholder: 'Second' } }),
       ],
     );
     const input = getStaticChild(result, 0) as {
@@ -30,8 +29,8 @@ describe('DX Pipeline — GSL Selector Precedence', () => {
     const result = processDx(
       _guiTextInput('email'),
       [
-        _gslInputs({ decorator: { placeholder: 'From inputs' } }),
-        _gslTextInputs({ decorator: { hint: 'From textInputs' } }),
+        _gslInputs({ override: { placeholder: 'From inputs' } }),
+        _gslTextInputs({ override: { hint: 'From textInputs' } }),
       ],
     );
     const input = getStaticChild(result, 0) as {
@@ -42,12 +41,12 @@ describe('DX Pipeline — GSL Selector Precedence', () => {
     expect(input.props?.hint).toBeUndefined();
   });
 
-  it('_gslInputById overrides _gslInputs for the targeted widget', () => {
+  it('_gslInputByUid overrides _gslInputs for the targeted widget', () => {
     const result = processDx(
       _guiTextInput('email', { uid: '#email' }),
       [
-        _gslInputs({ decorator: { placeholder: 'Global' } }),
-        _gslInputById('#email', { decorator: { placeholder: 'ById' } }),
+        _gslInputs({ override: { placeholder: 'Global' } }),
+        _gslInputByUid('#email', { override: { placeholder: 'ById' } }),
       ],
     );
     const input = getStaticChild(result, 0) as {
@@ -59,10 +58,10 @@ describe('DX Pipeline — GSL Selector Precedence', () => {
 
   it('tag-scoped selector decorator does not apply when widget lacks the tag', () => {
     const result = processDx(
-      _guiInputs({ name: ['string', 'required'] }),
+      _guiTextInput('name', {}, ['required']),
       [
-        _gslInputs({ decorator: { placeholder: 'Global' } }),
-        _gslTag('important', _gslInputs({ decorator: { placeholder: 'Tagged' } })),
+        _gslInputs({ override: { placeholder: 'Global' } }),
+        _gslTag('important', _gslInputs({ override: { placeholder: 'Tagged' } })),
       ],
     );
     const input = getStaticChild(result, 0) as {
@@ -74,14 +73,14 @@ describe('DX Pipeline — GSL Selector Precedence', () => {
   });
 
   it('tag-scoped selector overrides global when widget has the matching tag', () => {
-    const taggedInputs = _guiInputs({ name: 'string' });
+    const taggedInputs = _guiTextInput('name');
     taggedInputs.tags = ['important'];
 
     const result = processDx(
       taggedInputs,
       [
-        _gslInputs({ decorator: { placeholder: 'Global' } }),
-        _gslTag('important', _gslInputs({ decorator: { placeholder: 'Tagged' } })),
+        _gslInputs({ override: { placeholder: 'Global' } }),
+        _gslTag('important', _gslInputs({ override: { placeholder: 'Tagged' } })),
       ],
     );
     const input = getStaticChild(result, 0) as {

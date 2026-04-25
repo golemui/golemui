@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiAccordion, _guiInputs, _guiCheckbox } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const accordionDemo: FormDemoDefinition = {
   title: '16. Accordion',
@@ -9,19 +9,24 @@ export const accordionDemo: FormDemoDefinition = {
     + 'Similar to tabs but sections expand/collapse independently. '
     + 'Supports singleOpen, defaultOpen, and renderMode.',
   formDef: () => [
-    _guiAccordion(
-      {
-        'Personal Information': [
-          _guiInputs({ firstName: 'string', lastName: 'string' }),
-        ],
-        'Contact Details': [
-          _guiInputs({ email: 'string', phone: 'string' }),
-        ],
-        'Preferences': [
-          _guiCheckbox('newsletter'),
-          _guiCheckbox('notifications'),
-        ],
-      },
+    gui.layouts.accordion(
+      [
+        {
+          label: 'Personal Information',
+          children: [gui.inputs.textInput('firstName'), gui.inputs.textInput('lastName')],
+        },
+        {
+          label: 'Contact Details',
+          children: [gui.inputs.textInput('email'), gui.inputs.textInput('phone')],
+        },
+        {
+          label: 'Preferences',
+          children: [
+            gui.inputs.checkbox('newsletter'),
+            gui.inputs.checkbox('notifications'),
+          ],
+        },
+      ],
       { singleOpen: true, defaultOpen: { 'personal-information': true } },
     ),
   ],

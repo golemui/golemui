@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { processDx, getRawChild, getStaticChild, resolveDynamic } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
 import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
 import { _gslDisplays } from '../shortcuts/display/register';
 import { _gslTag } from '../shortcuts/scopes/gslTag.impl';
+import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Displays', () => {
   describe('Basic display behavior', () => {
@@ -44,7 +44,7 @@ describe('DX Pipeline — Displays', () => {
 
   describe('Auto-wrapping plain functions', () => {
     it('auto-wraps plain function defs as display widgets in pipeline', () => {
-      const root = processDx([() => 'hello', _guiInputs({ a: 'string' })]);
+      const root = processDx([() => 'hello', _guiTextInput('a')]);
       const first = getRawChild(root, 0);
       const second = getStaticChild(root, 1) as { kind?: string; path?: string };
 
@@ -58,10 +58,10 @@ describe('DX Pipeline — Displays', () => {
     it('processes tagged display with matching _gslTag + _gslDisplays selector', () => {
       const defs = [
         _guiDisplay(() => 'tagged', ['highlight']),
-        _guiInputs({ a: 'string' }),
+        _guiTextInput('a'),
       ];
       const selectors = [
-        _gslTag('highlight', _gslDisplays({ decorator: { customProp: 'matched' } as any })),
+        _gslTag('highlight', _gslDisplays({ override: { customProp: 'matched' } as any })),
       ];
 
       const root = processDx(defs, selectors);
@@ -82,10 +82,10 @@ describe('DX Pipeline — Displays', () => {
     it('processes untagged display even when tag-scoped selector exists', () => {
       const defs = [
         _guiDisplay(() => 'untagged'),
-        _guiInputs({ a: 'string' }),
+        _guiTextInput('a'),
       ];
       const selectors = [
-        _gslTag('highlight', _gslDisplays({ decorator: { customProp: 'matched' } as any })),
+        _gslTag('highlight', _gslDisplays({ override: { customProp: 'matched' } as any })),
       ];
 
       const root = processDx(defs, selectors);

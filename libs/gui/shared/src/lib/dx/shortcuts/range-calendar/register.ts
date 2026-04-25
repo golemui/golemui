@@ -7,7 +7,7 @@ import type {
   RangeCalendarEntry,
 } from './rangeCalendar.domain';
 
-export const { gsl: _gslRangeCalendar, gslById: _gslRangeCalendarById } =
+export const { gsl: _gslRangeCalendars, gslByUid: _gslRangeCalendarByUid } =
   defineShortcutType<RangeCalendarEntry, RangeCalendarDecorator, GslRangeCalendarConfig>({
     itemType: 'RANGE_CALENDAR',
     entryShape: 'keyed',

@@ -86,9 +86,9 @@ export class WidgetMerger {
     const decorators: (Record<string, any> | ((...args: any[]) => any))[] = [];
 
     for (const leaf of resolved.leafSelectors) {
-      const config = leaf.config as { decorator?: any };
-      if (config.decorator != null) {
-        decorators.push(config.decorator);
+      const config = leaf.config as { override?: any };
+      if (config.override != null) {
+        decorators.push(config.override);
       }
     }
 

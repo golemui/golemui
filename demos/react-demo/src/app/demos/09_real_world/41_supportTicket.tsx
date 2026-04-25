@@ -1,17 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiSelect,
-  _guiRadiogroup,
-  _guiTextInput,
-  _guiTextarea,
-  _guiButton,
-  _guiRepeater,
-  _guiInputs,
-  _guiDisplay,
-  _gslRoot,
-  _gslInputById,
-  DxRuntimeParams,
-} from '@golemui/gui-shared';
+import { gui, _gslRoot, DxRuntimeParams } from '@golemui/gui-shared';
 
 const products = [
   { label: 'Cloud Platform', value: 'cloud' },
@@ -58,7 +46,7 @@ export const supportTicketDemo: FormDemoDefinition = {
     + 'category options. Priority drives conditional fields and dynamic button '
     + 'labels. A live summary at the bottom reads form state reactively.',
   formDef: () => [
-    _guiSelect('product', {
+    gui.inputs.select('product', {
       options: products,
       label: 'Product',
       onChange: (event) => {
@@ -67,46 +55,47 @@ export const supportTicketDemo: FormDemoDefinition = {
         event.update({ path: 'category', options: cats });
       },
     }),
-    _guiSelect('category', {
+    gui.inputs.select('category', {
       options: [],
       label: 'Category',
     }),
-    _guiRadiogroup('priority', {
+    gui.inputs.radiogroup('priority', {
       options: priorities,
       label: 'Priority',
     }),
-    _guiTextInput('escalationContact', {
+    gui.inputs.textInput('escalationContact', {
       label: 'Escalation contact',
       when: ['$form.priority === "critical"', { visible: true }],
     }),
-    _guiTextInput('subject', { label: 'Subject', uid: '#subject' }),
-    _guiTextarea('description', { label: 'Description', uid: '#description' }),
-    _guiRepeater(
-      'attachments',
-      { addLabel: 'Add attachment', removeLabel: 'Remove' },
-      [
-        _guiInputs({ filename: 'string', notes: 'string' }),
+    gui.inputs.textInput('subject', { label: 'Subject', uid: 'subject' }),
+    gui.inputs.textarea('description', { label: 'Description', uid: 'description' }),
+    gui.inputs.repeater('attachments', {
+      addLabel: 'Add attachment',
+      removeLabel: 'Remove',
+      template: [
+        gui.inputs.textInput('filename'),
+        gui.inputs.textInput('notes'),
       ],
-    ),
-    _guiDisplay((params: DxRuntimeParams) => {
+    }),
+    gui.displays.display((params: DxRuntimeParams) => {
       const form = params?.$form;
       if (!form?.product || !form?.priority) return null;
       const category = form.category ? ` > ${form.category}` : '';
       return (
-        <p style={{ padding: '0.75rem', background: '#f0f4f8', borderRadius: '4px' }}>
+        <p style={{ padding: '0.75rem', background: 'f0f4f8', borderRadius: '4px' }}>
           You're submitting a <strong>{form.priority}</strong> ticket
           for <strong>{form.product}{category}</strong>.
         </p>
       );
     }),
-    _guiButton({
+    gui.actions.button({
       label: 'Submit Ticket',
       states: { urgent: { label: 'Submit Urgent Ticket' } },
     }),
   ],
   formSelectors: () =>
     _gslRoot(
-      _gslInputById('#description', { decorator: { placeholder: 'Describe the issue in detail…' } }),
+      gui.selectors.inputByUid('description', { override: { placeholder: 'Describe the issue in detail…' } }),
     ),
   formConfig: () => ({
     states: {

@@ -2,19 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { LayoutWidget, NonFunctionWidget } from '@golemui/core';
 import {
   _guiAccordion,
-  _guiInputs,
-  _gslAccordions,
-  _gslAccordionById,
+    _gslAccordions,
+  _gslAccordionByUid,
 } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
+import { _guiTextInput, _guiNumberInput } from '../index';
 
 describe('DX Pipeline — Accordion', () => {
   it('expands _guiAccordion into an accordion layout widget with sections', () => {
     const result = processDx(
-      _guiAccordion({
-        'Section A': [_guiInputs({ fieldA: 'string' })],
-        'Section B': [_guiInputs({ fieldB: 'number' })],
-      }),
+      _guiAccordion([
+        { label: 'Section A', children: [_guiTextInput('fieldA')] },
+        { label: 'Section B', children: [_guiNumberInput('fieldB')] },
+      ]),
     );
     const w = getStaticChild(result, 0) as LayoutWidget & {
       props?: {
@@ -36,10 +36,10 @@ describe('DX Pipeline — Accordion', () => {
   it('passes singleOpen, defaultOpen, and renderMode through to props', () => {
     const result = processDx(
       _guiAccordion(
-        {
-          'First': [_guiInputs({ a: 'string' })],
-          'Second': [_guiInputs({ b: 'string' })],
-        },
+        [
+        { label: 'First', children: [_guiTextInput('a')] },
+        { label: 'Second', children: [_guiTextInput('b')] },
+      ],
         {
           singleOpen: true,
           defaultOpen: { first: true },
@@ -62,9 +62,9 @@ describe('DX Pipeline — Accordion', () => {
 
   it('recursively processes children inside accordion sections', () => {
     const result = processDx(
-      _guiAccordion({
-        'Details': [_guiInputs({ firstName: 'string', lastName: 'string' })],
-      }),
+      _guiAccordion([
+        { label: 'Details', children: [_guiTextInput('firstName'), _guiTextInput('lastName')] },
+      ]),
     );
     const accordion = getStaticChild(result, 0) as LayoutWidget;
     // Accordion should have one child (the flex wrapper for the section)
@@ -92,10 +92,12 @@ describe('DX Pipeline — Accordion', () => {
   it('applies GSL broad selector override', () => {
     const result = processDx(
       _guiAccordion(
-        { 'Info': [_guiInputs({ x: 'string' })] },
+        [
+        { label: 'Info', children: [_guiTextInput('x')] },
+      ],
         { renderMode: 'all' },
       ),
-      [_gslAccordions({ decorator: { renderMode: 'activeOnly' } })],
+      [_gslAccordions({ override: { renderMode: 'activeOnly' } })],
     );
     const w = getStaticChild(result, 0) as {
       props?: { renderMode?: string };
@@ -107,10 +109,12 @@ describe('DX Pipeline — Accordion', () => {
   it('applies GSL byId selector override', () => {
     const result = processDx(
       _guiAccordion(
-        { 'Info': [_guiInputs({ x: 'string' })] },
+        [
+        { label: 'Info', children: [_guiTextInput('x')] },
+      ],
         { uid: 'my-accordion', singleOpen: false },
       ),
-      [_gslAccordionById('my-accordion', { decorator: { singleOpen: true } })],
+      [_gslAccordionByUid('my-accordion', { override: { singleOpen: true } })],
     );
     const w = getStaticChild(result, 0) as {
       props?: { singleOpen?: boolean };
@@ -121,12 +125,12 @@ describe('DX Pipeline — Accordion', () => {
 
   it('supports dynamic callback producing a FunctionWidget', () => {
     const result = processDx(
-      _guiAccordion({
-        'Dynamic': [_guiInputs({ d: 'string' })],
-      }),
+      _guiAccordion([
+        { label: 'Dynamic', children: [_guiTextInput('d')] },
+      ]),
       [
         _gslAccordions({
-          decorator: () => () => ({
+          override: () => () => ({
             sections: [{ label: 'Dynamic', uid: 'dynamic' }],
             renderMode: 'activeOnly' as const,
           }),

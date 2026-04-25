@@ -1,9 +1,9 @@
 import { LayoutWidget } from '@golemui/core';
 import { describe, expect, it, vi } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
-import { _guiInputs } from '../shortcuts/inputs/guiInputs.impl';
-import { _guiButton, _guiButtons } from '../shortcuts/actions/guiActions.impl';
+import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
+import { _guiTextInput } from '../index';
 
 function getRootFromFacadeResult(result: ReturnType<typeof formDefs.processDxFacade>): LayoutWidget {
   return result.form.form as LayoutWidget;
@@ -14,7 +14,7 @@ describe('DX Pipeline — Actions', () => {
     it('maps explicit onClick button with click event wiring', () => {
       const myFn = () => null;
       const root = processDx([
-        _guiInputs({ name: 'string' }),
+        _guiTextInput('name'),
         _guiButton({ label: 'Save', onClick: myFn }),
       ]);
 
@@ -30,7 +30,7 @@ describe('DX Pipeline — Actions', () => {
 
     it('maps button without onClick and does not wire click event', () => {
       const root = processDx([
-        _guiInputs({ name: 'string' }),
+        _guiTextInput('name'),
         _guiButton({ label: 'Cancel' }),
       ]);
 
@@ -45,11 +45,9 @@ describe('DX Pipeline — Actions', () => {
 
     it('wires multiple buttons with unique uids and unique click event names', () => {
       const root = processDx([
-        _guiInputs({ name: 'string' }),
-        _guiButtons([
-          { label: 'A', onClick: () => null },
-          { label: 'B', onClick: () => null },
-        ]),
+        _guiTextInput('name'),
+        _guiButton({ label: 'A', onClick: () => null }),
+        _guiButton({ label: 'B', onClick: () => null }),
       ]);
 
       const actions = (root.children ?? []).filter(
@@ -99,7 +97,7 @@ describe('DX Pipeline — Actions', () => {
     it('registers root onSubmit callback into form events when submit action is present', () => {
       const submitFn = vi.fn();
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' }), _guiButton({ label: 'Go', onClick: 'submit' })],
+        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
         [],
         { onSubmit: submitFn, suppressAutomaticSubmit: true },
       );
@@ -115,7 +113,7 @@ describe('DX Pipeline — Actions', () => {
       const myFn = vi.fn();
       const submitFn = vi.fn();
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' }), _guiButton({ label: 'Custom', onClick: myFn })],
+        [_guiTextInput('name'), _guiButton({ label: 'Custom', onClick: myFn })],
         [],
         { onSubmit: submitFn, suppressAutomaticSubmit: true },
       );
@@ -136,7 +134,7 @@ describe('DX Pipeline — Actions', () => {
 
   describe('Auto-submit injection', () => {
     it('adds auto-submit when no submit button exists', () => {
-      const result = formDefs.processDxFacade([_guiInputs({ name: 'string' })], []);
+      const result = formDefs.processDxFacade([_guiTextInput('name')], []);
       const root = getRootFromFacadeResult(result);
       const lastChild = root.children?.[root.children.length - 1] as {
         uid?: string;
@@ -149,7 +147,7 @@ describe('DX Pipeline — Actions', () => {
 
     it('does not inject auto-submit when suppressAutomaticSubmit is true', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { suppressAutomaticSubmit: true },
       );
@@ -175,7 +173,7 @@ describe('DX Pipeline — Actions', () => {
     it('keeps callback action dynamic and wires on.click after resolving', () => {
       const myFn = () => null;
       const defs = [
-        _guiInputs({ name: 'string' }),
+        _guiTextInput('name'),
         _guiButton((p: any) => ({
           label: p?.$form?.dirty ? 'Save*' : 'Save',
           onClick: myFn,
@@ -216,7 +214,7 @@ describe('DX Pipeline — Actions', () => {
 
     it('omits events from DxResult when no onClick callback is wired', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { suppressAutomaticSubmit: true },
       );
@@ -228,7 +226,7 @@ describe('DX Pipeline — Actions', () => {
     it('includes dependencies in DxResult when _gslRoot provides them', () => {
       const mockParse = (md: string) => `<p>${md}</p>`;
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { dependencies: { markdown: { parse: mockParse } } },
       );
@@ -239,7 +237,7 @@ describe('DX Pipeline — Actions', () => {
 
     it('omits dependencies from DxResult when _gslRoot has none', () => {
       const result = formDefs.processDxFacade(
-        [_guiInputs({ name: 'string' })],
+        [_guiTextInput('name')],
         [],
         { suppressAutomaticSubmit: true },
       );

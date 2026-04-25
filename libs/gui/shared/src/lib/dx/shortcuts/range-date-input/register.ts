@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
 import type { GslRangeDateInputConfig, RangeDateInputDecorator, RangeDateInputEntry } from './rangeDateInput.domain';
 
-export const { gsl: _gslRangeDateInput, gslById: _gslRangeDateInputById } =
+export const { gsl: _gslRangeDateInputs, gslByUid: _gslRangeDateInputByUid } =
   defineShortcutType<RangeDateInputEntry, RangeDateInputDecorator, GslRangeDateInputConfig>({
     itemType: 'RANGE_DATE_INPUT',
     entryShape: 'keyed',

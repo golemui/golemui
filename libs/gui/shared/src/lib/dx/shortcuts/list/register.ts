@@ -3,7 +3,7 @@ import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
 import type { GslListConfig, ListDecorator, ListEntry } from './list.domain';
 
-export const { gsl: _gslList, gslById: _gslListById } =
+export const { gsl: _gslLists, gslByUid: _gslListByUid } =
   defineShortcutType<ListEntry, ListDecorator, GslListConfig>({
     itemType: 'LIST',
     entryShape: 'keyed',

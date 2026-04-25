@@ -53,13 +53,13 @@ export class StateExpansionService {
   ): { cleanedResult: MergeResult; stateData: StateData } {
 
     // Accumulate state overrides from _gslStates selectors.
-    // GSL config may use `{ decorator: { ... } }` (typed) or raw properties (untyped).
+    // GSL config may use `{ override: { ... } }` (typed) or raw properties (untyped).
     const gslStateOverrides: Record<string, Record<string, any>> = {};
     for (const leaf of stateLeafs) {
       const stateName = leaf.targetState!;
       const config = leaf.config;
-      const overrides = (config['decorator'] && typeof config['decorator'] !== 'function')
-        ? config['decorator']
+      const overrides = (config['override'] && typeof config['override'] !== 'function')
+        ? config['override']
         : config;
       gslStateOverrides[stateName] = {
         ...(gslStateOverrides[stateName] || {}),
@@ -146,9 +146,7 @@ export class StateExpansionService {
     if ((widget as any).on) result['on'] = { ...(widget as any).on };
 
     // ── Named state overrides ──
-    for (const [dxStateName, overrides] of Object.entries(stateOverrides)) {
-      const coreStateName = dxStateName.replace(/\$/g, ':');
-
+    for (const [coreStateName, overrides] of Object.entries(stateOverrides)) {
       for (const [prop, value] of Object.entries(overrides)) {
         if (prop === 'visible') {
           this.applyVisibility(result, coreStateName, value as boolean);

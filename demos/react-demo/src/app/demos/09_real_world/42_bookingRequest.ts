@@ -1,18 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiDatePicker,
-  _guiRangeDateInput,
-  _guiSelect,
-  _guiNumberInput,
-  _guiCheckbox,
-  _guiTextarea,
-  _guiCurrency,
-  _guiButton,
-  _guiAlert,
-  _gslRoot,
-  _gslStates,
-  _gslInputs,
-} from '@golemui/gui-shared';
+import { gui, _gslRoot, _gslStates } from '@golemui/gui-shared';
 
 const rooms = [
   { label: 'Room A — 4 seats', value: 'room-a' },
@@ -43,8 +30,8 @@ export const bookingRequestDemo: FormDemoDefinition = {
     + 'options via visibility state. Catering budget appears when attendees exceed a '
     + 'threshold. A pending state disables the form on submission. onLoad sets defaults.',
   formDef: () => [
-    _guiAlert({ text: 'Rooms are subject to availability. You will receive a confirmation email.', level: 'info' }),
-    _guiDatePicker('date', {
+    gui.displays.alert({ text: 'Rooms are subject to availability. You will receive a confirmation email.', level: 'info' }),
+    gui.inputs.datePicker('date', {
       label: 'Date',
       onLoad: (event) => {
         const tomorrow = new Date();
@@ -52,35 +39,35 @@ export const bookingRequestDemo: FormDemoDefinition = {
         event.update({ path: 'date', value: tomorrow.toISOString().split('T')[0] });
       },
     }),
-    _guiRangeDateInput('timeWindow', {
+    gui.inputs.rangeDateInput('timeWindow', {
       label: 'Time window',
       separator: '→',
     }),
-    _guiSelect('room', {
+    gui.inputs.select('room', {
       options: rooms,
       label: 'Room',
     }),
-    _guiNumberInput('attendees', { label: 'Expected attendees' }),
-    _guiCurrency('cateringBudget', {
+    gui.inputs.numberInput('attendees', { label: 'Expected attendees' }),
+    gui.inputs.currency('cateringBudget', {
       label: 'Catering budget',
       when: ['$form.attendees > 10', { visible: true }],
     }),
-    _guiCheckbox('isRecurring', { label: 'Recurring booking' }),
-    _guiSelect('recurrencePattern', {
+    gui.inputs.checkbox('isRecurring', { label: 'Recurring booking' }),
+    gui.inputs.select('recurrencePattern', {
       options: recurrencePatterns,
       label: 'Recurrence pattern',
       states: { recurring: { visible: true } },
     }),
-    _guiDatePicker('recurrenceEnd', {
+    gui.inputs.datePicker('recurrenceEnd', {
       label: 'Recurrence end date',
       states: { recurring: { visible: true } },
     }),
-    _guiSelect('equipment', {
+    gui.inputs.select('equipment', {
       options: equipmentOptions,
       label: 'Equipment needed',
     }),
-    _guiTextarea('notes', { label: 'Notes', placeholder: 'Any special requirements…' }),
-    _guiButton({
+    gui.inputs.textarea('notes', { label: 'Notes', placeholder: 'Any special requirements…' }),
+    gui.actions.button({
       label: 'Book Room',
       states: {
         recurring: { label: 'Book Series' },
@@ -90,7 +77,7 @@ export const bookingRequestDemo: FormDemoDefinition = {
   ],
   formSelectors: () =>
     _gslRoot(
-      _gslStates('pending', _gslInputs({ decorator: { disabled: true } })),
+      _gslStates('pending', gui.selectors.inputs({ override: { disabled: true } })),
     ),
   formConfig: () => ({
     states: {

@@ -2,21 +2,25 @@ import { describe, expect, it } from 'vitest';
 import { LayoutWidget, NonFunctionWidget } from '@golemui/core';
 import {
   _guiRepeater,
-  _guiInputs,
-  _guiSelect,
+    _guiSelect,
   _guiCurrency,
   _guiHorizontalStack,
   _gslRepeaters,
-  _gslRepeaterById,
+  _gslRepeaterByUid,
 } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
+import { _guiTextInput, _guiNumberInput } from '../index';
 
 describe('DX Pipeline — Repeater', () => {
   it('expands _guiRepeater into a repeater input widget with template', () => {
     const result = processDx(
-      _guiRepeater('users', { addLabel: 'Add User' }, [
-        _guiInputs({ name: 'string', surname: 'string' }),
-      ]),
+      _guiRepeater('users', {
+        addLabel: 'Add User',
+        template: [
+          _guiTextInput('name'),
+          _guiTextInput('surname'),
+        ],
+      }),
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
       path?: string;
@@ -42,11 +46,13 @@ describe('DX Pipeline — Repeater', () => {
     expect(child1.type).toBe('textinput');
   });
 
-  it('works with minimal signature (no config)', () => {
+  it('works with template-only props (no other config)', () => {
     const result = processDx(
-      _guiRepeater('items', [
-        _guiInputs({ name: 'string' }),
-      ]),
+      _guiRepeater('items', {
+        template: [
+          _guiTextInput('name'),
+        ],
+      }),
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
       path?: string;
@@ -63,18 +69,15 @@ describe('DX Pipeline — Repeater', () => {
 
   it('passes all config props through to widget props', () => {
     const result = processDx(
-      _guiRepeater(
-        'data',
-        {
-          addLabel: 'Add',
-          removeLabel: 'Remove',
-          limit: 5,
-          title: 'Data Entries',
-          addButtonIcon: 'plus',
-          removeButtonIcon: 'trash',
-        },
-        [_guiInputs({ val: 'string' })],
-      ),
+      _guiRepeater('data', {
+        addLabel: 'Add',
+        removeLabel: 'Remove',
+        limit: 5,
+        title: 'Data Entries',
+        addButtonIcon: 'plus',
+        removeButtonIcon: 'trash',
+        template: [_guiTextInput('val')],
+      }),
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
       props?: Record<string, any>;
@@ -90,9 +93,10 @@ describe('DX Pipeline — Repeater', () => {
 
   it('processes template children through the full pipeline', () => {
     const result = processDx(
-      _guiRepeater('orders', { addLabel: 'Add' }, [
-        _guiInputs({ product: 'string' }),
-      ]),
+      _guiRepeater('orders', {
+        addLabel: 'Add',
+        template: [_guiTextInput('product')],
+      }),
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
       props?: { template?: LayoutWidget };
@@ -106,12 +110,17 @@ describe('DX Pipeline — Repeater', () => {
 
   it('supports nested repeaters', () => {
     const result = processDx(
-      _guiRepeater('containers', { addLabel: 'Add Container' }, [
-        _guiInputs({ containerId: 'string' }),
-        _guiRepeater('pallets', { addLabel: 'Add Pallet', limit: 20 }, [
-          _guiInputs({ skuCode: 'string' }),
-        ]),
-      ]),
+      _guiRepeater('containers', {
+        addLabel: 'Add Container',
+        template: [
+          _guiTextInput('containerId'),
+          _guiRepeater('pallets', {
+            addLabel: 'Add Pallet',
+            limit: 20,
+            template: [_guiTextInput('skuCode')],
+          }),
+        ],
+      }),
     );
     const outerRepeater = getStaticChild(result, 0) as NonFunctionWidget & {
       path?: string;
@@ -154,10 +163,12 @@ describe('DX Pipeline — Repeater', () => {
 
   it('applies GSL broad selector override', () => {
     const result = processDx(
-      _guiRepeater('items', { addLabel: 'Add', limit: 3 }, [
-        _guiInputs({ x: 'string' }),
-      ]),
-      [_gslRepeaters({ decorator: { limit: 10 } })],
+      _guiRepeater('items', {
+        addLabel: 'Add',
+        limit: 3,
+        template: [_guiTextInput('x')],
+      }),
+      [_gslRepeaters({ override: { limit: 10 } })],
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
       props?: { limit?: number };
@@ -168,10 +179,12 @@ describe('DX Pipeline — Repeater', () => {
 
   it('applies GSL byId selector override', () => {
     const result = processDx(
-      _guiRepeater('items', { uid: 'my-repeater', addLabel: 'Add' }, [
-        _guiInputs({ x: 'string' }),
-      ]),
-      [_gslRepeaterById('my-repeater', { decorator: { addLabel: 'New' } })],
+      _guiRepeater('items', {
+        uid: 'my-repeater',
+        addLabel: 'Add',
+        template: [_guiTextInput('x')],
+      }),
+      [_gslRepeaterByUid('my-repeater', { override: { addLabel: 'New' } })],
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
       props?: { addLabel?: string };
@@ -182,10 +195,10 @@ describe('DX Pipeline — Repeater', () => {
 
   it('supports dynamic callback producing a FunctionWidget', () => {
     const result = processDx(
-      _guiRepeater('items', [_guiInputs({ x: 'string' })]),
+      _guiRepeater('items', { template: [_guiTextInput('x')] }),
       [
         _gslRepeaters({
-          decorator: () => () => ({
+          override: () => () => ({
             addLabel: 'Dynamic Add',
           }),
         }),
@@ -206,9 +219,13 @@ describe('DX Pipeline — Repeater', () => {
   describe('auto-prefixing', () => {
     it('prefixes simple repeater children', () => {
       const result = processDx(
-        _guiRepeater('users', { addLabel: 'Add User' }, [
-          _guiInputs({ name: 'string', email: 'string' }),
-        ]),
+        _guiRepeater('users', {
+          addLabel: 'Add User',
+          template: [
+            _guiTextInput('name'),
+            _guiTextInput('email'),
+          ],
+        }),
       );
       const w = getStaticChild(result, 0) as NonFunctionWidget & {
         props?: { template?: LayoutWidget };
@@ -223,12 +240,16 @@ describe('DX Pipeline — Repeater', () => {
 
     it('prefixes nested repeater — 2 levels', () => {
       const result = processDx(
-        _guiRepeater('containers', { addLabel: 'Add Container' }, [
-          _guiInputs({ containerId: 'string' }),
-          _guiRepeater('pallets', { addLabel: 'Add Pallet' }, [
-            _guiInputs({ weight: 'number' }),
-          ]),
-        ]),
+        _guiRepeater('containers', {
+          addLabel: 'Add Container',
+          template: [
+            _guiTextInput('containerId'),
+            _guiRepeater('pallets', {
+              addLabel: 'Add Pallet',
+              template: [_guiNumberInput('weight')],
+            }),
+          ],
+        }),
       );
       const outer = getStaticChild(result, 0) as NonFunctionWidget & {
         path?: string;
@@ -257,15 +278,22 @@ describe('DX Pipeline — Repeater', () => {
 
     it('prefixes nested repeater — 3 levels (shipping manifest pattern)', () => {
       const result = processDx(
-        _guiRepeater('containers', { addLabel: 'Add Container' }, [
-          _guiInputs({ containerId: 'string' }),
-          _guiRepeater('pallets', { addLabel: 'Add Pallet' }, [
-            _guiInputs({ palletType: 'string' }),
-            _guiRepeater('skuItems', { addLabel: 'Add SKU' }, [
-              _guiInputs({ skuCode: 'string' }),
-            ]),
-          ]),
-        ]),
+        _guiRepeater('containers', {
+          addLabel: 'Add Container',
+          template: [
+            _guiTextInput('containerId'),
+            _guiRepeater('pallets', {
+              addLabel: 'Add Pallet',
+              template: [
+                _guiTextInput('palletType'),
+                _guiRepeater('skuItems', {
+                  addLabel: 'Add SKU',
+                  template: [_guiTextInput('skuCode')],
+                }),
+              ],
+            }),
+          ],
+        }),
       );
       const outer = getStaticChild(result, 0) as NonFunctionWidget & {
         path?: string;
@@ -306,12 +334,15 @@ describe('DX Pipeline — Repeater', () => {
 
     it('prefixes children inside layout wrappers', () => {
       const result = processDx(
-        _guiRepeater('users', { addLabel: 'Add' }, [
-          _guiHorizontalStack([
-            _guiInputs({ firstName: 'string' }),
-            _guiInputs({ lastName: 'string' }),
-          ]),
-        ]),
+        _guiRepeater('users', {
+          addLabel: 'Add',
+          template: [
+            _guiHorizontalStack([
+              _guiTextInput('firstName'),
+              _guiTextInput('lastName'),
+            ]),
+          ],
+        }),
       );
       const w = getStaticChild(result, 0) as NonFunctionWidget & {
         props?: { template?: LayoutWidget };
@@ -338,11 +369,15 @@ describe('DX Pipeline — Repeater', () => {
       // buildCustomWidget applies 'a.items.' to both the inner repeater's path ('b' → 'a.items.b')
       // AND the inner template child ('b.items.x' → 'a.items.b.items.x').
       const result = processDx(
-        _guiRepeater('a', { addLabel: 'A' }, [
-          _guiRepeater('b', { addLabel: 'B' }, [
-            _guiInputs({ x: 'string' }),
-          ]),
-        ]),
+        _guiRepeater('a', {
+          addLabel: 'A',
+          template: [
+            _guiRepeater('b', {
+              addLabel: 'B',
+              template: [_guiTextInput('x')],
+            }),
+          ],
+        }),
       );
       const outer = getStaticChild(result, 0) as NonFunctionWidget & {
         props?: { template?: LayoutWidget };

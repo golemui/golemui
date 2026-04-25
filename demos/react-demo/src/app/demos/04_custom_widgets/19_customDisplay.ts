@@ -1,16 +1,17 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import { _guiCustomDisplay, _guiInputs } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 export const customDisplayDemo: FormDemoDefinition = {
   title: '19. Custom Display',
   category: 'Ch4: Custom Widgets',
   description:
-    'Use _guiCustomDisplay to render a custom display widget (heading) through the DX pipeline. '
-    + 'The widget loader is transported via _gslRoot({ widgetLoaders }).',
+    'Use gui.displays.custom to render a custom display widget (heading) through the DX pipeline. '
+    + 'The widget loader is transported via formConfig.widgetLoaders.',
   formDef: () => [
-    _guiCustomDisplay('heading', { text: 'Welcome to Custom Widgets', level: 1 }),
-    _guiCustomDisplay('heading', { text: 'Fill in your details below', level: 3 }),
-    _guiInputs({ firstName: 'string', lastName: 'string' }),
+    gui.displays.custom('heading', { text: 'Welcome to Custom Widgets', level: 1 }),
+    gui.displays.custom('heading', { text: 'Fill in your details below', level: 3 }),
+    gui.inputs.textInput('firstName'),
+    gui.inputs.textInput('lastName'),
   ],
   formConfig: () => ({
     widgetLoaders: {

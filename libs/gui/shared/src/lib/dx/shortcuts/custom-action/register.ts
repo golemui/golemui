@@ -6,7 +6,7 @@ import type {
 } from './customAction.domain';
 import eventWiringService from '../../core/eventWiring.service';
 
-export const { gsl: _gslCustomActions, gslById: _gslCustomActionById } = defineShortcutType<
+export const { gsl: _gslCustomActions, gslByUid: _gslCustomActionByUid } = defineShortcutType<
   CustomActionEntry,
   CustomActionDecorator,
   GslCustomActionConfig

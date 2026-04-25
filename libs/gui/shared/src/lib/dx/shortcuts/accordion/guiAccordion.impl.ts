@@ -3,6 +3,12 @@ import type { AccordionDecorator, GuiAccordionShortcut } from './accordion.domai
 
 type AccordionFactoryProps = Omit<AccordionDecorator, 'sections'>;
 
+export interface AccordionSection {
+  label: string;
+  children: ValidGuiShortcut[];
+  uid?: string;
+}
+
 function slugify(label: string): string {
   return label
     .toLowerCase()
@@ -11,34 +17,34 @@ function slugify(label: string): string {
 }
 
 export function _guiAccordion(
-  sections: Record<string, ValidGuiShortcut[]>,
+  sections: AccordionSection[],
 ): GuiAccordionShortcut;
 export function _guiAccordion(
-  sections: Record<string, ValidGuiShortcut[]>,
+  sections: AccordionSection[],
   props: AccordionFactoryProps,
 ): GuiAccordionShortcut;
 export function _guiAccordion(
-  sections: Record<string, ValidGuiShortcut[]>,
+  sections: AccordionSection[],
   props: AccordionFactoryProps,
   tags: string[],
 ): GuiAccordionShortcut;
 export function _guiAccordion(
-  sectionsRecord: Record<string, ValidGuiShortcut[]>,
+  sections: AccordionSection[],
   props?: AccordionFactoryProps,
   tags?: string[],
 ): GuiAccordionShortcut {
-  const sectionHeaders = Object.keys(sectionsRecord).map((label) => ({
-    label,
-    uid: slugify(label),
+  const sectionHeaders = sections.map((s) => ({
+    label: s.label,
+    uid: s.uid ?? slugify(s.label),
   }));
 
-  const children: ValidGuiShortcut[] = Object.entries(sectionsRecord).map(([label, content]) => ({
+  const children: ValidGuiShortcut[] = sections.map((s) => ({
     type: 'ITEMS',
     itemType: GuiItemTypes.LAYOUTS,
     items: [
       {
-        def: { uid: slugify(label), direction: 'column', widgetName: 'flex' },
-        children: content,
+        def: { uid: s.uid ?? slugify(s.label), direction: 'column', widgetName: 'flex' },
+        children: s.children,
       },
     ],
     tags: [],

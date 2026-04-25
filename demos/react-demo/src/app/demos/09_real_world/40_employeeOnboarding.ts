@@ -1,16 +1,5 @@
 import { FormDemoDefinition } from '../../formRegistry.domain';
-import {
-  _guiTabs,
-  _guiAccordion,
-  _guiRepeater,
-  _guiInputs,
-  _guiTextInput,
-  _guiSelect,
-  _guiDatePicker,
-  _guiHorizontalStack,
-  _gslTag,
-  _gslInputs,
-} from '@golemui/gui-shared';
+import { gui, _gslTag } from '@golemui/gui-shared';
 
 const departments = [
   { label: 'Engineering', value: 'engineering' },
@@ -75,68 +64,74 @@ export const employeeOnboardingDemo: FormDemoDefinition = {
     + 'dropdown. An accordion at the bottom holds a repeater for prior employment '
     + 'history. Required fields are marked via tags.',
   formDef: () => [
-    _guiTabs({
-      'Personal Details': [
-        _guiInputs({
-          firstName: ['string', 'required'],
-          lastName: ['string', 'required'],
-          email: ['string', 'required'],
-          phone: 'string',
-        }),
-        _guiDatePicker('dateOfBirth', { label: 'Date of birth' }),
-        _guiHorizontalStack([
-          _guiTextInput('emergencyContactName', { label: 'Emergency contact' }, ['required']),
-          _guiTextInput('emergencyContactPhone', { label: 'Contact phone' }, ['required']),
-        ]),
-      ],
-      'Employment': [
-        _guiSelect('department', {
-          options: departments,
-          label: 'Department',
-          onChange: (event) => {
-            const selected = event.data?.department;
-            const teams = teamsByDepartment[selected] ?? [];
-            event.update({ path: 'team', options: teams });
-          },
-        }),
-        _guiSelect('team', {
-          options: [],
-          label: 'Team',
-        }),
-        _guiDatePicker('startDate', { label: 'Start date' }),
-        _guiSelect('office', {
-          options: offices,
-          label: 'Office location',
-        }),
-        _guiSelect('dietaryPreference', {
-          options: dietaryOptions,
-          label: 'Dietary preference (welcome lunch)',
-        }),
-      ],
-    }),
-    _guiAccordion(
+    gui.layouts.tabs([
       {
-        'Prior Employment': [
-          _guiRepeater(
-            'employmentHistory',
-            { addLabel: 'Add position', removeLabel: 'Remove' },
-            [
-              _guiHorizontalStack([
-                _guiInputs({ company: 'string', role: 'string' }),
-              ]),
-              _guiHorizontalStack([
-                _guiDatePicker('from', { label: 'From' }),
-                _guiDatePicker('to', { label: 'To' }),
-              ]),
-            ],
-          ),
+        label: 'Personal Details',
+        children: [
+          gui.inputs.textInput('firstName', {}, ['required']),
+          gui.inputs.textInput('lastName', {}, ['required']),
+          gui.inputs.textInput('email', {}, ['required']),
+          gui.inputs.textInput('phone'),
+          gui.inputs.datePicker('dateOfBirth', { label: 'Date of birth' }),
+          gui.layouts.horizontalFlex([
+            gui.inputs.textInput('emergencyContactName', { label: 'Emergency contact' }, ['required']),
+            gui.inputs.textInput('emergencyContactPhone', { label: 'Contact phone' }, ['required']),
+          ]),
         ],
       },
-    ),
+      {
+        label: 'Employment',
+        children: [
+          gui.inputs.select('department', {
+            options: departments,
+            label: 'Department',
+            onChange: (event) => {
+              const selected = event.data?.department;
+              const teams = teamsByDepartment[selected] ?? [];
+              event.update({ path: 'team', options: teams });
+            },
+          }),
+          gui.inputs.select('team', {
+            options: [],
+            label: 'Team',
+          }),
+          gui.inputs.datePicker('startDate', { label: 'Start date' }),
+          gui.inputs.select('office', {
+            options: offices,
+            label: 'Office location',
+          }),
+          gui.inputs.select('dietaryPreference', {
+            options: dietaryOptions,
+            label: 'Dietary preference (welcome lunch)',
+          }),
+        ],
+      },
+    ]),
+    gui.layouts.accordion([
+      {
+        label: 'Prior Employment',
+        children: [
+          gui.inputs.repeater('employmentHistory', {
+            addLabel: 'Add position',
+            removeLabel: 'Remove',
+            template: [
+              gui.layouts.horizontalFlex([
+                gui.inputs.textInput('company'),
+                gui.inputs.textInput('role'),
+              ]),
+              gui.layouts.horizontalFlex([
+                gui.inputs.datePicker('from', { label: 'From' }),
+                gui.inputs.datePicker('to', { label: 'To' }),
+              ]),
+            ],
+          }),
+        ],
+      },
+    ]),
   ],
   formSelectors: () => [
-    _gslTag('required', _gslInputs({
-      decorator: (cur) => ({
+    _gslTag('required', gui.selectors.inputs({
+      override: (cur) => ({
         placeholder: `${('placeholder' in cur ? cur.placeholder : undefined) ?? cur.path} *`,
       }),
     })),

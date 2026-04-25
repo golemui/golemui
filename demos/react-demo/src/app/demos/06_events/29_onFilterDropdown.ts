@@ -1,5 +1,5 @@
 import { FormDemoDefinition } from '../../../formRegistry.domain';
-import { _guiDropdown, _guiInputs } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
 const allCities = [
   { template: 'Paris', value: 'paris' },
@@ -20,8 +20,8 @@ export const onFilterDropdownDemo: FormDemoDefinition = {
     + 'the search term via event.detail and returns filtered options via event.update. '
     + 'Try typing "par" to see only Paris and Paraná.',
   formDef: () => [
-    _guiInputs({ name: 'string' }),
-    _guiDropdown('city', {
+    gui.inputs.textInput('name'),
+    gui.inputs.dropdown('city', {
       items: allCities,
       placeholder: 'Search for a city...',
       onFilter: (event) => {
