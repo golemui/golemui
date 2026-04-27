@@ -1,54 +1,36 @@
-import { iframeResizer, signin, tiny } from '@golemui/apps-shared';
+import { iframeResizer } from '@golemui/apps-shared';
 import '@golemui/gui-lit';
-import { Dependencies } from '@golemui/gui-shared';
 import hljs from 'highlight.js/lib/core';
 import json from 'highlight.js/lib/languages/json';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import eventRegistration from '../forms/event-registration.form.json';
 import './app.element.scss';
 
 hljs.registerLanguage('json', json);
 
-type Example = {
-  key: string;
-  label: string;
-  formDef: Record<string, unknown>;
-  data: Record<string, unknown>;
-};
+type Example = { key: string; label: string; file: string };
 
 const EXAMPLES: Example[] = [
-  {
-    key: 'tiny',
-    label: 'Tiny form',
-    formDef: tiny.form as unknown as Record<string, unknown>,
-    data: tiny.data,
-  },
-  {
-    key: 'signin',
-    label: 'Sign-in',
-    formDef: signin.form as unknown as Record<string, unknown>,
-    data: signin.data,
-  },
-  {
-    key: 'event',
-    label: 'Event registration',
-    formDef: eventRegistration as unknown as Record<string, unknown>,
-    data: {},
-  },
+  { key: 'tiny', label: 'Tiny form', file: 'forms/tiny.json' },
+  { key: 'signin', label: 'Sign-in', file: 'forms/signin.json' },
+  { key: 'event', label: 'Event registration', file: 'forms/event-registration.json' },
 ];
 
 @customElement('gui-serializable')
 export class SerializableElement extends LitElement {
   @state() private declare selectedKey: string;
-
-  private deps: Dependencies = {};
+  @state() private declare loadedKey: string | null;
+  @state() private declare loading: boolean;
+  @state() private declare formDef: Record<string, unknown> | null;
 
   constructor() {
     super();
     this.selectedKey = EXAMPLES[0].key;
+    this.loadedKey = null;
+    this.loading = true;
+    this.formDef = null;
   }
 
   override createRenderRoot() {
@@ -58,21 +40,42 @@ export class SerializableElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     iframeResizer();
+    this.loadExample(this.selectedKey);
+  }
+
+  private async loadExample(key: string) {
+    const example = EXAMPLES.find((e) => e.key === key);
+    if (!example) return;
+
+    this.loading = true;
+
+    const url = new URL(example.file, window.location.href).href;
+    const [response] = await Promise.all([
+      fetch(url, { cache: 'no-store' }),
+      new Promise((resolve) => setTimeout(resolve, 1000)),
+    ]);
+    const data = await response.json();
+
+    if (this.selectedKey !== key) return; // a newer selection landed first
+    this.formDef = data;
+    this.loadedKey = key;
+    this.loading = false;
   }
 
   private onSelect(event: Event) {
-    this.selectedKey = (event.target as HTMLSelectElement).value;
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedKey = value;
+    this.loadExample(value);
   }
 
   override render() {
-    const example = EXAMPLES.find((e) => e.key === this.selectedKey) ?? EXAMPLES[0];
-    const jsonText = JSON.stringify(example.formDef, null, 2);
-    const highlighted = hljs.highlight(jsonText, { language: 'json' }).value;
+    const jsonText = this.formDef ? JSON.stringify(this.formDef, null, 2) : '';
+    const highlighted = jsonText
+      ? hljs.highlight(jsonText, { language: 'json' }).value
+      : '';
 
-    // Deep-clone formDef and data so the form engine's internal mutations
-    // don't bleed back into the source mocks across re-renders.
-    const formDef = JSON.parse(jsonText);
-    const data = JSON.parse(JSON.stringify(example.data));
+    const formDef = this.formDef ? JSON.parse(jsonText) : null;
+    const loadingFile = EXAMPLES.find((e) => e.key === this.selectedKey)?.file;
 
     return html`
       <div class="serializable-root">
@@ -88,18 +91,30 @@ export class SerializableElement extends LitElement {
               )}
             </select>
           </header>
-          <pre
-            class="serializable-json"
-          ><code class="hljs language-json">${unsafeHTML(highlighted)}</code></pre>
+          ${formDef
+            ? html`<pre
+                class="serializable-json"
+              ><code class="hljs language-json">${unsafeHTML(highlighted)}</code></pre>`
+            : nothing}
         </section>
         <section class="serializable-pane">
           <div class="serializable-form">
-            ${keyed(
-              this.selectedKey,
-              html`<gui-form .formDef=${formDef} .data=${data}></gui-form>`,
-            )}
+            ${formDef && this.loadedKey
+              ? keyed(
+                  this.loadedKey,
+                  html`<gui-form .formDef=${formDef} .data=${{}}></gui-form>`,
+                )
+              : nothing}
           </div>
         </section>
+        ${this.loading
+          ? html`<div class="serializable-overlay" role="status" aria-live="polite">
+              <div class="serializable-overlay-card">
+                <div class="serializable-spinner" aria-hidden="true"></div>
+                <span>Loading <code>${loadingFile}</code>…</span>
+              </div>
+            </div>`
+          : nothing}
       </div>
     `;
   }

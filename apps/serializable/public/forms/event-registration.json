@@ -49,7 +49,7 @@
         "label": "I'm registering as",
         "path": "attendeeType",
         "defaultValue": "individual",
-        "props":{
+        "props": {
           "options": [
             { "value": "individual", "label": "An individual" },
             { "value": "company", "label": "A company representative" }

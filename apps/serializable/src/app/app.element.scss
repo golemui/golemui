@@ -1,9 +1,11 @@
 .serializable-root {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
   padding: 16px;
   align-items: start;
+  min-height: 280px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -75,4 +77,52 @@
   border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.08));
   background-color: var(--gui-bg-default);
   min-width: 0;
+}
+
+.serializable-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, var(--gui-bg-default) 70%, transparent);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  cursor: wait;
+}
+
+.serializable-overlay-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background-color: var(--gui-bg-default);
+  border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.12));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color: var(--gui-text-default);
+  font-size: 0.9rem;
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.85rem;
+    background-color: rgba(0, 0, 0, 0.06);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+}
+
+.serializable-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--gui-intent-primary) 20%, transparent);
+  border-top-color: var(--gui-intent-primary);
+  animation: serializable-spin 0.8s linear infinite;
+}
+
+@keyframes serializable-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
