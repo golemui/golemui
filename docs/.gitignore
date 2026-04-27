@@ -29,6 +29,7 @@ public/material
 public/theming
 public/tiny
 public/headless
+public/serializable
 public/template/assets
 public/template/index.html
 public/template/favicon.ico

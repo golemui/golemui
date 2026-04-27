@@ -1,0 +1,78 @@
+.serializable-root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.serializable-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.serializable-pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px 10px;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gui-text-muted, var(--gui-text-default));
+  }
+
+  select {
+    flex: 1;
+    max-width: 220px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.12));
+    background-color: var(--gui-bg-surface);
+    color: var(--gui-text-default);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--gui-intent-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.serializable-json {
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow: auto;
+  max-height: 560px;
+  white-space: pre;
+
+  code.hljs {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+.serializable-form {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.08));
+  background-color: var(--gui-bg-default);
+  min-width: 0;
+}
