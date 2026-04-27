@@ -21,14 +21,7 @@ const coins: { [key: string]: string } = {
   GB: 'GBP',
 };
 
-const data = {
-  details: {
-    clientName: '',
-    date: null,
-    isRemote: false, // Toggles the UI state
-    notes: '',
-  },
-};
+const data = {};
 
 const form = defineForm({
   form: [
@@ -138,6 +131,9 @@ const form = defineForm({
               { id: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
             ],
           },
+          on: {
+            change: 'fieldChange',
+          },
         },
         {
           uid: 'budget',
@@ -169,6 +165,9 @@ const form = defineForm({
                 default: 'Budget must be at least $100',
               },
             },
+          },
+          on: {
+            change: 'fieldChange',
           },
         },
       ],
@@ -278,6 +277,9 @@ const form = defineForm({
             key: 'travelPlanner.field.includePets',
             default: 'Include Pets',
           },
+          on: {
+            change: 'fieldChange',
+          },
         },
       ],
     },
@@ -324,7 +326,9 @@ const form = defineForm({
           key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
           default: 'Next Month',
         },
-        numberOfMonths: 3,
+      },
+      on: {
+        change: 'fieldChange',
       },
     },
     // Submit Action
