@@ -23,7 +23,7 @@ const coins: { [key: string]: string } = {
 
 const data = {
   projects: [
-    { name: 'GolemUI', deliveryDate: '2026-06-30', budget: 100000, description: '**GolemUI The Enterprise Forms Library:**\n\nOpen source forever, 100% serializable, framework agnostic and AI ready. Built for enterprise teams who need performance, extensibility, and control.' },
+    { name: 'GolemUI', deliveryDate: '2026-06-30', budget: 100000, description: '**GolemUI The Declarative Form Engine:**\n\nThe New Paradigm for building forms. Stop coding UI-coupled forms and start defining semantic, serializable schemas.' },
   ],
   developers: [
     { name: 'John Doe', position: 'pm', holidays: [{ start: '2026-05-29' }] },

@@ -26,14 +26,6 @@ const form = golemForm<FormType, CustomHeadingWidget>().create({
   states,
   form: [
     {
-      kind: 'display',
-      type: 'heading',
-      props: {
-        text: 'Login',
-        'text.register': 'Register',
-      },
-    },
-    {
       kind: 'input',
       type: 'textinput',
       label: 'User Id',
