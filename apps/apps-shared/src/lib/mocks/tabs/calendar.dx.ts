@@ -46,7 +46,6 @@ export const calendarTab = gui.layouts.flex([
       { start: '2026-02-20' },
     ],
     numberOfMonths: 3,
-    icon: 'calendar_month',
     prevMonthIcon: 'chevron_left',
     nextMonthIcon: 'chevron_right',
     removePillAriaLabel: 'Delete holiday period',
@@ -73,7 +72,6 @@ export const calendarTab = gui.layouts.flex([
 
   gui.inputs.calendar('calendar', {
     defaultValue: '2026-02-13',
-    icon: 'calendar_month',
     prevMonthIcon: 'chevron_left',
     nextMonthIcon: 'chevron_right',
     prevMonthAriaLabel: 'Go To Previous Month',

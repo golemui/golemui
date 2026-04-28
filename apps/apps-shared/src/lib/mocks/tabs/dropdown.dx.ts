@@ -8,7 +8,6 @@ export const dropdownTab = gui.layouts.flex([
     label: 'Search as you type',
     itemHeight: 60,
     itemRenderer: 'productItemRenderer',
-    asyncFiltering: true,
     labelField: 'product',
     valueField: 'id',
     inputDebounce: 300,

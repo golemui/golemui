@@ -1,4 +1,4 @@
-import type { ListItem, ListProps } from '../../../widget.props';
+import type { ListItem, ListProps, OptionValue } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
@@ -7,7 +7,7 @@ export interface ListDecorator
     DxCommonFields,
     Partial<Omit<ListProps<any>, 'items'>> {
   type: 'list';
-  items: ListItem<any>[];
+  items?: ListItem<any>[] | OptionValue[] | Record<string, unknown>[];
 }
 
 export interface GslListConfig extends GslConfigBase<ListDecorator> {

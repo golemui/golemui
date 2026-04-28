@@ -15,7 +15,6 @@ export const dropdown = (uid: string): any => ({
       props: {
         itemHeight: 60,
         itemRenderer: 'productItemRenderer',
-        asyncFiltering: true,
         labelField: 'product',
         valueField: 'id',
         inputDebounce: 300,

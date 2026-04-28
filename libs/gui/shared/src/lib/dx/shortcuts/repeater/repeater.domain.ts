@@ -3,6 +3,7 @@ import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxU
 import type { ValidGuiShortcut } from '../../core/dx.domain';
 
 export interface RepeaterDecorator extends DxCommonFields {
+  label?: string;
   addLabel?: string;
   removeLabel?: string;
   limit?: number;

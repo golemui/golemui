@@ -54,7 +54,6 @@ export const calendar = (uid: string): any => ({
       defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
       props: {
         numberOfMonths: 3,
-        icon: 'calendar_month',
         prevMonthIcon: 'chevron_left',
         nextMonthIcon: 'chevron_right',
         removePillAriaLabel: 'Delete holiday period',
@@ -102,7 +101,6 @@ export const calendar = (uid: string): any => ({
       path: 'calendar',
       defaultValue: '2026-02-13',
       props: {
-        icon: 'calendar_month',
         prevMonthIcon: 'chevron_left',
         nextMonthIcon: 'chevron_right',
         prevMonthAriaLabel: 'Go To Previous Month',

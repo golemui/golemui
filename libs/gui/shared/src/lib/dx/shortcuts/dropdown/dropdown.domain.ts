@@ -1,4 +1,4 @@
-import type { DropdownProps, ListItem } from '../../../widget.props';
+import type { DropdownProps, ListItem, OptionValue } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type {
   DefOrCallback,
@@ -15,7 +15,7 @@ export interface DropdownDecorator
     DxCommonFields,
     Partial<Omit<DropdownProps<any>, 'items'>> {
   type: 'dropdown';
-  items: ListItem<any>[];
+  items?: ListItem<any>[] | OptionValue[] | Record<string, unknown>[];
 }
 
 // ═══════════════════════════════════════════════════
