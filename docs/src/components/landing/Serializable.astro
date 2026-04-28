@@ -1,0 +1,74 @@
+---
+import Demo from './Demo.astro';
+---
+
+<section class="serializable">
+  <div class="container">
+    <div class="content">
+      <span class="section-label">Serializable</span>
+      <h2>
+        Pure <span class="gradient-text">Data</span>.<br />
+        Pure <span class="gradient-text">Power</span>.
+      </h2>
+      <p>
+        A GolemUI form is just JSON — no glue code, no compilation step. Persist it in a database,
+        ship it from a CMS, generate it with an LLM, edit it by hand. Pick a file from the dropdown
+        and watch the same JSON render as a fully working form, instantly.
+      </p>
+    </div>
+    <div class="visual">
+      <Demo src="/serializable/index.html" />
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .serializable {
+    padding: 6rem 0;
+    background: var(--bg-color);
+    overflow: hidden;
+
+    @media (min-width: 768px) {
+      padding: 4rem 0;
+    }
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .visual {
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  :global(html.dark) .visual {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
+
+    @media (min-width: 768px) {
+      font-size: 4.5rem;
+    }
+  }
+
+  .content > p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
+  }
+</style>

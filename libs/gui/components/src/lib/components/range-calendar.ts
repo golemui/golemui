@@ -37,6 +37,8 @@ export class GuiRangeCalendar extends AbstractCalendar {
   @state() private _isStartVisible = true;
   @state() private _isEndVisible = true;
 
+  private _skipValueNavigation = false;
+
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
 
@@ -51,7 +53,9 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has('value') && !changedProperties.has('focusDate')) {
-      if (this.value) {
+      if (this._skipValueNavigation) {
+        this._skipValueNavigation = false;
+      } else if (this.value) {
         const value = Array.isArray(this.value)
           ? this.value
           : [{ start: this.value as unknown as string }];
@@ -243,6 +247,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
     // Calculate ranges based on disabled days
     const newRanges = this.calculateValidRanges(startDate, endDate);
     const combinedRanges = [...(this.value || []), ...newRanges];
+    this._skipValueNavigation = true;
     this.value = mergeDateRanges(combinedRanges);
 
     this._isSelecting = false;

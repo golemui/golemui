@@ -1,0 +1,214 @@
+.freedom-root {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  align-items: start;
+  min-height: 280px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.freedom-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.freedom-pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px 10px;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gui-text-muted, var(--gui-text-default));
+  }
+
+  select {
+    flex: 1;
+    max-width: 240px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.12));
+    background-color: var(--gui-bg-surface);
+    color: var(--gui-text-default);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--gui-intent-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.freedom-source {
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow: auto;
+  max-height: 560px;
+  white-space: pre;
+
+  code.hljs {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+.freedom-form {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.08));
+  background-color: var(--gui-bg-default);
+  min-width: 0;
+}
+
+.freedom-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, var(--gui-bg-default) 70%, transparent);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  cursor: wait;
+}
+
+.freedom-overlay-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background-color: var(--gui-bg-default);
+  border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.12));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color: var(--gui-text-default);
+  font-size: 0.9rem;
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.85rem;
+    background-color: rgba(0, 0, 0, 0.06);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+}
+
+.freedom-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--gui-intent-primary) 20%, transparent);
+  border-top-color: var(--gui-intent-primary);
+  animation: freedom-spin 0.8s linear infinite;
+}
+
+@keyframes freedom-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Custom widget set (only used in the "Your custom components" option) ---------- */
+
+.freedom-form--custom {
+  .freedom-input {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+  }
+
+  .freedom-input__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8b5cf6;
+    margin-bottom: 6px;
+  }
+
+  .freedom-input__field {
+    appearance: none;
+    border: 2px solid #1f2937;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background-color: #fafafa;
+    color: #0f172a;
+    box-shadow: 4px 4px 0 0 #1f2937;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+
+    &:focus {
+      outline: none;
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 0 #8b5cf6;
+      border-color: #8b5cf6;
+    }
+  }
+
+  .freedom-input__field--error {
+    border-color: #ef4444;
+    box-shadow: 4px 4px 0 0 #ef4444;
+  }
+
+  .freedom-input__error {
+    font-size: 0.78rem;
+    color: #ef4444;
+    margin-top: 4px;
+  }
+
+  .freedom-button {
+    display: block;
+    margin-top: 8px;
+  }
+
+  .freedom-button__btn {
+    appearance: none;
+    border: 2px solid #1f2937;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #a855f7 100%);
+    color: #ffffff;
+    box-shadow: 4px 4px 0 0 #1f2937;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+
+    &:hover:not(:disabled) {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0 0 #1f2937;
+    }
+
+    &:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 0 #1f2937;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+@use '../../../libs/gui/components/src/styles/index';
+@use '../../../libs/gui/components/src/styles/themes/clay';
+@use 'highlight.js/styles/github-dark.css';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+html,
+body {
+  background-color: var(--gui-bg-default);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+}
+
+gui-serializable {
+  display: block;
+  width: 100%;
+}
+
+.gui-widget-icon[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'Material Icons';
+  font-size: var(--gui-font-lg);
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}

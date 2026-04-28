@@ -21,14 +21,7 @@ const coins: { [key: string]: string } = {
   GB: 'GBP',
 };
 
-const data = {
-  details: {
-    clientName: '',
-    date: null,
-    isRemote: false, // Toggles the UI state
-    notes: '',
-  },
-};
+const data = {};
 
 const form = defineForm({
   form: [
@@ -138,6 +131,9 @@ const form = defineForm({
               { id: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
             ],
           },
+          on: {
+            change: 'fieldChange',
+          },
         },
         {
           uid: 'budget',
@@ -169,6 +165,9 @@ const form = defineForm({
                 default: 'Budget must be at least $100',
               },
             },
+          },
+          on: {
+            change: 'fieldChange',
           },
         },
       ],
@@ -278,6 +277,9 @@ const form = defineForm({
             key: 'travelPlanner.field.includePets',
             default: 'Include Pets',
           },
+          on: {
+            change: 'fieldChange',
+          },
         },
       ],
     },
@@ -297,9 +299,13 @@ const form = defineForm({
         minItems: 1,
         maxItems: 3,
         messages: {
+          required: {
+            key: 'travelPlanner.field.preferredDates.required',
+            default: 'Preferred dates are required',
+          },
           invalid: {
             key: 'travelPlanner.field.preferredDates.required',
-            default: 'Preferred dates are required, select at least one date',
+            default: 'Preferred dates are required',
           },
           minItems: {
             key: 'travelPlanner.field.preferredDates.minItems',
@@ -324,7 +330,9 @@ const form = defineForm({
           key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
           default: 'Next Month',
         },
-        numberOfMonths: 3,
+      },
+      on: {
+        change: 'fieldChange',
       },
     },
     // Submit Action
@@ -385,7 +393,7 @@ const resources = {
             label: 'Select Preferred Dates',
             nextMonthAriaLabel: 'Next Month',
             prevMonthAriaLabel: 'Previous Month',
-            required: 'Preferred dates are required, select at least one date',
+            required: 'Preferred dates are required',
             minItems: 'Please select at least one date',
             maxItems: 'Please select no more than three dates',
           },
@@ -419,15 +427,13 @@ const resources = {
           },
           passengers: {
             label: 'Pasajeros',
-            invalid:
-              'Los pasajeros son obligatorios y deben ser entre 1 y 10',
+            invalid: 'Los pasajeros son obligatorios y deben ser entre 1 y 10',
             minimum: 'Debe haber al menos 1 pasajero',
             maximum: 'Debe haber como máximo 10 pasajeros',
           },
           pets: {
             label: 'Mascotas',
-            invalid:
-              'Las mascotas son obligatorias y deben ser entre 1 y 3',
+            invalid: 'Las mascotas son obligatorias y deben ser entre 1 y 3',
             minimum: 'Debe haber al menos 1 mascota',
             maximum: 'Debe haber como máximo 3 mascotas',
           },
@@ -436,8 +442,7 @@ const resources = {
             label: 'Seleccionar fechas preferidas',
             nextMonthAriaLabel: 'Mes siguiente',
             prevMonthAriaLabel: 'Mes anterior',
-            required:
-              'Las fechas preferidas son obligatorias, seleccione al menos una fecha',
+            required: 'Las fechas preferidas son obligatorias',
             minItems: 'Por favor, seleccione al menos una fecha',
             maxItems: 'Por favor, seleccione no más de tres fechas',
           },
@@ -486,8 +491,7 @@ const resources = {
             label: '希望日の選択',
             nextMonthAriaLabel: '翌月',
             prevMonthAriaLabel: '前月',
-            required:
-              '希望日は必須です。少なくとも1つの日付を選択してください',
+            required: '希望日が必要です',
             minItems: '少なくとも1つの日付を選択してください',
             maxItems: '3つ以内の日付を選択してください',
           },
@@ -527,8 +531,7 @@ const resources = {
           },
           pets: {
             label: 'حیوانات خانگی',
-            invalid:
-              'تعداد حیوانات خانگی الزامی است و باید بین ۱ تا ۳ باشد',
+            invalid: 'تعداد حیوانات خانگی الزامی است و باید بین ۱ تا ۳ باشد',
             minimum: 'تعداد حیوانات خانگی باید حداقل ۱ باشد',
             maximum: 'تعداد حیوانات خانگی حداکثر ۳ می‌تواند باشد',
           },
@@ -537,8 +540,7 @@ const resources = {
             label: 'انتخاب تاریخ‌های مورد نظر',
             nextMonthAriaLabel: 'ماه بعد',
             prevMonthAriaLabel: 'ماه قبل',
-            required:
-              'تاریخ‌های مورد نظر الزامی است، حداقل یک تاریخ انتخاب کنید',
+            required: 'تاریخ‌های مورد نظر الزامی است',
             minItems: 'لطفاً حداقل یک تاریخ انتخاب کنید',
             maxItems: 'لطفاً بیش از سه تاریخ انتخاب نکنید',
           },

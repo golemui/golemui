@@ -1,0 +1,78 @@
+---
+import Demo from './Demo.astro';
+---
+
+<section class="freedom">
+  <div class="container">
+    <div class="content">
+      <span class="section-label">Total Freedom</span>
+      <h2>
+        Use <span class="gradient-text">anything</span>.<br />
+        Even <span class="gradient-text">your own</span>.
+      </h2>
+      <p>
+        GolemUI doesn't lock you into a widget library. Render forms with our built-ins, plug in
+        a third-party set like Google Material, or bring your own components — same schema, any
+        chrome. Pick a library from the dropdown to see the same form swap looks instantly.
+      </p>
+    </div>
+    <div class="visual">
+      <Demo src="/freedom/index.html" />
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .freedom {
+    padding: 6rem 0;
+    background: var(--bg-surface);
+    overflow: hidden;
+
+    @media (min-width: 768px) {
+      padding: 4rem 0;
+    }
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    margin-bottom: 2.5rem;
+  }
+
+  .visual {
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  :global(html.dark) .visual {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin: 1.25rem 0;
+    letter-spacing: -0.03em;
+
+    @media (min-width: 768px) {
+      font-size: 4.5rem;
+    }
+  }
+
+  .content > p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
+  }
+</style>

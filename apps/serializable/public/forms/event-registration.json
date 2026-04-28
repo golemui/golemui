@@ -1,0 +1,117 @@
+{
+  "states": {
+    "isCompany": "$form.attendeeType === 'company'",
+    "needsDietary": "$form.dietaryRestrictions === true"
+  },
+  "form": {
+    "uid": "root",
+    "kind": "layout",
+    "type": "flex",
+    "props": { "direction": "column", "gap": "16px" },
+    "children": [
+      {
+        "uid": "attendee-row",
+        "kind": "layout",
+        "type": "grid",
+        "props": { "direction": "row", "gap": "12px" },
+        "children": [
+          {
+            "uid": "first-name",
+            "kind": "input",
+            "type": "textinput",
+            "label": "First name",
+            "path": "firstName",
+            "validator": { "type": "string", "required": true, "minLength": 2 }
+          },
+          {
+            "uid": "last-name",
+            "kind": "input",
+            "type": "textinput",
+            "label": "Last name",
+            "path": "lastName",
+            "validator": { "type": "string", "required": true, "minLength": 2 }
+          }
+        ]
+      },
+      {
+        "uid": "email",
+        "kind": "input",
+        "type": "textinput",
+        "label": "Email",
+        "path": "email",
+        "props": { "placeholder": "you@example.com" },
+        "validator": { "type": "string", "required": true, "format": "email" }
+      },
+      {
+        "uid": "attendee-type",
+        "kind": "input",
+        "type": "radiogroup",
+        "label": "I'm registering as",
+        "path": "attendeeType",
+        "defaultValue": "individual",
+        "props": {
+          "options": [
+            { "value": "individual", "label": "An individual" },
+            { "value": "company", "label": "A company representative" }
+          ]
+        },
+        "validator": { "type": "string", "required": true }
+      },
+      {
+        "uid": "company-name",
+        "kind": "input",
+        "type": "textinput",
+        "label": "Company name",
+        "path": "companyName",
+        "include": { "in": ["isCompany"] },
+        "validator": { "type": "string", "required": true }
+      },
+      {
+        "uid": "ticket",
+        "kind": "input",
+        "type": "select",
+        "label": "Ticket",
+        "path": "ticket",
+        "props": {
+          "options": [
+            { "value": "standard", "label": "Standard — $99" },
+            { "value": "pro", "label": "Pro — $249" },
+            { "value": "vip", "label": "VIP — $499" }
+          ]
+        },
+        "validator": { "type": "string", "required": true }
+      },
+      {
+        "uid": "dietary-restrictions",
+        "kind": "input",
+        "type": "checkbox",
+        "label": "I have dietary restrictions",
+        "path": "dietaryRestrictions"
+      },
+      {
+        "uid": "dietary-notes",
+        "kind": "input",
+        "type": "textarea",
+        "label": "Tell us about them",
+        "path": "dietaryNotes",
+        "props": { "rows": 3, "placeholder": "Allergies, preferences, etc." },
+        "include": { "in": ["needsDietary"] }
+      },
+      {
+        "uid": "terms",
+        "kind": "input",
+        "type": "checkbox",
+        "label": "I accept the terms and conditions",
+        "path": "terms",
+        "validator": { "type": "boolean", "required": true }
+      },
+      {
+        "uid": "submit",
+        "kind": "action",
+        "type": "button",
+        "label": "Register",
+        "disabled": { "when": "$form.terms !== true" }
+      }
+    ]
+  }
+}

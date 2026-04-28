@@ -1,0 +1,96 @@
+{
+  "states": {
+    "register": "$form.registerMode === true",
+    "register:adult": "$form.user.age >= 18",
+    "canSubmit": "$form.terms === true"
+  },
+  "form": {
+    "uid": "signin-root",
+    "kind": "layout",
+    "type": "flex",
+    "props": { "direction": "column", "gap": "12px" },
+    "children": [
+      {
+        "uid": "user-name",
+        "kind": "input",
+        "type": "textinput",
+        "label": "Name",
+        "path": "user.name",
+        "validator": { "type": "string", "required": true, "minLength": 2 }
+      },
+      {
+        "uid": "user-email",
+        "kind": "input",
+        "type": "textinput",
+        "label": "Email",
+        "path": "user.email",
+        "validator": { "type": "string", "required": true, "format": "email" }
+      },
+      {
+        "uid": "user-password",
+        "kind": "input",
+        "type": "password",
+        "label": "Password",
+        "path": "user.password",
+        "props": {
+          "hint": "At least 8 characters with a letter and a number",
+          "showPasswordLabel": "SHOW",
+          "hidePasswordLabel": "HIDE"
+        },
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 8,
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
+        }
+      },
+      {
+        "uid": "user-age",
+        "kind": "input",
+        "type": "number",
+        "label": "Age",
+        "path": "user.age",
+        "include": { "in": ["register"] },
+        "validator": { "type": "number", "required": true, "min": 0 }
+      },
+      {
+        "uid": "register-mode",
+        "kind": "input",
+        "type": "checkbox",
+        "label": "Create a new account",
+        "path": "registerMode"
+      },
+      {
+        "uid": "terms",
+        "kind": "input",
+        "type": "checkbox",
+        "label": "I accept the terms",
+        "path": "terms",
+        "include": { "in": ["register"] }
+      },
+      {
+        "uid": "status",
+        "kind": "display",
+        "type": "alert",
+        "props": {
+          "text": "Fill in your credentials to continue",
+          "level": "info",
+          "text.register": "Complete the form to create your account",
+          "text.register:adult": "You're good to go — accept the terms to register",
+          "level.canSubmit": "success",
+          "text.canSubmit": "Ready to submit"
+        }
+      },
+      {
+        "uid": "submit",
+        "kind": "action",
+        "type": "button",
+        "label": "Sign in",
+        "label.register": "Register",
+        "disabled": false,
+        "disabled.register": true,
+        "disabled.canSubmit": false
+      }
+    ]
+  }
+}

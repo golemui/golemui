@@ -1,5 +1,21 @@
+.demo-layout {
+  display: grid;
+  grid-template-columns: minmax(620px, 360px) 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.demo-form {
+  min-width: 0;
+}
+
 .error {
   padding: 1rem;
   border: 1px solid red;
   color: red;
+  margin: 0 0 12px;
 }

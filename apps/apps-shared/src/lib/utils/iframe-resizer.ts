@@ -1,7 +1,7 @@
 export const iframeResizer = () => {
   if (typeof window !== 'undefined' && window.parent !== window) {
     const sendHeight = () => {
-      const height = document.body.scrollHeight + 24;
+      const height = Math.ceil(document.documentElement.getBoundingClientRect().height);
       window.parent.postMessage({ type: 'golemui-resize', height }, '*');
     };
 
