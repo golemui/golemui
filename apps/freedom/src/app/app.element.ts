@@ -160,42 +160,33 @@ export const signupForm = defineForm({
     gui.inputs.textInput('lastName',  { validator: { required: true, minLength: 2 } }),
     gui.inputs.textInput('email',     { validator: { required: true, format: 'email' } }),
     gui.inputs.password('password',   { validator: { required: true, minLength: 8 } }),
-    gui.actions.button('submit',      { label: 'Sign up' }),
+    gui.actions.button({ label: 'Sign up' }),
   ],
 });
 `;
 
 const MATERIAL_SOURCE = `import { defineForm, gui } from '@golemui/core';
-import { mat } from './material-widgets';
 
 export const signupForm = defineForm({
   form: [
-    mat.textInput('firstName', { validator: { required: true, minLength: 2 } }),
-    mat.textInput('lastName',  { validator: { required: true, minLength: 2 } }),
-    mat.textInput('email',     { validator: { required: true, format: 'email' } }),
-    mat.textInput('password',  { props: { type: 'password' }, validator: { required: true, minLength: 8 } }),
-    mat.button('submit',       { label: 'Sign up' }),
+    gui.inputs.custom('matTextInput', 'firstName', { validator: { required: true, minLength: 2 } }),
+    gui.inputs.custom('matTextInput', 'lastName',  { validator: { required: true, minLength: 2 } }),
+    gui.inputs.custom('matTextInput', 'email',     { validator: { required: true, format: 'email' } }),
+    gui.inputs.custom('matTextInput', 'password',  { props: { type: 'password' }, validator: { required: true, minLength: 8 } }),
+    gui.actions.custom('matButton', { label: 'Sign up' }),
   ],
 });
-
-// Material widgets are wired via customWidgetLoaders — see ./material-widgets.ts
-// where each widget wraps an @material/web component (md-filled-text-field,
-// md-filled-button) inside a tiny LitElement adapter.
 `;
 
 const CUSTOM_SOURCE = `import { defineForm, gui } from '@golemui/core';
-import { freedom } from './my-widgets';
 
-// Bring your own components. GolemUI doesn't care — if it implements the
-// adapter contract, you can plug it in. Here we register two tiny widgets
-// that render however we like.
 export const signupForm = defineForm({
   form: [
-    freedom.input('firstName', { validator: { required: true, minLength: 2 } }),
-    freedom.input('lastName',  { validator: { required: true, minLength: 2 } }),
-    freedom.input('email',     { validator: { required: true, format: 'email' } }),
-    freedom.input('password',  { props: { type: 'password' }, validator: { required: true, minLength: 8 } }),
-    freedom.button('submit',   { label: 'Sign up' }),
+    gui.inputs.custom('myTextinput', 'firstName', { validator: { required: true, minLength: 2 } }),
+    gui.inputs.custom('myTextinput', 'lastName',  { validator: { required: true, minLength: 2 } }),
+    gui.inputs.custom('myTextinput', 'email',     { validator: { required: true, format: 'email' } }),
+    gui.inputs.custom('myTextinput', 'password',  { props: { type: 'password' }, validator: { required: true, minLength: 8 } }),
+    gui.actions.custom('myBtn', { label: 'Sign up' }),
   ],
 });
 `;
