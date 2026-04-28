@@ -18,6 +18,6 @@ export const textareaTab = gui.layouts.flex([
     placeholder: 'Please enter your phone number',
     counterMode: 'current',
     minimumHeight: 80,
-    // TODO: validator on textarea — DX type gap, tracked in dx-open-items
+    validator: { maxLength: 10, required: true },
   }),
 ]);

@@ -50,6 +50,7 @@ function mapBooleanInputDef<
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
     ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
     ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
+    ...(fieldDef.validator != null ? { validator: { type: 'boolean' as const, ...fieldDef.validator } } : {}),
     props,
   };
 }

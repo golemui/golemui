@@ -1,3 +1,4 @@
+import type { StringValidator } from '@golemui/gui-validators';
 import { CalendarProps } from '../../../widget.props';
 import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
 import {
@@ -12,6 +13,7 @@ import {
 
 export interface CalendarDecorator extends DxInputBase, DxCommonFields, Partial<CalendarProps> {
   type: 'calendar';
+  validator?: Omit<StringValidator, 'type'>;
 }
 
 /**

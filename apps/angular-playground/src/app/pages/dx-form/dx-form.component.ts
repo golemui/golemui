@@ -3,11 +3,21 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import * as AppsShared from '@golemui/apps-shared';
 import * as GuiAngular from '@golemui/gui-angular';
 import snarkdown from 'snarkdown';
+import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
+import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
+import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
+import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
 const ks = AppsShared.buildKitchenSinkDx({
   widgetLoaders: {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
+  },
+  itemRenderers: {
+    complexListItemRenderer: ComplexListItemRenderer,
+    productItemRenderer: ProductItemRenderer,
+    airportItemRenderer: AirportItemRenderer,
+    countryItemRenderer: CountryItemRenderer,
   },
   dependencies: {
     markdown: {

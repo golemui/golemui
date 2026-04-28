@@ -1,8 +1,10 @@
+import type { StringValidator } from '@golemui/gui-validators';
 import type { TextareaProps } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 export interface TextareaDecorator extends DxInputBase, DxCommonFields, Partial<TextareaProps> {
   type: 'textarea';
+  validator?: Omit<StringValidator, 'type'>;
 }
 
 export interface GslTextareaConfig extends GslConfigBase<TextareaDecorator> {

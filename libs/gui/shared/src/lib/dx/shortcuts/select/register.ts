@@ -20,6 +20,7 @@ export const { gsl: _gslSelects, gslByUid: _gslSelectByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
+      ...(def.validator != null ? { validator: def.validator } : {}),
       props: extractWidgetProps(def),
     }),
   });

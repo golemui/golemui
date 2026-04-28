@@ -53,6 +53,10 @@ export class FormElement extends LitElement {
     const mergedDependencies: Dependencies | undefined =
       this.dependencies ?? resolved.dependencies;
     const mergedValidateOn: Core.ValidateOn = this.validateOn ?? resolved.validateOn ?? 'eager';
+    const mergedItemRenderers: Record<string, LitItemRenderer<any>> = {
+      ...((resolved.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),
+      ...this.itemRenderers,
+    };
 
     const onFormEvent = resolved.formEvent;
     const formEventListener = onFormEvent
@@ -65,7 +69,7 @@ export class FormElement extends LitElement {
         .data=${this.data}
         .meta=${this.meta}
         .widgetLoaders=${mergedWidgetLoaders}
-        .itemRenderers=${this.itemRenderers}
+        .itemRenderers=${mergedItemRenderers}
         .localization=${this.localization}
         .dependencies=${mergedDependencies}
         .middlewares=${this.middlewares}

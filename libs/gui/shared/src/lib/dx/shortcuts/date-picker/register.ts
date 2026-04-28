@@ -33,6 +33,7 @@ export const { gsl: _gslDatePickers, gslByUid: _gslDatePickerByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
+      ...(def.validator != null ? { validator: { type: 'string' as const, ...def.validator } } : {}),
       props: extractWidgetProps(def),
     }),
   });

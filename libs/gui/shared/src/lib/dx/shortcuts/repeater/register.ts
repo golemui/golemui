@@ -38,6 +38,7 @@ function mapToWidget(def: Record<string, any>): NonFunctionWidget {
     ...(def['label'] != null ? { label: def['label'] } : {}),
     ...(def['disabled'] != null ? { disabled: def['disabled'] } : {}),
     ...(def['readonly'] != null ? { readonly: def['readonly'] } : {}),
+    ...(def['validator'] != null ? { validator: { type: 'array' as const, ...def['validator'] } } : {}),
     props: {
       ...buildRepeaterProps(def as RepeaterDecorator),
       template: { kind: 'layout', type: 'flex', children: [], props: { direction: 'column' } },

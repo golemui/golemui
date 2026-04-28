@@ -35,14 +35,14 @@ export const gridTab = gui.layouts.grid(
           size: 3,
           togglePosition: 'left',
           hint: 'Long hints are discouraged with checkboxes and toggles when these share a row with a text input',
-          // TODO: validator on boolean — DX type gap
+          validator: { required: true },
         }),
         gui.inputs.checkbox('cb1', {
           label: 'Checkbox',
           size: 3,
           checkboxPosition: 'left',
           hint: 'Long hints are discouraged with checkboxes and toggles when these share a row with a text input',
-          // TODO: validator on checkbox — DX type gap
+          validator: { required: true },
         }),
       ],
       { direction: 'row' },

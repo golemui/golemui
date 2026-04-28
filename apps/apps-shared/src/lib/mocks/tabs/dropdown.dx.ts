@@ -48,14 +48,14 @@ export const dropdownTab = gui.layouts.flex([
     hint: 'Select a number greater than 10.',
     height: 100,
     items: thousandsOfItems,
-    // TODO: validator on dropdown — DX type gap
+    validator: { type: 'number', required: true, minimum: 10 },
   }),
   gui.inputs.dropdown('dropdowns.invalidValueList', {
     label: 'Invalid value list',
     hint: 'A list containing invalid values.',
     height: 100,
     items: thousandsOfItems,
-    // TODO: validator on dropdown — DX type gap
+    validator: { type: 'string', required: true },
   }),
   gui.inputs.dropdown('dropdowns.customItemRenderer', {
     label: 'Custom item renderer',

@@ -48,6 +48,10 @@ export class FormComponent {
   protected resolvedValidateOn = computed(
     () => this.validateOn() ?? this.resolved().validateOn ?? 'eager',
   );
+  protected allItemRenderers = computed(() => ({
+    ...((this.resolved().itemRenderers ?? {}) as Record<string, Angular.AngularItemRenderer<any>>),
+    ...this.itemRenderers(),
+  }));
   protected allValidators = computed(() => initValidators({ ...this.customValidators() }));
 
   formHealth = output<Core.FormHealth>();

@@ -211,6 +211,10 @@ export class DxService {
       result.validateOn = formConfig.validateOn;
     }
 
+    if (formConfig.itemRenderers) {
+      result.itemRenderers = formConfig.itemRenderers;
+    }
+
     return result;
   }
 }

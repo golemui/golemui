@@ -21,6 +21,6 @@ export const currencyTab = gui.layouts.flex([
     icon: 'phone_callback',
     hint: 'This is a hint',
     placeholder: 'Please enter price in EUR',
-    // TODO: validator on currency — DX type gap, tracked in dx-open-items
+    validator: { required: true, minimum: 100 },
   }),
 ]);

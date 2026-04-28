@@ -1,3 +1,4 @@
+import type { StringValidator } from '@golemui/gui-validators';
 import type { DatePickerProps } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type {
@@ -15,6 +16,7 @@ export interface DatePickerDecorator
     DxCommonFields,
     Partial<DatePickerProps> {
   type: 'datePicker';
+  validator?: Omit<StringValidator, 'type'>;
 }
 
 // ═══════════════════════════════════════════════════

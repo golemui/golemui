@@ -15,6 +15,6 @@ export const checkboxTab = gui.layouts.flex([
   gui.inputs.checkbox('isNewUserHint', {
     label: 'Create new account?',
     hint: longHint,
-    // TODO: validator on checkbox — DX type gap, tracked in dx-open-items
+    validator: { required: true },
   }),
 ]);

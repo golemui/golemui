@@ -1,3 +1,4 @@
+import type { Validator } from '@golemui/gui-validators';
 import type { DropdownProps, ListItem, OptionValue } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type {
@@ -16,6 +17,7 @@ export interface DropdownDecorator
     Partial<Omit<DropdownProps<any>, 'items'>> {
   type: 'dropdown';
   items?: ListItem<any>[] | OptionValue[] | Record<string, unknown>[];
+  validator?: Validator;
 }
 
 // ═══════════════════════════════════════════════════

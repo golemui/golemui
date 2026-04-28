@@ -18,6 +18,6 @@ export const toggleTab = gui.layouts.flex([
   gui.inputs.booleanInput('isNewUserHint', {
     label: 'Create new account?',
     hint: longHint,
-    // TODO: validator on boolean (toggle) — DX type gap, tracked in dx-open-items
+    validator: { required: true },
   }),
 ]);

@@ -62,6 +62,10 @@ export const FormComponent = ({
   const mergedDependencies = dependencies ?? resolved.dependencies ?? {};
   const mergedValidateOn = validateOn ?? resolved.validateOn ?? 'eager';
   const mergedFormEvent = formEvent ?? resolved.formEvent;
+  const mergedItemRenderers = {
+    ...((resolved.itemRenderers ?? {}) as Record<string, ReactItemRenderer<any>>),
+    ...itemRenderers,
+  };
 
   return (
     <React.FormComponent
@@ -70,7 +74,7 @@ export const FormComponent = ({
       meta={meta}
       widgetLoaders={allWidgetLoaders}
       middlewares={middlewares}
-      itemRenderers={itemRenderers}
+      itemRenderers={mergedItemRenderers}
       localization={localization}
       dependencies={mergedDependencies}
       validators={allValidators}

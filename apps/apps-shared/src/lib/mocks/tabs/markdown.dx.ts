@@ -16,6 +16,6 @@ export const markdownTab = gui.layouts.flex([
     defaultOpenPreview: true,
     counterMode: 'current',
     minimumHeight: 80,
-    // TODO: validator on markdown — DX type gap, tracked in dx-open-items
+    validator: { maxLength: 500, required: true },
   }),
 ]);

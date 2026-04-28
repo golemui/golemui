@@ -27,6 +27,7 @@ export interface ResolvedFormInput<FormData extends Record<string, any> = any> {
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;
+  itemRenderers?: Record<string, unknown>;
 }
 
 /**
@@ -102,6 +103,7 @@ export function resolveFormInput<FormData extends Record<string, any> = any>(
     dependencies: result.dependencies,
     widgetLoaders: result.widgetLoaders,
     validateOn: result.validateOn,
+    itemRenderers: result.itemRenderers,
   };
   byConfig.set(configKey, resolved);
   return resolved;

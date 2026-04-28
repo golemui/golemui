@@ -19,6 +19,6 @@ export const passwordTab = gui.layouts.flex([
     hidePasswordIcon: 'visibility_off',
     hint: 'This is a hint',
     placeholder: 'Please enter your phone number',
-    // TODO: validator on password — DX type gap, tracked in dx-open-items
+    validator: { required: true },
   }),
 ]);

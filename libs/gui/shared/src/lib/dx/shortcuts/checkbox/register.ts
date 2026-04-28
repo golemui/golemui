@@ -20,6 +20,7 @@ export const { gsl: _gslCheckboxes, gslByUid: _gslCheckboxByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
+      ...(def.validator != null ? { validator: { type: 'boolean' as const, ...def.validator } } : {}),
       props: extractWidgetProps(def),
     }),
   });

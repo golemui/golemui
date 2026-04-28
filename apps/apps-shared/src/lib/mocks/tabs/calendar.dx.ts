@@ -37,7 +37,7 @@ export const calendarTab = gui.layouts.flex([
     startDateAriaLabel: 'Begin of holiday period',
     endDateAriaLabel: 'End of holiday period',
     separator: 'to',
-    // TODO: validator on rangeDatePicker — DX type gap
+    validator: { required: true },
   }),
 
   gui.inputs.rangeCalendar('rangeCalendar', {
@@ -58,7 +58,7 @@ export const calendarTab = gui.layouts.flex([
 
   gui.inputs.dateInput('dateInput', {
     icon: 'calendar_month',
-    // TODO: validator on dateInput — DX type gap
+    validator: { required: true, format: 'date' },
   }),
 
   gui.inputs.datePicker('datePicker', {
@@ -67,7 +67,7 @@ export const calendarTab = gui.layouts.flex([
     nextMonthIcon: 'chevron_right',
     prevMonthAriaLabel: 'Go To Previous Month',
     nextMonthAriaLabel: 'Go To Next Month',
-    // TODO: validator on datePicker — DX type gap
+    validator: { required: true, format: 'date' },
   }),
 
   gui.inputs.calendar('calendar', {
@@ -79,6 +79,6 @@ export const calendarTab = gui.layouts.flex([
     minDate: '2022-01-01',
     maxDate: '2026-03-28',
     disabledRanges: [{ start: '2026-02-09', end: '2026-02-10' }, { start: '2026-02-17' }],
-    // TODO: validator on calendar — DX type gap
+    validator: { required: true, format: 'date' },
   }),
 ]);

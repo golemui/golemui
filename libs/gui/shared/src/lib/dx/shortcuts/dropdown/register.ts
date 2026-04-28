@@ -31,6 +31,7 @@ export const { gsl: _gslDropdowns, gslByUid: _gslDropdownByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
+      ...(def.validator != null ? { validator: def.validator } : {}),
       props: extractWidgetProps(def),
     }),
   });

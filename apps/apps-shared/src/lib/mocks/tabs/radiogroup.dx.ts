@@ -10,13 +10,13 @@ export const radiogroupTab = gui.layouts.flex([
   gui.inputs.radiogroup('radiogroups.wrongGreeting', {
     hint: 'No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
     options: ['hello', 'bye'],
-    // TODO: validator on radiogroup — DX type gap, tracked in dx-open-items
+    validator: { type: 'string', required: true },
   }),
   gui.inputs.radiogroup('radiogroups.requiredUnselected', {
     hint: 'No option should be selected, and a validation error should be displayed because the field is required',
     options: ['hello', 'bye'],
     direction: 'row',
-    // TODO: validator on radiogroup — DX type gap, tracked in dx-open-items
+    validator: { type: 'string', required: true },
   }),
   gui.inputs.radiogroup('radiogroups.greetingIndex', {
     hint: '"bye.2" should be selected',

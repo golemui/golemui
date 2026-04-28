@@ -20,6 +20,7 @@ export const { gsl: _gslPasswords, gslByUid: _gslPasswordByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
+      ...(def.validator != null ? { validator: { type: 'string' as const, ...def.validator } } : {}),
       props: extractWidgetProps(def),
     }),
   });

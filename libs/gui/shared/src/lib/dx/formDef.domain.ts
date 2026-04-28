@@ -39,6 +39,7 @@ export interface DxResult<
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;
+  itemRenderers?: Record<string, unknown>;
 }
 
 // ═══════════════════════════════════════════════════

@@ -25,8 +25,8 @@ import { repeaterTab } from './tabs/repeater.dx';
  * Framework-agnostic: the returned `{ formDef, data, formSelectors, formConfig }`
  * is forwarded into the unified `<gui-form>` component (React `FormComponent`,
  * Angular `<gui-form>`, Lit `<gui-form>`), which detects the DX shape and runs
- * `processDxFacade` internally. Widget loaders are framework-specific and must
- * be supplied by the host playground via `widgetLoaders`.
+ * `processDxFacade` internally. Widget loaders, item renderers and dependencies
+ * are framework-specific and must be supplied by the host playground.
  *
  * Per-tab content lives in sibling `tabs/<name>.dx.ts` files, mirroring the
  * JSON KS layout (`tabs/<name>.ts`) for easy side-by-side comparison.
@@ -34,6 +34,7 @@ import { repeaterTab } from './tabs/repeater.dx';
 
 export interface KitchenSinkDxOptions {
   widgetLoaders?: Record<string, () => Promise<unknown>>;
+  itemRenderers?: Record<string, unknown>;
   dependencies?: Dependencies;
 }
 
@@ -44,7 +45,44 @@ export interface KitchenSinkDx {
   formConfig: DxFormConfig;
 }
 
-const data: Record<string, unknown> = {};
+const states = {
+  limitReached: '$form.repeaters.users?.length === 5',
+  hasSubregionSelect: `!!$form.selects.subregion`,
+  hasSubregionRadiogroup: `!!$form.radiogroups.subregion`,
+};
+
+const data: Record<string, unknown> = {
+  listName: 'Development Team',
+  currency: 1000000,
+  dropdowns: {
+    defaultListRenderer: 0,
+    disabledList: 0,
+    customItemRenderer: 'two',
+  },
+  lists: {
+    defaultListRenderer: 0,
+    disabledList: 0,
+    customItemRenderer: 'one',
+  },
+  selects: {
+    greeting: 'bye',
+    wrongGreeting: 'aaaaaa',
+    greetingIndex: 2,
+  },
+  radiogroups: {
+    greeting: 'bye',
+    wrongGreeting: 'aaaaaa',
+    greetingIndex: 2,
+  },
+  repeaters: {
+    users: [
+      { firstName: 'Alice', lastName: 'Johnson' },
+      { firstName: '', lastName: 'Smith' },
+      { firstName: 'Charlie' },
+      { firstName: 'Diana', lastName: 'Rodriguez' },
+    ],
+  },
+};
 
 export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenSinkDx => ({
   data,
@@ -52,27 +90,27 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
     gui.displays.custom('heading', { text: 'KITCHEN SINK', level: 1 }),
     gui.layouts.tabs(
       [
+        { label: 'Alert Component', uid: 'tabAlert', children: [alertTab] },
+        { label: 'Markdown Text Component', uid: 'tabMarkdownText', children: [markdownTextTab] },
+        { label: 'Accordion Layout', uid: 'tabAccordion', children: [accordionTab] },
+        { label: 'Flex Layout', uid: 'tabFlex', children: [flexTab] },
+        { label: 'Grid Layout', uid: 'tabGrid', children: [gridTab] },
         { label: 'Textinput Component', uid: 'tabTextinput', children: [textinputTab] },
         { label: 'Password Component', uid: 'tabPassword', children: [passwordTab] },
-        { label: 'Currency Component', uid: 'tabCurrency', children: [currencyTab] },
         { label: 'Number Component', uid: 'tabNumber', children: [numberTab] },
-        { label: 'Markdown Text Component', uid: 'tabMarkdownText', children: [markdownTextTab] },
-        { label: 'Alert Component', uid: 'tabAlert', children: [alertTab] },
+        { label: 'Currency Component', uid: 'tabCurrency', children: [currencyTab] },
+        { label: 'Date Components', uid: 'tabDate', children: [calendarTab] },
+        { label: 'Markdown Component', uid: 'tabMarkdown', children: [markdownTab] },
+        { label: 'Textarea Component', uid: 'tabTextarea', children: [textareaTab] },
         { label: 'Checkbox Component', uid: 'tabCheckbox', children: [checkboxTab] },
         { label: 'Toggle Component', uid: 'tabToggle', children: [toggleTab] },
-        { label: 'Markdown Component', uid: 'tabMarkdown', children: [markdownTab] },
-        { label: 'Select Component', uid: 'tabSelect', children: [selectTab] },
         { label: 'Radiogroup Component', uid: 'tabRadiogroup', children: [radiogroupTab] },
-        { label: 'Textarea Component', uid: 'tabTextarea', children: [textareaTab] },
-        { label: 'List Component', uid: 'tabList', children: [listTab] },
-        { label: 'Flex Layout', uid: 'tabFlex', children: [flexTab] },
-        { label: 'Accordion Layout', uid: 'tabAccordion', children: [accordionTab] },
-        { label: 'Grid Layout', uid: 'tabGrid', children: [gridTab] },
-        { label: 'Date Components', uid: 'tabDate', children: [calendarTab] },
+        { label: 'Select Component', uid: 'tabSelect', children: [selectTab] },
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
+        { label: 'List Component', uid: 'tabList', children: [listTab] },
         { label: 'Repeater Component', uid: 'tabRepeater', children: [repeaterTab] },
       ],
-      { defaultOpen: 'tabTextinput' },
+      { defaultOpen: 'tabAlert', onChange: 'onTabEvent' },
     ),
     gui.actions.button({ label: 'Create', icon: 'save', iconPosition: 'right', onClick: 'submit' }),
   ],
@@ -89,7 +127,9 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
     // JSON KS does not auto-add a submit button; suppress the DX default so the
     // two pipelines emit equivalent action lists.
     suppressAutomaticSubmit: true,
+    states,
     widgetLoaders: options.widgetLoaders ?? {},
+    itemRenderers: options.itemRenderers,
     dependencies: options.dependencies,
   },
 });

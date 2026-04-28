@@ -35,14 +35,14 @@ export const listTab = gui.layouts.flex([
     hint: 'Select a number greater than 10.',
     height: 150,
     items: thousandsOfItems,
-    // TODO: validator on list — DX type gap, tracked in dx-open-items
+    validator: { type: 'number', required: true, minimum: 10 },
   }),
   gui.inputs.list('lists.invalidValueList', {
     label: 'Invalid value list',
     hint: 'A list containing invalid values.',
     height: 150,
     items: thousandsOfItems,
-    // TODO: validator on list — DX type gap, tracked in dx-open-items
+    validator: { type: 'string', required: true },
   }),
   gui.inputs.list('lists.customItemRenderer', {
     height: 200,

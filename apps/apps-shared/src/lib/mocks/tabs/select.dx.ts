@@ -14,12 +14,12 @@ export const selectTab = gui.layouts.flex([
     icon: 'phone_callback',
     hint: 'The disabled  "Select an Option" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed',
     options: ['hello', 'bye'],
-    // TODO: validator on select — DX type gap, tracked in dx-open-items
+    validator: { type: 'string', required: true },
   }),
   gui.inputs.select('selects.requiredUnselected', {
     hint: 'The disabled  "Select an Option" option should be selected, and a validation error should be displayed because the field is required',
     options: ['hello', 'bye'],
-    // TODO: validator on select — DX type gap, tracked in dx-open-items
+    validator: { type: 'string', required: true },
   }),
   gui.inputs.select('selects.greetingIndex', {
     hint: '"bye.2" should be selected',

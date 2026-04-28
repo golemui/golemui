@@ -18,6 +18,6 @@ export const repeaterTab = gui.layouts.flex([
         gui.inputs.textInput('lastName'),
       ]),
     ],
-    // TODO: validator on repeater — DX type gap
+    validator: { required: true, minItems: 1, maxItems: 2 },
   }),
 ]);

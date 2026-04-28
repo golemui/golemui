@@ -1,4 +1,5 @@
 import * as ValidatorsVanilla from '@golemui/gui-validators';
+import type { BooleanValidator } from '@golemui/gui-validators';
 import { NumberinputProps, TextinputProps, ToggleProps } from '../../../widget.props';
 import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
 import {
@@ -37,6 +38,7 @@ export interface TextDataInputDecorator extends DxInputBase, DxCommonFields, Par
 
 export interface BooleanDataInputDecorator extends DxInputBase, DxCommonFields, Partial<ToggleProps> {
   type: 'boolean';
+  validator?: Omit<BooleanValidator, 'type'>;
 }
 
 export type InputDecorator =
