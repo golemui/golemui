@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { DxForm } from '@golemui/gui-react';
+import { FormComponent } from '@golemui/gui-react';
 import { DxDefinitions, GslSelectorsInput, DxFormConfig, formDefs } from '@golemui/gui-shared';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import { DemoLogEntry, DemoLogFn } from '../utils/demoLog';
@@ -152,9 +152,9 @@ export function FormDisplayLayout<T extends Record<string, any>>({
             <div className={styles.formSection}>
               <h4 className={styles.sectionTitle}>Form</h4>
               <FormErrorBoundary>
-                <DxForm<T>
+                <FormComponent
                   formDef={resolvedFormDef}
-                  formData={formData}
+                  data={formData}
                   formSelectors={resolvedFormSelectors}
                   formConfig={resolvedFormConfig}
                 />

@@ -134,6 +134,8 @@ export type { CustomActionDecorator, GslCustomActionConfig } from './shortcuts/c
 export type { CustomLayoutDecorator, GslCustomLayoutConfig } from './shortcuts/custom-layout/customLayout.domain';
 export type { GslSelectorsInput, FormConfig, DxFormConfig } from './core/dx.domain';
 export { formDefs } from './dx.service';
+export { resolveFormInput, isDxDefinitions } from './resolveFormInput';
+export type { FormInput, ResolvedFormInput } from './resolveFormInput';
 
 // ─── Extension API (for adding custom shortcut types) ───
 

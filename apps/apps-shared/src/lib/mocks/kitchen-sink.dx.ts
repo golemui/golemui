@@ -22,8 +22,10 @@ import { repeaterTab } from './tabs/repeater.dx';
 
 /**
  * DX kitchen-sink — built on the v2.0 `gui.*` surface.
- * Framework-agnostic: returns the three-tuple consumed by `<DxForm>` (React),
- * `<dx-form>` (Angular / Lit). Widget loaders are framework-specific and must
+ * Framework-agnostic: the returned `{ formDef, data, formSelectors, formConfig }`
+ * is forwarded into the unified `<gui-form>` component (React `FormComponent`,
+ * Angular `<gui-form>`, Lit `<gui-form>`), which detects the DX shape and runs
+ * `processDxFacade` internally. Widget loaders are framework-specific and must
  * be supplied by the host playground via `widgetLoaders`.
  *
  * Per-tab content lives in sibling `tabs/<name>.dx.ts` files, mirroring the
