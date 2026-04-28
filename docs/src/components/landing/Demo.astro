@@ -7,7 +7,7 @@ interface Props {
 
 const { src, title = 'Component Demo', minHeight } = Astro.props;
 
-let minHeightValue = minHeight ?? 0;
+let minHeightValue = (minHeight) ?? 0;
 if (typeof minHeight === 'number') {
   minHeightValue = `${minHeight}px`;
 } else if (typeof minHeight === 'string' && /^\d+$/.test(minHeight)) {
