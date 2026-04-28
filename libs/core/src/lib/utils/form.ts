@@ -180,7 +180,9 @@ export function calculateValidationVariables(state: State): {
     (acc, [dotPath, errors]) => {
       if (errors !== null) {
         acc.$formIsInvalid = true;
-        set(acc.$errors, dotPath, errors);
+        // Copy the array so `set` can't mutate the entry shared with state.validations
+        // when a nested path (e.g. `users.1.firstName`) walks through this one (`users`).
+        set(acc.$errors, dotPath, [...errors]);
       }
       return acc;
     },
