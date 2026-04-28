@@ -59,7 +59,7 @@
           display: grid;
           grid-template-rows: subgrid;
           grid-row: span 3;
-          gap: var(--gui-space-1);
+          gap: 0;
           align-items: start;
         }
       }
@@ -67,9 +67,6 @@
   }
 
   .gui-grid__widget--row {
-    .gui-label { margin-bottom: 0; }
-    .gui-validator { margin-top: 0; }
-
     gui-checkbox::after,
     gui-toggle::after {
       content: '';
