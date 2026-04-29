@@ -59,9 +59,21 @@ export const FormComponent = ({
     ...customWidgetLoaders,
   };
   const allValidators = initValidators({ ...customValidators });
-  const mergedDependencies = dependencies ?? resolved.dependencies ?? {};
+  const mergedDependencies = {
+    ...(resolved.dependencies ?? {}),
+    ...(dependencies ?? {}),
+  };
   const mergedValidateOn = validateOn ?? resolved.validateOn ?? 'eager';
-  const mergedFormEvent = formEvent ?? resolved.formEvent;
+  // Chain DX-registered fn handlers with the user-supplied callback so both fire:
+  // - resolved.formEvent dispatches handlers registered by the DX pipeline
+  // - formEvent (user) handles widget events whose names map to handlers in app code
+  const mergedFormEvent =
+    resolved.formEvent && formEvent
+      ? (event: Core.FormEvent) => {
+          resolved.formEvent!(event);
+          formEvent(event);
+        }
+      : (formEvent ?? resolved.formEvent);
   const mergedItemRenderers = {
     ...((resolved.itemRenderers ?? {}) as Record<string, ReactItemRenderer<any>>),
     ...itemRenderers,

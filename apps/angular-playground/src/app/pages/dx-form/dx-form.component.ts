@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import * as AppsShared from '@golemui/apps-shared';
+import * as Core from '@golemui/core';
 import * as GuiAngular from '@golemui/gui-angular';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
+
+const localization = AppsShared.initializeI18n({});
 
 const ks = AppsShared.buildKitchenSinkDx({
   widgetLoaders: {
@@ -37,4 +40,9 @@ export class DxFormPage {
   protected formData = ks.data;
   protected formSelectors = ks.formSelectors;
   protected formConfig = ks.formConfig;
+  protected localization = localization;
+
+  protected async onFormEvent(event: Core.FormEvent) {
+    await AppsShared.onFormEvent(event);
+  }
 }

@@ -1,4 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
+import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
@@ -7,6 +8,8 @@ import { airportItemRenderer } from '../../item-renderers/airport.item-renderer'
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
+
+const localization = AppsShared.initializeI18n({});
 
 const ks = AppsShared.buildKitchenSinkDx({
   widgetLoaders: {
@@ -32,6 +35,10 @@ export class DxFormElement extends LitElement {
     return this;
   }
 
+  protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
+    await AppsShared.onFormEvent(event.detail);
+  }
+
   override render() {
     return html`
       <div>
@@ -40,6 +47,8 @@ export class DxFormElement extends LitElement {
           .data=${ks.data}
           .formSelectors=${ks.formSelectors}
           .formConfig=${ks.formConfig}
+          .localization=${localization}
+          @formEvent=${this.onFormEvent}
         ></gui-form>
       </div>
     `;

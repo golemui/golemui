@@ -41,7 +41,17 @@ export const _guiGrid = (
 ): GuiLayoutItemsShortcut => ({
   type: 'ITEMS',
   itemType: GuiItemTypes.LAYOUTS,
-  items: [{ def: { widgetName: 'grid', ...(props ?? {}) } as any, children }],
+  items: [
+    {
+      def: {
+        widgetName: 'grid',
+        direction: 'row',
+        autoFit: true,
+        ...(props ?? {}),
+      } as any,
+      children,
+    },
+  ],
   tags: tags ?? [],
 });
 

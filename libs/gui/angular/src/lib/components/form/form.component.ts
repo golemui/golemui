@@ -42,9 +42,10 @@ export class FormComponent {
     ...((this.resolved().widgetLoaders ?? {}) as Core.WidgetLoaders<Type<Core.WithWidget>>),
     ...this.customWidgetLoaders(),
   }));
-  protected allDependencies = computed(
-    () => this.dependencies() ?? this.resolved().dependencies ?? {},
-  );
+  protected allDependencies = computed(() => ({
+    ...(this.resolved().dependencies ?? {}),
+    ...(this.dependencies() ?? {}),
+  }));
   protected resolvedValidateOn = computed(
     () => this.validateOn() ?? this.resolved().validateOn ?? 'eager',
   );

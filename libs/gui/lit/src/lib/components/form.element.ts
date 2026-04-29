@@ -50,8 +50,10 @@ export class FormElement extends LitElement {
       ...(resolved.widgetLoaders as WidgetLoaders<Type<WithWidget>>),
       ...this.customWidgetLoaders,
     };
-    const mergedDependencies: Dependencies | undefined =
-      this.dependencies ?? resolved.dependencies;
+    const mergedDependencies: Dependencies = {
+      ...(resolved.dependencies ?? {}),
+      ...(this.dependencies ?? {}),
+    };
     const mergedValidateOn: Core.ValidateOn = this.validateOn ?? resolved.validateOn ?? 'eager';
     const mergedItemRenderers: Record<string, LitItemRenderer<any>> = {
       ...((resolved.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),

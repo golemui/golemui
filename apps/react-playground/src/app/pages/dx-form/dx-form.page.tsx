@@ -6,6 +6,8 @@ import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRen
 import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 
+const localization = AppsShared.initializeI18n({});
+
 const ks = AppsShared.buildKitchenSinkDx({
   widgetLoaders: {
     heading: async () =>
@@ -32,6 +34,8 @@ export function DxFormPage() {
         data={ks.data}
         formSelectors={ks.formSelectors}
         formConfig={ks.formConfig}
+        localization={localization}
+        formEvent={AppsShared.onFormEvent}
       />
     </div>
   );
