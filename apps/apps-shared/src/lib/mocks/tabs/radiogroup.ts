@@ -52,7 +52,7 @@ export const radiogroup = (uid: string): any => ({
       },
     },
     {
-      uid: '',
+      uid: 'subregionRadiogroup',
       kind: 'input',
       type: 'radiogroup',
       path: 'radiogroups.subregion',
@@ -64,7 +64,7 @@ export const radiogroup = (uid: string): any => ({
       },
     },
     {
-      uid: '',
+      uid: 'countryRadiogroup',
       kind: 'input',
       type: 'radiogroup',
       path: 'radiogroups.country',

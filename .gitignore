@@ -41,6 +41,8 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+.nxignore
+.claude
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
@@ -53,4 +55,6 @@ vitest.config.*.timestamp*
 angular-test-app
 react-test-app
 lit-test-app
-.claude
+.ai-lore-golem-ui/
+.obsidian/
+/ai_readme.md

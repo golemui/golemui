@@ -5,3 +5,4 @@ export * from './lib/utils';
 export * from './lib/widget.factory';
 export * from './lib/widget.props';
 export * from './lib/widgets';
+export * from './lib/dx';

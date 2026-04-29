@@ -46,8 +46,11 @@ export function FormComponent({
   const formNameRef = useRef(formName || Core.shortUUID());
   const [formLayoutField, setFormLayoutField] = useState<Core.LayoutWidget<string> | null>(null);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
+  const [storeVersion, setStoreVersion] = useState(0);
 
   // INITIALIZE FORM CONTEXT
+  // Creates a new store when context dependencies change.
+  // Bumps storeVersion so the INITIALIZE effect re-dispatches to the new store.
   useEffect(() => {
     formContextRef.current.initialize(
       widgetLoaders,
@@ -58,6 +61,7 @@ export function FormComponent({
       localization,
       dependencies || {},
     );
+    setStoreVersion((v) => v + 1);
   }, [
     widgetLoaders,
     middlewares,
@@ -68,7 +72,21 @@ export function FormComponent({
     dependencies,
   ]);
 
+  // INITIALIZE FORM DEFINITION
+  // Re-dispatches when formDef changes OR when a new store is created (storeVersion).
+  // This ensures the store always has the form definition with states.
+  useEffect(() => {
+    formContextRef.current.store.dispatch({
+      type: 'INITIALIZE',
+      payload: {
+        formName: formNameRef.current,
+        formDef: formDef,
+      },
+    });
+  }, [formDef, storeVersion]);
+
   // FORM HEALTH
+  // Re-subscribes when store is recreated (storeVersion changes).
   useEffect(() => {
     const sub = Core.formHealth(formContextRef.current.store.state$).subscribe((health) =>
       formHealth?.(health),
@@ -76,7 +94,7 @@ export function FormComponent({
     return () => {
       sub.unsubscribe();
     };
-  }, [formHealth]);
+  }, [formHealth, storeVersion]);
 
   // EVENTS
   useEffect(() => {
@@ -87,6 +105,9 @@ export function FormComponent({
   }, [formEvent]);
 
   // FORM ENTRY POINT
+  // Re-subscribes when store is recreated (storeVersion changes) so the
+  // rendered form tree always comes from the same decode as flatForm,
+  // ensuring widget uids match between flatForm and calculatedWidgets.
   useEffect(() => {
     const sub = formContextRef.current.store.state$.subscribe((state) => {
       setFormLayoutField(state.formDef.form);
@@ -95,34 +116,29 @@ export function FormComponent({
     return () => {
       sub.unsubscribe();
     };
-  }, []);
-
-  // INITIALIZE FORM
-  useEffect(() => {
-    formContextRef.current.store.dispatch({
-      type: 'INITIALIZE',
-      payload: {
-        formName: formNameRef.current,
-        formDef: formDef,
-      },
-    });
-  }, [formDef]);
+  }, [storeVersion]);
 
   // SET FORM DATA
+  // Also re-dispatches when the store is recreated (storeVersion bumps via the
+  // initialize effect): otherwise the fresh store starts with empty data and
+  // input subscriptions like the Repeater's `dataByPath$('repeaters.users')`
+  // emit `undefined`, so default rows never render even though the `data` prop
+  // hasn't actually changed.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'SET_DATA',
       payload: { data: data || {} },
     });
-  }, [data]);
+  }, [data, storeVersion]);
 
   // SET FORM META
+  // Same reason as SET_DATA: re-fire when the store is recreated.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'SET_META',
       payload: { meta: meta || {} },
     });
-  }, [meta]);
+  }, [meta, storeVersion]);
 
   // I18n
   useEffect(() => {

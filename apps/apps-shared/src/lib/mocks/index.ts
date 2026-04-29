@@ -6,6 +6,7 @@ export * from './flight-tickets';
 export * from './item-renderers';
 export * from './json-schema-test';
 export * from './kitchen-sink';
+export * from './kitchen-sink.dx';
 export * from './reactive-functions';
 export * from './selects';
 export * from './signin';

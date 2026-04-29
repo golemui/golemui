@@ -1,13 +1,21 @@
 import * as Core from '@golemui/core';
-import { Dependencies } from '@golemui/gui-shared';
+import {
+  Dependencies,
+  DxFormConfig,
+  FormInput,
+  GslSelectorsInput,
+  resolveFormInput,
+} from '@golemui/gui-shared';
 import { CustomValidatorSchemas, initValidators } from '@golemui/gui-validators';
 import * as React from '@golemui/react';
 import { ReactItemRenderer } from '@golemui/react';
-import { ComponentType } from 'react';
+import { ComponentType, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
-  formDef: string | Record<string, any>;
+  formDef: FormInput;
+  formSelectors?: GslSelectorsInput;
+  formConfig?: DxFormConfig;
   customWidgetLoaders?: Core.WidgetLoaders<ComponentType<Core.WithWidget>>;
   itemRenderers?: Record<string, ReactItemRenderer<any>>;
   localization?: Core.I18nTranslator;
@@ -25,36 +33,66 @@ export interface ReactFormComponentProps {
 
 export const FormComponent = ({
   formDef,
+  formSelectors,
+  formConfig,
   data = undefined,
   meta = undefined,
   customWidgetLoaders = {},
   itemRenderers = {},
   localization,
-  dependencies = {},
+  dependencies,
   customValidators = {},
   middlewares = [],
-  validateOn = 'eager',
+  validateOn,
   formHealth = undefined,
   formEvent = undefined,
   autocomplete,
 }: ReactFormComponentProps) => {
-  const allWidgetLoaders = { ...golemWidgetLoaders, ...customWidgetLoaders };
-  const customItemRenderers = { ...itemRenderers };
+  const resolved = useMemo(
+    () => resolveFormInput(formDef, formSelectors, formConfig),
+    [formDef, formSelectors, formConfig],
+  );
+
+  const allWidgetLoaders = {
+    ...golemWidgetLoaders,
+    ...(resolved.widgetLoaders as Core.WidgetLoaders<ComponentType<Core.WithWidget>>),
+    ...customWidgetLoaders,
+  };
   const allValidators = initValidators({ ...customValidators });
+  const mergedDependencies = {
+    ...(resolved.dependencies ?? {}),
+    ...(dependencies ?? {}),
+  };
+  const mergedValidateOn = validateOn ?? resolved.validateOn ?? 'eager';
+  // Chain DX-registered fn handlers with the user-supplied callback so both fire:
+  // - resolved.formEvent dispatches handlers registered by the DX pipeline
+  // - formEvent (user) handles widget events whose names map to handlers in app code
+  const mergedFormEvent =
+    resolved.formEvent && formEvent
+      ? (event: Core.FormEvent) => {
+          resolved.formEvent!(event);
+          formEvent(event);
+        }
+      : (formEvent ?? resolved.formEvent);
+  const mergedItemRenderers = {
+    ...((resolved.itemRenderers ?? {}) as Record<string, ReactItemRenderer<any>>),
+    ...itemRenderers,
+  };
+
   return (
     <React.FormComponent
-      formDef={formDef}
+      formDef={resolved.formDef as string | Record<string, any>}
       data={data}
       meta={meta}
       widgetLoaders={allWidgetLoaders}
       middlewares={middlewares}
-      itemRenderers={customItemRenderers}
+      itemRenderers={mergedItemRenderers}
       localization={localization}
-      dependencies={dependencies}
+      dependencies={mergedDependencies}
       validators={allValidators}
-      validateOn={validateOn}
+      validateOn={mergedValidateOn}
       formHealth={formHealth}
-      formEvent={formEvent}
+      formEvent={mergedFormEvent}
       autocomplete={autocomplete}
     />
   );
