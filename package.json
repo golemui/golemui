@@ -38,7 +38,6 @@
     "@google/generative-ai": "^0.24.1",
     "@lit/context": "^1.1.6",
     "@material/web": "^2.4.1",
-    "@rollup/rollup-linux-arm64-gnu": "^4.59.0",
     "@standard-schema/spec": "^1.0.0",
     "highlight.js": "^11.11.1",
     "i18next": "^25.7.4",
