@@ -1,30 +1,18 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'repeater_limit',
-      kind: 'input',
-      type: 'repeater',
-      path: 'contacts',
-      label: 'Emergency Contacts',
-      props: {
-        limit: 3,
-        addLabel: 'Add Contact',
-        removeLabel: 'Delete',
-        template: {
-          kind: 'layout',
-          type: 'flex',
-          children: [
-            {
-              kind: 'input',
-              type: 'textinput',
-              path: 'contacts.items.phone',
-              label: 'Phone Number',
-            },
-          ],
-        },
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.repeater('contacts', {
+    limit: 3,
+    addLabel: 'Add Contact',
+    removeLabel: 'Delete',
+    label: 'Emergency Contacts',
+    uid: 'repeater_limit',
+    template: [
+      gui.layouts.flex([
+        gui.inputs.textInput('contacts.items.phone', {
+          label: 'Phone Number',
+        }),
+      ]),
+    ],
+  }),
+];

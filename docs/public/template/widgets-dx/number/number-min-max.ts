@@ -1,22 +1,15 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
+export default [
+  gui.inputs.numberInput('height', {
+    placeholder: 'Please enter your height in meters (min 0 and max 2.5)',
+    min: 0,
+    max: 2.5,
+    label: 'Height in meters',
+    validator: {
       type: 'number',
-      path: 'height',
-      label: 'Height in meters',
-      props: {
-        placeholder: 'Please enter your height in meters (min 0 and max 2.5)',
-        min: 0,
-        max: 2.5,
-      },
-      validator: {
-        type: 'number',
-        minimum: 0,
-        maximum: 2.5,
-      },
+      minimum: 0,
+      maximum: 2.5,
     },
-  ],
-});
+  }),
+];

@@ -1,14 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'alert_default',
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'This is a default alert message.',
-      },
-    },
-  ],
-});
+export default [
+  gui.displays.alert({
+    text: 'This is a default alert message.',
+    uid: 'alert_default',
+  }),
+];

@@ -1,19 +1,14 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'userPasswordInput',
-      kind: 'input',
-      type: 'textinput',
-      path: 'user.password',
-      validator: {
-        type: 'string',
-        required: true,
-        minLength: 8,
-        maxLength: 20,
-        pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
-      },
+export default [
+  gui.inputs.textInput('user.password', {
+    validator: {
+      type: 'string',
+      required: true,
+      minLength: 8,
+      maxLength: 20,
+      pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
     },
-  ],
-});
+    uid: 'userPasswordInput',
+  }),
+];

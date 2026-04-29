@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'password',
-      path: 'password',
-      label: 'Password',
-      props: {
-        icon: 'fas fa-lock',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.password('password', {
+    icon: 'fas fa-lock',
+    label: 'Password',
+  }),
+];

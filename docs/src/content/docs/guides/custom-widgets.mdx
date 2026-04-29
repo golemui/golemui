@@ -34,101 +34,54 @@ Throughout this guide, we'll build a **Product Card Rating** composed of four cu
 Here's the full form definition we're working toward:
 
 ```ts
-{
-  kind: 'layout',
-  type: 'productCard',
-  props: {
-    title: 'Product Card Name',
-  },
-  children: [
-    {
-      kind: 'display',
-      type: 'productDescription',
-      props: {
-        img: 'assets/product-image.png',
-        description: `### My Cool Product
-My product is the best`
-      }
-    },
-    {
-      kind: 'input',
-      type: 'productRating',
-      path: 'product.rating',
-      props: {
-        maxRating: 10
-      }
-    },
-    {
-      kind: 'action',
-      type: 'productShare',
-      on: {
-        click: 'shareEvent'
-      }
-    },
-  ]
-}
+import { gui } from '@golemui/gui-shared';
+
+gui.layouts.custom('productCard', [
+  gui.displays.custom('productDescription', {
+    img: 'assets/product-image.png',
+    description: `### My Cool Product
+My product is the best`,
+  }),
+  gui.inputs.custom('productRating', 'product.rating', {
+    maxRating: 10,
+  }),
+  gui.actions.custom('productShare', {
+    onClick: 'shareEvent',
+  }),
+], { title: 'Product Card Name' });
 ```
 
 And because custom widgets live side by side with built-in ones, you can easily extend the card — say, by adding a comment field and a submit button without writing any extra widgets:
 
 ```ts
-{
-  kind: 'layout',
-  type: 'productCard',
-  props: {
-    title: 'Product Card Name',
-  },
-  children: [
-    {
-      kind: 'display',
-      type: 'productDescription',
-      props: {
-        img: 'assets/product-image.png',
-        description: `### My Cool Product
-My product is the best`
-      }
-    },
-    {
-      kind: 'input',
-      type: 'productRating',
-      path: 'product.rating',
-      props: {
-        maxRating: 10
-      },
-      validator: { type: 'number', required: true },
-    },
-    {
-      kind: 'input',
-      type: 'textarea',
-      path: 'product.comment',
-      props: {
-        hint: 'Enter your comment (maximum 500 characters)',
-        placeholder: 'Let us know why you love our product',
-        counterMode: 'current',
-      },
-      validator: { type: 'string', maxLength: 500, required: true },
-    },
-    {
-      kind: 'action',
-      type: 'productShare',
-      on: {
-        click: 'shareEvent'
-      }
-    },
-    {
-      kind: 'action',
-      type: 'button',
-      label: 'Submit',
-      props: {
-        icon: 'save',
-        iconPosition: 'right',
-      },
-      on: {
-        click: 'submit',
-      },
-    },
-  ]
-}
+import { gui } from '@golemui/gui-shared';
+
+gui.layouts.custom('productCard', [
+  gui.displays.custom('productDescription', {
+    img: 'assets/product-image.png',
+    description: `### My Cool Product
+My product is the best`,
+  }),
+  gui.inputs.custom('productRating', 'product.rating', {
+    maxRating: 10,
+    validator: { type: 'number', required: true },
+  }),
+  gui.inputs.textarea('product.comment', {
+    hint: 'Enter your comment (maximum 500 characters)',
+    placeholder: 'Let us know why you love our product',
+    counterMode: 'current',
+    validator: { type: 'string', maxLength: 500, required: true },
+  }),
+  gui.actions.custom('productShare', {
+    onClick: 'shareEvent',
+  }),
+  gui.actions.button({
+    label: 'Submit',
+    icon: 'save',
+    iconPosition: 'right',
+    onClick: 'submit',
+  }),
+], { title: 'Product Card Name' });
 ```
 
 Notice how `textarea` and `button` are built-in GolemUI widgets mixed right in with the custom `productRating` and `productShare`. That's the power of the widget system — all widgets, custom or built-in, speak the same language.
@@ -148,16 +101,11 @@ A layout widget is a container. It receives a `children` array from the form def
 **Widget definition:**
 
 ```ts
-{
-  kind: 'layout',
-  type: 'productCard',
-  props: {
-    title: 'Product Card Name',
-  },
-  children: [
-    // child widgets go here
-  ]
-}
+import { gui } from '@golemui/gui-shared';
+
+gui.layouts.custom('productCard', [
+  // child widgets go here
+], { title: 'Product Card Name' });
 ```
 
 **Key concepts:**
@@ -360,18 +308,15 @@ An input widget reads and writes form data. It binds to a `path` in the form's d
 **Widget definition:**
 
 ```ts
-{
-  kind: 'input',
-  type: 'productRating',
-  path: 'product.rating',
-  props: {
-    maxRating: 10
-  },
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.custom('productRating', 'product.rating', {
+  maxRating: 10,
   validator: { type: 'number', required: true },
-}
+});
 ```
 
-The `maxRating` prop controls how many stars are displayed. The `path` tells the form engine where to store the selected value (a number from 1 to `maxRating`). The `validator` adds built-in number validation — in this case, making the field required.
+The `maxRating` prop controls how many stars are displayed. The second argument (`'product.rating'`) tells the form engine where to store the selected value (a number from 1 to `maxRating`). The `validator` adds built-in number validation — in this case, making the field required.
 
 **Key concepts:**
 - `useInputWidget` (React) and `InputWidgetAdapter` (Angular / Lit) handle data binding, validation, and touched tracking automatically
@@ -635,15 +580,13 @@ A display widget renders read-only content. It has no data binding, no validatio
 **Widget definition:**
 
 ```ts
-{
-  kind: 'display',
-  type: 'productDescription',
-  props: {
-    img: 'assets/product-image.png',
-    description: `### My Cool Product
-My product is the best`
-  }
-}
+import { gui } from '@golemui/gui-shared';
+
+gui.displays.custom('productDescription', {
+  img: 'assets/product-image.png',
+  description: `### My Cool Product
+My product is the best`,
+});
 ```
 
 This is also a great place to show how you can use GolemUI's library of **custom elements** inside your own widgets. The `gui-markdown-text` web component ships with `@golemui/gui-components` and renders markdown as HTML — no extra dependencies needed.
@@ -841,16 +784,14 @@ An action widget fires events. It has no data binding — instead, it triggers n
 **Widget definition:**
 
 ```ts
-{
-  kind: 'action',
-  type: 'productShare',
-  on: {
-    click: 'shareEvent'
-  }
-}
+import { gui } from '@golemui/gui-shared';
+
+gui.actions.custom('productShare', {
+  onClick: 'shareEvent',
+});
 ```
 
-When the widget calls `onClick()`, the form engine looks up `on.click`, finds `'shareEvent'`, and emits it through the `formEvent` callback. Your application code catches it there.
+When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'shareEvent'`, and emits it through the `formEvent` callback. Your application code catches it there.
 
 **Key concepts:**
 - `useActionWidget` (React) and `ActionWidgetAdapter` (Angular / Lit) provide an `onClick` / `click()` method that triggers the event pipeline
@@ -1053,7 +994,7 @@ On the application side, you handle the event through the `formEvent` callback o
 
     <React.FormComponent
       formDef={formDef}
-      widgetLoaders={widgetLoaders}
+      formConfig={formConfig}
       formEvent={handleFormEvent}
       // ...other props
     />
@@ -1066,7 +1007,7 @@ On the application side, you handle the event through the `formEvent` callback o
       template: `
         <gui-form
           [formDef]="formDef"
-          [fieldLoaders]="widgetLoaders"
+          [formConfig]="formConfig"
           (formEvent)="handleFormEvent($event)"
         ></gui-form>
       `,
@@ -1104,7 +1045,7 @@ On the application side, you handle the event through the `formEvent` callback o
         return html`
           <gui-form
             .formDef=${this.formDef}
-            .fieldLoaders=${this.widgetLoaders}
+            .formConfig=${this.formConfig}
             @form-event=${(e: CustomEvent<Core.FormEvent>) =>
               this.handleFormEvent(e.detail)}
           ></gui-form>
@@ -1220,39 +1161,26 @@ With all four widgets implemented and registered, here's the complete form setup
     ```tsx
     import * as Core from '@golemui/core';
     import * as React from '@golemui/react';
+    import { gui } from '@golemui/gui-shared';
     import { customWidgetLoaders } from './custom-widget-loaders';
 
-    const formDef = {
-      form: [
-        {
-          kind: 'layout',
-          type: 'productCard',
-          props: { title: 'Rate Our Product' },
-          children: [
-            {
-              kind: 'display',
-              type: 'productDescription',
-              props: {
-                img: 'assets/product-image.png',
-                description: `### My Cool Product\nMy product is the best`,
-              },
-            },
-            {
-              kind: 'input',
-              type: 'productRating',
-              path: 'product.rating',
-              props: { maxRating: 10 },
-              validator: { type: 'number', required: true },
-            },
-            {
-              kind: 'action',
-              type: 'productShare',
-              on: { click: 'shareEvent' },
-            },
-          ],
-        },
-      ],
-    };
+    const formDef = [
+      gui.layouts.custom('productCard', [
+        gui.displays.custom('productDescription', {
+          img: 'assets/product-image.png',
+          description: `### My Cool Product\nMy product is the best`,
+        }),
+        gui.inputs.custom('productRating', 'product.rating', {
+          maxRating: 10,
+          validator: { type: 'number', required: true },
+        }),
+        gui.actions.custom('productShare', {
+          onClick: 'shareEvent',
+        }),
+      ], { title: 'Rate Our Product' }),
+    ];
+
+    const formConfig = { widgetLoaders: customWidgetLoaders };
 
     export function ProductPage() {
       const SHARE_URLS: Record<string, (url: string) => string> = {
@@ -1277,7 +1205,7 @@ With all four widgets implemented and registered, here's the complete form setup
       return (
         <React.FormComponent
           formDef={formDef}
-          customWidgetLoaders={customWidgetLoaders}
+          formConfig={formConfig}
           data={{}}
           formEvent={handleFormEvent}
         />
@@ -1290,6 +1218,7 @@ With all four widgets implemented and registered, here's the complete form setup
     import { Component } from '@angular/core';
     import * as Angular from '@golemui/angular';
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
     import { customWidgetLoaders } from './widget-loaders';
 
     @Component({
@@ -1298,46 +1227,30 @@ With all four widgets implemented and registered, here's the complete form setup
       template: `
         <gui-form
           [formDef]="formDef"
-          [customWidgetLoaders]="customWidgetLoaders"
+          [formConfig]="formConfig"
           [data]="data"
           (formEvent)="handleFormEvent($event)"
         ></gui-form>
       `,
     })
     export class ProductPage {
-      customWidgetLoaders = customWidgetLoaders;
+      formConfig = { widgetLoaders: customWidgetLoaders };
       data = {};
-      formDef = {
-        form: [
-          {
-            kind: 'layout',
-            type: 'productCard',
-            props: { title: 'Rate Our Product' },
-            children: [
-              {
-                kind: 'display',
-                type: 'productDescription',
-                props: {
-                  img: 'assets/product-image.png',
-                  description: `### My Cool Product\nMy product is the best`,
-                },
-              },
-              {
-                kind: 'input',
-                type: 'productRating',
-                path: 'product.rating',
-                props: { maxRating: 10 },
-                validator: { type: 'number', required: true },
-              },
-              {
-                kind: 'action',
-                type: 'productShare',
-                on: { click: 'shareEvent' },
-              },
-            ],
-          },
-        ],
-      };
+      formDef = [
+        gui.layouts.custom('productCard', [
+          gui.displays.custom('productDescription', {
+            img: 'assets/product-image.png',
+            description: `### My Cool Product\nMy product is the best`,
+          }),
+          gui.inputs.custom('productRating', 'product.rating', {
+            maxRating: 10,
+            validator: { type: 'number', required: true },
+          }),
+          gui.actions.custom('productShare', {
+            onClick: 'shareEvent',
+          }),
+        ], { title: 'Rate Our Product' }),
+      ];
 
       SHARE_URLS: Record<string, (url: string) => string> = {
         twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
@@ -1365,43 +1278,28 @@ With all four widgets implemented and registered, here's the complete form setup
     import { html, LitElement } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
     import { customWidgetLoaders } from './widget-loaders';
 
     @customElement('app-product-page')
     export class ProductPage extends LitElement {
-      customWidgetLoaders = customWidgetLoaders;
+      formConfig = { widgetLoaders: customWidgetLoaders };
       data = {};
-      formDef = {
-        form: [
-          {
-            kind: 'layout',
-            type: 'productCard',
-            props: { title: 'Rate Our Product' },
-            children: [
-              {
-                kind: 'display',
-                type: 'productDescription',
-                props: {
-                  img: 'assets/product-image.png',
-                  description: `### My Cool Product\nMy product is the best`,
-                },
-              },
-              {
-                kind: 'input',
-                type: 'productRating',
-                path: 'product.rating',
-                props: { maxRating: 10 },
-                validator: { type: 'number', required: true },
-              },
-              {
-                kind: 'action',
-                type: 'productShare',
-                on: { click: 'shareEvent' },
-              },
-            ],
-          },
-        ],
-      };
+      formDef = [
+        gui.layouts.custom('productCard', [
+          gui.displays.custom('productDescription', {
+            img: 'assets/product-image.png',
+            description: `### My Cool Product\nMy product is the best`,
+          }),
+          gui.inputs.custom('productRating', 'product.rating', {
+            maxRating: 10,
+            validator: { type: 'number', required: true },
+          }),
+          gui.actions.custom('productShare', {
+            onClick: 'shareEvent',
+          }),
+        ], { title: 'Rate Our Product' }),
+      ];
 
       override createRenderRoot() {
         return this;
@@ -1411,7 +1309,7 @@ With all four widgets implemented and registered, here's the complete form setup
         return html`
           <gui-form
             .formDef=${this.formDef}
-            .customWidgetLoaders=${this.customWidgetLoaders}
+            .formConfig=${this.formConfig}
             .data=${this.data}
             @form-event=${(e: CustomEvent<Core.FormEvent>) =>
               this.handleFormEvent(e.detail)}

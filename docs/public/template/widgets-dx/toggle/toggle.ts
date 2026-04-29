@@ -1,12 +1,7 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'toggle',
-      path: 'notificationsEnabled',
-      label: 'Enable push notifications',
-    },
-  ],
-});
+export default [
+  gui.inputs.booleanInput('notificationsEnabled', {
+    label: 'Enable push notifications',
+  }),
+];

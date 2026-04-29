@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'datePicker',
-      path: 'startDate',
-      label: 'Start Date',
-      props: {
-        icon: 'calendar_month',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.datePicker('startDate', {
+    icon: 'calendar_month',
+    label: 'Start Date',
+  }),
+];

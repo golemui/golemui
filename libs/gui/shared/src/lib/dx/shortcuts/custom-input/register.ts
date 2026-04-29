@@ -29,6 +29,7 @@ export const { gsl: _gslCustomInputs, gslByUid: _gslCustomInputByUid } = defineS
     ...(def.disabled != null ? { disabled: def.disabled } : {}),
     ...(def.readonly != null ? { readonly: def.readonly } : {}),
     ...(def.defaultValue != null ? { defaultValue: def.defaultValue } : {}),
+    ...(def.validator != null ? { validator: def.validator } : {}),
     props: def.props ?? {},
   }),
 });

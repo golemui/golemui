@@ -1,16 +1,9 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'number',
-      path: 'number',
-      label: 'Phone Number',
-      props: {
-        hint: 'This is a hint',
-        placeholder: 'Please enter your phone number',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.numberInput('number', {
+    hint: 'This is a hint',
+    placeholder: 'Please enter your phone number',
+    label: 'Phone Number',
+  }),
+];

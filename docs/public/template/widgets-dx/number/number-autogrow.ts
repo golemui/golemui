@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'number',
-      path: 'amount',
-      label: 'Amount',
-      props: {
-        autoGrow: true,
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.numberInput('amount', {
+    autoGrow: true,
+    label: 'Amount',
+  }),
+];

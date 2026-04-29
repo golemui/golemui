@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'calendar',
-      path: 'appointmentDate',
-      props: {
-        hint: 'Please select a valid date for your appointment',
-      },
-      label: 'Appointment Date',
-    },
-  ],
-});
+export default [
+  gui.inputs.calendar('appointmentDate', {
+    hint: 'Please select a valid date for your appointment',
+    label: 'Appointment Date',
+  }),
+];

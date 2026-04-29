@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'number',
-      path: 'height',
-      label: 'Height in meters',
-      props: {
-        step: 0.01,
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.numberInput('height', {
+    step: 0.01,
+    label: 'Height in meters',
+  }),
+];

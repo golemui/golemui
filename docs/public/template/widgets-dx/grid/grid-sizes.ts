@@ -1,31 +1,17 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'grid_sizes',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'row',
-      },
-      children: [
-        {
-          uid: 's1',
-          kind: 'input',
-          type: 'textinput',
-          path: 's1',
-          label: 'Default Size (1)',
-        },
-        {
-          uid: 's2',
-          kind: 'input',
-          type: 'textinput',
-          path: 's2',
-          label: 'Size 2',
-          size: 2,
-        },
-      ],
-    },
-  ],
-});
+export default [
+  gui.layouts.grid([
+    gui.inputs.textInput('s1', {
+      label: 'Default Size (1)',
+      uid: 's1',
+    }),
+    gui.inputs.textInput('s2', {
+      label: 'Size 2',
+      uid: 's2',
+    }),
+  ], {
+    direction: 'row',
+    uid: 'grid_sizes',
+  }),
+];

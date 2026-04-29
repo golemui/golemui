@@ -1,3 +1,4 @@
+import type { Validator } from '@golemui/gui-validators';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type {
   DefOrCallback,
@@ -12,6 +13,7 @@ import type {
 export interface CustomInputDecorator extends DxInputBase, DxCommonFields {
   customType: string;
   props?: Record<string, unknown>;
+  validator?: Validator;
 }
 
 // ═══════════════════════════════════════════════════

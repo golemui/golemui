@@ -1,42 +1,29 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
+export default [
+  gui.layouts.accordion([
     {
-      uid: 'accordion_basic',
-      kind: 'layout',
-      type: 'accordion',
-      props: {
-        sections: [
-          {
-            uid: 'personal',
-            label: 'Personal Information',
-          },
-          {
-            uid: 'account',
-            label: 'Account Settings',
-          },
-        ],
-        defaultOpen: {
-          personal: true,
-        },
-      },
+      label: 'Personal Information',
+      uid: 'personal',
       children: [
-        {
-          uid: 'personal',
-          kind: 'input',
-          type: 'textinput',
-          path: 'name',
+        gui.inputs.textInput('name', {
           label: 'Full Name',
-        },
-        {
-          uid: 'account',
-          kind: 'input',
-          type: 'textinput',
-          path: 'email',
-          label: 'Email Address',
-        },
+        }),
       ],
     },
-  ],
-});
+    {
+      label: 'Account Settings',
+      uid: 'account',
+      children: [
+        gui.inputs.textInput('email', {
+          label: 'Email Address',
+        }),
+      ],
+    },
+  ], {
+    defaultOpen: {
+      personal: true,
+    },
+    uid: 'accordion_basic',
+  }),
+];

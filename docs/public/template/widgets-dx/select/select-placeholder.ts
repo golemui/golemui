@@ -1,25 +1,18 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'select',
-      path: 'country',
-      label: 'Country',
-      props: {
-        placeholder: 'Select your country',
-        options: [
-          {
-            label: 'United States',
-            value: 'us',
-          },
-          {
-            label: 'Canada',
-            value: 'ca',
-          },
-        ],
+export default [
+  gui.inputs.select('country', {
+    placeholder: 'Select your country',
+    options: [
+      {
+        label: 'United States',
+        value: 'us',
       },
-    },
-  ],
-});
+      {
+        label: 'Canada',
+        value: 'ca',
+      },
+    ],
+    label: 'Country',
+  }),
+];

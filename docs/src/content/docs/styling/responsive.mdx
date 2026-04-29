@@ -96,7 +96,7 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
           <React.FormComponent
             formDef={formDef}
             data={formData}
-            fieldLoader={widgetLoaders}
+            formConfig={formConfig}
             localization={localization}
           />
         </div>
@@ -113,11 +113,12 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
+        [formConfig]="formConfig"
         [localization]="localization"
       ></gui-form>`,
     })
     export class AppFormPage {
+      protected formConfig = { widgetLoaders };
       protected localization = { /* i18next implementation */ };
 
       constructor() {
@@ -138,6 +139,7 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
   ```ts
   @customElement('lit-form')
   export class FormElement extends LitElement {
+    protected formConfig = { widgetLoaders };
     protected localization = { /* i18next implementation */ };
 
     constructor() {
@@ -157,7 +159,7 @@ When you set in the `localization` property a `RTL` language like Persian or Heb
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
+            .formConfig=${this.formConfig}
             .localization=${this.localization}
           ></gui-form>
         </div>

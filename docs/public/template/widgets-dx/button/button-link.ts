@@ -1,15 +1,9 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'button_link',
-      kind: 'action',
-      type: 'button',
-      label: 'Click Me',
-      props: {
-        variant: 'link',
-      },
-    },
-  ],
-});
+export default [
+  gui.actions.button({
+    variant: 'link',
+    label: 'Click Me',
+    uid: 'button_link',
+  }),
+];

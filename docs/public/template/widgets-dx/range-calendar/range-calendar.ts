@@ -1,11 +1,5 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'rangeCalendar',
-      path: 'vacationDates',
-    },
-  ],
-});
+export default [
+  gui.inputs.rangeCalendar('vacationDates'),
+];

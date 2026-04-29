@@ -21,7 +21,7 @@ GolemUI is a framework-agnostic form engine. Its core logic and widget library a
 
 All frameworks share the same rendering engine (`@golemui/core`) and widget set. The adapter packages provide a native wrapper that:
 
-1. Accepts a `formDef` (your form definition, either from `golemForm().create(...)` or parsed JSON)
+1. Accepts a `formDef` (your form definition — either an array built with the `gui.*` shortcuts, or parsed JSON)
 2. Accepts `data` (the initial form data object)
 3. Accepts `customWidgetLoaders` (the set of UI widgets to render — typically the GolemUI set)
 4. Optionally accepts `customValidators`, `validateOn`, `dependencies`, and `localization`

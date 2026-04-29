@@ -1,41 +1,14 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'repeater',
-      path: 'users',
-      defaultValue: [
-        {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-        {
-          firstName: 'Jane',
-          lastName: 'Doe',
-        },
-      ],
-      props: {
-        addLabel: 'Add new developer',
-        removeLabel: 'Remove developer',
-        template: {
-          kind: 'layout',
-          type: 'flex',
-          children: [
-            {
-              kind: 'input',
-              type: 'textinput',
-              path: 'users.items.firstName',
-            },
-            {
-              kind: 'input',
-              type: 'textinput',
-              path: 'users.items.lastName',
-            },
-          ],
-        },
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.repeater('users', {
+    addLabel: 'Add new developer',
+    removeLabel: 'Remove developer',
+    template: [
+      gui.layouts.flex([
+        gui.inputs.textInput('users.items.firstName'),
+        gui.inputs.textInput('users.items.lastName'),
+      ]),
+    ],
+  }),
+];

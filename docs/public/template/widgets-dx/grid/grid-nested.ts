@@ -1,65 +1,35 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'grid_outer',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'column',
-      },
-      children: [
-        {
-          uid: 'grid_row_1',
-          kind: 'layout',
-          type: 'grid',
-          props: {
-            direction: 'row',
-          },
-          children: [
-            {
-              uid: 'n1',
-              kind: 'input',
-              type: 'textinput',
-              path: 'n1',
-              label: 'First Name',
-            },
-            {
-              uid: 'n2',
-              kind: 'input',
-              type: 'textinput',
-              path: 'n2',
-              label: 'Last Name',
-            },
-          ],
-        },
-        {
-          uid: 'grid_row_2',
-          kind: 'layout',
-          type: 'grid',
-          props: {
-            direction: 'row',
-          },
-          children: [
-            {
-              uid: 'n3',
-              kind: 'input',
-              type: 'textinput',
-              path: 'n3',
-              label: 'Email',
-            },
-            {
-              uid: 'n4',
-              kind: 'input',
-              type: 'textinput',
-              path: 'n4',
-              label: 'Phone',
-              size: 2,
-            },
-          ],
-        },
-      ],
-    },
-  ],
-});
+export default [
+  gui.layouts.grid([
+    gui.layouts.grid([
+      gui.inputs.textInput('n1', {
+        label: 'First Name',
+        uid: 'n1',
+      }),
+      gui.inputs.textInput('n2', {
+        label: 'Last Name',
+        uid: 'n2',
+      }),
+    ], {
+      direction: 'row',
+      uid: 'grid_row_1',
+    }),
+    gui.layouts.grid([
+      gui.inputs.textInput('n3', {
+        label: 'Email',
+        uid: 'n3',
+      }),
+      gui.inputs.textInput('n4', {
+        label: 'Phone',
+        uid: 'n4',
+      }),
+    ], {
+      direction: 'row',
+      uid: 'grid_row_2',
+    }),
+  ], {
+    direction: 'column',
+    uid: 'grid_outer',
+  }),
+];

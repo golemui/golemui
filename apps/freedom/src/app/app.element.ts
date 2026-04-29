@@ -1,5 +1,5 @@
 import { iframeResizer } from '@golemui/apps-shared';
-import { defineForm } from '@golemui/core';
+import { DxDefinitions, DxFormConfig, gui } from '@golemui/gui-shared';
 import '@golemui/gui-lit';
 import hljs from 'highlight.js/lib/core';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -16,179 +16,104 @@ type LibraryKey = 'golemui' | 'material' | 'custom';
 type Library = {
   key: LibraryKey;
   label: string;
-  formDef: ReturnType<typeof defineForm>;
-  customWidgetLoaders: Record<string, () => Promise<unknown>>;
+  formDef: DxDefinitions;
+  formConfig: DxFormConfig;
   source: string;
 };
 
-const golemuiForm = defineForm({
-  form: [
-    {
-      uid: 'firstName',
-      kind: 'input',
-      type: 'textinput',
-      label: 'First name',
-      path: 'firstName',
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-    {
-      uid: 'lastName',
-      kind: 'input',
-      type: 'textinput',
-      label: 'Last name',
-      path: 'lastName',
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-    {
-      uid: 'email',
-      kind: 'input',
-      type: 'textinput',
-      label: 'Email',
-      path: 'email',
-      validator: { type: 'string', required: true, format: 'email' },
-    },
-    {
-      uid: 'password',
-      kind: 'input',
-      type: 'password',
-      label: 'Password',
-      path: 'password',
-      validator: { type: 'string', required: true, minLength: 8 },
-    },
-    {
-      uid: 'submit',
-      kind: 'action',
-      type: 'button',
-      label: 'Sign up',
-    },
-  ],
-});
+const golemuiForm = [
+  gui.inputs.textInput('firstName', {
+    label: 'First name',
+    validator: { required: true, minLength: 2 },
+  }),
+  gui.inputs.textInput('lastName', {
+    label: 'Last name',
+    validator: { required: true, minLength: 2 },
+  }),
+  gui.inputs.textInput('email', {
+    label: 'Email',
+    validator: { required: true, format: 'email' },
+  }),
+  gui.inputs.password('password', {
+    label: 'Password',
+    validator: { required: true, minLength: 8 },
+  }),
+  gui.actions.button({ label: 'Sign up', uid: 'submit' }),
+];
 
-const materialForm = defineForm({
-  form: [
-    {
-      uid: 'firstName',
-      kind: 'input',
-      type: 'matTextInput',
-      label: 'First name',
-      path: 'firstName',
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-    {
-      uid: 'lastName',
-      kind: 'input',
-      type: 'matTextInput',
-      label: 'Last name',
-      path: 'lastName',
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-    {
-      uid: 'email',
-      kind: 'input',
-      type: 'matTextInput',
-      label: 'Email',
-      path: 'email',
-      validator: { type: 'string', required: true, format: 'email' },
-    },
-    {
-      uid: 'password',
-      kind: 'input',
-      type: 'matTextInput',
-      label: 'Password',
-      path: 'password',
-      props: { type: 'password' },
-      validator: { type: 'string', required: true, minLength: 8 },
-    },
-    {
-      uid: 'submit',
-      kind: 'action',
-      type: 'matButton',
-      label: 'Sign up',
-    },
-  ],
-});
+const materialForm = [
+  gui.inputs.custom('matTextInput', 'firstName', {
+    label: 'First name',
+    validator: { type: 'string', required: true, minLength: 2 },
+  }),
+  gui.inputs.custom('matTextInput', 'lastName', {
+    label: 'Last name',
+    validator: { type: 'string', required: true, minLength: 2 },
+  }),
+  gui.inputs.custom('matTextInput', 'email', {
+    label: 'Email',
+    validator: { type: 'string', required: true, format: 'email' },
+  }),
+  gui.inputs.custom('matTextInput', 'password', {
+    label: 'Password',
+    props: { type: 'password' },
+    validator: { type: 'string', required: true, minLength: 8 },
+  }),
+  gui.actions.custom('matButton', { label: 'Sign up', uid: 'submit' }),
+];
 
-const customForm = defineForm({
-  form: [
-    {
-      uid: 'firstName',
-      kind: 'input',
-      type: 'freedomInput',
-      label: 'First name',
-      path: 'firstName',
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-    {
-      uid: 'lastName',
-      kind: 'input',
-      type: 'freedomInput',
-      label: 'Last name',
-      path: 'lastName',
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-    {
-      uid: 'email',
-      kind: 'input',
-      type: 'freedomInput',
-      label: 'Email',
-      path: 'email',
-      validator: { type: 'string', required: true, format: 'email' },
-    },
-    {
-      uid: 'password',
-      kind: 'input',
-      type: 'freedomInput',
-      label: 'Password',
-      path: 'password',
-      props: { type: 'password' },
-      validator: { type: 'string', required: true, minLength: 8 },
-    },
-    {
-      uid: 'submit',
-      kind: 'action',
-      type: 'freedomButton',
-      label: 'Sign up',
-    },
-  ],
-});
+const customForm = [
+  gui.inputs.custom('freedomInput', 'firstName', {
+    label: 'First name',
+    validator: { type: 'string', required: true, minLength: 2 },
+  }),
+  gui.inputs.custom('freedomInput', 'lastName', {
+    label: 'Last name',
+    validator: { type: 'string', required: true, minLength: 2 },
+  }),
+  gui.inputs.custom('freedomInput', 'email', {
+    label: 'Email',
+    validator: { type: 'string', required: true, format: 'email' },
+  }),
+  gui.inputs.custom('freedomInput', 'password', {
+    label: 'Password',
+    props: { type: 'password' },
+    validator: { type: 'string', required: true, minLength: 8 },
+  }),
+  gui.actions.custom('freedomButton', { label: 'Sign up', uid: 'submit' }),
+];
 
-const GOLEMUI_SOURCE = `import { defineForm, gui } from '@golemui/core';
+const GOLEMUI_SOURCE = `import { gui } from '@golemui/gui-shared';
 
-export const signupForm = defineForm({
-  form: [
-    gui.inputs.textInput('firstName', { validator: { required: true, minLength: 2 } }),
-    gui.inputs.textInput('lastName',  { validator: { required: true, minLength: 2 } }),
-    gui.inputs.textInput('email',     { validator: { required: true, format: 'email' } }),
-    gui.inputs.password('password',   { validator: { required: true, minLength: 8 } }),
-    gui.actions.button({ label: 'Sign up' }),
-  ],
-});
+export const signupForm = [
+  gui.inputs.textInput('firstName', { validator: { required: true, minLength: 2 } }),
+  gui.inputs.textInput('lastName',  { validator: { required: true, minLength: 2 } }),
+  gui.inputs.textInput('email',     { validator: { required: true, format: 'email' } }),
+  gui.inputs.password('password',   { validator: { required: true, minLength: 8 } }),
+  gui.actions.button({ label: 'Sign up' }),
+];
 `;
 
-const MATERIAL_SOURCE = `import { defineForm, gui } from '@golemui/core';
+const MATERIAL_SOURCE = `import { gui } from '@golemui/gui-shared';
 
-export const signupForm = defineForm({
-  form: [
-    gui.inputs.custom('matTextInput', 'firstName', { validator: { required: true, minLength: 2 } }),
-    gui.inputs.custom('matTextInput', 'lastName',  { validator: { required: true, minLength: 2 } }),
-    gui.inputs.custom('matTextInput', 'email',     { validator: { required: true, format: 'email' } }),
-    gui.inputs.custom('matTextInput', 'password',  { props: { type: 'password' }, validator: { required: true, minLength: 8 } }),
-    gui.actions.custom('matButton', { label: 'Sign up' }),
-  ],
-});
+export const signupForm = [
+  gui.inputs.custom('matTextInput', 'firstName', { validator: { type: 'string', required: true, minLength: 2 } }),
+  gui.inputs.custom('matTextInput', 'lastName',  { validator: { type: 'string', required: true, minLength: 2 } }),
+  gui.inputs.custom('matTextInput', 'email',     { validator: { type: 'string', required: true, format: 'email' } }),
+  gui.inputs.custom('matTextInput', 'password',  { props: { type: 'password' }, validator: { type: 'string', required: true, minLength: 8 } }),
+  gui.actions.custom('matButton', { label: 'Sign up' }),
+];
 `;
 
-const CUSTOM_SOURCE = `import { defineForm, gui } from '@golemui/core';
+const CUSTOM_SOURCE = `import { gui } from '@golemui/gui-shared';
 
-export const signupForm = defineForm({
-  form: [
-    gui.inputs.custom('myTextinput', 'firstName', { validator: { required: true, minLength: 2 } }),
-    gui.inputs.custom('myTextinput', 'lastName',  { validator: { required: true, minLength: 2 } }),
-    gui.inputs.custom('myTextinput', 'email',     { validator: { required: true, format: 'email' } }),
-    gui.inputs.custom('myTextinput', 'password',  { props: { type: 'password' }, validator: { required: true, minLength: 8 } }),
-    gui.actions.custom('myBtn', { label: 'Sign up' }),
-  ],
-});
+export const signupForm = [
+  gui.inputs.custom('myTextinput', 'firstName', { validator: { type: 'string', required: true, minLength: 2 } }),
+  gui.inputs.custom('myTextinput', 'lastName',  { validator: { type: 'string', required: true, minLength: 2 } }),
+  gui.inputs.custom('myTextinput', 'email',     { validator: { type: 'string', required: true, format: 'email' } }),
+  gui.inputs.custom('myTextinput', 'password',  { props: { type: 'password' }, validator: { type: 'string', required: true, minLength: 8 } }),
+  gui.actions.custom('myBtn', { label: 'Sign up' }),
+];
 `;
 
 const LIBRARIES: Library[] = [
@@ -196,18 +121,21 @@ const LIBRARIES: Library[] = [
     key: 'golemui',
     label: 'GolemUI',
     formDef: golemuiForm,
-    customWidgetLoaders: {},
+    formConfig: { widgetLoaders: {}, suppressAutomaticSubmit: true },
     source: GOLEMUI_SOURCE,
   },
   {
     key: 'material',
     label: 'Google Material',
     formDef: materialForm,
-    customWidgetLoaders: {
-      matTextInput: async () =>
-        (await import('./components/mat-text-input')).FreedomMatTextInputElement,
-      matButton: async () =>
-        (await import('./components/mat-button')).FreedomMatButtonElement,
+    formConfig: {
+      widgetLoaders: {
+        matTextInput: async () =>
+          (await import('./components/mat-text-input')).FreedomMatTextInputElement,
+        matButton: async () =>
+          (await import('./components/mat-button')).FreedomMatButtonElement,
+      },
+      suppressAutomaticSubmit: true,
     },
     source: MATERIAL_SOURCE,
   },
@@ -215,11 +143,14 @@ const LIBRARIES: Library[] = [
     key: 'custom',
     label: 'Your custom components',
     formDef: customForm,
-    customWidgetLoaders: {
-      freedomInput: async () =>
-        (await import('./components/freedom-input')).FreedomInputElement,
-      freedomButton: async () =>
-        (await import('./components/freedom-button')).FreedomButtonElement,
+    formConfig: {
+      widgetLoaders: {
+        freedomInput: async () =>
+          (await import('./components/freedom-input')).FreedomInputElement,
+        freedomButton: async () =>
+          (await import('./components/freedom-button')).FreedomButtonElement,
+      },
+      suppressAutomaticSubmit: true,
     },
     source: CUSTOM_SOURCE,
   },
@@ -301,7 +232,7 @@ export class FreedomElement extends LitElement {
                   html`<gui-form
                     .formDef=${loaded.formDef}
                     .data=${{}}
-                    .customWidgetLoaders=${loaded.customWidgetLoaders}
+                    .formConfig=${loaded.formConfig}
                   ></gui-form>`,
                 )
               : nothing}
