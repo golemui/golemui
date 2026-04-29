@@ -119,20 +119,26 @@ export function FormComponent({
   }, [storeVersion]);
 
   // SET FORM DATA
+  // Also re-dispatches when the store is recreated (storeVersion bumps via the
+  // initialize effect): otherwise the fresh store starts with empty data and
+  // input subscriptions like the Repeater's `dataByPath$('repeaters.users')`
+  // emit `undefined`, so default rows never render even though the `data` prop
+  // hasn't actually changed.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'SET_DATA',
       payload: { data: data || {} },
     });
-  }, [data]);
+  }, [data, storeVersion]);
 
   // SET FORM META
+  // Same reason as SET_DATA: re-fire when the store is recreated.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'SET_META',
       payload: { meta: meta || {} },
     });
-  }, [meta]);
+  }, [meta, storeVersion]);
 
   // I18n
   useEffect(() => {
