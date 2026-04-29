@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'rangeDatePicker',
-      path: 'dateRanges',
-      label: 'Date Ranges',
-      props: {
-        separator: 'to',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.rangeDatePicker('dateRanges', {
+    separator: 'to',
+    label: 'Date Ranges',
+  }),
+];

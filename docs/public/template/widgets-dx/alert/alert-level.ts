@@ -1,46 +1,24 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Default level',
-        level: 'default',
-      },
-    },
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Info level',
-        level: 'info',
-      },
-    },
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Success level',
-        level: 'success',
-      },
-    },
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Warning level',
-        level: 'warning',
-      },
-    },
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Error level',
-        level: 'error',
-      },
-    },
-  ],
-});
+export default [
+  gui.displays.alert({
+    text: 'Default level',
+    level: 'default',
+  }),
+  gui.displays.alert({
+    text: 'Info level',
+    level: 'info',
+  }),
+  gui.displays.alert({
+    text: 'Success level',
+    level: 'success',
+  }),
+  gui.displays.alert({
+    text: 'Warning level',
+    level: 'warning',
+  }),
+  gui.displays.alert({
+    text: 'Error level',
+    level: 'error',
+  }),
+];

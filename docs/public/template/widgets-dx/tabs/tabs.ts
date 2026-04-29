@@ -1,51 +1,36 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
+export default [
+  gui.layouts.tabs([
     {
-      uid: 'tabs_basic',
-      kind: 'layout',
-      type: 'tabs',
-      props: {
-        tabs: [
-          {
-            uid: 'tab_personal',
-            label: 'Personal',
-          },
-          {
-            uid: 'tab_work',
-            label: 'Work',
-          },
-          {
-            uid: 'tab_other',
-            label: 'Other',
-          },
-        ],
-        defaultOpen: 'tab_personal',
-      },
+      label: 'Personal',
+      uid: 'tab_personal',
       children: [
-        {
-          uid: 'tab_personal',
-          kind: 'input',
-          type: 'textinput',
-          path: 'personal_email',
+        gui.inputs.textInput('personal_email', {
           label: 'Personal Email',
-        },
-        {
-          uid: 'tab_work',
-          kind: 'input',
-          type: 'textinput',
-          path: 'work_email',
-          label: 'Work Email',
-        },
-        {
-          uid: 'tab_other',
-          kind: 'input',
-          type: 'textarea',
-          path: 'notes',
-          label: 'Additional Notes',
-        },
+        }),
       ],
     },
-  ],
-});
+    {
+      label: 'Work',
+      uid: 'tab_work',
+      children: [
+        gui.inputs.textInput('work_email', {
+          label: 'Work Email',
+        }),
+      ],
+    },
+    {
+      label: 'Other',
+      uid: 'tab_other',
+      children: [
+        gui.inputs.textarea('notes', {
+          label: 'Additional Notes',
+        }),
+      ],
+    },
+  ], {
+    defaultOpen: 'tab_personal',
+    uid: 'tabs_basic',
+  }),
+];

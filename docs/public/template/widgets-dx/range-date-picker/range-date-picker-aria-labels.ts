@@ -1,17 +1,10 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'rangeDatePicker',
-      path: 'dateRanges',
-      label: 'Date Ranges',
-      props: {
-        removePillAriaLabel: 'Delete range',
-        startDateAriaLabel: 'From date',
-        endDateAriaLabel: 'To date',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.rangeDatePicker('dateRanges', {
+    removePillAriaLabel: 'Delete range',
+    startDateAriaLabel: 'From date',
+    endDateAriaLabel: 'To date',
+    label: 'Date Ranges',
+  }),
+];

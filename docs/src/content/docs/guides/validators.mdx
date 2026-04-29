@@ -14,43 +14,31 @@ A Validator can validate different types of data, and each Validator will have a
 
 Let's create a password input with a required Validator. Just add a `validator` property to a Control Field as shown below:
 
-```json
-{
-  "form": [
-    {
-      "uid": "userPasswordInput",
-      "kind": "control",
-      "widget": "textinput",
-      "path": "user.password",
-      "validator": {
-        "type": "string",
-        "required": true
-      }
-    }
-  ]
-}
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.textInput('user.password', {
+  validator: {
+    type: 'string',
+    required: true,
+  },
+});
 ```
 
 You can add more validators, triggering multiple errors if one or more of the requirements are not fulfilled. Let's add validations for minimum length 8 characters, maximum length 20 characters and a pattern to check that the password has only letters and numbers.
 
-```json
-{
-  "form": [
-    {
-      "uid": "userPasswordInput",
-      "kind": "control",
-      "widget": "textinput",
-      "path": "user.password",
-      "validator": {
-        "type": "string",
-        "required": true,
-        "minLength": 8,
-        "maxLength": 20,
-        "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
-      }
-    }
-  ]
-}
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.textInput('user.password', {
+  validator: {
+    type: 'string',
+    required: true,
+    minLength: 8,
+    maxLength: 20,
+    pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
+  },
+});
 ```
 
 Let's give it a try!
@@ -67,35 +55,35 @@ The `messages` property accepts a `Record<string, Localizable>` where each key c
 
 #### Plain string messages
 
-```json
-{
-  "validator": {
-    "type": "string",
-    "required": true,
-    "minLength": 8,
-    "messages": {
-      "required": "Please enter your password",
-      "minLength": "Password must be at least 8 characters"
-    }
-  }
-}
+```ts
+gui.inputs.textInput('user.password', {
+  validator: {
+    type: 'string',
+    required: true,
+    minLength: 8,
+    messages: {
+      required: 'Please enter your password',
+      minLength: 'Password must be at least 8 characters',
+    },
+  },
+});
 ```
 
 #### Translation config messages (i18n)
 
-```json
-{
-  "validator": {
-    "type": "string",
-    "required": true,
-    "messages": {
-      "required": {
-        "key": "errors.password.required",
-        "default": "Please enter your password"
-      }
-    }
-  }
-}
+```ts
+gui.inputs.textInput('user.password', {
+  validator: {
+    type: 'string',
+    required: true,
+    messages: {
+      required: {
+        key: 'errors.password.required',
+        default: 'Please enter your password',
+      },
+    },
+  },
+});
 ```
 
 Here's a more complete example with custom messages for different validator types:
@@ -176,11 +164,10 @@ Next, inform the form that it should use the custom validator when it encounters
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
 
-    const customValidators: Core.CustomValidatorSchemas = {
-      allowedNames,
+    const formConfig = {
+      customValidators: { allowedNames },
     };
 
     export function FormPage() {
@@ -188,7 +175,7 @@ Next, inform the form that it should use the custom validator when it encounters
         <div>
         <React.FormComponent
           (...)
-          customValidators={customValidators}
+          formConfig={formConfig}
         />
       </div>
       );
@@ -198,20 +185,19 @@ Next, inform the form that it should use the custom validator when it encounters
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
 
     @Component({
       selector: 'my-form-app',
       template: `<gui-form
         (...)
-        [customValidators]="customValidators">
+        [formConfig]="formConfig">
         </gui-form>
       `,
     })
     class MyFormApp {
-      protected customValidators: Core.CustomValidatorSchemas = {
-        allowedNames,
+      protected formConfig = {
+        customValidators: { allowedNames },
       };
     }
     ```
@@ -219,20 +205,19 @@ Next, inform the form that it should use the custom validator when it encounters
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
 
     @customElement('lit-form')
     export class FormElement extends LitElement {
-      protected customValidators: Core.CustomValidatorSchemas = {
-        allowedNames,
+      protected formConfig = {
+        customValidators: { allowedNames },
       };
 
       render() {
         return html`
             <gui-form
               (...)
-              .customValidators=${this.customValidators}
+              .formConfig=${this.formConfig}
             ></gui-form>
           `;
       }
@@ -244,15 +229,12 @@ Next, inform the form that it should use the custom validator when it encounters
 
 Finally, declare your validator:
 
-```json
-{
-  {
-    kind: 'input',
-    widget: 'textinput',
-    path: 'user.name',
-    validator: { type: 'custom', allowedNames: ['John', 'Jane'] }
-  },
-}
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.textInput('user.name', {
+  validator: { type: 'custom', allowedNames: ['John', 'Jane'] },
+});
 ```
 
 Type something different from `John` and `Jane` to trigger the validation error.
@@ -283,13 +265,7 @@ When not set, the default `validateOn` behaviour is `'eager'`.
 - `'submit'`: When using 'submit', validation triggers when the 'submit' event is emitted. When that happens, all fields are also _touched_ first.
 
 ```ts
-{
-  widget: 'button',
-  label: 'Create User',
-  on: {
-    click: 'submit',
-  },
-}
+gui.actions.submitButton({ label: 'Create User' });
 ```
 
 - `'eager'`: Validates when any of the above happens.
@@ -297,14 +273,14 @@ When not set, the default `validateOn` behaviour is `'eager'`.
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
+    const formConfig = { validateOn: 'change' };
 
     export function FormPage() {
       return (
         <div>
         <React.FormComponent
           (...)
-          validateOn="change"
+          formConfig={formConfig}
         />
       </div>
       );
@@ -320,12 +296,14 @@ When not set, the default `validateOn` behaviour is `'eager'`.
       selector: 'my-form-app',
       template: `<gui-form
         (...)
-        [validateOn]="validateOn">
+        [formConfig]="formConfig">
         </gui-form>
       `,
     })
     class MyFormApp {
-      protected validateOn: Core.ValidateOn = 'change';
+      protected formConfig = {
+        validateOn: 'change' as Core.ValidateOn,
+      };
     }
     ```
 
@@ -336,13 +314,15 @@ When not set, the default `validateOn` behaviour is `'eager'`.
 
     @customElement('lit-form')
     export class FormElement extends LitElement {
-      protected validateOn: Core.ValidateOn = 'change';
+      protected formConfig = {
+        validateOn: 'change' as Core.ValidateOn,
+      };
 
       render() {
         return html`
             <gui-form
               (...)
-              .validateOn=${this.validateOn}
+              .formConfig=${this.formConfig}
             ></gui-form>
           `;
       }

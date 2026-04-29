@@ -1,16 +1,9 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'calendar',
-      path: 'appointmentDate',
-      props: {
-        dayFormat: '2-digit',
-        monthFormat: 'long',
-        weekdayFormat: 'short',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.calendar('appointmentDate', {
+    dayFormat: '2-digit',
+    monthFormat: 'long',
+    weekdayFormat: 'short',
+  }),
+];

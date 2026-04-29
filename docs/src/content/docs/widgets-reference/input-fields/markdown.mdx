@@ -44,24 +44,25 @@ The Markdown widget requires a markdown parser to power its live preview. Since 
   You can use any markdown parser that exposes a `(markdown: string) => string` function, such as [snarkdown](https://github.com/developit/snarkdown), [marked](https://github.com/markedjs/marked), or [micromark](https://github.com/micromark/micromark).
 </Aside>
 
-Pass `dependencies` as a property on the form component itself, not inside the widget's `props`:
+Pass the markdown parser through `formConfig.dependencies` on the form component, not inside the widget's `props`:
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
 
-    const deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
+    const formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
       },
     };
 
     <GolemForm
       formDef={formDef}
       data={formData}
-      dependencies={deps}
+      formConfig={formConfig}
       ...
     />
     ```
@@ -70,11 +71,12 @@ Pass `dependencies` as a property on the form component itself, not inside the w
   <Fragment slot="angular">
     ```typescript
     import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
 
-    protected deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
+    protected formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
       },
     };
     ```
@@ -82,7 +84,7 @@ Pass `dependencies` as a property on the form component itself, not inside the w
     <gui-form
       [formDef]="formDef"
       [data]="formData"
-      [dependencies]="deps"
+      [formConfig]="formConfig"
       ...
     ></gui-form>
     ```
@@ -91,21 +93,22 @@ Pass `dependencies` as a property on the form component itself, not inside the w
   <Fragment slot="lit">
     ```typescript
     import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
 
-    const deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
+    const formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
       },
     };
     ```
     ```html
-    <golem-form
+    <gui-form
       .formDef=${formDef}
       .data=${formData}
-      .dependencies=${deps}
+      .formConfig=${formConfig}
       ...
-    ></golem-form>
+    ></gui-form>
     ```
 
   </Fragment>

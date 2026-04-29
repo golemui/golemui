@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'checkbox',
-      path: 'newsletter',
-      label: 'Subscribe to newsletter',
-      props: {
-        hint: 'We promise not to spam your inbox.',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.checkbox('newsletter', {
+    hint: 'We promise not to spam your inbox.',
+    label: 'Subscribe to newsletter',
+  }),
+];

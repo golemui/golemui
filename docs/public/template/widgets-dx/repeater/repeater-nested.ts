@@ -1,55 +1,32 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'team_repeater',
-      kind: 'input',
-      type: 'repeater',
-      path: 'teams',
-      label: 'Teams',
-      props: {
-        addLabel: 'Add Team',
-        removeLabel: 'Remove Team',
-        template: {
-          kind: 'layout',
-          type: 'flex',
-          props: {
-            direction: 'column',
-          },
-          children: [
-            {
-              kind: 'input',
-              type: 'textinput',
-              path: 'teams.items.teamName',
-              label: 'Team Name',
-            },
-            {
-              uid: 'member_repeater',
-              kind: 'input',
-              type: 'repeater',
-              path: 'teams.items.members',
-              label: 'Members',
-              props: {
-                addLabel: 'Add Member',
-                removeLabel: 'Remove Member',
-                template: {
-                  kind: 'layout',
-                  type: 'flex',
-                  children: [
-                    {
-                      kind: 'input',
-                      type: 'textinput',
-                      path: 'teams.items.members.items.memberName',
-                      label: 'Member Name',
-                    },
-                  ],
-                },
-              },
-            },
+export default [
+  gui.inputs.repeater('teams', {
+    addLabel: 'Add Team',
+    removeLabel: 'Remove Team',
+    label: 'Teams',
+    uid: 'team_repeater',
+    template: [
+      gui.layouts.flex([
+        gui.inputs.textInput('teams.items.teamName', {
+          label: 'Team Name',
+        }),
+        gui.inputs.repeater('teams.items.members', {
+          addLabel: 'Add Member',
+          removeLabel: 'Remove Member',
+          label: 'Members',
+          uid: 'member_repeater',
+          template: [
+            gui.layouts.flex([
+              gui.inputs.textInput('teams.items.members.items.memberName', {
+                label: 'Member Name',
+              }),
+            ]),
           ],
-        },
-      },
-    },
-  ],
-});
+        }),
+      ], {
+        direction: 'column',
+      }),
+    ],
+  }),
+];

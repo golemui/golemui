@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'markdown',
-      path: 'content',
-      label: 'Content',
-      props: {
-        placeholder: 'Write your markdown here...',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.markdown('content', {
+    placeholder: 'Write your markdown here...',
+    label: 'Content',
+  }),
+];

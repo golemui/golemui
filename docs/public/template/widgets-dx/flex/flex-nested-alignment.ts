@@ -1,75 +1,40 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'layout',
-      type: 'flex',
-      children: [
-        {
-          kind: 'input',
-          type: 'calendar',
-          label: 'Calendar',
-          path: 'calendar',
-        },
-        {
-          kind: 'layout',
-          type: 'flex',
-          children: [
-            {
-              kind: 'input',
-              type: 'textinput',
-              label: 'Username',
-              path: 'username',
-            },
-            {
-              kind: 'input',
-              type: 'password',
-              label: 'Password',
-              path: 'password',
-            },
-          ],
-          props: {
-            align: 'center',
-            justify: 'start',
-            direction: 'column',
-          },
-        },
-      ],
-      props: {
-        direction: 'row',
-        align: 'center',
-        justify: 'stretch',
-      },
-    },
-    {
-      kind: 'layout',
-      type: 'flex',
-      children: [
-        {
-          kind: 'input',
-          type: 'textinput',
-          label: 'Textinput',
-          path: 'textinput',
-        },
-        {
-          kind: 'input',
-          type: 'number',
-          label: 'Number',
-          path: 'number',
-        },
-        {
-          kind: 'input',
-          type: 'checkbox',
-          label: 'Checkbox cool',
-          path: 'checkbox',
-        },
-      ],
-      props: {
-        direction: 'row',
-        align: 'start',
-        justify: 'end',
-      },
-    },
-  ],
-});
+export default [
+  gui.layouts.flex([
+    gui.inputs.calendar('calendar', {
+      label: 'Calendar',
+    }),
+    gui.layouts.flex([
+      gui.inputs.textInput('username', {
+        label: 'Username',
+      }),
+      gui.inputs.password('password', {
+        label: 'Password',
+      }),
+    ], {
+      align: 'center',
+      justify: 'start',
+      direction: 'column',
+    }),
+  ], {
+    direction: 'row',
+    align: 'center',
+    justify: 'stretch',
+  }),
+  gui.layouts.flex([
+    gui.inputs.textInput('textinput', {
+      label: 'Textinput',
+    }),
+    gui.inputs.numberInput('number', {
+      label: 'Number',
+    }),
+    gui.inputs.checkbox('checkbox', {
+      label: 'Checkbox cool',
+    }),
+  ], {
+    direction: 'row',
+    align: 'start',
+    justify: 'end',
+  }),
+];

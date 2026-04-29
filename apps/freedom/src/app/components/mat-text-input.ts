@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 import '@material/web/textfield/filled-text-field.js';
@@ -16,7 +16,6 @@ export class FreedomMatTextInputElement extends LitElement implements Core.WithW
   widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
-  @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.inputContext })

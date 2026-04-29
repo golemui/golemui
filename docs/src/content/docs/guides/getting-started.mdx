@@ -58,10 +58,11 @@ Creating a dynamic form has never been this easy.
         <IntegrationTabs>
           <Fragment slot="react">
             ```ts
-            const formDef = golemForm().create({
-              form: [{ kind: 'input', type: 'textinput', path: 'username' }],
-            });
+            import { gui } from '@golemui/gui-shared';
+
+            const formDef = [gui.inputs.textInput('username')];
             const formData = { username: 'golemui' };
+            const formConfig = { widgetLoaders: GuiReact.widgetLoaders };
 
             export function FormPage() {
               return (
@@ -69,7 +70,7 @@ Creating a dynamic form has never been this easy.
                 <React.FormComponent
                   formDef={formDef}
                   data={formData}
-                  widgetLoaders={GuiReact.widgetLoaders}
+                  formConfig={formConfig}
                 />
                </div>
               );
@@ -78,33 +79,34 @@ Creating a dynamic form has never been this easy.
           </Fragment>
           <Fragment slot="angular">
             ```ts
+            import { gui } from '@golemui/gui-shared';
+
             @Component({
               imports: [CommonModule, Angular.FormComponent],
               selector: 'app-dynamic-form',
               template: `<gui-form
                 [formDef]="formDef"
                 [data]="formData"
-                [customWidgetLoaders]="widgetLoaders"
+                [formConfig]="formConfig"
               >
               </gui-form>`,
             })
             export class AppFormPage {
-              protected formDef = golemForm().create({
-                form: [{ kind: 'input', type: 'textinput', path: 'username' }],
-              });
+              protected formDef = [gui.inputs.textInput('username')];
               protected formData = { username: 'golemui' };
-              protected widgetLoaders = GuiAngular.widgetLoaders;
+              protected formConfig = { widgetLoaders: GuiAngular.widgetLoaders };
             }
             ```
           </Fragment>
           <Fragment slot="lit">
             ```ts
+            import { gui } from '@golemui/gui-shared';
+
             @customElement('lit-form')
             export class FormElement extends LitElement {
-              formDef = golemForm().create({
-                form: [{ kind: 'input', type: 'textinput', path: 'username' }],
-              });
+              formDef = [gui.inputs.textInput('username')];
               formData = { username: 'golemui' };
+              formConfig = { widgetLoaders: GuiLit.widgetLoaders };
 
               override createRenderRoot() {
                 return this;
@@ -116,7 +118,7 @@ Creating a dynamic form has never been this easy.
                     <gui-form
                       .formDef=${this.formDef}
                       .data=${this.formData}
-                      .customWidgetLoaders=${GuiLit.widgetLoaders}
+                      .formConfig=${this.formConfig}
                     ></gui-form>
                   </div>
                 `;

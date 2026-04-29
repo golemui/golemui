@@ -27,22 +27,24 @@ Import the core styles in your application entry point or global stylesheet:
 <DslTabs>
   <Fragment slot="dx">
     ```tsx
-    import { golemForm } from '@golemui/gui-shared';
+    import { gui } from '@golemui/gui-shared';
     import { FormComponent } from '@golemui/gui-react';
     import * as GuiReact from '@golemui/gui-react';
 
-    const formDef = golemForm().create({
-      form: [
-        { kind: 'input', type: 'textinput', path: 'username', label: 'Username' },
-      ],
-    });
+    const formDef = [
+      gui.inputs.textInput('username', { label: 'Username' }),
+    ];
+
+    const formConfig = {
+      widgetLoaders: { ...GuiReact.widgetLoaders },
+    };
 
     export function MyForm() {
       return (
         <FormComponent
           formDef={formDef}
           data={{ username: '' }}
-          widgetLoaders={{ ...GuiReact.widgetLoaders }}
+          formConfig={formConfig}
         />
       );
     }
@@ -55,12 +57,16 @@ Import the core styles in your application entry point or global stylesheet:
     import * as GuiReact from '@golemui/gui-react';
     import formDef from './my-form.json';
 
+    const formConfig = {
+      widgetLoaders: { ...GuiReact.widgetLoaders },
+    };
+
     export function MyForm() {
       return (
         <FormComponent
           formDef={formDef}
           data={{ username: '' }}
-          widgetLoaders={{ ...GuiReact.widgetLoaders }}
+          formConfig={formConfig}
         />
       );
     }

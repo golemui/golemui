@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 
 import '@material/web/button/filled-button.js';
@@ -12,7 +12,6 @@ export class FreedomMatButtonElement extends LitElement implements Core.WithWidg
   widget!: Core.ActionWidget;
 
   @consume({ context: Lit.formContext })
-  @property({ attribute: false })
   formContext!: Lit.LitFormContext<any>;
 
   @provide({ context: Lit.actionContext })

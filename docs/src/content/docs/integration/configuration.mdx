@@ -34,11 +34,10 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
 
-    const customValidators: Core.CustomValidatorSchemas = {
-      allowedNames,
+    const formConfig = {
+      customValidators: { allowedNames },
     };
 
     export function FormPage() {
@@ -46,7 +45,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
         <div>
         <React.FormComponent
           (...)
-          customValidators={customValidators}
+          formConfig={formConfig}
         />
       </div>
       );
@@ -56,20 +55,19 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
 
     @Component({
       selector: 'my-form-app',
       template: `<gui-form
         (...)
-        [customValidators]="customValidators">
+        [formConfig]="formConfig">
         </gui-form>
       `,
     })
     class MyFormApp {
-      protected customValidators: Core.CustomValidatorSchemas = {
-        allowedNames,
+      protected formConfig = {
+        customValidators: { allowedNames },
       };
     }
     ```
@@ -77,20 +75,19 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Core from '@golemui/core';
     import { allowedNames } from './custom-validators/allowed-names';
 
     @customElement('lit-form')
     export class FormElement extends LitElement {
-      protected customValidators: Core.CustomValidatorSchemas = {
-        allowedNames,
+      protected formConfig = {
+        customValidators: { allowedNames },
       };
 
       render() {
         return html`
             <gui-form
               (...)
-              .customValidators=${this.customValidators}
+              .formConfig=${this.formConfig}
             ></gui-form>
           `;
       }
@@ -125,27 +122,30 @@ When not set, the default behaviour is `'eager'`.
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
+    const formConfig = { validateOn: 'change' };
+
     <React.FormComponent
       (...)
-      validateOn="change"
+      formConfig={formConfig}
     />
     ```
   </Fragment>
   <Fragment slot="angular">
     ```ts
     @Component({
-      template: `<gui-form (...) [validateOn]="validateOn"></gui-form>`,
+      template: `<gui-form (...) [formConfig]="formConfig"></gui-form>`,
     })
     class MyFormApp {
-      protected validateOn: Core.ValidateOn = 'change';
+      protected formConfig = { validateOn: 'change' as Core.ValidateOn };
     }
     ```
   </Fragment>
   <Fragment slot="lit">
     ```ts
     render() {
+      const formConfig = { validateOn: 'change' as Core.ValidateOn };
       return html`
-        <gui-form (...) .validateOn=${'change'}></gui-form>
+        <gui-form (...) .formConfig=${formConfig}></gui-form>
       `;
     }
     ```
@@ -197,18 +197,19 @@ The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/w
   <Fragment slot="react">
     ```tsx
     import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
 
-    const deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
+    const formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
       },
     };
 
     <GolemForm
       formDef={formDef}
       data={formData}
-      dependencies={deps}
+      formConfig={formConfig}
       ...
     />
     ```
@@ -217,11 +218,12 @@ The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/w
   <Fragment slot="angular">
     ```typescript
     import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
 
-    protected deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
+    protected formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
       },
     };
     ```
@@ -229,7 +231,7 @@ The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/w
     <gui-form
       [formDef]="formDef"
       [data]="formData"
-      [dependencies]="deps"
+      [formConfig]="formConfig"
       ...
     ></gui-form>
     ```
@@ -238,21 +240,22 @@ The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/w
   <Fragment slot="lit">
     ```typescript
     import snarkdown from 'snarkdown';
-    import { Dependencies } from '@golemui/gui-shared';
 
-    const deps: Dependencies = {
-      markdown: {
-        parse: (md: string) => snarkdown(md),
+    const formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
       },
     };
     ```
     ```html
-    <golem-form
+    <gui-form
       .formDef=${formDef}
       .data=${formData}
-      .dependencies=${deps}
+      .formConfig=${formConfig}
       ...
-    ></golem-form>
+    ></gui-form>
     ```
 
   </Fragment>
@@ -269,10 +272,12 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
+    const formConfig = { widgetLoaders };
+
     <React.FormComponent
       formDef={formDef}
       data={formData}
-      widgetLoaders={widgetLoaders}
+      formConfig={formConfig}
       localization={localization}
     />
     ```
@@ -282,7 +287,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <gui-form
       [formDef]="formDef"
       [data]="formData"
-      [customWidgetLoaders]="widgetLoaders"
+      [formConfig]="formConfig"
       [localization]="localization"
     ></gui-form>
     ```
@@ -292,7 +297,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
     <gui-form
       .formDef=${this.formDef}
       .data=${this.formData}
-      .customWidgetLoaders=${this.widgetLoaders}
+      .formConfig=${this.formConfig}
       .localization=${this.localization}
     ></gui-form>
     ```

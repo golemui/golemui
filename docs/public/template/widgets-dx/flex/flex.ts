@@ -1,30 +1,17 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'flex_vertical',
-      kind: 'layout',
-      type: 'flex',
-      props: {
-        direction: 'column',
-      },
-      children: [
-        {
-          uid: 'v1',
-          kind: 'input',
-          type: 'textinput',
-          path: 'v1',
-          label: 'Vertical Field 1',
-        },
-        {
-          uid: 'v2',
-          kind: 'input',
-          type: 'textinput',
-          path: 'v2',
-          label: 'Vertical Field 2',
-        },
-      ],
-    },
-  ],
-});
+export default [
+  gui.layouts.flex([
+    gui.inputs.textInput('v1', {
+      label: 'Vertical Field 1',
+      uid: 'v1',
+    }),
+    gui.inputs.textInput('v2', {
+      label: 'Vertical Field 2',
+      uid: 'v2',
+    }),
+  ], {
+    direction: 'column',
+    uid: 'flex_vertical',
+  }),
+];

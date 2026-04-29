@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'textinput',
-      path: 'listName',
-      label: 'First Name',
-      props: {
-        placeholder: 'Enter your first name',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.textInput('listName', {
+    placeholder: 'Enter your first name',
+    label: 'First Name',
+  }),
+];

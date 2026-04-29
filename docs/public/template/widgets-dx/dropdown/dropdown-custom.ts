@@ -1,34 +1,27 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'dropdown_custom',
-      kind: 'input',
-      type: 'dropdown',
-      path: 'selection',
-      label: 'Custom Fields',
-      props: {
-        items: [
-          {
-            template: {
-              name: 'USA',
-              code: 'US',
-            },
-            value: 'us',
-          },
-          {
-            template: {
-              name: 'Canada',
-              code: 'CA',
-            },
-            value: 'ca',
-          },
-        ],
-        labelField: 'name',
-        valueField: 'code',
-        searchFields: ['name', 'code'],
+export default [
+  gui.inputs.dropdown('selection', {
+    items: [
+      {
+        template: {
+          name: 'USA',
+          code: 'US',
+        },
+        value: 'us',
       },
-    },
-  ],
-});
+      {
+        template: {
+          name: 'Canada',
+          code: 'CA',
+        },
+        value: 'ca',
+      },
+    ],
+    labelField: 'name',
+    valueField: 'code',
+    searchFields: ['name', 'code'],
+    label: 'Custom Fields',
+    uid: 'dropdown_custom',
+  }),
+];

@@ -1,12 +1,7 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'currency',
-      path: 'price',
-      label: 'Price',
-    },
-  ],
-});
+export default [
+  gui.inputs.currency('price', {
+    label: 'Price',
+  }),
+];

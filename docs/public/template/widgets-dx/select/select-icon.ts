@@ -1,21 +1,14 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'select',
-      path: 'country',
-      label: 'Country',
-      props: {
-        icon: 'fas fa-globe',
-        options: [
-          {
-            label: 'United States',
-            value: 'us',
-          },
-        ],
+export default [
+  gui.inputs.select('country', {
+    icon: 'fas fa-globe',
+    options: [
+      {
+        label: 'United States',
+        value: 'us',
       },
-    },
-  ],
-});
+    ],
+    label: 'Country',
+  }),
+];

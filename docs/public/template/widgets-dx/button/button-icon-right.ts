@@ -1,15 +1,9 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'action',
-      type: 'button',
-      label: 'Save',
-      props: {
-        icon: 'save',
-        iconPosition: 'right',
-      },
-    },
-  ],
-});
+export default [
+  gui.actions.button({
+    icon: 'save',
+    iconPosition: 'right',
+    label: 'Save',
+  }),
+];

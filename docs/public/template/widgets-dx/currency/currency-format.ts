@@ -1,17 +1,10 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'currency',
-      path: 'price',
-      label: 'Price (EUR)',
-      props: {
-        currency: 'EUR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 4,
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.currency('price', {
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+    label: 'Price (EUR)',
+  }),
+];

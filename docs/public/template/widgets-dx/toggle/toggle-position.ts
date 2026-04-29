@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'toggle',
-      path: 'darkMode',
-      label: 'Dark mode',
-      props: {
-        togglePosition: 'left',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.booleanInput('darkMode', {
+    togglePosition: 'left',
+    label: 'Dark mode',
+  }),
+];

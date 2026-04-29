@@ -28,18 +28,16 @@ Import the core styles in your HTML or application entry point:
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import { golemForm } from '@golemui/gui-shared';
+    import { gui } from '@golemui/gui-shared';
     import { widgetLoaders } from '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = golemForm().create({
-        form: [
-          { kind: 'input', type: 'textinput', path: 'username', label: 'Username' },
-        ],
-      });
+      formDef = [
+        gui.inputs.textInput('username', { label: 'Username' }),
+      ];
       formData = { username: '' };
-      widgetLoaders = { ...widgetLoaders };
+      formConfig = { widgetLoaders };
 
       override createRenderRoot() {
         return this;
@@ -50,7 +48,7 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
+            .formConfig=${this.formConfig}
           ></gui-form>
         `;
       }
@@ -69,7 +67,7 @@ Import the core styles in your HTML or application entry point:
     export class MyForm extends LitElement {
       formDef = formDef;
       formData = { username: '' };
-      widgetLoaders = { ...widgetLoaders };
+      formConfig = { widgetLoaders };
 
       override createRenderRoot() {
         return this;
@@ -80,7 +78,7 @@ Import the core styles in your HTML or application entry point:
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
+            .formConfig=${this.formConfig}
           ></gui-form>
         `;
       }

@@ -28,7 +28,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import { golemForm } from '@golemui/gui-shared';
+    import { gui } from '@golemui/gui-shared';
     import { FormComponent, widgetLoaders } from '@golemui/gui-angular';
 
     @Component({
@@ -37,17 +37,15 @@ Import the core styles in your `styles.scss` or `angular.json`:
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
+        [formConfig]="formConfig"
       ></gui-form>`,
     })
     export class MyFormComponent {
-      protected formDef = golemForm().create({
-        form: [
-          { kind: 'input', type: 'textinput', path: 'username', label: 'Username' },
-        ],
-      });
+      protected formDef = [
+        gui.inputs.textInput('username', { label: 'Username' }),
+      ];
       protected formData = { username: '' };
-      protected widgetLoaders = widgetLoaders;
+      protected formConfig = { widgetLoaders };
     }
     ```
 
@@ -65,13 +63,13 @@ Import the core styles in your `styles.scss` or `angular.json`:
       template: `<gui-form
         [formDef]="formDef"
         [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
+        [formConfig]="formConfig"
       ></gui-form>`,
     })
     export class MyFormComponent {
       protected formDef = formDef;
       protected formData = { username: '' };
-      protected widgetLoaders = widgetLoaders;
+      protected formConfig = { widgetLoaders };
     }
     ```
 

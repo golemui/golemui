@@ -1,15 +1,8 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'textarea',
-      path: 'comments',
-      label: 'Comments',
-      props: {
-        placeholder: 'Enter your comments here...',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.textarea('comments', {
+    placeholder: 'Enter your comments here...',
+    label: 'Comments',
+  }),
+];

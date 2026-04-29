@@ -1,38 +1,22 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      uid: 'grid_auto_fit',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'row',
-        autoFit: true,
-      },
-      children: [
-        {
-          uid: 'af1',
-          kind: 'input',
-          type: 'textinput',
-          path: 'firstName',
-          label: 'First Name',
-        },
-        {
-          uid: 'af2',
-          kind: 'input',
-          type: 'textinput',
-          path: 'lastName',
-          label: 'Last Name',
-        },
-        {
-          uid: 'af3',
-          kind: 'input',
-          type: 'textinput',
-          path: 'email',
-          label: 'Email',
-        },
-      ],
-    },
-  ],
-});
+export default [
+  gui.layouts.grid([
+    gui.inputs.textInput('firstName', {
+      label: 'First Name',
+      uid: 'af1',
+    }),
+    gui.inputs.textInput('lastName', {
+      label: 'Last Name',
+      uid: 'af2',
+    }),
+    gui.inputs.textInput('email', {
+      label: 'Email',
+      uid: 'af3',
+    }),
+  ], {
+    direction: 'row',
+    autoFit: true,
+    uid: 'grid_auto_fit',
+  }),
+];

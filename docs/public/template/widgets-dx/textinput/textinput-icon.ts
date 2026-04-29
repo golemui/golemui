@@ -1,24 +1,12 @@
-import { golemForm } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
 
-export default golemForm().create({
-  form: [
-    {
-      kind: 'input',
-      type: 'textinput',
-      path: 'phoneNumber',
-      label: 'Phone Number',
-      props: {
-        icon: 'phone_callback',
-      },
-    },
-    {
-      kind: 'input',
-      type: 'textinput',
-      path: 'email',
-      label: 'Email',
-      props: {
-        icon: 'alternate_email',
-      },
-    },
-  ],
-});
+export default [
+  gui.inputs.textInput('phoneNumber', {
+    icon: 'phone_callback',
+    label: 'Phone Number',
+  }),
+  gui.inputs.textInput('email', {
+    icon: 'alternate_email',
+    label: 'Email',
+  }),
+];
