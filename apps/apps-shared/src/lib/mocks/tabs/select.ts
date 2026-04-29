@@ -55,7 +55,7 @@ export const select = (uid: string): any => ({
       },
     },
     {
-      uid: '',
+      uid: 'subregionSelect',
       kind: 'input',
       type: 'select',
       path: 'selects.subregion',
@@ -67,7 +67,7 @@ export const select = (uid: string): any => ({
       },
     },
     {
-      uid: '',
+      uid: 'countrySelect',
       kind: 'input',
       type: 'select',
       path: 'selects.country',
