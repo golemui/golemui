@@ -64,7 +64,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef = mock.form;
+  formDef = mock.formDef;
   formData = mock.data;
   localization = AppsShared.initializeI18n(mock.resources);
   languages = AppsShared.commonLanguages
@@ -73,14 +73,16 @@ export class FormElement extends LitElement {
       value: code,
       label: `${flag} ${label}`,
     }));
-  itemRenderers = {
-    countryItemRenderer: countryItemRenderer,
+  formConfig = {
+    itemRenderers: {
+      countryItemRenderer: countryItemRenderer,
+    },
+    validateOn: 'eager' as Core.ValidateOn,
   };
   middlewares = [AppsShared.loggerMiddleware];
   customValidators: GuiValidators.CustomValidatorSchemas = {
     allowedNames: AppsShared.allowedNames,
   };
-  validateOn: Core.ValidateOn = 'eager';
   checklistItems = CHECKLIST_ITEMS;
   formSource = FORM_SOURCE;
 
@@ -246,11 +248,10 @@ export class FormElement extends LitElement {
           <gui-form
             .formDef=${this.formDef}
             .data=${this.formData}
-            .itemRenderers=${this.itemRenderers}
+            .formConfig=${this.formConfig}
             .localization=${this.localization}
             .middlewares=${this.middlewares}
             .customValidators=${this.customValidators}
-            .validateOn=${this.validateOn}
             @formHealth=${this.onFormHealth}
             @formEvent=${this.onFormEvent}
           ></gui-form>

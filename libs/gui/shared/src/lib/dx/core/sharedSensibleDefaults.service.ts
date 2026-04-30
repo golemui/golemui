@@ -2,6 +2,8 @@
 // Shared Sensible Defaults — reusable processors for input-like types
 // ═══════════════════════════════════════════════════
 
+import { Localizable } from '@golemui/core';
+
 /**
  * Config interface for types that support automatic labels.
  */
@@ -33,10 +35,9 @@ export function pathToLabel(path: string | undefined): string {
  * Behavior must match existing `inputSensibleDefaults.service.ts` and
  * `calendarSensibleDefaults.service.ts` exactly.
  */
-export function processAutoLabel<D extends { path?: string; label?: string | null }>(
-  def: D,
-  config: LabelSensibleDefaultsConfig,
-): D {
+export function processAutoLabel<
+  D extends { path?: string; label?: Localizable | null },
+>(def: D, config: LabelSensibleDefaultsConfig): D {
   if (def.label != null) return def;
   if (config.suppressAutomaticLabels) return def;
   if (!def.path) return def;

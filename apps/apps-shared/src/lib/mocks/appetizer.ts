@@ -1,5 +1,7 @@
-import { defineForm, FunctionWidgetParams } from '@golemui/core';
-import { Example } from './types';
+import type { FunctionWidgetParams } from '@golemui/core';
+import type { DxDefinitions } from '@golemui/gui-shared';
+import { gui } from '@golemui/gui-shared';
+import type { Resource } from 'i18next';
 
 const minDate = new Date().toISOString().split('T')[0];
 
@@ -21,341 +23,262 @@ const coins: { [key: string]: string } = {
   GB: 'GBP',
 };
 
-const data = {};
+const data: Record<string, unknown> = {};
 
-const form = defineForm({
-  form: [
-    {
-      uid: 'language',
-      kind: 'input',
-      type: 'dropdown',
-      path: 'language',
-      label: {
-        key: 'travelPlanner.field.language.label',
-        default: 'Language',
-      },
-      size: 2,
-      validator: {
-        type: 'string',
-        required: true,
-        messages: {
-          required: {
-            key: 'travelPlanner.field.language.required',
-            default: 'Language is required',
-          },
-          invalid: {
-            key: 'travelPlanner.field.language.required',
-            default: 'Language is required',
-          },
+const formDef: DxDefinitions = [
+  gui.inputs.dropdown('language', {
+    uid: 'language',
+    label: { key: 'travelPlanner.field.language.label', default: 'Language' },
+    size: 2,
+    defaultValue: 'en',
+    height: 300,
+    placeholder: {
+      key: 'travelPlanner.field.language.placeholder',
+      default: 'Select language',
+    } as unknown as string,
+    labelField: 'label',
+    valueField: 'id',
+    items: [
+      { id: 'en', label: 'English' },
+      { id: 'es', label: 'Español' },
+      { id: 'fa', label: 'فارسی' },
+      { id: 'ja', label: '日本語' },
+    ],
+    validator: {
+      type: 'string',
+      required: true,
+      messages: {
+        required: {
+          key: 'travelPlanner.field.language.required',
+          default: 'Language is required',
+        },
+        invalid: {
+          key: 'travelPlanner.field.language.required',
+          default: 'Language is required',
         },
       },
-      defaultValue: 'en',
-      props: {
+    },
+    onChange: 'onSelectLanguage',
+  }),
+
+  gui.layouts.grid(
+    [
+      gui.inputs.dropdown('departureCountry', {
+        uid: 'departureCountry',
+        label: {
+          key: 'travelPlanner.field.departureCountry.label',
+          default: 'Departure Country',
+        },
+        size: 2,
         height: 300,
+        itemHeight: 60,
+        itemRenderer: 'countryItemRenderer',
         placeholder: {
-          key: 'travelPlanner.field.language.placeholder',
-          default: 'Select language',
-        },
+          key: 'travelPlanner.field.departureCountry.placeholder',
+          default: 'Select a Country',
+        } as unknown as string,
         labelField: 'label',
         valueField: 'id',
         items: [
-          { id: 'en', label: 'English' },
-          { id: 'es', label: 'Español' },
-          { id: 'fa', label: 'فارسی' },
-          { id: 'ja', label: '日本語' },
+          { id: 'AU', flag: '🇦🇺', label: 'Australia' },
+          { id: 'BR', flag: '🇧🇷', label: 'Brazil' },
+          { id: 'CA', flag: '🇨🇦', label: 'Canada' },
+          { id: 'CN', flag: '🇨🇳', label: 'China' },
+          { id: 'FR', flag: '🇫🇷', label: 'France' },
+          { id: 'DE', flag: '🇩🇪', label: 'Germany' },
+          { id: 'IN', flag: '🇮🇳', label: 'India' },
+          { id: 'IT', flag: '🇮🇹', label: 'Italy' },
+          { id: 'JP', flag: '🇯🇵', label: 'Japan' },
+          { id: 'MX', flag: '🇲🇽', label: 'Mexico' },
+          { id: 'KR', flag: '🇰🇷', label: 'South Korea' },
+          { id: 'ES', flag: '🇪🇸', label: 'Spain' },
+          { id: 'UK', flag: '🇺🇦', label: 'Ukraine' },
+          { id: 'US', flag: '🇺🇸', label: 'United States' },
+          { id: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
         ],
-      },
-      on: {
-        change: 'onSelectLanguage',
-      },
-    },
-    {
-      uid: '',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'row',
-        autoFit: true,
-        align: 'stretch',
-      },
-      children: [
-        {
-          uid: 'departureCountry',
-          kind: 'input',
-          type: 'dropdown',
-          path: 'departureCountry',
-          label: {
-            key: 'travelPlanner.field.departureCountry.label',
-            default: 'Departure Country',
-          },
-          size: 2,
-          validator: {
-            type: 'string',
-            required: true,
-            messages: {
-              required: {
-                key: 'travelPlanner.field.departureCountry.required',
-                default: 'Departure Country is required',
-              },
-              invalid: {
-                key: 'travelPlanner.field.departureCountry.required',
-                default: 'Departure Country is required',
-              },
+        validator: {
+          type: 'string',
+          required: true,
+          messages: {
+            required: {
+              key: 'travelPlanner.field.departureCountry.required',
+              default: 'Departure Country is required',
             },
-          },
-          props: {
-            height: 300,
-            itemHeight: 60,
-            itemRenderer: 'countryItemRenderer',
-            placeholder: {
-              key: 'travelPlanner.field.departureCountry.placeholder',
-              default: 'Select a Country',
-            },
-            labelField: 'label',
-            valueField: 'id',
-            items: [
-              { id: 'AU', flag: '🇦🇺', label: 'Australia' },
-              { id: 'BR', flag: '🇧🇷', label: 'Brazil' },
-              { id: 'CA', flag: '🇨🇦', label: 'Canada' },
-              { id: 'CN', flag: '🇨🇳', label: 'China' },
-              { id: 'FR', flag: '🇫🇷', label: 'France' },
-              { id: 'DE', flag: '🇩🇪', label: 'Germany' },
-              { id: 'IN', flag: '🇮🇳', label: 'India' },
-              { id: 'IT', flag: '🇮🇹', label: 'Italy' },
-              { id: 'JP', flag: '🇯🇵', label: 'Japan' },
-              { id: 'MX', flag: '🇲🇽', label: 'Mexico' },
-              { id: 'KR', flag: '🇰🇷', label: 'South Korea' },
-              { id: 'ES', flag: '🇪🇸', label: 'Spain' },
-              { id: 'UK', flag: '🇺🇦', label: 'Ukraine' },
-              { id: 'US', flag: '🇺🇸', label: 'United States' },
-              { id: 'GB', flag: '🇬🇧', label: 'United Kingdom' },
-            ],
-          },
-          on: {
-            change: 'fieldChange',
-          },
-        },
-        {
-          uid: 'budget',
-          kind: 'input',
-          type: 'currency',
-          path: 'budget',
-          label: {
-            key: 'travelPlanner.field.budget.label',
-            default: 'Travel Budget',
-          },
-          props: {
-            step: 100,
-            placeholder: (data: FunctionWidgetParams<any> | undefined) =>
-              coins[data?.$form?.departureCountry ?? 'US'],
-            currency: (data: FunctionWidgetParams<any> | undefined) =>
-              coins[data?.$form?.departureCountry ?? 'US'],
-          },
-          validator: {
-            type: 'number',
-            required: true,
-            minimum: 100,
-            messages: {
-              invalid: {
-                key: 'travelPlanner.field.budget.required',
-                default: 'Budget is required',
-              },
-              minimum: {
-                key: 'travelPlanner.field.budget.minimum',
-                default: 'Budget must be at least $100',
-              },
-            },
-          },
-          on: {
-            change: 'fieldChange',
-          },
-        },
-      ],
-    },
-    {
-      uid: '',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'row',
-        autoFit: true,
-        align: 'end',
-      },
-      children: [
-        {
-          uid: 'passengers',
-          kind: 'input',
-          type: 'number',
-          path: 'passengers',
-          defaultValue: 1,
-          size: 1,
-          label: {
-            key: 'travelPlanner.field.passengers.label',
-            default: 'Passengers',
-          },
-          props: {
-            minimum: 1,
-            maximum: 10,
-          },
-          validator: {
-            type: 'number',
-            required: true,
-            minimum: 1,
-            maximum: 10,
-            messages: {
-              invalid: {
-                key: 'travelPlanner.field.passengers.invalid',
-                default: 'Passengers field is required and must be between 1 and 10',
-              },
-              minimum: {
-                key: 'travelPlanner.field.passengers.minimum',
-                default: 'Passengers field must be at least 1',
-              },
-              maximum: {
-                key: 'travelPlanner.field.passengers.maximum',
-                default: 'Passengers field must be at most 10',
-              },
+            invalid: {
+              key: 'travelPlanner.field.departureCountry.required',
+              default: 'Departure Country is required',
             },
           },
         },
-        {
-          uid: 'pets',
-          kind: 'input',
-          type: 'number',
-          path: 'pets',
-          defaultValue: 1,
-          size: 1,
-          label: {
-            key: 'travelPlanner.field.pets.label',
-            default: 'Pets',
-          },
-          props: {
-            minimum: 1,
-            maximum: 3,
-          },
-          validator: {
-            type: 'number',
-            required: true,
-            minimum: 1,
-            maximum: 3,
-            messages: {
-              invalid: {
-                key: 'travelPlanner.field.pets.invalid',
-                default: 'Pets is required and must be between 1 and 3',
-              },
-              minimum: {
-                key: 'travelPlanner.field.pets.minimum',
-                default: 'Pets must be at least 1',
-              },
-              maximum: {
-                key: 'travelPlanner.field.pets.maximum',
-                default: 'Pets must be at most 3',
-              },
+        onChange: 'fieldChange',
+      }),
+      gui.inputs.currency('budget', {
+        label: {
+          key: 'travelPlanner.field.budget.label',
+          default: 'Travel Budget',
+        },
+        step: 100,
+        placeholder: ((d: FunctionWidgetParams<any> | undefined) =>
+          coins[d?.$form?.departureCountry ?? 'US']) as unknown as string,
+        currency: ((d: FunctionWidgetParams<any> | undefined) =>
+          coins[d?.$form?.departureCountry ?? 'US']) as unknown as string,
+        validator: {
+          required: true,
+          minimum: 100,
+          messages: {
+            invalid: {
+              key: 'travelPlanner.field.budget.required',
+              default: 'Budget is required',
+            },
+            minimum: {
+              key: 'travelPlanner.field.budget.minimum',
+              default: 'Budget must be at least $100',
             },
           },
-          include: { when: '$form.includePets === true' },
         },
-      ],
+        onChange: 'fieldChange',
+      }),
+    ],
+    { direction: 'row', autoFit: true, align: 'stretch' },
+  ),
+
+  gui.layouts.grid(
+    [
+      gui.inputs.numberInput('passengers', {
+        defaultValue: 1,
+        size: 1,
+        label: {
+          key: 'travelPlanner.field.passengers.label',
+          default: 'Passengers',
+        },
+        minimum: 1,
+        maximum: 10,
+        validator: {
+          required: true,
+          minimum: 1,
+          maximum: 10,
+          messages: {
+            invalid: {
+              key: 'travelPlanner.field.passengers.invalid',
+              default: 'Passengers field is required and must be between 1 and 10',
+            },
+            minimum: {
+              key: 'travelPlanner.field.passengers.minimum',
+              default: 'Passengers field must be at least 1',
+            },
+            maximum: {
+              key: 'travelPlanner.field.passengers.maximum',
+              default: 'Passengers field must be at most 10',
+            },
+          },
+        },
+      }),
+      gui.inputs.numberInput('pets', {
+        defaultValue: 1,
+        size: 1,
+        label: {
+          key: 'travelPlanner.field.pets.label',
+          default: 'Pets',
+        },
+        minimum: 1,
+        maximum: 3,
+        validator: {
+          required: true,
+          minimum: 1,
+          maximum: 3,
+          messages: {
+            invalid: {
+              key: 'travelPlanner.field.pets.invalid',
+              default: 'Pets is required and must be between 1 and 3',
+            },
+            minimum: {
+              key: 'travelPlanner.field.pets.minimum',
+              default: 'Pets must be at least 1',
+            },
+            maximum: {
+              key: 'travelPlanner.field.pets.maximum',
+              default: 'Pets must be at most 3',
+            },
+          },
+        },
+        include: { when: '$form.includePets === true' },
+      }),
+    ],
+    { direction: 'row', autoFit: true, align: 'end' },
+  ),
+
+  gui.layouts.flex(
+    [
+      gui.inputs.booleanInput('includePets', {
+        size: 3,
+        label: {
+          key: 'travelPlanner.field.includePets',
+          default: 'Include Pets',
+        },
+        onChange: 'fieldChange',
+      }),
+    ],
+    { direction: 'column', align: 'end', justify: 'end' },
+  ),
+
+  gui.inputs.rangeCalendar('preferredDates', {
+    label: {
+      key: 'travelPlanner.field.preferredDates.label',
+      default: 'Select Preferred Dates',
     },
-    {
-      uid: '',
-      kind: 'layout',
-      type: 'flex',
-      props: {
-        direction: 'column',
-        align: 'end',
-        justify: 'end',
-      },
-      children: [
-        {
-          uid: 'includePets',
-          kind: 'input',
-          type: 'toggle',
-          path: 'includePets',
-          size: 3,
-          label: {
-            key: 'travelPlanner.field.includePets',
-            default: 'Include Pets',
-          },
-          on: {
-            change: 'fieldChange',
-          },
+    size: 3,
+    minDate,
+    prevMonthIcon: 'chevron_left',
+    nextMonthIcon: 'chevron_right',
+    prevMonthAriaLabel: {
+      key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
+      default: 'Previous Month',
+    } as unknown as string,
+    nextMonthAriaLabel: {
+      key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
+      default: 'Next Month',
+    } as unknown as string,
+    validator: {
+      required: true,
+      minItems: 1,
+      maxItems: 3,
+      messages: {
+        required: {
+          key: 'travelPlanner.field.preferredDates.required',
+          default: 'Preferred dates are required',
         },
-      ],
-    },
-    {
-      uid: 'preferredDates',
-      kind: 'input',
-      type: 'rangeCalendar',
-      path: 'preferredDates',
-      label: {
-        key: 'travelPlanner.field.preferredDates.label',
-        default: 'Select Preferred Dates',
-      },
-      size: 3,
-      validator: {
-        type: 'array',
-        required: true,
-        minItems: 1,
-        maxItems: 3,
-        messages: {
-          required: {
-            key: 'travelPlanner.field.preferredDates.required',
-            default: 'Preferred dates are required',
-          },
-          invalid: {
-            key: 'travelPlanner.field.preferredDates.required',
-            default: 'Preferred dates are required',
-          },
-          minItems: {
-            key: 'travelPlanner.field.preferredDates.minItems',
-            default: 'Please select at least one date',
-          },
-          maxItems: {
-            key: 'travelPlanner.field.preferredDates.maxItems',
-            default: 'Please select no more than three dates',
-          },
+        invalid: {
+          key: 'travelPlanner.field.preferredDates.required',
+          default: 'Preferred dates are required',
         },
-      },
-      props: {
-        minDate: minDate,
-        icon: 'calendar_month',
-        prevMonthIcon: 'chevron_left',
-        nextMonthIcon: 'chevron_right',
-        prevMonthAriaLabel: {
-          key: 'travelPlanner.field.preferredDates.prevMonthAriaLabel',
-          default: 'Previous Month',
+        minItems: {
+          key: 'travelPlanner.field.preferredDates.minItems',
+          default: 'Please select at least one date',
         },
-        nextMonthAriaLabel: {
-          key: 'travelPlanner.field.preferredDates.nextMonthAriaLabel',
-          default: 'Next Month',
+        maxItems: {
+          key: 'travelPlanner.field.preferredDates.maxItems',
+          default: 'Please select no more than three dates',
         },
-      },
-      on: {
-        change: 'fieldChange',
       },
     },
-    // Submit Action
-    {
-      uid: 'btn-submit',
-      kind: 'action',
-      type: 'button',
-      on: {
-        click: 'handleSubmit',
-      },
-      label: {
-        key: 'travelPlanner.btn.submit',
-        default: 'Search My Trip',
-      },
+    onChange: 'fieldChange',
+  }),
+
+  gui.actions.button({
+    uid: 'btn-submit',
+    label: {
+      key: 'travelPlanner.btn.submit',
+      default: 'Search My Trip',
     },
-  ],
-});
+    on: { click: 'handleSubmit' },
+  }),
+];
 
 /**
  * i18next Resource Bundle
  */
 
-const resources = {
+const resources: Resource = {
   // English (Default)
   en: {
     translation: {
@@ -553,8 +476,8 @@ const resources = {
   },
 };
 
-export const appetizer: Example = {
+export const appetizer = {
   data,
-  form,
+  formDef,
   resources,
 };
