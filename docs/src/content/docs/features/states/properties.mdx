@@ -1,0 +1,33 @@
+---
+title: Properties per state
+description: Override widget props when a named state is active.
+sidebar:
+  order: 2
+---
+
+Per-state property overrides let you change a widget's appearance or behavior when one or more states are active, without duplicating the widget definition.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const states = {
+  limitReached: '$form.users?.length === 5',
+};
+
+gui.inputs.repeater('users', {
+  addLabel: 'Add user',
+  states: {
+    limitReached: { addLabel: "Limit reached, you can't add more" },
+  },
+  // …
+});
+```
+
+When `limitReached` is active, the repeater's add button label changes. When it's inactive, the default `addLabel` applies.
+
+You can override any prop the widget supports — labels, icons, disabled flags, even nested arrays.
+
+## See also
+
+- [Inline `when`](/features/states/inline-when/) — for one-off prop conditions without naming a state.
+- [Composing states](/features/states/composing/) — combining multiple states with AND / OR semantics.

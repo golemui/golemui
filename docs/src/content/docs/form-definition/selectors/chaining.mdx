@@ -1,0 +1,32 @@
+---
+title: Chaining
+description: Compose selectors by chaining scope operators before the leaf method.
+sidebar:
+  order: 2
+---
+
+The selector chain is a small immutable builder. Each scope method (`tag`, `state`, `tagsAnd`, `tagsOr`) returns a new chain with that scope appended; the leaf method (`inputs`, `dropdowns`, etc.) emits the matched selector.
+
+```ts
+gui.selectors.tag('identity').state('loaded').inputs({ disabled: false });
+```
+
+Reads as: **for inputs tagged `identity`, while the `loaded` state is active, set `disabled: false`**.
+
+## Order matters
+
+Scope operators commute in semantics but the convention is **tag first, state second**, for readability. The chain builder is immutable so you can save partial chains and reuse them:
+
+```ts
+const identity = gui.selectors.tag('identity');
+
+const formSelectors = [
+  identity.inputs({ suppressAutomaticPlaceholders: true }),
+  identity.state('readonly').inputs({ readonly: true }),
+];
+```
+
+## See also
+
+- [Scope operators](/form-definition/selectors/scope-operators/) — `tag` and `state` semantics.
+- [Multi-value scopes](/form-definition/selectors/multi-value-scopes/) — `tagsAnd`, `tagsOr`.

@@ -43,38 +43,19 @@ export default defineConfig({
         }
       ],
       sidebar: [
-        {
-          label: 'Guides',
-          autogenerate: { directory: 'guides' },
-        },
-        {
-          label: 'Integration',
-          autogenerate: { directory: 'integration' },
-        },
-        {
-          label: 'Styling',
-          autogenerate: { directory: 'styling' },
-        },
+        { label: 'Getting Started', autogenerate: { directory: 'getting-started' } },
+        { label: 'Integration', autogenerate: { directory: 'integration' } },
+        { label: 'Features', autogenerate: { directory: 'features' } },
+        { label: 'Extending GolemUI', autogenerate: { directory: 'extending' } },
+        { label: 'Form Definition API', autogenerate: { directory: 'form-definition' } },
+        { label: 'Styling', autogenerate: { directory: 'styling' } },
         {
           label: 'Widgets Reference',
           items: [
-            // Each item here is one entry in the navigation menu.
-            {
-              label: 'Display Fields',
-              autogenerate: { directory: 'widgets-reference/display-fields' },
-            },
-            {
-              label: 'Input Fields',
-              autogenerate: { directory: 'widgets-reference/input-fields' },
-            },
-            {
-              label: 'Layout Fields',
-              autogenerate: { directory: 'widgets-reference/layout-fields' },
-            },
-            {
-              label: 'Interactive Fields',
-              autogenerate: { directory: 'widgets-reference/interactive-fields' },
-            },
+            { label: 'Display Widgets', autogenerate: { directory: 'widgets-reference/display-fields' } },
+            { label: 'Input Widgets', autogenerate: { directory: 'widgets-reference/input-fields' } },
+            { label: 'Layout Widgets', autogenerate: { directory: 'widgets-reference/layout-fields' } },
+            { label: 'Action Widgets', autogenerate: { directory: 'widgets-reference/interactive-fields' } },
           ],
         },
       ],

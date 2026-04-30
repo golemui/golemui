@@ -1,0 +1,41 @@
+---
+title: Going Headless
+description: Drop the courtesy CSS layer and build a theme from scratch.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+GolemUI's headless mode gives you full control over the look and feel of every widget. The widget engine — accessibility, focus management, validation, state, events — keeps working without any styles.
+
+To enter headless mode, simply **don't import** `@golemui/gui-components/index.css`. Widgets render unstyled but functional.
+
+## Creating a theme from scratch
+
+Each widget exposes a small, predictable HTML structure with stable class names. Style them directly with regular CSS — no piercing or shadow-DOM tricks needed.
+
+```css
+.gui-form { /* form-level layout */ }
+.gui-widget { /* every widget wrapper */ }
+.gui-widget--horizontal { /* horizontally-aligned widgets */ }
+.gui-button { /* every button */ }
+.gui-textinput { /* every text input */ }
+.gui-dropdown { /* every dropdown */ }
+.gui-repeater__card { /* each repeater card */ }
+```
+
+For the full list of class names, see the **anatomy** block on each [widget reference page](/widgets-reference/input-fields/overview/) — the per-widget HTML markup is shown verbatim.
+
+## Widget anatomy
+
+Every widget reference page (e.g. [Textinput](/widgets-reference/input-fields/textinput/), [Dropdown](/widgets-reference/input-fields/dropdown/)) ends with an **Anatomy** section that shows the rendered HTML. Use these as the contract you style against.
+
+<Aside>
+The widget anatomy is part of GolemUI's API surface — class names won't change between minor versions. If we need to refactor a widget's structure, that's a major-version change.
+</Aside>
+
+## See also
+
+- [Styling Overview](/styling/overview/) — headless vs courtesy layer.
+- [Customization](/styling/customization/) — CSS variables and class-based overrides.

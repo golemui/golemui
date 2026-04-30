@@ -1,0 +1,293 @@
+---
+title: Creating an input widget
+description: Build a custom input widget that reads and writes form data through the engine.
+sidebar:
+  order: 2
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
+
+An **input widget** binds to a `path` in the form data, supports validation, and tracks touched state. The framework helpers (`useInputWidget` in React, `InputWidgetAdapter` in Angular and Lit) handle data binding for you — your widget calls a few methods, the engine does the rest. The example we'll walk through is `productRating` — a star-based rating control.
+
+## Widget definition
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.custom('productRating', 'product.rating', {
+  maxRating: 10,
+  validator: { type: 'number', required: true },
+});
+```
+
+The `maxRating` prop controls how many stars are displayed. The second argument (`'product.rating'`) tells the form engine where to store the selected value (a number from 1 to `maxRating`). The `validator` adds built-in number validation — in this case, making the field required.
+
+## Key concepts
+
+- `useInputWidget` (React) and `InputWidgetAdapter` (Angular / Lit) handle data binding, validation, and touched tracking automatically.
+- Call `onValueChanged(newValue)` to update the form data.
+- Call `onBlur()` to mark the field as touched and trigger validation (when `validateOn` includes `'blur'`).
+- `errors` is an array of validation error messages, and `isTouched` tracks whether the user has interacted with the field.
+
+| Method                          | Purpose                                                          |
+| ------------------------------- | ---------------------------------------------------------------- |
+| `onValueChanged(value)`         | Update the form data at the widget's `path`.                     |
+| `onBlur()`                      | Mark the field as touched and trigger blur-time validation.      |
+| `templateData.errors`           | Array of validation error messages for this field.               |
+| `templateData.touched`          | Whether the user has interacted with the field.                  |
+| `injectValidationIssues(issues)`| Programmatically inject custom validation errors.                |
+
+## Implementation
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // ProductRating.tsx
+    import * as Core from '@golemui/core';
+    import { useInputWidget } from '@golemui/react';
+
+    interface ProductRatingProps {
+      maxRating: number;
+    }
+
+    export function ProductRating(widgetInstance: Core.WithWidget) {
+      const widget = widgetInstance.widget as Core.InputWidget<number>;
+      const { uid, value, errors, isTouched, templateData, onValueChanged, onBlur } =
+        useInputWidget<number, ProductRatingProps>(widget);
+
+      const maxRating = templateData.maxRating || 5;
+
+      return (
+        <div className="product-rating" style={{ flex: templateData.size }}>
+          <div className="product-rating__widget" id={uid}>
+            <div className="product-rating__stars" onBlur={onBlur} tabIndex={0}>
+              {Array.from({ length: maxRating }, (_, i) => i + 1).map((star) => (
+                <span
+                  key={star}
+                  role="button"
+                  className={`product-rating__star ${
+                    star <= (value || 0) ? 'product-rating__star--active' : ''
+                  }`}
+                  onClick={() => onValueChanged(star)}
+                >
+                  {star <= (value || 0) ? '★' : '☆'}
+                </span>
+              ))}
+            </div>
+            {isTouched && errors.length > 0 && (
+              <div className="product-rating__errors">
+                {errors.map((error, i) => (
+                  <span key={i} className="product-rating__error">{error}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+    ```
+
+    `useInputWidget` returns:
+    - **`value`** — the current value from the form data (type-safe via the generic `<number>`)
+    - **`errors`** — validation error messages as `string[]`
+    - **`isTouched`** — whether the user has interacted with the field
+    - **`templateData`** — your custom props (`maxRating`) plus engine-managed properties (`label`, `disabled`, `readonly`, etc.)
+    - **`onValueChanged(newValue)`** — updates the form data at the widget's `path`
+    - **`onBlur()`** — marks the field as touched and triggers validation
+    - **`onFilter(value)`** — emits a filter event (useful for search/autocomplete widgets)
+    - **`injectValidationIssues(issues)`** — programmatically inject custom validation errors
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // product-rating.component.ts
+    import { CommonModule } from '@angular/common';
+    import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+    import * as Angular from '@golemui/angular';
+    import * as Core from '@golemui/core';
+
+    interface ProductRatingProps {
+      maxRating: number;
+    }
+
+    @Component({
+      standalone: true,
+      selector: 'app-product-rating',
+      imports: [CommonModule],
+      providers: [Angular.InputWidgetAdapter],
+      host: {
+        class: 'product-rating',
+        '[style.flex]': 'this.adapter.templateData().size',
+      },
+      template: `
+        @let templateData = adapter.templateData();
+        @let maxRating = templateData.maxRating || 5;
+
+        <div class="product-rating__widget" [id]="widget.uid">
+          <div class="product-rating__stars" (blur)="onBlur()" tabindex="0">
+            @for (star of stars(maxRating); track star) {
+              <span
+                role="button"
+                class="product-rating__star"
+                [class.product-rating__star--active]="star <= (templateData.value || 0)"
+                (click)="selectRating(star)"
+              >
+                {{ star <= (templateData.value || 0) ? '★' : '☆' }}
+              </span>
+            }
+          </div>
+          @if (templateData.touched && templateData.errors?.length) {
+            <div class="product-rating__errors">
+              @for (error of templateData.errors; track error) {
+                <span class="product-rating__error">{{ error }}</span>
+              }
+            </div>
+          }
+        </div>
+      `,
+    })
+    export class ProductRatingComponent
+      implements OnInit, OnDestroy, Core.WithWidget
+    {
+      widget!: Core.InputWidget<number>;
+
+      protected adapter: Angular.InputWidgetAdapter<number, ProductRatingProps> =
+        inject(Angular.InputWidgetAdapter);
+
+      ngOnInit(): void {
+        this.adapter.init(this.widget);
+      }
+
+      ngOnDestroy(): void {
+        this.adapter.destroy();
+      }
+
+      stars(count: number): number[] {
+        return Array.from({ length: count }, (_, i) => i + 1);
+      }
+
+      selectRating(star: number): void {
+        this.adapter.valueChanged(star);
+      }
+
+      onBlur(): void {
+        this.adapter.onBlur();
+      }
+    }
+    ```
+
+    The `InputWidgetAdapter` manages the reactive `templateData` signal, which includes:
+    - **`value`** — current form data at the widget's `path`
+    - **`errors`** — validation errors
+    - **`touched`** — interaction tracking
+    - All your custom props from the widget definition
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // product-rating.element.ts
+    import { html, LitElement, nothing } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { consume, provide } from '@lit/context';
+    import { Subscription } from 'rxjs';
+    import * as Core from '@golemui/core';
+    import * as Lit from '@golemui/lit';
+
+    interface ProductRatingProps {
+      maxRating: number;
+    }
+
+    @customElement('app-product-rating')
+    export class ProductRatingElement
+      extends LitElement
+      implements Core.WithWidget
+    {
+      widget!: Core.InputWidget<number>;
+
+      @consume({ context: Lit.formContext })
+      formContext!: Lit.LitFormContext<any>;
+
+      @provide({ context: Lit.inputContext })
+      adapter = new Lit.InputWidgetAdapter<number, ProductRatingProps>();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-rating');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        const { value, errors, touched, maxRating } =
+          this.adapter.templateData;
+        const stars = maxRating || 5;
+
+        return html`
+          <div class="product-rating__widget" id=${this.widget.uid}>
+            <div
+              class="product-rating__stars"
+              tabindex="0"
+              @blur=${() => this.adapter.onBlur()}
+            >
+              ${Array.from({ length: stars }, (_, i) => i + 1).map(
+                (star) => html`
+                  <span
+                    role="button"
+                    class="product-rating__star ${star <= (value || 0)
+                      ? 'product-rating__star--active'
+                      : ''}"
+                    @click=${() => this.adapter.valueChanged(star)}
+                  >
+                    ${star <= (value || 0) ? '★' : '☆'}
+                  </span>
+                `,
+              )}
+            </div>
+            ${touched && errors?.length
+              ? html`
+                  <div class="product-rating__errors">
+                    ${errors.map(
+                      (error: string) =>
+                        html`<span class="product-rating__error"
+                          >${error}</span
+                        >`,
+                    )}
+                  </div>
+                `
+              : nothing}
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Result
+
+Try clicking the stars to select a rating, then click away to trigger validation:
+
+<Demo src="/template/index.html?form=template/custom-widgets/product-rating.json" minHeight="80" />
+
+## See also
+
+- [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — `gui.inputs.custom(...)` reference.
+- [Features / Validators](/features/validators/) — validators on custom inputs.

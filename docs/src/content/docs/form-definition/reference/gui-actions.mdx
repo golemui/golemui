@@ -1,0 +1,18 @@
+---
+title: gui.actions reference
+description: Every action shortcut.
+sidebar:
+  order: 1
+---
+
+| Shortcut                 | Renders                                | Reference                                                       |
+| ------------------------ | -------------------------------------- | --------------------------------------------------------------- |
+| `gui.actions.button`     | a button (typed `ActionDecorator` props) | [Button](/widgets-reference/interactive-fields/button/)         |
+| `gui.actions.submitButton` | a button preconfigured with `onClick: 'submit'` | [Button](/widgets-reference/interactive-fields/button/) |
+| `gui.actions.custom`     | your custom action                     | [Custom Widgets](/form-definition/custom-widgets/)              |
+
+Common props: `label` (Localizable), `icon`, `iconPosition`, `disabled`, `uid`, `tags`, `onClick` (`'submit'` literal or function), or the legacy `on: { click: '<eventName>' }` for arbitrary event names.
+
+## See also
+
+- [Events](/form-definition/events/) — wiring `onClick` and friends.

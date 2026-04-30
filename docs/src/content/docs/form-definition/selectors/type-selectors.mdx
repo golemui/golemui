@@ -1,0 +1,33 @@
+---
+title: Type selectors
+description: Match every widget of a given type and apply a decorator.
+sidebar:
+  order: 1
+---
+
+Type selectors are the leaf methods of the selector chain — they match every widget of a given type and apply a decorator config.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.selectors.inputs({ suppressAutomaticLabels: true });   // every input
+gui.selectors.dropdowns({ height: 300 });                   // every dropdown
+gui.selectors.dateInputs({ dayFormat: '2-digit' });         // every dateInput
+gui.selectors.actions({ disabled: false });                 // every action
+```
+
+The leaf method names mirror the `gui.<group>.*` shortcuts — `gui.inputs.textInput` corresponds to `gui.selectors.textInputs`, and so on.
+
+## Targeting a single widget
+
+Each leaf has a `<type>ByUid` variant that targets a specific widget:
+
+```ts
+gui.selectors.dropdownByUid('country', { itemRenderer: 'countryItemRenderer' });
+gui.selectors.textInputByUid('username', { autocomplete: 'username' });
+```
+
+## See also
+
+- [Scope operators](/form-definition/selectors/scope-operators/) — restricting matches to a tag or state.
+- [Reference / `gui.selectors`](/form-definition/reference/gui-selectors/) — every type selector method.

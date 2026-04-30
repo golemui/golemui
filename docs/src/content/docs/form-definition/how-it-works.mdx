@@ -1,0 +1,21 @@
+---
+title: How it works
+description: Inside the resolver pipeline that turns your gui.* shortcuts into rendered widgets.
+sidebar:
+  order: 1
+---
+
+When you pass a `formDef` array to `<gui-form>`, the engine runs it through a small, predictable pipeline:
+
+1. **Selector resolution.** Selectors from `formSelectors` (and the chain root `gui.selectors`) match against shortcut entries by type, tag, or uid. Matching selectors emit decorator overrides.
+2. **Widget merging.** For each shortcut, decorator overrides are merged with the shortcut's own props in a defined precedence order (sensible defaults < selector decorators < shortcut props < per-state overrides).
+3. **Widget mapping.** The merged decorator is mapped to a core `FormWidget` — the same shape JSON forms produce.
+4. **Render.** The framework adapter renders each widget through its registered loader, passes data and event hooks, and reactively updates as state changes.
+
+You don't usually need to know any of this. But if you start writing selectors or composing complex states, the precedence order above is what to keep in mind.
+
+## See also
+
+- [Selectors](/form-definition/selectors/) — the behavior layer.
+- [Sensible defaults](/form-definition/selectors/sensible-defaults/) — how the engine fills in labels and placeholders for you.
+- [Precedence](/form-definition/selectors/precedence/) — the full merge order.

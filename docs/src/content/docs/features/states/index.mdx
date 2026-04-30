@@ -1,0 +1,30 @@
+---
+title: States
+description: Declare named conditions and reuse them across your form to gate widgets, override properties, and compose behavior.
+sidebar:
+  order: 8
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+States are named boolean expressions evaluated against the live form data. They let you describe complex conditional behavior once and reuse it across many widgets — without scattering inline conditionals throughout your form definition.
+
+```ts
+const states = {
+  hasDiscount: '$form.hasDiscountCode === true',
+  isAdult: '$form.driverAge >= 18',
+};
+```
+
+You can then refer to these names in `include` / `exclude` rules, in per-widget property overrides, and in event handlers. See the sub-pages for each pattern.
+
+## In this section
+
+- **[Include & Exclude](/features/states/include-exclude/)** — gate which widgets render.
+- **[Properties](/features/states/properties/)** — override widget props per state.
+- **[Inline `when`](/features/states/inline-when/)** — ad-hoc conditionals without naming a state.
+- **[Composing states](/features/states/composing/)** — combine multiple state expressions.
+
+<Aside>
+States are part of the **Form Definition API** as well — see [States in the form definition](/form-definition/states/) for declaring them programmatically with `gui.*`.
+</Aside>

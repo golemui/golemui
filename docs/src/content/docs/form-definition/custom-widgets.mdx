@@ -1,0 +1,43 @@
+---
+title: Custom Widgets
+description: Plug your own widgets into the form definition with gui.<group>.custom().
+sidebar:
+  order: 4
+---
+
+Each shortcut group exposes a `.custom()` factory for widgets you've implemented yourself. The shape mirrors the built-in shortcuts but takes the widget `type` as the first argument.
+
+## Per-group factories
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+// Custom layout
+gui.layouts.custom('productCard', [/* children */], { title: 'My Product' });
+
+// Custom input
+gui.inputs.custom('productRating', 'product.rating', {
+  maxRating: 10,
+  validator: { type: 'number', required: true },
+});
+
+// Custom display
+gui.displays.custom('productDescription', {
+  img: 'assets/product.png',
+  description: '### Cool product',
+});
+
+// Custom action
+gui.actions.custom('productShare', { onClick: 'shareEvent' });
+```
+
+The first arg is the widget `type` string — it must match the key you register in `formConfig.widgetLoaders`.
+
+## Validators on custom inputs
+
+Custom inputs accept a `validator` prop typed as the union of all built-in validator types. Use `{ type: 'string'/'number'/'boolean'/'array'/'custom', ... }`.
+
+## See also
+
+- [Extending GolemUI / Widgets](/extending/widgets/overview/) — implementing the widget itself.
+- [Features / Widget Loaders](/features/widget-loaders/) — registering the loader.

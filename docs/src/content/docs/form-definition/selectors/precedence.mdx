@@ -1,0 +1,34 @@
+---
+title: Precedence
+description: How sensible defaults, selectors, shortcut props, and per-state overrides combine.
+sidebar:
+  order: 6
+---
+
+When the engine resolves a widget's final props, it merges several sources in this order (later sources win):
+
+1. **Sensible defaults** — auto-label, auto-placeholder, auto-stack, auto-submit.
+2. **Type selectors** — broad rules from `gui.selectors.<type>(...)`.
+3. **Tag selectors** — `gui.selectors.tag('...').<type>(...)`.
+4. **State selectors** — `gui.selectors.state('...').<type>(...)`.
+5. **Combined-scope selectors** — `gui.selectors.tag('...').state('...').<type>(...)`.
+6. **`<type>ByUid` selectors** — most specific selector match.
+7. **Shortcut props** — what you pass on the call site, e.g. `gui.inputs.textInput('name', { label: 'Full name' })`.
+8. **Per-state property overrides** — `states: { foo: { label: '...' } }` on the shortcut itself, applied when the state is active.
+
+## Reading the order
+
+- The deeper into the chain a rule is, the higher its specificity (and thus its precedence).
+- Per-state overrides on the shortcut itself sit **above** any selector — they're the closest thing to "inline conditional props".
+- A `byUid` selector beats every broader selector but loses to shortcut props and per-state overrides.
+
+## Practical implications
+
+- Don't try to override per-widget styling from a tag selector if the shortcut explicitly sets the same prop. The shortcut wins.
+- Use selectors for **defaults**; use shortcut props for **overrides**.
+- Use per-state overrides on the shortcut itself for **dynamic** behavior tied to state changes.
+
+## See also
+
+- [Sensible defaults](/form-definition/selectors/sensible-defaults/) — what's auto-applied at level 1.
+- [Form Definition / States](/form-definition/states/) — declaring states the engine evaluates.

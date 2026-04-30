@@ -1,0 +1,106 @@
+---
+title: Item Renderers
+description: Implement and register custom item renderers for dropdowns, lists, and other choice widgets.
+sidebar:
+  order: 1
+---
+
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
+
+Item renderers are framework-specific components that the form engine instantiates to render each item of a dropdown, list, or radiogroup. The engine forwards the raw item object plus useful metadata (selected state, disabled state, the active label/value fields).
+
+## The contract
+
+Each framework defines a small interface:
+
+| Framework | Type                       | Receives                                            |
+| --------- | -------------------------- | --------------------------------------------------- |
+| React     | `ReactItemRenderer<T>`     | `{ item: T, isSelected, isDisabled, ... }` props    |
+| Angular   | `AngularItemRenderer<T>`   | An `Angular.itemRenderer` adapter on init           |
+| Lit       | `LitItemRenderer<T>`       | A custom element that consumes `item` via property |
+
+## Example — country renderer
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from 'react';
+    import type { ReactItemRenderer } from '@golemui/react';
+
+    type Country = { id: string; flag: string; label: string };
+
+    export const CountryItemRenderer: ReactItemRenderer<Country> = ({ item }) => (
+      <div className="country-item">
+        <span className="country-item__flag">{item.flag}</span>
+        <span className="country-item__label">{item.label}</span>
+      </div>
+    );
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import * as Angular from '@golemui/angular';
+
+    type Country = { id: string; flag: string; label: string };
+
+    @Component({
+      standalone: true,
+      selector: 'country-item-renderer',
+      template: `
+        <div class="country-item">
+          <span class="country-item__flag">{{ item.flag }}</span>
+          <span class="country-item__label">{{ item.label }}</span>
+        </div>
+      `,
+    })
+    export class CountryItemRenderer implements Angular.AngularItemRenderer<Country> {
+      item!: Country;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement, property } from 'lit/decorators.js';
+
+    type Country = { id: string; flag: string; label: string };
+
+    @customElement('country-item-renderer')
+    export class CountryItemRenderer extends LitElement {
+      @property({ attribute: false }) item!: Country;
+
+      override render() {
+        return html`
+          <div class="country-item">
+            <span class="country-item__flag">${this.item.flag}</span>
+            <span class="country-item__label">${this.item.label}</span>
+          </div>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Registering the renderer
+
+Pass it through `formConfig.itemRenderers`, then reference its name from a widget's `itemRenderer` prop:
+
+```ts
+const formConfig = {
+  itemRenderers: { countryItemRenderer: CountryItemRenderer },
+};
+
+const formDef = [
+  gui.inputs.dropdown('country', {
+    items: [/* ... */],
+    itemRenderer: 'countryItemRenderer',
+  }),
+];
+```
+
+## See also
+
+- [Features / Item Renderers](/features/item-renderers/) — wiring renderers in `formConfig`.
+- [Getting Started / Custom renderer for the car list](/getting-started/rent-a-car-renderer/) — a full step-by-step example.

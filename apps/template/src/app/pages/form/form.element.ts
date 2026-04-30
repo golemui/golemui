@@ -9,6 +9,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import snarkdown from 'snarkdown';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
+import { carItemRenderer } from '../../item-renderers/car.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
@@ -49,6 +50,7 @@ export class FormElement extends LitElement {
     productItemRenderer: productItemRenderer,
     airportItemRenderer: airportItemRenderer,
     countryItemRenderer: countryItemRenderer,
+    carItemRenderer: carItemRenderer,
   };
   middlewares = [AppsShared.loggerMiddleware];
   customValidators: GuiValidators.CustomValidatorSchemas = {

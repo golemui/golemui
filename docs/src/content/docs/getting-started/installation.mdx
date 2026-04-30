@@ -1,0 +1,185 @@
+---
+title: Installation
+description: Scaffold a project, install GolemUI, and render your first form.
+sidebar:
+  order: 0
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+
+import { Steps } from '@astrojs/starlight/components';
+import DslTabs from '../../../components/DslTabs.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+
+GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files or other data sources. It provides a free set of UI widgets with support for React, Angular, and Lit.
+
+This guide walks you from an empty directory to a rendered form in five steps.
+
+<Steps>
+
+1.  ##### Scaffold a new project
+
+    Use Vite (or your favourite scaffolder) to create a fresh project for your framework. For example, with Vite:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```bash
+        npm create vite@latest my-form -- --template react-ts
+        cd my-form && npm install
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```bash
+        npx @angular/cli new my-form
+        cd my-form
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```bash
+        npm create vite@latest my-form -- --template lit-ts
+        cd my-form && npm install
+        ```
+      </Fragment>
+    </IntegrationTabs>
+
+2.  ##### Install GolemUI and the Golem Widgets
+
+    Pick the adapter package for the framework you're using.
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```bash
+        npm i @golemui/core @golemui/react @golemui/gui-react --save
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```bash
+        npm i @golemui/core @golemui/angular @golemui/gui-angular --save
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```bash
+        npm i @golemui/core @golemui/lit @golemui/gui-lit --save
+        ```
+      </Fragment>
+    </IntegrationTabs>
+
+3.  ##### Import the Golem Widgets styles
+
+    Load the CSS file directly in your HTML or import it in your Sass/CSS file.
+
+    ```scss
+    @import '@golemui/core/styles/index.css';
+    ```
+
+4.  ##### Define a form and render it
+
+    The easiest way to define a form is the **Programmatic** API, an array of `gui.*` shortcuts. The same form can also be defined as JSON if you prefer.
+
+    <DslTabs>
+      <Fragment slot="dx">
+        <IntegrationTabs>
+          <Fragment slot="react">
+            ```ts
+            import { gui } from '@golemui/gui-shared';
+            import * as React from '@golemui/gui-react';
+
+            const formDef = [gui.inputs.textInput('username')];
+            const formData = { username: 'golemui' };
+            const formConfig = { widgetLoaders: React.widgetLoaders };
+
+            export function FormPage() {
+              return (
+                <div>
+                  <React.FormComponent
+                    formDef={formDef}
+                    data={formData}
+                    formConfig={formConfig}
+                  />
+                </div>
+              );
+            }
+            ```
+          </Fragment>
+          <Fragment slot="angular">
+            ```ts
+            import { Component } from '@angular/core';
+            import { CommonModule } from '@angular/common';
+            import { gui } from '@golemui/gui-shared';
+            import * as Angular from '@golemui/gui-angular';
+
+            @Component({
+              imports: [CommonModule, Angular.FormComponent],
+              selector: 'app-dynamic-form',
+              template: `<gui-form
+                [formDef]="formDef"
+                [data]="formData"
+                [formConfig]="formConfig"
+              ></gui-form>`,
+            })
+            export class AppFormPage {
+              protected formDef = [gui.inputs.textInput('username')];
+              protected formData = { username: 'golemui' };
+              protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+            }
+            ```
+          </Fragment>
+          <Fragment slot="lit">
+            ```ts
+            import { LitElement, html } from 'lit';
+            import { customElement } from 'lit/decorators.js';
+            import { gui } from '@golemui/gui-shared';
+            import * as Lit from '@golemui/gui-lit';
+
+            @customElement('lit-form')
+            export class FormElement extends LitElement {
+              formDef = [gui.inputs.textInput('username')];
+              formData = { username: 'golemui' };
+              formConfig = { widgetLoaders: Lit.widgetLoaders };
+
+              override createRenderRoot() {
+                return this;
+              }
+
+              render() {
+                return html`
+                  <gui-form
+                    .formDef=${this.formDef}
+                    .data=${this.formData}
+                    .formConfig=${this.formConfig}
+                  ></gui-form>
+                `;
+              }
+            }
+            ```
+          </Fragment>
+        </IntegrationTabs>
+      </Fragment>
+      <Fragment slot="json">
+        Create a JSON file with your form definition and pass it to the form component:
+
+        ```json
+        {
+          "form": [
+            { "kind": "input", "type": "textinput", "path": "username" }
+          ]
+        }
+        ```
+
+        Then load and render it in your framework. See the [Integration](/integration/overview/) section for framework-specific setup.
+      </Fragment>
+    </DslTabs>
+
+5.  ##### That's it
+
+    Run your dev server and you'll see your form rendered in the browser.
+
+    <Demo src="/template/index.html?form=template/getting-started/quick-start.json" />
+
+</Steps>
+
+## Next steps
+
+Ready for something more substantial? Walk through the [Rent a Car form tutorial](/getting-started/rent-a-car-introduction/), where you'll build a real, multi-field form with conditional logic, custom item renderers, async data loading, and form submission.
+
+For framework-specific configuration (React, Angular, Lit), see the [Integration](/integration/overview/) section.

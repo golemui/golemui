@@ -1,0 +1,40 @@
+---
+title: 'Rent a car: Introduction'
+description: An end-to-end tutorial that builds a real Rent a Car form with conditional logic, custom item renderers, async data, and submission.
+sidebar:
+  order: 2
+---
+
+This tutorial walks through building a complete **Rent a Car** form. By the end, you'll have used most of the features GolemUI offers — layout, validators, states, custom item renderers, async data with debouncing, and form submission — in one connected example.
+
+## What you'll build
+
+A form that lets a customer:
+
+- pick a **car model** from a dropdown (search-as-you-type, custom item renderer with image and details),
+- pick a **collect-from office** dropdown,
+- toggle **"Choose a different return location"** to reveal a **return-to office** dropdown,
+- pick a **rental dates range** (a range calendar),
+- pick a **rental type** from a radio group,
+- confirm the driver is **aged over 25** with a toggle,
+- toggle **"I have a discount code"** to reveal a discount code input,
+- submit the form, with the submit button disabled until everything is valid.
+
+## Tutorial chapters
+
+Work through them in order — each chapter builds on the previous one.
+
+1. **[Parts of the form](/getting-started/rent-a-car-form/)** — author the static layout with all the input widgets.
+2. **[States and conditional rendering](/getting-started/rent-a-car-states/)** — wire the toggles to show/hide fields, and disable the submit button when invalid.
+3. **[A custom item renderer](/getting-started/rent-a-car-renderer/)** — design the per-car list item with image, name, and price.
+4. **[Search as you type](/getting-started/rent-a-car-search/)** — load the car list from a service, filter server-side, debounce the input.
+5. **[Submitting the form](/getting-started/rent-a-car-submitting/)** — capture the submit event and read the data.
+
+## Layout convention
+
+This tutorial follows the GolemUI default: **`gui.layouts.grid` for rows** (CSS subgrid keeps labels and inputs aligned), **`gui.layouts.flex` for columns**.
+
+## See also
+
+- [Form Definition API](/form-definition/overview/) — every shortcut you'll see in this tutorial.
+- [Features](/features/overview/) — deep dives into each capability you'll touch.

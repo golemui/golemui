@@ -1,0 +1,42 @@
+---
+title: Include & Exclude
+description: Gate which widgets render based on named states.
+sidebar:
+  order: 1
+---
+
+Use `include` to render a widget only when a named state is active; use `exclude` to render it only when it is **not** active.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const states = {
+  hasDiscount: '$form.hasDiscountCode === true',
+};
+
+const formDef = [
+  gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+  gui.inputs.textInput('discountCode', {
+    label: 'Discount code',
+    include: { in: ['hasDiscount'] },
+  }),
+];
+```
+
+The discount-code input only renders when `$form.hasDiscountCode === true`.
+
+## Active-state lists vs reactive `when`
+
+Both `include` and `exclude` accept either a list of state names or a one-off reactive expression:
+
+```ts
+include: { in: ['hasDiscount'] }       // active-state list
+include: { when: '$form.age >= 18' }   // ad-hoc expression
+```
+
+Use named states when the same condition appears in multiple places. Use `when` for one-shot conditions (see [Inline `when`](/features/states/inline-when/)).
+
+## See also
+
+- [States overview](/features/states/) — declaring and composing states.
+- [Form Definition API / Conditionals](/form-definition/conditionals/) — full `include` / `exclude` reference.

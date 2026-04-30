@@ -1,0 +1,45 @@
+---
+title: Composing states
+description: Combine multiple state expressions with AND / OR semantics.
+sidebar:
+  order: 4
+---
+
+States are simple boolean expressions, so you can compose them inline with `&&` and `||`:
+
+```ts
+const states = {
+  isAdult: '$form.age >= 18',
+  hasLicense: '$form.licenseNumber != null',
+  canDrive: '$form.age >= 18 && $form.licenseNumber != null',
+};
+```
+
+You can also compose by referencing other states — but the convention in GolemUI is to **define one canonical expression per state**. Don't reference state names inside other state expressions.
+
+## Combining states in `include`
+
+The `in` form of `include` is an array; multiple names are combined with **AND**:
+
+```ts
+include: { in: ['isAdult', 'hasLicense'] } // both must be active
+```
+
+For OR semantics, write a composite state.
+
+## Combining states with prop overrides
+
+Per-state property overrides apply additively. If two states are active and both override the same prop, the **last** one wins (declaration order in `states: {}`).
+
+```ts
+states: {
+  busy: { disabled: true },
+  loading: { disabled: true, label: 'Loading…' },
+},
+```
+
+If both `busy` and `loading` are active, the widget shows `Loading…` and is disabled.
+
+## See also
+
+- [Form Definition API / States](/form-definition/states/) — declaring states with `gui.*`.

@@ -1,0 +1,55 @@
+---
+title: Form Definition API
+description: A tour of the gui.* programmatic API — the canonical way to define forms with GolemUI.
+sidebar:
+  order: 0
+---
+
+The **Form Definition API** is the Programmatic surface for declaring forms in GolemUI. You import a single `gui` namespace from `@golemui/gui-shared` and compose your form as an array of typed shortcut calls.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formDef = [
+  gui.inputs.textInput('name', { label: 'Name' }),
+  gui.inputs.dropdown('country', { items: ['US', 'CA'] }),
+  gui.actions.submitButton({ label: 'Submit' }),
+];
+```
+
+The same form can be written in JSON; both feed into the same `<gui-form>` component. The Programmatic API gives you compile-time safety, IDE autocomplete, and a much more compact syntax.
+
+## The `gui` namespace
+
+The API is grouped by widget kind:
+
+| Group           | What it produces                                                              |
+| --------------- | ----------------------------------------------------------------------------- |
+| `gui.inputs`    | Input widgets — text input, number, select, dropdown, calendar, repeater, etc. |
+| `gui.actions`   | Buttons and other action widgets.                                             |
+| `gui.displays`  | Display widgets — alert, markdown text, custom render functions.              |
+| `gui.layouts`   | Containers — flex, grid, tabs, accordion.                                     |
+| `gui.selectors` | Behavior layer — decorate widgets by type, tag, or uid.                       |
+
+Each input/action/display/layout group also exposes a `.custom(...)` method for plugging in your own widgets.
+
+## Read the rest of this section
+
+- **[How it works](/form-definition/how-it-works/)** — the resolver pipeline.
+- **[Tags](/form-definition/tags/)** — labelling widgets for the selector layer.
+- **[Selectors](/form-definition/selectors/)** — the behavior layer (`gui.selectors`).
+- **[Custom Widgets](/form-definition/custom-widgets/)** — `gui.<group>.custom(...)`.
+- **[States](/form-definition/states/)** — declaring named conditions.
+- **[Conditionals](/form-definition/conditionals/)** — `include`, `exclude`, `when`.
+- **[Events](/form-definition/events/)** — `onClick`, `onChange`, `onLoad`, `onFilter`.
+- **API Reference**:
+  - [`gui.inputs`](/form-definition/reference/gui-inputs/)
+  - [`gui.actions`](/form-definition/reference/gui-actions/)
+  - [`gui.displays`](/form-definition/reference/gui-displays/)
+  - [`gui.layouts`](/form-definition/reference/gui-layouts/)
+  - [`gui.selectors`](/form-definition/reference/gui-selectors/)
+
+## See also
+
+- [Getting Started / Installation](/getting-started/installation/) — your first DX-driven form.
+- [Features Overview](/features/overview/) — what `<gui-form>` does with your form definition.

@@ -1,0 +1,38 @@
+---
+title: 'Rent a car: Parts of the form'
+description: Lay out every input widget the Rent a Car form needs, using grid for rows and flex for columns.
+sidebar:
+  order: 3
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+import DslCode from '../../../components/DslCode.astro';
+import formJson from '../../../../public/template/getting-started/rent-a-car/01-form.json?raw';
+import formDx from '../../../../public/template/getting-started-dx/rent-a-car/01-form.ts?raw';
+export const configJson = '01-form.json';
+export const configDx = '01-form.ts';
+
+In this chapter you'll declare every input the form needs, in a sensible order, with no logic yet. The form ends up rendering all the pieces but doesn't react to anything — that's what the next chapters add.
+
+## Layout convention
+
+GolemUI ships two layouts that cover most needs:
+
+- **`gui.layouts.grid`** for **rows**. Subgrid alignment keeps labels, inputs, and validation messages aligned across all children in a row.
+- **`gui.layouts.flex`** for **columns**. Lighter, more flexible for vertical stacks.
+
+The top-level form definition is implicitly stacked vertically (the engine adds an auto-stack — see [Sensible defaults](/form-definition/selectors/sensible-defaults/)), so we only need a `grid` when we want fields side-by-side.
+
+## The form
+
+The two **office** dropdowns sit side-by-side in a row, the rest stacks vertically.
+
+<DslCode dxCode={formDx} jsonCode={formJson} dxTitle={configDx} jsonTitle={configJson} />
+
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/01-form.json" minHeight="700" />
+
+Notice that the **Return to office** dropdown is visible all the time, and the **Discount code** input is too. We'll fix both with states in the next chapter.
+
+## Next
+
+[States and conditional rendering →](/getting-started/rent-a-car-states/)

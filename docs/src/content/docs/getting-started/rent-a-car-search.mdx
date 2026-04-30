@@ -1,0 +1,98 @@
+---
+title: 'Rent a car: Search as you type'
+description: Load the car list from a service, filter server-side as the user types, and debounce the dropdown input to avoid flooding the network.
+sidebar:
+  order: 6
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+import DslCode from '../../../components/DslCode.astro';
+import searchJson from '../../../../public/template/getting-started/rent-a-car/04-search.json?raw';
+import searchDx from '../../../../public/template/getting-started-dx/rent-a-car/04-search.ts?raw';
+export const configJson = '04-search.json';
+export const configDx = '04-search.ts';
+
+Hard-coding the car list works for a demo but real applications fetch it from a service. The dropdown widget has two events that hook into async data:
+
+- **`onLoad`** — fired when the dropdown is opened with no items loaded yet.
+- **`onFilter`** — fired as the user types in the search input.
+
+Wire both to event names, and handle them in your application's `formEvent` callback.
+
+## Step 1 — A simple service stub
+
+Pretend you have a service that returns cars matching a query string. We'll fake it with a `setTimeout` to emulate network latency:
+
+```ts
+type Car = { id: string; label: string; img: string; price: number };
+
+const ALL_CARS: Car[] = [
+  { id: 'compact', label: 'Compact', img: '🚗', price: 35 },
+  { id: 'suv', label: 'SUV', img: '🚙', price: 75 },
+  { id: 'convertible', label: 'Convertible', img: '🏎️', price: 110 },
+  { id: 'luxury', label: 'Luxury', img: '🚘', price: 180 },
+  { id: 'minivan', label: 'Minivan', img: '🚐', price: 95 },
+  { id: 'pickup', label: 'Pickup', img: '🛻', price: 85 },
+];
+
+function searchCars(query: string): Promise<Car[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const q = query.toLowerCase();
+      resolve(ALL_CARS.filter((c) => c.label.toLowerCase().includes(q)));
+    }, 250);
+  });
+}
+```
+
+## Step 2 — Wire `onLoad` and `onFilter`
+
+In the form definition, attach event handlers:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.dropdown('car', {
+  label: 'Select car',
+  labelField: 'label',
+  valueField: 'id',
+  itemRenderer: 'carItemRenderer',
+  inputDebounce: 300,
+  on: { load: 'loadCars', filter: 'filterCars' },
+});
+```
+
+The `inputDebounce: 300` prop tells the dropdown to wait 300ms after the user stops typing before firing `onFilter`.
+
+## Step 3 — Handle the events
+
+In your `formEvent` callback, populate the dropdown by emitting an `update` for the dropdown's `items`:
+
+```ts
+async function handleFormEvent(event) {
+  if (event.name === 'loadCars' || event.name === 'filterCars') {
+    const query = event.detail ?? '';
+    const cars = await searchCars(query);
+    event.update({ path: 'car', items: cars });
+  }
+}
+```
+
+Pass `handleFormEvent` to `<gui-form>` via the `formEvent` callback.
+
+## Result
+
+<DslCode dxCode={searchDx} jsonCode={searchJson} dxTitle={configDx} jsonTitle={configJson} />
+
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/04-search.json" minHeight="800" />
+
+Type in the dropdown — the list filters server-side after a 300ms pause.
+
+## Next
+
+[Submitting the form →](/getting-started/rent-a-car-submitting/)
+
+## See also
+
+- [Features / Form Events](/features/events/) — every event hook.
+- [Widgets Reference / Dropdown](/widgets-reference/input-fields/dropdown/) — every dropdown prop.

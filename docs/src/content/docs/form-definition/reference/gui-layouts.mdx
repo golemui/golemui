@@ -1,0 +1,29 @@
+---
+title: gui.layouts reference
+description: Every layout shortcut.
+sidebar:
+  order: 3
+---
+
+Every layout shortcut takes a `children` array. Most also take a props object as the second argument.
+
+| Shortcut                        | Renders                            | Reference                                                            |
+| ------------------------------- | ---------------------------------- | -------------------------------------------------------------------- |
+| `gui.layouts.flex`              | flex container                     | [Flex](/widgets-reference/layout-fields/flex/)                       |
+| `gui.layouts.horizontalFlex`    | flex with `direction: 'row'`       | [Flex](/widgets-reference/layout-fields/flex/)                       |
+| `gui.layouts.verticalFlex`      | flex with `direction: 'column'`    | [Flex](/widgets-reference/layout-fields/flex/)                       |
+| `gui.layouts.grid`              | grid container (subgrid alignment) | [Grid](/widgets-reference/layout-fields/grid/)                       |
+| `gui.layouts.horizontalGrid`    | grid with `direction: 'row'`       | [Grid](/widgets-reference/layout-fields/grid/)                       |
+| `gui.layouts.verticalGrid`      | grid with `direction: 'column'`    | [Grid](/widgets-reference/layout-fields/grid/)                       |
+| `gui.layouts.tabs`              | tabs                               | [Tabs](/widgets-reference/layout-fields/tabs/)                       |
+| `gui.layouts.accordion`         | accordion                          | [Accordion](/widgets-reference/layout-fields/accordion/)             |
+| `gui.layouts.custom`            | your custom layout                 | [Custom Widgets](/form-definition/custom-widgets/)                   |
+
+## Layout recommendation
+
+- **Use `grid` for rows.** It enables CSS subgrid so labels, inputs, and validation messages line up across all children in a row.
+- **Use `flex` for columns.** Lighter, more flexible for vertical stacks.
+
+## See also
+
+- [Tabs](/widgets-reference/layout-fields/tabs/) and [Accordion](/widgets-reference/layout-fields/accordion/) — both take a `sections` array as the first arg, where each section has its own `children`.

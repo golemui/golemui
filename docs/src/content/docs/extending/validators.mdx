@@ -1,0 +1,86 @@
+---
+title: Custom Validators
+description: Implement application-specific validation rules and register them via formConfig.customValidators.
+sidebar:
+  order: 2
+---
+
+import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
+
+Custom validators are functions that follow the `CustomValidatorSchemaFn` interface. They take a configuration parameter and return a Zod schema.
+
+## Implementing a custom validator
+
+```ts
+import * as z from 'zod';
+import type { CustomValidatorSchemaFn } from '@golemui/gui-validators';
+
+export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
+  z.string().check(
+    z.superRefine((val, ctx) => {
+      if (val && !names.includes(val)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Name "${val}" is not in ${names.map((n) => `"${n}"`).join(', ')}`,
+          input: val,
+        });
+      }
+    }),
+  );
+```
+
+## Registering it on the form
+
+Add the validator to `formConfig.customValidators`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    const formConfig = {
+      customValidators: { allowedNames },
+    };
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    class MyFormApp {
+      protected formConfig = {
+        customValidators: { allowedNames },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    export class FormElement extends LitElement {
+      protected formConfig = {
+        customValidators: { allowedNames },
+      };
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Declaring the validator on a widget
+
+Use `validator: { type: 'custom', <validatorName>: <config> }`:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.textInput('user.name', {
+  validator: { type: 'custom', allowedNames: ['John', 'Jane'] },
+});
+```
+
+The form engine resolves `allowedNames` against `formConfig.customValidators` at validation time.
+
+## See also
+
+- [Features / Validators](/features/validators/) — built-in validator types.

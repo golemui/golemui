@@ -1,21 +1,61 @@
 ---
-title: Overview
-description: A field to display information
+title: Display Widgets Overview
+description: Read-only widgets that present information without binding to form data.
 sidebar:
   order: 0
 ---
 
-Display Fields are widgets used to display information in several ways to users. An alert or a custom header are examples of Display Fields.
+**Display widgets** render read-only content. They have no `path` and don't write to form data — they just display information. An alert, a markdown block, a custom-rendered summary card are all display widgets.
 
-Display Fields are defined by setting the `kind` property as `display`.
+## The DX shortcuts
 
-## Main Properties
+```ts
+import { gui } from '@golemui/gui-shared';
+import { html } from 'lit';
 
-Use these properties to customize your Fields.
+const formDef = [
+  gui.displays.alert({ text: 'Some fields need your attention', level: 'warning' }),
+  gui.displays.display(({ $form }) => html`<h2>Hello, ${$form.name}!</h2>`),
+  gui.displays.custom('productDescription', { img: 'p.png', description: '### Cool' }),
+];
+```
 
-| property | type   | value                                                                                                                      |
-| -------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `uid`    | string | A unique id, if none provided, one will be generated automatically                                                         |
-| `kind`   | string | **MANDATORY** All Display Fields are type `display`                                                                        |
-| `widget` | string | **MANDATORY** The Display Field widget that you want to use (for example: `alert`)                                         |
-| `props`  | object | An object with custom properties defined by each Display Field, check the documentation of each Display Field to know more |
+| Shortcut                  | Description                                                                                                                |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `gui.displays.alert`      | A levelled alert ([Alert](/widgets-reference/display-fields/alert/)).                                                      |
+| `gui.displays.display`    | A render-callback that returns framework markup ([Renderer](/widgets-reference/display-fields/renderer/)). Programmatic-only. |
+| `gui.displays.custom`     | Plug in your own display widget ([Custom Widgets](/form-definition/custom-widgets/)).                                       |
+
+## JSON form
+
+The same widgets expressed in JSON:
+
+```json
+{
+  "form": [
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": { "text": "Some fields need your attention", "level": "warning" }
+    }
+  ]
+}
+```
+
+| Property | Description                                                                  |
+| -------- | ---------------------------------------------------------------------------- |
+| `uid`    | Optional unique id; one is generated if absent.                              |
+| `kind`   | **MANDATORY**. Always `'display'`.                                            |
+| `type`   | **MANDATORY**. The widget type (`alert`, `markdownText`, `renderer`, etc.). |
+| `props`  | Widget-specific configuration — see each widget's reference page.            |
+
+## Available widgets
+
+- [Alert](/widgets-reference/display-fields/alert/)
+- [Markdown Text](/widgets-reference/display-fields/markdown-text/)
+- [Renderer](/widgets-reference/display-fields/renderer/)
+
+## See also
+
+- [`gui.displays` reference](/form-definition/reference/gui-displays/) — every display shortcut.
+- [Extending GolemUI / Display Widget](/extending/widgets/display-widget/) — build your own.

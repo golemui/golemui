@@ -1,0 +1,14 @@
+---
+title: gui.displays reference
+description: Every display shortcut.
+sidebar:
+  order: 2
+---
+
+| Shortcut                  | Renders                                            | Reference                                                                |
+| ------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ |
+| `gui.displays.alert`      | an alert with a level (`info` / `warning` / `error` / `success`) | [Alert](/widgets-reference/display-fields/alert/) |
+| `gui.displays.display`    | a render-callback display (Programmatic-only)      | [Renderer](/widgets-reference/display-fields/renderer/)                  |
+| `gui.displays.custom`     | your custom display widget                         | [Custom Widgets](/form-definition/custom-widgets/)                       |
+
+The Programmatic-only `gui.displays.display(callback)` lets you return raw framework markup (Lit `html`, React JSX, Angular template) from a function — there's no JSON equivalent for this widget because it requires a function reference.

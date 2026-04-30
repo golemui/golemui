@@ -1,0 +1,220 @@
+---
+title: Creating a layout widget
+description: Build a custom layout widget that wraps its children with bespoke markup.
+sidebar:
+  order: 1
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
+
+A **layout widget** is a container. It receives a `children` array from the form definition and is responsible for rendering them. The example we'll walk through is `productCard` — a card container with a title header that wraps its children inside a styled card.
+
+## Widget definition
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.layouts.custom('productCard', [
+  // child widgets go here
+], { title: 'Product Card Name' });
+```
+
+## Key concepts
+
+- `useLayoutWidget` (React) and `LayoutWidgetAdapter` (Angular / Lit) give you the `children` array, already filtered by any `include`/`exclude` rules.
+- You must render each child using the framework's widget renderer: `WidgetRenderer` (React), the `guiWidget` directive (Angular), or the `<gui-widget>` element (Lit).
+- The `templateData` object contains your custom props (like `title`) merged with calculated properties from the form engine (`size`, `lang`, `deps`).
+
+## Implementation
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // ProductCard.tsx
+    import * as Core from '@golemui/core';
+    import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
+
+    interface ProductCardProps {
+      title: string;
+    }
+
+    export function ProductCard(widgetInstance: Core.WithWidget) {
+      const widget = widgetInstance.widget as Core.LayoutWidget;
+      const { uid, children, templateData } =
+        useLayoutWidget<ProductCardProps>(widget);
+
+      return (
+        <div className="product-card" style={{ flex: templateData.size }}>
+          <div className="product-card__widget" id={uid}>
+            <h2 className="product-card__title">{templateData.title}</h2>
+            <div className="product-card__content">
+              {children.map((child) => {
+                const w = child as Core.NonFunctionWidget<string>;
+                return <WidgetRenderer key={w.uid} widget={w} />;
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    ```
+
+    `useLayoutWidget` returns:
+    - **`uid`** — unique identifier for the widget DOM node
+    - **`children`** — the resolved child widgets, filtered by visibility rules
+    - **`templateData`** — your custom props (`title`) plus engine-managed properties (`size`, `lang`, `deps`)
+    - **`onChange`** — a callback to emit `change` events with an optional detail payload
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // product-card.component.ts
+    import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+    import * as Angular from '@golemui/angular';
+    import * as Core from '@golemui/core';
+
+    interface ProductCardProps {
+      title: string;
+    }
+
+    @Component({
+      standalone: true,
+      selector: 'app-product-card',
+      imports: [Angular.WidgetDirective],
+      providers: [Angular.LayoutWidgetAdapter],
+      host: {
+        class: 'product-card',
+        '[style.flex]': 'this.adapter.templateData().size',
+      },
+      template: `
+        @let templateData = adapter.templateData();
+
+        <div class="product-card__widget" [id]="widget.uid">
+          <h2 class="product-card__title">{{ templateData.title }}</h2>
+          <div class="product-card__content">
+            @for (child of templateData.children; track child.uid) {
+              <ng-container guiWidget [widget]="child" />
+            }
+          </div>
+        </div>
+      `,
+    })
+    export class ProductCardComponent
+      implements OnInit, OnDestroy, Core.WithWidget
+    {
+      widget!: Core.LayoutWidget;
+
+      protected adapter: Angular.LayoutWidgetAdapter<ProductCardProps> =
+        inject(Angular.LayoutWidgetAdapter);
+
+      ngOnInit(): void {
+        this.adapter.init(this.widget);
+      }
+
+      ngOnDestroy(): void {
+        this.adapter.destroy();
+      }
+    }
+    ```
+
+    The Angular pattern follows three steps every time:
+    1. **Provide** the adapter in the `providers` array
+    2. **Initialize** it in `ngOnInit` with `this.adapter.init(this.widget)`
+    3. **Destroy** it in `ngOnDestroy` with `this.adapter.destroy()`
+
+    Children are rendered with the `guiWidget` structural directive, which resolves and instantiates each child widget from the registry.
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // product-card.element.ts
+    import { html, LitElement } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { consume, provide } from '@lit/context';
+    import { repeat } from 'lit-html/directives/repeat.js';
+    import { Subscription } from 'rxjs';
+    import * as Core from '@golemui/core';
+    import * as Lit from '@golemui/lit';
+
+    interface ProductCardProps {
+      title: string;
+    }
+
+    @customElement('app-product-card')
+    export class ProductCardElement
+      extends LitElement
+      implements Core.WithWidget
+    {
+      widget!: Core.LayoutWidget;
+
+      @consume({ context: Lit.formContext })
+      formContext!: Lit.LitFormContext<any>;
+
+      @provide({ context: Lit.layoutContext })
+      adapter = new Lit.LayoutWidgetAdapter<ProductCardProps>();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-card');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        return html`
+          <div class="product-card__widget" id=${this.widget.uid}>
+            <h2 class="product-card__title">
+              ${this.adapter.templateData.title}
+            </h2>
+            <div class="product-card__content">
+              ${repeat(
+                this.adapter.templateData.children || [],
+                (child: any) => child.uid,
+                (child: any) =>
+                  html`<gui-widget .widget=${child}></gui-widget>`,
+              )}
+            </div>
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+    ```
+
+    The Lit pattern has a few extra steps compared to Angular:
+    1. **Consume** the `formContext` with `@consume` and **provide** the adapter with `@provide`
+    2. **Wire up** the context in `connectedCallback` with `this.adapter.context = this.formContext`
+    3. **Subscribe** to `templateDataChanged$` and call `this.requestUpdate()` to trigger re-renders
+    4. **Clean up** subscriptions in `disconnectedCallback`
+
+    Children are rendered with the `<gui-widget>` custom element and the `repeat` directive for efficient list rendering.
+  </Fragment>
+</IntegrationTabs>
+
+## Result
+
+Here's the Product Card layout rendering its child widgets:
+
+<Demo src="/template/index.html?form=template/custom-widgets/product-card.json" minHeight="280" />
+
+## See also
+
+- [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — `gui.layouts.custom(...)` reference.
+- [Features / Widget Loaders](/features/widget-loaders/) — registering the loader.
