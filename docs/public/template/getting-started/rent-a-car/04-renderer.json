@@ -9,15 +9,23 @@
       "type": "dropdown",
       "path": "car",
       "label": "Select car",
-      "validator": { "type": "string", "required": true },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "messages": {
+          "required": "Please pick a car model",
+          "invalid": "Please pick a car model"
+        }
+      },
       "props": {
         "labelField": "label",
         "valueField": "id",
+        "itemRenderer": "carItemRenderer",
         "items": [
-          { "id": "compact", "label": "Compact" },
-          { "id": "suv", "label": "SUV" },
-          { "id": "convertible", "label": "Convertible" },
-          { "id": "luxury", "label": "Luxury" }
+          { "id": "compact", "label": "Compact", "img": "🚗", "price": 35 },
+          { "id": "suv", "label": "SUV", "img": "🚙", "price": 75 },
+          { "id": "convertible", "label": "Convertible", "img": "🏎️", "price": 110 },
+          { "id": "luxury", "label": "Luxury", "img": "🚘", "price": 180 }
         ]
       }
     },
@@ -31,7 +39,11 @@
           "type": "dropdown",
           "path": "collectOffice",
           "label": "Collect from office",
-          "validator": { "type": "string", "required": true },
+          "validator": {
+            "type": "string",
+            "required": true,
+            "messages": { "required": "Choose where you'll pick up the car" }
+          },
           "props": {
             "labelField": "label",
             "valueField": "id",
@@ -48,7 +60,11 @@
           "path": "returnOffice",
           "label": "Return to office",
           "include": { "in": ["differentReturn"] },
-          "validator": { "type": "string", "required": true },
+          "validator": {
+            "type": "string",
+            "required": true,
+            "messages": { "required": "Choose where you'll drop the car off" }
+          },
           "props": {
             "labelField": "label",
             "valueField": "id",
@@ -73,14 +89,28 @@
       "path": "rentalDates",
       "label": "Rental dates",
       "props": { "numberOfMonths": 2 },
-      "validator": { "type": "array", "required": true, "minItems": 1, "maxItems": 1 }
+      "validator": {
+        "type": "array",
+        "required": true,
+        "minItems": 1,
+        "maxItems": 1,
+        "messages": {
+          "required": "Please select your rental dates",
+          "minItems": "Pick a rental date range",
+          "maxItems": "Only one date range, please"
+        }
+      }
     },
     {
       "kind": "input",
       "type": "radiogroup",
       "path": "rentalType",
       "label": "Rental type",
-      "validator": { "type": "string", "required": true },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "messages": { "required": "Choose Daily, Weekly, or Monthly" }
+      },
       "props": {
         "options": [
           { "label": "Daily", "value": "daily" },
@@ -94,7 +124,15 @@
       "type": "toggle",
       "path": "driverOver25",
       "label": "Driver aged over 25",
-      "validator": { "type": "boolean", "const": true, "required": true }
+      "validator": {
+        "type": "boolean",
+        "const": true,
+        "required": true,
+        "messages": {
+          "const": "Drivers must be at least 25 years old to rent",
+          "required": "Confirm the driver is over 25"
+        }
+      }
     },
     {
       "kind": "input",
@@ -108,7 +146,15 @@
       "path": "discountCode",
       "label": "Discount code",
       "include": { "in": ["hasDiscount"] },
-      "validator": { "type": "string", "required": true, "minLength": 4 }
+      "validator": {
+        "type": "string",
+        "required": true,
+        "minLength": 4,
+        "messages": {
+          "required": "Enter your discount code",
+          "minLength": "Discount codes are at least 4 characters"
+        }
+      }
     },
     {
       "kind": "action",

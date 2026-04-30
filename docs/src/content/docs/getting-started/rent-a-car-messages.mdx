@@ -1,0 +1,66 @@
+---
+title: 'Rent a car: Custom error messages'
+description: Replace the default Zod validation messages with friendlier copy for every rule in the form.
+sidebar:
+  order: 5
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+import DslCode from '../../../components/DslCode.astro';
+import messagesJson from '../../../../public/template/getting-started/rent-a-car/03-messages.json?raw';
+import messagesDx from '../../../../public/template/getting-started-dx/rent-a-car/03-messages.ts?raw';
+export const configJson = '03-messages.json';
+export const configDx = '03-messages.ts';
+
+By default, GolemUI's validators show concise, generic messages from Zod. They're fine, but for a real product you'll usually want copy that matches your tone and explains *what* the user needs to do.
+
+Every validator's `messages` property lets you override the message per rule key — `required`, `minLength`, `maxLength`, `pattern`, `minItems`, `maxItems`, `const`, `invalid`, etc.
+
+## The shape
+
+Each `messages` entry maps a rule key to either a plain string or a `Localizable` (i18n) descriptor:
+
+```ts
+validator: {
+  type: 'string',
+  required: true,
+  minLength: 4,
+  messages: {
+    required: 'Enter your discount code',
+    minLength: 'Discount codes are at least 4 characters',
+  },
+}
+```
+
+If a rule fires and there's a matching key in `messages`, the engine renders your copy instead of Zod's default. Rules without a custom message keep the default.
+
+## Sweep through every validator
+
+Below, every validator in the Rent a Car form gets human-friendly messages — picking the car, picking offices, the rental dates range, the rental type, the over-25 confirmation, and the discount code.
+
+<DslCode dxCode={messagesDx} jsonCode={messagesJson} dxTitle={configDx} jsonTitle={configJson} />
+
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/03-messages.json" minHeight="800" />
+
+Try clicking **Reserve** without filling anything in: each field shows its custom message. Try selecting more than one date range in the calendar: the `maxItems` message kicks in. Toggle **Driver aged over 25** off and back on without confirming and the boolean `const` message explains what's expected.
+
+## Localizing messages
+
+For multi-language apps, swap any string for a `Localizable`:
+
+```ts
+messages: {
+  required: { key: 'rentACar.car.required', default: 'Please pick a car model' },
+}
+```
+
+The default text fires when the active translator can't resolve the key. See [Features / i18n](/features/i18n/) for how to wire a translator.
+
+## Next
+
+[A custom item renderer →](/getting-started/rent-a-car-renderer/)
+
+## See also
+
+- [Features / Validators](/features/validators/) — every validator type and its rule keys.
+- [Form Definition API / Reference / `gui.inputs`](/form-definition/reference/gui-inputs/) — typed `validator` props per input.

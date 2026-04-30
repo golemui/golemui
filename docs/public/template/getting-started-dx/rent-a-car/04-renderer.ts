@@ -35,64 +35,85 @@ export default [
     validator: {
       type: 'string',
       required: true,
+      messages: {
+        required: 'Please pick a car model',
+        invalid: 'Please pick a car model',
+      },
     },
   }),
-  gui.inputs.dropdown('collectOffice', {
-    labelField: 'label',
-    valueField: 'id',
-    items: [
-      {
-        id: 'lhr',
-        label: 'London Heathrow',
+  gui.layouts.grid([
+    gui.inputs.dropdown('collectOffice', {
+      labelField: 'label',
+      valueField: 'id',
+      items: [
+        {
+          id: 'lhr',
+          label: 'London Heathrow',
+        },
+        {
+          id: 'cdg',
+          label: 'Paris CDG',
+        },
+        {
+          id: 'fra',
+          label: 'Frankfurt Main',
+        },
+      ],
+      label: 'Collect from office',
+      validator: {
+        type: 'string',
+        required: true,
+        messages: {
+          required: 'Choose where you\'ll pick up the car',
+        },
       },
-      {
-        id: 'cdg',
-        label: 'Paris CDG',
+    }),
+    gui.inputs.dropdown('returnOffice', {
+      labelField: 'label',
+      valueField: 'id',
+      items: [
+        {
+          id: 'lhr',
+          label: 'London Heathrow',
+        },
+        {
+          id: 'cdg',
+          label: 'Paris CDG',
+        },
+        {
+          id: 'fra',
+          label: 'Frankfurt Main',
+        },
+      ],
+      label: 'Return to office',
+      validator: {
+        type: 'string',
+        required: true,
+        messages: {
+          required: 'Choose where you\'ll drop the car off',
+        },
       },
-      {
-        id: 'fra',
-        label: 'Frankfurt Main',
-      },
-    ],
-    label: 'Collect from office',
-    validator: {
-      type: 'string',
-      required: true,
-    },
+    }),
+  ], {
+    direction: 'row',
+    autoFit: true,
   }),
   gui.inputs.booleanInput('differentReturn', {
     label: 'Choose a different return location',
   }),
-  gui.inputs.dropdown('returnOffice', {
-    labelField: 'label',
-    valueField: 'id',
-    items: [
-      {
-        id: 'lhr',
-        label: 'London Heathrow',
-      },
-      {
-        id: 'cdg',
-        label: 'Paris CDG',
-      },
-      {
-        id: 'fra',
-        label: 'Frankfurt Main',
-      },
-    ],
-    label: 'Return to office',
-    validator: {
-      type: 'string',
-      required: true,
-    },
-  }),
   gui.inputs.rangeCalendar('rentalDates', {
+    numberOfMonths: 2,
     label: 'Rental dates',
     validator: {
       type: 'array',
       required: true,
-      minItems: 2,
-      maxItems: 2,
+      minItems: 1,
+      maxItems: 1,
+      messages: {
+        required: 'Please select your rental dates',
+        minItems: 'Pick a rental date range',
+        maxItems: 'Only one date range, please',
+      },
     },
   }),
   gui.inputs.radiogroup('rentalType', {
@@ -114,6 +135,9 @@ export default [
     validator: {
       type: 'string',
       required: true,
+      messages: {
+        required: 'Choose Daily, Weekly, or Monthly',
+      },
     },
   }),
   gui.inputs.booleanInput('driverOver25', {
@@ -122,6 +146,10 @@ export default [
       type: 'boolean',
       const: true,
       required: true,
+      messages: {
+        const: 'Drivers must be at least 25 years old to rent',
+        required: 'Confirm the driver is over 25',
+      },
     },
   }),
   gui.inputs.booleanInput('hasDiscountCode', {
@@ -133,6 +161,10 @@ export default [
       type: 'string',
       required: true,
       minLength: 4,
+      messages: {
+        required: 'Enter your discount code',
+        minLength: 'Discount codes are at least 4 characters',
+      },
     },
   }),
   gui.actions.button({
