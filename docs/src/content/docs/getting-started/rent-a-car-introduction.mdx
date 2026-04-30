@@ -5,6 +5,8 @@ sidebar:
   order: 2
 ---
 
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+
 This tutorial walks through building a complete **Rent a Car** form. By the end, you'll have used most of the features GolemUI offers — layout, validators, states, custom item renderers, async data with debouncing, and form submission — in one connected example.
 
 ## What you'll build
@@ -26,13 +28,110 @@ Work through them in order — each chapter builds on the previous one.
 
 1. **[Parts of the form](/getting-started/rent-a-car-form/)** — author the static layout with all the input widgets.
 2. **[States and conditional rendering](/getting-started/rent-a-car-states/)** — wire the toggles to show/hide fields, and disable the submit button when invalid.
-3. **[A custom item renderer](/getting-started/rent-a-car-renderer/)** — design the per-car list item with image, name, and price.
-4. **[Search as you type](/getting-started/rent-a-car-search/)** — load the car list from a service, filter server-side, debounce the input.
-5. **[Submitting the form](/getting-started/rent-a-car-submitting/)** — capture the submit event and read the data.
+3. **[Custom error messages](/getting-started/rent-a-car-messages/)** — replace the default validation messages with friendlier copy.
+4. **[A custom item renderer](/getting-started/rent-a-car-renderer/)** — design the per-car list item with image, name, and price.
+5. **[Search as you type](/getting-started/rent-a-car-search/)** — load the car list from a service, filter server-side, debounce the input.
+6. **[Submitting the form](/getting-started/rent-a-car-submitting/)** — capture the submit event and read the data.
 
 ## Layout convention
 
 This tutorial follows the GolemUI default: **`gui.layouts.grid` for rows** (CSS subgrid keeps labels and inputs aligned), **`gui.layouts.flex` for columns**.
+
+## Where the form definition lives
+
+In [Installation](/getting-started/installation/) we authored the `formDef` array inline, in the same file as the React / Angular / Lit component. That keeps everything in one place while you're getting started, but for any non-trivial form it's a maintenance trap — the component file balloons, and reusing the form shape from a test, a script, or a backend becomes awkward.
+
+From this chapter on, **the tutorial moves the form definition into its own `.ts` file** and exports it as `default`:
+
+```ts
+// rent-a-car.form.ts
+import { gui } from '@golemui/gui-shared';
+
+export default [
+  gui.inputs.dropdown('car', { /* ... */ }),
+  // …more widgets…
+];
+```
+
+Then import that default export from your component and pass it as `formDef`. The wiring code is identical to what you saw in [Installation](/getting-started/installation/) — only the source of `formDef` changes.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // rent-a-car.page.tsx
+    import * as React from '@golemui/gui-react';
+    import rentACarForm from './rent-a-car.form';
+
+    const formConfig = { widgetLoaders: React.widgetLoaders };
+
+    export function RentACarPage() {
+      return (
+        <React.FormComponent
+          formDef={rentACarForm}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // rent-a-car.page.component.ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import rentACarForm from './rent-a-car.form';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-rent-a-car',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class RentACarPage {
+      protected formDef = rentACarForm;
+      protected formData = {};
+      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // rent-a-car.page.element.ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import rentACarForm from './rent-a-car.form';
+
+    @customElement('rent-a-car-page')
+    export class RentACarPage extends LitElement {
+      formDef = rentACarForm;
+      formData = {};
+      formConfig = { widgetLoaders: Lit.widgetLoaders };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+That's why the code blocks in the upcoming chapters open with `export default [` — they're the contents of the dedicated form file. The wiring above stays the same as the form grows; only `rent-a-car.form.ts` changes.
 
 ## See also
 

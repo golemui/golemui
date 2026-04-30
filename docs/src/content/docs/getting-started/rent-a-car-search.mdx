@@ -2,15 +2,15 @@
 title: 'Rent a car: Search as you type'
 description: Load the car list from a service, filter server-side as the user types, and debounce the dropdown input to avoid flooding the network.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
-import searchJson from '../../../../public/template/getting-started/rent-a-car/04-search.json?raw';
-import searchDx from '../../../../public/template/getting-started-dx/rent-a-car/04-search.ts?raw';
-export const configJson = '04-search.json';
-export const configDx = '04-search.ts';
+import searchJson from '../../../../public/template/getting-started/rent-a-car/05-search.json?raw';
+import searchDx from '../../../../public/template/getting-started-dx/rent-a-car/05-search.ts?raw';
+export const configJson = '05-search.json';
+export const configDx = '05-search.ts';
 
 Hard-coding the car list works for a demo but real applications fetch it from a service. The dropdown widget has two events that hook into async data:
 
@@ -84,7 +84,7 @@ Pass `handleFormEvent` to `<gui-form>` via the `formEvent` callback.
 
 <DslCode dxCode={searchDx} jsonCode={searchJson} dxTitle={configDx} jsonTitle={configJson} />
 
-<Demo src="/template/index.html?form=template/getting-started/rent-a-car/04-search.json" minHeight="800" />
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/05-search.json" minHeight="800" />
 
 Type in the dropdown — the list filters server-side after a 300ms pause.
 

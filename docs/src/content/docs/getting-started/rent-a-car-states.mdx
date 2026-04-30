@@ -35,7 +35,46 @@ JSON forms put the same map at the form root under `"states"`.
 
 ## Gating fields with include
 
-Add `include: { in: ['<stateName>'] }` to the optional widgets — they'll only render while the named state is active.
+Add `include: { in: ['<stateName>'] }` to each optional widget — it will only render while the named state is active. In our form, that's two widgets: the return-office dropdown (gated by `differentReturn`) and the discount-code input (gated by `hasDiscount`).
+
+```ts
+gui.inputs.dropdown('returnOffice', {
+  label: 'Return to office',
+  include: { in: ['differentReturn'] },
+  // …items, validator…
+});
+
+gui.inputs.textInput('discountCode', {
+  label: 'Discount code',
+  include: { in: ['hasDiscount'] },
+  validator: { type: 'string', required: true, minLength: 4 },
+});
+```
+
+The toggles that drive the states (`differentReturn` and `hasDiscountCode`) stay in the form unconditionally — they're what the user interacts with to flip the state on or off.
+
+## Adding validators
+
+Every required field gets a `validator`. The form's health stays `errored` until every validator passes; once it goes `ok`, the submit button can fire its event.
+
+```ts
+gui.inputs.dropdown('car', {
+  label: 'Select car',
+  validator: { type: 'string', required: true },
+  // …items…
+});
+
+gui.inputs.rangeCalendar('rentalDates', {
+  label: 'Rental dates',
+  numberOfMonths: 2,
+  validator: { type: 'array', required: true, minItems: 1, maxItems: 1 },
+});
+
+gui.inputs.booleanInput('driverOver25', {
+  label: 'Driver aged over 25',
+  validator: { type: 'boolean', const: true, required: true },
+});
+```
 
 ## Result
 
@@ -54,7 +93,7 @@ The example above uses the simpler **`'submit'` literal** on the button: `onClic
 
 ## Next
 
-[A custom item renderer →](/getting-started/rent-a-car-renderer/)
+[Custom error messages →](/getting-started/rent-a-car-messages/)
 
 ## See also
 

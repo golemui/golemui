@@ -2,16 +2,16 @@
 title: 'Rent a car: A custom item renderer'
 description: Display each car in the dropdown with an emoji thumbnail, the model name, and the price.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
-import rendererJson from '../../../../public/template/getting-started/rent-a-car/03-renderer.json?raw';
-import rendererDx from '../../../../public/template/getting-started-dx/rent-a-car/03-renderer.ts?raw';
-export const configJson = '03-renderer.json';
-export const configDx = '03-renderer.ts';
+import rendererJson from '../../../../public/template/getting-started/rent-a-car/04-renderer.json?raw';
+import rendererDx from '../../../../public/template/getting-started-dx/rent-a-car/04-renderer.ts?raw';
+export const configJson = '04-renderer.json';
+export const configDx = '04-renderer.ts';
 
 The default dropdown item template is just a label. Real applications usually want richer items — a thumbnail, the title, secondary metadata. GolemUI lets you supply a custom **item renderer** for that.
 
@@ -137,7 +137,7 @@ The dropdown's `itemRenderer` prop carries the **name** you registered:
 
 <DslCode dxCode={rendererDx} jsonCode={rendererJson} dxTitle={configDx} jsonTitle={configJson} />
 
-<Demo src="/template/index.html?form=template/getting-started/rent-a-car/03-renderer.json" minHeight="800" />
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/04-renderer.json" minHeight="800" />
 
 ## Next
 

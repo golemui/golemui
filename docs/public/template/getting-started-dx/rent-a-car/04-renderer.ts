@@ -4,28 +4,41 @@ export default [
   gui.inputs.dropdown('car', {
     labelField: 'label',
     valueField: 'id',
+    itemRenderer: 'carItemRenderer',
     items: [
       {
         id: 'compact',
         label: 'Compact',
+        img: '🚗',
+        price: 35,
       },
       {
         id: 'suv',
         label: 'SUV',
+        img: '🚙',
+        price: 75,
       },
       {
         id: 'convertible',
         label: 'Convertible',
+        img: '🏎️',
+        price: 110,
       },
       {
         id: 'luxury',
         label: 'Luxury',
+        img: '🚘',
+        price: 180,
       },
     ],
     label: 'Select car',
     validator: {
       type: 'string',
       required: true,
+      messages: {
+        required: 'Please pick a car model',
+        invalid: 'Please pick a car model',
+      },
     },
   }),
   gui.layouts.grid([
@@ -50,6 +63,9 @@ export default [
       validator: {
         type: 'string',
         required: true,
+        messages: {
+          required: 'Choose where you\'ll pick up the car',
+        },
       },
     }),
     gui.inputs.dropdown('returnOffice', {
@@ -73,6 +89,9 @@ export default [
       validator: {
         type: 'string',
         required: true,
+        messages: {
+          required: 'Choose where you\'ll drop the car off',
+        },
       },
       include: {
         in: ['differentReturn'],
@@ -93,6 +112,11 @@ export default [
       required: true,
       minItems: 1,
       maxItems: 1,
+      messages: {
+        required: 'Please select your rental dates',
+        minItems: 'Pick a rental date range',
+        maxItems: 'Only one date range, please',
+      },
     },
   }),
   gui.inputs.radiogroup('rentalType', {
@@ -114,6 +138,9 @@ export default [
     validator: {
       type: 'string',
       required: true,
+      messages: {
+        required: 'Choose Daily, Weekly, or Monthly',
+      },
     },
   }),
   gui.inputs.booleanInput('driverOver25', {
@@ -122,6 +149,10 @@ export default [
       type: 'boolean',
       const: true,
       required: true,
+      messages: {
+        const: 'Drivers must be at least 25 years old to rent',
+        required: 'Confirm the driver is over 25',
+      },
     },
   }),
   gui.inputs.booleanInput('hasDiscountCode', {
@@ -133,6 +164,10 @@ export default [
       type: 'string',
       required: true,
       minLength: 4,
+      messages: {
+        required: 'Enter your discount code',
+        minLength: 'Discount codes are at least 4 characters',
+      },
     },
     include: {
       in: ['hasDiscount'],

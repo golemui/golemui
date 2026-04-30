@@ -22,6 +22,7 @@ export default [
       }),
       gui.inputs.textInput('n4', {
         label: 'Phone',
+        size: 2,
         uid: 'n4',
       }),
     ], {

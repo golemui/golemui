@@ -8,6 +8,7 @@ export default [
     }),
     gui.inputs.textInput('s2', {
       label: 'Size 2',
+      size: 2,
       uid: 's2',
     }),
   ], {
