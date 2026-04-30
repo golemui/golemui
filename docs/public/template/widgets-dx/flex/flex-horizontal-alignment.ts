@@ -4,10 +4,12 @@ export default [
   gui.layouts.flex([
     gui.inputs.textInput('firstName', {
       label: 'First Name',
+      size: 1,
       uid: 'f1',
     }),
     gui.inputs.textInput('lastName', {
       label: 'Last Name',
+      size: 1,
       uid: 'f2',
     }),
   ], {

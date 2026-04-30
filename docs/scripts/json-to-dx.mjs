@@ -59,7 +59,16 @@ const LAYOUT_TYPES = {
   accordion: 'accordion',
 };
 
-const ERGONOMIC_FIELDS = ['label', 'disabled', 'readonly', 'validator'];
+const ERGONOMIC_FIELDS = [
+  'label',
+  'disabled',
+  'readonly',
+  'validator',
+  'include',
+  'exclude',
+  'defaultValue',
+  'size',
+];
 
 const pad = (n) => '  '.repeat(n);
 

@@ -8,5 +8,6 @@ export default [
         end: '2024-03-15T23:59:59.999Z',
       },
     ],
+    defaultValue: '2024-03-21',
   }),
 ];

@@ -93,6 +93,9 @@ export default [
           required: 'Choose where you\'ll drop the car off',
         },
       },
+      include: {
+        in: ['differentReturn'],
+      },
     }),
   ], {
     direction: 'row',
@@ -165,6 +168,9 @@ export default [
         required: 'Enter your discount code',
         minLength: 'Discount codes are at least 4 characters',
       },
+    },
+    include: {
+      in: ['hasDiscount'],
     },
   }),
   gui.actions.button({

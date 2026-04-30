@@ -4,6 +4,16 @@ export default [
   gui.inputs.repeater('users', {
     addLabel: 'Add new developer',
     removeLabel: 'Remove developer',
+    defaultValue: [
+      {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      {
+        firstName: 'Jane',
+        lastName: 'Doe',
+      },
+    ],
     template: [
       gui.layouts.flex([
         gui.inputs.textInput('users.items.firstName'),

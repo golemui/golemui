@@ -74,6 +74,9 @@ export default [
         type: 'string',
         required: true,
       },
+      include: {
+        in: ['differentReturn'],
+      },
     }),
   ], {
     direction: 'row',
@@ -130,6 +133,9 @@ export default [
       type: 'string',
       required: true,
       minLength: 4,
+    },
+    include: {
+      in: ['hasDiscount'],
     },
   }),
   gui.actions.button({
