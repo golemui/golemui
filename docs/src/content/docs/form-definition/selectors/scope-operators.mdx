@@ -1,0 +1,30 @@
+---
+title: Scope operators
+description: Restrict a selector match to a tag or to an active state.
+sidebar:
+  order: 3
+---
+
+Two scope operators sit between the chain root and the leaf method:
+
+| Method            | Restricts the match to widgets that…                            |
+| ----------------- | --------------------------------------------------------------- |
+| `tag(name)`       | …have `name` in their `tags` array.                            |
+| `state(name)`     | …are inside a form where the named state is currently active.   |
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+// Disable every action while the 'submitting' state is active
+gui.selectors.state('submitting').actions({ disabled: true });
+
+// Apply auto-placeholders only to inputs tagged 'identity'
+gui.selectors.tag('identity').inputs({ suppressAutomaticPlaceholders: false });
+```
+
+`state` resolves against the form's state map (the same one you declare via `formConfig.states` or via the `gui.*` `states` arg).
+
+## See also
+
+- [Multi-value scopes](/form-definition/selectors/multi-value-scopes/) — `tagsAnd`, `tagsOr` for matching multiple tags at once.
+- [Chaining](/form-definition/selectors/chaining/) — composition order.

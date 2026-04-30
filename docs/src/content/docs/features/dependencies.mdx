@@ -1,0 +1,34 @@
+---
+title: Dependencies
+description: Inject third-party helpers (markdown parsers, etc.) at the form level via formConfig.dependencies.
+sidebar:
+  order: 7
+---
+
+Some widgets rely on third-party libraries that GolemUI deliberately doesn't bundle — typically because the choice of library is opinionated. The Markdown widget needs a markdown parser; you might want to add others. These come in through `formConfig.dependencies`.
+
+## The dependency contract
+
+```ts
+import { Dependencies } from '@golemui/gui-shared';
+
+const formConfig: { dependencies?: Dependencies } = {
+  dependencies: {
+    markdown: {
+      parse: (md: string) => snarkdown(md),
+    },
+  },
+};
+```
+
+Each widget that uses a dependency reads it from `formConfig.dependencies` at render time. If the widget needs a dependency you haven't provided, it renders gracefully (e.g. the Markdown widget shows the editor but leaves the preview blank).
+
+## Available dependency keys
+
+| Key       | Used by                                                                 | Shape                                  |
+| --------- | ----------------------------------------------------------------------- | -------------------------------------- |
+| `markdown` | [Markdown](/widgets-reference/input-fields/markdown/), [Markdown Text](/widgets-reference/display-fields/markdown-text/) | `{ parse: (md: string) => string }` |
+
+## See also
+
+- [Widgets Reference / Markdown](/widgets-reference/input-fields/markdown/) — example with snarkdown.

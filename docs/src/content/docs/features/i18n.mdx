@@ -1,0 +1,51 @@
+---
+title: i18n
+description: Localize labels, placeholders, validators, dates, and currency with i18next or any other translator.
+sidebar:
+  order: 6
+---
+
+GolemUI is i18n-aware out of the box. Every visible string in a form definition can be either a plain string or a `Localizable`:
+
+```ts
+type Localizable =
+  | string
+  | { key: string; default?: string; params?: Record<string, unknown> };
+```
+
+The active translator resolves `{ key, default }` shapes at render time. Plain strings render as-is.
+
+## Wiring a translator
+
+GolemUI ships an i18next adapter; you can also build your own.
+
+### Using i18next
+
+```ts
+import * as AppsShared from '@golemui/apps-shared';
+
+const localization = AppsShared.initializeI18n({
+  // i18next resource bundles
+});
+```
+
+Pass `localization` to `<gui-form>`:
+
+```ts
+<gui-form .formDef=${formDef} .localization=${localization}></gui-form>
+```
+
+### Other providers
+
+Anything that implements the `I18nTranslator` interface from `@golemui/core` works. Examples include intlayer, FormatJS, or your own translation function.
+
+## What's translated
+
+- Widget labels, placeholders, hints (where the prop accepts `Localizable`).
+- Validator error messages (`messages: { required: { key, default } }`).
+- Repeater labels, accordion section labels, tab labels.
+- Date and currency formatting honor the active locale.
+
+## See also
+
+- [Form Definition API / States](/form-definition/states/) — switch language at runtime by emitting a `change` event from a language dropdown.

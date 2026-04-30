@@ -1,0 +1,149 @@
+---
+title: 'Rent a car: A custom item renderer'
+description: Display each car in the dropdown with an emoji thumbnail, the model name, and the price.
+sidebar:
+  order: 5
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+import DslCode from '../../../components/DslCode.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+import rendererJson from '../../../../public/template/getting-started/rent-a-car/03-renderer.json?raw';
+import rendererDx from '../../../../public/template/getting-started-dx/rent-a-car/03-renderer.ts?raw';
+export const configJson = '03-renderer.json';
+export const configDx = '03-renderer.ts';
+
+The default dropdown item template is just a label. Real applications usually want richer items — a thumbnail, the title, secondary metadata. GolemUI lets you supply a custom **item renderer** for that.
+
+## Step 1 — Enrich the data
+
+The car items now carry an emoji thumbnail and a price:
+
+```ts
+items: [
+  { id: 'compact', label: 'Compact', img: '🚗', price: 35 },
+  { id: 'suv', label: 'SUV', img: '🚙', price: 75 },
+  { id: 'convertible', label: 'Convertible', img: '🏎️', price: 110 },
+  { id: 'luxury', label: 'Luxury', img: '🚘', price: 180 },
+],
+```
+
+## Step 2 — Implement the renderer
+
+Item renderers are framework-specific components.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // CarItemRenderer.tsx
+    import * as React from 'react';
+    import type { ReactItemRenderer } from '@golemui/react';
+
+    type Car = { id: string; label: string; img: string; price: number };
+
+    export const CarItemRenderer: ReactItemRenderer<Car> = ({ item }) => (
+      <div className="car-item">
+        <span className="car-item__img">{item.img}</span>
+        <span className="car-item__label">{item.label}</span>
+        <span className="car-item__price">${item.price}/day</span>
+      </div>
+    );
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // car-item-renderer.component.ts
+    import { Component } from '@angular/core';
+    import * as Angular from '@golemui/angular';
+
+    type Car = { id: string; label: string; img: string; price: number };
+
+    @Component({
+      standalone: true,
+      selector: 'car-item-renderer',
+      template: `
+        <div class="car-item">
+          <span class="car-item__img">{{ item.img }}</span>
+          <span class="car-item__label">{{ item.label }}</span>
+          <span class="car-item__price">\${{ item.price }}/day</span>
+        </div>
+      `,
+    })
+    export class CarItemRenderer implements Angular.AngularItemRenderer<Car> {
+      item!: Car;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // car-item-renderer.element.ts
+    import { LitElement, html } from 'lit';
+    import { customElement, property } from 'lit/decorators.js';
+
+    type Car = { id: string; label: string; img: string; price: number };
+
+    @customElement('car-item-renderer')
+    export class CarItemRenderer extends LitElement {
+      @property({ attribute: false }) item!: Car;
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <div class="car-item">
+            <span class="car-item__img">${this.item.img}</span>
+            <span class="car-item__label">${this.item.label}</span>
+            <span class="car-item__price">$${this.item.price}/day</span>
+          </div>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Step 3 — Add styles
+
+A few lines of CSS to lay the renderer out:
+
+```css
+.car-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gui-space-3);
+}
+.car-item__img { font-size: 1.4em; }
+.car-item__label { flex: 1; }
+.car-item__price { color: var(--gui-color-fg--secondary); }
+```
+
+## Step 4 — Register the renderer
+
+Add it to `formConfig.itemRenderers`:
+
+```ts
+const formConfig = {
+  itemRenderers: {
+    carItemRenderer: CarItemRenderer,
+  },
+};
+```
+
+## Step 5 — Reference it from the dropdown
+
+The dropdown's `itemRenderer` prop carries the **name** you registered:
+
+<DslCode dxCode={rendererDx} jsonCode={rendererJson} dxTitle={configDx} jsonTitle={configJson} />
+
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/03-renderer.json" minHeight="800" />
+
+## Next
+
+[Search as you type →](/getting-started/rent-a-car-search/)
+
+## See also
+
+- [Features / Item Renderers](/features/item-renderers/) — wiring renderers in `formConfig`.
+- [Extending GolemUI / Item Renderers](/extending/item-renderers/) — the renderer contract per framework.

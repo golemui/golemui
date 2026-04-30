@@ -1,11 +1,13 @@
 ---
 title: Styling Overview
-description: Understand the GolemUI styling philosophy — headless CSS with a courtesy layer.
+description: How GolemUI styles work — headless CSS with a courtesy layer, responsive scaling, and right-to-left support.
 sidebar:
   order: 0
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+import Demo from '../../../components/landing/Demo.astro';
 
 GolemUI is a **Headless CSS** library with a **courtesy layer**. The default theme ships as plain CSS that you can use as-is, override selectively, or remove entirely. No matter what you do with the styles, widgets always work — ARIA attributes, keyboard navigation, event handling, and state management are baked into the widgets themselves, not the CSS.
 
@@ -26,7 +28,7 @@ Import the CSS file in your project:
 That single import gives you the full courtesy layer — every widget is styled and ready to use.
 
 <Aside>
-This import is entirely optional. If you skip it, you enter **headless mode** and widgets render without any visual styling. See [Going headless](#going-headless) below.
+This import is entirely optional. If you skip it, you enter **headless mode** and widgets render without any visual styling. See [Going Headless](/styling/going-headless/) for how to build a theme from scratch.
 </Aside>
 
 ## What's included
@@ -43,10 +45,164 @@ The `index.css` file bundles everything you need in a single import:
 | **Widget styles**      | Visual styles for every widget (button, textinput, calendar, toggle, etc.)    |
 | **Validation styles**  | Error message formatting and invalid-state indicators                         |
 
+## Dark and light mode
+
+Dark mode activates automatically based on the user's system preference. No JavaScript, no class toggles, no configuration — just import the stylesheet and it works. Every semantic token has both a light and a dark value; widgets switch between them seamlessly.
+
+See [Theming](/styling/theming/) for built-in themes and how to build your own.
+
+## Responsive
+
+GolemUI adapts to different screen sizes using two complementary strategies: **media queries** for global token scaling, and **container queries** for widget-level layout adaptation.
+
+### Breakpoints
+
+GolemUI defines four breakpoint reference tokens:
+
+| Token         | Value    |
+| ------------- | -------- |
+| `--gui-bp-sm` | `640px`  |
+| `--gui-bp-md` | `768px`  |
+| `--gui-bp-lg` | `1024px` |
+| `--gui-bp-xl` | `1280px` |
+
+<Aside type="caution">
+CSS custom properties cannot be used inside `@media` queries — this is a CSS limitation. These tokens exist as documented references. The actual media queries in the stylesheet use literal pixel values.
+</Aside>
+
+### Responsive token scaling
+
+At smaller viewport sizes, spacing and typography tokens automatically scale down to keep the UI compact and readable.
+
+**At 768px and below:**
+
+| Token            | Default         | Scaled to        |
+| ---------------- | --------------- | ---------------- |
+| `--gui-space-6`  | `1.5rem` (24px) | `1.25rem` (20px) |
+| `--gui-space-8`  | `2rem` (32px)   | `1.5rem` (24px)  |
+| `--gui-space-10` | `2.5rem` (40px) | `2rem` (32px)    |
+
+**At 640px and below:**
+
+| Token            | Default         | Scaled to        |
+| ---------------- | --------------- | ---------------- |
+| `--gui-space-4`  | `1rem` (16px)   | `0.75rem` (12px) |
+| `--gui-space-6`  | `1.5rem` (24px) | `1rem` (16px)    |
+| `--gui-space-8`  | `2rem` (32px)   | `1.25rem` (20px) |
+| `--gui-space-10` | `2.5rem` (40px) | `1.5rem` (24px)  |
+| `--gui-font-2xl` | `1.5rem` (24px) | `1.25rem` (20px) |
+| `--gui-font-3xl` | `2rem` (32px)   | `1.5rem` (24px)  |
+
+<Aside type="tip">
+Because widgets use these tokens for their spacing and sizing, they automatically become more compact on small screens — no extra work needed on your part.
+</Aside>
+
+### Container queries
+
+GolemUI forms respond to their **container width**, not just the viewport. A form placed in a narrow sidebar adapts correctly even on a wide screen.
+
+When the form container is **480px or narrower**:
+
+| Component         | Behavior                         |
+| ----------------- | -------------------------------- |
+| Horizontal fields | Switch from row to column layout |
+| Flex rows         | Stack vertically                 |
+| Calendars         | Expand to full container width   |
+| Tab buttons       | Reduce padding and font size     |
+
+## RTL
+
+GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Persian. When you set the `localization` property to a translator configured for an RTL language, the form switches direction automatically.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```ts
+    i18next.init({
+      fallbackLng: 'fa',
+      fa: {
+        translation: {
+          rtl: { username: 'نام کاربری', password: 'رمز عبور' },
+        },
+      },
+    });
+
+    const localization = { /* i18next implementation */ };
+
+    export function FormPage() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={formData}
+          formConfig={formConfig}
+          localization={localization}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-dynamic-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+        [localization]="localization"
+      ></gui-form>`,
+    })
+    export class AppFormPage {
+      protected formConfig = { widgetLoaders };
+      protected localization = { /* i18next implementation */ };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    @customElement('lit-form')
+    export class FormElement extends LitElement {
+      protected formConfig = { widgetLoaders };
+      protected localization = { /* i18next implementation */ };
+
+      render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+            .localization=${this.localization}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+<Demo src="/template/index.html?form=template/styling/rtl.json&dir=rtl" />
+
+### What adapts automatically
+
+All widgets mirror automatically in RTL mode — no additional CSS needed on your side.
+
+| Area             | What adapts                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| Text and inputs  | Padding and alignment flip to match reading direction           |
+| Icons and arrows | Select arrows, date-picker icons, and toggle sliders reposition |
+| Buttons          | Repeater action buttons align to the correct side               |
+| Calendar         | Month navigation arrows mirror direction                        |
+
+For full i18n setup, see [Features / i18n](/features/i18n/).
+
+## Going headless
+
+Skip the CSS import entirely and you enter **headless mode** — widgets render unstyled but functional. You write all the CSS yourself, targeting the BEM class names that widgets render.
+
+This is the most powerful customization mode: full control, no fighting the courtesy layer. See [Going Headless](/styling/going-headless/) for the full walkthrough.
+
 ## Next steps
 
-- [Design Tokens](/styling/design-tokens/) — Complete reference of all CSS variables
-- [Theming](/styling/theming/) — Dark mode, built-in themes, and creating your own
-- [Customization](/styling/customization/) — Override styles with variables, classes, or go fully headless
-- [Responsive & RTL](/styling/responsive/) — Breakpoints, container queries, and right-to-left support
-- [Icon Customization](/styling/icons/) — Webfont ligatures, SVGs, images, and mixed icon strategies
+- [Theming](/styling/theming/) — Built-in themes (Clay), creating new themes, scoped themes.
+- [Customization](/styling/customization/) — Override styles with CSS variables, class selectors, design tokens, and icon customization.
+- [Going Headless](/styling/going-headless/) — Build a theme from scratch.

@@ -1,6 +1,6 @@
 ---
 title: Theming
-description: Dark mode, built-in themes, and creating your own GolemUI themes.
+description: Load the default theme, switch to the bundled Clay theme, and build your own — including scoped themes for multiple looks on the same page.
 sidebar:
   order: 2
 ---
@@ -8,21 +8,29 @@ sidebar:
 import { Aside, Steps } from '@astrojs/starlight/components';
 import Demo from '../../../../src/components/landing/Demo.astro';
 
-GolemUI supports automatic dark mode out of the box, ships with built-in themes, and provides a clear pattern for creating your own.
+GolemUI ships with a default theme, a bundled alternative (Clay), automatic dark mode, and a clear pattern for creating and scoping your own themes.
+
+## Loading the default theme
+
+The default theme is included in `@golemui/gui-components/index.css`. Import it once in your project's CSS or SCSS entry point:
+
+```css
+@import '@golemui/gui-components/index.css';
+```
+
+That's all that's needed — every widget renders with the default look, dark mode works automatically, and the design tokens documented in [Customization](/styling/customization/#design-tokens-reference) are available for overrides.
 
 ## Dark mode
 
 Dark mode activates automatically based on the user's system preference. No JavaScript, no class toggles, no configuration — just import the stylesheet and it works.
 
-All colors, backgrounds, borders, and status indicators adjust for dark backgrounds. You can see the exact light and dark values for every token in the [Design Tokens](/styling/design-tokens/#semantic-tokens) reference.
+All colors, backgrounds, borders, and status indicators adjust for dark backgrounds. You can see the exact light and dark values for every token in the [Customization](/styling/customization/#semantic-tokens) reference.
 
 <Aside type="tip">
-Want to customize the dark palette? Override the [primitive color variables](/styling/design-tokens/#primitive-colors). For example, changing `--gui-color-neutral-950` updates the dark mode background across every widget.
+Want to customize the dark palette? Override the [primitive color variables](/styling/customization/#primitive-colors). For example, changing `--gui-color-neutral-950` updates the dark mode background across every widget.
 </Aside>
 
-## Built-in themes
-
-### Clay
+## Using the alternative Clay theme
 
 Clay is a warm, terracotta-inspired theme that replaces the neutral slate palette with earthy tones and uses terracotta as the primary accent color. It includes both light and dark mode variants.
 
@@ -122,7 +130,11 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
 
 ## Scoped themes
 
-Because `data-theme` is a standard CSS attribute selector, themes can be scoped to specific containers. This lets you display multiple themes on the same page:
+Because `data-theme` is a standard CSS attribute selector, themes can be **scoped to a specific container** rather than applied page-wide. The same page can host multiple themes side by side, and switching themes is just a DOM-attribute change.
+
+### Multiple themes on one page
+
+Place each `data-theme` on a different container:
 
 ```html
 <div data-theme="clay">
@@ -134,6 +146,35 @@ Because `data-theme` is a standard CSS attribute selector, themes can be scoped 
 </div>
 ```
 
-Each form renders with its own theme, and the CSS cascade handles everything naturally — no JavaScript needed.
+Each form renders with its own theme. The CSS cascade handles everything naturally — no JavaScript needed.
 
 <Demo src="/template/index.html?form=template/styling/scoped-themes.json&theme=clay|sunset" />
+
+### Per-section overrides
+
+A common pattern is a default page theme with one section opted into a different look — for example, a "preview" panel that always uses the dark theme:
+
+```html
+<body>
+  <main>
+    <gui-form ...></gui-form>            <!-- default theme -->
+  </main>
+  <aside data-theme="clay">
+    <gui-form ...></gui-form>            <!-- clay theme inside this aside -->
+  </aside>
+</body>
+```
+
+### Switching at runtime
+
+Because the theme is a DOM attribute, swapping it is a single line of JavaScript:
+
+```js
+document.querySelector('[data-theme]').dataset.theme = 'sunset';
+```
+
+Every widget inside that subtree updates immediately. No re-render of the form definition is needed; the CSS cascade does the work.
+
+<Aside type="tip">
+Scoped themes pair well with [scoped CSS variable overrides](/styling/customization/#scoped-overrides) — define a tweak once at the container level and every widget inside it picks it up.
+</Aside>

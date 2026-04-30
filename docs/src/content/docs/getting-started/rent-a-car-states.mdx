@@ -1,0 +1,62 @@
+---
+title: 'Rent a car: States and conditional rendering'
+description: Hide the return-office dropdown and the discount-code input until their toggles are on, and add validators so the submit button stays disabled until everything is valid.
+sidebar:
+  order: 4
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+import DslCode from '../../../components/DslCode.astro';
+import statesJson from '../../../../public/template/getting-started/rent-a-car/02-states.json?raw';
+import statesDx from '../../../../public/template/getting-started-dx/rent-a-car/02-states.ts?raw';
+export const configJson = '02-states.json';
+export const configDx = '02-states.ts';
+
+The form from the previous chapter renders every field unconditionally. We'll now:
+
+1. **Declare two states** — `differentReturn` and `hasDiscount` — that mirror the matching toggles.
+2. **Gate the optional fields** with `include: { in: [...] }`.
+3. **Add validators** to every required field so the form's health goes from `errored` → `ok` only when all validators pass.
+
+## Declaring states
+
+States are named boolean expressions evaluated against `$form`. Pass them as the second arg of the `formConfig`:
+
+```ts
+const formConfig = {
+  states: {
+    differentReturn: '$form.differentReturn === true',
+    hasDiscount: '$form.hasDiscountCode === true',
+  },
+};
+```
+
+JSON forms put the same map at the form root under `"states"`.
+
+## Gating fields with include
+
+Add `include: { in: ['<stateName>'] }` to the optional widgets — they'll only render while the named state is active.
+
+## Result
+
+<DslCode dxCode={statesDx} jsonCode={statesJson} dxTitle={configDx} jsonTitle={configJson} />
+
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/02-states.json" minHeight="800" />
+
+- The **Return to office** dropdown only appears when **Choose a different return location** is on.
+- The **Discount code** input only appears when **I have a discount code** is on.
+
+## Disabling submit until valid
+
+GolemUI emits a `formHealth` callback whenever the form's validation status changes. You can wire it to a piece of UI state and conditionally disable your submit handler — or use the `disabled` prop on the button with a `when` expression that references `$form.<paths>`.
+
+The example above uses the simpler **`'submit'` literal** on the button: `onClick: 'submit'` triggers form-level validation before the event fires, so an invalid form won't fire the event at all. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
+
+## Next
+
+[A custom item renderer →](/getting-started/rent-a-car-renderer/)
+
+## See also
+
+- [Features / States](/features/states/) — gating, properties, composing.
+- [Form Definition / Conditionals](/form-definition/conditionals/) — `include` / `exclude` / `when` reference.

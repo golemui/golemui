@@ -1,0 +1,209 @@
+---
+title: Creating an action widget
+description: Build a custom action widget that emits events to your application.
+sidebar:
+  order: 4
+---
+
+import Demo from '../../../../../src/components/landing/Demo.astro';
+import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
+
+An **action widget** fires events. It has no data binding — instead, it triggers named events via the `on` / `onClick` property that your application handles. The example we'll walk through is `productShare` — a widget that renders social-network buttons and fires a `shareEvent` when clicked.
+
+## Widget definition
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.actions.custom('productShare', { onClick: 'shareEvent' });
+```
+
+When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'shareEvent'`, and emits it through the `formEvent` callback. Your application code catches it there.
+
+## Key concepts
+
+- `useActionWidget` (React) and `ActionWidgetAdapter` (Angular / Lit) provide a `click()` / `onClick` method that triggers the event pipeline.
+- The event **name** (`'shareEvent'`) is defined in the widget definition, not in the component — keeping your widget reusable.
+- The `formEvent` callback receives a `FormEvent` object with the current form `data`, so you always have access to the full form state when handling the event.
+
+## Implementation
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // ProductShare.tsx
+    import * as Core from '@golemui/core';
+    import { useActionWidget } from '@golemui/react';
+
+    const NETWORKS = ['Twitter', 'Facebook', 'LinkedIn'];
+
+    export function ProductShare(widgetInstance: Core.WithWidget) {
+      const widget = widgetInstance.widget as Core.ActionWidget;
+      const { uid, templateData, onClick } = useActionWidget(widget);
+
+      return (
+        <div className="product-share" style={{ flex: templateData.size }}>
+          <div className="product-share__widget" id={uid}>
+            <span className="product-share__label">Share this product:</span>
+            <div className="product-share__buttons">
+              {NETWORKS.map((network) => (
+                <button
+                  key={network}
+                  className="product-share__button"
+                  onClick={onClick}
+                >
+                  {network}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    ```
+
+    `useActionWidget` returns:
+    - **`uid`** — unique identifier
+    - **`templateData`** — your custom props plus engine-managed properties (`label`, `disabled`, etc.)
+    - **`onClick()`** — emits the click event through the form engine pipeline
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // product-share.component.ts
+    import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+    import * as Angular from '@golemui/angular';
+    import * as Core from '@golemui/core';
+
+    @Component({
+      standalone: true,
+      selector: 'app-product-share',
+      providers: [Angular.ActionWidgetAdapter],
+      host: {
+        class: 'product-share',
+        '[style.flex]': 'this.adapter.templateData().size',
+      },
+      template: `
+        <div class="product-share__widget" [id]="widget.uid">
+          <span class="product-share__label">Share this product:</span>
+          <div class="product-share__buttons">
+            @for (network of networks; track network) {
+              <button
+                class="product-share__button"
+                (click)="share()"
+              >
+                {{ network }}
+              </button>
+            }
+          </div>
+        </div>
+      `,
+    })
+    export class ProductShareComponent
+      implements OnInit, OnDestroy, Core.WithWidget
+    {
+      widget!: Core.ActionWidget;
+
+      protected adapter: Angular.ActionWidgetAdapter<Record<string, any>> =
+        inject(Angular.ActionWidgetAdapter);
+
+      networks = ['Twitter', 'Facebook', 'LinkedIn'];
+
+      ngOnInit(): void {
+        this.adapter.init(this.widget);
+      }
+
+      ngOnDestroy(): void {
+        this.adapter.destroy();
+      }
+
+      share(): void {
+        this.adapter.click();
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // product-share.element.ts
+    import { html, LitElement } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { consume, provide } from '@lit/context';
+    import { Subscription } from 'rxjs';
+    import * as Core from '@golemui/core';
+    import * as Lit from '@golemui/lit';
+
+    const NETWORKS = ['Twitter', 'Facebook', 'LinkedIn'];
+
+    @customElement('app-product-share')
+    export class ProductShareElement
+      extends LitElement
+      implements Core.WithWidget
+    {
+      widget!: Core.ActionWidget;
+
+      @consume({ context: Lit.formContext })
+      formContext!: Lit.LitFormContext<any>;
+
+      @provide({ context: Lit.actionContext })
+      adapter = new Lit.ActionWidgetAdapter();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-share');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        return html`
+          <div class="product-share__widget" id=${this.widget.uid}>
+            <span class="product-share__label">Share this product:</span>
+            <div class="product-share__buttons">
+              ${NETWORKS.map(
+                (network) => html`
+                  <button
+                    class="product-share__button"
+                    @click=${() => this.adapter.click()}
+                  >
+                    ${network}
+                  </button>
+                `,
+              )}
+            </div>
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Result
+
+Click any of the share buttons to fire the `shareEvent`:
+
+<Demo src="/template/index.html?form=template/custom-widgets/product-share.json" minHeight="80" />
+
+## See also
+
+- [Sending events](/extending/widgets/events/) — emitting events with detail payloads, and catching them application-side.
+- [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Features / Form Events](/features/events/) — handling events application-side.

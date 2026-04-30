@@ -1,0 +1,33 @@
+---
+title: Multi-value scopes
+description: Match widgets carrying multiple tags with AND or OR semantics.
+sidebar:
+  order: 4
+---
+
+When you need to match widgets that carry **all** or **any** of several tags, use the multi-value scope operators:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+// Match widgets tagged BOTH 'identity' and 'required'
+gui.selectors.tagsAnd(['identity', 'required']).inputs({ readonly: false });
+
+// Match widgets tagged 'admin' OR 'superuser'
+gui.selectors.tagsOr(['admin', 'superuser']).actions({ disabled: false });
+```
+
+| Method         | Semantics |
+| -------------- | --------- |
+| `tagsAnd(...)` | All tags listed must be present.                                |
+| `tagsOr(...)`  | At least one of the listed tags must be present.                |
+
+You can chain a multi-value scope with `state(...)` too:
+
+```ts
+gui.selectors.tagsAnd(['identity', 'required']).state('readonly').inputs({ disabled: true });
+```
+
+## See also
+
+- [Scope operators](/form-definition/selectors/scope-operators/) — single-value `tag` and `state`.

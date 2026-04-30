@@ -1,0 +1,42 @@
+---
+title: Events
+description: Wire widget events through onClick, onChange, onLoad, onFilter, onBlur.
+sidebar:
+  order: 7
+---
+
+Each widget kind exposes a small set of event hooks. The DX shortcuts surface them as flat camelCase props (no nested `on` object).
+
+| Hook       | Available on                              |
+| ---------- | ----------------------------------------- |
+| `onClick`  | `gui.actions.button`, `gui.actions.custom` |
+| `onChange` | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion` |
+| `onLoad`   | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select` |
+| `onFilter` | `gui.inputs.dropdown`                     |
+| `onBlur`   | `gui.inputs.*`                            |
+
+Each value is a string — the **event name** the form will emit through `formEvent`.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.dropdown('country', {
+  items: [/* ... */],
+  onChange: 'countryChanged',
+  onFilter: 'countryQuery',
+});
+
+gui.actions.button({
+  label: 'Submit',
+  onClick: 'submit', // 'submit' is special — triggers form-level validation first
+});
+```
+
+## The legacy `on: { click }` shape
+
+The legacy JSON-style `on: { click: '...' }` still works on shortcuts that accept a `Partial<ActionDecorator>` (e.g. `gui.actions.button`). It exists for compatibility with custom event names not yet covered by the typed `onClick` literal. Prefer the flat `onClick` whenever the typed surface allows.
+
+## See also
+
+- [Features / Form Events](/features/events/) — handling events in your application code.
+- [Extending GolemUI / Widgets / Sending events](/extending/widgets/events/) — emitting events from a custom widget.

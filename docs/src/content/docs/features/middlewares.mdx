@@ -1,0 +1,34 @@
+---
+title: Middlewares
+description: Intercept the form's reactive store to add logging, persistence, or schema validation.
+sidebar:
+  order: 4
+---
+
+Middlewares are functions that wrap the form's reactive store and observe (or mutate) every action that flows through it. They run on every state change and can be composed.
+
+## Default middlewares
+
+GolemUI ships a few middlewares you can opt into:
+
+| Middleware              | What it does                                                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `loggerMiddleware`      | Logs each action and the resulting state to the console — handy during development.                                   |
+| `jsonSchemaMiddleware`  | Validates each incoming change against a JSON Schema and rejects invalid mutations.                                   |
+| `devToolsMiddleware`    | Pipes actions to the Redux DevTools extension for time-travel debugging.                                              |
+
+## Wiring middlewares
+
+Pass an array of middlewares to `<gui-form>`. The framework adapter forwards the array to the underlying store.
+
+```ts
+import * as Core from '@golemui/core';
+
+const middlewares = [Core.devToolsMiddleware()];
+```
+
+Then pass `middlewares` as a prop on your framework's `<FormComponent>` / `<gui-form>`.
+
+## Want to write your own?
+
+See [Extending GolemUI / Middlewares](/extending/middlewares/) for the middleware contract and a worked example.

@@ -1,0 +1,68 @@
+---
+title: Form Events
+description: Capture events emitted by widgets and react in your application code.
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Widgets emit named events through the `formEvent` callback you pass to `<gui-form>`. The form definition wires the widget event (a click, a value change, a load) to a name; your application matches on that name and reacts.
+
+## Wiring an event
+
+In the form definition, attach an event handler to a widget. The handler is a string — the name of the event your application will receive.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formDef = [
+  gui.inputs.dropdown('country', {
+    onChange: 'countryChanged',
+    items: ['US', 'CA', 'MX'],
+  }),
+  gui.actions.button({ label: 'Submit', onClick: 'submitForm' }),
+];
+```
+
+In your application, handle the events:
+
+```ts
+function handleFormEvent(event) {
+  switch (event.name) {
+    case 'countryChanged':
+      console.log('Country selected:', event.data.country);
+      break;
+    case 'submitForm':
+      console.log('Submitting:', event.data);
+      break;
+  }
+}
+```
+
+## Event types
+
+| Event     | Emitted by                                  |
+| --------- | ------------------------------------------- |
+| `onClick` | Action widgets (button, custom action).     |
+| `onChange` | Input widgets when their value changes.    |
+| `onLoad`  | Dropdowns and lists during initialization. |
+| `onFilter` | Dropdowns when the user types a search query. |
+| `onBlur`  | Input widgets when focus leaves.           |
+
+## Event payload
+
+The `formEvent` callback receives an object with:
+
+- `name` — the string you wired in the form definition.
+- `data` — the current form data at the moment the event fired.
+- `detail` — optional payload supplied by the widget (e.g. the network id from a custom share button).
+
+<Aside>
+The `'submit'` literal on `onClick` is special — it triggers form-level validation before invoking your handler.
+</Aside>
+
+## See also
+
+- [Extending GolemUI / Widgets / Sending events](/extending/widgets/events/) — emitting events from your custom widgets.
+- [Form Definition API / Events](/form-definition/events/) — every event property accepted by the DX shortcuts.

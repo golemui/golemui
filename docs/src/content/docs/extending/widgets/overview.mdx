@@ -1,0 +1,372 @@
+---
+title: Custom Widgets Overview
+description: Learn how to create your own widgets and plug them into the GolemUI form engine.
+sidebar:
+  order: 0
+---
+import Demo from '../../../../../src/components/landing/Demo.astro';
+import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+GolemUI ships with a rich set of built-in widgets, but real-world applications often need something tailor-made. Custom widgets let you plug your own widgets into the form engine while keeping all the benefits: data binding, validation, event handling, and state management.
+
+## Widget kinds
+
+Every widget in GolemUI has a **kind** that determines its role:
+
+| Kind      | Purpose                                  | Data binding | Events                | Implementation guide                                           |
+| --------- | ---------------------------------------- | ------------ | --------------------- | -------------------------------------------------------------- |
+| `layout`  | Containers that arrange child widgets   | No           | `change`              | [Layout widget](/extending/widgets/layout-widget/)             |
+| `input`   | Controls that read and write form data  | Yes (`path`) | `change`, `filter`    | [Input widget](/extending/widgets/input-widget/)               |
+| `display` | Read-only presentational content        | No           | None                  | [Display widget](/extending/widgets/display-widget/)            |
+| `action`  | Buttons and triggers that fire events   | No           | `click`               | [Action widget](/extending/widgets/action-widget/)             |
+
+To build custom widgets, GolemUI provides **Hooks** (React) and **Adapters** (Angular and Lit). These framework-specific helpers connect your widget to the form engine. Under the hood they interact with the **FormContext** — the central object that manages the widget registry, the reactive store, and the event stream. You don't touch the FormContext directly; the hooks and adapters handle it for you.
+
+## What we're building
+
+Throughout this section, we build a **Product Card Rating** composed of four custom widgets — one for each kind:
+
+- **Layout** — `productCard`: a card container with a title.
+- **Input** — `productRating`: a star-based rating control.
+- **Display** — `productDescription`: an image with a markdown description.
+- **Action** — `productShare`: social sharing buttons that fire an event.
+
+Here's the full form definition we're working toward:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.layouts.custom('productCard', [
+  gui.displays.custom('productDescription', {
+    img: 'assets/product-image.png',
+    description: `### My Cool Product
+My product is the best`,
+  }),
+  gui.inputs.custom('productRating', 'product.rating', {
+    maxRating: 10,
+  }),
+  gui.actions.custom('productShare', {
+    onClick: 'shareEvent',
+  }),
+], { title: 'Product Card Name' });
+```
+
+And because custom widgets live side by side with built-in ones, you can easily extend the card — say, by adding a comment field and a submit button without writing any extra widgets:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.layouts.custom('productCard', [
+  gui.displays.custom('productDescription', {
+    img: 'assets/product-image.png',
+    description: `### My Cool Product
+My product is the best`,
+  }),
+  gui.inputs.custom('productRating', 'product.rating', {
+    maxRating: 10,
+    validator: { type: 'number', required: true },
+  }),
+  gui.inputs.textarea('product.comment', {
+    hint: 'Enter your comment (maximum 500 characters)',
+    placeholder: 'Let us know why you love our product',
+    counterMode: 'current',
+    validator: { type: 'string', maxLength: 500, required: true },
+  }),
+  gui.actions.custom('productShare', {
+    onClick: 'shareEvent',
+  }),
+  gui.actions.button({
+    label: 'Submit',
+    icon: 'save',
+    iconPosition: 'right',
+    onClick: 'submit',
+  }),
+], { title: 'Product Card Name' });
+```
+
+Notice how `textarea` and `button` are built-in GolemUI widgets mixed right in with the custom `productRating` and `productShare`. That's the power of the widget system — all widgets, custom or built-in, speak the same language.
+
+Here's what the extended card looks like with custom and built-in widgets working together:
+
+<Demo src="/template/index.html?form=template/custom-widgets/product-card-extended.json" minHeight="460" />
+
+## Per-kind implementation guides
+
+Each kind has its own dedicated chapter with the full per-framework implementation, key concepts, and a live demo:
+
+1. **[Creating a layout widget](/extending/widgets/layout-widget/)** — the `productCard` container.
+2. **[Creating an input widget](/extending/widgets/input-widget/)** — the `productRating` star control.
+3. **[Creating a display widget](/extending/widgets/display-widget/)** — the `productDescription` image+markdown card.
+4. **[Creating an action widget](/extending/widgets/action-widget/)** — the `productShare` social-buttons widget.
+5. **[Sending events with your widgets](/extending/widgets/events/)** — emitting and receiving events, with detail payloads.
+
+## Registering custom widgets
+
+Before GolemUI can render your custom widgets, you need to register them in the **widget loaders** object. Widget loaders map a `type` string to a lazy-loaded widget. This is the same registry that built-in widgets use.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    export const customWidgetLoaders: Core.WidgetLoaders<
+      React.ComponentType<Core.WithWidget>
+    > = {
+      productCard: async () =>
+        (await import('./widgets/ProductCard')).ProductCard,
+      productRating: async () =>
+        (await import('./widgets/ProductRating')).ProductRating,
+      productDescription: async () =>
+        (await import('./widgets/ProductDescription')).ProductDescription,
+      productShare: async () =>
+        (await import('./widgets/ProductShare')).ProductShare,
+    };
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import * as Core from '@golemui/core';
+    import { Type } from '@angular/core';
+
+    export const customWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = {
+      productCard: async () =>
+        (await import('./widgets/product-card/product-card.component'))
+          .ProductCardComponent,
+      productRating: async () =>
+        (await import('./widgets/product-rating/product-rating.component'))
+          .ProductRatingComponent,
+      productDescription: async () =>
+        (
+          await import(
+            './widgets/product-description/product-description.component'
+          )
+        ).ProductDescriptionComponent,
+      productShare: async () =>
+        (await import('./widgets/product-share/product-share.component'))
+          .ProductShareComponent,
+    };
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    export const customWidgetLoaders: Core.WidgetLoaders<any> = {
+      productCard: async () => {
+        await import('./widgets/product-card.element');
+        return 'app-product-card';
+      },
+      productRating: async () => {
+        await import('./widgets/product-rating.element');
+        return 'app-product-rating';
+      },
+      productDescription: async () => {
+        await import('./widgets/product-description.element');
+        return 'app-product-description';
+      },
+      productShare: async () => {
+        await import('./widgets/product-share.element');
+        return 'app-product-share';
+      },
+    };
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+The `type` key in the loader (`productCard`, `productRating`, etc.) must match the `type` field in your widget definitions. Widget loaders use dynamic `import()` so custom widgets are **lazy-loaded** — they're only fetched when the form engine encounters them.
+
+## Putting it all together
+
+With all four widgets implemented and registered, here's the complete form setup:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import * as React from '@golemui/react';
+    import { gui } from '@golemui/gui-shared';
+    import { customWidgetLoaders } from './custom-widget-loaders';
+
+    const formDef = [
+      gui.layouts.custom('productCard', [
+        gui.displays.custom('productDescription', {
+          img: 'assets/product-image.png',
+          description: `### My Cool Product\nMy product is the best`,
+        }),
+        gui.inputs.custom('productRating', 'product.rating', {
+          maxRating: 10,
+          validator: { type: 'number', required: true },
+        }),
+        gui.actions.custom('productShare', {
+          onClick: 'shareEvent',
+        }),
+      ], { title: 'Rate Our Product' }),
+    ];
+
+    const formConfig = { widgetLoaders: customWidgetLoaders };
+
+    export function ProductPage() {
+      const SHARE_URLS: Record<string, (url: string) => string> = {
+        twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
+        facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+        linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      };
+
+      const handleFormEvent = (event: Core.FormEvent) => {
+        if (event.name === 'shareEvent') {
+          const network = event.detail as string;
+          const buildUrl = SHARE_URLS[network];
+          if (buildUrl) {
+            window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
+          }
+        }
+      };
+
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          formConfig={formConfig}
+          data={{}}
+          formEvent={handleFormEvent}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import * as Angular from '@golemui/angular';
+    import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import { customWidgetLoaders } from './widget-loaders';
+
+    @Component({
+      standalone: true,
+      imports: [Angular.FormComponent],
+      template: `
+        <gui-form
+          [formDef]="formDef"
+          [formConfig]="formConfig"
+          [data]="data"
+          (formEvent)="handleFormEvent($event)"
+        ></gui-form>
+      `,
+    })
+    export class ProductPage {
+      formConfig = { widgetLoaders: customWidgetLoaders };
+      data = {};
+      formDef = [
+        gui.layouts.custom('productCard', [
+          gui.displays.custom('productDescription', {
+            img: 'assets/product-image.png',
+            description: `### My Cool Product\nMy product is the best`,
+          }),
+          gui.inputs.custom('productRating', 'product.rating', {
+            maxRating: 10,
+            validator: { type: 'number', required: true },
+          }),
+          gui.actions.custom('productShare', {
+            onClick: 'shareEvent',
+          }),
+        ], { title: 'Rate Our Product' }),
+      ];
+
+      SHARE_URLS: Record<string, (url: string) => string> = {
+        twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
+        facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+        linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      };
+
+      handleFormEvent(event: Core.FormEvent) {
+        if (event.name === 'shareEvent') {
+          const network = event.detail as string;
+          const buildUrl = this.SHARE_URLS[network];
+          if (buildUrl) {
+            window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
+          }
+        }
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { html, LitElement } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import { customWidgetLoaders } from './widget-loaders';
+
+    @customElement('app-product-page')
+    export class ProductPage extends LitElement {
+      formConfig = { widgetLoaders: customWidgetLoaders };
+      data = {};
+      formDef = [
+        gui.layouts.custom('productCard', [
+          gui.displays.custom('productDescription', {
+            img: 'assets/product-image.png',
+            description: `### My Cool Product\nMy product is the best`,
+          }),
+          gui.inputs.custom('productRating', 'product.rating', {
+            maxRating: 10,
+            validator: { type: 'number', required: true },
+          }),
+          gui.actions.custom('productShare', {
+            onClick: 'shareEvent',
+          }),
+        ], { title: 'Rate Our Product' }),
+      ];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .formConfig=${this.formConfig}
+            .data=${this.data}
+            @form-event=${(e: CustomEvent<Core.FormEvent>) =>
+              this.handleFormEvent(e.detail)}
+          ></gui-form>
+        `;
+      }
+
+      SHARE_URLS: Record<string, (url: string) => string> = {
+        twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
+        facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+        linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      };
+
+      handleFormEvent(event: Core.FormEvent) {
+        if (event.name === 'shareEvent') {
+          const network = event.detail as string;
+          const buildUrl = this.SHARE_URLS[network];
+          if (buildUrl) {
+            window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
+          }
+        }
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+Here's the final result — the complete Product Card with all four custom widgets:
+
+<Demo src="/template/index.html?form=template/custom-widgets/product-card.json" minHeight="320" />
+
+<Aside type="tip" title="Styling with CSS custom properties">
+All the CSS in these examples uses GolemUI's CSS custom properties (`--gui-*`) — colors, fonts, shadows, spacing, and intent tokens. This means your custom widgets automatically adapt to the Clay theme and dark mode without any extra work. See the [Styling](/styling/overview/) section for the full list of available tokens.
+</Aside>
+
+That's it. Four custom widgets, three frameworks, one consistent API. The form engine handles data flow, validation, and event routing — your widgets just focus on rendering.
+
+## See also
+
+- [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — `gui.<group>.custom(...)` reference for declaring instances.
+- [Features / Widget Loaders](/features/widget-loaders/) — registering loaders in `formConfig`.
+- [Features / Form Events](/features/events/) — handling events application-side.

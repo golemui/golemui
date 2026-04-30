@@ -1,0 +1,44 @@
+---
+title: Widget Loaders
+description: Register the UI widgets the form can render through formConfig.widgetLoaders.
+sidebar:
+  order: 1
+---
+
+Widget loaders are a `Record<string, () => Promise<unknown>>` map that tells the form engine how to lazy-load each widget kind. The map key is the widget `type` (e.g. `'textinput'`, `'dropdown'`) and the value is an async loader that returns the widget implementation.
+
+## Default loaders
+
+Each framework adapter exports a `widgetLoaders` object preloaded with the GolemUI widget set:
+
+```ts
+import * as React from '@golemui/gui-react';
+// React.widgetLoaders covers every built-in input, layout, display, and action widget.
+```
+
+Pass this as part of `formConfig`:
+
+```ts
+const formConfig = { widgetLoaders: React.widgetLoaders };
+```
+
+## Adding more
+
+Spread the defaults and add your own custom widgets to the same map:
+
+```ts
+const formConfig = {
+  widgetLoaders: {
+    ...React.widgetLoaders,
+    productCard: async () =>
+      (await import('./widgets/ProductCard')).ProductCard,
+  },
+};
+```
+
+The `type` key in the loader (`productCard`) must match the `type` field in your widget definitions.
+
+## See also
+
+- [Extending GolemUI / Widgets](/extending/widgets/overview/) — building your own widget implementations.
+- [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — declaring custom widget instances in the form.

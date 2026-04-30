@@ -1,0 +1,33 @@
+---
+title: Custom Middlewares
+description: Write your own middleware to intercept the form's reactive store.
+sidebar:
+  order: 3
+---
+
+A middleware is a function that wraps the store's dispatch pipeline. The signature is the standard Redux-style triple-function:
+
+```ts
+import * as Core from '@golemui/core';
+
+export const myMiddleware: Core.Middleware<Core.State, Core.Action> =
+  (store) => (next) => (action) => {
+    console.log('Before:', action.type, store.getState());
+    const result = next(action);
+    console.log('After:', store.getState());
+    return result;
+  };
+```
+
+Pass it through the `middlewares` prop of the form component (this stays as a separate prop, not inside `formConfig`).
+
+## Patterns
+
+- **Logging.** Log every action and resulting state — useful during development.
+- **Persistence.** Watch a subset of actions and persist the form state to `localStorage`.
+- **Schema validation.** Validate every state mutation against a JSON Schema and reject invalid changes.
+- **Telemetry.** Emit analytics events for specific user interactions.
+
+## See also
+
+- [Features / Middlewares](/features/middlewares/) — built-in middlewares and how to wire them.

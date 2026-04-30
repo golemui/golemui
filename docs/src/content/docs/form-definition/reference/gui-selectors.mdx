@@ -1,0 +1,48 @@
+---
+title: gui.selectors reference
+description: Every selector method, organized by chain position.
+sidebar:
+  order: 4
+---
+
+`gui.selectors` is a chain root. Methods come in three categories:
+
+## Scope methods (intermediate)
+
+| Method                | Use                                                     |
+| --------------------- | ------------------------------------------------------- |
+| `tag(name)`           | Match widgets carrying `name` in their `tags` array.   |
+| `tagsAnd([...names])` | Match widgets carrying **all** of `names`.              |
+| `tagsOr([...names])`  | Match widgets carrying **any** of `names`.              |
+| `state(name)`         | Match while the named state is active.                  |
+
+Scope methods are immutable; they return a new chain.
+
+## Type-leaf methods (terminal)
+
+The leaf names mirror `gui.<group>.<type>` — every typed shortcut has a corresponding selector. Examples:
+
+- `inputs(config)`, `textInputs(config)`, `numberInputs(config)`, `booleanInputs(config)`
+- `selects(config)`, `dropdowns(config)`, `radiogroups(config)`, `checkboxes(config)`
+- `textareas(config)`, `passwords(config)`, `currencies(config)`, `markdowns(config)`, `lists(config)`
+- `calendars(config)`, `dateInputs(config)`, `datePickers(config)`
+- `rangeCalendars(config)`, `rangeDateInputs(config)`, `rangeDatePickers(config)`
+- `repeaters(config)`, `actions(config)`, `displays(config)`, `alerts(config)`
+- `layouts(config)`, `tabs(config)`, `accordions(config)`
+- `customInputs(config)`, `customActions(config)`, `customDisplays(config)`, `customLayouts(config)`
+
+## Uid-leaf methods (terminal)
+
+For each type, a `<type>ByUid` variant targets a single widget:
+
+- `inputByUid(uid, config)`, `textInputByUid(uid, config)`, `numberInputByUid(uid, config)`, …
+- `selectByUid(uid, config)`, `dropdownByUid(uid, config)`, `radiogroupByUid(uid, config)`, …
+- and so on for every type listed above.
+
+## Configs
+
+Each config is the typed `Gsl<Type>Config` shape — typically a partial of the widget's decorator plus selector-specific options like `suppressAutomaticLabels` and `suppressAutomaticPlaceholders`.
+
+## See also
+
+- [Type selectors](/form-definition/selectors/type-selectors/), [Scope operators](/form-definition/selectors/scope-operators/), [Multi-value scopes](/form-definition/selectors/multi-value-scopes/), [Sensible defaults](/form-definition/selectors/sensible-defaults/), [Precedence](/form-definition/selectors/precedence/).

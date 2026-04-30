@@ -1,0 +1,38 @@
+---
+title: Features Overview
+description: How the GolemUI form component works, and a quick tour of every feature you can plug into it.
+sidebar:
+  order: 0
+---
+
+The unified `<gui-form>` component (React `<FormComponent>`, Angular `<gui-form>`, Lit `<gui-form>`) takes a small set of inputs and produces a fully-rendered, validated, accessible form. Most of the interesting customization happens through the `formConfig` object you hand to it.
+
+This section walks through every feature you can plug in, in increasing order of depth. Each page is self-contained — read what you need, skip the rest.
+
+## What `<gui-form>` accepts
+
+| Input          | Description                                                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `formDef`      | An array of `gui.*` shortcuts (Programmatic) or a parsed JSON form definition. See [Form Definition API](/form-definition/overview/). |
+| `data`         | The initial form data object.                                                                                                        |
+| `formConfig`   | Engine wiring: widget loaders, item renderers, validators, dependencies, validation timing, states.                                  |
+| `formSelectors` | GSL selectors that decorate widgets by type, tag, or uid.                                                                            |
+| `localization` | i18n translator (e.g. i18next).                                                                                                      |
+| `formEvent`    | Callback for events emitted by widgets.                                                                                              |
+| `formHealth`   | Callback that reports the live validation status of the form.                                                                        |
+
+## Features
+
+- **[Widget Loaders](/features/widget-loaders/)** — register the UI widgets the form can render.
+- **[Item Renderers](/features/item-renderers/)** — supply custom item templates for `dropdown`, `list`, and similar widgets.
+- **[Validators](/features/validators/)** — declarative validation rules with localized error messages.
+- **[Middlewares](/features/middlewares/)** — intercept the store to add logging, persistence, or schema validation.
+- **[Form Events](/features/events/)** — listen to widget events and react in your application code.
+- **[i18n](/features/i18n/)** — wire i18next or any other translator and localize labels, placeholders, validators, and dates.
+- **[Dependencies](/features/dependencies/)** — inject third-party helpers (e.g. a markdown parser) at the form level.
+- **[States](/features/states/)** — declare named conditions and use them to gate fields, override props, and compose behavior.
+
+## See also
+
+- [Extending GolemUI](/extending/widgets/overview/) for building your own widgets, item renderers, validators, and middlewares.
+- [Form Definition API](/form-definition/overview/) for the full `gui.*` and `gui.selectors` reference.

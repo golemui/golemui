@@ -1,0 +1,40 @@
+---
+title: Selectors
+description: The behavior layer — decorate widgets by type, tag, or uid without touching the form structure.
+sidebar:
+  order: 3
+---
+
+Selectors are the **behavior layer** of the Form Definition API. While `gui.inputs.*`, `gui.layouts.*`, etc. describe the form's **structure**, `gui.selectors.*` describes how those widgets should look and behave — by **type**, by **tag**, or by **uid** — without you having to weave that behavior into every shortcut call.
+
+A selector is built by chaining methods off the `gui.selectors` root, then matching a target type and supplying a config:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formSelectors = [
+  // Suppress auto-labels on every input
+  gui.selectors.inputs({ suppressAutomaticLabels: true }),
+
+  // For inputs tagged 'identity', also suppress auto-placeholders
+  gui.selectors.tag('identity').inputs({ suppressAutomaticPlaceholders: true }),
+
+  // Hide a specific dropdown by uid in a particular state
+  gui.selectors.state('loaded').dropdownByUid('country', { disabled: false }),
+];
+```
+
+Pass the array as `formSelectors` on `<gui-form>`.
+
+## Read on
+
+- [Type selectors](/form-definition/selectors/type-selectors/) — `inputs`, `dropdowns`, `actions`, etc.
+- [Chaining](/form-definition/selectors/chaining/) — composing scope methods.
+- [Scope operators](/form-definition/selectors/scope-operators/) — `tag`, `state`.
+- [Multi-value scope operators](/form-definition/selectors/multi-value-scopes/) — `tagsAnd`, `tagsOr`.
+- [Sensible defaults](/form-definition/selectors/sensible-defaults/) — what the engine auto-fills for you.
+- [Precedence](/form-definition/selectors/precedence/) — the merge order between defaults, selectors, and shortcut props.
+
+## See also
+
+- [Form Definition Overview](/form-definition/overview/) — the full `gui.*` namespace.

@@ -1,0 +1,41 @@
+---
+title: Item Renderers
+description: Provide custom item templates for dropdowns, lists, and other choice widgets.
+sidebar:
+  order: 2
+---
+
+Some widgets render a list of items — `dropdown`, `list`, `radiogroup`, and similar. By default, each item is rendered as a label/value pair. Item renderers let you supply a richer template (e.g. a country flag next to its label, a product card with a thumbnail and a price).
+
+Item renderers live in `formConfig.itemRenderers`, keyed by a name you reference from the widget's `itemRenderer` prop.
+
+## Wiring an item renderer
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formDef = [
+  gui.inputs.dropdown('country', {
+    items: [
+      { id: 'US', flag: '🇺🇸', label: 'United States' },
+      { id: 'CA', flag: '🇨🇦', label: 'Canada' },
+    ],
+    labelField: 'label',
+    valueField: 'id',
+    itemRenderer: 'countryItemRenderer', // <- name of the renderer
+  }),
+];
+
+const formConfig = {
+  itemRenderers: {
+    countryItemRenderer: CountryItemRenderer, // <- framework component
+  },
+};
+```
+
+The shape of `CountryItemRenderer` is framework-specific — see [Extending GolemUI / Item Renderers](/extending/item-renderers/) for the implementation contract.
+
+## See also
+
+- [Extending GolemUI / Item Renderers](/extending/item-renderers/) — implementing renderers per framework.
+- [Widgets Reference / Dropdown](/widgets-reference/input-fields/dropdown/) — every prop a dropdown supports.

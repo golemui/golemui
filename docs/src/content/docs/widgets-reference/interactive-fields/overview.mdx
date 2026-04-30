@@ -1,0 +1,68 @@
+---
+title: Action Widgets Overview
+description: Buttons and other widgets that trigger events without binding to form data.
+sidebar:
+  order: 0
+---
+
+**Action widgets** trigger events. They don't bind to form data and don't render values — they emit named events that your application code handles via the `formEvent` callback.
+
+## The DX shortcuts
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formDef = [
+  // Triggers form-level validation, then emits a built-in 'submit' event.
+  gui.actions.submitButton({ label: 'Submit' }),
+
+  // A free-form button — emits whatever event name you provide.
+  gui.actions.button({ label: 'Cancel', on: { click: 'cancelForm' } }),
+
+  // Plug in your own action widget.
+  gui.actions.custom('productShare', { onClick: 'shareEvent' }),
+];
+```
+
+| Shortcut                    | Description                                                                                              |
+| --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `gui.actions.button`        | A button widget ([Button](/widgets-reference/interactive-fields/button/)). Use `onClick: 'submit'` for the form-submit literal, or `on: { click: '<eventName>' }` for arbitrary events. |
+| `gui.actions.submitButton`  | A button preconfigured with `onClick: 'submit'`.                                                          |
+| `gui.actions.custom`        | Plug in your own action widget ([Custom Widgets](/form-definition/custom-widgets/)).                      |
+
+## JSON form
+
+The same widget in JSON:
+
+```json
+{
+  "form": [
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Submit",
+      "on": { "click": "submit" }
+    }
+  ]
+}
+```
+
+| Property | Description                                                                       |
+| -------- | --------------------------------------------------------------------------------- |
+| `uid`    | Optional unique id; one is generated if absent.                                   |
+| `kind`   | **MANDATORY**. Always `'action'`.                                                  |
+| `type`   | **MANDATORY**. The action type (`button` is the only built-in).                    |
+| `label`  | Visible label text. Accepts a `Localizable` for i18n.                             |
+| `on`     | Event wiring — typically `{ click: '<eventName>' }`. Use `'submit'` to trigger form-level validation. |
+| `props`  | Widget-specific configuration (icon, iconPosition, variant, etc.).                |
+
+## Available widgets
+
+- [Button](/widgets-reference/interactive-fields/button/)
+
+## See also
+
+- [`gui.actions` reference](/form-definition/reference/gui-actions/) — every action shortcut.
+- [Form Definition / Events](/form-definition/events/) — wiring `onClick` and friends.
+- [Features / Form Events](/features/events/) — handling events in your application.
+- [Extending GolemUI / Action Widget](/extending/widgets/action-widget/) — build your own.

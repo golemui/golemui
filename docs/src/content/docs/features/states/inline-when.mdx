@@ -1,0 +1,29 @@
+---
+title: Inline when
+description: Express one-off conditional rules without naming a state.
+sidebar:
+  order: 3
+---
+
+Sometimes you need a condition that's only used once. Naming it as a state would be overkill. Use `{ when: '<expression>' }` to express it inline:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.numberInput('pets', {
+  label: 'Number of pets',
+  include: { when: '$form.includePets === true' },
+});
+```
+
+Inline `when` accepts the same reactive expression syntax as named states — `$form.<path>`, comparisons, logical operators.
+
+## When to inline vs name
+
+- Use **inline `when`** when the condition appears once and reads naturally at the call site.
+- Use a **named state** when the same condition gates multiple widgets, drives prop overrides, or is referenced from event handlers.
+
+## See also
+
+- [Include & Exclude](/features/states/include-exclude/) — gating with active-state lists.
+- [Form Definition API / Conditionals](/form-definition/conditionals/) — the expression language.

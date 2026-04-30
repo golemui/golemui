@@ -1,0 +1,39 @@
+---
+title: Tags
+description: Label widgets so you can target them from the selector layer.
+sidebar:
+  order: 2
+---
+
+Every shortcut accepts an optional `tags` array. Tags don't change rendering — they're metadata that selectors can match against.
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formDef = [
+  gui.inputs.textInput('username', { label: 'Username' }, ['identity']),
+  gui.inputs.password('password', { label: 'Password' }, ['identity']),
+];
+```
+
+Then in selectors:
+
+```ts
+const formSelectors = [
+  gui.selectors.tag('identity').inputs({
+    suppressAutomaticPlaceholders: true,
+  }),
+];
+```
+
+The selector applies its decorator to **every input tagged `identity`** without you having to repeat the rule on each widget.
+
+## When to use tags
+
+- When you need the same behavior or styling on a logical group of widgets.
+- When you want selectors to be reusable across forms.
+- When the alternative would be repeating the same prop on many shortcuts.
+
+## See also
+
+- [Selectors](/form-definition/selectors/) — chaining tags with type selectors and scope operators.

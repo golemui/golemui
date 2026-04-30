@@ -50,7 +50,35 @@ const eventHandlers = {
   async getToAirports(event: Core.FormEvent) {
     getAirports(event, event.detail, 'to');
   },
+  async loadCars(event: Core.FormEvent) {
+    getCars(event, '', 'car');
+  },
+  async filterCars(event: Core.FormEvent) {
+    getCars(event, (event.detail as string) ?? '', 'car');
+  },
 };
+
+const ALL_CARS = [
+  { id: 'compact', label: 'Compact', img: '🚗', price: 35 },
+  { id: 'suv', label: 'SUV', img: '🚙', price: 75 },
+  { id: 'convertible', label: 'Convertible', img: '🏎️', price: 110 },
+  { id: 'luxury', label: 'Luxury', img: '🚘', price: 180 },
+  { id: 'minivan', label: 'Minivan', img: '🚐', price: 95 },
+  { id: 'pickup', label: 'Pickup', img: '🛻', price: 85 },
+];
+
+function getCars(event: Core.FormEvent, filter: string, path: Core.DotPath) {
+  setTimeout(() => {
+    const q = filter.toLowerCase();
+    const filtered = q
+      ? ALL_CARS.filter((c) => c.label.toLowerCase().includes(q))
+      : ALL_CARS;
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { path, prop: 'items', value: filtered },
+    });
+  }, 250);
+}
 
 async function getSubregions(event: Core.FormEvent, path: Core.DotPath) {
   const response = await fetch('/data/subregions.json');

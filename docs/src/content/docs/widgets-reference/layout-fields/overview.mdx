@@ -1,22 +1,94 @@
 ---
-title: Overview
-description: A layout widget that organizes and displays information
+title: Layout Widgets Overview
+description: Containers that arrange child widgets in rows, columns, tabs, or accordions.
 sidebar:
   order: 0
 ---
 
-Layout Fields are widgets that organize and display information to users. An accordion, a stack, or tabs are examples of Layout Fields.
+**Layout widgets** are containers. They take a `children` array (a tabs/accordion takes a `sections` array of `{ label, uid, children }`) and arrange them visually. They have no `path` and don't write to form data themselves.
 
-Layout Fields are defined by setting the `kind` property as `layout`, and the property `children`, an array of elements to display.
+## The DX shortcuts
 
-## Main Properties
+```ts
+import { gui } from '@golemui/gui-shared';
 
-Use these properties to customize your Layout Fields.
+const formDef = [
+  // Grid for rows — subgrid keeps labels and inputs aligned across all children.
+  gui.layouts.grid([
+    gui.inputs.textInput('user.firstName'),
+    gui.inputs.textInput('user.lastName'),
+  ]),
 
-| property   | type   | value                                                                                                                    |
-| ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `uid`      | string | A unique id, if none provided, one will be generated automatically                                                       |
-| `kind`     | string | **MANDATORY** All Layout Fields are type `layout`                                                                        |
-| `widget`   | string | **MANDATORY** The Layout Field widget that you want to use (for example: `accordion`)                                    |
-| `children` | array  | **MANDATORY** The elements to display inside the Layout Field                                                            |
-| `props`    | object | An object with custom properties defined by each Layout Field, check the documentation of each Layout Field to know more |
+  // Flex for columns.
+  gui.layouts.flex(
+    [
+      gui.inputs.textInput('user.email'),
+      gui.inputs.password('user.password'),
+    ],
+    { direction: 'column' },
+  ),
+
+  // Tabs — first arg is sections, each with its own children.
+  gui.layouts.tabs([
+    { label: 'Personal', uid: 'personal', children: [/* ... */] },
+    { label: 'Work', uid: 'work', children: [/* ... */] },
+  ]),
+];
+```
+
+| Shortcut                       | Description                                                                |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `gui.layouts.flex`             | Flex container ([Flex](/widgets-reference/layout-fields/flex/)).           |
+| `gui.layouts.horizontalFlex`   | Flex with `direction: 'row'`.                                              |
+| `gui.layouts.verticalFlex`     | Flex with `direction: 'column'`.                                           |
+| `gui.layouts.grid`             | Grid container with subgrid alignment ([Grid](/widgets-reference/layout-fields/grid/)). |
+| `gui.layouts.horizontalGrid`   | Grid with `direction: 'row'`.                                              |
+| `gui.layouts.verticalGrid`     | Grid with `direction: 'column'`.                                           |
+| `gui.layouts.tabs`             | Tabs ([Tabs](/widgets-reference/layout-fields/tabs/)).                     |
+| `gui.layouts.accordion`        | Accordion ([Accordion](/widgets-reference/layout-fields/accordion/)).      |
+| `gui.layouts.custom`           | Plug in your own layout ([Custom Widgets](/form-definition/custom-widgets/)). |
+
+### Layout recommendation
+
+- **Use `grid` for rows.** CSS subgrid keeps labels, inputs, and validation messages aligned across every child in the row.
+- **Use `flex` for columns.** Lighter, more flexible for vertical stacks.
+
+## JSON form
+
+The same widget in JSON, with `props` and `children` separated:
+
+```json
+{
+  "form": [
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": { "direction": "row", "autoFit": true },
+      "children": [
+        { "kind": "input", "type": "textinput", "path": "user.firstName" },
+        { "kind": "input", "type": "textinput", "path": "user.lastName" }
+      ]
+    }
+  ]
+}
+```
+
+| Property   | Description                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------ |
+| `uid`      | Optional unique id; one is generated if absent.                                                        |
+| `kind`     | **MANDATORY**. Always `'layout'`.                                                                      |
+| `type`     | **MANDATORY**. The layout type (`flex`, `grid`, `tabs`, `accordion`).                                  |
+| `children` | **MANDATORY** for `flex` / `grid`. An array of child widgets. (Tabs and accordion put children inside their sections.) |
+| `props`    | Layout-specific configuration — direction, gap, align/justify, etc. See each layout's reference page. |
+
+## Available widgets
+
+- [Accordion](/widgets-reference/layout-fields/accordion/)
+- [Flex](/widgets-reference/layout-fields/flex/)
+- [Grid](/widgets-reference/layout-fields/grid/) — recommended for rows
+- [Tabs](/widgets-reference/layout-fields/tabs/)
+
+## See also
+
+- [`gui.layouts` reference](/form-definition/reference/gui-layouts/) — every layout shortcut.
+- [Extending GolemUI / Layout Widget](/extending/widgets/layout-widget/) — build your own.

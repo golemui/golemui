@@ -1,0 +1,111 @@
+---
+title: 'Rent a car: Submitting the form'
+description: Capture the submit event, read the form data, and pop a confirmation.
+sidebar:
+  order: 7
+---
+
+import Demo from '../../../components/landing/Demo.astro';
+import DslCode from '../../../components/DslCode.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+import finalJson from '../../../../public/template/getting-started/rent-a-car/05-final.json?raw';
+import finalDx from '../../../../public/template/getting-started-dx/rent-a-car/05-final.ts?raw';
+export const configJson = '05-final.json';
+export const configDx = '05-final.ts';
+
+The reservation button currently fires the special `'submit'` event, which runs form-level validation but doesn't notify your application code. Let's wire it to a real handler instead, so we can read the data and confirm the booking.
+
+## Step 1 — Emit a custom event from the button
+
+Replace `onClick: 'submit'` with `on: { click: 'handleReservation' }`. The `'submit'` literal triggers form-level validation and emits the event only when the form is valid; for arbitrary event names, use the legacy `on: { click: '<eventName>' }` shape.
+
+## Step 2 — Listen for it
+
+In your `formEvent` callback, match the event name and read `event.data`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    function handleFormEvent(event) {
+      if (event.name === 'handleReservation') {
+        console.log('Reservation:', event.data);
+        alert(`Reserved ${event.data.car} from ${event.data.collectOffice}`);
+      }
+    }
+
+    <FormComponent
+      formDef={formDef}
+      formConfig={formConfig}
+      formEvent={handleFormEvent}
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    @Component({
+      template: `
+        <gui-form
+          [formDef]="formDef"
+          [formConfig]="formConfig"
+          (formEvent)="onFormEvent($event)"
+        ></gui-form>
+      `,
+    })
+    export class AppPage {
+      onFormEvent(event: Core.FormEvent) {
+        if (event.name === 'handleReservation') {
+          console.log('Reservation:', event.data);
+        }
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    @customElement('app-page')
+    export class AppPage extends LitElement {
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .formConfig=${this.formConfig}
+            @formEvent=${(e) => this.onFormEvent(e.detail)}
+          ></gui-form>
+        `;
+      }
+
+      onFormEvent(event) {
+        if (event.name === 'handleReservation') {
+          console.log('Reservation:', event.data);
+        }
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+## Result
+
+<DslCode dxCode={finalDx} jsonCode={finalJson} dxTitle={configDx} jsonTitle={configJson} />
+
+<Demo src="/template/index.html?form=template/getting-started/rent-a-car/05-final.json" minHeight="800" />
+
+Fill the form, click **Reserve**, and the JSON payload arrives in your `formEvent` callback.
+
+## Wrapping up
+
+You've now built a real-world form that uses:
+
+- declarative widget composition with `gui.layouts.grid` and `gui.layouts.flex`,
+- validators per field,
+- named states with `include` rules,
+- a custom item renderer,
+- async data loading with `onLoad`/`onFilter` and `inputDebounce`,
+- form events to capture the submit.
+
+## Where next?
+
+- **[Features](/features/overview/)** — deep dives into every cross-cutting capability.
+- **[Form Definition API](/form-definition/overview/)** — the canonical reference for `gui.*`.
+- **[Extending GolemUI](/extending/widgets/overview/)** — building your own widgets.
+- **[Widgets Reference](/widgets-reference/input-fields/overview/)** — every built-in widget.

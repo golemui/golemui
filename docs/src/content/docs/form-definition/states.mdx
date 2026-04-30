@@ -1,0 +1,38 @@
+---
+title: States
+description: Declare named conditions that the engine evaluates against form data.
+sidebar:
+  order: 5
+---
+
+States are named boolean expressions over the live form data. Declare them once in `formConfig.states`, then reference the names from `include` / `exclude` rules, per-state property overrides, and selectors.
+
+```ts
+const formConfig = {
+  states: {
+    hasDiscount: '$form.hasDiscountCode === true',
+    isAdult: '$form.driverAge >= 18',
+  },
+};
+```
+
+## Expression syntax
+
+Expressions are JavaScript-like. The engine exposes:
+
+- `$form` — the current form data tree.
+- Standard operators: `&&`, `||`, `!`, `===`, `!==`, `<`, `>`, `<=`, `>=`, `+`, `-`, `*`, `/`, `?:`.
+- Optional chaining: `$form.user?.name`.
+
+Expressions can reference any path in the form data.
+
+## Where to use states
+
+- In `include` / `exclude` rules: gate widgets.
+- In per-state property overrides on shortcuts: change props when active.
+- In `gui.selectors.state(...)` chains: scope a selector to one state.
+
+## See also
+
+- [Features / States](/features/states/) — gating, properties, composing.
+- [Conditionals](/form-definition/conditionals/) — `include`, `exclude`, inline `when`.
