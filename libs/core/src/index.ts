@@ -3,23 +3,20 @@ import type * as justin from './types/subscript__justin';
 
 type _ = justin;
 
+export * from './lib/context';
+export * from './lib/errors';
 export * from './lib/form';
-export * from './lib/form-widget';
 export * from './lib/form-store';
 export * from './lib/form-validator';
+export * from './lib/form-widget';
+export * from './lib/i18n';
+export * from './lib/item-renderer';
+export * from './lib/middleware';
+export * from './lib/shared';
 export * from './lib/store/actions';
 export * from './lib/store/model';
 export * from './lib/store/selectors';
-
-export * from './lib/context';
-
-export * from './lib/shared';
-export * from './lib/errors';
-
-export * from './lib/middleware';
-
-export * from './lib/i18n';
-export * from './lib/item-renderer';
+export * from './lib/utils/assert-no-prop-collisions';
 export * from './lib/utils/debug';
 export * from './lib/utils/function';
 export * from './lib/utils/object';
