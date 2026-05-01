@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { enableDevMode } from './dev-mode';
 import { assertNoPropCollisions } from './assert-no-prop-collisions';
 
 const widgetBase = {
@@ -11,7 +12,42 @@ const widgetBase = {
   validator: {},
 };
 
-describe('assertNoPropCollisions', () => {
+describe('assertNoPropCollisions — dev mode OFF (default)', () => {
+  it('does not throw for typical widget props', () => {
+    const props = { itemHeight: 30, hint: 'Pick one', items: [1, 2, 3] };
+    expect(() =>
+      assertNoPropCollisions('dropdown-widget', props, widgetBase),
+    ).not.toThrow();
+  });
+
+  it('does not throw when props is undefined', () => {
+    expect(() =>
+      assertNoPropCollisions('dropdown-widget', undefined, widgetBase),
+    ).not.toThrow();
+  });
+
+  it('does not throw when props is empty', () => {
+    expect(() =>
+      assertNoPropCollisions('dropdown-widget', {}, widgetBase),
+    ).not.toThrow();
+  });
+
+  it('does not throw even when props.uid collides', () => {
+    expect(() =>
+      assertNoPropCollisions('dropdown-widget', { uid: 'my-uid' }, widgetBase),
+    ).not.toThrow();
+  });
+
+  it('does not throw even when multiple props collide', () => {
+    expect(() =>
+      assertNoPropCollisions('dropdown-widget', { uid: 'x', kind: 'action' }, widgetBase),
+    ).not.toThrow();
+  });
+});
+
+describe('assertNoPropCollisions — dev mode ON', () => {
+  beforeAll(() => enableDevMode());
+
   it('does not throw for typical widget props', () => {
     const props = { itemHeight: 30, hint: 'Pick one', items: [1, 2, 3] };
     expect(() =>
@@ -50,9 +86,8 @@ describe('assertNoPropCollisions', () => {
   });
 
   it('throws when multiple props collide with widget fields', () => {
-    const props = { uid: 'x', kind: 'action', itemHeight: 30 };
     expect(() =>
-      assertNoPropCollisions('dropdown-widget', props, widgetBase),
+      assertNoPropCollisions('dropdown-widget', { uid: 'x', kind: 'action', itemHeight: 30 }, widgetBase),
     ).toThrow();
   });
 
@@ -68,7 +103,7 @@ describe('assertNoPropCollisions', () => {
     ).toThrow(/uid.*kind|kind.*uid/);
   });
 
-  it('does not report non-colliding mixed props as errors', () => {
+  it('does not throw for non-colliding mixed props', () => {
     const props = {
       height: 150,
       itemHeight: 60,

@@ -18,6 +18,7 @@ export * from './lib/store/model';
 export * from './lib/store/selectors';
 export * from './lib/utils/assert-no-prop-collisions';
 export * from './lib/utils/debug';
+export * from './lib/utils/dev-mode';
 export * from './lib/utils/function';
 export * from './lib/utils/object';
 export * from './lib/utils/random';
