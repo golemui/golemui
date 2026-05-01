@@ -129,6 +129,7 @@ When not set, the default behaviour is `'eager'`.
       formConfig={formConfig}
     />
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -281,6 +282,7 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
       localization={localization}
     />
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```html
@@ -305,3 +307,41 @@ GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable tr
 </IntegrationTabs>
 
 See the [Responsive & RTL](/styling/overview/#responsive) guide for full RTL setup details.
+
+## Dev Mode
+
+Call `enableDevMode()` once at application bootstrap to turn on extra runtime checks. It is disabled by default and should only be enabled outside of production builds.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx title="main.tsx"
+    import { enableDevMode } from '@golemui/core';
+
+    if (import.meta.env.DEV) {
+      enableDevMode();
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts title="main.ts"
+    import { enableDevMode } from '@golemui/core';
+    import { environment } from './environments/environment';
+
+    if (environment.env !== 'prod') {
+      enableDevMode();
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts title="main.ts"
+    import { enableDevMode } from '@golemui/core';
+
+    if (import.meta.env.DEV) {
+      enableDevMode();
+    }
+    ```
+
+  </Fragment>
+</IntegrationTabs>
