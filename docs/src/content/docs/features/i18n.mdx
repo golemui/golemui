@@ -1,11 +1,16 @@
 ---
 title: i18n
-description: Localize labels, placeholders, validators, dates, and currency with i18next or any other translator.
+description: Localize labels, placeholders, validators, dates, and currency by plugging any i18n library that implements the I18nTranslator interface.
 sidebar:
   order: 6
 ---
 
-GolemUI is i18n-aware out of the box. Every visible string in a form definition can be either a plain string or a `Localizable`:
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+GolemUI is i18n-aware out of the box but **library-agnostic** — it doesn't ship or depend on any specific translation library. You bring your own (i18next, ParaglideJS, typesafe-i18n, FormatJS, your own JSON loader…) and adapt it to the small `I18nTranslator` contract from `@golemui/core`.
+
+Every visible string in a form definition can be either a plain string or a `Localizable`:
 
 ```ts
 type Localizable =
@@ -15,37 +20,261 @@ type Localizable =
 
 The active translator resolves `{ key, default }` shapes at render time. Plain strings render as-is.
 
-## Wiring a translator
-
-GolemUI ships an i18next adapter; you can also build your own.
-
-### Using i18next
+## The `I18nTranslator` contract
 
 ```ts
-import * as AppsShared from '@golemui/apps-shared';
+import * as Core from '@golemui/core';
 
-const localization = AppsShared.initializeI18n({
-  // i18next resource bundles
-});
+interface I18nTranslator {
+  /** Current BCP 47 language tag (e.g. 'en-US', 'es', 'fr-CA'). */
+  get lang(): string;
+
+  /** Resolve a key to a localized string; fall back to `defaultValue` if unknown. */
+  translate(
+    key: Core.TranslationKey,
+    params?: Core.I18nParams,
+    defaultValue?: string,
+  ): string;
+
+  /** Subscribe to language-change events. Returns an unsubscribe function. */
+  subscribe(listener: (lang: string) => void): () => void;
+}
 ```
 
-Pass `localization` to `<gui-form>`:
+Three properties, no opinions about how strings are stored or compiled. Any library you can wrap into those four members will work.
+
+<Aside type="tip">
+For a quick start without a real i18n library, `@golemui/core` exports `identityTranslator()` — a no-op translator that returns the key unchanged but still notifies subscribers when you call `setLang('xx')`. Useful for tests and prototypes.
+</Aside>
+
+## Adapter examples
+
+Here's the same `I18nTranslator` implemented against three popular libraries. Pick the one closest to what you already use, or treat it as a template for your own.
+
+### i18next
 
 ```ts
-<gui-form .formDef=${formDef} .localization=${localization}></gui-form>
+import * as Core from '@golemui/core';
+import i18next, { type Resource } from 'i18next';
+
+export function createI18nextTranslator(resources: Resource): Core.I18nTranslator {
+  i18next.init({ fallbackLng: 'en', resources });
+
+  return {
+    get lang() {
+      return i18next.language;
+    },
+    translate(key, params, defaultValue) {
+      return i18next.t(key, { ...params, defaultValue });
+    },
+    subscribe(listener) {
+      const onChange = (lng: string) => listener(lng);
+      i18next.on('languageChanged', onChange);
+      return () => i18next.off('languageChanged', onChange);
+    },
+  };
+}
 ```
 
-### Other providers
+Switch language at runtime: `i18next.changeLanguage('es')`.
 
-Anything that implements the `I18nTranslator` interface from `@golemui/core` works. Examples include intlayer, FormatJS, or your own translation function.
+### ParaglideJS
+
+ParaglideJS compiles your messages into typed functions, so the adapter calls a tiny lookup helper instead of a generic `t()`. The runtime exports `getLocale()` / `setLocale()` and tracks subscribers via a small store you wrap.
+
+```ts
+import * as Core from '@golemui/core';
+import { getLocale, setLocale } from './paraglide/runtime';
+import * as m from './paraglide/messages';
+
+const listeners = new Set<(lang: string) => void>();
+
+export const paraglideTranslator: Core.I18nTranslator = {
+  get lang() {
+    return getLocale();
+  },
+  translate(key, params, defaultValue) {
+    const fn = (m as Record<string, (p?: Record<string, unknown>) => string>)[key];
+    return fn ? fn(params) : (defaultValue ?? key);
+  },
+  subscribe(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+};
+
+// Wherever you change locale, also fan out to GolemUI subscribers:
+export function changeLanguage(lang: string) {
+  setLocale(lang as Parameters<typeof setLocale>[0]);
+  listeners.forEach((l) => l(lang));
+}
+```
+
+Keys here are the names of compiled message functions (`hello_world`, `errors_required`, …). Pair them with structured `Localizable` values: `{ key: 'errors_required', default: 'Required' }`.
+
+### typesafe-i18n
+
+typesafe-i18n compiles a typed `LL` accessor per locale. You wrap its `i18nObject` and read keys with `LL[key]({ params })`.
+
+```ts
+import * as Core from '@golemui/core';
+import { i18nObject } from './i18n/i18n-util';
+import { loadLocale } from './i18n/i18n-util.sync';
+
+let lang = 'en' as const;
+let LL = (() => {
+  loadLocale(lang);
+  return i18nObject(lang);
+})();
+const listeners = new Set<(lang: string) => void>();
+
+export const typesafeTranslator: Core.I18nTranslator = {
+  get lang() {
+    return lang;
+  },
+  translate(key, params, defaultValue) {
+    const node = (LL as any)[key];
+    if (typeof node === 'function') return node(params);
+    return defaultValue ?? key;
+  },
+  subscribe(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+};
+
+export function changeLanguage(newLang: 'en' | 'es' | 'fr') {
+  loadLocale(newLang);
+  lang = newLang;
+  LL = i18nObject(lang);
+  listeners.forEach((l) => l(lang));
+}
+```
+
+The typesafe types catch missing keys at compile time — your `Localizable` `{ key }` strings are validated against the generated dictionary.
+
+## Wiring the translator into your form
+
+The translator goes into a separate `localization` prop on your form component (it sits **alongside** `formConfig`, not inside it). Below uses the i18next adapter; the wiring is identical for any other adapter you build.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    const formDef = [
+      gui.inputs.textInput('username', {
+        label: { key: 'username.label', default: 'Username' },
+      }),
+    ];
+
+    const formConfig = { widgetLoaders: React.widgetLoaders };
+
+    const localization = createI18nextTranslator({
+      en: { translation: { username: { label: 'Username' } } },
+      es: { translation: { username: { label: 'Usuario' } } },
+    });
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+          localization={localization}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+        [localization]="localization"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.textInput('username', {
+          label: { key: 'username.label', default: 'Username' },
+        }),
+      ];
+      protected formData = {};
+      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+      protected localization = createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      });
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.textInput('username', {
+          label: { key: 'username.label', default: 'Username' },
+        }),
+      ];
+      formData = {};
+      formConfig = { widgetLoaders: Lit.widgetLoaders };
+      localization = createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      });
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+            .localization=${this.localization}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
 
 ## What's translated
 
 - Widget labels, placeholders, hints (where the prop accepts `Localizable`).
 - Validator error messages (`messages: { required: { key, default } }`).
 - Repeater labels, accordion section labels, tab labels.
-- Date and currency formatting honor the active locale.
+- Date and currency formatting honor the active locale (via `Intl`).
+
+## Switching language at runtime
+
+GolemUI re-renders every `Localizable` whenever the translator notifies its subscribers. So as long as your adapter calls `listener(lang)` after the language changes — which all three examples above do — calling your library's "change language" function (e.g. `i18next.changeLanguage('es')`) is enough to retranslate the whole form. No form-level reset, no remount.
 
 ## See also
 
 - [Form Definition API / States](/form-definition/states/) — switch language at runtime by emitting a `change` event from a language dropdown.
+- [Features / Validators](/features/validators/) — using `{ key, default }` messages on validators for translated error text.

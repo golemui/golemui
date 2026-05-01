@@ -13,6 +13,13 @@ import { carItemRenderer } from '../../item-renderers/car.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
+import { rendererMock } from '../../renderer-mock';
+
+// In-app form registry for forms that can't be expressed as JSON — typically
+// `gui.displays.display(callback)` widgets, whose `render` prop is a function.
+const RENDERER_FORMS: Record<string, { data: any; form: any }> = {
+  'client-name': rendererMock,
+};
 import './form.element.scss';
 
 const mock = AppsShared.template;
@@ -74,7 +81,14 @@ export class FormElement extends LitElement {
     iframeResizer();
     const params = new URLSearchParams(window.location.search);
 
-    if (params.has('form')) {
+    if (params.has('renderer')) {
+      const key = params.get('renderer')!;
+      const entry = RENDERER_FORMS[key];
+      if (entry) {
+        this.formDef = entry.form;
+        this.formData = entry.data ?? {};
+      }
+    } else if (params.has('form')) {
       const formDefResponse = await fetch(params.get('form')!);
       this.formDef = await formDefResponse.json();
     }

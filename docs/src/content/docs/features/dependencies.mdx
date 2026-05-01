@@ -5,6 +5,8 @@ sidebar:
   order: 7
 ---
 
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+
 Some widgets rely on third-party libraries that GolemUI deliberately doesn't bundle — typically because the choice of library is opinionated. The Markdown widget needs a markdown parser; you might want to add others. These come in through `formConfig.dependencies`.
 
 ## The dependency contract
@@ -12,22 +14,117 @@ Some widgets rely on third-party libraries that GolemUI deliberately doesn't bun
 ```ts
 import { Dependencies } from '@golemui/gui-shared';
 
-const formConfig: { dependencies?: Dependencies } = {
-  dependencies: {
-    markdown: {
-      parse: (md: string) => snarkdown(md),
-    },
+const dependencies: Dependencies = {
+  markdown: {
+    parse: (md: string) => snarkdown(md),
   },
 };
 ```
 
 Each widget that uses a dependency reads it from `formConfig.dependencies` at render time. If the widget needs a dependency you haven't provided, it renders gracefully (e.g. the Markdown widget shows the editor but leaves the preview blank).
 
+## Wiring dependencies into your form
+
+Build a `formConfig` that includes `dependencies`, then pass `formConfig` to your form component. Here's the same Markdown-parser example wired across all three frameworks:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import snarkdown from 'snarkdown';
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [gui.inputs.markdown('content')];
+
+    const formConfig = {
+      widgetLoaders: React.widgetLoaders,
+      dependencies: {
+        markdown: { parse: (md: string) => snarkdown(md) },
+      },
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import snarkdown from 'snarkdown';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [gui.inputs.markdown('content')];
+      protected formData = {};
+      protected formConfig = {
+        widgetLoaders: Angular.widgetLoaders,
+        dependencies: {
+          markdown: { parse: (md: string) => snarkdown(md) },
+        },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import snarkdown from 'snarkdown';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [gui.inputs.markdown('content')];
+      formData = {};
+      formConfig = {
+        widgetLoaders: Lit.widgetLoaders,
+        dependencies: {
+          markdown: { parse: (md: string) => snarkdown(md) },
+        },
+      };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
 ## Available dependency keys
 
-| Key       | Used by                                                                 | Shape                                  |
-| --------- | ----------------------------------------------------------------------- | -------------------------------------- |
-| `markdown` | [Markdown](/widgets-reference/input-fields/markdown/), [Markdown Text](/widgets-reference/display-fields/markdown-text/) | `{ parse: (md: string) => string }` |
+| Key       | Used by                                                                                                                  | Shape                                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| `markdown` | [Markdown](/widgets-reference/input-fields/markdown/), [Markdown Text](/widgets-reference/display-fields/markdown-text/) | `{ parse: (md: string) => string }`    |
 
 ## See also
 

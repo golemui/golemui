@@ -12,7 +12,7 @@ Validators provide contextual messages for errors in input widgets. Each validat
 
 ## Adding validators to your inputs
 
-Add a `validator` property to any input widget. The example below requires a non-empty password:
+Add a `validator` property to any input widget. The example below requires a non-empty password and supplies its own message — Zod's defaults like "Invalid input" or "Required" rarely tell the user what they should actually do, so always pair every rule with a `messages` entry:
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -21,11 +21,14 @@ gui.inputs.textInput('user.password', {
   validator: {
     type: 'string',
     required: true,
+    messages: {
+      required: 'Please enter your password',
+    },
   },
 });
 ```
 
-Validators stack — combine multiple rules and you'll see one message per failing rule. The next example checks the password is between 8 and 20 characters long, and that it contains both letters and numbers:
+Validators stack — combine multiple rules and you'll see one message per failing rule. The next example checks the password is between 8 and 20 characters long, and that it contains both letters and numbers, with a tailored message for each rule:
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -37,6 +40,12 @@ gui.inputs.textInput('user.password', {
     minLength: 8,
     maxLength: 20,
     pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
+    messages: {
+      required: 'Please enter your password',
+      minLength: 'Password must be at least 8 characters',
+      maxLength: 'Password cannot exceed 20 characters',
+      pattern: 'Password must contain both letters and numbers',
+    },
   },
 });
 ```
@@ -161,34 +170,73 @@ gui.actions.submitButton({ label: 'Create User' });
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    const formConfig = { validateOn: 'change' };
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [
+      gui.inputs.textInput('username', {
+        validator: {
+          type: 'string',
+          required: true,
+          minLength: 2,
+          messages: {
+            required: 'Please enter a username',
+            minLength: 'Username must be at least 2 characters',
+          },
+        },
+      }),
+    ];
+
+    const formConfig = {
+      widgetLoaders: React.widgetLoaders,
+      validateOn: 'change',
+    };
 
     export function FormPage() {
       return (
-        <div>
-          <React.FormComponent
-            (...)
-            formConfig={formConfig}
-          />
-        </div>
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
       );
     }
     ```
   </Fragment>
   <Fragment slot="angular">
     ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
 
     @Component({
-      selector: 'my-form-app',
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
       template: `<gui-form
-        (...)
-        [formConfig]="formConfig">
-        </gui-form>
-      `,
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
     })
-    class MyFormApp {
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.textInput('username', {
+          validator: {
+          type: 'string',
+          required: true,
+          minLength: 2,
+          messages: {
+            required: 'Please enter a username',
+            minLength: 'Username must be at least 2 characters',
+          },
+        },
+        }),
+      ];
+      protected formData = {};
       protected formConfig = {
+        widgetLoaders: Angular.widgetLoaders,
         validateOn: 'change' as Core.ValidateOn,
       };
     }
@@ -196,18 +244,42 @@ gui.actions.submitButton({ label: 'Create User' });
   </Fragment>
   <Fragment slot="lit">
     ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
 
-    @customElement('lit-form')
-    export class FormElement extends LitElement {
-      protected formConfig = {
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.textInput('username', {
+          validator: {
+          type: 'string',
+          required: true,
+          minLength: 2,
+          messages: {
+            required: 'Please enter a username',
+            minLength: 'Username must be at least 2 characters',
+          },
+        },
+        }),
+      ];
+      formData = {};
+      formConfig = {
+        widgetLoaders: Lit.widgetLoaders,
         validateOn: 'change' as Core.ValidateOn,
       };
 
-      render() {
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
         return html`
           <gui-form
-            (...)
+            .formDef=${this.formDef}
+            .data=${this.formData}
             .formConfig=${this.formConfig}
           ></gui-form>
         `;

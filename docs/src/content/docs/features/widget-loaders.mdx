@@ -5,38 +5,195 @@ sidebar:
   order: 1
 ---
 
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+import { Aside } from '@astrojs/starlight/components';
+
 Widget loaders are a `Record<string, () => Promise<unknown>>` map that tells the form engine how to lazy-load each widget kind. The map key is the widget `type` (e.g. `'textinput'`, `'dropdown'`) and the value is an async loader that returns the widget implementation.
 
 ## Default loaders
 
-Each framework adapter exports a `widgetLoaders` object preloaded with the GolemUI widget set:
+Each framework adapter exports a `widgetLoaders` object preloaded with the GolemUI widget set. Build a `formConfig` with it and pass that into your form component:
 
-```ts
-import * as React from '@golemui/gui-react';
-// React.widgetLoaders covers every built-in input, layout, display, and action widget.
-```
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
 
-Pass this as part of `formConfig`:
+    const formDef = [gui.inputs.textInput('username')];
+    const formConfig = { widgetLoaders: React.widgetLoaders };
 
-```ts
-const formConfig = { widgetLoaders: React.widgetLoaders };
-```
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [gui.inputs.textInput('username')];
+      protected formData = {};
+      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [gui.inputs.textInput('username')];
+      formData = {};
+      formConfig = { widgetLoaders: Lit.widgetLoaders };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+The exported map covers every built-in input, layout, display, and action widget for that framework.
 
 ## Adding more
 
-Spread the defaults and add your own custom widgets to the same map:
+Spread the defaults and add your own custom widgets to the same map. The `type` key (e.g. `productCard`) must match the `type` field in your widget definitions.
 
-```ts
-const formConfig = {
-  widgetLoaders: {
-    ...React.widgetLoaders,
-    productCard: async () =>
-      (await import('./widgets/ProductCard')).ProductCard,
-  },
-};
-```
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
 
-The `type` key in the loader (`productCard`) must match the `type` field in your widget definitions.
+    const formDef = [
+      gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+    ];
+
+    const formConfig = {
+      widgetLoaders: {
+        ...React.widgetLoaders,
+        productCard: async () =>
+          (await import('./widgets/ProductCard')).ProductCard,
+      },
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+      ];
+      protected formData = {};
+      protected formConfig = {
+        widgetLoaders: {
+          ...Angular.widgetLoaders,
+          productCard: async () =>
+            (await import('./widgets/product-card.component')).ProductCardComponent,
+        },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+      ];
+      formData = {};
+      formConfig = {
+        widgetLoaders: {
+          ...Lit.widgetLoaders,
+          productCard: async () =>
+            (await import('./widgets/product-card.element')).ProductCardElement,
+        },
+      };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+Widget loaders use dynamic `import()` so custom widgets are **lazy-loaded** — they're only fetched when the form engine encounters them.
 
 ## See also
 

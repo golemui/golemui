@@ -5,6 +5,7 @@ sidebar:
   order: 5
 ---
 
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
 Widgets emit named events through the `formEvent` callback you pass to `<gui-form>`. The form definition wires the widget event (a click, a value change, a load) to a name; your application matches on that name and reacts.
@@ -25,30 +26,128 @@ const formDef = [
 ];
 ```
 
-In your application, handle the events:
+## Handling events in your component
 
-```ts
-function handleFormEvent(event) {
-  switch (event.name) {
-    case 'countryChanged':
-      console.log('Country selected:', event.data.country);
-      break;
-    case 'submitForm':
-      console.log('Submitting:', event.data);
-      break;
-  }
-}
-```
+Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/component event (in Angular and Lit) on your form component. Match on `event.name` and read `event.data`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import * as React from '@golemui/gui-react';
+
+    const formConfig = { widgetLoaders: React.widgetLoaders };
+
+    function handleFormEvent(event: Core.FormEvent) {
+      switch (event.name) {
+        case 'countryChanged':
+          console.log('Country selected:', event.data.country);
+          break;
+        case 'submitForm':
+          console.log('Submitting:', event.data);
+          break;
+      }
+    }
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+          formEvent={handleFormEvent}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Core from '@golemui/core';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+        (formEvent)="onFormEvent($event)"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+
+      protected onFormEvent(event: Core.FormEvent) {
+        switch (event.name) {
+          case 'countryChanged':
+            console.log('Country selected:', event.data.country);
+            break;
+          case 'submitForm':
+            console.log('Submitting:', event.data);
+            break;
+        }
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Core from '@golemui/core';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      formConfig = { widgetLoaders: Lit.widgetLoaders };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      protected onFormEvent(event: Core.FormEvent) {
+        switch (event.name) {
+          case 'countryChanged':
+            console.log('Country selected:', event.data.country);
+            break;
+          case 'submitForm':
+            console.log('Submitting:', event.data);
+            break;
+        }
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+            @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
 
 ## Event types
 
-| Event     | Emitted by                                  |
-| --------- | ------------------------------------------- |
-| `onClick` | Action widgets (button, custom action).     |
-| `onChange` | Input widgets when their value changes.    |
-| `onLoad`  | Dropdowns and lists during initialization. |
+| Event      | Emitted by                                    |
+| ---------- | --------------------------------------------- |
+| `onClick`  | Action widgets (button, custom action).       |
+| `onChange` | Input widgets when their value changes.       |
+| `onLoad`   | Dropdowns and lists during initialization.    |
 | `onFilter` | Dropdowns when the user types a search query. |
-| `onBlur`  | Input widgets when focus leaves.           |
+| `onBlur`   | Input widgets when focus leaves.              |
 
 ## Event payload
 
