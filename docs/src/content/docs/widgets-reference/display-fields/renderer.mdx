@@ -4,6 +4,7 @@ description: A display widget that renders raw framework markup from a callback.
 ---
 
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
+import Demo from '../../../../../src/components/landing/Demo.astro';
 import { Aside } from '@astrojs/starlight/components';
 
 The Renderer widget renders **raw framework markup** returned by a callback. Use it when you need to drop a small piece of bespoke UI inside a form — a heading, a summary block, a chart — without writing a full custom widget.
@@ -14,10 +15,19 @@ import { html } from 'lit';
 
 const formDef = [
   gui.displays.display(
-    (params) => html`<h2>Hello, ${params?.$form?.name ?? 'guest'}!</h2>`,
+    (api) => html`<h1>Client Name: ${api.$form?.details?.clientName || 'unknown'}</h1>`,
   ),
+  gui.inputs.textInput('details.clientName', {
+    label: 'Client Name',
+    placeholder: 'e.g. Jane Doe',
+    validator: { required: true, minLength: 2 },
+  }),
 ];
 ```
+
+Type a name into the input below — the heading above it re-renders on every keystroke because the callback reads `$form.details.clientName`:
+
+<Demo src="/template/index.html?renderer=client-name" minHeight="160" />
 
 ## Programmatic-only
 
