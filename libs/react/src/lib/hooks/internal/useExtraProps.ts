@@ -22,11 +22,15 @@ export function useTemplateData<
     formContext.store.state$
       .pipe(takeUntil(destroy$), Core.calculatedWidgetsByUid$(widget.uid))
       .subscribe((calculatedWidget) => {
-        const templateData = {
+        const obj = {
           ...calculatedWidget,
-          ...calculatedWidget.props,
           lang: formContext.store.getState().lang,
           deps: formContext.dependencies,
+        };
+        Core.assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
+        const templateData = {
+          ...obj,
+          ...calculatedWidget.props,
         } as unknown as WithFlattenedProps<F, ExtraProps>;
         setTemplateData(templateData);
       });

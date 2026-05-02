@@ -28,11 +28,15 @@ export abstract class BaseWidgetAdapter<F extends Core.FormWidget> {
     this.context.store.state$
       .pipe(takeUntil(this.destroy$), Core.calculatedWidgetsByUid$(this.widget.uid!))
       .subscribe((calculatedWidget) => {
-        this.setTemplateData({
+        const obj = {
           ...calculatedWidget,
-          ...calculatedWidget.props,
           lang: this.context.store.getState().lang,
           deps: this.context.dependencies,
+        };
+        Core.assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
+        this.setTemplateData({
+          ...obj,
+          ...calculatedWidget.props,
         });
       });
   }

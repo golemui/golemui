@@ -1,25 +1,25 @@
+import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/gui-shared';
 import { accordion } from './tabs/accordion';
 import { alert } from './tabs/alert';
-import { markdown } from './tabs/markdown';
-import { markdownText } from './tabs/markdown-text';
 import { calendar } from './tabs/calendar';
 import { checkbox } from './tabs/checkbox';
 import { currency } from './tabs/currency';
 import { dropdown } from './tabs/dropdown';
+import { flex } from './tabs/flex';
+import { grid } from './tabs/grid';
 import { list } from './tabs/list';
+import { markdown } from './tabs/markdown';
+import { markdownText } from './tabs/markdown-text';
 import { number } from './tabs/number';
+import { password } from './tabs/password';
 import { radiogroup } from './tabs/radiogroup';
 import { repeater } from './tabs/repeater';
 import { select } from './tabs/select';
-import { grid } from './tabs/grid';
 import { textarea } from './tabs/textarea';
 import { textinput } from './tabs/textinput';
 import { toggle } from './tabs/toggle';
 import { Example } from './types';
-import { golemForm } from '@golemui/gui-shared';
-import * as Core from '@golemui/core';
-import { password } from './tabs/password';
-import { flex } from './tabs/flex';
 
 const states = {
   limitReached: '$form.repeaters.users?.length === 5',
@@ -107,7 +107,7 @@ const form = golemForm<any, CustomHeadingWidget>().create({
       on: {
         click: 'submit',
       },
-    } as any, // TODO: why is this failing
+    },
   ],
 });
 

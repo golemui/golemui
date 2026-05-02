@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
-import { ActionWidget, InputWidget, LayoutWidget, On } from '../form-widget';
 import { createFormStore, FormStore } from '../form-store';
 import { ValidatorFn } from '../form-validator';
+import { ActionWidget, InputWidget, LayoutWidget, On } from '../form-widget';
 import { I18nTranslator, identityTranslator } from '../i18n';
 import { ItemRenderer } from '../item-renderer';
 import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
@@ -80,28 +80,29 @@ export class FormContext<ComponentType> {
     }
   }
 
-  attemptValidation(
+  private attemptValidation(
     eventType: keyof On<string>,
     eventName: EventName | undefined,
     widget: InputWidget<any, string> | ActionWidget<string> | LayoutWidget<string>,
   ) {
-    // TODO: Remove this if widget.kind !== 'layout', find a way to avoid attempt validations with layouts
-    // We don't validate layouts
-    if (widget.kind !== 'layout') {
-      if (eventType === 'change') {
-        this.store.dispatch({
-          type: 'ATTEMPT_VALIDATION',
-          payload: {
-            reason: 'change',
-            path: (widget as InputWidget<any, string>).path,
-            uid: widget.uid,
-          },
-        });
-      } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
-        this.store.dispatch({
-          type: 'VALIDATE_ALL',
-        });
-      }
+    // Some layouts (e.g. tabs that are clicked) emit events, but we don't trigger validation for them.
+    if (widget.kind === 'layout') {
+      return;
+    }
+
+    if (eventType === 'change') {
+      this.store.dispatch({
+        type: 'ATTEMPT_VALIDATION',
+        payload: {
+          reason: 'change',
+          path: (widget as InputWidget<any, string>).path,
+          uid: widget.uid,
+        },
+      });
+    } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
+      this.store.dispatch({
+        type: 'VALIDATE_ALL',
+      });
     }
   }
 }
