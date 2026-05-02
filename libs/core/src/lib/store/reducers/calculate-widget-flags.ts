@@ -8,6 +8,7 @@ import {
   NonFunctionWidget,
 } from '../../form-widget';
 import { $Errors } from '../../shared';
+import { filterMap, filterReduce, SKIP } from '../../utils/array';
 import { calculateValidationVariables, flattenForm } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
 import { get } from '../../utils/object';
@@ -37,105 +38,104 @@ function calculateFlags(
   $errors: $Errors,
   $formIsInvalid: boolean,
 ): State['widgetFlags'] {
-  return (
-    Object.values(state.flatForm)
-      // TODO: use filterMap
-      // Filters repeater items, because we process them already in calculateRepeaterFlags
-      .filter((widget) => !widget.uid?.includes('['))
-      .map((widget) => {
-        if (isFunctionWidget(widget)) {
-          const widget_ = widget({
-            $form: state.data,
-            errors: undefined,
-            touched: undefined,
-            translate: undefined,
-          });
-          widget_.uid = widget.uid!;
-          return widget_;
+  return filterMap(Object.values(state.flatForm), (widget) => {
+    // Filters repeater items, because we process them already in calculateRepeaterFlags
+    if (!widget.uid?.includes('[')) {
+      if (isFunctionWidget(widget)) {
+        const widget_ = widget({
+          $form: state.data,
+          errors: undefined,
+          touched: undefined,
+          translate: undefined,
+        });
+        widget_.uid = widget.uid!;
+        return widget_;
+      }
+      return widget;
+    } else {
+      return SKIP;
+    }
+  })
+    .filter((widget) => {
+      if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
+        return true;
+      }
+      if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
+        return true;
+      }
+      if ((isInputWidget(widget) || isActionWidget(widget)) && hasWhen(widget.disabled)) {
+        return true;
+      }
+      if (isInputWidget(widget) && hasWhen(widget.readonly)) {
+        return true;
+      }
+      return false;
+    })
+    .reduce(
+      (flags, widget) => {
+        flags[widget.uid] = flags[widget.uid] || {};
+
+        // show
+        if (widget.include && 'in' in widget.include) {
+          flags[widget.uid].hidden = !widget.include.in.some((widgetState) =>
+            state.currentStates.includes(widgetState),
+          );
+        } else if (widget.include && 'when' in widget.include) {
+          flags[widget.uid].hidden = !expressionIsTrue(
+            widget.include.when,
+            state.data,
+            state.meta,
+            $errors,
+            $formIsInvalid,
+          );
         }
-        return widget;
-      })
-      .filter((widget) => {
-        if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
-          return true;
+
+        // hide
+        if (widget.exclude && 'from' in widget.exclude) {
+          flags[widget.uid].hidden = widget.exclude.from.some((widgetState) =>
+            state.currentStates.includes(widgetState),
+          );
+        } else if (widget.exclude && 'when' in widget.exclude) {
+          flags[widget.uid].hidden = expressionIsTrue(
+            widget.exclude.when,
+            state.data,
+            state.meta,
+            $errors,
+            $formIsInvalid,
+          );
         }
-        if (widget.exclude && ('from' in widget.exclude || 'when' in widget.exclude)) {
-          return true;
+
+        // TODO: We have to document that (disabled|readonly).when is NOT compatible with states e.g. `{'disabled.register': {when: '...'}}`
+        //       It's either boolean, states + boolean or when.
+
+        // disabled
+        if (isInputWidget(widget) || isActionWidget(widget)) {
+          if (hasWhen(widget.disabled)) {
+            flags[widget.uid].disabled = expressionIsTrue(
+              (widget.disabled as { when: string }).when,
+              state.data,
+              state.meta,
+              $errors,
+              $formIsInvalid,
+            );
+          }
         }
-        if ((isInputWidget(widget) || isActionWidget(widget)) && hasWhen(widget.disabled)) {
-          return true;
-        }
+
+        // readonly
         if (isInputWidget(widget) && hasWhen(widget.readonly)) {
-          return true;
+          flags[widget.uid].readonly = expressionIsTrue(
+            (widget.readonly as { when: string }).when,
+            state.data,
+            state.meta,
+            $errors,
+            $formIsInvalid,
+          );
         }
-        return false;
-      })
-      .reduce(
-        (flags, widget) => {
-          flags[widget.uid] = flags[widget.uid] || {};
 
-          // show
-          if (widget.include && 'in' in widget.include) {
-            flags[widget.uid].hidden = !widget.include.in.some((widgetState) =>
-              state.currentStates.includes(widgetState),
-            );
-          } else if (widget.include && 'when' in widget.include) {
-            flags[widget.uid].hidden = !expressionIsTrue(
-              widget.include.when,
-              state.data,
-              state.meta,
-              $errors,
-              $formIsInvalid,
-            );
-          }
-
-          // hide
-          if (widget.exclude && 'from' in widget.exclude) {
-            flags[widget.uid].hidden = widget.exclude.from.some((widgetState) =>
-              state.currentStates.includes(widgetState),
-            );
-          } else if (widget.exclude && 'when' in widget.exclude) {
-            flags[widget.uid].hidden = expressionIsTrue(
-              widget.exclude.when,
-              state.data,
-              state.meta,
-              $errors,
-              $formIsInvalid,
-            );
-          }
-
-          // TODO: We have to document that (disabled|readonly).when is NOT compatible with states e.g. `{'disabled.register': {when: '...'}}`
-          //       It's either boolean, states + boolean or when.
-
-          // disabled
-          if (isInputWidget(widget) || isActionWidget(widget)) {
-            if (hasWhen(widget.disabled)) {
-              flags[widget.uid].disabled = expressionIsTrue(
-                (widget.disabled as { when: string }).when,
-                state.data,
-                state.meta,
-                $errors,
-                $formIsInvalid,
-              );
-            }
-          }
-
-          // readonly
-          if (isInputWidget(widget) && hasWhen(widget.readonly)) {
-            flags[widget.uid].readonly = expressionIsTrue(
-              (widget.readonly as { when: string }).when,
-              state.data,
-              state.meta,
-              $errors,
-              $formIsInvalid,
-            );
-          }
-
-          return flags;
-        },
-        {} as State['widgetFlags'],
-      )
-  );
+        return flags;
+      },
+      {} as State['widgetFlags'],
+    );
 }
 
 // -----------------------
@@ -150,16 +150,15 @@ function calculateRepeaterFlags(
   $errors: $Errors,
   $formIsInvalid: boolean,
 ): State['widgetFlags'] {
-  // TODO: should we collect the active repeater templates on addWidget so we don't have to iterate so much?
-  return Object.values(state.flatForm)
-    .filter((w): w is NonFunctionWidget<string> => !isFunctionWidget(w) && w.type === 'repeater')
-    .reduce(
-      (flags, repeater) => ({
-        ...flags,
-        ...expandRepeaterFlags(state, repeater as RepeaterContract, [], $errors, $formIsInvalid),
-      }),
-      {} as State['widgetFlags'],
-    );
+  return filterReduce(
+    Object.values(state.flatForm),
+    (w): w is NonFunctionWidget<string> => !isFunctionWidget(w) && w.type === 'repeater',
+    (flags, repeater) => ({
+      ...flags,
+      ...expandRepeaterFlags(state, repeater as RepeaterContract, [], $errors, $formIsInvalid),
+    }),
+    {} as State['widgetFlags'],
+  );
 }
 
 type RepeaterContract = InputWidget<string> & {

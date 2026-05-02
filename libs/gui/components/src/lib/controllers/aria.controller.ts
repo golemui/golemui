@@ -1,5 +1,5 @@
-import { ReactiveController, ReactiveControllerHost } from 'lit';
 import * as Core from '@golemui/core';
+import { ReactiveController, ReactiveControllerHost } from 'lit';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string }>
   implements ReactiveController
@@ -47,9 +47,10 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
     const { touched, errors, readonly, disabled, hint } = templateData;
     const showErrors = touched && errors && errors.length > 0;
 
-    elements
-      .filter((e) => !!e)
-      .forEach((element) => {
+    Core.filterTap(
+      elements,
+      (e) => !!e,
+      (element) => {
         const toggleAttr = (attr: string, value: string | null) => {
           if (value) {
             element.setAttribute(attr, value);
@@ -62,6 +63,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
         toggleAttr('aria-invalid', showErrors ? 'true' : null);
         toggleAttr('aria-errormessage', showErrors ? `${uid}_errors` : null);
         toggleAttr('aria-readonly', disabled || readonly ? 'true' : null);
-      });
+      },
+    );
   }
 }

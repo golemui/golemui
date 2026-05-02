@@ -1,4 +1,5 @@
 import {
+  filterTap,
   I18nTranslator,
   isStandardValidateSuccess,
   Localizable,
@@ -352,10 +353,11 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
   return withOptional(v, (v) => {
     let schema = any();
 
-    Object.keys(v)
+    filterTap(
+      Object.keys(v),
       // filter non-custom validator keys
-      .filter((key) => key !== 'type' && key !== 'required')
-      .forEach((key) => {
+      (key) => key !== 'type' && key !== 'required',
+      (key) => {
         // This originates from the validator field in the JSON form
         const validatorInput = v[key];
         // This originates from the user-defined custom validators in the form
@@ -378,7 +380,8 @@ function fromCustomValidator(v: CustomValidator, customValidators: CustomValidat
             }
           }),
         );
-      });
+      },
+    );
 
     return schema;
   });

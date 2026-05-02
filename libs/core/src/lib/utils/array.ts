@@ -47,6 +47,113 @@ export function filterMap<T, U>(
 }
 
 /**
+ * Iterates over an array, executing a callback function only for elements
+ * that satisfy the provided predicate.
+ *
+ * This combines `filter` and `forEach` in a single pass without allocating
+ * intermediate arrays, improving performance and reducing garbage collection.
+ *
+ * @typeParam T - The type of the input array elements.
+ * @typeParam S - A narrower type of the elements that pass a type guard predicate.
+ *
+ * @param array - The source array to iterate over.
+ * @param predicate - A function that evaluates each element. If it returns truthy,
+ * the callback is executed.
+ * @param callback - A function to execute for each element that passes the predicate.
+ *
+ * @example
+ * ```ts
+ * filterTap(
+ *   [1, 2, 3, 4],
+ *   n => n % 2 === 0,
+ *   n => console.log('Even:', n)
+ * );
+ * // "Even: 2", "Even: 4"
+ * ```
+ */
+export function filterTap<T, S extends T>(
+  array: readonly T[],
+  predicate: (value: T, index: number, array: readonly T[]) => value is S,
+  callback: (value: S, index: number, array: readonly T[]) => void,
+): void;
+export function filterTap<T>(
+  array: readonly T[],
+  predicate: (value: T, index: number, array: readonly T[]) => unknown,
+  callback: (value: T, index: number, array: readonly T[]) => void,
+): void;
+export function filterTap<T>(
+  array: readonly T[],
+  predicate: (value: T, index: number, array: readonly T[]) => unknown,
+  callback: (value: T, index: number, array: readonly T[]) => void,
+): void {
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i], i, array)) {
+      callback(array[i], i, array);
+    }
+  }
+}
+
+/**
+ * Iterates over an array, filtering elements using a predicate, and
+ * accumulating a single result using a reducer function.
+ *
+ * This combines `filter` and `reduce` in a single pass without allocating
+ * intermediate arrays, improving performance and memory efficiency.
+ *
+ * @typeParam T - The type of the input array elements.
+ * @typeParam S - A narrower type of the elements that pass a type guard predicate.
+ * @typeParam U - The type of the accumulated value.
+ *
+ * @param array - The source array to iterate over.
+ * @param predicate - A function that evaluates each element. If truthy, the element
+ * is passed to the reducer.
+ * @param reducer - A function that accumulates the results.
+ * @param initialValue - The initial value to start the accumulation. Required to ensure
+ * safety in cases where no elements pass the predicate.
+ *
+ * @returns The final accumulated value.
+ *
+ * @example
+ * ```ts
+ * const sumOfEvens = filterReduce(
+ *   [1, 2, 3, 4, 5],
+ *   n => n % 2 === 0,
+ *   (acc, n) => acc + n,
+ *   0
+ * );
+ * // sumOfEvens: 6
+ * ```
+ */
+export function filterReduce<T, S extends T, U>(
+  array: readonly T[],
+  predicate: (value: T, index: number, array: readonly T[]) => value is S,
+  reducer: (accumulator: U, currentValue: S, index: number, array: readonly T[]) => U,
+  initialValue: U,
+): U;
+export function filterReduce<T, U>(
+  array: readonly T[],
+  predicate: (value: T, index: number, array: readonly T[]) => unknown,
+  reducer: (accumulator: U, currentValue: T, index: number, array: readonly T[]) => U,
+  initialValue: U,
+): U;
+export function filterReduce<T, U>(
+  array: readonly T[],
+  predicate: (value: T, index: number, array: readonly T[]) => unknown,
+  reducer: (accumulator: U, currentValue: any, index: number, array: readonly T[]) => U,
+  initialValue: U,
+): U {
+  let accumulator = initialValue;
+
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i], i, array)) {
+      accumulator = reducer(accumulator, array[i], i, array);
+    }
+  }
+
+  return accumulator;
+}
+
+/**
  * Compares two arrays for structural equality by applying a predicate
  * to each pair of elements.
  *

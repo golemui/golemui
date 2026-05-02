@@ -21,7 +21,6 @@ export const calculateCurrentState = (state: State): State => {
   let currentStates: string[] = [];
   let formHealth: FormHealth = { status: 'ok' };
   try {
-    // TODO: Use filterMap
     currentStates = Object.keys(stateExpressions)
       .map((stateName) => {
         const expression = stateExpressions[stateName];
