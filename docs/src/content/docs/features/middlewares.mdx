@@ -13,11 +13,10 @@ Middlewares are functions that wrap the form's reactive store and observe (or mu
 
 GolemUI ships a few middlewares you can opt into:
 
-| Middleware              | What it does                                                                                                          |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `loggerMiddleware`      | Logs each action and the resulting state to the console — handy during development.                                   |
-| `jsonSchemaMiddleware`  | Validates each incoming change against a JSON Schema and rejects invalid mutations.                                   |
-| `devToolsMiddleware`    | Pipes actions to the Redux DevTools extension for time-travel debugging.                                              |
+| Middleware           | What it does                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `loggerMiddleware`   | Logs each action and the resulting state to the console — handy during development. |
+| `devToolsMiddleware` | Pipes actions to the Redux DevTools extension for time-travel debugging.            |
 
 ## Wiring middlewares
 
@@ -45,6 +44,7 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -71,6 +71,7 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       protected middlewares = [Core.devToolsMiddleware()];
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -103,6 +104,7 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
