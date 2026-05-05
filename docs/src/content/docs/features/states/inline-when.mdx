@@ -5,18 +5,204 @@ sidebar:
   order: 3
 ---
 
-Sometimes you need a condition that's only used once. Naming it as a state would be overkill. Use `{ when: '<expression>' }` to express it inline:
+import DslTabs from '../../../../components/DslTabs.astro';
+import IntegrationTabs from '../../../../components/IntegrationTabs.astro';
 
-```ts
-import { gui } from '@golemui/gui-shared';
-
-gui.inputs.numberInput('pets', {
-  label: 'Number of pets',
-  include: { when: '$form.includePets === true' },
-});
-```
+Sometimes you need a condition that's only used once. Naming it as a state would be overkill. Use `{ when: '<expression>' }` to express it inline directly on the widget.
 
 Inline `when` accepts the same reactive expression syntax as named states — `$form.<path>`, comparisons, logical operators.
+
+## A complete example
+
+A "Number of pets" input that only renders when the user opted into pet-friendly hotels.
+
+<DslTabs>
+  <Fragment slot="dx">
+
+No `formConfig.states` entry is needed — the expression sits on the widget.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [
+      gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
+      gui.inputs.numberInput('pets', {
+        label: 'Number of pets',
+        include: { when: '$form.includePets === true' },
+      }),
+    ];
+
+    const formConfig = { widgetLoaders: React.widgetLoaders };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
+        gui.inputs.numberInput('pets', {
+          label: 'Number of pets',
+          include: { when: '$form.includePets === true' },
+        }),
+      ];
+      protected formData = {};
+      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
+        gui.inputs.numberInput('pets', {
+          label: 'Number of pets',
+          include: { when: '$form.includePets === true' },
+        }),
+      ];
+      formData = {};
+      formConfig = { widgetLoaders: Lit.widgetLoaders };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+No `"states"` block is needed — the expression sits on the widget.
+
+```json
+{
+  "form": [
+    { "kind": "input", "type": "checkbox", "path": "includePets", "label": "I am traveling with pets" },
+    {
+      "kind": "input", "type": "number", "path": "pets",
+      "label": "Number of pets",
+      "include": { "when": "$form.includePets === true" }
+    }
+  ]
+}
+```
+
+Wire the parsed JSON into your form component the same way as any other JSON `formDef`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
 
 ## When to inline vs name
 

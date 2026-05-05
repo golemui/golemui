@@ -1,18 +1,24 @@
 ---
 title: Widget Loaders
-description: Register the UI widgets the form can render through formConfig.widgetLoaders.
+description: Register the UI widgets the form can render.
 sidebar:
   order: 1
 ---
 
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
 Widget loaders are a `Record<string, () => Promise<unknown>>` map that tells the form engine how to lazy-load each widget kind. The map key is the widget `type` (e.g. `'textinput'`, `'dropdown'`) and the value is an async loader that returns the widget implementation.
 
+Each framework adapter exports a default `widgetLoaders` object preloaded with the GolemUI widget set. You always start from that and merge in your own custom widgets as needed. **Where** that map lives on the form component depends on which path you took to define the form.
+
 ## Default loaders
 
-Each framework adapter exports a `widgetLoaders` object preloaded with the GolemUI widget set. Build a `formConfig` with it and pass that into your form component:
+<DslTabs>
+  <Fragment slot="dx">
+
+In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. The form component reads them through `formConfig`.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -70,9 +76,7 @@ Each framework adapter exports a `widgetLoaders` object preloaded with the Golem
       formData = {};
       formConfig = { widgetLoaders: Lit.widgetLoaders };
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -88,11 +92,93 @@ Each framework adapter exports a `widgetLoaders` object preloaded with the Golem
   </Fragment>
 </IntegrationTabs>
 
+  </Fragment>
+  <Fragment slot="json">
+
+In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` prop** on the form component. There is no `formConfig` wrapper.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
 The exported map covers every built-in input, layout, display, and action widget for that framework.
 
-## Adding more
+## Adding custom widgets
 
-Spread the defaults and add your own custom widgets to the same map. The `type` key (e.g. `productCard`) must match the `type` field in your widget definitions.
+Spread the defaults and add your own loader entries to the same map. The key (e.g. `productCard`) must match the `type` field on the widget instances in your `formDef`.
+
+<DslTabs>
+  <Fragment slot="dx">
+
+The `formConfig.widgetLoaders` object now carries both the defaults and your custom entries.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -175,9 +261,7 @@ Spread the defaults and add your own custom widgets to the same map. The `type` 
         },
       };
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -192,6 +276,104 @@ Spread the defaults and add your own custom widgets to the same map. The `type` 
     ```
   </Fragment>
 </IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+The `customWidgetLoaders` prop carries both the defaults and your custom entries. The JSON itself references the widget by `"type": "productCard"`.
+
+```json
+{
+  "form": [
+    { "kind": "layout", "type": "productCard", "props": { "title": "My product" }, "items": [] }
+  ]
+}
+```
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    const widgetLoaders = {
+      ...React.widgetLoaders,
+      productCard: async () => (await import('./widgets/ProductCard')).ProductCard,
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={widgetLoaders}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = {
+        ...Angular.widgetLoaders,
+        productCard: async () =>
+          (await import('./widgets/product-card.component')).ProductCardComponent,
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = {
+        ...Lit.widgetLoaders,
+        productCard: async () =>
+          (await import('./widgets/product-card.element')).ProductCardElement,
+      };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
 
 Widget loaders use dynamic `import()` so custom widgets are **lazy-loaded** — they're only fetched when the form engine encounters them.
 

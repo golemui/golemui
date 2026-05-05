@@ -1,15 +1,18 @@
 ---
 title: Dependencies
-description: Inject third-party helpers (markdown parsers, etc.) at the form level via formConfig.dependencies.
+description: Inject third-party helpers (markdown parsers, etc.) at the form level.
 sidebar:
   order: 7
 ---
 
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-Some widgets rely on third-party libraries that GolemUI deliberately doesn't bundle — typically because the choice of library is opinionated. The Markdown widget needs a markdown parser; you might want to add others. These come in through `formConfig.dependencies`.
+Some widgets rely on third-party libraries that GolemUI deliberately doesn't bundle — typically because the choice of library is opinionated. The Markdown widget needs a markdown parser; you might want to add others. **Dependencies** are how you supply those helpers to the engine.
 
 ## The dependency contract
+
+A dependency is a key/value pair in a `Dependencies` object. The key identifies what kind of helper it is (the widgets know which key to read); the value is the helper implementation.
 
 ```ts
 import { Dependencies } from '@golemui/gui-shared';
@@ -21,11 +24,14 @@ const dependencies: Dependencies = {
 };
 ```
 
-Each widget that uses a dependency reads it from `formConfig.dependencies` at render time. If the widget needs a dependency you haven't provided, it renders gracefully (e.g. the Markdown widget shows the editor but leaves the preview blank).
+Each widget that uses a dependency reads it at render time. If the widget needs a dependency you haven't provided, it renders gracefully (e.g. the Markdown widget shows the editor but leaves the preview blank).
 
 ## Wiring dependencies into your form
 
-Build a `formConfig` that includes `dependencies`, then pass `formConfig` to your form component. Here's the same Markdown-parser example wired across all three frameworks:
+<DslTabs>
+  <Fragment slot="dx">
+
+In the Programmatic API, dependencies go inside `formConfig.dependencies`.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -102,9 +108,7 @@ Build a `formConfig` that includes `dependencies`, then pass `formConfig` to you
         },
       };
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -119,6 +123,107 @@ Build a `formConfig` that includes `dependencies`, then pass `formConfig` to you
     ```
   </Fragment>
 </IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+In the JSON path, dependencies go into the **standalone `dependencies` prop** on the form component.
+
+```json
+{
+  "form": [
+    { "kind": "input", "type": "markdown", "path": "content" }
+  ]
+}
+```
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import snarkdown from 'snarkdown';
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    const dependencies = {
+      markdown: { parse: (md: string) => snarkdown(md) },
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+          dependencies={dependencies}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import snarkdown from 'snarkdown';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+        [dependencies]="dependencies"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+      protected dependencies = {
+        markdown: { parse: (md: string) => snarkdown(md) },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import snarkdown from 'snarkdown';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+      dependencies = {
+        markdown: { parse: (md: string) => snarkdown(md) },
+      };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            .dependencies=${this.dependencies}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
 
 ## Available dependency keys
 

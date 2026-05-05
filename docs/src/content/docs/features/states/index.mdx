@@ -5,9 +5,16 @@ sidebar:
   order: 0
 ---
 
+import DslTabs from '../../../../components/DslTabs.astro';
+import IntegrationTabs from '../../../../components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
-States are named boolean expressions evaluated against the live form data. They let you describe complex conditional behavior once and reuse it across many widgets — without scattering inline conditionals throughout your form definition.
+States are **named boolean expressions** evaluated against the live form data. They let you describe complex conditional behavior once and reuse it across many widgets — without scattering inline conditionals throughout your form definition.
+
+A state is a key-value pair: the **key** is the name you reference from `include` / `exclude` rules, prop overrides, and event handlers; the **value** is an expression string that reads from `$form.<path>`.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 const states = {
@@ -16,7 +23,247 @@ const states = {
 };
 ```
 
-You can then refer to these names in `include` / `exclude` rules, in per-widget property overrides, and in event handlers. See the sub-pages for each pattern.
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "states": {
+    "hasDiscount": "$form.hasDiscountCode === true",
+    "isAdult": "$form.driverAge >= 18"
+  },
+  "form": [ /* ... */ ]
+}
+```
+
+  </Fragment>
+</DslTabs>
+
+## Declaring states
+
+<DslTabs>
+  <Fragment slot="dx">
+
+In the Programmatic API, states live inside `formConfig.states`. The form component reads them through `formConfig`, so the engine sees the same `$form` data the form itself binds to.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [
+      gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+      gui.inputs.numberInput('driverAge', { label: 'Driver age' }),
+      gui.inputs.textInput('discountCode', {
+        label: 'Discount code',
+        include: { in: ['hasDiscount'] },
+      }),
+    ];
+
+    const formConfig = {
+      widgetLoaders: React.widgetLoaders,
+      states: {
+        hasDiscount: '$form.hasDiscountCode === true',
+        isAdult: '$form.driverAge >= 18',
+      },
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.numberInput('driverAge', { label: 'Driver age' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ];
+      protected formData = {};
+      protected formConfig = {
+        widgetLoaders: Angular.widgetLoaders,
+        states: {
+          hasDiscount: '$form.hasDiscountCode === true',
+          isAdult: '$form.driverAge >= 18',
+        },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.numberInput('driverAge', { label: 'Driver age' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ];
+      formData = {};
+      formConfig = {
+        widgetLoaders: Lit.widgetLoaders,
+        states: {
+          hasDiscount: '$form.hasDiscountCode === true',
+          isAdult: '$form.driverAge >= 18',
+        },
+      };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+In the JSON path, states are declared **inside the form payload itself** under the top-level `"states"` key. There is no `formConfig` wrapper — the engine reads `"states"` directly off the parsed JSON.
+
+```json
+{
+  "states": {
+    "hasDiscount": "$form.hasDiscountCode === true",
+    "isAdult": "$form.driverAge >= 18"
+  },
+  "form": [
+    { "kind": "input", "type": "checkbox", "path": "hasDiscountCode", "label": "I have a discount code" },
+    { "kind": "input", "type": "number",   "path": "driverAge",       "label": "Driver age" },
+    {
+      "kind": "input", "type": "textinput", "path": "discountCode",
+      "label": "Discount code",
+      "include": { "in": ["hasDiscount"] }
+    }
+  ]
+}
+```
+
+Wire the parsed JSON into your form component the same way as any other JSON `formDef` — no extra prop is needed for states:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
+## What you can do with a state name
+
+Once a state is named, you reference it in three places:
+
+1. **`include` / `exclude`** — gate whether a widget renders.
+2. **Per-state prop overrides** — change a widget's label, disabled flag, items list, etc. when the state is active.
+3. **Inline `when`** — a one-shot expression that doesn't get a name.
+
+See the sub-pages for each pattern.
 
 ## In this section
 
@@ -26,5 +273,5 @@ You can then refer to these names in `include` / `exclude` rules, in per-widget 
 - **[Composing states](/features/states/composing/)** — combine multiple state expressions.
 
 <Aside>
-States are part of the **Form Definition API** as well — see [States in the form definition](/form-definition/states/) for declaring them programmatically with `gui.*`.
+States are also a first-class part of the **Form Definition API** — see [States in the form definition](/form-definition/states/) for the full programmatic reference.
 </Aside>

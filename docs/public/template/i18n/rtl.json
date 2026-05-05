@@ -1,0 +1,38 @@
+{
+  "form": [
+    {
+      "uid": "languageSwitcher",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "lang",
+      "label": { "key": "languageLabel", "default": "Language" },
+      "props": {
+        "labelField": "label",
+        "valueField": "value",
+        "items": [
+          { "value": "en", "label": "🇬🇧 English" },
+          { "value": "ar", "label": "🇸🇦 العربية" },
+          { "value": "he", "label": "🇮🇱 עברית" },
+          { "value": "fa", "label": "🇮🇷 فارسی" }
+        ]
+      },
+      "on": { "change": "changeLanguage" }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "username",
+      "label": { "key": "usernameLabel", "default": "Username" },
+      "props": {
+        "placeholder": { "key": "usernamePlaceholder", "default": "e.g. ada-lovelace" },
+        "hint": { "key": "usernameHint", "default": "Pick something memorable." }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "dob",
+      "label": { "key": "birthdateLabel", "default": "Date of birth" }
+    }
+  ]
+}

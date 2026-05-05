@@ -5,14 +5,18 @@ sidebar:
   order: 5
 ---
 
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
 Widgets emit named events through the `formEvent` callback you pass to `<gui-form>`. The form definition wires the widget event (a click, a value change, a load) to a name; your application matches on that name and reacts.
 
-## Wiring an event
+The event **name** is just a string you pick — your application listens for it. The form definition declares the wiring inline on the widget, identically in both paths.
 
-In the form definition, attach an event handler to a widget. The handler is a string — the name of the event your application will receive.
+## Wiring events on widgets
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -22,20 +26,51 @@ const formDef = [
     onChange: 'countryChanged',
     items: ['US', 'CA', 'MX'],
   }),
-  gui.actions.button({ label: 'Submit', onClick: 'submitForm' }),
+  gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
 ];
 ```
 
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "form": [
+    {
+      "kind": "input", "type": "dropdown", "path": "country",
+      "items": ["US", "CA", "MX"],
+      "on": { "change": "countryChanged" }
+    },
+    {
+      "kind": "action", "type": "button", "uid": "submit",
+      "label": "Submit",
+      "on": { "click": "submitForm" }
+    }
+  ]
+}
+```
+
+  </Fragment>
+</DslTabs>
+
 ## Handling events in your component
 
-Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/component event (in Angular and Lit) on your form component. Match on `event.name` and read `event.data`:
+`formEvent` is a callback prop in React, an output in Angular, and a `CustomEvent` in Lit. Match on `event.name` and read `event.data`:
+
+<DslTabs>
+  <Fragment slot="dx">
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
     import * as React from '@golemui/gui-react';
 
+    const formDef = [
+      gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+      gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+    ];
     const formConfig = { widgetLoaders: React.widgetLoaders };
 
     function handleFormEvent(event: Core.FormEvent) {
@@ -66,6 +101,7 @@ Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/compone
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
     import * as Angular from '@golemui/gui-angular';
 
     @Component({
@@ -79,7 +115,10 @@ Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/compone
       ></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
+      protected formDef = [
+        gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+        gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+      ];
       protected formData = {};
       protected formConfig = { widgetLoaders: Angular.widgetLoaders };
 
@@ -101,17 +140,19 @@ Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/compone
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
     import * as Lit from '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
+      formDef = [
+        gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+        gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+      ];
       formData = {};
       formConfig = { widgetLoaders: Lit.widgetLoaders };
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       protected onFormEvent(event: Core.FormEvent) {
         switch (event.name) {
@@ -139,6 +180,120 @@ Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/compone
   </Fragment>
 </IntegrationTabs>
 
+  </Fragment>
+  <Fragment slot="json">
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    function handleFormEvent(event: Core.FormEvent) {
+      switch (event.name) {
+        case 'countryChanged':
+          console.log('Country selected:', event.data.country);
+          break;
+        case 'submitForm':
+          console.log('Submitting:', event.data);
+          break;
+      }
+    }
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+          formEvent={handleFormEvent}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Core from '@golemui/core';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+        (formEvent)="onFormEvent($event)"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+
+      protected onFormEvent(event: Core.FormEvent) {
+        switch (event.name) {
+          case 'countryChanged':
+            console.log('Country selected:', event.data.country);
+            break;
+          case 'submitForm':
+            console.log('Submitting:', event.data);
+            break;
+        }
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Core from '@golemui/core';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      protected onFormEvent(event: Core.FormEvent) {
+        switch (event.name) {
+          case 'countryChanged':
+            console.log('Country selected:', event.data.country);
+            break;
+          case 'submitForm':
+            console.log('Submitting:', event.data);
+            break;
+        }
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
 ## Event types
 
 | Event      | Emitted by                                    |
@@ -148,6 +303,8 @@ Pass a `formEvent` callback (in React) or listen for the `formEvent` DOM/compone
 | `onLoad`   | Dropdowns and lists during initialization.    |
 | `onFilter` | Dropdowns when the user types a search query. |
 | `onBlur`   | Input widgets when focus leaves.              |
+
+In the JSON path, the same events live under the widget's `"on"` block: `"on": { "click": "...", "change": "...", "load": "...", "filter": "...", "blur": "..." }`.
 
 ## Event payload
 

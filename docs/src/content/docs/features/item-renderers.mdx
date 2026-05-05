@@ -5,15 +5,21 @@ sidebar:
   order: 2
 ---
 
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-Some widgets render a list of items — `dropdown`, `list`, `radiogroup`, and similar. By default, each item is rendered as a label/value pair. Item renderers let you supply a richer template (e.g. a country flag next to its label, a product card with a thumbnail and a price).
+Some widgets render a list of items — `dropdown`, `list`, `radiogroup`, and similar. By default, each item is rendered as a label/value pair. **Item renderers** let you supply a richer template (e.g. a country flag next to its label, a product card with a thumbnail and a price).
 
-Item renderers live in `formConfig.itemRenderers`, keyed by a name you reference from the widget's `itemRenderer` prop.
+An item renderer is a small framework-specific function or component that receives the current item and returns the template for it. The renderer is registered under a name; widgets reference that name through their `itemRenderer` prop.
+
+The shape of `CountryItemRenderer` itself is framework-specific — see [Extending GolemUI / Item Renderers](/extending/item-renderers/) for the implementation contract. The wiring below shows how to register and use it once it exists.
 
 ## Wiring an item renderer
 
-Build a `formConfig` that registers your renderer, reference its name from the dropdown's `itemRenderer` prop, and pass `formConfig` into your form component:
+<DslTabs>
+  <Fragment slot="dx">
+
+In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. The widget references the renderer by name through its `itemRenderer` prop.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -30,14 +36,14 @@ Build a `formConfig` that registers your renderer, reference its name from the d
         ],
         labelField: 'label',
         valueField: 'id',
-        itemRenderer: 'countryItemRenderer', // <- name registered below
+        itemRenderer: 'countryItemRenderer',
       }),
     ];
 
     const formConfig = {
       widgetLoaders: React.widgetLoaders,
       itemRenderers: {
-        countryItemRenderer: CountryItemRenderer, // React component
+        countryItemRenderer: CountryItemRenderer,
       },
     };
 
@@ -85,7 +91,7 @@ Build a `formConfig` that registers your renderer, reference its name from the d
       protected formConfig = {
         widgetLoaders: Angular.widgetLoaders,
         itemRenderers: {
-          countryItemRenderer: CountryItemRenderer, // Angular component class
+          countryItemRenderer: CountryItemRenderer,
         },
       };
     }
@@ -115,14 +121,10 @@ Build a `formConfig` that registers your renderer, reference its name from the d
       formData = {};
       formConfig = {
         widgetLoaders: Lit.widgetLoaders,
-        itemRenderers: {
-          countryItemRenderer, // Lit render function
-        },
+        itemRenderers: { countryItemRenderer },
       };
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -138,7 +140,107 @@ Build a `formConfig` that registers your renderer, reference its name from the d
   </Fragment>
 </IntegrationTabs>
 
-The shape of `CountryItemRenderer` is framework-specific — see [Extending GolemUI / Item Renderers](/extending/item-renderers/) for the implementation contract.
+  </Fragment>
+  <Fragment slot="json">
+
+In the JSON path, item renderers go into the **standalone `itemRenderers` prop** on the form component. The JSON references the renderer by name through the dropdown's `"itemRenderer"` field.
+
+```json
+{
+  "form": [
+    {
+      "kind": "input", "type": "dropdown", "path": "country",
+      "items": [
+        { "id": "US", "flag": "🇺🇸", "label": "United States" },
+        { "id": "CA", "flag": "🇨🇦", "label": "Canada" }
+      ],
+      "labelField": "label",
+      "valueField": "id",
+      "itemRenderer": "countryItemRenderer"
+    }
+  ]
+}
+```
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+    import { CountryItemRenderer } from './CountryItemRenderer';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+          itemRenderers={{ countryItemRenderer: CountryItemRenderer }}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import { CountryItemRenderer } from './country-item-renderer.component';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+        [itemRenderers]="itemRenderers"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+      protected itemRenderers = { countryItemRenderer: CountryItemRenderer };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import { countryItemRenderer } from './country-item-renderer';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+      itemRenderers = { countryItemRenderer };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            .itemRenderers=${this.itemRenderers}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
 
 ## See also
 

@@ -5,29 +5,277 @@ sidebar:
   order: 2
 ---
 
-Per-state property overrides let you change a widget's appearance or behavior when one or more states are active, without duplicating the widget definition.
+import DslTabs from '../../../../components/DslTabs.astro';
+import IntegrationTabs from '../../../../components/IntegrationTabs.astro';
+
+Per-state property overrides let you change a widget's appearance or behavior when one or more states are active, without duplicating the widget definition. The two paths express overrides differently:
+
+- **Programmatic** — a `states: {}` block on the widget itself, mapping state name to the props that change while that state is active.
+- **JSON** — a suffix on the prop name, `"<prop>.<stateName>": <value>`. The base prop holds the default; each suffix supplies the override.
+
+## A complete example
+
+A repeater accepts up to five users. Once the array reaches that limit a `limitReached` state activates, swapping the add button label.
+
+<DslTabs>
+  <Fragment slot="dx">
+
+The state lives in `formConfig.states`; the override sits in the repeater's `states` block.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [
+      gui.inputs.repeater('users', {
+        addLabel: 'Add user',
+        states: {
+          limitReached: { addLabel: "Limit reached, you can't add more" },
+        },
+        children: [
+          gui.inputs.textInput('name', { label: 'Name' }),
+        ],
+      }),
+    ];
+
+    const formConfig = {
+      widgetLoaders: React.widgetLoaders,
+      states: {
+        limitReached: '$form.users?.length === 5',
+      },
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.repeater('users', {
+          addLabel: 'Add user',
+          states: {
+            limitReached: { addLabel: "Limit reached, you can't add more" },
+          },
+          children: [
+            gui.inputs.textInput('name', { label: 'Name' }),
+          ],
+        }),
+      ];
+      protected formData = {};
+      protected formConfig = {
+        widgetLoaders: Angular.widgetLoaders,
+        states: {
+          limitReached: '$form.users?.length === 5',
+        },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.repeater('users', {
+          addLabel: 'Add user',
+          states: {
+            limitReached: { addLabel: "Limit reached, you can't add more" },
+          },
+          children: [
+            gui.inputs.textInput('name', { label: 'Name' }),
+          ],
+        }),
+      ];
+      formData = {};
+      formConfig = {
+        widgetLoaders: Lit.widgetLoaders,
+        states: {
+          limitReached: '$form.users?.length === 5',
+        },
+      };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+The state lives at the form root; the override is a `"addLabel.limitReached"` suffix on the repeater.
+
+```json
+{
+  "states": {
+    "limitReached": "$form.users?.length === 5"
+  },
+  "form": [
+    {
+      "kind": "input", "type": "repeater", "path": "users",
+      "addLabel": "Add user",
+      "addLabel.limitReached": "Limit reached, you can't add more",
+      "children": [
+        { "kind": "input", "type": "textinput", "path": "name", "label": "Name" }
+      ]
+    }
+  ]
+}
+```
+
+Wire the parsed JSON into your form component the same way as any other JSON `formDef`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
+When `limitReached` is active the add button label switches; when it's inactive the default `addLabel` applies. You can override any prop the widget supports — labels, icons, disabled flags, even nested arrays.
+
+## Multiple overrides on the same widget
+
+Stack as many per-state overrides as you need.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-import { gui } from '@golemui/gui-shared';
-
-const states = {
-  limitReached: '$form.users?.length === 5',
-};
-
-gui.inputs.repeater('users', {
-  addLabel: 'Add user',
+gui.actions.button('save', {
+  label: 'Save',
+  disabled: false,
   states: {
-    limitReached: { addLabel: "Limit reached, you can't add more" },
+    busy:    { label: 'Saving…',  disabled: true },
+    success: { label: 'Saved!',   disabled: true },
   },
-  // …
 });
 ```
 
-When `limitReached` is active, the repeater's add button label changes. When it's inactive, the default `addLabel` applies.
+  </Fragment>
+  <Fragment slot="json">
 
-You can override any prop the widget supports — labels, icons, disabled flags, even nested arrays.
+```json
+{
+  "kind": "action", "type": "button", "uid": "save",
+  "label": "Save",
+  "disabled": false,
+  "label.busy": "Saving…",
+  "disabled.busy": true,
+  "label.success": "Saved!",
+  "disabled.success": true
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 ## See also
 
 - [Inline `when`](/features/states/inline-when/) — for one-off prop conditions without naming a state.
-- [Composing states](/features/states/composing/) — combining multiple states with AND / OR semantics.
+- [Composing states](/features/states/composing/) — combining multiple states with AND / OR semantics, including the colon-chain convention.

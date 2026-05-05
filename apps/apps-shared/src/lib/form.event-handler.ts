@@ -1,4 +1,5 @@
 import * as Core from '@golemui/core';
+import i18next from 'i18next';
 
 export const onFormEvent = async (event: Core.FormEvent) => {
   const eventHandler = eventHandlers[event.name as keyof typeof eventHandlers];
@@ -55,6 +56,12 @@ const eventHandlers = {
   },
   async filterCars(event: Core.FormEvent) {
     getCars(event, (event.detail as string) ?? '', 'car');
+  },
+  async changeLanguage(event: Core.FormEvent) {
+    const lang = (event.data as Record<string, unknown>)['lang'] as string | undefined;
+    if (lang) {
+      await i18next.changeLanguage(lang);
+    }
   },
 };
 

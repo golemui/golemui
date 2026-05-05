@@ -6,13 +6,23 @@ sidebar:
 ---
 
 import Demo from '../../../../src/components/landing/Demo.astro';
+import DslTabs from '../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
-Validators provide contextual messages for errors in input widgets. Each validator validates a particular shape of data — string, number, boolean, array — and supports a set of rules tailored to that shape. You can also create [custom validators](/extending/validators/) for application-specific rules.
+Validators provide contextual error messages on input widgets. Each validator validates a particular shape of data — string, number, boolean, array — and supports a set of rules tailored to that shape. You can also create [custom validators](/extending/validators/) for application-specific rules.
+
+A validator is just a `validator: { type: ..., ...rules, messages: ... }` object on an input widget. **It lives inline on the widget**, identically in both paths.
 
 ## Adding validators to your inputs
 
-Add a `validator` property to any input widget. The example below requires a non-empty password and supplies its own message — Zod's defaults like "Invalid input" or "Required" rarely tell the user what they should actually do, so always pair every rule with a `messages` entry:
+A validator without a `messages` block falls back to Zod's defaults — strings like "Invalid input" or "Required" that rarely tell the user what they should actually do. Try the demo: leave the field empty, type a short value, type a long value, type letters only:
+
+<Demo src="/template/index.html?form=template/validators/default-validators.json" />
+
+Always pair every rule with a `messages` entry to give the user contextual, actionable feedback. The example below requires a non-empty password and supplies its own message:
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -28,11 +38,31 @@ gui.inputs.textInput('user.password', {
 });
 ```
 
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "input", "type": "textinput", "path": "user.password",
+  "validator": {
+    "type": "string",
+    "required": true,
+    "messages": {
+      "required": "Please enter your password"
+    }
+  }
+}
+```
+
+  </Fragment>
+</DslTabs>
+
 Validators stack — combine multiple rules and you'll see one message per failing rule. The next example checks the password is between 8 and 20 characters long, and that it contains both letters and numbers, with a tailored message for each rule:
 
-```ts
-import { gui } from '@golemui/gui-shared';
+<DslTabs>
+  <Fragment slot="dx">
 
+```ts
 gui.inputs.textInput('user.password', {
   validator: {
     type: 'string',
@@ -50,29 +80,39 @@ gui.inputs.textInput('user.password', {
 });
 ```
 
-<Demo src="/template/index.html?form=template/validators/string-validators.json" />
+  </Fragment>
+  <Fragment slot="json">
 
-## Custom error messages
-
-By default, validators use Zod's built-in messages. Override them by providing a `messages` property — a record where each key corresponds to a validation rule and the value is either a plain string or a translation config for i18n.
-
-### Plain string messages
-
-```ts
-gui.inputs.textInput('user.password', {
-  validator: {
-    type: 'string',
-    required: true,
-    minLength: 8,
-    messages: {
-      required: 'Please enter your password',
-      minLength: 'Password must be at least 8 characters',
-    },
-  },
-});
+```json
+{
+  "kind": "input", "type": "textinput", "path": "user.password",
+  "validator": {
+    "type": "string",
+    "required": true,
+    "minLength": 8,
+    "maxLength": 20,
+    "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$",
+    "messages": {
+      "required": "Please enter your password",
+      "minLength": "Password must be at least 8 characters",
+      "maxLength": "Password cannot exceed 20 characters",
+      "pattern": "Password must contain both letters and numbers"
+    }
+  }
+}
 ```
 
-### Translation config messages (i18n)
+  </Fragment>
+</DslTabs>
+
+<Demo src="/template/index.html?form=template/validators/string-validators.json" />
+
+## Translating messages
+
+A `messages` entry can be a plain string (as above) or a `Localizable` shape — `{ key, default }` — that the active translator resolves at render time. Pair this with the [i18n feature](/features/i18n/) and your validator messages localize alongside the rest of the form.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 gui.inputs.textInput('user.password', {
@@ -89,7 +129,29 @@ gui.inputs.textInput('user.password', {
 });
 ```
 
-A more complete example combining several rule types:
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "input", "type": "textinput", "path": "user.password",
+  "validator": {
+    "type": "string",
+    "required": true,
+    "messages": {
+      "required": {
+        "key": "errors.password.required",
+        "default": "Please enter your password"
+      }
+    }
+  }
+}
+```
+
+  </Fragment>
+</DslTabs>
+
+A more complete example combining several rule types — switch the language dropdown to see the same messages in English, Spanish, and French:
 
 <Demo src="/template/index.html?form=template/validators/messages-validators.json" />
 
@@ -143,7 +205,7 @@ Each validator type supports a specific set of rules and message keys.
 
 ## Configuring when validation triggers
 
-The `validateOn` property in `formConfig` controls when field validation runs.
+The `validateOn` setting controls when field validation runs.
 
 ```ts
 type ValidateOn =
@@ -154,7 +216,7 @@ type ValidateOn =
   | ('change' | 'blur' | 'submit')[];
 ```
 
-When not set, the default `validateOn` behaviour is `'eager'`.
+When not set, the default behaviour is `'eager'`.
 
 | Mode       | Triggers when                                                |
 | ---------- | ------------------------------------------------------------ |
@@ -163,9 +225,12 @@ When not set, the default `validateOn` behaviour is `'eager'`.
 | `'submit'` | A `submit` event is emitted (all fields are touched first)   |
 | `'eager'`  | Any of the above happens (default)                           |
 
-```ts
-gui.actions.submitButton({ label: 'Create User' });
-```
+Where `validateOn` lives on the form component depends on the path:
+
+<DslTabs>
+  <Fragment slot="dx">
+
+`validateOn` goes inside `formConfig`.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -185,6 +250,7 @@ gui.actions.submitButton({ label: 'Create User' });
           },
         },
       }),
+      gui.actions.submitButton({ label: 'Create User' }),
     ];
 
     const formConfig = {
@@ -192,7 +258,7 @@ gui.actions.submitButton({ label: 'Create User' });
       validateOn: 'change',
     };
 
-    export function FormPage() {
+    export function MyForm() {
       return (
         <React.FormComponent
           formDef={formDef}
@@ -224,15 +290,16 @@ gui.actions.submitButton({ label: 'Create User' });
       protected formDef = [
         gui.inputs.textInput('username', {
           validator: {
-          type: 'string',
-          required: true,
-          minLength: 2,
-          messages: {
-            required: 'Please enter a username',
-            minLength: 'Username must be at least 2 characters',
+            type: 'string',
+            required: true,
+            minLength: 2,
+            messages: {
+              required: 'Please enter a username',
+              minLength: 'Username must be at least 2 characters',
+            },
           },
-        },
         }),
+        gui.actions.submitButton({ label: 'Create User' }),
       ];
       protected formData = {};
       protected formConfig = {
@@ -255,15 +322,16 @@ gui.actions.submitButton({ label: 'Create User' });
       formDef = [
         gui.inputs.textInput('username', {
           validator: {
-          type: 'string',
-          required: true,
-          minLength: 2,
-          messages: {
-            required: 'Please enter a username',
-            minLength: 'Username must be at least 2 characters',
+            type: 'string',
+            required: true,
+            minLength: 2,
+            messages: {
+              required: 'Please enter a username',
+              minLength: 'Username must be at least 2 characters',
+            },
           },
-        },
         }),
+        gui.actions.submitButton({ label: 'Create User' }),
       ];
       formData = {};
       formConfig = {
@@ -271,9 +339,7 @@ gui.actions.submitButton({ label: 'Create User' });
         validateOn: 'change' as Core.ValidateOn,
       };
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -288,6 +354,86 @@ gui.actions.submitButton({ label: 'Create User' });
     ```
   </Fragment>
 </IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+`validateOn` is a **standalone prop** on the form component.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+          validateOn="change"
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+        [validateOn]="'change'"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            .validateOn=${'change'}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
 
 ## See also
 

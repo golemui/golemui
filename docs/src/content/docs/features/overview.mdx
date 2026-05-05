@@ -5,21 +5,47 @@ sidebar:
   order: 0
 ---
 
-The unified `<gui-form>` component (React `<FormComponent>`, Angular `<gui-form>`, Lit `<gui-form>`) takes a small set of inputs and produces a fully-rendered, validated, accessible form. Most of the interesting customization happens through the `formConfig` object you hand to it.
+import DslTabs from '../../../../src/components/DslTabs.astro';
+
+The unified `<gui-form>` component (React `<FormComponent>`, Angular `<gui-form>`, Lit `<gui-form>`) takes a small set of inputs and produces a fully-rendered, validated, accessible form. How you wire engine knobs depends on which path you take — Programmatic groups them under `formConfig`, JSON exposes each as a standalone component prop.
 
 This section walks through every feature you can plug in, in increasing order of depth. Each page is self-contained — read what you need, skip the rest.
 
 ## What `<gui-form>` accepts
 
-| Input          | Description                                                                                                                          |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `formDef`      | An array of `gui.*` shortcuts (Programmatic) or a parsed JSON form definition. See [Form Definition API](/form-definition/overview/). |
-| `data`         | The initial form data object.                                                                                                        |
-| `formConfig`   | Engine wiring: widget loaders, item renderers, validators, dependencies, validation timing, states.                                  |
+<DslTabs>
+  <Fragment slot="dx">
+
+| Input           | Description                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `formDef`       | An array of `gui.*` shortcuts. See [Form Definition API](/form-definition/overview/).                                                |
+| `data`          | The initial form data object.                                                                                                        |
+| `formConfig`    | Engine wiring container: `widgetLoaders`, `itemRenderers`, `customValidators`, `dependencies`, `validateOn`, `states`.               |
 | `formSelectors` | GSL selectors that decorate widgets by type, tag, or uid.                                                                            |
-| `localization` | i18n translator (e.g. i18next).                                                                                                      |
-| `formEvent`    | Callback for events emitted by widgets.                                                                                              |
-| `formHealth`   | Callback that reports the live validation status of the form.                                                                        |
+| `localization`  | i18n translator (e.g. i18next).                                                                                                      |
+| `formEvent`     | Callback for events emitted by widgets.                                                                                              |
+| `formHealth`    | Callback that reports the live validation status of the form.                                                                        |
+
+  </Fragment>
+  <Fragment slot="json">
+
+| Input                 | Description                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `formDef`             | A parsed JSON form definition. See [Form Definition API](/form-definition/overview/).                                                |
+| `data`                | The initial form data object.                                                                                                        |
+| `customWidgetLoaders` | Map of widget `type` → async loader, merged with the framework defaults.                                                             |
+| `itemRenderers`       | Custom item-renderer map for `dropdown`, `list`, etc.                                                                                |
+| `customValidators`    | Map of custom validator schemas referenced by `validator: { type: 'custom', ... }`.                                                  |
+| `dependencies`        | External helpers (e.g. a markdown parser).                                                                                           |
+| `validateOn`          | When validation runs: `'eager'`, `'change'`, `'blur'`, `'submit'`.                                                                   |
+| `localization`        | i18n translator (e.g. i18next).                                                                                                      |
+| `formEvent`           | Callback for events emitted by widgets.                                                                                              |
+| `formHealth`          | Callback that reports the live validation status of the form.                                                                        |
+
+State declarations (`"states": { ... }`) live **inside** the JSON form itself, not as a component prop.
+
+  </Fragment>
+</DslTabs>
 
 ## Features
 

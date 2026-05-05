@@ -5,6 +5,8 @@ sidebar:
   order: 6
 ---
 
+import Demo from '../../../components/landing/Demo.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
@@ -155,7 +157,12 @@ The typesafe types catch missing keys at compile time — your `Localizable` `{ 
 
 ## Wiring the translator into your form
 
-The translator goes into a separate `localization` prop on your form component (it sits **alongside** `formConfig`, not inside it). Below uses the i18next adapter; the wiring is identical for any other adapter you build.
+The translator goes into a separate `localization` prop on your form component — a standalone prop in both paths. Below uses the i18next adapter; the wiring is identical for any other adapter you build.
+
+The form definition references translation keys through `Localizable` shapes (`{ key, default }`). In the Programmatic path you pass them as object literals to `gui.*`; in the JSON path you write them inline.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -244,9 +251,7 @@ The translator goes into a separate `localization` prop on your form component (
         es: { translation: { username: { label: 'Usuario' } } },
       });
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -263,6 +268,117 @@ The translator goes into a separate `localization` prop on your form component (
   </Fragment>
 </IntegrationTabs>
 
+  </Fragment>
+  <Fragment slot="json">
+
+The JSON form references the same translation keys inline:
+
+```json
+{
+  "form": [
+    {
+      "kind": "input", "type": "textinput", "path": "username",
+      "label": { "key": "username.label", "default": "Username" }
+    }
+  ]
+}
+```
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    const localization = createI18nextTranslator({
+      en: { translation: { username: { label: 'Username' } } },
+      es: { translation: { username: { label: 'Usuario' } } },
+    });
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+          localization={localization}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+        [localization]="localization"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+      protected localization = createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      });
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+      localization = createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      });
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            .localization=${this.localization}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
+Here's the same wiring rendered live — switch the language dropdown to confirm the label retranslates without any reset or remount:
+
+<Demo src="/template/index.html?form=template/i18n/wiring.json" />
+
 ## What's translated
 
 - Widget labels, placeholders, hints (where the prop accepts `Localizable`).
@@ -270,9 +386,15 @@ The translator goes into a separate `localization` prop on your form component (
 - Repeater labels, accordion section labels, tab labels.
 - Date and currency formatting honor the active locale (via `Intl`).
 
-## Switching language at runtime
+The demo below combines a translated label, placeholder, hint, validator message, and locale-aware date/currency formatting. Switch the language dropdown and watch every piece update at once:
 
-GolemUI re-renders every `Localizable` whenever the translator notifies its subscribers. So as long as your adapter calls `listener(lang)` after the language changes — which all three examples above do — calling your library's "change language" function (e.g. `i18next.changeLanguage('es')`) is enough to retranslate the whole form. No form-level reset, no remount.
+<Demo src="/template/index.html?form=template/i18n/whats-translated.json" />
+
+## RTL text direction
+
+When the active language uses a right-to-left script — Arabic, Hebrew, Persian, Urdu, and others — GolemUI flips the form to `dir="rtl"` automatically, and back to `dir="ltr"` when the user picks an LTR language. Layout, labels, validation messages, and date formatting all follow the active direction without any extra wiring on your side.
+
+<Demo src="/template/index.html?form=template/i18n/rtl.json" />
 
 ## See also
 

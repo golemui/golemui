@@ -5,40 +5,102 @@ sidebar:
   order: 4
 ---
 
+import DslTabs from '../../../../components/DslTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
-States are simple boolean expressions, so you can compose them inline with `&&` and `||`:
+States are simple boolean expressions, so you can compose them inline with `&&` and `||`. The convention in GolemUI is to **define one canonical expression per state** — don't reference state names inside other state expressions; recombine raw `$form.*` reads instead.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-const states = {
-  isAdult: '$form.age >= 18',
-  hasLicense: '$form.licenseNumber != null',
-  canDrive: '$form.age >= 18 && $form.licenseNumber != null',
+const formConfig = {
+  // ...other formConfig options
+  states: {
+    isAdult:    '$form.age >= 18',
+    hasLicense: '$form.licenseNumber != null',
+    canDrive:   '$form.age >= 18 && $form.licenseNumber != null',
+  },
 };
 ```
 
-You can also compose by referencing other states — but the convention in GolemUI is to **define one canonical expression per state**. Don't reference state names inside other state expressions.
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "states": {
+    "isAdult":    "$form.age >= 18",
+    "hasLicense": "$form.licenseNumber != null",
+    "canDrive":   "$form.age >= 18 && $form.licenseNumber != null"
+  },
+  "form": [ /* ... */ ]
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 ## Combining states in `include`
 
-The `in` form of `include` is an array; multiple names are combined with **AND**:
+The `in` form of `include` is an array; multiple names are combined with **AND**.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-include: { in: ['isAdult', 'hasLicense'] } // both must be active
+gui.inputs.textInput('drivingTest', {
+  include: { in: ['isAdult', 'hasLicense'] }, // both must be active
+});
 ```
 
-For OR semantics, write a composite state.
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "input", "type": "textinput", "path": "drivingTest",
+  "include": { "in": ["isAdult", "hasLicense"] }
+}
+```
+
+  </Fragment>
+</DslTabs>
+
+For OR semantics, write a composite state with `||` and reference it by name.
 
 ## Combining states with prop overrides
 
-Per-state property overrides apply additively. If two states are active and both override the same prop, the **last** one wins (declaration order in `states: {}`).
+Per-state property overrides apply additively. If two states are active and both override the same prop, the **last** one wins (declaration order in the `states` map).
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-states: {
-  busy: { disabled: true },
-  loading: { disabled: true, label: 'Loading…' },
-},
+gui.actions.button('save', {
+  label: 'Save',
+  states: {
+    busy:    { disabled: true },
+    loading: { disabled: true, label: 'Loading…' },
+  },
+});
 ```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "action", "type": "button", "uid": "save",
+  "label": "Save",
+  "disabled.busy": true,
+  "disabled.loading": true,
+  "label.loading": "Loading…"
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 If both `busy` and `loading` are active, the widget shows `Loading…` and is disabled.
 
@@ -46,51 +108,102 @@ If both `busy` and `loading` are active, the widget shows `Loading…` and is di
 
 For richer flows you can chain state names with a **colon**, e.g. `register:adult:canSubmit`. The chain isn't magic — each name is still its own expression evaluated against `$form` — but the colon convention gives you three things at once:
 
-1. **A naming hierarchy** that reads like a path (`<parent>:<child>:<grandchild>`), so related states cluster visually in the `states: {}` map.
-2. **Cascading activeness** when used with the `'<prop>.<state>'` suffix syntax: a longer chain wins over a shorter one. `'label.register:adult:canSubmit'` overrides `'label.register'` whenever both apply.
+1. **A naming hierarchy** that reads like a path (`<parent>:<child>:<grandchild>`), so related states cluster visually in the `states` map.
+2. **Cascading activeness** when used with the `<prop>.<state>` suffix syntax: a longer chain wins over a shorter one. `label.register:adult:canSubmit` overrides `label.register` whenever both apply.
 3. **A natural place to encode "stage X is satisfied"** flags — `register:adult:canSubmit` reads as "the adult branch of the register flow has met its submit prerequisites."
 
 Here's a complete sign-in / sign-up flow that uses the chain to gate everything from labels and placeholders to disabled state and click handlers:
 
+<DslTabs>
+  <Fragment slot="dx">
+
 ```ts
-const states = {
-  register: '$form.registerMode === true',
-  'register:tall': '$form.user.height > 180',
-  'register:minor': '$form.user.age < 18',
-  'register:minor:canSubmit': '$form.terms === true && $form.parentalApproval === true',
-  'register:adult': '$form.user.age >= 18',
-  'register:adult:canSubmit': '$form.terms === true',
+const formConfig = {
+  // ...other formConfig options
+  states: {
+    register:                       '$form.registerMode === true',
+    'register:tall':                '$form.user.height > 180',
+    'register:minor':               '$form.user.age < 18',
+    'register:minor:canSubmit':     '$form.terms === true && $form.parentalApproval === true',
+    'register:adult':               '$form.user.age >= 18',
+    'register:adult:canSubmit':     '$form.terms === true',
+  },
 };
 ```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "states": {
+    "register":                   "$form.registerMode === true",
+    "register:tall":              "$form.user.height > 180",
+    "register:minor":             "$form.user.age < 18",
+    "register:minor:canSubmit":   "$form.terms === true && $form.parentalApproval === true",
+    "register:adult":             "$form.user.age >= 18",
+    "register:adult:canSubmit":   "$form.terms === true"
+  },
+  "form": [ /* ... */ ]
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 Read top-to-bottom: there's a `register` mode (the user toggled "Register" instead of "Login"). Inside that mode there are two branches — `register:adult` and `register:minor` — driven by age. Each branch has its own `canSubmit` precondition (terms-only for adults, terms + parental approval for minors). And independently of all that, `register:tall` is a leaf state used to reveal a "Play Basketball" checkbox if the user is taller than 180cm.
 
 ### Activating chained states
 
-Each entry is just a **string key**. There's no implicit dependency between `register` and `register:adult` from the engine's perspective — both have to evaluate `true` for `register:adult` to be active, only because both expressions read `$form.registerMode === true` (transitively, via `$form.user.age`). The chain in the key name is **for you and the suffix system**, not for the evaluator.
+Each entry is just a **string key**. There's no implicit dependency between `register` and `register:adult` from the engine's perspective — both have to evaluate `true` for `register:adult` to be active, only because both expressions read `$form.registerMode` (transitively, via `$form.user.age`). The chain in the key name is **for you and the suffix system**, not for the evaluator.
 
 That means you can write a deeply-nested key without a parent and it'll still work — the engine just evaluates the expression. Use the convention to keep your state map readable.
 
-### Using chains with the suffix syntax
+### Using chains with prop overrides
 
-The real payoff is in widget definitions. Suffix any prop with `.<state>` (legacy JSON shape) or use the per-state `states: {}` block (DX shape) and the engine swaps in the override when that state is active. For chained keys, **the more specific suffix wins** when multiple match:
+The real payoff is in widget definitions. The more specific suffix wins when multiple match.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-{
-  kind: 'action',
-  type: 'button',
+gui.actions.button('login', {
   label: 'Login',
-  'label.register': 'Register',                // when registerMode is on
   disabled: false,
-  'disabled.register': true,                   // disabled in register mode by default
-  'disabled.register:minor:canSubmit': false,  // re-enabled when a minor meets the bar
-  'disabled.register:adult:canSubmit': false,  // re-enabled when an adult meets the bar
+  states: {
+    register:                   { label: 'Register', disabled: true },
+    'register:minor:canSubmit': { disabled: false },
+    'register:adult:canSubmit': { disabled: false },
+  },
   on: {
     click: 'handleLogin',
-    'click.register': 'handleRegister',        // register-mode click swaps the handler
   },
-},
+});
 ```
+
+In Programmatic, swapping the click handler per state is best done in your `formEvent` handler — branch on `event.name` and on the active states (read them from `event.data` or directly).
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "action", "type": "button", "uid": "login",
+  "label": "Login",
+  "label.register": "Register",
+  "disabled": false,
+  "disabled.register": true,
+  "disabled.register:minor:canSubmit": false,
+  "disabled.register:adult:canSubmit": false,
+  "on": {
+    "click": "handleLogin",
+    "click.register": "handleRegister"
+  }
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 A single button now drives three flows: a Login click in non-register mode, a disabled Register button while the form isn't yet valid, and an enabled Register button once the appropriate `canSubmit` precondition is met.
 
@@ -98,33 +211,69 @@ A single button now drives three flows: a Login click in non-register mode, a di
 
 Conditional rendering reads the same way:
 
+<DslTabs>
+  <Fragment slot="dx">
+
 ```ts
-{
-  kind: 'input', type: 'checkbox', path: 'parentalApproval',
+gui.inputs.booleanInput('parentalApproval', {
   label: 'Parental Approval!',
   include: { in: ['register:minor'] },
+});
+```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "input", "type": "checkbox", "path": "parentalApproval",
+  "label": "Parental Approval!",
+  "include": { "in": ["register:minor"] }
 }
 ```
+
+  </Fragment>
+</DslTabs>
 
 `parentalApproval` only renders when both `registerMode === true` **and** `user.age < 18` — the colon name simply documents the relationship.
 
 ### Display widgets that react to a chain
 
-Display widgets pick up suffixes too:
+Display widgets pick up the same overrides:
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-{
-  kind: 'display', type: 'alert',
-  props: {
-    text: 'Some fields need your attention',
-    level: 'warning',
-    'text.register:adult:canSubmit': 'You can Register now',
-    'level.register:adult:canSubmit': 'success',
-    'text.register:minor:canSubmit': 'You can Register now',
-    'level.register:minor:canSubmit': 'success',
+gui.displays.alert('submit-hint', {
+  text: 'Some fields need your attention',
+  level: 'warning',
+  states: {
+    'register:adult:canSubmit': { text: 'You can Register now', level: 'success' },
+    'register:minor:canSubmit': { text: 'You can Register now', level: 'success' },
   },
-},
+});
 ```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "display", "type": "alert",
+  "props": {
+    "text": "Some fields need your attention",
+    "level": "warning",
+    "text.register:adult:canSubmit": "You can Register now",
+    "level.register:adult:canSubmit": "success",
+    "text.register:minor:canSubmit": "You can Register now",
+    "level.register:minor:canSubmit": "success"
+  }
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 The alert is amber + warning copy by default; once either the adult or minor `canSubmit` chain matches, it swaps to a green success message — without you writing a single conditional in your application code.
 

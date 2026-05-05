@@ -5,9 +5,12 @@ sidebar:
   order: 4
 ---
 
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
 Middlewares are functions that wrap the form's reactive store and observe (or mutate) every action that flows through it. They run on every state change and can be composed.
+
+`middlewares` is a **standalone prop** on the form component in both paths — it sits alongside `formConfig` (Programmatic) or alongside the JSON `formDef` and engine props (JSON). It is **not** part of `formConfig`.
 
 ## Default middlewares
 
@@ -20,7 +23,10 @@ GolemUI ships a few middlewares you can opt into:
 
 ## Wiring middlewares
 
-Pass an array of middlewares to your form component as a separate prop (it sits alongside `formConfig`, not inside it). Below, every framework wires `devToolsMiddleware` and a hand-written `loggerMiddleware`:
+Pass an array of middlewares to your form component as the `middlewares` prop. Below, every framework wires `devToolsMiddleware`.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -44,7 +50,6 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       );
     }
     ```
-
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -71,7 +76,6 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       protected middlewares = [Core.devToolsMiddleware()];
     }
     ```
-
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -88,9 +92,7 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       formConfig = { widgetLoaders: Lit.widgetLoaders };
       middlewares = [Core.devToolsMiddleware()];
 
-      override createRenderRoot() {
-        return this;
-      }
+      override createRenderRoot() { return this; }
 
       override render() {
         return html`
@@ -104,9 +106,93 @@ Pass an array of middlewares to your form component as a separate prop (it sits 
       }
     }
     ```
-
   </Fragment>
 </IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    const middlewares = [Core.devToolsMiddleware()];
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+          middlewares={middlewares}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Core from '@golemui/core';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+        [middlewares]="middlewares"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+      protected middlewares = [Core.devToolsMiddleware()];
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Core from '@golemui/core';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+      middlewares = [Core.devToolsMiddleware()];
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+            .middlewares=${this.middlewares}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
 
 ## Want to write your own?
 

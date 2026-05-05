@@ -1,0 +1,53 @@
+{
+  "form": [
+    {
+      "uid": "languageSwitcher",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "lang",
+      "label": { "key": "languageLabel", "default": "Language" },
+      "props": {
+        "labelField": "label",
+        "valueField": "value",
+        "items": [
+          { "value": "en", "label": "🇬🇧 English" },
+          { "value": "es", "label": "🇪🇸 Spanish" },
+          { "value": "fr", "label": "🇫🇷 French" }
+        ]
+      },
+      "on": { "change": "changeLanguage" }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "username",
+      "label": { "key": "usernameLabel", "default": "Username" },
+      "props": {
+        "placeholder": { "key": "usernamePlaceholder", "default": "e.g. ada-lovelace" },
+        "hint": { "key": "usernameHint", "default": "Pick something memorable." }
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "messages": {
+          "required": { "key": "validators.usernameRequired", "default": "A username is required" }
+        }
+      }
+    },
+    {
+      "kind": "input",
+      "type": "datePicker",
+      "path": "dob",
+      "label": { "key": "birthdateLabel", "default": "Date of birth" }
+    },
+    {
+      "kind": "input",
+      "type": "currency",
+      "path": "price",
+      "label": { "key": "priceLabel", "default": "Price" },
+      "props": {
+        "hint": { "key": "priceHint", "default": "Amount in your local currency." }
+      }
+    }
+  ]
+}

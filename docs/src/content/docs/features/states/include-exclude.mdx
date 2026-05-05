@@ -5,38 +5,279 @@ sidebar:
   order: 1
 ---
 
-Use `include` to render a widget only when a named state is active; use `exclude` to render it only when it is **not** active.
+import DslTabs from '../../../../components/DslTabs.astro';
+import IntegrationTabs from '../../../../components/IntegrationTabs.astro';
 
-```ts
-import { gui } from '@golemui/gui-shared';
+Use `include` to render a widget only when one or more named states are active; use `exclude` to render it only when they are **not** active.
 
-const states = {
-  hasDiscount: '$form.hasDiscountCode === true',
-};
+Both shapes accept either a list of state names (`{ in: [...] }`) or a one-off reactive expression (`{ when: '...' }`).
 
-const formDef = [
-  gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
-  gui.inputs.textInput('discountCode', {
-    label: 'Discount code',
-    include: { in: ['hasDiscount'] },
-  }),
-];
+## A complete include example
+
+A boolean toggle reveals a discount-code input only when the user opts in. The state expression reads `$form.hasDiscountCode` and the discount input declares `include: { in: ['hasDiscount'] }`.
+
+<DslTabs>
+  <Fragment slot="dx">
+
+The state lives in `formConfig.states`; the `include` rule sits next to the widget's other props.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [
+      gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+      gui.inputs.textInput('discountCode', {
+        label: 'Discount code',
+        include: { in: ['hasDiscount'] },
+      }),
+    ];
+
+    const formConfig = {
+      widgetLoaders: React.widgetLoaders,
+      states: {
+        hasDiscount: '$form.hasDiscountCode === true',
+      },
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          formConfig={formConfig}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [formConfig]="formConfig"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ];
+      protected formData = {};
+      protected formConfig = {
+        widgetLoaders: Angular.widgetLoaders,
+        states: {
+          hasDiscount: '$form.hasDiscountCode === true',
+        },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ];
+      formData = {};
+      formConfig = {
+        widgetLoaders: Lit.widgetLoaders,
+        states: {
+          hasDiscount: '$form.hasDiscountCode === true',
+        },
+      };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .formConfig=${this.formConfig}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+The state lives at the form root under `"states"`; the widget carries `"include"` inline.
+
+```json
+{
+  "states": {
+    "hasDiscount": "$form.hasDiscountCode === true"
+  },
+  "form": [
+    { "kind": "input", "type": "checkbox",  "path": "hasDiscountCode", "label": "I have a discount code" },
+    {
+      "kind": "input", "type": "textinput", "path": "discountCode",
+      "label": "Discount code",
+      "include": { "in": ["hasDiscount"] }
+    }
+  ]
+}
 ```
 
-The discount-code input only renders when `$form.hasDiscountCode === true`.
+Wire the parsed JSON into your form component the same way as any other JSON `formDef`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={React.widgetLoaders}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="widgetLoaders"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected widgetLoaders = Angular.widgetLoaders;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Lit from '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      widgetLoaders = Lit.widgetLoaders;
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.widgetLoaders}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
+When `$form.hasDiscountCode` flips to `true`, the discount-code input mounts; flipping it back unmounts the widget and clears its data.
 
 ## Active-state lists vs reactive `when`
 
-Both `include` and `exclude` accept either a list of state names or a one-off reactive expression:
+Both `include` and `exclude` accept either form. Pick the one that reads best at the call site.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
-include: { in: ['hasDiscount'] }       // active-state list
-include: { when: '$form.age >= 18' }   // ad-hoc expression
+include: { in: ['hasDiscount'] }       // active-state list — name defined in formConfig.states
+include: { when: '$form.age >= 18' }   // ad-hoc expression — no name needed
 ```
 
-Use named states when the same condition appears in multiple places. Use `when` for one-shot conditions (see [Inline `when`](/features/states/inline-when/)).
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+"include": { "in": ["hasDiscount"] }
+"include": { "when": "$form.age >= 18" }
+```
+
+  </Fragment>
+</DslTabs>
+
+Use a **named state** when the same condition appears in multiple places. Use **`when`** for one-shot conditions (see [Inline `when`](/features/states/inline-when/)).
+
+## Excluding a widget
+
+`exclude` is the mirror of `include` — render the widget unless the state(s) match.
+
+<DslTabs>
+  <Fragment slot="dx">
+
+```ts
+gui.displays.alert('signin-hint', {
+  text: 'Already have an account? Sign in.',
+  exclude: { in: ['hasAccount'] },
+});
+```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "display", "type": "alert",
+  "props": { "text": "Already have an account? Sign in." },
+  "exclude": { "in": ["hasAccount"] }
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 ## See also
 
-- [States overview](/features/states/) — declaring and composing states.
+- [States overview](/features/states/) — declaring states in each path.
 - [Form Definition API / Conditionals](/form-definition/conditionals/) — full `include` / `exclude` reference.
