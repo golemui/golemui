@@ -88,17 +88,33 @@ Import the core styles in your HTML or application entry point:
   </Fragment>
 </DslTabs>
 
-## Widget Properties
+## `<gui-form>` properties
 
-| Property           | Type                     | Description                                          |
-| ------------------ | ------------------------ | ---------------------------------------------------- |
-| `formDef`          | `Form`                   | The form definition object                           |
-| `data`             | `object`                 | Initial form data                                    |
-| `widgetLoaders`    | `WidgetLoaders`          | Map of widget type loaders (e.g. GolemUI widgets) |
-| `validators`       | `ValidatorFn`            | Validator function (from `initValidators()`)         |
-| `customValidators` | `CustomValidatorSchemas` | Custom validator schemas                             |
-| `validateOn`       | `ValidateOn`             | When to trigger validation                           |
-| `dependencies`     | `Dependencies`           | External dependencies (e.g. markdown parser)         |
-| `localization`     | `Localization`           | i18n/localization configuration                      |
+| Property               | Type                                                          | Description                                                                          |
+| ---------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `.formDef` (required)  | `FormInput`                                                    | Programmatic `gui.*` array or parsed JSON form definition.                          |
+| `.formSelectors`       | `GslSelectorsInput`                                            | GSL selector decorators. **Programmatic-only.**                                     |
+| `.formConfig`          | `DxFormConfig`                                                 | DX engine wiring (loaders, item renderers, dependencies, validateOn, …). **Programmatic-only.** |
+| `.data`                | `Record<string, any>`                                          | Initial form data.                                                                  |
+| `.meta`                | `Record<string, any>`                                          | Out-of-band metadata you want to thread through events and state.                   |
+| `.customWidgetLoaders` | `Core.WidgetLoaders<Type<Core.WithWidget>>`                    | Custom widget map; merged with the default Lit widget set.                          |
+| `.itemRenderers`       | `Record<string, LitItemRenderer<any>>`                         | Custom item-renderer map (for dropdown, list, etc.).                                |
+| `.customValidators`    | `CustomValidatorSchemas`                                       | Custom validator schemas referenced by `validator: { type: 'custom', ... }`.        |
+| `.middlewares`         | `Core.Middleware<Core.State, Core.Action>[]`                   | Store middlewares (logging, persistence, devtools).                                 |
+| `.validateOn`          | `Core.ValidateOn`                                              | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array. |
+| `.dependencies`        | `Dependencies`                                                 | External helpers (e.g. a markdown parser).                                          |
+| `.localization`        | `Core.I18nTranslator`                                          | Translator implementing the `I18nTranslator` interface.                             |
+| `.autocomplete`        | `string`                                                       | Sets the underlying `<form>` element's `autocomplete` attribute.                    |
 
-See [Configuration](/integration/configuration/) for details on each optional prop.
+The element also dispatches two **custom events**:
+
+| Event              | Detail type             | Description                                          |
+| ------------------ | ----------------------- | ---------------------------------------------------- |
+| `@formEvent`       | `Core.FormEvent`        | Fired when a widget fires a wired event.             |
+| `@formHealth`      | `Core.FormHealth`       | Fired when the form's validation status changes.     |
+
+See [Configuration](/integration/configuration/) for details on each property, plus the **Programmatic-only vs JSON-form** notes.
+
+## Custom widgets in Lit
+
+Build your own widgets by extending `LitElement`, consuming the form context with `@consume({ context: Lit.formContext })`, and providing the appropriate adapter (`@provide({ context: Lit.inputContext })` and friends). Because Lit widgets are native web components, they also work inside React or Angular hosts when paired with a thin shim. See [Extending GolemUI / Widgets](/extending/widgets/overview/) for the full walkthrough.

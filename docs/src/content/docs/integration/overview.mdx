@@ -1,119 +1,37 @@
 ---
 title: Integration Overview
-description: How GolemUI's framework-agnostic core integrates with React, Angular, and Lit.
+description: Install GolemUI for React, Angular, or Lit and render your first form.
 sidebar:
   order: 0
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-GolemUI is a **framework-agnostic form engine**. The same form definition runs in React, Angular, and Lit — only a thin adapter layer differs between frameworks. Most of the code is shared, including the widget set, validators, item renderers, state engine, and i18n pipeline.
+GolemUI is **framework-agnostic** — your form definition runs unchanged in React, Angular, and Lit. Pick the adapter package for your framework; the form component, props, and behavior are identical across all three.
 
-## Supported frameworks
+## Pick your framework
 
-| Framework | Adapter Package        | Component                    |
-| --------- | ---------------------- | ---------------------------- |
-| React     | `@golemui/gui-react`   | `<FormComponent />`          |
-| Angular   | `@golemui/gui-angular` | `<gui-form>`                 |
-| Lit       | `@golemui/gui-lit`     | `<gui-form>` (web component) |
+| Framework | Adapter package        | Component                    | Setup                                      |
+| --------- | ---------------------- | ---------------------------- | ------------------------------------------ |
+| React     | `@golemui/gui-react`   | `<FormComponent />`          | [React →](/integration/react/)             |
+| Angular   | `@golemui/gui-angular` | `<gui-form>`                 | [Angular →](/integration/angular/)         |
+| Lit       | `@golemui/gui-lit`     | `<gui-form>` (web component) | [Lit →](/integration/lit/)                 |
 
-## Architecture
+## What `<gui-form>` does
 
-GolemUI is built as a small set of layers, each with a single responsibility. From the bottom up:
+- Renders widgets from your `formDef` array (Programmatic or JSON).
+- Tracks user input in a reactive store.
+- Runs validators and surfaces errors.
+- Emits events your application code listens to.
 
-### 1. Core (`@golemui/core`)
-
-The engine. It owns the **reactive store**, the **widget tree**, the **state evaluation pipeline**, the **event bus**, and the **validation runner**. It knows nothing about React, Angular, Lit, or even DOM — it speaks in plain TypeScript objects (`FormWidget`, `State`, `Action`).
-
-Everything that sits above it is glue.
-
-### 2. Form Definition layer (`@golemui/gui-shared`)
-
-The user-facing **DX layer**. This is where `gui.inputs.textInput(...)`, `gui.layouts.grid(...)`, and `gui.selectors.tag('...').inputs(...)` live. It's a typed builder that produces an array of shortcut objects, then **resolves** them — applying selector decorators, sensible defaults, per-state overrides, custom-widget mappings — into the core's `FormWidget` shape.
-
-`gui-shared` also exposes the legacy [`golemForm().create(...)`](/form-definition/overview/) and `defineForm(...)` helpers for users who prefer the JSON-shaped form definition. Either way, what reaches Core is the same internal `FormWidget` tree.
-
-### 3. Widget library (`@golemui/gui-components`)
-
-The **default UI widgets** — buttons, inputs, dropdowns, calendars, layouts. These are framework-agnostic web components implementing the widget contract. They render based on the `templateData` the core engine hands them and emit value changes / events back through the engine.
-
-This package is the **courtesy CSS layer** too — see [Styling Overview](/styling/overview/).
-
-### 4. Framework adapters (`@golemui/gui-react`, `@golemui/gui-angular`, `@golemui/gui-lit`)
-
-The **bridge between Core and your framework**. Each adapter:
-
-- Exposes a `<gui-form>` / `<FormComponent>` element/component that takes `formDef`, `data`, `formConfig`, `formSelectors`, `localization`, and event callbacks as inputs.
-- Wires the framework's reactivity model to the core engine — re-rendering on store changes, propagating value updates, attaching event listeners.
-- Ships a `widgetLoaders` map preconfigured with the default widget set. You can spread it and add custom widgets.
-- Provides framework-idiomatic helpers for **building your own widgets**: hooks (`useInputWidget`, `useLayoutWidget`, `useDisplayWidget`, `useActionWidget`) in React, **adapters** (`InputWidgetAdapter`, etc.) in Angular and Lit. See [Extending GolemUI](/extending/widgets/overview/).
-
-#### React
-
-The `<FormComponent>` is a regular React component. Hooks (`useInputWidget`, `useActionWidget`, `useDisplayWidget`, `useLayoutWidget`) wrap the engine for use inside React components, with stable references and minimal re-renders.
-
-#### Angular
-
-The `<gui-form>` element is a standalone Angular component. Custom widgets implement `Core.WithWidget` and inject one of the framework's `*WidgetAdapter` services in their constructor; the adapter handles `init` / `destroy` and exposes a reactive `templateData` signal.
-
-#### Lit
-
-`<gui-form>` is a native web component. Custom widgets extend `LitElement`, consume the form context with `@consume({ context: Lit.formContext })`, and provide their adapter (`@provide({ context: Lit.inputContext })`). The web-component nature means **Lit widgets work inside any framework** — including React and Angular hosts — when paired with a thin shim.
-
-## Data flow
-
-```
-   ┌──────────────────┐
-   │  formDef (your   │
-   │  Programmatic /  │
-   │   JSON form)     │
-   └────────┬─────────┘
-            │
-            ▼
-   ┌──────────────────┐    ┌─────────────────┐
-   │   gui-shared     │◀──▶│  formSelectors  │
-   │   resolver       │    │   (decorators)  │
-   └────────┬─────────┘    └─────────────────┘
-            │ FormWidget tree
-            ▼
-   ┌──────────────────┐
-   │      Core        │  ← reactive store, validators, state engine
-   └────────┬─────────┘
-            │
-            ▼
-   ┌──────────────────┐
-   │ Framework adapter │  ← React / Angular / Lit
-   └────────┬─────────┘
-            │
-            ▼
-   ┌──────────────────┐
-   │  Widget library  │  ← rendered DOM
-   └──────────────────┘
-```
-
-## Inputs your form receives
-
-Regardless of framework, `<gui-form>` accepts the same set of inputs:
-
-- **`formDef`** — the form definition. Programmatic (`[gui.inputs.textInput(...)]`) or JSON.
-- **`data`** — the initial form data object.
-- **`formConfig`** — engine wiring: `widgetLoaders`, `itemRenderers`, `dependencies`, `validateOn`, `customValidators`, `states`, `suppressAutomaticSubmit`, `suppressAutomaticStack`. See [Configuration](/integration/configuration/).
-- **`formSelectors`** — GSL selector decorators that apply by type, tag, or uid. See [Selectors](/form-definition/selectors/).
-- **`localization`** — i18n translator (e.g. i18next). See [i18n](/features/i18n/).
-- **`formEvent`** — your callback for events emitted by widgets. See [Form Events](/features/events/).
-- **`formHealth`** — your callback that reports validation status changes.
-- **`middlewares`** — store middlewares for logging, persistence, etc. See [Middlewares](/features/middlewares/).
+Every customization knob — widget loaders, item renderers, validators, middlewares, i18n, dependencies, states — flows through the same small surface. See [Features Overview](/features/overview/) for the full list of inputs and [Configuration](/integration/configuration/) for the per-prop reference.
 
 <Aside type="tip">
-Because the engine is framework-agnostic, switching frameworks only requires changing the adapter package and the component wiring — your form definitions, validators, custom widgets (via the framework's adapter helpers), and business logic stay essentially the same. The Lit adapter is a particularly common choice for **cross-framework** projects since web components plug into anything.
+Switching frameworks later only requires changing the adapter package and the component wiring — your form definitions and business logic stay identical.
 </Aside>
 
 ## Next steps
 
-Choose your framework to see the full setup guide:
-
-- [React Integration](/integration/react/)
-- [Angular Integration](/integration/angular/)
-- [Lit Integration](/integration/lit/)
-
-For the full per-prop reference of `formConfig`, see [Configuration](/integration/configuration/).
+- [React Integration](/integration/react/) · [Angular Integration](/integration/angular/) · [Lit Integration](/integration/lit/)
+- [Configuration](/integration/configuration/) — typed reference for every `formConfig` option.
+- [Features Overview](/features/overview/) — every `<gui-form>` input explained.

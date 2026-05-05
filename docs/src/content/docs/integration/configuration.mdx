@@ -1,21 +1,700 @@
 ---
 title: Configuration
-description: Configure validators, dependencies, and localization across frameworks.
+description: Every input the form component accepts, what it does, and how it differs between Programmatic and JSON forms.
 sidebar:
   order: 4
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
+import DslTabs from '../../../../src/components/DslTabs.astro';
 
-All configuration properties are passed directly to the form component. This page covers the optional properties that are common across all frameworks.
+This page is the canonical reference for every input the form component accepts. The same surface ships in React, Angular, and Lit — only the binding syntax differs (`prop={...}` for React, `[prop]="..."` for Angular, `.prop=${...}` for Lit). For the framework-typed signatures, see [React](/integration/react/), [Angular](/integration/angular/), [Lit](/integration/lit/).
 
-## Custom Validators
+<DslTabs>
+  <Fragment slot="dx">
+    You're looking at the **Programmatic** view. The Programmatic API leans on `formSelectors` and `formConfig` to wire the engine — you'll see those everywhere below. Switch to the **JSON** view from the language selector to see the same props described from the JSON form's perspective.
+  </Fragment>
+  <Fragment slot="json">
+    You're looking at the **JSON** view. JSON forms don't use `formSelectors` or `formConfig` — every engine-wiring input below is passed as a standalone component prop. Switch to the **Programmatic** view to see the `gui.*` / `formConfig` equivalents.
+  </Fragment>
+</DslTabs>
 
-To create custom validators, implement functions that follow the `CustomValidatorSchemaFn` interface. Then pass them to the form component via the `customValidators` property.
+## Property reference
+
+### Required
+
+#### `formDef`
+
+<DslTabs>
+  <Fragment slot="dx">
+    A **Programmatic** array of `gui.*` shortcuts. Composed with `gui.inputs.*`, `gui.layouts.*`, `gui.actions.*`, `gui.displays.*` and resolved through the DX pipeline at render time.
+
+    ```ts
+    import { gui } from '@golemui/gui-shared';
+
+    const formDef = [
+      gui.inputs.textInput('name', { label: 'Name' }),
+      gui.actions.submitButton({ label: 'Submit' }),
+    ];
+    ```
+
+    Wire it to the form component:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        <React.FormComponent formDef={formDef} data={{}} />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // template:
+        // <gui-form [formDef]="formDef" [data]="formData"></gui-form>
+        protected formDef = formDef;
+        protected formData = {};
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        html`<gui-form .formDef=${formDef} .data=${{}}></gui-form>`;
+        ```
+      </Fragment>
+    </IntegrationTabs>
+
+    See [Form Definition API](/form-definition/overview/).
+  </Fragment>
+  <Fragment slot="json">
+    A parsed **JSON** form definition. Loaded from a file, fetched from an API, or authored as a literal in your code.
+
+    ```json
+    {
+      "form": [
+        { "kind": "input", "type": "textinput", "path": "name", "label": "Name" },
+        { "kind": "action", "type": "button", "label": "Submit", "on": { "click": "submit" } }
+      ]
+    }
+    ```
+
+    Wire it to the form component:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        import formDef from './my-form.json';
+
+        <React.FormComponent formDef={formDef} data={{}} />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import formDef from './my-form.json';
+
+        // template:
+        // <gui-form [formDef]="formDef" [data]="formData"></gui-form>
+        protected formDef = formDef;
+        protected formData = {};
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import formDef from './my-form.json';
+
+        html`<gui-form .formDef=${formDef} .data=${{}}></gui-form>`;
+        ```
+      </Fragment>
+    </IntegrationTabs>
+
+    Top-level keys like `"states"` and per-widget suffixes (`"label.someState"`) replace the Programmatic `formConfig` and selector-decorator paths.
+  </Fragment>
+</DslTabs>
+
+### Selectors and engine config
+
+<DslTabs>
+  <Fragment slot="dx">
+
+The Programmatic API has two dedicated wiring objects — `formSelectors` for behavior decorators, and `formConfig` for engine knobs. Both are typed and composable.
+
+#### `formSelectors`
+
+GSL selector decorators that apply by widget type, tag, or uid. Built with `gui.selectors.*` and resolved against your `formDef` array at render time. See [Selectors](/form-definition/selectors/).
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formSelectors = [
+  gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
+  gui.selectors.tag('identity').inputs({ autocomplete: 'off' }),
+];
+```
+
+Wire it alongside `formDef`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent
+      formDef={formDef}
+      formSelectors={formSelectors}
+      data={{}}
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // template:
+    // <gui-form [formDef]="formDef" [formSelectors]="formSelectors" [data]="formData"></gui-form>
+    protected formDef = formDef;
+    protected formSelectors = formSelectors;
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    html`<gui-form
+      .formDef=${formDef}
+      .formSelectors=${formSelectors}
+      .data=${{}}
+    ></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+#### `formConfig`
+
+DX engine wiring container. Holds `widgetLoaders`, `itemRenderers`, `dependencies`, `validateOn`, `customValidators`, `states`, `suppressAutomaticSubmit`, `suppressAutomaticStack`. The Programmatic API treats `formConfig` as the single home for all of these knobs.
+
+```ts
+const formConfig = {
+  widgetLoaders: React.widgetLoaders,
+  itemRenderers: { countryRenderer },
+  dependencies: { markdown: { parse: snarkdown } },
+  validateOn: 'eager',
+  states: {
+    hasDiscount: '$form.hasDiscountCode === true',
+  },
+  suppressAutomaticSubmit: true,
+};
+```
+
+Wire it alongside `formDef`:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent
+      formDef={formDef}
+      formConfig={formConfig}
+      data={{}}
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // template:
+    // <gui-form [formDef]="formDef" [formConfig]="formConfig" [data]="formData"></gui-form>
+    protected formDef = formDef;
+    protected formConfig = formConfig;
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    html`<gui-form
+      .formDef=${formDef}
+      .formConfig=${formConfig}
+      .data=${{}}
+    ></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+#### Putting it all together
+
+A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig` together — copy this as the starting shape for your own form:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import * as React from '@golemui/gui-react';
+
+    const formDef = [
+      gui.inputs.textInput('name', { label: 'Name' }),
+      gui.actions.submitButton({ label: 'Submit' }),
+    ];
+    const formSelectors = [
+      gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
+    ];
+    const formConfig = {
+      widgetLoaders: React.widgetLoaders,
+      validateOn: 'eager',
+    };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          formSelectors={formSelectors}
+          formConfig={formConfig}
+          data={{}}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [formSelectors]="formSelectors"
+        [formConfig]="formConfig"
+        [data]="formData"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = [
+        gui.inputs.textInput('name', { label: 'Name' }),
+        gui.actions.submitButton({ label: 'Submit' }),
+      ];
+      protected formSelectors = [
+        gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
+      ];
+      protected formConfig = {
+        widgetLoaders: Angular.widgetLoaders,
+        validateOn: 'eager' as const,
+      };
+      protected formData = {};
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import * as Lit from '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = [
+        gui.inputs.textInput('name', { label: 'Name' }),
+        gui.actions.submitButton({ label: 'Submit' }),
+      ];
+      formSelectors = [
+        gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
+      ];
+      formConfig = {
+        widgetLoaders: Lit.widgetLoaders,
+        validateOn: 'eager' as const,
+      };
+      formData = {};
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .formSelectors=${this.formSelectors}
+            .formConfig=${this.formConfig}
+            .data=${this.formData}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+  <Fragment slot="json">
+
+The JSON path expresses the same behaviors **inline on the form itself** and **as standalone component props** — there's no `formSelectors` or `formConfig` wrapper to compose. Each path has its own ergonomics:
+
+- **Inline on the JSON** — `"states"` at the form root, `"label.someState"` suffixes on widget props for per-state overrides, the `validator` block on each input. The form ships with its behavior baked in, which is convenient when the form definition lives in a CMS or backend.
+- **Standalone component props** — `customWidgetLoaders`, `itemRenderers`, `customValidators`, `dependencies`, `validateOn`. These stay in your application code, which keeps secrets, framework imports, and platform-specific renderers out of the form payload.
+
+A typical JSON form with state-driven behavior:
+
+```json
+{
+  "states": {
+    "hasDiscount": "$form.hasDiscountCode === true"
+  },
+  "form": [
+    {
+      "kind": "input", "type": "textinput", "path": "discountCode",
+      "label": "Discount code",
+      "label.hasDiscount": "Your discount code",
+      "include": { "in": ["hasDiscount"] }
+    }
+  ]
+}
+```
+
+#### Putting it all together
+
+A complete component skeleton wiring a JSON `formDef` plus the standalone engine-wiring props — copy this as the starting shape for your own JSON-driven form. The widget loader, renderer, and validator below are the same shapes used in the Programmatic example; only the wiring differs.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+    import formDef from './my-form.json';
+    import { ProductCard } from './widgets/ProductCard';
+    import { CountryRenderer } from './renderers/CountryRenderer';
+    import { allowedNames } from './validators/allowed-names';
+
+    const customWidgetLoaders = {
+      productCard: async () => (await import('./widgets/ProductCard')).ProductCard,
+    };
+    const itemRenderers = { countryRenderer: CountryRenderer };
+    const customValidators = { allowedNames };
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          data={{}}
+          customWidgetLoaders={customWidgetLoaders}
+          itemRenderers={itemRenderers}
+          customValidators={customValidators}
+          validateOn="eager"
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+    import { ProductCardComponent } from './widgets/product-card.component';
+    import { CountryRenderer } from './renderers/country-renderer.component';
+    import { allowedNames } from './validators/allowed-names';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [data]="formData"
+        [customWidgetLoaders]="customWidgetLoaders"
+        [itemRenderers]="itemRenderers"
+        [customValidators]="customValidators"
+        [validateOn]="'eager'"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formData = {};
+      protected customWidgetLoaders = {
+        productCard: async () =>
+          (await import('./widgets/product-card.component')).ProductCardComponent,
+      };
+      protected itemRenderers = { countryRenderer: CountryRenderer };
+      protected customValidators = { allowedNames };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import formDef from './my-form.json';
+    import { countryRenderer } from './renderers/country-renderer';
+    import { allowedNames } from './validators/allowed-names';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formData = {};
+      customWidgetLoaders = {
+        productCard: async () =>
+          (await import('./widgets/product-card.element')).ProductCardElement,
+      };
+      itemRenderers = { countryRenderer };
+      customValidators = { allowedNames };
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .data=${this.formData}
+            .customWidgetLoaders=${this.customWidgetLoaders}
+            .itemRenderers=${this.itemRenderers}
+            .customValidators=${this.customValidators}
+            .validateOn=${'eager'}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
+### Data inputs
+
+#### `data`
+
+The initial form data object. Reads/writes flow through the engine's reactive store; the value here only seeds the first render.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    const formData = { username: 'golemui', email: 'hello@example.com' };
+
+    <React.FormComponent formDef={formDef} data={formData} />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // template:
+    // <gui-form [formDef]="formDef" [data]="formData"></gui-form>
+    protected formData = { username: 'golemui', email: 'hello@example.com' };
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    formData = { username: 'golemui', email: 'hello@example.com' };
+
+    // render():
+    html`<gui-form .formDef=${this.formDef} .data=${this.formData}></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+#### `meta`
+
+Optional out-of-band metadata you want to thread through events and state. The engine doesn't interpret it; you read it back from `event.data` / via custom widgets.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    const formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
+
+    <React.FormComponent formDef={formDef} data={formData} meta={formMeta} />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // template:
+    // <gui-form [formDef]="formDef" [data]="formData" [meta]="formMeta"></gui-form>
+    protected formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
+
+    // render():
+    html`<gui-form
+      .formDef=${this.formDef}
+      .data=${this.formData}
+      .meta=${this.formMeta}
+    ></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+### Engine wiring
+
+The next group of properties wires the engine — widget loaders, item renderers, custom validators, validation timing, dependencies, and states. They mean exactly the same thing in both paths; what differs is **where** you put them.
+
+<DslTabs>
+  <Fragment slot="dx">
+    With the Programmatic API, the typical home for these knobs is **`formConfig`** — a single typed object you pass to the form component. The standalone props (`customWidgetLoaders`, `itemRenderers`, etc.) still work and merge with whatever you put in `formConfig`, which is handy when you want to keep environment-specific bits out of the resolved form.
+  </Fragment>
+  <Fragment slot="json">
+    With the JSON path, each knob is a **standalone component prop** — `customWidgetLoaders`, `itemRenderers`, `customValidators`, `validateOn`, `dependencies`. They live in your application code rather than in the form payload, which is exactly what you want when the JSON itself is loaded from a CMS, an API, or a backend.
+  </Fragment>
+</DslTabs>
+
+#### Widget loaders
+
+Map of widget `type` → async loader. Merged with the framework's default widget set.
+
+<DslTabs>
+  <Fragment slot="dx">
+    Place it inside `formConfig.widgetLoaders`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import * as React from '@golemui/gui-react';
+
+        const formConfig = {
+          widgetLoaders: {
+            ...React.widgetLoaders,
+            productCard: async () => (await import('./ProductCard')).ProductCard,
+          },
+        };
+        // <React.FormComponent formDef={formDef} formConfig={formConfig} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import * as Angular from '@golemui/gui-angular';
+
+        protected formConfig = {
+          widgetLoaders: {
+            ...Angular.widgetLoaders,
+            productCard: async () =>
+              (await import('./product-card.component')).ProductCardComponent,
+          },
+        };
+        // <gui-form [formDef]="formDef" [formConfig]="formConfig"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import * as Lit from '@golemui/gui-lit';
+
+        formConfig = {
+          widgetLoaders: {
+            ...Lit.widgetLoaders,
+            productCard: async () =>
+              (await import('./product-card.element')).ProductCardElement,
+          },
+        };
+        // html`<gui-form .formDef=${this.formDef} .formConfig=${this.formConfig}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    Pass it as the `customWidgetLoaders` component prop:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        const customWidgetLoaders = {
+          productCard: async () => (await import('./ProductCard')).ProductCard,
+        };
+        // <React.FormComponent formDef={formDef} customWidgetLoaders={customWidgetLoaders} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        protected customWidgetLoaders = {
+          productCard: async () =>
+            (await import('./product-card.component')).ProductCardComponent,
+        };
+        // <gui-form [formDef]="formDef" [customWidgetLoaders]="customWidgetLoaders"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        customWidgetLoaders = {
+          productCard: async () =>
+            (await import('./product-card.element')).ProductCardElement,
+        };
+        // html`<gui-form .formDef=${this.formDef} .customWidgetLoaders=${this.customWidgetLoaders}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+</DslTabs>
+
+See [Features / Widget Loaders](/features/widget-loaders/).
+
+#### Item renderers
+
+Map of renderer name → framework-specific component. Referenced from a widget's `itemRenderer` prop (dropdown, list, radiogroup).
+
+<DslTabs>
+  <Fragment slot="dx">
+    Place it inside `formConfig.itemRenderers`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import { CountryRenderer } from './CountryRenderer';
+
+        const formConfig = {
+          itemRenderers: { countryRenderer: CountryRenderer },
+        };
+        // <React.FormComponent formDef={formDef} formConfig={formConfig} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import { CountryRenderer } from './country-renderer.component';
+
+        protected formConfig = {
+          itemRenderers: { countryRenderer: CountryRenderer },
+        };
+        // <gui-form [formDef]="formDef" [formConfig]="formConfig"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import { countryRenderer } from './country-renderer';
+
+        formConfig = {
+          itemRenderers: { countryRenderer },
+        };
+        // html`<gui-form .formDef=${this.formDef} .formConfig=${this.formConfig}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    Pass it as the `itemRenderers` component prop:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import { CountryRenderer } from './CountryRenderer';
+
+        const itemRenderers = { countryRenderer: CountryRenderer };
+        // <React.FormComponent formDef={formDef} itemRenderers={itemRenderers} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import { CountryRenderer } from './country-renderer.component';
+
+        protected itemRenderers = { countryRenderer: CountryRenderer };
+        // <gui-form [formDef]="formDef" [itemRenderers]="itemRenderers"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import { countryRenderer } from './country-renderer';
+
+        itemRenderers = { countryRenderer };
+        // html`<gui-form .formDef=${this.formDef} .itemRenderers=${this.itemRenderers}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+</DslTabs>
+
+See [Features / Item Renderers](/features/item-renderers/).
+
+#### Custom validators
+
+Map of validator name → schema factory. Referenced from a widget's `validator: { type: 'custom', <name>: <config> }`. The factory follows the `CustomValidatorSchemaFn` interface and returns a schema (typically a Zod check):
 
 ```ts
 import * as Core from '@golemui/core';
+import * as z from 'zod';
 
 export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
@@ -23,7 +702,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
       if (val && names.includes(val) === false) {
         ctx.addIssue({
           code: 'custom',
-          message: `Name "${val}" not in ${names.map((name) => `"${name}"`).join(', ')}`,
+          message: `Name "${val}" not in ${names.map((n) => `"${n}"`).join(', ')}`,
           input: val,
         });
       }
@@ -31,75 +710,80 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
   );
 ```
 
-<IntegrationTabs>
-  <Fragment slot="react">
-    ```tsx
-    import { allowedNames } from './custom-validators/allowed-names';
+<DslTabs>
+  <Fragment slot="dx">
+    Place it inside `formConfig.customValidators`:
 
-    const formConfig = {
-      customValidators: { allowedNames },
-    };
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
 
-    export function FormPage() {
-      return (
-        <div>
-        <React.FormComponent
-          (...)
-          formConfig={formConfig}
-        />
-      </div>
-      );
-    }
-    ```
+        const formConfig = {
+          customValidators: { allowedNames },
+        };
+        // <React.FormComponent formDef={formDef} formConfig={formConfig} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
 
+        protected formConfig = {
+          customValidators: { allowedNames },
+        };
+        // <gui-form [formDef]="formDef" [formConfig]="formConfig"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
+
+        formConfig = {
+          customValidators: { allowedNames },
+        };
+        // html`<gui-form .formDef=${this.formDef} .formConfig=${this.formConfig}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
   </Fragment>
-  <Fragment slot="angular">
-    ```ts
-    import { allowedNames } from './custom-validators/allowed-names';
+  <Fragment slot="json">
+    Pass it as the `customValidators` component prop:
 
-    @Component({
-      selector: 'my-form-app',
-      template: `<gui-form
-        (...)
-        [formConfig]="formConfig">
-        </gui-form>
-      `,
-    })
-    class MyFormApp {
-      protected formConfig = {
-        customValidators: { allowedNames },
-      };
-    }
-    ```
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
 
+        const customValidators = { allowedNames };
+        // <React.FormComponent formDef={formDef} customValidators={customValidators} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
+
+        protected customValidators = { allowedNames };
+        // <gui-form [formDef]="formDef" [customValidators]="customValidators"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
+
+        customValidators = { allowedNames };
+        // html`<gui-form .formDef=${this.formDef} .customValidators=${this.customValidators}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
   </Fragment>
-  <Fragment slot="lit">
-    ```ts
-    import { allowedNames } from './custom-validators/allowed-names';
+</DslTabs>
 
-    @customElement('lit-form')
-    export class FormElement extends LitElement {
-      protected formConfig = {
-        customValidators: { allowedNames },
-      };
+See [Extending GolemUI / Validators](/extending/validators/).
 
-      render() {
-        return html`
-            <gui-form
-              (...)
-              .formConfig=${this.formConfig}
-            ></gui-form>
-          `;
-      }
-    }
-    ```
+#### Validation timing
 
-  </Fragment>
-</IntegrationTabs>
-
-## Validation Timing
-
-Control when field validation triggers with the `validateOn` property.
+When validation runs. Accepts a single mode or an array combining the latter three:
 
 ```ts
 type ValidateOn =
@@ -110,8 +794,6 @@ type ValidateOn =
   | ('change' | 'blur' | 'submit')[];
 ```
 
-When not set, the default behaviour is `'eager'`.
-
 | Mode       | Triggers when                                              |
 | ---------- | ---------------------------------------------------------- |
 | `'change'` | The user changes the field value                           |
@@ -119,229 +801,471 @@ When not set, the default behaviour is `'eager'`.
 | `'submit'` | A `submit` event is emitted (all fields are touched first) |
 | `'eager'`  | Any of the above happens (default)                         |
 
-<IntegrationTabs>
-  <Fragment slot="react">
-    ```tsx
-    const formConfig = { validateOn: 'change' };
+<DslTabs>
+  <Fragment slot="dx">
+    Place it inside `formConfig.validateOn`:
 
-    <React.FormComponent
-      (...)
-      formConfig={formConfig}
-    />
-    ```
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        const formConfig = { validateOn: 'change' };
+        // <React.FormComponent formDef={formDef} formConfig={formConfig} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import * as Core from '@golemui/core';
 
+        protected formConfig = {
+          validateOn: 'change' as Core.ValidateOn,
+        };
+        // <gui-form [formDef]="formDef" [formConfig]="formConfig"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import * as Core from '@golemui/core';
+
+        formConfig = {
+          validateOn: 'change' as Core.ValidateOn,
+        };
+        // html`<gui-form .formDef=${this.formDef} .formConfig=${this.formConfig}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
   </Fragment>
-  <Fragment slot="angular">
-    ```ts
-    @Component({
-      template: `<gui-form (...) [formConfig]="formConfig"></gui-form>`,
-    })
-    class MyFormApp {
-      protected formConfig = { validateOn: 'change' as Core.ValidateOn };
-    }
-    ```
+  <Fragment slot="json">
+    Pass it as the `validateOn` component prop:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        <React.FormComponent formDef={formDef} validateOn="change" />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```html
+        <gui-form [formDef]="formDef" [validateOn]="'change'"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        html`<gui-form .formDef=${this.formDef} .validateOn=${'change'}></gui-form>`;
+        ```
+      </Fragment>
+    </IntegrationTabs>
   </Fragment>
-  <Fragment slot="lit">
-    ```ts
-    render() {
-      const formConfig = { validateOn: 'change' as Core.ValidateOn };
-      return html`
-        <gui-form (...) .formConfig=${formConfig}></gui-form>
-      `;
-    }
-    ```
-  </Fragment>
-</IntegrationTabs>
+</DslTabs>
 
-## Autocomplete
+#### Dependencies
 
-Control browser autofill behaviour with the `autocomplete` property on the form element. This sets the `autocomplete` attribute on the underlying `<form>` HTML element.
-
-When not set, the attribute is omitted, leaving the default browser behaviour.
-
-Individual input widgets also accept an `autocomplete` prop (via `props`) for fine-grained control using any [W3C autofill token](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) (e.g. `'given-name'`, `'street-address'`, `'off'`).
-
-<IntegrationTabs>
-  <Fragment slot="react">
-    ```tsx
-    <React.FormComponent
-      (...)
-      autocomplete="off"
-    />
-    ```
-  </Fragment>
-  <Fragment slot="angular">
-    ```html
-    <gui-form (...) [autocomplete]="'off'"></gui-form>
-    ```
-  </Fragment>
-  <Fragment slot="lit">
-    ```ts
-    render() {
-      return html`
-        <gui-form (...) .autocomplete=${'off'}></gui-form>
-      `;
-    }
-    ```
-  </Fragment>
-</IntegrationTabs>
-
-## Dependencies
-
-Some widgets require external dependencies that are not bundled with GolemUI. Pass them via the `dependencies` property.
-
-### Markdown Parser
-
-The [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/widgets-reference/display-fields/markdown-text/) widgets need a markdown parser for live preview rendering.
-
-<IntegrationTabs>
-  <Fragment slot="react">
-    ```tsx
-    import snarkdown from 'snarkdown';
-
-    const formConfig = {
-      dependencies: {
-        markdown: {
-          parse: (md: string) => snarkdown(md),
-        },
-      },
-    };
-
-    <GolemForm
-      formDef={formDef}
-      data={formData}
-      formConfig={formConfig}
-      ...
-    />
-    ```
-
-  </Fragment>
-  <Fragment slot="angular">
-    ```typescript
-    import snarkdown from 'snarkdown';
-
-    protected formConfig = {
-      dependencies: {
-        markdown: {
-          parse: (md: string) => snarkdown(md),
-        },
-      },
-    };
-    ```
-    ```html
-    <gui-form
-      [formDef]="formDef"
-      [data]="formData"
-      [formConfig]="formConfig"
-      ...
-    ></gui-form>
-    ```
-
-  </Fragment>
-  <Fragment slot="lit">
-    ```typescript
-    import snarkdown from 'snarkdown';
-
-    const formConfig = {
-      dependencies: {
-        markdown: {
-          parse: (md: string) => snarkdown(md),
-        },
-      },
-    };
-    ```
-    ```html
-    <gui-form
-      .formDef=${formDef}
-      .data=${formData}
-      .formConfig=${formConfig}
-      ...
-    ></gui-form>
-    ```
-
-  </Fragment>
-</IntegrationTabs>
+External helpers that widgets read at render time. Today, the only built-in widgets that need a dependency are [Markdown](/widgets-reference/input-fields/markdown/) and [Markdown Text](/widgets-reference/display-fields/markdown-text/) — both expect a `markdown.parse` function for live preview rendering.
 
 <Aside type="tip">
-  You can use any markdown parser that exposes a `(markdown: string) => string` function, such as [snarkdown](https://github.com/developit/snarkdown), [marked](https://github.com/markedjs/marked), or [micromark](https://github.com/micromark/micromark).
+You can use any markdown parser that exposes a `(markdown: string) => string` function, such as [snarkdown](https://github.com/developit/snarkdown), [marked](https://github.com/markedjs/marked), or [micromark](https://github.com/micromark/micromark).
 </Aside>
 
-## Localization
+<DslTabs>
+  <Fragment slot="dx">
+    Place it inside `formConfig.dependencies`:
 
-GolemUI supports i18n and RTL layouts. Pass a `localization` object to enable translations and automatic RTL rendering for languages like Arabic, Hebrew, and Persian.
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        const formConfig = {
+          dependencies: { markdown: { parse: snarkdown } },
+        };
+        // <React.FormComponent formDef={formDef} formConfig={formConfig} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        protected formConfig = {
+          dependencies: { markdown: { parse: snarkdown } },
+        };
+        // <gui-form [formDef]="formDef" [formConfig]="formConfig"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        formConfig = {
+          dependencies: { markdown: { parse: snarkdown } },
+        };
+        // html`<gui-form .formDef=${this.formDef} .formConfig=${this.formConfig}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    Pass it as the `dependencies` component prop:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        const dependencies = { markdown: { parse: snarkdown } };
+        // <React.FormComponent formDef={formDef} dependencies={dependencies} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        protected dependencies = { markdown: { parse: snarkdown } };
+        // <gui-form [formDef]="formDef" [dependencies]="dependencies"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        dependencies = { markdown: { parse: snarkdown } };
+        // html`<gui-form .formDef=${this.formDef} .dependencies=${this.dependencies}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+</DslTabs>
+
+See [Features / Dependencies](/features/dependencies/).
+
+#### States
+
+Named boolean expressions evaluated against `$form`.
+
+<DslTabs>
+  <Fragment slot="dx">
+    Place the map inside `formConfig.states`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```ts
+        const formConfig = {
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        };
+        // <React.FormComponent formDef={formDef} formConfig={formConfig} ... />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        protected formConfig = {
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        };
+        // <gui-form [formDef]="formDef" [formConfig]="formConfig"></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        formConfig = {
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        };
+        // html`<gui-form .formDef=${this.formDef} .formConfig=${this.formConfig}></gui-form>`
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    At the JSON form root — the form payload itself carries the state map, so the wiring is the same regardless of framework:
+
+    ```json
+    {
+      "states": {
+        "hasDiscount": "$form.hasDiscountCode === true"
+      },
+      "form": [...]
+    }
+    ```
+  </Fragment>
+</DslTabs>
+
+See [Features / States](/features/states/).
+
+### Globally applied
+
+The next four inputs apply equally to Programmatic and JSON forms — they always sit on the component, not inside `formConfig`.
+
+#### `localization`
+
+Translator implementing the `I18nTranslator` interface from `@golemui/core`. Resolves `Localizable` shapes (`{ key, default, params }`) on labels, placeholders, hints, validator messages, and section labels. Enables RTL automatically when the active language is RTL. See [Features / i18n](/features/i18n/) for translator implementations and the [Responsive & RTL](/styling/overview/#responsive) guide for RTL details.
+
+<DslTabs>
+  <Fragment slot="dx">
+    Pass `localization` next to `formConfig`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        <React.FormComponent
+          formDef={formDef}
+          data={formData}
+          formConfig={formConfig}
+          localization={localization}
+        />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```html
+        <gui-form
+          [formDef]="formDef"
+          [data]="formData"
+          [formConfig]="formConfig"
+          [localization]="localization"
+        ></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```html
+        <gui-form
+          .formDef=${this.formDef}
+          .data=${this.formData}
+          .formConfig=${this.formConfig}
+          .localization=${this.localization}
+        ></gui-form>
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    Pass `localization` next to the standalone engine-wiring props:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        <React.FormComponent
+          formDef={formDef}
+          data={formData}
+          customWidgetLoaders={customWidgetLoaders}
+          localization={localization}
+        />
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```html
+        <gui-form
+          [formDef]="formDef"
+          [data]="formData"
+          [customWidgetLoaders]="customWidgetLoaders"
+          [localization]="localization"
+        ></gui-form>
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```html
+        <gui-form
+          .formDef=${this.formDef}
+          .data=${this.formData}
+          .customWidgetLoaders=${this.customWidgetLoaders}
+          .localization=${this.localization}
+        ></gui-form>
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+</DslTabs>
+
+#### `middlewares`
+
+Array of `Core.Middleware` functions wrapping the form's reactive store — used for logging, persistence, devtools. See [Features / Middlewares](/features/middlewares/).
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    const formConfig = { widgetLoaders };
+    import * as Core from '@golemui/core';
+
+    const middlewares = [Core.devToolsMiddleware()];
 
     <React.FormComponent
       formDef={formDef}
       data={formData}
-      formConfig={formConfig}
-      localization={localization}
+      middlewares={middlewares}
     />
     ```
-
   </Fragment>
   <Fragment slot="angular">
-    ```html
-    <gui-form
-      [formDef]="formDef"
-      [data]="formData"
-      [formConfig]="formConfig"
-      [localization]="localization"
-    ></gui-form>
+    ```ts
+    import * as Core from '@golemui/core';
+
+    // template:
+    // <gui-form [formDef]="formDef" [data]="formData" [middlewares]="middlewares"></gui-form>
+    protected middlewares = [Core.devToolsMiddleware()];
     ```
   </Fragment>
   <Fragment slot="lit">
-    ```html
-    <gui-form
+    ```ts
+    import * as Core from '@golemui/core';
+
+    middlewares = [Core.devToolsMiddleware()];
+
+    // render():
+    html`<gui-form
       .formDef=${this.formDef}
       .data=${this.formData}
-      .formConfig=${this.formConfig}
-      .localization=${this.localization}
-    ></gui-form>
+      .middlewares=${this.middlewares}
+    ></gui-form>`;
     ```
   </Fragment>
 </IntegrationTabs>
 
-See the [Responsive & RTL](/styling/overview/#responsive) guide for full RTL setup details.
+#### `autocomplete`
 
-## Dev Mode
-
-Call `enableDevMode()` once at application bootstrap to turn on extra runtime checks. It is disabled by default and should only be enabled outside of production builds.
+Sets the underlying `<form>` element's `autocomplete` attribute. Useful to disable browser autofill across the entire form. Individual input widgets also accept an `autocomplete` prop (via `props`) for fine-grained control using any [W3C autofill token](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) (e.g. `'given-name'`, `'street-address'`, `'off'`).
 
 <IntegrationTabs>
   <Fragment slot="react">
-    ```tsx title="main.tsx"
-    import { enableDevMode } from '@golemui/core';
-
-    if (import.meta.env.DEV) {
-      enableDevMode();
-    }
+    ```tsx
+    <React.FormComponent formDef={formDef} autocomplete="off" />
     ```
-
   </Fragment>
   <Fragment slot="angular">
-    ```ts title="main.ts"
-    import { enableDevMode } from '@golemui/core';
-    import { environment } from './environments/environment';
-
-    if (environment.env !== 'prod') {
-      enableDevMode();
-    }
+    ```html
+    <gui-form [formDef]="formDef" [autocomplete]="'off'"></gui-form>
     ```
-
   </Fragment>
   <Fragment slot="lit">
-    ```ts title="main.ts"
-    import { enableDevMode } from '@golemui/core';
-
-    if (import.meta.env.DEV) {
-      enableDevMode();
-    }
+    ```ts
+    html`<gui-form .formDef=${this.formDef} .autocomplete=${'off'}></gui-form>`;
     ```
-
   </Fragment>
 </IntegrationTabs>
+
+#### `formName`
+
+Optional form identifier. Useful when you have several `<gui-form>` instances on the same page and want to disambiguate them in event payloads or middleware logs.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <React.FormComponent formDef={formDef} formName="checkout" />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```html
+    <gui-form [formDef]="formDef" [formName]="'checkout'"></gui-form>
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    html`<gui-form .formDef=${this.formDef} .formName=${'checkout'}></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+### Form Callbacks
+
+#### `formEvent`
+
+Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFilter`, `onBlur`). Payload: `{ name, data, detail }`. See [Features / Form Events](/features/events/).
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+
+    function handleFormEvent(event: Core.FormEvent) {
+      if (event.name === 'submit') {
+        console.log('Submit:', event.data);
+      }
+    }
+
+    <React.FormComponent
+      formDef={formDef}
+      data={formData}
+      formEvent={handleFormEvent}
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    // template:
+    // <gui-form [formDef]="formDef" [data]="formData" (formEvent)="onFormEvent($event)"></gui-form>
+    protected onFormEvent(event: Core.FormEvent) {
+      if (event.name === 'submit') {
+        console.log('Submit:', event.data);
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    onFormEvent(event: Core.FormEvent) {
+      if (event.name === 'submit') {
+        console.log('Submit:', event.data);
+      }
+    }
+
+    // render():
+    html`<gui-form
+      .formDef=${this.formDef}
+      .data=${this.formData}
+      @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
+    ></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+#### `formHealth`
+
+Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'errored', message? }`. Wire it to disable a submit button or surface a banner.
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+
+    function handleFormHealth(health: Core.FormHealth) {
+      console.log('Health:', health.status);
+    }
+
+    <React.FormComponent
+      formDef={formDef}
+      data={formData}
+      formHealth={handleFormHealth}
+    />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    // template:
+    // <gui-form [formDef]="formDef" [data]="formData" (formHealth)="onFormHealth($event)"></gui-form>
+    protected onFormHealth(health: Core.FormHealth) {
+      console.log('Health:', health.status);
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    onFormHealth(health: Core.FormHealth) {
+      console.log('Health:', health.status);
+    }
+
+    // render():
+    html`<gui-form
+      .formDef=${this.formDef}
+      .data=${this.formData}
+      @formHealth=${(e: CustomEvent<Core.FormHealth>) => this.onFormHealth(e.detail)}
+    ></gui-form>`;
+    ```
+  </Fragment>
+</IntegrationTabs>
+
