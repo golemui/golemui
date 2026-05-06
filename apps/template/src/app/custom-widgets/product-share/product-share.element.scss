@@ -24,15 +24,25 @@
 .product-share__button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 1px solid var(--gui-border-default);
-  border-radius: 8px;
+  border-radius: 50%;
   background: var(--gui-bg-surface);
   color: var(--gui-text-default);
   font-size: var(--gui-font-sm);
   cursor: pointer;
   transition: all 0.15s ease;
+
+  &:has(.product-share__network) {
+    width: auto;
+    height: auto;
+    padding: 8px 14px;
+    border-radius: 8px;
+  }
 
   &:hover {
     border-color: var(--gui-intent-primary);
@@ -54,8 +64,23 @@
 }
 
 .product-share__icon {
-  font-size: 1.1rem;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
   line-height: 1;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .product-share__network {

@@ -5,42 +5,68 @@ sidebar:
   order: 1
 ---
 
+import DslTabs from '../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
-Item renderers are framework-specific components that the form engine instantiates to render each item of a dropdown, list, or radiogroup. The engine forwards the raw item object plus useful metadata (selected state, disabled state, the active label/value fields).
+Item renderers are framework-specific functions or components that the form engine invokes to render each item of a dropdown, list, or radiogroup. The engine forwards an `ItemRenderContext<T>` object that carries the raw item plus useful metadata (selected, disabled, focused, index).
 
 ## The contract
 
-Each framework defines a small interface:
+Each framework adapts the same `ItemRenderContext<T>` to its idiomatic shape:
 
-| Framework | Type                       | Receives                                            |
-| --------- | -------------------------- | --------------------------------------------------- |
-| React     | `ReactItemRenderer<T>`     | `{ item: T, isSelected, isDisabled, ... }` props    |
-| Angular   | `AngularItemRenderer<T>`   | An `Angular.itemRenderer` adapter on init           |
-| Lit       | `LitItemRenderer<T>`       | A custom element that consumes `item` via property |
+| Framework | Type                       | What the engine passes                                                                        |
+| --------- | -------------------------- | --------------------------------------------------------------------------------------------- |
+| React     | `ReactItemRenderer<T>`     | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.            |
+| Angular   | `AngularItemRenderer<T>`   | A `Type<ItemRenderContext<T>>` — the component declares a signal `input()` for each context field. |
+| Lit       | `LitItemRenderer<T>`       | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element. |
+
+The shared context shape comes from `@golemui/core`:
+
+```ts
+export interface ItemRenderContext<T extends ItemRenderItemData> {
+  template: T;
+  value: string | number;
+  index: number;
+  selected?: boolean;
+  disabled?: boolean;
+  focused?: boolean;
+}
+```
+
+`template` is the raw item from the widget's `items` array. The other fields reflect the live state of the option in the rendered list.
 
 ## Example — country renderer
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from 'react';
     import type { ReactItemRenderer } from '@golemui/react';
 
     type Country = { id: string; flag: string; label: string };
 
-    export const CountryItemRenderer: ReactItemRenderer<Country> = ({ item }) => (
-      <div className="country-item">
-        <span className="country-item__flag">{item.flag}</span>
-        <span className="country-item__label">{item.label}</span>
+    export const CountryItemRenderer: ReactItemRenderer<Country> = ({
+      template,
+      index,
+      selected,
+      disabled,
+      focused,
+    }) => (
+      <div
+        className={`country-item ${selected ? 'country-item--selected' : ''} ${
+          disabled ? 'country-item--disabled' : ''
+        } ${focused ? 'country-item--focused' : ''} ${index % 2 ? 'country-item--odd' : ''}`}
+      >
+        <span className="country-item__flag">{template.flag}</span>
+        <span className="country-item__label">{template.label}</span>
       </div>
     );
     ```
+
+    Props are the full `ItemRenderContext<T>` — destructure whichever fields you need.
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import { Component } from '@angular/core';
-    import * as Angular from '@golemui/angular';
+    import { Component, input } from '@angular/core';
 
     type Country = { id: string; flag: string; label: string };
 
@@ -48,46 +74,75 @@ Each framework defines a small interface:
       standalone: true,
       selector: 'country-item-renderer',
       template: `
-        <div class="country-item">
-          <span class="country-item__flag">{{ item.flag }}</span>
-          <span class="country-item__label">{{ item.label }}</span>
+        <div
+          class="country-item"
+          [class.country-item--selected]="selected()"
+          [class.country-item--disabled]="disabled()"
+          [class.country-item--focused]="focused()"
+          [class.country-item--odd]="index() % 2"
+        >
+          <span class="country-item__flag">{{ template().flag }}</span>
+          <span class="country-item__label">{{ template().label }}</span>
         </div>
       `,
     })
-    export class CountryItemRenderer implements Angular.AngularItemRenderer<Country> {
-      item!: Country;
+    export class CountryItemRenderer {
+      template = input.required<Country>();
+      value = input.required<string | number>();
+      index = input.required<number>();
+      selected = input<boolean>();
+      disabled = input<boolean>();
+      focused = input<boolean>();
     }
     ```
+
+    The component declares one signal input per context field; the engine binds each one when rendering an item. Read each value by calling the signal — `template().flag`, `selected()`, etc.
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import { LitElement, html } from 'lit';
-    import { customElement, property } from 'lit/decorators.js';
+    import { html, TemplateResult } from 'lit';
+    import { classMap } from 'lit/directives/class-map.js';
+    import { ItemRenderContext } from '@golemui/core';
 
     type Country = { id: string; flag: string; label: string };
 
-    @customElement('country-item-renderer')
-    export class CountryItemRenderer extends LitElement {
-      @property({ attribute: false }) item!: Country;
+    export const countryItemRenderer = (
+      ctx: ItemRenderContext<Country>,
+    ): TemplateResult => {
+      const classes = {
+        'country-item': true,
+        'country-item--selected': !!ctx.selected,
+        'country-item--disabled': !!ctx.disabled,
+        'country-item--focused': !!ctx.focused,
+        'country-item--odd': ctx.index % 2 !== 0,
+      };
 
-      override render() {
-        return html`
-          <div class="country-item">
-            <span class="country-item__flag">${this.item.flag}</span>
-            <span class="country-item__label">${this.item.label}</span>
-          </div>
-        `;
-      }
-    }
+      return html`
+        <div class=${classMap(classes)}>
+          <span class="country-item__flag">${ctx.template.flag}</span>
+          <span class="country-item__label">${ctx.template.label}</span>
+        </div>
+      `;
+    };
     ```
+
+    Lit renderers are **functions** — the engine invokes them with an `ItemRenderContext<T>` argument and inlines the returned template into the dropdown / list. A `LitElement` class with an `@property() item` field will not be picked up by the engine.
   </Fragment>
 </IntegrationTabs>
 
 ## Registering the renderer
 
-Pass it through `formConfig.itemRenderers`, then reference its name from a widget's `itemRenderer` prop:
+The widget references the renderer by name through its `itemRenderer` prop. Where the renderer map lives depends on the path:
+
+<DslTabs>
+  <Fragment slot="dx">
+
+In the Programmatic API the renderer map goes inside `formConfig.itemRenderers`:
 
 ```ts
+import { gui } from '@golemui/gui-shared';
+import { CountryItemRenderer } from './country-item-renderer';
+
 const formConfig = {
   itemRenderers: { countryItemRenderer: CountryItemRenderer },
 };
@@ -99,6 +154,34 @@ const formDef = [
   }),
 ];
 ```
+
+  </Fragment>
+  <Fragment slot="json">
+
+In the JSON path the renderer map is the **standalone `itemRenderers` prop** on the form component; the JSON references the renderer by name on the widget.
+
+```json
+{
+  "form": [
+    {
+      "kind": "input", "type": "dropdown", "path": "country",
+      "items": [],
+      "itemRenderer": "countryItemRenderer"
+    }
+  ]
+}
+```
+
+```ts
+import { CountryItemRenderer } from './country-item-renderer';
+import formDef from './my-form.json';
+
+// On the form component:
+//   <FormComponent formDef={formDef} itemRenderers={{ countryItemRenderer: CountryItemRenderer }} />
+```
+
+  </Fragment>
+</DslTabs>
 
 ## See also
 

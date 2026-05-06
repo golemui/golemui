@@ -6,11 +6,17 @@ sidebar:
 ---
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
+import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 
 An **input widget** binds to a `path` in the form data, supports validation, and tracks touched state. The framework helpers (`useInputWidget` in React, `InputWidgetAdapter` in Angular and Lit) handle data binding for you — your widget calls a few methods, the engine does the rest. The example we'll walk through is `productRating` — a star-based rating control.
 
 ## Widget definition
+
+The `maxRating` prop controls how many stars are displayed. The `path` (`'product.rating'`) tells the form engine where to store the selected value (a number from 1 to `maxRating`). The `validator` adds built-in number validation — in this case, making the field required.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -21,14 +27,23 @@ gui.inputs.custom('productRating', 'product.rating', {
 });
 ```
 
-The `maxRating` prop controls how many stars are displayed. The second argument (`'product.rating'`) tells the form engine where to store the selected value (a number from 1 to `maxRating`). The `validator` adds built-in number validation — in this case, making the field required.
+  </Fragment>
+  <Fragment slot="json">
 
-## Key concepts
+```json
+{
+  "kind": "input",
+  "type": "productRating",
+  "path": "product.rating",
+  "props": { "maxRating": 10 },
+  "validator": { "type": "number", "required": true }
+}
+```
 
-- `useInputWidget` (React) and `InputWidgetAdapter` (Angular / Lit) handle data binding, validation, and touched tracking automatically.
-- Call `onValueChanged(newValue)` to update the form data.
-- Call `onBlur()` to mark the field as touched and trigger validation (when `validateOn` includes `'blur'`).
-- `errors` is an array of validation error messages, and `isTouched` tracks whether the user has interacted with the field.
+  </Fragment>
+</DslTabs>
+
+## API summary
 
 | Method                          | Purpose                                                          |
 | ------------------------------- | ---------------------------------------------------------------- |
@@ -42,6 +57,14 @@ The `maxRating` prop controls how many stars are displayed. The second argument 
 
 <IntegrationTabs>
   <Fragment slot="react">
+
+    **Key concepts (React)**
+
+    - `useInputWidget` returns the typed `value`, `errors`, `isTouched`, and a merged `templateData` (your custom props + engine-managed values).
+    - Call `onValueChanged(newValue)` from a click/change handler — the engine writes through to the form data and runs validation.
+    - Call `onBlur()` when the user leaves the field. With `validateOn: 'blur'` (or `'eager'`), this triggers validation; either way, it sets `isTouched`.
+    - `style={{ flex: templateData.size }}` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```tsx
     // ProductRating.tsx
     import * as Core from '@golemui/core';
@@ -88,17 +111,16 @@ The `maxRating` prop controls how many stars are displayed. The second argument 
     }
     ```
 
-    `useInputWidget` returns:
-    - **`value`** — the current value from the form data (type-safe via the generic `<number>`)
-    - **`errors`** — validation error messages as `string[]`
-    - **`isTouched`** — whether the user has interacted with the field
-    - **`templateData`** — your custom props (`maxRating`) plus engine-managed properties (`label`, `disabled`, `readonly`, etc.)
-    - **`onValueChanged(newValue)`** — updates the form data at the widget's `path`
-    - **`onBlur()`** — marks the field as touched and triggers validation
-    - **`onFilter(value)`** — emits a filter event (useful for search/autocomplete widgets)
-    - **`injectValidationIssues(issues)`** — programmatically inject custom validation errors
   </Fragment>
   <Fragment slot="angular">
+
+    **Key concepts (Angular)**
+
+    - Provide `Angular.InputWidgetAdapter` in the component's `providers`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter's `templateData()` signal exposes `value`, `errors`, `touched`, plus your custom props.
+    - Call `this.adapter.valueChanged(newValue)` to write through to the form data and trigger validation.
+    - Call `this.adapter.onBlur()` from a `(blur)` handler to mark the field touched and run blur-time validation.
+    - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-rating.component.ts
     import { CommonModule } from '@angular/common';
@@ -176,13 +198,16 @@ The `maxRating` prop controls how many stars are displayed. The second argument 
     }
     ```
 
-    The `InputWidgetAdapter` manages the reactive `templateData` signal, which includes:
-    - **`value`** — current form data at the widget's `path`
-    - **`errors`** — validation errors
-    - **`touched`** — interaction tracking
-    - All your custom props from the widget definition
   </Fragment>
   <Fragment slot="lit">
+
+    **Key concepts (Lit)**
+
+    - Consume `formContext` and provide `inputContext` so any nested widget can resolve through the registry.
+    - Subscribe to `adapter.templateDataChanged$` to drive Lit's `requestUpdate()`. Clean up the subscription in `disconnectedCallback`.
+    - Call `this.adapter.valueChanged(newValue)` to update the form data; call `this.adapter.onBlur()` from a `@blur` handler.
+    - Adding `class="product-rating"` and binding `flex` to `templateData.size` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-rating.element.ts
     import { html, LitElement, nothing } from 'lit';
@@ -277,6 +302,7 @@ The `maxRating` prop controls how many stars are displayed. The second argument 
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -289,5 +315,6 @@ Try clicking the stars to select a rating, then click away to trigger validation
 ## See also
 
 - [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Sizing custom widgets](/extending/widgets/sizing/) — why every widget reads `templateData.size`.
 - [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — `gui.inputs.custom(...)` reference.
 - [Features / Validators](/features/validators/) — validators on custom inputs.

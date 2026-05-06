@@ -12,20 +12,60 @@ import * as Core from '@golemui/core';
 
 export const myMiddleware: Core.Middleware<Core.State, Core.Action> =
   (store) => (next) => (action) => {
-    console.log('Before:', action.type, store.getState());
-    const result = next(action);
-    console.log('After:', store.getState());
-    return result;
+    // inspect / branch on `action` and `store.getState()` here
+    return next(action);
   };
 ```
 
 Pass it through the `middlewares` prop of the form component (this stays as a separate prop, not inside `formConfig`).
 
-## Patterns
+## Worked example — language analytics
 
-- **Logging.** Log every action and resulting state — useful during development.
-- **Persistence.** Watch a subset of actions and persist the form state to `localStorage`.
-- **Telemetry.** Emit analytics events for specific user interactions.
+Suppose you want to know which languages your users actually pick. GolemUI dispatches a `SET_LANGUAGE` action every time the active translator notifies of a language change (see [i18n](/features/i18n/)), so a middleware can forward that to your analytics service without touching the form definition.
+
+```ts
+import * as Core from '@golemui/core';
+import { analytics } from './analytics'; // your analytics SDK
+
+export const languageAnalyticsMiddleware: Core.Middleware<Core.State, Core.Action> =
+  (store) => (next) => (action) => {
+    if (action.type !== 'SET_LANGUAGE') {
+      return next(action);
+    }
+
+    const from = store.getState().lang;
+    const result = next(action);
+    const to = action.payload.lang;
+
+    if (from !== to) {
+      analytics.track('language_changed', { from, to });
+    }
+    return result;
+  };
+```
+
+Two things worth pointing out:
+
+- The `if (action.type !== 'SET_LANGUAGE') return next(action);` early exit keeps the middleware out of the way for every other action — middlewares run on **every** dispatch, so cheap branching matters.
+- We capture `from` before calling `next(action)` and `to` from the action payload, so the event always reports the real transition. Reading `store.getState().lang` after `next(action)` would also work, but reading the payload directly is fewer moving parts.
+
+Wire it through the `middlewares` prop alongside any other middlewares you use:
+
+```ts
+import { languageAnalyticsMiddleware } from './middlewares/language-analytics';
+
+const middlewares = [languageAnalyticsMiddleware];
+
+// <FormComponent ... middlewares={middlewares} />
+```
+
+That's all — the next time the user switches the language dropdown your analytics dashboard will start logging which languages get picked, with no changes to the form definition itself.
+
+## Other patterns
+
+- **Logging.** Log every action and resulting state — useful during development. The built-in `Core.loggerMiddleware` does this.
+- **Persistence.** Watch `SET_WIDGET_DATA` actions and persist the form state to `localStorage`, then rehydrate on next mount.
+- **Telemetry.** Same shape as the example above, but track other actions — `'INJECT_VALIDATION_ISSUES'` for validation failures, `'SET_WIDGET_DATA'` for engagement on specific fields, etc.
 
 ## See also
 

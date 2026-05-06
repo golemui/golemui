@@ -5,6 +5,7 @@ sidebar:
   order: 5
 ---
 
+import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 
 Custom widgets emit events through the framework adapter's `click()`, `valueChanged()`, `onLoad()`, `onFilter()`, or `onBlur()` methods. Each method optionally accepts a `detail` payload.
@@ -17,15 +18,32 @@ this.adapter.onFilter('toyota');   // emits onFilter with detail = 'toyota'
 
 Event names are wired in the widget definition, not in the component:
 
+<DslTabs>
+  <Fragment slot="dx">
+
 ```ts
 gui.actions.custom('productShare', { onClick: 'shareEvent' });
 ```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "action",
+  "type": "productShare",
+  "on": { "click": "shareEvent" }
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 When your widget calls `this.adapter.click('twitter')`, the engine emits an event with `name: 'shareEvent'` and `detail: 'twitter'` to the form's `formEvent` callback.
 
 ## Receiving the event
 
-The application-side handler receives a `FormEvent` object with the event `name`, the current form `data`, and an optional `detail` payload passed from the widget. In this example, `productShare` passes the network id (e.g. `'twitter'`, `'facebook'`, `'linkedin'`) as `detail`:
+The application-side handler receives a `FormEvent` object with the event `name`, the current form `data`, and an optional `detail` payload passed from the widget. In this example, `productShare` passes the network id (e.g. `'twitter'`, `'facebook'`, `'reddit'`) as `detail`:
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -33,7 +51,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
     const SHARE_URLS: Record<string, (url: string) => string> = {
       twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
       facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out this product!')}`,
     };
 
     function handleFormEvent(event: Core.FormEvent) {
@@ -70,7 +88,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
       SHARE_URLS: Record<string, (url: string) => string> = {
         twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
         facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-        linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+        reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out this product!')}`,
       };
 
       handleFormEvent(event: Core.FormEvent) {
@@ -90,7 +108,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
     const SHARE_URLS: Record<string, (url: string) => string> = {
       twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
       facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out this product!')}`,
     };
 
     @customElement('app-page')

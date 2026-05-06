@@ -6,53 +6,126 @@ sidebar:
 ---
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
+import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
+import { Aside } from '@astrojs/starlight/components';
 
-An **action widget** fires events. It has no data binding — instead, it triggers named events via the `on` / `onClick` property that your application handles. The example we'll walk through is `productShare` — a widget that renders social-network buttons and fires a `shareEvent` when clicked.
+An **action widget** fires events. It has no data binding — instead, it triggers named events via the `on` / `onClick` property that your application handles. The example we'll walk through is `productShare` — a widget that renders social-network buttons (with brand icons) and fires a `shareEvent` when clicked, passing the chosen network as the event detail.
 
 ## Widget definition
+
+The widget accepts a `networks` prop so callers decide which buttons to render and which icons to use. Each entry has a stable `id` (sent as the click `detail`), a human label, and an optional `icon` — either an inline SVG string or a URL to an SVG/PNG.
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
 
-gui.actions.custom('productShare', { onClick: 'shareEvent' });
+gui.actions.custom('productShare', {
+  onClick: 'shareEvent',
+  networks: [
+    { id: 'twitter',  label: 'X',        icon: 'https://cdn.simpleicons.org/x/333' },
+    { id: 'facebook', label: 'Facebook', icon: 'https://cdn.simpleicons.org/facebook/1877F2' },
+    { id: 'reddit',   label: 'Reddit',   icon: 'https://cdn.simpleicons.org/reddit/FF4500' },
+  ],
+});
 ```
 
-When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'shareEvent'`, and emits it through the `formEvent` callback. Your application code catches it there.
+  </Fragment>
+  <Fragment slot="json">
 
-## Key concepts
+```json
+{
+  "kind": "action",
+  "type": "productShare",
+  "props": {
+    "networks": [
+      { "id": "twitter",  "label": "X",        "icon": "https://cdn.simpleicons.org/x/333" },
+      { "id": "facebook", "label": "Facebook", "icon": "https://cdn.simpleicons.org/facebook/1877F2" },
+      { "id": "reddit",   "label": "Reddit",   "icon": "https://cdn.simpleicons.org/reddit/FF4500" }
+    ]
+  },
+  "on": { "click": "shareEvent" }
+}
+```
 
-- `useActionWidget` (React) and `ActionWidgetAdapter` (Angular / Lit) provide a `click()` / `onClick` method that triggers the event pipeline.
-- The event **name** (`'shareEvent'`) is defined in the widget definition, not in the component — keeping your widget reusable.
-- The `formEvent` callback receives a `FormEvent` object with the current form `data`, so you always have access to the full form state when handling the event.
+  </Fragment>
+</DslTabs>
+
+When the widget calls `click('twitter')`, the form engine looks up `onClick`, finds `'shareEvent'`, and emits it through the `formEvent` callback with `detail: 'twitter'`. Your application code catches it there.
+
+<Aside title="Picking an icon library">
+The `icon` field is intentionally just a string — either inline SVG or a URL. That way the widget stays library-agnostic. We use [simple-icons](https://simpleicons.org/) in the demos because it ships every major brand SVG and offers a free CDN at `https://cdn.simpleicons.org/<slug>[/<color>]`. For non-brand icons, [Phosphor](https://phosphoricons.com/) and [Lucide](https://lucide.dev/) work the same way — pass an SVG string or a URL.
+</Aside>
 
 ## Implementation
 
 <IntegrationTabs>
   <Fragment slot="react">
+
+    **Key concepts (React)**
+
+    - `useActionWidget` returns `uid`, the merged `templateData`, and an `onClick(detail?)` callback that emits the wired event.
+    - The event **name** (`'shareEvent'`) lives in the widget definition, not in the component — so the same widget reuses across forms.
+    - Pass the network id as `onClick(network.id)` so the consumer's `formEvent` handler reads `event.detail` to know which button was clicked.
+    - `style={{ flex: templateData.size }}` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```tsx
     // ProductShare.tsx
     import * as Core from '@golemui/core';
     import { useActionWidget } from '@golemui/react';
 
-    const NETWORKS = ['Twitter', 'Facebook', 'LinkedIn'];
+    interface ShareNetwork {
+      id: string;
+      label: string;
+      icon?: string;
+    }
+    interface ProductShareProps {
+      networks?: ShareNetwork[];
+    }
+
+    const DEFAULT_NETWORKS: ShareNetwork[] = [
+      { id: 'twitter', label: 'X' },
+      { id: 'facebook', label: 'Facebook' },
+      { id: 'reddit', label: 'Reddit' },
+    ];
+
+    function isInlineSvg(icon: string) {
+      return icon.trim().startsWith('<svg');
+    }
 
     export function ProductShare(widgetInstance: Core.WithWidget) {
       const widget = widgetInstance.widget as Core.ActionWidget;
-      const { uid, templateData, onClick } = useActionWidget(widget);
+      const { uid, templateData, onClick } =
+        useActionWidget<ProductShareProps>(widget);
+
+      const networks = templateData.networks ?? DEFAULT_NETWORKS;
 
       return (
         <div className="product-share" style={{ flex: templateData.size }}>
           <div className="product-share__widget" id={uid}>
             <span className="product-share__label">Share this product:</span>
             <div className="product-share__buttons">
-              {NETWORKS.map((network) => (
+              {networks.map((n) => (
                 <button
-                  key={network}
+                  key={n.id}
+                  type="button"
                   className="product-share__button"
-                  onClick={onClick}
+                  onClick={() => onClick(n.id)}
+                  title={n.label}
+                  aria-label={n.label}
                 >
-                  {network}
+                  {n.icon ? (
+                    isInlineSvg(n.icon)
+                      ? <span
+                          className="product-share__icon"
+                          dangerouslySetInnerHTML={{ __html: n.icon }}
+                        />
+                      : <img className="product-share__icon" src={n.icon} alt="" aria-hidden />
+                  ) : (
+                    <span className="product-share__network">{n.label}</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -62,36 +135,71 @@ When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'s
     }
     ```
 
-    `useActionWidget` returns:
-    - **`uid`** — unique identifier
-    - **`templateData`** — your custom props plus engine-managed properties (`label`, `disabled`, etc.)
-    - **`onClick()`** — emits the click event through the form engine pipeline
   </Fragment>
   <Fragment slot="angular">
+
+    **Key concepts (Angular)**
+
+    - Provide `Angular.ActionWidgetAdapter`, then `init()`/`destroy()` it. The adapter exposes a reactive `templateData()` signal.
+    - Call `this.adapter.click(networkId)` to emit the wired event with the chosen network as `detail`.
+    - For URL icons, use `<img [src]="...">`. For inline SVG strings, bind via `[innerHTML]` on a wrapping span (Angular's sanitizer will strip unsafe content unless you explicitly trust it via `DomSanitizer`).
+    - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-share.component.ts
+    import { CommonModule } from '@angular/common';
     import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+    import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
     import * as Angular from '@golemui/angular';
     import * as Core from '@golemui/core';
+
+    interface ShareNetwork {
+      id: string;
+      label: string;
+      icon?: string;
+    }
+    interface ProductShareProps {
+      networks?: ShareNetwork[];
+    }
+
+    const DEFAULT_NETWORKS: ShareNetwork[] = [
+      { id: 'twitter', label: 'X' },
+      { id: 'facebook', label: 'Facebook' },
+      { id: 'reddit', label: 'Reddit' },
+    ];
 
     @Component({
       standalone: true,
       selector: 'app-product-share',
+      imports: [CommonModule],
       providers: [Angular.ActionWidgetAdapter],
       host: {
         class: 'product-share',
         '[style.flex]': 'this.adapter.templateData().size',
       },
       template: `
+        @let networks = adapter.templateData().networks ?? defaults;
+
         <div class="product-share__widget" [id]="widget.uid">
           <span class="product-share__label">Share this product:</span>
           <div class="product-share__buttons">
-            @for (network of networks; track network) {
+            @for (n of networks; track n.id) {
               <button
+                type="button"
                 class="product-share__button"
-                (click)="share()"
+                (click)="share(n.id)"
+                [title]="n.label"
+                [attr.aria-label]="n.label"
               >
-                {{ network }}
+                @if (n.icon) {
+                  @if (isInlineSvg(n.icon)) {
+                    <span class="product-share__icon" [innerHTML]="trustHtml(n.icon)"></span>
+                  } @else {
+                    <img class="product-share__icon" [src]="n.icon" alt="" aria-hidden="true" />
+                  }
+                } @else {
+                  <span class="product-share__network">{{ n.label }}</span>
+                }
               </button>
             }
           </div>
@@ -103,10 +211,11 @@ When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'s
     {
       widget!: Core.ActionWidget;
 
-      protected adapter: Angular.ActionWidgetAdapter<Record<string, any>> =
+      protected adapter: Angular.ActionWidgetAdapter<ProductShareProps> =
         inject(Angular.ActionWidgetAdapter);
 
-      networks = ['Twitter', 'Facebook', 'LinkedIn'];
+      private sanitizer = inject(DomSanitizer);
+      protected defaults = DEFAULT_NETWORKS;
 
       ngOnInit(): void {
         this.adapter.init(this.widget);
@@ -116,23 +225,58 @@ When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'s
         this.adapter.destroy();
       }
 
-      share(): void {
-        this.adapter.click();
+      share(id: string): void {
+        this.adapter.click(id);
+      }
+
+      isInlineSvg(icon: string): boolean {
+        return icon.trim().startsWith('<svg');
+      }
+
+      trustHtml(icon: string): SafeHtml {
+        return this.sanitizer.bypassSecurityTrustHtml(icon);
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
+
+    **Key concepts (Lit)**
+
+    - Consume `formContext` and provide `actionContext`.
+    - Subscribe to `adapter.templateDataChanged$` to drive `requestUpdate()`; clean up in `disconnectedCallback`.
+    - For URL icons, render an `<img>`. For inline SVG strings, use Lit's `unsafeHTML` directive to inject the SVG as innerHTML on a wrapping span.
+    - Adding `class="product-share"` and binding `flex` to `templateData.size` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-share.element.ts
     import { html, LitElement } from 'lit';
     import { customElement } from 'lit/decorators.js';
+    import { unsafeHTML } from 'lit/directives/unsafe-html.js';
     import { consume, provide } from '@lit/context';
     import { Subscription } from 'rxjs';
     import * as Core from '@golemui/core';
     import * as Lit from '@golemui/lit';
 
-    const NETWORKS = ['Twitter', 'Facebook', 'LinkedIn'];
+    interface ShareNetwork {
+      id: string;
+      label: string;
+      icon?: string;
+    }
+    interface ProductShareProps {
+      networks?: ShareNetwork[];
+    }
+
+    const DEFAULT_NETWORKS: ShareNetwork[] = [
+      { id: 'twitter', label: 'X' },
+      { id: 'facebook', label: 'Facebook' },
+      { id: 'reddit', label: 'Reddit' },
+    ];
+
+    function isInlineSvg(icon: string) {
+      return icon.trim().startsWith('<svg');
+    }
 
     @customElement('app-product-share')
     export class ProductShareElement
@@ -145,7 +289,7 @@ When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'s
       formContext!: Lit.LitFormContext<any>;
 
       @provide({ context: Lit.actionContext })
-      adapter = new Lit.ActionWidgetAdapter();
+      adapter = new Lit.ActionWidgetAdapter<ProductShareProps>();
 
       subscriptions: Subscription[] = [];
 
@@ -167,17 +311,32 @@ When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'s
       }
 
       override render() {
+        const networks = this.adapter.templateData.networks ?? DEFAULT_NETWORKS;
         return html`
           <div class="product-share__widget" id=${this.widget.uid}>
             <span class="product-share__label">Share this product:</span>
             <div class="product-share__buttons">
-              ${NETWORKS.map(
-                (network) => html`
+              ${networks.map(
+                (n) => html`
                   <button
+                    type="button"
                     class="product-share__button"
-                    @click=${() => this.adapter.click()}
+                    @click=${() => this.adapter.click(n.id)}
+                    title=${n.label}
+                    aria-label=${n.label}
                   >
-                    ${network}
+                    ${n.icon
+                      ? isInlineSvg(n.icon)
+                        ? html`<span class="product-share__icon"
+                            >${unsafeHTML(n.icon)}</span
+                          >`
+                        : html`<img
+                            class="product-share__icon"
+                            src=${n.icon}
+                            alt=""
+                            aria-hidden="true"
+                          />`
+                      : html`<span class="product-share__network">${n.label}</span>`}
                   </button>
                 `,
               )}
@@ -193,12 +352,13 @@ When the widget calls `onClick()`, the form engine looks up `onClick`, finds `'s
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
 ## Result
 
-Click any of the share buttons to fire the `shareEvent`:
+Click any of the share buttons to fire the `shareEvent`. The icons come from `https://cdn.simpleicons.org`, but you can pass any SVG string or URL via the `networks` prop.
 
 <Demo src="/template/index.html?form=template/custom-widgets/product-share.json" minHeight="80" />
 
@@ -206,4 +366,5 @@ Click any of the share buttons to fire the `shareEvent`:
 
 - [Sending events](/extending/widgets/events/) — emitting events with detail payloads, and catching them application-side.
 - [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Sizing custom widgets](/extending/widgets/sizing/) — why every widget reads `templateData.size`.
 - [Features / Form Events](/features/events/) — handling events application-side.

@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
+import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
@@ -13,21 +14,37 @@ A **display widget** renders read-only content. It has no data binding, no valid
 
 ## Widget definition
 
+<DslTabs>
+  <Fragment slot="dx">
+
 ```ts
 import { gui } from '@golemui/gui-shared';
 
 gui.displays.custom('productDescription', {
   img: 'assets/product-image.png',
   description: `### My Cool Product
-My product is the best`,
+The declarative form engine.`,
 });
 ```
 
-## Key concepts
+  </Fragment>
+  <Fragment slot="json">
 
-- `useDisplayWidget` (React) and `DisplayWidgetAdapter` (Angular / Lit) give you the merged `templateData` (your custom props plus engine-managed values).
-- No `onValueChanged`, no events — you just render.
-- For inline ad-hoc markup that doesn't justify a full custom widget, use the [Renderer](/widgets-reference/display-fields/renderer/) widget instead.
+```json
+{
+  "kind": "display",
+  "type": "productDescription",
+  "props": {
+    "img": "assets/product-image.png",
+    "description": "### GolemUI\nThe declarative form engine for JavaScript. Build complex, data-driven forms with zero boilerplate."
+  }
+}
+```
+
+  </Fragment>
+</DslTabs>
+
+For inline ad-hoc markup that doesn't justify a full custom widget, use the [Renderer](/widgets-reference/display-fields/renderer/) widget instead.
 
 This is a great place to show how you can use GolemUI's library of **custom elements** inside your own widgets. The `gui-markdown-text` web component ships with `@golemui/gui-components` and renders markdown as HTML — no extra dependencies needed.
 
@@ -39,10 +56,18 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
 
 <IntegrationTabs>
   <Fragment slot="react">
+
+    **Key concepts (React)**
+
+    - `useDisplayWidget` is the simplest of the four hooks — it returns just `uid` and the merged `templateData` (your custom props plus engine-managed values).
+    - There's no `onValueChanged`, no events; you just render.
+    - Importing `@golemui/gui-components` once unlocks every GolemUI custom element (like `<gui-markdown-text>`) inside your JSX.
+    - `style={{ flex: templateData.size }}` lets the display participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```tsx
     // ProductDescription.tsx
     import * as Core from '@golemui/core';
-    import { useDisplayWdiget } from '@golemui/react';
+    import { useDisplayWidget } from '@golemui/react';
     import '@golemui/gui-components';
 
     interface ProductDescriptionProps {
@@ -53,7 +78,7 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     export function ProductDescription(widgetInstance: Core.WithWidget) {
       const widget = widgetInstance.widget as Core.DisplayWidget;
       const { uid, templateData } =
-        useDisplayWdiget<ProductDescriptionProps>(widget);
+        useDisplayWidget<ProductDescriptionProps>(widget);
 
       return (
         <div className="product-description" style={{ flex: templateData.size }}>
@@ -70,11 +95,15 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     }
     ```
 
-    `useDisplayWdiget` returns just `uid` and `templateData` — the simplest hook of the four. Your custom props (`img`, `description`) are available directly on `templateData`.
-
-    Notice the `<gui-markdown-text>` custom element: import `@golemui/gui-components` once and you can use any of GolemUI's web components in your JSX.
   </Fragment>
   <Fragment slot="angular">
+
+    **Key concepts (Angular)**
+
+    - Provide `Angular.DisplayWidgetAdapter`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter exposes a reactive `templateData` signal.
+    - Since `gui-markdown-text` is a web component (not an Angular component), add `CUSTOM_ELEMENTS_SCHEMA` to the `schemas` array so Angular doesn't complain about unknown elements.
+    - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the display participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-description.component.ts
     import {
@@ -133,9 +162,16 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     }
     ```
 
-    Since `gui-markdown-text` is a web component (not an Angular component), add `CUSTOM_ELEMENTS_SCHEMA` to the `schemas` array so Angular doesn't complain about unknown elements.
   </Fragment>
   <Fragment slot="lit">
+
+    **Key concepts (Lit)**
+
+    - Consume `formContext` and provide `displayWidgetContext` for nested widget resolution.
+    - Subscribe to `adapter.templateDataChanged$` to drive `requestUpdate()`; clean up in `disconnectedCallback`.
+    - In Lit, custom elements work natively — no schema or special config needed. Just import `@golemui/gui-components` and use the tag.
+    - Adding `class="product-description"` and binding `flex` to `templateData.size` lets the display participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-description.element.ts
     import { html, LitElement } from 'lit';
@@ -206,7 +242,6 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     }
     ```
 
-    In Lit, custom elements work natively — no schema or special config needed. Just import the package and use the tag.
   </Fragment>
 </IntegrationTabs>
 
@@ -220,4 +255,5 @@ Here's the product description displaying an image alongside rendered markdown:
 
 - [Renderer widget](/widgets-reference/display-fields/renderer/) — for one-off bits of markup.
 - [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Sizing custom widgets](/extending/widgets/sizing/) — why every widget reads `templateData.size`.
 - [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — `gui.displays.custom(...)`.

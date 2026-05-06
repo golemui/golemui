@@ -6,11 +6,15 @@ sidebar:
 ---
 
 import Demo from '../../../../../src/components/landing/Demo.astro';
+import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 
 A **layout widget** is a container. It receives a `children` array from the form definition and is responsible for rendering them. The example we'll walk through is `productCard` — a card container with a title header that wraps its children inside a styled card.
 
 ## Widget definition
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -20,16 +24,36 @@ gui.layouts.custom('productCard', [
 ], { title: 'Product Card Name' });
 ```
 
-## Key concepts
+  </Fragment>
+  <Fragment slot="json">
 
-- `useLayoutWidget` (React) and `LayoutWidgetAdapter` (Angular / Lit) give you the `children` array, already filtered by any `include`/`exclude` rules.
-- You must render each child using the framework's widget renderer: `WidgetRenderer` (React), the `guiWidget` directive (Angular), or the `<gui-widget>` element (Lit).
-- The `templateData` object contains your custom props (like `title`) merged with calculated properties from the form engine (`size`, `lang`, `deps`).
+```json
+{
+  "kind": "layout",
+  "type": "productCard",
+  "props": { "title": "Product Card Name" },
+  "children": [
+    /* child widgets go here */
+  ]
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 ## Implementation
 
+Pick your framework — each tab walks through the key concepts and the full implementation side by side.
+
 <IntegrationTabs>
   <Fragment slot="react">
+
+    **Key concepts (React)**
+
+    - `useLayoutWidget` returns the widget's resolved children, already filtered by `include`/`exclude`, plus a merged `templateData` (your custom props + engine-managed values like `size`, `lang`, `deps`).
+    - Render each child by handing it to `<WidgetRenderer />` — that's the React entry point that resolves a widget instance to its registered component.
+    - The `style={{ flex: templateData.size }}` line lets the layout participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```tsx
     // ProductCard.tsx
     import * as Core from '@golemui/core';
@@ -60,13 +84,15 @@ gui.layouts.custom('productCard', [
     }
     ```
 
-    `useLayoutWidget` returns:
-    - **`uid`** — unique identifier for the widget DOM node
-    - **`children`** — the resolved child widgets, filtered by visibility rules
-    - **`templateData`** — your custom props (`title`) plus engine-managed properties (`size`, `lang`, `deps`)
-    - **`onChange`** — a callback to emit `change` events with an optional detail payload
   </Fragment>
   <Fragment slot="angular">
+
+    **Key concepts (Angular)**
+
+    - Provide `Angular.LayoutWidgetAdapter` in the component's `providers`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter exposes a reactive `templateData` signal.
+    - Render children with the structural `guiWidget` directive, which resolves and instantiates each child from the registry.
+    - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the layout participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-card.component.ts
     import { Component, inject, OnDestroy, OnInit } from '@angular/core';
@@ -117,14 +143,16 @@ gui.layouts.custom('productCard', [
     }
     ```
 
-    The Angular pattern follows three steps every time:
-    1. **Provide** the adapter in the `providers` array
-    2. **Initialize** it in `ngOnInit` with `this.adapter.init(this.widget)`
-    3. **Destroy** it in `ngOnDestroy` with `this.adapter.destroy()`
-
-    Children are rendered with the `guiWidget` structural directive, which resolves and instantiates each child widget from the registry.
   </Fragment>
   <Fragment slot="lit">
+
+    **Key concepts (Lit)**
+
+    - Consume `formContext` and provide `layoutContext` so child widgets can resolve through the registry.
+    - Drive re-renders by subscribing to `adapter.templateDataChanged$` and calling `requestUpdate()`; clean up the subscription in `disconnectedCallback`.
+    - Render children with `<gui-widget>` and the `repeat` directive for keyed list updates.
+    - Adding `class="product-card"` and binding `flex` to `templateData.size` lets the layout participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
     ```ts
     // product-card.element.ts
     import { html, LitElement } from 'lit';
@@ -197,13 +225,6 @@ gui.layouts.custom('productCard', [
     }
     ```
 
-    The Lit pattern has a few extra steps compared to Angular:
-    1. **Consume** the `formContext` with `@consume` and **provide** the adapter with `@provide`
-    2. **Wire up** the context in `connectedCallback` with `this.adapter.context = this.formContext`
-    3. **Subscribe** to `templateDataChanged$` and call `this.requestUpdate()` to trigger re-renders
-    4. **Clean up** subscriptions in `disconnectedCallback`
-
-    Children are rendered with the `<gui-widget>` custom element and the `repeat` directive for efficient list rendering.
   </Fragment>
 </IntegrationTabs>
 
@@ -216,5 +237,6 @@ Here's the Product Card layout rendering its child widgets:
 ## See also
 
 - [Custom Widgets Overview](/extending/widgets/overview/) — the full Product Card example with all four kinds.
+- [Sizing custom widgets](/extending/widgets/sizing/) — why every widget reads `templateData.size`.
 - [Form Definition API / Custom Widgets](/form-definition/custom-widgets/) — `gui.layouts.custom(...)` reference.
 - [Features / Widget Loaders](/features/widget-loaders/) — registering the loader.

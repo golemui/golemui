@@ -17,7 +17,7 @@ export const onFormEvent = async (event: Core.FormEvent) => {
 const SHARE_URLS: Record<string, (url: string) => string> = {
   twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out GolemUI Pro!')}&url=${encodeURIComponent(url)}`,
   facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-  linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+  reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out GolemUI Pro!')}`,
 };
 
 const eventHandlers = {

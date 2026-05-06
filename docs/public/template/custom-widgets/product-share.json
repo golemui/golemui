@@ -4,6 +4,13 @@
       "kind": "action",
       "type": "productShare",
       "label": "Share",
+      "props": {
+        "networks": [
+          { "id": "twitter", "label": "X", "icon": "https://cdn.simpleicons.org/x/333" },
+          { "id": "facebook", "label": "Facebook", "icon": "https://cdn.simpleicons.org/facebook/1877F2" },
+          { "id": "reddit", "label": "Reddit", "icon": "https://cdn.simpleicons.org/reddit/FF4500" }
+        ]
+      },
       "on": {
         "click": "shareEvent"
       }

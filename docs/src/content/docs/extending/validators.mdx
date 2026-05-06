@@ -5,6 +5,7 @@ sidebar:
   order: 2
 ---
 
+import DslTabs from '../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
 Custom validators are functions that follow the `CustomValidatorSchemaFn` interface. They take a configuration parameter and return a Zod schema.
@@ -31,7 +32,12 @@ export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
 
 ## Registering it on the form
 
-Add the validator to `formConfig.customValidators`:
+The validator is referenced by name from a widget's `validator` block. Where you register that name with the engine depends on the path:
+
+<DslTabs>
+  <Fragment slot="dx">
+
+In the Programmatic API, register custom validators inside `formConfig.customValidators`:
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -67,9 +73,59 @@ Add the validator to `formConfig.customValidators`:
   </Fragment>
 </IntegrationTabs>
 
+  </Fragment>
+  <Fragment slot="json">
+
+In the JSON path, custom validators live on the **standalone `customValidators` prop** on the form component:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import { allowedNames } from './custom-validators/allowed-names';
+    import formDef from './my-form.json';
+
+    // On the form component:
+    //   <FormComponent
+    //     formDef={formDef}
+    //     customValidators={{ allowedNames }}
+    //   />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { allowedNames } from './custom-validators/allowed-names';
+    import formDef from './my-form.json';
+
+    class MyFormApp {
+      protected formDef = formDef;
+      protected customValidators = { allowedNames };
+    }
+    // template: <gui-form [formDef]="formDef" [customValidators]="customValidators"></gui-form>
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { allowedNames } from './custom-validators/allowed-names';
+    import formDef from './my-form.json';
+
+    export class FormElement extends LitElement {
+      formDef = formDef;
+      customValidators = { allowedNames };
+      // render: html`<gui-form .formDef=${this.formDef} .customValidators=${this.customValidators}></gui-form>`
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+  </Fragment>
+</DslTabs>
+
 ## Declaring the validator on a widget
 
 Use `validator: { type: 'custom', <validatorName>: <config> }`:
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -79,7 +135,20 @@ gui.inputs.textInput('user.name', {
 });
 ```
 
-The form engine resolves `allowedNames` against `formConfig.customValidators` at validation time.
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "input", "type": "textinput", "path": "user.name",
+  "validator": { "type": "custom", "allowedNames": ["John", "Jane"] }
+}
+```
+
+  </Fragment>
+</DslTabs>
+
+The form engine resolves `allowedNames` against the registered map (`formConfig.customValidators` for Programmatic, the `customValidators` prop for JSON) at validation time.
 
 ## See also
 

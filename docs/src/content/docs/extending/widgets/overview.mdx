@@ -5,6 +5,7 @@ sidebar:
   order: 0
 ---
 import Demo from '../../../../../src/components/landing/Demo.astro';
+import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
 
@@ -17,7 +18,7 @@ Every widget in GolemUI has a **kind** that determines its role:
 | Kind      | Purpose                                  | Data binding | Events                | Implementation guide                                           |
 | --------- | ---------------------------------------- | ------------ | --------------------- | -------------------------------------------------------------- |
 | `layout`  | Containers that arrange child widgets   | No           | `change`              | [Layout widget](/extending/widgets/layout-widget/)             |
-| `input`   | Controls that read and write form data  | Yes (`path`) | `change`, `filter`    | [Input widget](/extending/widgets/input-widget/)               |
+| `input`   | Controls that read and write form data  | Yes          | `change`, `filter`    | [Input widget](/extending/widgets/input-widget/)               |
 | `display` | Read-only presentational content        | No           | None                  | [Display widget](/extending/widgets/display-widget/)            |
 | `action`  | Buttons and triggers that fire events   | No           | `click`               | [Action widget](/extending/widgets/action-widget/)             |
 
@@ -34,6 +35,9 @@ Throughout this section, we build a **Product Card Rating** composed of four cus
 
 Here's the full form definition we're working toward:
 
+<DslTabs>
+  <Fragment slot="dx">
+
 ```ts
 import { gui } from '@golemui/gui-shared';
 
@@ -41,7 +45,7 @@ gui.layouts.custom('productCard', [
   gui.displays.custom('productDescription', {
     img: 'assets/product-image.png',
     description: `### My Cool Product
-My product is the best`,
+The declarative form engine.`,
   }),
   gui.inputs.custom('productRating', 'product.rating', {
     maxRating: 10,
@@ -52,7 +56,45 @@ My product is the best`,
 ], { title: 'Product Card Name' });
 ```
 
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "layout",
+  "type": "productCard",
+  "props": { "title": "Product Card Name" },
+  "children": [
+    {
+      "kind": "display",
+      "type": "productDescription",
+      "props": {
+        "img": "assets/product-image.png",
+        "description": "### GolemUI\nThe declarative form engine for JavaScript. Build complex, data-driven forms with zero boilerplate."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "productRating",
+      "path": "product.rating",
+      "props": { "maxRating": 10 }
+    },
+    {
+      "kind": "action",
+      "type": "productShare",
+      "on": { "click": "shareEvent" }
+    }
+  ]
+}
+```
+
+  </Fragment>
+</DslTabs>
+
 And because custom widgets live side by side with built-in ones, you can easily extend the card — say, by adding a comment field and a submit button without writing any extra widgets:
+
+<DslTabs>
+  <Fragment slot="dx">
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -61,7 +103,7 @@ gui.layouts.custom('productCard', [
   gui.displays.custom('productDescription', {
     img: 'assets/product-image.png',
     description: `### My Cool Product
-My product is the best`,
+The declarative form engine.`,
   }),
   gui.inputs.custom('productRating', 'product.rating', {
     maxRating: 10,
@@ -84,6 +126,60 @@ My product is the best`,
   }),
 ], { title: 'Product Card Name' });
 ```
+
+  </Fragment>
+  <Fragment slot="json">
+
+```json
+{
+  "kind": "layout",
+  "type": "productCard",
+  "props": { "title": "Product Card Name" },
+  "children": [
+    {
+      "kind": "display",
+      "type": "productDescription",
+      "props": {
+        "img": "assets/product-image.png",
+        "description": "### GolemUI\nThe declarative form engine for JavaScript. Build complex, data-driven forms with zero boilerplate."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "productRating",
+      "path": "product.rating",
+      "props": { "maxRating": 10 },
+      "validator": { "type": "number", "required": true }
+    },
+    {
+      "kind": "input",
+      "type": "textarea",
+      "path": "product.comment",
+      "props": {
+        "hint": "Enter your comment (maximum 500 characters)",
+        "placeholder": "Let us know why you love our product",
+        "counterMode": "current"
+      },
+      "validator": { "type": "string", "maxLength": 500, "required": true }
+    },
+    {
+      "kind": "action",
+      "type": "productShare",
+      "on": { "click": "shareEvent" }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Submit",
+      "props": { "icon": "save", "iconPosition": "right" },
+      "on": { "click": "submit" }
+    }
+  ]
+}
+```
+
+  </Fragment>
+</DslTabs>
 
 Notice how `textarea` and `button` are built-in GolemUI widgets mixed right in with the custom `productRating` and `productShare`. That's the power of the widget system — all widgets, custom or built-in, speak the same language.
 
