@@ -7,6 +7,45 @@ sidebar:
 
 Every input shortcut takes a `path` string and an optional props object. The props object inherits the widget's typed `WidgetProps`, plus the DX-specific props (`label`, `disabled`, `readonly`, `validator`, `defaultValue`, `uid`, `tags`, `size`, `states`, `include`, `exclude`, `onChange`, `onLoad`, `onFilter`, `onBlur`).
 
+## Signature
+
+```ts
+gui.inputs.<shortcut>(path: string, props?: Props, tags?: string[]): GuiInputsShortcut;
+```
+
+A fully-populated example, exercising most fields you'll reach for:
+
+```ts
+gui.inputs.textInput(
+  'user.email',                 // path — where the value lives in the form data
+  {                             // props — the widget's typed props + DX fields
+    label: 'Email',
+    placeholder: 'you@example.com',
+    hint: 'We never share your email.',
+    disabled: false,
+    readonly: false,
+    autocomplete: 'email',
+    defaultValue: '',
+    validator: {
+      type: 'string',
+      required: true,
+      format: 'email',
+      messages: { required: 'Email is required', format: 'Enter a valid email' },
+    },
+    onChange: 'emailChanged',  // wire a named event the form's `formEvent` callback receives
+    states: {                  // per-state prop overrides — see /form-definition/states/
+      registerMode: { label: 'Choose a sign-up email' },
+    },
+    include: { in: ['needsEmail'] },
+  },
+  ['identity'],                // tags — addressable groups for selectors
+);
+```
+
+Most shortcuts also accept a runtime-function variant for any individual prop — see [Runtime Functions](/form-definition/runtime-functions/). For per-widget required props (e.g. dropdown's `items`, repeater's `template`), see the matching page in the [Widgets Reference](/widgets-reference/input-fields/overview/).
+
+## Shortcuts
+
 | Shortcut                    | Renders                          | Reference                                                          |
 | --------------------------- | -------------------------------- | ------------------------------------------------------------------ |
 | `gui.inputs.textInput`      | text input                       | [Textinput](/widgets-reference/input-fields/textinput/)            |

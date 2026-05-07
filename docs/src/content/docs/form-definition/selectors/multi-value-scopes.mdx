@@ -5,29 +5,77 @@ sidebar:
   order: 4
 ---
 
-When you need to match widgets that carry **all** or **any** of several tags, use the multi-value scope operators:
+import Demo from '../../../../components/landing/Demo.astro';
+
+`tag(name)` narrows a leaf to widgets carrying a single tag. When you need to match against **multiple** tags, use the multi-value scope operators:
+
+| Method         | Semantics                                       |
+| -------------- | ----------------------------------------------- |
+| `tagsAnd(...)` | All listed tags must be present on the widget.  |
+| `tagsOr(...)`  | At least one of the listed tags must be present.|
+
+## `tagsAnd([...names])`
+
+`tagsAnd(['identity', 'required'])` only matches widgets that carry **both** tags. Widgets with just one of them — or none — pass through untouched.
 
 ```ts
-import { gui } from '@golemui/gui-shared';
+const formDef = [
+  gui.inputs.textInput('email',       { label: 'Email' },         ['identity', 'required']),
+  gui.inputs.textInput('username',    { label: 'Username' },      ['identity', 'required']),
+  gui.inputs.textInput('displayName', { label: 'Display name' },  ['identity']),
+  gui.inputs.textInput('bio',         { label: 'Short bio' },     ['required']),
+  gui.inputs.textInput('nickname',    { label: 'Nickname' }),
+];
 
-// Match widgets tagged BOTH 'identity' and 'required'
-gui.selectors.tagsAnd(['identity', 'required']).inputs({ readonly: false });
-
-// Match widgets tagged 'admin' OR 'superuser'
-gui.selectors.tagsOr(['admin', 'superuser']).actions({ disabled: false });
+const formSelectors = [
+  gui.selectors.tagsAnd(['identity', 'required']).textInputs({
+    override: { hint: '⚠ Required identity field' },
+  }),
+];
 ```
 
-| Method         | Semantics |
-| -------------- | --------- |
-| `tagsAnd(...)` | All tags listed must be present.                                |
-| `tagsOr(...)`  | At least one of the listed tags must be present.                |
+<Demo src="/template/index.html?renderer=multi-value-and" minHeight="440" />
 
-You can chain a multi-value scope with `state(...)` too:
+Only **Email** and **Username** carry both tags, so only those two pick up the hint. *Display name* (one tag), *Short bio* (one tag), and *Nickname* (no tags) stay clean.
+
+## `tagsOr([...names])`
+
+`tagsOr(['beta', 'experimental'])` matches every widget that carries **at least one** of the listed tags. Widgets carrying both still match — the rule is "any of these tags is enough".
 
 ```ts
-gui.selectors.tagsAnd(['identity', 'required']).state('readonly').inputs({ disabled: true });
+const formDef = [
+  gui.inputs.textInput('featureName', { label: 'New dashboard name' }, ['beta']),
+  gui.inputs.textInput('aiPrompt',    { label: 'AI prompt' },          ['experimental']),
+  gui.inputs.textInput('exportPath',  { label: 'Export path' },        ['beta', 'experimental']),
+  gui.inputs.textInput('legacyKey',   { label: 'Legacy key' }),
+];
+
+const formSelectors = [
+  gui.selectors.tagsOr(['beta', 'experimental']).textInputs({
+    override: { hint: '🧪 Preview feature — may change or vanish' },
+  }),
+];
 ```
+
+<Demo src="/template/index.html?renderer=multi-value-or" minHeight="380" />
+
+Three of the four fields carry at least one of the listed tags and pick up the hint. *Legacy key* has no tags so the scope skips it.
+
+## Combining with other scope operators
+
+Multi-value scopes chain freely with `state(...)`. The engine collects every condition and matches when **all** of them hold (the multi-value scope's internal AND/OR semantics, plus the state scope's own condition):
+
+```ts
+gui.selectors
+  .tagsAnd(['identity', 'required'])
+  .state('readonly')
+  .inputs({ override: { disabled: true } });
+```
+
+Reads as: *for inputs tagged both `identity` and `required`, while the `readonly` state is active, disable them*.
 
 ## See also
 
 - [Scope operators](/form-definition/selectors/scope-operators/) — single-value `tag` and `state`.
+- [Chaining](/form-definition/selectors/chaining/) — composition order and partial-chain reuse.
+- [Tags](/form-definition/tags/) — declaring tags on shortcuts.

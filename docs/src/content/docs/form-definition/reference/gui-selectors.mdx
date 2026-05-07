@@ -1,48 +1,210 @@
 ---
 title: gui.selectors reference
-description: Every selector method, organized by chain position.
+description: Every selector method, organized by chain position, with config shape and examples.
 sidebar:
   order: 5
 ---
 
-`gui.selectors` is a chain root. Methods come in three categories:
+`gui.selectors` is a **chain root**. You build a selector by composing zero or more **scope methods** (intermediate, return a new chain) and ending with one **leaf method** (terminal, returns a `GslLeafSelector` you put in `formSelectors`).
 
-## Scope methods (intermediate)
+## Signature
 
-| Method                | Use                                                     |
-| --------------------- | ------------------------------------------------------- |
-| `tag(name)`           | Match widgets carrying `name` in their `tags` array.   |
-| `tagsAnd([...names])` | Match widgets carrying **all** of `names`.              |
-| `tagsOr([...names])`  | Match widgets carrying **any** of `names`.              |
-| `state(name)`         | Match while the named state is active.                  |
+```ts
+gui.selectors                         // chain root
+  .<scopeMethod>(...)                 // 0+ — narrow the match
+  .<leafMethod>(uid?, config)         // 1  — declare what to apply
 
-Scope methods are immutable; they return a new chain.
+// → produces a GslLeafSelector that goes in `formSelectors`.
+```
+
+A fully-populated example combining a tag scope, a state scope, and a type-leaf:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formSelectors = [
+  // Apply to every dropdown tagged 'us-state' while the
+  // 'editing' state is active. Override `items` and add a hint.
+  gui.selectors
+    .tag('us-state')
+    .state('editing')
+    .dropdowns({
+      override: {
+        items: US_STATES,
+        labelField: 'label',
+        valueField: 'value',
+        hint: 'Edit mode — choose carefully',
+      },
+    }),
+];
+```
+
+## Scope methods (intermediate, chainable)
+
+Scope methods are immutable: each one returns a new chain. Combine them in any order — the engine collects all conditions and matches a widget when **every** condition holds.
+
+| Method                    | Matches                                                                |
+| ------------------------- | ---------------------------------------------------------------------- |
+| `tag(name)`               | Widgets carrying `name` in their `tags` array.                         |
+| `tagsAnd(['a', 'b', …])`  | Widgets carrying **all** of the given tags.                            |
+| `tagsOr(['a', 'b', …])`   | Widgets carrying **any** of the given tags.                            |
+| `state(name)`             | Only fire while the named state is active. Per-state override path.    |
+
+```ts
+gui.selectors.tag('identity').inputs({ override: { autocomplete: 'off' } });
+gui.selectors.tagsAnd(['compact', 'identity']).textInputs({ override: { hint: 'Sign-in field' } });
+gui.selectors.tagsOr(['danger', 'destructive']).actions({ override: { icon: 'warning' } });
+gui.selectors.state('submitting').actions({ override: { disabled: true } });
+```
+
+See [Multi-value scopes](/form-definition/selectors/multi-value-scopes/) and [Scope operators](/form-definition/selectors/scope-operators/) for the full semantics, including how `state(...)` interacts with the `<prop>.<state>` suffix syntax.
 
 ## Type-leaf methods (terminal)
 
-The leaf names mirror `gui.<group>.<type>` — every typed shortcut has a corresponding selector. Examples:
+A type-leaf names a widget kind and applies a **decorator config** to every matching widget. Each leaf takes a single `config` argument.
 
-- `inputs(config)`, `textInputs(config)`, `numberInputs(config)`, `booleanInputs(config)`
-- `selects(config)`, `dropdowns(config)`, `radiogroups(config)`, `checkboxes(config)`
-- `textareas(config)`, `passwords(config)`, `currencies(config)`, `markdowns(config)`, `lists(config)`
-- `calendars(config)`, `dateInputs(config)`, `datePickers(config)`
-- `rangeCalendars(config)`, `rangeDateInputs(config)`, `rangeDatePickers(config)`
-- `repeaters(config)`, `actions(config)`, `displays(config)`, `alerts(config)`
-- `layouts(config)`, `tabs(config)`, `accordions(config)`
-- `customInputs(config)`, `customActions(config)`, `customDisplays(config)`, `customLayouts(config)`
+### Inputs
+
+The umbrella `inputs(...)` matches every input-kind itemType (textInputs, dropdowns, passwords, calendars, every input). The narrower leaves match only their specific kind.
+
+| Leaf method                | Matches                              |
+| -------------------------- | ------------------------------------ |
+| `inputs(config)`           | **Umbrella** — every input kind.     |
+| `textInputs(config)`       | Only `gui.inputs.textInput` widgets. |
+| `numberInputs(config)`     | Only `gui.inputs.numberInput`.       |
+| `booleanInputs(config)`    | Only `gui.inputs.booleanInput`.      |
+| `selects(config)`          | `gui.inputs.select`.                 |
+| `dropdowns(config)`        | `gui.inputs.dropdown`.               |
+| `radiogroups(config)`      | `gui.inputs.radiogroup`.             |
+| `checkboxes(config)`       | `gui.inputs.checkbox`.               |
+| `textareas(config)`        | `gui.inputs.textarea`.               |
+| `passwords(config)`        | `gui.inputs.password`.               |
+| `currencies(config)`       | `gui.inputs.currency`.               |
+| `markdowns(config)`        | `gui.inputs.markdown`.               |
+| `lists(config)`            | `gui.inputs.list`.                   |
+| `calendars(config)`        | `gui.inputs.calendar`.               |
+| `dateInputs(config)`       | `gui.inputs.dateInput`.              |
+| `datePickers(config)`      | `gui.inputs.datePicker`.             |
+| `rangeCalendars(config)`   | `gui.inputs.rangeCalendar`.          |
+| `rangeDateInputs(config)`  | `gui.inputs.rangeDateInput`.         |
+| `rangeDatePickers(config)` | `gui.inputs.rangeDatePicker`.        |
+| `repeaters(config)`        | `gui.inputs.repeater`.               |
+| `customInputs(config)`     | Every `gui.inputs.custom(...)`.      |
+
+### Actions, displays, layouts
+
+| Leaf method                | Matches                                                                          |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| `actions(config)`          | **Umbrella** — every action kind (`button`, `submitButton`, custom actions).      |
+| `displays(config)`         | **Umbrella** — every display kind (`alert`, `display(callback)`, custom displays). |
+| `alerts(config)`           | Only `gui.displays.alert`.                                                       |
+| `layouts(config)`          | **Umbrella** — every layout kind (`flex`, `grid`, `tabs`, `accordion`, custom).   |
+| `tabs(config)`             | Only `gui.layouts.tabs`.                                                         |
+| `accordions(config)`       | Only `gui.layouts.accordion`.                                                    |
+| `customActions(config)`    | Every `gui.actions.custom(...)`.                                                 |
+| `customDisplays(config)`   | Every `gui.displays.custom(...)`.                                                |
+| `customLayouts(config)`    | Every `gui.layouts.custom(...)`.                                                 |
 
 ## Uid-leaf methods (terminal)
 
-For each type, a `<type>ByUid` variant targets a single widget:
+Each leaf has a `<leaf>ByUid` variant that targets a **single** widget by its `uid`. The `uid` argument comes first; the `config` second. There's one byUid per top-level itemType — for `textInput` / `numberInput` / `booleanInput` (which share the `INPUTS` itemType) use `inputByUid`.
 
-- `inputByUid(uid, config)`, `textInputByUid(uid, config)`, `numberInputByUid(uid, config)`, …
-- `selectByUid(uid, config)`, `dropdownByUid(uid, config)`, `radiogroupByUid(uid, config)`, …
-- and so on for every type listed above.
+### Inputs
 
-## Configs
+| Leaf method                          | Matches                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------ |
+| `inputByUid(uid, config)`            | A single input by `uid` — works for `textInput` / `numberInput` / `booleanInput`. |
+| `selectByUid(uid, config)`           | A single `gui.inputs.select`.                                            |
+| `dropdownByUid(uid, config)`         | A single `gui.inputs.dropdown`.                                          |
+| `radiogroupByUid(uid, config)`       | A single `gui.inputs.radiogroup`.                                        |
+| `checkboxByUid(uid, config)`         | A single `gui.inputs.checkbox`.                                          |
+| `textareaByUid(uid, config)`         | A single `gui.inputs.textarea`.                                          |
+| `passwordByUid(uid, config)`         | A single `gui.inputs.password`.                                          |
+| `currencyByUid(uid, config)`         | A single `gui.inputs.currency`.                                          |
+| `markdownByUid(uid, config)`         | A single `gui.inputs.markdown`.                                          |
+| `listByUid(uid, config)`             | A single `gui.inputs.list`.                                              |
+| `calendarByUid(uid, config)`         | A single `gui.inputs.calendar`.                                          |
+| `dateInputByUid(uid, config)`        | A single `gui.inputs.dateInput`.                                         |
+| `datePickerByUid(uid, config)`       | A single `gui.inputs.datePicker`.                                        |
+| `rangeCalendarByUid(uid, config)`    | A single `gui.inputs.rangeCalendar`.                                     |
+| `rangeDateInputByUid(uid, config)`   | A single `gui.inputs.rangeDateInput`.                                    |
+| `rangeDatePickerByUid(uid, config)`  | A single `gui.inputs.rangeDatePicker`.                                   |
+| `repeaterByUid(uid, config)`         | A single `gui.inputs.repeater`.                                          |
+| `customInputByUid(uid, config)`      | A single `gui.inputs.custom(...)` instance.                              |
 
-Each config is the typed `Gsl<Type>Config` shape — typically a partial of the widget's decorator plus selector-specific options like `suppressAutomaticLabels` and `suppressAutomaticPlaceholders`.
+### Actions, displays, layouts
+
+| Leaf method                          | Matches                                            |
+| ------------------------------------ | -------------------------------------------------- |
+| `actionByUid(uid, config)`           | A single action (`button`, `submitButton`, custom).|
+| `customActionByUid(uid, config)`     | A single `gui.actions.custom(...)`.                |
+| `displayByUid(uid, config)`          | A single display (any kind).                       |
+| `alertByUid(uid, config)`            | A single `gui.displays.alert`.                     |
+| `customDisplayByUid(uid, config)`    | A single `gui.displays.custom(...)`.               |
+| `layoutByUid(uid, config)`           | A single layout (any kind).                        |
+| `tabsByUid(uid, config)`             | A single `gui.layouts.tabs`.                       |
+| `accordionByUid(uid, config)`        | A single `gui.layouts.accordion`.                  |
+| `customLayoutByUid(uid, config)`     | A single `gui.layouts.custom(...)`.                |
+
+```ts
+gui.selectors.inputByUid('email-field', { override: { hint: 'We never share this.' } });
+gui.selectors.tag('compact').dropdownByUid('country', { override: { height: 120 } });
+```
+
+`byUid` selectors win over broader selectors in [precedence](/form-definition/selectors/precedence/).
+
+## Config shape
+
+Every leaf's `config` is a typed `Gsl<Type>Config` extending the same base:
+
+```ts
+interface GslConfigBase<D> {
+  override?: Partial<D> | (current: D) => Partial<D>;
+}
+```
+
+`override` carries either a partial decorator (most common) or a callback that receives the current decorator and returns a partial. Specific kinds add extra fields — e.g. inputs and dropdowns also expose:
+
+```ts
+interface GslInputsConfig extends GslConfigBase<InputDecorator> {
+  suppressAutomaticLabels?: boolean;
+  suppressAutomaticPlaceholders?: boolean;
+}
+```
+
+These flags turn off the [sensible defaults](/form-definition/selectors/sensible-defaults/) the DX layer applies to matching widgets.
+
+```ts
+gui.selectors.inputs({
+  override: { autocomplete: 'off' },
+  suppressAutomaticPlaceholders: true,
+});
+```
+
+## Wiring `formSelectors` on the form component
+
+`formSelectors` lives on the form component as a sibling of `formDef` and `formConfig`:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+import * as React from '@golemui/gui-react';
+
+const formDef = [/* … */];
+const formSelectors = [
+  gui.selectors.tag('identity').inputs({ override: { autocomplete: 'off' } }),
+];
+
+<React.FormComponent
+  formDef={formDef}
+  formSelectors={formSelectors}
+  data={{}}
+/>;
+```
+
+For Angular and Lit wiring, see [Integration / Configuration](/integration/configuration/).
 
 ## See also
 
-- [Type selectors](/form-definition/selectors/type-selectors/), [Scope operators](/form-definition/selectors/scope-operators/), [Multi-value scopes](/form-definition/selectors/multi-value-scopes/), [Sensible defaults](/form-definition/selectors/sensible-defaults/), [Precedence](/form-definition/selectors/precedence/).
+- [Selectors](/form-definition/selectors/) — the conceptual walkthrough.
+- [Type selectors](/form-definition/selectors/type-selectors/) · [Chaining](/form-definition/selectors/chaining/) · [Scope operators](/form-definition/selectors/scope-operators/) · [Multi-value scopes](/form-definition/selectors/multi-value-scopes/) · [Sensible defaults](/form-definition/selectors/sensible-defaults/) · [Precedence](/form-definition/selectors/precedence/).
+- [Tags](/form-definition/tags/) — how to mark widgets so selectors can target them.

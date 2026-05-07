@@ -2,29 +2,74 @@
 title: Scope operators
 description: Restrict a selector match to a tag or to an active state.
 sidebar:
-  order: 3
+  order: 2
 ---
 
-Two scope operators sit between the chain root and the leaf method:
+import Demo from '../../../../components/landing/Demo.astro';
 
-| Method            | Restricts the match to widgets that…                            |
-| ----------------- | --------------------------------------------------------------- |
-| `tag(name)`       | …have `name` in their `tags` array.                            |
-| `state(name)`     | …are inside a form where the named state is currently active.   |
+Scope operators sit between the chain root and the leaf method. They **narrow** the broader leaf so it only fires for widgets that meet the scope condition.
+
+| Method        | Restricts the match to widgets that…                            |
+| ------------- | --------------------------------------------------------------- |
+| `tag(name)`   | …have `name` in their `tags` array.                            |
+| `state(name)` | …are inside a form where the named state is currently active.   |
+
+## `tag(name)`
+
+`tag(name)` narrows a leaf to only widgets that carry `name` in their `tags` array. Widgets without the tag pass through untouched, even if the leaf would otherwise match by type.
 
 ```ts
-import { gui } from '@golemui/gui-shared';
+const formDef = [
+  gui.inputs.textInput('street', { label: 'Street' }, ['priority']),
+  gui.inputs.textInput('city',   { label: 'City' }),
+  gui.inputs.textInput('zip',    { label: 'ZIP' }),
+];
 
-// Disable every action while the 'submitting' state is active
-gui.selectors.state('submitting').actions({ disabled: true });
-
-// Apply auto-placeholders only to inputs tagged 'identity'
-gui.selectors.tag('identity').inputs({ suppressAutomaticPlaceholders: false });
+const formSelectors = [
+  gui.selectors.tag('priority').textInputs({
+    override: { hint: 'Required to ship.' },
+  }),
+];
 ```
 
-`state` resolves against the form's state map (the same one you declare via `formConfig.states` or via the `gui.*` `states` arg).
+<Demo src="/template/index.html?renderer=scope-tag" minHeight="320" />
+
+Only **Street** carries the `'priority'` tag, so only it picks up the hint. *City* and *ZIP* are still text inputs but the scope narrows them out of the match. Without the `tag('priority')` scope, the leaf would have decorated all three.
+
+## `state(name)`
+
+`state(name)` narrows a leaf to fire only while the named state is active. The state is resolved against the form's state map (the same one you declare via `formConfig.states` or via the `gui.*` `states` arg).
+
+```ts
+const formDef = [
+  gui.inputs.booleanInput('submitting', { label: 'Mark as submitting' }),
+  gui.actions.button({ label: 'Submit' }),
+];
+
+const formConfig = {
+  suppressAutomaticSubmit: true,
+  states: {
+    submitting: '$form.submitting === true',
+  },
+};
+
+const formSelectors = [
+  gui.selectors.state('submitting').actions({
+    override: { disabled: true, label: 'Submitting…' },
+  }),
+];
+```
+
+<Demo src="/template/index.html?renderer=scope-state" minHeight="200" />
+
+Toggle the **Mark as submitting** switch to flip the state. While `submitting` is active, the selector fires and the button gets `disabled: true` plus a new label. Toggle off and the scope no longer matches — the button reverts to its declared shape.
+
+## Combining both
+
+`tag()` and `state()` can be chained on the same selector — the engine collects every condition and matches when **all** of them hold. See [Chaining](/form-definition/selectors/chaining/) for a worked example combining a tag and a state scope.
 
 ## See also
 
 - [Multi-value scopes](/form-definition/selectors/multi-value-scopes/) — `tagsAnd`, `tagsOr` for matching multiple tags at once.
-- [Chaining](/form-definition/selectors/chaining/) — composition order.
+- [Chaining](/form-definition/selectors/chaining/) — composition order and partial-chain reuse.
+- [States](/form-definition/states/) — declaring named conditions in `formConfig.states`.

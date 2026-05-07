@@ -32,6 +32,23 @@ import {
   eventsBlurDemo,
   eventsSubmitDemo,
 } from '../../forms/events';
+import {
+  typeSelectorDropdownsDemo,
+  typeSelectorByUidDemo,
+} from '../../forms/type-selectors';
+import {
+  chainingProfileDemo,
+  chainingProfileRefactoredDemo,
+} from '../../forms/chaining';
+import {
+  scopeTagDemo,
+  scopeStateDemo,
+} from '../../forms/scope-operators';
+import {
+  multiValueAndDemo,
+  multiValueOrDemo,
+} from '../../forms/multi-value-scopes';
+import { sensibleDefaultsDemo } from '../../forms/sensible-defaults';
 
 // In-app form registry for forms that can't be expressed as JSON — typically
 // `gui.displays.display(callback)` widgets (whose `render` prop is a function),
@@ -55,6 +72,15 @@ const RENDERER_FORMS: Record<
   'events-load-filter': eventsLoadFilterDemo,
   'events-blur': eventsBlurDemo,
   'events-submit': eventsSubmitDemo,
+  'type-selector-dropdowns': typeSelectorDropdownsDemo,
+  'type-selector-byuid': typeSelectorByUidDemo,
+  'chaining-profile': chainingProfileDemo,
+  'chaining-profile-refactored': chainingProfileRefactoredDemo,
+  'scope-tag': scopeTagDemo,
+  'scope-state': scopeStateDemo,
+  'multi-value-and': multiValueAndDemo,
+  'multi-value-or': multiValueOrDemo,
+  'sensible-defaults': sensibleDefaultsDemo,
 };
 import './form.element.scss';
 

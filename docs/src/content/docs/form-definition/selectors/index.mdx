@@ -5,6 +5,8 @@ sidebar:
   order: 0
 ---
 
+import IntegrationTabs from '../../../../components/IntegrationTabs.astro';
+
 Selectors are the **behavior layer** of the Form Definition API. While `gui.inputs.*`, `gui.layouts.*`, etc. describe the form's **structure**, `gui.selectors.*` describes how those widgets should look and behave — by **type**, by **tag**, or by **uid** — without you having to weave that behavior into every shortcut call.
 
 A selector is built by chaining methods off the `gui.selectors` root, then matching a target type and supplying a config:
@@ -24,7 +26,69 @@ const formSelectors = [
 ];
 ```
 
-Pass the array as `formSelectors` on `<gui-form>`.
+Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `formConfig`):
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as React from '@golemui/gui-react';
+
+    <React.FormComponent
+      formDef={formDef}
+      formSelectors={formSelectors}
+      data={{}}
+    />;
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        [formSelectors]="formSelectors"
+        [data]="formData"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+      protected formSelectors = formSelectors;
+      protected formData = {};
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+      formSelectors = formSelectors;
+      formData = {};
+
+      override createRenderRoot() { return this; }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            .formSelectors=${this.formSelectors}
+            .data=${this.formData}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
 
 ## Read on
 

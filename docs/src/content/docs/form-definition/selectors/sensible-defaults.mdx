@@ -5,6 +5,8 @@ sidebar:
   order: 5
 ---
 
+import Demo from '../../../../components/landing/Demo.astro';
+
 The DX layer applies a small set of **sensible defaults** to keep your form definitions concise:
 
 | Default                       | Behavior                                                                                                                             |
@@ -19,9 +21,19 @@ The DX layer applies a small set of **sensible defaults** to keep your form defi
 Each default can be turned off, either globally (via `formConfig`) or scoped (via a selector).
 
 ```ts
+const formDef = [
+  gui.layouts.flex(
+    [
+      gui.inputs.textInput('username', undefined, ['identity']),
+      gui.inputs.textInput('firstName'),
+      gui.inputs.textInput('lastName'),
+    ],
+    { direction: 'column', gap: 12 },
+  ),
+];
+
 const formConfig = {
   suppressAutomaticSubmit: true,   // no auto submit button
-  suppressAutomaticStack: true,    // no auto vertical wrap
 };
 
 const formSelectors = [
@@ -37,6 +49,15 @@ const formSelectors = [
   }),
 ];
 ```
+
+<Demo src="/template/index.html?renderer=sensible-defaults" minHeight="320" />
+
+What you should see in the demo:
+
+- **No labels** on any of the three inputs — `suppressAutomaticLabels` is on for every input.
+- **No placeholder** on `firstName` or `lastName` — `suppressAutomaticPlaceholders` is on for every input.
+- **A `username` placeholder** on the first field — the tag-scoped selector re-enables auto-placeholders for inputs tagged `'identity'`, beating the broader rule by [precedence](/form-definition/selectors/precedence/).
+- **No submit button** — `suppressAutomaticSubmit: true` skips the engine's default action.
 
 ## See also
 

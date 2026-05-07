@@ -5,10 +5,45 @@ sidebar:
   order: 3
 ---
 
+Display shortcuts render read-only content. They have **no `path`** (no data binding) and **no events** — just a typed props object.
+
+## Signature
+
+```ts
+gui.displays.<shortcut>(props: DisplayProps, tags?: string[]): GuiDisplaysShortcut;
+```
+
+A fully-populated alert example:
+
+```ts
+gui.displays.alert(
+  {                            // props — typed per-shortcut
+    text: 'Your changes have been saved.',
+    level: 'success',          // 'info' | 'warning' | 'error' | 'success'
+    icon: 'check',
+    states: {                  // per-state overrides — see /form-definition/states/
+      'errors:hasIssues': {
+        text: 'Some fields need your attention.',
+        level: 'warning',
+      },
+    },
+  },
+  ['banner'],                  // tags — addressable groups for selectors
+);
+```
+
+The Programmatic-only **`gui.displays.display(callback)`** is shaped differently — it takes a single render callback that returns framework-specific markup (Lit `html`, React JSX, Angular template). There's no JSON equivalent because the value is a function reference. See [Renderer](/widgets-reference/display-fields/renderer/) for the full pattern.
+
+```ts
+gui.displays.display(({ $form }) => html`
+  <p>Hello, ${$form.user?.name ?? 'guest'}!</p>
+`);
+```
+
+## Shortcuts
+
 | Shortcut                  | Renders                                            | Reference                                                                |
 | ------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ |
 | `gui.displays.alert`      | an alert with a level (`info` / `warning` / `error` / `success`) | [Alert](/widgets-reference/display-fields/alert/) |
 | `gui.displays.display`    | a render-callback display (Programmatic-only)      | [Renderer](/widgets-reference/display-fields/renderer/)                  |
 | `gui.displays.custom`     | your custom display widget                         | [Custom Widgets](/form-definition/custom-widgets/)                       |
-
-The Programmatic-only `gui.displays.display(callback)` lets you return raw framework markup (Lit `html`, React JSX, Angular template) from a function — there's no JSON equivalent for this widget because it requires a function reference.

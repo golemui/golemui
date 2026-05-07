@@ -5,7 +5,66 @@ sidebar:
   order: 4
 ---
 
-Every layout shortcut takes a `children` array. Most also take a props object as the second argument.
+Every layout shortcut takes a `children` array. Most also take a props object as the second argument. **`gui.layouts.tabs` and `gui.layouts.accordion`** are exceptions — they take a `sections` array instead, where each section has its own `label` and `children`.
+
+## Signature
+
+Most layouts:
+
+```ts
+gui.layouts.<shortcut>(children: ValidGuiShortcut[], props?: Props, tags?: string[]): GuiLayoutsShortcut;
+```
+
+Tabs / accordion:
+
+```ts
+gui.layouts.tabs(sections: TabSection[], props?: Props, tags?: string[]): GuiTabsShortcut;
+gui.layouts.accordion(sections: AccordionSection[], props?: Props, tags?: string[]): GuiAccordionShortcut;
+```
+
+A fully-populated flex example:
+
+```ts
+gui.layouts.flex(
+  [                                          // children — any array of gui.* shortcuts
+    gui.inputs.textInput('first', { label: 'First name' }),
+    gui.inputs.textInput('last',  { label: 'Last name' }),
+  ],
+  {                                          // props — the layout's typed props + DX fields
+    direction: 'row',
+    gap: 12,
+    size: 1,
+    states: {                                // per-state overrides
+      compactMode: { direction: 'column' },
+    },
+    include: { in: ['hasName'] },
+  },
+  ['identity-row'],                          // tags — addressable groups for selectors
+);
+```
+
+A tabs example with two sections:
+
+```ts
+gui.layouts.tabs([
+  {
+    label: 'Delivery address',
+    children: [
+      gui.inputs.textInput('delivery.street', { label: 'Street' }),
+      gui.inputs.textInput('delivery.city',   { label: 'City' }),
+    ],
+  },
+  {
+    label: 'Invoice address',
+    children: [
+      gui.inputs.textInput('invoice.street', { label: 'Street' }),
+      gui.inputs.textInput('invoice.city',   { label: 'City' }),
+    ],
+  },
+]);
+```
+
+## Shortcuts
 
 | Shortcut                        | Renders                            | Reference                                                            |
 | ------------------------------- | ---------------------------------- | -------------------------------------------------------------------- |
