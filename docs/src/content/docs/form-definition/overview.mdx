@@ -17,7 +17,13 @@ const formDef = [
 ];
 ```
 
-The same form can be written in JSON; both feed into the same `<gui-form>` component. The Programmatic API gives you compile-time safety, IDE autocomplete, and a much more compact syntax.
+The same form can be written in JSON; both feed into the same `<gui-form>` component. What the Programmatic API gives you on top of compile-time safety, IDE autocomplete, and a much more compact syntax:
+
+- **[Tags](/form-definition/tags/)** — annotate widgets with metadata so you can target a whole subset (e.g. every `'identity'` widget) without weaving the same prop into every shortcut.
+- **[Selectors](/form-definition/selectors/)** — the behavior layer. Match widgets by type, tag, or uid and apply decorators in one place — invaluable when a form grows past a handful of fields and you want to keep cross-cutting concerns (placeholders, autocomplete, validation policy, per-state overrides) out of the form structure.
+- **First-class event handling** — every shortcut takes plain `onClick` / `onChange` / `onLoad` / `onFilter` / `onBlur` props (no nested `on` block), keyed strings that the engine routes through your `formEvent` callback so application logic and form structure stay decoupled.
+
+Together those three turn the Programmatic surface into a real toolkit for **complex** forms — the kind where flat JSON would force you to repeat yourself or reach for a build step.
 
 ## The `gui` namespace
 
@@ -39,8 +45,7 @@ Each input/action/display/layout group also exposes a `.custom(...)` method for 
 - **[Tags](/form-definition/tags/)** — labelling widgets for the selector layer.
 - **[Selectors](/form-definition/selectors/)** — the behavior layer (`gui.selectors`).
 - **[Custom Widgets](/form-definition/custom-widgets/)** — `gui.<group>.custom(...)`.
-- **[States](/form-definition/states/)** — declaring named conditions.
-- **[Conditionals](/form-definition/conditionals/)** — `include`, `exclude`, `when`.
+- **[States](/form-definition/states/)** — declaring named conditions and gating widgets with `include` / `exclude` / `when`.
 - **[Events](/form-definition/events/)** — `onClick`, `onChange`, `onLoad`, `onFilter`.
 - **API Reference**:
   - [`gui.inputs`](/form-definition/reference/gui-inputs/)

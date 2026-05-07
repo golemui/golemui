@@ -93,5 +93,6 @@ export class InputWidgetAdapter<
       type: 'ATTEMPT_VALIDATION',
       payload: { reason: 'blur', path: this.widget.path, uid: this.widget.uid },
     });
+    this.context.emitEvent('blur', this.widget);
   }
 }

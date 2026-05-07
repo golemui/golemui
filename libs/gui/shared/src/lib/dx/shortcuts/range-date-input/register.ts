@@ -1,4 +1,5 @@
 import { defineShortcutType } from '../../core/defineShortcutType';
+import { buildTypedValidator } from '../../core/dxValidatorHelper';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
 import type { GslRangeDateInputConfig, RangeDateInputDecorator, RangeDateInputEntry } from './rangeDateInput.domain';
@@ -20,7 +21,7 @@ export const { gsl: _gslRangeDateInputs, gslByUid: _gslRangeDateInputByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
-      ...(def.validator != null ? { validator: { type: 'array' as const, ...def.validator } } : {}),
+      ...(def.validator != null ? { validator: buildTypedValidator(def.validator as any, 'array') } : {}),
       props: extractWidgetProps(def),
     }),
   });

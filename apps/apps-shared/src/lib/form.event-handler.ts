@@ -63,7 +63,77 @@ const eventHandlers = {
       await i18next.changeLanguage(lang);
     }
   },
+  async evClick(event: Core.FormEvent) {
+    const time = new Date().toLocaleTimeString();
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { path: 'evClickResult', prop: 'hint', value: `Clicked at ${time}.` },
+    });
+  },
+  async evChange(event: Core.FormEvent) {
+    const text = String((event.data as any).evSource ?? '');
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        path: 'evChangeResult',
+        prop: 'hint',
+        value: text ? `Current value: "${text}"` : 'Type something to see live changes.',
+      },
+    });
+  },
+  async evLoadColors(event: Core.FormEvent) {
+    setTimeout(() => {
+      event.callback({
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { path: 'evColorPick', prop: 'items', value: ALL_COLORS },
+      });
+    }, 250);
+  },
+  async evFilterColors(event: Core.FormEvent) {
+    const q = String(event.detail ?? '').toLowerCase();
+    const filtered = q
+      ? ALL_COLORS.filter((c) => c.label.toLowerCase().includes(q))
+      : ALL_COLORS;
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { path: 'evColorPick', prop: 'items', value: filtered },
+    });
+  },
+  async evBlur(event: Core.FormEvent) {
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        path: 'evBlurResult',
+        prop: 'hint',
+        value: 'You tabbed out of the email field.',
+      },
+    });
+  },
+  async submit(event: Core.FormEvent) {
+    const email = (event.data as any).evEmail;
+    if (email !== undefined) {
+      event.callback({
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: {
+          path: 'evSubmittedEmail',
+          prop: 'hint',
+          value: `Submitted: ${email}`,
+        },
+      });
+    }
+  },
 };
+
+const ALL_COLORS = [
+  { value: 'red', label: 'Red' },
+  { value: 'green', label: 'Green' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'yellow', label: 'Yellow' },
+  { value: 'orange', label: 'Orange' },
+  { value: 'purple', label: 'Purple' },
+  { value: 'pink', label: 'Pink' },
+  { value: 'teal', label: 'Teal' },
+];
 
 const ALL_CARS = [
   { id: 'compact', label: 'Compact', img: '🚗', price: 35 },

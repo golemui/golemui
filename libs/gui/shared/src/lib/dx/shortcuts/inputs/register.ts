@@ -8,6 +8,7 @@ import {
 } from '@golemui/core';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
+import { buildTypedValidator } from '../../core/dxValidatorHelper';
 import {
   processAutoLabel,
   processAutoPlaceholder,
@@ -50,7 +51,7 @@ function mapBooleanInputDef<
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
     ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
     ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
-    ...(fieldDef.validator != null ? { validator: { type: 'boolean' as const, ...fieldDef.validator } } : {}),
+    ...(fieldDef.validator != null ? { validator: buildTypedValidator(fieldDef.validator as any, 'boolean') } : {}),
     props,
   };
 }
@@ -72,10 +73,7 @@ function mapTextInputDef<
       placeholder: textProps.placeholder ?? '',
       ...textProps,
     },
-    validator: {
-      type: 'string',
-      ...fieldDef.validator,
-    },
+    validator: buildTypedValidator(fieldDef.validator as any, 'string') as any,
   };
 }
 
@@ -96,10 +94,7 @@ function mapNumberInputDef<
       placeholder: numberProps.placeholder ?? '',
       ...numberProps,
     },
-    validator: {
-      type: 'number',
-      ...fieldDef.validator,
-    },
+    validator: buildTypedValidator(fieldDef.validator as any, 'number') as any,
   };
 }
 

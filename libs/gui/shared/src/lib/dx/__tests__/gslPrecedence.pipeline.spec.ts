@@ -21,11 +21,11 @@ describe('DX Pipeline — GSL Selector Precedence', () => {
     expect(input.props?.placeholder).toBe('Second');
   });
 
-  it('_gslTextInputs matcher does not apply because decorator type field is absent during matching', () => {
-    // NOTE: DecoratorForMatching only carries { itemType, tags, uid } — the decorator's
-    // data fields (e.g. 'type: text') are NOT available to the matcher at resolve time.
-    // _gslTextInputs uses (d) => d.type === 'text', which always returns false since
-    // d.type is undefined in DecoratorForMatching. Only _gslInputs (broad match) applies.
+  it('_gslTextInputs matches inputs whose decorator type === "text"', () => {
+    // DecoratorForMatching carries { itemType, tags, uid, type }, so sub-type
+    // matchers like `_gslTextInputs((d) => d.type === 'text')` resolve correctly.
+    // Both selectors apply: the umbrella `_gslInputs` sets `placeholder`,
+    // and the sub-type `_gslTextInputs` adds `hint`.
     const result = processDx(
       _guiTextInput('email'),
       [
@@ -38,7 +38,7 @@ describe('DX Pipeline — GSL Selector Precedence', () => {
     };
 
     expect(input.props?.placeholder).toBe('From inputs');
-    expect(input.props?.hint).toBeUndefined();
+    expect(input.props?.hint).toBe('From textInputs');
   });
 
   it('_gslInputByUid overrides _gslInputs for the targeted widget', () => {

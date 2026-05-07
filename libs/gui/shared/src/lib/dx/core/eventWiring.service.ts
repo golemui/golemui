@@ -19,6 +19,7 @@ const INPUT_LAYOUT_EVENT_PROPS: Record<string, string> = {
   onLoad: 'load',
   onChange: 'change',
   onFilter: 'filter',
+  onBlur: 'blur',
 };
 
 const INPUT_LAYOUT_EVENT_KEYS = Object.keys(INPUT_LAYOUT_EVENT_PROPS);
@@ -105,6 +106,11 @@ export class EventWiringService {
     if (isSubmit) {
       const { onClick: _, ...rest } = actionDef;
       return { ...rest, uid: actionId, on: { click: 'submit' } };
+    }
+
+    if (typeof rawOnClick === 'string') {
+      const { onClick: _, ...rest } = actionDef;
+      return { ...rest, uid: actionId, on: { click: rawOnClick } };
     }
 
     return { ...actionDef, uid: actionId };

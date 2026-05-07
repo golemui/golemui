@@ -14,11 +14,47 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import { rendererMock } from '../../renderer-mock';
+import { tagsHintDemo } from '../../forms/tags/tags-1-hint';
+import { tagsGroupingDemo } from '../../forms/tags/tags-2-grouping';
+import { tagsPaymentDemo } from '../../forms/tags/tags-3-payment';
+import { statesSupportTicketDemo } from '../../forms/states/support-ticket';
+import {
+  runtimeLabelDemo,
+  runtimeValidatorDemo,
+  runtimeEventHandlerDemo,
+  runtimeNestedPropDemo,
+  runtimeDisplayDemo,
+} from '../../forms/runtime-functions';
+import {
+  eventsClickDemo,
+  eventsChangeDemo,
+  eventsLoadFilterDemo,
+  eventsBlurDemo,
+  eventsSubmitDemo,
+} from '../../forms/events';
 
 // In-app form registry for forms that can't be expressed as JSON — typically
-// `gui.displays.display(callback)` widgets, whose `render` prop is a function.
-const RENDERER_FORMS: Record<string, { data: any; form: any }> = {
+// `gui.displays.display(callback)` widgets (whose `render` prop is a function),
+// or Programmatic forms that ship with `formSelectors` / `formConfig`.
+const RENDERER_FORMS: Record<
+  string,
+  { data: any; form: any; selectors?: any; config?: any }
+> = {
   'client-name': rendererMock,
+  'tags-1-hint': tagsHintDemo,
+  'tags-2-grouping': tagsGroupingDemo,
+  'tags-3-payment': tagsPaymentDemo,
+  'states-support-ticket': statesSupportTicketDemo,
+  'runtime-label': runtimeLabelDemo,
+  'runtime-validator': runtimeValidatorDemo,
+  'runtime-event-handler': runtimeEventHandlerDemo,
+  'runtime-nested-prop': runtimeNestedPropDemo,
+  'runtime-display': runtimeDisplayDemo,
+  'events-click': eventsClickDemo,
+  'events-change': eventsChangeDemo,
+  'events-load-filter': eventsLoadFilterDemo,
+  'events-blur': eventsBlurDemo,
+  'events-submit': eventsSubmitDemo,
 };
 import './form.element.scss';
 
@@ -28,6 +64,8 @@ const mock = AppsShared.template;
 export class FormElement extends LitElement {
   formThemes: string[] = [];
   formDef = null;
+  formSelectors: any = undefined;
+  formConfig: any = undefined;
   formDir: string | null = null;
   formData = {};
   localization = AppsShared.initializeI18n(mock.resources);
@@ -87,6 +125,12 @@ export class FormElement extends LitElement {
       if (entry) {
         this.formDef = entry.form;
         this.formData = entry.data ?? {};
+        if (entry.selectors) {
+          this.formSelectors = entry.selectors;
+        }
+        if (entry.config) {
+          this.formConfig = entry.config;
+        }
       }
     } else if (params.has('form')) {
       const formDefResponse = await fetch(params.get('form')!);
@@ -139,6 +183,8 @@ export class FormElement extends LitElement {
 
               <gui-form
                 .formDef=${this.formDef}
+                .formSelectors=${this.formSelectors}
+                .formConfig=${this.formConfig}
                 .data=${this.formData}
                 .customWidgetLoaders=${this.customWidgetLoaders}
                 .itemRenderers=${this.itemRenderers}

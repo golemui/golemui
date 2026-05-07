@@ -45,9 +45,43 @@ export default defineConfig({
       sidebar: [
         { label: 'Getting Started', autogenerate: { directory: 'getting-started' } },
         { label: 'Integration', autogenerate: { directory: 'integration' } },
-        { label: 'Features', autogenerate: { directory: 'features' } },
-        { label: 'Extending GolemUI', autogenerate: { directory: 'extending' } },
-        { label: 'Form Definition API', autogenerate: { directory: 'form-definition' } },
+        {
+          label: 'Features',
+          items: [
+            { slug: 'features/overview' },
+            { slug: 'features/widget-loaders' },
+            { slug: 'features/item-renderers' },
+            { slug: 'features/validators' },
+            { slug: 'features/middlewares' },
+            { slug: 'features/events' },
+            { slug: 'features/i18n' },
+            { slug: 'features/dependencies' },
+            { label: 'States', autogenerate: { directory: 'features/states' } },
+          ],
+        },
+        {
+          label: 'Extending GolemUI',
+          items: [
+            { label: 'Custom Widgets', autogenerate: { directory: 'extending/widgets' } },
+            { slug: 'extending/item-renderers' },
+            { slug: 'extending/validators' },
+            { slug: 'extending/middlewares' },
+          ],
+        },
+        {
+          label: 'Form Definition API',
+          items: [
+            { slug: 'form-definition/overview' },
+            { slug: 'form-definition/how-it-works' },
+            { slug: 'form-definition/tags' },
+            { slug: 'form-definition/custom-widgets' },
+            { slug: 'form-definition/states' },
+            { slug: 'form-definition/runtime-functions' },
+            { slug: 'form-definition/events' },
+            { label: 'Selectors', autogenerate: { directory: 'form-definition/selectors' } },
+            { label: 'Reference', autogenerate: { directory: 'form-definition/reference' } },
+          ],
+        },
         { label: 'Styling', autogenerate: { directory: 'styling' } },
         {
           label: 'Widgets Reference',

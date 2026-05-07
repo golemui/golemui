@@ -1,21 +1,162 @@
 ---
 title: How it works
-description: Inside the resolver pipeline that turns your gui.* shortcuts into rendered widgets.
+description: A user-facing tour of the gui.* surface — why it exists, what its building blocks are, and where to read more.
 sidebar:
   order: 1
 ---
 
-When you pass a `formDef` array to `<gui-form>`, the engine runs it through a small, predictable pipeline:
+Hand-maintained JSON form definitions are easy to start with and painful to scale: there's no autocomplete, no type-checking, no refactor support, and every cross-cutting concern (placeholders, validation policy, per-state overrides, tagged behaviors) ends up duplicated across every widget. A growing form inevitably becomes a growing copy-paste exercise.
 
-1. **Selector resolution.** Selectors from `formSelectors` (and the chain root `gui.selectors`) match against shortcut entries by type, tag, or uid. Matching selectors emit decorator overrides.
-2. **Widget merging.** For each shortcut, decorator overrides are merged with the shortcut's own props in a defined precedence order (sensible defaults < selector decorators < shortcut props < per-state overrides).
-3. **Widget mapping.** The merged decorator is mapped to a core `FormWidget` — the same shape JSON forms produce.
-4. **Render.** The framework adapter renders each widget through its registered loader, passes data and event hooks, and reactively updates as state changes.
+The Form Definition API solves that by giving you a small, typed namespace — `gui` — to compose forms with. Each shortcut is a single function call; cross-cutting concerns live in **[Selectors](/form-definition/selectors/)**; metadata you want selectors to target lives in **[Tags](/form-definition/tags/)**.
 
-You don't usually need to know any of this. But if you start writing selectors or composing complex states, the precedence order above is what to keep in mind.
+## The shape of a `formDef`
 
-## See also
+Every form definition is just an array of `gui.*` shortcut calls:
 
-- [Selectors](/form-definition/selectors/) — the behavior layer.
-- [Sensible defaults](/form-definition/selectors/sensible-defaults/) — how the engine fills in labels and placeholders for you.
-- [Precedence](/form-definition/selectors/precedence/) — the full merge order.
+```ts
+import { gui } from '@golemui/gui-shared';
+
+const formDef = [
+  gui.inputs.textInput('name', { label: 'Name' }),
+  gui.actions.submitButton({ label: 'Submit' }),
+];
+```
+
+Each shortcut returns a typed object the engine can render. The signatures follow predictable rules per group:
+
+| Group           | Signature                                                  | Notes                                                         |
+| --------------- | ---------------------------------------------------------- | ------------------------------------------------------------- |
+| `gui.inputs.*`  | `(path, props?, tags?)`                                    | `path` is where the value lives in the form data.             |
+| `gui.actions.*` | `(props, tags?)`                                           | No `path` — actions don't store data.                         |
+| `gui.displays.*`| `(props, tags?)`                                           | Read-only, no `path`, no events.                              |
+| `gui.layouts.*` | `(children, props?, tags?)`                                | `children` is an array of more `gui.*` calls.                 |
+| `gui.selectors`| chainable — `gui.selectors.<scope>?.<group>(decorator)`     | Behavior layer; matches by type, tag, or uid.                 |
+
+## Runtime functions
+
+Every shortcut and every individual prop can be a **function** instead of a
+static value. The engine re-evaluates these callbacks whenever the form data
+changes, so a single widget can react to live state — labels that flip with a
+toggle, validators that swap rules per mode, event handlers that pick a
+different name based on what the user has typed.
+
+```ts
+gui.inputs.textInput('user.name', {
+  label: ({ $form }) =>
+    $form.registerMode ? 'Choose a username' : 'Sign-in name',
+  validator: ({ $form }) =>
+    $form.registerMode
+      ? { type: 'string', required: true, minLength: 3 }
+      : { type: 'string', required: true },
+});
+```
+
+Runtime functions sit between **[States](/form-definition/states/)** (named
+boolean expressions, evaluated by the engine) and **[Selectors](/form-definition/selectors/)**
+(cross-cutting decorators) — and pick up where both leave off when the
+dynamic shape of one widget can't be expressed declaratively.
+
+→ Read the full guide at **[Runtime Functions](/form-definition/runtime-functions/)**.
+
+## The building blocks
+
+### Inputs
+
+Read and write form data. Every input takes a string `path` plus a typed props
+object that mirrors the widget's typed `WidgetProps` (everything in the
+[Widgets Reference](/widgets-reference/input-fields/overview/)) plus DX-only
+fields (`label`, `validator`, `defaultValue`, `tags`, `size`, `states`,
+`include`, `exclude`, `onChange`, `onLoad`, `onFilter`, `onBlur`).
+
+```ts
+gui.inputs.textInput('user.email', {
+  label: 'Email',
+  validator: { type: 'string', format: 'email', required: true },
+});
+```
+
+→ See the full list at **[`gui.inputs` reference](/form-definition/reference/gui-inputs/)**.
+
+### Actions
+
+Buttons and triggers. No `path`, no value to store — they fire named events
+through the `formEvent` callback when clicked.
+
+```ts
+gui.actions.submitButton({ label: 'Save' });
+gui.actions.button({ label: 'Cancel', onClick: 'cancelForm' });
+```
+
+→ See the full list at **[`gui.actions` reference](/form-definition/reference/gui-actions/)**.
+
+### Displays
+
+Read-only presentational widgets — alerts, markdown, and a renderer escape
+hatch for one-off bits of markup.
+
+```ts
+gui.displays.alert({ text: 'Tip: pick a memorable username.', level: 'info' });
+gui.displays.display(({ data }) => html`<p>Hello ${data.name}!</p>`);
+```
+
+→ See the full list at **[`gui.displays` reference](/form-definition/reference/gui-displays/)**.
+
+### Layouts
+
+Containers that arrange children. `flex` for rows/columns sized by `size`,
+`grid` with subgrid alignment, plus `tabs` and `accordion` for grouped content.
+
+```ts
+gui.layouts.flex([
+  gui.inputs.textInput('first', { label: 'First name' }),
+  gui.inputs.textInput('last',  { label: 'Last name' }),
+]);
+```
+
+→ See the full list at **[`gui.layouts` reference](/form-definition/reference/gui-layouts/)**.
+
+### Tags
+
+A free-form metadata list on every shortcut. Tags don't change rendering —
+they're hooks for selectors. Group widgets that share a behavioral concern
+(`'identity'`, `'address'`, `'compact'`) and the selector layer can target
+the whole subset in one place.
+
+```ts
+gui.inputs.textInput('email', { label: 'Email' }, ['identity']);
+gui.inputs.password('password', { label: 'Password' }, ['identity']);
+```
+
+→ Read more at **[Tags](/form-definition/tags/)**.
+
+### Selectors
+
+The **behavior layer**. Decorate widgets by **type**, **tag**, or **uid**
+without touching the form structure. Selectors are how you keep
+cross-cutting concerns — autocomplete, placeholders, validation timing,
+per-state overrides — out of the per-widget shortcut calls.
+
+```ts
+const formSelectors = [
+  // Disable browser autocomplete on every input tagged 'identity'.
+  gui.selectors.tag('identity').inputs({ autocomplete: 'off' }),
+  // Default every text input to a sensible placeholder.
+  gui.selectors.textInputs({ placeholder: 'Type here…' }),
+];
+```
+
+`formSelectors` lives alongside `formDef` on the form component. The engine
+merges decorator overrides with each shortcut's own props at render time.
+
+→ Read more at **[Selectors](/form-definition/selectors/)** and the
+**[`gui.selectors` reference](/form-definition/reference/gui-selectors/)**.
+
+## What's next
+
+Beyond the building blocks above, the Form Definition API also covers:
+
+- **[Custom Widgets](/form-definition/custom-widgets/)** — plug your own widgets in via `gui.<group>.custom(...)`.
+- **[States](/form-definition/states/)** — named conditions plus `include` / `exclude` / `when` for gating widgets.
+- **[Events](/form-definition/events/)** — every event hook (`onClick`, `onChange`, `onLoad`, `onFilter`, `onBlur`).
+
+Each page is self-contained — read what you need, skip the rest.

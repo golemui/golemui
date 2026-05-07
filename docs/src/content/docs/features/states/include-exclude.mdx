@@ -259,7 +259,7 @@ Use a **named state** when the same condition appears in multiple places. Use **
 ```ts
 gui.displays.alert('signin-hint', {
   text: 'Already have an account? Sign in.',
-  exclude: { in: ['hasAccount'] },
+  exclude: { from: ['hasAccount'] },
 });
 ```
 
@@ -270,7 +270,7 @@ gui.displays.alert('signin-hint', {
 {
   "kind": "display", "type": "alert",
   "props": { "text": "Already have an account? Sign in." },
-  "exclude": { "in": ["hasAccount"] }
+  "exclude": { "from": ["hasAccount"] }
 }
 ```
 
@@ -280,4 +280,4 @@ gui.displays.alert('signin-hint', {
 ## See also
 
 - [States overview](/features/states/) — declaring states in each path.
-- [Form Definition API / Conditionals](/form-definition/conditionals/) — full `include` / `exclude` reference.
+- [Form Definition API / States](/form-definition/states/#gating-with-include--exclude--when) — full `include` / `exclude` reference.

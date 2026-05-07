@@ -106,6 +106,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
       type: 'ATTEMPT_VALIDATION',
       payload: { reason: 'blur', path: widget.path, uid: widget.uid },
     });
+    formContext.emitEvent('blur', widget);
   }, [formContext, widget]);
 
   return {

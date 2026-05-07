@@ -1,4 +1,5 @@
 import { defineShortcutType } from '../../core/defineShortcutType';
+import { buildTypedValidator } from '../../core/dxValidatorHelper';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel, processAutoPlaceholder } from '../../core/sharedSensibleDefaults.service';
 import type { CurrencyDecorator, CurrencyEntry, GslCurrencyConfig } from './currency.domain';
@@ -20,7 +21,7 @@ export const { gsl: _gslCurrencies, gslByUid: _gslCurrencyByUid } =
       ...(def.label != null ? { label: def.label } : {}),
       ...(def.disabled != null ? { disabled: def.disabled } : {}),
       ...(def.readonly != null ? { readonly: def.readonly } : {}),
-      ...(def.validator != null ? { validator: { type: 'number' as const, ...def.validator } } : {}),
+      ...(def.validator != null ? { validator: buildTypedValidator(def.validator as any, 'number') } : {}),
       props: extractWidgetProps(def),
     }),
   });

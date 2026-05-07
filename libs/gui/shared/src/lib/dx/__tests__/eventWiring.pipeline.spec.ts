@@ -319,6 +319,50 @@ describe('DX Pipeline — Event Wiring', () => {
       result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
       expect(submitFn).toHaveBeenCalledWith({ ok: true });
     });
+
+    it('arbitrary string onClick lands as on.click for host-managed dispatch', () => {
+      const result = formDefs.processDxFacade(
+        [_guiButton({ label: 'Click me', onClick: 'evClick' })],
+        [],
+        { suppressAutomaticSubmit: true },
+      );
+
+      const root = getRootFromFacadeResult(result);
+      const button = (root.children ?? []).find(
+        (c) => typeof c !== 'function' && (c as any).kind === 'action',
+      ) as any;
+
+      // The DX layer translates `onClick: 'evClick'` to `on: { click: 'evClick' }`
+      // — exactly the shape host applications listen for via formEvent.
+      expect(button.on?.click).toBe('evClick');
+      // No internal event registry entry — the engine just routes the name through.
+      const clickFn = vi.fn();
+      result.events?.({ name: 'evClick', data: {}, callback: clickFn });
+      expect(clickFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Input events — onBlur', () => {
+    it('wires onBlur callback to on.blur with generated event name', () => {
+      const blurFn = vi.fn();
+      const root = processDx([
+        _guiTextInput('email', { onBlur: blurFn }),
+      ]);
+
+      const input = getStaticChild(root, 0) as any;
+      expect(input.kind).toBe('input');
+      expect(typeof input.on?.blur).toBe('string');
+      expect(input.on.blur).toMatch(/^event_\d+$/);
+    });
+
+    it('wires onBlur string passthrough to on.blur', () => {
+      const root = processDx([
+        _guiTextInput('email', { onBlur: 'myBlurEvent' }),
+      ]);
+
+      const input = getStaticChild(root, 0) as any;
+      expect(input.on?.blur).toBe('myBlurEvent');
+    });
   });
 
   describe('DX update wrapper — event.update({ path, prop: value })', () => {

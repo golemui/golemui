@@ -1,42 +1,325 @@
 ---
 title: Events
-description: Wire widget events through onClick, onChange, onLoad, onFilter, onBlur.
+description: Wire widget events through onClick, onChange, onLoad, onFilter, onBlur — plus the special submit.
 sidebar:
-  order: 7
+  order: 6
 ---
 
-Each widget kind exposes a small set of event hooks. The DX shortcuts surface them as flat camelCase props (no nested `on` object).
+import Demo from '../../../components/landing/Demo.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-| Hook       | Available on                              |
-| ---------- | ----------------------------------------- |
-| `onClick`  | `gui.actions.button`, `gui.actions.custom` |
-| `onChange` | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion` |
-| `onLoad`   | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select` |
-| `onFilter` | `gui.inputs.dropdown`                     |
-| `onBlur`   | `gui.inputs.*`                            |
+Each widget kind exposes a small set of event hooks. Every event has a **string name** the form emits through `formEvent`; your application's event-handler map catches the name and reacts (or, in the demos below, dispatches an `OVERRIDE_WIDGET_PROP` to push feedback right back into the form).
 
-Each value is a string — the **event name** the form will emit through `formEvent`.
+| Hook       | Available on                                                             |
+| ---------- | ------------------------------------------------------------------------ |
+| `onClick`  | `gui.actions.button`, `gui.actions.custom`                               |
+| `onChange` | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion`              |
+| `onLoad`   | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select`            |
+| `onFilter` | `gui.inputs.dropdown`                                                    |
+| `onBlur`   | `gui.inputs.*`                                                           |
+| `submit`   | `gui.actions.submitButton` / `gui.actions.button({ onClick: 'submit' })` — triggers form-level validation first, then emits `submit` |
+
+Each value is a flat camelCase prop on the shortcut — `onClick: 'eventName'`, `onBlur: 'eventName'`, etc. The DX layer translates them all into the lower-level `on: { click | change | blur | … : 'name' }` block the engine consumes.
+
+## Wiring `formEvent` on the form component
+
+Every demo on this page uses the same shape: a `formDef` array, a `handleFormEvent` function that switches on `event.name`, and a `formEvent` binding on the form component. Each framework wires the binding slightly differently — the `handleFormEvent` body itself is identical:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    import * as Core from '@golemui/core';
+    import * as React from '@golemui/gui-react';
+
+    function handleFormEvent(event: Core.FormEvent) {
+      // see each per-hook section below for the case body.
+    }
+
+    export function MyForm() {
+      return (
+        <React.FormComponent
+          formDef={formDef}
+          formEvent={handleFormEvent}
+        />
+      );
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import * as Core from '@golemui/core';
+    import * as Angular from '@golemui/gui-angular';
+
+    @Component({
+      imports: [CommonModule, Angular.FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form
+        [formDef]="formDef"
+        (formEvent)="handleFormEvent($event)"
+      ></gui-form>`,
+    })
+    export class MyForm {
+      protected formDef = formDef;
+
+      protected handleFormEvent(event: Core.FormEvent) {
+        // see each per-hook section below for the case body.
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    import { html, LitElement } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import * as Core from '@golemui/core';
+    import '@golemui/gui-lit';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      formDef = formDef;
+
+      override createRenderRoot() { return this; }
+
+      handleFormEvent(event: Core.FormEvent) {
+        // see each per-hook section below for the case body.
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .formDef=${this.formDef}
+            @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.handleFormEvent(e.detail)}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+</IntegrationTabs>
+
+The per-hook sections below show only the `formDef` and the relevant `if (event.name === '…')` branch — drop them into your framework's wiring above.
+
+## `onClick`
+
+Buttons fire `onClick` events. The handler matches by `event.name` and dispatches overrides via `event.callback`.
 
 ```ts
-import { gui } from '@golemui/gui-shared';
+const formDef = [
+  gui.actions.button({
+    label: 'Click me',
+    onClick: 'evClick',
+  }),
+  gui.inputs.textInput('evClickResult', {
+    label: 'Last click',
+    readonly: true,
+    hint: 'Click the button.',
+  }),
+];
 
-gui.inputs.dropdown('country', {
-  items: [/* ... */],
-  onChange: 'countryChanged',
-  onFilter: 'countryQuery',
-});
-
-gui.actions.button({
-  label: 'Submit',
-  onClick: 'submit', // 'submit' is special — triggers form-level validation first
-});
+function handleFormEvent(event: Core.FormEvent) {
+  if (event.name === 'evClick') {
+    const time = new Date().toLocaleTimeString();
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        path: 'evClickResult',
+        prop: 'hint',
+        value: `Clicked at ${time}.`,
+      },
+    });
+  }
+}
 ```
 
-## The legacy `on: { click }` shape
+<Demo src="/template/index.html?renderer=events-click" minHeight="200" />
 
-The legacy JSON-style `on: { click: '...' }` still works on shortcuts that accept a `Partial<ActionDecorator>` (e.g. `gui.actions.button`). It exists for compatibility with custom event names not yet covered by the typed `onClick` literal. Prefer the flat `onClick` whenever the typed surface allows.
+## `onChange`
+
+`onChange` fires whenever an input's value changes. The handler reads `event.data` to see the live form state and can update sibling widgets.
+
+```ts
+const formDef = [
+  gui.inputs.textInput('evSource', {
+    label: 'Type something',
+    onChange: 'evChange',
+  }),
+  gui.inputs.textInput('evChangeResult', {
+    label: 'Live value',
+    readonly: true,
+    hint: 'Type something to see live changes.',
+  }),
+];
+
+function handleFormEvent(event: Core.FormEvent) {
+  if (event.name === 'evChange') {
+    const text = String(event.data.evSource ?? '');
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        path: 'evChangeResult',
+        prop: 'hint',
+        value: text
+          ? `Current value: "${text}"`
+          : 'Type something to see live changes.',
+      },
+    });
+  }
+}
+```
+
+<Demo src="/template/index.html?renderer=events-change" minHeight="220" />
+
+## `onLoad` and `onFilter`
+
+`onLoad` fires once when a widget mounts — the typical use is fetching items for a dropdown. `onFilter` fires when the user types into the dropdown's search field; `event.detail` carries the query, and the handler returns a filtered list. They're naturally paired:
+
+```ts
+const formDef = [
+  gui.inputs.dropdown('evColorPick', {
+    label: 'Pick a color',
+    items: [],
+    labelField: 'label',
+    valueField: 'value',
+    height: 120,
+    inputDebounce: 300,
+    onLoad: 'evLoadColors',
+    onFilter: 'evFilterColors',
+  }),
+];
+
+const ALL_COLORS = [
+  { value: 'red',    label: 'Red' },
+  { value: 'green',  label: 'Green' },
+  { value: 'blue',   label: 'Blue' },
+  { value: 'yellow', label: 'Yellow' },
+  { value: 'orange', label: 'Orange' },
+  { value: 'purple', label: 'Purple' },
+];
+
+function handleFormEvent(event: Core.FormEvent) {
+  if (event.name === 'evLoadColors') {
+    setTimeout(() => {
+      event.callback({
+        type: 'OVERRIDE_WIDGET_PROP',
+        payload: { path: 'evColorPick', prop: 'items', value: ALL_COLORS },
+      });
+    }, 250);
+  }
+
+  if (event.name === 'evFilterColors') {
+    const q = String(event.detail ?? '').toLowerCase();
+    const filtered = q
+      ? ALL_COLORS.filter((c) => c.label.toLowerCase().includes(q))
+      : ALL_COLORS;
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { path: 'evColorPick', prop: 'items', value: filtered },
+    });
+  }
+}
+```
+
+<Demo src="/template/index.html?renderer=events-load-filter" minHeight="240" />
+
+`evLoadColors` waits ~250 ms (a fake remote fetch) then dispatches `OVERRIDE_WIDGET_PROP` to fill the dropdown's `items`. `evFilterColors` reads `event.detail` for the typed query and replaces the items with a filtered subset.
+
+## `onBlur`
+
+Fires when focus leaves an input. Useful for validating-on-blur, marking a field as touched in your application state, or recording analytics events.
+
+```ts
+const formDef = [
+  gui.inputs.textInput('evEmailBlur', {
+    label: 'Email',
+    onBlur: 'evBlur',
+  }),
+  gui.inputs.textInput('evBlurResult', {
+    label: 'Status',
+    readonly: true,
+    hint: 'Tab out of the email field above.',
+  }),
+];
+
+function handleFormEvent(event: Core.FormEvent) {
+  if (event.name === 'evBlur') {
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        path: 'evBlurResult',
+        prop: 'hint',
+        value: 'You tabbed out of the email field.',
+      },
+    });
+  }
+}
+```
+
+<Demo src="/template/index.html?renderer=events-blur" minHeight="200" />
+
+## `submit`
+
+The `'submit'` literal is special. Wiring it on a button (or using `gui.actions.submitButton`) makes the click trigger **form-level validation first**: every input is touched, validators run, and the `submit` event only fires if the whole form is valid.
+
+```ts
+const formDef = [
+  gui.inputs.textInput('evEmail', {
+    label: 'Email',
+    validator: {
+      type: 'string',
+      required: true,
+      format: 'email',
+      messages: {
+        required: 'An email is required',
+        format: 'Enter a valid email',
+      },
+    },
+  }),
+  gui.actions.submitButton({ label: 'Submit' }),
+  // — or equivalently —
+  // gui.actions.button({ label: 'Submit', onClick: 'submit' }),
+  gui.inputs.textInput('evSubmittedEmail', {
+    label: 'Result',
+    readonly: true,
+    hint: 'Enter a valid email and click Submit.',
+  }),
+];
+
+function handleFormEvent(event: Core.FormEvent) {
+  if (event.name === 'submit') {
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: {
+        path: 'evSubmittedEmail',
+        prop: 'hint',
+        value: `Submitted: ${event.data.evEmail}`,
+      },
+    });
+  }
+}
+```
+
+<Demo src="/template/index.html?renderer=events-submit" minHeight="280" />
+
+Try clicking submit while the email is empty or invalid — validation messages appear and no `submit` event fires. Enter a valid email and click again to see the result land in the read-only field.
+
+## `onClick` vs. the other hooks
+
+There's one asymmetry worth knowing about. The handler shape differs between `onClick` and every other hook:
+
+| Hook                                         | What the handler receives                                    |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| `onClick` (function form)                    | `event.data` — only the form data, no `callback` / `update`  |
+| `onChange`, `onLoad`, `onFilter`, `onBlur`   | The full wrapped `DxFormEvent` — `data`, `detail`, `callback`, `update` |
+
+In the **string** form (`'evClick'`, `'evChange'`, …), this distinction doesn't matter — the engine routes the event name through `formEvent` to your application code, and the application-side handler always sees the full event regardless of which hook fired it. The asymmetry only shows up when you pass a **runtime function** directly:
+
+- A function `onChange` / `onLoad` / `onFilter` / `onBlur` can read live data **and** dispatch overrides (`event.update({ path, prop: value })`) without leaving the form definition. See [Runtime Functions](/form-definition/runtime-functions/#a-reactive-event-handler).
+- A function `onClick` can only read `event.data` and run side-effecty code — it can't push overrides back into the form. For click-driven dispatch into the form, prefer the **string** form and handle the named event in your application's `formEvent` callback.
 
 ## See also
 
 - [Features / Form Events](/features/events/) — handling events in your application code.
+- [Runtime Functions](/form-definition/runtime-functions/) — event handlers as runtime callbacks.
 - [Extending GolemUI / Widgets / Sending events](/extending/widgets/events/) — emitting events from a custom widget.

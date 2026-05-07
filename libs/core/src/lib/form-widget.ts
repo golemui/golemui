@@ -43,6 +43,7 @@ export type On<
     click?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
     change?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
     filter?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
+    blur?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
   },
   StateKeys
 >;
@@ -277,6 +278,7 @@ const onDecoder = objectWithSuffix(
     click: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(jd.optional(jd.string())) },
     change: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(jd.optional(jd.string())) },
     filter: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(jd.optional(jd.string())) },
+    blur: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(jd.optional(jd.string())) },
   },
   'On',
 );

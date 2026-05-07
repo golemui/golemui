@@ -16,6 +16,7 @@ import type {
 } from '../../core/itemTypeRegistry';
 import { registerItemType } from '../../core/itemTypeRegistry';
 import { createGslSelector } from '../../core/dxUtilityTypes';
+import { buildTypedValidator } from '../../core/dxValidatorHelper';
 import type { RepeaterDecorator, RepeaterEntry, GslRepeaterConfig } from './repeater.domain';
 
 function buildRepeaterProps(def: RepeaterDecorator): Record<string, any> {
@@ -38,7 +39,7 @@ function mapToWidget(def: Record<string, any>): NonFunctionWidget {
     ...(def['label'] != null ? { label: def['label'] } : {}),
     ...(def['disabled'] != null ? { disabled: def['disabled'] } : {}),
     ...(def['readonly'] != null ? { readonly: def['readonly'] } : {}),
-    ...(def['validator'] != null ? { validator: { type: 'array' as const, ...def['validator'] } } : {}),
+    ...(def['validator'] != null ? { validator: buildTypedValidator(def['validator'] as any, 'array') } : {}),
     props: {
       ...buildRepeaterProps(def as RepeaterDecorator),
       template: { kind: 'layout', type: 'flex', children: [], props: { direction: 'column' } },

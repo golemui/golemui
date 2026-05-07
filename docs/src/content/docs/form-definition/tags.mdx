@@ -1,39 +1,120 @@
 ---
 title: Tags
-description: Label widgets so you can target them from the selector layer.
+description: Label widgets so you can target a whole subset from the selector layer in one place.
 sidebar:
   order: 2
 ---
 
-Every shortcut accepts an optional `tags` array. Tags don't change rendering — they're metadata that selectors can match against.
+import Demo from '../../../components/landing/Demo.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+Every shortcut accepts an optional `tags` array — a free-form list of strings the engine attaches as metadata to the resulting widget. Tags don't change rendering on their own; they're hooks for **[Selectors](/form-definition/selectors/)** to match against. The two together turn a tag into an addressable group: decorate every widget tagged `'identity'` (or `'personal-info'`, or `'us-state'`) in one place instead of repeating the same prop on every shortcut.
 
 ```ts
-import { gui } from '@golemui/gui-shared';
+gui.inputs.textInput('username', { label: 'Username' }, ['identity']);
+gui.inputs.password('password', { label: 'Password' }, ['identity']);
+```
 
-const formDef = [
-  gui.inputs.textInput('username', { label: 'Username' }, ['identity']),
-  gui.inputs.password('password', { label: 'Password' }, ['identity']),
+The third positional argument on every shortcut is the tags array. A widget can carry as many tags as you like — selectors match against the list.
+
+## When to use tags
+
+- The same behavior or styling needs to apply to a logical group of widgets.
+- A selector should be reusable across forms (define once, drop into any form definition).
+- The alternative is repeating the same prop on many shortcuts.
+
+The three demos below progress from the simplest possible use to a full payment form, so you can see how tags scale with the complexity of the form.
+
+## One tag, one shared decorator
+
+Three text inputs. The first two are tagged `'personal-info'`; the third isn't. A single selector adds a hint to every input carrying the tag — the untagged "Display name" input stays clean.
+
+```ts
+const form = [
+  gui.inputs.textInput('user.email', { label: 'Email' }, ['personal-info']),
+  gui.inputs.textInput('user.phone', { label: 'Phone' }, ['personal-info']),
+  gui.inputs.textInput('user.nickname', { label: 'Display name' }),
+];
+
+const formSelectors = [
+  gui.selectors
+    .tag('personal-info')
+    .inputs({ override: { hint: 'Personal data — never shared.' } }),
 ];
 ```
 
-Then in selectors:
+<Demo src="/template/index.html?renderer=tags-1-hint" minHeight="280" />
+
+What just happened: the engine resolved each input, checked its tag list against the selector's `'personal-info'` matcher, and merged the `hint` decorator only for the matched widgets. Untagged widgets pass through untouched.
+
+## Singling out one widget with a tag
+
+A sign-up form has two text inputs — a "Username" and a "Referral code" — but only the first should suppress browser autocomplete and carry a placeholder. Tagging the username with `'identity'` lets a per-type selector decorate exactly that widget without touching the referral field.
 
 ```ts
+const form = [
+  gui.inputs.textInput('username', { label: 'Username' }, ['identity']),
+  gui.inputs.textInput('referral', { label: 'Referral code' }),
+];
+
 const formSelectors = [
-  gui.selectors.tag('identity').inputs({
-    suppressAutomaticPlaceholders: true,
+  gui.selectors.tag('identity').textInputs({
+    override: {
+      autocomplete: 'off',
+      placeholder: 'Pick a sign-in name',
+    },
   }),
 ];
 ```
 
-The selector applies its decorator to **every input tagged `identity`** without you having to repeat the rule on each widget.
+<Demo src="/template/index.html?renderer=tags-2-grouping" minHeight="240" />
 
-## When to use tags
+Both widgets are the same kind, but only the first carries the tag — so the selector's matcher fires on it alone. A tag isn't only a "group of widgets" device: it's also the simplest way to address **one** widget out of several identical ones, without having to give it a `uid` and reach for a `byUid` selector.
 
-- When you need the same behavior or styling on a logical group of widgets.
-- When you want selectors to be reusable across forms.
-- When the alternative would be repeating the same prop on many shortcuts.
+## Payment details with shared dropdown options
+
+The case where the user-facing payoff really lands. A payment form has both a **delivery address** and an **invoice address**. Each address has a State select. Without tags you'd hard-code the same fifty US states twice — or pull them out into a shared constant and pass it into both widgets manually. With tags + selectors, both selects carry the `'us-state'` tag and a single selector populates `options` once.
+
+A small helper builds the address fields, and a `gui.layouts.tabs(...)` separates the two addresses cleanly into their own panels — no fake-heading widgets in the form, the layout itself provides the section labels.
+
+```ts
+const addressBlock = (kind: 'delivery' | 'invoice') => [
+  gui.inputs.textInput(`${kind}.street`, { label: 'Street' }),
+  gui.layouts.flex([
+    gui.inputs.textInput(`${kind}.city`,  { label: 'City' }),
+    gui.inputs.dropdown(`${kind}.state`,  { label: 'State' }, ['us-state']),
+    gui.inputs.textInput(`${kind}.zip`,   { label: 'ZIP' }),
+  ]),
+];
+
+const form = [
+  gui.layouts.tabs([
+    { label: 'Delivery address', children: addressBlock('delivery') },
+    { label: 'Invoice address',  children: addressBlock('invoice') },
+  ]),
+];
+
+const formSelectors = [
+  gui.selectors.tag('us-state').dropdowns({
+    override: {
+      items: US_STATES,
+      labelField: 'label',
+      valueField: 'value',
+      height: 180,
+    },
+  }),
+];
+```
+
+<Demo src="/template/index.html?renderer=tags-3-payment" minHeight="320" />
+
+Switch tabs — both State dropdowns share the same fifty items and the same `labelField` / `valueField` config, all defined once in the selector. Add a third address (billing, shipping, whatever) and you don't touch the selector at all: tag the new State dropdown with `'us-state'` and it inherits everything.
+
+<Aside type="tip">
+The same pattern scales beyond static lists. Selectors apply runtime functions too, so a tagged selector can populate `options` from an async source (`gui.selectors.tag('us-state').selects({ override: ({ $form }) => ({ options: ... }) })`) without each widget knowing where the data comes from.
+</Aside>
 
 ## See also
 
 - [Selectors](/form-definition/selectors/) — chaining tags with type selectors and scope operators.
+- [`gui.selectors` reference](/form-definition/reference/gui-selectors/) — every leaf method (`inputs`, `textInputs`, `selects`, …) you can pin a tag to.

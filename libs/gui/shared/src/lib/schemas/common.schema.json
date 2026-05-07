@@ -123,6 +123,9 @@
         },
         "filter": {
           "type": "string"
+        },
+        "blur": {
+          "type": "string"
         }
       },
       "patternProperties": {
@@ -136,6 +139,9 @@
           "type": "string"
         },
         "^filter\\.[^.]+$": {
+          "type": "string"
+        },
+        "^blur\\.[^.]+$": {
           "type": "string"
         }
       },

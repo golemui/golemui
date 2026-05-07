@@ -229,6 +229,7 @@ export class ItemWalker {
     }
     const tags = [...parentTags, ...('tags' in baseDef && baseDef['tags'] ? baseDef['tags'] : [])];
     const uid = 'uid' in baseDef ? baseDef['uid'] : undefined;
-    return { itemType, tags, uid };
+    const type = 'type' in baseDef ? (baseDef as any)['type'] : undefined;
+    return { itemType, tags, uid, type };
   }
 }

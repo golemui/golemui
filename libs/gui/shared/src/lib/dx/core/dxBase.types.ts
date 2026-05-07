@@ -29,6 +29,13 @@ export type DxEventHandler = string | ((event: DxFormEvent) => void);
 export interface DxInternalFields {
   itemType?: string;
   removeField?: boolean;
+  /**
+   * Sub-type discriminator on the decorator (e.g. `'text' | 'number' | 'boolean'`
+   * for inputs that share the `INPUTS` itemType, `'password'`, `'dropdown'`, etc.
+   * for top-level itemTypes). Carried into the matching phase so sub-type
+   * matchers like `_gslTextInputs((d) => d.type === 'text')` work.
+   */
+  type?: string;
 }
 
 /**
@@ -75,6 +82,7 @@ export interface DxInputBase {
   onLoad?: DxEventHandler;
   onChange?: DxEventHandler;
   onFilter?: DxEventHandler;
+  onBlur?: DxEventHandler;
 }
 
 /**

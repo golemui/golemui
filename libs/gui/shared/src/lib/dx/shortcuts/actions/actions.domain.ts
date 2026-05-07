@@ -15,7 +15,7 @@ export interface ActionDecorator extends DxActionBase, DxCommonFields, Partial<B
   data?: any | null;
   type?: 'button';
   on?: { click: string };
-  onClick?: ((data: any) => void) | 'submit';
+  onClick?: ((data: any) => void) | string;
 }
 
 /**
