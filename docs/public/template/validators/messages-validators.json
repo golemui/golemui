@@ -32,7 +32,8 @@
           "required": { "key": "validators.passwordRequired", "default": "Please enter your password" },
           "minLength": { "key": "validators.passwordMinLength", "default": "Password must be at least 8 characters" },
           "maxLength": { "key": "validators.passwordMaxLength", "default": "Password cannot exceed 20 characters" },
-          "pattern": { "key": "validators.passwordPattern", "default": "Password must contain both letters and numbers" }
+          "pattern": { "key": "validators.passwordPattern", "default": "Password must contain both letters and numbers" },
+          "invalid": { "key": "validators.passwordInvalid", "default": "Password must be plain text" }
         }
       }
     },
@@ -64,7 +65,8 @@
         "required": true,
         "messages": {
           "required": { "key": "validators.termsRequired", "default": "You must accept the terms and conditions to continue" },
-          "const": { "key": "validators.termsRequired", "default": "You must accept the terms and conditions to continue" }
+          "const": { "key": "validators.termsRequired", "default": "You must accept the terms and conditions to continue" },
+          "invalid": { "key": "validators.termsInvalid", "default": "Terms acceptance must be a valid boolean value" }
         }
       }
     }

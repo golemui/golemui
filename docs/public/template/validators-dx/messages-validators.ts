@@ -1,8 +1,35 @@
 import { gui } from '@golemui/gui-shared';
 
 export default [
+  gui.inputs.dropdown('lang', {
+    labelField: 'label',
+    valueField: 'value',
+    items: [
+      {
+        value: 'en',
+        label: '🇬🇧 English',
+      },
+      {
+        value: 'es',
+        label: '🇪🇸 Spanish',
+      },
+      {
+        value: 'fr',
+        label: '🇫🇷 French',
+      },
+    ],
+    label: {
+      key: 'languageLabel',
+      default: 'Language',
+    },
+    uid: 'languageSwitcher',
+    onChange: 'changeLanguage',
+  }),
   gui.inputs.textInput('user.password', {
-    label: 'Password',
+    label: {
+      key: 'passwordLabel',
+      default: 'Password',
+    },
     validator: {
       type: 'string',
       required: true,
@@ -10,38 +37,69 @@ export default [
       maxLength: 20,
       pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$',
       messages: {
-        invalid: 'Please enter your password',
-        required: 'Please enter your password',
-        minLength: 'Password must be at least 8 characters',
-        maxLength: 'Password cannot exceed 20 characters',
-        pattern: 'Password must contain both letters and numbers',
+        required: {
+          key: 'validators.passwordRequired',
+          default: 'Please enter your password',
+        },
+        minLength: {
+          key: 'validators.passwordMinLength',
+          default: 'Password must be at least 8 characters',
+        },
+        maxLength: {
+          key: 'validators.passwordMaxLength',
+          default: 'Password cannot exceed 20 characters',
+        },
+        pattern: {
+          key: 'validators.passwordPattern',
+          default: 'Password must contain both letters and numbers',
+        },
       },
     },
   }),
   gui.inputs.numberInput('user.age', {
-    label: 'Age',
+    label: {
+      key: 'ageLabel',
+      default: 'Age',
+    },
     validator: {
       type: 'number',
       required: true,
       minimum: 18,
       maximum: 120,
       messages: {
-        invalid: 'Please enter a valid number',
-        minimum: 'You must be at least 18 years old',
-        maximum: 'Age cannot exceed 120',
+        invalid: {
+          key: 'validators.ageInvalid',
+          default: 'Please enter a valid number',
+        },
+        minimum: {
+          key: 'validators.ageMinimum',
+          default: 'You must be at least 18 years old',
+        },
+        maximum: {
+          key: 'validators.ageMaximum',
+          default: 'Age cannot exceed 120',
+        },
       },
     },
   }),
   gui.inputs.checkbox('acceptTerms', {
-    label: 'I accept the terms and conditions',
+    label: {
+      key: 'acceptTermsLabel',
+      default: 'I accept the terms and conditions',
+    },
     validator: {
       type: 'boolean',
       const: true,
       required: true,
       messages: {
-        invalid: 'You must accept terms and conditions',
-        required: 'You must accept terms and conditions',
-        const: 'You must accept the terms and conditions to continue',
+        required: {
+          key: 'validators.termsRequired',
+          default: 'You must accept the terms and conditions to continue',
+        },
+        const: {
+          key: 'validators.termsRequired',
+          default: 'You must accept the terms and conditions to continue',
+        },
       },
     },
   }),

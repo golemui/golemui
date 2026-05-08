@@ -56,6 +56,7 @@ export default [
         required: true,
         messages: {
           required: 'Choose where you\'ll pick up the car',
+          invalid: 'Pick a valid pickup location',
         },
       },
     }),
@@ -82,6 +83,7 @@ export default [
         required: true,
         messages: {
           required: 'Choose where you\'ll drop the car off',
+          invalid: 'Pick a valid return location',
         },
       },
       include: {
@@ -107,6 +109,7 @@ export default [
         required: 'Please select your rental dates',
         minItems: 'Pick a rental date range',
         maxItems: 'Only one date range, please',
+        invalid: 'Rental dates must be a valid date range',
       },
     },
   }),
@@ -131,6 +134,7 @@ export default [
       required: true,
       messages: {
         required: 'Choose Daily, Weekly, or Monthly',
+        invalid: 'Pick one of the rental types above',
       },
     },
   }),
@@ -143,6 +147,7 @@ export default [
       messages: {
         const: 'Drivers must be at least 25 years old to rent',
         required: 'Confirm the driver is over 25',
+        invalid: 'Confirm the driver is over 25',
       },
     },
   }),
@@ -158,6 +163,7 @@ export default [
       messages: {
         required: 'Enter your discount code',
         minLength: 'Discount codes are at least 4 characters',
+        invalid: 'Discount codes must be plain text',
       },
     },
     include: {

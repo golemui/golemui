@@ -75,6 +75,7 @@ gui.inputs.textInput('user.password', {
       minLength: 'Password must be at least 8 characters',
       maxLength: 'Password cannot exceed 20 characters',
       pattern: 'Password must contain both letters and numbers',
+      invalid: 'Password must be plain text',
     },
   },
 });
@@ -96,7 +97,8 @@ gui.inputs.textInput('user.password', {
       "required": "Please enter your password",
       "minLength": "Password must be at least 8 characters",
       "maxLength": "Password cannot exceed 20 characters",
-      "pattern": "Password must contain both letters and numbers"
+      "pattern": "Password must contain both letters and numbers",
+      "invalid": "Password must be plain text"
     }
   }
 }
