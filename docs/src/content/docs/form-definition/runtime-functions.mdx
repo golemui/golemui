@@ -5,8 +5,8 @@ sidebar:
   order: 6
 ---
 
-import Demo from '../../../components/landing/Demo.astro';
 import { Aside } from '@astrojs/starlight/components';
+import Demo from '../../../components/landing/Demo.astro';
 
 Most form definitions are static — every shortcut returns a typed object the
 engine renders once. **Runtime functions** flip a single widget into reactive
@@ -31,7 +31,7 @@ Every runtime function gets the same argument shape:
 
 ```ts
 type DxRuntimeParams<FormData = any> = {
-  $form: FormData;        // Live, immutable form data.
+  $form: FormData; // Live, immutable form data.
   errors: ValidationStatus | undefined;
   touched: boolean | undefined;
   translate: I18nTranslator['translate'] | undefined;
@@ -86,7 +86,9 @@ handlers that fire on the event. The handler receives a wrapped
 callback, but with an `update({ path, prop: value })` helper that
 translates into an `OVERRIDE_WIDGET_PROP` dispatch under the hood. So a
 single inline callback can read live form data **and** push changes to
-sibling widgets without leaving the form definition.
+sibling widgets without leaving the form definition. Pass `path` to target
+an input widget by its data-binding key, or `uid` to target any widget —
+including display widgets (`gui.displays.*`) that have no data path.
 
 ```ts
 const formDef = [
@@ -132,8 +134,7 @@ Beyond `label` / `validator` / event handlers, **any** prop the widget exposes c
 ```ts
 gui.inputs.checkbox('agreed', {
   label: 'I agree',
-  checkboxPosition: ({ $form }) =>
-    $form.rtlMode ? 'right' : 'left',
+  checkboxPosition: ({ $form }) => ($form.rtlMode ? 'right' : 'left'),
 });
 ```
 
@@ -147,7 +148,9 @@ from `$form` the same way:
 ```ts
 gui.displays.alert({
   text: ({ $form }) =>
-    $form.user?.name ? `Hello ${$form.user.name}!` : 'Welcome — type your name above.',
+    $form.user?.name
+      ? `Hello ${$form.user.name}!`
+      : 'Welcome — type your name above.',
   level: 'info',
 });
 ```

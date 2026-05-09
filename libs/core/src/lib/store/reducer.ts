@@ -1,5 +1,5 @@
 import { ValidatorFn } from '../form-validator';
-import { isFunctionWidget, isInputWidget } from '../form-widget';
+import { InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
 import { I18nTranslator } from '../i18n';
 import { ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
@@ -7,7 +7,7 @@ import * as Fn from '../utils/function';
 import { Action } from './actions';
 import { State } from './model';
 import * as Reducers from './reducers';
-import { isControlTouched, reduceIf } from './reducers/utils';
+import { reduceIf } from './reducers/utils';
 
 export const reducer =
   ({
@@ -78,8 +78,24 @@ export const reducer =
           Reducers.calculateWidgetFlags,
           Reducers.calculateWidgetProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
+          // Apply only when the action is related to an input
           reduceIf(
-            isControlTouched(action.payload.path),
+            (state: State): boolean => {
+              let isInput = false;
+              let path = '';
+              if ('path' in action.payload) {
+                isInput = true;
+                path = action.payload.path;
+              } else {
+                if (isInputWidget(state.calculatedWidgets[action.payload.uid].current)) {
+                  isInput = true;
+                  path = (state.calculatedWidgets[action.payload.uid].current as InputWidget<any>)
+                    .path;
+                }
+              }
+              const touched = isInput && state.touchedControls[path];
+              return state.touched && touched;
+            },
             Reducers.validateAll(validators, localization),
           ),
         );

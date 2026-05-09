@@ -21,6 +21,8 @@ Each widget kind exposes a small set of event hooks. Every event has a **string 
 
 Each value is a flat camelCase prop on the shortcut — `onClick: 'eventName'`, `onBlur: 'eventName'`, etc. The DX layer translates them all into the lower-level `on: { click | change | blur | … : 'name' }` block the engine consumes.
 
+The `OVERRIDE_WIDGET_PROP` action used throughout these examples targets a widget by **`path`** (the widget's data-binding key, for control kinds) or by **`uid`** (the widget's unique ID, for any kind). Use `uid` when the target is a display widget such as `gui.displays.alert` — those have no data path.
+
 ## Wiring `formEvent` on the form component
 
 Every demo on this page uses the same shape: a `formDef` array, a `handleFormEvent` function that switches on `event.name`, and a `formEvent` binding on the form component. Each framework wires the binding slightly differently — the `handleFormEvent` body itself is identical:

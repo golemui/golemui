@@ -66,11 +66,12 @@ export type SET_WIDGET_DATA = {
 };
 
 /**
- * Overrides a property in a form widget's `props` object.
+ * Overwrites a property in a form widget's `props` object.
+ * Targets widgets via `path` (for 'control' kinds) or `uid` (for all kinds).
  */
 export type OVERRIDE_WIDGET_PROP = {
   type: 'OVERRIDE_WIDGET_PROP';
-  payload: { path: DotPath; prop: string; value: any };
+  payload: { path: DotPath; prop: string; value: any } | { uid: string; prop: string; value: any };
 };
 
 export type SET_FORM_HEALTH = {

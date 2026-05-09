@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
 import i18next from 'i18next';
 
-export const onFormEvent = async (event: Core.FormEvent) => {
+export const onFormEvent = (event: Core.FormEvent) => {
   const eventHandler = eventHandlers[event.name as keyof typeof eventHandlers];
   if (eventHandler) {
     console.log(`✅ onFormEvent('${event.name}')`, event.data);
-    await eventHandler(event);
+    eventHandler(event);
   } else {
     console.groupCollapsed(`⚠️ Unhandled - onFormEvent('${event.name}')`);
     console.log(event.data);
@@ -15,46 +15,48 @@ export const onFormEvent = async (event: Core.FormEvent) => {
 };
 
 const SHARE_URLS: Record<string, (url: string) => string> = {
-  twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out GolemUI Pro!')}&url=${encodeURIComponent(url)}`,
+  twitter: (url) =>
+    `https://x.com/intent/tweet?text=${encodeURIComponent('Check out GolemUI Pro!')}&url=${encodeURIComponent(url)}`,
   facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-  reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out GolemUI Pro!')}`,
+  reddit: (url) =>
+    `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out GolemUI Pro!')}`,
 };
 
 const eventHandlers = {
-  async shareEvent(event: Core.FormEvent) {
+  shareEvent(event: Core.FormEvent) {
     const network = event.detail as string;
     const buildUrl = SHARE_URLS[network];
     if (buildUrl) {
       window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
     }
   },
-  async getSubregionsForSelect(event: Core.FormEvent) {
+  getSubregionsForSelect(event: Core.FormEvent) {
     getSubregions(event, 'selects.subregion');
   },
-  async getCountriesForSelect(event: Core.FormEvent) {
+  getCountriesForSelect(event: Core.FormEvent) {
     const subregion = event.data['selects'].subregion as string;
     getCountries(event, subregion, 'selects.country');
   },
-  async getSubregionsForRadio(event: Core.FormEvent) {
+  getSubregionsForRadio(event: Core.FormEvent) {
     getSubregions(event, 'radiogroups.subregion');
   },
-  async getCountriesForRadio(event: Core.FormEvent) {
+  getCountriesForRadio(event: Core.FormEvent) {
     const subregion = event.data['radiogroups'].subregion as string;
     getCountries(event, subregion, 'radiogroups.country');
   },
-  async searchProductForDropdown(event: Core.FormEvent) {
+  searchProductForDropdown(event: Core.FormEvent) {
     getProducts(event, event.detail, 'dropdowns.searchAsYouType');
   },
-  async getFromAirports(event: Core.FormEvent) {
+  getFromAirports(event: Core.FormEvent) {
     getAirports(event, event.detail, 'from');
   },
-  async getToAirports(event: Core.FormEvent) {
+  getToAirports(event: Core.FormEvent) {
     getAirports(event, event.detail, 'to');
   },
-  async loadCars(event: Core.FormEvent) {
+  loadCars(event: Core.FormEvent) {
     getCars(event, '', 'car');
   },
-  async filterCars(event: Core.FormEvent) {
+  filterCars(event: Core.FormEvent) {
     getCars(event, (event.detail as string) ?? '', 'car');
   },
   async changeLanguage(event: Core.FormEvent) {
@@ -63,14 +65,14 @@ const eventHandlers = {
       await i18next.changeLanguage(lang);
     }
   },
-  async evClick(event: Core.FormEvent) {
+  evClick(event: Core.FormEvent) {
     const time = new Date().toLocaleTimeString();
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: { path: 'evClickResult', prop: 'hint', value: `Clicked at ${time}.` },
     });
   },
-  async evChange(event: Core.FormEvent) {
+  evChange(event: Core.FormEvent) {
     const text = String((event.data as any).evSource ?? '');
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
@@ -81,7 +83,7 @@ const eventHandlers = {
       },
     });
   },
-  async evLoadColors(event: Core.FormEvent) {
+  evLoadColors(event: Core.FormEvent) {
     setTimeout(() => {
       event.callback({
         type: 'OVERRIDE_WIDGET_PROP',
@@ -89,17 +91,15 @@ const eventHandlers = {
       });
     }, 250);
   },
-  async evFilterColors(event: Core.FormEvent) {
+  evFilterColors(event: Core.FormEvent) {
     const q = String(event.detail ?? '').toLowerCase();
-    const filtered = q
-      ? ALL_COLORS.filter((c) => c.label.toLowerCase().includes(q))
-      : ALL_COLORS;
+    const filtered = q ? ALL_COLORS.filter((c) => c.label.toLowerCase().includes(q)) : ALL_COLORS;
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: { path: 'evColorPick', prop: 'items', value: filtered },
     });
   },
-  async evBlur(event: Core.FormEvent) {
+  evBlur(event: Core.FormEvent) {
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: {
@@ -109,7 +109,7 @@ const eventHandlers = {
       },
     });
   },
-  async submit(event: Core.FormEvent) {
+  submit(event: Core.FormEvent) {
     const email = (event.data as any).evEmail;
     if (email !== undefined) {
       event.callback({
@@ -121,6 +121,17 @@ const eventHandlers = {
         },
       });
     }
+  },
+  send(event: Core.FormEvent) {
+    const name = String((event.data as any).userName ?? '');
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { path: 'userName', prop: 'hint', value: `Submitted as "${name}".` },
+    });
+    event.callback({
+      type: 'OVERRIDE_WIDGET_PROP',
+      payload: { uid: 'send-result', prop: 'text', value: `Form submitted! Hello, ${name}.` },
+    });
   },
 };
 
@@ -147,9 +158,7 @@ const ALL_CARS = [
 function getCars(event: Core.FormEvent, filter: string, path: Core.DotPath) {
   setTimeout(() => {
     const q = filter.toLowerCase();
-    const filtered = q
-      ? ALL_CARS.filter((c) => c.label.toLowerCase().includes(q))
-      : ALL_CARS;
+    const filtered = q ? ALL_CARS.filter((c) => c.label.toLowerCase().includes(q)) : ALL_CARS;
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: { path, prop: 'items', value: filtered },

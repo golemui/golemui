@@ -18,3 +18,4 @@ export * from './tests';
 export * from './tiny';
 export * from './translations';
 export * from './users';
+export * from './modular.dx';

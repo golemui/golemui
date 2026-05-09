@@ -1,10 +1,10 @@
-import * as Core from '@golemui/core';
+import { golemForm } from '@golemui/gui-shared';
 import { Example } from './types';
 
 const data = { userName: 'Grace', isVip: false };
 
 const getFormDefinition = () =>
-  Core.defineForm({
+  golemForm().create({
     states: {
       vip: '$form.isVip === true',
     },
@@ -14,6 +14,10 @@ const getFormDefinition = () =>
         kind: 'input',
         type: 'textinput',
         path: 'userName',
+        label: 'User Name',
+        props: {
+          hint: 'Your user name',
+        },
         validator: {
           type: 'string',
           required: true,
@@ -62,6 +66,15 @@ const getFormDefinition = () =>
         disabled: { when: '$formIsInvalid' },
         on: {
           click: 'send',
+        },
+      },
+      {
+        uid: 'send-result',
+        kind: 'display',
+        type: 'alert',
+        props: {
+          text: 'Press Send to submit.',
+          level: 'info',
         },
       },
     ],

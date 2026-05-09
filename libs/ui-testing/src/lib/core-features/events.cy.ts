@@ -240,5 +240,68 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@formEventHandler').should('have.been.called');
       cy.get('[data-cy="regionSelect_select"] option').should('have.length', 4);
     });
+
+    it('Should override widget props by uid on button click', () => {
+      const formEventHandler = cy.stub().as('formEventHandler');
+      formEventHandler.callsFake((event: Core.FormEvent) => {
+        if (event.name === 'updateAlerts') {
+          if (event.callback) {
+            event.callback({
+              type: 'OVERRIDE_WIDGET_PROP',
+              payload: { uid: 'alertFirst', prop: 'text', value: 'First alert updated' },
+            });
+            event.callback({
+              type: 'OVERRIDE_WIDGET_PROP',
+              payload: { uid: 'alertSecond', prop: 'text', value: 'Second alert updated' },
+            });
+          }
+        }
+      });
+
+      mountFn({
+        formDef: Core.defineForm({
+          form: [
+            {
+              uid: 'alertFirst',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: 'First alert default text',
+                level: 'info',
+              },
+            },
+            {
+              uid: 'alertSecond',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: 'Second alert default text',
+                level: 'info',
+              },
+            },
+            {
+              uid: 'updateAlertsButton',
+              kind: 'action',
+              type: 'button',
+              label: 'Update Alerts',
+              on: {
+                click: 'updateAlerts',
+              },
+            },
+          ],
+        }),
+        formEvent: formEventHandler,
+      });
+
+      cy.get('[id="alertFirst"] [role="alert"]').should('contain.text', 'First alert default text');
+      cy.get('[id="alertSecond"] [role="alert"]').should('contain.text', 'Second alert default text');
+
+      cy.get('[data-cy="updateAlertsButton_button"]').click();
+
+      cy.get('@formEventHandler').should('have.been.called');
+      cy.get('[id="alertFirst"] [role="alert"]').should('contain.text', 'First alert updated');
+      cy.get('[id="alertSecond"] [role="alert"]').should('contain.text', 'Second alert updated');
+    });
   });
 };
+
