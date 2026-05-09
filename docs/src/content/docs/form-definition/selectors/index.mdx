@@ -33,12 +33,13 @@ Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `for
     ```tsx
     import * as React from '@golemui/gui-react';
 
-    <React.FormComponent
+    <GuiForm
       formDef={formDef}
       formSelectors={formSelectors}
       data={{}}
     />;
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -61,6 +62,7 @@ Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `for
       protected formData = {};
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -87,6 +89,7 @@ Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `for
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

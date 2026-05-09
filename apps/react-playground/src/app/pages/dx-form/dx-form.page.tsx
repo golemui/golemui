@@ -1,5 +1,5 @@
 import * as AppsShared from '@golemui/apps-shared';
-import { FormComponent } from '@golemui/gui-react';
+import { GuiForm } from '@golemui/gui-react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
@@ -29,7 +29,7 @@ const ks = AppsShared.buildKitchenSinkDx({
 export function DxFormPage() {
   return (
     <div>
-      <FormComponent
+      <GuiForm
         formDef={ks.formDef}
         data={ks.data}
         formSelectors={ks.formSelectors}

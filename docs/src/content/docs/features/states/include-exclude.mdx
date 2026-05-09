@@ -44,7 +44,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <React.GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -52,6 +52,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -86,6 +87,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -124,6 +126,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -138,9 +141,16 @@ The state lives at the form root under `"states"`; the widget carries `"include"
     "hasDiscount": "$form.hasDiscountCode === true"
   },
   "form": [
-    { "kind": "input", "type": "checkbox",  "path": "hasDiscountCode", "label": "I have a discount code" },
     {
-      "kind": "input", "type": "textinput", "path": "discountCode",
+      "kind": "input",
+      "type": "checkbox",
+      "path": "hasDiscountCode",
+      "label": "I have a discount code"
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "discountCode",
       "label": "Discount code",
       "include": { "in": ["hasDiscount"] }
     }
@@ -158,7 +168,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <React.GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -166,6 +176,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -189,6 +200,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       protected widgetLoaders = Angular.widgetLoaders;
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -216,6 +228,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -268,7 +281,8 @@ gui.displays.alert('signin-hint', {
 
 ```json
 {
-  "kind": "display", "type": "alert",
+  "kind": "display",
+  "type": "alert",
   "props": { "text": "Already have an account? Sign in." },
   "exclude": { "from": ["hasAccount"] }
 }

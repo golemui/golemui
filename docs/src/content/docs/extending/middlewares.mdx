@@ -27,21 +27,23 @@ Suppose you want to know which languages your users actually pick. GolemUI dispa
 import * as Core from '@golemui/core';
 import { analytics } from './analytics'; // your analytics SDK
 
-export const languageAnalyticsMiddleware: Core.Middleware<Core.State, Core.Action> =
-  (store) => (next) => (action) => {
-    if (action.type !== 'SET_LANGUAGE') {
-      return next(action);
-    }
+export const languageAnalyticsMiddleware: Core.Middleware<
+  Core.State,
+  Core.Action
+> = (store) => (next) => (action) => {
+  if (action.type !== 'SET_LANGUAGE') {
+    return next(action);
+  }
 
-    const from = store.getState().lang;
-    const result = next(action);
-    const to = action.payload.lang;
+  const from = store.getState().lang;
+  const result = next(action);
+  const to = action.payload.lang;
 
-    if (from !== to) {
-      analytics.track('language_changed', { from, to });
-    }
-    return result;
-  };
+  if (from !== to) {
+    analytics.track('language_changed', { from, to });
+  }
+  return result;
+};
 ```
 
 Two things worth pointing out:
@@ -56,7 +58,7 @@ import { languageAnalyticsMiddleware } from './middlewares/language-analytics';
 
 const middlewares = [languageAnalyticsMiddleware];
 
-// <FormComponent ... middlewares={middlewares} />
+// <GuiForm ... middlewares={middlewares} />
 ```
 
 That's all — the next time the user switches the language dropdown your analytics dashboard will start logging which languages get picked, with no changes to the form definition itself.

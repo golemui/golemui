@@ -5,9 +5,9 @@ sidebar:
   order: 3
 ---
 
-import Demo from '../../../../src/components/landing/Demo.astro';
 import DslTabs from '../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
+import Demo from '../../../../src/components/landing/Demo.astro';
 
 Validators provide contextual error messages on input widgets. Each validator validates a particular shape of data — string, number, boolean, array — and supports a set of rules tailored to that shape. You can also create [custom validators](/extending/validators/) for application-specific rules.
 
@@ -43,7 +43,9 @@ gui.inputs.textInput('user.password', {
 
 ```json
 {
-  "kind": "input", "type": "textinput", "path": "user.password",
+  "kind": "input",
+  "type": "textinput",
+  "path": "user.password",
   "validator": {
     "type": "string",
     "required": true,
@@ -86,7 +88,9 @@ gui.inputs.textInput('user.password', {
 
 ```json
 {
-  "kind": "input", "type": "textinput", "path": "user.password",
+  "kind": "input",
+  "type": "textinput",
+  "path": "user.password",
   "validator": {
     "type": "string",
     "required": true,
@@ -136,7 +140,9 @@ gui.inputs.textInput('user.password', {
 
 ```json
 {
-  "kind": "input", "type": "textinput", "path": "user.password",
+  "kind": "input",
+  "type": "textinput",
+  "path": "user.password",
   "validator": {
     "type": "string",
     "required": true,
@@ -163,47 +169,47 @@ Each validator type supports a specific set of rules and message keys.
 
 ### String validator
 
-| Property       | Message key | Description                                                                                                    |
-| -------------- | ----------- | -------------------------------------------------------------------------------------------------------------- |
-| _(type check)_ | `invalid`   | Value is not a string                                                                                          |
-| `required`     | `required`  | Empty string when `required: true`                                                                             |
-| `minLength`    | `minLength` | String length is below the minimum                                                                             |
-| `maxLength`    | `maxLength` | String length exceeds the maximum                                                                              |
-| `pattern`      | `pattern`   | String does not match the regex pattern                                                                        |
+| Property       | Message key | Description                                                                                                                    |
+| -------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| _(type check)_ | `invalid`   | Value is not a string                                                                                                          |
+| `required`     | `required`  | Empty string when `required: true`                                                                                             |
+| `minLength`    | `minLength` | String length is below the minimum                                                                                             |
+| `maxLength`    | `maxLength` | String length exceeds the maximum                                                                                              |
+| `pattern`      | `pattern`   | String does not match the regex pattern                                                                                        |
 | `format`       | `format`    | String does not match the format (`email`, `url`, `uuid`, `hostname`, `ipv4`, `ipv6`, `date`, `time`, `date-time`, `duration`) |
-| `enum`         | `enum`      | Value is not one of the allowed values                                                                         |
-| `const`        | `const`     | Value does not match the exact value                                                                           |
+| `enum`         | `enum`      | Value is not one of the allowed values                                                                                         |
+| `const`        | `const`     | Value does not match the exact value                                                                                           |
 
 ### Number validator
 
-| Property           | Message key        | Description                                            |
-| ------------------ | ------------------ | ------------------------------------------------------ |
-| _(type check)_     | `invalid`          | Value is not a number                                  |
-| `required`         | `required`         | Empty string when `required: true`                     |
-| `minimum`          | `minimum`          | Value is below the minimum                             |
-| `maximum`          | `maximum`          | Value exceeds the maximum                              |
-| `exclusiveMinimum` | `exclusiveMinimum` | Value is not greater than the exclusive minimum       |
-| `exclusiveMaximum` | `exclusiveMaximum` | Value is not less than the exclusive maximum          |
-| `multipleOf`       | `multipleOf`       | Value is not a multiple of the specified number        |
-| `enum`             | `enum`             | Value is not one of the allowed values                 |
-| `const`            | `const`            | Value does not match the exact value                   |
+| Property           | Message key        | Description                                     |
+| ------------------ | ------------------ | ----------------------------------------------- |
+| _(type check)_     | `invalid`          | Value is not a number                           |
+| `required`         | `required`         | Empty string when `required: true`              |
+| `minimum`          | `minimum`          | Value is below the minimum                      |
+| `maximum`          | `maximum`          | Value exceeds the maximum                       |
+| `exclusiveMinimum` | `exclusiveMinimum` | Value is not greater than the exclusive minimum |
+| `exclusiveMaximum` | `exclusiveMaximum` | Value is not less than the exclusive maximum    |
+| `multipleOf`       | `multipleOf`       | Value is not a multiple of the specified number |
+| `enum`             | `enum`             | Value is not one of the allowed values          |
+| `const`            | `const`            | Value does not match the exact value            |
 
 ### Boolean validator
 
-| Property       | Message key | Description                                       |
-| -------------- | ----------- | ------------------------------------------------- |
-| _(type check)_ | `invalid`   | Value is not a boolean                            |
-| `required`     | `required`  | Empty string when `required: true`                |
-| `const`        | `const`     | Value does not match the expected boolean value   |
+| Property       | Message key | Description                                     |
+| -------------- | ----------- | ----------------------------------------------- |
+| _(type check)_ | `invalid`   | Value is not a boolean                          |
+| `required`     | `required`  | Empty string when `required: true`              |
+| `const`        | `const`     | Value does not match the expected boolean value |
 
 ### Array validator
 
-| Property       | Message key | Description                                  |
-| -------------- | ----------- | -------------------------------------------- |
-| _(type check)_ | `invalid`   | Value is not an array                        |
-| `required`     | `required`  | Array is empty when `required: true`         |
-| `minItems`     | `minItems`  | Array has fewer items than the minimum       |
-| `maxItems`     | `maxItems`  | Array has more items than the maximum        |
+| Property       | Message key | Description                            |
+| -------------- | ----------- | -------------------------------------- |
+| _(type check)_ | `invalid`   | Value is not an array                  |
+| `required`     | `required`  | Array is empty when `required: true`   |
+| `minItems`     | `minItems`  | Array has fewer items than the minimum |
+| `maxItems`     | `maxItems`  | Array has more items than the maximum  |
 
 ## Configuring when validation triggers
 
@@ -220,12 +226,12 @@ type ValidateOn =
 
 When not set, the default behaviour is `'eager'`.
 
-| Mode       | Triggers when                                                |
-| ---------- | ------------------------------------------------------------ |
-| `'change'` | The user changes the field value                             |
-| `'blur'`   | The user leaves the field                                    |
-| `'submit'` | A `submit` event is emitted (all fields are touched first)   |
-| `'eager'`  | Any of the above happens (default)                           |
+| Mode       | Triggers when                                              |
+| ---------- | ---------------------------------------------------------- |
+| `'change'` | The user changes the field value                           |
+| `'blur'`   | The user leaves the field                                  |
+| `'submit'` | A `submit` event is emitted (all fields are touched first) |
+| `'eager'`  | Any of the above happens (default)                         |
 
 Where `validateOn` lives on the form component depends on the path:
 
@@ -262,7 +268,7 @@ Where `validateOn` lives on the form component depends on the path:
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -270,6 +276,7 @@ Where `validateOn` lives on the form component depends on the path:
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -310,6 +317,7 @@ Where `validateOn` lives on the form component depends on the path:
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -354,6 +362,7 @@ Where `validateOn` lives on the form component depends on the path:
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -370,7 +379,7 @@ Where `validateOn` lives on the form component depends on the path:
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -379,6 +388,7 @@ Where `validateOn` lives on the form component depends on the path:
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -403,6 +413,7 @@ Where `validateOn` lives on the form component depends on the path:
       protected widgetLoaders = Angular.widgetLoaders;
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -431,6 +442,7 @@ Where `validateOn` lives on the form component depends on the path:
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

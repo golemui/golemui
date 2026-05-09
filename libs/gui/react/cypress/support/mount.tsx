@@ -2,7 +2,7 @@ import * as Core from '@golemui/core';
 import { MountOptions } from '@golemui/ui-testing';
 import { mount } from 'cypress/react';
 import { ComponentType } from 'react';
-import { FormComponent } from '../../src/lib/components/Form';
+import { GuiForm } from '../../src/lib/components/Form';
 
 export const mountFramework = (options: MountOptions) => {
   const widgetLoaders: Core.WidgetLoaders<ComponentType<Core.WithWidget>> =
@@ -19,7 +19,7 @@ export const mountFramework = (options: MountOptions) => {
   const handleFormHealth = options.formHealth ? options.formHealth : cy.spy().as('formHealth');
 
   mount(
-    <FormComponent
+    <GuiForm
       formDef={options.formDef}
       data={options.data}
       meta={options.meta}

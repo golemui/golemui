@@ -51,7 +51,7 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -59,6 +59,7 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -88,6 +89,7 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -121,6 +123,7 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -131,9 +134,7 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
 
 ```json
 {
-  "form": [
-    { "kind": "input", "type": "markdown", "path": "content" }
-  ]
+  "form": [{ "kind": "input", "type": "markdown", "path": "content" }]
 }
 ```
 
@@ -150,7 +151,7 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -159,6 +160,7 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -187,6 +189,7 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -219,6 +222,7 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -227,9 +231,9 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
 
 ## Available dependency keys
 
-| Key       | Used by                                                                                                                  | Shape                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
-| `markdown` | [Markdown](/widgets-reference/input-fields/markdown/), [Markdown Text](/widgets-reference/display-fields/markdown-text/) | `{ parse: (md: string) => string }`    |
+| Key        | Used by                                                                                                                  | Shape                               |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| `markdown` | [Markdown](/widgets-reference/input-fields/markdown/), [Markdown Text](/widgets-reference/display-fields/markdown-text/) | `{ parse: (md: string) => string }` |
 
 ## See also
 

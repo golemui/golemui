@@ -35,15 +35,15 @@ This import is entirely optional. If you skip it, you enter **headless mode** an
 
 The `index.css` file bundles everything you need in a single import:
 
-| What you get           | Description                                                                   |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| **Design tokens**      | Colors, spacing, typography, border radii, and shadows as CSS variables       |
-| **Responsive scaling** | Spacing and font sizes automatically adjust on smaller screens                |
-| **RTL support**        | Right-to-left layout for Arabic, Hebrew, and similar languages                |
-| **Form layout**        | Base form container that adapts to its available width                        |
-| **Input styling**      | Styled inputs, labels, hints, and shared field patterns                       |
-| **Widget styles**      | Visual styles for every widget (button, textinput, calendar, toggle, etc.)    |
-| **Validation styles**  | Error message formatting and invalid-state indicators                         |
+| What you get           | Description                                                                |
+| ---------------------- | -------------------------------------------------------------------------- |
+| **Design tokens**      | Colors, spacing, typography, border radii, and shadows as CSS variables    |
+| **Responsive scaling** | Spacing and font sizes automatically adjust on smaller screens             |
+| **RTL support**        | Right-to-left layout for Arabic, Hebrew, and similar languages             |
+| **Form layout**        | Base form container that adapts to its available width                     |
+| **Input styling**      | Styled inputs, labels, hints, and shared field patterns                    |
+| **Widget styles**      | Visual styles for every widget (button, textinput, calendar, toggle, etc.) |
+| **Validation styles**  | Error message formatting and invalid-state indicators                      |
 
 ## Dark and light mode
 
@@ -130,7 +130,7 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
 
     export function FormPage() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={formData}
           formConfig={formConfig}
@@ -139,6 +139,7 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -177,6 +178,7 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

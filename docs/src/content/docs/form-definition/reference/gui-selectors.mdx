@@ -43,17 +43,21 @@ const formSelectors = [
 
 Scope methods are immutable: each one returns a new chain. Combine them in any order — the engine collects all conditions and matches a widget when **every** condition holds.
 
-| Method                    | Matches                                                                |
-| ------------------------- | ---------------------------------------------------------------------- |
-| `tag(name)`               | Widgets carrying `name` in their `tags` array.                         |
-| `tagsAnd(['a', 'b', …])`  | Widgets carrying **all** of the given tags.                            |
-| `tagsOr(['a', 'b', …])`   | Widgets carrying **any** of the given tags.                            |
-| `state(name)`             | Only fire while the named state is active. Per-state override path.    |
+| Method                   | Matches                                                             |
+| ------------------------ | ------------------------------------------------------------------- |
+| `tag(name)`              | Widgets carrying `name` in their `tags` array.                      |
+| `tagsAnd(['a', 'b', …])` | Widgets carrying **all** of the given tags.                         |
+| `tagsOr(['a', 'b', …])`  | Widgets carrying **any** of the given tags.                         |
+| `state(name)`            | Only fire while the named state is active. Per-state override path. |
 
 ```ts
 gui.selectors.tag('identity').inputs({ override: { autocomplete: 'off' } });
-gui.selectors.tagsAnd(['compact', 'identity']).textInputs({ override: { hint: 'Sign-in field' } });
-gui.selectors.tagsOr(['danger', 'destructive']).actions({ override: { icon: 'warning' } });
+gui.selectors
+  .tagsAnd(['compact', 'identity'])
+  .textInputs({ override: { hint: 'Sign-in field' } });
+gui.selectors
+  .tagsOr(['danger', 'destructive'])
+  .actions({ override: { icon: 'warning' } });
 gui.selectors.state('submitting').actions({ override: { disabled: true } });
 ```
 
@@ -93,17 +97,17 @@ The umbrella `inputs(...)` matches every input-kind itemType (textInputs, dropdo
 
 ### Actions, displays, layouts
 
-| Leaf method                | Matches                                                                          |
-| -------------------------- | -------------------------------------------------------------------------------- |
-| `actions(config)`          | **Umbrella** — every action kind (`button`, `submitButton`, custom actions).      |
-| `displays(config)`         | **Umbrella** — every display kind (`alert`, `display(callback)`, custom displays). |
-| `alerts(config)`           | Only `gui.displays.alert`.                                                       |
-| `layouts(config)`          | **Umbrella** — every layout kind (`flex`, `grid`, `tabs`, `accordion`, custom).   |
-| `tabs(config)`             | Only `gui.layouts.tabs`.                                                         |
-| `accordions(config)`       | Only `gui.layouts.accordion`.                                                    |
-| `customActions(config)`    | Every `gui.actions.custom(...)`.                                                 |
-| `customDisplays(config)`   | Every `gui.displays.custom(...)`.                                                |
-| `customLayouts(config)`    | Every `gui.layouts.custom(...)`.                                                 |
+| Leaf method              | Matches                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `actions(config)`        | **Umbrella** — every action kind (`button`, `submitButton`, custom actions).       |
+| `displays(config)`       | **Umbrella** — every display kind (`alert`, `display(callback)`, custom displays). |
+| `alerts(config)`         | Only `gui.displays.alert`.                                                         |
+| `layouts(config)`        | **Umbrella** — every layout kind (`flex`, `grid`, `tabs`, `accordion`, custom).    |
+| `tabs(config)`           | Only `gui.layouts.tabs`.                                                           |
+| `accordions(config)`     | Only `gui.layouts.accordion`.                                                      |
+| `customActions(config)`  | Every `gui.actions.custom(...)`.                                                   |
+| `customDisplays(config)` | Every `gui.displays.custom(...)`.                                                  |
+| `customLayouts(config)`  | Every `gui.layouts.custom(...)`.                                                   |
 
 ## Uid-leaf methods (terminal)
 
@@ -111,44 +115,48 @@ Each leaf has a `<leaf>ByUid` variant that targets a **single** widget by its `u
 
 ### Inputs
 
-| Leaf method                          | Matches                                                                  |
-| ------------------------------------ | ------------------------------------------------------------------------ |
-| `inputByUid(uid, config)`            | A single input by `uid` — works for `textInput` / `numberInput` / `booleanInput`. |
-| `selectByUid(uid, config)`           | A single `gui.inputs.select`.                                            |
-| `dropdownByUid(uid, config)`         | A single `gui.inputs.dropdown`.                                          |
-| `radiogroupByUid(uid, config)`       | A single `gui.inputs.radiogroup`.                                        |
-| `checkboxByUid(uid, config)`         | A single `gui.inputs.checkbox`.                                          |
-| `textareaByUid(uid, config)`         | A single `gui.inputs.textarea`.                                          |
-| `passwordByUid(uid, config)`         | A single `gui.inputs.password`.                                          |
-| `currencyByUid(uid, config)`         | A single `gui.inputs.currency`.                                          |
-| `markdownByUid(uid, config)`         | A single `gui.inputs.markdown`.                                          |
-| `listByUid(uid, config)`             | A single `gui.inputs.list`.                                              |
-| `calendarByUid(uid, config)`         | A single `gui.inputs.calendar`.                                          |
-| `dateInputByUid(uid, config)`        | A single `gui.inputs.dateInput`.                                         |
-| `datePickerByUid(uid, config)`       | A single `gui.inputs.datePicker`.                                        |
-| `rangeCalendarByUid(uid, config)`    | A single `gui.inputs.rangeCalendar`.                                     |
-| `rangeDateInputByUid(uid, config)`   | A single `gui.inputs.rangeDateInput`.                                    |
-| `rangeDatePickerByUid(uid, config)`  | A single `gui.inputs.rangeDatePicker`.                                   |
-| `repeaterByUid(uid, config)`         | A single `gui.inputs.repeater`.                                          |
-| `customInputByUid(uid, config)`      | A single `gui.inputs.custom(...)` instance.                              |
+| Leaf method                         | Matches                                                                           |
+| ----------------------------------- | --------------------------------------------------------------------------------- |
+| `inputByUid(uid, config)`           | A single input by `uid` — works for `textInput` / `numberInput` / `booleanInput`. |
+| `selectByUid(uid, config)`          | A single `gui.inputs.select`.                                                     |
+| `dropdownByUid(uid, config)`        | A single `gui.inputs.dropdown`.                                                   |
+| `radiogroupByUid(uid, config)`      | A single `gui.inputs.radiogroup`.                                                 |
+| `checkboxByUid(uid, config)`        | A single `gui.inputs.checkbox`.                                                   |
+| `textareaByUid(uid, config)`        | A single `gui.inputs.textarea`.                                                   |
+| `passwordByUid(uid, config)`        | A single `gui.inputs.password`.                                                   |
+| `currencyByUid(uid, config)`        | A single `gui.inputs.currency`.                                                   |
+| `markdownByUid(uid, config)`        | A single `gui.inputs.markdown`.                                                   |
+| `listByUid(uid, config)`            | A single `gui.inputs.list`.                                                       |
+| `calendarByUid(uid, config)`        | A single `gui.inputs.calendar`.                                                   |
+| `dateInputByUid(uid, config)`       | A single `gui.inputs.dateInput`.                                                  |
+| `datePickerByUid(uid, config)`      | A single `gui.inputs.datePicker`.                                                 |
+| `rangeCalendarByUid(uid, config)`   | A single `gui.inputs.rangeCalendar`.                                              |
+| `rangeDateInputByUid(uid, config)`  | A single `gui.inputs.rangeDateInput`.                                             |
+| `rangeDatePickerByUid(uid, config)` | A single `gui.inputs.rangeDatePicker`.                                            |
+| `repeaterByUid(uid, config)`        | A single `gui.inputs.repeater`.                                                   |
+| `customInputByUid(uid, config)`     | A single `gui.inputs.custom(...)` instance.                                       |
 
 ### Actions, displays, layouts
 
-| Leaf method                          | Matches                                            |
-| ------------------------------------ | -------------------------------------------------- |
-| `actionByUid(uid, config)`           | A single action (`button`, `submitButton`, custom).|
-| `customActionByUid(uid, config)`     | A single `gui.actions.custom(...)`.                |
-| `displayByUid(uid, config)`          | A single display (any kind).                       |
-| `alertByUid(uid, config)`            | A single `gui.displays.alert`.                     |
-| `customDisplayByUid(uid, config)`    | A single `gui.displays.custom(...)`.               |
-| `layoutByUid(uid, config)`           | A single layout (any kind).                        |
-| `tabsByUid(uid, config)`             | A single `gui.layouts.tabs`.                       |
-| `accordionByUid(uid, config)`        | A single `gui.layouts.accordion`.                  |
-| `customLayoutByUid(uid, config)`     | A single `gui.layouts.custom(...)`.                |
+| Leaf method                       | Matches                                             |
+| --------------------------------- | --------------------------------------------------- |
+| `actionByUid(uid, config)`        | A single action (`button`, `submitButton`, custom). |
+| `customActionByUid(uid, config)`  | A single `gui.actions.custom(...)`.                 |
+| `displayByUid(uid, config)`       | A single display (any kind).                        |
+| `alertByUid(uid, config)`         | A single `gui.displays.alert`.                      |
+| `customDisplayByUid(uid, config)` | A single `gui.displays.custom(...)`.                |
+| `layoutByUid(uid, config)`        | A single layout (any kind).                         |
+| `tabsByUid(uid, config)`          | A single `gui.layouts.tabs`.                        |
+| `accordionByUid(uid, config)`     | A single `gui.layouts.accordion`.                   |
+| `customLayoutByUid(uid, config)`  | A single `gui.layouts.custom(...)`.                 |
 
 ```ts
-gui.selectors.inputByUid('email-field', { override: { hint: 'We never share this.' } });
-gui.selectors.tag('compact').dropdownByUid('country', { override: { height: 120 } });
+gui.selectors.inputByUid('email-field', {
+  override: { hint: 'We never share this.' },
+});
+gui.selectors
+  .tag('compact')
+  .dropdownByUid('country', { override: { height: 120 } });
 ```
 
 `byUid` selectors win over broader selectors in [precedence](/form-definition/selectors/precedence/).
@@ -194,7 +202,7 @@ const formSelectors = [
   gui.selectors.tag('identity').inputs({ override: { autocomplete: 'off' } }),
 ];
 
-<React.FormComponent
+<GuiForm
   formDef={formDef}
   formSelectors={formSelectors}
   data={{}}

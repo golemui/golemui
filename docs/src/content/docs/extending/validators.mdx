@@ -48,6 +48,7 @@ In the Programmatic API, register custom validators inside `formConfig.customVal
       customValidators: { allowedNames },
     };
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -59,6 +60,7 @@ In the Programmatic API, register custom validators inside `formConfig.customVal
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -70,6 +72,7 @@ In the Programmatic API, register custom validators inside `formConfig.customVal
       };
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -85,11 +88,12 @@ In the JSON path, custom validators live on the **standalone `customValidators` 
     import formDef from './my-form.json';
 
     // On the form component:
-    //   <FormComponent
+    //   <GuiForm
     //     formDef={formDef}
     //     customValidators={{ allowedNames }}
     //   />
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -102,6 +106,7 @@ In the JSON path, custom validators live on the **standalone `customValidators` 
     }
     // template: <gui-form [formDef]="formDef" [customValidators]="customValidators"></gui-form>
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -114,6 +119,7 @@ In the JSON path, custom validators live on the **standalone `customValidators` 
       // render: html`<gui-form .formDef=${this.formDef} .customValidators=${this.customValidators}></gui-form>`
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -140,7 +146,9 @@ gui.inputs.textInput('user.name', {
 
 ```json
 {
-  "kind": "input", "type": "textinput", "path": "user.name",
+  "kind": "input",
+  "type": "textinput",
+  "path": "user.name",
   "validator": { "type": "custom", "allowedNames": ["John", "Jane"] }
 }
 ```

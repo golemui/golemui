@@ -1,6 +1,6 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import { FormComponent } from '@golemui/gui-react';
+import { GuiForm } from '@golemui/gui-react';
 import { Dependencies } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import { ReactItemRenderer } from '@golemui/react';
@@ -62,7 +62,7 @@ export function FormPage() {
     <div>
       {languages.length > 0 ? <LanguagePicker /> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
-      <FormComponent
+      <GuiForm
         formDef={formDef}
         data={formData}
         meta={formMeta}

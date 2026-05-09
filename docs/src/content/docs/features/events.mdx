@@ -5,9 +5,9 @@ sidebar:
   order: 5
 ---
 
+import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
-import { Aside } from '@astrojs/starlight/components';
 
 Widgets emit named events through the `formEvent` callback you pass to `<gui-form>`. The form definition wires the widget event (a click, a value change, a load) to a name; your application matches on that name and reacts.
 
@@ -37,12 +37,16 @@ const formDef = [
 {
   "form": [
     {
-      "kind": "input", "type": "dropdown", "path": "country",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "country",
       "items": ["US", "CA", "MX"],
       "on": { "change": "countryChanged" }
     },
     {
-      "kind": "action", "type": "button", "uid": "submit",
+      "kind": "action",
+      "type": "button",
+      "uid": "submit",
       "label": "Submit",
       "on": { "click": "submitForm" }
     }
@@ -86,7 +90,7 @@ const formDef = [
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -95,6 +99,7 @@ const formDef = [
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -134,6 +139,7 @@ const formDef = [
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -177,6 +183,7 @@ const formDef = [
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -203,7 +210,7 @@ const formDef = [
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -212,6 +219,7 @@ const formDef = [
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -248,6 +256,7 @@ const formDef = [
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -288,6 +297,7 @@ const formDef = [
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

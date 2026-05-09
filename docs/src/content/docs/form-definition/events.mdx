@@ -5,18 +5,18 @@ sidebar:
   order: 6
 ---
 
-import Demo from '../../../components/landing/Demo.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
+import Demo from '../../../components/landing/Demo.astro';
 
 Each widget kind exposes a small set of event hooks. Every event has a **string name** the form emits through `formEvent`; your application's event-handler map catches the name and reacts (or, in the demos below, dispatches an `OVERRIDE_WIDGET_PROP` to push feedback right back into the form).
 
-| Hook       | Available on                                                             |
-| ---------- | ------------------------------------------------------------------------ |
-| `onClick`  | `gui.actions.button`, `gui.actions.custom`                               |
-| `onChange` | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion`              |
-| `onLoad`   | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select`            |
-| `onFilter` | `gui.inputs.dropdown`                                                    |
-| `onBlur`   | `gui.inputs.*`                                                           |
+| Hook       | Available on                                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `onClick`  | `gui.actions.button`, `gui.actions.custom`                                                                                           |
+| `onChange` | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion`                                                                          |
+| `onLoad`   | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select`                                                                        |
+| `onFilter` | `gui.inputs.dropdown`                                                                                                                |
+| `onBlur`   | `gui.inputs.*`                                                                                                                       |
 | `submit`   | `gui.actions.submitButton` / `gui.actions.button({ onClick: 'submit' })` — triggers form-level validation first, then emits `submit` |
 
 Each value is a flat camelCase prop on the shortcut — `onClick: 'eventName'`, `onBlur: 'eventName'`, etc. The DX layer translates them all into the lower-level `on: { click | change | blur | … : 'name' }` block the engine consumes.
@@ -39,13 +39,14 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           formEvent={handleFormEvent}
         />
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -70,6 +71,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -98,6 +100,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -192,9 +195,9 @@ const formDef = [
 ];
 
 const ALL_COLORS = [
-  { value: 'red',    label: 'Red' },
-  { value: 'green',  label: 'Green' },
-  { value: 'blue',   label: 'Blue' },
+  { value: 'red', label: 'Red' },
+  { value: 'green', label: 'Green' },
+  { value: 'blue', label: 'Blue' },
   { value: 'yellow', label: 'Yellow' },
   { value: 'orange', label: 'Orange' },
   { value: 'purple', label: 'Purple' },
@@ -310,10 +313,10 @@ Try clicking submit while the email is empty or invalid — validation messages 
 
 There's one asymmetry worth knowing about. The handler shape differs between `onClick` and every other hook:
 
-| Hook                                         | What the handler receives                                    |
-| -------------------------------------------- | ------------------------------------------------------------ |
-| `onClick` (function form)                    | `event.data` — only the form data, no `callback` / `update`  |
-| `onChange`, `onLoad`, `onFilter`, `onBlur`   | The full wrapped `DxFormEvent` — `data`, `detail`, `callback`, `update` |
+| Hook                                       | What the handler receives                                               |
+| ------------------------------------------ | ----------------------------------------------------------------------- |
+| `onClick` (function form)                  | `event.data` — only the form data, no `callback` / `update`             |
+| `onChange`, `onLoad`, `onFilter`, `onBlur` | The full wrapped `DxFormEvent` — `data`, `detail`, `callback`, `update` |
 
 In the **string** form (`'evClick'`, `'evChange'`, …), this distinction doesn't matter — the engine routes the event name through `formEvent` to your application code, and the application-side handler always sees the full event regardless of which hook fired it. The asymmetry only shows up when you pass a **runtime function** directly:
 

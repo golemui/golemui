@@ -14,11 +14,11 @@ Item renderers are framework-specific functions or components that the form engi
 
 Each framework adapts the same `ItemRenderContext<T>` to its idiomatic shape:
 
-| Framework | Type                       | What the engine passes                                                                        |
-| --------- | -------------------------- | --------------------------------------------------------------------------------------------- |
-| React     | `ReactItemRenderer<T>`     | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.            |
-| Angular   | `AngularItemRenderer<T>`   | A `Type<ItemRenderContext<T>>` — the component declares a signal `input()` for each context field. |
-| Lit       | `LitItemRenderer<T>`       | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element. |
+| Framework | Type                     | What the engine passes                                                                              |
+| --------- | ------------------------ | --------------------------------------------------------------------------------------------------- |
+| React     | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                 |
+| Angular   | `AngularItemRenderer<T>` | A `Type<ItemRenderContext<T>>` — the component declares a signal `input()` for each context field.  |
+| Lit       | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element. |
 
 The shared context shape comes from `@golemui/core`:
 
@@ -63,6 +63,7 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
     ```
 
     Props are the full `ItemRenderContext<T>` — destructure whichever fields you need.
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -97,6 +98,7 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
     ```
 
     The component declares one signal input per context field; the engine binds each one when rendering an item. Read each value by calling the signal — `template().flag`, `selected()`, etc.
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -127,6 +129,7 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
     ```
 
     Lit renderers are **functions** — the engine invokes them with an `ItemRenderContext<T>` argument and inlines the returned template into the dropdown / list. A `LitElement` class with an `@property() item` field will not be picked up by the engine.
+
   </Fragment>
 </IntegrationTabs>
 
@@ -149,7 +152,9 @@ const formConfig = {
 
 const formDef = [
   gui.inputs.dropdown('country', {
-    items: [/* ... */],
+    items: [
+      /* ... */
+    ],
     itemRenderer: 'countryItemRenderer',
   }),
 ];
@@ -164,7 +169,9 @@ In the JSON path the renderer map is the **standalone `itemRenderers` prop** on 
 {
   "form": [
     {
-      "kind": "input", "type": "dropdown", "path": "country",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "country",
       "items": [],
       "itemRenderer": "countryItemRenderer"
     }
@@ -177,7 +184,7 @@ import { CountryItemRenderer } from './country-item-renderer';
 import formDef from './my-form.json';
 
 // On the form component:
-//   <FormComponent formDef={formDef} itemRenderers={{ countryItemRenderer: CountryItemRenderer }} />
+//   <GuiForm formDef={formDef} itemRenderers={{ countryItemRenderer: CountryItemRenderer }} />
 ```
 
   </Fragment>

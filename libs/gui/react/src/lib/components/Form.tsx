@@ -31,7 +31,7 @@ export interface ReactFormComponentProps {
   autocomplete?: string;
 }
 
-export const FormComponent = ({
+export const GuiForm = ({
   formDef,
   formSelectors,
   formConfig,

@@ -3,10 +3,9 @@ function App() {
   const validators: ValidatorFn<Validator> = initValidators();
   return (
     <>
-      <FormComponent
+      <GuiForm
         formDef={formDef}
         data={{}}
-        widgetLoaders={ GuiReact.widgetLoaders }
         validators={validators}
       />
     </>

@@ -5,9 +5,9 @@ sidebar:
   order: 0
 ---
 
+import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../../components/IntegrationTabs.astro';
-import { Aside } from '@astrojs/starlight/components';
 
 States are **named boolean expressions** evaluated against the live form data. They let you describe complex conditional behavior once and reuse it across many widgets — without scattering inline conditionals throughout your form definition.
 
@@ -32,7 +32,9 @@ const states = {
     "hasDiscount": "$form.hasDiscountCode === true",
     "isAdult": "$form.driverAge >= 18"
   },
-  "form": [ /* ... */ ]
+  "form": [
+    /* ... */
+  ]
 }
 ```
 
@@ -71,7 +73,7 @@ In the Programmatic API, states live inside `formConfig.states`. The form compon
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <React.GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -79,6 +81,7 @@ In the Programmatic API, states live inside `formConfig.states`. The form compon
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -115,6 +118,7 @@ In the Programmatic API, states live inside `formConfig.states`. The form compon
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -155,6 +159,7 @@ In the Programmatic API, states live inside `formConfig.states`. The form compon
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -170,10 +175,22 @@ In the JSON path, states are declared **inside the form payload itself** under t
     "isAdult": "$form.driverAge >= 18"
   },
   "form": [
-    { "kind": "input", "type": "checkbox", "path": "hasDiscountCode", "label": "I have a discount code" },
-    { "kind": "input", "type": "number",   "path": "driverAge",       "label": "Driver age" },
     {
-      "kind": "input", "type": "textinput", "path": "discountCode",
+      "kind": "input",
+      "type": "checkbox",
+      "path": "hasDiscountCode",
+      "label": "I have a discount code"
+    },
+    {
+      "kind": "input",
+      "type": "number",
+      "path": "driverAge",
+      "label": "Driver age"
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "discountCode",
       "label": "Discount code",
       "include": { "in": ["hasDiscount"] }
     }
@@ -191,14 +208,14 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <React.GuiForm
           formDef={formDef}
           data={{}}
-          customWidgetLoaders={React.widgetLoaders}
         />
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -222,6 +239,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       protected widgetLoaders = Angular.widgetLoaders;
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -249,6 +267,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

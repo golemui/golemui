@@ -49,7 +49,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -57,6 +57,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -96,6 +97,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -137,6 +139,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -149,7 +152,9 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
 {
   "form": [
     {
-      "kind": "input", "type": "dropdown", "path": "country",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "country",
       "items": [
         { "id": "US", "flag": "🇺🇸", "label": "United States" },
         { "id": "CA", "flag": "🇨🇦", "label": "Canada" }
@@ -171,7 +176,7 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -180,6 +185,7 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -206,6 +212,7 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
       protected itemRenderers = { countryItemRenderer: CountryItemRenderer };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -236,6 +243,7 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

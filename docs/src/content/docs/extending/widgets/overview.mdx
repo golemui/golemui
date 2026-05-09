@@ -4,10 +4,11 @@ description: Learn how to create your own widgets and plug them into the GolemUI
 sidebar:
   order: 0
 ---
-import Demo from '../../../../../src/components/landing/Demo.astro';
+
+import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
-import { Aside } from '@astrojs/starlight/components';
+import Demo from '../../../../../src/components/landing/Demo.astro';
 
 GolemUI ships with a rich set of built-in widgets, but real-world applications often need something tailor-made. Custom widgets let you plug your own widgets into the form engine while keeping all the benefits: data binding, validation, event handling, and state management.
 
@@ -15,12 +16,12 @@ GolemUI ships with a rich set of built-in widgets, but real-world applications o
 
 Every widget in GolemUI has a **kind** that determines its role:
 
-| Kind      | Purpose                                  | Data binding | Events                | Implementation guide                                           |
-| --------- | ---------------------------------------- | ------------ | --------------------- | -------------------------------------------------------------- |
-| `layout`  | Containers that arrange child widgets   | No           | `change`              | [Layout widget](/extending/widgets/layout-widget/)             |
-| `input`   | Controls that read and write form data  | Yes          | `change`, `filter`    | [Input widget](/extending/widgets/input-widget/)               |
-| `display` | Read-only presentational content        | No           | None                  | [Display widget](/extending/widgets/display-widget/)            |
-| `action`  | Buttons and triggers that fire events   | No           | `click`               | [Action widget](/extending/widgets/action-widget/)             |
+| Kind      | Purpose                                | Data binding | Events             | Implementation guide                                 |
+| --------- | -------------------------------------- | ------------ | ------------------ | ---------------------------------------------------- |
+| `layout`  | Containers that arrange child widgets  | No           | `change`           | [Layout widget](/extending/widgets/layout-widget/)   |
+| `input`   | Controls that read and write form data | Yes          | `change`, `filter` | [Input widget](/extending/widgets/input-widget/)     |
+| `display` | Read-only presentational content       | No           | None               | [Display widget](/extending/widgets/display-widget/) |
+| `action`  | Buttons and triggers that fire events  | No           | `click`            | [Action widget](/extending/widgets/action-widget/)   |
 
 To build custom widgets, GolemUI provides **Hooks** (React) and **Adapters** (Angular and Lit). These framework-specific helpers connect your widget to the form engine. Under the hood they interact with the **FormContext** — the central object that manages the widget registry, the reactive store, and the event stream. You don't touch the FormContext directly; the hooks and adapters handle it for you.
 
@@ -41,19 +42,23 @@ Here's the full form definition we're working toward:
 ```ts
 import { gui } from '@golemui/gui-shared';
 
-gui.layouts.custom('productCard', [
-  gui.displays.custom('productDescription', {
-    img: 'assets/product-image.png',
-    description: `### My Cool Product
+gui.layouts.custom(
+  'productCard',
+  [
+    gui.displays.custom('productDescription', {
+      img: 'assets/product-image.png',
+      description: `### My Cool Product
 The declarative form engine.`,
-  }),
-  gui.inputs.custom('productRating', 'product.rating', {
-    maxRating: 10,
-  }),
-  gui.actions.custom('productShare', {
-    onClick: 'shareEvent',
-  }),
-], { title: 'Product Card Name' });
+    }),
+    gui.inputs.custom('productRating', 'product.rating', {
+      maxRating: 10,
+    }),
+    gui.actions.custom('productShare', {
+      onClick: 'shareEvent',
+    }),
+  ],
+  { title: 'Product Card Name' },
+);
 ```
 
   </Fragment>
@@ -99,32 +104,36 @@ And because custom widgets live side by side with built-in ones, you can easily 
 ```ts
 import { gui } from '@golemui/gui-shared';
 
-gui.layouts.custom('productCard', [
-  gui.displays.custom('productDescription', {
-    img: 'assets/product-image.png',
-    description: `### My Cool Product
+gui.layouts.custom(
+  'productCard',
+  [
+    gui.displays.custom('productDescription', {
+      img: 'assets/product-image.png',
+      description: `### My Cool Product
 The declarative form engine.`,
-  }),
-  gui.inputs.custom('productRating', 'product.rating', {
-    maxRating: 10,
-    validator: { type: 'number', required: true },
-  }),
-  gui.inputs.textarea('product.comment', {
-    hint: 'Enter your comment (maximum 500 characters)',
-    placeholder: 'Let us know why you love our product',
-    counterMode: 'current',
-    validator: { type: 'string', maxLength: 500, required: true },
-  }),
-  gui.actions.custom('productShare', {
-    onClick: 'shareEvent',
-  }),
-  gui.actions.button({
-    label: 'Submit',
-    icon: 'save',
-    iconPosition: 'right',
-    onClick: 'submit',
-  }),
-], { title: 'Product Card Name' });
+    }),
+    gui.inputs.custom('productRating', 'product.rating', {
+      maxRating: 10,
+      validator: { type: 'number', required: true },
+    }),
+    gui.inputs.textarea('product.comment', {
+      hint: 'Enter your comment (maximum 500 characters)',
+      placeholder: 'Let us know why you love our product',
+      counterMode: 'current',
+      validator: { type: 'string', maxLength: 500, required: true },
+    }),
+    gui.actions.custom('productShare', {
+      onClick: 'shareEvent',
+    }),
+    gui.actions.button({
+      label: 'Submit',
+      icon: 'save',
+      iconPosition: 'right',
+      onClick: 'submit',
+    }),
+  ],
+  { title: 'Product Card Name' },
+);
 ```
 
   </Fragment>
@@ -219,6 +228,7 @@ Before GolemUI can render your custom widgets, you need to register them in the 
         (await import('./widgets/ProductShare')).ProductShare,
     };
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -243,6 +253,7 @@ Before GolemUI can render your custom widgets, you need to register them in the 
           .ProductShareComponent,
     };
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -267,6 +278,7 @@ Before GolemUI can render your custom widgets, you need to register them in the 
       },
     };
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -320,7 +332,7 @@ With all four widgets implemented and registered, here's the complete form setup
       };
 
       return (
-        <React.FormComponent
+        <React.GuiForm
           formDef={formDef}
           formConfig={formConfig}
           data={{}}
@@ -329,6 +341,7 @@ With all four widgets implemented and registered, here's the complete form setup
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -386,6 +399,7 @@ With all four widgets implemented and registered, here's the complete form setup
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -448,6 +462,7 @@ With all four widgets implemented and registered, here's the complete form setup
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

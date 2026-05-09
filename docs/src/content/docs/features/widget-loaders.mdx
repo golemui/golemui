@@ -5,9 +5,9 @@ sidebar:
   order: 1
 ---
 
+import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
-import { Aside } from '@astrojs/starlight/components';
 
 Widget loaders are a `Record<string, () => Promise<unknown>>` map that tells the form engine how to lazy-load each widget kind. The map key is the widget `type` (e.g. `'textinput'`, `'dropdown'`) and the value is an async loader that returns the widget implementation.
 
@@ -31,7 +31,7 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -39,6 +39,7 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -62,6 +63,7 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
       protected formConfig = { widgetLoaders: Angular.widgetLoaders };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -89,6 +91,7 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -105,7 +108,7 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -113,6 +116,7 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -136,6 +140,7 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
       protected widgetLoaders = Angular.widgetLoaders;
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -163,6 +168,7 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -200,7 +206,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -208,6 +214,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -239,6 +246,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -274,6 +282,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -285,7 +294,12 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
 ```json
 {
   "form": [
-    { "kind": "layout", "type": "productCard", "props": { "title": "My product" }, "items": [] }
+    {
+      "kind": "layout",
+      "type": "productCard",
+      "props": { "title": "My product" },
+      "items": []
+    }
   ]
 }
 ```
@@ -303,7 +317,7 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={widgetLoaders}
@@ -311,6 +325,7 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -338,6 +353,7 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -369,6 +385,7 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

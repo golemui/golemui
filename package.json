@@ -10,6 +10,7 @@
     "format": "nx format:write --all",
     "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:check --all",
     "cz": "czg checkbox",
+    "start:docs": "cd docs && npm run dev",
     "start:angular": "nx run angular-playground:serve",
     "start:lit": "nx run lit-playground:serve",
     "start:react": "nx run react-playground:serve",

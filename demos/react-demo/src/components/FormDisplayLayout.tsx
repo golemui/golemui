@@ -1,9 +1,9 @@
+import { GuiForm } from '@golemui/gui-react';
+import { DxDefinitions, DxFormConfig, formDefs, GslSelectorsInput } from '@golemui/gui-shared';
 import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { FormComponent } from '@golemui/gui-react';
-import { DxDefinitions, GslSelectorsInput, DxFormConfig, formDefs } from '@golemui/gui-shared';
-import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import { DemoLogEntry, DemoLogFn } from '../utils/demoLog';
+import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 
 class FormErrorBoundary extends Component<
@@ -26,7 +26,14 @@ class FormErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '1rem', border: '2px solid red', borderRadius: '4px', backgroundColor: '#fff5f5' }}>
+        <div
+          style={{
+            padding: '1rem',
+            border: '2px solid red',
+            borderRadius: '4px',
+            backgroundColor: '#fff5f5',
+          }}
+        >
           <h4 style={{ color: 'red', margin: '0 0 0.5rem 0' }}>Form Rendering Error</h4>
           <p style={{ color: '#666', margin: 0, fontSize: '0.9rem' }}>
             {this.state.error?.message || 'An error occurred while rendering the form'}
@@ -69,10 +76,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   const logPanelRef = React.useRef<HTMLDivElement>(null);
 
   const demoLog: DemoLogFn = React.useCallback((label: string, ...args: any[]) => {
-    setLogEntries((prev) => [
-      ...prev,
-      { timestamp: new Date().toLocaleTimeString(), label, args },
-    ]);
+    setLogEntries((prev) => [...prev, { timestamp: new Date().toLocaleTimeString(), label, args }]);
   }, []);
 
   React.useEffect(() => {
@@ -85,7 +89,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   const isFormDefFunction = typeof formDef === 'function';
   const resolvedFormDef = React.useMemo(
     () => (isFormDefFunction ? (formDef as (log: DemoLogFn) => DxDefinitions)(demoLog) : formDef),
-    [formDef, isFormDefFunction, demoLog]
+    [formDef, isFormDefFunction, demoLog],
   );
 
   // For display: show function source if it's a function, otherwise serialize the value
@@ -93,26 +97,25 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   const serialized = formDefSource
     ? formDefSource
     : formDef
-      ? (isFormDefFunction
-          ? (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
-          : serializeFormDefForDisplay(formDef))
+      ? isFormDefFunction
+        ? // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+          (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
+        : serializeFormDefForDisplay(formDef)
       : '';
   const resolvedFormSelectors = React.useMemo(
     () => (formSelectors ? formSelectors() : undefined),
-    [formSelectors]
+    [formSelectors],
   );
   const resolvedFormConfig = React.useMemo(
     () => (formConfig ? formConfig() : undefined),
-    [formConfig]
+    [formConfig],
   );
 
   const serializedFormSelectors = formSelectors
     ? formSelectors.toString().replace(/^\(\)\s*=>\s*/, '')
     : '';
 
-  const serializedFormConfig = formConfig
-    ? formConfig.toString().replace(/^\(\)\s*=>\s*/, '')
-    : '';
+  const serializedFormConfig = formConfig ? formConfig.toString().replace(/^\(\)\s*=>\s*/, '') : '';
 
   const processedConfig = React.useMemo(
     () =>
@@ -152,7 +155,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
             <div className={styles.formSection}>
               <h4 className={styles.sectionTitle}>Form</h4>
               <FormErrorBoundary>
-                <FormComponent
+                <GuiForm
                   formDef={resolvedFormDef}
                   data={formData}
                   formSelectors={resolvedFormSelectors}
@@ -203,9 +206,9 @@ export function FormDisplayLayout<T extends Record<string, any>>({
                       <span className={styles.logLabel}>{entry.label}</span>
                       {entry.args.length > 0 && (
                         <span className={styles.logArgs}>
-                          {entry.args.map((a) =>
-                            typeof a === 'object' ? JSON.stringify(a) : String(a)
-                          ).join(' ')}
+                          {entry.args
+                            .map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
+                            .join(' ')}
                         </span>
                       )}
                     </div>

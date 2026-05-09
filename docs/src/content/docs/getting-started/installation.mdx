@@ -7,11 +7,12 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 
-import { Steps } from '@astrojs/starlight/components';
+import { Aside, Steps } from '@astrojs/starlight/components';
 import DslTabs from '../../../components/DslTabs.astro';
+import FrameworkContent from '../../../components/FrameworkContent.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files or other data sources. It provides a free set of UI widgets with support for React, Angular, and Lit.
+GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files. It provides a free set of UI widgets with support for React, Angular, and Lit.
 
 This guide walks you from an empty directory to a rendered form in five steps.
 
@@ -49,20 +50,25 @@ This guide walks you from an empty directory to a rendered form in five steps.
     <IntegrationTabs>
       <Fragment slot="react">
         ```bash
-        npm i @golemui/core @golemui/react @golemui/gui-react --save
+        npm i @golemui/gui-react --save
         ```
       </Fragment>
       <Fragment slot="angular">
         ```bash
-        npm i @golemui/core @golemui/angular @golemui/gui-angular --save
+        npm i @golemui/gui-angular --save
         ```
       </Fragment>
       <Fragment slot="lit">
         ```bash
-        npm i @golemui/core @golemui/lit @golemui/gui-lit --save
+        npm i @golemui/gui-lit --save
         ```
       </Fragment>
     </IntegrationTabs>
+
+    This installs the adapter along with all its peer dependencies.
+    - **GolemUI packages** (shared across all adapters): `@golemui/core`, `@golemui/gui-shared`, `@golemui/gui-components`, `@golemui/gui-validators`.
+
+    - **GolemUI Framework adapter**: <FrameworkContent inline><Fragment slot="react">`@golemui/react`</Fragment><Fragment slot="angular">`@golemui/angular`</Fragment><Fragment slot="lit">`@golemui/lit`</Fragment></FrameworkContent>
 
 3.  ##### Import the Golem Widgets styles
 
@@ -74,7 +80,9 @@ This guide walks you from an empty directory to a rendered form in five steps.
 
 4.  ##### Define a form and render it
 
-    The easiest way to define a form is the **Programmatic** API, an array of `gui.*` shortcuts. The same form can also be defined as JSON if you prefer.
+    The easiest way to define a form is through the **Programmatic** API, using an array of `gui.*` shortcuts. Alternatively, the same form can be defined using the **JSON** API if you prefer.
+
+    <Aside type="tip">Toggle the top-right dropdown to switch between JSON and Programmatic API examples.</Aside>
 
     <DslTabs>
       <Fragment slot="dx">
@@ -91,7 +99,7 @@ This guide walks you from an empty directory to a rendered form in five steps.
             export function FormPage() {
               return (
                 <div>
-                  <React.FormComponent
+                  <GuiForm
                     formDef={formDef}
                     data={formData}
                     formConfig={formConfig}
@@ -154,6 +162,7 @@ This guide walks you from an empty directory to a rendered form in five steps.
             ```
           </Fragment>
         </IntegrationTabs>
+
       </Fragment>
       <Fragment slot="json">
         Create a JSON file with your form definition and pass it to the form component:
@@ -167,6 +176,7 @@ This guide walks you from an empty directory to a rendered form in five steps.
         ```
 
         Then load and render it in your framework. See the [Integration](/integration/overview/) section for framework-specific setup.
+
       </Fragment>
     </DslTabs>
 

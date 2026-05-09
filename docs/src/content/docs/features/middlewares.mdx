@@ -41,7 +41,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -50,6 +50,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -76,6 +77,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
       protected middlewares = [Core.devToolsMiddleware()];
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -106,6 +108,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -123,7 +126,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -132,6 +135,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -158,6 +162,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
       protected middlewares = [Core.devToolsMiddleware()];
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -188,6 +193,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

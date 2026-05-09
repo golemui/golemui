@@ -5,10 +5,10 @@ sidebar:
   order: 6
 ---
 
-import Demo from '../../../components/landing/Demo.astro';
+import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
-import { Aside } from '@astrojs/starlight/components';
+import Demo from '../../../components/landing/Demo.astro';
 
 GolemUI is i18n-aware out of the box but **library-agnostic** — it doesn't ship or depend on any specific translation library. You bring your own (i18next, ParaglideJS, typesafe-i18n, FormatJS, your own JSON loader…) and adapt it to the small `I18nTranslator` contract from `@golemui/core`.
 
@@ -59,7 +59,9 @@ Here's the same `I18nTranslator` implemented against three popular libraries. Pi
 import * as Core from '@golemui/core';
 import i18next, { type Resource } from 'i18next';
 
-export function createI18nextTranslator(resources: Resource): Core.I18nTranslator {
+export function createI18nextTranslator(
+  resources: Resource,
+): Core.I18nTranslator {
   i18next.init({ fallbackLng: 'en', resources });
 
   return {
@@ -96,7 +98,9 @@ export const paraglideTranslator: Core.I18nTranslator = {
     return getLocale();
   },
   translate(key, params, defaultValue) {
-    const fn = (m as Record<string, (p?: Record<string, unknown>) => string>)[key];
+    const fn = (m as Record<string, (p?: Record<string, unknown>) => string>)[
+      key
+    ];
     return fn ? fn(params) : (defaultValue ?? key);
   },
   subscribe(listener) {
@@ -186,7 +190,7 @@ The form definition references translation keys through `Localizable` shapes (`{
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -195,6 +199,7 @@ The form definition references translation keys through `Localizable` shapes (`{
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -228,6 +233,7 @@ The form definition references translation keys through `Localizable` shapes (`{
       });
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -265,6 +271,7 @@ The form definition references translation keys through `Localizable` shapes (`{
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -277,7 +284,9 @@ The JSON form references the same translation keys inline:
 {
   "form": [
     {
-      "kind": "input", "type": "textinput", "path": "username",
+      "kind": "input",
+      "type": "textinput",
+      "path": "username",
       "label": { "key": "username.label", "default": "Username" }
     }
   ]
@@ -298,7 +307,7 @@ The JSON form references the same translation keys inline:
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -307,6 +316,7 @@ The JSON form references the same translation keys inline:
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -336,6 +346,7 @@ The JSON form references the same translation keys inline:
       });
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -369,6 +380,7 @@ The JSON form references the same translation keys inline:
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

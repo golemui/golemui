@@ -49,7 +49,7 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           formConfig={formConfig}
@@ -57,6 +57,7 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -95,6 +96,7 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
       };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -137,6 +139,7 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -152,11 +155,18 @@ The state lives at the form root; the override is a `"addLabel.limitReached"` su
   },
   "form": [
     {
-      "kind": "input", "type": "repeater", "path": "users",
+      "kind": "input",
+      "type": "repeater",
+      "path": "users",
       "addLabel": "Add user",
       "addLabel.limitReached": "Limit reached, you can't add more",
       "children": [
-        { "kind": "input", "type": "textinput", "path": "name", "label": "Name" }
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "name",
+          "label": "Name"
+        }
       ]
     }
   ]
@@ -173,7 +183,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 
     export function MyForm() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={formDef}
           data={{}}
           customWidgetLoaders={React.widgetLoaders}
@@ -181,6 +191,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -204,6 +215,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       protected widgetLoaders = Angular.widgetLoaders;
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -231,6 +243,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -251,8 +264,8 @@ gui.actions.button('save', {
   label: 'Save',
   disabled: false,
   states: {
-    busy:    { label: 'Saving…',  disabled: true },
-    success: { label: 'Saved!',   disabled: true },
+    busy: { label: 'Saving…', disabled: true },
+    success: { label: 'Saved!', disabled: true },
   },
 });
 ```
@@ -262,7 +275,9 @@ gui.actions.button('save', {
 
 ```json
 {
-  "kind": "action", "type": "button", "uid": "save",
+  "kind": "action",
+  "type": "button",
+  "uid": "save",
   "label": "Save",
   "disabled": false,
   "label.busy": "Saving…",

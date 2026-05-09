@@ -48,7 +48,9 @@ From this chapter on, **the tutorial moves the form definition into its own `.ts
 import { gui } from '@golemui/gui-shared';
 
 export default [
-  gui.inputs.dropdown('car', { /* ... */ }),
+  gui.inputs.dropdown('car', {
+    /* ... */
+  }),
   // …more widgets…
 ];
 ```
@@ -66,7 +68,7 @@ Then import that default export from your component and pass it as `formDef`. Th
 
     export function RentACarPage() {
       return (
-        <React.FormComponent
+        <GuiForm
           formDef={rentACarForm}
           data={{}}
           formConfig={formConfig}
@@ -74,6 +76,7 @@ Then import that default export from your component and pass it as `formDef`. Th
       );
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -98,6 +101,7 @@ Then import that default export from your component and pass it as `formDef`. Th
       protected formConfig = { widgetLoaders: Angular.widgetLoaders };
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -128,6 +132,7 @@ Then import that default export from your component and pass it as `formDef`. Th
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

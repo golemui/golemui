@@ -11,9 +11,9 @@ import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro
 Custom widgets emit events through the framework adapter's `click()`, `valueChanged()`, `onLoad()`, `onFilter()`, or `onBlur()` methods. Each method optionally accepts a `detail` payload.
 
 ```ts
-this.adapter.click('twitter');     // fires the wired click event with detail = 'twitter'
+this.adapter.click('twitter'); // fires the wired click event with detail = 'twitter'
 this.adapter.valueChanged(newVal); // pushes a new value AND emits onChange
-this.adapter.onFilter('toyota');   // emits onFilter with detail = 'toyota'
+this.adapter.onFilter('toyota'); // emits onFilter with detail = 'toyota'
 ```
 
 Event names are wired in the widget definition, not in the component:
@@ -64,13 +64,14 @@ The application-side handler receives a `FormEvent` object with the event `name`
       }
     }
 
-    <React.FormComponent
+    <React.GuiForm
       formDef={formDef}
       formConfig={formConfig}
       formEvent={handleFormEvent}
       // ...other props
     />
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -102,6 +103,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -135,6 +137,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 

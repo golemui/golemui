@@ -1,0 +1,47 @@
+---
+interface Props {
+  inline?: boolean;
+}
+const { inline } = Astro.props;
+---
+
+{inline ? (
+  <framework-content style="display:inline">
+    <span data-fw="react" hidden><slot name="react" /></span>
+    <span data-fw="angular" hidden><slot name="angular" /></span>
+    <span data-fw="lit" hidden><slot name="lit" /></span>
+  </framework-content>
+) : (
+  <framework-content>
+    <div data-fw="react" hidden><slot name="react" /></div>
+    <div data-fw="angular" hidden><slot name="angular" /></div>
+    <div data-fw="lit" hidden><slot name="lit" /></div>
+  </framework-content>
+)}
+
+<script>
+  const KEY = 'starlight-synced-tabs__framework';
+
+  function getFramework(): string {
+    return (localStorage.getItem(KEY) ?? 'React').toLowerCase();
+  }
+
+  class FrameworkContent extends HTMLElement {
+    connectedCallback() {
+      this.show(getFramework());
+      document.addEventListener('click', () => {
+        requestAnimationFrame(() => this.show(getFramework()));
+      });
+    }
+
+    show(framework: string) {
+      for (const el of this.querySelectorAll<HTMLElement>('[data-fw]')) {
+        el.hidden = el.dataset.fw !== framework;
+      }
+    }
+  }
+
+  if (!customElements.get('framework-content')) {
+    customElements.define('framework-content', FrameworkContent);
+  }
+</script>

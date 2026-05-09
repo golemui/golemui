@@ -1,29 +1,35 @@
-import { gui, DxDefinitions, DxFormConfig, GslSelectorsInput, Dependencies } from '@golemui/gui-shared';
+import {
+  Dependencies,
+  DxDefinitions,
+  DxFormConfig,
+  GslSelectorsInput,
+  gui,
+} from '@golemui/gui-shared';
 
-import { textinputTab } from './tabs/textinput.dx';
-import { passwordTab } from './tabs/password.dx';
-import { currencyTab } from './tabs/currency.dx';
-import { numberTab } from './tabs/number.dx';
-import { markdownTextTab } from './tabs/markdown-text.dx';
-import { alertTab } from './tabs/alert.dx';
-import { checkboxTab } from './tabs/checkbox.dx';
-import { toggleTab } from './tabs/toggle.dx';
-import { markdownTab } from './tabs/markdown.dx';
-import { selectTab } from './tabs/select.dx';
-import { radiogroupTab } from './tabs/radiogroup.dx';
-import { textareaTab } from './tabs/textarea.dx';
-import { listTab } from './tabs/list.dx';
-import { flexTab } from './tabs/flex.dx';
 import { accordionTab } from './tabs/accordion.dx';
-import { gridTab } from './tabs/grid.dx';
+import { alertTab } from './tabs/alert.dx';
 import { calendarTab } from './tabs/calendar.dx';
+import { checkboxTab } from './tabs/checkbox.dx';
+import { currencyTab } from './tabs/currency.dx';
 import { dropdownTab } from './tabs/dropdown.dx';
+import { flexTab } from './tabs/flex.dx';
+import { gridTab } from './tabs/grid.dx';
+import { listTab } from './tabs/list.dx';
+import { markdownTextTab } from './tabs/markdown-text.dx';
+import { markdownTab } from './tabs/markdown.dx';
+import { numberTab } from './tabs/number.dx';
+import { passwordTab } from './tabs/password.dx';
+import { radiogroupTab } from './tabs/radiogroup.dx';
 import { repeaterTab } from './tabs/repeater.dx';
+import { selectTab } from './tabs/select.dx';
+import { textareaTab } from './tabs/textarea.dx';
+import { textinputTab } from './tabs/textinput.dx';
+import { toggleTab } from './tabs/toggle.dx';
 
 /**
  * DX kitchen-sink — built on the v2.0 `gui.*` surface.
  * Framework-agnostic: the returned `{ formDef, data, formSelectors, formConfig }`
- * is forwarded into the unified `<gui-form>` component (React `FormComponent`,
+ * is forwarded into the unified `<gui-form>` component (React `GuiForm`,
  * Angular `<gui-form>`, Lit `<gui-form>`), which detects the DX shape and runs
  * `processDxFacade` internally. Widget loaders, item renderers and dependencies
  * are framework-specific and must be supplied by the host playground.

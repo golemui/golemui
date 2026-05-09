@@ -5,11 +5,11 @@ sidebar:
   order: 8
 ---
 
-import Demo from '../../../components/landing/Demo.astro';
+import finalDx from '../../../../public/template/getting-started-dx/rent-a-car/06-final.ts?raw';
+import finalJson from '../../../../public/template/getting-started/rent-a-car/06-final.json?raw';
 import DslCode from '../../../components/DslCode.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
-import finalJson from '../../../../public/template/getting-started/rent-a-car/06-final.json?raw';
-import finalDx from '../../../../public/template/getting-started-dx/rent-a-car/06-final.ts?raw';
+import Demo from '../../../components/landing/Demo.astro';
 export const configJson = '06-final.json';
 export const configDx = '06-final.ts';
 
@@ -33,12 +33,13 @@ In your `formEvent` callback, match the event name and read `event.data`:
       }
     }
 
-    <FormComponent
+    <GuiForm
       formDef={formDef}
       formConfig={formConfig}
       formEvent={handleFormEvent}
     />
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -81,6 +82,7 @@ In your `formEvent` callback, match the event name and read `event.data`:
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
