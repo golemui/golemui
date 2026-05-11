@@ -2,6 +2,16 @@
 @use '../../../libs/gui/components/src/styles/index';
 @use '../../../libs/gui/components/src/styles/themes/clay';
 
+/* Iframe is hosted inside the docs site (dark). Force dark so the
+   "default theme" radio renders against the docs palette regardless of
+   the visitor's system preference. The Clay radio still flips to its
+   cream surface (its own --gui-bg-default override wins), and the
+   Override radio swaps tokens directly — so the demo still shows real
+   theme variation, just from a dark baseline. */
+html {
+  color-scheme: dark;
+}
+
 html, body {
   background-color: var(--gui-bg-default);
   font-family: var(--gui-font-family);

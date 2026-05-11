@@ -1,0 +1,101 @@
+{
+  "form": [
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "email",
+      "label": "Email",
+      "props": { "type": "email", "placeholder": "you@company.com" },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "format": "email"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "password",
+      "path": "password",
+      "label": "Password",
+      "validator": {
+        "type": "string",
+        "required": true,
+        "minLength": 8
+      }
+    },
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "accountType",
+      "label": "Account type",
+      "defaultValue": "Free",
+      "props": {
+        "items": ["Free", "Pro", "Enterprise"]
+      },
+      "validator": {
+        "type": "string",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "companyName",
+      "label": "Company name",
+      "include": { "when": "$form.accountType !== 'Free'" },
+      "validator": {
+        "type": "string",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "number",
+      "path": "seats",
+      "label": "Seats",
+      "include": { "when": "$form.accountType === 'Enterprise'" },
+      "validator": {
+        "type": "number",
+        "required": true,
+        "minimum": 5,
+        "maximum": 1000
+      }
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "path": "subscribe",
+      "label": "Subscribe to product updates"
+    },
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "frequency",
+      "label": "Frequency",
+      "include": { "when": "$form.subscribe === true" },
+      "props": {
+        "items": ["Daily", "Weekly", "Monthly"]
+      },
+      "validator": {
+        "type": "string",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "path": "terms",
+      "label": "I accept the terms of service",
+      "validator": {
+        "type": "boolean",
+        "const": true,
+        "required": true
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Sign up"
+    }
+  ]
+}

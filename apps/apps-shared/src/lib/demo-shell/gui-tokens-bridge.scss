@@ -1,0 +1,88 @@
+/* ============================================================================
+   gui-* token bridge for the docs site theme.
+
+   The library's variables.scss flips --gui-* tokens via
+   `@media (prefers-color-scheme: dark)`, which is the OS preference. The
+   docs site lets users override that via a manual toggle that we mirror
+   into the iframe as `html.dark` / `html.light` (see iframeThemeSync).
+
+   This file forces the gui-* tokens to follow the iframe's class instead of
+   the OS preference, so the demos stay aligned with the docs surface.
+   Each app's styles.scss @uses this file after `@use ...components/styles/index`,
+   so these blocks override the library's @media query (same specificity,
+   later in the cascade).
+   ============================================================================ */
+
+:root.light {
+  /* Backgrounds */
+  --gui-bg-default: var(--gui-color-white);
+  --gui-bg-surface: var(--gui-color-white);
+  --gui-bg-surface-hover: var(--gui-color-neutral-50);
+  --gui-bg-surface-active: var(--gui-color-neutral-100);
+  --gui-bg-disabled: var(--gui-color-neutral-300);
+  --gui-bg-inverse: var(--gui-color-neutral-900);
+
+  /* Text */
+  --gui-text-default: var(--gui-color-neutral-900);
+  --gui-text-secondary: var(--gui-color-neutral-500);
+  --gui-text-muted: var(--gui-color-neutral-400);
+  --gui-text-inverse: var(--gui-color-white);
+  --gui-text-disabled: var(--gui-color-neutral-400);
+
+  /* Borders */
+  --gui-border-default: var(--gui-color-neutral-300);
+  --gui-border-subtle: var(--gui-color-neutral-200);
+  --gui-border-strong: var(--gui-color-neutral-400);
+  --gui-border-disabled: var(--gui-color-neutral-200);
+
+  /* Intents */
+  --gui-intent-primary: var(--gui-color-primary-600);
+  --gui-intent-primary-hover: var(--gui-color-primary-700);
+  --gui-intent-primary-active: var(--gui-color-primary-800);
+
+  --gui-intent-success-bg: var(--gui-color-success-50);
+  --gui-intent-success-text: var(--gui-color-success-900);
+  --gui-intent-info-bg: var(--gui-color-info-50);
+  --gui-intent-info-text: var(--gui-color-info-900);
+  --gui-intent-warning-bg: var(--gui-color-warning-50);
+  --gui-intent-warning-text: var(--gui-color-warning-900);
+  --gui-intent-error-bg: var(--gui-color-error-50);
+  --gui-intent-error-text: var(--gui-color-error-900);
+}
+
+:root.dark {
+  /* Backgrounds */
+  --gui-bg-default: var(--gui-color-neutral-950);
+  --gui-bg-surface: var(--gui-color-neutral-900);
+  --gui-bg-surface-hover: var(--gui-color-neutral-800);
+  --gui-bg-surface-active: var(--gui-color-neutral-700);
+  --gui-bg-disabled: var(--gui-color-neutral-800);
+  --gui-bg-inverse: var(--gui-color-white);
+
+  /* Text */
+  --gui-text-default: var(--gui-color-neutral-50);
+  --gui-text-secondary: var(--gui-color-neutral-400);
+  --gui-text-muted: var(--gui-color-neutral-500);
+  --gui-text-inverse: var(--gui-color-neutral-900);
+  --gui-text-disabled: var(--gui-color-neutral-600);
+
+  /* Borders */
+  --gui-border-default: var(--gui-color-neutral-700);
+  --gui-border-subtle: var(--gui-color-neutral-800);
+  --gui-border-strong: var(--gui-color-neutral-600);
+  --gui-border-disabled: var(--gui-color-neutral-700);
+
+  /* Intents */
+  --gui-intent-primary: var(--gui-color-primary-500);
+  --gui-intent-primary-hover: var(--gui-color-primary-400);
+  --gui-intent-primary-active: var(--gui-color-primary-300);
+
+  --gui-intent-success-bg: color-mix(in srgb, var(--gui-color-success-500) 20%, transparent);
+  --gui-intent-success-text: var(--gui-color-success-400);
+  --gui-intent-info-bg: color-mix(in srgb, var(--gui-color-info-500) 20%, transparent);
+  --gui-intent-info-text: var(--gui-color-info-400);
+  --gui-intent-warning-bg: color-mix(in srgb, var(--gui-color-warning-500) 20%, transparent);
+  --gui-intent-warning-text: var(--gui-color-warning-400);
+  --gui-intent-error-bg: color-mix(in srgb, var(--gui-color-error-500) 20%, transparent);
+  --gui-intent-error-text: var(--gui-color-error-400);
+}

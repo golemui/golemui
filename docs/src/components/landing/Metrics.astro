@@ -2,85 +2,94 @@
 const metrics = [
   { label: 'Library Weight', value: 14.32, suffix: 'kb', sub: 'gzipped' },
   { label: 'LCP', value: 0.19, suffix: 'ms', sub: 'Largest Contentful Paint' },
-  { label: 'Lighthouse', value: 100, suffix: '', sub: 'Perfect Score' }
+  { label: 'Lighthouse', value: 100, suffix: '', sub: 'Perfect Score' },
 ];
 ---
 
 <section class="metrics-section">
   <div class="container">
     <div class="content">
-      <span class="section-label">Performance</span>
-      <h2>Built for <span class="gradient-text">Speed</span></h2>
+      <h2>
+        Built for <span class="gradient-text">speed</span>.
+      </h2>
+      <p class="subtitle">
+        Tiny library, sub-millisecond render, perfect Lighthouse. The forms above run on the same engine — these are its numbers.
+      </p>
     </div>
-  </div>
-  <div class="metrics-grid">
-    {metrics.map((metric) => (
-      <div class="metric-card">
-        <p class="metric-label">{metric.label}</p>
-        <div class="metric-value-container">
-          <span
-            class="counter"
-            data-target={metric.value}
-            data-decimals={metric.value % 1 !== 0 ? 2 : 0}
-          >0</span>
-          <span class="suffix">{metric.suffix}</span>
+    <div class="metrics-grid">
+      {metrics.map((metric) => (
+        <div class="metric-card">
+          <p class="metric-label">{metric.label}</p>
+          <div class="metric-value-container">
+            <span
+              class="counter"
+              data-target={metric.value}
+              data-decimals={metric.value % 1 !== 0 ? 2 : 0}
+            >0</span>
+            <span class="suffix">{metric.suffix}</span>
+          </div>
+          <p class="metric-sub">{metric.sub}</p>
         </div>
-        <p class="metric-sub">{metric.sub}</p>
-      </div>
-    ))}
+      ))}
+    </div>
   </div>
 </section>
 
-<style>
+<style lang="scss">
   .metrics-section {
-    padding: 6rem 2rem;
-    background: var(--bg-surface);
+    padding: 1.5rem 0 4rem;
+    overflow: hidden;
   }
 
-  @media (min-width: 768px) {
-    .metrics-section {
-      padding: 4rem 2rem;
-    }
+  .container {
+    display: flex;
+    flex-direction: column;
   }
 
   .content {
-    text-align: center;
+    margin-bottom: 2rem;
   }
 
-  .content h2 {
-    font-size: 2.5rem;
+  h2 {
+    font-size: 2rem;
     font-weight: 800;
     line-height: 1.08;
-    margin: 1.25rem 0;
+    margin: 0 0 0.5rem;
     letter-spacing: -0.03em;
-  }
 
-  @media (min-width: 768px) {
-    .content h2 {
-      font-size: 4.5rem;
+    @media (min-width: 768px) {
+      font-size: 3rem;
     }
   }
 
-  .content .section-label {
-    margin-left: auto;
-    margin-right: auto;
+  .subtitle {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 60rem;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+      line-height: 1.55;
+    }
   }
 
   .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.25rem;
-    max-width: 900px;
-    margin: 0 auto;
   }
 
   .metric-card {
     text-align: center;
-    padding: 2.5rem 1.5rem;
+    padding: 2rem 1.5rem;
     border-radius: 16px;
     border: 1px solid var(--border-color);
     background: var(--bg-color);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .metric-card:hover {
@@ -125,7 +134,9 @@ const metrics = [
   }
 
   @media (max-width: 640px) {
-    .metric-value-container { font-size: 2.5rem; }
+    .metric-value-container {
+      font-size: 2.5rem;
+    }
   }
 </style>
 
@@ -149,11 +160,11 @@ const metrics = [
   }
 
   const observerOptions = {
-    threshold: 0.5
+    threshold: 0.5,
   };
 
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const counters = entry.target.querySelectorAll('.counter');
         counters.forEach((counter: Element) => {

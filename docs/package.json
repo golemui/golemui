@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.6",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/streamline": "^1.2.5",
+    "@iconify-json/tabler": "^1.2.33",
     "astro": "5.16.0",
+    "astro-icon": "^1.1.5",
     "sharp": "^0.34.2"
   },
   "devDependencies": {

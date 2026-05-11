@@ -2,7 +2,7 @@ import { LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';
 import './pages/form/form.element';
-import { iframeResizer } from '@golemui/apps-shared';
+import { iframeResizer, iframeThemeSync } from '@golemui/apps-shared';
 
 @customElement('gui-appetizer')
 export class AppElement extends LitElement {
@@ -14,6 +14,7 @@ export class AppElement extends LitElement {
 
   connectedCallback() {
     iframeResizer();
+    iframeThemeSync();
 
     this.innerHTML = `
       <main class="container">

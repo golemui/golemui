@@ -1,26 +1,124 @@
 @use '../../../libs/gui/components/src/styles/index';
 @use '../../../libs/gui/components/src/styles/themes/clay';
-@use 'highlight.js/styles/github-dark.css';
+@use '@shoelace-style/shoelace/dist/themes/light.css';
+@use '@shoelace-style/shoelace/dist/themes/dark.css';
+@use '../../apps-shared/src/lib/demo-shell/demo-shell.scss';
+@use '../../apps-shared/src/lib/demo-shell/gui-tokens-bridge';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* Three widget sources to keep aligned with the docs theme:
+   - GolemUI OOB widgets — handled by gui-tokens-bridge (above).
+   - Material Web — needs explicit --md-sys-color-* tokens per scheme.
+   - Shoelace — toggled via .sl-theme-dark class (handled in app.element.ts).
+   - Match Material typography to the rest of the demo. */
+html {
+  --md-ref-typeface-plain: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --md-ref-typeface-brand: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+:root.light {
+  /* Material 3 baseline light scheme */
+  --md-sys-color-primary: #6750a4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #eaddff;
+  --md-sys-color-on-primary-container: #21005d;
+  --md-sys-color-surface: #fef7ff;
+  --md-sys-color-on-surface: #1c1b1f;
+  --md-sys-color-surface-variant: #e7e0ec;
+  --md-sys-color-on-surface-variant: #49454e;
+  --md-sys-color-surface-container: #f3edf7;
+  --md-sys-color-surface-container-high: #ece6f0;
+  --md-sys-color-surface-container-highest: #e6e0e9;
+  --md-sys-color-outline: #79747e;
+  --md-sys-color-outline-variant: #cab4d4;
+  --md-sys-color-background: #fef7ff;
+  --md-sys-color-on-background: #1c1b1f;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+
+  /* "Yours" custom-widget palette — light variant */
+  --fd-yours-accent: #7c3aed;
+  --fd-yours-field-bg: #faf5ff;
+  --fd-yours-text: #1e1b34;
+  --fd-yours-placeholder: rgba(30, 27, 52, 0.45);
+  --fd-yours-shadow-frame: #cbd5e1;
+  --fd-yours-label: #6d28d9;
+
+  /* Picker chrome */
+  --fd-picker-base-bg: rgba(15, 23, 42, 0.04);
+  --fd-picker-menu-bg: #ffffff;
+  --fd-picker-menu-text: #334155;
+
+  /* Per-source palette (used by both picker buttons and menu items) */
+  --fd-pick-golem:          #1d4ed8;
+  --fd-pick-golem-hover:    #1e3a8a;
+  --fd-pick-material:       #047857;
+  --fd-pick-material-hover: #064e3b;
+  --fd-pick-shoelace:       #0f766e;
+  --fd-pick-shoelace-hover: #134e4a;
+  --fd-pick-yours:          #6d28d9;
+  --fd-pick-yours-hover:    #4c1d95;
+}
+
+:root.dark {
+  /* Material 3 dark scheme */
+  --md-sys-color-primary: #d0bcff;
+  --md-sys-color-on-primary: #381e72;
+  --md-sys-color-primary-container: #4f378b;
+  --md-sys-color-on-primary-container: #eaddff;
+  --md-sys-color-surface: #141218;
+  --md-sys-color-on-surface: #e6e1e5;
+  --md-sys-color-surface-variant: #49454f;
+  --md-sys-color-on-surface-variant: #cac4d0;
+  --md-sys-color-surface-container: #211f26;
+  --md-sys-color-surface-container-high: #2b2930;
+  --md-sys-color-surface-container-highest: #36343b;
+  --md-sys-color-outline: #938f99;
+  --md-sys-color-outline-variant: #49454f;
+  --md-sys-color-background: #141218;
+  --md-sys-color-on-background: #e6e1e5;
+  --md-sys-color-error: #f2b8b5;
+  --md-sys-color-on-error: #601410;
+
+  /* "Yours" custom-widget palette — dark variant */
+  --fd-yours-accent: #a855f7;
+  --fd-yours-field-bg: #1e1b34;
+  --fd-yours-text: #ede9fe;
+  --fd-yours-placeholder: rgba(237, 233, 254, 0.45);
+  --fd-yours-shadow-frame: #1f2937;
+  --fd-yours-label: #c4b5fd;
+
+  /* Picker chrome */
+  --fd-picker-base-bg: rgba(15, 23, 42, 0.5);
+  --fd-picker-menu-bg: #0f172a;
+  --fd-picker-menu-text: #cbd5e1;
+
+  /* Per-source palette (used by both picker buttons and menu items) */
+  --fd-pick-golem:          #93c5fd;
+  --fd-pick-golem-hover:    #dbeafe;
+  --fd-pick-material:       #6ee7b7;
+  --fd-pick-material-hover: #d1fae5;
+  --fd-pick-shoelace:       #5eead4;
+  --fd-pick-shoelace-hover: #ccfbf1;
+  --fd-pick-yours:          #c4b5fd;
+  --fd-pick-yours-hover:    #ede9fe;
+}
 
 html,
 body {
-  background-color: var(--gui-bg-default);
-  font-family: system-ui, sans-serif;
+  background-color: var(--ds-surface);
+  color: var(--ds-text);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Noto Color Emoji';
   margin: 0;
 }
 
 gui-freedom {
   display: block;
-  width: 100%;
-}
-
-.gui-widget-icon[data-icon]::before {
-  content: attr(data-icon);
-  font-family: 'Material Icons';
-  font-size: var(--gui-font-lg);
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
 }

@@ -1,18 +1,25 @@
 @use '../../../libs/gui/components/src/styles/index';
 @use '../../../libs/gui/components/src/styles/themes/clay';
-@use 'highlight.js/styles/github-dark.css';
+@use '../../apps-shared/src/lib/demo-shell/demo-shell.scss';
+@use '../../apps-shared/src/lib/demo-shell/gui-tokens-bridge';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* color-scheme is set by iframeThemeSync() to mirror the docs site. */
 
 html,
 body {
-  background-color: var(--gui-bg-default);
-  font-family: system-ui, sans-serif;
+  background-color: var(--ds-surface);
+  color: var(--ds-text);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
   margin: 0;
 }
 
 gui-serializable {
   display: block;
-  width: 100%;
 }
 
 .gui-widget-icon[data-icon]::before {

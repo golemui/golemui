@@ -1,5 +1,6 @@
 // @ts-check
 import starlight from '@astrojs/starlight';
+import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import { dslRoutesPlugin } from './src/plugins/dsl-routes';
 
@@ -7,6 +8,7 @@ import { dslRoutesPlugin } from './src/plugins/dsl-routes';
 export default defineConfig({
   outDir: '../dist/docs',
   integrations: [
+    icon(),
     starlight({
       title: 'GolemUI',
       plugins: [dslRoutesPlugin()],

@@ -1,9 +1,12 @@
 ---
 import Hero from '../components/landing/Hero.astro';
+import Paradigm from '../components/landing/Paradigm.astro';
+import Tokens from '../components/landing/Tokens.astro';
 import Freedom from '../components/landing/Freedom.astro';
 import Serializable from '../components/landing/Serializable.astro';
 import Theming from '../components/landing/Theming.astro';
-import Features from '../components/landing/Features.astro';
+import Travel from '../components/landing/Travel.astro';
+import OutOfBox from '../components/landing/OutOfBox.astro';
 import Metrics from '../components/landing/Metrics.astro';
 import CTA from '../components/landing/CTA.astro';
 ---
@@ -51,8 +54,19 @@ import CTA from '../components/landing/CTA.astro';
   <body>
     <header class="landing-header">
       <div class="container">
-        <a href="/" class="logo">
-          Golem<span class="highlight">UI</span>
+        <a href="/" class="logo" aria-label="GolemUI home">
+          <svg class="logo-lockup" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="GolemUI">
+            <defs>
+              <linearGradient id="header-brand" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="50%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#a855f7" />
+              </linearGradient>
+            </defs>
+            <text x="200" y="170" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="160" text-anchor="middle" letter-spacing="-2">
+              <tspan fill="url(#header-brand)">{'{'}</tspan><tspan fill="currentColor">gui.</tspan><tspan fill="url(#header-brand)">{'}'}</tspan>
+            </text>
+          </svg>
         </a>
         <nav>
           <a href="/dx/getting-started/installation/">Docs</a>
@@ -63,11 +77,14 @@ import CTA from '../components/landing/CTA.astro';
 
     <main>
       <Hero />
-      <Freedom />
+      <Paradigm />
+      <Tokens />
       <Serializable />
+      <Travel />
       <Theming />
-      <Features />
       <Metrics />
+      <Freedom />
+      <OutOfBox />
       <CTA />
     </main>
 
@@ -75,7 +92,18 @@ import CTA from '../components/landing/CTA.astro';
       <div class="container">
         <div class="footer-content">
           <div class="footer-col">
-            <h3>GolemUI</h3>
+            <svg class="footer-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" width="140" height="42" role="img" aria-label="GolemUI">
+              <defs>
+                <linearGradient id="footer-brand" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3b82f6" />
+                  <stop offset="50%" stop-color="#8b5cf6" />
+                  <stop offset="100%" stop-color="#a855f7" />
+                </linearGradient>
+              </defs>
+              <text x="200" y="170" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="160" text-anchor="middle" letter-spacing="-2">
+                <tspan fill="url(#footer-brand)">{'{'}</tspan><tspan fill="currentColor">gui.</tspan><tspan fill="url(#footer-brand)">{'}'}</tspan>
+              </text>
+            </svg>
             <p>The Declarative Form Engine.</p>
           </div>
           <div class="footer-col">
@@ -434,14 +462,15 @@ import CTA from '../components/landing/CTA.astro';
     }
 
     .logo {
-      font-size: 1.35rem;
-      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
       text-decoration: none;
       color: var(--text-color);
-      letter-spacing: -0.02em;
 
-      .highlight {
-        color: var(--accent-color);
+      .logo-lockup {
+        height: 36px;
+        width: auto;
+        display: block;
       }
     }
 
@@ -491,6 +520,13 @@ import CTA from '../components/landing/CTA.astro';
     }
 
     .footer-col {
+      .footer-mark {
+        height: 36px;
+        width: auto;
+        display: block;
+        margin: 0 0 0.75rem;
+      }
+
       h3 {
         font-size: 1.35rem;
         font-weight: 700;

@@ -1,26 +1,40 @@
 ---
-import Demo from './Demo.astro';---
+import Demo from './Demo.astro';
 
-<section class="custom-power">
+const demoSrc = import.meta.env.DEV
+  ? 'http://localhost:4205/'
+  : '/theming/index.html';
+---
+
+<section class="theming">
   <div class="container">
     <div class="content">
-      <span class="section-label">Theming</span>
-      <h2>Your <span class="gradient-text">Brand</span>.<br />Your <span class="gradient-text">Rules</span>.</h2>
-      <p>
-        Style GolemUI effortlessly using native CSS Variables. Quickly override our default tokens to match your brand or author a complete custom theme from scratch. Total design freedom, zero complexity.
+      <h2>
+        Your <span class="gradient-text">brand</span>. Your <span class="gradient-text">rules</span>.
+      </h2>
+      <p class="subtitle">
+        Pick a theme and watch the form re-skin instantly. GolemUI ships sensible defaults — your brand layers on top by overriding native CSS variables, no rebuild, no compile step, no glue code. Author a complete custom theme or just nudge a token.
       </p>
     </div>
     <div class="visual">
-      <div>
-        <Demo src="/theming/index.html" />
-      </div>
+      <Demo src={demoSrc} />
     </div>
   </div>
 </section>
 
 <style lang="scss">
-  a {
-    color: var(--accent-color);
+  .theming {
+    padding: 1.5rem 0 4rem;
+    overflow: hidden;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    margin-bottom: 1.25rem;
   }
 
   .visual {
@@ -30,85 +44,32 @@ import Demo from './Demo.astro';---
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   }
 
-  html.dark .visual {
+  :global(html.dark) .visual {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   }
 
-  .custom-power {
-    padding: 6rem 0;
-    background: var(--bg-surface);
-    overflow: hidden;
-
-    @media (min-width: 768px) {
-      padding: 4rem 0;
-    }
-  }
-
-  .container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .custom-power .container-row {
-    display: flex;
-    flex-direction: column-reverse;
-
-    @media (min-width: 50rem) {
-      flex-direction: row;
-      gap: 3rem;
-      margin-top: 3rem;
-    }
-  }
-
   h2 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
     line-height: 1.08;
-    margin: 1.25rem 0;
+    margin: 0 0 0.5rem;
     letter-spacing: -0.03em;
 
     @media (min-width: 768px) {
-      font-size: 4.5rem;
+      font-size: 3rem;
     }
   }
 
-  h3 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    line-height: 1.2;
-    margin: 1.25rem 0;
-    letter-spacing: -0.03em;
-
-    @media (min-width: 768px) {
-      font-size: 3.5rem;
-    }
-  }
-
-  .content > p,
-  .freedom > p {
+  .subtitle {
     font-size: 1.125rem;
     color: var(--text-muted);
-    margin-bottom: 2.5rem;
-    line-height: 1.7;
+    margin: 0;
+    line-height: 1.6;
+    max-width: 60rem;
 
     @media (min-width: 768px) {
       font-size: 1.25rem;
+      line-height: 1.55;
     }
-  }
-
-  .freedom {
-    flex: 3;
-  }
-
-  .material {
-    flex: 2;
-    height: 260px;
-    overflow: hidden;
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-  }
-
-  iframe {
-    border: none;
   }
 </style>

@@ -1,128 +1,219 @@
-.serializable-root {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px;
-  padding: 16px;
-  align-items: start;
-  min-height: 280px;
+/* App-specific styles for Serializable.
+   Shared layout chrome (cards, columns, panes, tabs, code, stepper) lives in
+   apps/apps-shared/src/lib/demo-shell/demo-shell.scss and is imported via
+   styles.scss. This file only defines the bits unique to this demo:
+   composed sections (with drag-reorder + remove), the fragment tray, and
+   the pills. */
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+gui-serializable {
+  display: block;
+  padding: 24px;
 }
 
-.serializable-pane {
+/* ---------- Composed sections (one per added fragment) ---------- */
+
+.srz-sections {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  gap: 14px;
 }
 
-.serializable-pane-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 4px 10px;
+.srz-section {
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: 10px;
+  padding: 14px 18px 18px;
+  background: var(--ds-inset-bg);
+  animation: srz-section-in 0.32s cubic-bezier(0.2, 0.8, 0.4, 1);
+  transition: opacity 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 
-  label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--gui-text-muted, var(--gui-text-default));
+  &.is-dragging {
+    opacity: 0.4;
+    transform: scale(0.99);
   }
 
-  select {
+  &.is-drop-target {
+    border-color: rgba(168, 85, 247, 0.7);
+    box-shadow: 0 -2px 0 0 rgba(168, 85, 247, 0.7);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ds-border-subtle);
+    cursor: grab;
+    user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &__handle {
+    color: var(--ds-text-muted);
+    font-size: 0.75rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    padding-right: 4px;
+    cursor: inherit;
+    transition: color 0.15s ease;
+  }
+
+  &__header:hover &__handle {
+    color: var(--ds-accent-text);
+  }
+
+  &__index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--ds-accent-text);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  &__title {
     flex: 1;
-    max-width: 220px;
-    padding: 6px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ds-text);
+    letter-spacing: -0.005em;
+  }
+
+  &__remove {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    width: 26px;
+    height: 26px;
     border-radius: 6px;
-    border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.12));
-    background-color: var(--gui-bg-surface);
-    color: var(--gui-text-default);
-    font-size: 0.9rem;
-    font-family: inherit;
+    color: var(--ds-text-muted);
     cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
 
     &:focus-visible {
-      outline: 2px solid var(--gui-intent-primary);
+      outline: 2px solid rgba(168, 85, 247, 0.7);
       outline-offset: 2px;
     }
   }
 }
 
-.serializable-json {
-  margin: 0;
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #0d1117;
-  color: #c9d1d9;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  overflow: auto;
-  max-height: 560px;
-  white-space: pre;
-
-  code.hljs {
-    background: transparent;
-    padding: 0;
+@keyframes srz-section-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
-}
-
-.serializable-form {
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.08));
-  background-color: var(--gui-bg-default);
-  min-width: 0;
-}
-
-.serializable-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: color-mix(in srgb, var(--gui-bg-default) 70%, transparent);
-  backdrop-filter: blur(2px);
-  z-index: 10;
-  cursor: wait;
-}
-
-.serializable-overlay-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 18px;
-  border-radius: 10px;
-  background-color: var(--gui-bg-default);
-  border: 1px solid var(--gui-border-default, rgba(0, 0, 0, 0.12));
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  color: var(--gui-text-default);
-  font-size: 0.9rem;
-
-  code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.85rem;
-    background-color: rgba(0, 0, 0, 0.06);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-}
-
-.serializable-spinner {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--gui-intent-primary) 20%, transparent);
-  border-top-color: var(--gui-intent-primary);
-  animation: serializable-spin 0.8s linear infinite;
-}
-
-@keyframes serializable-spin {
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Fragment tray + pills ---------- */
+
+.srz-tray {
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 10px;
+  padding: 14px 18px;
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(168, 85, 247, 0.08) 100%);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ds-accent-text);
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: var(--ds-text-muted);
+  }
+
+  &__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.srz-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px 7px 10px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--ds-accent-text);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  background: rgba(168, 85, 247, 0.1);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+
+  &__plus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(168, 85, 247, 0.25);
+    font-size: 0.85rem;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  &:not(:disabled):hover {
+    background: rgba(168, 85, 247, 0.22);
+    border-color: rgba(168, 85, 247, 0.8);
+    color: var(--ds-accent-text-strong);
+    transform: translateY(-1px);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(0);
+  }
+
+  &.is-added {
+    color: var(--ds-success);
+    border-color: rgba(110, 231, 183, 0.5);
+    background: rgba(16, 185, 129, 0.12);
+    cursor: default;
+
+    .srz-pill__plus {
+      background: rgba(16, 185, 129, 0.25);
+    }
   }
 }

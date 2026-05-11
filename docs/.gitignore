@@ -32,5 +32,6 @@ public/headless
 public/freedom
 public/serializable
 public/template/assets
+public/template/compare
 public/template/index.html
 public/template/favicon.ico

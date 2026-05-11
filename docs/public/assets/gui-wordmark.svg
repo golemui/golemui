@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" width="480" height="200" role="img" aria-label="GolemUI wordmark">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+  <text x="240" y="100"
+        font-family="Inter, system-ui, -apple-system, sans-serif"
+        font-weight="700"
+        font-size="120"
+        text-anchor="middle"
+        dominant-baseline="central"
+        letter-spacing="-3">
+    <tspan fill="#ffffff">Golem</tspan><tspan fill="url(#brand)">UI</tspan>
+  </text>
+</svg>

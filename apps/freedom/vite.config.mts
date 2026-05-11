@@ -7,11 +7,11 @@ export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/freedom',
   server: {
-    port: 4200,
+    port: 4203,
     host: 'localhost',
   },
   preview: {
-    port: 4300,
+    port: 4303,
     host: 'localhost',
   },
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],

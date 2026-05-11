@@ -1,0 +1,263 @@
+---
+import { stackTabs, golemui } from './paradigm-snippets';
+
+const initialStack = stackTabs[0];
+const initialDelta = Math.round((1 - golemui.tokens / initialStack.tokens) * 100);
+
+const stackData = Object.fromEntries(
+  stackTabs.map((s) => [s.id, { label: s.headerLabel, tokens: s.tokens }]),
+);
+---
+
+<section id="tokens" class="tokens-section" data-stack={initialStack.id}>
+  <div class="container">
+    <h2 aria-label="Save tokens. Breeze through reviews.">
+      Save <span class="gradient-text">token$</span>. Breeze through <span class="gradient-text">review$</span>.
+    </h2>
+    <p class="subtitle">
+      <code>{`{gui.}`}</code> is small enough for your agent to emit cleanly — and small enough for your team to review at a glance. <strong>Same code, both jobs.</strong>
+    </p>
+
+    <div class="cards-grid">
+      <article class="card card--stack">
+        <p class="card-label" data-tokens-stack-name>{initialStack.headerLabel}</p>
+        <div class="card-value-container">
+          <span class="counter danger" data-tokens-stack-value data-target={initialStack.tokens}>0</span>
+          <span class="suffix">tokens</span>
+        </div>
+        <p class="card-sub">{initialStack.lines} lines of form code · tokenized with <code>cl100k_base</code></p>
+      </article>
+
+      <article class="card card--gui">
+        <p class="card-label">GolemUI</p>
+        <div class="card-value-container">
+          <span class="counter brand" data-target={golemui.tokens}>0</span>
+          <span class="suffix">tokens</span>
+        </div>
+        <p class="card-sub">
+          {golemui.lines} lines · <span class="delta" data-tokens-delta>−{initialDelta}%</span> on the same form
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ stackData, golemuiTokens: golemui.tokens }}>
+  const section = document.querySelector('.tokens-section');
+  const stackName = document.querySelector('[data-tokens-stack-name]');
+  const stackValue = document.querySelector('[data-tokens-stack-value]');
+  const delta = document.querySelector('[data-tokens-delta]');
+
+  function applyStack(id) {
+    const data = stackData[id];
+    if (!data || !section) return;
+    section.setAttribute('data-stack', id);
+    if (stackName) stackName.textContent = data.label;
+    if (stackValue) {
+      stackValue.setAttribute('data-target', String(data.tokens));
+      stackValue.textContent = String(data.tokens);
+    }
+    if (delta) {
+      const pct = Math.round((1 - golemuiTokens / data.tokens) * 100);
+      delta.textContent = `−${pct}%`;
+    }
+  }
+
+  document.addEventListener('golemui:stack', (e) => {
+    applyStack(e.detail?.id);
+  });
+</script>
+
+<script>
+  function animateValue(obj: Element, end: number, duration: number) {
+    let startTimestamp: number | null = null;
+    const start = parseFloat((obj as HTMLElement).textContent || '0') || 0;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const currentValue = progress * (end - start) + start;
+      obj.textContent = String(Math.round(currentValue));
+      if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const counters = entry.target.querySelectorAll('.counter');
+          counters.forEach((counter: Element) => {
+            const target = parseFloat(counter.getAttribute('data-target') ?? '0');
+            animateValue(counter, target, 1500);
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.5 },
+  );
+
+  const section = document.querySelector('.tokens-section');
+  if (section) observer.observe(section);
+</script>
+
+<style lang="scss">
+  .tokens-section {
+    padding: 1.5rem 0 4rem;
+    overflow: hidden;
+
+    &[data-stack='react-rhf'] { --stack-color: 97, 218, 251; }
+    &[data-stack='angular']   { --stack-color: 221, 0, 49; }
+    &[data-stack='lit']       { --stack-color: 50, 79, 255; }
+    &[data-stack='vanilla']   { --stack-color: 247, 223, 30; }
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.03em;
+
+    @media (min-width: 768px) {
+      font-size: 3rem;
+    }
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    margin: 0 0 2rem;
+    line-height: 1.6;
+    max-width: 60rem;
+
+    strong {
+      color: var(--text-color);
+      font-weight: 700;
+    }
+
+    code {
+      font-family: var(--__sl-font-mono);
+      font-size: 0.95em;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 0.05rem 0.4rem;
+      border-radius: 4px;
+      color: var(--text-color);
+    }
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+      line-height: 1.55;
+    }
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .card {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s ease;
+  }
+
+  .card--stack {
+    border-color: rgba(var(--stack-color, 248, 113, 113), 0.32);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  :global(html.dark) .card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-label {
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
+    transition: color 0.3s ease;
+  }
+
+  .card--stack .card-label {
+    color: rgba(var(--stack-color, 100, 116, 139), 1);
+  }
+
+  .card-value-container {
+    font-size: 3.75rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .counter {
+    display: inline-block;
+    transition: color 0.3s ease;
+
+    &.danger {
+      color: #f87171;
+    }
+
+    &.brand {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .suffix {
+    font-size: 1.5rem;
+    margin-left: 0.4rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .card-sub {
+    margin: 0.85rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+
+    code {
+      font-family: var(--__sl-font-mono);
+      font-size: 0.75rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 0.05rem 0.4rem;
+      border-radius: 4px;
+    }
+  }
+
+  .delta {
+    color: #22c55e;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .card-value-container {
+      font-size: 2.75rem;
+    }
+  }
+</style>

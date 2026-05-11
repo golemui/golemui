@@ -7,7 +7,7 @@ export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/appetizer',
   server: {
-    port: 4200,
+    port: 4201,
     host: 'localhost',
   },
   preview: {
