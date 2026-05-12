@@ -126,7 +126,6 @@
 ### ❤️ Thank You
 
 - Mud Scientist
-- mudscientist
 - Raul Jimenez @Elecash
 
 ## 0.18.0 (2026-01-13)
@@ -258,7 +257,6 @@
 ### ❤️ Thank You
 
 - Mud Scientist
-- mudscientist
 - Raul Jimenez @Elecash
 
 ## 0.14.11 (2025-12-21)
