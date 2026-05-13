@@ -1,45 +1,45 @@
-import { describe, it, expect } from 'vitest';
-import { golemForm, formDefs } from '@golemui/gui-shared';
+import { formDefs } from '@golemui/gui-shared';
+import { describe, expect, it } from 'vitest';
 
-import { textinput as jsonTextinputTab } from './tabs/textinput';
-import { textinputTab as dxTextinputTab } from './tabs/textinput.dx';
-import { password as jsonPasswordTab } from './tabs/password';
-import { passwordTab as dxPasswordTab } from './tabs/password.dx';
-import { currency as jsonCurrencyTab } from './tabs/currency';
-import { currencyTab as dxCurrencyTab } from './tabs/currency.dx';
-import { number as jsonNumberTab } from './tabs/number';
-import { numberTab as dxNumberTab } from './tabs/number.dx';
-import { markdownText as jsonMarkdownTextTab } from './tabs/markdown-text';
-import { markdownTextTab as dxMarkdownTextTab } from './tabs/markdown-text.dx';
-import { alert as jsonAlertTab } from './tabs/alert';
-import { alertTab as dxAlertTab } from './tabs/alert.dx';
-import { checkbox as jsonCheckboxTab } from './tabs/checkbox';
-import { checkboxTab as dxCheckboxTab } from './tabs/checkbox.dx';
-import { toggle as jsonToggleTab } from './tabs/toggle';
-import { toggleTab as dxToggleTab } from './tabs/toggle.dx';
-import { markdown as jsonMarkdownTab } from './tabs/markdown';
-import { markdownTab as dxMarkdownTab } from './tabs/markdown.dx';
-import { select as jsonSelectTab } from './tabs/select';
-import { selectTab as dxSelectTab } from './tabs/select.dx';
-import { radiogroup as jsonRadiogroupTab } from './tabs/radiogroup';
-import { radiogroupTab as dxRadiogroupTab } from './tabs/radiogroup.dx';
-import { textarea as jsonTextareaTab } from './tabs/textarea';
-import { textareaTab as dxTextareaTab } from './tabs/textarea.dx';
-import { list as jsonListTab } from './tabs/list';
-import { listTab as dxListTab } from './tabs/list.dx';
-import { flex as jsonFlexTab } from './tabs/flex';
-import { flexTab as dxFlexTab } from './tabs/flex.dx';
+import { buildKitchenSinkDx } from './kitchen-sink.dx';
 import { accordion as jsonAccordionTab } from './tabs/accordion';
 import { accordionTab as dxAccordionTab } from './tabs/accordion.dx';
-import { grid as jsonGridTab } from './tabs/grid';
-import { gridTab as dxGridTab } from './tabs/grid.dx';
+import { alert as jsonAlertTab } from './tabs/alert';
+import { alertTab as dxAlertTab } from './tabs/alert.dx';
 import { calendar as jsonCalendarTab } from './tabs/calendar';
 import { calendarTab as dxCalendarTab } from './tabs/calendar.dx';
+import { checkbox as jsonCheckboxTab } from './tabs/checkbox';
+import { checkboxTab as dxCheckboxTab } from './tabs/checkbox.dx';
+import { currency as jsonCurrencyTab } from './tabs/currency';
+import { currencyTab as dxCurrencyTab } from './tabs/currency.dx';
 import { dropdown as jsonDropdownTab } from './tabs/dropdown';
 import { dropdownTab as dxDropdownTab } from './tabs/dropdown.dx';
+import { flex as jsonFlexTab } from './tabs/flex';
+import { flexTab as dxFlexTab } from './tabs/flex.dx';
+import { grid as jsonGridTab } from './tabs/grid';
+import { gridTab as dxGridTab } from './tabs/grid.dx';
+import { list as jsonListTab } from './tabs/list';
+import { listTab as dxListTab } from './tabs/list.dx';
+import { markdown as jsonMarkdownTab } from './tabs/markdown';
+import { markdownText as jsonMarkdownTextTab } from './tabs/markdown-text';
+import { markdownTextTab as dxMarkdownTextTab } from './tabs/markdown-text.dx';
+import { markdownTab as dxMarkdownTab } from './tabs/markdown.dx';
+import { number as jsonNumberTab } from './tabs/number';
+import { numberTab as dxNumberTab } from './tabs/number.dx';
+import { password as jsonPasswordTab } from './tabs/password';
+import { passwordTab as dxPasswordTab } from './tabs/password.dx';
+import { radiogroup as jsonRadiogroupTab } from './tabs/radiogroup';
+import { radiogroupTab as dxRadiogroupTab } from './tabs/radiogroup.dx';
 import { repeater as jsonRepeaterTab } from './tabs/repeater';
 import { repeaterTab as dxRepeaterTab } from './tabs/repeater.dx';
-import { buildKitchenSinkDx } from './kitchen-sink.dx';
+import { select as jsonSelectTab } from './tabs/select';
+import { selectTab as dxSelectTab } from './tabs/select.dx';
+import { textarea as jsonTextareaTab } from './tabs/textarea';
+import { textareaTab as dxTextareaTab } from './tabs/textarea.dx';
+import { textinput as jsonTextinputTab } from './tabs/textinput';
+import { textinputTab as dxTextinputTab } from './tabs/textinput.dx';
+import { toggle as jsonToggleTab } from './tabs/toggle';
+import { toggleTab as dxToggleTab } from './tabs/toggle.dx';
 
 // ─── Per-tab equivalence test ───────────────────────────────────────────────
 //
@@ -54,8 +54,16 @@ import { buildKitchenSinkDx } from './kitchen-sink.dx';
 
 const ks = buildKitchenSinkDx();
 
-const buildJsonTab = (tabSection: any) =>
-  golemForm<any>().create({ states: {}, form: [tabSection] });
+// Emulates the behaviour of the internal `golemForm` function
+const buildJsonTab = (tabSection: any) => ({
+  states: {},
+  form: {
+    uid: 'gui-root-uid',
+    type: 'flex',
+    kind: 'layout',
+    children: [tabSection],
+  },
+});
 
 // `processDxFacade(...).form` returns `Core.Form` (a `{states, form: LayoutWidget}`
 // wrapper). `golemForm().create(...).form` returns the LayoutWidget directly.
