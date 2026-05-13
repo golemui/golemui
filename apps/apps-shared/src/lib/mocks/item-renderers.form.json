@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
   "states": {
     "register": "$form.registerMode === true"
   },
