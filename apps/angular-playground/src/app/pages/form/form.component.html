@@ -17,19 +17,23 @@
     <p class="error">{{ error }}</p>
   }
 
-  <gui-form
-    [formDef]="formDef"
-    [data]="formData"
-    [meta]="formMeta"
-    [customWidgetLoaders]="customWidgetLoaders"
-    [middlewares]="middlewares"
-    [customValidators]="validators"
-    [itemRenderers]="itemRenderers"
-    [localization]="localization"
-    [autocomplete]="'off'"
-    [dependencies]="deps"
-    [validateOn]="validateOn"
-    (formHealth)="onFormHealth($event)"
-    (formEvent)="onFormEvent($event)"
-  ></gui-form>
+  @if (formDef) {
+    <gui-form
+      [formDef]="formDef"
+      [data]="formData"
+      [meta]="formMeta"
+      [customWidgetLoaders]="customWidgetLoaders"
+      [middlewares]="middlewares"
+      [customValidators]="validators"
+      [itemRenderers]="itemRenderers"
+      [localization]="localization"
+      [autocomplete]="'off'"
+      [dependencies]="deps"
+      [validateOn]="validateOn"
+      (formHealth)="onFormHealth($event)"
+      (formEvent)="onFormEvent($event)"
+    ></gui-form>
+  } @else {
+    Loading...
+  }
 </div>

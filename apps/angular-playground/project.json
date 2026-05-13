@@ -20,6 +20,11 @@
           {
             "glob": "**/*",
             "input": "apps/angular-playground/public"
+          },
+          {
+            "glob": "**/*.json",
+            "input": "apps/apps-shared/src/lib/mocks",
+            "output": "assets/mocks"
           }
         ],
         "styles": [
