@@ -1,115 +1,6 @@
 import * as Core from '@golemui/core';
-import { golemForm } from '@golemui/gui-shared';
-import { accordion } from './tabs/accordion';
-import { alert } from './tabs/alert';
-import { calendar } from './tabs/calendar';
-import { checkbox } from './tabs/checkbox';
-import { currency } from './tabs/currency';
-import { dropdown } from './tabs/dropdown';
-import { flex } from './tabs/flex';
-import { grid } from './tabs/grid';
-import { list } from './tabs/list';
-import { markdown } from './tabs/markdown';
-import { markdownText } from './tabs/markdown-text';
-import { number } from './tabs/number';
-import { password } from './tabs/password';
-import { radiogroup } from './tabs/radiogroup';
-import { repeater } from './tabs/repeater';
-import { select } from './tabs/select';
-import { textarea } from './tabs/textarea';
-import { textinput } from './tabs/textinput';
-import { toggle } from './tabs/toggle';
+import { resolveChunkRefs } from '@golemui/gui-shared';
 import { Example } from './types';
-
-const states = {
-  limitReached: '$form.repeaters.users?.length === 5',
-  hasSubregionSelect: `!!$form.selects.subregion`,
-  hasSubregionRadiogroup: `!!$form.radiogroups.subregion`,
-};
-
-type States = keyof typeof states;
-
-type CustomHeadingWidgetProps = {
-  text: string;
-  level?: number;
-};
-type CustomHeadingWidget = Core.DisplayWidget<States, any, CustomHeadingWidgetProps>;
-
-const form = golemForm<any, CustomHeadingWidget>().create({
-  states,
-  form: [
-    {
-      kind: 'display',
-      type: 'heading',
-      props: {
-        text: 'KITCHEN SINK',
-        level: 1,
-      },
-    },
-    {
-      kind: 'layout',
-      type: 'tabs',
-      props: {
-        defaultOpen: 'tabAlert',
-        tabs: [
-          { label: 'Alert Component', uid: 'tabAlert' },
-          { label: 'Markdown Text Component', uid: 'tabMarkdownText' },
-          { label: 'Accordion Layout', uid: 'tabAccordion' },
-          { label: 'Flex Layout', uid: 'tabFlex' },
-          { label: 'Grid Layout', uid: 'tabGrid' },
-          { label: 'Textinput Component', uid: 'tabTextinput' },
-          { label: 'Password Component', uid: 'tabPassword' },
-          { label: 'Number Component', uid: 'tabNumber' },
-          { label: 'Currency Component', uid: 'tabCurrency' },
-          { label: 'Date Components', uid: 'tabDate' },
-          { label: 'Markdown Component', uid: 'tabMarkdown' },
-          { label: 'Textarea Component', uid: 'tabTextarea' },
-          { label: 'Checkbox Component', uid: 'tabCheckbox' },
-          { label: 'Toggle Component', uid: 'tabToggle' },
-          { label: 'Radiogroup Component', uid: 'tabRadiogroup' },
-          { label: 'Select Component', uid: 'tabSelect' },
-          { label: 'Dropdown Component', uid: 'tabDropdown' },
-          { label: 'List Component', uid: 'tabList' },
-          { label: 'Repeater Component', uid: 'tabRepeater' },
-        ],
-      },
-      on: { change: 'onTabEvent' },
-      children: [
-        alert('tabAlert'),
-        markdownText('tabMarkdownText'),
-        accordion('tabAccordion'),
-        flex('tabFlex'),
-        grid('tabGrid'),
-        textinput('tabTextinput'),
-        password('tabPassword'),
-        number('tabNumber'),
-        currency('tabCurrency'),
-        calendar('tabDate'),
-        markdown('tabMarkdown'),
-        textarea('tabTextarea'),
-        checkbox('tabCheckbox'),
-        toggle('tabToggle'),
-        radiogroup('tabRadiogroup'),
-        select('tabSelect'),
-        dropdown('tabDropdown'),
-        list('tabList'),
-        repeater('tabRepeater'),
-      ],
-    },
-    {
-      kind: 'action',
-      type: 'button',
-      label: 'Create',
-      props: {
-        icon: 'save',
-        iconPosition: 'right',
-      },
-      on: {
-        click: 'submit',
-      },
-    },
-  ],
-});
 
 const data = {
   listName: 'Development Team',
@@ -162,6 +53,10 @@ const resources = {};
 
 export const kitchenSink: Example = {
   data,
-  form,
+  form: async () => {
+    const baseUrl = new URL('/assets/mocks/kitchen-sink.form.json', window.location.href).href;
+    const json = await fetch(baseUrl).then((r) => r.json());
+    return resolveChunkRefs(json, baseUrl) as unknown as Core.Form<string>;
+  },
   resources,
 };

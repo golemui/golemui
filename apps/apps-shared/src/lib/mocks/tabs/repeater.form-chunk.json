@@ -1,0 +1,46 @@
+{
+  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "uid": "tabRepeater",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "repeater",
+      "path": "repeaters.users",
+      "label": "Team Members",
+      "props": {
+        "title": "Developer",
+        "addButtonIcon": "person_add",
+        "removeButtonIcon": "delete",
+        "addLabel": "Add new developer",
+        "addLabel.limitReached": "'Limit Reached, you can't add more'",
+        "removeLabel": "Delete",
+        "limit": 5,
+        "template": {
+          "kind": "layout",
+          "type": "grid",
+          "children": [
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "repeaters.users.items.firstName",
+              "validator": { "type": "string", "required": true }
+            },
+            {
+              "kind": "input",
+              "type": "textinput",
+              "path": "repeaters.users.items.lastName"
+            }
+          ]
+        }
+      },
+      "validator": {
+        "type": "array",
+        "required": true,
+        "minItems": 1,
+        "maxItems": 2
+      }
+    }
+  ]
+}

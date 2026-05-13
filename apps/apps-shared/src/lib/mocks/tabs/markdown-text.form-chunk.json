@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "uid": "tabMarkdownText",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "display",
+      "type": "markdownText",
+      "props": {
+        "md": "# Welcome\n## Welcome\n### Welcome\n#### Welcome\n##### Welcome\n###### Welcome\n\nThis is a **markdownText** display widget. It renders _markdown_ content as formatted HTML. You can add links too like this one to [GolemUI](https://golemui.com).\n\n- Use it for structured text\n- Use it for rich content display\n- Use it for formatted instructions\n\n1. Use it for structured text\n2. Use it for rich content display\n3. Use it for formatted instructions\n\n> **Note:** Remember to provide a markdown parser via the form `dependencies` prop.\n\n```\nimport { markdownText } from '@golem/ui';\n\nconsole.log('Code blocks are also supported');\n```\n"
+      }
+    }
+  ]
+}

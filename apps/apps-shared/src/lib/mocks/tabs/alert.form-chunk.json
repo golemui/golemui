@@ -1,0 +1,47 @@
+{
+  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "uid": "tabAlert",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Some fields need your attention",
+        "level": "warning"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Some fields need your attention",
+        "level": "success"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Some fields need your attention",
+        "level": "error"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Some fields need your attention",
+        "level": "info"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Some fields need your attention"
+      }
+    }
+  ]
+}

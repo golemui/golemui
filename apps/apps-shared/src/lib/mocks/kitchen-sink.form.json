@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
+  "states": {
+    "limitReached": "$form.repeaters.users?.length === 5",
+    "hasSubregionSelect": "!!$form.selects.subregion",
+    "hasSubregionRadiogroup": "!!$form.radiogroups.subregion"
+  },
+  "form": [
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
+        "text": "KITCHEN SINK",
+        "level": 1
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "tabs",
+      "props": {
+        "defaultOpen": "tabAlert",
+        "tabs": [
+          { "label": "Alert Component", "uid": "tabAlert" },
+          { "label": "Markdown Text Component", "uid": "tabMarkdownText" },
+          { "label": "Accordion Layout", "uid": "tabAccordion" },
+          { "label": "Flex Layout", "uid": "tabFlex" },
+          { "label": "Grid Layout", "uid": "tabGrid" },
+          { "label": "Textinput Component", "uid": "tabTextinput" },
+          { "label": "Password Component", "uid": "tabPassword" },
+          { "label": "Number Component", "uid": "tabNumber" },
+          { "label": "Currency Component", "uid": "tabCurrency" },
+          { "label": "Date Components", "uid": "tabDate" },
+          { "label": "Markdown Component", "uid": "tabMarkdown" },
+          { "label": "Textarea Component", "uid": "tabTextarea" },
+          { "label": "Checkbox Component", "uid": "tabCheckbox" },
+          { "label": "Toggle Component", "uid": "tabToggle" },
+          { "label": "Radiogroup Component", "uid": "tabRadiogroup" },
+          { "label": "Select Component", "uid": "tabSelect" },
+          { "label": "Dropdown Component", "uid": "tabDropdown" },
+          { "label": "List Component", "uid": "tabList" },
+          { "label": "Repeater Component", "uid": "tabRepeater" }
+        ]
+      },
+      "on": { "change": "onTabEvent" },
+      "children": [
+        { "$ref": "./tabs/alert.form-chunk.json" },
+        { "$ref": "./tabs/markdown-text.form-chunk.json" },
+        { "$ref": "./tabs/accordion.form-chunk.json" },
+        { "$ref": "./tabs/flex.form-chunk.json" },
+        { "$ref": "./tabs/grid.form-chunk.json" },
+        { "$ref": "./tabs/textinput.form-chunk.json" },
+        { "$ref": "./tabs/password.form-chunk.json" },
+        { "$ref": "./tabs/number.form-chunk.json" },
+        { "$ref": "./tabs/currency.form-chunk.json" },
+        { "$ref": "./tabs/calendar.form-chunk.json" },
+        { "$ref": "./tabs/markdown.form-chunk.json" },
+        { "$ref": "./tabs/textarea.form-chunk.json" },
+        { "$ref": "./tabs/checkbox.form-chunk.json" },
+        { "$ref": "./tabs/toggle.form-chunk.json" },
+        { "$ref": "./tabs/radiogroup.form-chunk.json" },
+        { "$ref": "./tabs/select.form-chunk.json" },
+        { "$ref": "./tabs/dropdown.form-chunk.json" },
+        { "$ref": "./tabs/list.form-chunk.json" },
+        { "$ref": "./tabs/repeater.form-chunk.json" }
+      ]
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Create",
+      "props": {
+        "icon": "save",
+        "iconPosition": "right"
+      },
+      "on": {
+        "click": "submit"
+      }
+    }
+  ]
+}
