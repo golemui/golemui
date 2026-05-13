@@ -46,7 +46,9 @@ gui-checklist {
   color: var(--gui-text-muted, rgba(0, 0, 0, 0.35));
   flex-shrink: 0;
   margin-top: -2px;
-  transition: color 200ms ease, transform 200ms ease;
+  transition:
+    color 200ms ease,
+    transform 200ms ease;
 }
 
 .checklist-item.done .checklist-icon {

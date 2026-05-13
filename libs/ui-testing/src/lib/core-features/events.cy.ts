@@ -294,7 +294,10 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       cy.get('[id="alertFirst"] [role="alert"]').should('contain.text', 'First alert default text');
-      cy.get('[id="alertSecond"] [role="alert"]').should('contain.text', 'Second alert default text');
+      cy.get('[id="alertSecond"] [role="alert"]').should(
+        'contain.text',
+        'Second alert default text',
+      );
 
       cy.get('[data-cy="updateAlertsButton_button"]').click();
 
@@ -304,4 +307,3 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
     });
   });
 };
-

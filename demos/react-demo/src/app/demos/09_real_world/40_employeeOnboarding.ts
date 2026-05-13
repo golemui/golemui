@@ -59,10 +59,10 @@ export const employeeOnboardingDemo: FormDemoDefinition = {
   title: '40. Employee Onboarding',
   category: 'Ch9: Real World',
   description:
-    'HR sends this to new hires on day one. Two tabs organise personal and '
-    + 'employment details. Selecting a department cascades to populate the team '
-    + 'dropdown. An accordion at the bottom holds a repeater for prior employment '
-    + 'history. Required fields are marked via tags.',
+    'HR sends this to new hires on day one. Two tabs organise personal and ' +
+    'employment details. Selecting a department cascades to populate the team ' +
+    'dropdown. An accordion at the bottom holds a repeater for prior employment ' +
+    'history. Required fields are marked via tags.',
   formDef: () => [
     gui.layouts.tabs([
       {
@@ -74,7 +74,9 @@ export const employeeOnboardingDemo: FormDemoDefinition = {
           gui.inputs.textInput('phone'),
           gui.inputs.datePicker('dateOfBirth', { label: 'Date of birth' }),
           gui.layouts.horizontalFlex([
-            gui.inputs.textInput('emergencyContactName', { label: 'Emergency contact' }, ['required']),
+            gui.inputs.textInput('emergencyContactName', { label: 'Emergency contact' }, [
+              'required',
+            ]),
             gui.inputs.textInput('emergencyContactPhone', { label: 'Contact phone' }, ['required']),
           ]),
         ],

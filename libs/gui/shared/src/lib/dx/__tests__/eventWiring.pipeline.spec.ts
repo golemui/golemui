@@ -8,7 +8,9 @@ import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
 import { _guiTextInput, _guiNumberInput } from '../index';
 
-function getRootFromFacadeResult(result: ReturnType<typeof formDefs.processDxFacade>): LayoutWidget {
+function getRootFromFacadeResult(
+  result: ReturnType<typeof formDefs.processDxFacade>,
+): LayoutWidget {
   return result.form.form as LayoutWidget;
 }
 
@@ -16,9 +18,7 @@ describe('DX Pipeline — Event Wiring', () => {
   describe('Input events — onLoad', () => {
     it('wires onLoad callback on a select to on.load with generated event name', () => {
       const loadFn = vi.fn();
-      const root = processDx([
-        _guiSelect('country', { options: [], onLoad: loadFn }),
-      ]);
+      const root = processDx([_guiSelect('country', { options: [], onLoad: loadFn })]);
 
       const select = getStaticChild(root, 0) as any;
       expect(select.kind).toBe('input');
@@ -28,9 +28,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('wires onLoad string passthrough to on.load', () => {
-      const root = processDx([
-        _guiSelect('country', { options: [], onLoad: 'myLoadEvent' }),
-      ]);
+      const root = processDx([_guiSelect('country', { options: [], onLoad: 'myLoadEvent' })]);
 
       const select = getStaticChild(root, 0) as any;
       expect(select.on?.load).toBe('myLoadEvent');
@@ -69,9 +67,7 @@ describe('DX Pipeline — Event Wiring', () => {
   describe('Input events — onChange', () => {
     it('wires onChange callback on a select to on.change', () => {
       const changeFn = vi.fn();
-      const root = processDx([
-        _guiSelect('country', { options: [], onChange: changeFn }),
-      ]);
+      const root = processDx([_guiSelect('country', { options: [], onChange: changeFn })]);
 
       const select = getStaticChild(root, 0) as any;
       expect(typeof select.on?.change).toBe('string');
@@ -79,9 +75,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('wires onChange string passthrough to on.change', () => {
-      const root = processDx([
-        _guiSelect('country', { options: [], onChange: 'myChangeEvent' }),
-      ]);
+      const root = processDx([_guiSelect('country', { options: [], onChange: 'myChangeEvent' })]);
 
       const select = getStaticChild(root, 0) as any;
       expect(select.on?.change).toBe('myChangeEvent');
@@ -120,9 +114,7 @@ describe('DX Pipeline — Event Wiring', () => {
   describe('Input events — onFilter', () => {
     it('wires onFilter callback on a dropdown to on.filter', () => {
       const filterFn = vi.fn();
-      const root = processDx([
-        _guiDropdown('product', { items: [], onFilter: filterFn }),
-      ]);
+      const root = processDx([_guiDropdown('product', { items: [], onFilter: filterFn })]);
 
       const dropdown = getStaticChild(root, 0) as any;
       expect(typeof dropdown.on?.filter).toBe('string');
@@ -130,9 +122,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('wires onFilter string passthrough to on.filter', () => {
-      const root = processDx([
-        _guiDropdown('product', { items: [], onFilter: 'searchProduct' }),
-      ]);
+      const root = processDx([_guiDropdown('product', { items: [], onFilter: 'searchProduct' })]);
 
       const dropdown = getStaticChild(root, 0) as any;
       expect(dropdown.on?.filter).toBe('searchProduct');
@@ -182,9 +172,9 @@ describe('DX Pipeline — Event Wiring', () => {
       const root = processDx([
         _guiTabs(
           [
-          { label: 'Tab A', children: [_guiTextInput('name')] },
-          { label: 'Tab B', children: [_guiNumberInput('age')] },
-        ],
+            { label: 'Tab A', children: [_guiTextInput('name')] },
+            { label: 'Tab B', children: [_guiNumberInput('age')] },
+          ],
           { onChange: changeFn },
         ),
       ]);
@@ -199,13 +189,15 @@ describe('DX Pipeline — Event Wiring', () => {
     it('registers tabs onChange callback and dispatches FormEvent with update', () => {
       const changeFn = vi.fn();
       const result = formDefs.processDxFacade(
-        [_guiTabs(
-          [
-  { label: 'Tab A', children: [_guiTextInput('name')] },
-  { label: 'Tab B', children: [_guiNumberInput('age')] },
-],
-          { onChange: changeFn },
-        )],
+        [
+          _guiTabs(
+            [
+              { label: 'Tab A', children: [_guiTextInput('name')] },
+              { label: 'Tab B', children: [_guiNumberInput('age')] },
+            ],
+            { onChange: changeFn },
+          ),
+        ],
         [],
         { suppressAutomaticSubmit: true },
       );
@@ -252,12 +244,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
     it('does not include onChange in tabs props', () => {
       const root = processDx([
-        _guiTabs(
-          [
-          { label: 'Tab A', children: [_guiTextInput('name')] },
-        ],
-          { onChange: vi.fn() },
-        ),
+        _guiTabs([{ label: 'Tab A', children: [_guiTextInput('name')] }], { onChange: vi.fn() }),
       ]);
 
       const tabs = getStaticChild(root, 0) as any;
@@ -293,11 +280,9 @@ describe('DX Pipeline — Event Wiring', () => {
 
     it('action onClick still passes event.data to callback (backward compat)', () => {
       const clickFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Go', onClick: clickFn })],
-        [],
-        { suppressAutomaticSubmit: true },
-      );
+      const result = formDefs.processDxFacade([_guiButton({ label: 'Go', onClick: clickFn })], [], {
+        suppressAutomaticSubmit: true,
+      });
 
       const root = getRootFromFacadeResult(result);
       const button = (root.children ?? []).find(
@@ -345,9 +330,7 @@ describe('DX Pipeline — Event Wiring', () => {
   describe('Input events — onBlur', () => {
     it('wires onBlur callback to on.blur with generated event name', () => {
       const blurFn = vi.fn();
-      const root = processDx([
-        _guiTextInput('email', { onBlur: blurFn }),
-      ]);
+      const root = processDx([_guiTextInput('email', { onBlur: blurFn })]);
 
       const input = getStaticChild(root, 0) as any;
       expect(input.kind).toBe('input');
@@ -356,9 +339,7 @@ describe('DX Pipeline — Event Wiring', () => {
     });
 
     it('wires onBlur string passthrough to on.blur', () => {
-      const root = processDx([
-        _guiTextInput('email', { onBlur: 'myBlurEvent' }),
-      ]);
+      const root = processDx([_guiTextInput('email', { onBlur: 'myBlurEvent' })]);
 
       const input = getStaticChild(root, 0) as any;
       expect(input.on?.blur).toBe('myBlurEvent');

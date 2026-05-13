@@ -1,15 +1,6 @@
-import {
-  FormWidget,
-  NonFunctionWidget,
-  UiState,
-} from '@golemui/core';
+import { FormWidget, NonFunctionWidget, UiState } from '@golemui/core';
 import { DxRuntimeParams } from './dxUtilityTypes';
-import {
-  GslLeafSelector,
-  FormConfig,
-  MergeResult,
-  ValidGuiShortcut,
-} from './dx.domain';
+import { GslLeafSelector, FormConfig, MergeResult, ValidGuiShortcut } from './dx.domain';
 import type { DxCommonFields } from './dxBase.types';
 import type { GslItemType } from './dx.domain';
 
@@ -17,9 +8,7 @@ import type { GslItemType } from './dx.domain';
 // Item Type Handler — each shortcut folder implements this
 // ═══════════════════════════════════════════════════
 
-export interface ParsedEntry<
-  TDecorator extends DxCommonFields = DxCommonFields,
-> {
+export interface ParsedEntry<TDecorator extends DxCommonFields = DxCommonFields> {
   baseDef: TDecorator | ((params: DxRuntimeParams) => Partial<TDecorator>);
   path?: string;
   children?: ValidGuiShortcut[];
@@ -101,10 +90,7 @@ export interface ItemTypeHandler<
   // Returns { baseDef, path? } where path is set for keyed entries (inputs, calendar, etc.)
   parseEntry(entry: TEntry): ParsedEntry<TDecorator>;
 
-  afterMerge?(
-    mergeResult: MergeResult,
-    context: AfterMergeContext,
-  ): MergeResult;
+  afterMerge?(mergeResult: MergeResult, context: AfterMergeContext): MergeResult;
 
   /**
    * Optional override for widget types that need custom construction beyond the
@@ -117,10 +103,7 @@ export interface ItemTypeHandler<
    *
    * If not provided, the pipeline falls back to `mapToWidget` for simple leaf types.
    */
-  buildCustomWidget?(
-    mergeResult: MergeResult,
-    context: BuildWidgetContext,
-  ): FormWidget;
+  buildCustomWidget?(mergeResult: MergeResult, context: BuildWidgetContext): FormWidget;
 
   getChildren?(entry: TEntry): ValidGuiShortcut[] | undefined;
 }
@@ -143,7 +126,7 @@ export function getItemTypeHandler(itemType: string): ItemTypeHandler<any, any, 
   if (!handler) {
     throw new Error(
       `No handler registered for item type "${itemType}". ` +
-      `Did you forget to import the registration module?`,
+        `Did you forget to import the registration module?`,
     );
   }
   return handler;

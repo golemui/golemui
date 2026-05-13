@@ -34,7 +34,6 @@ const INPUT_LAYOUT_EVENT_KEYS = Object.keys(INPUT_LAYOUT_EVENT_PROPS);
  *   Called from ItemWalker.processItem for every item.
  */
 export class EventWiringService {
-
   // ── Action-specific: onClick + submit ─────────────────────────
 
   extractOnClickFromMergeResult(
@@ -93,8 +92,7 @@ export class EventWiringService {
 
     const rawOnClick = actionDef.onClick;
     const explicitCallback = typeof rawOnClick === 'function' ? rawOnClick : undefined;
-    const effectiveOnClick = explicitCallback
-      ?? (isSubmit ? formConfig.onSubmit : undefined);
+    const effectiveOnClick = explicitCallback ?? (isSubmit ? formConfig.onSubmit : undefined);
 
     if (effectiveOnClick) {
       // Wrap action onClick: callback receives event.data for backward compat

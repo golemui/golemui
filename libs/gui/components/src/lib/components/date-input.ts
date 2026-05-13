@@ -124,7 +124,9 @@ export class GuiDate extends LitElement {
             },
           )}
         </div>
-        ${this.icon ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>` : nothing}
+        ${this.icon
+          ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
+          : nothing}
       </div>
 
       ${this.showErrors && this.errors?.length

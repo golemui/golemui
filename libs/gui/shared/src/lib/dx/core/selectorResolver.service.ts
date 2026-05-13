@@ -19,10 +19,24 @@ type DecoratorForMatching = DxInternalFields & DxCommonFields;
 // When a new itemType is added, list it under its kind here.
 const UMBRELLA_ITEMTYPES: Record<string, ReadonlySet<string>> = {
   INPUTS: new Set([
-    'INPUTS', 'TEXTAREA', 'PASSWORD', 'SELECT', 'DROPDOWN', 'RADIOGROUP',
-    'CHECKBOX', 'CALENDAR', 'DATE_INPUT', 'DATE_PICKER',
-    'RANGE_CALENDAR', 'RANGE_DATE_INPUT', 'RANGE_DATE_PICKER',
-    'CURRENCY', 'MARKDOWN', 'LIST', 'CUSTOM_INPUT', 'REPEATER',
+    'INPUTS',
+    'TEXTAREA',
+    'PASSWORD',
+    'SELECT',
+    'DROPDOWN',
+    'RADIOGROUP',
+    'CHECKBOX',
+    'CALENDAR',
+    'DATE_INPUT',
+    'DATE_PICKER',
+    'RANGE_CALENDAR',
+    'RANGE_DATE_INPUT',
+    'RANGE_DATE_PICKER',
+    'CURRENCY',
+    'MARKDOWN',
+    'LIST',
+    'CUSTOM_INPUT',
+    'REPEATER',
   ]),
   ACTIONS: new Set(['ACTIONS', 'CUSTOM_ACTION']),
   DISPLAYS: new Set(['DISPLAYS', 'ALERTS', 'CUSTOM_DISPLAY']),
@@ -35,12 +49,7 @@ function selectorMatchesItemType(selectorType: string, itemType: string): boolea
 }
 
 export class SelectorResolver {
-
-  resolve(
-    decorator: DecoratorForMatching,
-    allSelectors: GslSelector[],
-  ): ResolvedSelectors {
-
+  resolve(decorator: DecoratorForMatching, allSelectors: GslSelector[]): ResolvedSelectors {
     const leafSelectors: GslLeafSelector[] = [];
 
     for (const sel of allSelectors) {

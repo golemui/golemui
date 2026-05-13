@@ -24,19 +24,28 @@ export interface DataInputDecorator extends DxInputBase, DxCommonFields {
 
 export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
 
-export interface NumberDataInputDecorator extends DxInputBase, DxCommonFields, Partial<NumberinputProps> {
+export interface NumberDataInputDecorator
+  extends DxInputBase,
+    DxCommonFields,
+    Partial<NumberinputProps> {
   type: 'number';
   validator?: NumberDataInputValidator;
 }
 
 export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
 
-export interface TextDataInputDecorator extends DxInputBase, DxCommonFields, Partial<TextinputProps> {
+export interface TextDataInputDecorator
+  extends DxInputBase,
+    DxCommonFields,
+    Partial<TextinputProps> {
   type: 'text';
   validator?: TextDataInputValidator;
 }
 
-export interface BooleanDataInputDecorator extends DxInputBase, DxCommonFields, Partial<ToggleProps> {
+export interface BooleanDataInputDecorator
+  extends DxInputBase,
+    DxCommonFields,
+    Partial<ToggleProps> {
   type: 'boolean';
   validator?: Omit<BooleanValidator, 'type'>;
 }

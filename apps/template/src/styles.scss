@@ -3,7 +3,7 @@
 @use '../../../libs/gui/components/src/styles/themes/clay';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-[dir="rtl"] .gui-widget-icon {
+[dir='rtl'] .gui-widget-icon {
   direction: rtl;
 }
 
@@ -27,7 +27,9 @@
 
   /* Adjust borders */
   --gui-border-default: var(--gui-color-warning-300);
-  --gui-shadow-focus: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+  --gui-shadow-focus:
+    0 0 0 2px var(--gui-bg-default),
+    0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,7 +42,8 @@
   }
 }
 
-html, body {
+html,
+body {
   background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
@@ -215,7 +218,6 @@ lit-root {
     box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
   }
 }
-
 
 @media (prefers-color-scheme: dark) {
   .country-renderer.odd {

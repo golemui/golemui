@@ -88,7 +88,9 @@ const ORIGIN_ICON: Record<Origin, TemplateResult> = {
       font-size="160"
       letter-spacing="6"
       fill="url(#fd-golem-brand)"
-    >{}</text>
+    >
+      {}
+    </text>
   </svg>`,
   material: html`<svg
     class="fd-origin-icon"
@@ -142,29 +144,21 @@ const DEFAULT_MIX: Record<FieldKey, Origin> = {
 
 const ORIGINS: Origin[] = ['golem', 'material', 'shoelace', 'yours'];
 
-const flagItemRenderer = (
-  ctx: ItemRenderContext<CountryItem>,
-): TemplateResult => html`
+const flagItemRenderer = (ctx: ItemRenderContext<CountryItem>): TemplateResult => html`
   <div class="fd-flag-item ${ctx.selected ? 'is-selected' : ''} ${ctx.focused ? 'is-focused' : ''}">
     <span class="fd-flag-item__flag">${ctx.template.flag}</span>
     <span class="fd-flag-item__label">${ctx.template.label}</span>
   </div>
 `;
 
-function buildField(
-  field: FieldKey,
-  origin: Origin,
-  onChangeCb: (value: unknown) => void,
-) {
+function buildField(field: FieldKey, origin: Origin, onChangeCb: (value: unknown) => void) {
   const type = FIELD_TYPE[field];
   const label = FIELD_LABEL[field];
 
   if (type === 'submit') {
     if (origin === 'golem') return gui.actions.button({ label, uid: field });
-    if (origin === 'material')
-      return gui.actions.custom('matButton', { label, uid: field });
-    if (origin === 'shoelace')
-      return gui.actions.custom('shoelaceButton', { label, uid: field });
+    if (origin === 'material') return gui.actions.custom('matButton', { label, uid: field });
+    if (origin === 'shoelace') return gui.actions.custom('shoelaceButton', { label, uid: field });
     return gui.actions.custom('freedomButton', { label, uid: field });
   }
 
@@ -249,8 +243,7 @@ function buildField(
   }
 
   // checkbox
-  if (origin === 'golem')
-    return gui.inputs.checkbox(field, { uid: field, label, onChange });
+  if (origin === 'golem') return gui.inputs.checkbox(field, { uid: field, label, onChange });
   if (origin === 'material')
     return gui.inputs.custom('matCheckbox', field, { uid: field, label, onChange });
   if (origin === 'shoelace')
@@ -267,7 +260,11 @@ function fieldLineJson(field: FieldKey, origin: Origin): unknown {
     return {
       type: 'custom',
       widget:
-        origin === 'material' ? 'matButton' : origin === 'shoelace' ? 'shoelaceButton' : 'freedomButton',
+        origin === 'material'
+          ? 'matButton'
+          : origin === 'shoelace'
+            ? 'shoelaceButton'
+            : 'freedomButton',
       uid: field,
       label,
     };
@@ -313,8 +310,7 @@ function fieldLineJson(field: FieldKey, origin: Origin): unknown {
   }
 
   if (type === 'slider') {
-    if (origin === 'golem')
-      return { type: 'numberInput', path: field, label };
+    if (origin === 'golem') return { type: 'numberInput', path: field, label };
     return {
       type: 'custom',
       widget:
@@ -348,10 +344,8 @@ function fieldLineSource(field: FieldKey, origin: Origin): string {
   const type = FIELD_TYPE[field];
   if (type === 'submit') {
     if (origin === 'golem') return `gui.actions.button({ label: 'Sign up' }),`;
-    if (origin === 'material')
-      return `gui.actions.custom('matButton', { label: 'Sign up' }),`;
-    if (origin === 'shoelace')
-      return `gui.actions.custom('shoelaceButton', { label: 'Sign up' }),`;
+    if (origin === 'material') return `gui.actions.custom('matButton', { label: 'Sign up' }),`;
+    if (origin === 'shoelace') return `gui.actions.custom('shoelaceButton', { label: 'Sign up' }),`;
     return `gui.actions.custom('freedomButton', { label: 'Sign up' }),`;
   }
 
@@ -399,13 +393,13 @@ type Tab = 'dsl' | 'json';
 
 @customElement('gui-freedom')
 export class FreedomElement extends LitElement {
-  @state() private declare mix: Record<FieldKey, Origin>;
-  @state() private declare formData: FormShape;
-  @state() private declare formKey: number;
-  @state() private declare openPicker: FieldKey | null;
-  @state() private declare flashedCodeField: FieldKey | null;
-  @state() private declare flashedDataField: FieldKey | null;
-  @state() private declare activeTab: Tab;
+  @state() declare private mix: Record<FieldKey, Origin>;
+  @state() declare private formData: FormShape;
+  @state() declare private formKey: number;
+  @state() declare private openPicker: FieldKey | null;
+  @state() declare private flashedCodeField: FieldKey | null;
+  @state() declare private flashedDataField: FieldKey | null;
+  @state() declare private activeTab: Tab;
 
   private codeFlashTimer: ReturnType<typeof setTimeout> | null = null;
   private dataFlashTimer: ReturnType<typeof setTimeout> | null = null;
@@ -423,8 +417,7 @@ export class FreedomElement extends LitElement {
         (await import('./components/mat-checkbox')).FreedomMatCheckboxElement,
       matDatePicker: async () =>
         (await import('./components/mat-date-picker')).FreedomMatDatePickerElement,
-      matSlider: async () =>
-        (await import('./components/mat-slider')).FreedomMatSliderElement,
+      matSlider: async () => (await import('./components/mat-slider')).FreedomMatSliderElement,
       matButton: async () => (await import('./components/mat-button')).FreedomMatButtonElement,
       // Shoelace
       shoelaceDropdown: async () =>
@@ -444,10 +437,8 @@ export class FreedomElement extends LitElement {
         (await import('./components/freedom-checkbox')).FreedomCheckboxElement,
       freedomDatePicker: async () =>
         (await import('./components/freedom-date-picker')).FreedomDatePickerElement,
-      freedomSlider: async () =>
-        (await import('./components/freedom-slider')).FreedomSliderElement,
-      freedomButton: async () =>
-        (await import('./components/freedom-button')).FreedomButtonElement,
+      freedomSlider: async () => (await import('./components/freedom-slider')).FreedomSliderElement,
+      freedomButton: async () => (await import('./components/freedom-button')).FreedomButtonElement,
     },
   };
 
@@ -567,26 +558,27 @@ export class FreedomElement extends LitElement {
         ${isOpen
           ? html`<ul class="fd-picker-menu" role="listbox">
               ${ORIGINS.map(
-                (o) => html`<li>
-                  <button
-                    type="button"
-                    role="option"
-                    class="fd-picker-menu__item fd-picker-menu__item--${o} ${o === origin
-                      ? 'is-current'
-                      : ''}"
-                    aria-selected=${o === origin}
-                    @click=${(e: Event) => {
-                      e.stopPropagation();
-                      this.setOrigin(field, o);
-                    }}
-                  >
-                    ${ORIGIN_ICON[o]}
-                    <span class="fd-picker-menu__label">${ORIGIN_LABEL[o]}</span>
-                    ${o === origin
-                      ? html`<span class="fd-picker-menu__check" aria-hidden="true">✓</span>`
-                      : null}
-                  </button>
-                </li>`,
+                (o) =>
+                  html`<li>
+                    <button
+                      type="button"
+                      role="option"
+                      class="fd-picker-menu__item fd-picker-menu__item--${o} ${o === origin
+                        ? 'is-current'
+                        : ''}"
+                      aria-selected=${o === origin}
+                      @click=${(e: Event) => {
+                        e.stopPropagation();
+                        this.setOrigin(field, o);
+                      }}
+                    >
+                      ${ORIGIN_ICON[o]}
+                      <span class="fd-picker-menu__label">${ORIGIN_LABEL[o]}</span>
+                      ${o === origin
+                        ? html`<span class="fd-picker-menu__check" aria-hidden="true">✓</span>`
+                        : null}
+                    </button>
+                  </li>`,
               )}
             </ul>`
           : null}
@@ -607,13 +599,14 @@ export class FreedomElement extends LitElement {
   private renderDsl(): TemplateResult {
     return html`<pre class="ds-code"><code>const formDef = [
 ${FIELDS.map(
-  (f) =>
-    html`<span
-      class="fd-code-line ${this.flashedCodeField === f ? 'is-flashing' : ''}"
-      data-field=${f}
-    >  ${fieldLineSource(f, this.mix[f])}</span>
-`,
-)}];</code></pre>`;
+      (f) =>
+        html`<span
+          class="fd-code-line ${this.flashedCodeField === f ? 'is-flashing' : ''}"
+          data-field=${f}
+        >
+          ${fieldLineSource(f, this.mix[f])}</span
+        > `,
+    )}];</code></pre>`;
   }
 
   private renderJson(): TemplateResult {

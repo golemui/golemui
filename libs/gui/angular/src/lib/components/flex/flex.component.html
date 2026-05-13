@@ -9,7 +9,9 @@
   [class.gui-flex__widget--justify-center]="templateData.justify === 'center'"
   [class.gui-flex__widget--justify-start]="templateData.justify === 'start'"
   [class.gui-flex__widget--justify-end]="templateData.justify === 'end'"
-  [class.gui-flex__widget--justify-stretch]="!templateData.justify || templateData.justify === 'stretch'"
+  [class.gui-flex__widget--justify-stretch]="
+    !templateData.justify || templateData.justify === 'stretch'
+  "
   [class.gui-flex__widget--align-center]="templateData.align === 'center'"
   [class.gui-flex__widget--align-start]="!templateData.align || templateData.align === 'start'"
   [class.gui-flex__widget--align-end]="templateData.align === 'end'"

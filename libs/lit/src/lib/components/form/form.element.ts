@@ -102,7 +102,12 @@ export class FormElement extends LitElement {
     const ready = this.state?.formDef && this.context.widgetRegistry.ready;
 
     return html`
-      <form id=${this.formName} novalidate dir=${this.direction} autocomplete=${this.autocomplete || nothing}>
+      <form
+        id=${this.formName}
+        novalidate
+        dir=${this.direction}
+        autocomplete=${this.autocomplete || nothing}
+      >
         ${when(
           ready,
           () => html` <gui-widget .widget=${this.state?.formDef.form}></gui-widget>`,

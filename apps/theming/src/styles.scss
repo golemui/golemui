@@ -12,7 +12,8 @@ html {
   color-scheme: dark;
 }
 
-html, body {
+html,
+body {
   background-color: var(--gui-bg-default);
   font-family: var(--gui-font-family);
 }
@@ -84,7 +85,7 @@ gui-theming {
     align-items: center;
   }
 
-  input[type="radio"] {
+  input[type='radio'] {
     appearance: none;
     min-width: 20px;
     min-height: 20px;
@@ -92,11 +93,16 @@ gui-theming {
     margin-right: 12px;
 
     border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--gui-color-neutral-800), var(--gui-color-neutral-50) 30%);
-    transition: background-color .25s ease-in-out, border-color .25s ease-in-out, box-shadow .25s ease-in-out;
+    border: 1px solid
+      color-mix(in srgb, var(--gui-color-neutral-800), var(--gui-color-neutral-50) 30%);
+    transition:
+      background-color 0.25s ease-in-out,
+      border-color 0.25s ease-in-out,
+      box-shadow 0.25s ease-in-out;
 
     &:checked {
-      border: 6px solid color-mix(in srgb, var(--gui-color-neutral-50), var(--gui-color-neutral-950) 50%);
+      border: 6px solid
+        color-mix(in srgb, var(--gui-color-neutral-50), var(--gui-color-neutral-950) 50%);
     }
   }
 }

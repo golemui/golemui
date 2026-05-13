@@ -23,24 +23,83 @@ const coins: { [key: string]: string } = {
 
 const data = {
   projects: [
-    { name: 'GolemUI', deliveryDate: '2026-06-30', budget: 100000, description: '**GolemUI The Declarative Form Engine:**\n\nThe New Paradigm for building forms. Stop coding UI-coupled forms and start defining semantic, serializable schemas.' },
+    {
+      name: 'GolemUI',
+      deliveryDate: '2026-06-30',
+      budget: 100000,
+      description:
+        '**GolemUI The Declarative Form Engine:**\n\nThe New Paradigm for building forms. Stop coding UI-coupled forms and start defining semantic, serializable schemas.',
+    },
   ],
   developers: [
     { name: 'John Doe', position: 'pm', holidays: [{ start: '2026-05-29' }] },
-    { name: 'Jane Smith', position: 'ui_ux', holidays: [{ start: '2026-05-29', end: '2026-06-01' }] },
+    {
+      name: 'Jane Smith',
+      position: 'ui_ux',
+      holidays: [{ start: '2026-05-29', end: '2026-06-01' }],
+    },
     { name: 'Alice Johnson', position: 'frontend', holidays: [] },
-    { name: 'Bob Brown', position: 'backend', holidays: [{ start: '2026-07-01', end: '2026-07-15' }, { start: '2026-12-20', end: '2026-12-31' }] },
+    {
+      name: 'Bob Brown',
+      position: 'backend',
+      holidays: [
+        { start: '2026-07-01', end: '2026-07-15' },
+        { start: '2026-12-20', end: '2026-12-31' },
+      ],
+    },
     { name: 'Charlie Davis', position: 'fullstack', holidays: [] },
     { name: 'David Wilson', position: 'devops', holidays: [] },
   ],
   issues: [
-    { name: 'Add new toggle component', type: 'feature', projectId: 'GolemUI', assigneeId: 'John Doe', estDelivery: '2026-06-30', highPriority: false },
-    { name: 'Use custom font', type: 'improvement', projectId: 'GolemUI', assigneeId: 'Jane Smith', estDelivery: '2026-06-30', highPriority: false },
-    { name: 'Fix rendering issue in small screens', type: 'bug', projectId: 'GolemUI', assigneeId: 'Alice Johnson', estDelivery: '2026-06-30', highPriority: true },
-    { name: 'Add reactive functions docs', type: 'documentation', projectId: 'GolemUI', assigneeId: 'Bob Brown', estDelivery: '2026-06-30', highPriority: false },
-    { name: 'Add tests to Astro components', type: 'test', projectId: 'GolemUI', assigneeId: 'Charlie Davis', estDelivery: '2026-06-30', highPriority: false },
-    { name: 'Deploy website', type: 'chore', projectId: 'GolemUI', assigneeId: 'David Wilson', estDelivery: '2026-06-30', highPriority: false },
-  ]
+    {
+      name: 'Add new toggle component',
+      type: 'feature',
+      projectId: 'GolemUI',
+      assigneeId: 'John Doe',
+      estDelivery: '2026-06-30',
+      highPriority: false,
+    },
+    {
+      name: 'Use custom font',
+      type: 'improvement',
+      projectId: 'GolemUI',
+      assigneeId: 'Jane Smith',
+      estDelivery: '2026-06-30',
+      highPriority: false,
+    },
+    {
+      name: 'Fix rendering issue in small screens',
+      type: 'bug',
+      projectId: 'GolemUI',
+      assigneeId: 'Alice Johnson',
+      estDelivery: '2026-06-30',
+      highPriority: true,
+    },
+    {
+      name: 'Add reactive functions docs',
+      type: 'documentation',
+      projectId: 'GolemUI',
+      assigneeId: 'Bob Brown',
+      estDelivery: '2026-06-30',
+      highPriority: false,
+    },
+    {
+      name: 'Add tests to Astro components',
+      type: 'test',
+      projectId: 'GolemUI',
+      assigneeId: 'Charlie Davis',
+      estDelivery: '2026-06-30',
+      highPriority: false,
+    },
+    {
+      name: 'Deploy website',
+      type: 'chore',
+      projectId: 'GolemUI',
+      assigneeId: 'David Wilson',
+      estDelivery: '2026-06-30',
+      highPriority: false,
+    },
+  ],
 };
 
 const form = defineForm({
@@ -349,7 +408,9 @@ const form = defineForm({
                               props: {
                                 placeholder: 'Select Developer',
                                 items: (data: FunctionWidgetParams<any> | undefined) => {
-                                  return data?.$form.developers?.length ? data?.$form.developers : [];
+                                  return data?.$form.developers?.length
+                                    ? data?.$form.developers
+                                    : [];
                                 },
                                 labelField: 'name',
                                 valueField: 'name',

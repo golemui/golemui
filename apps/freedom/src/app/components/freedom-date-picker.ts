@@ -41,13 +41,10 @@ export class FreedomDatePickerElement extends LitElement implements Core.WithWid
         type="date"
         class="freedom-date-picker__field ${hasError ? 'freedom-date-picker__field--error' : ''}"
         .value=${td.value ?? ''}
-        @input=${(e: Event) =>
-          this.adapter.valueChanged((e.target as HTMLInputElement).value)}
+        @input=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).value)}
         @blur=${() => this.adapter.onBlur()}
       />
-      ${hasError
-        ? html`<span class="freedom-date-picker__error">${td.errors?.[0]}</span>`
-        : null}
+      ${hasError ? html`<span class="freedom-date-picker__error">${td.errors?.[0]}</span>` : null}
     `;
   }
 

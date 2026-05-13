@@ -86,9 +86,7 @@ describe('DX Pipeline — Dropdown', () => {
   });
 
   it('passes inputDebounce through', () => {
-    const result = processDx(
-      _guiDropdown('country', { items: sampleItems, inputDebounce: 300 }),
-    );
+    const result = processDx(_guiDropdown('country', { items: sampleItems, inputDebounce: 300 }));
     const w = getStaticChild(result, 0) as {
       props?: { inputDebounce?: number };
     };
@@ -97,48 +95,41 @@ describe('DX Pipeline — Dropdown', () => {
   });
 
   it('applies GSL broad selector override', () => {
-    const result = processDx(
-      _guiDropdown('country', { items: sampleItems }),
-      [_gslDropdowns({ override: { hint: 'Pick one' } })],
-    );
+    const result = processDx(_guiDropdown('country', { items: sampleItems }), [
+      _gslDropdowns({ override: { hint: 'Pick one' } }),
+    ]);
     const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
     expect(w.props?.hint).toBe('Pick one');
   });
 
   it('applies GSL byId selector override', () => {
-    const result = processDx(
-      _guiDropdown('country', { items: sampleItems, uid: 'country-dd' }),
-      [_gslDropdownByUid('country-dd', { override: { hint: 'By-id hint' } })],
-    );
+    const result = processDx(_guiDropdown('country', { items: sampleItems, uid: 'country-dd' }), [
+      _gslDropdownByUid('country-dd', { override: { hint: 'By-id hint' } }),
+    ]);
     const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
     expect(w.props?.hint).toBe('By-id hint');
   });
 
   it('suppresses auto-label via GSL config', () => {
-    const result = processDx(
-      _guiDropdown('homeCountry', { items: sampleItems }),
-      [_gslDropdowns({ suppressAutomaticLabels: true })],
-    );
+    const result = processDx(_guiDropdown('homeCountry', { items: sampleItems }), [
+      _gslDropdowns({ suppressAutomaticLabels: true }),
+    ]);
     const w = getStaticChild(result, 0) as { label?: string };
 
     expect(w.label).toBeUndefined();
   });
 
   it('conditionally sets readonly', () => {
-    const result = processDx(
-      _guiDropdown('country', { items: sampleItems, readonly: true }),
-    );
+    const result = processDx(_guiDropdown('country', { items: sampleItems, readonly: true }));
     const w = getStaticChild(result, 0) as { readonly?: boolean };
 
     expect(w.readonly).toBe(true);
   });
 
   it('conditionally sets disabled', () => {
-    const result = processDx(
-      _guiDropdown('country', { items: sampleItems, disabled: true }),
-    );
+    const result = processDx(_guiDropdown('country', { items: sampleItems, disabled: true }));
     const w = getStaticChild(result, 0) as { disabled?: boolean };
 
     expect(w.disabled).toBe(true);

@@ -32,31 +32,16 @@ import {
   eventsBlurDemo,
   eventsSubmitDemo,
 } from '../../forms/events';
-import {
-  typeSelectorDropdownsDemo,
-  typeSelectorByUidDemo,
-} from '../../forms/type-selectors';
-import {
-  chainingProfileDemo,
-  chainingProfileRefactoredDemo,
-} from '../../forms/chaining';
-import {
-  scopeTagDemo,
-  scopeStateDemo,
-} from '../../forms/scope-operators';
-import {
-  multiValueAndDemo,
-  multiValueOrDemo,
-} from '../../forms/multi-value-scopes';
+import { typeSelectorDropdownsDemo, typeSelectorByUidDemo } from '../../forms/type-selectors';
+import { chainingProfileDemo, chainingProfileRefactoredDemo } from '../../forms/chaining';
+import { scopeTagDemo, scopeStateDemo } from '../../forms/scope-operators';
+import { multiValueAndDemo, multiValueOrDemo } from '../../forms/multi-value-scopes';
 import { sensibleDefaultsDemo } from '../../forms/sensible-defaults';
 
 // In-app form registry for forms that can't be expressed as JSON — typically
 // `gui.displays.display(callback)` widgets (whose `render` prop is a function),
 // or Programmatic forms that ship with `formSelectors` / `formConfig`.
-const RENDERER_FORMS: Record<
-  string,
-  { data: any; form: any; selectors?: any; config?: any }
-> = {
+const RENDERER_FORMS: Record<string, { data: any; form: any; selectors?: any; config?: any }> = {
   'client-name': rendererMock,
   'tags-1-hint': tagsHintDemo,
   'tags-2-grouping': tagsGroupingDemo,

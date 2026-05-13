@@ -12,10 +12,9 @@ import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import type { AccordionDecorator, AccordionEntry, GslAccordionConfig } from './accordion.domain';
 
-function mapToWidget<
-  StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
->(def: AccordionDecorator): NonFunctionWidget<StateKeys, FormData> {
+function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+  def: AccordionDecorator,
+): NonFunctionWidget<StateKeys, FormData> {
   return {
     uid: def.uid ?? '',
     kind: 'layout',
@@ -30,10 +29,7 @@ function mapToWidget<
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function buildCustomWidget(
-  mergeResult: MergeResult,
-  context: BuildWidgetContext,
-): FormWidget {
+function buildCustomWidget(mergeResult: MergeResult, context: BuildWidgetContext): FormWidget {
   const children = context.walkChildren(context.children ?? []);
 
   if (mergeResult.kind === 'static') {
@@ -53,11 +49,14 @@ function getChildren(entry: AccordionEntry): any[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslAccordions, gslByUid: _gslAccordionByUid } =
-  defineShortcutType<AccordionEntry, AccordionDecorator, GslAccordionConfig>({
-    itemType: 'ACCORDION',
-    entryShape: 'compound',
-    mapToWidget,
-    buildCustomWidget,
-    getChildren,
-  });
+export const { gsl: _gslAccordions, gslByUid: _gslAccordionByUid } = defineShortcutType<
+  AccordionEntry,
+  AccordionDecorator,
+  GslAccordionConfig
+>({
+  itemType: 'ACCORDION',
+  entryShape: 'compound',
+  mapToWidget,
+  buildCustomWidget,
+  getChildren,
+});

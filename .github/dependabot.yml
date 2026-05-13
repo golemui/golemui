@@ -1,0 +1,96 @@
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '08:00'
+      timezone: 'Europe/Madrid'
+    open-pull-requests-limit: 10
+    labels:
+      - 'dependencies'
+      - 'javascript'
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+      include: 'scope'
+    groups:
+      # Group all minor/patch updates into a single weekly PR
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Group testing-related dependencies together
+      testing:
+        patterns:
+          - 'vitest*'
+          - '@vitest/*'
+          - 'jest*'
+          - '@testing-library/*'
+          - 'cypress*'
+          - 'playwright*'
+      # Group linting / formatting tools
+      linting:
+        patterns:
+          - 'eslint*'
+          - '@eslint/*'
+          - 'prettier*'
+          - '@typescript-eslint/*'
+    ignore:
+      # Major bumps for framework peerDependencies are reviewed manually,
+      # never auto-merged — they tend to require coordinated changes
+      # across adapters and a roadmap decision.
+      # React
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-major']
+      # Angular
+      - dependency-name: '@angular/core'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular/common'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular/forms'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular/router'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular/platform-browser'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'rxjs'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'zone.js'
+        update-types: ['version-update:semver-major']
+      # Lit
+      - dependency-name: 'lit'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@lit/reactive-element'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'lit-html'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'lit-element'
+        update-types: ['version-update:semver-major']
+
+  # GitHub Actions workflows
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '08:00'
+      timezone: 'Europe/Madrid'
+    labels:
+      - 'dependencies'
+      - 'github-actions'
+    commit-message:
+      prefix: 'chore(ci)'
+      include: 'scope'
+    groups:
+      actions:
+        patterns:
+          - '*'

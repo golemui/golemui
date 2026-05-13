@@ -94,7 +94,9 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
 
       /* Adjust borders */
       --gui-border-default: var(--gui-color-warning-300);
-      --gui-shadow-focus: 0 0 0 2px var(--gui-bg-default), 0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
+      --gui-shadow-focus:
+        0 0 0 2px var(--gui-bg-default),
+        0 0 0 4px color-mix(in srgb, var(--gui-border-focus) 50%, transparent);
     }
     ```
 
@@ -157,10 +159,12 @@ A common pattern is a default page theme with one section opted into a different
 ```html
 <body>
   <main>
-    <gui-form ...></gui-form>            <!-- default theme -->
+    <gui-form ...></gui-form>
+    <!-- default theme -->
   </main>
   <aside data-theme="clay">
-    <gui-form ...></gui-form>            <!-- clay theme inside this aside -->
+    <gui-form ...></gui-form>
+    <!-- clay theme inside this aside -->
   </aside>
 </body>
 ```

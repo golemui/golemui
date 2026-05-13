@@ -7,9 +7,7 @@ const form = [
 ];
 
 const selectors = [
-  gui.selectors
-    .tag('pii')
-    .inputs({ override: { hint: 'Personal data — never shared.' } }),
+  gui.selectors.tag('pii').inputs({ override: { hint: 'Personal data — never shared.' } }),
 ];
 
 export const tagsHintDemo = {

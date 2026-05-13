@@ -100,8 +100,10 @@ export class GuiPassword extends LitElement {
         />
         ${passwordIcon.html}
         <button
-          class=${`gui-password__toggle gui-widget-icon ${this.showPassword && templateData.showPasswordIcon ? templateData.showPasswordIcon : ''} ${!this.showPassword && templateData.hidePasswordIcon ? templateData.hidePasswordIcon : '' }`}
-          data-icon=${this.showPassword ? templateData.showPasswordIcon : templateData.hidePasswordIcon}
+          class=${`gui-password__toggle gui-widget-icon ${this.showPassword && templateData.showPasswordIcon ? templateData.showPasswordIcon : ''} ${!this.showPassword && templateData.hidePasswordIcon ? templateData.hidePasswordIcon : ''}`}
+          data-icon=${this.showPassword
+            ? templateData.showPasswordIcon
+            : templateData.hidePasswordIcon}
           type="button"
           tabindex="-1"
           @click=${() => (this.showPassword = !this.showPassword)}

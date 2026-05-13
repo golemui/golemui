@@ -78,10 +78,7 @@ const pad = (n) => '  '.repeat(n);
 const fmtString = (s) => {
   if (typeof s !== 'string') return String(s);
   if (s.includes('\n') || s.includes('\r')) {
-    const escaped = s
-      .replace(/\\/g, '\\\\')
-      .replace(/`/g, '\\`')
-      .replace(/\$\{/g, '\\${');
+    const escaped = s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
     return '`' + escaped + '`';
   }
   return "'" + s.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
@@ -89,10 +86,7 @@ const fmtString = (s) => {
 
 const fmtKey = (k) => (/[.\-]/.test(k) ? fmtString(k) : k);
 const isPrimitive = (v) =>
-  v === null ||
-  typeof v === 'string' ||
-  typeof v === 'number' ||
-  typeof v === 'boolean';
+  v === null || typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean';
 
 // ─── JSON literal → TS literal ───
 
@@ -124,9 +118,7 @@ function jsonObjectToTs(obj, indent) {
   if (entries.length === 0) return '{}';
   const inner = pad(indent + 1);
   const outer = pad(indent);
-  const lines = entries.map(
-    ([k, v]) => `${inner}${fmtKey(k)}: ${jsonToTs(v, indent + 1)}`,
-  );
+  const lines = entries.map(([k, v]) => `${inner}${fmtKey(k)}: ${jsonToTs(v, indent + 1)}`);
   return `{\n${lines.join(',\n')},\n${outer}}`;
 }
 
@@ -174,11 +166,16 @@ function buildBaseProps(widget) {
 
 function widgetToTs(widget, indent) {
   switch (widget.kind) {
-    case 'input': return inputToTs(widget, indent);
-    case 'action': return actionToTs(widget, indent);
-    case 'display': return displayToTs(widget, indent);
-    case 'layout': return layoutToTs(widget, indent);
-    default: throw new Error(`Unknown widget kind: ${widget.kind}`);
+    case 'input':
+      return inputToTs(widget, indent);
+    case 'action':
+      return actionToTs(widget, indent);
+    case 'display':
+      return displayToTs(widget, indent);
+    case 'layout':
+      return layoutToTs(widget, indent);
+    default:
+      throw new Error(`Unknown widget kind: ${widget.kind}`);
   }
 }
 
@@ -186,9 +183,7 @@ function childrenArrayRaw(children, indent) {
   if (!children || children.length === 0) return '[]';
   const inner = pad(indent + 1);
   const outer = pad(indent);
-  const items = children
-    .map((c) => `${inner}${widgetToTs(c, indent + 1)}`)
-    .join(',\n');
+  const items = children.map((c) => `${inner}${widgetToTs(c, indent + 1)}`).join(',\n');
   return `[\n${items},\n${outer}]`;
 }
 
@@ -344,17 +339,11 @@ function processDirectory(srcDir, dxDir) {
 
 console.log('Converting JSON templates to Programmatic DSL (DX)...\n');
 
-processDirectory(
-  path.join(templateDir, 'widgets'),
-  path.join(templateDir, 'widgets-dx'),
-);
+processDirectory(path.join(templateDir, 'widgets'), path.join(templateDir, 'widgets-dx'));
 processDirectory(
   path.join(templateDir, 'getting-started'),
   path.join(templateDir, 'getting-started-dx'),
 );
-processDirectory(
-  path.join(templateDir, 'validators'),
-  path.join(templateDir, 'validators-dx'),
-);
+processDirectory(path.join(templateDir, 'validators'), path.join(templateDir, 'validators-dx'));
 
 console.log('\nDone!');

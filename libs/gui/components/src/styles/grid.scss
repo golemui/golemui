@@ -16,36 +16,80 @@
           grid-template-columns: repeat(auto-fit, minmax(120px, auto));
         }
 
-        &.gui-grid__widget--align-center { justify-content: center; }
-        &.gui-grid__widget--align-start { justify-content: start; }
-        &.gui-grid__widget--align-end { justify-content: end; }
-        &.gui-grid__widget--align-space-between { justify-content: space-between; }
-        &.gui-grid__widget--align-space-around { justify-content: space-around; }
-        &.gui-grid__widget--align-space-evenly { justify-content: space-evenly; }
-        &.gui-grid__widget--align-stretch { justify-content: stretch; }
+        &.gui-grid__widget--align-center {
+          justify-content: center;
+        }
+        &.gui-grid__widget--align-start {
+          justify-content: start;
+        }
+        &.gui-grid__widget--align-end {
+          justify-content: end;
+        }
+        &.gui-grid__widget--align-space-between {
+          justify-content: space-between;
+        }
+        &.gui-grid__widget--align-space-around {
+          justify-content: space-around;
+        }
+        &.gui-grid__widget--align-space-evenly {
+          justify-content: space-evenly;
+        }
+        &.gui-grid__widget--align-stretch {
+          justify-content: stretch;
+        }
 
-        &.gui-grid__widget--justify-center { align-items: center; }
-        &.gui-grid__widget--justify-start { align-items: start; }
-        &.gui-grid__widget--justify-end { align-items: end; }
-        &.gui-grid__widget--justify-stretch { align-items: stretch; }
+        &.gui-grid__widget--justify-center {
+          align-items: center;
+        }
+        &.gui-grid__widget--justify-start {
+          align-items: start;
+        }
+        &.gui-grid__widget--justify-end {
+          align-items: end;
+        }
+        &.gui-grid__widget--justify-stretch {
+          align-items: stretch;
+        }
       }
 
       &--column {
         grid-template-columns: auto;
         height: 100%;
 
-        &.gui-grid__widget--align-center { align-content: center; }
-        &.gui-grid__widget--align-start { align-content: start; }
-        &.gui-grid__widget--align-end { align-content: end; }
-        &.gui-grid__widget--align-space-between { align-content: space-between; }
-        &.gui-grid__widget--align-space-around { align-content: space-around; }
-        &.gui-grid__widget--align-space-evenly { align-content: space-evenly; }
-        &.gui-grid__widget--align-stretch { align-content: stretch; }
+        &.gui-grid__widget--align-center {
+          align-content: center;
+        }
+        &.gui-grid__widget--align-start {
+          align-content: start;
+        }
+        &.gui-grid__widget--align-end {
+          align-content: end;
+        }
+        &.gui-grid__widget--align-space-between {
+          align-content: space-between;
+        }
+        &.gui-grid__widget--align-space-around {
+          align-content: space-around;
+        }
+        &.gui-grid__widget--align-space-evenly {
+          align-content: space-evenly;
+        }
+        &.gui-grid__widget--align-stretch {
+          align-content: stretch;
+        }
 
-        &.gui-grid__widget--justify-center { justify-items: center; }
-        &.gui-grid__widget--justify-start { justify-items: start; }
-        &.gui-grid__widget--justify-end { justify-items: end; }
-        &.gui-grid__widget--justify-stretch { justify-items: stretch; }
+        &.gui-grid__widget--justify-center {
+          justify-items: center;
+        }
+        &.gui-grid__widget--justify-start {
+          justify-items: start;
+        }
+        &.gui-grid__widget--justify-end {
+          justify-items: end;
+        }
+        &.gui-grid__widget--justify-stretch {
+          justify-items: stretch;
+        }
       }
 
       .gui-grid__cell {
@@ -84,7 +128,9 @@
       grid-row: auto;
       grid-column: auto !important;
 
-      .gui-field { display: block; }
+      .gui-field {
+        display: block;
+      }
     }
   }
 }

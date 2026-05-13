@@ -1,25 +1,12 @@
-import {
-  FormWidget,
-  FunctionWidgetParams,
-  NonFunctionWidget,
-  UiState,
-} from '@golemui/core';
-import {
-  GslItemType,
-  MergeResult,
-} from './dx.domain';
+import { FormWidget, FunctionWidgetParams, NonFunctionWidget, UiState } from '@golemui/core';
+import { GslItemType, MergeResult } from './dx.domain';
 import { getItemTypeHandler } from './itemTypeRegistry';
 
 export class WidgetMapper {
-
-  mapToWidget<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
+  mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     mergeResult: MergeResult,
     itemType: GslItemType,
   ): FormWidget<StateKeys, FormData> {
-
     if (mergeResult.kind === 'dynamic') {
       const fn = mergeResult.fn;
       return ((params: FunctionWidgetParams<FormData>) => {
@@ -31,10 +18,7 @@ export class WidgetMapper {
     return this.mapStaticDef<StateKeys, FormData>(mergeResult.def, itemType);
   }
 
-  mapStaticDef<
-    StateKeys extends UiState = never,
-    FormData extends Record<string, any> = any,
-  >(
+  mapStaticDef<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
     def: Record<string, any>,
     itemType: GslItemType,
   ): NonFunctionWidget<StateKeys, FormData> {

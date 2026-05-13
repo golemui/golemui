@@ -46,7 +46,9 @@ lit-form {
     radial-gradient(80% 100% at 100% 0%, var(--ds-card-tint-purple) 0%, transparent 55%),
     var(--ds-surface);
   overflow: hidden;
-  transition: border-color 0.4s ease, background 0.4s ease;
+  transition:
+    border-color 0.4s ease,
+    background 0.4s ease;
 
   &__layout {
     display: flex;
@@ -79,7 +81,11 @@ lit-form {
     cursor: pointer;
     font-family: inherit;
     letter-spacing: -0.01em;
-    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease,
+      opacity 0.2s ease;
 
     &:hover {
       color: var(--ds-accent-text-strong);
@@ -139,7 +145,9 @@ lit-form {
     border: none;
     padding: 4px 8px;
     border-radius: 6px;
-    transition: color 0.3s ease, background 0.2s ease;
+    transition:
+      color 0.3s ease,
+      background 0.2s ease;
     font-family: inherit;
 
     &:disabled {
@@ -171,7 +179,9 @@ lit-form {
     font-weight: 700;
     border: 1px solid currentColor;
     background: transparent;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease;
 
     .is-done & {
       background: rgba(110, 231, 183, 0.18);
@@ -201,11 +211,7 @@ lit-form {
     width: 1px;
     height: 22px;
     margin-left: 10px;
-    background: linear-gradient(
-      to bottom,
-      rgba(148, 163, 184, 0.25),
-      rgba(148, 163, 184, 0.1)
-    );
+    background: linear-gradient(to bottom, rgba(148, 163, 184, 0.25), rgba(148, 163, 184, 0.1));
   }
 
   &__row {
@@ -274,14 +280,16 @@ lit-form {
       margin: 0;
       padding: 8px 28px;
       color: var(--ds-text);
-      font-family:
-        'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.8125rem;
       line-height: 1.7;
       overflow-x: auto;
       opacity: 0.55;
       border-left: 2px solid transparent;
-      transition: opacity 0.4s ease, border-left-color 0.4s ease, background 0.4s ease;
+      transition:
+        opacity 0.4s ease,
+        border-left-color 0.4s ease,
+        background 0.4s ease;
 
       &.is-active-step {
         opacity: 1;
@@ -332,8 +340,7 @@ lit-form {
     color: var(--ds-text);
 
     code {
-      font-family:
-        'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.88em;
       background: rgba(168, 85, 247, 0.2);
       padding: 1px 6px;
@@ -376,11 +383,7 @@ lit-form {
       width: 22px;
       height: 1px;
       margin-left: 0;
-      background: linear-gradient(
-        to right,
-        rgba(148, 163, 184, 0.25),
-        rgba(148, 163, 184, 0.1)
-      );
+      background: linear-gradient(to right, rgba(148, 163, 184, 0.25), rgba(148, 163, 184, 0.1));
     }
 
     &__content {
@@ -427,7 +430,11 @@ lit-form {
     cursor: pointer;
     box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4);
     animation: pocSubmitPulse 2.4s ease-in-out infinite;
-    transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.12s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
       box-shadow: 0 4px 18px rgba(168, 85, 247, 0.45);
@@ -535,8 +542,7 @@ lit-form {
     border-left: 2px solid rgba(96, 165, 250, 0.5);
     border-radius: 6px;
     color: var(--ds-text);
-    font-family:
-      'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.78rem;
     line-height: 1.55;
     overflow: auto;
@@ -569,7 +575,10 @@ lit-form {
     font-size: 0.95rem;
     letter-spacing: -0.01em;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.12s ease;
 
     &:hover {
       background: rgba(168, 85, 247, 0.32);
@@ -595,7 +604,10 @@ lit-form {
     font-size: 0.95rem;
     letter-spacing: -0.01em;
     text-decoration: none;
-    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease;
 
     &:hover {
       color: var(--ds-text);
@@ -606,8 +618,13 @@ lit-form {
 }
 
 @keyframes pocSubmitPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
-  50%      { box-shadow: 0 0 14px 3px rgba(168, 85, 247, 0.35); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 14px 3px rgba(168, 85, 247, 0.35);
+  }
 }
 
 .poc-currency-item {
@@ -627,8 +644,7 @@ lit-form {
   }
 
   &__code {
-    font-family:
-      'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.85em;
     color: var(--gui-text-default);
     font-weight: 600;
@@ -660,7 +676,10 @@ lit-form {
   border-radius: 5px;
   padding: 0 5px;
   margin: 0 -1px;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
   animation: pocTokenPulse 2.4s ease-in-out infinite;
 
   &:hover {
@@ -717,17 +736,29 @@ lit-form {
 }
 
 @keyframes pocTokenPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.35); }
-  50%      { box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.3); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.3);
+  }
 }
 
 @keyframes pocTokenSpin {
-  to { --poc-token-angle: 360deg; }
+  to {
+    --poc-token-angle: 360deg;
+  }
 }
 
 @keyframes pocFieldPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.5); }
-  50%      { box-shadow: 0 0 18px 4px rgba(96, 165, 250, 0.45); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 18px 4px rgba(96, 165, 250, 0.45);
+  }
 }
 
 .poc-confetti {
@@ -766,6 +797,12 @@ lit-form {
 }
 
 @keyframes pocCodeReveal {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

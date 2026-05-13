@@ -50,7 +50,9 @@ export function defineShortcutType<
   TEntry,
   TDecorator extends DxCommonFields,
   TConfig extends GslConfigBase<TDecorator> = GslConfigBase<TDecorator>,
->(config: ShortcutTypeConfig<TEntry, TDecorator, TConfig>): ShortcutTypeSelectors<TDecorator, TConfig> {
+>(
+  config: ShortcutTypeConfig<TEntry, TDecorator, TConfig>,
+): ShortcutTypeSelectors<TDecorator, TConfig> {
   const rollUpSensibleDefaults = (leafSelectors: GslLeafSelector[]): TConfig => {
     if (!config.sensibleDefaults) {
       return {} as TConfig;

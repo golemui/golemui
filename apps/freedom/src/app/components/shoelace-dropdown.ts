@@ -13,10 +13,7 @@ export type FreedomShoelaceDropdownProps = {
 };
 
 @customElement('freedom-shoelace-dropdown')
-export class FreedomShoelaceDropdownElement
-  extends LitElement
-  implements Core.WithWidget
-{
+export class FreedomShoelaceDropdownElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
@@ -49,15 +46,14 @@ export class FreedomShoelaceDropdownElement
       <sl-select
         label=${td.label ?? ''}
         .value=${td.value ?? ''}
-        @sl-change=${(e: Event) =>
-          this.adapter.valueChanged((e.target as HTMLInputElement).value)}
+        @sl-change=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).value)}
         @sl-blur=${() => this.adapter.onBlur()}
       >
         ${items.map(
-          (item) => html`<sl-option value=${item.value}>
-            ${item.flag ? html`<span slot="prefix">${item.flag}</span>` : null}
-            ${item.label}
-          </sl-option>`,
+          (item) =>
+            html`<sl-option value=${item.value}>
+              ${item.flag ? html`<span slot="prefix">${item.flag}</span>` : null} ${item.label}
+            </sl-option>`,
         )}
       </sl-select>
     `;

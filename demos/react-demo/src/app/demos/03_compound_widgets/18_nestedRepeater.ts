@@ -5,9 +5,9 @@ export const nestedRepeaterDemo: FormDemoDefinition = {
   title: '18. Nested Repeaters',
   category: 'Ch3: Compound Widgets',
   description:
-    'Nested repeaters with auto-prefixing. All paths are local — '
-    + 'the DX pipeline automatically prepends the parent repeater path. '
-    + 'This demo uses a 2-level order/line-items structure.',
+    'Nested repeaters with auto-prefixing. All paths are local — ' +
+    'the DX pipeline automatically prepends the parent repeater path. ' +
+    'This demo uses a 2-level order/line-items structure.',
   formDef: () => [
     gui.inputs.repeater('orders', {
       addLabel: 'Add Order',

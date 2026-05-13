@@ -11,11 +11,11 @@ export const inlineWhenDemo: FormDemoDefinition = {
   title: '37. Inline Conditions — include / exclude / disabled / readonly',
   category: 'Ch8: States',
   description:
-    'The four conditional fields work universally across kinds. Each accepts a '
-    + '{ when: \'<expr>\' } inline expression; include/exclude also accept a '
-    + 'state-list form ({ in } / { from }). Try selecting a country, toggling '
-    + 'the debug switch, and watching the subregion, the alert, the address '
-    + 'block, and the buttons react.',
+    'The four conditional fields work universally across kinds. Each accepts a ' +
+    "{ when: '<expr>' } inline expression; include/exclude also accept a " +
+    'state-list form ({ in } / { from }). Try selecting a country, toggling ' +
+    'the debug switch, and watching the subregion, the alert, the address ' +
+    'block, and the buttons react.',
   formDef: () => [
     gui.layouts.horizontalFlex([
       gui.inputs.select('country', { options: countries, label: 'Country' }),
@@ -45,16 +45,16 @@ export const inlineWhenDemo: FormDemoDefinition = {
 
     // Layout — include: { in } applies to a state-list (mirrors the per-widget
     // states-visible:true shorthand on demo 36, in literal form)
-    gui.layouts.verticalFlex(
-      [gui.inputs.textInput('debugTrace', { label: 'Trace id' })],
-      { include: { in: ['debugMode'] }, gap: 8 },
-    ),
+    gui.layouts.verticalFlex([gui.inputs.textInput('debugTrace', { label: 'Trace id' })], {
+      include: { in: ['debugMode'] },
+      gap: 8,
+    }),
 
     // Layout — include: { when } applies to the whole address block
     gui.layouts.verticalFlex(
       [
         gui.inputs.textInput('street', { label: 'Street' }),
-        gui.inputs.textInput('city',   { label: 'City'   }),
+        gui.inputs.textInput('city', { label: 'City' }),
       ],
       { include: { when: '!!$form.country' }, gap: 8 },
     ),

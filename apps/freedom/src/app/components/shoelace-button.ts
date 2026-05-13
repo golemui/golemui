@@ -8,10 +8,7 @@ import { Subscription } from 'rxjs';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 
 @customElement('freedom-shoelace-button')
-export class FreedomShoelaceButtonElement
-  extends LitElement
-  implements Core.WithWidget
-{
+export class FreedomShoelaceButtonElement extends LitElement implements Core.WithWidget {
   widget!: Core.ActionWidget;
 
   @consume({ context: Lit.formContext })

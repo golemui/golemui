@@ -26,11 +26,14 @@ export const bookingRequestDemo: FormDemoDefinition = {
   title: '42. Booking Request',
   category: 'Ch9: Real World',
   description:
-    'An internal meeting room booking form. A recurring checkbox reveals recurrence '
-    + 'options via visibility state. Catering budget appears when attendees exceed a '
-    + 'threshold. A pending state disables the form on submission. onLoad sets defaults.',
+    'An internal meeting room booking form. A recurring checkbox reveals recurrence ' +
+    'options via visibility state. Catering budget appears when attendees exceed a ' +
+    'threshold. A pending state disables the form on submission. onLoad sets defaults.',
   formDef: () => [
-    gui.displays.alert({ text: 'Rooms are subject to availability. You will receive a confirmation email.', level: 'info' }),
+    gui.displays.alert({
+      text: 'Rooms are subject to availability. You will receive a confirmation email.',
+      level: 'info',
+    }),
     gui.inputs.datePicker('date', {
       label: 'Date',
       onLoad: (event) => {
@@ -75,9 +78,7 @@ export const bookingRequestDemo: FormDemoDefinition = {
       },
     }),
   ],
-  formSelectors: () => [
-    gui.selectors.state('pending').inputs({ override: { disabled: true } }),
-  ],
+  formSelectors: () => [gui.selectors.state('pending').inputs({ override: { disabled: true } })],
   formConfig: () => ({
     states: {
       recurring: '!!$form.isRecurring',

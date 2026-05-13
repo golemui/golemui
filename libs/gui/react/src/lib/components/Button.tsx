@@ -8,10 +8,7 @@ export function Button(widgetInstance: Core.WithWidget) {
   const { uid, templateData, onClick } = useActionWidget<ButtonProps>(widget);
 
   return (
-    <div
-      className="gui-button gui-field"
-      style={{ flex: templateData.size }}
-    >
+    <div className="gui-button gui-field" style={{ flex: templateData.size }}>
       <gui-button
         uid={uid}
         label={templateData.label as string}

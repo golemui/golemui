@@ -272,12 +272,12 @@ The default font stack is:
 
 ### Shadows
 
-| Token                | Usage                                                                |
-| -------------------- | -------------------------------------------------------------------- |
-| `--gui-shadow-sm`    | Subtle elevation (`0 1px 2px 0 rgb(0 0 0 / 0.05)`)                   |
-| `--gui-shadow-md`    | Medium elevation                                                     |
-| `--gui-shadow-lg`    | Large elevation                                                      |
-| `--gui-shadow-focus` | Focus indicator — double-ring effect using `color-mix()`             |
+| Token                | Usage                                                    |
+| -------------------- | -------------------------------------------------------- |
+| `--gui-shadow-sm`    | Subtle elevation (`0 1px 2px 0 rgb(0 0 0 / 0.05)`)       |
+| `--gui-shadow-md`    | Medium elevation                                         |
+| `--gui-shadow-lg`    | Large elevation                                          |
+| `--gui-shadow-focus` | Focus indicator — double-ring effect using `color-mix()` |
 
 The focus shadow creates a double-ring effect — a solid inner ring matching the background and a semi-transparent outer ring in the focus color:
 
@@ -313,21 +313,21 @@ Some widgets expose dedicated tokens for fine-grained control.
 
 These tokens control the typography and visual style of rendered markdown content inside the [Markdown Text](/widgets-reference/display-fields/markdown-text/) widget.
 
-| Token                              | Default                  | Description                              |
-| ---------------------------------- | ------------------------ | ---------------------------------------- |
-| `--gui-md-text-color`              | `--gui-text-default`     | Base text color                          |
-| `--gui-md-line-height`             | `1.6`                    | Base line height                         |
-| `--gui-md-heading-color`           | `--gui-text-default`     | Color for h1–h6 headings                 |
-| `--gui-md-heading-weight`          | `600`                    | Font weight for headings                 |
-| `--gui-md-link-color`              | `--gui-intent-primary`   | Link text color                          |
-| `--gui-md-link-hover-color`        | `--gui-intent-primary-hover` | Link color on hover                  |
-| `--gui-md-blockquote-bg`           | `--gui-bg-surface-hover` | Blockquote background                    |
-| `--gui-md-blockquote-border-color` | `--gui-border-strong`    | Blockquote left border color             |
-| `--gui-md-blockquote-color`        | `--gui-text-secondary`   | Blockquote text color                    |
-| `--gui-md-code-bg`                 | `--gui-bg-surface-active`| Background for inline code and code blocks |
-| `--gui-md-code-color`              | `--gui-text-default`     | Text color for inline code and code blocks |
-| `--gui-md-code-radius`             | `--gui-radius-sm`        | Border radius for inline code            |
-| `--gui-md-hr-color`                | `--gui-border-default`   | Color of horizontal rules (`<hr>`)       |
+| Token                              | Default                      | Description                                |
+| ---------------------------------- | ---------------------------- | ------------------------------------------ |
+| `--gui-md-text-color`              | `--gui-text-default`         | Base text color                            |
+| `--gui-md-line-height`             | `1.6`                        | Base line height                           |
+| `--gui-md-heading-color`           | `--gui-text-default`         | Color for h1–h6 headings                   |
+| `--gui-md-heading-weight`          | `600`                        | Font weight for headings                   |
+| `--gui-md-link-color`              | `--gui-intent-primary`       | Link text color                            |
+| `--gui-md-link-hover-color`        | `--gui-intent-primary-hover` | Link color on hover                        |
+| `--gui-md-blockquote-bg`           | `--gui-bg-surface-hover`     | Blockquote background                      |
+| `--gui-md-blockquote-border-color` | `--gui-border-strong`        | Blockquote left border color               |
+| `--gui-md-blockquote-color`        | `--gui-text-secondary`       | Blockquote text color                      |
+| `--gui-md-code-bg`                 | `--gui-bg-surface-active`    | Background for inline code and code blocks |
+| `--gui-md-code-color`              | `--gui-text-default`         | Text color for inline code and code blocks |
+| `--gui-md-code-radius`             | `--gui-radius-sm`            | Border radius for inline code              |
+| `--gui-md-hr-color`                | `--gui-border-default`       | Color of horizontal rules (`<hr>`)         |
 
 ## Icon customization
 
@@ -343,28 +343,28 @@ When you set `"icon": "save"` in your form configuration, GolemUI renders:
 
 This gives you three CSS selectors to work with:
 
-| Selector                       | Description                                       |
-| ------------------------------ | ------------------------------------------------- |
-| `.gui-widget-icon`             | Always present on every icon element              |
-| `.{icon-name}` (e.g. `.save`)  | A class matching the exact icon string you passed |
-| `[data-icon="{icon-name}"]`    | A data attribute with the icon string value       |
+| Selector                      | Description                                       |
+| ----------------------------- | ------------------------------------------------- |
+| `.gui-widget-icon`            | Always present on every icon element              |
+| `.{icon-name}` (e.g. `.save`) | A class matching the exact icon string you passed |
+| `[data-icon="{icon-name}"]`   | A data attribute with the icon string value       |
 
 GolemUI provides base positioning styles for the icon element (absolute positioning, flexbox centering, 40×40 dimensions), but the actual icon rendering is intentionally left to you. This means you can use any icon system you prefer.
 
 ### Widgets with icon support
 
-| Widget           | Icon props                                       |
-| ---------------- | ------------------------------------------------ |
-| Textinput        | `icon`                                           |
-| Password         | `icon`, `showPasswordIcon`, `hidePasswordIcon`   |
-| Textarea         | `icon`                                           |
-| Select           | `icon`                                           |
-| Currency         | `icon`                                           |
-| Date Input       | `icon`                                           |
-| Range Date Input | `icon`                                           |
-| Calendar         | `icon`, `prevMonthIcon`, `nextMonthIcon`         |
-| Button           | `icon`, `iconPosition` (`'left'` \| `'right'`)   |
-| Repeater         | `addButtonIcon`, `removeButtonIcon`              |
+| Widget           | Icon props                                     |
+| ---------------- | ---------------------------------------------- |
+| Textinput        | `icon`                                         |
+| Password         | `icon`, `showPasswordIcon`, `hidePasswordIcon` |
+| Textarea         | `icon`                                         |
+| Select           | `icon`                                         |
+| Currency         | `icon`                                         |
+| Date Input       | `icon`                                         |
+| Range Date Input | `icon`                                         |
+| Calendar         | `icon`, `prevMonthIcon`, `nextMonthIcon`       |
+| Button           | `icon`, `iconPosition` (`'left'` \| `'right'`) |
+| Repeater         | `addButtonIcon`, `removeButtonIcon`            |
 
 ### Method 1: Webfont ligatures
 

@@ -24,11 +24,11 @@ const formDef = [
 ];
 ```
 
-| Shortcut                    | Description                                                                                              |
-| --------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `gui.actions.button`        | A button widget ([Button](/widgets-reference/interactive-fields/button/)). Use `onClick: 'submit'` for the form-submit literal, or `on: { click: '<eventName>' }` for arbitrary events. |
-| `gui.actions.submitButton`  | A button preconfigured with `onClick: 'submit'`.                                                          |
-| `gui.actions.custom`        | Plug in your own action widget ([Custom Widgets](/form-definition/custom-widgets/)).                      |
+| Shortcut                   | Description                                                                                                                                                                             |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gui.actions.button`       | A button widget ([Button](/widgets-reference/interactive-fields/button/)). Use `onClick: 'submit'` for the form-submit literal, or `on: { click: '<eventName>' }` for arbitrary events. |
+| `gui.actions.submitButton` | A button preconfigured with `onClick: 'submit'`.                                                                                                                                        |
+| `gui.actions.custom`       | Plug in your own action widget ([Custom Widgets](/form-definition/custom-widgets/)).                                                                                                    |
 
 ## JSON form
 
@@ -47,14 +47,14 @@ The same widget in JSON:
 }
 ```
 
-| Property | Description                                                                       |
-| -------- | --------------------------------------------------------------------------------- |
-| `uid`    | Optional unique id; one is generated if absent.                                   |
-| `kind`   | **MANDATORY**. Always `'action'`.                                                  |
-| `type`   | **MANDATORY**. The action type (`button` is the only built-in).                    |
-| `label`  | Visible label text. Accepts a `Localizable` for i18n.                             |
+| Property | Description                                                                                           |
+| -------- | ----------------------------------------------------------------------------------------------------- |
+| `uid`    | Optional unique id; one is generated if absent.                                                       |
+| `kind`   | **MANDATORY**. Always `'action'`.                                                                     |
+| `type`   | **MANDATORY**. The action type (`button` is the only built-in).                                       |
+| `label`  | Visible label text. Accepts a `Localizable` for i18n.                                                 |
 | `on`     | Event wiring — typically `{ click: '<eventName>' }`. Use `'submit'` to trigger form-level validation. |
-| `props`  | Widget-specific configuration (icon, iconPosition, variant, etc.).                |
+| `props`  | Widget-specific configuration (icon, iconPosition, variant, etc.).                                    |
 
 ## Available widgets
 

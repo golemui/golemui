@@ -1,11 +1,7 @@
 import type { Validator } from '@golemui/gui-validators';
 import type { DropdownProps, ListItem, OptionValue } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
-import type {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Dropdown Decorator

@@ -17,8 +17,9 @@ A fully-populated example, exercising most fields you'll reach for:
 
 ```ts
 gui.inputs.textInput(
-  'user.email',                 // path — where the value lives in the form data
-  {                             // props — the widget's typed props + DX fields
+  'user.email', // path — where the value lives in the form data
+  {
+    // props — the widget's typed props + DX fields
     label: 'Email',
     placeholder: 'you@example.com',
     hint: 'We never share your email.',
@@ -30,15 +31,19 @@ gui.inputs.textInput(
       type: 'string',
       required: true,
       format: 'email',
-      messages: { required: 'Email is required', format: 'Enter a valid email' },
+      messages: {
+        required: 'Email is required',
+        format: 'Enter a valid email',
+      },
     },
-    onChange: 'emailChanged',  // wire a named event the form's `formEvent` callback receives
-    states: {                  // per-state prop overrides — see /form-definition/states/
+    onChange: 'emailChanged', // wire a named event the form's `formEvent` callback receives
+    states: {
+      // per-state prop overrides — see /form-definition/states/
       registerMode: { label: 'Choose a sign-up email' },
     },
     include: { in: ['needsEmail'] },
   },
-  ['identity'],                // tags — addressable groups for selectors
+  ['identity'], // tags — addressable groups for selectors
 );
 ```
 
@@ -46,27 +51,27 @@ Most shortcuts also accept a runtime-function variant for any individual prop �
 
 ## Shortcuts
 
-| Shortcut                    | Renders                          | Reference                                                          |
-| --------------------------- | -------------------------------- | ------------------------------------------------------------------ |
-| `gui.inputs.textInput`      | text input                       | [Textinput](/widgets-reference/input-fields/textinput/)            |
-| `gui.inputs.numberInput`    | number input                     | [Number Input](/widgets-reference/input-fields/number/)            |
-| `gui.inputs.booleanInput`   | toggle                           | [Toggle](/widgets-reference/input-fields/toggle/)                  |
-| `gui.inputs.password`       | password input                   | [Password](/widgets-reference/input-fields/password/)              |
-| `gui.inputs.currency`       | currency input                   | [Currency](/widgets-reference/input-fields/currency/)              |
-| `gui.inputs.checkbox`       | checkbox                         | [Checkbox](/widgets-reference/input-fields/checkbox/)              |
-| `gui.inputs.radiogroup`     | radio group                      | [Radio Group](/widgets-reference/input-fields/radiogroup/)         |
-| `gui.inputs.select`         | select                           | [Select](/widgets-reference/input-fields/select/)                  |
-| `gui.inputs.dropdown`       | dropdown (autocomplete)          | [Dropdown](/widgets-reference/input-fields/dropdown/)              |
-| `gui.inputs.list`           | scrolling list                   | [List](/widgets-reference/input-fields/list/)                      |
-| `gui.inputs.textarea`       | multi-line text                  | [Textarea](/widgets-reference/input-fields/textarea/)              |
-| `gui.inputs.markdown`       | markdown editor                  | [Markdown](/widgets-reference/input-fields/markdown/)              |
-| `gui.inputs.calendar`       | inline calendar                  | [Calendar](/widgets-reference/input-fields/calendar/)              |
-| `gui.inputs.dateInput`      | date input (typed)               | [Date Input](/widgets-reference/input-fields/dateinput/)           |
-| `gui.inputs.datePicker`     | date picker (popover calendar)   | [Date Picker](/widgets-reference/input-fields/date-picker/)        |
-| `gui.inputs.rangeCalendar`  | range calendar                   | [Range Calendar](/widgets-reference/input-fields/range-calendar/)  |
-| `gui.inputs.rangeDateInput` | typed date range                 | [Range Date Input](/widgets-reference/input-fields/range-date-input/) |
-| `gui.inputs.rangeDatePicker`| popover date range               | [Range Date Picker](/widgets-reference/input-fields/range-date-picker/) |
-| `gui.inputs.repeater`       | repeater                         | [Repeater](/widgets-reference/input-fields/repeater/)              |
-| `gui.inputs.custom`         | your custom input                | [Custom Widgets](/form-definition/custom-widgets/)                 |
+| Shortcut                     | Renders                        | Reference                                                               |
+| ---------------------------- | ------------------------------ | ----------------------------------------------------------------------- |
+| `gui.inputs.textInput`       | text input                     | [Textinput](/widgets-reference/input-fields/textinput/)                 |
+| `gui.inputs.numberInput`     | number input                   | [Number Input](/widgets-reference/input-fields/number/)                 |
+| `gui.inputs.booleanInput`    | toggle                         | [Toggle](/widgets-reference/input-fields/toggle/)                       |
+| `gui.inputs.password`        | password input                 | [Password](/widgets-reference/input-fields/password/)                   |
+| `gui.inputs.currency`        | currency input                 | [Currency](/widgets-reference/input-fields/currency/)                   |
+| `gui.inputs.checkbox`        | checkbox                       | [Checkbox](/widgets-reference/input-fields/checkbox/)                   |
+| `gui.inputs.radiogroup`      | radio group                    | [Radio Group](/widgets-reference/input-fields/radiogroup/)              |
+| `gui.inputs.select`          | select                         | [Select](/widgets-reference/input-fields/select/)                       |
+| `gui.inputs.dropdown`        | dropdown (autocomplete)        | [Dropdown](/widgets-reference/input-fields/dropdown/)                   |
+| `gui.inputs.list`            | scrolling list                 | [List](/widgets-reference/input-fields/list/)                           |
+| `gui.inputs.textarea`        | multi-line text                | [Textarea](/widgets-reference/input-fields/textarea/)                   |
+| `gui.inputs.markdown`        | markdown editor                | [Markdown](/widgets-reference/input-fields/markdown/)                   |
+| `gui.inputs.calendar`        | inline calendar                | [Calendar](/widgets-reference/input-fields/calendar/)                   |
+| `gui.inputs.dateInput`       | date input (typed)             | [Date Input](/widgets-reference/input-fields/dateinput/)                |
+| `gui.inputs.datePicker`      | date picker (popover calendar) | [Date Picker](/widgets-reference/input-fields/date-picker/)             |
+| `gui.inputs.rangeCalendar`   | range calendar                 | [Range Calendar](/widgets-reference/input-fields/range-calendar/)       |
+| `gui.inputs.rangeDateInput`  | typed date range               | [Range Date Input](/widgets-reference/input-fields/range-date-input/)   |
+| `gui.inputs.rangeDatePicker` | popover date range             | [Range Date Picker](/widgets-reference/input-fields/range-date-picker/) |
+| `gui.inputs.repeater`        | repeater                       | [Repeater](/widgets-reference/input-fields/repeater/)                   |
+| `gui.inputs.custom`          | your custom input              | [Custom Widgets](/form-definition/custom-widgets/)                      |
 
 For each widget, refer to the matching reference page for the full prop list and live demos.

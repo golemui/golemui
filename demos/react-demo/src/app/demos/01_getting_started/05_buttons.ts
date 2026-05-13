@@ -5,8 +5,8 @@ export const buttonsDemo: FormDemoDefinition = {
   title: '5. Buttons & Submit',
   category: 'Ch1: Getting Started',
   description:
-    'A submit button is auto-generated unless you suppress it. Override it, add custom buttons, '
-    + 'or wire your own submit handler. onClick: "submit" promotes any button to the form\'s submit action.',
+    'A submit button is auto-generated unless you suppress it. Override it, add custom buttons, ' +
+    'or wire your own submit handler. onClick: "submit" promotes any button to the form\'s submit action.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.textInput('email'),

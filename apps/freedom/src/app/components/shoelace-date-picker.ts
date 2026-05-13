@@ -8,10 +8,7 @@ import { Subscription } from 'rxjs';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
 @customElement('freedom-shoelace-date-picker')
-export class FreedomShoelaceDatePickerElement
-  extends LitElement
-  implements Core.WithWidget
-{
+export class FreedomShoelaceDatePickerElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<string>;
 
   @consume({ context: Lit.formContext })
@@ -44,8 +41,7 @@ export class FreedomShoelaceDatePickerElement
         type="date"
         label=${td.label ?? ''}
         .value=${td.value ?? ''}
-        @sl-input=${(e: Event) =>
-          this.adapter.valueChanged((e.target as HTMLInputElement).value)}
+        @sl-input=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).value)}
         @sl-blur=${() => this.adapter.onBlur()}
       ></sl-input>
     `;

@@ -38,7 +38,6 @@ export interface StateData {
 }
 
 export class StateExpansionService {
-
   /**
    * Extracts `states` from a merge result, combining with state-targeted
    * GSL leaf selectors from `_gslStates`.
@@ -49,16 +48,16 @@ export class StateExpansionService {
     mergeResult: MergeResult,
     stateLeafs: GslLeafSelector[],
   ): { cleanedResult: MergeResult; stateData: StateData } {
-
     // Accumulate state overrides from _gslStates selectors.
     // GSL config may use `{ override: { ... } }` (typed) or raw properties (untyped).
     const gslStateOverrides: Record<string, Record<string, any>> = {};
     for (const leaf of stateLeafs) {
       const stateName = leaf.targetState!;
       const config = leaf.config;
-      const overrides = (config['override'] && typeof config['override'] !== 'function')
-        ? config['override']
-        : config;
+      const overrides =
+        config['override'] && typeof config['override'] !== 'function'
+          ? config['override']
+          : config;
       gslStateOverrides[stateName] = {
         ...(gslStateOverrides[stateName] || {}),
         ...overrides,
@@ -87,7 +86,9 @@ export class StateExpansionService {
       allOverrides[stateName] = { ...overrides };
     }
     if (inlineStates) {
-      for (const [stateName, overrides] of Object.entries(inlineStates as Record<string, Record<string, any>>)) {
+      for (const [stateName, overrides] of Object.entries(
+        inlineStates as Record<string, Record<string, any>>,
+      )) {
         allOverrides[stateName] = { ...(allOverrides[stateName] || {}), ...overrides };
       }
     }

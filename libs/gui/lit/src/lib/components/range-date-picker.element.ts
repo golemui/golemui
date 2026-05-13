@@ -115,7 +115,10 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
       : nothing;
 
     return html`
-      ${addLabel(this.widget.uid, { ...this.adapter.templateData, required: this.adapter.templateData.validator?.required })}
+      ${addLabel(this.widget.uid, {
+        ...this.adapter.templateData,
+        required: this.adapter.templateData.validator?.required,
+      })}
 
       <div
         role="button"
@@ -149,7 +152,12 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
           @change=${this.valueChanged}
           @pillClick=${this.onPillClick}
         ></gui-range-date>
-        <span class="gui-range-date-picker__arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
+        <span class="gui-range-date-picker__arrow"
+          ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256">
+            <path
+              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+            ></path></svg
+        ></span>
 
         ${calendar}
       </div>
@@ -196,7 +204,7 @@ export class RangeDatePickerElement extends LitElement implements Core.WithWidge
       this.openCalendar();
     } else if (isPillCountClick) {
       this.closeCalendar();
-    }  else {
+    } else {
       this.isCalendarOpen = !this.isCalendarOpen;
       this.requestUpdate();
     }

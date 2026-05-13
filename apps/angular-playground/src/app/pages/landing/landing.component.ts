@@ -6,7 +6,9 @@ import { RouterLink } from '@angular/router';
   selector: 'app-landing-page',
   styles: [
     `
-      :host { display: block; }
+      :host {
+        display: block;
+      }
       .kx-landing {
         --kx-bg: #f6f7fb;
         --kx-fg: #1a1f2c;
@@ -15,7 +17,7 @@ import { RouterLink } from '@angular/router';
         --kx-card: #ffffff;
         --kx-card-hover-border: #d6d9e0;
         --kx-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
-        --kx-shadow-hover: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 36px rgba(15, 23, 42, 0.10);
+        --kx-shadow-hover: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 36px rgba(15, 23, 42, 0.1);
         --kx-accent-json: #6366f1;
         --kx-accent-dx: #0ea5e9;
         --kx-accent-modular: #8b5cf6;
@@ -41,7 +43,10 @@ import { RouterLink } from '@angular/router';
           --kx-code-bg: rgba(255, 255, 255, 0.08);
         }
       }
-      .kx-landing__inner { max-width: 1080px; margin: 0 auto; }
+      .kx-landing__inner {
+        max-width: 1080px;
+        margin: 0 auto;
+      }
       .kx-landing__eyebrow {
         display: inline-block;
         font-size: 0.75rem;
@@ -79,7 +84,10 @@ import { RouterLink } from '@angular/router';
         text-decoration: none;
         color: inherit;
         box-shadow: var(--kx-shadow);
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          border-color 0.18s ease;
         position: relative;
         overflow: hidden;
       }
@@ -95,10 +103,20 @@ import { RouterLink } from '@angular/router';
         height: 4px;
         background: var(--kx-card-accent);
       }
-      .kx-card--json { --kx-card-accent: var(--kx-accent-json); }
-      .kx-card--dx { --kx-card-accent: var(--kx-accent-dx); }
-      .kx-card--modular { --kx-card-accent: var(--kx-accent-modular); }
-      .kx-card__head { display: flex; align-items: center; gap: 0.75rem; }
+      .kx-card--json {
+        --kx-card-accent: var(--kx-accent-json);
+      }
+      .kx-card--dx {
+        --kx-card-accent: var(--kx-accent-dx);
+      }
+      .kx-card--modular {
+        --kx-card-accent: var(--kx-accent-modular);
+      }
+      .kx-card__head {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
       .kx-card__badge {
         font-size: 0.7rem;
         font-weight: 600;
@@ -109,15 +127,37 @@ import { RouterLink } from '@angular/router';
         background: color-mix(in srgb, var(--kx-card-accent) 14%, transparent);
         color: var(--kx-card-accent);
       }
-      .kx-card__title { font-size: 1.35rem; font-weight: 600; margin: 0; }
-      .kx-card__desc { color: var(--kx-muted); margin: 0; line-height: 1.55; }
-      .kx-card__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
-      .kx-card__list li { padding-left: 1.25rem; position: relative; line-height: 1.45; font-size: 0.95rem; }
+      .kx-card__title {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      .kx-card__desc {
+        color: var(--kx-muted);
+        margin: 0;
+        line-height: 1.55;
+      }
+      .kx-card__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.4rem;
+      }
+      .kx-card__list li {
+        padding-left: 1.25rem;
+        position: relative;
+        line-height: 1.45;
+        font-size: 0.95rem;
+      }
       .kx-card__list li::before {
         content: '';
         position: absolute;
-        left: 0; top: 0.55rem;
-        width: 6px; height: 6px; border-radius: 50%;
+        left: 0;
+        top: 0.55rem;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
         background: var(--kx-card-accent);
       }
       .kx-card__cta {
@@ -128,8 +168,12 @@ import { RouterLink } from '@angular/router';
         font-weight: 600;
         color: var(--kx-card-accent);
       }
-      .kx-card:hover .kx-card__cta__arrow { transform: translateX(3px); }
-      .kx-card__cta__arrow { transition: transform 0.18s ease; }
+      .kx-card:hover .kx-card__cta__arrow {
+        transform: translateX(3px);
+      }
+      .kx-card__cta__arrow {
+        transition: transform 0.18s ease;
+      }
       code {
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 0.92em;
@@ -146,8 +190,8 @@ import { RouterLink } from '@angular/router';
         <h1 class="kx-landing__title">GolemUI Kitchen Sink</h1>
         <p class="kx-landing__subtitle">
           Two ways to build the same form. Both pipelines render through the unified
-          <code>&lt;gui-form&gt;</code> component and produce identical output — pick the path
-          that fits how you author forms.
+          <code>&lt;gui-form&gt;</code> component and produce identical output — pick the path that
+          fits how you author forms.
         </p>
 
         <div class="kx-landing__grid">
@@ -157,9 +201,9 @@ import { RouterLink } from '@angular/router';
             </div>
             <h2 class="kx-card__title">Declarative form definition</h2>
             <p class="kx-card__desc">
-              A plain JSON tree describing layouts, inputs, validators and event handlers.
-              Ideal when the form lives in a database, is generated by an external tool, or
-              needs to round-trip across services.
+              A plain JSON tree describing layouts, inputs, validators and event handlers. Ideal
+              when the form lives in a database, is generated by an external tool, or needs to
+              round-trip across services.
             </p>
             <ul class="kx-card__list">
               <li>Schema-driven UIs &amp; backend-defined forms</li>

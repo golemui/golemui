@@ -40,8 +40,7 @@ export class FreedomMatCheckboxElement extends LitElement implements Core.WithWi
       <label class="freedom-mat-checkbox__row">
         <md-checkbox
           ?checked=${td.value === true}
-          @change=${(e: Event) =>
-            this.adapter.valueChanged((e.target as HTMLInputElement).checked)}
+          @change=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).checked)}
           @blur=${() => this.adapter.onBlur()}
         ></md-checkbox>
         <span class="freedom-mat-checkbox__label">${td.label ?? ''}</span>

@@ -13,9 +13,9 @@ export const onLoadInitializationDemo: FormDemoDefinition = {
   title: '28. onLoad — Initialization',
   category: 'Ch6: Events',
   description:
-    'The timezone select starts empty and populates when the form loads. '
-    + 'The onLoad callback simulates fetching options from an external source '
-    + 'and uses event.update to populate them on mount.',
+    'The timezone select starts empty and populates when the form loads. ' +
+    'The onLoad callback simulates fetching options from an external source ' +
+    'and uses event.update to populate them on mount.',
   formDef: () => [
     gui.inputs.textInput('username'),
     gui.inputs.select('timezone', {

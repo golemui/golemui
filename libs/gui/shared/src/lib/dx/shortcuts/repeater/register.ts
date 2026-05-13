@@ -2,18 +2,9 @@
 // directly because the repeater is both keyed (has a data path) and compound (has
 // children) — a hybrid that doesn't fit any standard entry shape. Also implements
 // auto-prefixing of child paths. You almost certainly don't need this pattern.
-import {
-  FormWidget,
-  FunctionWidgetParams,
-  LayoutWidget,
-  NonFunctionWidget,
-} from '@golemui/core';
+import { FormWidget, FunctionWidgetParams, LayoutWidget, NonFunctionWidget } from '@golemui/core';
 import type { MergeResult } from '../../core/dx.domain';
-import type {
-  BuildWidgetContext,
-  ItemTypeHandler,
-  ParsedEntry,
-} from '../../core/itemTypeRegistry';
+import type { BuildWidgetContext, ItemTypeHandler, ParsedEntry } from '../../core/itemTypeRegistry';
 import { registerItemType } from '../../core/itemTypeRegistry';
 import { createGslSelector } from '../../core/dxUtilityTypes';
 import { buildTypedValidator } from '../../core/dxValidatorHelper';
@@ -39,7 +30,9 @@ function mapToWidget(def: Record<string, any>): NonFunctionWidget {
     ...(def['label'] != null ? { label: def['label'] } : {}),
     ...(def['disabled'] != null ? { disabled: def['disabled'] } : {}),
     ...(def['readonly'] != null ? { readonly: def['readonly'] } : {}),
-    ...(def['validator'] != null ? { validator: buildTypedValidator(def['validator'] as any, 'array') } : {}),
+    ...(def['validator'] != null
+      ? { validator: buildTypedValidator(def['validator'] as any, 'array') }
+      : {}),
     props: {
       ...buildRepeaterProps(def as RepeaterDecorator),
       template: { kind: 'layout', type: 'flex', children: [], props: { direction: 'column' } },
@@ -67,10 +60,7 @@ function prefixTemplatePaths(widgets: FormWidget[], prefix: string): void {
   }
 }
 
-function buildCustomWidget(
-  mergeResult: MergeResult,
-  context: BuildWidgetContext,
-): FormWidget {
+function buildCustomWidget(mergeResult: MergeResult, context: BuildWidgetContext): FormWidget {
   const walkedChildren = context.walkChildren(context.children ?? []);
 
   // Auto-prefix: prepend {path}.items. to all template children paths.
@@ -78,8 +68,8 @@ function buildCustomWidget(
   // the walker bakes it into the fn return, so we can extract it safely.
   const repeaterPath =
     mergeResult.kind === 'static'
-      ? (mergeResult.def['path'] as string) ?? ''
-      : (mergeResult.fn({} as FunctionWidgetParams<any>)?.['path'] as string) ?? '';
+      ? ((mergeResult.def['path'] as string) ?? '')
+      : ((mergeResult.fn({} as FunctionWidgetParams<any>)?.['path'] as string) ?? '');
   if (repeaterPath) {
     prefixTemplatePaths(walkedChildren, repeaterPath + '.items.');
   }

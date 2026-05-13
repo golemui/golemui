@@ -18,8 +18,16 @@ const formDef = [
     validator: { required: true, minLength: 2 },
   }),
   gui.inputs.numberInput('user.age', { validator: { minimum: 0 } }),
-  gui.inputs.dropdown('user.country', { items: [/* ... */] }),
-  gui.inputs.repeater('contacts', { template: [/* ... */] }),
+  gui.inputs.dropdown('user.country', {
+    items: [
+      /* ... */
+    ],
+  }),
+  gui.inputs.repeater('contacts', {
+    template: [
+      /* ... */
+    ],
+  }),
 ];
 ```
 
@@ -45,40 +53,40 @@ The same widget in JSON, with `props` nested:
 }
 ```
 
-| Property    | Description                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------- |
-| `uid`       | Optional unique id; one is generated if absent.                                                   |
-| `kind`      | **MANDATORY**. Always `'input'`.                                                                  |
-| `type`      | **MANDATORY**. The widget type (`textinput`, `dropdown`, etc.).                                   |
-| `path`      | **MANDATORY**. Dot-separated path in the form data (e.g. `user.firstName`).                       |
-| `label`     | Visible label text. Accepts a `Localizable` (`{ key, default }`) for i18n.                        |
-| `validator` | Validation rules. See [Features / Validators](/features/validators/).                             |
-| `props`     | Widget-specific configuration. See each widget's reference page.                                  |
+| Property    | Description                                                                 |
+| ----------- | --------------------------------------------------------------------------- |
+| `uid`       | Optional unique id; one is generated if absent.                             |
+| `kind`      | **MANDATORY**. Always `'input'`.                                            |
+| `type`      | **MANDATORY**. The widget type (`textinput`, `dropdown`, etc.).             |
+| `path`      | **MANDATORY**. Dot-separated path in the form data (e.g. `user.firstName`). |
+| `label`     | Visible label text. Accepts a `Localizable` (`{ key, default }`) for i18n.  |
+| `validator` | Validation rules. See [Features / Validators](/features/validators/).       |
+| `props`     | Widget-specific configuration. See each widget's reference page.            |
 
 ## Available widgets
 
-| Widget         | DX shortcut                  | Reference                                                              |
-| -------------- | ---------------------------- | ---------------------------------------------------------------------- |
-| Textinput      | `gui.inputs.textInput`       | [Textinput](/widgets-reference/input-fields/textinput/)                |
-| Number         | `gui.inputs.numberInput`     | [Number Input](/widgets-reference/input-fields/number/)                |
-| Toggle         | `gui.inputs.booleanInput`    | [Toggle](/widgets-reference/input-fields/toggle/)                      |
-| Password       | `gui.inputs.password`        | [Password](/widgets-reference/input-fields/password/)                  |
-| Currency       | `gui.inputs.currency`        | [Currency](/widgets-reference/input-fields/currency/)                  |
-| Checkbox       | `gui.inputs.checkbox`        | [Checkbox](/widgets-reference/input-fields/checkbox/)                  |
-| Radio Group    | `gui.inputs.radiogroup`      | [Radio Group](/widgets-reference/input-fields/radiogroup/)             |
-| Select         | `gui.inputs.select`          | [Select](/widgets-reference/input-fields/select/)                      |
-| Dropdown       | `gui.inputs.dropdown`        | [Dropdown](/widgets-reference/input-fields/dropdown/)                  |
-| List           | `gui.inputs.list`            | [List](/widgets-reference/input-fields/list/)                          |
-| Textarea       | `gui.inputs.textarea`        | [Textarea](/widgets-reference/input-fields/textarea/)                  |
-| Markdown       | `gui.inputs.markdown`        | [Markdown](/widgets-reference/input-fields/markdown/)                  |
-| Calendar       | `gui.inputs.calendar`        | [Calendar](/widgets-reference/input-fields/calendar/)                  |
-| Date Input     | `gui.inputs.dateInput`       | [Date Input](/widgets-reference/input-fields/dateinput/)               |
-| Date Picker    | `gui.inputs.datePicker`      | [Date Picker](/widgets-reference/input-fields/date-picker/)            |
-| Range Calendar | `gui.inputs.rangeCalendar`   | [Range Calendar](/widgets-reference/input-fields/range-calendar/)      |
-| Range Date Input | `gui.inputs.rangeDateInput` | [Range Date Input](/widgets-reference/input-fields/range-date-input/) |
+| Widget            | DX shortcut                  | Reference                                                               |
+| ----------------- | ---------------------------- | ----------------------------------------------------------------------- |
+| Textinput         | `gui.inputs.textInput`       | [Textinput](/widgets-reference/input-fields/textinput/)                 |
+| Number            | `gui.inputs.numberInput`     | [Number Input](/widgets-reference/input-fields/number/)                 |
+| Toggle            | `gui.inputs.booleanInput`    | [Toggle](/widgets-reference/input-fields/toggle/)                       |
+| Password          | `gui.inputs.password`        | [Password](/widgets-reference/input-fields/password/)                   |
+| Currency          | `gui.inputs.currency`        | [Currency](/widgets-reference/input-fields/currency/)                   |
+| Checkbox          | `gui.inputs.checkbox`        | [Checkbox](/widgets-reference/input-fields/checkbox/)                   |
+| Radio Group       | `gui.inputs.radiogroup`      | [Radio Group](/widgets-reference/input-fields/radiogroup/)              |
+| Select            | `gui.inputs.select`          | [Select](/widgets-reference/input-fields/select/)                       |
+| Dropdown          | `gui.inputs.dropdown`        | [Dropdown](/widgets-reference/input-fields/dropdown/)                   |
+| List              | `gui.inputs.list`            | [List](/widgets-reference/input-fields/list/)                           |
+| Textarea          | `gui.inputs.textarea`        | [Textarea](/widgets-reference/input-fields/textarea/)                   |
+| Markdown          | `gui.inputs.markdown`        | [Markdown](/widgets-reference/input-fields/markdown/)                   |
+| Calendar          | `gui.inputs.calendar`        | [Calendar](/widgets-reference/input-fields/calendar/)                   |
+| Date Input        | `gui.inputs.dateInput`       | [Date Input](/widgets-reference/input-fields/dateinput/)                |
+| Date Picker       | `gui.inputs.datePicker`      | [Date Picker](/widgets-reference/input-fields/date-picker/)             |
+| Range Calendar    | `gui.inputs.rangeCalendar`   | [Range Calendar](/widgets-reference/input-fields/range-calendar/)       |
+| Range Date Input  | `gui.inputs.rangeDateInput`  | [Range Date Input](/widgets-reference/input-fields/range-date-input/)   |
 | Range Date Picker | `gui.inputs.rangeDatePicker` | [Range Date Picker](/widgets-reference/input-fields/range-date-picker/) |
-| Repeater       | `gui.inputs.repeater`        | [Repeater](/widgets-reference/input-fields/repeater/)                  |
-| _Custom_       | `gui.inputs.custom`          | [Custom Widgets](/form-definition/custom-widgets/)                     |
+| Repeater          | `gui.inputs.repeater`        | [Repeater](/widgets-reference/input-fields/repeater/)                   |
+| _Custom_          | `gui.inputs.custom`          | [Custom Widgets](/form-definition/custom-widgets/)                      |
 
 ## See also
 

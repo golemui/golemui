@@ -92,7 +92,9 @@ export class GuiToggle extends LitElement {
         </span>
       </label>
 
-      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}</div>
+      <div class="gui-widget-hint" id=${`${templateData.uid}_hint`}>
+        ${templateData.hint ?? nothing} ${addErrors(this.uid as string, templateData)}
+      </div>
     `;
   }
 

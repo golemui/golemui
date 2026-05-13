@@ -1,10 +1,6 @@
 import type { AlertProps } from '../../../widget.props';
 import type { DxCommonFields } from '../../core/dxBase.types';
-import type {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Alert Decorator

@@ -40,7 +40,9 @@
       @let labelField = templateData.labelField ?? 'label';
       @let isObject = item.template !== null && typeof item.template === 'object';
       @let template =
-        isObject && labelField && !templateData.itemRenderer ? item.template[labelField] : item.template;
+        isObject && labelField && !templateData.itemRenderer
+          ? item.template[labelField]
+          : item.template;
 
       <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
       <div
@@ -73,5 +75,9 @@
 </div>
 
 @if (showErrors) {
-  <gui-errors [uid]="widget.uid" [errors]="templateData.errors" [touched]="templateData.touched"></gui-errors>
+  <gui-errors
+    [uid]="widget.uid"
+    [errors]="templateData.errors"
+    [touched]="templateData.touched"
+  ></gui-errors>
 }

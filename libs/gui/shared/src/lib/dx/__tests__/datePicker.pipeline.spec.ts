@@ -33,20 +33,18 @@ describe('DX Pipeline — DatePicker', () => {
   });
 
   it('suppresses auto-label via GSL config', () => {
-    const result = processDx(
-      _guiDatePicker('birthDate', {}),
-      [_gslDatePickers({ suppressAutomaticLabels: true })],
-    );
+    const result = processDx(_guiDatePicker('birthDate', {}), [
+      _gslDatePickers({ suppressAutomaticLabels: true }),
+    ]);
     const w = getStaticChild(result, 0) as { label?: string };
 
     expect(w.label).toBeUndefined();
   });
 
   it('suppresses auto-placeholder via GSL config', () => {
-    const result = processDx(
-      _guiDatePicker('birthDate', {}),
-      [_gslDatePickers({ suppressAutomaticPlaceholders: true })],
-    );
+    const result = processDx(_guiDatePicker('birthDate', {}), [
+      _gslDatePickers({ suppressAutomaticPlaceholders: true }),
+    ]);
     const w = getStaticChild(result, 0) as { props?: { placeholder?: string } };
 
     expect(w.props?.placeholder).toBeUndefined();
@@ -70,20 +68,18 @@ describe('DX Pipeline — DatePicker', () => {
   });
 
   it('applies GSL decorator override', () => {
-    const result = processDx(
-      _guiDatePicker('date', { icon: 'original' }),
-      [_gslDatePickers({ override: { icon: 'overridden' } })],
-    );
+    const result = processDx(_guiDatePicker('date', { icon: 'original' }), [
+      _gslDatePickers({ override: { icon: 'overridden' } }),
+    ]);
     const w = getStaticChild(result, 0) as { props?: { icon?: string } };
 
     expect(w.props?.icon).toBe('overridden');
   });
 
   it('applies GSL byId selector override', () => {
-    const result = processDx(
-      _guiDatePicker('date', { uid: 'my-date', icon: 'original' }),
-      [_gslDatePickerByUid('my-date', { override: { icon: 'by-id-override' } })],
-    );
+    const result = processDx(_guiDatePicker('date', { uid: 'my-date', icon: 'original' }), [
+      _gslDatePickerByUid('my-date', { override: { icon: 'by-id-override' } }),
+    ]);
     const w = getStaticChild(result, 0) as { props?: { icon?: string } };
 
     expect(w.props?.icon).toBe('by-id-override');
@@ -104,9 +100,7 @@ describe('DX Pipeline — DatePicker', () => {
   });
 
   it('supports dynamic callback', () => {
-    const result = processDx(
-      _guiDatePicker('date', () => ({ hint: 'Dynamic hint' })),
-    );
+    const result = processDx(_guiDatePicker('date', () => ({ hint: 'Dynamic hint' })));
     const raw = getRawChild(result, 0);
     const w = resolveDynamic(raw) as {
       type?: string;

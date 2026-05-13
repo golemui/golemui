@@ -6,9 +6,9 @@ export const onChangeLayoutDemo: FormDemoDefinition = {
   title: '30. onChange — Layout',
   category: 'Ch6: Events',
   description:
-    'Events work on layouts too, not just inputs. The tabs layout fires onChange '
-    + 'when switching tabs. The callback receives event.detail with the tab index. '
-    + 'Watch the Log panel to see the tab switch events.',
+    'Events work on layouts too, not just inputs. The tabs layout fires onChange ' +
+    'when switching tabs. The callback receives event.detail with the tab index. ' +
+    'Watch the Log panel to see the tab switch events.',
   formDef: (log: DemoLogFn) =>
     gui.layouts.tabs(
       [

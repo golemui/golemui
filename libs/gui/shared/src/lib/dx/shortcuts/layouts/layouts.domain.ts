@@ -2,11 +2,7 @@ import { FlexProps, GridProps } from '../../../widget.props';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
 import { ValidGuiShortcut } from '../../core/dx.domain';
 import { DxCommonFields, DxInternalFields, DxLayoutBase } from '../../core/dxBase.types';
-import {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Layout Decorator (DX-level type for layouts)

@@ -46,19 +46,13 @@ export const eventRegistrationDemo: FormDemoDefinition = {
   title: '43. Event Registration',
   category: 'Ch9: Real World',
   description:
-    'A conference registration form with hierarchical states driving visibility. '
-    + 'In-person shows the Travel accordion; remote hides it. A plus-one checkbox '
-    + 'reveals extra fields. A custom display shows a live cost summary. Markdown '
-    + 'for special requests with a dependency on snarkdown.',
+    'A conference registration form with hierarchical states driving visibility. ' +
+    'In-person shows the Travel accordion; remote hides it. A plus-one checkbox ' +
+    'reveals extra fields. A custom display shows a live cost summary. Markdown ' +
+    'for special requests with a dependency on snarkdown.',
   formDef: () => [
-    gui.layouts.horizontalFlex([
-      gui.inputs.textInput('fullName'),
-      gui.inputs.textInput('email'),
-    ]),
-    gui.layouts.horizontalFlex([
-      gui.inputs.textInput('company'),
-      gui.inputs.textInput('role'),
-    ]),
+    gui.layouts.horizontalFlex([gui.inputs.textInput('fullName'), gui.inputs.textInput('email')]),
+    gui.layouts.horizontalFlex([gui.inputs.textInput('company'), gui.inputs.textInput('role')]),
     gui.inputs.select('attendanceMode', {
       options: attendanceModes,
       label: 'Attendance mode',
@@ -138,7 +132,9 @@ export const eventRegistrationDemo: FormDemoDefinition = {
         <div style={{ padding: '0.75rem', background: 'f0f4f8', borderRadius: '4px' }}>
           <strong>Estimated cost:</strong> ${total}
           <span style={{ color: '#666', marginLeft: '0.5rem' }}>
-            (base: ${base}{plusOne > 0 ? `, plus-one: $${plusOne}` : ''}{guests > 0 ? `, guests: $${guests}` : ''})
+            (base: ${base}
+            {plusOne > 0 ? `, plus-one: $${plusOne}` : ''}
+            {guests > 0 ? `, guests: $${guests}` : ''})
           </span>
         </div>
       );

@@ -26,10 +26,12 @@ const CURRENCIES: CurrencyItem[] = [
   { code: 'GBP', symbol: '£', name: 'British Pound' },
 ];
 
-const currencyItemRenderer = (
-  ctx: ItemRenderContext<CurrencyItem>,
-): TemplateResult => html`
-  <div class="poc-currency-item ${ctx.selected ? 'is-selected' : ''} ${ctx.focused ? 'is-focused' : ''}">
+const currencyItemRenderer = (ctx: ItemRenderContext<CurrencyItem>): TemplateResult => html`
+  <div
+    class="poc-currency-item ${ctx.selected ? 'is-selected' : ''} ${ctx.focused
+      ? 'is-focused'
+      : ''}"
+  >
     <span class="poc-currency-item__symbol">${ctx.template.symbol}</span>
     <span class="poc-currency-item__code">${ctx.template.code}</span>
     <span class="poc-currency-item__name">${ctx.template.name}</span>
@@ -65,7 +67,6 @@ const STAGE_TO_STEP_INDEX: Record<Stage, number> = {
   submitted: 6,
 };
 
-
 type Token =
   | 'componentDropdown'
   | 'componentRadiogroup'
@@ -90,19 +91,25 @@ const STAGE_PROMPT_FORM: Record<Stage, string> = {
   start: 'Pick a country to show its relevant cities. See the code below for how this is wired.',
   countryPicked: 'Pick a city — note how the radio group only appeared once a country was set.',
   cityPicked: 'Pick a currency. The dropdown uses a custom item renderer for symbol + code + name.',
-  currencyPicked: 'Toggle whether you are travelling with pets. A simple boolean flips the next step in.',
+  currencyPicked:
+    'Toggle whether you are travelling with pets. A simple boolean flips the next step in.',
   petsToggled: 'Pick a start date. The calendar pops over the input — ISO date in, ISO date out.',
   dateEntered: 'Submit when you are ready. The form will flip to a summary of what just happened.',
   submitted: 'Submitted. Click "Start again" on the back face to come back here.',
 };
 
 const STAGE_PROMPT_CODE: Record<Stage, string> = {
-  start: 'Code for a dropdown in GolemUI. Notice the update instruction that hydrates cities based on the chosen country.',
-  countryPicked: 'Code for the city radio group. The include rule is what kept it hidden until a country was picked.',
-  cityPicked: 'Code for the currency dropdown. itemRenderer is plugged in by name — the row layout becomes custom.',
-  currencyPicked: 'Code for the pets toggle. A plain boolean field, conditionally included once currency is set.',
+  start:
+    'Code for a dropdown in GolemUI. Notice the update instruction that hydrates cities based on the chosen country.',
+  countryPicked:
+    'Code for the city radio group. The include rule is what kept it hidden until a country was picked.',
+  cityPicked:
+    'Code for the currency dropdown. itemRenderer is plugged in by name — the row layout becomes custom.',
+  currencyPicked:
+    'Code for the pets toggle. A plain boolean field, conditionally included once currency is set.',
   petsToggled: 'Code for the date picker. ISO dates, with optional min/max and disabled ranges.',
-  dateEntered: 'And the submit handler. onSubmit gets the form data — do whatever you want with it.',
+  dateEntered:
+    'And the submit handler. onSubmit gets the form data — do whatever you want with it.',
   submitted: 'That was the whole form.',
 };
 
@@ -117,10 +124,12 @@ const TOKEN_INFO: Record<Token, TokenInfo> = {
   componentDropdown: {
     title: 'Dropdown',
     base: () =>
-      html`A list-based input. Static items, reactive items, custom rendering, item filtering — all declarative.`,
+      html`A list-based input. Static items, reactive items, custom rendering, item filtering — all
+      declarative.`,
     context: {
       start: () =>
-        html`Here it's a static list of four countries, and <code>onChange</code> wires up the next field.`,
+        html`Here it's a static list of four countries, and <code>onChange</code> wires up the next
+          field.`,
       cityPicked: () =>
         html`Here it backs the currency picker, with a custom renderer for each row.`,
     },
@@ -129,76 +138,81 @@ const TOKEN_INFO: Record<Token, TokenInfo> = {
   componentRadiogroup: {
     title: 'Radio group',
     base: () =>
-      html`Mutually-exclusive options laid out inline. Same shape as the dropdown — pick whichever fits the UX.`,
+      html`Mutually-exclusive options laid out inline. Same shape as the dropdown — pick whichever
+      fits the UX.`,
     context: {
-      countryPicked: () =>
-        html`Here it lists the cities of the chosen country.`,
+      countryPicked: () => html`Here it lists the cities of the chosen country.`,
     },
     docs: '/dx/widgets-reference/input-fields/radiogroup/',
   },
   componentCheckbox: {
     title: 'Checkbox',
     base: () =>
-      html`A boolean input. Render as checkbox, switch, or any custom toggle — the data model is one bool.`,
+      html`A boolean input. Render as checkbox, switch, or any custom toggle — the data model is one
+      bool.`,
     context: {
       currencyPicked: () =>
-        html`Here it captures whether the user is travelling with pets. Toggling it unlocks the date field.`,
+        html`Here it captures whether the user is travelling with pets. Toggling it unlocks the date
+        field.`,
     },
     docs: '/dx/widgets-reference/input-fields/checkbox/',
   },
   componentDatePicker: {
     title: 'Date picker',
     base: () =>
-      html`An input with a calendar pop-over. ISO date in/out, with optional min/max and disabled ranges.`,
+      html`An input with a calendar pop-over. ISO date in/out, with optional min/max and disabled
+      ranges.`,
     context: {
       petsToggled: () =>
-        html`Here it captures the trip start date — the format is plain ISO so it round-trips cleanly.`,
+        html`Here it captures the trip start date — the format is plain ISO so it round-trips
+        cleanly.`,
     },
     docs: '/dx/widgets-reference/input-fields/date-picker/',
   },
   update: {
     title: 'update()',
     base: () =>
-      html`Mutate any widget from anywhere — set its value, swap its options, change visibility. Inline, no host code needed.`,
+      html`Mutate any widget from anywhere — set its value, swap its options, change visibility.
+      Inline, no host code needed.`,
     context: {
-      start: () =>
-        html`Here it sets the city's options to the cities of the chosen country.`,
+      start: () => html`Here it sets the city's options to the cities of the chosen country.`,
     },
     docs: '/dx/features/events/',
   },
   include: {
     title: 'Conditional rendering',
     base: () =>
-      html`The field appears or disappears as form state changes. Declared inline; no show/hide handlers.`,
+      html`The field appears or disappears as form state changes. Declared inline; no show/hide
+      handlers.`,
     context: {
-      countryPicked: () =>
-        html`The city is hidden until <code>$form.country</code> is set.`,
-      cityPicked: () =>
-        html`The currency is hidden until <code>$form.city</code> is set.`,
-      currencyPicked: () =>
-        html`The pets toggle appears once <code>$form.currency</code> is set.`,
-      petsToggled: () =>
-        html`The date is hidden until the pets toggle has been touched.`,
+      countryPicked: () => html`The city is hidden until <code>$form.country</code> is set.`,
+      cityPicked: () => html`The currency is hidden until <code>$form.city</code> is set.`,
+      currencyPicked: () => html`The pets toggle appears once <code>$form.currency</code> is set.`,
+      petsToggled: () => html`The date is hidden until the pets toggle has been touched.`,
     },
     docs: '/dx/features/states/',
   },
   submit: {
     title: 'onSubmit',
     base: () =>
-      html`The form's submit handler. Receives the current form data — do whatever you need: fetch, log, navigate.`,
+      html`The form's submit handler. Receives the current form data — do whatever you need: fetch,
+      log, navigate.`,
     context: {
       dateEntered: () =>
-        html`In this case it just calls <code>process(data)</code> — your handler. The flip is incidental.`,
+        html`In this case it just calls <code>process(data)</code> — your handler. The flip is
+          incidental.`,
     },
     docs: '/dx/features/events/',
   },
   itemRenderer: {
     title: 'Item renderers',
     base: () =>
-      html`Replace the default option markup with your own — icons, badges, multi-line layouts. Plug it in by name.`,
+      html`Replace the default option markup with your own — icons, badges, multi-line layouts. Plug
+      it in by name.`,
     context: {
       cityPicked: () =>
-        html`The currency dropdown registers <code>currencyItemRenderer</code> for a 3-column layout (symbol, code, name).`,
+        html`The currency dropdown registers <code>currencyItemRenderer</code> for a 3-column layout
+          (symbol, code, name).`,
     },
     docs: '/dx/features/item-renderers/',
   },
@@ -237,7 +251,12 @@ export class FormElement extends LitElement {
   @state() declare furthestStage: Stage;
   @state() declare confetti: ConfettiPiece[] | null;
   @state() declare activeToken: Token;
-  @state() declare activeFieldRect: { top: number; left: number; width: number; height: number } | null;
+  @state() declare activeFieldRect: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null;
   @state() declare connectorPath: string | null;
   @state() declare connectorBounds: { width: number; height: number } | null;
   @state() declare confettiOrigin: { left: number; top: number } | null;
@@ -363,9 +382,7 @@ export class FormElement extends LitElement {
 
   override updated() {
     this.scheduleFieldRectCompute();
-    this.querySelectorAll('input, select').forEach((el) =>
-      el.setAttribute('autocomplete', 'off'),
-    );
+    this.querySelectorAll('input, select').forEach((el) => el.setAttribute('autocomplete', 'off'));
   }
 
   private scheduleFieldRectCompute() {
@@ -481,7 +498,6 @@ export class FormElement extends LitElement {
     }
   }
 
-
   private scheduleCelebration(count = 28) {
     if (this.celebrateTimer) clearTimeout(this.celebrateTimer);
     this.celebrateTimer = setTimeout(() => {
@@ -587,45 +603,36 @@ export class FormElement extends LitElement {
   }
 
   private renderCountryCode() {
-    return html`${this.renderToken('componentDropdown', 'gui.inputs.dropdown')}('country', {
-  items: ['United States', 'Japan', 'Brazil', 'France'],
-  onChange: ({ data, update }) =>
-    ${this.renderToken('update', "update({ path: 'city', options: CITIES[data.country] })")},
-}),`;
+    return html`${this.renderToken('componentDropdown', 'gui.inputs.dropdown')}('country', { items:
+    ['United States', 'Japan', 'Brazil', 'France'], onChange: ({ data, update }) =>
+    ${this.renderToken('update', "update({ path: 'city', options: CITIES[data.country] })")}, }),`;
   }
 
   private renderCityCode() {
     return html`${this.renderToken('componentRadiogroup', 'gui.inputs.radiogroup')}('city', {
-  ${this.renderToken('include', "include: { when: '!!$form.country' }")},
-}),`;
+    ${this.renderToken('include', "include: { when: '!!$form.country' }")}, }),`;
   }
 
   private renderCurrencyCode() {
-    return html`${this.renderToken('componentDropdown', 'gui.inputs.dropdown')}('currency', {
-  items: CURRENCIES,
-  ${this.renderToken('itemRenderer', "itemRenderer: 'currencyItemRenderer'")},
-  ${this.renderToken('include', "include: { when: '!!$form.city' }")},
-}),`;
+    return html`${this.renderToken('componentDropdown', 'gui.inputs.dropdown')}('currency', { items:
+    CURRENCIES, ${this.renderToken('itemRenderer', "itemRenderer: 'currencyItemRenderer'")},
+    ${this.renderToken('include', "include: { when: '!!$form.city' }")}, }),`;
   }
 
   private renderPetsCode() {
-    return html`${this.renderToken('componentCheckbox', 'gui.inputs.checkbox')}('pets', {
-  label: 'Travelling with pets?',
-  ${this.renderToken('include', "include: { when: '!!$form.currency' }")},
-}),`;
+    return html`${this.renderToken('componentCheckbox', 'gui.inputs.checkbox')}('pets', { label:
+    'Travelling with pets?',
+    ${this.renderToken('include', "include: { when: '!!$form.currency' }")}, }),`;
   }
 
   private renderDateCode() {
     return html`${this.renderToken('componentDatePicker', 'gui.inputs.datePicker')}('startDate', {
-  icon: 'calendar_month',
-  ${this.renderToken('include', "include: { when: '$form.pets != null' }")},
-}),`;
+    icon: 'calendar_month',
+    ${this.renderToken('include', "include: { when: '$form.pets != null' }")}, }),`;
   }
 
   private renderSubmitCode() {
-    return html`formConfig: {
-  ${this.renderToken('submit', 'onSubmit: (data) => process(data)')},
-}`;
+    return html`formConfig: { ${this.renderToken('submit', 'onSubmit: (data) => process(data)')}, }`;
   }
 
   private renderCurrentCode() {
@@ -645,7 +652,6 @@ export class FormElement extends LitElement {
         return this.renderSubmitCode();
     }
   }
-
 
   override render() {
     const showHint = this.activeFieldRect != null;
@@ -685,121 +691,134 @@ export class FormElement extends LitElement {
     return html`
       <div class="poc-stage__flipper ${this.isFlipped ? 'is-flipped' : ''}">
         <section class="poc-stage poc-stage__face poc-stage__face--front" data-stage=${this.stage}>
-        <div class="poc-stage__layout">
-          <aside class="poc-stage__rail" aria-label="Demo progress">
-            <button
-              type="button"
-              class="poc-stage__rail-reset"
-              ?disabled=${this.stage === 'start'}
-              @click=${() => this.resetDemo()}
-              aria-label="Start over"
-              title="Start over"
-            >
-              <span class="poc-stage__rail-reset-icon" aria-hidden="true">↻</span>
-              <span class="poc-stage__rail-reset-label">Start over</span>
-            </button>
-            ${STEP_LABELS.map((label, i) => renderStep(label, i))}
-          </aside>
+          <div class="poc-stage__layout">
+            <aside class="poc-stage__rail" aria-label="Demo progress">
+              <button
+                type="button"
+                class="poc-stage__rail-reset"
+                ?disabled=${this.stage === 'start'}
+                @click=${() => this.resetDemo()}
+                aria-label="Start over"
+                title="Start over"
+              >
+                <span class="poc-stage__rail-reset-icon" aria-hidden="true">↻</span>
+                <span class="poc-stage__rail-reset-label">Start over</span>
+              </button>
+              ${STEP_LABELS.map((label, i) => renderStep(label, i))}
+            </aside>
 
-          <div class="poc-stage__content">
-            ${this.connectorPath && this.connectorBounds
-              ? html`
-                  <svg
-                    class="poc-stage__connectors"
-                    viewBox="0 0 ${this.connectorBounds.width} ${this.connectorBounds.height}"
-                    width=${this.connectorBounds.width}
-                    height=${this.connectorBounds.height}
-                    aria-hidden="true"
-                  >
-                    <path d=${this.connectorPath} />
-                  </svg>
-                `
-              : null}
-            <div class="poc-stage__row">
-              <div class="poc-stage__form">
-                ${keyed(
-                  this.resetCounter,
-                  html`<gui-form
-                    .formDef=${this.formDef}
-                    .data=${this.formData}
-                    .formConfig=${this.formConfig}
-                  ></gui-form>`,
-                )}
-                ${this.stage === 'dateEntered'
-                  ? html`<button
-                      type="button"
-                      class="poc-stage__submit"
-                      @click=${() => this.handleSubmit()}
-                    >Submit →</button>`
-                  : null}
-                ${showHint && this.activeFieldRect
-                  ? html`
-                      <div
-                        class="poc-stage__field-glow"
-                        style="top: ${this.activeFieldRect.top}px; left: ${this.activeFieldRect.left}px; width: ${this.activeFieldRect.width}px; height: ${this.activeFieldRect.height}px"
-                      ></div>
-                    `
-                  : null}
-              </div>
-              ${renderPrompt(`form-${this.stage}`, formPromptCopy)}
-            </div>
-
-            <div class="poc-stage__row">
-              <div class="poc-stage__code">
-                ${keyed(
-                  this.stage,
-                  html`<pre class="poc-stage__code-reveal is-active-step"><code>${this.renderCurrentCode()}</code></pre>`,
-                )}
-                ${this.confetti
-                  ? html`
-                      <div
-                        class="poc-confetti"
-                        aria-hidden="true"
-                        style=${this.confettiOrigin
-                          ? `--origin-x: ${this.confettiOrigin.left}px; --origin-y: ${this.confettiOrigin.top}px;`
-                          : ''}
+            <div class="poc-stage__content">
+              ${this.connectorPath && this.connectorBounds
+                ? html`
+                    <svg
+                      class="poc-stage__connectors"
+                      viewBox="0 0 ${this.connectorBounds.width} ${this.connectorBounds.height}"
+                      width=${this.connectorBounds.width}
+                      height=${this.connectorBounds.height}
+                      aria-hidden="true"
+                    >
+                      <path d=${this.connectorPath} />
+                    </svg>
+                  `
+                : null}
+              <div class="poc-stage__row">
+                <div class="poc-stage__form">
+                  ${keyed(
+                    this.resetCounter,
+                    html`<gui-form
+                      .formDef=${this.formDef}
+                      .data=${this.formData}
+                      .formConfig=${this.formConfig}
+                    ></gui-form>`,
+                  )}
+                  ${this.stage === 'dateEntered'
+                    ? html`<button
+                        type="button"
+                        class="poc-stage__submit"
+                        @click=${() => this.handleSubmit()}
                       >
-                        ${this.confetti.map(
-                          (p) => html`
-                            <span
-                              class="poc-confetti__piece"
-                              style="--x: ${p.x}px; --y: ${p.y}px; --color: ${p.color}; --delay: ${p.delay}ms; --rot: ${p.rot}deg"
-                            ></span>
-                          `,
-                        )}
-                      </div>
-                    `
-                  : null}
+                        Submit →
+                      </button>`
+                    : null}
+                  ${showHint && this.activeFieldRect
+                    ? html`
+                        <div
+                          class="poc-stage__field-glow"
+                          style="top: ${this.activeFieldRect.top}px; left: ${this.activeFieldRect
+                            .left}px; width: ${this.activeFieldRect.width}px; height: ${this
+                            .activeFieldRect.height}px"
+                        ></div>
+                      `
+                    : null}
+                </div>
+                ${renderPrompt(`form-${this.stage}`, formPromptCopy)}
               </div>
-              ${renderPrompt(`code-${this.stage}`, codePromptCopy)}
-            </div>
 
-            <div class="poc-stage__row poc-stage__row--solo">
-              <div class="poc-stage__detail-box">
-                <h4 class="poc-stage__detail-title">${tokenInfo.title}</h4>
-                <p class="poc-stage__detail-body">
-                  ${tokenInfo.base()}${contextDesc ? html` — ${contextDesc()}` : null}
-                </p>
-                <a
-                  class="poc-stage__detail-link"
-                  href=${tokenInfo.docs}
-                  target="_top"
-                  rel="noopener"
-                  >Read the docs →</a
-                >
+              <div class="poc-stage__row">
+                <div class="poc-stage__code">
+                  ${keyed(
+                    this.stage,
+                    html`<pre
+                      class="poc-stage__code-reveal is-active-step"
+                    ><code>${this.renderCurrentCode()}</code></pre>`,
+                  )}
+                  ${this.confetti
+                    ? html`
+                        <div
+                          class="poc-confetti"
+                          aria-hidden="true"
+                          style=${this.confettiOrigin
+                            ? `--origin-x: ${this.confettiOrigin.left}px; --origin-y: ${this.confettiOrigin.top}px;`
+                            : ''}
+                        >
+                          ${this.confetti.map(
+                            (p) => html`
+                              <span
+                                class="poc-confetti__piece"
+                                style="--x: ${p.x}px; --y: ${p.y}px; --color: ${p.color}; --delay: ${p.delay}ms; --rot: ${p.rot}deg"
+                              ></span>
+                            `,
+                          )}
+                        </div>
+                      `
+                    : null}
+                </div>
+                ${renderPrompt(`code-${this.stage}`, codePromptCopy)}
+              </div>
+
+              <div class="poc-stage__row poc-stage__row--solo">
+                <div class="poc-stage__detail-box">
+                  <h4 class="poc-stage__detail-title">${tokenInfo.title}</h4>
+                  <p class="poc-stage__detail-body">
+                    ${tokenInfo.base()}${contextDesc ? html` — ${contextDesc()}` : null}
+                  </p>
+                  <a
+                    class="poc-stage__detail-link"
+                    href=${tokenInfo.docs}
+                    target="_top"
+                    rel="noopener"
+                    >Read the docs →</a
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
         </section>
 
-        <section class="poc-stage poc-stage__face poc-stage__face--back" aria-hidden=${!this.isFlipped}>
+        <section
+          class="poc-stage poc-stage__face poc-stage__face--back"
+          aria-hidden=${!this.isFlipped}
+        >
           <div class="poc-stage__back">
             <h3 class="poc-stage__back-headline">That's GolemUI in five fields.</h3>
             <div class="poc-stage__back-grid">
               <div class="poc-stage__back-col">
                 <h4>Data</h4>
-                <pre class="poc-stage__back-code"><code>${JSON.stringify(this.latestFormData, null, 2)}</code></pre>
+                <pre class="poc-stage__back-code"><code>${JSON.stringify(
+                  this.latestFormData,
+                  null,
+                  2,
+                )}</code></pre>
               </div>
               <div class="poc-stage__back-col">
                 <h4>Code</h4>
@@ -834,12 +853,16 @@ const formConfig = { onSubmit: (data) => process(data) };</code></pre>
                 type="button"
                 class="poc-stage__back-restart"
                 @click=${() => this.startAgain()}
-              >↻ Start again</button>
+              >
+                ↻ Start again
+              </button>
               <button
                 type="button"
                 class="poc-stage__back-codesandbox"
                 @click=${() => alert('Coming soon')}
-              >Open in Codesandbox →</button>
+              >
+                Open in Codesandbox →
+              </button>
             </div>
           </div>
         </section>

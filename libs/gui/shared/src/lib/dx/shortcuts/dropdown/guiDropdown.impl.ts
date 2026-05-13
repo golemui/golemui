@@ -1,16 +1,9 @@
 import type { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import type {
-  DropdownDecorator,
-  DropdownEntry,
-  GuiDropdownShortcut,
-} from './dropdown.domain';
+import type { DropdownDecorator, DropdownEntry, GuiDropdownShortcut } from './dropdown.domain';
 
 type DropdownFactoryProps = Omit<DropdownDecorator, 'type'>;
 
-export function _guiDropdown(
-  path: string,
-  props: DropdownFactoryProps,
-): GuiDropdownShortcut;
+export function _guiDropdown(path: string, props: DropdownFactoryProps): GuiDropdownShortcut;
 export function _guiDropdown(
   path: string,
   props: DropdownFactoryProps,
@@ -23,9 +16,7 @@ export function _guiDropdown(
 ): GuiDropdownShortcut;
 export function _guiDropdown(
   path: string,
-  propsOrCallback:
-    | DropdownFactoryProps
-    | ((params: DxRuntimeParams) => DropdownFactoryProps),
+  propsOrCallback: DropdownFactoryProps | ((params: DxRuntimeParams) => DropdownFactoryProps),
   tags?: string[],
 ): GuiDropdownShortcut {
   if (typeof propsOrCallback === 'function') {

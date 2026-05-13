@@ -49,17 +49,17 @@ export class FreedomMatDropdownElement extends LitElement implements Core.WithWi
         .value=${td.value ?? ''}
         ?error=${td.touched && !!td.errors?.length}
         .errorText=${td.errors?.[0] ?? ''}
-        @change=${(e: Event) =>
-          this.adapter.valueChanged((e.target as HTMLSelectElement).value)}
+        @change=${(e: Event) => this.adapter.valueChanged((e.target as HTMLSelectElement).value)}
         @blur=${() => this.adapter.onBlur()}
       >
         ${items.map(
-          (item) => html`<md-select-option .value=${item.value}>
-            <div slot="headline">
-              ${item.flag ? html`<span class="fd-flag">${item.flag}</span>` : null}
-              <span>${item.label}</span>
-            </div>
-          </md-select-option>`,
+          (item) =>
+            html`<md-select-option .value=${item.value}>
+              <div slot="headline">
+                ${item.flag ? html`<span class="fd-flag">${item.flag}</span>` : null}
+                <span>${item.label}</span>
+              </div>
+            </md-select-option>`,
         )}
       </md-filled-select>
     `;

@@ -35,9 +35,10 @@ export function pathToLabel(path: string | undefined): string {
  * Behavior must match existing `inputSensibleDefaults.service.ts` and
  * `calendarSensibleDefaults.service.ts` exactly.
  */
-export function processAutoLabel<
-  D extends { path?: string; label?: Localizable | null },
->(def: D, config: LabelSensibleDefaultsConfig): D {
+export function processAutoLabel<D extends { path?: string; label?: Localizable | null }>(
+  def: D,
+  config: LabelSensibleDefaultsConfig,
+): D {
   if (def.label != null) return def;
   if (config.suppressAutomaticLabels) return def;
   if (!def.path) return def;

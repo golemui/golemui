@@ -4,8 +4,7 @@ import { gui } from '@golemui/gui-shared';
 export const selectAndRadioDemo: FormDemoDefinition = {
   title: '7. Select & Radiogroup',
   category: 'Ch2: Input Widgets',
-  description:
-    'Select dropdowns and radio button groups — both take an options array.',
+  description: 'Select dropdowns and radio button groups — both take an options array.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.select('country', {

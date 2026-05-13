@@ -54,9 +54,7 @@ export class FormElement extends LitElement {
               <input type="radio" name="theming" checked @click=${() => this.setDefaultTheme()} />
               <span>Default theme</span>
             </label>
-            <pre>
-@import '@golemui/gui-components/styles/index.css';</pre
-            >
+            <pre>@import '@golemui/gui-components/styles/index.css';</pre>
           </div>
 
           <div class="theming-option">

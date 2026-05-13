@@ -14,17 +14,23 @@ import { gui } from '@golemui/gui-shared';
 import { html } from 'lit';
 
 const formDef = [
-  gui.displays.alert({ text: 'Some fields need your attention', level: 'warning' }),
+  gui.displays.alert({
+    text: 'Some fields need your attention',
+    level: 'warning',
+  }),
   gui.displays.display(({ $form }) => html`<h2>Hello, ${$form.name}!</h2>`),
-  gui.displays.custom('productDescription', { img: 'p.png', description: '### Cool' }),
+  gui.displays.custom('productDescription', {
+    img: 'p.png',
+    description: '### Cool',
+  }),
 ];
 ```
 
-| Shortcut                  | Description                                                                                                                |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `gui.displays.alert`      | A levelled alert ([Alert](/widgets-reference/display-fields/alert/)).                                                      |
-| `gui.displays.display`    | A render-callback that returns framework markup ([Renderer](/widgets-reference/display-fields/renderer/)). Programmatic-only. |
-| `gui.displays.custom`     | Plug in your own display widget ([Custom Widgets](/form-definition/custom-widgets/)).                                       |
+| Shortcut               | Description                                                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `gui.displays.alert`   | A levelled alert ([Alert](/widgets-reference/display-fields/alert/)).                                                         |
+| `gui.displays.display` | A render-callback that returns framework markup ([Renderer](/widgets-reference/display-fields/renderer/)). Programmatic-only. |
+| `gui.displays.custom`  | Plug in your own display widget ([Custom Widgets](/form-definition/custom-widgets/)).                                         |
 
 ## JSON form
 
@@ -42,12 +48,12 @@ The same widgets expressed in JSON:
 }
 ```
 
-| Property | Description                                                                  |
-| -------- | ---------------------------------------------------------------------------- |
-| `uid`    | Optional unique id; one is generated if absent.                              |
-| `kind`   | **MANDATORY**. Always `'display'`.                                            |
+| Property | Description                                                                 |
+| -------- | --------------------------------------------------------------------------- |
+| `uid`    | Optional unique id; one is generated if absent.                             |
+| `kind`   | **MANDATORY**. Always `'display'`.                                          |
 | `type`   | **MANDATORY**. The widget type (`alert`, `markdownText`, `renderer`, etc.). |
-| `props`  | Widget-specific configuration — see each widget's reference page.            |
+| `props`  | Widget-specific configuration — see each widget's reference page.           |
 
 ## Available widgets
 

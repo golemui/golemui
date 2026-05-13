@@ -12,10 +12,9 @@ import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import type { GslTabsConfig, TabsDecorator, TabsEntry } from './tabs.domain';
 
-function mapToWidget<
-  StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
->(def: TabsDecorator): NonFunctionWidget<StateKeys, FormData> {
+function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+  def: TabsDecorator,
+): NonFunctionWidget<StateKeys, FormData> {
   return {
     uid: def.uid ?? '',
     kind: 'layout',
@@ -29,10 +28,7 @@ function mapToWidget<
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function buildCustomWidget(
-  mergeResult: MergeResult,
-  context: BuildWidgetContext,
-): FormWidget {
+function buildCustomWidget(mergeResult: MergeResult, context: BuildWidgetContext): FormWidget {
   const children = context.walkChildren(context.children ?? []);
 
   if (mergeResult.kind === 'static') {
@@ -52,11 +48,14 @@ function getChildren(entry: TabsEntry): any[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslTabs, gslByUid: _gslTabsByUid } =
-  defineShortcutType<TabsEntry, TabsDecorator, GslTabsConfig>({
-    itemType: 'TABS',
-    entryShape: 'compound',
-    mapToWidget,
-    buildCustomWidget,
-    getChildren,
-  });
+export const { gsl: _gslTabs, gslByUid: _gslTabsByUid } = defineShortcutType<
+  TabsEntry,
+  TabsDecorator,
+  GslTabsConfig
+>({
+  itemType: 'TABS',
+  entryShape: 'compound',
+  mapToWidget,
+  buildCustomWidget,
+  getChildren,
+});

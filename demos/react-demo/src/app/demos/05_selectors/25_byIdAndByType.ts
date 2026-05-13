@@ -5,8 +5,8 @@ export const byIdAndByTypeDemo: FormDemoDefinition = {
   title: '25. By-ID & By-Type',
   category: 'Ch5: Selectors',
   description:
-    'Target a specific widget by its uid, or narrow to a subtype. Every registered type gets a by-ID selector out of the box. '
-    + 'Input subtypes get their own type selectors — override all number inputs without touching text inputs.',
+    'Target a specific widget by its uid, or narrow to a subtype. Every registered type gets a by-ID selector out of the box. ' +
+    'Input subtypes get their own type selectors — override all number inputs without touching text inputs.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.numberInput('age'),

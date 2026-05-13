@@ -5,8 +5,13 @@ import { objectUtils } from '../../../utils/objectUtils.service';
 
 export function _guiButton(props: ActionDecorator): GuiActionsShortcut;
 export function _guiButton(props: ActionDecorator, tags: string[]): GuiActionsShortcut;
-export function _guiButton(callback: (params: DxRuntimeParams) => Partial<ActionDecorator>): GuiActionsShortcut;
-export function _guiButton(callback: (params: DxRuntimeParams) => Partial<ActionDecorator>, tags: string[]): GuiActionsShortcut;
+export function _guiButton(
+  callback: (params: DxRuntimeParams) => Partial<ActionDecorator>,
+): GuiActionsShortcut;
+export function _guiButton(
+  callback: (params: DxRuntimeParams) => Partial<ActionDecorator>,
+  tags: string[],
+): GuiActionsShortcut;
 export function _guiButton(
   propsOrCallback: ActionDecorator | ((params: DxRuntimeParams) => Partial<ActionDecorator>),
   tags?: string[],
@@ -19,7 +24,9 @@ export function _guiButton(
   };
 }
 
-export const _guiSubmitButton = (defs?: ActionDecorator | ActionDefOrCallback): GuiActionsShortcut => {
+export const _guiSubmitButton = (
+  defs?: ActionDecorator | ActionDefOrCallback,
+): GuiActionsShortcut => {
   const baseSubmit: ActionDecorator = {
     uid: '#submit',
     label: 'Submit',

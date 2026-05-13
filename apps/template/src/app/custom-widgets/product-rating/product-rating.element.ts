@@ -44,11 +44,7 @@ export class ProductRatingElement extends LitElement implements Core.WithWidget 
     return html`
       <div class="product-rating__widget" id=${this.widget.uid}>
         ${label ? html`<label class="product-rating__label">${label}</label>` : nothing}
-        <div
-          class="product-rating__stars"
-          tabindex="0"
-          @blur=${() => this.adapter.onBlur()}
-        >
+        <div class="product-rating__stars" tabindex="0" @blur=${() => this.adapter.onBlur()}>
           ${Array.from({ length: stars }, (_, i) => i + 1).map(
             (star) => html`
               <span
@@ -68,8 +64,7 @@ export class ProductRatingElement extends LitElement implements Core.WithWidget 
           ? html`
               <div class="product-rating__errors">
                 ${errors.map(
-                  (error: string) =>
-                    html`<span class="product-rating__error">${error}</span>`,
+                  (error: string) => html`<span class="product-rating__error">${error}</span>`,
                 )}
               </div>
             `

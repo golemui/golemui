@@ -1,9 +1,5 @@
 import type { DxActionBase, DxCommonFields } from '../../core/dxBase.types';
-import type {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Custom Action Decorator
