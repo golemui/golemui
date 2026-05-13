@@ -5,7 +5,7 @@ import { Dependencies } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import { ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
@@ -18,7 +18,6 @@ async function onFormEvent(event: Core.FormEvent) {
 }
 
 const mock = AppsShared.kitchenSink;
-const formDef = mock.form;
 const formData = mock.data;
 const formMeta = mock.meta;
 const localization = AppsShared.initializeI18n(mock.resources);
@@ -51,6 +50,16 @@ const validateOn: Core.ValidateOn = 'eager';
 
 export function FormPage() {
   const [error, setError] = useState('');
+  const [formDef, setFormDef] = useState<Core.Form<string> | undefined>(undefined);
+
+  useEffect(() => {
+    const { form } = mock;
+    if (typeof form === 'function') {
+      form().then(setFormDef);
+    } else {
+      setFormDef(form);
+    }
+  }, []);
 
   function onFormHealth(formHealth: Core.FormHealth) {
     if (formHealth.status === 'errored') {
@@ -62,21 +71,23 @@ export function FormPage() {
     <div>
       {languages.length > 0 ? <LanguagePicker /> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
-      <GuiForm
-        formDef={formDef}
-        data={formData}
-        meta={formMeta}
-        customValidators={customValidators}
-        middlewares={middlewares}
-        itemRenderers={itemRenderers}
-        localization={localization}
-        autocomplete={'off'}
-        dependencies={deps}
-        customWidgetLoaders={customWidgetLoaders}
-        validateOn={validateOn}
-        formHealth={onFormHealth}
-        formEvent={onFormEvent}
-      />
+      {formDef && (
+        <GuiForm
+          formDef={formDef}
+          data={formData}
+          meta={formMeta}
+          customValidators={customValidators}
+          middlewares={middlewares}
+          itemRenderers={itemRenderers}
+          localization={localization}
+          autocomplete={'off'}
+          dependencies={deps}
+          customWidgetLoaders={customWidgetLoaders}
+          validateOn={validateOn}
+          formHealth={onFormHealth}
+          formEvent={onFormEvent}
+        />
+      )}
     </div>
   );
 }

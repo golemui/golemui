@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import * as path from 'node:path';
+import { sharedMocksPlugin } from '../apps-shared/src/lib/utils/vite-mocks-plugin';
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -16,7 +17,7 @@ export default defineConfig(() => ({
     port: 8080,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
+  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md', { glob: '**/*.json', input: '../../apps/apps-shared/src/lib/mocks', output: 'assets/mocks' }]), sharedMocksPlugin()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
