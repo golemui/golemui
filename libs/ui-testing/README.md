@@ -1,7 +1,14 @@
-# ui-testing
+# @golemui/ui-testing
 
-This library was generated with [Nx](https://nx.dev).
+[Golem UI](https://golemui.com): the declarative form engine.
 
-## Building
+## Documentation
 
-Run `nx build ui-testing` to build the library.
+- Website: https://golemui.com
+- Repository: https://github.com/golemui/golemui
+- Source: https://github.com/golemui/golemui/tree/main/libs/ui-testing
+- Issues: https://github.com/golemui/golemui/issues
+
+## License
+
+MIT

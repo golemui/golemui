@@ -1,23 +1,25 @@
 name: Release
 
-# TODO: Re-enable automatic triggers when ready to go public with provenance
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_run:
-#     workflows: ['CI']
-#     types:
-#       - completed
 on:
   workflow_dispatch:
+    inputs:
+      release-type:
+        description: Release type
+        type: choice
+        required: true
+        default: stable
+        options:
+          - stable
+          - rc
+      dry-run:
+        description: Dry run (skip publish and tag push)
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   release:
-    # if: >
-    #   github.event.workflow_run.conclusion == 'success' &&
-    #   github.event.workflow_run.head_branch == 'main'
-    name: Nx Release & Publish
+    name: Nx Release (${{ inputs.release-type }})
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -45,14 +47,15 @@ jobs:
 
       - name: config git user
         run: |
-          git config --global user.name "Raúl Jiménez"
-          git config --global user.email "elecash@gmail.com"
+          git config --global user.name "Roger"
+          git config --global user.email "roger@golemui.com"
 
       - name: Release to Github and NPM
         run: |
           export NODE_OPTIONS="--max-old-space-size=4096 --trace-warnings"
-          # We need more listeners here
-          node -e "require('events').EventEmitter.defaultMaxListeners = 20" && npm run release
+          npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+          RELEASE_TYPE: ${{ inputs.release-type }}
+          DRY_RUN: ${{ inputs.dry-run }}
