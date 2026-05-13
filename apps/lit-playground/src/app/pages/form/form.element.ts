@@ -5,7 +5,7 @@ import { Dependencies } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import snarkdown from 'snarkdown';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
@@ -17,7 +17,7 @@ const mock = AppsShared.kitchenSink;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  @state() formDef: Core.Form<string> | undefined;
+  formDef: Core.Form<string> | undefined;
   formData = mock.data;
   formMeta = mock.meta || {};
   localization = AppsShared.initializeI18n(mock.resources);
@@ -54,6 +54,7 @@ export class FormElement extends LitElement {
     super.connectedCallback();
     const { form } = mock;
     this.formDef = typeof form === 'function' ? await form() : form;
+    this.requestUpdate();
   }
 
   override createRenderRoot() {
