@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "uid": "tabTextinput",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinput",
+      "props": {
+        "autocomplete": "off"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinputDisabled",
+      "disabled": true,
+      "readonly": true
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinputPhone",
+      "props": {
+        "placeholder": "Please enter your phone number"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinputWithHint",
+      "props": {
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinputWithIcon",
+      "props": {
+        "icon": "phone_callback",
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinputIconRight",
+      "props": {
+        "icon": "phone_callback",
+        "hint": "This is a hint",
+        "placeholder": "Please enter your phone number"
+      },
+      "validator": { "type": "string", "required": true }
+    }
+  ]
+}

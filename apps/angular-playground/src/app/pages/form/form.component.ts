@@ -32,7 +32,7 @@ export class AppFormPage {
       code,
       label: `${flag} ${label}`,
     }));
-  protected formDef = mock.form;
+  protected formDef: Core.Form<string> | undefined;
   protected formData = mock.data;
   protected formMeta = mock.meta || {};
   protected deps: Dependencies = {
@@ -61,6 +61,12 @@ export class AppFormPage {
 
   constructor() {
     console.log(`Playground started in "${this.appConfig.env}" mode`);
+    this.loadFormDef();
+  }
+
+  private async loadFormDef() {
+    const { form } = mock;
+    this.formDef = typeof form === 'function' ? await form() : form;
   }
 
   protected onFormHealth(formHealth: Core.FormHealth) {
@@ -69,8 +75,8 @@ export class AppFormPage {
     }
   }
 
-  protected async onFormEvent(event: Core.FormEvent) {
-    await AppsShared.onFormEvent(event);
+  protected onFormEvent(event: Core.FormEvent) {
+    AppsShared.onFormEvent(event);
   }
 
   protected onLanguageChanged(event: Event) {

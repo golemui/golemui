@@ -4,6 +4,9 @@
   "title": "Golem Form DSL",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string"
+    },
     "states": {
       "type": "object",
       "additionalProperties": {
@@ -23,6 +26,14 @@
   "required": ["form"],
   "additionalProperties": false,
   "$defs": {
+    "chunkRef": {
+      "type": "object",
+      "properties": {
+        "$ref": { "type": "string" }
+      },
+      "required": ["$ref"],
+      "additionalProperties": false
+    },
     "formWidget": {
       "oneOf": [
         {
@@ -99,6 +110,9 @@
         },
         {
           "$ref": "./components/toggle.schema.json"
+        },
+        {
+          "$ref": "#/$defs/chunkRef"
         }
       ]
     }
