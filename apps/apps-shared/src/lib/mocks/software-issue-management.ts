@@ -1,4 +1,4 @@
-import { defineForm, Form, FunctionWidgetParams } from '@golemui/core';
+import { Form, FunctionWidgetParams } from '@golemui/core';
 import { Example } from './types';
 
 const data = {
@@ -83,7 +83,7 @@ const data = {
 };
 
 // TODO: Move the calculated items logic to the *.form.json file
-const form = defineForm({
+const form = {
   form: [
     {
       uid: 'root',
@@ -424,7 +424,7 @@ const form = defineForm({
       ],
     },
   ],
-});
+};
 
 /**
  * i18next Resource Bundle

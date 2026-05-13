@@ -1,4 +1,3 @@
-import { defineForm } from '@golemui/core';
 import { html } from 'lit';
 
 const data = {
@@ -7,7 +6,8 @@ const data = {
   },
 };
 
-const form = defineForm({
+// TODO: migrate to gui.* DSL
+const form = {
   form: [
     {
       uid: 'renderer-component',
@@ -45,7 +45,7 @@ const form = defineForm({
       },
     },
   ],
-});
+};
 
 export const rendererMock = {
   data,

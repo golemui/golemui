@@ -1,14 +1,14 @@
+import { iframeResizer } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
-import { defineForm } from '@golemui/core';
 import '@golemui/gui-lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';
-import { iframeResizer } from '@golemui/apps-shared';
 
 @customElement('gui-material')
 export class AppElement extends LitElement {
-  formDef = defineForm({
+  // TODO: Migrate to the gui.* DSL
+  formDef = {
     form: [
       {
         uid: '',
@@ -36,7 +36,7 @@ export class AppElement extends LitElement {
         label: 'Send',
       },
     ],
-  });
+  };
   formData = {};
   customWidgetLoaders = {
     matTextInput: async () => (await import('./components/mat-input')).MatTextInputElement,
