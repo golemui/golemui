@@ -2,7 +2,6 @@
   "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
   "form": [
     {
-      "uid": "",
       "kind": "input",
       "type": "textinput",
       "path": "textinput",
@@ -12,7 +11,6 @@
       "validator": { "type": "string", "minLength": 4, "maxLength": 8, "required": true }
     },
     {
-      "uid": "",
       "kind": "input",
       "type": "dateInput",
       "path": "dateInput",
@@ -22,7 +20,6 @@
       "validator": { "type": "string", "required": true, "format": "date" }
     },
     {
-      "uid": "",
       "kind": "input",
       "type": "currency",
       "path": "currencyIconRightWithUSD",
@@ -32,7 +29,6 @@
       "validator": { "type": "number", "required": true, "minimum": 100 }
     },
     {
-      "uid": "",
       "kind": "input",
       "type": "radiogroup",
       "path": "radiogroups.requiredUnselected",
@@ -42,7 +38,6 @@
       "validator": { "type": "string", "required": true }
     },
     {
-      "uid": "",
       "kind": "input",
       "type": "checkbox",
       "label": "I accept the terms and conditions",
@@ -53,7 +48,6 @@
       "validator": { "type": "boolean", "required": true }
     },
     {
-      "uid": "",
       "kind": "input",
       "type": "number",
       "path": "number",
