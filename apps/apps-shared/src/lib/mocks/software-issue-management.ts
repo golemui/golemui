@@ -1,25 +1,5 @@
-import { defineForm, FunctionWidgetParams } from '@golemui/core';
+import { defineForm, Form, FunctionWidgetParams } from '@golemui/core';
 import { Example } from './types';
-
-const minDate = new Date().toISOString().split('T')[0];
-
-const coins: { [key: string]: string } = {
-  AU: 'AUD',
-  BR: 'BRL',
-  CA: 'CAD',
-  CN: 'CNY',
-  FR: 'EUR',
-  DE: 'EUR',
-  IN: 'INR',
-  IT: 'EUR',
-  JP: 'JPY',
-  MX: 'MXN',
-  KR: 'KRW',
-  ES: 'EUR',
-  UK: 'UAH',
-  US: 'USD',
-  GB: 'GBP',
-};
 
 const data = {
   projects: [
@@ -102,6 +82,7 @@ const data = {
   ],
 };
 
+// TODO: Move the calculated items logic to the *.form.json file
 const form = defineForm({
   form: [
     {
@@ -649,6 +630,13 @@ const resources = {
 
 export const softwareIssueManagement: Example = {
   data,
-  form,
+  form: async () => {
+    const baseUrl = new URL(
+      '/assets/mocks/software-issue-management.form.json',
+      window.location.href,
+    ).href;
+    const json = await fetch(baseUrl).then((r) => r.json());
+    return json as unknown as Form<string>;
+  },
   resources,
 };

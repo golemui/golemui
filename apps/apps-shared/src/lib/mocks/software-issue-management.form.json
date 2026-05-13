@@ -1,0 +1,337 @@
+{
+  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
+  "form": [
+    {
+      "uid": "root",
+      "kind": "layout",
+      "type": "flex",
+      "props": {
+        "direction": "column",
+        "gap": 4
+      },
+      "children": [
+        {
+          "uid": "title",
+          "kind": "display",
+          "type": "markdownText",
+          "props": {
+            "md": "## Software Issue Management"
+          }
+        },
+        {
+          "uid": "form-tabs",
+          "kind": "layout",
+          "type": "tabs",
+          "props": {
+            "tabs": [
+              {
+                "label": "Projects",
+                "uid": "projects-tab"
+              },
+              {
+                "label": "Developers",
+                "uid": "developers-tab"
+              },
+              {
+                "label": "Issues",
+                "uid": "issues-tab"
+              }
+            ]
+          },
+          "children": [
+            {
+              "uid": "projects-tab",
+              "kind": "layout",
+              "type": "flex",
+              "children": [
+                {
+                  "uid": "projects-repeater",
+                  "kind": "input",
+                  "type": "repeater",
+                  "path": "projects",
+                  "props": {
+                    "title": "Project",
+                    "addLabel": "Add Project",
+                    "template": {
+                      "uid": "project-template",
+                      "kind": "layout",
+                      "type": "grid",
+                      "props": {
+                        "autoFit": false,
+                        "direction": "row"
+                      },
+                      "children": [
+                        {
+                          "uid": "project-name",
+                          "kind": "input",
+                          "type": "textinput",
+                          "path": "projects.items.name",
+                          "label": "Project Name",
+                          "size": 6,
+                          "validator": {
+                            "type": "string",
+                            "required": true
+                          }
+                        },
+                        {
+                          "uid": "project-delivery",
+                          "kind": "input",
+                          "type": "datePicker",
+                          "path": "projects.items.deliveryDate",
+                          "label": "Delivery Date",
+                          "size": 3
+                        },
+                        {
+                          "uid": "project-budget",
+                          "kind": "input",
+                          "type": "currency",
+                          "path": "projects.items.budget",
+                          "label": "Budget",
+                          "size": 3,
+                          "props": {
+                            "currency": "USD"
+                          }
+                        },
+                        {
+                          "uid": "project-desc",
+                          "kind": "input",
+                          "type": "markdown",
+                          "path": "projects.items.description",
+                          "label": "Description",
+                          "size": 12
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "uid": "developers-tab",
+              "kind": "layout",
+              "type": "flex",
+              "children": [
+                {
+                  "uid": "devs-repeater",
+                  "kind": "input",
+                  "type": "repeater",
+                  "path": "developers",
+                  "props": {
+                    "addLabel": "Add Developer",
+                    "template": {
+                      "uid": "dev-template",
+                      "kind": "layout",
+                      "type": "grid",
+                      "props": {
+                        "autoFit": false,
+                        "direction": "row"
+                      },
+                      "children": [
+                        {
+                          "uid": "dev-name",
+                          "kind": "input",
+                          "type": "textinput",
+                          "path": "developers.items.name",
+                          "label": "Developer Name",
+                          "size": 4,
+                          "validator": {
+                            "type": "string",
+                            "required": true
+                          }
+                        },
+                        {
+                          "uid": "dev-position",
+                          "kind": "input",
+                          "type": "dropdown",
+                          "path": "developers.items.position",
+                          "label": "Position",
+                          "size": 4,
+                          "props": {
+                            "items": [
+                              {
+                                "label": "Product Manager",
+                                "value": "pm"
+                              },
+                              {
+                                "label": "UI/UX Designer",
+                                "value": "ui_ux"
+                              },
+                              {
+                                "label": "Frontend Developer",
+                                "value": "frontend"
+                              },
+                              {
+                                "label": "Backend Developer",
+                                "value": "backend"
+                              },
+                              {
+                                "label": "Fullstack Developer",
+                                "value": "fullstack"
+                              },
+                              {
+                                "label": "DevOps",
+                                "value": "devops"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "uid": "dev-holidays",
+                          "kind": "input",
+                          "type": "rangeDatePicker",
+                          "path": "developers.items.holidays",
+                          "label": "Holidays",
+                          "size": 4
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "uid": "issues-tab",
+              "kind": "layout",
+              "type": "flex",
+              "children": [
+                {
+                  "uid": "issues-repeater",
+                  "kind": "input",
+                  "type": "repeater",
+                  "path": "issues",
+                  "props": {
+                    "addLabel": "Report Issue",
+                    "template": {
+                      "uid": "issue-template",
+                      "kind": "layout",
+                      "type": "grid",
+                      "props": {
+                        "direction": "row"
+                      },
+                      "children": [
+                        {
+                          "kind": "layout",
+                          "type": "grid",
+                          "size": 3,
+                          "props": {
+                            "direction": "column",
+                            "align": "start"
+                          },
+                          "children": [
+                            {
+                              "uid": "issue-name",
+                              "kind": "input",
+                              "type": "textinput",
+                              "path": "issues.items.name",
+                              "label": "Issue Name",
+                              "validator": {
+                                "type": "string",
+                                "required": true
+                              }
+                            },
+                            {
+                              "uid": "issue-desc",
+                              "kind": "input",
+                              "type": "markdown",
+                              "path": "issues.items.description",
+                              "label": "Issue Description (be precise)"
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "layout",
+                          "type": "grid",
+                          "size": 1,
+                          "props": {
+                            "direction": "column"
+                          },
+                          "children": [
+                            {
+                              "uid": "issue-type",
+                              "kind": "input",
+                              "type": "dropdown",
+                              "path": "issues.items.type",
+                              "label": "Type",
+                              "props": {
+                                "items": [
+                                  {
+                                    "label": "Feature",
+                                    "value": "feature"
+                                  },
+                                  {
+                                    "label": "Improvement",
+                                    "value": "improvement"
+                                  },
+                                  {
+                                    "label": "Bug",
+                                    "value": "bug"
+                                  },
+                                  {
+                                    "label": "Documentation",
+                                    "value": "documentation"
+                                  },
+                                  {
+                                    "label": "Test",
+                                    "value": "test"
+                                  },
+                                  {
+                                    "label": "Chore",
+                                    "value": "chore"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "uid": "issue-project",
+                              "kind": "input",
+                              "type": "dropdown",
+                              "path": "issues.items.projectId",
+                              "label": "Project",
+                              "props": {
+                                "placeholder": "Select Project",
+                                "items": [],
+                                "labelField": "name",
+                                "valueField": "name"
+                              }
+                            },
+                            {
+                              "uid": "issue-assignee",
+                              "kind": "input",
+                              "type": "dropdown",
+                              "path": "issues.items.assigneeId",
+                              "label": "Assign To",
+                              "props": {
+                                "placeholder": "Select Developer",
+                                "items": [],
+                                "labelField": "name",
+                                "valueField": "name"
+                              }
+                            },
+                            {
+                              "uid": "issue-delivery",
+                              "kind": "input",
+                              "type": "datePicker",
+                              "path": "issues.items.estDelivery",
+                              "label": "Est. Delivery Date"
+                            },
+                            {
+                              "uid": "issue-priority",
+                              "kind": "input",
+                              "type": "toggle",
+                              "path": "issues.items.highPriority",
+                              "label": "High Priority"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
