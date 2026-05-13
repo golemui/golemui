@@ -1,7 +1,8 @@
+import { Form } from '@golemui/core';
 import { Example } from './types';
 
 // TODO: Migrate to gui.* DSL
-const form = {
+const formDef = {
   states: {
     limitReached: '$form.repeaters.users?.length === 5',
     hasSubregionSelect: `!!$form.selects.subregion`,
@@ -236,6 +237,6 @@ const resources = {
 
 export const template: Example = {
   data,
-  form,
+  form: formDef as unknown as Form<string>,
   resources,
 };
