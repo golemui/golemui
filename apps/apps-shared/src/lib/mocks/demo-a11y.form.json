@@ -71,8 +71,8 @@
               "type": "dropdown",
               "path": "userCountry",
               "label": "Country of Residence",
+              "size": 4,
               "props": {
-                "size": 4,
                 "height": 300,
                 "itemHeight": 60,
                 "itemRenderer": "countryItemRenderer",
