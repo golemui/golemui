@@ -1,12 +1,6 @@
-import {
-  FormConfig,
-  GslLeafSelector,
-  GslSelector,
-  GslSelectorsInput,
-} from './dx.domain';
+import { FormConfig, GslLeafSelector, GslSelector, GslSelectorsInput } from './dx.domain';
 
 export class SelectorNormalizer {
-
   /**
    * Ensures the output is always a uniform GslSelector[] of aggregated selectors.
    *

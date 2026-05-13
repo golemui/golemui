@@ -1,12 +1,26 @@
 import { FormWidget, FunctionWidgetParams, NonFunctionWidget, UiState } from '@golemui/core';
 import type { GuiItemType } from './dx.domain';
-import { FormConfig, GslSelector, MergeResult, ResolvedSelectors, RuntimeFunction, ValidGuiShortcut } from './dx.domain';
+import {
+  FormConfig,
+  GslSelector,
+  MergeResult,
+  ResolvedSelectors,
+  RuntimeFunction,
+  ValidGuiShortcut,
+} from './dx.domain';
 import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import type { GslItemType } from '../formDef.domain';
 import { SelectorResolver } from './selectorResolver.service';
 import { WidgetMerger } from './widgetMerger.service';
 import { WidgetMapper } from './widgetMapper.service';
-import { EventIdGenerator, EventRegistry, BuildWidgetContext, getItemTypeHandler, ItemTypeHandler, ParsedEntry } from './itemTypeRegistry';
+import {
+  EventIdGenerator,
+  EventRegistry,
+  BuildWidgetContext,
+  getItemTypeHandler,
+  ItemTypeHandler,
+  ParsedEntry,
+} from './itemTypeRegistry';
 import { EventWiringService } from './eventWiring.service';
 import { StateExpansionService } from './stateExpansion.service';
 
@@ -108,28 +122,45 @@ export class ItemWalker {
     const resolved = this.resolver.resolve(decoratorForMatching, gslSelectors);
 
     // Separate state-targeted selectors (from _gslStates) from regular ones
-    const stateLeafs = resolved.leafSelectors.filter(s => s.targetState != null);
+    const stateLeafs = resolved.leafSelectors.filter((s) => s.targetState != null);
     const regularResolved: ResolvedSelectors = {
-      leafSelectors: resolved.leafSelectors.filter(s => s.targetState == null),
+      leafSelectors: resolved.leafSelectors.filter((s) => s.targetState == null),
       sensibleDefaults: resolved.sensibleDefaults,
     };
 
     let mergeResult = this.merger.merge(baseDef, gslItemType, regularResolved);
 
     if (handler.afterMerge) {
-      mergeResult = handler.afterMerge(mergeResult, { eventRegistry, formConfig, eventIdGenerator });
+      mergeResult = handler.afterMerge(mergeResult, {
+        eventRegistry,
+        formConfig,
+        eventIdGenerator,
+      });
     }
 
     // Universal event wiring: onLoad, onChange, onFilter → core on: { ... }
-    mergeResult = this.eventWiring.wireInputLayoutEvents(mergeResult, eventRegistry, eventIdGenerator);
+    mergeResult = this.eventWiring.wireInputLayoutEvents(
+      mergeResult,
+      eventRegistry,
+      eventIdGenerator,
+    );
 
     // Extract states/when from merged def, combine with _gslStates overrides
-    const { cleanedResult, stateData } = this.stateExpansion.extractFromMergeResult(mergeResult, stateLeafs);
+    const { cleanedResult, stateData } = this.stateExpansion.extractFromMergeResult(
+      mergeResult,
+      stateLeafs,
+    );
 
     let widget: FormWidget<StateKeys, FormData>;
     if (handler.buildCustomWidget) {
       const context = this.buildCustomWidgetContext(
-        parsed.children, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter, claimedPathUids,
+        parsed.children,
+        gslSelectors,
+        eventRegistry,
+        formConfig,
+        eventIdGenerator,
+        widgetUidCounter,
+        claimedPathUids,
       );
       widget = this.buildCustomWidget<StateKeys, FormData>(handler, cleanedResult, context);
     } else {
@@ -160,11 +191,19 @@ export class ItemWalker {
         const originalFn = widget;
         widget = ((params: FunctionWidgetParams<any>) => {
           const resolved = originalFn(params) as NonFunctionWidget;
-          return this.stateExpansion.applyToWidget(resolved, stateData, eventRegistry, eventIdGenerator);
+          return this.stateExpansion.applyToWidget(
+            resolved,
+            stateData,
+            eventRegistry,
+            eventIdGenerator,
+          );
         }) as FormWidget<StateKeys, FormData>;
       } else {
         widget = this.stateExpansion.applyToWidget(
-          widget as NonFunctionWidget, stateData, eventRegistry, eventIdGenerator,
+          widget as NonFunctionWidget,
+          stateData,
+          eventRegistry,
+          eventIdGenerator,
         ) as FormWidget<StateKeys, FormData>;
       }
     }
@@ -185,7 +224,15 @@ export class ItemWalker {
       children,
       mapStaticDef: (def, type) => this.mapper.mapStaticDef(def, type),
       walkChildren: (c) =>
-        this.walkItems(c, gslSelectors, eventRegistry, formConfig, eventIdGenerator, widgetUidCounter, claimedPathUids),
+        this.walkItems(
+          c,
+          gslSelectors,
+          eventRegistry,
+          formConfig,
+          eventIdGenerator,
+          widgetUidCounter,
+          claimedPathUids,
+        ),
     };
   }
 

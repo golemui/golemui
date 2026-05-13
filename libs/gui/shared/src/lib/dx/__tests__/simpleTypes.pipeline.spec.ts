@@ -52,10 +52,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiPassword('pw'),
-        [_gslPasswords({ override: { label: 'Secret code' } })],
-      );
+      const result = processDx(_guiPassword('pw'), [
+        _gslPasswords({ override: { label: 'Secret code' } }),
+      ]);
       const w = getStaticChild(result, 0) as { label?: string };
 
       expect(w.label).toBe('Secret code');
@@ -103,10 +102,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiCheckbox('agree'),
-        [_gslCheckboxes({ override: { label: 'I agree' } })],
-      );
+      const result = processDx(_guiCheckbox('agree'), [
+        _gslCheckboxes({ override: { label: 'I agree' } }),
+      ]);
       const w = getStaticChild(result, 0) as { label?: string };
 
       expect(w.label).toBe('I agree');
@@ -138,10 +136,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiDateInput('date'),
-        [_gslDateInputs({ override: { hint: 'YYYY-MM-DD' } })],
-      );
+      const result = processDx(_guiDateInput('date'), [
+        _gslDateInputs({ override: { hint: 'YYYY-MM-DD' } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
       expect(w.props?.hint).toBe('YYYY-MM-DD');
@@ -181,10 +178,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiCurrency('amount'),
-        [_gslCurrencies({ override: { currency: 'GBP' } })],
-      );
+      const result = processDx(_guiCurrency('amount'), [
+        _gslCurrencies({ override: { currency: 'GBP' } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { currency?: string } };
 
       expect(w.props?.currency).toBe('GBP');
@@ -235,10 +231,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiRangeCalendar('range'),
-        [_gslRangeCalendars({ override: { numberOfMonths: 3 } })],
-      );
+      const result = processDx(_guiRangeCalendar('range'), [
+        _gslRangeCalendars({ override: { numberOfMonths: 3 } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { numberOfMonths?: number } };
 
       expect(w.props?.numberOfMonths).toBe(3);
@@ -270,21 +265,22 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiMarkdown('bio'),
-        [_gslMarkdowns({ override: { label: 'Biography' } })],
-      );
+      const result = processDx(_guiMarkdown('bio'), [
+        _gslMarkdowns({ override: { label: 'Biography' } }),
+      ]);
       const w = getStaticChild(result, 0) as { label?: string };
 
       expect(w.label).toBe('Biography');
     });
 
     it('passes markdown-specific props (tools, defaultOpenPreview)', () => {
-      const result = processDx(_guiMarkdown('content', {
-        tools: ['H', 'B', 'I', 'L'],
-        defaultOpenPreview: true,
-        headingTitle: 'Add heading',
-      }));
+      const result = processDx(
+        _guiMarkdown('content', {
+          tools: ['H', 'B', 'I', 'L'],
+          defaultOpenPreview: true,
+          headingTitle: 'Add heading',
+        }),
+      );
       const w = getStaticChild(result, 0) as {
         props?: { tools?: string[]; defaultOpenPreview?: boolean; headingTitle?: string };
       };
@@ -313,7 +309,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('passes range-date-input-specific props', () => {
-      const result = processDx(_guiRangeDateInput('dates', { separator: '→', hint: 'Pick a range' }));
+      const result = processDx(
+        _guiRangeDateInput('dates', { separator: '→', hint: 'Pick a range' }),
+      );
       const w = getStaticChild(result, 0) as { props?: { separator?: string; hint?: string } };
 
       expect(w.props?.separator).toBe('→');
@@ -321,10 +319,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiRangeDateInput('dates'),
-        [_gslRangeDateInputs({ override: { hint: 'Select dates' } })],
-      );
+      const result = processDx(_guiRangeDateInput('dates'), [
+        _gslRangeDateInputs({ override: { hint: 'Select dates' } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
       expect(w.props?.hint).toBe('Select dates');
@@ -366,10 +363,9 @@ describe('DX Pipeline — Simple Types (Phase 6.1)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiRangeDatePicker('range'),
-        [_gslRangeDatePickers({ override: { numberOfMonths: 3 } })],
-      );
+      const result = processDx(_guiRangeDatePicker('range'), [
+        _gslRangeDatePickers({ override: { numberOfMonths: 3 } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { numberOfMonths?: number } };
 
       expect(w.props?.numberOfMonths).toBe(3);

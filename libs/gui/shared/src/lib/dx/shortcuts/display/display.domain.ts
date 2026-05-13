@@ -1,10 +1,6 @@
 import { DxCommonFields, DxDisplayBase, DxInternalFields } from '../../core/dxBase.types';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Display Decorator

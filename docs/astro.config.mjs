@@ -41,8 +41,8 @@ export default defineConfig({
               }
             }
           });
-          `
-        }
+          `,
+        },
       ],
       sidebar: [
         { label: 'Getting Started', autogenerate: { directory: 'getting-started' } },
@@ -88,10 +88,22 @@ export default defineConfig({
         {
           label: 'Widgets Reference',
           items: [
-            { label: 'Display Widgets', autogenerate: { directory: 'widgets-reference/display-fields' } },
-            { label: 'Input Widgets', autogenerate: { directory: 'widgets-reference/input-fields' } },
-            { label: 'Layout Widgets', autogenerate: { directory: 'widgets-reference/layout-fields' } },
-            { label: 'Action Widgets', autogenerate: { directory: 'widgets-reference/interactive-fields' } },
+            {
+              label: 'Display Widgets',
+              autogenerate: { directory: 'widgets-reference/display-fields' },
+            },
+            {
+              label: 'Input Widgets',
+              autogenerate: { directory: 'widgets-reference/input-fields' },
+            },
+            {
+              label: 'Layout Widgets',
+              autogenerate: { directory: 'widgets-reference/layout-fields' },
+            },
+            {
+              label: 'Action Widgets',
+              autogenerate: { directory: 'widgets-reference/interactive-fields' },
+            },
           ],
         },
       ],

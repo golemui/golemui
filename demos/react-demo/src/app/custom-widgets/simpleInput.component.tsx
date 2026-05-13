@@ -3,8 +3,10 @@ import { useInputWidget } from '@golemui/react';
 
 export function SimpleInputComponent(fieldInstance: Core.WithWidget) {
   const widget = fieldInstance.widget as Core.InputWidget<string, string>;
-  const { uid, value, errors, isTouched, onValueChanged, onBlur } =
-    useInputWidget<string, Record<string, any>>(widget);
+  const { uid, value, errors, isTouched, onValueChanged, onBlur } = useInputWidget<
+    string,
+    Record<string, any>
+  >(widget);
 
   const isDisabled = typeof widget.disabled === 'boolean' ? widget.disabled : false;
   const isReadonly = typeof widget.readonly === 'boolean' ? widget.readonly : false;

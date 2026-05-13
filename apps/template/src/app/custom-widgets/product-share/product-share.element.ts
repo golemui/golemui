@@ -66,16 +66,13 @@ export class ProductShareElement extends LitElement implements Core.WithWidget {
               <button
                 type="button"
                 class="product-share__button"
-                @click=${() =>
-                  this.formContext.emitEvent('click', this.widget, network.id)}
+                @click=${() => this.formContext.emitEvent('click', this.widget, network.id)}
                 title=${network.label}
                 aria-label=${network.label}
               >
                 ${network.icon
                   ? isInlineSvg(network.icon)
-                    ? html`<span class="product-share__icon"
-                        >${unsafeHTML(network.icon)}</span
-                      >`
+                    ? html`<span class="product-share__icon">${unsafeHTML(network.icon)}</span>`
                     : html`<img
                         class="product-share__icon"
                         src=${network.icon}

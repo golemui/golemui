@@ -5,8 +5,8 @@ export const dynamicButtonDemo: FormDemoDefinition = {
   title: '32. Dynamic Button',
   category: 'Ch7: Dynamic',
   description:
-    'Same callback pattern on actions. The button label adapts to the user\'s name, '
-    + 'and it stays disabled until the email field is filled. Any widget factory that accepts props also accepts a callback.',
+    "Same callback pattern on actions. The button label adapts to the user's name, " +
+    'and it stays disabled until the email field is filled. Any widget factory that accepts props also accepts a callback.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.textInput('email'),

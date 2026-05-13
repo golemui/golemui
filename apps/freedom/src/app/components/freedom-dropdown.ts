@@ -47,8 +47,7 @@ export class FreedomDropdownElement extends LitElement implements Core.WithWidge
         <select
           class="freedom-dropdown__field ${hasError ? 'freedom-dropdown__field--error' : ''}"
           .value=${td.value ?? ''}
-          @change=${(e: Event) =>
-            this.adapter.valueChanged((e.target as HTMLSelectElement).value)}
+          @change=${(e: Event) => this.adapter.valueChanged((e.target as HTMLSelectElement).value)}
           @blur=${() => this.adapter.onBlur()}
         >
           <option value="" disabled ?selected=${!selected}>Pick one…</option>
@@ -61,9 +60,7 @@ export class FreedomDropdownElement extends LitElement implements Core.WithWidge
         </select>
         <span class="freedom-dropdown__chev" aria-hidden="true">▾</span>
       </div>
-      ${hasError
-        ? html`<span class="freedom-dropdown__error">${td.errors?.[0]}</span>`
-        : null}
+      ${hasError ? html`<span class="freedom-dropdown__error">${td.errors?.[0]}</span>` : null}
     `;
   }
 

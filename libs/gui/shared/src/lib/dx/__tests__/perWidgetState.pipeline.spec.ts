@@ -19,7 +19,6 @@ const opts = [
 ];
 
 describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
-
   // ═══════════════════════════════════════════════════
   // Concern 1: states block on decorators
   // ═══════════════════════════════════════════════════
@@ -27,10 +26,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('states block — input decorators', () => {
     it('produces state-suffixed core props (disabled, label) on an input', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          label: 'Name',
-          states: { editing: { label: 'Edit name', disabled: true } },
-        })],
+        [
+          _guiTextInput('name', {
+            label: 'Name',
+            states: { editing: { label: 'Edit name', disabled: true } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { editing: '!!$form.name' } },
       );
@@ -44,9 +45,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('produces state-suffixed readonly on an input', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          states: { locked: { readonly: true } },
-        })],
+        [
+          _guiTextInput('name', {
+            states: { locked: { readonly: true } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
@@ -57,10 +60,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('produces state-suffixed size on an input', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          size: 6,
-          states: { wide: { size: 12 } },
-        })],
+        [
+          _guiTextInput('name', {
+            size: 6,
+            states: { wide: { size: 12 } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { wide: '!!$form.wide' } },
       );
@@ -74,11 +79,13 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('states block — select decorator', () => {
     it('produces state-suffixed label on a select', () => {
       const root = processDx(
-        [_guiSelect('country', {
-          options: opts,
-          label: 'Country',
-          states: { locked: { label: 'Country (locked)', disabled: true } },
-        })],
+        [
+          _guiSelect('country', {
+            options: opts,
+            label: 'Country',
+            states: { locked: { label: 'Country (locked)', disabled: true } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
@@ -94,13 +101,10 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('states block — layout decorator', () => {
     it('produces state-suffixed custom props (direction) in props', () => {
       const root = processDx(
-        _guiVerticalFlex(
-          [_guiTextInput('a')],
-          {
-            direction: 'row',
-            states: { compact: { direction: 'column' } },
-          },
-        ),
+        _guiVerticalFlex([_guiTextInput('a')], {
+          direction: 'row',
+          states: { compact: { direction: 'column' } },
+        }),
         undefined,
         { suppressAutomaticSubmit: true, states: { compact: '!!$form.compact' } },
       );
@@ -135,7 +139,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           _guiTextInput('email'),
           _guiHorizontalFlex([
             _guiButton({ label: 'Create', states: { editing: { label: 'Update' } } }),
-            _guiButton({ label: 'Reset', disabled: true, states: { editing: { disabled: false } } }),
+            _guiButton({
+              label: 'Reset',
+              disabled: true,
+              states: { editing: { disabled: false } },
+            }),
           ]),
         ],
         undefined,
@@ -161,14 +169,14 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('states block — repeater decorator', () => {
     it('produces state-suffixed custom props (addLabel) in props', () => {
       const root = processDx(
-        [_guiRepeater('users', {
-          addLabel: 'Add user',
-          limit: 5,
-          states: { limitReached: { addLabel: "Can't add more" } },
-          template: [
-            _guiTextInput('firstName'),
-          ],
-        })],
+        [
+          _guiRepeater('users', {
+            addLabel: 'Add user',
+            limit: 5,
+            states: { limitReached: { addLabel: "Can't add more" } },
+            template: [_guiTextInput('firstName')],
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { limitReached: '$form.users?.length >= 5' } },
       );
@@ -188,10 +196,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('visible translation', () => {
     it('visible: true produces include: { in: [stateName] }', () => {
       const root = processDx(
-        [_guiSelect('subregion', {
-          options: opts,
-          states: { hasCountry: { visible: true } },
-        })],
+        [
+          _guiSelect('subregion', {
+            options: opts,
+            states: { hasCountry: { visible: true } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { hasCountry: '!!$form.country' } },
       );
@@ -202,9 +212,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('visible: false produces exclude: { from: [stateName] }', () => {
       const root = processDx(
-        [_guiTextInput('secret', {
-          states: { locked: { visible: false } },
-        })],
+        [
+          _guiTextInput('secret', {
+            states: { locked: { visible: false } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
@@ -215,13 +227,15 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('multiple states with visible: true merge into include.in array', () => {
       const root = processDx(
-        [_guiSelect('plan', {
-          options: opts,
-          states: {
-            register: { visible: true },
-            premium: { visible: true },
-          },
-        })],
+        [
+          _guiSelect('plan', {
+            options: opts,
+            states: {
+              register: { visible: true },
+              premium: { visible: true },
+            },
+          }),
+        ],
         undefined,
         {
           suppressAutomaticSubmit: true,
@@ -271,9 +285,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('validator (core suffixable) gets state-suffixed on input', () => {
       const root = processDx(
-        [_guiTextInput('email', {
-          states: { strict: { validator: { required: true } } },
-        })],
+        [
+          _guiTextInput('email', {
+            states: { strict: { validator: { required: true } } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { strict: '!!$form.strict' } },
       );
@@ -286,10 +302,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('state-suffixed event handlers', () => {
     it('string event handler produces state-suffixed on entry', () => {
       const root = processDx(
-        [_guiSelect('country', {
-          options: opts,
-          states: { editing: { onChange: 'customChangeHandler' } },
-        })],
+        [
+          _guiSelect('country', {
+            options: opts,
+            states: { editing: { onChange: 'customChangeHandler' } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
       );
@@ -300,13 +318,17 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('callback event handler produces state-suffixed on entry with event wiring', () => {
       let called = false;
-      const handler = () => { called = true; };
+      const handler = () => {
+        called = true;
+      };
 
       const result = formDefs.processDxFacade(
-        [_guiSelect('country', {
-          options: opts,
-          states: { editing: { onChange: handler } },
-        })],
+        [
+          _guiSelect('country', {
+            options: opts,
+            states: { editing: { onChange: handler } },
+          }),
+        ],
         [],
         { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
       );
@@ -331,13 +353,15 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('hierarchical state names in overrides', () => {
     it(': hierarchy in state name produces state-suffixed properties', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          label: 'Name',
-          states: {
-            'register:adult': { label: 'Full legal name' },
-            'register:minor': { label: 'Name (parent must verify)' },
-          },
-        })],
+        [
+          _guiTextInput('name', {
+            label: 'Name',
+            states: {
+              'register:adult': { label: 'Full legal name' },
+              'register:minor': { label: 'Name (parent must verify)' },
+            },
+          }),
+        ],
         undefined,
         {
           suppressAutomaticSubmit: true,
@@ -356,10 +380,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it(': hierarchy in state name lands in include.in for visible', () => {
       const root = processDx(
-        [_guiSelect('plan', {
-          options: opts,
-          states: { 'register:adult': { visible: true } },
-        })],
+        [
+          _guiSelect('plan', {
+            options: opts,
+            states: { 'register:adult': { visible: true } },
+          }),
+        ],
         undefined,
         {
           suppressAutomaticSubmit: true,
@@ -382,10 +408,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('conditional fields — discriminated unions', () => {
     it('include: { when } passes through to the widget unchanged', () => {
       const root = processDx(
-        [_guiSelect('subregion', {
-          options: opts,
-          include: { when: '!!$form.country' },
-        })],
+        [
+          _guiSelect('subregion', {
+            options: opts,
+            include: { when: '!!$form.country' },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true },
       );
@@ -396,9 +424,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('exclude: { when } passes through to the widget unchanged', () => {
       const root = processDx(
-        [_guiTextInput('hidden', {
-          exclude: { when: '$form.hideFields === true' },
-        })],
+        [
+          _guiTextInput('hidden', {
+            exclude: { when: '$form.hideFields === true' },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true },
       );
@@ -409,9 +439,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('disabled: { when } passes through to the widget unchanged', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          disabled: { when: '$form.quantity > 100' },
-        })],
+        [
+          _guiTextInput('name', {
+            disabled: { when: '$form.quantity > 100' },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true },
       );
@@ -422,9 +454,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('readonly: { when } passes through to the widget unchanged', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          readonly: { when: '!!$form.isViewer' },
-        })],
+        [
+          _guiTextInput('name', {
+            readonly: { when: '!!$form.isViewer' },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true },
       );
@@ -435,12 +469,14 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('include: { in } and exclude: { from } pass through with their state lists', () => {
       const root = processDx(
-        [_guiTextInput('guardianName', {
-          include: { in: ['register:minor'] },
-        }),
-         _guiTextInput('debugId', {
-          exclude: { from: ['production'] },
-        })],
+        [
+          _guiTextInput('guardianName', {
+            include: { in: ['register:minor'] },
+          }),
+          _guiTextInput('debugId', {
+            exclude: { from: ['production'] },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true },
       );
@@ -465,10 +501,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('multiple conditional fields can coexist on one widget', () => {
       const root = processDx(
-        [_guiTextInput('notes', {
-          disabled: { when: '$form.quantity > 100' },
-          readonly: { when: '!!$form.isViewer' },
-        })],
+        [
+          _guiTextInput('notes', {
+            disabled: { when: '$form.quantity > 100' },
+            readonly: { when: '!!$form.isViewer' },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true },
       );
@@ -486,10 +524,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('_gslStates', () => {
     it('applies disabled to all matching inputs via _gslStates', () => {
       const root = processDx(
-        [
-          _guiTextInput('name'),
-          _guiTextInput('email'),
-        ],
+        [_guiTextInput('name'), _guiTextInput('email')],
         _gslStates('locked', _gslInputs({ override: { disabled: true } })),
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
@@ -513,12 +548,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('_gslStates applies direction override to _guiHorizontalFlex (demo 39 pattern)', () => {
       const root = processDx(
-        [
-          _guiHorizontalFlex([
-            _guiTextInput('a'),
-            _guiTextInput('b'),
-          ]),
-        ],
+        [_guiHorizontalFlex([_guiTextInput('a'), _guiTextInput('b')])],
         _gslStates('locked', _gslLayouts({ override: { direction: 'column' } })),
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
@@ -542,10 +572,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('_gslStates with visible: false produces exclude on matched widgets', () => {
       const root = processDx(
-        [
-          _guiTextInput('name'),
-          _guiTextInput('email'),
-        ],
+        [_guiTextInput('name'), _guiTextInput('email')],
         _gslStates('hidden', _gslInputs({ override: { visible: false } as any })),
         { suppressAutomaticSubmit: true, states: { hidden: '!!$form.hidden' } },
       );
@@ -556,9 +583,11 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('inline states override _gslStates for same state name', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          states: { locked: { label: 'Inline label' } },
-        })],
+        [
+          _guiTextInput('name', {
+            states: { locked: { label: 'Inline label' } },
+          }),
+        ],
         _gslStates('locked', _gslInputs({ override: { label: 'GSL label', disabled: true } })),
         { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
       );
@@ -610,11 +639,13 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('combined usage', () => {
     it('states block and inline conditional coexist on the same widget', () => {
       const root = processDx(
-        [_guiSelect('subregion', {
-          options: opts,
-          states: { hasCountry: { visible: true } },
-          disabled: { when: '$form.quantity > 100' },
-        })],
+        [
+          _guiSelect('subregion', {
+            options: opts,
+            states: { hasCountry: { visible: true } },
+            disabled: { when: '$form.quantity > 100' },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { hasCountry: '!!$form.country' } },
       );
@@ -626,11 +657,13 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('_gslStates + inline states + readonly { when } all combine correctly', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          label: 'Name',
-          states: { editing: { label: 'Edit name' } },
-          readonly: { when: '!!$form.isViewer' },
-        })],
+        [
+          _guiTextInput('name', {
+            label: 'Name',
+            states: { editing: { label: 'Edit name' } },
+            readonly: { when: '!!$form.isViewer' },
+          }),
+        ],
         _gslStates('locked', _gslInputs({ override: { disabled: true } })),
         {
           suppressAutomaticSubmit: true,
@@ -654,11 +687,9 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
   describe('edge cases', () => {
     it('no states or when — widget unchanged', () => {
-      const root = processDx(
-        [_guiTextInput('name', { label: 'Name' })],
-        undefined,
-        { suppressAutomaticSubmit: true },
-      );
+      const root = processDx([_guiTextInput('name', { label: 'Name' })], undefined, {
+        suppressAutomaticSubmit: true,
+      });
 
       const widget = getStaticChild(root, 0) as any;
       expect(widget.label).toBe('Name');
@@ -667,23 +698,24 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
     });
 
     it('states block with empty overrides — no state-suffixed props added', () => {
-      const root = processDx(
-        [_guiTextInput('name', { states: { editing: {} } })],
-        undefined,
-        { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
-      );
+      const root = processDx([_guiTextInput('name', { states: { editing: {} } })], undefined, {
+        suppressAutomaticSubmit: true,
+        states: { editing: '!!$form.editing' },
+      });
 
       const widget = getStaticChild(root, 0) as any;
       // No state-suffixed props should be on the widget
       const keys = Object.keys(widget);
-      expect(keys.filter(k => k.includes('.'))).toEqual([]);
+      expect(keys.filter((k) => k.includes('.'))).toEqual([]);
     });
 
     it('states does not leak into widget props', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          states: { editing: { label: 'Edit' } },
-        })],
+        [
+          _guiTextInput('name', {
+            states: { editing: { label: 'Edit' } },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
       );
@@ -696,10 +728,12 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('include / exclude do not leak into widget props', () => {
       const root = processDx(
-        [_guiTextInput('name', {
-          include: { when: '!!$form.name' },
-          exclude: { from: ['hidden'] },
-        })],
+        [
+          _guiTextInput('name', {
+            include: { when: '!!$form.name' },
+            exclude: { from: ['hidden'] },
+          }),
+        ],
         undefined,
         { suppressAutomaticSubmit: true, states: { hidden: '!!$form.hide' } },
       );
@@ -747,10 +781,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
   describe('conditional fields — layouts', () => {
     it('include: { in } passes through to the layout widget', () => {
       const root = processDx(
-        _guiVerticalFlex(
-          [_guiTextInput('a')],
-          { include: { in: ['debugMode'] } },
-        ),
+        _guiVerticalFlex([_guiTextInput('a')], { include: { in: ['debugMode'] } }),
         undefined,
         { suppressAutomaticSubmit: true, states: { debugMode: '!!$form.debug' } },
       );
@@ -763,10 +794,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('exclude: { when } passes through to the layout widget', () => {
       const root = processDx(
-        _guiHorizontalFlex(
-          [_guiTextInput('a')],
-          { exclude: { when: '$form.compact === true' } },
-        ),
+        _guiHorizontalFlex([_guiTextInput('a')], { exclude: { when: '$form.compact === true' } }),
         undefined,
         { suppressAutomaticSubmit: true },
       );

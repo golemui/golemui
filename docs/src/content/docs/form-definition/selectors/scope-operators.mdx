@@ -9,10 +9,10 @@ import Demo from '../../../../components/landing/Demo.astro';
 
 Scope operators sit between the chain root and the leaf method. They **narrow** the broader leaf so it only fires for widgets that meet the scope condition.
 
-| Method        | Restricts the match to widgets that…                            |
-| ------------- | --------------------------------------------------------------- |
-| `tag(name)`   | …have `name` in their `tags` array.                            |
-| `state(name)` | …are inside a form where the named state is currently active.   |
+| Method        | Restricts the match to widgets that…                          |
+| ------------- | ------------------------------------------------------------- |
+| `tag(name)`   | …have `name` in their `tags` array.                           |
+| `state(name)` | …are inside a form where the named state is currently active. |
 
 ## `tag(name)`
 
@@ -21,8 +21,8 @@ Scope operators sit between the chain root and the leaf method. They **narrow** 
 ```ts
 const formDef = [
   gui.inputs.textInput('street', { label: 'Street' }, ['priority']),
-  gui.inputs.textInput('city',   { label: 'City' }),
-  gui.inputs.textInput('zip',    { label: 'ZIP' }),
+  gui.inputs.textInput('city', { label: 'City' }),
+  gui.inputs.textInput('zip', { label: 'ZIP' }),
 ];
 
 const formSelectors = [
@@ -34,7 +34,7 @@ const formSelectors = [
 
 <Demo src="/template/index.html?renderer=scope-tag" minHeight="320" />
 
-Only **Street** carries the `'priority'` tag, so only it picks up the hint. *City* and *ZIP* are still text inputs but the scope narrows them out of the match. Without the `tag('priority')` scope, the leaf would have decorated all three.
+Only **Street** carries the `'priority'` tag, so only it picks up the hint. _City_ and _ZIP_ are still text inputs but the scope narrows them out of the match. Without the `tag('priority')` scope, the leaf would have decorated all three.
 
 ## `state(name)`
 

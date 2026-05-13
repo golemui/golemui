@@ -49,6 +49,7 @@ Item renderers are framework-specific components.
       </div>
     );
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -73,6 +74,7 @@ Item renderers are framework-specific components.
       item!: Car;
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -101,6 +103,7 @@ Item renderers are framework-specific components.
       }
     }
     ```
+
   </Fragment>
 </IntegrationTabs>
 
@@ -114,9 +117,15 @@ A few lines of CSS to lay the renderer out:
   align-items: center;
   gap: var(--gui-space-3);
 }
-.car-item__img { font-size: 1.4em; }
-.car-item__label { flex: 1; }
-.car-item__price { color: var(--gui-color-fg--secondary); }
+.car-item__img {
+  font-size: 1.4em;
+}
+.car-item__label {
+  flex: 1;
+}
+.car-item__price {
+  color: var(--gui-color-fg--secondary);
+}
 ```
 
 ## Step 4 — Register the renderer

@@ -151,7 +151,10 @@ describe('RangeDatePicker schema validation', () => {
               maxItems: 2,
               messages: {
                 required: 'Date range is required',
-                minItems: { key: 'validation.dateRanges.minItems', default: 'Select start and end dates' },
+                minItems: {
+                  key: 'validation.dateRanges.minItems',
+                  default: 'Select start and end dates',
+                },
                 maxItems: 'Only a start and end date can be selected',
               },
             },

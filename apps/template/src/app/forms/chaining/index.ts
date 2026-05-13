@@ -4,7 +4,7 @@ import { gui } from '@golemui/gui-shared';
 // unlocked while the `editing` state is active.
 const profileForm = [
   gui.inputs.booleanInput('editMode', { label: 'Edit mode' }),
-  gui.inputs.textInput('name',  { label: 'Name' },  ['profile-field']),
+  gui.inputs.textInput('name', { label: 'Name' }, ['profile-field']),
   gui.inputs.textInput('email', { label: 'Email' }, ['profile-field']),
   gui.inputs.textInput('phone', { label: 'Phone' }, ['profile-field']),
 ];
@@ -24,9 +24,12 @@ export const chainingProfileDemo = {
     gui.selectors.tag('profile-field').inputs({
       override: { disabled: true },
     }),
-    gui.selectors.tag('profile-field').state('editing').inputs({
-      override: { disabled: false },
-    }),
+    gui.selectors
+      .tag('profile-field')
+      .state('editing')
+      .inputs({
+        override: { disabled: false },
+      }),
   ],
   resources: {},
 };

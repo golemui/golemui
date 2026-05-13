@@ -1,20 +1,14 @@
 // Complexity: MODERATE — always produces a FunctionWidget (dynamic). The buildCustomWidget
 // hook wraps the developer's render function so it re-evaluates on form state changes.
-import {
-  FormWidget,
-  FunctionWidgetParams,
-  NonFunctionWidget,
-  UiState,
-} from '@golemui/core';
+import { FormWidget, FunctionWidgetParams, NonFunctionWidget, UiState } from '@golemui/core';
 import { MergeResult } from '../../core/dx.domain';
 import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import { DisplayDecorator, DisplayEntry, GslDisplaysConfig } from './display.domain';
 
-function mapToWidget<
-  StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
->(def: DisplayDecorator): NonFunctionWidget<StateKeys, FormData> {
+function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+  def: DisplayDecorator,
+): NonFunctionWidget<StateKeys, FormData> {
   return {
     uid: '',
     kind: 'display' as const,
@@ -23,10 +17,7 @@ function mapToWidget<
   } as unknown as NonFunctionWidget<StateKeys, FormData>;
 }
 
-function buildCustomWidget(
-  mergeResult: MergeResult,
-  _context: BuildWidgetContext,
-): FormWidget {
+function buildCustomWidget(mergeResult: MergeResult, _context: BuildWidgetContext): FormWidget {
   if (mergeResult.kind === 'static') {
     const displayDef = mergeResult.def as DisplayDecorator;
     return ((params?: FunctionWidgetParams<any>) => ({
@@ -53,10 +44,13 @@ function buildCustomWidget(
   }) as FormWidget;
 }
 
-export const { gsl: _gslDisplays, gslByUid: _gslDisplayByUid } =
-  defineShortcutType<DisplayEntry, DisplayDecorator, GslDisplaysConfig>({
-    itemType: 'DISPLAYS',
-    entryShape: 'bare',
-    mapToWidget,
-    buildCustomWidget,
-  });
+export const { gsl: _gslDisplays, gslByUid: _gslDisplayByUid } = defineShortcutType<
+  DisplayEntry,
+  DisplayDecorator,
+  GslDisplaysConfig
+>({
+  itemType: 'DISPLAYS',
+  entryShape: 'bare',
+  mapToWidget,
+  buildCustomWidget,
+});

@@ -17,26 +17,28 @@ interface GslCustomConfig extends GslConfigBase<CustomDecorator> {
 type CustomEntry = { key: string; def: DefOrCallback<CustomDecorator> };
 type GuiCustomShortcut = GuiShortcutOf<'TEST_CUSTOM_WIDGET', CustomEntry>;
 
-const { gsl: _gslCustom } =
-  defineShortcutType<CustomEntry, CustomDecorator, GslCustomConfig>({
-    itemType: 'TEST_CUSTOM_WIDGET',
-    entryShape: 'keyed',
-    sensibleDefaults: {
-      base: { suppressAutomaticLabels: false },
-      fields: ['suppressAutomaticLabels'],
-      apply: (def, config) => processAutoLabel(def, config),
-    },
-    mapToWidget: (def) => ({
-      uid: def.uid ?? '',
-      kind: 'input',
-      type: 'test-custom',
-      path: def.path ?? '',
-      ...(def.label != null ? { label: def.label } : {}),
-      props: { ...(def.customField != null ? { customField: def.customField } : {}) },
-    }),
-  });
+const { gsl: _gslCustom } = defineShortcutType<CustomEntry, CustomDecorator, GslCustomConfig>({
+  itemType: 'TEST_CUSTOM_WIDGET',
+  entryShape: 'keyed',
+  sensibleDefaults: {
+    base: { suppressAutomaticLabels: false },
+    fields: ['suppressAutomaticLabels'],
+    apply: (def, config) => processAutoLabel(def, config),
+  },
+  mapToWidget: (def) => ({
+    uid: def.uid ?? '',
+    kind: 'input',
+    type: 'test-custom',
+    path: def.path ?? '',
+    ...(def.label != null ? { label: def.label } : {}),
+    props: { ...(def.customField != null ? { customField: def.customField } : {}) },
+  }),
+});
 
-function _guiCustom(path: string, props?: Partial<Omit<CustomDecorator, 'type'>>): GuiCustomShortcut {
+function _guiCustom(
+  path: string,
+  props?: Partial<Omit<CustomDecorator, 'type'>>,
+): GuiCustomShortcut {
   const def: CustomDecorator = { type: 'test-custom', ...props };
   return { type: 'ITEMS', itemType: 'TEST_CUSTOM_WIDGET', items: [{ key: path, def }], tags: [] };
 }
@@ -63,10 +65,9 @@ describe('Extension API — defineShortcutType', () => {
   });
 
   it('applies GSL selector decorator override to custom type', () => {
-    const result = processDx(
-      _guiCustom('field'),
-      [_gslCustom({ override: { customField: 'from-gsl' } })],
-    );
+    const result = processDx(_guiCustom('field'), [
+      _gslCustom({ override: { customField: 'from-gsl' } }),
+    ]);
     const widget = getStaticChild(result, 0) as {
       props?: { customField?: string };
     };

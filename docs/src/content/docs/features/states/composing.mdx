@@ -17,9 +17,9 @@ States are simple boolean expressions, so you can compose them inline with `&&` 
 const formConfig = {
   // ...other formConfig options
   states: {
-    isAdult:    '$form.age >= 18',
+    isAdult: '$form.age >= 18',
     hasLicense: '$form.licenseNumber != null',
-    canDrive:   '$form.age >= 18 && $form.licenseNumber != null',
+    canDrive: '$form.age >= 18 && $form.licenseNumber != null',
   },
 };
 ```
@@ -30,11 +30,13 @@ const formConfig = {
 ```json
 {
   "states": {
-    "isAdult":    "$form.age >= 18",
+    "isAdult": "$form.age >= 18",
     "hasLicense": "$form.licenseNumber != null",
-    "canDrive":   "$form.age >= 18 && $form.licenseNumber != null"
+    "canDrive": "$form.age >= 18 && $form.licenseNumber != null"
   },
-  "form": [ /* ... */ ]
+  "form": [
+    /* ... */
+  ]
 }
 ```
 
@@ -59,7 +61,9 @@ gui.inputs.textInput('drivingTest', {
 
 ```json
 {
-  "kind": "input", "type": "textinput", "path": "drivingTest",
+  "kind": "input",
+  "type": "textinput",
+  "path": "drivingTest",
   "include": { "in": ["isAdult", "hasLicense"] }
 }
 ```
@@ -80,7 +84,7 @@ Per-state property overrides apply additively. If two states are active and both
 gui.actions.button('save', {
   label: 'Save',
   states: {
-    busy:    { disabled: true },
+    busy: { disabled: true },
     loading: { disabled: true, label: 'Loading…' },
   },
 });
@@ -91,7 +95,9 @@ gui.actions.button('save', {
 
 ```json
 {
-  "kind": "action", "type": "button", "uid": "save",
+  "kind": "action",
+  "type": "button",
+  "uid": "save",
   "label": "Save",
   "disabled.busy": true,
   "disabled.loading": true,
@@ -121,12 +127,13 @@ Here's a complete sign-in / sign-up flow that uses the chain to gate everything 
 const formConfig = {
   // ...other formConfig options
   states: {
-    register:                       '$form.registerMode === true',
-    'register:tall':                '$form.user.height > 180',
-    'register:minor':               '$form.user.age < 18',
-    'register:minor:canSubmit':     '$form.terms === true && $form.parentalApproval === true',
-    'register:adult':               '$form.user.age >= 18',
-    'register:adult:canSubmit':     '$form.terms === true',
+    register: '$form.registerMode === true',
+    'register:tall': '$form.user.height > 180',
+    'register:minor': '$form.user.age < 18',
+    'register:minor:canSubmit':
+      '$form.terms === true && $form.parentalApproval === true',
+    'register:adult': '$form.user.age >= 18',
+    'register:adult:canSubmit': '$form.terms === true',
   },
 };
 ```
@@ -137,14 +144,16 @@ const formConfig = {
 ```json
 {
   "states": {
-    "register":                   "$form.registerMode === true",
-    "register:tall":              "$form.user.height > 180",
-    "register:minor":             "$form.user.age < 18",
-    "register:minor:canSubmit":   "$form.terms === true && $form.parentalApproval === true",
-    "register:adult":             "$form.user.age >= 18",
-    "register:adult:canSubmit":   "$form.terms === true"
+    "register": "$form.registerMode === true",
+    "register:tall": "$form.user.height > 180",
+    "register:minor": "$form.user.age < 18",
+    "register:minor:canSubmit": "$form.terms === true && $form.parentalApproval === true",
+    "register:adult": "$form.user.age >= 18",
+    "register:adult:canSubmit": "$form.terms === true"
   },
-  "form": [ /* ... */ ]
+  "form": [
+    /* ... */
+  ]
 }
 ```
 
@@ -171,7 +180,7 @@ gui.actions.button('login', {
   label: 'Login',
   disabled: false,
   states: {
-    register:                   { label: 'Register', disabled: true },
+    register: { label: 'Register', disabled: true },
     'register:minor:canSubmit': { disabled: false },
     'register:adult:canSubmit': { disabled: false },
   },
@@ -188,7 +197,9 @@ In Programmatic, swapping the click handler per state is best done in your `form
 
 ```json
 {
-  "kind": "action", "type": "button", "uid": "login",
+  "kind": "action",
+  "type": "button",
+  "uid": "login",
   "label": "Login",
   "label.register": "Register",
   "disabled": false,
@@ -226,7 +237,9 @@ gui.inputs.booleanInput('parentalApproval', {
 
 ```json
 {
-  "kind": "input", "type": "checkbox", "path": "parentalApproval",
+  "kind": "input",
+  "type": "checkbox",
+  "path": "parentalApproval",
   "label": "Parental Approval!",
   "include": { "in": ["register:minor"] }
 }
@@ -249,8 +262,14 @@ gui.displays.alert('submit-hint', {
   text: 'Some fields need your attention',
   level: 'warning',
   states: {
-    'register:adult:canSubmit': { text: 'You can Register now', level: 'success' },
-    'register:minor:canSubmit': { text: 'You can Register now', level: 'success' },
+    'register:adult:canSubmit': {
+      text: 'You can Register now',
+      level: 'success',
+    },
+    'register:minor:canSubmit': {
+      text: 'You can Register now',
+      level: 'success',
+    },
   },
 });
 ```
@@ -260,7 +279,8 @@ gui.displays.alert('submit-hint', {
 
 ```json
 {
-  "kind": "display", "type": "alert",
+  "kind": "display",
+  "type": "alert",
   "props": {
     "text": "Some fields need your attention",
     "level": "warning",

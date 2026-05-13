@@ -32,9 +32,7 @@ describe('DX Pipeline — Alert', () => {
   });
 
   it('supports dynamic callback', () => {
-    const result = processDx(
-      _guiAlert(() => ({ text: 'Dynamic alert' })),
-    );
+    const result = processDx(_guiAlert(() => ({ text: 'Dynamic alert' })));
     const raw = getRawChild(result, 0);
     const w = resolveDynamic(raw) as {
       kind?: string;
@@ -48,10 +46,9 @@ describe('DX Pipeline — Alert', () => {
   });
 
   it('applies GSL broad selector override', () => {
-    const result = processDx(
-      _guiAlert({ text: 'Original', level: 'info' }),
-      [_gslAlerts({ override: { level: 'error' } })],
-    );
+    const result = processDx(_guiAlert({ text: 'Original', level: 'info' }), [
+      _gslAlerts({ override: { level: 'error' } }),
+    ]);
     const w = getStaticChild(result, 0) as {
       props?: { level?: string };
     };
@@ -60,10 +57,9 @@ describe('DX Pipeline — Alert', () => {
   });
 
   it('applies GSL byId selector override', () => {
-    const result = processDx(
-      _guiAlert({ text: 'With uid', uid: 'main-alert', level: 'info' }),
-      [_gslAlertByUid('main-alert', { override: { level: 'success' } })],
-    );
+    const result = processDx(_guiAlert({ text: 'With uid', uid: 'main-alert', level: 'info' }), [
+      _gslAlertByUid('main-alert', { override: { level: 'success' } }),
+    ]);
     const w = getStaticChild(result, 0) as {
       props?: { level?: string };
     };

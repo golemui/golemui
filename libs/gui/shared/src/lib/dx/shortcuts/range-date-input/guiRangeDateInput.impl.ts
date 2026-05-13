@@ -1,5 +1,9 @@
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import type { GuiRangeDateInputShortcut, RangeDateInputDecorator, RangeDateInputEntry } from './rangeDateInput.domain';
+import type {
+  GuiRangeDateInputShortcut,
+  RangeDateInputDecorator,
+  RangeDateInputEntry,
+} from './rangeDateInput.domain';
 
 export function _guiRangeDateInput(path: string): GuiRangeDateInputShortcut;
 export function _guiRangeDateInput(
@@ -25,7 +29,10 @@ export function _guiRangeDateInput(
 ): GuiRangeDateInputShortcut {
   if (typeof propsOrCallback === 'function') {
     const callback = propsOrCallback;
-    const def = (params: DxRuntimeParams) => ({ type: 'rangeDateInput' as const, ...callback(params) });
+    const def = (params: DxRuntimeParams) => ({
+      type: 'rangeDateInput' as const,
+      ...callback(params),
+    });
     const items: RangeDateInputEntry[] = [{ key: path, def }];
     return { type: 'ITEMS', itemType: 'RANGE_DATE_INPUT', items, tags: tags ?? [] };
   }

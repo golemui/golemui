@@ -53,13 +53,16 @@ export class FlexElement extends LitElement implements Core.WithWidget {
       'gui-flex__widget': true,
       'gui-flex__widget--row': this.adapter.templateData.direction === 'row',
       'gui-flex__widget--row-reverse': this.adapter.templateData.direction === 'row-reverse',
-      'gui-flex__widget--column': !this.adapter.templateData.direction || this.adapter.templateData.direction === 'column',
+      'gui-flex__widget--column':
+        !this.adapter.templateData.direction || this.adapter.templateData.direction === 'column',
       'gui-flex__widget--column-reverse': this.adapter.templateData.direction === 'column-reverse',
       'gui-flex__widget--justify-center': this.adapter.templateData.justify === 'center',
       'gui-flex__widget--justify-start': this.adapter.templateData.justify === 'start',
       'gui-flex__widget--justify-end': this.adapter.templateData.justify === 'end',
-      'gui-flex__widget--justify-stretch': !this.adapter.templateData.justify || this.adapter.templateData.justify === 'stretch',
-      'gui-flex__widget--align-start': !this.adapter.templateData.align || this.adapter.templateData.align === 'start',
+      'gui-flex__widget--justify-stretch':
+        !this.adapter.templateData.justify || this.adapter.templateData.justify === 'stretch',
+      'gui-flex__widget--align-start':
+        !this.adapter.templateData.align || this.adapter.templateData.align === 'start',
       'gui-flex__widget--align-end': this.adapter.templateData.align === 'end',
       'gui-flex__widget--align-center': this.adapter.templateData.align === 'center',
       'gui-flex__widget--align-space-between': this.adapter.templateData.align === 'space-between',
@@ -68,7 +71,11 @@ export class FlexElement extends LitElement implements Core.WithWidget {
     };
 
     return html`
-      <div class=${classMap(classes)} id=${this.widget?.uid} style=${this.adapter.templateData.gap ? `gap: ${this.adapter.templateData.gap}px` : ''}>
+      <div
+        class=${classMap(classes)}
+        id=${this.widget?.uid}
+        style=${this.adapter.templateData.gap ? `gap: ${this.adapter.templateData.gap}px` : ''}
+      >
         ${repeat(
           this.adapter.templateData.children || [],
           (child: any) => child?.uid,

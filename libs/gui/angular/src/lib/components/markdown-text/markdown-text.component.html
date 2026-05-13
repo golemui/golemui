@@ -1,8 +1,5 @@
 @let templateData = adapter.templateData();
 
 <div class="gui-widget" [id]="widget.uid">
-  <gui-markdown-text
-    [md]="templateData.md"
-    [dependencies]="templateData.deps"
-  ></gui-markdown-text>
+  <gui-markdown-text [md]="templateData.md" [dependencies]="templateData.deps"></gui-markdown-text>
 </div>

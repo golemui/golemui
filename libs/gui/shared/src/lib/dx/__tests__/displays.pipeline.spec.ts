@@ -56,10 +56,7 @@ describe('DX Pipeline — Displays', () => {
 
   describe('GSL tag matching — Phase 2 safety baseline', () => {
     it('processes tagged display with matching _gslTag + _gslDisplays selector', () => {
-      const defs = [
-        _guiDisplay(() => 'tagged', ['highlight']),
-        _guiTextInput('a'),
-      ];
+      const defs = [_guiDisplay(() => 'tagged', ['highlight']), _guiTextInput('a')];
       const selectors = [
         _gslTag('highlight', _gslDisplays({ override: { customProp: 'matched' } as any })),
       ];
@@ -80,10 +77,7 @@ describe('DX Pipeline — Displays', () => {
     });
 
     it('processes untagged display even when tag-scoped selector exists', () => {
-      const defs = [
-        _guiDisplay(() => 'untagged'),
-        _guiTextInput('a'),
-      ];
+      const defs = [_guiDisplay(() => 'untagged'), _guiTextInput('a')];
       const selectors = [
         _gslTag('highlight', _gslDisplays({ override: { customProp: 'matched' } as any })),
       ];

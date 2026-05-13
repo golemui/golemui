@@ -16,7 +16,13 @@ Each shortcut group exposes a `.custom()` factory for widgets you've implemented
 import { gui } from '@golemui/gui-shared';
 
 // Custom layout
-gui.layouts.custom('productCard', [/* children */], { title: 'My Product' });
+gui.layouts.custom(
+  'productCard',
+  [
+    /* children */
+  ],
+  { title: 'My Product' },
+);
 
 // Custom input
 gui.inputs.custom('productRating', 'product.rating', {
@@ -53,51 +59,68 @@ Here's the full form definition that produces the demo:
 import { gui } from '@golemui/gui-shared';
 
 const formDef = [
-  gui.layouts.custom('productCard', [
-    gui.displays.custom('productDescription', {
-      img: 'https://picsum.photos/seed/golemui/240/240',
-      description: '### GolemUI\nThe declarative form engine.',
-    }),
-    gui.inputs.custom('productRating', 'product.rating', {
-      label: 'Your rating',
-      maxRating: 10,
-      validator: {
-        type: 'number',
-        required: true,
-        messages: { required: 'Please rate the product before submitting' },
-      },
-    }),
-    gui.inputs.textarea('product.comment', {
-      label: 'Your comment',
-      hint: 'Enter your comment (maximum 500 characters)',
-      placeholder: 'Let us know why you love our product',
-      counterMode: 'current',
-      validator: {
-        type: 'string',
-        required: true,
-        maxLength: 500,
-        messages: {
-          required: 'Please leave a comment with your rating',
-          maxLength: 'Your comment is too long — keep it under 500 characters',
+  gui.layouts.custom(
+    'productCard',
+    [
+      gui.displays.custom('productDescription', {
+        img: 'https://picsum.photos/seed/golemui/240/240',
+        description: '### GolemUI\nThe declarative form engine.',
+      }),
+      gui.inputs.custom('productRating', 'product.rating', {
+        label: 'Your rating',
+        maxRating: 10,
+        validator: {
+          type: 'number',
+          required: true,
+          messages: { required: 'Please rate the product before submitting' },
         },
-      },
-    }),
-    gui.actions.custom('productShare', {
-      label: 'Share',
-      networks: [
-        { id: 'twitter',  label: 'X',        icon: 'https://cdn.simpleicons.org/x/333' },
-        { id: 'facebook', label: 'Facebook', icon: 'https://cdn.simpleicons.org/facebook/1877F2' },
-        { id: 'reddit',   label: 'Reddit',   icon: 'https://cdn.simpleicons.org/reddit/FF4500' },
-      ],
-      onClick: 'shareEvent',
-    }),
-    gui.actions.button({
-      label: 'Submit',
-      icon: 'save',
-      iconPosition: 'right',
-      onClick: 'submit',
-    }),
-  ], { title: 'Rate Our Product' }),
+      }),
+      gui.inputs.textarea('product.comment', {
+        label: 'Your comment',
+        hint: 'Enter your comment (maximum 500 characters)',
+        placeholder: 'Let us know why you love our product',
+        counterMode: 'current',
+        validator: {
+          type: 'string',
+          required: true,
+          maxLength: 500,
+          messages: {
+            required: 'Please leave a comment with your rating',
+            maxLength:
+              'Your comment is too long — keep it under 500 characters',
+          },
+        },
+      }),
+      gui.actions.custom('productShare', {
+        label: 'Share',
+        networks: [
+          {
+            id: 'twitter',
+            label: 'X',
+            icon: 'https://cdn.simpleicons.org/x/333',
+          },
+          {
+            id: 'facebook',
+            label: 'Facebook',
+            icon: 'https://cdn.simpleicons.org/facebook/1877F2',
+          },
+          {
+            id: 'reddit',
+            label: 'Reddit',
+            icon: 'https://cdn.simpleicons.org/reddit/FF4500',
+          },
+        ],
+        onClick: 'shareEvent',
+      }),
+      gui.actions.button({
+        label: 'Submit',
+        icon: 'save',
+        iconPosition: 'right',
+        onClick: 'submit',
+      }),
+    ],
+    { title: 'Rate Our Product' },
+  ),
 ];
 ```
 
@@ -156,9 +179,21 @@ const formDef = [
       "label": "Share",
       "props": {
         "networks": [
-          { "id": "twitter",  "label": "X",        "icon": "https://cdn.simpleicons.org/x/333" },
-          { "id": "facebook", "label": "Facebook", "icon": "https://cdn.simpleicons.org/facebook/1877F2" },
-          { "id": "reddit",   "label": "Reddit",   "icon": "https://cdn.simpleicons.org/reddit/FF4500" }
+          {
+            "id": "twitter",
+            "label": "X",
+            "icon": "https://cdn.simpleicons.org/x/333"
+          },
+          {
+            "id": "facebook",
+            "label": "Facebook",
+            "icon": "https://cdn.simpleicons.org/facebook/1877F2"
+          },
+          {
+            "id": "reddit",
+            "label": "Reddit",
+            "icon": "https://cdn.simpleicons.org/reddit/FF4500"
+          }
         ]
       },
       "on": { "click": "shareEvent" }

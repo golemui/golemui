@@ -21,32 +21,41 @@ const formDef = [
 
   // Flex for columns.
   gui.layouts.flex(
-    [
-      gui.inputs.textInput('user.email'),
-      gui.inputs.password('user.password'),
-    ],
+    [gui.inputs.textInput('user.email'), gui.inputs.password('user.password')],
     { direction: 'column' },
   ),
 
   // Tabs — first arg is sections, each with its own children.
   gui.layouts.tabs([
-    { label: 'Personal', uid: 'personal', children: [/* ... */] },
-    { label: 'Work', uid: 'work', children: [/* ... */] },
+    {
+      label: 'Personal',
+      uid: 'personal',
+      children: [
+        /* ... */
+      ],
+    },
+    {
+      label: 'Work',
+      uid: 'work',
+      children: [
+        /* ... */
+      ],
+    },
   ]),
 ];
 ```
 
-| Shortcut                       | Description                                                                |
-| ------------------------------ | -------------------------------------------------------------------------- |
-| `gui.layouts.flex`             | Flex container ([Flex](/widgets-reference/layout-fields/flex/)).           |
-| `gui.layouts.horizontalFlex`   | Flex with `direction: 'row'`.                                              |
-| `gui.layouts.verticalFlex`     | Flex with `direction: 'column'`.                                           |
-| `gui.layouts.grid`             | Grid container with subgrid alignment ([Grid](/widgets-reference/layout-fields/grid/)). |
-| `gui.layouts.horizontalGrid`   | Grid with `direction: 'row'`.                                              |
-| `gui.layouts.verticalGrid`     | Grid with `direction: 'column'`.                                           |
-| `gui.layouts.tabs`             | Tabs ([Tabs](/widgets-reference/layout-fields/tabs/)).                     |
-| `gui.layouts.accordion`        | Accordion ([Accordion](/widgets-reference/layout-fields/accordion/)).      |
-| `gui.layouts.custom`           | Plug in your own layout ([Custom Widgets](/form-definition/custom-widgets/)). |
+| Shortcut                     | Description                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------- |
+| `gui.layouts.flex`           | Flex container ([Flex](/widgets-reference/layout-fields/flex/)).                        |
+| `gui.layouts.horizontalFlex` | Flex with `direction: 'row'`.                                                           |
+| `gui.layouts.verticalFlex`   | Flex with `direction: 'column'`.                                                        |
+| `gui.layouts.grid`           | Grid container with subgrid alignment ([Grid](/widgets-reference/layout-fields/grid/)). |
+| `gui.layouts.horizontalGrid` | Grid with `direction: 'row'`.                                                           |
+| `gui.layouts.verticalGrid`   | Grid with `direction: 'column'`.                                                        |
+| `gui.layouts.tabs`           | Tabs ([Tabs](/widgets-reference/layout-fields/tabs/)).                                  |
+| `gui.layouts.accordion`      | Accordion ([Accordion](/widgets-reference/layout-fields/accordion/)).                   |
+| `gui.layouts.custom`         | Plug in your own layout ([Custom Widgets](/form-definition/custom-widgets/)).           |
 
 ### Layout recommendation
 
@@ -73,13 +82,13 @@ The same widget in JSON, with `props` and `children` separated:
 }
 ```
 
-| Property   | Description                                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------------------ |
-| `uid`      | Optional unique id; one is generated if absent.                                                        |
-| `kind`     | **MANDATORY**. Always `'layout'`.                                                                      |
-| `type`     | **MANDATORY**. The layout type (`flex`, `grid`, `tabs`, `accordion`).                                  |
+| Property   | Description                                                                                                            |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `uid`      | Optional unique id; one is generated if absent.                                                                        |
+| `kind`     | **MANDATORY**. Always `'layout'`.                                                                                      |
+| `type`     | **MANDATORY**. The layout type (`flex`, `grid`, `tabs`, `accordion`).                                                  |
 | `children` | **MANDATORY** for `flex` / `grid`. An array of child widgets. (Tabs and accordion put children inside their sections.) |
-| `props`    | Layout-specific configuration — direction, gap, align/justify, etc. See each layout's reference page. |
+| `props`    | Layout-specific configuration — direction, gap, align/justify, etc. See each layout's reference page.                  |
 
 ## Available widgets
 

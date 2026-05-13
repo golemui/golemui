@@ -119,7 +119,10 @@ export class TabsElement extends LitElement implements Core.WithWidget {
                       @click=${() => this.onClickTab(tab.uid)}
                       @keydown=${this.onKeyDown}
                       @focus=${(event: FocusEvent) =>
-                        (event.target as HTMLButtonElement).scrollIntoView({ block: 'nearest', inline: 'nearest' })}
+                        (event.target as HTMLButtonElement).scrollIntoView({
+                          block: 'nearest',
+                          inline: 'nearest',
+                        })}
                     >
                       ${tab.label}
                     </button>

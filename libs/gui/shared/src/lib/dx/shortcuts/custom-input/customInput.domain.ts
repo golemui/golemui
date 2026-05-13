@@ -1,10 +1,6 @@
 import type { Validator } from '@golemui/gui-validators';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
-import type {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Custom Input Decorator

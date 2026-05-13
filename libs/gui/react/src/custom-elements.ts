@@ -64,10 +64,7 @@ declare module 'react' {
         HTMLElement
       > &
         Partial<GuiRangeCalendar>;
-      'gui-range-date': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      > &
+      'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeDateInput>;
 
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

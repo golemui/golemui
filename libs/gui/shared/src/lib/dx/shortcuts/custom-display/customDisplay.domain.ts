@@ -1,9 +1,5 @@
 import type { DxCommonFields, DxDisplayBase } from '../../core/dxBase.types';
-import type {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Custom Display Decorator

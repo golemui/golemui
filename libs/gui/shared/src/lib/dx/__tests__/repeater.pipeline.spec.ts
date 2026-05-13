@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { LayoutWidget, NonFunctionWidget } from '@golemui/core';
 import {
   _guiRepeater,
-    _guiSelect,
+  _guiSelect,
   _guiCurrency,
   _guiHorizontalFlex,
   _gslRepeaters,
@@ -16,10 +16,7 @@ describe('DX Pipeline — Repeater', () => {
     const result = processDx(
       _guiRepeater('users', {
         addLabel: 'Add User',
-        template: [
-          _guiTextInput('name'),
-          _guiTextInput('surname'),
-        ],
+        template: [_guiTextInput('name'), _guiTextInput('surname')],
       }),
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
@@ -49,9 +46,7 @@ describe('DX Pipeline — Repeater', () => {
   it('works with template-only props (no other config)', () => {
     const result = processDx(
       _guiRepeater('items', {
-        template: [
-          _guiTextInput('name'),
-        ],
+        template: [_guiTextInput('name')],
       }),
     );
     const w = getStaticChild(result, 0) as NonFunctionWidget & {
@@ -194,16 +189,13 @@ describe('DX Pipeline — Repeater', () => {
   });
 
   it('supports dynamic callback producing a FunctionWidget', () => {
-    const result = processDx(
-      _guiRepeater('items', { template: [_guiTextInput('x')] }),
-      [
-        _gslRepeaters({
-          override: () => () => ({
-            addLabel: 'Dynamic Add',
-          }),
+    const result = processDx(_guiRepeater('items', { template: [_guiTextInput('x')] }), [
+      _gslRepeaters({
+        override: () => () => ({
+          addLabel: 'Dynamic Add',
         }),
-      ],
-    );
+      }),
+    ]);
     const raw = getRawChild(result, 0);
     const w = resolveDynamic(raw) as NonFunctionWidget & {
       path?: string;
@@ -221,10 +213,7 @@ describe('DX Pipeline — Repeater', () => {
       const result = processDx(
         _guiRepeater('users', {
           addLabel: 'Add User',
-          template: [
-            _guiTextInput('name'),
-            _guiTextInput('email'),
-          ],
+          template: [_guiTextInput('name'), _guiTextInput('email')],
         }),
       );
       const w = getStaticChild(result, 0) as NonFunctionWidget & {
@@ -316,7 +305,9 @@ describe('DX Pipeline — Repeater', () => {
       const palletsTemplate = palletsRepeater.props?.template as LayoutWidget;
 
       // Level 2: palletType
-      const palletTypeInput = palletsTemplate.children?.[0] as NonFunctionWidget & { path?: string };
+      const palletTypeInput = palletsTemplate.children?.[0] as NonFunctionWidget & {
+        path?: string;
+      };
       expect(palletTypeInput.path).toBe('containers.items.pallets.items.palletType');
 
       // Level 3: skuItems repeater
@@ -336,12 +327,7 @@ describe('DX Pipeline — Repeater', () => {
       const result = processDx(
         _guiRepeater('users', {
           addLabel: 'Add',
-          template: [
-            _guiHorizontalFlex([
-              _guiTextInput('firstName'),
-              _guiTextInput('lastName'),
-            ]),
-          ],
+          template: [_guiHorizontalFlex([_guiTextInput('firstName'), _guiTextInput('lastName')])],
         }),
       );
       const w = getStaticChild(result, 0) as NonFunctionWidget & {

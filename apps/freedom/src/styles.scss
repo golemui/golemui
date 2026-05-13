@@ -50,14 +50,14 @@ html {
   --fd-picker-menu-text: #334155;
 
   /* Per-source palette (used by both picker buttons and menu items) */
-  --fd-pick-golem:          #1d4ed8;
-  --fd-pick-golem-hover:    #1e3a8a;
-  --fd-pick-material:       #047857;
+  --fd-pick-golem: #1d4ed8;
+  --fd-pick-golem-hover: #1e3a8a;
+  --fd-pick-material: #047857;
   --fd-pick-material-hover: #064e3b;
-  --fd-pick-shoelace:       #0f766e;
+  --fd-pick-shoelace: #0f766e;
   --fd-pick-shoelace-hover: #134e4a;
-  --fd-pick-yours:          #6d28d9;
-  --fd-pick-yours-hover:    #4c1d95;
+  --fd-pick-yours: #6d28d9;
+  --fd-pick-yours-hover: #4c1d95;
 }
 
 :root.dark {
@@ -94,14 +94,14 @@ html {
   --fd-picker-menu-text: #cbd5e1;
 
   /* Per-source palette (used by both picker buttons and menu items) */
-  --fd-pick-golem:          #93c5fd;
-  --fd-pick-golem-hover:    #dbeafe;
-  --fd-pick-material:       #6ee7b7;
+  --fd-pick-golem: #93c5fd;
+  --fd-pick-golem-hover: #dbeafe;
+  --fd-pick-material: #6ee7b7;
   --fd-pick-material-hover: #d1fae5;
-  --fd-pick-shoelace:       #5eead4;
+  --fd-pick-shoelace: #5eead4;
   --fd-pick-shoelace-hover: #ccfbf1;
-  --fd-pick-yours:          #c4b5fd;
-  --fd-pick-yours-hover:    #ede9fe;
+  --fd-pick-yours: #c4b5fd;
+  --fd-pick-yours-hover: #ede9fe;
 }
 
 html,

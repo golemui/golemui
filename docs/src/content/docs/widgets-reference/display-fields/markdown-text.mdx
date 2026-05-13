@@ -105,20 +105,21 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
 <Aside type="caution">
   **You are responsible for sanitizing the markdown content.** The parse function output is injected as raw HTML. This is consistent with the approach recommended by most markdown libraries (e.g. [marked](https://marked.js.org/using_advanced#options), [micromark](https://github.com/micromark/micromark#security)).
 
-  Use a sanitization library such as [DOMPurify](https://github.com/cure53/DOMPurify) inside your `parse` function to prevent XSS attacks:
+Use a sanitization library such as [DOMPurify](https://github.com/cure53/DOMPurify) inside your `parse` function to prevent XSS attacks:
 
-  ```typescript
-  import DOMPurify from 'dompurify';
-  import { marked } from 'marked';
+```typescript
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 
-  const formConfig = {
-    dependencies: {
-      markdown: {
-        parse: (md: string) => DOMPurify.sanitize(marked(md) as string),
-      },
+const formConfig = {
+  dependencies: {
+    markdown: {
+      parse: (md: string) => DOMPurify.sanitize(marked(md) as string),
     },
-  };
-  ```
+  },
+};
+```
+
 </Aside>
 
 ## Styling

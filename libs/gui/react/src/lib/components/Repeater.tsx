@@ -87,10 +87,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
                 {templateData.removeLabel ?? 'Remove'}
               </button>
             </div>
-            <WidgetRenderer
-              key={`${uid}-${itemKey}`}
-              widget={templateData.template}
-            />
+            <WidgetRenderer key={`${uid}-${itemKey}`} widget={templateData.template} />
           </div>
         </RepeaterIndexesContext.Provider>
       );

@@ -42,9 +42,9 @@ export const supportTicketDemo: FormDemoDefinition = {
   title: '41. Support Ticket',
   category: 'Ch9: Real World',
   description:
-    'A customer-facing support request. Selecting a product cascades to load '
-    + 'category options. Priority drives conditional fields and dynamic button '
-    + 'labels. A live summary at the bottom reads form state reactively.',
+    'A customer-facing support request. Selecting a product cascades to load ' +
+    'category options. Priority drives conditional fields and dynamic button ' +
+    'labels. A live summary at the bottom reads form state reactively.',
   formDef: () => [
     gui.inputs.select('product', {
       options: products,
@@ -72,10 +72,7 @@ export const supportTicketDemo: FormDemoDefinition = {
     gui.inputs.repeater('attachments', {
       addLabel: 'Add attachment',
       removeLabel: 'Remove',
-      template: [
-        gui.inputs.textInput('filename'),
-        gui.inputs.textInput('notes'),
-      ],
+      template: [gui.inputs.textInput('filename'), gui.inputs.textInput('notes')],
     }),
     gui.displays.display((params: DxRuntimeParams) => {
       const form = params?.$form;
@@ -83,8 +80,12 @@ export const supportTicketDemo: FormDemoDefinition = {
       const category = form.category ? ` > ${form.category}` : '';
       return (
         <p style={{ padding: '0.75rem', background: 'f0f4f8', borderRadius: '4px' }}>
-          You're submitting a <strong>{form.priority}</strong> ticket
-          for <strong>{form.product}{category}</strong>.
+          You're submitting a <strong>{form.priority}</strong> ticket for{' '}
+          <strong>
+            {form.product}
+            {category}
+          </strong>
+          .
         </p>
       );
     }),
@@ -94,7 +95,9 @@ export const supportTicketDemo: FormDemoDefinition = {
     }),
   ],
   formSelectors: () => [
-    gui.selectors.inputByUid('description', { override: { placeholder: 'Describe the issue in detail…' } }),
+    gui.selectors.inputByUid('description', {
+      override: { placeholder: 'Describe the issue in detail…' },
+    }),
   ],
   formConfig: () => ({
     states: {

@@ -225,7 +225,7 @@ gui-calendar {
       }
     }
 
-    .gui-calendar__year-selector[aria-expanded="true"] .gui-calendar__year-arrow {
+    .gui-calendar__year-selector[aria-expanded='true'] .gui-calendar__year-arrow {
       transform: rotate(180deg);
     }
   }

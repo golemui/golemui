@@ -42,17 +42,13 @@ export interface DxInternalFields {
  * Conditional inclusion: state-list or reactive expression form.
  * Mirrors core's `include` shape on `BaseWidget`.
  */
-export type DxIncludeCondition =
-  | { in: string[] }
-  | { when: ReactiveExpression };
+export type DxIncludeCondition = { in: string[] } | { when: ReactiveExpression };
 
 /**
  * Conditional exclusion: state-list or reactive expression form.
  * Mirrors core's `exclude` shape on `BaseWidget`.
  */
-export type DxExcludeCondition =
-  | { from: string[] }
-  | { when: ReactiveExpression };
+export type DxExcludeCondition = { from: string[] } | { when: ReactiveExpression };
 
 /**
  * User-settable common fields available on ALL decorator types.

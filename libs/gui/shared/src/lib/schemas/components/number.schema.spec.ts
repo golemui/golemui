@@ -169,7 +169,10 @@ describe('Number schema validation', () => {
               messages: {
                 exclusiveMinimum: { key: 'validation.score.exclusiveMinimum' },
                 exclusiveMaximum: { key: 'validation.score.exclusiveMaximum' },
-                multipleOf: { key: 'validation.score.multipleOf', default: 'Must be a multiple of 5' },
+                multipleOf: {
+                  key: 'validation.score.multipleOf',
+                  default: 'Must be a multiple of 5',
+                },
               },
             },
           },

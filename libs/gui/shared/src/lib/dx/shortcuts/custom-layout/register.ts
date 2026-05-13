@@ -1,8 +1,4 @@
-import {
-  FormWidget,
-  FunctionWidgetParams,
-  LayoutWidget,
-} from '@golemui/core';
+import { FormWidget, FunctionWidgetParams, LayoutWidget } from '@golemui/core';
 import { MergeResult, ValidGuiShortcut } from '../../core/dx.domain';
 import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
@@ -22,10 +18,7 @@ function mapToWidget(def: CustomLayoutDecorator) {
   } as LayoutWidget;
 }
 
-function buildCustomWidget(
-  mergeResult: MergeResult,
-  context: BuildWidgetContext,
-): FormWidget {
+function buildCustomWidget(mergeResult: MergeResult, context: BuildWidgetContext): FormWidget {
   const children = context.walkChildren(context.children ?? []);
 
   if (mergeResult.kind === 'static') {
@@ -45,11 +38,14 @@ function getChildren(entry: CustomLayoutEntry): ValidGuiShortcut[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslCustomLayouts, gslByUid: _gslCustomLayoutByUid } =
-  defineShortcutType<CustomLayoutEntry, CustomLayoutDecorator, GslCustomLayoutConfig>({
-    itemType: 'CUSTOM_LAYOUT',
-    entryShape: 'compound',
-    mapToWidget,
-    buildCustomWidget,
-    getChildren,
-  });
+export const { gsl: _gslCustomLayouts, gslByUid: _gslCustomLayoutByUid } = defineShortcutType<
+  CustomLayoutEntry,
+  CustomLayoutDecorator,
+  GslCustomLayoutConfig
+>({
+  itemType: 'CUSTOM_LAYOUT',
+  entryShape: 'compound',
+  mapToWidget,
+  buildCustomWidget,
+  getChildren,
+});

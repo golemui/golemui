@@ -185,13 +185,8 @@ function CategoryGroupedDemos() {
     <>
       {categories.map(({ category, entries }, catIndex) => (
         <div key={category} className={styles.categorySection}>
-          <button
-            onClick={() => toggleCategory(category)}
-            className={styles.categoryToggle}
-          >
-            <span className={styles.categoryToggleIcon}>
-              {collapsed[category] ? '▶' : '▼'}
-            </span>
+          <button onClick={() => toggleCategory(category)} className={styles.categoryToggle}>
+            <span className={styles.categoryToggleIcon}>{collapsed[category] ? '▶' : '▼'}</span>
             {catIndex + 1}. {category}
             <span className={styles.categoryCount}>({entries.length})</span>
           </button>

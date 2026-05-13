@@ -12,10 +12,9 @@ import { BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import { GslLayoutsConfig, LayoutDecorator, LayoutEntry } from './layouts.domain';
 
-function mapToWidget<
-  StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
->(def: LayoutDecorator): NonFunctionWidget<StateKeys, FormData> {
+function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+  def: LayoutDecorator,
+): NonFunctionWidget<StateKeys, FormData> {
   const {
     uid,
     widgetName,
@@ -39,10 +38,7 @@ function mapToWidget<
   } as LayoutWidget<StateKeys, FormData>;
 }
 
-function buildCustomWidget(
-  mergeResult: MergeResult,
-  context: BuildWidgetContext,
-): FormWidget {
+function buildCustomWidget(mergeResult: MergeResult, context: BuildWidgetContext): FormWidget {
   const children = context.walkChildren(context.children ?? []);
 
   if (mergeResult.kind === 'static') {
@@ -62,11 +58,14 @@ function getChildren(entry: LayoutEntry): ValidGuiShortcut[] | undefined {
   return entry.children;
 }
 
-export const { gsl: _gslLayouts, gslByUid: _gslLayoutByUid } =
-  defineShortcutType<LayoutEntry, LayoutDecorator, GslLayoutsConfig>({
-    itemType: 'LAYOUTS',
-    entryShape: 'compound',
-    mapToWidget,
-    buildCustomWidget,
-    getChildren,
-  });
+export const { gsl: _gslLayouts, gslByUid: _gslLayoutByUid } = defineShortcutType<
+  LayoutEntry,
+  LayoutDecorator,
+  GslLayoutsConfig
+>({
+  itemType: 'LAYOUTS',
+  entryShape: 'compound',
+  mapToWidget,
+  buildCustomWidget,
+  getChildren,
+});

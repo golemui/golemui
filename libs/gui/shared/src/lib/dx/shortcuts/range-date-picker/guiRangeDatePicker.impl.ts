@@ -1,5 +1,9 @@
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import type { GuiRangeDatePickerShortcut, RangeDatePickerDecorator, RangeDatePickerEntry } from './rangeDatePicker.domain';
+import type {
+  GuiRangeDatePickerShortcut,
+  RangeDatePickerDecorator,
+  RangeDatePickerEntry,
+} from './rangeDatePicker.domain';
 
 export function _guiRangeDatePicker(path: string): GuiRangeDatePickerShortcut;
 export function _guiRangeDatePicker(
@@ -25,7 +29,10 @@ export function _guiRangeDatePicker(
 ): GuiRangeDatePickerShortcut {
   if (typeof propsOrCallback === 'function') {
     const callback = propsOrCallback;
-    const def = (params: DxRuntimeParams) => ({ type: 'rangeDatePicker' as const, ...callback(params) });
+    const def = (params: DxRuntimeParams) => ({
+      type: 'rangeDatePicker' as const,
+      ...callback(params),
+    });
     const items: RangeDatePickerEntry[] = [{ key: path, def }];
     return { type: 'ITEMS', itemType: 'RANGE_DATE_PICKER', items, tags: tags ?? [] };
   }

@@ -7,10 +7,7 @@ import type {
 
 type DatePickerFactoryProps = Omit<DatePickerDecorator, 'type'>;
 
-export function _guiDatePicker(
-  path: string,
-  props: DatePickerFactoryProps,
-): GuiDatePickerShortcut;
+export function _guiDatePicker(path: string, props: DatePickerFactoryProps): GuiDatePickerShortcut;
 export function _guiDatePicker(
   path: string,
   props: DatePickerFactoryProps,
@@ -23,9 +20,7 @@ export function _guiDatePicker(
 ): GuiDatePickerShortcut;
 export function _guiDatePicker(
   path: string,
-  propsOrCallback:
-    | DatePickerFactoryProps
-    | ((params: DxRuntimeParams) => DatePickerFactoryProps),
+  propsOrCallback: DatePickerFactoryProps | ((params: DxRuntimeParams) => DatePickerFactoryProps),
   tags?: string[],
 ): GuiDatePickerShortcut {
   if (typeof propsOrCallback === 'function') {

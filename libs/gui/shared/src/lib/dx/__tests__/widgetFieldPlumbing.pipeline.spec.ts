@@ -69,9 +69,7 @@ describe('DX Pipeline — defaultValue pass-through', () => {
   });
 
   it('passes defaultValue through _guiSelect', () => {
-    const root = processDx(
-      _guiSelect('color', { options: ['red', 'blue'], defaultValue: 'blue' }),
-    );
+    const root = processDx(_guiSelect('color', { options: ['red', 'blue'], defaultValue: 'blue' }));
     const widget = getStaticChild(root, 0) as any;
     expect(widget.defaultValue).toBe('blue');
   });
@@ -83,9 +81,7 @@ describe('DX Pipeline — defaultValue pass-through', () => {
   });
 
   it('passes defaultValue through dynamic widget', () => {
-    const root = processDx(
-      _guiTextInput('name', () => ({ defaultValue: 'dynamic' })),
-    );
+    const root = processDx(_guiTextInput('name', () => ({ defaultValue: 'dynamic' })));
     const fn = getRawChild(root, 0);
     const widget = resolveDynamic(fn) as any;
     expect(widget.defaultValue).toBe('dynamic');
@@ -104,9 +100,7 @@ describe('DX Pipeline — size pass-through', () => {
   });
 
   it('passes size through action widget', () => {
-    const root = processDx(
-      _guiButton({ label: 'Click', size: 3 } as any),
-    );
+    const root = processDx(_guiButton({ label: 'Click', size: 3 } as any));
     const widget = getStaticChild(root, 0) as any;
     expect(widget.size).toBe(3);
   });
@@ -115,7 +109,9 @@ describe('DX Pipeline — size pass-through', () => {
     const layoutShortcut: ValidGuiShortcut = {
       type: 'ITEMS',
       itemType: GuiItemTypes.LAYOUTS,
-      items: [{ def: { widgetName: 'flex', direction: 'row', size: 2 }, children: [_guiTextInput('x')] }],
+      items: [
+        { def: { widgetName: 'flex', direction: 'row', size: 2 }, children: [_guiTextInput('x')] },
+      ],
       tags: [],
     };
     const root = processDx(layoutShortcut);
@@ -133,7 +129,9 @@ describe('DX Pipeline — size pass-through', () => {
     const layoutShortcut: ValidGuiShortcut = {
       type: 'ITEMS',
       itemType: GuiItemTypes.LAYOUTS,
-      items: [{ def: { widgetName: 'flex', direction: 'row', size: 2 }, children: [_guiTextInput('x')] }],
+      items: [
+        { def: { widgetName: 'flex', direction: 'row', size: 2 }, children: [_guiTextInput('x')] },
+      ],
       tags: [],
     };
     const root = processDx(layoutShortcut);
@@ -154,29 +152,19 @@ describe('DX Pipeline — size pass-through', () => {
 
 describe('DX Pipeline — validateOn pass-through', () => {
   it('passes validateOn from FormConfig to DxResult', () => {
-    const result = formDefs.processDxFacade(
-      _guiTextInput('name'),
-      [],
-      { validateOn: 'blur' },
-    );
+    const result = formDefs.processDxFacade(_guiTextInput('name'), [], { validateOn: 'blur' });
     expect(result.validateOn).toBe('blur');
   });
 
   it('passes validateOn: eager', () => {
-    const result = formDefs.processDxFacade(
-      _guiTextInput('name'),
-      [],
-      { validateOn: 'eager' },
-    );
+    const result = formDefs.processDxFacade(_guiTextInput('name'), [], { validateOn: 'eager' });
     expect(result.validateOn).toBe('eager');
   });
 
   it('passes validateOn as array', () => {
-    const result = formDefs.processDxFacade(
-      _guiTextInput('name'),
-      [],
-      { validateOn: ['change', 'blur'] },
-    );
+    const result = formDefs.processDxFacade(_guiTextInput('name'), [], {
+      validateOn: ['change', 'blur'],
+    });
     expect(result.validateOn).toEqual(['change', 'blur']);
   });
 
@@ -187,11 +175,10 @@ describe('DX Pipeline — validateOn pass-through', () => {
 
   it('passes validateOn alongside other FormConfig fields', () => {
     const deps = {};
-    const result = formDefs.processDxFacade(
-      _guiTextInput('name'),
-      [],
-      { validateOn: 'submit', dependencies: deps },
-    );
+    const result = formDefs.processDxFacade(_guiTextInput('name'), [], {
+      validateOn: 'submit',
+      dependencies: deps,
+    });
     expect(result.validateOn).toBe('submit');
     expect(result.dependencies).toBe(deps);
   });

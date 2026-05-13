@@ -1,9 +1,4 @@
-import {
-  FormWidget,
-  FunctionWidgetParams,
-  LayoutWidget,
-  NonFunctionWidget,
-} from '@golemui/core';
+import { FormWidget, FunctionWidgetParams, LayoutWidget, NonFunctionWidget } from '@golemui/core';
 import { DxDefinitions } from '../formDef.domain';
 import { FormConfig, GslSelectorsInput } from '../core/dx.domain';
 import { formDefs } from '../dx.service';

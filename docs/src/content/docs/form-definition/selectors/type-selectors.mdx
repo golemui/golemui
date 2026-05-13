@@ -12,10 +12,10 @@ Type selectors are the leaf methods of the selector chain — they match every w
 ```ts
 import { gui } from '@golemui/gui-shared';
 
-gui.selectors.inputs({ suppressAutomaticLabels: true });   // every input
-gui.selectors.dropdowns({ height: 300 });                   // every dropdown
-gui.selectors.dateInputs({ dayFormat: '2-digit' });         // every dateInput
-gui.selectors.actions({ disabled: false });                 // every action
+gui.selectors.inputs({ suppressAutomaticLabels: true }); // every input
+gui.selectors.dropdowns({ height: 300 }); // every dropdown
+gui.selectors.dateInputs({ dayFormat: '2-digit' }); // every dateInput
+gui.selectors.actions({ disabled: false }); // every action
 ```
 
 The leaf method names mirror the `gui.<group>.*` shortcuts — `gui.inputs.textInput` corresponds to `gui.selectors.textInputs`, and so on.
@@ -59,11 +59,20 @@ Each leaf has a `<type>ByUid` variant that targets a specific widget. By-uid sel
 
 ```ts
 const formDef = [
-  gui.inputs.textInput('username',    { label: 'Username' }),
-  gui.inputs.textInput('displayName', { label: 'Display name', uid: 'display-name' }),
-  gui.inputs.textInput('email',       { label: 'Email' }),
-  gui.inputs.dateInput('dob',         { label: 'Date of birth' }),
-  gui.inputs.dropdown('country',      { label: 'Country', items: COUNTRIES, labelField: 'label', valueField: 'value', height: 120 }),
+  gui.inputs.textInput('username', { label: 'Username' }),
+  gui.inputs.textInput('displayName', {
+    label: 'Display name',
+    uid: 'display-name',
+  }),
+  gui.inputs.textInput('email', { label: 'Email' }),
+  gui.inputs.dateInput('dob', { label: 'Date of birth' }),
+  gui.inputs.dropdown('country', {
+    label: 'Country',
+    items: COUNTRIES,
+    labelField: 'label',
+    valueField: 'value',
+    height: 120,
+  }),
 ];
 
 const formSelectors = [
@@ -80,7 +89,7 @@ const formSelectors = [
 
 <Demo src="/template/index.html?renderer=type-selector-byuid" minHeight="500" />
 
-Every field shows "✱ Required" except *Display name*, which carries the byUid override "Optional — shown publicly". The same widget pattern previews [precedence](/form-definition/selectors/precedence/): byUid selectors win over the broader umbrella.
+Every field shows "✱ Required" except _Display name_, which carries the byUid override "Optional — shown publicly". The same widget pattern previews [precedence](/form-definition/selectors/precedence/): byUid selectors win over the broader umbrella.
 
 ## See also
 

@@ -3,10 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
-import {
-  _guiHorizontalFlex,
-  _guiVerticalFlex,
-} from '../shortcuts/layouts/guiFlex.impl';
+import { _guiHorizontalFlex, _guiVerticalFlex } from '../shortcuts/layouts/guiFlex.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
 import { formDefs } from '../dx.service';
 import { _guiTextInput } from '../index';
@@ -15,11 +12,7 @@ describe('DX Pipeline — Edge Cases', () => {
   describe('Deeply nested layouts', () => {
     it('recurses through 3+ levels of nested layouts', () => {
       const root = processDx(
-        _guiVerticalFlex([
-          _guiHorizontalFlex([
-            _guiVerticalFlex([_guiTextInput('deep')]),
-          ]),
-        ]),
+        _guiVerticalFlex([_guiHorizontalFlex([_guiVerticalFlex([_guiTextInput('deep')])])]),
       );
 
       const level1 = getStaticChild(root, 0) as LayoutWidget;

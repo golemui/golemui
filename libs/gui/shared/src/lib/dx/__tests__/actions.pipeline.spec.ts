@@ -5,7 +5,9 @@ import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
 import { _guiTextInput } from '../index';
 
-function getRootFromFacadeResult(result: ReturnType<typeof formDefs.processDxFacade>): LayoutWidget {
+function getRootFromFacadeResult(
+  result: ReturnType<typeof formDefs.processDxFacade>,
+): LayoutWidget {
   return result.form.form as LayoutWidget;
 }
 
@@ -13,10 +15,7 @@ describe('DX Pipeline — Actions', () => {
   describe('Basic action expansion', () => {
     it('maps explicit onClick button with click event wiring', () => {
       const myFn = () => null;
-      const root = processDx([
-        _guiTextInput('name'),
-        _guiButton({ label: 'Save', onClick: myFn }),
-      ]);
+      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Save', onClick: myFn })]);
 
       const saveButton = root.children?.find(
         (child) => typeof child !== 'function' && (child as { kind?: string }).kind === 'action',
@@ -29,10 +28,7 @@ describe('DX Pipeline — Actions', () => {
     });
 
     it('maps button without onClick and does not wire click event', () => {
-      const root = processDx([
-        _guiTextInput('name'),
-        _guiButton({ label: 'Cancel' }),
-      ]);
+      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Cancel' })]);
 
       const cancelButton = root.children?.find(
         (child) => typeof child !== 'function' && (child as { label?: string }).label === 'Cancel',
@@ -81,11 +77,9 @@ describe('DX Pipeline — Actions', () => {
     });
 
     it("treats uid '#submit' action as submit and wires submit event", () => {
-      const result = formDefs.processDxFacade(
-        [_guiButton({ uid: '#submit', label: 'Send' })],
-        [],
-        { suppressAutomaticSubmit: true },
-      );
+      const result = formDefs.processDxFacade([_guiButton({ uid: '#submit', label: 'Send' })], [], {
+        suppressAutomaticSubmit: true,
+      });
       const root = getRootFromFacadeResult(result);
       const submit = root.children?.find(
         (child) => typeof child !== 'function' && (child as { uid?: string }).uid === '#submit',
@@ -146,11 +140,9 @@ describe('DX Pipeline — Actions', () => {
     });
 
     it('does not inject auto-submit when suppressAutomaticSubmit is true', () => {
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name')],
-        [],
-        { suppressAutomaticSubmit: true },
-      );
+      const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
+        suppressAutomaticSubmit: true,
+      });
       const root = getRootFromFacadeResult(result);
       const hasSubmit = (root.children ?? []).some(
         (child) => typeof child !== 'function' && (child as { uid?: string }).uid === '#submit',
@@ -213,11 +205,9 @@ describe('DX Pipeline — Actions', () => {
     });
 
     it('omits events from DxResult when no onClick callback is wired', () => {
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name')],
-        [],
-        { suppressAutomaticSubmit: true },
-      );
+      const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
+        suppressAutomaticSubmit: true,
+      });
 
       expect(result.form).toBeDefined();
       expect(result.events).toBeUndefined();
@@ -225,22 +215,18 @@ describe('DX Pipeline — Actions', () => {
 
     it('includes dependencies in DxResult when formConfig provides them', () => {
       const mockParse = (md: string) => `<p>${md}</p>`;
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name')],
-        [],
-        { dependencies: { markdown: { parse: mockParse } } },
-      );
+      const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
+        dependencies: { markdown: { parse: mockParse } },
+      });
 
       expect(result.dependencies).toBeDefined();
       expect(result.dependencies!.markdown!.parse).toBe(mockParse);
     });
 
     it('omits dependencies from DxResult when formConfig has none', () => {
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name')],
-        [],
-        { suppressAutomaticSubmit: true },
-      );
+      const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
+        suppressAutomaticSubmit: true,
+      });
 
       expect(result.dependencies).toBeUndefined();
     });

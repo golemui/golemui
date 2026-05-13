@@ -5,8 +5,8 @@ export const dropdownDemo: FormDemoDefinition = {
   title: '9. Dropdown',
   category: 'Ch2: Input Widgets',
   description:
-    'A searchable dropdown with item templates. '
-    + 'Unlike select, dropdown uses ListItem (template/value) and supports custom height and search.',
+    'A searchable dropdown with item templates. ' +
+    'Unlike select, dropdown uses ListItem (template/value) and supports custom height and search.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.dropdown('country', {

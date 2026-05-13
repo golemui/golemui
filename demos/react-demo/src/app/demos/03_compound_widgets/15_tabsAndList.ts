@@ -4,8 +4,7 @@ import { gui } from '@golemui/gui-shared';
 export const tabsAndListDemo: FormDemoDefinition = {
   title: '15. Tabs & List',
   category: 'Ch3: Compound Widgets',
-  description:
-    'Tabbed layouts with nested content and list inputs with item templates.',
+  description: 'Tabbed layouts with nested content and list inputs with item templates.',
   formDef: () => [
     gui.layouts.tabs([
       {

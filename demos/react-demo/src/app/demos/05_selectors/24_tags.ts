@@ -5,9 +5,9 @@ export const tagsDemo: FormDemoDefinition = {
   title: '24. Tags',
   category: 'Ch5: Selectors',
   description:
-    'Tag fields in the structure, then target them with scoped selectors. '
-    + 'Tags are declared inline — either as tuple suffixes or as the third parameter on any factory. '
-    + 'gui.selectors.tag(name) narrows a selector to widgets carrying that tag.',
+    'Tag fields in the structure, then target them with scoped selectors. ' +
+    'Tags are declared inline — either as tuple suffixes or as the third parameter on any factory. ' +
+    'gui.selectors.tag(name) narrows a selector to widgets carrying that tag.',
   formDef: () => [
     gui.inputs.textInput('firstName', {}, ['required']),
     gui.inputs.textInput('lastName', {}, ['required']),

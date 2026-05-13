@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { LayoutWidget, NonFunctionWidget } from '@golemui/core';
-import {
-  _guiAccordion,
-    _gslAccordions,
-  _gslAccordionByUid,
-} from '../index';
+import { _guiAccordion, _gslAccordions, _gslAccordionByUid } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiTextInput, _guiNumberInput } from '../index';
 
@@ -37,9 +33,9 @@ describe('DX Pipeline — Accordion', () => {
     const result = processDx(
       _guiAccordion(
         [
-        { label: 'First', children: [_guiTextInput('a')] },
-        { label: 'Second', children: [_guiTextInput('b')] },
-      ],
+          { label: 'First', children: [_guiTextInput('a')] },
+          { label: 'Second', children: [_guiTextInput('b')] },
+        ],
         {
           singleOpen: true,
           defaultOpen: { first: true },
@@ -91,12 +87,7 @@ describe('DX Pipeline — Accordion', () => {
 
   it('applies GSL broad selector override', () => {
     const result = processDx(
-      _guiAccordion(
-        [
-        { label: 'Info', children: [_guiTextInput('x')] },
-      ],
-        { renderMode: 'all' },
-      ),
+      _guiAccordion([{ label: 'Info', children: [_guiTextInput('x')] }], { renderMode: 'all' }),
       [_gslAccordions({ override: { renderMode: 'activeOnly' } })],
     );
     const w = getStaticChild(result, 0) as {
@@ -108,12 +99,10 @@ describe('DX Pipeline — Accordion', () => {
 
   it('applies GSL byId selector override', () => {
     const result = processDx(
-      _guiAccordion(
-        [
-        { label: 'Info', children: [_guiTextInput('x')] },
-      ],
-        { uid: 'my-accordion', singleOpen: false },
-      ),
+      _guiAccordion([{ label: 'Info', children: [_guiTextInput('x')] }], {
+        uid: 'my-accordion',
+        singleOpen: false,
+      }),
       [_gslAccordionByUid('my-accordion', { override: { singleOpen: true } })],
     );
     const w = getStaticChild(result, 0) as {
@@ -125,9 +114,7 @@ describe('DX Pipeline — Accordion', () => {
 
   it('supports dynamic callback producing a FunctionWidget', () => {
     const result = processDx(
-      _guiAccordion([
-        { label: 'Dynamic', children: [_guiTextInput('d')] },
-      ]),
+      _guiAccordion([{ label: 'Dynamic', children: [_guiTextInput('d')] }]),
       [
         _gslAccordions({
           override: () => () => ({

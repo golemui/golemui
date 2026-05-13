@@ -1,9 +1,6 @@
 import { GuiItemTypes } from '../../core/dx.domain';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import {
-  GuiInputsShortcut,
-  NumberDataInputDecorator,
-} from './inputs.domain';
+import { GuiInputsShortcut, NumberDataInputDecorator } from './inputs.domain';
 
 export function _guiNumberInput(path: string): GuiInputsShortcut;
 export function _guiNumberInput(

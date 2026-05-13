@@ -30,10 +30,7 @@ export type DxDefinitions = DxDefinitionItem | DxDefinitionItem[];
 
 export type FormEvents = (event: Core.FormEvent) => void;
 
-export interface DxResult<
-  S extends Core.UiState = never,
-  F extends Record<string, any> = any,
-> {
+export interface DxResult<S extends Core.UiState = never, F extends Record<string, any> = any> {
   form: Core.Form<S, F>;
   events?: FormEvents;
   dependencies?: Dependencies;
@@ -105,7 +102,4 @@ export type {
   LabelSensibleDefaultsConfig,
   PlaceholderSensibleDefaultsConfig,
 } from './core/sharedSensibleDefaults.service';
-export {
-  processAutoLabel,
-  processAutoPlaceholder,
-} from './core/sharedSensibleDefaults.service';
+export { processAutoLabel, processAutoPlaceholder } from './core/sharedSensibleDefaults.service';

@@ -5,10 +5,10 @@ export const tagsMultiValueDemo: FormDemoDefinition = {
   title: '46. tagsAnd / tagsOr',
   category: 'Ch10: Selector Grammar',
   description:
-    'Multi-value tag operators. tagsAnd matches widgets carrying ALL listed tags — the '
-    + 'apiKey field has both [admin, sensitive] and becomes readonly. tagsOr matches widgets '
-    + 'carrying ANY listed tag — both required and mandatory inputs get the asterisk treatment. '
-    + 'Single-value tag(x) is shorthand for tagsAnd([x]).',
+    'Multi-value tag operators. tagsAnd matches widgets carrying ALL listed tags — the ' +
+    'apiKey field has both [admin, sensitive] and becomes readonly. tagsOr matches widgets ' +
+    'carrying ANY listed tag — both required and mandatory inputs get the asterisk treatment. ' +
+    'Single-value tag(x) is shorthand for tagsAnd([x]).',
   formDef: () => [
     gui.inputs.textInput('publicNote', { label: 'Public note' }),
     gui.inputs.textInput('legalName', { label: 'Legal name' }, ['required']),

@@ -47,8 +47,7 @@ export function createListItemMapper(opt: unknown, { valueField }: ListProps<any
 
   // Resolve fields: default to 'value' if not provided
   const field = valueField ?? 'value';
-  const resolvedValueField =
-    Object.prototype.hasOwnProperty.call(obj, field) ? field : undefined;
+  const resolvedValueField = Object.prototype.hasOwnProperty.call(obj, field) ? field : undefined;
 
   if (!resolvedValueField) {
     throw new Error('No valueField exists on the object');

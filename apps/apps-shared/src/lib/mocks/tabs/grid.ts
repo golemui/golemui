@@ -34,7 +34,7 @@ export const grid = (uid: string): any => ({
           size: 4,
           validator: { type: 'string', required: true },
         },
-      ]
+      ],
     },
     {
       kind: 'layout',
@@ -87,7 +87,7 @@ export const grid = (uid: string): any => ({
           },
           validator: { type: 'boolean', required: true },
         },
-      ]
+      ],
     },
   ],
 });

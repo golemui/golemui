@@ -14,10 +14,7 @@ export type FreedomShoelaceSliderProps = {
 };
 
 @customElement('freedom-shoelace-slider')
-export class FreedomShoelaceSliderElement
-  extends LitElement
-  implements Core.WithWidget
-{
+export class FreedomShoelaceSliderElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<number>;
 
   @consume({ context: Lit.formContext })

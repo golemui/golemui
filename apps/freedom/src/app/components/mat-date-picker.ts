@@ -44,8 +44,7 @@ export class FreedomMatDatePickerElement extends LitElement implements Core.With
         .value=${td.value ?? ''}
         ?error=${td.touched && !!td.errors?.length}
         .errorText=${td.errors?.[0] ?? ''}
-        @input=${(e: Event) =>
-          this.adapter.valueChanged((e.target as HTMLInputElement).value)}
+        @input=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).value)}
         @blur=${() => this.adapter.onBlur()}
       ></md-filled-text-field>
     `;

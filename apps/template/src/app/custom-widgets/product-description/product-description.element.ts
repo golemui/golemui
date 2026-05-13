@@ -44,9 +44,7 @@ export class ProductDescriptionElement extends LitElement implements Core.WithWi
 
     return html`
       <div class="product-description__widget" id=${this.widget.uid}>
-        ${img
-          ? html`<img class="product-description__image" src=${img} alt="Product" />`
-          : null}
+        ${img ? html`<img class="product-description__image" src=${img} alt="Product" />` : null}
         ${description
           ? html`<gui-markdown-text
               .md=${description}

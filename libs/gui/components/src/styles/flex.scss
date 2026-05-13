@@ -13,10 +13,18 @@
       min-width: 0;
       height: 100%;
 
-      &--row { flex-direction: row; }
-      &--row-reverse { flex-direction: row-reverse; }
-      &--column { flex-direction: column; }
-      &--column-reverse { flex-direction: column-reverse; }
+      &--row {
+        flex-direction: row;
+      }
+      &--row-reverse {
+        flex-direction: row-reverse;
+      }
+      &--column {
+        flex-direction: column;
+      }
+      &--column-reverse {
+        flex-direction: column-reverse;
+      }
 
       &--row,
       &--row-reverse {

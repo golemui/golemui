@@ -9,11 +9,8 @@ import { GslLeafSelector } from '../../core/dx.domain';
  * rather than base property overrides. Returns an array of leaves; spread
  * into the `formSelectors` array since `_gslRoot` is gone.
  */
-export function _gslStates(
-  stateName: string,
-  ...children: GslLeafSelector[]
-): GslLeafSelector[] {
-  return children.map(child => ({
+export function _gslStates(stateName: string, ...children: GslLeafSelector[]): GslLeafSelector[] {
+  return children.map((child) => ({
     ...child,
     targetState: stateName,
   }));

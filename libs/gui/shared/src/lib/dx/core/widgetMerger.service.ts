@@ -1,24 +1,16 @@
 import { FunctionWidgetParams } from '@golemui/core';
-import {
-  GslItemType,
-  MergeResult,
-  ResolvedSelectors,
-  RuntimeFunction,
-} from './dx.domain';
+import { GslItemType, MergeResult, ResolvedSelectors, RuntimeFunction } from './dx.domain';
 import { objectUtils, ObjectUtils } from '../../utils/objectUtils.service';
 import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
 
 export class WidgetMerger {
-  constructor(
-    private readonly objectUtils: ObjectUtils,
-  ) {}
+  constructor(private readonly objectUtils: ObjectUtils) {}
 
   merge(
     baseDef: Record<string, any> | RuntimeFunction,
     itemType: GslItemType,
     resolved: ResolvedSelectors,
   ): MergeResult {
-
     let accumulated: Record<string, any> = {};
     let promotedToRuntime: RuntimeFunction | null = null;
 
@@ -33,15 +25,15 @@ export class WidgetMerger {
     // ── Apply decorators from lowest to highest priority ──
     for (const decorator of allDecorators) {
       if (promotedToRuntime != null) {
-        promotedToRuntime = this.composeRuntimeFunctions(
-          promotedToRuntime,
-          decorator,
-        );
+        promotedToRuntime = this.composeRuntimeFunctions(promotedToRuntime, decorator);
         continue;
       }
 
       if (typeof decorator === 'function') {
-        const result = decorator({ ...accumulated, ...(typeof baseDef === 'function' ? {} : baseDef) });
+        const result = decorator({
+          ...accumulated,
+          ...(typeof baseDef === 'function' ? {} : baseDef),
+        });
 
         if (typeof result === 'function') {
           promotedToRuntime = this.createPromotedFunction(
@@ -62,7 +54,10 @@ export class WidgetMerger {
 
     // ── If promoted to runtime, return dynamic ──
     if (promotedToRuntime != null) {
-      return { kind: 'dynamic', fn: this.wrapWithSensibleDefaults(promotedToRuntime, accumulated, itemType, resolved) };
+      return {
+        kind: 'dynamic',
+        fn: this.wrapWithSensibleDefaults(promotedToRuntime, accumulated, itemType, resolved),
+      };
     }
 
     // ── GSL decorators override inline _gui def for matching properties ──
@@ -82,7 +77,6 @@ export class WidgetMerger {
   private collectDecorators(
     resolved: ResolvedSelectors,
   ): (Record<string, any> | ((...args: any[]) => any))[] {
-
     const decorators: (Record<string, any> | ((...args: any[]) => any))[] = [];
 
     for (const leaf of resolved.leafSelectors) {

@@ -126,15 +126,15 @@ const FRAGMENT_KEYS: FragmentKey[] = ['profile', 'address', 'preferences', 'paym
 
 @customElement('gui-serializable')
 export class SerializableElement extends LitElement {
-  @state() private declare added: FragmentKey[];
-  @state() private declare activeTab: Tab;
-  @state() private declare savedAt: number | null;
-  @state() private declare loadedAt: number | null;
-  @state() private declare draggingKey: FragmentKey | null;
-  @state() private declare dragOverIdx: number | null;
-  @state() private declare codeSeq: number;
-  @state() private declare formData: Partial<Record<FragmentKey, Record<string, unknown>>>;
-  @state() private declare progress: {
+  @state() declare private added: FragmentKey[];
+  @state() declare private activeTab: Tab;
+  @state() declare private savedAt: number | null;
+  @state() declare private loadedAt: number | null;
+  @state() declare private draggingKey: FragmentKey | null;
+  @state() declare private dragOverIdx: number | null;
+  @state() declare private codeSeq: number;
+  @state() declare private formData: Partial<Record<FragmentKey, Record<string, unknown>>>;
+  @state() declare private progress: {
     changed: boolean;
     saved: boolean;
     changedAfter: boolean;
@@ -285,9 +285,7 @@ export class SerializableElement extends LitElement {
         this.added = parsed.filter((k): k is FragmentKey => FRAGMENT_KEYS.includes(k));
         this.formData = {};
       } else {
-        this.added = parsed.added.filter((k): k is FragmentKey =>
-          FRAGMENT_KEYS.includes(k),
-        );
+        this.added = parsed.added.filter((k): k is FragmentKey => FRAGMENT_KEYS.includes(k));
         this.formData = parsed.formData ?? {};
       }
       this.loadedAt = Date.now();
@@ -310,52 +308,53 @@ export class SerializableElement extends LitElement {
     }
     return html`<div class="srz-sections">
       ${this.added.map(
-        (key, i) => html`<section
-          class="srz-section ${this.draggingKey === key ? 'is-dragging' : ''} ${this
-            .dragOverIdx === i && this.draggingKey !== null && this.draggingKey !== key
-            ? 'is-drop-target'
-            : ''}"
-          data-fragment=${key}
-          @dragover=${(e: DragEvent) => this.onDragOver(e, i)}
-          @drop=${(e: DragEvent) => this.onDrop(e, i)}
-          @dragleave=${() => {
-            if (this.dragOverIdx === i) this.dragOverIdx = null;
-          }}
-        >
-          <header
-            class="srz-section__header"
-            draggable="true"
-            @dragstart=${(e: DragEvent) => this.onDragStart(e, key)}
-            @dragend=${() => this.onDragEnd()}
+        (key, i) =>
+          html`<section
+            class="srz-section ${this.draggingKey === key ? 'is-dragging' : ''} ${this
+              .dragOverIdx === i &&
+            this.draggingKey !== null &&
+            this.draggingKey !== key
+              ? 'is-drop-target'
+              : ''}"
+            data-fragment=${key}
+            @dragover=${(e: DragEvent) => this.onDragOver(e, i)}
+            @drop=${(e: DragEvent) => this.onDrop(e, i)}
+            @dragleave=${() => {
+              if (this.dragOverIdx === i) this.dragOverIdx = null;
+            }}
           >
-            <span class="srz-section__handle" aria-hidden="true" title="Drag to reorder">⋮⋮</span>
-            <span class="srz-section__index">${i + 1}</span>
-            <span class="srz-section__title">${FRAGMENTS[key].label}</span>
-            <button
-              type="button"
-              class="srz-section__remove"
-              aria-label=${`Remove ${FRAGMENTS[key].label} section`}
-              title="Remove section"
-              @click=${(e: Event) => {
-                e.stopPropagation();
-                this.removeFragment(key);
-              }}
-              @mousedown=${(e: Event) => e.stopPropagation()}
+            <header
+              class="srz-section__header"
+              draggable="true"
+              @dragstart=${(e: DragEvent) => this.onDragStart(e, key)}
+              @dragend=${() => this.onDragEnd()}
             >
-              ×
-            </button>
-          </header>
-          ${keyed(
-            `${key}-${i}`,
-            html`<gui-form
-              .formDef=${FRAGMENTS[key].build(({ data }) =>
-                this.handleFragmentChange(key, data),
-              )}
-              .data=${this.formData[key] ?? {}}
-              .formConfig=${{ suppressAutomaticSubmit: true }}
-            ></gui-form>`,
-          )}
-        </section>`,
+              <span class="srz-section__handle" aria-hidden="true" title="Drag to reorder">⋮⋮</span>
+              <span class="srz-section__index">${i + 1}</span>
+              <span class="srz-section__title">${FRAGMENTS[key].label}</span>
+              <button
+                type="button"
+                class="srz-section__remove"
+                aria-label=${`Remove ${FRAGMENTS[key].label} section`}
+                title="Remove section"
+                @click=${(e: Event) => {
+                  e.stopPropagation();
+                  this.removeFragment(key);
+                }}
+                @mousedown=${(e: Event) => e.stopPropagation()}
+              >
+                ×
+              </button>
+            </header>
+            ${keyed(
+              `${key}-${i}`,
+              html`<gui-form
+                .formDef=${FRAGMENTS[key].build(({ data }) => this.handleFragmentChange(key, data))}
+                .data=${this.formData[key] ?? {}}
+                .formConfig=${{ suppressAutomaticSubmit: true }}
+              ></gui-form>`,
+            )}
+          </section>`,
       )}
     </div>`;
   }
@@ -388,9 +387,7 @@ export class SerializableElement extends LitElement {
     const hasContent = this.added.length > 0;
 
     // The "active" step is the first non-done one
-    const stepStatus = (
-      i: 1 | 2 | 3 | 4,
-    ): 'done' | 'active' | 'pending' => {
+    const stepStatus = (i: 1 | 2 | 3 | 4): 'done' | 'active' | 'pending' => {
       const done = [p.changed, p.saved, p.changedAfter, p.restored];
       if (done[i - 1]) return 'done';
       const firstActive = done.findIndex((d) => !d) + 1;
@@ -400,7 +397,10 @@ export class SerializableElement extends LitElement {
     const renderCheck = (status: 'done' | 'active' | 'pending') =>
       status === 'done'
         ? html`<span class="ds-step__check is-done" aria-hidden="true">✓</span>`
-        : html`<span class="ds-step__check ${status === 'active' ? 'is-active' : ''}" aria-hidden="true"></span>`;
+        : html`<span
+            class="ds-step__check ${status === 'active' ? 'is-active' : ''}"
+            aria-hidden="true"
+          ></span>`;
 
     return html`<nav class="ds-stepper" aria-label="Demo flow">
       <ol class="ds-stepper__list">
@@ -430,7 +430,9 @@ export class SerializableElement extends LitElement {
         <li class="ds-step ds-step--${stepStatus(3)}">
           ${renderCheck(stepStatus(3))}
           <div class="ds-step__body">
-            <span class="ds-step__label"><span class="ds-step__num">3</span> Reset or change further</span>
+            <span class="ds-step__label"
+              ><span class="ds-step__num">3</span> Reset or change further</span
+            >
             <button
               type="button"
               class="ds-step__action ds-step__action--ghost"
@@ -505,10 +507,7 @@ export class SerializableElement extends LitElement {
   private renderDsl(): string {
     if (this.added.length === 0) return '// pick a fragment to start';
     const body = this.added
-      .map(
-        (k) =>
-          `  // ${FRAGMENTS[k].label}\n  ${FRAGMENTS[k].dsl.split('\n').join('\n  ')}`,
-      )
+      .map((k) => `  // ${FRAGMENTS[k].label}\n  ${FRAGMENTS[k].dsl.split('\n').join('\n  ')}`)
       .join('\n\n');
     return `const formDef = [\n${body}\n];`;
   }
@@ -528,9 +527,9 @@ export class SerializableElement extends LitElement {
             </header>
             ${keyed(
               this.codeSeq,
-              html`<pre class="ds-code"><code>${
-                this.activeTab === 'dsl' ? this.renderDsl() : this.renderJson()
-              }</code></pre>`,
+              html`<pre class="ds-code"><code>${this.activeTab === 'dsl'
+                ? this.renderDsl()
+                : this.renderJson()}</code></pre>`,
             )}
           </div>
           <div class="ds-pane ds-pane--bottom">

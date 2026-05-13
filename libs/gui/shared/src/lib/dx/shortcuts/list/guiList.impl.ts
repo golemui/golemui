@@ -3,15 +3,8 @@ import type { GuiListShortcut, ListDecorator, ListEntry } from './list.domain';
 
 type ListFactoryProps = Omit<ListDecorator, 'type'>;
 
-export function _guiList(
-  path: string,
-  props: ListFactoryProps,
-): GuiListShortcut;
-export function _guiList(
-  path: string,
-  props: ListFactoryProps,
-  tags: string[],
-): GuiListShortcut;
+export function _guiList(path: string, props: ListFactoryProps): GuiListShortcut;
+export function _guiList(path: string, props: ListFactoryProps, tags: string[]): GuiListShortcut;
 export function _guiList(
   path: string,
   callback: (params: DxRuntimeParams) => ListFactoryProps,

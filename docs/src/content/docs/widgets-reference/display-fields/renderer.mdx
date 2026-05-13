@@ -15,7 +15,10 @@ import { html } from 'lit';
 
 const formDef = [
   gui.displays.display(
-    (api) => html`<h1>Client Name: ${api.$form?.details?.clientName || 'unknown'}</h1>`,
+    (api) =>
+      html`<h1>
+        Client Name: ${api.$form?.details?.clientName || 'unknown'}
+      </h1>`,
   ),
   gui.inputs.textInput('details.clientName', {
     label: 'Client Name',
@@ -56,6 +59,7 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
       ),
     ];
     ```
+
   </Fragment>
   <Fragment slot="angular">
     Renderer widgets in Angular accept a callback that returns an Angular template ref or a string of HTML. Most teams prefer a [custom display widget](/extending/widgets/display-widget/) for non-trivial Angular templates.
@@ -76,6 +80,7 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
       ),
     ];
     ```
+
   </Fragment>
 </IntegrationTabs>
 

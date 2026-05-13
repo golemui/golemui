@@ -1,8 +1,5 @@
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import {
-  GuiCalendarShortcut,
-  CalendarDecorator,
-} from './calendar.domain';
+import { GuiCalendarShortcut, CalendarDecorator } from './calendar.domain';
 
 export function _guiCalendar(path: string): GuiCalendarShortcut;
 export function _guiCalendar(
@@ -28,7 +25,11 @@ export function _guiCalendar(
 ): GuiCalendarShortcut {
   if (typeof propsOrCallback === 'function') {
     const callback = propsOrCallback;
-    const def = (params: DxRuntimeParams) => ({ type: 'calendar' as const, path, ...callback(params) });
+    const def = (params: DxRuntimeParams) => ({
+      type: 'calendar' as const,
+      path,
+      ...callback(params),
+    });
     return {
       items: [def],
       type: 'ITEMS',

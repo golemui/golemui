@@ -29,9 +29,9 @@ export const onChangeCascadingSelectsDemo: FormDemoDefinition = {
   title: '27. onChange — Cascading Selects',
   category: 'Ch6: Events',
   description:
-    'Selecting a country populates the subregion dropdown with matching regions. '
-    + 'The onChange callback on the country select reads the selected value and '
-    + 'calls event.update to update the subregion options dynamically.',
+    'Selecting a country populates the subregion dropdown with matching regions. ' +
+    'The onChange callback on the country select reads the selected value and ' +
+    'calls event.update to update the subregion options dynamically.',
   formDef: () =>
     gui.layouts.horizontalFlex([
       gui.inputs.select('country', {

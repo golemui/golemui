@@ -1,7 +1,8 @@
 @use '../../../libs/gui/components/src/styles/index';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-html, body {
+html,
+body {
   background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }

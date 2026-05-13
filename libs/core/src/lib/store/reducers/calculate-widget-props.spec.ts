@@ -765,9 +765,9 @@ describe('calculateWidgetProps', () => {
       const second = run(first);
 
       expect(second.calculatedWidgets['l']).not.toBe(prevDerived);
-      expect(
-        (second.calculatedWidgets['l'].current as LayoutWidget<string>).children,
-      ).toHaveLength(1);
+      expect((second.calculatedWidgets['l'].current as LayoutWidget<string>).children).toHaveLength(
+        1,
+      );
     });
   });
 
