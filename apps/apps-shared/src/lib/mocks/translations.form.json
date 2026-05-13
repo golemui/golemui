@@ -1,9 +1,49 @@
 {
   "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
   "states": {
-    "remote": "$form.details.isRemote === true"
+    "remote": "$form.details.isRemote === true",
+    "systemMessage": "$meta.systemMessage !== undefined",
+    "offline": "$meta.connectionStatus !== \"online\""
   },
   "form": [
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
+        "text": {
+          "key": "consultation.header.onsite"
+        },
+        "text.remote": {
+          "key": "consultation.header.remote"
+        }
+      }
+    },
+
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Your connection status is: {{$meta.connectionStatus}}",
+        "level": "success",
+        "level.offline": "error"
+      }
+    },
+
+    {
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": {
+          "key": "consultation.system.message",
+          "params": {
+            "message": "$meta.systemMessage"
+          }
+        },
+        "level": "warning"
+      },
+      "include": { "in": ["systemMessage"] }
+    },
+
     {
       "kind": "input",
       "type": "toggle",
@@ -79,15 +119,32 @@
     {
       "kind": "action",
       "type": "button",
-      "props": {
-        "variant": "filled"
-      },
       "on": {
         "click": "handleSubmit"
       },
       "label": {
         "key": "consultation.btn.submit",
         "default": "Confirm Booking"
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "on": {
+        "click": "handleSubmit"
+      },
+      "label": {
+        "key": "consultation.btn.submit",
+        "default": "Confirm Booking"
+      },
+      "props": {
+        "title": {
+          "key": "consultation.btn.tooltip",
+          "default": "Submit booking for {{name}}",
+          "params": {
+            "name": "$form.details.clientName"
+          }
+        }
       }
     }
   ]

@@ -12,7 +12,5 @@ export * from './selects';
 export * from './shipping-manifest';
 export * from './signin';
 export * from './software-issue-management';
-export * from './tests';
 export * from './tiny';
 export * from './translations';
-export * from './users';

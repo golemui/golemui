@@ -1,42 +1,7 @@
-import { golemForm } from '@golemui/gui-shared';
+import { Form } from '@golemui/core';
 import { Example } from './types';
 
 const data = {};
-
-const form = golemForm().create({
-  form: [
-    {
-      uid: 'login-flex',
-      kind: 'layout',
-      type: 'grid',
-      props: {
-        direction: 'column',
-      },
-      children: [
-        {
-          uid: 'login-email',
-          kind: 'input',
-          type: 'textinput',
-          path: 'login.email',
-          props: { placeholder: 'example@domain.com' },
-        },
-        {
-          uid: 'login-password',
-          kind: 'input',
-          type: 'password',
-          path: 'login.password',
-          props: { placeholder: 'Enter your password...' },
-        },
-        {
-          uid: 'login-submit',
-          kind: 'action',
-          type: 'button',
-          label: 'Login',
-        },
-      ],
-    },
-  ],
-});
 
 /**
  * i18next Resource Bundle
@@ -46,6 +11,10 @@ const resources = {};
 
 export const tiny: Example = {
   data,
-  form,
+  form: async () => {
+    const baseUrl = new URL('/assets/mocks/tiny.form.json', window.location.href).href;
+    const json = await fetch(baseUrl).then((r) => r.json());
+    return json as unknown as Form<string>;
+  },
   resources,
 };
