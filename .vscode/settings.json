@@ -1,0 +1,5 @@
+{
+  "json.schemaDownload.trustedDomains": {
+    "https://golemui.com/schemas/": true
+  }
+}
