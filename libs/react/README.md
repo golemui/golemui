@@ -1,7 +1,20 @@
-# react
+# @golemui/react
 
-This library was generated with [Nx](https://nx.dev).
+[Golem UI](https://golemui.com): the declarative form engine.
 
-## Running unit tests
+## Install
 
-Run `nx test react` to execute the unit tests via [Vitest](https://vitest.dev/).
+```bash
+npm install @golemui/react
+```
+
+## Documentation
+
+- Website: https://golemui.com
+- Repository: https://github.com/golemui/golemui
+- Source: https://github.com/golemui/golemui/tree/main/libs/react
+- Issues: https://github.com/golemui/golemui/issues
+
+## License
+
+MIT

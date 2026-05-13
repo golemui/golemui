@@ -1,11 +1,20 @@
-# core
+# @golemui/core
 
-This library was generated with [Nx](https://nx.dev).
+[Golem UI](https://golemui.com): the declarative form engine.
 
-## Building
+## Install
 
-Run `nx build core` to build the library.
+```bash
+npm install @golemui/core
+```
 
-## Running unit tests
+## Documentation
 
-Run `nx test core` to execute the unit tests via [Vitest](https://vitest.dev/).
+- Website: https://golemui.com
+- Repository: https://github.com/golemui/golemui
+- Source: https://github.com/golemui/golemui/tree/main/libs/core
+- Issues: https://github.com/golemui/golemui/issues
+
+## License
+
+MIT

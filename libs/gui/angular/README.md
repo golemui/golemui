@@ -1,7 +1,20 @@
-# gui-angular
+# @golemui/gui-angular
 
-This library was generated with [Nx](https://nx.dev).
+[Golem UI](https://golemui.com): the declarative form engine.
 
-## Running unit tests
+## Install
 
-Run `nx test gui-angular` to execute the unit tests.
+```bash
+npm install @golemui/gui-angular
+```
+
+## Documentation
+
+- Website: https://golemui.com
+- Repository: https://github.com/golemui/golemui
+- Source: https://github.com/golemui/golemui/tree/main/libs/gui/angular
+- Issues: https://github.com/golemui/golemui/issues
+
+## License
+
+MIT

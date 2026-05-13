@@ -1,23 +1,25 @@
 name: Release
 
-# TODO: Re-enable automatic triggers when ready to go public with provenance
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_run:
-#     workflows: ['CI']
-#     types:
-#       - completed
 on:
   workflow_dispatch:
+    inputs:
+      release-type:
+        description: Release type
+        type: choice
+        required: true
+        default: stable
+        options:
+          - stable
+          - rc
+      dry-run:
+        description: Dry run (skip publish and tag push)
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   release:
-    # if: >
-    #   github.event.workflow_run.conclusion == 'success' &&
-    #   github.event.workflow_run.head_branch == 'main'
-    name: Nx Release & Publish
+    name: Nx Release (${{ inputs.release-type }})
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,10 +27,24 @@ jobs:
       id-token: write
 
     steps:
+      - name: Mint GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Get GitHub App user ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,20 +55,17 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Configure git remote with PAT
+      - name: Configure git user
         run: |
-          git remote set-url origin https://${{ github.actor }}:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }}.git
-
-      - name: config git user
-        run: |
-          git config --global user.name "Raúl Jiménez"
-          git config --global user.email "elecash@gmail.com"
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
 
       - name: Release to Github and NPM
         run: |
           export NODE_OPTIONS="--max-old-space-size=4096 --trace-warnings"
-          # We need more listeners here
-          node -e "require('events').EventEmitter.defaultMaxListeners = 20" && npm run release
+          npm run release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NPM_CONFIG_PROVENANCE: true
+          RELEASE_TYPE: ${{ inputs.release-type }}
+          DRY_RUN: ${{ inputs.dry-run }}
