@@ -150,6 +150,9 @@
     "baseWidget": {
       "type": "object",
       "properties": {
+        "$schema": {
+          "type": "string"
+        },
         "uid": {
           "$ref": "#/$defs/uid"
         },
