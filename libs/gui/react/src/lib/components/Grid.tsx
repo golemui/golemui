@@ -14,7 +14,11 @@ export function Grid(widgetInstance: Core.WithWidget) {
     return children.map((child) => {
       const widget = child as Core.NonFunctionWidget<string>;
       return (
-        <div key={widget.uid} className="gui-grid__cell" style={{ gridColumn: `span ${widget.size || 1}` }}>
+        <div
+          key={widget.uid}
+          className="gui-grid__cell"
+          style={{ gridColumn: `span ${widget.size || 1}` }}
+        >
           <WidgetRenderer widget={widget} />
         </div>
       );
@@ -23,7 +27,9 @@ export function Grid(widgetInstance: Core.WithWidget) {
 
   const direction = isRow ? 'gui-grid__widget--row' : 'gui-grid__widget--column';
   const align = `gui-grid__widget--align-${(templateData.align as string) ?? 'stretch'}`;
-  const justify = templateData.justify ? `gui-grid__widget--justify-${templateData.justify as string}` : '';
+  const justify = templateData.justify
+    ? `gui-grid__widget--justify-${templateData.justify as string}`
+    : '';
 
   const style: React.CSSProperties = {};
   if (templateData.columnGap !== undefined) style.columnGap = `${templateData.columnGap}px`;
@@ -31,7 +37,11 @@ export function Grid(widgetInstance: Core.WithWidget) {
 
   return (
     <div className="gui-grid gui-field" style={{ flex: templateData.size }}>
-      <div className={`gui-grid__widget ${direction} ${isRow && (templateData.autoFit ?? true) ? 'gui-grid__widget--row--auto-fit' : ''} ${align} ${justify}`} style={style} id={uid}>
+      <div
+        className={`gui-grid__widget ${direction} ${isRow && (templateData.autoFit ?? true) ? 'gui-grid__widget--row--auto-fit' : ''} ${align} ${justify}`}
+        style={style}
+        id={uid}
+      >
         {renderWidgets()}
       </div>
     </div>

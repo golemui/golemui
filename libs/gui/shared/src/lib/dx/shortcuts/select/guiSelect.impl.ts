@@ -3,10 +3,7 @@ import type { GuiSelectShortcut, SelectDecorator, SelectEntry } from './select.d
 
 type SelectFactoryProps = Omit<SelectDecorator, 'type'>;
 
-export function _guiSelect(
-  path: string,
-  props: SelectFactoryProps,
-): GuiSelectShortcut;
+export function _guiSelect(path: string, props: SelectFactoryProps): GuiSelectShortcut;
 export function _guiSelect(
   path: string,
   props: SelectFactoryProps,

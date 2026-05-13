@@ -16,9 +16,9 @@ export const onFilterDropdownDemo: FormDemoDefinition = {
   title: '29. onFilter — Dropdown',
   category: 'Ch6: Events',
   description:
-    'Typing in the dropdown filters the city list. The onFilter callback receives '
-    + 'the search term via event.detail and returns filtered options via event.update. '
-    + 'Try typing "par" to see only Paris and Paraná.',
+    'Typing in the dropdown filters the city list. The onFilter callback receives ' +
+    'the search term via event.detail and returns filtered options via event.update. ' +
+    'Try typing "par" to see only Paris and Paraná.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.dropdown('city', {

@@ -12,7 +12,11 @@ export const gslStatesDemo: FormDemoDefinition = {
     'overrides which target individual widgets.',
   formDef: () => [
     gui.inputs.checkbox('isLocked', { label: 'Lock form' }),
-    gui.layouts.horizontalFlex([gui.inputs.textInput('firstName'), gui.inputs.textInput('lastName'), gui.inputs.textInput('email')]),
+    gui.layouts.horizontalFlex([
+      gui.inputs.textInput('firstName'),
+      gui.inputs.textInput('lastName'),
+      gui.inputs.textInput('email'),
+    ]),
     gui.actions.button({ label: 'Submit' }),
   ],
   formSelectors: () => {

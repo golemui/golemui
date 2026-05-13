@@ -81,16 +81,16 @@ A small helper builds the address fields, and a `gui.layouts.tabs(...)` separate
 const addressBlock = (kind: 'delivery' | 'invoice') => [
   gui.inputs.textInput(`${kind}.street`, { label: 'Street' }),
   gui.layouts.flex([
-    gui.inputs.textInput(`${kind}.city`,  { label: 'City' }),
-    gui.inputs.dropdown(`${kind}.state`,  { label: 'State' }, ['us-state']),
-    gui.inputs.textInput(`${kind}.zip`,   { label: 'ZIP' }),
+    gui.inputs.textInput(`${kind}.city`, { label: 'City' }),
+    gui.inputs.dropdown(`${kind}.state`, { label: 'State' }, ['us-state']),
+    gui.inputs.textInput(`${kind}.zip`, { label: 'ZIP' }),
   ]),
 ];
 
 const form = [
   gui.layouts.tabs([
     { label: 'Delivery address', children: addressBlock('delivery') },
-    { label: 'Invoice address',  children: addressBlock('invoice') },
+    { label: 'Invoice address', children: addressBlock('invoice') },
   ]),
 ];
 

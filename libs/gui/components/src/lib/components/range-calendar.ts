@@ -338,11 +338,13 @@ export class GuiRangeCalendar extends AbstractCalendar {
     if (pills.length === 0) return nothing;
 
     return html`
-      <div class=${classMap({
-        'gui-range-calendar__pills-wrapper': true,
-        'gui-range-calendar--start-shadow': !this._isStartVisible,
-        'gui-range-calendar--end-shadow': !this._isEndVisible,
-      })}>
+      <div
+        class=${classMap({
+          'gui-range-calendar__pills-wrapper': true,
+          'gui-range-calendar--start-shadow': !this._isStartVisible,
+          'gui-range-calendar--end-shadow': !this._isEndVisible,
+        })}
+      >
         <div class="gui-range-calendar__pills" role="list">
           <span class="gui-sentinel gui-sentinel__start"></span>
           ${repeat(
@@ -376,7 +378,10 @@ export class GuiRangeCalendar extends AbstractCalendar {
           class="gui-range-calendar__pill-remove"
           tabindex="-1"
           ?disabled=${this.disabled || this.readOnly}
-          @click=${(e: Event) => { e.stopPropagation(); this.removePill(index); }}
+          @click=${(e: Event) => {
+            e.stopPropagation();
+            this.removePill(index);
+          }}
         >
           &times;
         </button>
@@ -435,7 +440,9 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
-      const pills = this.querySelectorAll<HTMLElement>('.gui-range-calendar__pills .gui-range-calendar__pill');
+      const pills = this.querySelectorAll<HTMLElement>(
+        '.gui-range-calendar__pills .gui-range-calendar__pill',
+      );
       const newIndex = e.key === 'ArrowLeft' ? index - 1 : index + 1;
       if (newIndex >= 0 && newIndex < pills.length) {
         pills[newIndex].focus();
@@ -445,7 +452,10 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
   private navigateToDate(isoDate: string) {
     const date = new Date(isoDate);
-    if (!isNaN(date.getTime()) && !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)) {
+    if (
+      !isNaN(date.getTime()) &&
+      !isDateInVisibleMonths(date, this._currentDate, this.numberOfMonths ?? 1)
+    ) {
       this._currentDate = date;
     }
   }

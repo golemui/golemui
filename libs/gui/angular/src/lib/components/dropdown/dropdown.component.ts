@@ -71,7 +71,8 @@ export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
 
   protected selectedItemValue = computed(() => {
     const data = this.adapter.templateData();
-    const isObject = this.selectedItem()?.template !== null && typeof this.selectedItem()?.template === 'object';
+    const isObject =
+      this.selectedItem()?.template !== null && typeof this.selectedItem()?.template === 'object';
     const referenceField = isObject ? (data.labelField ?? 'label') : null;
 
     return referenceField

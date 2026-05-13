@@ -32,7 +32,9 @@
   font-size: 1.5rem;
   cursor: pointer;
   color: var(--gui-border-default);
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
   user-select: none;
   line-height: 1;
 

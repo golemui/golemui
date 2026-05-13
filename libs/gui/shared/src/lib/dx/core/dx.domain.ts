@@ -126,4 +126,3 @@ export interface ResolvedSelectors {
 export type MergeResult =
   | { kind: 'static'; def: Record<string, any> }
   | { kind: 'dynamic'; fn: RuntimeFunction };
-

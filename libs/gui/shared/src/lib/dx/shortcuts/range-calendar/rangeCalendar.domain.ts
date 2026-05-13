@@ -4,7 +4,9 @@ import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 export interface RangeCalendarDecorator
-  extends DxInputBase, DxCommonFields, Partial<RangeCalendarProps> {
+  extends DxInputBase,
+    DxCommonFields,
+    Partial<RangeCalendarProps> {
   type: 'rangeCalendar';
   validator?: Omit<ArrayValidator, 'type'>;
 }

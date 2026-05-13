@@ -46,7 +46,9 @@ gui-freedom {
   cursor: pointer;
   width: 100%;
   background: var(--fd-picker-base-bg);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 
   &__label {
     flex: 1;
@@ -141,7 +143,9 @@ gui-freedom {
   gap: 2px;
   animation: fd-picker-menu-in 0.14s ease-out;
 
-  li { display: block; }
+  li {
+    display: block;
+  }
 
   &__item {
     display: flex;
@@ -158,23 +162,37 @@ gui-freedom {
     cursor: pointer;
     text-align: left;
     color: var(--fd-picker-menu-text);
-    transition: background 0.12s ease, color 0.12s ease;
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
 
     &--golem {
       color: var(--fd-pick-golem);
-      &:hover { background: rgba(59, 130, 246, 0.18); color: var(--fd-pick-golem-hover); }
+      &:hover {
+        background: rgba(59, 130, 246, 0.18);
+        color: var(--fd-pick-golem-hover);
+      }
     }
     &--material {
       color: var(--fd-pick-material);
-      &:hover { background: rgba(16, 185, 129, 0.18); color: var(--fd-pick-material-hover); }
+      &:hover {
+        background: rgba(16, 185, 129, 0.18);
+        color: var(--fd-pick-material-hover);
+      }
     }
     &--shoelace {
       color: var(--fd-pick-shoelace);
-      &:hover { background: rgba(20, 184, 166, 0.18); color: var(--fd-pick-shoelace-hover); }
+      &:hover {
+        background: rgba(20, 184, 166, 0.18);
+        color: var(--fd-pick-shoelace-hover);
+      }
     }
     &--yours {
       color: var(--fd-pick-yours);
-      &:hover { background: rgba(168, 85, 247, 0.18); color: var(--fd-pick-yours-hover); }
+      &:hover {
+        background: rgba(168, 85, 247, 0.18);
+        color: var(--fd-pick-yours-hover);
+      }
     }
 
     &.is-current {
@@ -194,8 +212,14 @@ gui-freedom {
 }
 
 @keyframes fd-picker-menu-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ---------- Per-line schema flash (DSL view) ---------- */
@@ -215,18 +239,24 @@ gui-freedom {
 @keyframes fd-flash {
   0% {
     background: rgba(168, 85, 247, 0.7);
-    box-shadow: inset 3px 0 0 rgba(168, 85, 247, 1), 0 0 0 1px rgba(168, 85, 247, 0.5);
+    box-shadow:
+      inset 3px 0 0 rgba(168, 85, 247, 1),
+      0 0 0 1px rgba(168, 85, 247, 0.5);
   }
   15% {
     background: rgba(168, 85, 247, 0.6);
-    box-shadow: inset 3px 0 0 rgba(168, 85, 247, 1), 0 0 0 1px rgba(168, 85, 247, 0.4);
+    box-shadow:
+      inset 3px 0 0 rgba(168, 85, 247, 1),
+      0 0 0 1px rgba(168, 85, 247, 0.4);
   }
   60% {
     background: rgba(168, 85, 247, 0.18);
   }
   100% {
     background: transparent;
-    box-shadow: inset 3px 0 0 rgba(168, 85, 247, 0), 0 0 0 1px rgba(168, 85, 247, 0);
+    box-shadow:
+      inset 3px 0 0 rgba(168, 85, 247, 0),
+      0 0 0 1px rgba(168, 85, 247, 0);
   }
 }
 
@@ -352,7 +382,10 @@ md-filled-select md-select-option [slot='headline'] {
   background-color: var(--fd-yours-field-bg);
   color: var(--fd-yours-text);
   box-shadow: 4px 4px 0 0 var(--fd-yours-accent);
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+  transition:
+    transform 0.1s ease-out,
+    box-shadow 0.1s ease-out,
+    border-color 0.1s ease-out;
 
   &::placeholder {
     color: var(--fd-yours-placeholder);
@@ -389,7 +422,10 @@ md-filled-select md-select-option [slot='headline'] {
   background-color: var(--fd-yours-field-bg);
   color: var(--fd-yours-text);
   box-shadow: 4px 4px 0 0 var(--fd-yours-accent);
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+  transition:
+    transform 0.1s ease-out,
+    box-shadow 0.1s ease-out,
+    border-color 0.1s ease-out;
 
   &:focus {
     outline: none;
@@ -514,7 +550,10 @@ md-filled-select md-select-option [slot='headline'] {
   color: var(--fd-yours-text);
   box-shadow: 4px 4px 0 0 var(--fd-yours-accent);
   cursor: pointer;
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+  transition:
+    transform 0.1s ease-out,
+    box-shadow 0.1s ease-out,
+    border-color 0.1s ease-out;
 
   &:focus {
     outline: none;
@@ -580,7 +619,10 @@ md-filled-select md-select-option [slot='headline'] {
   font-size: 1rem;
   font-weight: 900;
   color: #ffffff;
-  transition: background-color 0.1s ease-out, transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  transition:
+    background-color 0.1s ease-out,
+    transform 0.1s ease-out,
+    box-shadow 0.1s ease-out;
 
   &.is-checked {
     background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
@@ -621,7 +663,9 @@ md-filled-select md-select-option [slot='headline'] {
   background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #a855f7 100%);
   color: #ffffff;
   box-shadow: 4px 4px 0 0 var(--fd-yours-accent);
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  transition:
+    transform 0.1s ease-out,
+    box-shadow 0.1s ease-out;
 
   &:hover:not(:disabled) {
     transform: translate(-1px, -1px);

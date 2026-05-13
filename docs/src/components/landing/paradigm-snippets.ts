@@ -489,9 +489,4 @@ export const signupForm = [
 ];`,
 };
 
-export const stackTabs: Snippet[] = [
-  reactRhf,
-  angularReactive,
-  litElement,
-  vanilla,
-];
+export const stackTabs: Snippet[] = [reactRhf, angularReactive, litElement, vanilla];

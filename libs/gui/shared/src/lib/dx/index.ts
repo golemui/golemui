@@ -48,7 +48,11 @@ export { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl
 // ─── GSL selectors (behavior) ───
 
 export { _gslInputs, _gslInputByUid } from './shortcuts/inputs/register';
-export { _gslTextInputs, _gslNumberInputs, _gslBooleanInputs } from './shortcuts/inputs/gslInputSubtypes';
+export {
+  _gslTextInputs,
+  _gslNumberInputs,
+  _gslBooleanInputs,
+} from './shortcuts/inputs/gslInputSubtypes';
 export { _gslCalendars, _gslCalendarByUid } from './shortcuts/calendar/register';
 export { _gslTextareas, _gslTextareaByUid } from './shortcuts/textarea/register';
 export { _gslPasswords, _gslPasswordByUid } from './shortcuts/password/register';
@@ -69,8 +73,14 @@ export { _gslDropdowns, _gslDropdownByUid } from './shortcuts/dropdown/register'
 export { _gslAccordions, _gslAccordionByUid } from './shortcuts/accordion/register';
 export { _gslRepeaters, _gslRepeaterByUid } from './shortcuts/repeater/register';
 export { _gslMarkdowns, _gslMarkdownByUid } from './shortcuts/markdown/register';
-export { _gslRangeDateInputs, _gslRangeDateInputByUid } from './shortcuts/range-date-input/register';
-export { _gslRangeDatePickers, _gslRangeDatePickerByUid } from './shortcuts/range-date-picker/register';
+export {
+  _gslRangeDateInputs,
+  _gslRangeDateInputByUid,
+} from './shortcuts/range-date-input/register';
+export {
+  _gslRangeDatePickers,
+  _gslRangeDatePickerByUid,
+} from './shortcuts/range-date-picker/register';
 export { _gslCustomDisplays, _gslCustomDisplayByUid } from './shortcuts/custom-display/register';
 export { _gslCustomInputs, _gslCustomInputByUid } from './shortcuts/custom-input/register';
 export { _gslCustomActions, _gslCustomActionByUid } from './shortcuts/custom-action/register';
@@ -89,7 +99,13 @@ export { _gslStates } from './shortcuts/scopes/gslStates.impl';
 // ─── Public types ───
 
 export type { DxRuntimeParams } from './core/dxUtilityTypes';
-export type { DxDefinitions, DxDefinitionItem, FormEvents, DxDisplayRenderFn, DxResult } from './formDef.domain';
+export type {
+  DxDefinitions,
+  DxDefinitionItem,
+  FormEvents,
+  DxDisplayRenderFn,
+  DxResult,
+} from './formDef.domain';
 export type {
   TextDataInputDecorator,
   NumberDataInputDecorator,
@@ -104,7 +120,10 @@ export type { CalendarDecorator, GslCalendarConfig } from './shortcuts/calendar/
 export type { TextareaDecorator, GslTextareaConfig } from './shortcuts/textarea/textarea.domain';
 export type { PasswordDecorator, GslPasswordConfig } from './shortcuts/password/password.domain';
 export type { CheckboxDecorator, GslCheckboxConfig } from './shortcuts/checkbox/checkbox.domain';
-export type { DateInputDecorator, GslDateInputConfig } from './shortcuts/date-input/dateInput.domain';
+export type {
+  DateInputDecorator,
+  GslDateInputConfig,
+} from './shortcuts/date-input/dateInput.domain';
 export type { CurrencyDecorator, GslCurrencyConfig } from './shortcuts/currency/currency.domain';
 export type {
   RangeCalendarDecorator,
@@ -121,17 +140,41 @@ export type { ActionDecorator, GslActionsConfig } from './shortcuts/actions/acti
 export type { LayoutDecorator, GslLayoutsConfig } from './shortcuts/layouts/layouts.domain';
 export type { DisplayDecorator, GslDisplaysConfig } from './shortcuts/display/display.domain';
 export type { AlertDecorator, GslAlertsConfig } from './shortcuts/alert/alert.domain';
-export type { DatePickerDecorator, GslDatePickerConfig } from './shortcuts/date-picker/datePicker.domain';
+export type {
+  DatePickerDecorator,
+  GslDatePickerConfig,
+} from './shortcuts/date-picker/datePicker.domain';
 export type { DropdownDecorator, GslDropdownConfig } from './shortcuts/dropdown/dropdown.domain';
-export type { AccordionDecorator, GslAccordionConfig } from './shortcuts/accordion/accordion.domain';
+export type {
+  AccordionDecorator,
+  GslAccordionConfig,
+} from './shortcuts/accordion/accordion.domain';
 export type { RepeaterDecorator, GslRepeaterConfig } from './shortcuts/repeater/repeater.domain';
 export type { MarkdownDecorator, GslMarkdownConfig } from './shortcuts/markdown/markdown.domain';
-export type { RangeDateInputDecorator, GslRangeDateInputConfig } from './shortcuts/range-date-input/rangeDateInput.domain';
-export type { RangeDatePickerDecorator, GslRangeDatePickerConfig } from './shortcuts/range-date-picker/rangeDatePicker.domain';
-export type { CustomDisplayDecorator, GslCustomDisplayConfig } from './shortcuts/custom-display/customDisplay.domain';
-export type { CustomInputDecorator, GslCustomInputConfig } from './shortcuts/custom-input/customInput.domain';
-export type { CustomActionDecorator, GslCustomActionConfig } from './shortcuts/custom-action/customAction.domain';
-export type { CustomLayoutDecorator, GslCustomLayoutConfig } from './shortcuts/custom-layout/customLayout.domain';
+export type {
+  RangeDateInputDecorator,
+  GslRangeDateInputConfig,
+} from './shortcuts/range-date-input/rangeDateInput.domain';
+export type {
+  RangeDatePickerDecorator,
+  GslRangeDatePickerConfig,
+} from './shortcuts/range-date-picker/rangeDatePicker.domain';
+export type {
+  CustomDisplayDecorator,
+  GslCustomDisplayConfig,
+} from './shortcuts/custom-display/customDisplay.domain';
+export type {
+  CustomInputDecorator,
+  GslCustomInputConfig,
+} from './shortcuts/custom-input/customInput.domain';
+export type {
+  CustomActionDecorator,
+  GslCustomActionConfig,
+} from './shortcuts/custom-action/customAction.domain';
+export type {
+  CustomLayoutDecorator,
+  GslCustomLayoutConfig,
+} from './shortcuts/custom-layout/customLayout.domain';
 export type { GslSelectorsInput, FormConfig, DxFormConfig } from './core/dx.domain';
 export { formDefs } from './dx.service';
 export { resolveFormInput, isDxDefinitions } from './resolveFormInput';
@@ -142,7 +185,20 @@ export type { FormInput, ResolvedFormInput } from './resolveFormInput';
 export { defineShortcutType } from './core/defineShortcutType';
 export type { ShortcutTypeSelectors } from './core/defineShortcutType';
 export { createGslSelector } from './core/dxUtilityTypes';
-export type { GslConfigBase, GslDecoratorCallback, DefOrCallback, GuiShortcutOf } from './core/dxUtilityTypes';
+export type {
+  GslConfigBase,
+  GslDecoratorCallback,
+  DefOrCallback,
+  GuiShortcutOf,
+} from './core/dxUtilityTypes';
 export { processAutoLabel, processAutoPlaceholder } from './core/sharedSensibleDefaults.service';
 export { extractWidgetProps } from './core/dxPropsHelper';
-export type { DxCommonFields, DxInputBase, DxActionBase, DxLayoutBase, DxDisplayBase, DxInternalFields, DxFormEvent } from './core/dxBase.types';
+export type {
+  DxCommonFields,
+  DxInputBase,
+  DxActionBase,
+  DxLayoutBase,
+  DxDisplayBase,
+  DxInternalFields,
+  DxFormEvent,
+} from './core/dxBase.types';

@@ -123,32 +123,42 @@ export class GuiRangeDateInput extends LitElement {
       ${this.label ? addLabel(this.uid as string, templateData, false, undefined, false) : nothing}
 
       <div class="gui-widget">
-        <div class="gui-range-date-input ${this.icon ? 'gui-range-date-input--icon' : ''}" role="group" aria-label=${this.label ?? 'Date range input'}>
-          ${this.icon ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>` : nothing}
+        <div
+          class="gui-range-date-input ${this.icon ? 'gui-range-date-input--icon' : ''}"
+          role="group"
+          aria-label=${this.label ?? 'Date range input'}
+        >
+          ${this.icon
+            ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
+            : nothing}
           ${pills.length > 0
-            ? html`<div class=${classMap({
-                'gui-range-date-input__pills-wrapper': true,
-                'gui-range-date-input--start-shadow': !this._isStartVisible,
-                'gui-range-date-input--end-shadow': !this._isEndVisible,
-              })}>
-                <div class="gui-range-date-input__pills" role="list">
-                  <span class="gui-sentinel gui-sentinel__start"></span>
-                  ${repeat(
-                    pills,
-                    (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-                    (pill, index) => this.renderPill(pill, index),
-                  )}
-                  <span class="gui-sentinel gui-sentinel__end"></span>
+            ? html`<div
+                  class=${classMap({
+                    'gui-range-date-input__pills-wrapper': true,
+                    'gui-range-date-input--start-shadow': !this._isStartVisible,
+                    'gui-range-date-input--end-shadow': !this._isEndVisible,
+                  })}
+                >
+                  <div class="gui-range-date-input__pills" role="list">
+                    <span class="gui-sentinel gui-sentinel__start"></span>
+                    ${repeat(
+                      pills,
+                      (pill) => `${pill.start}-${pill.end ?? pill.start}`,
+                      (pill, index) => this.renderPill(pill, index),
+                    )}
+                    <span class="gui-sentinel gui-sentinel__end"></span>
+                  </div>
                 </div>
-              </div>
-              <div class="gui-range-date-input__pills-compact">
-                <button
-                  type="button"
-                  class="gui-range-date-input__pill--count"
-                  aria-label="${pills.length} date ranges"
-                  @click=${this.togglePillsList}
-                >${pills.length}</button>
-              </div>`
+                <div class="gui-range-date-input__pills-compact">
+                  <button
+                    type="button"
+                    class="gui-range-date-input__pill--count"
+                    aria-label="${pills.length} date ranges"
+                    @click=${this.togglePillsList}
+                  >
+                    ${pills.length}
+                  </button>
+                </div>`
             : nothing}
 
           <div class="gui-range-date-input__inputs">
@@ -173,12 +183,12 @@ export class GuiRangeDateInput extends LitElement {
         </div>
         ${this._showPillsList && pills.length > 0
           ? html`<div class="gui-range-date-input__pills-dropdown" role="list">
-                ${repeat(
-            pills,
-            (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-            (pill, index) => this.renderPill(pill, index),
-          )}
-              </div>`
+              ${repeat(
+                pills,
+                (pill) => `${pill.start}-${pill.end ?? pill.start}`,
+                (pill, index) => this.renderPill(pill, index),
+              )}
+            </div>`
           : nothing}
       </div>
 
@@ -217,10 +227,7 @@ export class GuiRangeDateInput extends LitElement {
     `;
   }
 
-  private renderDateInputs(
-    group: 'start' | 'end',
-    parts: Intl.DateTimeFormatPart[],
-  ) {
+  private renderDateInputs(group: 'start' | 'end', parts: Intl.DateTimeFormatPart[]) {
     const dateParts = group === 'start' ? this._startDate : this._endDate;
 
     return repeat(
@@ -322,10 +329,7 @@ export class GuiRangeDateInput extends LitElement {
     const compact = this.querySelector('.gui-range-date-input__pills-compact');
     const dropdown = this.querySelector('.gui-range-date-input__pills-dropdown');
     const target = e.composedPath()[0] as Node;
-    if (
-      !compact?.contains(target) &&
-      !dropdown?.contains(target)
-    ) {
+    if (!compact?.contains(target) && !dropdown?.contains(target)) {
       this._showPillsList = false;
       this.removeOutsideListeners();
     }
@@ -370,7 +374,11 @@ export class GuiRangeDateInput extends LitElement {
   }
 
   private handlePillFocus(e: FocusEvent) {
-    (e.target as Element).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    (e.target as Element).scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'nearest',
+    });
   }
 
   private handlePillKeydown(e: KeyboardEvent, index: number) {
@@ -440,7 +448,11 @@ export class GuiRangeDateInput extends LitElement {
     this.dispatchEvent(new CustomEvent('focus', { detail: event }));
   }
 
-  private handleKeyUp(event: KeyboardEvent, group: 'start' | 'end', type: 'day' | 'month' | 'year') {
+  private handleKeyUp(
+    event: KeyboardEvent,
+    group: 'start' | 'end',
+    type: 'day' | 'month' | 'year',
+  ) {
     if (this.readOnly) return;
 
     const isRTL = window.getComputedStyle(this).direction === 'rtl';

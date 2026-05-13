@@ -5,8 +5,8 @@ export const customActionDemo: FormDemoDefinition = {
   title: '21. Custom Action',
   category: 'Ch4: Custom Widgets',
   description:
-    'Use gui.actions.custom to render a custom action widget with onClick wiring. '
-    + 'Click handling goes through DxResult.events, same as built-in gui.actions.button.',
+    'Use gui.actions.custom to render a custom action widget with onClick wiring. ' +
+    'Click handling goes through DxResult.events, same as built-in gui.actions.button.',
   formDef: () => [
     gui.displays.custom('heading', { text: 'Custom Action Demo', level: 2 }),
     gui.inputs.custom('simpleInput', 'message', { label: 'Your message' }),

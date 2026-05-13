@@ -9,12 +9,12 @@ import Demo from '../../../../components/landing/Demo.astro';
 
 The DX layer applies a small set of **sensible defaults** to keep your form definitions concise:
 
-| Default                       | Behavior                                                                                                                             |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Auto-label**                | If you don't provide `label`, the engine derives one from `path` (e.g. `user.firstName` → `First Name`).                              |
-| **Auto-placeholder**          | If you don't provide `placeholder`, the engine uses `path` as a placeholder.                                                         |
-| **Auto-submit-button**        | If your `formDef` has no `gui.actions.button`/`submitButton`, the engine appends a default submit button.                            |
-| **Auto-stack**                | If your `formDef` has multiple top-level items and no top-level layout, the engine wraps them in a vertical flex.                    |
+| Default                | Behavior                                                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Auto-label**         | If you don't provide `label`, the engine derives one from `path` (e.g. `user.firstName` → `First Name`).          |
+| **Auto-placeholder**   | If you don't provide `placeholder`, the engine uses `path` as a placeholder.                                      |
+| **Auto-submit-button** | If your `formDef` has no `gui.actions.button`/`submitButton`, the engine appends a default submit button.         |
+| **Auto-stack**         | If your `formDef` has multiple top-level items and no top-level layout, the engine wraps them in a vertical flex. |
 
 ## Suppressing them
 
@@ -33,7 +33,7 @@ const formDef = [
 ];
 
 const formConfig = {
-  suppressAutomaticSubmit: true,   // no auto submit button
+  suppressAutomaticSubmit: true, // no auto submit button
 };
 
 const formSelectors = [

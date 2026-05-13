@@ -86,33 +86,25 @@ describe('justin', () => {
     };
 
     it('detects a field with errors', () => {
-      expect(
-        expressionIsTrue('$errors.name !== null', {}, {}, $errors, false),
-      ).toBe(true);
+      expect(expressionIsTrue('$errors.name !== null', {}, {}, $errors, false)).toBe(true);
     });
 
     it('detects a field with no errors (null)', () => {
-      expect(
-        expressionIsTrue('$errors.address.city === null', {}, {}, $errors, false),
-      ).toBe(true);
+      expect(expressionIsTrue('$errors.address.city === null', {}, {}, $errors, false)).toBe(true);
     });
 
     it('checks the number of errors on a field', () => {
-      expect(
-        expressionIsTrue('$errors.email.length === 2', {}, {}, $errors, false),
-      ).toBe(true);
+      expect(expressionIsTrue('$errors.email.length === 2', {}, {}, $errors, false)).toBe(true);
     });
 
     it('returns false when a field has no errors but expression expects errors', () => {
-      expect(
-        expressionIsTrue('$errors.address.city !== null', {}, {}, $errors, false),
-      ).toBe(false);
+      expect(expressionIsTrue('$errors.address.city !== null', {}, {}, $errors, false)).toBe(false);
     });
 
     it('accesses nested field errors', () => {
-      expect(
-        expressionIsTrue('$errors.address.street !== null', {}, {}, $errors, false),
-      ).toBe(true);
+      expect(expressionIsTrue('$errors.address.street !== null', {}, {}, $errors, false)).toBe(
+        true,
+      );
     });
   });
 
@@ -128,13 +120,7 @@ describe('justin', () => {
     it('combines $formIsInvalid with $errors in an expression', () => {
       const $errors = { name: ['Required'] };
       expect(
-        expressionIsTrue(
-          '$formIsInvalid === true && $errors.name !== null',
-          {},
-          {},
-          $errors,
-          true,
-        ),
+        expressionIsTrue('$formIsInvalid === true && $errors.name !== null', {}, {}, $errors, true),
       ).toBe(true);
     });
 

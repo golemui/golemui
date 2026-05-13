@@ -41,10 +41,7 @@ export const calendarTab = gui.layouts.flex([
   }),
 
   gui.inputs.rangeCalendar('rangeCalendar', {
-    defaultValue: [
-      { start: '2026-02-13', end: '2026-02-16' },
-      { start: '2026-02-20' },
-    ],
+    defaultValue: [{ start: '2026-02-13', end: '2026-02-16' }, { start: '2026-02-20' }],
     numberOfMonths: 3,
     prevMonthIcon: 'chevron_left',
     nextMonthIcon: 'chevron_right',

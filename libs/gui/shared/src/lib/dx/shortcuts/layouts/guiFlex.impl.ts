@@ -1,9 +1,5 @@
 import { ValidGuiShortcut, GuiItemTypes } from '../../core/dx.domain';
-import {
-  FlexFamilyProps,
-  GridFamilyProps,
-  GuiLayoutItemsShortcut,
-} from './layouts.domain';
+import { FlexFamilyProps, GridFamilyProps, GuiLayoutItemsShortcut } from './layouts.domain';
 
 // ── Flex family — uniform (children, props?, tags?) ──
 
@@ -22,15 +18,13 @@ export const _guiHorizontalFlex = (
   children: ValidGuiShortcut[],
   props?: Omit<FlexFamilyProps, 'direction'>,
   tags?: string[],
-): GuiLayoutItemsShortcut =>
-  _guiFlex(children, { direction: 'row', ...(props ?? {}) }, tags);
+): GuiLayoutItemsShortcut => _guiFlex(children, { direction: 'row', ...(props ?? {}) }, tags);
 
 export const _guiVerticalFlex = (
   children: ValidGuiShortcut[],
   props?: Omit<FlexFamilyProps, 'direction'>,
   tags?: string[],
-): GuiLayoutItemsShortcut =>
-  _guiFlex(children, { direction: 'column', ...(props ?? {}) }, tags);
+): GuiLayoutItemsShortcut => _guiFlex(children, { direction: 'column', ...(props ?? {}) }, tags);
 
 // ── Grid family — uniform (children, props?, tags?) ──
 
@@ -59,12 +53,10 @@ export const _guiHorizontalGrid = (
   children: ValidGuiShortcut[],
   props?: Omit<GridFamilyProps, 'direction'>,
   tags?: string[],
-): GuiLayoutItemsShortcut =>
-  _guiGrid(children, { direction: 'row', ...(props ?? {}) }, tags);
+): GuiLayoutItemsShortcut => _guiGrid(children, { direction: 'row', ...(props ?? {}) }, tags);
 
 export const _guiVerticalGrid = (
   children: ValidGuiShortcut[],
   props?: Omit<GridFamilyProps, 'direction'>,
   tags?: string[],
-): GuiLayoutItemsShortcut =>
-  _guiGrid(children, { direction: 'column', ...(props ?? {}) }, tags);
+): GuiLayoutItemsShortcut => _guiGrid(children, { direction: 'column', ...(props ?? {}) }, tags);

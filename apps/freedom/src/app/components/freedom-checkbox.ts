@@ -41,8 +41,7 @@ export class FreedomCheckboxElement extends LitElement implements Core.WithWidge
           type="checkbox"
           class="freedom-checkbox__box"
           .checked=${checked}
-          @change=${(e: Event) =>
-            this.adapter.valueChanged((e.target as HTMLInputElement).checked)}
+          @change=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).checked)}
           @blur=${() => this.adapter.onBlur()}
         />
         <span class="freedom-checkbox__visual ${checked ? 'is-checked' : ''}" aria-hidden="true">

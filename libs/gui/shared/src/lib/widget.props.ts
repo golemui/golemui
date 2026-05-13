@@ -457,7 +457,14 @@ export type GridProps = {
   columnGap?: number;
   rowGap?: number;
   autoFit?: boolean;
-  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch';
+  align?:
+    | 'center'
+    | 'start'
+    | 'end'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly'
+    | 'stretch';
   justify?: 'center' | 'start' | 'end' | 'stretch';
 };
 

@@ -7,10 +7,7 @@ import type {
 
 type RadiogroupFactoryProps = Omit<RadiogroupDecorator, 'type'>;
 
-export function _guiRadiogroup(
-  path: string,
-  props: RadiogroupFactoryProps,
-): GuiRadiogroupShortcut;
+export function _guiRadiogroup(path: string, props: RadiogroupFactoryProps): GuiRadiogroupShortcut;
 export function _guiRadiogroup(
   path: string,
   props: RadiogroupFactoryProps,
@@ -23,9 +20,7 @@ export function _guiRadiogroup(
 ): GuiRadiogroupShortcut;
 export function _guiRadiogroup(
   path: string,
-  propsOrCallback:
-    | RadiogroupFactoryProps
-    | ((params: DxRuntimeParams) => RadiogroupFactoryProps),
+  propsOrCallback: RadiogroupFactoryProps | ((params: DxRuntimeParams) => RadiogroupFactoryProps),
   tags?: string[],
 ): GuiRadiogroupShortcut {
   if (typeof propsOrCallback === 'function') {

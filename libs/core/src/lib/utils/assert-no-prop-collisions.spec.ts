@@ -15,21 +15,15 @@ const widgetBase = {
 describe('assertNoPropCollisions — dev mode OFF (default)', () => {
   it('does not throw for typical widget props', () => {
     const props = { itemHeight: 30, hint: 'Pick one', items: [1, 2, 3] };
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', props, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('dropdown-widget', props, widgetBase)).not.toThrow();
   });
 
   it('does not throw when props is undefined', () => {
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', undefined, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('dropdown-widget', undefined, widgetBase)).not.toThrow();
   });
 
   it('does not throw when props is empty', () => {
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', {}, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('dropdown-widget', {}, widgetBase)).not.toThrow();
   });
 
   it('does not throw even when props.uid collides', () => {
@@ -50,21 +44,15 @@ describe('assertNoPropCollisions — dev mode ON', () => {
 
   it('does not throw for typical widget props', () => {
     const props = { itemHeight: 30, hint: 'Pick one', items: [1, 2, 3] };
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', props, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('dropdown-widget', props, widgetBase)).not.toThrow();
   });
 
   it('does not throw when props is undefined', () => {
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', undefined, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('dropdown-widget', undefined, widgetBase)).not.toThrow();
   });
 
   it('does not throw when props is empty', () => {
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', {}, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('dropdown-widget', {}, widgetBase)).not.toThrow();
   });
 
   it('throws when props.uid collides with widget uid', () => {
@@ -87,20 +75,24 @@ describe('assertNoPropCollisions — dev mode ON', () => {
 
   it('throws when multiple props collide with widget fields', () => {
     expect(() =>
-      assertNoPropCollisions('dropdown-widget', { uid: 'x', kind: 'action', itemHeight: 30 }, widgetBase),
+      assertNoPropCollisions(
+        'dropdown-widget',
+        { uid: 'x', kind: 'action', itemHeight: 30 },
+        widgetBase,
+      ),
     ).toThrow();
   });
 
   it('includes the widget uid in the error message', () => {
-    expect(() =>
-      assertNoPropCollisions('dropdown-widget', { uid: '' }, widgetBase),
-    ).toThrow('dropdown-widget');
+    expect(() => assertNoPropCollisions('dropdown-widget', { uid: '' }, widgetBase)).toThrow(
+      'dropdown-widget',
+    );
   });
 
   it('includes all colliding key names in the error message', () => {
-    expect(() =>
-      assertNoPropCollisions('w', { uid: '', kind: 'action' }, widgetBase),
-    ).toThrow(/uid.*kind|kind.*uid/);
+    expect(() => assertNoPropCollisions('w', { uid: '', kind: 'action' }, widgetBase)).toThrow(
+      /uid.*kind|kind.*uid/,
+    );
   });
 
   it('does not throw for non-colliding mixed props', () => {
@@ -111,8 +103,6 @@ describe('assertNoPropCollisions — dev mode ON', () => {
       itemRenderer: 'complexListItemRenderer',
       items: [{ value: 'one' }],
     };
-    expect(() =>
-      assertNoPropCollisions('complex-dropdown', props, widgetBase),
-    ).not.toThrow();
+    expect(() => assertNoPropCollisions('complex-dropdown', props, widgetBase)).not.toThrow();
   });
 });

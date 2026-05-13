@@ -5,15 +5,19 @@
 If you're new to the shortcut system, **don't start by reading `inputs/`**. It's the most complex shortcut and will mislead you about what's typical. Instead, follow this progression:
 
 ### 1. Start here → `alert/`
+
 The simplest complete shortcut. Bare entry shape, no sensible defaults, no hooks. Three files, minimal code. This is the template you'll copy for most new types.
 
 ### 2. Standard keyed type → `date-picker/` or `currency/`
+
 Adds a data path (keyed entry shape) and sensible defaults (autoLabel, autoPlaceholder). This is the most common pattern — most widget shortcuts look like this. The props pass through from the core widget type via `extractWidgetProps`.
 
 ### 3. Compound type → `tabs/` or `accordion/`
+
 Adds recursive children. The `buildCustomWidget` hook walks children through the pipeline and assembles them into the parent widget. `getChildren` extracts children for the walker. If your widget contains other widgets, study this pattern.
 
 ### 4. Action type → `actions/`
+
 Adds the `afterMerge` hook for onClick wiring. This is the only type that needs post-merge processing. Moderate complexity, but the hook pattern is straightforward.
 
 ### 5. Complex outliers (understand, don't copy)
@@ -26,31 +30,31 @@ Adds the `afterMerge` hook for onClick wiring. This is the only type that needs 
 
 ### Quick reference: complexity by folder
 
-| Folder | Complexity | Entry Shape | Hooks Used | Why |
-|---|---|---|---|---|
-| `alert/` | Minimal | bare | none | Bare display, no defaults |
-| `date-picker/` | Standard | keyed | sensibleDefaults | Typical keyed input with pass-through props |
-| `currency/` | Standard | keyed | sensibleDefaults | Same pattern, different props |
-| `dropdown/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `markdown/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `checkbox/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `password/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `textarea/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `select/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `radiogroup/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `list/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `calendar/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `range-calendar/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `date-input/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `range-date-input/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `range-date-picker/` | Standard | keyed | sensibleDefaults | Same pattern |
-| `tabs/` | Compound | compound | buildCustomWidget, getChildren | Recursive children |
-| `accordion/` | Compound | compound | buildCustomWidget, getChildren | Recursive children |
-| `actions/` | Moderate | bare | afterMerge | onClick wiring |
-| `display/` | Moderate | bare | buildCustomWidget | Always dynamic (FunctionWidget) |
-| `layouts/` | Compound | compound | buildCustomWidget, getChildren | Recursive children |
-| `inputs/` | Complex | keyed | sensibleDefaults | Batch factory, 3 sub-types, key expansion |
-| `repeater/` | Custom | hybrid | buildCustomWidget, getChildren, custom parseEntry | Bypasses defineShortcutType, auto-prefixing |
+| Folder               | Complexity | Entry Shape | Hooks Used                                        | Why                                         |
+| -------------------- | ---------- | ----------- | ------------------------------------------------- | ------------------------------------------- |
+| `alert/`             | Minimal    | bare        | none                                              | Bare display, no defaults                   |
+| `date-picker/`       | Standard   | keyed       | sensibleDefaults                                  | Typical keyed input with pass-through props |
+| `currency/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern, different props               |
+| `dropdown/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `markdown/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `checkbox/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `password/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `textarea/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `select/`            | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `radiogroup/`        | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `list/`              | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `calendar/`          | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `range-calendar/`    | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `date-input/`        | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `range-date-input/`  | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `range-date-picker/` | Standard   | keyed       | sensibleDefaults                                  | Same pattern                                |
+| `tabs/`              | Compound   | compound    | buildCustomWidget, getChildren                    | Recursive children                          |
+| `accordion/`         | Compound   | compound    | buildCustomWidget, getChildren                    | Recursive children                          |
+| `actions/`           | Moderate   | bare        | afterMerge                                        | onClick wiring                              |
+| `display/`           | Moderate   | bare        | buildCustomWidget                                 | Always dynamic (FunctionWidget)             |
+| `layouts/`           | Compound   | compound    | buildCustomWidget, getChildren                    | Recursive children                          |
+| `inputs/`            | Complex    | keyed       | sensibleDefaults                                  | Batch factory, 3 sub-types, key expansion   |
+| `repeater/`          | Custom     | hybrid      | buildCustomWidget, getChildren, custom parseEntry | Bypasses defineShortcutType, auto-prefixing |
 
 ---
 
@@ -70,8 +74,9 @@ The path is the entry's key. The factory does NOT put `path` in the decorator �
 Used when the factory takes `(path, ...)` and produces a `{ key, def }` entry.
 
 Example — `_guiTextInput`:
+
 ```ts
-_guiTextInput('email', { placeholder: '...' })
+_guiTextInput('email', { placeholder: '...' });
 // → items: [{ key: 'email', def: { type: 'text', placeholder: '...' } }]
 // Note: NO `path` in the def object
 ```
@@ -83,8 +88,9 @@ Keyed types: **inputs**, **textarea**
 The path lives inside the decorator. No key wrapping — the entry IS the decorator.
 
 Example — `_guiCalendar`:
+
 ```ts
-_guiCalendar('birthDate', { minDate: '...' })
+_guiCalendar('birthDate', { minDate: '...' });
 // → items: [{ type: 'calendar', path: 'birthDate', minDate: '...' }]
 // Note: `path` IS in the decorator
 ```
@@ -96,8 +102,9 @@ Bare types: **calendar**
 Container types with children. No path.
 
 Example — `_guiFlex`:
+
 ```ts
-_guiFlex([...children], { direction: 'row' })
+_guiFlex([...children], { direction: 'row' });
 // → items: [{ def: { widgetName: 'flex', direction: 'row' }, children: [...] }]
 ```
 
@@ -118,7 +125,7 @@ The `override` property in a GSL config supports three modes with increasing pow
 Same override for all matched widgets.
 
 ```ts
-_gslInputs({ override: { placeholder: 'fixed value' } })
+_gslInputs({ override: { placeholder: 'fixed value' } });
 ```
 
 ### Level 2: Callback on current state
@@ -126,7 +133,7 @@ _gslInputs({ override: { placeholder: 'fixed value' } })
 Computes the override from the current widget's merged state. Receives the widget as it exists after sensible defaults and prior selectors.
 
 ```ts
-_gslInputs({ override: (cur) => ({ placeholder: `Enter ${cur.path}` }) })
+_gslInputs({ override: (cur) => ({ placeholder: `Enter ${cur.path}` }) });
 ```
 
 ### Level 3: Callback returning runtime function
@@ -136,11 +143,9 @@ Promotes the widget to a FunctionWidget. It re-renders when form state changes. 
 ```ts
 _gslInputs({
   override: (cur) => (params) => ({
-    placeholder: params.$form?.name
-      ? `${cur.path} for ${params.$form.name}`
-      : `Enter ${cur.path}`,
+    placeholder: params.$form?.name ? `${cur.path} for ${params.$form.name}` : `Enter ${cur.path}`,
   }),
-})
+});
 ```
 
 Level 3 is the most powerful: one selector can make every matched widget reactive.
@@ -208,9 +213,9 @@ There is no shared base type for entries. The shapes are intentionally different
 For single-widget input-like shortcuts, use a consistent API shape:
 
 ```ts
-_guiXxx(path)
-_guiXxx(path, props)
-_guiXxx(path, props, tags)
+_guiXxx(path);
+_guiXxx(path, props);
+_guiXxx(path, props, tags);
 ```
 
 Where:
@@ -315,24 +320,24 @@ services/dx/
 
 A `--` means the shortcut does not implement that piece.
 
-| Piece | Inputs | Actions | Layouts | Display |
-|-------|--------|---------|---------|---------|
-| **Folder** | `inputs/` | `actions/` | `layouts/` | `display/` |
-| **Core shape** | `GuiItemsShortcut` | `GuiItemsShortcut` | `GuiItemsShortcut` | `GuiItemsShortcut` |
-| **Sub-interface** | `GuiInputsShortcut` | `GuiActionsShortcut` | `GuiLayoutItemsShortcut` | `GuiDisplayItemsShortcut` |
-| **Entry type** | `InputEntry` (keyed: `{key, def}`) | `ActionEntry` (bare: decorator or callback) | `LayoutEntry` (`{def, children}`) | `DisplayEntry` (bare: `DisplayDecorator`) |
-| **Decorator type** | `InputDecorator` (Text, Number, Boolean) | `ActionDecorator` | `LayoutDecorator` | `DisplayDecorator` |
-| **GUI shortcut fn** | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButton`, `_guiSubmitButton` | `_guiFlex`, `_guiHorizontalFlex`, `_guiVerticalFlex`, `_guiGrid`, `_guiHorizontalGrid`, `_guiVerticalGrid` | `_guiDisplay(renderFn)` |
-| **GSL widget selector fn** | `_gslInputs(config)` | `_gslActions(config)` | `_gslLayouts(config)` | `_gslDisplays(config)` |
-| **GSL by-uid selector fn** | `_gslInputByUid(uid, config)` | `_gslActionByUid(uid, config)` | `_gslLayoutByUid(uid, config)` | `_gslDisplayByUid(uid, config)` |
-| **GSL config type** | `GslInputsConfig` (decorator + 2 suppress flags) | `GslActionsConfig` (decorator only) | `GslLayoutsConfig` (decorator only) | `GslDisplaysConfig` (decorator only) |
-| **Sensible defaults config** | `InputSensibleDefaultsConfig` | `ActionSensibleDefaultsConfig` (empty) | `LayoutSensibleDefaultsConfig` (empty) | `DisplaySensibleDefaultsConfig` (empty) |
-| **Sensible defaults processor** | `InputSensibleDefaultsService` | -- | -- | -- |
-| **Mapper fn** | `mapToInputWidget` (text→textinput, number→number, boolean→toggle) | `mapToActionWidget` (always button) | `mapToLayoutWidget` (defaults to flex) | `mapToDisplayWidget` (renderer) |
-| **Type defaults / helpers** | `inputDefsByKey.service`, `inputTypeDefaults.service` | -- | -- | -- |
-| **Resolver rollup** | `rollUpInputSensibleDefaults` | -- (empty `{}`) | -- (empty `{}`) | -- (empty `{}`) |
-| **Merger wiring** | `if (itemType === 'INPUTS')` → `applyInputSensibleDefaults` | -- | -- | -- |
-| **DxService special handling** | `parseFieldKey` (path from key) | `extractOnClickFromMergeResult`, `wireOnClick`, `countSubmitButtons` | `processLayoutItem` (recurse children) | `processDisplayItem` (wrap as function widget) |
+| Piece                           | Inputs                                                                                | Actions                                                              | Layouts                                                                                                    | Display                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **Folder**                      | `inputs/`                                                                             | `actions/`                                                           | `layouts/`                                                                                                 | `display/`                                     |
+| **Core shape**                  | `GuiItemsShortcut`                                                                    | `GuiItemsShortcut`                                                   | `GuiItemsShortcut`                                                                                         | `GuiItemsShortcut`                             |
+| **Sub-interface**               | `GuiInputsShortcut`                                                                   | `GuiActionsShortcut`                                                 | `GuiLayoutItemsShortcut`                                                                                   | `GuiDisplayItemsShortcut`                      |
+| **Entry type**                  | `InputEntry` (keyed: `{key, def}`)                                                    | `ActionEntry` (bare: decorator or callback)                          | `LayoutEntry` (`{def, children}`)                                                                          | `DisplayEntry` (bare: `DisplayDecorator`)      |
+| **Decorator type**              | `InputDecorator` (Text, Number, Boolean)                                              | `ActionDecorator`                                                    | `LayoutDecorator`                                                                                          | `DisplayDecorator`                             |
+| **GUI shortcut fn**             | `_guiInputs(shorthands/tags)`, `_guiTextInput`, `_guiNumberInput`, `_guiBooleanInput` | `_guiButton`, `_guiSubmitButton`                                     | `_guiFlex`, `_guiHorizontalFlex`, `_guiVerticalFlex`, `_guiGrid`, `_guiHorizontalGrid`, `_guiVerticalGrid` | `_guiDisplay(renderFn)`                        |
+| **GSL widget selector fn**      | `_gslInputs(config)`                                                                  | `_gslActions(config)`                                                | `_gslLayouts(config)`                                                                                      | `_gslDisplays(config)`                         |
+| **GSL by-uid selector fn**      | `_gslInputByUid(uid, config)`                                                         | `_gslActionByUid(uid, config)`                                       | `_gslLayoutByUid(uid, config)`                                                                             | `_gslDisplayByUid(uid, config)`                |
+| **GSL config type**             | `GslInputsConfig` (decorator + 2 suppress flags)                                      | `GslActionsConfig` (decorator only)                                  | `GslLayoutsConfig` (decorator only)                                                                        | `GslDisplaysConfig` (decorator only)           |
+| **Sensible defaults config**    | `InputSensibleDefaultsConfig`                                                         | `ActionSensibleDefaultsConfig` (empty)                               | `LayoutSensibleDefaultsConfig` (empty)                                                                     | `DisplaySensibleDefaultsConfig` (empty)        |
+| **Sensible defaults processor** | `InputSensibleDefaultsService`                                                        | --                                                                   | --                                                                                                         | --                                             |
+| **Mapper fn**                   | `mapToInputWidget` (text→textinput, number→number, boolean→toggle)                    | `mapToActionWidget` (always button)                                  | `mapToLayoutWidget` (defaults to flex)                                                                     | `mapToDisplayWidget` (renderer)                |
+| **Type defaults / helpers**     | `inputDefsByKey.service`, `inputTypeDefaults.service`                                 | --                                                                   | --                                                                                                         | --                                             |
+| **Resolver rollup**             | `rollUpInputSensibleDefaults`                                                         | -- (empty `{}`)                                                      | -- (empty `{}`)                                                                                            | -- (empty `{}`)                                |
+| **Merger wiring**               | `if (itemType === 'INPUTS')` → `applyInputSensibleDefaults`                           | --                                                                   | --                                                                                                         | --                                             |
+| **DxService special handling**  | `parseFieldKey` (path from key)                                                       | `extractOnClickFromMergeResult`, `wireOnClick`, `countSubmitButtons` | `processLayoutItem` (recurse children)                                                                     | `processDisplayItem` (wrap as function widget) |
 
 ### Key Observations
 

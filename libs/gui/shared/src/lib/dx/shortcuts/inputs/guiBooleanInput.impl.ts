@@ -1,9 +1,6 @@
 import { GuiItemTypes } from '../../core/dx.domain';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import {
-  BooleanDataInputDecorator,
-  GuiInputsShortcut,
-} from './inputs.domain';
+import { BooleanDataInputDecorator, GuiInputsShortcut } from './inputs.domain';
 
 export function _guiBooleanInput(path: string): GuiInputsShortcut;
 export function _guiBooleanInput(

@@ -100,9 +100,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
 
       // Resolve selected item on initial load when a default value is set
       if (!selectedItem && value != null && items) {
-        const match = items.find(
-          (item: ListItem<never>) => item.value === value,
-        );
+        const match = items.find((item: ListItem<never>) => item.value === value);
         if (match) {
           setSelectedItem(match);
         }

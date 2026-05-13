@@ -29,7 +29,10 @@ export function _guiRangeCalendar(
 ): GuiRangeCalendarShortcut {
   if (typeof propsOrCallback === 'function') {
     const callback = propsOrCallback;
-    const def = (params: DxRuntimeParams) => ({ type: 'rangeCalendar' as const, ...callback(params) });
+    const def = (params: DxRuntimeParams) => ({
+      type: 'rangeCalendar' as const,
+      ...callback(params),
+    });
     const items: RangeCalendarEntry[] = [{ key: path, def }];
     return { type: 'ITEMS', itemType: 'RANGE_CALENDAR', items, tags: tags ?? [] };
   }

@@ -63,7 +63,8 @@ export class GridElement extends LitElement implements Core.WithWidget {
       'gui-grid__widget--align-space-between': this.adapter.templateData.align === 'space-between',
       'gui-grid__widget--align-space-around': this.adapter.templateData.align === 'space-around',
       'gui-grid__widget--align-space-evenly': this.adapter.templateData.align === 'space-evenly',
-      'gui-grid__widget--align-stretch': !this.adapter.templateData.align || this.adapter.templateData.align === 'stretch',
+      'gui-grid__widget--align-stretch':
+        !this.adapter.templateData.align || this.adapter.templateData.align === 'stretch',
       'gui-grid__widget--justify-center': this.adapter.templateData.justify === 'center',
       'gui-grid__widget--justify-start': this.adapter.templateData.justify === 'start',
       'gui-grid__widget--justify-end': this.adapter.templateData.justify === 'end',
@@ -83,9 +84,10 @@ export class GridElement extends LitElement implements Core.WithWidget {
         ${repeat(
           this.adapter.templateData.children || [],
           (child: any) => child?.uid,
-          (child: any) => html`<div class="gui-grid__cell" style="grid-column: span ${child.size || 1}">
-            <gui-widget .widget=${child}></gui-widget>
-          </div>`,
+          (child: any) =>
+            html`<div class="gui-grid__cell" style="grid-column: span ${child.size || 1}">
+              <gui-widget .widget=${child}></gui-widget>
+            </div>`,
         )}
       </div>
     `;

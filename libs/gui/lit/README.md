@@ -1,7 +1,20 @@
-# gui-lit
+# @golemui/gui-lit
 
-This library was generated with [Nx](https://nx.dev).
+[Golem UI](https://golemui.com): the declarative form engine.
 
-## Building
+## Install
 
-Run `nx build gui-lit` to build the library.
+```bash
+npm install @golemui/gui-lit
+```
+
+## Documentation
+
+- Website: https://golemui.com
+- Repository: https://github.com/golemui/golemui
+- Source: https://github.com/golemui/golemui/tree/main/libs/gui/lit
+- Issues: https://github.com/golemui/golemui/issues
+
+## License
+
+MIT

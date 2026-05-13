@@ -60,7 +60,10 @@ export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.Wit
     // Scroll into view the active tab, just in case it's out of view
     const tabs = (this.widget.props as TabsProps).tabs;
     const currentIndex = tabs.findIndex((tab) => tab.uid === this.activeTab());
-    this.tabButtons()[currentIndex].nativeElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    this.tabButtons()[currentIndex].nativeElement.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    });
   }
 
   onClickTab(uid: string) {

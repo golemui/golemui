@@ -5,9 +5,9 @@ export const globalConfigDemo: FormDemoDefinition = {
   title: '22. Global Config Flags',
   category: 'Ch5: Selectors',
   description:
-    'Selectors configure behavior across all matching widgets with a single line. '
-    + 'Suppress auto-generated labels, placeholders, the submit button, or the root layout. '
-    + 'These are form-level policies — they apply to every widget of that type.',
+    'Selectors configure behavior across all matching widgets with a single line. ' +
+    'Suppress auto-generated labels, placeholders, the submit button, or the root layout. ' +
+    'These are form-level policies — they apply to every widget of that type.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.numberInput('age'),

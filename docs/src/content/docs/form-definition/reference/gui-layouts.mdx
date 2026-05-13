@@ -26,20 +26,23 @@ A fully-populated flex example:
 
 ```ts
 gui.layouts.flex(
-  [                                          // children — any array of gui.* shortcuts
+  [
+    // children — any array of gui.* shortcuts
     gui.inputs.textInput('first', { label: 'First name' }),
-    gui.inputs.textInput('last',  { label: 'Last name' }),
+    gui.inputs.textInput('last', { label: 'Last name' }),
   ],
-  {                                          // props — the layout's typed props + DX fields
+  {
+    // props — the layout's typed props + DX fields
     direction: 'row',
     gap: 12,
     size: 1,
-    states: {                                // per-state overrides
+    states: {
+      // per-state overrides
       compactMode: { direction: 'column' },
     },
     include: { in: ['hasName'] },
   },
-  ['identity-row'],                          // tags — addressable groups for selectors
+  ['identity-row'], // tags — addressable groups for selectors
 );
 ```
 
@@ -51,14 +54,14 @@ gui.layouts.tabs([
     label: 'Delivery address',
     children: [
       gui.inputs.textInput('delivery.street', { label: 'Street' }),
-      gui.inputs.textInput('delivery.city',   { label: 'City' }),
+      gui.inputs.textInput('delivery.city', { label: 'City' }),
     ],
   },
   {
     label: 'Invoice address',
     children: [
       gui.inputs.textInput('invoice.street', { label: 'Street' }),
-      gui.inputs.textInput('invoice.city',   { label: 'City' }),
+      gui.inputs.textInput('invoice.city', { label: 'City' }),
     ],
   },
 ]);
@@ -66,17 +69,17 @@ gui.layouts.tabs([
 
 ## Shortcuts
 
-| Shortcut                        | Renders                            | Reference                                                            |
-| ------------------------------- | ---------------------------------- | -------------------------------------------------------------------- |
-| `gui.layouts.flex`              | flex container                     | [Flex](/widgets-reference/layout-fields/flex/)                       |
-| `gui.layouts.horizontalFlex`    | flex with `direction: 'row'`       | [Flex](/widgets-reference/layout-fields/flex/)                       |
-| `gui.layouts.verticalFlex`      | flex with `direction: 'column'`    | [Flex](/widgets-reference/layout-fields/flex/)                       |
-| `gui.layouts.grid`              | grid container (subgrid alignment) | [Grid](/widgets-reference/layout-fields/grid/)                       |
-| `gui.layouts.horizontalGrid`    | grid with `direction: 'row'`       | [Grid](/widgets-reference/layout-fields/grid/)                       |
-| `gui.layouts.verticalGrid`      | grid with `direction: 'column'`    | [Grid](/widgets-reference/layout-fields/grid/)                       |
-| `gui.layouts.tabs`              | tabs                               | [Tabs](/widgets-reference/layout-fields/tabs/)                       |
-| `gui.layouts.accordion`         | accordion                          | [Accordion](/widgets-reference/layout-fields/accordion/)             |
-| `gui.layouts.custom`            | your custom layout                 | [Custom Widgets](/form-definition/custom-widgets/)                   |
+| Shortcut                     | Renders                            | Reference                                                |
+| ---------------------------- | ---------------------------------- | -------------------------------------------------------- |
+| `gui.layouts.flex`           | flex container                     | [Flex](/widgets-reference/layout-fields/flex/)           |
+| `gui.layouts.horizontalFlex` | flex with `direction: 'row'`       | [Flex](/widgets-reference/layout-fields/flex/)           |
+| `gui.layouts.verticalFlex`   | flex with `direction: 'column'`    | [Flex](/widgets-reference/layout-fields/flex/)           |
+| `gui.layouts.grid`           | grid container (subgrid alignment) | [Grid](/widgets-reference/layout-fields/grid/)           |
+| `gui.layouts.horizontalGrid` | grid with `direction: 'row'`       | [Grid](/widgets-reference/layout-fields/grid/)           |
+| `gui.layouts.verticalGrid`   | grid with `direction: 'column'`    | [Grid](/widgets-reference/layout-fields/grid/)           |
+| `gui.layouts.tabs`           | tabs                               | [Tabs](/widgets-reference/layout-fields/tabs/)           |
+| `gui.layouts.accordion`      | accordion                          | [Accordion](/widgets-reference/layout-fields/accordion/) |
+| `gui.layouts.custom`         | your custom layout                 | [Custom Widgets](/form-definition/custom-widgets/)       |
 
 ## Layout recommendation
 

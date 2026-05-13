@@ -23,11 +23,11 @@ export class InputTypeDefaults {
   }
 
   public createDefaultNumberDataInput(): DataInputDecorator {
-    return { type: 'number'};
+    return { type: 'number' };
   }
 
   public createDefaultBooleanDataInput(): DataInputDecorator {
-    return { type: 'boolean'};
+    return { type: 'boolean' };
   }
 }
 

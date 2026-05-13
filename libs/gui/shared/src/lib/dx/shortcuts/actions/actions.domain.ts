@@ -1,11 +1,7 @@
 import { ButtonProps } from '../../../widget.props';
 import { DxActionBase, DxCommonFields, DxInternalFields } from '../../core/dxBase.types';
 import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import {
-  DefOrCallback,
-  GslConfigBase,
-  GuiShortcutOf,
-} from '../../core/dxUtilityTypes';
+import { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Action Decorators

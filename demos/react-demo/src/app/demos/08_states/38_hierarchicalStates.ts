@@ -10,11 +10,11 @@ export const hierarchicalStatesDemo: FormDemoDefinition = {
   title: '38. Hierarchical States',
   category: 'Ch8: States',
   description:
-    'A registration form with hierarchical states: "register", "register:adult", '
-    + 'and "register:minor". The ":" separator creates parent/child AND logic — '
-    + 'activating "register:adult" requires both "register" AND "register:adult" '
-    + 'expressions to be true. Check the registration box, then select an age group '
-    + 'to see different overrides appear.',
+    'A registration form with hierarchical states: "register", "register:adult", ' +
+    'and "register:minor". The ":" separator creates parent/child AND logic — ' +
+    'activating "register:adult" requires both "register" AND "register:adult" ' +
+    'expressions to be true. Check the registration box, then select an age group ' +
+    'to see different overrides appear.',
   formDef: () => [
     gui.inputs.textInput('name'),
     gui.inputs.checkbox('wantsRegistration', { label: 'Register for account' }),

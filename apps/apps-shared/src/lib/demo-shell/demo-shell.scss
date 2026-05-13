@@ -16,47 +16,47 @@
    the `.dark` class set by iframeThemeSync() on <html>. */
 
 :root {
-  --ds-surface:        #ffffff;
-  --ds-border:         #e2e8f0;
-  --ds-border-subtle:  rgba(148, 163, 184, 0.18);
-  --ds-text:           #0f172a;
-  --ds-text-muted:     #64748b;
-  --ds-text-hint:      #334155;
-  --ds-text-inverse:   #ffffff;
-  --ds-accent:         #a855f7;
-  --ds-accent-soft:    rgba(168, 85, 247, 0.12);
-  --ds-accent-strong:  rgba(168, 85, 247, 0.85);
-  --ds-accent-text:    #6d28d9;
-  --ds-success:        #059669;
-  --ds-code-bg:        #f1f5f9;
-  --ds-code-bg-data:   #f8fafc;
-  --ds-step-bg:        #f8fafc;
-  --ds-inset-bg:       rgba(148, 163, 184, 0.08);
+  --ds-surface: #ffffff;
+  --ds-border: #e2e8f0;
+  --ds-border-subtle: rgba(148, 163, 184, 0.18);
+  --ds-text: #0f172a;
+  --ds-text-muted: #64748b;
+  --ds-text-hint: #334155;
+  --ds-text-inverse: #ffffff;
+  --ds-accent: #a855f7;
+  --ds-accent-soft: rgba(168, 85, 247, 0.12);
+  --ds-accent-strong: rgba(168, 85, 247, 0.85);
+  --ds-accent-text: #6d28d9;
+  --ds-success: #059669;
+  --ds-code-bg: #f1f5f9;
+  --ds-code-bg-data: #f8fafc;
+  --ds-step-bg: #f8fafc;
+  --ds-inset-bg: rgba(148, 163, 184, 0.08);
   --ds-accent-text-strong: #5b21b6;
-  --ds-card-tint-blue:    rgba(59, 130, 246, 0.05);
-  --ds-card-tint-purple:  rgba(168, 85, 247, 0.08);
+  --ds-card-tint-blue: rgba(59, 130, 246, 0.05);
+  --ds-card-tint-purple: rgba(168, 85, 247, 0.08);
 }
 
 :root.dark {
-  --ds-surface:        #0a0c10;
-  --ds-border:         #1e293b;
-  --ds-border-subtle:  rgba(148, 163, 184, 0.08);
-  --ds-text:           #e2e8f0;
-  --ds-text-muted:     #94a3b8;
-  --ds-text-hint:      #cbd5e1;
-  --ds-text-inverse:   #0a0c10;
-  --ds-accent:         #a855f7;
-  --ds-accent-soft:    rgba(168, 85, 247, 0.18);
-  --ds-accent-strong:  rgba(168, 85, 247, 0.85);
-  --ds-accent-text:    #c4b5fd;
-  --ds-success:        #6ee7b7;
-  --ds-code-bg:        rgba(2, 6, 23, 0.6);
-  --ds-code-bg-data:   rgba(2, 6, 23, 0.45);
-  --ds-step-bg:        rgba(2, 6, 23, 0.35);
-  --ds-inset-bg:       rgba(2, 6, 23, 0.3);
+  --ds-surface: #0a0c10;
+  --ds-border: #1e293b;
+  --ds-border-subtle: rgba(148, 163, 184, 0.08);
+  --ds-text: #e2e8f0;
+  --ds-text-muted: #94a3b8;
+  --ds-text-hint: #cbd5e1;
+  --ds-text-inverse: #0a0c10;
+  --ds-accent: #a855f7;
+  --ds-accent-soft: rgba(168, 85, 247, 0.18);
+  --ds-accent-strong: rgba(168, 85, 247, 0.85);
+  --ds-accent-text: #c4b5fd;
+  --ds-success: #6ee7b7;
+  --ds-code-bg: rgba(2, 6, 23, 0.6);
+  --ds-code-bg-data: rgba(2, 6, 23, 0.45);
+  --ds-step-bg: rgba(2, 6, 23, 0.35);
+  --ds-inset-bg: rgba(2, 6, 23, 0.3);
   --ds-accent-text-strong: #ede9fe;
-  --ds-card-tint-blue:    rgba(59, 130, 246, 0.08);
-  --ds-card-tint-purple:  rgba(168, 85, 247, 0.16);
+  --ds-card-tint-blue: rgba(59, 130, 246, 0.08);
+  --ds-card-tint-purple: rgba(168, 85, 247, 0.16);
 }
 
 /* ---------- Shell + grid ---------- */
@@ -171,8 +171,7 @@
   border-radius: 6px;
   background: transparent;
   color: var(--ds-text-muted);
-  font-family:
-    'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -193,8 +192,7 @@
 
   &.is-active {
     color: var(--ds-accent-text);
-    background:
-      linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(168, 85, 247, 0.22) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(168, 85, 247, 0.22) 100%);
     border-color: rgba(168, 85, 247, 0.7);
     box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.18) inset;
   }
@@ -202,8 +200,7 @@
 
 :root.dark .ds-tab.is-active {
   color: #f5f3ff;
-  background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.28) 0%, rgba(168, 85, 247, 0.34) 100%);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.28) 0%, rgba(168, 85, 247, 0.34) 100%);
 }
 
 .ds-code {
@@ -212,8 +209,7 @@
   padding: 16px 20px;
   background: var(--ds-code-bg);
   color: var(--ds-text);
-  font-family:
-    'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.78rem;
   line-height: 1.6;
   overflow: auto;
@@ -239,14 +235,18 @@
 @keyframes ds-code-flash {
   0% {
     background: rgba(168, 85, 247, 0.5);
-    box-shadow: inset 3px 0 0 rgba(168, 85, 247, 1), inset 0 0 0 1px rgba(168, 85, 247, 0.4);
+    box-shadow:
+      inset 3px 0 0 rgba(168, 85, 247, 1),
+      inset 0 0 0 1px rgba(168, 85, 247, 0.4);
   }
   20% {
     background: rgba(168, 85, 247, 0.32);
   }
   100% {
     background: var(--ds-code-bg);
-    box-shadow: inset 3px 0 0 rgba(168, 85, 247, 0), inset 0 0 0 1px transparent;
+    box-shadow:
+      inset 3px 0 0 rgba(168, 85, 247, 0),
+      inset 0 0 0 1px transparent;
   }
 }
 
@@ -321,8 +321,7 @@
 
   &--active {
     border-color: rgba(168, 85, 247, 0.7);
-    background:
-      linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.14) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.14) 100%);
     box-shadow:
       0 0 0 1px rgba(168, 85, 247, 0.35),
       0 6px 18px rgba(168, 85, 247, 0.18);
@@ -478,11 +477,20 @@
 }
 
 @keyframes ds-step-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
-  50%      { box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.35); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.35);
+  }
 }
 
 @keyframes ds-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

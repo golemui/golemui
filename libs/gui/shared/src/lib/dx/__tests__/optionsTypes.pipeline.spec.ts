@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  _guiSelect,
-  _guiRadiogroup,
-  _gslSelects,
-  _gslRadiogroups,
-} from '../index';
+import { _guiSelect, _guiRadiogroup, _gslSelects, _gslRadiogroups } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 
 const sampleOptions = [
@@ -57,11 +52,13 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     });
 
     it('passes labelField and valueField through', () => {
-      const result = processDx(_guiSelect('country', {
-        options: sampleOptions,
-        labelField: 'name',
-        valueField: 'code',
-      }));
+      const result = processDx(
+        _guiSelect('country', {
+          options: sampleOptions,
+          labelField: 'name',
+          valueField: 'code',
+        }),
+      );
       const w = getStaticChild(result, 0) as {
         props?: { labelField?: string; valueField?: string };
       };
@@ -71,11 +68,13 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     });
 
     it('passes custom props alongside options', () => {
-      const result = processDx(_guiSelect('country', {
-        options: sampleOptions,
-        icon: 'globe',
-        placeholder: 'Choose a country...',
-      }));
+      const result = processDx(
+        _guiSelect('country', {
+          options: sampleOptions,
+          icon: 'globe',
+          placeholder: 'Choose a country...',
+        }),
+      );
       const w = getStaticChild(result, 0) as {
         props?: { icon?: string; placeholder?: string };
       };
@@ -85,10 +84,9 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiSelect('country', { options: sampleOptions }),
-        [_gslSelects({ override: { hint: 'Pick one' } })],
-      );
+      const result = processDx(_guiSelect('country', { options: sampleOptions }), [
+        _gslSelects({ override: { hint: 'Pick one' } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
       expect(w.props?.hint).toBe('Pick one');
@@ -155,11 +153,13 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     });
 
     it('passes labelField and valueField through', () => {
-      const result = processDx(_guiRadiogroup('size', {
-        options: sampleOptions,
-        labelField: 'displayName',
-        valueField: 'id',
-      }));
+      const result = processDx(
+        _guiRadiogroup('size', {
+          options: sampleOptions,
+          labelField: 'displayName',
+          valueField: 'id',
+        }),
+      );
       const w = getStaticChild(result, 0) as {
         props?: { labelField?: string; valueField?: string };
       };
@@ -169,10 +169,9 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     });
 
     it('applies GSL decorator override', () => {
-      const result = processDx(
-        _guiRadiogroup('priority', { options: sampleOptions }),
-        [_gslRadiogroups({ override: { hint: 'Choose carefully' } })],
-      );
+      const result = processDx(_guiRadiogroup('priority', { options: sampleOptions }), [
+        _gslRadiogroups({ override: { hint: 'Choose carefully' } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
       expect(w.props?.hint).toBe('Choose carefully');
@@ -181,7 +180,10 @@ describe('DX Pipeline — Options Types (Phase 6.2)', () => {
     it('supports dynamic callback', () => {
       const result = processDx(
         _guiRadiogroup('level', () => ({
-          options: [{ label: 'Easy', value: 1 }, { label: 'Hard', value: 2 }],
+          options: [
+            { label: 'Easy', value: 1 },
+            { label: 'Hard', value: 2 },
+          ],
         })),
       );
       const raw = getRawChild(result, 0);

@@ -47,13 +47,10 @@ export class FreedomInputElement extends LitElement implements Core.WithWidget {
         type=${td.type ?? 'text'}
         placeholder=${td.placeholder ?? ''}
         .value=${td.value ?? ''}
-        @input=${(e: Event) =>
-          this.adapter.valueChanged((e.target as HTMLInputElement).value)}
+        @input=${(e: Event) => this.adapter.valueChanged((e.target as HTMLInputElement).value)}
         @blur=${() => this.adapter.onBlur()}
       />
-      ${hasError
-        ? html`<span class="freedom-input__error">${td.errors?.[0]}</span>`
-        : null}
+      ${hasError ? html`<span class="freedom-input__error">${td.errors?.[0]}</span>` : null}
     `;
   }
 

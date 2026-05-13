@@ -112,10 +112,15 @@ export class GuiCurrency extends LitElement {
           @focus=${this.handleFocus}
           @blur=${this.handleBlur}
         />
-        ${this.displayValue ? html`<label
-          for=${this.uid}
-          class="gui-currency__format-value ${this.icon ? 'gui-currency__format-value--icon' : ''}"
-        >${this.displayValue}</label>` : nothing}
+        ${this.displayValue
+          ? html`<label
+              for=${this.uid}
+              class="gui-currency__format-value ${this.icon
+                ? 'gui-currency__format-value--icon'
+                : ''}"
+              >${this.displayValue}</label
+            >`
+          : nothing}
         ${currencyIcon.html}
       </div>
 

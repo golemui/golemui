@@ -2,7 +2,8 @@
 @use '../../../libs/gui/components/src/styles/index';
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-html, body {
+html,
+body {
   background-color: var(--gui-bg-default);
   font-family: system-ui, sans-serif;
 }
@@ -149,7 +150,6 @@ lit-root {
     box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-text-default) 25%, transparent);
   }
 }
-
 
 @media (prefers-color-scheme: dark) {
   .country-renderer.odd {

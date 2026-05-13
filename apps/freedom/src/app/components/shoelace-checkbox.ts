@@ -8,10 +8,7 @@ import { Subscription } from 'rxjs';
 import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 
 @customElement('freedom-shoelace-checkbox')
-export class FreedomShoelaceCheckboxElement
-  extends LitElement
-  implements Core.WithWidget
-{
+export class FreedomShoelaceCheckboxElement extends LitElement implements Core.WithWidget {
   widget!: Core.InputWidget<boolean>;
 
   @consume({ context: Lit.formContext })

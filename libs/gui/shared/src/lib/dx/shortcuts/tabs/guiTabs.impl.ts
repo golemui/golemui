@@ -16,13 +16,8 @@ function slugify(label: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-export function _guiTabs(
-  sections: TabSection[],
-): GuiTabsShortcut;
-export function _guiTabs(
-  sections: TabSection[],
-  props: TabsFactoryProps,
-): GuiTabsShortcut;
+export function _guiTabs(sections: TabSection[]): GuiTabsShortcut;
+export function _guiTabs(sections: TabSection[], props: TabsFactoryProps): GuiTabsShortcut;
 export function _guiTabs(
   sections: TabSection[],
   props: TabsFactoryProps,

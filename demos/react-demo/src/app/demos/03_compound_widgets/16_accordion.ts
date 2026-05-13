@@ -5,9 +5,9 @@ export const accordionDemo: FormDemoDefinition = {
   title: '16. Accordion',
   category: 'Ch3: Compound Widgets',
   description:
-    'Collapsible sections with nested content. '
-    + 'Similar to tabs but sections expand/collapse independently. '
-    + 'Supports singleOpen, defaultOpen, and renderMode.',
+    'Collapsible sections with nested content. ' +
+    'Similar to tabs but sections expand/collapse independently. ' +
+    'Supports singleOpen, defaultOpen, and renderMode.',
   formDef: () => [
     gui.layouts.accordion(
       [
@@ -21,10 +21,7 @@ export const accordionDemo: FormDemoDefinition = {
         },
         {
           label: 'Preferences',
-          children: [
-            gui.inputs.checkbox('newsletter'),
-            gui.inputs.checkbox('notifications'),
-          ],
+          children: [gui.inputs.checkbox('newsletter'), gui.inputs.checkbox('notifications')],
         },
       ],
       { singleOpen: true, defaultOpen: { 'personal-information': true } },

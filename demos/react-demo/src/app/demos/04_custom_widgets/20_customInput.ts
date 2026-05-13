@@ -5,8 +5,8 @@ export const customInputDemo: FormDemoDefinition = {
   title: '20. Custom Input',
   category: 'Ch4: Custom Widgets',
   description:
-    'Use gui.inputs.custom to render a custom input widget through the DX pipeline. '
-    + 'Full input lifecycle: value binding, auto-label from path, disabled state.',
+    'Use gui.inputs.custom to render a custom input widget through the DX pipeline. ' +
+    'Full input lifecycle: value binding, auto-label from path, disabled state.',
   formDef: () => [
     gui.displays.custom('heading', { text: 'Custom Input Demo', level: 2 }),
     gui.inputs.custom('simpleInput', 'email', { label: 'Email Address' }),

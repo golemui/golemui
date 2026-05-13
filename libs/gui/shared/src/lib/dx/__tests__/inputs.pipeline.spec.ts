@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  processDx,
-  getStaticChild,
-  getRawChild,
-  resolveDynamic,
-} from './helpers';
+import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiTextInput } from '../shortcuts/inputs/guiTextInput.impl';
 import { _gslInputs } from '../shortcuts/inputs/register';
 import { _guiNumberInput, _guiBooleanInput } from '../index';
@@ -41,9 +36,7 @@ describe('DX Pipeline — Inputs', () => {
     });
 
     it('preserves placeholder from _guiTextInput props', () => {
-      const result = processDx(
-        _guiTextInput('email', { placeholder: 'you@...' }),
-      );
+      const result = processDx(_guiTextInput('email', { placeholder: 'you@...' }));
       const input = getStaticChild(result, 0) as {
         props?: { placeholder?: string };
       };
@@ -81,9 +74,7 @@ describe('DX Pipeline — Inputs', () => {
     });
 
     it('keeps explicit label set via _guiTextInput', () => {
-      const result = processDx(
-        _guiTextInput('name', { label: 'Your Name' }),
-      );
+      const result = processDx(_guiTextInput('name', { label: 'Your Name' }));
       const input = getStaticChild(result, 0) as { label?: string };
 
       expect(input.label).toBe('Your Name');
@@ -138,10 +129,9 @@ describe('DX Pipeline — Inputs', () => {
 
   describe('GSL selector overrides', () => {
     it('applies static GSL decorator override to placeholder', () => {
-      const result = processDx(
-        _guiTextInput('name'),
-        [_gslInputs({ override: { placeholder: 'Override' } })],
-      );
+      const result = processDx(_guiTextInput('name'), [
+        _gslInputs({ override: { placeholder: 'Override' } }),
+      ]);
       const input = getStaticChild(result, 0) as {
         props?: { placeholder?: string };
       };

@@ -24,7 +24,10 @@ gui-serializable {
   padding: 14px 18px 18px;
   background: var(--ds-inset-bg);
   animation: srz-section-in 0.32s cubic-bezier(0.2, 0.8, 0.4, 1);
-  transition: opacity 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
 
   &.is-dragging {
     opacity: 0.4;
@@ -101,7 +104,10 @@ gui-serializable {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    transition:
+      color 0.15s ease,
+      background 0.15s ease,
+      border-color 0.15s ease;
 
     &:hover {
       color: #fca5a5;
@@ -133,8 +139,7 @@ gui-serializable {
   border: 1px solid rgba(168, 85, 247, 0.25);
   border-radius: 10px;
   padding: 14px 18px;
-  background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(168, 85, 247, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(168, 85, 247, 0.08) 100%);
 
   &__header {
     display: flex;

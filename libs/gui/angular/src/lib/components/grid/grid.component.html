@@ -3,7 +3,9 @@
 <div
   class="gui-grid__widget"
   [class.gui-grid__widget--row]="!templateData.direction || templateData.direction === 'row'"
-  [class.gui-grid__widget--row--auto-fit]="(!templateData.direction || templateData.direction === 'row') && (templateData.autoFit ?? true)"
+  [class.gui-grid__widget--row--auto-fit]="
+    (!templateData.direction || templateData.direction === 'row') && (templateData.autoFit ?? true)
+  "
   [class.gui-grid__widget--column]="templateData.direction === 'column'"
   [class.gui-grid__widget--align-center]="templateData.align === 'center'"
   [class.gui-grid__widget--align-start]="templateData.align === 'start'"

@@ -1,11 +1,20 @@
-# gui-components
+# @golemui/gui-components
 
-This library was generated with [Nx](https://nx.dev).
+[Golem UI](https://golemui.com): the declarative form engine.
 
-## Building
+## Install
 
-Run `nx build gui-components` to build the library.
+```bash
+npm install @golemui/gui-components
+```
 
-## Running unit tests
+## Documentation
 
-Run `nx test gui-components` to execute the unit tests.
+- Website: https://golemui.com
+- Repository: https://github.com/golemui/golemui
+- Source: https://github.com/golemui/golemui/tree/main/libs/gui/components
+- Issues: https://github.com/golemui/golemui/issues
+
+## License
+
+MIT

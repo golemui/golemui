@@ -25,7 +25,12 @@
   color: var(--gui-text-default);
   line-height: 1.5;
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin: 0 0 4px 0;
     color: var(--gui-text-default);
   }

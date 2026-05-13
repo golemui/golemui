@@ -1,17 +1,8 @@
 import { LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
 import { GuiItemTypes, ValidGuiShortcut } from '../core/dx.domain';
-import {
-  processDx,
-  getStaticChild,
-  getRawChild,
-  resolveDynamic,
-} from './helpers';
-import {
-  _guiHorizontalFlex,
-  _guiVerticalFlex,
-  _guiFlex,
-} from '../shortcuts/layouts/guiFlex.impl';
+import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
+import { _guiHorizontalFlex, _guiVerticalFlex, _guiFlex } from '../shortcuts/layouts/guiFlex.impl';
 import { _gslLayoutByUid } from '../shortcuts/layouts/register';
 import { _guiTextInput, _guiNumberInput } from '../index';
 
@@ -59,9 +50,7 @@ describe('DX Pipeline — Layouts', () => {
     });
 
     it('supports nested layouts and preserves hierarchy', () => {
-      const root = processDx(
-        _guiVerticalFlex([_guiHorizontalFlex([_guiTextInput('a')])]),
-      );
+      const root = processDx(_guiVerticalFlex([_guiHorizontalFlex([_guiTextInput('a')])]));
       const outer = getStaticChild(root, 0) as LayoutWidget;
       const inner = outer.children?.[0] as LayoutWidget;
       const leaf = inner.children?.[0] as { kind?: string; path?: string };
@@ -118,9 +107,11 @@ describe('DX Pipeline — Layouts', () => {
         tags: [],
       };
 
-      const root = processDx(layoutWithId, [_gslLayoutByUid('#myLayout', {
-        override: { direction: 'row' },
-      })]);
+      const root = processDx(layoutWithId, [
+        _gslLayoutByUid('#myLayout', {
+          override: { direction: 'row' },
+        }),
+      ]);
       const layout = getStaticChild(root, 0) as LayoutWidget;
 
       expect(layout.uid).toBe('#myLayout');

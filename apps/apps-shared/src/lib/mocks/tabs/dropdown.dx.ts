@@ -1,7 +1,10 @@
 import { gui } from '@golemui/gui-shared';
 
 const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
-const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
+const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
+  label: `Item ${i}`,
+  value: i,
+}));
 
 export const dropdownTab = gui.layouts.flex([
   gui.inputs.dropdown('dropdowns.searchAsYouType', {

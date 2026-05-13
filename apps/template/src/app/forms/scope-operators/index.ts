@@ -5,8 +5,8 @@ export const scopeTagDemo = {
   data: {},
   form: [
     gui.inputs.textInput('street', { label: 'Street' }, ['priority']),
-    gui.inputs.textInput('city',   { label: 'City' }),
-    gui.inputs.textInput('zip',    { label: 'ZIP' }),
+    gui.inputs.textInput('city', { label: 'City' }),
+    gui.inputs.textInput('zip', { label: 'ZIP' }),
   ],
   selectors: [
     gui.selectors.tag('priority').textInputs({

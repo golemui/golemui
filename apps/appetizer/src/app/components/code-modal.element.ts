@@ -66,8 +66,7 @@ export class CodeModalElement extends LitElement {
     if (!this.open) return nothing;
     const title = TITLES[this.mode];
     const language = this.mode === 'submit' ? 'json' : 'typescript';
-    const raw =
-      this.mode === 'submit' ? JSON.stringify(this.data ?? {}, replacer, 2) : this.source;
+    const raw = this.mode === 'submit' ? JSON.stringify(this.data ?? {}, replacer, 2) : this.source;
     const highlighted = hljs.highlight(raw, { language }).value;
     return html`
       <div class="code-modal-backdrop" @click=${this.onBackdropClick} role="presentation">
@@ -89,7 +88,9 @@ export class CodeModalElement extends LitElement {
               ×
             </button>
           </header>
-          <pre class="code-modal-body"><code class="hljs language-${language}">${unsafeHTML(highlighted)}</code></pre>
+          <pre class="code-modal-body"><code class="hljs language-${language}">${unsafeHTML(
+            highlighted,
+          )}</code></pre>
         </div>
       </div>
     `;

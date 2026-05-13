@@ -5,8 +5,10 @@ import { BaseWidgetAdapter } from './base-widget.adapter';
 @Injectable()
 export class ActionWidgetAdapter<
   ExtraProps extends Record<string, any>,
->  extends BaseWidgetAdapter<Core.ActionWidget> {
-  templateData = signal<Core.ActionWidgetTemplateData & ExtraProps>({} as Core.ActionWidgetTemplateData & ExtraProps);
+> extends BaseWidgetAdapter<Core.ActionWidget> {
+  templateData = signal<Core.ActionWidgetTemplateData & ExtraProps>(
+    {} as Core.ActionWidgetTemplateData & ExtraProps,
+  );
 
   init(widget: Core.ActionWidget) {
     this.widget = widget;

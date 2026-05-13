@@ -6,7 +6,7 @@ export const actionContext = createContext<ActionWidgetAdapter<any>>('guiActionW
 
 export class ActionWidgetAdapter<
   ExtraProps extends Record<string, any>,
->  extends BaseWidgetAdapter<Core.ActionWidget> {
+> extends BaseWidgetAdapter<Core.ActionWidget> {
   override templateData = {} as Core.ActionWidgetTemplateData & ExtraProps;
 
   init(widget: Core.ActionWidget) {

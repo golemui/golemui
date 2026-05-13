@@ -169,9 +169,15 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
 
   describe('Edge cases', () => {
     it('should handle zero and false values in i18n params interpolation', () => {
-      i18next.addResourceBundle('en', 'translation', {
-        stats: 'Count: {{count}}, Active: {{isActive}}',
-      }, true, true);
+      i18next.addResourceBundle(
+        'en',
+        'translation',
+        {
+          stats: 'Count: {{count}}, Active: {{isActive}}',
+        },
+        true,
+        true,
+      );
 
       mountFn({
         localization: i18nTranslator,

@@ -71,11 +71,7 @@ export class DxService {
 
     // ── 3. Build result ──
     const rootLayout = widgets[0] as LayoutWidget<STATE_KEYS, FORM_DATA>;
-    return this.buildResult<STATE_KEYS, FORM_DATA>(
-      { form: rootLayout },
-      eventRegistry,
-      formConfig,
-    );
+    return this.buildResult<STATE_KEYS, FORM_DATA>({ form: rootLayout }, eventRegistry, formConfig);
   }
 
   /**
@@ -176,7 +172,12 @@ export class DxService {
           const dxUpdate = (callbackArg: any) => {
             // DX-friendly shape: { path: 'widgetPath', propName: value }
             // translates to OVERRIDE_WIDGET_PROP actions
-            if (callbackArg && typeof callbackArg === 'object' && 'path' in callbackArg && !('type' in callbackArg)) {
+            if (
+              callbackArg &&
+              typeof callbackArg === 'object' &&
+              'path' in callbackArg &&
+              !('type' in callbackArg)
+            ) {
               const { path, ...props } = callbackArg;
               for (const [prop, value] of Object.entries(props)) {
                 event.callback({
@@ -219,6 +220,12 @@ export class DxService {
   }
 }
 
-const walker = new ItemWalker(selectorResolver, widgetMerger, widgetMapper, eventWiringService, stateExpansionService);
+const walker = new ItemWalker(
+  selectorResolver,
+  widgetMerger,
+  widgetMapper,
+  eventWiringService,
+  stateExpansionService,
+);
 const formDefs = new DxService(selectorNormalizer, eventWiringService, walker);
 export { formDefs };

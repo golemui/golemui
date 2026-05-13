@@ -20,7 +20,11 @@ export function Flex(widgetInstance: Core.WithWidget) {
   const align = `gui-flex__widget--align-${(templateData.align as string) ?? 'start'}`;
   return (
     <div className="gui-flex gui-field" style={{ flex: templateData.size }}>
-      <div className={`gui-flex__widget ${direction} ${justify} ${align}`} style={templateData.gap ? { gap: `${templateData.gap}px`} : {}} id={uid}>
+      <div
+        className={`gui-flex__widget ${direction} ${justify} ${align}`}
+        style={templateData.gap ? { gap: `${templateData.gap}px` } : {}}
+        id={uid}
+      >
         {renderWidgets()}
       </div>
     </div>

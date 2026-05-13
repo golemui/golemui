@@ -24,13 +24,13 @@ const formDef = [
 
 Each shortcut returns a typed object the engine can render. The signatures follow predictable rules per group:
 
-| Group           | Signature                                                  | Notes                                                         |
-| --------------- | ---------------------------------------------------------- | ------------------------------------------------------------- |
-| `gui.inputs.*`  | `(path, props?, tags?)`                                    | `path` is where the value lives in the form data.             |
-| `gui.actions.*` | `(props, tags?)`                                           | No `path` — actions don't store data.                         |
-| `gui.displays.*`| `(props, tags?)`                                           | Read-only, no `path`, no events.                              |
-| `gui.layouts.*` | `(children, props?, tags?)`                                | `children` is an array of more `gui.*` calls.                 |
-| `gui.selectors`| chainable — `gui.selectors.<scope>?.<group>(decorator)`     | Behavior layer; matches by type, tag, or uid.                 |
+| Group            | Signature                                               | Notes                                             |
+| ---------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| `gui.inputs.*`   | `(path, props?, tags?)`                                 | `path` is where the value lives in the form data. |
+| `gui.actions.*`  | `(props, tags?)`                                        | No `path` — actions don't store data.             |
+| `gui.displays.*` | `(props, tags?)`                                        | Read-only, no `path`, no events.                  |
+| `gui.layouts.*`  | `(children, props?, tags?)`                             | `children` is an array of more `gui.*` calls.     |
+| `gui.selectors`  | chainable — `gui.selectors.<scope>?.<group>(decorator)` | Behavior layer; matches by type, tag, or uid.     |
 
 ## Runtime functions
 
@@ -109,7 +109,7 @@ Containers that arrange children. `flex` for rows/columns sized by `size`,
 ```ts
 gui.layouts.flex([
   gui.inputs.textInput('first', { label: 'First name' }),
-  gui.inputs.textInput('last',  { label: 'Last name' }),
+  gui.inputs.textInput('last', { label: 'Last name' }),
 ]);
 ```
 

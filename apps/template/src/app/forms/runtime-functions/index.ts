@@ -5,8 +5,7 @@ export const runtimeLabelDemo = {
   data: {},
   form: [
     gui.inputs.booleanInput('registerMode', {
-      label: ({ $form }: any) =>
-        $form.registerMode ? 'Switch to login' : 'Switch to register',
+      label: ({ $form }: any) => ($form.registerMode ? 'Switch to login' : 'Switch to register'),
     }),
   ],
   resources: {},
@@ -75,8 +74,7 @@ export const runtimeNestedPropDemo = {
     }),
     gui.inputs.checkbox('agreed', {
       label: 'I agree',
-      checkboxPosition: ({ $form }: any) =>
-        $form.rtlMode ? 'right' : 'left',
+      checkboxPosition: ({ $form }: any) => ($form.rtlMode ? 'right' : 'left'),
     }),
   ],
   resources: {},
@@ -89,9 +87,7 @@ export const runtimeDisplayDemo = {
     gui.inputs.textInput('user.name', { label: 'Your name' }),
     gui.displays.alert({
       text: ({ $form }: any) =>
-        $form.user?.name
-          ? `Hello ${$form.user.name}!`
-          : 'Welcome — type your name above.',
+        $form.user?.name ? `Hello ${$form.user.name}!` : 'Welcome — type your name above.',
       level: 'info',
     }),
   ],

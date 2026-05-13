@@ -9,10 +9,10 @@ import Demo from '../../../../components/landing/Demo.astro';
 
 `tag(name)` narrows a leaf to widgets carrying a single tag. When you need to match against **multiple** tags, use the multi-value scope operators:
 
-| Method         | Semantics                                       |
-| -------------- | ----------------------------------------------- |
-| `tagsAnd(...)` | All listed tags must be present on the widget.  |
-| `tagsOr(...)`  | At least one of the listed tags must be present.|
+| Method         | Semantics                                        |
+| -------------- | ------------------------------------------------ |
+| `tagsAnd(...)` | All listed tags must be present on the widget.   |
+| `tagsOr(...)`  | At least one of the listed tags must be present. |
 
 ## `tagsAnd([...names])`
 
@@ -20,11 +20,14 @@ import Demo from '../../../../components/landing/Demo.astro';
 
 ```ts
 const formDef = [
-  gui.inputs.textInput('email',       { label: 'Email' },         ['identity', 'required']),
-  gui.inputs.textInput('username',    { label: 'Username' },      ['identity', 'required']),
-  gui.inputs.textInput('displayName', { label: 'Display name' },  ['identity']),
-  gui.inputs.textInput('bio',         { label: 'Short bio' },     ['required']),
-  gui.inputs.textInput('nickname',    { label: 'Nickname' }),
+  gui.inputs.textInput('email', { label: 'Email' }, ['identity', 'required']),
+  gui.inputs.textInput('username', { label: 'Username' }, [
+    'identity',
+    'required',
+  ]),
+  gui.inputs.textInput('displayName', { label: 'Display name' }, ['identity']),
+  gui.inputs.textInput('bio', { label: 'Short bio' }, ['required']),
+  gui.inputs.textInput('nickname', { label: 'Nickname' }),
 ];
 
 const formSelectors = [
@@ -36,7 +39,7 @@ const formSelectors = [
 
 <Demo src="/template/index.html?renderer=multi-value-and" minHeight="440" />
 
-Only **Email** and **Username** carry both tags, so only those two pick up the hint. *Display name* (one tag), *Short bio* (one tag), and *Nickname* (no tags) stay clean.
+Only **Email** and **Username** carry both tags, so only those two pick up the hint. _Display name_ (one tag), _Short bio_ (one tag), and _Nickname_ (no tags) stay clean.
 
 ## `tagsOr([...names])`
 
@@ -44,10 +47,15 @@ Only **Email** and **Username** carry both tags, so only those two pick up the h
 
 ```ts
 const formDef = [
-  gui.inputs.textInput('featureName', { label: 'New dashboard name' }, ['beta']),
-  gui.inputs.textInput('aiPrompt',    { label: 'AI prompt' },          ['experimental']),
-  gui.inputs.textInput('exportPath',  { label: 'Export path' },        ['beta', 'experimental']),
-  gui.inputs.textInput('legacyKey',   { label: 'Legacy key' }),
+  gui.inputs.textInput('featureName', { label: 'New dashboard name' }, [
+    'beta',
+  ]),
+  gui.inputs.textInput('aiPrompt', { label: 'AI prompt' }, ['experimental']),
+  gui.inputs.textInput('exportPath', { label: 'Export path' }, [
+    'beta',
+    'experimental',
+  ]),
+  gui.inputs.textInput('legacyKey', { label: 'Legacy key' }),
 ];
 
 const formSelectors = [
@@ -59,7 +67,7 @@ const formSelectors = [
 
 <Demo src="/template/index.html?renderer=multi-value-or" minHeight="380" />
 
-Three of the four fields carry at least one of the listed tags and pick up the hint. *Legacy key* has no tags so the scope skips it.
+Three of the four fields carry at least one of the listed tags and pick up the hint. _Legacy key_ has no tags so the scope skips it.
 
 ## Combining with other scope operators
 
@@ -72,7 +80,7 @@ gui.selectors
   .inputs({ override: { disabled: true } });
 ```
 
-Reads as: *for inputs tagged both `identity` and `required`, while the `readonly` state is active, disable them*.
+Reads as: _for inputs tagged both `identity` and `required`, while the `readonly` state is active, disable them_.
 
 ## See also
 

@@ -137,9 +137,10 @@ export function List(widgetInstance: Core.WithWidget) {
 
             const labelField = templateData.labelField ?? 'label';
             const isObject = item.template !== null && typeof item.template === 'object';
-            const template = isObject && labelField && !templateData.itemRenderer
-              ? item.template[labelField]
-              : item.template;
+            const template =
+              isObject && labelField && !templateData.itemRenderer
+                ? item.template[labelField]
+                : item.template;
 
             return (
               <div

@@ -12,7 +12,10 @@ export class InputSensibleDefaultsService {
     return processAutoLabel(item, currentConfig);
   }
 
-  public processAutomaticPlaceholders(item: InputDecorator, currentConfig: InputSensibleDefaultsConfig) {
+  public processAutomaticPlaceholders(
+    item: InputDecorator,
+    currentConfig: InputSensibleDefaultsConfig,
+  ) {
     return processAutoPlaceholder(item, currentConfig);
   }
 }

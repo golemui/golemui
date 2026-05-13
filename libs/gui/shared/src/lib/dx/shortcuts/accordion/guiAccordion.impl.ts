@@ -16,9 +16,7 @@ function slugify(label: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-export function _guiAccordion(
-  sections: AccordionSection[],
-): GuiAccordionShortcut;
+export function _guiAccordion(sections: AccordionSection[]): GuiAccordionShortcut;
 export function _guiAccordion(
   sections: AccordionSection[],
   props: AccordionFactoryProps,

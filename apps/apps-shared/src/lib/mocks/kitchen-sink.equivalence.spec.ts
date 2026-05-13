@@ -101,7 +101,8 @@ const stripFields = (node: any, fields: readonly string[]): any => {
 //     Tracked alongside accordion per-section-type gap.
 //   - autoFit: DX grid layouts default to `autoFit: true` (sensible-default for
 //     responsive layouts); JSON path doesn't set it. Pipeline default.
-const stripped = (form: any) => stripFields(form, ['uid', 'validator', 'direction', 'renderMode', 'autoFit']);
+const stripped = (form: any) =>
+  stripFields(form, ['uid', 'validator', 'direction', 'renderMode', 'autoFit']);
 
 // `_guiAccordion` (and similar layouts) hard-wrap each section's children in a
 // flex layout, even when the section's direct child is already a layout. JSON

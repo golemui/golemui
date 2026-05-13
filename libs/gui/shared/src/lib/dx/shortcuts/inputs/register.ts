@@ -1,11 +1,7 @@
 // Complexity: COMPLEX — batch factory with 3 sub-types (text, number, boolean).
 // This is NOT representative of a typical shortcut. If you're learning the system,
 // start with alert/ (minimal) or date-picker/ (standard keyed type).
-import {
-  InputWidget,
-  NonFunctionWidget,
-  UiState,
-} from '@golemui/core';
+import { InputWidget, NonFunctionWidget, UiState } from '@golemui/core';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { buildTypedValidator } from '../../core/dxValidatorHelper';
@@ -22,10 +18,9 @@ import {
   TextDataInputDecorator,
 } from './inputs.domain';
 
-function mapToWidget<
-  StateKeys extends UiState = never,
-  FormData extends Record<string, any> = any,
->(def: InputDecorator): NonFunctionWidget<StateKeys, FormData> {
+function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
+  def: InputDecorator,
+): NonFunctionWidget<StateKeys, FormData> {
   switch (def.type) {
     case 'text':
       return mapTextInputDef<StateKeys, FormData>(def as TextDataInputDecorator);
@@ -51,7 +46,9 @@ function mapBooleanInputDef<
     ...(fieldDef.label != null ? { label: fieldDef.label } : {}),
     ...(fieldDef.disabled != null ? { disabled: fieldDef.disabled } : {}),
     ...(fieldDef.readonly != null ? { readonly: fieldDef.readonly } : {}),
-    ...(fieldDef.validator != null ? { validator: buildTypedValidator(fieldDef.validator as any, 'boolean') } : {}),
+    ...(fieldDef.validator != null
+      ? { validator: buildTypedValidator(fieldDef.validator as any, 'boolean') }
+      : {}),
     props,
   };
 }
@@ -98,21 +95,24 @@ function mapNumberInputDef<
   };
 }
 
-export const { gsl: _gslInputs, gslByUid: _gslInputByUid } =
-  defineShortcutType<InputEntry, InputDecorator, GslInputsConfig>({
-    itemType: 'INPUTS',
-    entryShape: 'keyed',
-    sensibleDefaults: {
-      base: {
-        suppressAutomaticLabels: false,
-        suppressAutomaticPlaceholders: false,
-      },
-      fields: ['suppressAutomaticLabels', 'suppressAutomaticPlaceholders'],
-      apply: (def, config) => {
-        let result = processAutoLabel(def, config);
-        result = processAutoPlaceholder(result, config);
-        return result;
-      },
+export const { gsl: _gslInputs, gslByUid: _gslInputByUid } = defineShortcutType<
+  InputEntry,
+  InputDecorator,
+  GslInputsConfig
+>({
+  itemType: 'INPUTS',
+  entryShape: 'keyed',
+  sensibleDefaults: {
+    base: {
+      suppressAutomaticLabels: false,
+      suppressAutomaticPlaceholders: false,
     },
-    mapToWidget,
-  });
+    fields: ['suppressAutomaticLabels', 'suppressAutomaticPlaceholders'],
+    apply: (def, config) => {
+      let result = processAutoLabel(def, config);
+      result = processAutoPlaceholder(result, config);
+      return result;
+    },
+  },
+  mapToWidget,
+});

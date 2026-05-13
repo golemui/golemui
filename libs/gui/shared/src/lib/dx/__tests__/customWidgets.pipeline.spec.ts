@@ -6,7 +6,7 @@ import {
   _guiCustomInput,
   _guiCustomAction,
   _guiCustomLayout,
-    _gslCustomDisplays,
+  _gslCustomDisplays,
   _gslCustomDisplayByUid,
   _gslCustomInputs,
   _gslCustomInputByUid,
@@ -20,9 +20,7 @@ import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Custom Display', () => {
   it('expands _guiCustomDisplay into a display widget with custom type', () => {
-    const result = processDx(
-      _guiCustomDisplay('heading', { text: 'Hello', level: 1 }),
-    );
+    const result = processDx(_guiCustomDisplay('heading', { text: 'Hello', level: 1 }));
     const w = getStaticChild(result, 0) as any;
 
     expect(w.kind).toBe('display');
@@ -41,9 +39,7 @@ describe('DX Pipeline — Custom Display', () => {
   });
 
   it('supports dynamic callback', () => {
-    const result = processDx(
-      _guiCustomDisplay('heading', () => ({ props: { text: 'Dynamic' } })),
-    );
+    const result = processDx(_guiCustomDisplay('heading', () => ({ props: { text: 'Dynamic' } })));
     const raw = getRawChild(result, 0);
     const w = resolveDynamic(raw) as any;
 
@@ -53,20 +49,18 @@ describe('DX Pipeline — Custom Display', () => {
   });
 
   it('applies GSL broad selector override', () => {
-    const result = processDx(
-      _guiCustomDisplay('heading', { text: 'Original' }),
-      [_gslCustomDisplays({ override: { props: { text: 'Overridden' } } })],
-    );
+    const result = processDx(_guiCustomDisplay('heading', { text: 'Original' }), [
+      _gslCustomDisplays({ override: { props: { text: 'Overridden' } } }),
+    ]);
     const w = getStaticChild(result, 0) as any;
 
     expect(w.props.text).toBe('Overridden');
   });
 
   it('applies GSL byId selector override', () => {
-    const result = processDx(
-      _guiCustomDisplay('heading', { text: 'Original', uid: 'h1' }),
-      [_gslCustomDisplayByUid('h1', { override: { props: { text: 'ById' } } })],
-    );
+    const result = processDx(_guiCustomDisplay('heading', { text: 'Original', uid: 'h1' }), [
+      _gslCustomDisplayByUid('h1', { override: { props: { text: 'ById' } } }),
+    ]);
     const w = getStaticChild(result, 0) as any;
 
     expect(w.props.text).toBe('ById');
@@ -75,9 +69,7 @@ describe('DX Pipeline — Custom Display', () => {
 
 describe('DX Pipeline — Custom Input', () => {
   it('expands _guiCustomInput into an input widget with custom type', () => {
-    const result = processDx(
-      _guiCustomInput('matTextInput', 'user.email', { label: 'Email' }),
-    );
+    const result = processDx(_guiCustomInput('matTextInput', 'user.email', { label: 'Email' }));
     const w = getStaticChild(result, 0) as any;
 
     expect(w.kind).toBe('input');
@@ -87,9 +79,7 @@ describe('DX Pipeline — Custom Input', () => {
   });
 
   it('auto-generates label from path when not provided', () => {
-    const result = processDx(
-      _guiCustomInput('matTextInput', 'firstName'),
-    );
+    const result = processDx(_guiCustomInput('matTextInput', 'firstName'));
     const w = getStaticChild(result, 0) as any;
 
     expect(w.kind).toBe('input');
@@ -109,9 +99,7 @@ describe('DX Pipeline — Custom Input', () => {
   });
 
   it('passes through defaultValue', () => {
-    const result = processDx(
-      _guiCustomInput('matTextInput', 'field', { defaultValue: 'hello' }),
-    );
+    const result = processDx(_guiCustomInput('matTextInput', 'field', { defaultValue: 'hello' }));
     const w = getStaticChild(result, 0) as any;
 
     expect(w.defaultValue).toBe('hello');
@@ -127,20 +115,18 @@ describe('DX Pipeline — Custom Input', () => {
   });
 
   it('applies GSL broad selector', () => {
-    const result = processDx(
-      _guiCustomInput('matTextInput', 'email'),
-      [_gslCustomInputs({ override: { label: 'Forced Label' } })],
-    );
+    const result = processDx(_guiCustomInput('matTextInput', 'email'), [
+      _gslCustomInputs({ override: { label: 'Forced Label' } }),
+    ]);
     const w = getStaticChild(result, 0) as any;
 
     expect(w.label).toBe('Forced Label');
   });
 
   it('applies GSL byId selector', () => {
-    const result = processDx(
-      _guiCustomInput('matTextInput', 'email', { uid: 'email-field' }),
-      [_gslCustomInputByUid('email-field', { override: { label: 'By ID' } })],
-    );
+    const result = processDx(_guiCustomInput('matTextInput', 'email', { uid: 'email-field' }), [
+      _gslCustomInputByUid('email-field', { override: { label: 'By ID' } }),
+    ]);
     const w = getStaticChild(result, 0) as any;
 
     expect(w.label).toBe('By ID');
@@ -149,9 +135,7 @@ describe('DX Pipeline — Custom Input', () => {
 
 describe('DX Pipeline — Custom Action', () => {
   it('expands _guiCustomAction into an action widget with custom type', () => {
-    const result = processDx(
-      _guiCustomAction('matButton', { label: 'Send' }),
-    );
+    const result = processDx(_guiCustomAction('matButton', { label: 'Send' }));
     const w = getStaticChild(result, 0) as any;
 
     expect(w.kind).toBe('action');
@@ -205,20 +189,18 @@ describe('DX Pipeline — Custom Action', () => {
   });
 
   it('applies GSL broad selector', () => {
-    const result = processDx(
-      _guiCustomAction('matButton', { label: 'Original' }),
-      [_gslCustomActions({ override: { label: 'Overridden' } })],
-    );
+    const result = processDx(_guiCustomAction('matButton', { label: 'Original' }), [
+      _gslCustomActions({ override: { label: 'Overridden' } }),
+    ]);
     const w = getStaticChild(result, 0) as any;
 
     expect(w.label).toBe('Overridden');
   });
 
   it('applies GSL byId selector', () => {
-    const result = processDx(
-      _guiCustomAction('matButton', { label: 'Original', uid: 'btn1' }),
-      [_gslCustomActionByUid('btn1', { override: { label: 'ById' } })],
-    );
+    const result = processDx(_guiCustomAction('matButton', { label: 'Original', uid: 'btn1' }), [
+      _gslCustomActionByUid('btn1', { override: { label: 'ById' } }),
+    ]);
     const w = getStaticChild(result, 0) as any;
 
     expect(w.label).toBe('ById');
@@ -227,11 +209,7 @@ describe('DX Pipeline — Custom Action', () => {
 
 describe('DX Pipeline — Custom Layout', () => {
   it('expands _guiCustomLayout with children recursively', () => {
-    const result = processDx(
-      _guiCustomLayout('card', [
-        _guiTextInput('name'),
-      ]),
-    );
+    const result = processDx(_guiCustomLayout('card', [_guiTextInput('name')]));
     const layout = getStaticChild(result, 0) as LayoutWidget;
 
     expect(layout.kind).toBe('layout');
@@ -244,9 +222,7 @@ describe('DX Pipeline — Custom Layout', () => {
   });
 
   it('passes through custom props', () => {
-    const result = processDx(
-      _guiCustomLayout('card', [], { props: { elevation: 2 } }),
-    );
+    const result = processDx(_guiCustomLayout('card', [], { props: { elevation: 2 } }));
     const layout = getStaticChild(result, 0) as any;
 
     expect(layout.kind).toBe('layout');
@@ -255,20 +231,18 @@ describe('DX Pipeline — Custom Layout', () => {
   });
 
   it('applies GSL broad selector', () => {
-    const result = processDx(
-      _guiCustomLayout('card', []),
-      [_gslCustomLayouts({ override: { props: { elevation: 4 } } })],
-    );
+    const result = processDx(_guiCustomLayout('card', []), [
+      _gslCustomLayouts({ override: { props: { elevation: 4 } } }),
+    ]);
     const layout = getStaticChild(result, 0) as any;
 
     expect(layout.props.elevation).toBe(4);
   });
 
   it('applies GSL byId selector', () => {
-    const result = processDx(
-      _guiCustomLayout('card', [], { uid: 'main-card' }),
-      [_gslCustomLayoutByUid('main-card', { override: { props: { elevation: 8 } } })],
-    );
+    const result = processDx(_guiCustomLayout('card', [], { uid: 'main-card' }), [
+      _gslCustomLayoutByUid('main-card', { override: { props: { elevation: 8 } } }),
+    ]);
     const layout = getStaticChild(result, 0) as any;
 
     expect(layout.props.elevation).toBe(8);
@@ -278,22 +252,18 @@ describe('DX Pipeline — Custom Layout', () => {
 describe('DX Pipeline — widgetLoaders transport', () => {
   it('includes widgetLoaders in DxResult when formConfig provides them', () => {
     const loader = async () => ({ default: {} });
-    const result = formDefs.processDxFacade(
-      [_guiTextInput('name')],
-      [],
-      { widgetLoaders: { heading: loader } },
-    );
+    const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
+      widgetLoaders: { heading: loader },
+    });
 
     expect(result.widgetLoaders).toBeDefined();
     expect(result.widgetLoaders!['heading']).toBe(loader);
   });
 
   it('omits widgetLoaders from DxResult when formConfig has none', () => {
-    const result = formDefs.processDxFacade(
-      [_guiTextInput('name')],
-      [],
-      { suppressAutomaticSubmit: true },
-    );
+    const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
+      suppressAutomaticSubmit: true,
+    });
 
     expect(result.widgetLoaders).toBeUndefined();
   });

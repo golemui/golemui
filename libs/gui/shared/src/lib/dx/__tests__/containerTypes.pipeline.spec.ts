@@ -1,23 +1,18 @@
 import { LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
-import {
-  _guiTabs,
-  _guiList,
-    _guiCheckbox,
-  _guiButton,
-  _gslTabs,
-  _gslLists,
-} from '../index';
+import { _guiTabs, _guiList, _guiCheckbox, _guiButton, _gslTabs, _gslLists } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Container Types (Phase 6.3)', () => {
   describe('Tabs', () => {
     it('expands _guiTabs into a tabs layout widget', () => {
-      const result = processDx(_guiTabs([
-  { label: 'Tab A', children: [_guiTextInput('name')] },
-  { label: 'Tab B', children: [_guiCheckbox('agree')] },
-]));
+      const result = processDx(
+        _guiTabs([
+          { label: 'Tab A', children: [_guiTextInput('name')] },
+          { label: 'Tab B', children: [_guiCheckbox('agree')] },
+        ]),
+      );
       const tabsWidget = getStaticChild(result, 0) as LayoutWidget;
 
       expect(tabsWidget.kind).toBe('layout');
@@ -25,10 +20,12 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('derives tab headers from record keys with slugified uids', () => {
-      const result = processDx(_guiTabs([
-  { label: 'Personal Info', children: [_guiTextInput('firstName')] },
-  { label: 'Address', children: [_guiTextInput('city')] },
-]));
+      const result = processDx(
+        _guiTabs([
+          { label: 'Personal Info', children: [_guiTextInput('firstName')] },
+          { label: 'Address', children: [_guiTextInput('city')] },
+        ]),
+      );
       const tabsWidget = getStaticChild(result, 0) as LayoutWidget & {
         props?: { tabs?: Array<{ label: string; uid: string }> };
       };
@@ -40,10 +37,12 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('wraps each tab content in a flex layout child', () => {
-      const result = processDx(_guiTabs([
-  { label: 'Tab A', children: [_guiTextInput('name')] },
-  { label: 'Tab B', children: [_guiCheckbox('agree')] },
-]));
+      const result = processDx(
+        _guiTabs([
+          { label: 'Tab A', children: [_guiTextInput('name')] },
+          { label: 'Tab B', children: [_guiCheckbox('agree')] },
+        ]),
+      );
       const tabsWidget = getStaticChild(result, 0) as LayoutWidget;
 
       expect(tabsWidget.children).toHaveLength(2);
@@ -60,9 +59,11 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('recursively walks tab content widgets', () => {
-      const result = processDx(_guiTabs([
-  { label: 'Details', children: [_guiTextInput('firstName'), _guiTextInput('lastName')] },
-]));
+      const result = processDx(
+        _guiTabs([
+          { label: 'Details', children: [_guiTextInput('firstName'), _guiTextInput('lastName')] },
+        ]),
+      );
       const tabsWidget = getStaticChild(result, 0) as LayoutWidget;
       expect(tabsWidget.children).toBeDefined();
       const tabChildren = tabsWidget.children ?? [];
@@ -76,9 +77,7 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('defaults renderMode to all', () => {
-      const result = processDx(_guiTabs([
-  { label: 'A', children: [_guiTextInput('x')] },
-]));
+      const result = processDx(_guiTabs([{ label: 'A', children: [_guiTextInput('x')] }]));
       const tabsWidget = getStaticChild(result, 0) as {
         props?: { renderMode?: string };
       };
@@ -90,9 +89,9 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
       const result = processDx(
         _guiTabs(
           [
-          { label: 'Tab A', children: [_guiTextInput('a')] },
-          { label: 'Tab B', children: [_guiTextInput('b')] },
-        ],
+            { label: 'Tab A', children: [_guiTextInput('a')] },
+            { label: 'Tab B', children: [_guiTextInput('b')] },
+          ],
           { renderMode: 'activeOnly', defaultOpen: 'tab-b' },
         ),
       );
@@ -105,12 +104,9 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('applies GSL selector override', () => {
-      const result = processDx(
-        _guiTabs([
-          { label: 'A', children: [_guiTextInput('x')] },
-        ]),
-        [_gslTabs({ override: { renderMode: 'activeOnly' } })],
-      );
+      const result = processDx(_guiTabs([{ label: 'A', children: [_guiTextInput('x')] }]), [
+        _gslTabs({ override: { renderMode: 'activeOnly' } }),
+      ]);
       const tabsWidget = getStaticChild(result, 0) as {
         props?: { renderMode?: string };
       };
@@ -119,12 +115,14 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('does not double-add auto-submit when submit button is inside a tab', () => {
-      const result = processDx(_guiTabs([
-  { label: 'Main', children: [
-          _guiTextInput('name'),
-          _guiButton({ label: 'Submit', onClick: 'submit' }),
-        ] },
-]));
+      const result = processDx(
+        _guiTabs([
+          {
+            label: 'Main',
+            children: [_guiTextInput('name'), _guiButton({ label: 'Submit', onClick: 'submit' })],
+          },
+        ]),
+      );
 
       const rootChildren = result.children ?? [];
       expect(rootChildren).toHaveLength(1);
@@ -169,11 +167,13 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('passes custom props (height, itemHeight)', () => {
-      const result = processDx(_guiList('colors', {
-        items: sampleItems,
-        height: 300,
-        itemHeight: 40,
-      }));
+      const result = processDx(
+        _guiList('colors', {
+          items: sampleItems,
+          height: 300,
+          itemHeight: 40,
+        }),
+      );
       const w = getStaticChild(result, 0) as {
         props?: { height?: number; itemHeight?: number };
       };
@@ -183,10 +183,9 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
     });
 
     it('applies GSL selector override', () => {
-      const result = processDx(
-        _guiList('colors', { items: sampleItems }),
-        [_gslLists({ override: { hint: 'Pick favorites' } })],
-      );
+      const result = processDx(_guiList('colors', { items: sampleItems }), [
+        _gslLists({ override: { hint: 'Pick favorites' } }),
+      ]);
       const w = getStaticChild(result, 0) as { props?: { hint?: string } };
 
       expect(w.props?.hint).toBe('Pick favorites');

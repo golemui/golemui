@@ -38,9 +38,9 @@ Expressions can reference any path in the form data.
 
 Two properties on every shortcut control whether a widget renders:
 
-| Property  | Shape                                                                                                              |
-| --------- | ------------------------------------------------------------------------------------------------------------------ |
-| `include` | `{ in: ['stateName', ...] }` — render when **any** named state is active. Or `{ when: '<expr>' }` — render only when the expression is truthy. |
+| Property  | Shape                                                                                                                                                |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `include` | `{ in: ['stateName', ...] }` — render when **any** named state is active. Or `{ when: '<expr>' }` — render only when the expression is truthy.       |
 | `exclude` | `{ from: ['stateName', ...] }` — render unless any of the named states are active. Or `{ when: '<expr>' }` — render unless the expression is truthy. |
 
 Note the field names — `include` uses `in`, `exclude` uses `from`. Both also accept `when` for inline expressions that don't need a name.
@@ -55,10 +55,10 @@ Note the field names — `include` uses `in`, `exclude` uses `from`. Both also a
 
 The demo below shows the three gating mechanisms working side by side:
 
-- **`include: { in: ['isBug'] }`** on the *Steps to reproduce* textarea — render only when the named state is active.
-- **`include: { in: ['isBug', 'isBilling'] }`** on the *Priority* radiogroup — render when **any** of the listed states is active (OR semantics).
-- **`exclude: { from: ['isBilling'] }`** on the *Marketing opt-in* checkbox — render unless the named state is active.
-- **`include: { when: '$form.subscribeNewsletter === true' }`** on the *Newsletter frequency* radiogroup — an inline reactive expression for a one-off condition where naming a state would be overkill.
+- **`include: { in: ['isBug'] }`** on the _Steps to reproduce_ textarea — render only when the named state is active.
+- **`include: { in: ['isBug', 'isBilling'] }`** on the _Priority_ radiogroup — render when **any** of the listed states is active (OR semantics).
+- **`exclude: { from: ['isBilling'] }`** on the _Marketing opt-in_ checkbox — render unless the named state is active.
+- **`include: { when: '$form.subscribeNewsletter === true' }`** on the _Newsletter frequency_ radiogroup — an inline reactive expression for a one-off condition where naming a state would be overkill.
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -67,10 +67,10 @@ const formDef = [
   gui.inputs.radiogroup('issueType', {
     label: 'What can we help you with?',
     options: [
-      { value: 'bug',     label: 'Bug report' },
+      { value: 'bug', label: 'Bug report' },
       { value: 'billing', label: 'Billing question' },
       { value: 'feature', label: 'Feature request' },
-      { value: 'other',   label: 'Other' },
+      { value: 'other', label: 'Other' },
     ],
     direction: 'row',
   }),
@@ -91,9 +91,9 @@ const formDef = [
   gui.inputs.radiogroup('priority', {
     label: 'Priority',
     options: [
-      { value: 'low',    label: 'Low' },
+      { value: 'low', label: 'Low' },
       { value: 'medium', label: 'Medium' },
-      { value: 'high',   label: 'High' },
+      { value: 'high', label: 'High' },
     ],
     direction: 'row',
     include: { in: ['isBug', 'isBilling'] },
@@ -112,7 +112,7 @@ const formDef = [
   gui.inputs.radiogroup('newsletterFrequency', {
     label: 'How often?',
     options: [
-      { value: 'weekly',  label: 'Weekly' },
+      { value: 'weekly', label: 'Weekly' },
       { value: 'monthly', label: 'Monthly' },
     ],
     direction: 'row',
@@ -124,7 +124,7 @@ const formDef = [
 
 const formConfig = {
   states: {
-    isBug:     '$form.issueType === "bug"',
+    isBug: '$form.issueType === "bug"',
     isBilling: '$form.issueType === "billing"',
   },
 };

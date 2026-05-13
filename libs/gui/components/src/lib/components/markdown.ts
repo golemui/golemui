@@ -198,8 +198,14 @@ export class GuiMarkdown extends LitElement {
 
         ${this.splitViewActive
           ? html`
-              <section data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)} class="gui-markdown__preview">
-                <gui-markdown-text .md=${this.value || ''} .dependencies=${this.dependencies}></gui-markdown-text>
+              <section
+                data-cy=${ifDefined(this.uid ? `${this.uid}_markdown` : nothing)}
+                class="gui-markdown__preview"
+              >
+                <gui-markdown-text
+                  .md=${this.value || ''}
+                  .dependencies=${this.dependencies}
+                ></gui-markdown-text>
               </section>
             `
           : nothing}
@@ -459,7 +465,12 @@ export class GuiMarkdown extends LitElement {
     };
   }
 
-  private removeFormat(textarea: HTMLTextAreaElement, formatStart: string, formatEnd: string, formatKey: string) {
+  private removeFormat(
+    textarea: HTMLTextAreaElement,
+    formatStart: string,
+    formatEnd: string,
+    formatKey: string,
+  ) {
     const { selectionStart, value } = textarea;
     const lineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
     const lineEnd = value.indexOf('\n', selectionStart);
