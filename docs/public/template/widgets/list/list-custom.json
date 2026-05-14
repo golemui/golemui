@@ -1,0 +1,24 @@
+{
+  "form": [
+    {
+      "uid": "list_custom",
+      "kind": "input",
+      "type": "list",
+      "path": "selection",
+      "label": "Custom Fields",
+      "props": {
+        "height": 200,
+        "itemHeight": 40,
+        "labelField": "name",
+        "valueField": "code",
+        "items": [
+          { "name": "USA", "code": "US" },
+          { "name": "Canada", "code": "CA" },
+          { "name": "Mexico", "code": "MX" },
+          { "name": "Brazil", "code": "BR" },
+          { "name": "Argentina", "code": "AR" }
+        ]
+      }
+    }
+  ]
+}
