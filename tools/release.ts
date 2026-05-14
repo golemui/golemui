@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
-import { VersionData } from 'nx/src/command-line/release/utils/shared';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
+import { VersionData } from 'nx/src/command-line/release/utils/shared';
+import { archiveSchemas } from './archive-schemas';
 
 process.setMaxListeners(20);
 
@@ -57,6 +58,10 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
 
   if (releaseType === 'stable' && !dryRun) {
     updateLatestDistTag(projectsVersionData);
+  }
+
+  if (releaseType === 'stable' && workspaceVersion) {
+    await archiveSchemas(workspaceVersion, dryRun);
   }
 
   const ok = Object.values(publishResult).every((result) => result.code === 0);
