@@ -19,7 +19,7 @@ gui-range-calendar {
     }
 
     &:is(.range-start, .in-range):not(.range-end)::after {
-      content: "";
+      content: '';
       position: absolute;
       top: -1px;
       right: -2px;
@@ -145,9 +145,11 @@ gui-range-calendar {
     }
 
     &-remove {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: transparent;
-      border: 1px solid var(--gui-color-white);
-      border-radius: var(--gui-radius-full);
+      border: 0;
       color: white;
       padding: 0;
       width: 16px;

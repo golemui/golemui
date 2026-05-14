@@ -67,6 +67,10 @@ gui-calendar {
       width: var(--gui-calendar-change-month-button-width);
       height: var(--gui-calendar-change-month-button-height);
 
+      .gui-widget-icon {
+        color: var(--gui-color-white);
+      }
+
       &--prev {
         position: absolute;
         top: 8px;

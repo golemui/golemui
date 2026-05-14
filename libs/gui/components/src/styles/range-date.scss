@@ -137,13 +137,16 @@ gui-range-date {
     }
 
     &-remove {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: transparent;
-      border: 1px solid var(--gui-color-white);
-      border-radius: var(--gui-radius-full);
+      border: 0;
       color: white;
-      padding: 0px;
+      padding: 0;
       width: 16px;
       height: 16px;
+      cursor: pointer;
     }
 
     &:focus {
