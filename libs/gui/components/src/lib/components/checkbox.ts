@@ -75,6 +75,7 @@ export class GuiCheckbox extends LitElement {
         <div class="gui-widget gui-widget--horizontal">
           <input
             type="checkbox"
+            tabindex="0"
             id=${this.uid}
             data-cy=${`${this.uid}_checkbox`}
             ?checked=${this.value}

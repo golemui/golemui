@@ -75,6 +75,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
               )}
               <button
                 type="button"
+                tabIndex={0}
                 className="gui-button gui-button--sm gui-repeater__remove-btn"
                 onClick={() => removeItem(value, index)}
               >
@@ -119,6 +120,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
         {renderWidgets()}
         <button
           type="button"
+          tabIndex={0}
           className="gui-button gui-repeater__add-btn"
           onClick={() => addItem(value || [])}
           disabled={templateData.limit ? templateData.limit === (value?.length ?? 0) : false}

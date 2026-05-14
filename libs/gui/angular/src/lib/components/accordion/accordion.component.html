@@ -5,6 +5,7 @@
     <div class="gui-accordion__section">
       <button
         type="button"
+        tabindex="0"
         [id]="'accordion_button_' + section.uid"
         [attr.aria-controls]="'accordion_section_' + section.uid"
         [attr.aria-expanded]="activeSections[section.uid] ? 'true' : 'false'"

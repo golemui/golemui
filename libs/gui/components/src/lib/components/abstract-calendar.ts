@@ -101,6 +101,7 @@ export abstract class AbstractCalendar extends LitElement {
           <div class="gui-calendar__container">
             <button
               type="button"
+              tabindex="0"
               class="gui-button gui-calendar__month-button gui-calendar__month-button--prev"
               ?disabled=${!this.canGoPrev()}
               @click=${this.prevMonth}
@@ -120,6 +121,7 @@ export abstract class AbstractCalendar extends LitElement {
 
             <button
               type="button"
+              tabindex="0"
               class="gui-button gui-calendar__month-button gui-calendar__month-button--next"
               ?disabled=${!this.canGoNext()}
               @click=${this.nextMonth}
@@ -195,6 +197,7 @@ export abstract class AbstractCalendar extends LitElement {
             part.type === 'year'
               ? html`<button
                   type="button"
+                  tabindex="0"
                   class="gui-calendar__year-selector"
                   @click=${this.toggleYearSelector}
                   aria-expanded=${this._yearSelectorOpen}

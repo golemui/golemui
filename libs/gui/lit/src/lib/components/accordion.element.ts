@@ -99,6 +99,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
                 return html`<div class="gui-accordion__section">
                   <button
                     type="button"
+                    tabindex="0"
                     class=${classMap({
                       active: this.activeSections[section.uid],
                     })}

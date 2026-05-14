@@ -113,7 +113,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
             }}
             type="button"
             role="tab"
-            tabIndex={tab.uid === activeTab ? undefined : -1}
+            tabIndex={tab.uid === activeTab ? 0 : -1}
             data-cy={`tab_${widget.uid}_${index}`}
             id={`tab_${widget.uid}_${index}`}
             aria-controls={`tabpanel_${widget.uid}_${index}`}

@@ -28,6 +28,8 @@ export const anatomy = 'dropdown-anatomy.html';
 
 Dropdown widgets are [Input Fields](/widgets-reference/input-fields/overview) that provide a searchable list of items. Users can either type in the input to filter the list or select an item directly from the interactive dropdown menu.
 
+The simplest way to populate `items` is a flat array of strings or numbers — the displayed label and the stored value are the same. When you need a separate stored value (e.g. an id behind a human-readable name), pass an array of objects and tell the widget which keys to use via [`labelField`](#using-objects) and [`valueField`](#using-objects).
+
 <DslCode dxCode={dropdownDx} jsonCode={dropdownJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/dropdown/dropdown.json"
@@ -40,17 +42,31 @@ Use these `props` to customize your Dropdown widget.
 
 | prop            | type   | description                                                                                                            |
 | --------------- | ------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `items`         | array  | **Required**. Array of items to be displayed in the dropdown list                                                      |
+| `items`         | array  | **Required**. Array of strings, numbers, or plain objects. See [Using Objects](#using-objects).                        |
 | `placeholder`   | string | Text shown in the input when it is empty                                                                               |
 | `hint`          | string | A description to display below the input                                                                               |
-| `labelField`    | string | Field to use for the display label when items are objects                                                              |
-| `valueField`    | string | Field to use for the value when items are objects                                                                      |
+| `labelField`    | string | When items are objects, the key whose value is shown to the user. Defaults to `label`.                                 |
+| `valueField`    | string | When items are objects, the key whose value is stored in the form. Defaults to `value`. Required for selection to emit a primitive. |
 | `searchFields`  | array  | List of fields to search on when filtering the list                                                                    |
 | `height`        | number | Height of the dropdown list container                                                                                  |
 | `itemHeight`    | number | Height of each individual item in the list                                                                             |
 | `itemRenderer`  | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/)                   |
 | `inputDebounce` | number | Delay in milliseconds before triggering a search/filter. Defaults to `500`                                             |
 | `autocomplete`  | string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                                                      |
+
+### Using Objects
+
+The top-of-page demo uses an array of strings — each entry is both what the user sees and what gets stored. That's enough for many forms, but it falls short when you need to keep a stable id behind a human-readable label (e.g. a country code paired with a country name).
+
+For that case, pass `items` as plain objects and use `labelField` and `valueField` to tell the widget which key holds the displayed text and which one holds the stored value. The example below pairs each country `name` with a short `code`, and `searchFields` lets the user filter by either.
+
+<DslCode dxCode={dropdownCustomDx} jsonCode={dropdownCustomJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/dropdown/dropdown-custom.json"
+  minHeight="500"
+/>
+
+If your objects already use the default key names (`label` and `value`), you can omit `labelField` and `valueField` entirely. Otherwise both should be set so selection can extract the right primitive.
 
 ### Hint
 
@@ -61,16 +77,6 @@ Use the property `hint` to provide instructions for the user.
 <DslCode dxCode={dropdownHintDx} jsonCode={dropdownHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/dropdown/dropdown-hint.json"
-  minHeight="500"
-/>
-
-### Custom Fields
-
-If your items are complex objects, you can specify which fields to use for labels, values, and searching.
-
-<DslCode dxCode={dropdownCustomDx} jsonCode={dropdownCustomJson} dxTitle={configDx} jsonTitle={configJson} />
-<Demo
-  src="/template/index.html?form=template/widgets/dropdown/dropdown-custom.json"
   minHeight="500"
 />
 

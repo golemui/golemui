@@ -103,6 +103,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
                       : nothing}
                     <button
                       type="button"
+                      tabindex="0"
                       class="gui-button gui-button--sm gui-repeater__remove-btn"
                       @click=${() => this.removeItem(index)}
                     >
@@ -126,6 +127,7 @@ export class RepeaterElement extends LitElement implements Core.WithWidget {
 
         <button
           type="button"
+          tabindex="0"
           class="gui-button gui-repeater__add-btn"
           @click=${() => this.addItem()}
           ?disabled=${!!(templateData.limit && templateData.limit === templateData.value?.length)}

@@ -152,6 +152,7 @@ export class GuiRangeDateInput extends LitElement {
                 <div class="gui-range-date-input__pills-compact">
                   <button
                     type="button"
+                    tabindex="0"
                     class="gui-range-date-input__pill--count"
                     aria-label="${pills.length} date ranges"
                     @click=${this.togglePillsList}
