@@ -1,9 +1,10 @@
-import * as Core from '@golemui/core';
 import type { ValidateOn } from '@golemui/core';
+import * as Core from '@golemui/core';
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { Dependencies } from '../shared';
 import type { DxFormConfig, GslSelectorsInput } from './core/dx.domain';
-import type { DxDefinitions, FormEvents } from './formDef.domain';
 import { formDefs } from './dx.service';
+import type { DxDefinitions, FormEvents } from './formDef.domain';
 
 // ═══════════════════════════════════════════════════
 // resolveFormInput — shared bridge used by every framework's <Form> wrapper.
@@ -20,6 +21,22 @@ import { formDefs } from './dx.service';
 // ═══════════════════════════════════════════════════
 
 export type FormInput = string | Record<string, any> | DxDefinitions;
+
+export interface GuiFormInitConfig {
+  formDef: FormInput;
+  formSelectors?: GslSelectorsInput;
+  formConfig?: DxFormConfig;
+  customWidgetLoaders?: Record<string, () => Promise<unknown>>;
+  customValidators?: CustomValidatorSchemas;
+  data?: Record<string, any>;
+  meta?: Record<string, any>;
+  middlewares?: Core.Middleware<Core.State, Core.Action>[];
+  validateOn?: ValidateOn;
+  itemRenderers?: Record<string, unknown>;
+  localization?: Core.I18nTranslator;
+  dependencies?: Dependencies;
+  formName?: string;
+}
 
 export interface ResolvedFormInput<FormData extends Record<string, any> = any> {
   formDef: string | Record<string, any> | Core.Form<any, FormData>;
