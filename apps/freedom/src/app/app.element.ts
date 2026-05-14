@@ -1,7 +1,7 @@
 import { iframeResizer, iframeThemeSync } from '@golemui/apps-shared';
 import type { ItemRenderContext } from '@golemui/core';
-import { gui } from '@golemui/gui-shared';
 import '@golemui/gui-lit';
+import { gui } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -587,9 +587,11 @@ export class FreedomElement extends LitElement {
         ${keyed(
           `${field}-${origin}-${this.formKey}`,
           html`<gui-form
-            .formDef=${[buildField(field, origin, (v) => this.setFieldValue(field, v))]}
-            .data=${dataForRow}
-            .formConfig=${this.formConfig}
+            .config=${{
+              formDef: [buildField(field, origin, (v) => this.setFieldValue(field, v))],
+              data: dataForRow,
+              formConfig: this.formConfig,
+            }}
           ></gui-form>`,
         )}
       </div>
