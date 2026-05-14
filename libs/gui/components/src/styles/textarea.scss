@@ -10,16 +10,6 @@ gui-textarea {
     }
   }
 
-  .gui-widget-icon {
-    top: var(--gui-space-1);
-  }
-
-  textarea {
-    &.gui-textarea--icon {
-      padding-inline-start: var(--gui-space-10);
-    }
-  }
-
   .gui-textarea--validation {
     grid-row: 3;
     display: flex;

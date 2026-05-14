@@ -19,9 +19,6 @@
     "placeholderProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "iconProp": {
-      "type": "string"
-    },
     "counterModeProp": {
       "enum": ["remaining", "current"]
     },
@@ -80,9 +77,6 @@
         "placeholder": {
           "$ref": "#/$defs/placeholderProp"
         },
-        "icon": {
-          "$ref": "#/$defs/iconProp"
-        },
         "counterMode": {
           "$ref": "#/$defs/counterModeProp"
         },
@@ -105,9 +99,6 @@
         },
         "^placeholder\\.[^.]+$": {
           "$ref": "#/$defs/placeholderProp"
-        },
-        "^icon\\.[^.]+$": {
-          "$ref": "#/$defs/iconProp"
         },
         "^counterMode\\.[^.]+$": {
           "$ref": "#/$defs/counterModeProp"

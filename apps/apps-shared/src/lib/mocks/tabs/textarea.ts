@@ -45,9 +45,8 @@ export const textarea = (uid: string): any => ({
       uid: '',
       kind: 'input',
       type: 'textarea',
-      path: 'textareaWithIcon',
+      path: 'textareaWithCounter',
       props: {
-        icon: 'phone_callback',
         hint: 'This is a hint',
         placeholder: 'Please enter your phone number',
         counterMode: 'current',

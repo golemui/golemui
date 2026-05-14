@@ -13,8 +13,6 @@ import textareaPlaceholderJson from '../../../../../public/template/widgets/text
 import textareaPlaceholderDx from '../../../../../public/template/widgets-dx/textarea/textarea-placeholder.ts?raw';
 import textareaHintJson from '../../../../../public/template/widgets/textarea/textarea-hint.json?raw';
 import textareaHintDx from '../../../../../public/template/widgets-dx/textarea/textarea-hint.ts?raw';
-import textareaIconJson from '../../../../../public/template/widgets/textarea/textarea-icon.json?raw';
-import textareaIconDx from '../../../../../public/template/widgets-dx/textarea/textarea-icon.ts?raw';
 import textareaCounterJson from '../../../../../public/template/widgets/textarea/textarea-counter.json?raw';
 import textareaCounterDx from '../../../../../public/template/widgets-dx/textarea/textarea-counter.ts?raw';
 import textareaAutogrowJson from '../../../../../public/template/widgets/textarea/textarea-autogrow.json?raw';
@@ -39,7 +37,6 @@ Use these `props` to customize your Textarea widget.
 | --------------- | ------- | ------------------------------------------------------------------------------------------------------------ |
 | `placeholder`   | string  | A placeholder text to display when the textarea has no value                                                 |
 | `hint`          | string  | A description to display below the textarea                                                                  |
-| `icon`          | string  | A css class to display an icon inside the textarea                                                           |
 | `counterMode`   | string  | Mode for the character counter if `maxLength` is set, possible values are `remaining` (default) or `current` |
 | `minimumHeight` | number  | Minimum height of the textarea in pixels, defaults to 120                                                    |
 | `autoGrow`      | boolean | If true, the textarea will automatically expand its height as the user types                                 |
@@ -63,15 +60,6 @@ Use the property `hint` to add a description.
 <DslCode dxCode={textareaHintDx} jsonCode={textareaHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/textarea/textarea-hint.json"
-/>
-
-### Icon
-
-Use the property `icon` to add an icon to the `textarea`. The value of `icon` represents a set of CSS classes separated by spaces. The icon is displayed inside the textarea on the left.
-
-<DslCode dxCode={textareaIconDx} jsonCode={textareaIconJson} dxTitle={configDx} jsonTitle={configJson} />
-<Demo
-  src="/template/index.html?form=template/widgets/textarea/textarea-icon.json"
 />
 
 ### Character Counter
@@ -102,7 +90,6 @@ Following you will find a list with the CSS Variables and a quick description of
 
 | CSS Variable             | Description                                     |
 | ------------------------ | ----------------------------------------------- |
-| `--gui-space-10`         | Icon left padding or inline-start space         |
 | `--gui-font-sm`          | Counter text font size                          |
 | `--gui-space-2`          | Counter top margin                              |
 | `--gui-intent-error`     | Counter error color when max length is exceeded |

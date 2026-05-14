@@ -55,7 +55,6 @@ describe('Textarea schema validation', () => {
             props: {
               hint: 'Write a detailed comment',
               placeholder: 'Type here...',
-              icon: 'comment-icon',
               counterMode: 'current',
               minimumHeight: 100,
               autoGrow: true,

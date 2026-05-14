@@ -20,7 +20,6 @@ export class GuiTextarea extends LitElement {
 
   @property({ type: String }) hint: string | undefined = undefined;
   @property({ type: String }) placeholder: string | undefined = undefined;
-  @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) autocomplete: string | undefined = undefined;
   @property({ type: String, attribute: 'countermode' }) counterMode:
     | 'remaining'
@@ -68,29 +67,12 @@ export class GuiTextarea extends LitElement {
       value: this.value,
       hint: this.hint,
       placeholder: this.placeholder,
-      icon: this.icon,
       autocomplete: this.autocomplete,
       counterMode: this.counterMode ?? 'remaining',
       minimumHeight: this.minimumHeight ?? 120,
       autoGrow: this.autoGrow ?? false,
       maxLength: this.maxLength,
     };
-
-    // Icon
-    const fieldClasses: { [key: string]: boolean } = {
-      [`gui-textarea--icon`]: false,
-    };
-    let textareaIcon = html``;
-
-    if (templateData.icon) {
-      fieldClasses[`gui-textarea--icon`] = true;
-
-      const classes = {
-        'gui-widget-icon': true,
-        [templateData.icon]: true,
-      };
-      textareaIcon = html`<span class=${classMap(classes)} data-icon=${templateData.icon}></span>`;
-    }
 
     // Counter
     let counter = html``;
@@ -137,7 +119,6 @@ export class GuiTextarea extends LitElement {
         <textarea
           id=${this.uid}
           data-cy=${`${this.uid}_textarea`}
-          class=${classMap(fieldClasses)}
           style=${styleMap(autoGrowStyles)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled}
@@ -147,7 +128,6 @@ export class GuiTextarea extends LitElement {
           @input=${this.valueChanged}
           @blur=${this.onBlur}
         ></textarea>
-        ${textareaIcon}
       </div>
 
       <div class="gui-textarea--validation">
