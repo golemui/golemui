@@ -1,0 +1,112 @@
+{
+  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
+  "states": {
+    "register": "$form.registerMode === true"
+  },
+  "form": [
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "dropdown-default-renderer",
+      "props": {
+        "itemHeight": 30,
+        "hint": "Virtual scroll list with 1000 items.",
+        "items": [
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+          25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+          47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
+          69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
+          91, 92, 93, 94, 95, 96, 97, 98, 99
+        ]
+      },
+      "validator": { "type": "string", "required": true }
+    },
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "dropdown-complex-renderer",
+      "props": {
+        "height": 150,
+        "itemHeight": 60,
+        "valueField": "value",
+        "itemRenderer": "complexListItemRenderer",
+        "items": [
+          { "value": "one", "title": "This is One", "description": "Blah blah blah Lorem Ipsum" },
+          { "value": "two", "title": "Two this is", "description": "Ok, blah blah Ipsum Lorem" },
+          {
+            "value": "three",
+            "title": "Three this is",
+            "description": "Lorem Ipsum blah blah blah"
+          },
+          { "value": "four", "title": "Four this is", "description": "bluh bluh bluh" },
+          { "value": "five", "title": "Five this is", "description": "bleh bleh" },
+          { "value": "six", "title": "Six this is", "description": "blih blih blih" }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "list",
+      "path": "default-renderer",
+      "props": {
+        "itemHeight": 20,
+        "hint": "Virtual scroll list with 1000 items.",
+        "items": [
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+          25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+          47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
+          69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
+          91, 92, 93, 94, 95, 96, 97, 98, 99
+        ]
+      },
+      "validator": { "type": "string", "required": true }
+    },
+    {
+      "kind": "input",
+      "type": "list",
+      "path": "complex-renderer",
+      "props": {
+        "height": 150,
+        "itemHeight": 60,
+        "valueField": "value",
+        "itemRenderer": "complexListItemRenderer",
+        "items": [
+          { "value": "one", "title": "This is One", "description": "Blah blah blah Lorem Ipsum" },
+          { "value": "two", "title": "Two this is", "description": "Ok, blah blah Ipsum Lorem" },
+          {
+            "value": "three",
+            "title": "Three this is",
+            "description": "Lorem Ipsum blah blah blah"
+          },
+          { "value": "four", "title": "Four this is", "description": "bluh bluh bluh" },
+          { "value": "five", "title": "Five this is", "description": "bleh bleh" },
+          { "value": "six", "title": "Six this is", "description": "blih blih blih" }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "user.height",
+      "defaultValue": "170",
+      "validator": { "type": "string", "required": true },
+      "include": { "in": ["register"] }
+    },
+    {
+      "kind": "input",
+      "type": "checkbox",
+      "label": "Register",
+      "path": "registerMode"
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Login",
+      "label.register": "Register",
+      "on": {
+        "click": "submit",
+        "click.register": "handleRegister"
+      }
+    }
+  ]
+}

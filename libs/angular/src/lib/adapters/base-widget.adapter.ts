@@ -28,7 +28,7 @@ export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
             lang: this.context.store.getState().lang,
             deps: this.context.dependencies,
           };
-          Core.assertNoPropCollisions(current['uid'], calculatedWidget.props, obj);
+          Core.assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
           return {
             ...current,
             ...obj,

@@ -1,86 +1,5 @@
-import { defineForm } from '@golemui/core';
+import { Form } from '@golemui/core';
 import { Example } from './types';
-
-const form = defineForm({
-  form: [
-    {
-      uid: 'tab15',
-      kind: 'layout',
-      type: 'grid',
-      props: { direction: 'row' },
-      children: [
-        {
-          uid: '',
-          kind: 'input',
-          type: 'dropdown',
-          path: 'from',
-          label: 'From',
-          size: 1,
-          props: {
-            height: 300,
-            itemHeight: 60,
-            itemRenderer: 'airportItemRenderer',
-            asyncFiltering: true,
-            labelField: 'name',
-            valueField: 'iata',
-            inputDebounce: 300,
-            items: [],
-          },
-          on: {
-            load: 'getFromAirports',
-            filter: 'getFromAirports',
-          },
-        },
-        {
-          uid: '',
-          kind: 'input',
-          type: 'dropdown',
-          path: 'to',
-          label: 'To',
-          size: 1,
-          props: {
-            height: 300,
-            itemHeight: 60,
-            itemRenderer: 'airportItemRenderer',
-            asyncFiltering: true,
-            labelField: 'name',
-            valueField: 'iata',
-            inputDebounce: 300,
-            items: [],
-          },
-          on: {
-            load: 'getToAirports',
-            filter: 'getToAirports',
-          },
-        },
-        {
-          uid: '',
-          kind: 'input',
-          type: 'number',
-          path: 'passengers',
-          defaultValue: 1,
-          label: 'Number of passengers',
-        },
-      ],
-    },
-    {
-      uid: '',
-      kind: 'input',
-      type: 'rangeCalendar',
-      path: 'dates',
-      label: 'Outbound/Return Dates',
-      props: {
-        icon: 'calendar_month',
-        prevMonthIcon: 'chevron_left',
-        nextMonthIcon: 'chevron_right',
-        minDate: new Date().toISOString().split('T')[0],
-        maxDate: '2026-12-31',
-        disabledRanges: [],
-        numberOfMonths: 2,
-      },
-    },
-  ],
-});
 
 const data = {};
 
@@ -91,6 +10,10 @@ const resources = {};
 
 export const flightTickets: Example = {
   data,
-  form,
+  form: async () => {
+    const baseUrl = new URL('/assets/mocks/flight-tickets.form.json', window.location.href).href;
+    const json = await fetch(baseUrl).then((r) => r.json());
+    return json as unknown as Form<string>;
+  },
   resources,
 };

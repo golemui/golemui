@@ -70,7 +70,10 @@ export class FormElement extends LitElement {
   }
 
   protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
-    await AppsShared.onFormEvent(event.detail);
+    if (mock.onFormEvent) {
+      mock.onFormEvent(event.detail);
+    }
+    AppsShared.onFormEvent(event.detail);
     Promise.resolve().then(() => this.requestUpdate());
   }
 
@@ -96,7 +99,6 @@ export class FormElement extends LitElement {
       <div>
         ${this.languages.length > 0 ? this.languagePicker() : null}
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
-
         ${this.formDef
           ? html`<gui-form
               .formDef=${this.formDef}

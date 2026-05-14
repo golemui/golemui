@@ -1,5 +1,4 @@
-import { DisplayWidget } from '@golemui/core';
-import { golemForm } from '@golemui/gui-shared';
+import { Form } from '@golemui/core';
 import { Example } from './types';
 
 const data = {
@@ -10,175 +9,6 @@ const data = {
     notes: '',
   },
 };
-
-const states = {
-  remote: '$form.details.isRemote === true',
-  systemMessage: '$meta.systemMessage !== undefined',
-  offline: '$meta.connectionStatus !== "online"',
-};
-type States = keyof typeof states;
-
-type CustomHeadingWidgetProps = {
-  text: string;
-  level?: number;
-};
-type CustomHeadingWidget = DisplayWidget<States, typeof data, CustomHeadingWidgetProps>;
-
-const form = golemForm<typeof data, CustomHeadingWidget>().create({
-  states,
-  form: [
-    // 1. Dynamic Heading based on state
-    {
-      kind: 'display',
-      type: 'heading',
-      props: {
-        text: {
-          key: 'consultation.header.onsite',
-        },
-        'text.remote': {
-          key: 'consultation.header.remote',
-        },
-      },
-    },
-
-    // 1.5 System message based on $meta (inlined)
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: 'Your connection status is: {{$meta.connectionStatus}}',
-        level: 'success',
-        'level.offline': 'error',
-      },
-    },
-
-    // 1.6 System message based on $meta (via i18n param)
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: {
-          key: 'consultation.system.message',
-          params: {
-            message: '$meta.systemMessage',
-          },
-        },
-        level: 'warning',
-      },
-      include: { in: ['systemMessage'] },
-    },
-
-    // 2. Mode Toggle (The State Switcher)
-    {
-      kind: 'input',
-      type: 'toggle',
-      path: 'details.isRemote',
-      label: {
-        key: 'consultation.mode.label',
-        default: 'I prefer a remote Zoom meeting',
-      },
-    },
-
-    // 3. Client Name Input
-    {
-      kind: 'input',
-      type: 'textinput',
-      path: 'details.clientName',
-      label: {
-        key: 'consultation.field.name',
-      },
-      props: {
-        placeholder: {
-          key: 'consultation.placeholder.name',
-          default: 'e.g. Jane Doe',
-        },
-      },
-      validator: { type: 'string', required: true, minLength: 2 },
-    },
-
-    // 4. Calendar Control (The Requested Widget)
-    {
-      kind: 'input',
-      type: 'calendar',
-      path: 'details.date',
-      label: {
-        key: 'consultation.field.date',
-        default: 'Select a Date',
-      },
-      props: {
-        prevMonthIcon: 'chevron_left',
-        nextMonthIcon: 'chevron_right',
-      },
-      validator: { type: 'string', required: true, format: 'date-time' },
-    },
-
-    // 5. Dynamic Info Alert (Changes content based on context)
-    {
-      kind: 'display',
-      type: 'alert',
-      props: {
-        text: {
-          key: 'consultation.info.onsite',
-          default: 'Please arrive at our Main St. office 10 minutes early.',
-        },
-        level: 'info',
-        'text.remote': {
-          key: 'consultation.info.remote',
-          default: 'A Zoom link will be sent to your email upon confirmation.',
-        },
-        'level.remote': 'warning',
-      },
-    },
-
-    // 6. Conditional Currency (Only for on-site deposits)
-    {
-      kind: 'input',
-      type: 'currency',
-      path: 'depositAmount',
-      label: {
-        key: 'consultation.field.deposit',
-        default: 'Room Reservation Deposit',
-      },
-      props: {
-        currency: 'EUR',
-      },
-      exclude: { from: ['remote'] },
-    },
-
-    // 7. Submit Action
-    {
-      kind: 'action',
-      type: 'button',
-      on: {
-        click: 'handleSubmit',
-      },
-      label: {
-        key: 'consultation.btn.submit',
-        default: 'Confirm Booking',
-      },
-    },
-    /*{
-      kind: 'action',
-      type: 'button',
-      on: {
-        click: 'handleSubmit',
-      },
-      label: {
-        key: 'consultation.btn.submit',
-        default: 'Confirm Booking',
-      },
-      props: {
-        title: {
-          key: 'consultation.btn.tooltip',
-          default: 'Submit booking for {{name}}',
-          params: {
-            name: '$form.details.clientName',
-          },
-        },
-      },
-    },*/
-  ],
-});
 
 /**
  * i18next Resource Bundle
@@ -328,6 +158,10 @@ export const translations: Example = {
     systemMessage: 'System maintenance is scheduled for tomorrow',
     connectionStatus: 'online',
   },
-  form,
+  form: async () => {
+    const baseUrl = new URL('/assets/mocks/translations.form.json', window.location.href).href;
+    const json = await fetch(baseUrl).then((r) => r.json());
+    return json as unknown as Form<string>;
+  },
   resources,
 };

@@ -76,6 +76,9 @@ export class AppFormPage {
   }
 
   protected onFormEvent(event: Core.FormEvent) {
+    if (mock.onFormEvent) {
+      mock.onFormEvent(event);
+    }
     AppsShared.onFormEvent(event);
   }
 

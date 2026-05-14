@@ -13,10 +13,6 @@ import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 import styles from './form.page.module.scss';
 
-async function onFormEvent(event: Core.FormEvent) {
-  AppsShared.onFormEvent(event);
-}
-
 const mock = AppsShared.kitchenSink;
 const formData = mock.data;
 const formMeta = mock.meta;
@@ -47,6 +43,12 @@ const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   countryItemRenderer: CountryItemRenderer,
 };
 const validateOn: Core.ValidateOn = 'eager';
+function onFormEvent(event: Core.FormEvent) {
+  if (mock.onFormEvent) {
+    mock.onFormEvent(event);
+  }
+  AppsShared.onFormEvent(event);
+}
 
 export function FormPage() {
   const [error, setError] = useState('');
