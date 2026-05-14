@@ -1,12 +1,6 @@
 import * as Core from '@golemui/core';
-import { WidgetLoaders, WithWidget } from '@golemui/core';
-import {
-  Dependencies,
-  DxFormConfig,
-  FormInput,
-  GslSelectorsInput,
-  resolveFormInput,
-} from '@golemui/gui-shared';
+import { FormInitConfig, WidgetLoaders, WithWidget } from '@golemui/core';
+import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
 import { CustomValidatorSchemas, initValidators, Validator } from '@golemui/gui-validators';
 import '@golemui/lit';
 import { LitItemRenderer, Type } from '@golemui/lit';
@@ -16,49 +10,40 @@ import { widgetLoaders } from '../widget.loaders';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
-  @property({ type: Object }) formDef!: FormInput;
-  @property({ attribute: false }) formSelectors?: GslSelectorsInput;
-  @property({ attribute: false }) formConfig?: DxFormConfig;
-  @property({ type: Object }) data: any = {};
-  @property({ type: Object }) meta: Record<string, any> = {};
-  @property({ type: Object }) customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {};
-  @property({ type: Object }) itemRenderers: Record<string, LitItemRenderer<any>> = {};
-  @property({ type: Object }) localization?: Core.I18nTranslator;
-  @property({ type: Object }) dependencies?: Dependencies;
-  @property({ type: Object, attribute: false }) customValidators: CustomValidatorSchemas = {};
-  @property({ type: Array }) middlewares: Core.Middleware<Core.State, Core.Action>[] = [];
-  @property({ type: String }) validateOn: Core.ValidateOn = 'eager';
+  @property({ attribute: false }) config!: GuiFormInitConfig;
   @property({ type: String }) autocomplete: string | undefined = undefined;
-
-  protected allValidators: Core.ValidatorFn<Validator> = initValidators({
-    ...this.customValidators,
-  });
 
   override createRenderRoot() {
     return this;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.allValidators = initValidators({ ...this.customValidators });
-  }
-
   override render() {
-    const resolved = resolveFormInput(this.formDef, this.formSelectors, this.formConfig);
-    const mergedWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
-      ...widgetLoaders,
-      ...(resolved.widgetLoaders as WidgetLoaders<Type<WithWidget>>),
-      ...this.customWidgetLoaders,
+    const c = this.config;
+    const resolved = resolveFormInput(c.formDef, c.formSelectors, c.formConfig);
+
+    const coreConfig: FormInitConfig<Type<WithWidget>> = {
+      formDef: resolved.formDef as string | Record<string, any>,
+      widgetLoaders: {
+        ...widgetLoaders,
+        ...(resolved.widgetLoaders as WidgetLoaders<Type<WithWidget>>),
+        ...((c.customWidgetLoaders ?? {}) as WidgetLoaders<Type<WithWidget>>),
+      },
+      dependencies: { ...(resolved.dependencies ?? {}), ...(c.dependencies ?? {}) },
+      validateOn: c.validateOn ?? resolved.validateOn ?? 'eager',
+      itemRenderers: {
+        ...((resolved.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),
+        ...((c.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),
+      },
+      localization: c.localization,
+      middlewares: c.middlewares ?? [],
+      data: c.data,
+      meta: c.meta,
+      formName: c.formName,
     };
-    const mergedDependencies: Dependencies = {
-      ...(resolved.dependencies ?? {}),
-      ...(this.dependencies ?? {}),
-    };
-    const mergedValidateOn: Core.ValidateOn = this.validateOn ?? resolved.validateOn ?? 'eager';
-    const mergedItemRenderers: Record<string, LitItemRenderer<any>> = {
-      ...((resolved.itemRenderers ?? {}) as Record<string, LitItemRenderer<any>>),
-      ...this.itemRenderers,
-    };
+
+    const allValidators: Core.ValidatorFn<Validator> = initValidators({
+      ...((c.customValidators ?? {}) as CustomValidatorSchemas),
+    });
 
     const onFormEvent = resolved.formEvent;
     const formEventListener = onFormEvent
@@ -67,16 +52,8 @@ export class FormElement extends LitElement {
 
     return html`
       <gui-core-form
-        .formDef=${resolved.formDef}
-        .data=${this.data}
-        .meta=${this.meta}
-        .widgetLoaders=${mergedWidgetLoaders}
-        .itemRenderers=${mergedItemRenderers}
-        .localization=${this.localization}
-        .dependencies=${mergedDependencies}
-        .middlewares=${this.middlewares}
-        .validators=${this.allValidators}
-        .validateOn=${mergedValidateOn}
+        .config=${coreConfig}
+        .validators=${allValidators}
         .autocomplete=${this.autocomplete}
         @formEvent=${formEventListener}
       ></gui-core-form>
