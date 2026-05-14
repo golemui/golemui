@@ -13,6 +13,14 @@ import dropdownHintJson from '../../../../../public/template/widgets/dropdown/dr
 import dropdownHintDx from '../../../../../public/template/widgets-dx/dropdown/dropdown-hint.ts?raw';
 import dropdownCustomJson from '../../../../../public/template/widgets/dropdown/dropdown-custom.json?raw';
 import dropdownCustomDx from '../../../../../public/template/widgets-dx/dropdown/dropdown-custom.ts?raw';
+import dropdownItemRendererJson from '../../../../../public/template/widgets/dropdown/dropdown-item-renderer.json?raw';
+import dropdownItemRendererDx from '../../../../../public/template/widgets-dx/dropdown/dropdown-item-renderer.ts?raw';
+import dropdownSizeJson from '../../../../../public/template/widgets/dropdown/dropdown-size.json?raw';
+import dropdownSizeDx from '../../../../../public/template/widgets-dx/dropdown/dropdown-size.ts?raw';
+import dropdownDebounceJson from '../../../../../public/template/widgets/dropdown/dropdown-debounce.json?raw';
+import dropdownDebounceDx from '../../../../../public/template/widgets-dx/dropdown/dropdown-debounce.ts?raw';
+import dropdownAutocompleteJson from '../../../../../public/template/widgets/dropdown/dropdown-autocomplete.json?raw';
+import dropdownAutocompleteDx from '../../../../../public/template/widgets-dx/dropdown/dropdown-autocomplete.ts?raw';
 import dropdownAnatomyHtml from '../../../../../public/template/widgets/dropdown/dropdown-anatomy.html?raw';
 export const configJson = 'dropdown.json';
 export const configDx = 'dropdown.ts';
@@ -30,18 +38,19 @@ Dropdown widgets are [Input Fields](/widgets-reference/input-fields/overview) th
 
 Use these `props` to customize your Dropdown widget.
 
-| prop            | type   | description                                                       |
-| --------------- | ------ | ----------------------------------------------------------------- |
-| `items`         | array  | **Required**. Array of items to be displayed in the dropdown list |
-| `placeholder`   | string | Text shown in the input when it is empty                          |
-| `hint`          | string | A description to display below the input                          |
-| `labelField`    | string | Field to use for the display label when items are objects         |
-| `valueField`    | string | Field to use for the value when items are objects                 |
-| `searchFields`  | array  | List of fields to search on when filtering the list               |
-| `height`        | number | Height of the dropdown list container                             |
-| `itemHeight`    | number | Height of each individual item in the list                        |
-| `inputDebounce` | number | Delay in milliseconds before triggering a search/filter           |
-| `autocomplete`  | string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens |
+| prop            | type   | description                                                                                                            |
+| --------------- | ------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `items`         | array  | **Required**. Array of items to be displayed in the dropdown list                                                      |
+| `placeholder`   | string | Text shown in the input when it is empty                                                                               |
+| `hint`          | string | A description to display below the input                                                                               |
+| `labelField`    | string | Field to use for the display label when items are objects                                                              |
+| `valueField`    | string | Field to use for the value when items are objects                                                                      |
+| `searchFields`  | array  | List of fields to search on when filtering the list                                                                    |
+| `height`        | number | Height of the dropdown list container                                                                                  |
+| `itemHeight`    | number | Height of each individual item in the list                                                                             |
+| `itemRenderer`  | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/)                   |
+| `inputDebounce` | number | Delay in milliseconds before triggering a search/filter. Defaults to `500`                                             |
+| `autocomplete`  | string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                                                      |
 
 ### Hint
 
@@ -62,6 +71,48 @@ If your items are complex objects, you can specify which fields to use for label
 <DslCode dxCode={dropdownCustomDx} jsonCode={dropdownCustomJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/dropdown/dropdown-custom.json"
+  minHeight="500"
+/>
+
+### Item Renderer
+
+Use the property `itemRenderer` to draw each row with a registered renderer instead of the default template. The key must match one of the renderers registered on the form host — see [Item Renderers](/features/item-renderers/) for the full setup.
+
+This demo uses the registered `countryItemRenderer` to display each country with its flag.
+
+<DslCode dxCode={dropdownItemRendererDx} jsonCode={dropdownItemRendererJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/dropdown/dropdown-item-renderer.json"
+  minHeight="500"
+/>
+
+### Size
+
+Use `height` to set the size of the dropdown's scrollable list, and `itemHeight` to fix the row height used by the virtual scroller. Tune `itemHeight` whenever you use a custom `itemRenderer` whose rows are taller than the default.
+
+<DslCode dxCode={dropdownSizeDx} jsonCode={dropdownSizeJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/dropdown/dropdown-size.json"
+  minHeight="500"
+/>
+
+### Input Debounce
+
+Use `inputDebounce` to control how long the dropdown waits after each keystroke before applying the filter. Useful when the `filter` event triggers a server-side search.
+
+<DslCode dxCode={dropdownDebounceDx} jsonCode={dropdownDebounceJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/dropdown/dropdown-debounce.json"
+  minHeight="500"
+/>
+
+### Autocomplete
+
+Use `autocomplete` to set the underlying input's `autocomplete` attribute. Accepts `'on'`, `'off'`, or a space-separated list of [W3C autofill tokens](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill).
+
+<DslCode dxCode={dropdownAutocompleteDx} jsonCode={dropdownAutocompleteJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/dropdown/dropdown-autocomplete.json"
   minHeight="500"
 />
 
