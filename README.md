@@ -28,7 +28,6 @@
   <a href="https://golemui.com/integration/overview/">Integrations</a>
 </p>
 
-
 ---
 
 ## The New Paradigm for forms
@@ -74,10 +73,10 @@ Conditional fields, validation, accessibility, and i18n come built in. The same 
 
 `{gui.}` is small enough for your agent to emit cleanly, and small enough for your team to review at a glance. **Same code, both jobs.**
 
-|                                 | Lines | Branches | Tokens |
-| ------------------------------- | ----: | -------: | -----: |
-| React + React Hook Form         |    76 |        8 |    622 |
-| `{gui.}`                        |    35 |        0 |    366 |
+|                         | Lines | Branches | Tokens |
+| ----------------------- | ----: | -------: | -----: |
+| React + React Hook Form |    76 |        8 |    622 |
+| `{gui.}`                |    35 |        0 |    366 |
 
 The signup form above, measured. Tokens counted with `cl100k_base`.
 
@@ -116,9 +115,9 @@ Full walkthrough at [golemui.com/getting-started/installation](https://golemui.c
 
 ## Built for speed
 
-|   Library Weight    |        LCP        |   Lighthouse   |
-| :-----------------: | :---------------: | :------------: |
-| **14.32 kB** gzipped | **0.19 ms**        | **100**        |
+|    Library Weight    |     LCP     | Lighthouse |
+| :------------------: | :---------: | :--------: |
+| **14.32 kB** gzipped | **0.19 ms** |  **100**   |
 
 ## Your brand. Your rules.
 
@@ -131,4 +130,3 @@ Design tokens, custom widgets, full theming control. Bring your own components w
 ## Status
 
 Approaching v1.0. Public launch at [DevBcn 2026](https://www.devbcn.com/) (16–17 June 2026, Barcelona).
-

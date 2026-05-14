@@ -162,6 +162,8 @@ gui-markdown {
     .gui-markdown__preview {
       display: block;
       width: calc(100% - var(--gui-space-3) * 2);
+      height: calc(100% - var(--gui-space-12));
+      padding-top: var(--gui-space-12);
     }
     .gui-markdown__toolbar {
       width: calc(100% - var(--gui-space-2) * 2);

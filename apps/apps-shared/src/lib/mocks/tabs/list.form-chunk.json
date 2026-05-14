@@ -105,7 +105,11 @@
         "items": [
           { "value": "one", "title": "This is One", "description": "Blah blah blah Lorem Ipsum" },
           { "value": "two", "title": "Two this is", "description": "Ok, blah blah Ipsum Lorem" },
-          { "value": "three", "title": "Three this is", "description": "Lorem Ipsum blah blah blah" },
+          {
+            "value": "three",
+            "title": "Three this is",
+            "description": "Lorem Ipsum blah blah blah"
+          },
           { "value": "four", "title": "Four this is", "description": "bluh bluh bluh" },
           { "value": "five", "title": "Five this is", "description": "bleh bleh" },
           { "value": "six", "title": "Six this is", "description": "blih blih blih" }

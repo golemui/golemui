@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "format": "nx format:write --all",
-    "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:check --all",
+    "precz": "nx run-many --target=lint --all --exclude=@golemui/source && nx format:write --all && git update-index --again",
     "cz": "czg checkbox",
     "start:docs": "nx run-many --targets=dev --projects=appetizer,docs,freedom,serializable,template,theming --parallel",
     "start:angular": "nx run angular-playground:serve",

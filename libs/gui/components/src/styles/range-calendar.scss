@@ -3,16 +3,34 @@
 }
 
 gui-range-calendar {
+  --gui-range-bg: color-mix(in srgb, var(--gui-intent-primary), transparent 50%);
+
   &.gui-field {
     width: fit-content;
   }
 
   .gui-calendar__day-button {
+    position: relative;
+
     &.in-range {
-      background-color: color-mix(in srgb, var(--gui-intent-primary), transparent 50%);
+      background-color: var(--gui-range-bg);
       color: var(--gui-color-white);
       border-radius: 0;
-      margin-left: -1px;
+    }
+
+    &:is(.range-start, .in-range):not(.range-end)::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      right: -2px;
+      width: 1px;
+      height: var(--gui-calendar-day-button-size);
+      background-color: var(--gui-range-bg);
+      pointer-events: none;
+    }
+
+    &:last-child:is(.range-start, .in-range)::after {
+      display: none;
     }
     &.range-start {
       background-color: var(--gui-intent-primary);
@@ -127,9 +145,11 @@ gui-range-calendar {
     }
 
     &-remove {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: transparent;
-      border: 1px solid var(--gui-color-white);
-      border-radius: var(--gui-radius-full);
+      border: 0;
       color: white;
       padding: 0;
       width: 16px;

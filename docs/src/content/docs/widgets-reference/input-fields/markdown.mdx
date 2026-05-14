@@ -116,6 +116,20 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
 
 <Aside>The live preview will only render parsed HTML when a `dependencies.markdown.parse` function is provided. Without it, the toolbar and editor still work, but the preview panel will be empty.</Aside>
 
+### Line breaks
+
+The live preview follows CommonMark semantics: a **single newline** between two lines is rendered as a space, not a `<br>`. To produce a visible line break, add a blank line between them (a paragraph break) or end the first line with two trailing spaces before the newline (a CommonMark hard-break). The behavior is governed by the parser you provide, not by the widget itself.
+
+<Aside>
+  Our examples use [snarkdown](https://github.com/developit/snarkdown) because it is extremely lightweight (~1 KB gzipped) and dependency-free — ideal for keeping playground bundles small. For production, a richer parser is probably a better choice:
+
+- [marked](https://marked.js.org) (~13 KB gzipped) configured with `{ breaks: true, gfm: true }` emits real `<p>` paragraphs, supports GFM features (tables, autolinks, task lists), and treats a single newline as `<br>`.
+- [markdown-it](https://github.com/markdown-it/markdown-it) (~44 KB gzipped) configured with `{ breaks: true }` adds a pluggable architecture on top of the same line-break behavior.
+
+Both expose a `breaks` option so the "Enter inserts a line break" expectation works without any pre-processing.
+
+</Aside>
+
 ## Props
 
 Use these `props` to customize your Markdown widget.
