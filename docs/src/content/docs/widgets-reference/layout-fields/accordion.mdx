@@ -11,6 +11,10 @@ import accordionJson from '../../../../../public/template/widgets/accordion/acco
 import accordionDx from '../../../../../public/template/widgets-dx/accordion/accordion.ts?raw';
 import accordionSingleJson from '../../../../../public/template/widgets/accordion/accordion-single.json?raw';
 import accordionSingleDx from '../../../../../public/template/widgets-dx/accordion/accordion-single.ts?raw';
+import accordionDefaultOpenJson from '../../../../../public/template/widgets/accordion/accordion-default-open.json?raw';
+import accordionDefaultOpenDx from '../../../../../public/template/widgets-dx/accordion/accordion-default-open.ts?raw';
+import accordionRenderModeJson from '../../../../../public/template/widgets/accordion/accordion-render-mode.json?raw';
+import accordionRenderModeDx from '../../../../../public/template/widgets-dx/accordion/accordion-render-mode.ts?raw';
 import accordionAnatomyHtml from '../../../../../public/template/widgets/accordion/accordion-anatomy.html?raw';
 export const configJson = 'accordion.json';
 export const configDx = 'accordion.ts';
@@ -27,12 +31,12 @@ Accordion widgets are [Layout Fields](/widgets-reference/layout-fields/overview)
 
 Use these `props` to customize your Accordion widget.
 
-| prop          | type    | description                                                                                                         |
-| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
-| `sections`    | array   | **Required**. Array of section definitions: `{ label: string, uid: string }`                                        |
-| `singleOpen`  | boolean | If `true`, only one section can be open at a time. Defaults to `false`                                              |
-| `defaultOpen` | object  | Object mapping section `uid`s to boolean state (e.g., `{ "section_1": true }`)                                      |
-| `renderMode`  | string  | Either `'all'` (renders hidden sections in DOM) or `'activeOnly'` (renders only open sections). Defaults to `'all'` |
+| prop          | type    | description                                                                                                                                       |
+| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sections`    | array   | **Required**. Array of section definitions: `{ label: string, uid: string }`. Each `uid` must match the `uid` of one of the accordion's children. |
+| `singleOpen`  | boolean | If `true`, only one section can be open at a time — opening a section closes the others. Defaults to `false`                                      |
+| `defaultOpen` | object  | Map of section `uid` to boolean controlling which sections start expanded (e.g., `{ "section_1": true }`). Defaults to all collapsed              |
+| `renderMode`  | string  | `'all'` keeps every section mounted in the DOM and toggles visibility; `'activeOnly'` mounts a section's children only while it is open. Defaults to `'all'` |
 
 ### Single Open
 
@@ -41,6 +45,24 @@ Use the `singleOpen` property to ensure that opening one section automatically c
 <DslCode dxCode={accordionSingleDx} jsonCode={accordionSingleJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/accordion/accordion-single.json"
+/>
+
+### Default Open
+
+Use `defaultOpen` to pre-expand sections on initial render. The keys are section `uid`s; sections whose key is `true` start open.
+
+<DslCode dxCode={accordionDefaultOpenDx} jsonCode={accordionDefaultOpenJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/accordion/accordion-default-open.json"
+/>
+
+### Render Mode
+
+Use `renderMode` to control when section children are mounted. The default `'all'` keeps every section in the DOM and hides closed ones, which preserves child state and form values when collapsing. Use `'activeOnly'` to mount a section's children only while it is open — useful when sections contain expensive widgets, side effects on mount, or media you don't want loaded up front. Inspect the rendered DOM as you toggle sections to see the difference.
+
+<DslCode dxCode={accordionRenderModeDx} jsonCode={accordionRenderModeJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/accordion/accordion-render-mode.json"
 />
 
 ## Styling

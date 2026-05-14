@@ -13,8 +13,6 @@ import numberPlaceholderJson from '../../../../../public/template/widgets/number
 import numberPlaceholderDx from '../../../../../public/template/widgets-dx/number/number-placeholder.ts?raw';
 import numberHintJson from '../../../../../public/template/widgets/number/number-hint.json?raw';
 import numberHintDx from '../../../../../public/template/widgets-dx/number/number-hint.ts?raw';
-import numberIconJson from '../../../../../public/template/widgets/number/number-icon.json?raw';
-import numberIconDx from '../../../../../public/template/widgets-dx/number/number-icon.ts?raw';
 import numberStepJson from '../../../../../public/template/widgets/number/number-step.json?raw';
 import numberStepDx from '../../../../../public/template/widgets-dx/number/number-step.ts?raw';
 import numberMinMaxJson from '../../../../../public/template/widgets/number/number-min-max.json?raw';
@@ -45,7 +43,6 @@ Use these `props` to customize your Number Input widget.
 | `minimum`      | number  | The minimum allowed value                                                            |
 | `maximum`      | number  | The maximum allowed value                                                            |
 | `autoGrow`     | boolean | If true, the input width expands according to the number of digits                   |
-| `icon`         | string  | A css class to display an icon                                                       |
 | `autocomplete` | string  | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                    |
 
 ### Placeholder
@@ -66,15 +63,6 @@ Use the property `hint` to add a description.
 <DslCode dxCode={numberHintDx} jsonCode={numberHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/number/number-hint.json"
-/>
-
-### Icon
-
-Use the property `icon` to add an icon to the widget. The value of `icon` represents a set of CSS classes separated by spaces.
-
-<DslCode dxCode={numberIconDx} jsonCode={numberIconJson} dxTitle={configDx} jsonTitle={configJson} />
-<Demo
-  src="/template/index.html?form=template/widgets/number/number-icon.json"
 />
 
 ### Step

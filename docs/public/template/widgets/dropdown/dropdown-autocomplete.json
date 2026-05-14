@@ -1,0 +1,24 @@
+{
+  "form": [
+    {
+      "uid": "dropdown_autocomplete",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "country",
+      "label": "Country",
+      "props": {
+        "autocomplete": "country-name",
+        "labelField": "name",
+        "valueField": "code",
+        "searchFields": ["name"],
+        "items": [
+          { "name": "France", "code": "FR" },
+          { "name": "Germany", "code": "DE" },
+          { "name": "Spain", "code": "ES" },
+          { "name": "United Kingdom", "code": "GB" },
+          { "name": "United States", "code": "US" }
+        ]
+      }
+    }
+  ]
+}

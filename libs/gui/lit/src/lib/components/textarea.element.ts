@@ -62,7 +62,6 @@ export class TextareaElement extends LitElement implements Core.WithWidget {
         .hint=${this.adapter.templateData.hint}
         .placeholder=${this.adapter.templateData.placeholder}
         .autocomplete=${this.adapter.templateData.autocomplete}
-        .icon=${this.adapter.templateData.icon}
         .counterMode=${this.adapter.templateData.counterMode}
         .minimumHeight=${this.adapter.templateData.minimumHeight}
         .autoGrow=${this.adapter.templateData.autoGrow}

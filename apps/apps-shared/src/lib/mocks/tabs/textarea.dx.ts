@@ -12,8 +12,7 @@ export const textareaTab = gui.layouts.flex([
     hint: 'This is a hint',
     placeholder: 'Please enter your phone number',
   }),
-  gui.inputs.textarea('textareaWithIcon', {
-    icon: 'phone_callback',
+  gui.inputs.textarea('textareaWithCounter', {
     hint: 'This is a hint',
     placeholder: 'Please enter your phone number',
     counterMode: 'current',

@@ -7,7 +7,7 @@
       "path": "acceptConditions",
       "label": "Yes, I have read terms and conditions",
       "props": {
-        "checkboxPosition": "left"
+        "checkboxPosition": "right"
       }
     }
   ]

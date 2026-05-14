@@ -11,6 +11,10 @@ import listJson from '../../../../../public/template/widgets/list/list.json?raw'
 import listDx from '../../../../../public/template/widgets-dx/list/list.ts?raw';
 import listHintJson from '../../../../../public/template/widgets/list/list-hint.json?raw';
 import listHintDx from '../../../../../public/template/widgets-dx/list/list-hint.ts?raw';
+import listCustomJson from '../../../../../public/template/widgets/list/list-custom.json?raw';
+import listCustomDx from '../../../../../public/template/widgets-dx/list/list-custom.ts?raw';
+import listItemRendererJson from '../../../../../public/template/widgets/list/list-item-renderer.json?raw';
+import listItemRendererDx from '../../../../../public/template/widgets-dx/list/list-item-renderer.ts?raw';
 import listAnatomyHtml from '../../../../../public/template/widgets/list/list-anatomy.html?raw';
 export const configJson = 'list.json';
 export const configDx = 'list.ts';
@@ -27,15 +31,15 @@ List widgets are [Input Fields](/widgets-reference/input-fields/overview) design
 
 Use these `props` to customize your List widget.
 
-| prop           | type             | description                                                            |
-| -------------- | ---------------- | ---------------------------------------------------------------------- |
-| `items`        | array            | **Required**. Collection of items. Can be strings, numbers, or objects |
-| `value`        | string \| number | The currently selected value                                           |
-| `valueField`   | string           | The key to use for the value if items are objects                      |
-| `height`       | number           | Total height of the scrollable viewport. Defaults to `300`             |
-| `itemHeight`   | number           | Fixed height of each item for virtualization logic. Defaults to `40`   |
-| `hint`         | string           | A description to display for accessibility                             |
-| `itemRenderer` | string           | Key or identifier for a custom item renderer                           |
+| prop           | type   | description                                                                                          |
+| -------------- | ------ | ---------------------------------------------------------------------------------------------------- |
+| `items`        | array  | **Required**. Collection of items. Can be strings, numbers, or objects                               |
+| `hint`         | string | A description to display below the list                                                              |
+| `labelField`   | string | Field to use for the display label when items are objects                                            |
+| `valueField`   | string | Field to use for the value when items are objects                                                    |
+| `height`       | number | Total height of the scrollable viewport. Defaults to `300`                                           |
+| `itemHeight`   | number | Fixed height of each item for virtualization logic. Defaults to `40`                                 |
+| `itemRenderer` | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/) |
 
 ### Hint
 
@@ -46,6 +50,26 @@ Use the property `hint` to provide additional context for the list.
 <DslCode dxCode={listHintDx} jsonCode={listHintJson} dxTitle={configDx} jsonTitle={configJson} />
 <Demo
   src="/template/index.html?form=template/widgets/list/list-hint.json"
+/>
+
+### Custom Fields
+
+If your items are complex objects, use `labelField` and `valueField` to tell the list which keys to use for the display label and stored value.
+
+<DslCode dxCode={listCustomDx} jsonCode={listCustomJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/list/list-custom.json"
+/>
+
+### Item Renderer
+
+Use the property `itemRenderer` to draw each row with a registered renderer instead of the default template. The key must match one of the renderers registered on the form host — see [Item Renderers](/features/item-renderers/) for the full setup.
+
+This demo uses the registered `complexListItemRenderer` to display a title and description per row. Bump `itemHeight` to match the renderer's row height so virtualization stays accurate.
+
+<DslCode dxCode={listItemRendererDx} jsonCode={listItemRendererJson} dxTitle={configDx} jsonTitle={configJson} />
+<Demo
+  src="/template/index.html?form=template/widgets/list/list-item-renderer.json"
 />
 
 ## Styling

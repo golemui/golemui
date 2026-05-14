@@ -2,7 +2,7 @@ import { gui } from '@golemui/gui-shared';
 
 export default [
   gui.inputs.select('country', {
-    icon: 'fas fa-globe',
+    icon: 'language',
     options: [
       {
         label: 'United States',

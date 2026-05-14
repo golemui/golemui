@@ -7,7 +7,7 @@
       "path": "darkMode",
       "label": "Dark mode",
       "props": {
-        "togglePosition": "left"
+        "togglePosition": "right"
       }
     }
   ]

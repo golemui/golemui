@@ -53,10 +53,6 @@ export type CurrencyProps = {
 export type TextareaProps = {
   hint?: string;
   placeholder?: string;
-  /**
-   * icon to display inside the textarea on the left-top corner.
-   */
-  icon?: string;
   autocomplete?: Autocomplete;
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;

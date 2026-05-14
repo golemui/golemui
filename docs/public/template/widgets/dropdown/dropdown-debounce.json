@@ -1,0 +1,27 @@
+{
+  "form": [
+    {
+      "uid": "dropdown_debounce",
+      "kind": "input",
+      "type": "dropdown",
+      "path": "fruit",
+      "label": "Pick a fruit",
+      "props": {
+        "hint": "Filtering waits 800ms after the last keystroke",
+        "inputDebounce": 800,
+        "items": [
+          { "template": "Apple", "value": "apple" },
+          { "template": "Apricot", "value": "apricot" },
+          { "template": "Banana", "value": "banana" },
+          { "template": "Blueberry", "value": "blueberry" },
+          { "template": "Cherry", "value": "cherry" },
+          { "template": "Grapefruit", "value": "grapefruit" },
+          { "template": "Mango", "value": "mango" },
+          { "template": "Orange", "value": "orange" },
+          { "template": "Peach", "value": "peach" },
+          { "template": "Pineapple", "value": "pineapple" }
+        ]
+      }
+    }
+  ]
+}
