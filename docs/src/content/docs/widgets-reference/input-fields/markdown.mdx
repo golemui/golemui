@@ -123,10 +123,11 @@ The live preview follows CommonMark semantics: a **single newline** between two 
 <Aside>
   Our examples use [snarkdown](https://github.com/developit/snarkdown) because it is extremely lightweight (~1 KB gzipped) and dependency-free — ideal for keeping playground bundles small. For production, a richer parser is probably a better choice:
 
-  - [marked](https://marked.js.org) (~13 KB gzipped) configured with `{ breaks: true, gfm: true }` emits real `<p>` paragraphs, supports GFM features (tables, autolinks, task lists), and treats a single newline as `<br>`.
-  - [markdown-it](https://github.com/markdown-it/markdown-it) (~44 KB gzipped) configured with `{ breaks: true }` adds a pluggable architecture on top of the same line-break behavior.
+- [marked](https://marked.js.org) (~13 KB gzipped) configured with `{ breaks: true, gfm: true }` emits real `<p>` paragraphs, supports GFM features (tables, autolinks, task lists), and treats a single newline as `<br>`.
+- [markdown-it](https://github.com/markdown-it/markdown-it) (~44 KB gzipped) configured with `{ breaks: true }` adds a pluggable architecture on top of the same line-break behavior.
 
-  Both expose a `breaks` option so the "Enter inserts a line break" expectation works without any pre-processing.
+Both expose a `breaks` option so the "Enter inserts a line break" expectation works without any pre-processing.
+
 </Aside>
 
 ## Props

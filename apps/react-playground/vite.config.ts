@@ -17,7 +17,15 @@ export default defineConfig(() => ({
     port: 8080,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md', { glob: '**/*.json', input: '../../apps/apps-shared/src/lib/mocks', output: 'assets/mocks' }]), sharedMocksPlugin()],
+  plugins: [
+    react(),
+    nxViteTsPaths(),
+    nxCopyAssetsPlugin([
+      '*.md',
+      { glob: '**/*.json', input: '../../apps/apps-shared/src/lib/mocks', output: 'assets/mocks' },
+    ]),
+    sharedMocksPlugin(),
+  ],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],

@@ -64,10 +64,7 @@
       "kind": "input",
       "type": "rangeCalendar",
       "path": "rangeCalendar",
-      "defaultValue": [
-        { "start": "2026-02-13", "end": "2026-02-16" },
-        { "start": "2026-02-20" }
-      ],
+      "defaultValue": [{ "start": "2026-02-13", "end": "2026-02-16" }, { "start": "2026-02-20" }],
       "props": {
         "numberOfMonths": 3,
         "prevMonthIcon": "chevron_left",
