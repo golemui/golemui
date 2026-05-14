@@ -7,11 +7,7 @@
       "path": "selection",
       "label": "Select an Item",
       "props": {
-        "items": [
-          { "template": "Apple", "value": "apple" },
-          { "template": "Banana", "value": "banana" },
-          { "template": "Cherry", "value": "cherry" }
-        ],
+        "items": ["Apple", "Banana", "Cherry"],
         "placeholder": "Type to search..."
       }
     }

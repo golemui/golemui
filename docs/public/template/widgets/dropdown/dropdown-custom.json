@@ -8,8 +8,8 @@
       "label": "Custom Fields",
       "props": {
         "items": [
-          { "template": { "name": "USA", "code": "US" }, "value": "us" },
-          { "template": { "name": "Canada", "code": "CA" }, "value": "ca" }
+          { "name": "USA", "code": "US" },
+          { "name": "Canada", "code": "CA" }
         ],
         "labelField": "name",
         "valueField": "code",

@@ -3,20 +3,8 @@ import { gui } from '@golemui/gui-shared';
 export default [
   gui.inputs.dropdown('selection', {
     items: [
-      {
-        template: {
-          name: 'USA',
-          code: 'US',
-        },
-        value: 'us',
-      },
-      {
-        template: {
-          name: 'Canada',
-          code: 'CA',
-        },
-        value: 'ca',
-      },
+      { name: 'USA', code: 'US' },
+      { name: 'Canada', code: 'CA' },
     ],
     labelField: 'name',
     valueField: 'code',
