@@ -12,7 +12,7 @@ const resources = {};
 export const tiny: Example = {
   data,
   form: async () => {
-    const baseUrl = new URL('/assets/mocks/tiny.form.json', window.location.href).href;
+    const baseUrl = new URL('assets/mocks/tiny.form.json', window.location.href).href;
     const json = await fetch(baseUrl).then((r) => r.json());
     return json as unknown as Form<string>;
   },

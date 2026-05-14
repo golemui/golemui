@@ -9,7 +9,7 @@ const mock = AppsShared.tiny;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef = mock.form;
+  formDef: Core.Form<string> | undefined;
   formData = mock.data;
   validateOn: Core.ValidateOn = 'eager';
 
@@ -19,16 +19,24 @@ export class FormElement extends LitElement {
     return this;
   }
 
+  override async connectedCallback() {
+    super.connectedCallback();
+    const { form } = mock;
+    this.formDef = typeof form === 'function' ? await form() : form;
+    this.requestUpdate();
+  }
+
   render() {
     return html`
       <div>
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
-
-        <gui-form
-          .formDef=${this.formDef}
-          .data=${this.formData}
-          .validateOn=${this.validateOn}
-        ></gui-form>
+        ${this.formDef
+          ? html`<gui-form
+              .formDef=${this.formDef}
+              .data=${this.formData}
+              .validateOn=${this.validateOn}
+            ></gui-form>`
+          : null}
       </div>
     `;
   }
