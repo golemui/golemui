@@ -7,7 +7,7 @@
       "path": "country",
       "label": "Country",
       "props": {
-        "icon": "fas fa-globe",
+        "icon": "language",
         "options": [
           { "label": "United States", "value": "us" }
         ]
