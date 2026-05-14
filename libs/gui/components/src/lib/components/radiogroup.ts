@@ -85,22 +85,27 @@ export class GuiRadiogroup extends LitElement {
           ${repeat(
             this.options || [],
             (opt: any) => opt?.value,
-            (opt: any, index) =>
-              html`<label for=${`${this.uid}_${index}`}>
+            (opt: any, index) => {
+              const isChecked = this.hasMatchingValue && opt.value === templateData.value;
+              const isFirstUnchecked = !this.hasMatchingValue && index === 0;
+              const focusable = isChecked || isFirstUnchecked;
+              return html`<label for=${`${this.uid}_${index}`}>
                 <input
                   type="radio"
+                  tabindex=${focusable ? '0' : '-1'}
                   id=${`${this.uid}_${index}`}
                   data-cy=${`${this.uid}_radiogroup_${index}`}
                   name=${this.uid}
                   value=${opt.value}
-                  ?checked=${this.hasMatchingValue && opt.value === templateData.value}
+                  ?checked=${isChecked}
                   ?required=${templateData.required}
                   ?disabled=${templateData.disabled || templateData.readonly}
                   @change=${this.valueChanged}
                   @blur=${this.onBlur}
                 />
                 ${opt.label}
-              </label>`,
+              </label>`;
+            },
           )}
         `;
 

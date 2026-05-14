@@ -27,6 +27,7 @@
           }
           <button
             type="button"
+            tabindex="0"
             class="gui-button gui-button--sm gui-repeater__remove-btn"
             (click)="removeItem($index)"
           >
@@ -45,6 +46,7 @@
   }
   <button
     type="button"
+    tabindex="0"
     class="gui-button gui-repeater__add-btn"
     (click)="addItem()"
     [disabled]="

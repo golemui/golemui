@@ -64,6 +64,7 @@ export function Accordion(widgetInstance: Core.WithWidget) {
       <div className="gui-accordion__section" key={`${'accordion_section_' + section.uid}`}>
         <button
           type="button"
+          tabIndex={0}
           id={`accordion_button_${section.uid}`}
           aria-controls={`accordion_section_${section.uid}`}
           aria-expanded={activeSections[section.uid] ? 'true' : 'false'}

@@ -159,6 +159,7 @@ export class GuiMarkdown extends LitElement {
             <li>
               <button
                 type="button"
+                tabindex="0"
                 class=${classMap({
                   'gui-markdown__toolbar-button': true,
                   'gui-markdown__toolbar-button--active': this.splitViewActive,
@@ -242,6 +243,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('heading')}
             @click=${this.applyFormat('# ', '', 'heading')}
             title=${this.headingTitle ?? 'Heading'}
@@ -257,6 +259,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('bold')}
             @click=${this.applyFormat('**', '**', 'bold')}
             title=${this.boldTitle ?? 'Bold'}
@@ -272,6 +275,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('italic')}
             @click=${this.applyFormat('_', '_', 'italic')}
             title=${this.italicTitle ?? 'Italic'}
@@ -287,6 +291,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('strikethrough')}
             @click=${this.applyFormat('~~', '~~', 'strikethrough')}
             title=${this.strikethroughTitle ?? 'Strikethrough'}
@@ -302,6 +307,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('quote')}
             @click=${this.applyFormat('> ', '', 'quote')}
             title=${this.quoteTitle ?? 'Quote'}
@@ -317,6 +323,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('link')}
             @click=${this.applyFormat('[', '](url)', 'link')}
             title=${this.linkTitle ?? 'Link'}
@@ -332,6 +339,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('orderedList')}
             @click=${this.applyFormat('1. ', '', 'orderedList')}
             title=${this.orderedListTitle ?? 'Ordered List'}
@@ -347,6 +355,7 @@ export class GuiMarkdown extends LitElement {
         return html`<li>
           <button
             type="button"
+            tabindex="0"
             class=${this.toolbarBtnClass('unorderedList')}
             @click=${this.applyFormat('- ', '', 'unorderedList')}
             title=${this.unorderedListTitle ?? 'Unordered List'}

@@ -75,6 +75,7 @@ export class GuiToggle extends LitElement {
         <div class="gui-widget gui-widget--horizontal gui-toggle--switch">
           <input
             type="checkbox"
+            tabindex="0"
             id=${this.uid}
             data-cy=${`${this.uid}_toggle`}
             ?checked=${templateData.value}

@@ -111,6 +111,7 @@ export class GuiSelect extends LitElement {
       <div class="gui-widget">
         <select
           id=${this.uid as string}
+          tabindex="0"
           data-cy=${`${this.uid}_select`}
           class=${classMap(selectIcon.widgetClasses)}
           ?required=${templateData.required}
