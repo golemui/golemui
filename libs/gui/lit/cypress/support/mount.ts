@@ -5,7 +5,7 @@ import { html } from 'lit';
 import '../../src/lib/components/form.element';
 
 export const mountFramework = (options: MountOptions) => {
-  const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent
+  const customWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent
     ? {
         heading: async () => (await import('../components/heading/heading.element')).HeadingElement,
         customdate: async () =>
@@ -31,15 +31,17 @@ export const mountFramework = (options: MountOptions) => {
 
   cy.mount(
     html`<gui-form
-      .formDef=${options.formDef}
-      .data=${options.data}
-      .meta=${options.meta!}
-      .middlewares=${options.middlewares ?? []}
-      .customValidators=${options.validators!}
-      .validateOn=${options.validateOn ?? 'eager'}
-      .localization=${options.localization}
-      .dependencies=${options.dependencies}
-      .customWidgetLoaders=${widgetLoaders}
+      .config=${{
+        formDef: options.formDef,
+        data: options.data,
+        meta: options.meta,
+        middlewares: options.middlewares ?? [],
+        customValidators: options.validators,
+        validateOn: options.validateOn ?? 'eager',
+        localization: options.localization,
+        dependencies: options.dependencies,
+        customWidgetLoaders,
+      }}
       @formEvent=${handleFormEvent}
       @formHealth=${handleFormHealth}
     ></gui-form>`,

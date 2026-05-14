@@ -7,7 +7,7 @@ import { createOutputSpy, mount } from 'cypress/angular';
 import { FormComponent } from '../../src/lib/components/form/form.component';
 
 export const mountFramework = (options: MountOptions) => {
-  const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent
+  const customWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = options.withCustomComponent
     ? {
         heading: async () =>
           (await import('../components/heading/heading.component')).HeadingComponent,
@@ -37,15 +37,17 @@ export const mountFramework = (options: MountOptions) => {
   mount(FormComponent, {
     imports: [CommonModule, FormCoreComponent],
     componentProperties: {
-      formDef: options.formDef,
-      data: options.data,
-      meta: options.meta,
-      customWidgetLoaders: widgetLoaders,
-      middlewares: options.middlewares ?? [],
-      customValidators: options.validators,
-      validateOn: options.validateOn ?? 'eager',
-      localization: options.localization,
-      dependencies: options.dependencies,
+      config: {
+        formDef: options.formDef,
+        data: options.data,
+        meta: options.meta,
+        customWidgetLoaders,
+        middlewares: options.middlewares ?? [],
+        customValidators: options.validators,
+        validateOn: options.validateOn ?? 'eager',
+        localization: options.localization,
+        dependencies: options.dependencies,
+      },
       formHealth: formHealthOutput,
       formEvent: formEventOutput,
     },
