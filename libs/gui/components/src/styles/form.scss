@@ -9,4 +9,11 @@
   font-size: var(--gui-font-sm);
   color: var(--gui-text-default);
   box-sizing: border-box;
+
+  /* Safari (WebKit) ignores font inheritance on native <button>; re-assert it
+     so widget buttons match the surrounding form text in every browser. */
+  button {
+    font-family: inherit;
+    font-size: inherit;
+  }
 }
