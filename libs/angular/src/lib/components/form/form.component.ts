@@ -11,13 +11,12 @@ import {
   signal,
   Type,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import * as Core from '@golemui/core';
+import { FormInitConfig } from '@golemui/core';
+import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
-
-type JsonStringified = string;
-type JsonObject = Record<string, any>;
 
 @Component({
   selector: 'gui-core-form',
@@ -32,17 +31,8 @@ type JsonObject = Record<string, any>;
 })
 export class FormCoreComponent implements OnInit, OnDestroy {
   // INPUTS
-  formDef = input.required<JsonStringified | JsonObject>();
-  widgetLoaders = input.required<Core.WidgetLoaders<Type<Core.WithWidget>>>();
+  config = input.required<FormInitConfig<Type<Core.WithWidget>>>();
   validators = input.required<Core.ValidatorFn<any>>();
-  middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
-  data = input<Record<string, any>>({});
-  meta = input<Record<string, any>>({});
-  formName = input(Core.shortUUID());
-  validateOn = input<Core.ValidateOn>('eager');
-  itemRenderers = input<Record<string, Core.ItemRenderer>>({});
-  localization = input<Core.I18nTranslator>();
-  dependencies = input<Record<string, unknown>>({});
   autocomplete = input<string | undefined>(undefined);
   protected direction = signal<'ltr' | 'rtl'>('ltr');
 
@@ -56,60 +46,62 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // PRIVATE
   private destroyRef = inject(DestroyRef);
   private unsubscribeI18n: () => void = () => undefined;
+  protected readonly _defaultFormName = Core.shortUUID();
 
-  // LIFE CYCLE
+  // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
+  // that `context.initialize()` always fires before we resubscribe to `formHealth`
+  private config$ = toObservable(this.config).pipe(
+    tap((c) => {
+      this.unsubscribeI18n();
+      this.context.initialize(
+        c.widgetLoaders,
+        c.middlewares ?? [],
+        this.validators(),
+        c.validateOn ?? 'eager',
+        c.itemRenderers ?? {},
+        c.localization,
+        c.dependencies ?? {},
+      );
+      this.context.store.dispatch({
+        type: 'INITIALIZE',
+        payload: {
+          formName: c.formName ?? this._defaultFormName,
+          formDef: c.formDef,
+        },
+      });
+      this.context.store.dispatch({
+        type: 'SET_DATA',
+        payload: { data: c.data ?? {} },
+      });
+      this.context.store.dispatch({
+        type: 'SET_META',
+        payload: { meta: c.meta ?? {} },
+      });
+      this.direction.set(Core.getDirectionFromLanguage(this.context.localization.lang));
+      this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
+        this.direction.set(Core.getDirectionFromLanguage(lang));
+        this.context.store.dispatch({
+          type: 'SET_LANGUAGE',
+          payload: { lang },
+        });
+      });
+    }),
+    share(),
+  );
+
   ngOnInit(): void {
-    this.context.initialize(
-      this.widgetLoaders(),
-      this.middlewares(),
-      this.validators(),
-      this.validateOn(),
-      this.itemRenderers(),
-      this.localization(),
-      this.dependencies() || {},
-    );
-
-    Core.formHealth(this.context.store.state$)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    // Resubscribe to the new store `formHealth` whenever config changes
+    this.config$
+      .pipe(
+        switchMap(() => Core.formHealth(this.context.store.state$)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((health) => this.formHealth.emit(health));
 
+    // `events$` is stable. Survives store replacements
     this.context.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => this.formEvent.emit(event));
-
-    this.context.store.dispatch({
-      type: 'INITIALIZE',
-      payload: {
-        formName: this.formName(),
-        formDef: this.formDef(),
-      },
-    });
-
-    this.context.store.dispatch({
-      type: 'SET_DATA',
-      payload: {
-        data: this.data(),
-      },
-    });
-
-    this.context.store.dispatch({
-      type: 'SET_META',
-      payload: {
-        meta: this.meta(),
-      },
-    });
-
-    this.direction.set(Core.getDirectionFromLanguage(this.context.localization.lang));
-
-    this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
-      this.direction.set(Core.getDirectionFromLanguage(lang));
-      this.context.store.dispatch({
-        type: 'SET_LANGUAGE',
-        payload: {
-          lang,
-        },
-      });
-    });
   }
 
   ngOnDestroy(): void {
