@@ -75,17 +75,19 @@ export function FormPage() {
       {error ? <p className={styles.error}>{error}</p> : null}
       {formDef && (
         <GuiForm
-          formDef={formDef}
-          data={formData}
-          meta={formMeta}
-          customValidators={customValidators}
-          middlewares={middlewares}
-          itemRenderers={itemRenderers}
-          localization={localization}
-          autocomplete={'off'}
-          dependencies={deps}
-          customWidgetLoaders={customWidgetLoaders}
-          validateOn={validateOn}
+          config={{
+            formDef,
+            data: formData,
+            meta: formMeta,
+            customValidators,
+            middlewares,
+            itemRenderers,
+            localization,
+            dependencies: deps,
+            customWidgetLoaders,
+            validateOn,
+          }}
+          autocomplete="off"
           formHealth={onFormHealth}
           formEvent={onFormEvent}
         />

@@ -7,10 +7,12 @@ export function ModularDxPage() {
   return (
     <div>
       <GuiForm
-        formDef={md.formDef}
-        data={md.data}
-        formSelectors={md.formSelectors}
-        formConfig={md.formConfig}
+        config={{
+          formDef: md.formDef,
+          data: md.data,
+          formSelectors: md.formSelectors,
+          formConfig: md.formConfig,
+        }}
         formEvent={AppsShared.onFormEvent}
       />
     </div>

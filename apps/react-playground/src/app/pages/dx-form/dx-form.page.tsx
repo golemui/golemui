@@ -30,11 +30,13 @@ export function DxFormPage() {
   return (
     <div>
       <GuiForm
-        formDef={ks.formDef}
-        data={ks.data}
-        formSelectors={ks.formSelectors}
-        formConfig={ks.formConfig}
-        localization={localization}
+        config={{
+          formDef: ks.formDef,
+          data: ks.data,
+          formSelectors: ks.formSelectors,
+          formConfig: ks.formConfig,
+          localization,
+        }}
         formEvent={AppsShared.onFormEvent}
       />
     </div>
