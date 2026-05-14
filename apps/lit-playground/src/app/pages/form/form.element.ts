@@ -1,7 +1,7 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import { Dependencies } from '@golemui/gui-shared';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
@@ -17,43 +17,46 @@ const mock = AppsShared.kitchenSink;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef: Core.Form<string> | undefined;
-  formData = mock.data;
-  formMeta = mock.meta || {};
-  localization = AppsShared.initializeI18n(mock.resources);
-  deps: Dependencies = {
-    markdown: {
-      parse: (md: string) => snarkdown(md),
-    },
-  };
+  config: GuiFormInitConfig | undefined;
   languages = AppsShared.commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
       value: code,
       label: `${flag} ${label}`,
     }));
-  customWidgetLoaders = {
-    heading: async () =>
-      (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
-  };
-  itemRenderers = {
-    complexListItemRenderer: complexListItemRenderer,
-    productItemRenderer: productItemRenderer,
-    airportItemRenderer: airportItemRenderer,
-    countryItemRenderer: countryItemRenderer,
-  };
-  middlewares = [Core.devToolsMiddleware()];
-  customValidators: GuiValidators.CustomValidatorSchemas = {
-    allowedNames: AppsShared.allowedNames,
-  };
-  validateOn: Core.ValidateOn = 'eager';
 
   error = '';
 
   override async connectedCallback() {
     super.connectedCallback();
     const { form } = mock;
-    this.formDef = typeof form === 'function' ? await form() : form;
+    const formDef = typeof form === 'function' ? await form() : form;
+    this.config = {
+      formDef,
+      data: mock.data,
+      meta: mock.meta || {},
+      localization: AppsShared.initializeI18n(mock.resources),
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
+      },
+      customWidgetLoaders: {
+        heading: async () =>
+          (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
+      },
+      itemRenderers: {
+        complexListItemRenderer,
+        productItemRenderer,
+        airportItemRenderer,
+        countryItemRenderer,
+      },
+      middlewares: [Core.devToolsMiddleware()],
+      customValidators: {
+        allowedNames: AppsShared.allowedNames,
+      } as GuiValidators.CustomValidatorSchemas,
+      validateOn: 'eager',
+    };
     this.requestUpdate();
   }
 
@@ -95,23 +98,15 @@ export class FormElement extends LitElement {
   }
 
   render() {
+    const { config } = this;
     return html`
       <div>
         ${this.languages.length > 0 ? this.languagePicker() : null}
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
-        ${this.formDef
+        ${config
           ? html`<gui-form
-              .formDef=${this.formDef}
-              .data=${this.formData}
-              .meta=${this.formMeta}
-              .customWidgetLoaders=${this.customWidgetLoaders}
-              .itemRenderers=${this.itemRenderers}
-              .localization=${this.localization}
-              .autocomplete=${'off'}
-              .dependencies=${this.deps}
-              .middlewares=${this.middlewares}
-              .customValidators=${this.customValidators}
-              .validateOn=${this.validateOn}
+              .config=${config}
+              autocomplete="off"
               @formHealth=${this.onFormHealth}
               @formEvent=${this.onFormEvent}
             ></gui-form>`

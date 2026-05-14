@@ -1,10 +1,18 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 const md = AppsShared.modularDx;
+
+const config: GuiFormInitConfig = {
+  formDef: md.formDef,
+  data: md.data,
+  formSelectors: md.formSelectors,
+  formConfig: md.formConfig,
+};
 
 @customElement('lit-modular-dx')
 export class ModularDxElement extends LitElement {
@@ -20,10 +28,7 @@ export class ModularDxElement extends LitElement {
     return html`
       <div>
         <gui-form
-          .formDef=${md.formDef}
-          .data=${md.data}
-          .formSelectors=${md.formSelectors}
-          .formConfig=${md.formConfig}
+          .config=${config}
           @formEvent=${this.onFormEvent}
         ></gui-form>
       </div>
