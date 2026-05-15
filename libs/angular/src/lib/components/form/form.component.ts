@@ -107,4 +107,12 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribeI18n();
   }
+
+  setData(data: Record<string, any>): void {
+    this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+  }
+
+  setMeta(meta: Record<string, any>): void {
+    this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+  }
 }

@@ -122,6 +122,14 @@ export class FormElement extends LitElement {
     `;
   }
 
+  setData(data: Record<string, any>): void {
+    this.context.store.dispatch({ type: 'SET_DATA', payload: { data } });
+  }
+
+  setMeta(meta: Record<string, any>): void {
+    this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.stateSub?.unsubscribe();
