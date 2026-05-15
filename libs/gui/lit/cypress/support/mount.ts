@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { Type } from '@golemui/lit';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
 import { MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
 import '../../src/lib/components/form.element';
@@ -29,19 +30,21 @@ export const mountFramework = (options: MountOptions) => {
     }
   };
 
+  const config: GuiFormInitConfig = {
+    formDef: options.formDef,
+    data: options.data,
+    meta: options.meta,
+    middlewares: options.middlewares ?? [],
+    customValidators: options.validators,
+    validateOn: options.validateOn ?? 'eager',
+    localization: options.localization,
+    dependencies: options.dependencies,
+    customWidgetLoaders,
+  };
+
   cy.mount(
     html`<gui-form
-      .config=${{
-        formDef: options.formDef,
-        data: options.data,
-        meta: options.meta,
-        middlewares: options.middlewares ?? [],
-        customValidators: options.validators,
-        validateOn: options.validateOn ?? 'eager',
-        localization: options.localization,
-        dependencies: options.dependencies,
-        customWidgetLoaders,
-      }}
+      .config=${config}
       @formEvent=${handleFormEvent}
       @formHealth=${handleFormHealth}
     ></gui-form>`,

@@ -1,7 +1,7 @@
 import { iframeResizer, iframeThemeSync } from '@golemui/apps-shared';
 import type { ItemRenderContext } from '@golemui/core';
 import '@golemui/gui-lit';
-import { gui } from '@golemui/gui-shared';
+import { gui, GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -442,6 +442,12 @@ export class FreedomElement extends LitElement {
     },
   };
 
+  // Per-row gui-form config cache. Keyed by `${origin}-${formKey}` so the cached
+  // reference is reused across parent re-renders (e.g. when `formData` updates
+  // on user input) and only rebuilt when the row remounts via keyed(...).
+  private rowConfigCache: Partial<Record<FieldKey, { cacheKey: string; config: GuiFormInitConfig }>> =
+    {};
+
   private shoelaceThemeObserver: MutationObserver | null = null;
 
   constructor() {
@@ -529,12 +535,27 @@ export class FreedomElement extends LitElement {
     this.flashData(field);
   }
 
-  private renderRow(field: FieldKey) {
-    const origin = this.mix[field];
+  private getRowConfig(field: FieldKey, origin: Origin): GuiFormInitConfig {
+    const cacheKey = `${origin}-${this.formKey}`;
+    const cached = this.rowConfigCache[field];
+    if (cached?.cacheKey === cacheKey) return cached.config;
+
     const isSubmit = FIELD_TYPE[field] === 'submit';
     const dataForRow = isSubmit
       ? {}
       : ({ [field]: this.formData[field as keyof FormShape] } as Record<string, unknown>);
+
+    const config: GuiFormInitConfig = {
+      formDef: [buildField(field, origin, (v) => this.setFieldValue(field, v))],
+      data: dataForRow,
+      formConfig: this.formConfig,
+    };
+    this.rowConfigCache[field] = { cacheKey, config };
+    return config;
+  }
+
+  private renderRow(field: FieldKey) {
+    const origin = this.mix[field];
 
     const isOpen = this.openPicker === field;
 
@@ -586,13 +607,7 @@ export class FreedomElement extends LitElement {
       <div class="fd-row__field" data-origin=${origin}>
         ${keyed(
           `${field}-${origin}-${this.formKey}`,
-          html`<gui-form
-            .config=${{
-              formDef: [buildField(field, origin, (v) => this.setFieldValue(field, v))],
-              data: dataForRow,
-              formConfig: this.formConfig,
-            }}
-          ></gui-form>`,
+          html`<gui-form .config=${this.getRowConfig(field, origin)}></gui-form>`,
         )}
       </div>
     </div>`;

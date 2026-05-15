@@ -26,19 +26,18 @@ const ks = AppsShared.buildKitchenSinkDx({
   },
 });
 
+const config = {
+  formDef: ks.formDef,
+  data: ks.data,
+  formSelectors: ks.formSelectors,
+  formConfig: ks.formConfig,
+  localization,
+};
+
 export function DxFormPage() {
   return (
     <div>
-      <GuiForm
-        config={{
-          formDef: ks.formDef,
-          data: ks.data,
-          formSelectors: ks.formSelectors,
-          formConfig: ks.formConfig,
-          localization,
-        }}
-        formEvent={AppsShared.onFormEvent}
-      />
+      <GuiForm config={config} formEvent={AppsShared.onFormEvent} />
     </div>
   );
 }
