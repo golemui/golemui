@@ -27,10 +27,7 @@ export class ModularDxElement extends LitElement {
   override render() {
     return html`
       <div>
-        <gui-form
-          .config=${config}
-          @formEvent=${this.onFormEvent}
-        ></gui-form>
+        <gui-form .config=${config} @formEvent=${this.onFormEvent}></gui-form>
       </div>
     `;
   }

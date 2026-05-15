@@ -99,11 +99,11 @@ All initialization properties are bundled in the required `config` prop (`GuiFor
 
 Direct props (outside `config`):
 
-| Prop           | Type                                        | Description                                                                    |
-| -------------- | ------------------------------------------- | ------------------------------------------------------------------------------ |
-| `formEvent`    | `(event: Core.FormEvent) => void`           | Callback for events emitted by widgets.                                        |
-| `formHealth`   | `(health: Core.FormHealth) => void`         | Callback that reports the live validation status of the form.                  |
-| `autocomplete` | `string`                                    | Sets the underlying `<form>` element's `autocomplete` attribute.               |
+| Prop           | Type                                | Description                                                      |
+| -------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| `formEvent`    | `(event: Core.FormEvent) => void`   | Callback for events emitted by widgets.                          |
+| `formHealth`   | `(health: Core.FormHealth) => void` | Callback that reports the live validation status of the form.    |
+| `autocomplete` | `string`                            | Sets the underlying `<form>` element's `autocomplete` attribute. |
 
 See [Configuration](/integration/configuration/) for details on each prop, plus the **Programmatic-only vs JSON-form** notes.
 

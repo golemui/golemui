@@ -1,7 +1,7 @@
 import type { ItemRenderContext } from '@golemui/core';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import { gui } from '@golemui/gui-shared';
+import { gui, GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -246,6 +246,7 @@ export class FormElement extends LitElement {
       currencyItemRenderer,
     },
   };
+  config: GuiFormInitConfig;
 
   @state() declare stage: Stage;
   @state() declare furthestStage: Stage;
@@ -283,6 +284,7 @@ export class FormElement extends LitElement {
     this.resetCounter = 0;
     this.isFlipped = false;
     this.formDef = this.buildFormDef();
+    this.config = { formDef: this.formDef, data: this.formData, formConfig: this.formConfig };
   }
 
   private buildFormDef() {
@@ -561,6 +563,7 @@ export class FormElement extends LitElement {
     this.latestFormData = {};
     this.formData = {};
     this.formDef = this.buildFormDef();
+    this.config = { formDef: this.formDef, data: this.formData, formConfig: this.formConfig };
     this.activeFieldRect = null;
     this.confetti = null;
     this.confettiOrigin = null;
@@ -723,16 +726,7 @@ export class FormElement extends LitElement {
                 : null}
               <div class="poc-stage__row">
                 <div class="poc-stage__form">
-                  ${keyed(
-                    this.resetCounter,
-                    html`<gui-form
-                      .config=${{
-                        formDef: this.formDef,
-                        data: this.formData,
-                        formConfig: this.formConfig,
-                      }}
-                    ></gui-form>`,
-                  )}
+                  ${keyed(this.resetCounter, html`<gui-form .config=${this.config}></gui-form>`)}
                   ${this.stage === 'dateEntered'
                     ? html`<button
                         type="button"

@@ -40,19 +40,19 @@ The simplest way to populate `items` is a flat array of strings or numbers — t
 
 Use these `props` to customize your Dropdown widget.
 
-| prop            | type   | description                                                                                                            |
-| --------------- | ------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `items`         | array  | **Required**. Array of strings, numbers, or plain objects. See [Using Objects](#using-objects).                        |
-| `placeholder`   | string | Text shown in the input when it is empty                                                                               |
-| `hint`          | string | A description to display below the input                                                                               |
-| `labelField`    | string | When items are objects, the key whose value is shown to the user. Defaults to `label`.                                 |
+| prop            | type   | description                                                                                                                         |
+| --------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `items`         | array  | **Required**. Array of strings, numbers, or plain objects. See [Using Objects](#using-objects).                                     |
+| `placeholder`   | string | Text shown in the input when it is empty                                                                                            |
+| `hint`          | string | A description to display below the input                                                                                            |
+| `labelField`    | string | When items are objects, the key whose value is shown to the user. Defaults to `label`.                                              |
 | `valueField`    | string | When items are objects, the key whose value is stored in the form. Defaults to `value`. Required for selection to emit a primitive. |
-| `searchFields`  | array  | List of fields to search on when filtering the list                                                                    |
-| `height`        | number | Height of the dropdown list container                                                                                  |
-| `itemHeight`    | number | Height of each individual item in the list                                                                             |
-| `itemRenderer`  | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/)                   |
-| `inputDebounce` | number | Delay in milliseconds before triggering a search/filter. Defaults to `500`                                             |
-| `autocomplete`  | string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                                                      |
+| `searchFields`  | array  | List of fields to search on when filtering the list                                                                                 |
+| `height`        | number | Height of the dropdown list container                                                                                               |
+| `itemHeight`    | number | Height of each individual item in the list                                                                                          |
+| `itemRenderer`  | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/)                                |
+| `inputDebounce` | number | Delay in milliseconds before triggering a search/filter. Defaults to `500`                                                          |
+| `autocomplete`  | string | `'on'`, `'off'`, or a space-separated list of W3C autofill tokens                                                                   |
 
 ### Using Objects
 

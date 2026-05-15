@@ -2,7 +2,7 @@ import * as AppsShared from '@golemui/apps-shared';
 import { iframeResizer } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import { Dependencies } from '@golemui/gui-shared';
+import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement, nothing } from 'lit';
@@ -74,11 +74,8 @@ const mock = AppsShared.template;
 @customElement('lit-form')
 export class FormElement extends LitElement {
   formThemes: string[] = [];
-  formDef = null;
-  formSelectors: any = undefined;
-  formConfig: any = undefined;
   formDir: string | null = null;
-  formData = {};
+  config: GuiFormInitConfig | undefined;
   localization = AppsShared.initializeI18n(mock.resources);
   languages = AppsShared.commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
@@ -130,29 +127,32 @@ export class FormElement extends LitElement {
     iframeResizer();
     const params = new URLSearchParams(window.location.search);
 
+    let formDef: any = null;
+    let formSelectors: any = undefined;
+    let formConfig: any = undefined;
+    let formData: Record<string, unknown> = {};
+
     if (params.has('renderer')) {
       const key = params.get('renderer')!;
       const entry = RENDERER_FORMS[key];
       if (entry) {
-        this.formDef = entry.form;
-        this.formData = entry.data ?? {};
+        formDef = entry.form;
+        formData = entry.data ?? {};
         if (entry.selectors) {
-          this.formSelectors = entry.selectors;
+          formSelectors = entry.selectors;
         }
         if (entry.config) {
-          this.formConfig = entry.config;
+          formConfig = entry.config;
         }
       }
     } else if (params.has('form')) {
       const formDefResponse = await fetch(params.get('form')!);
-      this.formDef = await formDefResponse.json();
+      formDef = await formDefResponse.json();
     }
 
     if (params.has('data')) {
       const formDataResponse = await fetch(params.get('data')!);
-      this.formData = await formDataResponse.json();
-    } else {
-      this.formData = {};
+      formData = await formDataResponse.json();
     }
 
     if (params.has('theme')) {
@@ -163,6 +163,20 @@ export class FormElement extends LitElement {
       this.formDir = params.get('dir');
       i18next.changeLanguage('fa');
     }
+
+    this.config = {
+      formDef,
+      formSelectors,
+      formConfig,
+      data: formData,
+      customWidgetLoaders: this.customWidgetLoaders,
+      itemRenderers: this.itemRenderers,
+      localization: this.localization,
+      middlewares: this.middlewares,
+      customValidators: this.customValidators,
+      validateOn: this.validateOn,
+      dependencies: this.deps,
+    };
 
     this.requestUpdate();
   }
@@ -183,7 +197,7 @@ export class FormElement extends LitElement {
   render() {
     const themes = this.formThemes.length > 0 ? this.formThemes : [''];
 
-    if (!this.formDef) {
+    if (!this.config) {
       return html`<div>loading...</div>`;
     } else {
       return html`
@@ -193,19 +207,7 @@ export class FormElement extends LitElement {
               ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
               <gui-form
-                .config=${{
-                  formDef: this.formDef,
-                  formSelectors: this.formSelectors,
-                  formConfig: this.formConfig,
-                  data: this.formData,
-                  customWidgetLoaders: this.customWidgetLoaders,
-                  itemRenderers: this.itemRenderers,
-                  localization: this.localization,
-                  middlewares: this.middlewares,
-                  customValidators: this.customValidators,
-                  validateOn: this.validateOn,
-                  dependencies: this.deps,
-                }}
+                .config=${this.config}
                 @formHealth=${this.onFormHealth}
                 @formEvent=${this.onFormEvent}
               ></gui-form>

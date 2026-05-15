@@ -1,6 +1,7 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './form.element.scss';
@@ -9,8 +10,7 @@ const mock = AppsShared.tiny;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
-  formDef: Core.Form<string> | undefined;
-  formData = mock.data;
+  config: GuiFormInitConfig | undefined;
   validateOn: Core.ValidateOn = 'eager';
 
   error = '';
@@ -22,7 +22,8 @@ export class FormElement extends LitElement {
   override async connectedCallback() {
     super.connectedCallback();
     const { form } = mock;
-    this.formDef = typeof form === 'function' ? await form() : form;
+    const formDef = typeof form === 'function' ? await form() : form;
+    this.config = { formDef, data: mock.data, validateOn: this.validateOn };
     this.requestUpdate();
   }
 
@@ -92,15 +93,7 @@ export class FormElement extends LitElement {
 
         <div class="theming-view">
           ${this.error ? html`<p class="error">${this.error}</p>` : null}
-          ${this.formDef
-            ? html`<gui-form
-                .config=${{
-                  formDef: this.formDef,
-                  data: this.formData,
-                  validateOn: this.validateOn,
-                }}
-              ></gui-form>`
-            : null}
+          ${this.config ? html`<gui-form .config=${this.config}></gui-form>` : null}
         </div>
       </section>
     `;
