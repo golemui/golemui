@@ -161,7 +161,7 @@ The typesafe types catch missing keys at compile time — your `Localizable` `{ 
 
 ## Wiring the translator into your form
 
-The translator goes into a separate `localization` prop on your form component — a standalone prop in both paths. Below uses the i18next adapter; the wiring is identical for any other adapter you build.
+The translator goes inside the `config` object as the `localization` property. Below uses the i18next adapter; the wiring is identical for any other adapter you build.
 
 The form definition references translation keys through `Localizable` shapes (`{ key, default }`). In the Programmatic path you pass them as object literals to `gui.*`; in the JSON path you write them inline.
 
@@ -191,10 +191,12 @@ The form definition references translation keys through `Localizable` shapes (`{
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-          localization={localization}
+          config={{
+            formDef,
+            data: {},
+            formConfig,
+            localization,
+          }}
         />
       );
     }
@@ -212,25 +214,22 @@ The form definition references translation keys through `Localizable` shapes (`{
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-        [localization]="localization"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.inputs.textInput('username', {
-          label: { key: 'username.label', default: 'Username' },
+      protected config = {
+        formDef: [
+          gui.inputs.textInput('username', {
+            label: { key: 'username.label', default: 'Username' },
+          }),
+        ],
+        data: {},
+        formConfig: { widgetLoaders: Angular.widgetLoaders },
+        localization: createI18nextTranslator({
+          en: { translation: { username: { label: 'Username' } } },
+          es: { translation: { username: { label: 'Usuario' } } },
         }),
-      ];
-      protected formData = {};
-      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
-      protected localization = createI18nextTranslator({
-        en: { translation: { username: { label: 'Username' } } },
-        es: { translation: { username: { label: 'Usuario' } } },
-      });
+      };
     }
     ```
 
@@ -245,29 +244,24 @@ The form definition references translation keys through `Localizable` shapes (`{
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.inputs.textInput('username', {
-          label: { key: 'username.label', default: 'Username' },
+      config = {
+        formDef: [
+          gui.inputs.textInput('username', {
+            label: { key: 'username.label', default: 'Username' },
+          }),
+        ],
+        data: {},
+        formConfig: { widgetLoaders: Lit.widgetLoaders },
+        localization: createI18nextTranslator({
+          en: { translation: { username: { label: 'Username' } } },
+          es: { translation: { username: { label: 'Usuario' } } },
         }),
-      ];
-      formData = {};
-      formConfig = { widgetLoaders: Lit.widgetLoaders };
-      localization = createI18nextTranslator({
-        en: { translation: { username: { label: 'Username' } } },
-        es: { translation: { username: { label: 'Usuario' } } },
-      });
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-            .localization=${this.localization}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -308,10 +302,12 @@ The JSON form references the same translation keys inline:
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
-          localization={localization}
+          config={{
+            formDef,
+            data: {},
+            customWidgetLoaders: React.widgetLoaders,
+            localization,
+          }}
         />
       );
     }
@@ -329,21 +325,18 @@ The JSON form references the same translation keys inline:
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-        [localization]="localization"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
-      protected localization = createI18nextTranslator({
-        en: { translation: { username: { label: 'Username' } } },
-        es: { translation: { username: { label: 'Usuario' } } },
-      });
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+        localization: createI18nextTranslator({
+          en: { translation: { username: { label: 'Username' } } },
+          es: { translation: { username: { label: 'Usuario' } } },
+        }),
+      };
     }
     ```
 
@@ -358,25 +351,20 @@ The JSON form references the same translation keys inline:
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
-      localization = createI18nextTranslator({
-        en: { translation: { username: { label: 'Username' } } },
-        es: { translation: { username: { label: 'Usuario' } } },
-      });
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+        localization: createI18nextTranslator({
+          en: { translation: { username: { label: 'Username' } } },
+          es: { translation: { username: { label: 'Usuario' } } },
+        }),
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-            .localization=${this.localization}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

@@ -44,9 +44,7 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     };
 
     <GolemForm
-      formDef={formDef}
-      data={formData}
-      formConfig={formConfig}
+      config={{ formDef, data: formData, formConfig }}
       ...
     />
     ```
@@ -66,9 +64,7 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     ```
     ```html
     <gui-form
-      [formDef]="formDef"
-      [data]="formData"
-      [formConfig]="formConfig"
+      [config]="config"
       ...
     ></gui-form>
     ```
@@ -88,9 +84,7 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     ```
     ```html
     <gui-form
-      .formDef=${formDef}
-      .data=${formData}
-      .formConfig=${formConfig}
+      .config=${{ formDef, data: formData, formConfig }}
       ...
     ></gui-form>
     ```

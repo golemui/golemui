@@ -31,11 +31,7 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -51,16 +47,14 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [gui.inputs.textInput('username')];
-      protected formData = {};
-      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+      protected config = {
+        formDef: [gui.inputs.textInput('username')],
+        data: {},
+        formConfig: { widgetLoaders: Angular.widgetLoaders },
+      };
     }
     ```
 
@@ -74,20 +68,16 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [gui.inputs.textInput('username')];
-      formData = {};
-      formConfig = { widgetLoaders: Lit.widgetLoaders };
+      config = {
+        formDef: [gui.inputs.textInput('username')],
+        data: {},
+        formConfig: { widgetLoaders: Lit.widgetLoaders },
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -98,7 +88,7 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
   </Fragment>
   <Fragment slot="json">
 
-In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` prop** on the form component. There is no `formConfig` wrapper.
+In the JSON path, widget loaders go into the `customWidgetLoaders` property on the `config` object.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -108,11 +98,7 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
-        />
+        <GuiForm config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }} />
       );
     }
     ```
@@ -128,16 +114,14 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+      };
     }
     ```
 
@@ -151,20 +135,16 @@ In the JSON path, widget loaders go into the **standalone `customWidgetLoaders` 
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -206,11 +186,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -226,22 +202,20 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
-      ];
-      protected formData = {};
-      protected formConfig = {
-        widgetLoaders: {
-          ...Angular.widgetLoaders,
-          productCard: async () =>
-            (await import('./widgets/product-card.component')).ProductCardComponent,
+      protected config = {
+        formDef: [
+          gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: {
+            ...Angular.widgetLoaders,
+            productCard: async () =>
+              (await import('./widgets/product-card.component')).ProductCardComponent,
+          },
         },
       };
     }
@@ -257,28 +231,24 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
-      ];
-      formData = {};
-      formConfig = {
-        widgetLoaders: {
-          ...Lit.widgetLoaders,
-          productCard: async () =>
-            (await import('./widgets/product-card.element')).ProductCardElement,
+      config = {
+        formDef: [
+          gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: {
+            ...Lit.widgetLoaders,
+            productCard: async () =>
+              (await import('./widgets/product-card.element')).ProductCardElement,
+          },
         },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -289,7 +259,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
   </Fragment>
   <Fragment slot="json">
 
-The `customWidgetLoaders` prop carries both the defaults and your custom entries. The JSON itself references the widget by `"type": "productCard"`.
+The `customWidgetLoaders` property in `config` carries both the defaults and your custom entries. The JSON itself references the widget by `"type": "productCard"`.
 
 ```json
 {
@@ -317,11 +287,7 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={widgetLoaders}
-        />
+        <GuiForm config={{ formDef, data: {}, customWidgetLoaders: widgetLoaders }} />
       );
     }
     ```
@@ -337,19 +303,17 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = {
-        ...Angular.widgetLoaders,
-        productCard: async () =>
-          (await import('./widgets/product-card.component')).ProductCardComponent,
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: {
+          ...Angular.widgetLoaders,
+          productCard: async () =>
+            (await import('./widgets/product-card.component')).ProductCardComponent,
+        },
       };
     }
     ```
@@ -364,24 +328,20 @@ The `customWidgetLoaders` prop carries both the defaults and your custom entries
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = {
-        ...Lit.widgetLoaders,
-        productCard: async () =>
-          (await import('./widgets/product-card.element')).ProductCardElement,
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: {
+          ...Lit.widgetLoaders,
+          productCard: async () =>
+            (await import('./widgets/product-card.element')).ProductCardElement,
+        },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

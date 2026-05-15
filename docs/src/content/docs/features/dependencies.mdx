@@ -51,11 +51,7 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -72,19 +68,17 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [gui.inputs.markdown('content')];
-      protected formData = {};
-      protected formConfig = {
-        widgetLoaders: Angular.widgetLoaders,
-        dependencies: {
-          markdown: { parse: (md: string) => snarkdown(md) },
+      protected config = {
+        formDef: [gui.inputs.markdown('content')],
+        data: {},
+        formConfig: {
+          widgetLoaders: Angular.widgetLoaders,
+          dependencies: {
+            markdown: { parse: (md: string) => snarkdown(md) },
+          },
         },
       };
     }
@@ -101,25 +95,21 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [gui.inputs.markdown('content')];
-      formData = {};
-      formConfig = {
-        widgetLoaders: Lit.widgetLoaders,
-        dependencies: {
-          markdown: { parse: (md: string) => snarkdown(md) },
+      config = {
+        formDef: [gui.inputs.markdown('content')],
+        data: {},
+        formConfig: {
+          widgetLoaders: Lit.widgetLoaders,
+          dependencies: {
+            markdown: { parse: (md: string) => snarkdown(md) },
+          },
         },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -130,7 +120,7 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
   </Fragment>
   <Fragment slot="json">
 
-In the JSON path, dependencies go into the **standalone `dependencies` prop** on the form component.
+In the JSON path, dependencies go into the `dependencies` property in the `config` object.
 
 ```json
 {
@@ -152,10 +142,12 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
-          dependencies={dependencies}
+          config={{
+            formDef,
+            data: {},
+            customWidgetLoaders: React.widgetLoaders,
+            dependencies,
+          }}
         />
       );
     }
@@ -173,19 +165,16 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-        [dependencies]="dependencies"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
-      protected dependencies = {
-        markdown: { parse: (md: string) => snarkdown(md) },
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+        dependencies: {
+          markdown: { parse: (md: string) => snarkdown(md) },
+        },
       };
     }
     ```
@@ -201,24 +190,19 @@ In the JSON path, dependencies go into the **standalone `dependencies` prop** on
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
-      dependencies = {
-        markdown: { parse: (md: string) => snarkdown(md) },
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+        dependencies: {
+          markdown: { parse: (md: string) => snarkdown(md) },
+        },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-            .dependencies=${this.dependencies}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

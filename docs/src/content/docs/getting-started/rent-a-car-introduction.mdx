@@ -55,7 +55,7 @@ export default [
 ];
 ```
 
-Then import that default export from your component and pass it as `formDef`. The wiring code is identical to what you saw in [Installation](/getting-started/installation/) — only the source of `formDef` changes.
+Then import that default export from your component and include it in the `config` object. The wiring code is identical to what you saw in [Installation](/getting-started/installation/) — only the source of `formDef` changes.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -69,9 +69,11 @@ Then import that default export from your component and pass it as `formDef`. Th
     export function RentACarPage() {
       return (
         <GuiForm
-          formDef={rentACarForm}
-          data={{}}
-          formConfig={formConfig}
+          config={{
+            formDef: rentACarForm,
+            data: {},
+            formConfig,
+          }}
         />
       );
     }
@@ -89,16 +91,14 @@ Then import that default export from your component and pass it as `formDef`. Th
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-rent-a-car',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class RentACarPage {
-      protected formDef = rentACarForm;
-      protected formData = {};
-      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+      protected config = {
+        formDef: rentACarForm,
+        data: {},
+        formConfig: { widgetLoaders: Angular.widgetLoaders },
+      };
     }
     ```
 
@@ -113,22 +113,18 @@ Then import that default export from your component and pass it as `formDef`. Th
 
     @customElement('rent-a-car-page')
     export class RentACarPage extends LitElement {
-      formDef = rentACarForm;
-      formData = {};
-      formConfig = { widgetLoaders: Lit.widgetLoaders };
+      config = {
+        formDef: rentACarForm,
+        data: {},
+        formConfig: { widgetLoaders: Lit.widgetLoaders },
+      };
 
       override createRenderRoot() {
         return this;
       }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

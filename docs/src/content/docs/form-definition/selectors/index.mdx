@@ -26,18 +26,14 @@ const formSelectors = [
 ];
 ```
 
-Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `formConfig`):
+Pass the array as `formSelectors` inside the `config` object:
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import * as React from '@golemui/gui-react';
 
-    <GuiForm
-      formDef={formDef}
-      formSelectors={formSelectors}
-      data={{}}
-    />;
+    <GuiForm config={{ formDef, formSelectors, data: {} }} />;
     ```
 
   </Fragment>
@@ -50,16 +46,14 @@ Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `for
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [formSelectors]="formSelectors"
-        [data]="formData"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formSelectors = formSelectors;
-      protected formData = {};
+      protected config = {
+        formDef,
+        formSelectors,
+        data: {},
+      };
     }
     ```
 
@@ -72,20 +66,12 @@ Pass the array as `formSelectors` on `<gui-form>` (sibling of `formDef` and `for
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formSelectors = formSelectors;
-      formData = {};
+      config = { formDef, formSelectors, data: {} };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .formSelectors=${this.formSelectors}
-            .data=${this.formData}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

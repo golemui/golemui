@@ -10,10 +10,12 @@ export class MyGolemUIForm extends LitElement {
   render() {
     return html`
       <gui-form
-        .formDef=${this.formDef}
-        .data=${{}}
-        .customWidgetLoaders=${GuiLit.widgetLoaders}
-        .customValidators=${this.validators}
+        .config=${{
+          formDef: this.formDef,
+          data: {},
+          customWidgetLoaders: GuiLit.widgetLoaders,
+          customValidators: this.validators,
+        }}
       ></gui-form>
     `;
   }

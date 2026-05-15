@@ -34,18 +34,14 @@ Import the core styles in your `styles.scss` or `angular.json`:
     @Component({
       imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyFormComponent {
-      protected formDef = [
-        gui.inputs.textInput('username', { label: 'Username' }),
-      ];
-      protected formData = { username: '' };
-      protected formConfig = { widgetLoaders };
+      protected config = {
+        formDef: [gui.inputs.textInput('username', { label: 'Username' })],
+        data: { username: '' },
+        formConfig: { widgetLoaders },
+      };
     }
     ```
 
@@ -60,16 +56,14 @@ Import the core styles in your `styles.scss` or `angular.json`:
     @Component({
       imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyFormComponent {
-      protected formDef = formDef;
-      protected formData = { username: '' };
-      protected formConfig = { widgetLoaders };
+      protected config = {
+        formDef,
+        data: { username: '' },
+        customWidgetLoaders: widgetLoaders,
+      };
     }
     ```
 
@@ -78,7 +72,9 @@ Import the core styles in your `styles.scss` or `angular.json`:
 
 ## `<gui-form>` inputs
 
-| Input                 | Type                                               | Description                                                                                     |
+All initialization properties are bundled in the required `[config]` input (`GuiFormInitConfig`):
+
+| `config` property     | Type                                               | Description                                                                                     |
 | --------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `formDef` (required)  | `FormInput`                                        | Programmatic `gui.*` array or parsed JSON form definition.                                      |
 | `formSelectors`       | `GslSelectorsInput`                                | GSL selector decorators. **Programmatic-only.**                                                 |
@@ -92,7 +88,12 @@ Import the core styles in your `styles.scss` or `angular.json`:
 | `validateOn`          | `Core.ValidateOn`                                  | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
 | `dependencies`        | `Dependencies`                                     | External helpers (e.g. a markdown parser).                                                      |
 | `localization`        | `Core.I18nTranslator`                              | Translator implementing the `I18nTranslator` interface.                                         |
-| `autocomplete`        | `string`                                           | Sets the underlying `<form>` element's `autocomplete` attribute.                                |
+
+Direct inputs (outside `config`):
+
+| Input          | Type     | Description                                                         |
+| -------------- | -------- | ------------------------------------------------------------------- |
+| `autocomplete` | `string` | Sets the underlying `<form>` element's `autocomplete` attribute.    |
 
 The component also exposes two **outputs**:
 

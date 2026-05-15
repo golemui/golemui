@@ -44,11 +44,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
 
     export function MyForm() {
       return (
-        <React.GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <React.GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -64,25 +60,23 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
-        gui.inputs.textInput('discountCode', {
-          label: 'Discount code',
-          include: { in: ['hasDiscount'] },
-        }),
-      ];
-      protected formData = {};
-      protected formConfig = {
-        widgetLoaders: Angular.widgetLoaders,
-        states: {
-          hasDiscount: '$form.hasDiscountCode === true',
+      protected config = {
+        formDef: [
+          gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+          gui.inputs.textInput('discountCode', {
+            label: 'Discount code',
+            include: { in: ['hasDiscount'] },
+          }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Angular.widgetLoaders,
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
         },
       };
     }
@@ -98,31 +92,27 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
-        gui.inputs.textInput('discountCode', {
-          label: 'Discount code',
-          include: { in: ['hasDiscount'] },
-        }),
-      ];
-      formData = {};
-      formConfig = {
-        widgetLoaders: Lit.widgetLoaders,
-        states: {
-          hasDiscount: '$form.hasDiscountCode === true',
+      config = {
+        formDef: [
+          gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+          gui.inputs.textInput('discountCode', {
+            label: 'Discount code',
+            include: { in: ['hasDiscount'] },
+          }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Lit.widgetLoaders,
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
         },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -169,9 +159,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     export function MyForm() {
       return (
         <React.GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
+          config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }}
         />
       );
     }
@@ -188,16 +176,14 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+      };
     }
     ```
 
@@ -211,20 +197,16 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

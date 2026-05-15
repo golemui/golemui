@@ -49,11 +49,7 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -69,29 +65,27 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.inputs.repeater('users', {
-          addLabel: 'Add user',
+      protected config = {
+        formDef: [
+          gui.inputs.repeater('users', {
+            addLabel: 'Add user',
+            states: {
+              limitReached: { addLabel: "Limit reached, you can't add more" },
+            },
+            children: [
+              gui.inputs.textInput('name', { label: 'Name' }),
+            ],
+          }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Angular.widgetLoaders,
           states: {
-            limitReached: { addLabel: "Limit reached, you can't add more" },
+            limitReached: '$form.users?.length === 5',
           },
-          children: [
-            gui.inputs.textInput('name', { label: 'Name' }),
-          ],
-        }),
-      ];
-      protected formData = {};
-      protected formConfig = {
-        widgetLoaders: Angular.widgetLoaders,
-        states: {
-          limitReached: '$form.users?.length === 5',
         },
       };
     }
@@ -107,35 +101,31 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.inputs.repeater('users', {
-          addLabel: 'Add user',
+      config = {
+        formDef: [
+          gui.inputs.repeater('users', {
+            addLabel: 'Add user',
+            states: {
+              limitReached: { addLabel: "Limit reached, you can't add more" },
+            },
+            children: [
+              gui.inputs.textInput('name', { label: 'Name' }),
+            ],
+          }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Lit.widgetLoaders,
           states: {
-            limitReached: { addLabel: "Limit reached, you can't add more" },
+            limitReached: '$form.users?.length === 5',
           },
-          children: [
-            gui.inputs.textInput('name', { label: 'Name' }),
-          ],
-        }),
-      ];
-      formData = {};
-      formConfig = {
-        widgetLoaders: Lit.widgetLoaders,
-        states: {
-          limitReached: '$form.users?.length === 5',
         },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -184,9 +174,7 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
+          config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }}
         />
       );
     }
@@ -203,16 +191,14 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+      };
     }
     ```
 
@@ -226,20 +212,16 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

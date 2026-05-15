@@ -131,10 +131,7 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     export function FormPage() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={formData}
-          formConfig={formConfig}
-          localization={localization}
+          config={{ formDef, data: formData, formConfig, localization }}
         />
       );
     }
@@ -146,16 +143,13 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-dynamic-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-        [localization]="localization"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class AppFormPage {
-      protected formConfig = { widgetLoaders };
-      protected localization = { /* i18next implementation */ };
+      protected config = {
+        formConfig: { widgetLoaders },
+        localization: { /* i18next implementation */ },
+      };
     }
     ```
   </Fragment>
@@ -163,18 +157,13 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     ```ts
     @customElement('lit-form')
     export class FormElement extends LitElement {
-      protected formConfig = { widgetLoaders };
-      protected localization = { /* i18next implementation */ };
+      protected config = {
+        formConfig: { widgetLoaders },
+        localization: { /* i18next implementation */ },
+      };
 
       render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-            .localization=${this.localization}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

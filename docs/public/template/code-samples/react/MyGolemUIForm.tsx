@@ -4,9 +4,11 @@ function App() {
   return (
     <>
       <GuiForm
-        formDef={formDef}
-        data={{}}
-        validators={validators}
+        config={{
+          formDef,
+          data: {},
+          customValidators: validators,
+        }}
       />
     </>
   );

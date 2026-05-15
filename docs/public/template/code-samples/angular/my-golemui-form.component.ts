@@ -3,15 +3,15 @@
   imports: [FormComponent],
   template: `
     <gui-form
-      [formDef]="formDef"
-      [data]="{}"
-      [customWidgetLoaders]="widgetLoaders"
-      [customValidators]="validators"
+      [config]="config"
     ></gui-form>
   `,
 })
 export class MyGolemUIForm {
-  formDef = myForm;
-  widgetLoaders = GuiAngular.widgetLoaders;
-  validators: ValidatorFn<Validator> = initValidators();
+  config = {
+    formDef: myForm,
+    data: {},
+    customWidgetLoaders: GuiAngular.widgetLoaders,
+    customValidators: initValidators() as ValidatorFn<Validator>,
+  };
 }
