@@ -47,10 +47,10 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
       },
     };
 
+    const config = { formDef, data: {}, formConfig };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -164,17 +164,15 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
     import formDef from './my-form.json';
     import { CountryItemRenderer } from './CountryItemRenderer';
 
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: React.widgetLoaders,
+      itemRenderers: { countryItemRenderer: CountryItemRenderer },
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            customWidgetLoaders: React.widgetLoaders,
-            itemRenderers: { countryItemRenderer: CountryItemRenderer },
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

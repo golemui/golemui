@@ -188,17 +188,10 @@ The form definition references translation keys through `Localizable` shapes (`{
       es: { translation: { username: { label: 'Usuario' } } },
     });
 
+    const config = { formDef, data: {}, formConfig, localization };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            formConfig,
-            localization,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -299,17 +292,15 @@ The JSON form references the same translation keys inline:
       es: { translation: { username: { label: 'Usuario' } } },
     });
 
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: React.widgetLoaders,
+      localization,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            customWidgetLoaders: React.widgetLoaders,
-            localization,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

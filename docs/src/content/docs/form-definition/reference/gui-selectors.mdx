@@ -201,8 +201,8 @@ const formDef = [/* … */];
 const formSelectors = [
   gui.selectors.tag('identity').inputs({ override: { autocomplete: 'off' } }),
 ];
-
-<GuiForm config={{ formDef, formSelectors, data: {} }} />;
+const config = { formDef, formSelectors, data: {} };
+// <GuiForm config={config} />
 ```
 
 For Angular and Lit wiring, see [Integration / Configuration](/integration/configuration/).

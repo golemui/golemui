@@ -65,17 +65,10 @@ Then import that default export from your component and include it in the `confi
     import rentACarForm from './rent-a-car.form';
 
     const formConfig = { widgetLoaders: React.widgetLoaders };
+    const config = { formDef: rentACarForm, data: {}, formConfig };
 
     export function RentACarPage() {
-      return (
-        <GuiForm
-          config={{
-            formDef: rentACarForm,
-            data: {},
-            formConfig,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

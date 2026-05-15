@@ -47,10 +47,10 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
       },
     };
 
+    const config = { formDef, data: {}, formConfig };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -171,12 +171,10 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     import * as React from '@golemui/gui-react';
     import formDef from './my-form.json';
 
+    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

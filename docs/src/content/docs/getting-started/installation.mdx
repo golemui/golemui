@@ -95,17 +95,12 @@ This guide walks you from an empty directory to a rendered form in five steps.
             const formDef = [gui.inputs.textInput('username')];
             const formData = { username: 'golemui' };
             const formConfig = { widgetLoaders: React.widgetLoaders };
+            const config = { formDef, data: formData, formConfig };
 
             export function FormPage() {
               return (
                 <div>
-                  <GuiForm
-                    config={{
-                      formDef,
-                      data: formData,
-                      formConfig,
-                    }}
-                  />
+                  <GuiForm config={config} />
                 </div>
               );
             }

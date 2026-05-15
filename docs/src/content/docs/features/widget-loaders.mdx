@@ -28,11 +28,10 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
 
     const formDef = [gui.inputs.textInput('username')];
     const formConfig = { widgetLoaders: React.widgetLoaders };
+    const config = { formDef, data: {}, formConfig };
 
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -96,10 +95,10 @@ In the JSON path, widget loaders go into the `customWidgetLoaders` property on t
     import * as React from '@golemui/gui-react';
     import formDef from './my-form.json';
 
+    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -184,10 +183,10 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
       },
     };
 
+    const config = { formDef, data: {}, formConfig };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -285,10 +284,10 @@ The `customWidgetLoaders` property in `config` carries both the defaults and you
       productCard: async () => (await import('./widgets/ProductCard')).ProductCard,
     };
 
+    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, customWidgetLoaders: widgetLoaders }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

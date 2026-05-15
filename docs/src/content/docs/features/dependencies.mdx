@@ -49,10 +49,10 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
       },
     };
 
+    const config = { formDef, data: {}, formConfig };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -139,17 +139,15 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
       markdown: { parse: (md: string) => snarkdown(md) },
     };
 
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: React.widgetLoaders,
+      dependencies,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            customWidgetLoaders: React.widgetLoaders,
-            dependencies,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

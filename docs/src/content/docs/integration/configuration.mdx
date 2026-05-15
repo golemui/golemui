@@ -11,6 +11,10 @@ import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
 This page is the canonical reference for every input the form component accepts. The same surface ships in React, Angular, and Lit — only the binding syntax differs (`prop={...}` for React, `[prop]="..."` for Angular, `.prop=${...}` for Lit). For the framework-typed signatures, see [React](/integration/react/), [Angular](/integration/angular/), [Lit](/integration/lit/).
 
+<Aside type="caution" title="Pass `config` as a stable reference">
+Assemble the `config` object **once** — as a module-level constant in React, a class field in Lit/Angular — and pass that named reference to the form component. The wrappers treat a new `config` reference as a signal to tear down and rebuild the form's internal store; passing a fresh object literal on every render reinitializes the store every render (and, if a parent re-renders in response to a form event, can produce an infinite reinit loop). Every snippet on this page follows that pattern — `const config = { … }` in React, `protected config = { … }` / `config = { … }` for Angular and Lit class fields — then `<GuiForm config={config} />` (or the framework equivalent).
+</Aside>
+
 <DslTabs>
   <Fragment slot="dx">
     You're looking at the **Programmatic** view. The Programmatic API leans on `formSelectors` and `formConfig` to wire the engine — you'll see those everywhere below. Switch to the **JSON** view from the language selector to see the same props described from the JSON form's perspective.
@@ -44,7 +48,8 @@ This page is the canonical reference for every input the form component accepts.
     <IntegrationTabs>
       <Fragment slot="react">
         ```tsx
-        <GuiForm config={{ formDef, data: {} }} />
+        const config = { formDef, data: {} };
+        // <GuiForm config={config} />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -56,7 +61,9 @@ This page is the canonical reference for every input the form component accepts.
       </Fragment>
       <Fragment slot="lit">
         ```ts
-        html`<gui-form .config=${{ formDef, data: {} }}></gui-form>`;
+        // class field:
+        config = { formDef, data: {} };
+        // render(): html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
     </IntegrationTabs>
@@ -83,7 +90,8 @@ This page is the canonical reference for every input the form component accepts.
         ```tsx
         import formDef from './my-form.json';
 
-        <GuiForm config={{ formDef, data: {} }} />
+        const config = { formDef, data: {} };
+        // <GuiForm config={config} />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -99,7 +107,9 @@ This page is the canonical reference for every input the form component accepts.
         ```ts
         import formDef from './my-form.json';
 
-        html`<gui-form .config=${{ formDef, data: {} }}></gui-form>`;
+        // class field:
+        config = { formDef, data: {} };
+        // render(): html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
     </IntegrationTabs>
@@ -134,7 +144,8 @@ Wire it alongside `formDef`:
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    <GuiForm config={{ formDef, formSelectors, data: {} }} />
+    const config = { formDef, formSelectors, data: {} };
+    // <GuiForm config={config} />
     ```
   </Fragment>
   <Fragment slot="angular">
@@ -146,7 +157,9 @@ Wire it alongside `formDef`:
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    html`<gui-form .config=${{ formDef, formSelectors, data: {} }}></gui-form>`;
+    // class field:
+    config = { formDef, formSelectors, data: {} };
+    // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
   </Fragment>
 </IntegrationTabs>
@@ -173,7 +186,8 @@ Wire it alongside `formDef`:
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    <GuiForm config={{ formDef, formConfig, data: {} }} />
+    const config = { formDef, formConfig, data: {} };
+    // <GuiForm config={config} />
     ```
   </Fragment>
   <Fragment slot="angular">
@@ -185,7 +199,9 @@ Wire it alongside `formDef`:
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    html`<gui-form .config=${{ formDef, formConfig, data: {} }}></gui-form>`;
+    // class field:
+    config = { formDef, formConfig, data: {} };
+    // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
   </Fragment>
 </IntegrationTabs>
@@ -212,17 +228,15 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
       validateOn: 'eager',
     };
 
+    const config = {
+      formDef,
+      formSelectors,
+      formConfig,
+      data: {},
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            formSelectors,
-            formConfig,
-            data: {},
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -340,19 +354,17 @@ A complete component skeleton wiring a JSON `formDef` plus the standalone engine
     const itemRenderers = { countryRenderer: CountryRenderer };
     const customValidators = { allowedNames };
 
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders,
+      itemRenderers,
+      customValidators,
+      validateOn: 'eager' as const,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            customWidgetLoaders,
-            itemRenderers,
-            customValidators,
-            validateOn: 'eager',
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -434,8 +446,8 @@ The initial form data object. Reads/writes flow through the engine's reactive st
   <Fragment slot="react">
     ```tsx
     const formData = { username: 'golemui', email: 'hello@example.com' };
-
-    <GuiForm config={{ formDef, data: formData }} />
+    const config = { formDef, data: formData };
+    // <GuiForm config={config} />
     ```
 
   </Fragment>
@@ -448,10 +460,12 @@ The initial form data object. Reads/writes flow through the engine's reactive st
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    data = { username: 'golemui', email: 'hello@example.com' };
-
-    // render():
-    html`<gui-form .config=${{ formDef: this.formDef, data: this.data }}></gui-form>`;
+    // class field:
+    config = {
+      formDef: this.formDef,
+      data: { username: 'golemui', email: 'hello@example.com' },
+    };
+    // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
 
   </Fragment>
@@ -465,8 +479,8 @@ Optional out-of-band metadata you want to thread through events and state. The e
   <Fragment slot="react">
     ```tsx
     const formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
-
-    <GuiForm config={{ formDef, data: formData, meta: formMeta }} />
+    const config = { formDef, data: formData, meta: formMeta };
+    // <GuiForm config={config} />
     ```
 
   </Fragment>
@@ -479,12 +493,13 @@ Optional out-of-band metadata you want to thread through events and state. The e
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    meta = { tenantId: 'acme-co', sessionId: 'abc-123' };
-
-    // render():
-    html`<gui-form
-      .config=${{ formDef: this.formDef, data: {}, meta: this.meta }}
-    ></gui-form>`;
+    // class field:
+    config = {
+      formDef: this.formDef,
+      data: {},
+      meta: { tenantId: 'acme-co', sessionId: 'abc-123' },
+    };
+    // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
 
   </Fragment>
@@ -522,7 +537,7 @@ Map of widget `type` → async loader. Merged with the framework's default widge
             productCard: async () => (await import('./ProductCard')).ProductCard,
           },
         };
-        // <GuiForm config={{ formDef, formConfig }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -565,7 +580,7 @@ Map of widget `type` → async loader. Merged with the framework's default widge
         const customWidgetLoaders = {
           productCard: async () => (await import('./ProductCard')).ProductCard,
         };
-        // <GuiForm config={{ formDef, customWidgetLoaders }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -609,7 +624,7 @@ Map of renderer name → framework-specific component. Referenced from a widget'
         const formConfig = {
           itemRenderers: { countryRenderer: CountryRenderer },
         };
-        // <GuiForm config={{ formDef, formConfig }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -644,7 +659,7 @@ Map of renderer name → framework-specific component. Referenced from a widget'
         import { CountryRenderer } from './CountryRenderer';
 
         const itemRenderers = { countryRenderer: CountryRenderer };
-        // <GuiForm config={{ formDef, itemRenderers }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -704,7 +719,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
         const formConfig = {
           customValidators: { allowedNames },
         };
-        // <GuiForm config={{ formDef, formConfig }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -739,7 +754,7 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
         import { allowedNames } from './validators/allowed-names';
 
         const customValidators = { allowedNames };
-        // <GuiForm config={{ formDef, customValidators }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -793,7 +808,7 @@ type ValidateOn =
       <Fragment slot="react">
         ```ts
         const formConfig = { validateOn: 'change' };
-        // <GuiForm config={{ formDef, formConfig }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -825,17 +840,22 @@ type ValidateOn =
     <IntegrationTabs>
       <Fragment slot="react">
         ```tsx
-        <GuiForm config={{ formDef, validateOn: 'change' }} />
+        const config = { formDef, validateOn: 'change' as const };
+        // <GuiForm config={config} />
         ```
       </Fragment>
       <Fragment slot="angular">
-        ```html
-        <gui-form [config]="{ formDef: formDef, validateOn: 'change' }"></gui-form>
+        ```ts
+        // template:
+        // <gui-form [config]="config"></gui-form>
+        protected config = { formDef, validateOn: 'change' as Core.ValidateOn };
         ```
       </Fragment>
       <Fragment slot="lit">
         ```ts
-        html`<gui-form .config=${{ formDef: this.formDef, validateOn: 'change' }}></gui-form>`;
+        // class field:
+        config = { formDef: this.formDef, validateOn: 'change' as Core.ValidateOn };
+        // render(): html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
     </IntegrationTabs>
@@ -863,7 +883,7 @@ You can use any markdown parser that exposes a `(markdown: string) => string` fu
         const formConfig = {
           dependencies: { markdown: { parse: snarkdown } },
         };
-        // <GuiForm config={{ formDef, formConfig }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -898,7 +918,7 @@ You can use any markdown parser that exposes a `(markdown: string) => string` fu
         import snarkdown from 'snarkdown';
 
         const dependencies = { markdown: { parse: snarkdown } };
-        // <GuiForm config={{ formDef, dependencies }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -940,7 +960,7 @@ Named boolean expressions evaluated against `$form`.
             hasDiscount: '$form.hasDiscountCode === true',
           },
         };
-        // <GuiForm config={{ formDef, formConfig }} ... />
+        // <GuiForm config={config} ... />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -998,14 +1018,8 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
     <IntegrationTabs>
       <Fragment slot="react">
         ```tsx
-        <GuiForm
-          config={{
-            formDef,
-            data: formData,
-            formConfig,
-            localization,
-          }}
-        />
+        const config = { formDef, data: formData, formConfig, localization };
+        // <GuiForm config={config} />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -1027,14 +1041,8 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
     <IntegrationTabs>
       <Fragment slot="react">
         ```tsx
-        <GuiForm
-          config={{
-            formDef,
-            data: formData,
-            customWidgetLoaders,
-            localization,
-          }}
-        />
+        const config = { formDef, data: formData, customWidgetLoaders, localization };
+        // <GuiForm config={config} />
         ```
       </Fragment>
       <Fragment slot="angular">
@@ -1062,14 +1070,8 @@ Array of `Core.Middleware` functions wrapping the form's reactive store — used
     import * as Core from '@golemui/core';
 
     const middlewares = [Core.devToolsMiddleware()];
-
-    <GuiForm
-      config={{
-        formDef,
-        data: formData,
-        middlewares,
-      }}
-    />
+    const config = { formDef, data: formData, middlewares };
+    // <GuiForm config={config} />
     ```
 
   </Fragment>
@@ -1087,12 +1089,13 @@ Array of `Core.Middleware` functions wrapping the form's reactive store — used
     ```ts
     import * as Core from '@golemui/core';
 
-    middlewares = [Core.devToolsMiddleware()];
-
-    // render():
-    html`<gui-form
-      .config=${{ formDef: this.formDef, data: {}, middlewares: this.middlewares }}
-    ></gui-form>`;
+    // class field:
+    config = {
+      formDef: this.formDef,
+      data: {},
+      middlewares: [Core.devToolsMiddleware()],
+    };
+    // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
 
   </Fragment>
@@ -1105,7 +1108,8 @@ Sets the underlying `<form>` element's `autocomplete` attribute. Useful to disab
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    <GuiForm config={{ formDef }} autocomplete="off" />
+    const config = { formDef };
+    // <GuiForm config={config} autocomplete="off" />
     ```
   </Fragment>
   <Fragment slot="angular">
@@ -1127,17 +1131,22 @@ Optional form identifier. Useful when you have several `<gui-form>` instances on
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    <GuiForm config={{ formDef, formName: 'checkout' }} />
+    const config = { formDef, formName: 'checkout' };
+    // <GuiForm config={config} />
     ```
   </Fragment>
   <Fragment slot="angular">
-    ```html
-    <gui-form [config]="{ formDef: formDef, formName: 'checkout' }"></gui-form>
+    ```ts
+    // template:
+    // <gui-form [config]="config"></gui-form>
+    protected config = { formDef, formName: 'checkout' };
     ```
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    html`<gui-form .config=${{ formDef: this.formDef, formName: 'checkout' }}></gui-form>`;
+    // class field:
+    config = { formDef: this.formDef, formName: 'checkout' };
+    // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
   </Fragment>
 </IntegrationTabs>
@@ -1159,10 +1168,8 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
       }
     }
 
-    <GuiForm
-      config={{ formDef, data: formData }}
-      formEvent={handleFormEvent}
-    />
+    const config = { formDef, data: formData };
+    // <GuiForm config={config} formEvent={handleFormEvent} />
     ```
 
   </Fragment>
@@ -1192,7 +1199,7 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
 
     // render():
     html`<gui-form
-      .config=${{ formDef: this.formDef, data: this.formData }}
+      .config=${this.config}
       @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
     ></gui-form>`;
     ```
@@ -1213,10 +1220,8 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
       console.log('Health:', health.status);
     }
 
-    <GuiForm
-      config={{ formDef, data: formData }}
-      formHealth={handleFormHealth}
-    />
+    const config = { formDef, data: formData };
+    // <GuiForm config={config} formHealth={handleFormHealth} />
     ```
 
   </Fragment>
@@ -1242,7 +1247,7 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
 
     // render():
     html`<gui-form
-      .config=${{ formDef: this.formDef, data: this.formData }}
+      .config=${this.config}
       @formHealth=${(e: CustomEvent<Core.FormHealth>) => this.onFormHealth(e.detail)}
     ></gui-form>`;
     ```

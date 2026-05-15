@@ -64,11 +64,8 @@ The application-side handler receives a `FormEvent` object with the event `name`
       }
     }
 
-    <React.GuiForm
-      config={{ formDef, formConfig }}
-      formEvent={handleFormEvent}
-      // ...other props
-    />
+    const config = { formDef, formConfig };
+    // <React.GuiForm config={config} formEvent={handleFormEvent} /* ...other props */ />
     ```
 
   </Fragment>

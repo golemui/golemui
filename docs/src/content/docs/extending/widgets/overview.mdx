@@ -313,6 +313,7 @@ With all four widgets implemented and registered, here's the complete form setup
     ];
 
     const formConfig = { widgetLoaders: customWidgetLoaders };
+    const config = { formDef, formConfig, data: {} };
 
     export function ProductPage() {
       const SHARE_URLS: Record<string, (url: string) => string> = {
@@ -331,12 +332,7 @@ With all four widgets implemented and registered, here's the complete form setup
         }
       };
 
-      return (
-        <React.GuiForm
-          config={{ formDef, formConfig, data: {} }}
-          formEvent={handleFormEvent}
-        />
-      );
+      return <React.GuiForm config={config} formEvent={handleFormEvent} />;
     }
     ```
 

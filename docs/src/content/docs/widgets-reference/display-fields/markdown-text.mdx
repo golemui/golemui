@@ -43,10 +43,8 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
       },
     };
 
-    <GolemForm
-      config={{ formDef, data: formData, formConfig }}
-      ...
-    />
+    const config = { formDef, data: formData, formConfig };
+    // <GuiForm config={config} ... />
     ```
 
   </Fragment>
@@ -74,17 +72,19 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     ```typescript
     import snarkdown from 'snarkdown';
 
-    const formConfig = {
+    // class field:
+    formConfig = {
       dependencies: {
         markdown: {
           parse: (md: string) => snarkdown(md),
         },
       },
     };
+    config = { formDef: this.formDef, data: this.formData, formConfig: this.formConfig };
     ```
     ```html
     <gui-form
-      .config=${{ formDef, data: formData, formConfig }}
+      .config=${this.config}
       ...
     ></gui-form>
     ```

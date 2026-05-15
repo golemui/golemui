@@ -88,7 +88,8 @@ In the JSON path, custom validators go in the `customValidators` property in the
     import formDef from './my-form.json';
 
     // On the form component:
-    //   <GuiForm config={{ formDef, customValidators: { allowedNames } }} />
+    //   const config = { formDef, customValidators: { allowedNames } };
+    //   <GuiForm config={config} />
     ```
 
   </Fragment>

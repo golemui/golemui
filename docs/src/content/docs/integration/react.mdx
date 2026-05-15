@@ -39,16 +39,14 @@ Import the core styles in your application entry point or global stylesheet:
       widgetLoaders: { ...GuiReact.widgetLoaders },
     };
 
+    const config = {
+      formDef,
+      data: { username: '' },
+      formConfig,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: { username: '' },
-            formConfig,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -61,16 +59,14 @@ Import the core styles in your application entry point or global stylesheet:
 
     const customWidgetLoaders = { ...GuiReact.widgetLoaders };
 
+    const config = {
+      formDef,
+      data: { username: '' },
+      customWidgetLoaders,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: { username: '' },
-            customWidgetLoaders,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

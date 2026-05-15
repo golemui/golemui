@@ -37,13 +37,10 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
       // see each per-hook section below for the case body.
     }
 
+    const config = { formDef };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{ formDef }}
-          formEvent={handleFormEvent}
-        />
-      );
+      return <GuiForm config={config} formEvent={handleFormEvent} />;
     }
     ```
 
