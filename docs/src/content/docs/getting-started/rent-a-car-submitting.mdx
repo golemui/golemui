@@ -34,8 +34,7 @@ In your `formEvent` callback, match the event name and read `event.data`:
     }
 
     <GuiForm
-      formDef={formDef}
-      formConfig={formConfig}
+      config={{ formDef, formConfig }}
       formEvent={handleFormEvent}
     />
     ```
@@ -46,8 +45,7 @@ In your `formEvent` callback, match the event name and read `event.data`:
     @Component({
       template: `
         <gui-form
-          [formDef]="formDef"
-          [formConfig]="formConfig"
+          [config]="config"
           (formEvent)="onFormEvent($event)"
         ></gui-form>
       `,
@@ -68,8 +66,7 @@ In your `formEvent` callback, match the event name and read `event.data`:
       override render() {
         return html`
           <gui-form
-            .formDef=${this.formDef}
-            .formConfig=${this.formConfig}
+            .config=${this.config}
             @formEvent=${(e) => this.onFormEvent(e.detail)}
           ></gui-form>
         `;

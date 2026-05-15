@@ -61,10 +61,12 @@ export class AppElement extends LitElement {
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
         <gui-form
-          .formDef=${this.formDef}
-          .data=${this.formData}
-          .customWidgetLoaders=${this.customWidgetLoaders}
-          .validateOn=${this.validateOn}
+          .config=${{
+            formDef: this.formDef,
+            data: this.formData,
+            customWidgetLoaders: this.customWidgetLoaders,
+            validateOn: this.validateOn,
+          }}
         ></gui-form>
       </div>
     `;

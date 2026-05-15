@@ -65,8 +65,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
     }
 
     <React.GuiForm
-      formDef={formDef}
-      formConfig={formConfig}
+      config={{ formDef, formConfig }}
       formEvent={handleFormEvent}
       // ...other props
     />
@@ -79,8 +78,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
       imports: [Angular.FormComponent],
       template: `
         <gui-form
-          [formDef]="formDef"
-          [formConfig]="formConfig"
+          [config]="config"
           (formEvent)="handleFormEvent($event)"
         ></gui-form>
       `,
@@ -118,8 +116,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
       override render() {
         return html`
           <gui-form
-            .formDef=${this.formDef}
-            .formConfig=${this.formConfig}
+            .config=${this.config}
             @form-event=${(e: CustomEvent<Core.FormEvent>) =>
               this.handleFormEvent(e.detail)}
           ></gui-form>

@@ -4,7 +4,7 @@ import { AngularItemRenderer } from '@golemui/angular';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as GuiAngular from '@golemui/gui-angular';
-import { Dependencies } from '@golemui/gui-shared';
+import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import snarkdown from 'snarkdown';
@@ -25,38 +25,13 @@ const mock = AppsShared.kitchenSink;
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected localization: Core.I18nTranslator = AppsShared.initializeI18n(mock.resources);
   protected languages = AppsShared.commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
       code,
       label: `${flag} ${label}`,
     }));
-  protected formDef: Core.Form<string> | undefined;
-  protected formData = mock.data;
-  protected formMeta = mock.meta || {};
-  protected deps: Dependencies = {
-    markdown: {
-      parse: (md: string) => snarkdown(md),
-    },
-  };
-
-  protected middlewares = [Core.devToolsMiddleware()];
-  protected customWidgetLoaders = {
-    heading: async () =>
-      (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
-  };
-  protected validators: GuiValidators.CustomValidatorSchemas = {
-    allowedNames: AppsShared.allowedNames,
-  };
-  protected itemRenderers: Record<string, AngularItemRenderer<any>> = {
-    complexListItemRenderer: ComplexListItemRenderer,
-    productItemRenderer: ProductItemRenderer,
-    airportItemRenderer: AirportItemRenderer,
-    countryItemRenderer: CountryItemRenderer,
-  };
-  protected validateOn: Core.ValidateOn = 'eager';
-
+  protected config: GuiFormInitConfig | undefined;
   protected error = '';
 
   constructor() {
@@ -66,7 +41,30 @@ export class AppFormPage {
 
   private async loadFormDef() {
     const { form } = mock;
-    this.formDef = typeof form === 'function' ? await form() : form;
+    const formDef = typeof form === 'function' ? await form() : form;
+    const deps: Dependencies = { markdown: { parse: (md: string) => snarkdown(md) } };
+    this.config = {
+      formDef,
+      data: mock.data,
+      meta: mock.meta || {},
+      dependencies: deps,
+      middlewares: [Core.devToolsMiddleware()],
+      customWidgetLoaders: {
+        heading: async () =>
+          (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
+      },
+      customValidators: {
+        allowedNames: AppsShared.allowedNames,
+      } as GuiValidators.CustomValidatorSchemas,
+      itemRenderers: {
+        complexListItemRenderer: ComplexListItemRenderer,
+        productItemRenderer: ProductItemRenderer,
+        airportItemRenderer: AirportItemRenderer,
+        countryItemRenderer: CountryItemRenderer,
+      } as Record<string, AngularItemRenderer<any>>,
+      localization: AppsShared.initializeI18n(mock.resources),
+      validateOn: 'eager',
+    };
   }
 
   protected onFormHealth(formHealth: Core.FormHealth) {

@@ -79,7 +79,7 @@ In the Programmatic API, register custom validators inside `formConfig.customVal
   </Fragment>
   <Fragment slot="json">
 
-In the JSON path, custom validators live on the **standalone `customValidators` prop** on the form component:
+In the JSON path, custom validators go in the `customValidators` property in the `config` object:
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -88,10 +88,7 @@ In the JSON path, custom validators live on the **standalone `customValidators` 
     import formDef from './my-form.json';
 
     // On the form component:
-    //   <GuiForm
-    //     formDef={formDef}
-    //     customValidators={{ allowedNames }}
-    //   />
+    //   <GuiForm config={{ formDef, customValidators: { allowedNames } }} />
     ```
 
   </Fragment>
@@ -101,10 +98,9 @@ In the JSON path, custom validators live on the **standalone `customValidators` 
     import formDef from './my-form.json';
 
     class MyFormApp {
-      protected formDef = formDef;
-      protected customValidators = { allowedNames };
+      protected config = { formDef, customValidators: { allowedNames } };
     }
-    // template: <gui-form [formDef]="formDef" [customValidators]="customValidators"></gui-form>
+    // template: <gui-form [config]="config"></gui-form>
     ```
 
   </Fragment>
@@ -114,9 +110,8 @@ In the JSON path, custom validators live on the **standalone `customValidators` 
     import formDef from './my-form.json';
 
     export class FormElement extends LitElement {
-      formDef = formDef;
-      customValidators = { allowedNames };
-      // render: html`<gui-form .formDef=${this.formDef} .customValidators=${this.customValidators}></gui-form>`
+      config = { formDef, customValidators: { allowedNames } };
+      // render: html`<gui-form .config=${this.config}></gui-form>`
     }
     ```
 
@@ -156,7 +151,7 @@ gui.inputs.textInput('user.name', {
   </Fragment>
 </DslTabs>
 
-The form engine resolves `allowedNames` against the registered map (`formConfig.customValidators` for Programmatic, the `customValidators` prop for JSON) at validation time.
+The form engine resolves `allowedNames` against the registered map (`formConfig.customValidators` for Programmatic, `config.customValidators` for JSON) at validation time.
 
 ## See also
 

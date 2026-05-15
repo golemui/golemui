@@ -1,6 +1,11 @@
 @let formState = context.store.state$ | async;
 
-<form [id]="formName()" novalidate [attr.dir]="direction()" [attr.autocomplete]="autocomplete()">
+<form
+  [id]="config().formName ?? _defaultFormName"
+  novalidate
+  [attr.dir]="direction()"
+  [attr.autocomplete]="autocomplete()"
+>
   @if (formState && formState.formDef && context.widgetRegistry.ready) {
     <ng-container guiWidget [widget]="formState.formDef.form" />
   } @else {

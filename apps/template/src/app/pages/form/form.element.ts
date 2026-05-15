@@ -8,35 +8,36 @@ import i18next from 'i18next';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import snarkdown from 'snarkdown';
+import { chainingProfileDemo, chainingProfileRefactoredDemo } from '../../forms/chaining';
+import {
+  eventsBlurDemo,
+  eventsChangeDemo,
+  eventsClickDemo,
+  eventsLoadFilterDemo,
+  eventsSubmitDemo,
+} from '../../forms/events';
+import { multiValueAndDemo, multiValueOrDemo } from '../../forms/multi-value-scopes';
+import {
+  runtimeDisplayDemo,
+  runtimeEventHandlerDemo,
+  runtimeLabelDemo,
+  runtimeNestedPropDemo,
+  runtimeValidatorDemo,
+} from '../../forms/runtime-functions';
+import { scopeStateDemo, scopeTagDemo } from '../../forms/scope-operators';
+import { sensibleDefaultsDemo } from '../../forms/sensible-defaults';
+import { statesSupportTicketDemo } from '../../forms/states/support-ticket';
+import { tagsHintDemo } from '../../forms/tags/tags-1-hint';
+import { tagsGroupingDemo } from '../../forms/tags/tags-2-grouping';
+import { tagsPaymentDemo } from '../../forms/tags/tags-3-payment';
+import { typeSelectorByUidDemo, typeSelectorDropdownsDemo } from '../../forms/type-selectors';
 import { airportItemRenderer } from '../../item-renderers/airport.item-renderer';
 import { carItemRenderer } from '../../item-renderers/car.item-renderer';
 import { complexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import { rendererMock } from '../../renderer-mock';
-import { tagsHintDemo } from '../../forms/tags/tags-1-hint';
-import { tagsGroupingDemo } from '../../forms/tags/tags-2-grouping';
-import { tagsPaymentDemo } from '../../forms/tags/tags-3-payment';
-import { statesSupportTicketDemo } from '../../forms/states/support-ticket';
-import {
-  runtimeLabelDemo,
-  runtimeValidatorDemo,
-  runtimeEventHandlerDemo,
-  runtimeNestedPropDemo,
-  runtimeDisplayDemo,
-} from '../../forms/runtime-functions';
-import {
-  eventsClickDemo,
-  eventsChangeDemo,
-  eventsLoadFilterDemo,
-  eventsBlurDemo,
-  eventsSubmitDemo,
-} from '../../forms/events';
-import { typeSelectorDropdownsDemo, typeSelectorByUidDemo } from '../../forms/type-selectors';
-import { chainingProfileDemo, chainingProfileRefactoredDemo } from '../../forms/chaining';
-import { scopeTagDemo, scopeStateDemo } from '../../forms/scope-operators';
-import { multiValueAndDemo, multiValueOrDemo } from '../../forms/multi-value-scopes';
-import { sensibleDefaultsDemo } from '../../forms/sensible-defaults';
+import './form.element.scss';
 
 // In-app form registry for forms that can't be expressed as JSON — typically
 // `gui.displays.display(callback)` widgets (whose `render` prop is a function),
@@ -67,7 +68,6 @@ const RENDERER_FORMS: Record<string, { data: any; form: any; selectors?: any; co
   'multi-value-or': multiValueOrDemo,
   'sensible-defaults': sensibleDefaultsDemo,
 };
-import './form.element.scss';
 
 const mock = AppsShared.template;
 
@@ -193,17 +193,19 @@ export class FormElement extends LitElement {
               ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
               <gui-form
-                .formDef=${this.formDef}
-                .formSelectors=${this.formSelectors}
-                .formConfig=${this.formConfig}
-                .data=${this.formData}
-                .customWidgetLoaders=${this.customWidgetLoaders}
-                .itemRenderers=${this.itemRenderers}
-                .localization=${this.localization}
-                .middlewares=${this.middlewares}
-                .customValidators=${this.customValidators}
-                .validateOn=${this.validateOn}
-                .dependencies=${this.deps}
+                .config=${{
+                  formDef: this.formDef,
+                  formSelectors: this.formSelectors,
+                  formConfig: this.formConfig,
+                  data: this.formData,
+                  customWidgetLoaders: this.customWidgetLoaders,
+                  itemRenderers: this.itemRenderers,
+                  localization: this.localization,
+                  middlewares: this.middlewares,
+                  customValidators: this.customValidators,
+                  validateOn: this.validateOn,
+                  dependencies: this.deps,
+                }}
                 @formHealth=${this.onFormHealth}
                 @formEvent=${this.onFormEvent}
               ></gui-form>

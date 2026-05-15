@@ -5,7 +5,7 @@ import { ComponentType } from 'react';
 import { GuiForm } from '../../src/lib/components/Form';
 
 export const mountFramework = (options: MountOptions) => {
-  const widgetLoaders: Core.WidgetLoaders<ComponentType<Core.WithWidget>> =
+  const customWidgetLoaders: Core.WidgetLoaders<ComponentType<Core.WithWidget>> =
     options.withCustomComponent
       ? {
           heading: async () =>
@@ -20,15 +20,17 @@ export const mountFramework = (options: MountOptions) => {
 
   mount(
     <GuiForm
-      formDef={options.formDef}
-      data={options.data}
-      meta={options.meta}
-      middlewares={options.middlewares ?? []}
-      customValidators={options.validators}
-      validateOn={options.validateOn ?? 'eager'}
-      localization={options.localization}
-      dependencies={options.dependencies}
-      customWidgetLoaders={widgetLoaders}
+      config={{
+        formDef: options.formDef,
+        data: options.data,
+        meta: options.meta,
+        middlewares: options.middlewares ?? [],
+        customValidators: options.validators,
+        validateOn: options.validateOn ?? 'eager',
+        localization: options.localization,
+        dependencies: options.dependencies,
+        customWidgetLoaders,
+      }}
       formEvent={handleFormEvent}
       formHealth={handleFormHealth}
     />,

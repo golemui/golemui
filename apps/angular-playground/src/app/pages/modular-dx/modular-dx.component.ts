@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as GuiAngular from '@golemui/gui-angular';
+import type { GuiFormInitConfig } from '@golemui/gui-shared';
 
 const md = AppsShared.modularDx;
 
@@ -12,10 +13,12 @@ const md = AppsShared.modularDx;
   templateUrl: './modular-dx.component.html',
 })
 export class ModularDxPage {
-  protected formDef = md.formDef;
-  protected formData = md.data;
-  protected formSelectors = md.formSelectors;
-  protected formConfig = md.formConfig;
+  protected config: GuiFormInitConfig = {
+    formDef: md.formDef,
+    data: md.data,
+    formSelectors: md.formSelectors,
+    formConfig: md.formConfig,
+  };
 
   protected async onFormEvent(event: Core.FormEvent) {
     await AppsShared.onFormEvent(event);

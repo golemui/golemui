@@ -191,7 +191,7 @@ gui.selectors.inputs({
 
 ## Wiring `formSelectors` on the form component
 
-`formSelectors` lives on the form component as a sibling of `formDef` and `formConfig`:
+`formSelectors` lives inside the `config` object alongside `formDef`:
 
 ```ts
 import { gui } from '@golemui/gui-shared';
@@ -202,11 +202,7 @@ const formSelectors = [
   gui.selectors.tag('identity').inputs({ override: { autocomplete: 'off' } }),
 ];
 
-<GuiForm
-  formDef={formDef}
-  formSelectors={formSelectors}
-  data={{}}
-/>;
+<GuiForm config={{ formDef, formSelectors, data: {} }} />;
 ```
 
 For Angular and Lit wiring, see [Integration / Configuration](/integration/configuration/).

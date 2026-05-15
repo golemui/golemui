@@ -2,14 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, input, output, Type } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import {
-  Dependencies,
-  DxFormConfig,
-  FormInput,
-  GslSelectorsInput,
-  resolveFormInput,
-} from '@golemui/gui-shared';
-import { CustomValidatorSchemas, initValidators } from '@golemui/gui-validators';
+import { FormInitConfig } from '@golemui/core';
+import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
+import { initValidators } from '@golemui/gui-validators';
 import { widgetLoaders } from '../../widget.loaders';
 
 @Component({
@@ -18,42 +13,40 @@ import { widgetLoaders } from '../../widget.loaders';
   templateUrl: './form.component.html',
 })
 export class FormComponent {
-  formDef = input.required<FormInput>();
-  formSelectors = input<GslSelectorsInput | undefined>(undefined);
-  formConfig = input<DxFormConfig | undefined>(undefined);
-  customWidgetLoaders = input<Core.WidgetLoaders<Type<Core.WithWidget>>>({});
-  data = input<Record<string, any>>({});
-  meta = input<Record<string, any>>({});
-  middlewares = input<Core.Middleware<Core.State, Core.Action>[]>([]);
-  customValidators = input<CustomValidatorSchemas>({});
-  validateOn = input<Core.ValidateOn>('eager');
-  itemRenderers = input<Record<string, Angular.AngularItemRenderer<any>>>({});
-  localization = input<Core.I18nTranslator>();
-  dependencies = input<Dependencies>({});
+  config = input.required<GuiFormInitConfig>();
   autocomplete = input<string | undefined>(undefined);
 
   protected resolved = computed(() =>
-    resolveFormInput(this.formDef(), this.formSelectors(), this.formConfig()),
+    resolveFormInput(this.config().formDef, this.config().formSelectors, this.config().formConfig),
   );
 
-  protected resolvedFormDef = computed(() => this.resolved().formDef);
-  protected allWidgetLoaders = computed(() => ({
-    ...widgetLoaders,
-    ...((this.resolved().widgetLoaders ?? {}) as Core.WidgetLoaders<Type<Core.WithWidget>>),
-    ...this.customWidgetLoaders(),
-  }));
-  protected allDependencies = computed(() => ({
-    ...(this.resolved().dependencies ?? {}),
-    ...(this.dependencies() ?? {}),
-  }));
-  protected resolvedValidateOn = computed(
-    () => this.validateOn() ?? this.resolved().validateOn ?? 'eager',
+  protected coreConfig = computed((): FormInitConfig<Type<Core.WithWidget>> => {
+    const c = this.config();
+    const r = this.resolved();
+    return {
+      formDef: r.formDef as string | Record<string, any>,
+      widgetLoaders: {
+        ...widgetLoaders,
+        ...((r.widgetLoaders ?? {}) as Core.WidgetLoaders<Type<Core.WithWidget>>),
+        ...((c.customWidgetLoaders ?? {}) as Core.WidgetLoaders<Type<Core.WithWidget>>),
+      },
+      dependencies: { ...(r.dependencies ?? {}), ...(c.dependencies ?? {}) },
+      validateOn: c.validateOn ?? r.validateOn ?? 'eager',
+      itemRenderers: {
+        ...((r.itemRenderers ?? {}) as Record<string, Angular.AngularItemRenderer<any>>),
+        ...((c.itemRenderers ?? {}) as Record<string, Angular.AngularItemRenderer<any>>),
+      },
+      localization: c.localization,
+      middlewares: c.middlewares ?? [],
+      data: c.data,
+      meta: c.meta,
+      formName: c.formName,
+    };
+  });
+
+  protected allValidators = computed(() =>
+    initValidators({ ...(this.config().customValidators ?? {}) }),
   );
-  protected allItemRenderers = computed(() => ({
-    ...((this.resolved().itemRenderers ?? {}) as Record<string, Angular.AngularItemRenderer<any>>),
-    ...this.itemRenderers(),
-  }));
-  protected allValidators = computed(() => initValidators({ ...this.customValidators() }));
 
   formHealth = output<Core.FormHealth>();
   formEvent = output<Core.FormEvent>();

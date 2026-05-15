@@ -100,9 +100,11 @@ This guide walks you from an empty directory to a rendered form in five steps.
               return (
                 <div>
                   <GuiForm
-                    formDef={formDef}
-                    data={formData}
-                    formConfig={formConfig}
+                    config={{
+                      formDef,
+                      data: formData,
+                      formConfig,
+                    }}
                   />
                 </div>
               );
@@ -119,16 +121,14 @@ This guide walks you from an empty directory to a rendered form in five steps.
             @Component({
               imports: [CommonModule, Angular.FormComponent],
               selector: 'app-dynamic-form',
-              template: `<gui-form
-                [formDef]="formDef"
-                [data]="formData"
-                [formConfig]="formConfig"
-              ></gui-form>`,
+              template: `<gui-form [config]="config"></gui-form>`,
             })
             export class AppFormPage {
-              protected formDef = [gui.inputs.textInput('username')];
-              protected formData = { username: 'golemui' };
-              protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+              protected config = {
+                formDef: [gui.inputs.textInput('username')],
+                data: { username: 'golemui' },
+                formConfig: { widgetLoaders: Angular.widgetLoaders },
+              };
             }
             ```
           </Fragment>
@@ -141,22 +141,18 @@ This guide walks you from an empty directory to a rendered form in five steps.
 
             @customElement('lit-form')
             export class FormElement extends LitElement {
-              formDef = [gui.inputs.textInput('username')];
-              formData = { username: 'golemui' };
-              formConfig = { widgetLoaders: Lit.widgetLoaders };
+              config = {
+                formDef: [gui.inputs.textInput('username')],
+                data: { username: 'golemui' },
+                formConfig: { widgetLoaders: Lit.widgetLoaders },
+              };
 
               override createRenderRoot() {
                 return this;
               }
 
               render() {
-                return html`
-                  <gui-form
-                    .formDef=${this.formDef}
-                    .data=${this.formData}
-                    .formConfig=${this.formConfig}
-                  ></gui-form>
-                `;
+                return html`<gui-form .config=${this.config}></gui-form>`;
               }
             }
             ```

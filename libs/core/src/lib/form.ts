@@ -1,6 +1,11 @@
 import * as jd from 'ts.data.json';
+import { WidgetLoaders } from './context/widget-registry';
 import { FormWidget, LayoutWidget, layoutWidgetDecoder } from './form-widget';
-import { ReactiveExpression, UiState } from './shared';
+import { I18nTranslator } from './i18n';
+import { ItemRenderer } from './item-renderer';
+import { ReactiveExpression, UiState, ValidateOn } from './shared';
+import { Action } from './store/actions';
+import { Middleware, State } from './store/model';
 
 // --------------------------------
 //
@@ -41,6 +46,19 @@ export function defineForm<
 // Schema
 //
 // --------------------------------
+
+export interface FormInitConfig<ComponentType = unknown> {
+  formDef: string | Record<string, any>;
+  widgetLoaders: WidgetLoaders<ComponentType>;
+  formName?: string;
+  itemRenderers?: Record<string, ItemRenderer>;
+  localization?: I18nTranslator;
+  dependencies?: Record<string, unknown>;
+  middlewares?: Middleware<State, Action>[];
+  validateOn?: ValidateOn;
+  data?: Record<string, any>;
+  meta?: Record<string, any>;
+}
 
 export const formDefDecoder = jd.object(
   {

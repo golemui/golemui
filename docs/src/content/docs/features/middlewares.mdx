@@ -10,7 +10,7 @@ import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
 Middlewares are functions that wrap the form's reactive store and observe (or mutate) every action that flows through it. They run on every state change and can be composed.
 
-`middlewares` is a **standalone prop** on the form component in both paths — it sits alongside `formConfig` (Programmatic) or alongside the JSON `formDef` and engine props (JSON). It is **not** part of `formConfig`.
+`middlewares` goes inside the `config` object in both paths.
 
 ## Default middlewares
 
@@ -23,7 +23,7 @@ GolemUI ships a few middlewares you can opt into:
 
 ## Wiring middlewares
 
-Pass an array of middlewares to your form component as the `middlewares` prop. Below, every framework wires `devToolsMiddleware`.
+Pass an array of middlewares inside the `config` object as the `middlewares` property. Below, every framework wires `devToolsMiddleware`.
 
 <DslTabs>
   <Fragment slot="dx">
@@ -41,12 +41,7 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-          middlewares={middlewares}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig, middlewares }} />
       );
     }
     ```
@@ -63,18 +58,15 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-        [middlewares]="middlewares"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [gui.inputs.textInput('username')];
-      protected formData = {};
-      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
-      protected middlewares = [Core.devToolsMiddleware()];
+      protected config = {
+        formDef: [gui.inputs.textInput('username')],
+        data: {},
+        formConfig: { widgetLoaders: Angular.widgetLoaders },
+        middlewares: [Core.devToolsMiddleware()],
+      };
     }
     ```
 
@@ -89,22 +81,17 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [gui.inputs.textInput('username')];
-      formData = {};
-      formConfig = { widgetLoaders: Lit.widgetLoaders };
-      middlewares = [Core.devToolsMiddleware()];
+      config = {
+        formDef: [gui.inputs.textInput('username')],
+        data: {},
+        formConfig: { widgetLoaders: Lit.widgetLoaders },
+        middlewares: [Core.devToolsMiddleware()],
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-            .middlewares=${this.middlewares}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -127,10 +114,12 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
-          middlewares={middlewares}
+          config={{
+            formDef,
+            data: {},
+            customWidgetLoaders: React.widgetLoaders,
+            middlewares,
+          }}
         />
       );
     }
@@ -148,18 +137,15 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-        [middlewares]="middlewares"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
-      protected middlewares = [Core.devToolsMiddleware()];
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+        middlewares: [Core.devToolsMiddleware()],
+      };
     }
     ```
 
@@ -174,22 +160,17 @@ Pass an array of middlewares to your form component as the `middlewares` prop. B
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
-      middlewares = [Core.devToolsMiddleware()];
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+        middlewares: [Core.devToolsMiddleware()],
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-            .middlewares=${this.middlewares}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

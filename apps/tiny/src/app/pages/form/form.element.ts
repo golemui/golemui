@@ -32,9 +32,7 @@ export class FormElement extends LitElement {
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
         ${this.formDef
           ? html`<gui-form
-              .formDef=${this.formDef}
-              .data=${this.formData}
-              .validateOn=${this.validateOn}
+              .config=${{ formDef: this.formDef, data: this.formData, validateOn: this.validateOn }}
             ></gui-form>`
           : null}
       </div>

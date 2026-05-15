@@ -91,9 +91,7 @@ const formDef = [
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
+          config={{ formDef, data: {}, formConfig }}
           formEvent={handleFormEvent}
         />
       );
@@ -112,20 +110,17 @@ const formDef = [
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-        (formEvent)="onFormEvent($event)"
-      ></gui-form>`,
+      template: `<gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-        gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
-      ];
-      protected formData = {};
-      protected formConfig = { widgetLoaders: Angular.widgetLoaders };
+      protected config = {
+        formDef: [
+          gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+          gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+        ],
+        data: {},
+        formConfig: { widgetLoaders: Angular.widgetLoaders },
+      };
 
       protected onFormEvent(event: Core.FormEvent) {
         switch (event.name) {
@@ -151,12 +146,14 @@ const formDef = [
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-        gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
-      ];
-      formData = {};
-      formConfig = { widgetLoaders: Lit.widgetLoaders };
+      config = {
+        formDef: [
+          gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+          gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+        ],
+        data: {},
+        formConfig: { widgetLoaders: Lit.widgetLoaders },
+      };
 
       override createRenderRoot() { return this; }
 
@@ -174,9 +171,7 @@ const formDef = [
       override render() {
         return html`
           <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
+            .config=${this.config}
             @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
           ></gui-form>
         `;
@@ -211,9 +206,7 @@ const formDef = [
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
+          config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }}
           formEvent={handleFormEvent}
         />
       );
@@ -232,17 +225,14 @@ const formDef = [
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-        (formEvent)="onFormEvent($event)"
-      ></gui-form>`,
+      template: `<gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+      };
 
       protected onFormEvent(event: Core.FormEvent) {
         switch (event.name) {
@@ -268,9 +258,11 @@ const formDef = [
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+      };
 
       override createRenderRoot() { return this; }
 
@@ -288,9 +280,7 @@ const formDef = [
       override render() {
         return html`
           <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
+            .config=${this.config}
             @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
           ></gui-form>
         `;

@@ -49,11 +49,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -70,29 +66,27 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.inputs.dropdown('country', {
-          items: [
-            { id: 'US', flag: '🇺🇸', label: 'United States' },
-            { id: 'CA', flag: '🇨🇦', label: 'Canada' },
-          ],
-          labelField: 'label',
-          valueField: 'id',
-          itemRenderer: 'countryItemRenderer',
-        }),
-      ];
-      protected formData = {};
-      protected formConfig = {
-        widgetLoaders: Angular.widgetLoaders,
-        itemRenderers: {
-          countryItemRenderer: CountryItemRenderer,
+      protected config = {
+        formDef: [
+          gui.inputs.dropdown('country', {
+            items: [
+              { id: 'US', flag: '🇺🇸', label: 'United States' },
+              { id: 'CA', flag: '🇨🇦', label: 'Canada' },
+            ],
+            labelField: 'label',
+            valueField: 'id',
+            itemRenderer: 'countryItemRenderer',
+          }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Angular.widgetLoaders,
+          itemRenderers: {
+            countryItemRenderer: CountryItemRenderer,
+          },
         },
       };
     }
@@ -109,33 +103,29 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.inputs.dropdown('country', {
-          items: [
-            { id: 'US', flag: '🇺🇸', label: 'United States' },
-            { id: 'CA', flag: '🇨🇦', label: 'Canada' },
-          ],
-          labelField: 'label',
-          valueField: 'id',
-          itemRenderer: 'countryItemRenderer',
-        }),
-      ];
-      formData = {};
-      formConfig = {
-        widgetLoaders: Lit.widgetLoaders,
-        itemRenderers: { countryItemRenderer },
+      config = {
+        formDef: [
+          gui.inputs.dropdown('country', {
+            items: [
+              { id: 'US', flag: '🇺🇸', label: 'United States' },
+              { id: 'CA', flag: '🇨🇦', label: 'Canada' },
+            ],
+            labelField: 'label',
+            valueField: 'id',
+            itemRenderer: 'countryItemRenderer',
+          }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Lit.widgetLoaders,
+          itemRenderers: { countryItemRenderer },
+        },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -146,7 +136,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
   </Fragment>
   <Fragment slot="json">
 
-In the JSON path, item renderers go into the **standalone `itemRenderers` prop** on the form component. The JSON references the renderer by name through the dropdown's `"itemRenderer"` field.
+In the JSON path, item renderers go into the `itemRenderers` property on the `config` object. The JSON references the renderer by name through the dropdown's `"itemRenderer"` field.
 
 ```json
 {
@@ -177,10 +167,12 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
-          itemRenderers={{ countryItemRenderer: CountryItemRenderer }}
+          config={{
+            formDef,
+            data: {},
+            customWidgetLoaders: React.widgetLoaders,
+            itemRenderers: { countryItemRenderer: CountryItemRenderer },
+          }}
         />
       );
     }
@@ -198,18 +190,15 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-        [itemRenderers]="itemRenderers"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
-      protected itemRenderers = { countryItemRenderer: CountryItemRenderer };
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+        itemRenderers: { countryItemRenderer: CountryItemRenderer },
+      };
     }
     ```
 
@@ -224,22 +213,17 @@ In the JSON path, item renderers go into the **standalone `itemRenderers` prop**
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
-      itemRenderers = { countryItemRenderer };
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+        itemRenderers: { countryItemRenderer },
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-            .itemRenderers=${this.itemRenderers}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

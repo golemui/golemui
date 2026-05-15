@@ -42,9 +42,11 @@ Import the core styles in your application entry point or global stylesheet:
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{ username: '' }}
-          formConfig={formConfig}
+          config={{
+            formDef,
+            data: { username: '' },
+            formConfig,
+          }}
         />
       );
     }
@@ -57,16 +59,16 @@ Import the core styles in your application entry point or global stylesheet:
     import * as GuiReact from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const formConfig = {
-      widgetLoaders: { ...GuiReact.widgetLoaders },
-    };
+    const customWidgetLoaders = { ...GuiReact.widgetLoaders };
 
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{ username: '' }}
-          formConfig={formConfig}
+          config={{
+            formDef,
+            data: { username: '' },
+            customWidgetLoaders,
+          }}
         />
       );
     }
@@ -77,7 +79,9 @@ Import the core styles in your application entry point or global stylesheet:
 
 ## `<GuiForm>` props
 
-| Prop                  | Type                                         | Description                                                                                     |
+All initialization properties are bundled in the required `config` prop (`GuiFormInitConfig`):
+
+| `config` property     | Type                                         | Description                                                                                     |
 | --------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `formDef` (required)  | `FormInput`                                  | Programmatic `gui.*` array or parsed JSON form definition.                                      |
 | `formSelectors`       | `GslSelectorsInput`                          | GSL selector decorators. **Programmatic-only.**                                                 |
@@ -92,9 +96,14 @@ Import the core styles in your application entry point or global stylesheet:
 | `dependencies`        | `Dependencies`                               | External helpers (e.g. a markdown parser).                                                      |
 | `localization`        | `Core.I18nTranslator`                        | Translator implementing the `I18nTranslator` interface.                                         |
 | `formName`            | `string`                                     | Optional form identifier (useful when you have several forms on a page).                        |
-| `formEvent`           | `(event: Core.FormEvent) => void`            | Callback for events emitted by widgets.                                                         |
-| `formHealth`          | `(health: Core.FormHealth) => void`          | Callback that reports the live validation status of the form.                                   |
-| `autocomplete`        | `string`                                     | Sets the underlying `<form>` element's `autocomplete` attribute.                                |
+
+Direct props (outside `config`):
+
+| Prop           | Type                                        | Description                                                                    |
+| -------------- | ------------------------------------------- | ------------------------------------------------------------------------------ |
+| `formEvent`    | `(event: Core.FormEvent) => void`           | Callback for events emitted by widgets.                                        |
+| `formHealth`   | `(health: Core.FormHealth) => void`         | Callback that reports the live validation status of the form.                  |
+| `autocomplete` | `string`                                    | Sets the underlying `<form>` element's `autocomplete` attribute.               |
 
 See [Configuration](/integration/configuration/) for details on each prop, plus the **Programmatic-only vs JSON-form** notes.
 

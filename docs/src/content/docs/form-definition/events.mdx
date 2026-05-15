@@ -40,7 +40,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
+          config={{ formDef }}
           formEvent={handleFormEvent}
         />
       );
@@ -58,13 +58,10 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        (formEvent)="handleFormEvent($event)"
-      ></gui-form>`,
+      template: `<gui-form [config]="config" (formEvent)="handleFormEvent($event)"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
+      protected config = { formDef };
 
       protected handleFormEvent(event: Core.FormEvent) {
         // see each per-hook section below for the case body.
@@ -82,7 +79,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
+      config = { formDef };
 
       override createRenderRoot() { return this; }
 
@@ -93,7 +90,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
       override render() {
         return html`
           <gui-form
-            .formDef=${this.formDef}
+            .config=${this.config}
             @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.handleFormEvent(e.detail)}
           ></gui-form>
         `;

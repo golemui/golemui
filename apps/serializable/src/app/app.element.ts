@@ -1,6 +1,6 @@
 import { iframeResizer, iframeThemeSync } from '@golemui/apps-shared';
-import { gui } from '@golemui/gui-shared';
 import '@golemui/gui-lit';
+import { gui } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -349,9 +349,11 @@ export class SerializableElement extends LitElement {
             ${keyed(
               `${key}-${i}`,
               html`<gui-form
-                .formDef=${FRAGMENTS[key].build(({ data }) => this.handleFragmentChange(key, data))}
-                .data=${this.formData[key] ?? {}}
-                .formConfig=${{ suppressAutomaticSubmit: true }}
+                .config=${{
+                  formDef: FRAGMENTS[key].build(({ data }) => this.handleFragmentChange(key, data)),
+                  data: this.formData[key] ?? {},
+                  formConfig: { suppressAutomaticSubmit: true },
+                }}
               ></gui-form>`,
             )}
           </section>`,

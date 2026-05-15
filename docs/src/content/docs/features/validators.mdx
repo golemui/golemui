@@ -268,11 +268,7 @@ Where `validateOn` lives on the form component depends on the path:
 
     export function MyForm() {
       return (
-        <GuiForm
-          formDef={formDef}
-          data={{}}
-          formConfig={formConfig}
-        />
+        <GuiForm config={{ formDef, data: {}, formConfig }} />
       );
     }
     ```
@@ -289,31 +285,29 @@ Where `validateOn` lives on the form component depends on the path:
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [formConfig]="formConfig"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = [
-        gui.inputs.textInput('username', {
-          validator: {
-            type: 'string',
-            required: true,
-            minLength: 2,
-            messages: {
-              required: 'Please enter a username',
-              minLength: 'Username must be at least 2 characters',
+      protected config = {
+        formDef: [
+          gui.inputs.textInput('username', {
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 2,
+              messages: {
+                required: 'Please enter a username',
+                minLength: 'Username must be at least 2 characters',
+              },
             },
-          },
-        }),
-        gui.actions.submitButton({ label: 'Create User' }),
-      ];
-      protected formData = {};
-      protected formConfig = {
-        widgetLoaders: Angular.widgetLoaders,
-        validateOn: 'change' as Core.ValidateOn,
+          }),
+          gui.actions.submitButton({ label: 'Create User' }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Angular.widgetLoaders,
+          validateOn: 'change' as Core.ValidateOn,
+        },
       };
     }
     ```
@@ -329,36 +323,32 @@ Where `validateOn` lives on the form component depends on the path:
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = [
-        gui.inputs.textInput('username', {
-          validator: {
-            type: 'string',
-            required: true,
-            minLength: 2,
-            messages: {
-              required: 'Please enter a username',
-              minLength: 'Username must be at least 2 characters',
+      config = {
+        formDef: [
+          gui.inputs.textInput('username', {
+            validator: {
+              type: 'string',
+              required: true,
+              minLength: 2,
+              messages: {
+                required: 'Please enter a username',
+                minLength: 'Username must be at least 2 characters',
+              },
             },
-          },
-        }),
-        gui.actions.submitButton({ label: 'Create User' }),
-      ];
-      formData = {};
-      formConfig = {
-        widgetLoaders: Lit.widgetLoaders,
-        validateOn: 'change' as Core.ValidateOn,
+          }),
+          gui.actions.submitButton({ label: 'Create User' }),
+        ],
+        data: {},
+        formConfig: {
+          widgetLoaders: Lit.widgetLoaders,
+          validateOn: 'change' as Core.ValidateOn,
+        },
       };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .formConfig=${this.formConfig}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```
@@ -369,7 +359,7 @@ Where `validateOn` lives on the form component depends on the path:
   </Fragment>
   <Fragment slot="json">
 
-`validateOn` is a **standalone prop** on the form component.
+`validateOn` goes in the `config` object.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -380,10 +370,12 @@ Where `validateOn` lives on the form component depends on the path:
     export function MyForm() {
       return (
         <GuiForm
-          formDef={formDef}
-          data={{}}
-          customWidgetLoaders={React.widgetLoaders}
-          validateOn="change"
+          config={{
+            formDef,
+            data: {},
+            customWidgetLoaders: React.widgetLoaders,
+            validateOn: 'change',
+          }}
         />
       );
     }
@@ -400,17 +392,15 @@ Where `validateOn` lives on the form component depends on the path:
     @Component({
       imports: [CommonModule, Angular.FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form
-        [formDef]="formDef"
-        [data]="formData"
-        [customWidgetLoaders]="widgetLoaders"
-        [validateOn]="'change'"
-      ></gui-form>`,
+      template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected formDef = formDef;
-      protected formData = {};
-      protected widgetLoaders = Angular.widgetLoaders;
+      protected config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Angular.widgetLoaders,
+        validateOn: 'change',
+      };
     }
     ```
 
@@ -424,21 +414,17 @@ Where `validateOn` lives on the form component depends on the path:
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      formDef = formDef;
-      formData = {};
-      widgetLoaders = Lit.widgetLoaders;
+      config = {
+        formDef,
+        data: {},
+        customWidgetLoaders: Lit.widgetLoaders,
+        validateOn: 'change',
+      };
 
       override createRenderRoot() { return this; }
 
       override render() {
-        return html`
-          <gui-form
-            .formDef=${this.formDef}
-            .data=${this.formData}
-            .customWidgetLoaders=${this.widgetLoaders}
-            .validateOn=${'change'}
-          ></gui-form>
-        `;
+        return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
     ```

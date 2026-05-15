@@ -333,9 +333,7 @@ With all four widgets implemented and registered, here's the complete form setup
 
       return (
         <React.GuiForm
-          formDef={formDef}
-          formConfig={formConfig}
-          data={{}}
+          config={{ formDef, formConfig, data: {} }}
           formEvent={handleFormEvent}
         />
       );
@@ -356,31 +354,31 @@ With all four widgets implemented and registered, here's the complete form setup
       imports: [Angular.FormComponent],
       template: `
         <gui-form
-          [formDef]="formDef"
-          [formConfig]="formConfig"
-          [data]="data"
+          [config]="config"
           (formEvent)="handleFormEvent($event)"
         ></gui-form>
       `,
     })
     export class ProductPage {
-      formConfig = { widgetLoaders: customWidgetLoaders };
-      data = {};
-      formDef = [
-        gui.layouts.custom('productCard', [
-          gui.displays.custom('productDescription', {
-            img: 'assets/product-image.png',
-            description: `### My Cool Product\nMy product is the best`,
-          }),
-          gui.inputs.custom('productRating', 'product.rating', {
-            maxRating: 10,
-            validator: { type: 'number', required: true },
-          }),
-          gui.actions.custom('productShare', {
-            onClick: 'shareEvent',
-          }),
-        ], { title: 'Rate Our Product' }),
-      ];
+      config = {
+        formConfig: { widgetLoaders: customWidgetLoaders },
+        data: {},
+        formDef: [
+          gui.layouts.custom('productCard', [
+            gui.displays.custom('productDescription', {
+              img: 'assets/product-image.png',
+              description: `### My Cool Product\nMy product is the best`,
+            }),
+            gui.inputs.custom('productRating', 'product.rating', {
+              maxRating: 10,
+              validator: { type: 'number', required: true },
+            }),
+            gui.actions.custom('productShare', {
+              onClick: 'shareEvent',
+            }),
+          ], { title: 'Rate Our Product' }),
+        ],
+      };
 
       SHARE_URLS: Record<string, (url: string) => string> = {
         twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
@@ -411,23 +409,25 @@ With all four widgets implemented and registered, here's the complete form setup
 
     @customElement('app-product-page')
     export class ProductPage extends LitElement {
-      formConfig = { widgetLoaders: customWidgetLoaders };
-      data = {};
-      formDef = [
-        gui.layouts.custom('productCard', [
-          gui.displays.custom('productDescription', {
-            img: 'assets/product-image.png',
-            description: `### My Cool Product\nMy product is the best`,
-          }),
-          gui.inputs.custom('productRating', 'product.rating', {
-            maxRating: 10,
-            validator: { type: 'number', required: true },
-          }),
-          gui.actions.custom('productShare', {
-            onClick: 'shareEvent',
-          }),
-        ], { title: 'Rate Our Product' }),
-      ];
+      config = {
+        formConfig: { widgetLoaders: customWidgetLoaders },
+        data: {},
+        formDef: [
+          gui.layouts.custom('productCard', [
+            gui.displays.custom('productDescription', {
+              img: 'assets/product-image.png',
+              description: `### My Cool Product\nMy product is the best`,
+            }),
+            gui.inputs.custom('productRating', 'product.rating', {
+              maxRating: 10,
+              validator: { type: 'number', required: true },
+            }),
+            gui.actions.custom('productShare', {
+              onClick: 'shareEvent',
+            }),
+          ], { title: 'Rate Our Product' }),
+        ],
+      };
 
       override createRenderRoot() {
         return this;
@@ -436,9 +436,7 @@ With all four widgets implemented and registered, here's the complete form setup
       override render() {
         return html`
           <gui-form
-            .formDef=${this.formDef}
-            .formConfig=${this.formConfig}
-            .data=${this.data}
+            .config=${this.config}
             @form-event=${(e: CustomEvent<Core.FormEvent>) =>
               this.handleFormEvent(e.detail)}
           ></gui-form>

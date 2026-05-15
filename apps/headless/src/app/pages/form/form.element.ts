@@ -104,14 +104,16 @@ export class FormElement extends LitElement {
               ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
               <gui-form
-                .formDef=${this.formDef}
-                .data=${this.formData}
-                .customWidgetLoaders=${this.customWidgetLoaders}
-                .itemRenderers=${this.itemRenderers}
-                .localization=${this.localization}
-                .middlewares=${this.middlewares}
-                .customValidators=${this.customValidators}
-                .validateOn=${this.validateOn}
+                .config=${{
+                  formDef: this.formDef,
+                  data: this.formData,
+                  customWidgetLoaders: this.customWidgetLoaders,
+                  itemRenderers: this.itemRenderers,
+                  localization: this.localization,
+                  middlewares: this.middlewares,
+                  customValidators: this.customValidators,
+                  validateOn: this.validateOn,
+                }}
                 @formHealth=${this.onFormHealth}
                 @formEvent=${this.onFormEvent}
               ></gui-form>

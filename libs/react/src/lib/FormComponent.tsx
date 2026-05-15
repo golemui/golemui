@@ -1,41 +1,21 @@
 import * as Core from '@golemui/core';
+import { FormInitConfig } from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
 
-type JsonStringified = string;
-type JsonObject = Record<string, any>;
-
 export interface FormComponentProps {
-  formDef: JsonStringified | JsonObject;
-  widgetLoaders: Core.WidgetLoaders<React.ComponentType<Core.WithWidget>>;
-  itemRenderers: Record<string, Core.ItemRenderer>;
-  localization?: Core.I18nTranslator;
-  dependencies?: Record<string, unknown>;
+  config: FormInitConfig<React.ComponentType<Core.WithWidget>>;
   validators: Core.ValidatorFn<any>;
-  middlewares?: Core.Middleware<Core.State, Core.Action>[];
-  validateOn?: Core.ValidateOn;
-  data?: Record<string, any>;
-  meta?: Record<string, any>;
-  formName?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
   autocomplete?: string;
 }
 
 export function FormComponent({
-  formDef,
-  widgetLoaders,
-  itemRenderers,
-  localization,
-  dependencies,
-  middlewares,
+  config,
   validators,
-  validateOn,
-  data,
-  meta,
-  formName,
   formHealth,
   formEvent,
   autocomplete,
@@ -43,47 +23,38 @@ export function FormComponent({
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
     new Core.FormContext(),
   );
-  const formNameRef = useRef(formName || Core.shortUUID());
+  const formNameRef = useRef<string>(config.formName ?? Core.shortUUID());
   const [formLayoutField, setFormLayoutField] = useState<Core.LayoutWidget<string> | null>(null);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
   const [storeVersion, setStoreVersion] = useState(0);
 
   // INITIALIZE FORM CONTEXT
-  // Creates a new store when context dependencies change.
-  // Bumps storeVersion so the INITIALIZE effect re-dispatches to the new store.
+  // Recreates the store when config reference changes (atomic reinit) or validators change.
+  // Bumps storeVersion so downstream effects re-subscribe to the new store.
   useEffect(() => {
     formContextRef.current.initialize(
-      widgetLoaders,
-      middlewares,
+      config.widgetLoaders,
+      config.middlewares ?? [],
       validators,
-      validateOn || 'eager',
-      itemRenderers,
-      localization,
-      dependencies || {},
+      config.validateOn ?? 'eager',
+      config.itemRenderers ?? {},
+      config.localization,
+      config.dependencies ?? {},
     );
     setStoreVersion((v) => v + 1);
-  }, [
-    widgetLoaders,
-    middlewares,
-    validators,
-    validateOn,
-    itemRenderers,
-    localization,
-    dependencies,
-  ]);
+  }, [config, validators]);
 
   // INITIALIZE FORM DEFINITION
-  // Re-dispatches when formDef changes OR when a new store is created (storeVersion).
-  // This ensures the store always has the form definition with states.
+  // Re-dispatches when storeVersion bumps (new store) so the definition is always loaded.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'INITIALIZE',
       payload: {
         formName: formNameRef.current,
-        formDef: formDef,
+        formDef: config.formDef,
       },
     });
-  }, [formDef, storeVersion]);
+  }, [config.formDef, storeVersion]);
 
   // FORM HEALTH
   // Re-subscribes when store is recreated (storeVersion changes).
@@ -105,9 +76,8 @@ export function FormComponent({
   }, [formEvent]);
 
   // FORM ENTRY POINT
-  // Re-subscribes when store is recreated (storeVersion changes) so the
-  // rendered form tree always comes from the same decode as flatForm,
-  // ensuring widget uids match between flatForm and calculatedWidgets.
+  // Re-subscribes when store is recreated so the rendered form tree is always
+  // consistent with the new store's flatForm and calculatedWidgets.
   useEffect(() => {
     const sub = formContextRef.current.store.state$.subscribe((state) => {
       setFormLayoutField(state.formDef.form);
@@ -119,26 +89,21 @@ export function FormComponent({
   }, [storeVersion]);
 
   // SET FORM DATA
-  // Also re-dispatches when the store is recreated (storeVersion bumps via the
-  // initialize effect): otherwise the fresh store starts with empty data and
-  // input subscriptions like the Repeater's `dataByPath$('repeaters.users')`
-  // emit `undefined`, so default rows never render even though the `data` prop
-  // hasn't actually changed.
+  // Also re-dispatches when the store is recreated so fresh store starts with the right data.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'SET_DATA',
-      payload: { data: data || {} },
+      payload: { data: config.data || {} },
     });
-  }, [data, storeVersion]);
+  }, [config.data, storeVersion]);
 
   // SET FORM META
-  // Same reason as SET_DATA: re-fire when the store is recreated.
   useEffect(() => {
     formContextRef.current.store.dispatch({
       type: 'SET_META',
-      payload: { meta: meta || {} },
+      payload: { meta: config.meta || {} },
     });
-  }, [meta, storeVersion]);
+  }, [config.meta, storeVersion]);
 
   // I18n
   useEffect(() => {

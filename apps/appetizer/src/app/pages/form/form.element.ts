@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
 import type { ItemRenderContext } from '@golemui/core';
+import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
 import { gui } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
@@ -726,9 +726,11 @@ export class FormElement extends LitElement {
                   ${keyed(
                     this.resetCounter,
                     html`<gui-form
-                      .formDef=${this.formDef}
-                      .data=${this.formData}
-                      .formConfig=${this.formConfig}
+                      .config=${{
+                        formDef: this.formDef,
+                        data: this.formData,
+                        formConfig: this.formConfig,
+                      }}
                     ></gui-form>`,
                   )}
                   ${this.stage === 'dateEntered'
