@@ -31,11 +31,11 @@ Accordion widgets are [Layout Fields](/widgets-reference/layout-fields/overview)
 
 Use these `props` to customize your Accordion widget.
 
-| prop          | type    | description                                                                                                                                       |
-| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sections`    | array   | **Required**. Array of section definitions: `{ label: string, uid: string }`. Each `uid` must match the `uid` of one of the accordion's children. |
-| `singleOpen`  | boolean | If `true`, only one section can be open at a time — opening a section closes the others. Defaults to `false`                                      |
-| `defaultOpen` | object  | Map of section `uid` to boolean controlling which sections start expanded (e.g., `{ "section_1": true }`). Defaults to all collapsed              |
+| prop          | type    | description                                                                                                                                                  |
+| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sections`    | array   | **Required**. Array of section definitions: `{ label: string, uid: string }`. Each `uid` must match the `uid` of one of the accordion's children.            |
+| `singleOpen`  | boolean | If `true`, only one section can be open at a time — opening a section closes the others. Defaults to `false`                                                 |
+| `defaultOpen` | object  | Map of section `uid` to boolean controlling which sections start expanded (e.g., `{ "section_1": true }`). Defaults to all collapsed                         |
 | `renderMode`  | string  | `'all'` keeps every section mounted in the DOM and toggles visibility; `'activeOnly'` mounts a section's children only while it is open. Defaults to `'all'` |
 
 ### Single Open

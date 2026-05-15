@@ -263,13 +263,13 @@ Where `validateOn` lives on the form component depends on the path:
 
     const formConfig = {
       widgetLoaders: React.widgetLoaders,
-      validateOn: 'change',
+      validateOn: 'change' as const,
     };
 
+    const config = { formDef, data: {}, formConfig };
+
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -367,17 +367,15 @@ Where `validateOn` lives on the form component depends on the path:
     import * as React from '@golemui/gui-react';
     import formDef from './my-form.json';
 
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: React.widgetLoaders,
+      validateOn: 'change' as const,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            customWidgetLoaders: React.widgetLoaders,
-            validateOn: 'change',
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

@@ -1,6 +1,7 @@
 import { iframeResizer } from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';
@@ -8,41 +9,43 @@ import './app.element.scss';
 @customElement('gui-material')
 export class AppElement extends LitElement {
   // TODO: Migrate to the gui.* DSL
-  formDef = {
-    form: [
-      {
-        uid: '',
-        kind: 'input',
-        type: 'matTextInput',
-        label: 'Email',
-        path: 'user.email',
-        validator: { type: 'string', required: true, format: 'email' },
-      },
-      {
-        uid: '',
-        kind: 'input',
-        type: 'matTextInput',
-        label: 'Password',
-        path: 'user.password',
-        props: { type: 'password' },
-      },
-      {
-        uid: 'btn-submit',
-        kind: 'action',
-        type: 'matButton',
-        on: {
-          click: 'handleSubmit',
+  config: GuiFormInitConfig = {
+    formDef: {
+      form: [
+        {
+          uid: '',
+          kind: 'input',
+          type: 'matTextInput',
+          label: 'Email',
+          path: 'user.email',
+          validator: { type: 'string', required: true, format: 'email' },
         },
-        label: 'Send',
-      },
-    ],
+        {
+          uid: '',
+          kind: 'input',
+          type: 'matTextInput',
+          label: 'Password',
+          path: 'user.password',
+          props: { type: 'password' },
+        },
+        {
+          uid: 'btn-submit',
+          kind: 'action',
+          type: 'matButton',
+          on: {
+            click: 'handleSubmit',
+          },
+          label: 'Send',
+        },
+      ],
+    },
+    data: {},
+    customWidgetLoaders: {
+      matTextInput: async () => (await import('./components/mat-input')).MatTextInputElement,
+      matButton: async () => (await import('./components/mat-button')).MatButtonElement,
+    },
+    validateOn: 'eager' as Core.ValidateOn,
   };
-  formData = {};
-  customWidgetLoaders = {
-    matTextInput: async () => (await import('./components/mat-input')).MatTextInputElement,
-    matButton: async () => (await import('./components/mat-button')).MatButtonElement,
-  };
-  validateOn: Core.ValidateOn = 'eager';
 
   error = '';
 
@@ -60,14 +63,7 @@ export class AppElement extends LitElement {
       <div>
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
-        <gui-form
-          .config=${{
-            formDef: this.formDef,
-            data: this.formData,
-            customWidgetLoaders: this.customWidgetLoaders,
-            validateOn: this.validateOn,
-          }}
-        ></gui-form>
+        <gui-form .config=${this.config}></gui-form>
       </div>
     `;
   }

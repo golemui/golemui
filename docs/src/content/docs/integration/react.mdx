@@ -39,16 +39,14 @@ Import the core styles in your application entry point or global stylesheet:
       widgetLoaders: { ...GuiReact.widgetLoaders },
     };
 
+    const config = {
+      formDef,
+      data: { username: '' },
+      formConfig,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: { username: '' },
-            formConfig,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -61,16 +59,14 @@ Import the core styles in your application entry point or global stylesheet:
 
     const customWidgetLoaders = { ...GuiReact.widgetLoaders };
 
+    const config = {
+      formDef,
+      data: { username: '' },
+      customWidgetLoaders,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: { username: '' },
-            customWidgetLoaders,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -99,11 +95,11 @@ All initialization properties are bundled in the required `config` prop (`GuiFor
 
 Direct props (outside `config`):
 
-| Prop           | Type                                        | Description                                                                    |
-| -------------- | ------------------------------------------- | ------------------------------------------------------------------------------ |
-| `formEvent`    | `(event: Core.FormEvent) => void`           | Callback for events emitted by widgets.                                        |
-| `formHealth`   | `(health: Core.FormHealth) => void`         | Callback that reports the live validation status of the form.                  |
-| `autocomplete` | `string`                                    | Sets the underlying `<form>` element's `autocomplete` attribute.               |
+| Prop           | Type                                | Description                                                      |
+| -------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| `formEvent`    | `(event: Core.FormEvent) => void`   | Callback for events emitted by widgets.                          |
+| `formHealth`   | `(health: Core.FormHealth) => void` | Callback that reports the live validation status of the form.    |
+| `autocomplete` | `string`                            | Sets the underlying `<form>` element's `autocomplete` attribute. |
 
 See [Configuration](/integration/configuration/) for details on each prop, plus the **Programmatic-only vs JSON-form** notes.
 

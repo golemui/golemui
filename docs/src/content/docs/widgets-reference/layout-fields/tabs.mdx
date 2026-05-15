@@ -29,10 +29,10 @@ Tabs widgets are [Layout Fields](/widgets-reference/layout-fields/overview) that
 
 Use these `props` to customize your Tabs widget.
 
-| prop          | type   | description                                                                                                                                                  |
-| ------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tabs`        | array  | **Required**. Array of tab definitions: `{ label: string, uid: string }`. Each `uid` must match the `uid` of one of the children.                            |
-| `defaultOpen` | string | The `uid` of the tab that should be active on initial render. Defaults to the first tab                                                                      |
+| prop          | type   | description                                                                                                                                                         |
+| ------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tabs`        | array  | **Required**. Array of tab definitions: `{ label: string, uid: string }`. Each `uid` must match the `uid` of one of the children.                                   |
+| `defaultOpen` | string | The `uid` of the tab that should be active on initial render. Defaults to the first tab                                                                             |
 | `renderMode`  | string | `'all'` keeps every tab panel mounted in the DOM and toggles visibility; `'activeOnly'` mounts the active tab's children only while it is open. Defaults to `'all'` |
 
 ### Default Open

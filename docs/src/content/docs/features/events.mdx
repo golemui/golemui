@@ -88,13 +88,10 @@ const formDef = [
       }
     }
 
+    const config = { formDef, data: {}, formConfig };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{ formDef, data: {}, formConfig }}
-          formEvent={handleFormEvent}
-        />
-      );
+      return <GuiForm config={config} formEvent={handleFormEvent} />;
     }
     ```
 
@@ -203,13 +200,10 @@ const formDef = [
       }
     }
 
+    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{ formDef, data: {}, customWidgetLoaders: React.widgetLoaders }}
-          formEvent={handleFormEvent}
-        />
-      );
+      return <GuiForm config={config} formEvent={handleFormEvent} />;
     }
     ```
 

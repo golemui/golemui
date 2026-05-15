@@ -127,13 +127,10 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     });
 
     const localization = { /* i18next implementation */ };
+    const config = { formDef, data: formData, formConfig, localization };
 
     export function FormPage() {
-      return (
-        <GuiForm
-          config={{ formDef, data: formData, formConfig, localization }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

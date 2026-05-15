@@ -1,11 +1,11 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
-import { Dependencies } from '@golemui/gui-shared';
+import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
 import * as GuiValidators from '@golemui/gui-validators';
 import { ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
@@ -63,19 +63,10 @@ export function FormPage() {
     }
   }, []);
 
-  function onFormHealth(formHealth: Core.FormHealth) {
-    if (formHealth.status === 'errored') {
-      setError(formHealth.message);
-    }
-  }
-
-  return (
-    <div>
-      {languages.length > 0 ? <LanguagePicker /> : null}
-      {error ? <p className={styles.error}>{error}</p> : null}
-      {formDef && (
-        <GuiForm
-          config={{
+  const config = useMemo<GuiFormInitConfig | undefined>(
+    () =>
+      formDef
+        ? {
             formDef,
             data: formData,
             meta: formMeta,
@@ -86,7 +77,24 @@ export function FormPage() {
             dependencies: deps,
             customWidgetLoaders,
             validateOn,
-          }}
+          }
+        : undefined,
+    [formDef],
+  );
+
+  function onFormHealth(formHealth: Core.FormHealth) {
+    if (formHealth.status === 'errored') {
+      setError(formHealth.message);
+    }
+  }
+
+  return (
+    <div>
+      {languages.length > 0 ? <LanguagePicker /> : null}
+      {error ? <p className={styles.error}>{error}</p> : null}
+      {config && (
+        <GuiForm
+          config={config}
           autocomplete="off"
           formHealth={onFormHealth}
           formEvent={onFormEvent}

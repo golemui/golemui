@@ -33,15 +33,15 @@ The simplest way to populate `items` is a flat array of strings or numbers — t
 
 Use these `props` to customize your List widget.
 
-| prop           | type   | description                                                                                          |
-| -------------- | ------ | ---------------------------------------------------------------------------------------------------- |
-| `items`        | array  | **Required**. Array of strings, numbers, or plain objects. See [Using Objects](#using-objects).      |
-| `hint`         | string | A description to display below the list                                                              |
-| `labelField`   | string | When items are objects, the key whose value is shown to the user. Defaults to `label`.               |
+| prop           | type   | description                                                                                                                         |
+| -------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `items`        | array  | **Required**. Array of strings, numbers, or plain objects. See [Using Objects](#using-objects).                                     |
+| `hint`         | string | A description to display below the list                                                                                             |
+| `labelField`   | string | When items are objects, the key whose value is shown to the user. Defaults to `label`.                                              |
 | `valueField`   | string | When items are objects, the key whose value is stored in the form. Defaults to `value`. Required for selection to emit a primitive. |
-| `height`       | number | Total height of the scrollable viewport. Defaults to `300`                                           |
-| `itemHeight`   | number | Fixed height of each item for virtualization logic. Defaults to `40`                                 |
-| `itemRenderer` | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/) |
+| `height`       | number | Total height of the scrollable viewport. Defaults to `300`                                                                          |
+| `itemHeight`   | number | Fixed height of each item for virtualization logic. Defaults to `40`                                                                |
+| `itemRenderer` | string | Key of a registered renderer used to draw each item. See [Item Renderers](/features/item-renderers/)                                |
 
 ### Using Objects
 

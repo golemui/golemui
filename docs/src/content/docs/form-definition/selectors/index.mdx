@@ -33,7 +33,8 @@ Pass the array as `formSelectors` inside the `config` object:
     ```tsx
     import * as React from '@golemui/gui-react';
 
-    <GuiForm config={{ formDef, formSelectors, data: {} }} />;
+    const config = { formDef, formSelectors, data: {} };
+    // <GuiForm config={config} />
     ```
 
   </Fragment>

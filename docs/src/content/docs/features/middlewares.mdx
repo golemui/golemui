@@ -38,11 +38,10 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     const formDef = [gui.inputs.textInput('username')];
     const formConfig = { widgetLoaders: React.widgetLoaders };
     const middlewares = [Core.devToolsMiddleware()];
+    const config = { formDef, data: {}, formConfig, middlewares };
 
     export function MyForm() {
-      return (
-        <GuiForm config={{ formDef, data: {}, formConfig, middlewares }} />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -111,17 +110,15 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
 
     const middlewares = [Core.devToolsMiddleware()];
 
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: React.widgetLoaders,
+      middlewares,
+    };
+
     export function MyForm() {
-      return (
-        <GuiForm
-          config={{
-            formDef,
-            data: {},
-            customWidgetLoaders: React.widgetLoaders,
-            middlewares,
-          }}
-        />
-      );
+      return <GuiForm config={config} />;
     }
     ```
 

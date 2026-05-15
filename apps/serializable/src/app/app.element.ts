@@ -1,6 +1,6 @@
 import { iframeResizer, iframeThemeSync } from '@golemui/apps-shared';
 import '@golemui/gui-lit';
-import { gui } from '@golemui/gui-shared';
+import { gui, GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -140,6 +140,27 @@ export class SerializableElement extends LitElement {
     changedAfter: boolean;
     restored: boolean;
   };
+
+  // Per-fragment gui-form config cache. Keyed by `${index}-${loadedAt ?? 0}` so
+  // the cached reference is reused across parent re-renders (e.g. when
+  // `formData` updates on user input) and rebuilt only when the row remounts
+  // via keyed(...) — i.e. when reordered or restored from storage.
+  private fragmentConfigCache: Partial<
+    Record<FragmentKey, { cacheKey: string; config: GuiFormInitConfig }>
+  > = {};
+
+  private getFragmentConfig(key: FragmentKey, i: number): GuiFormInitConfig {
+    const cacheKey = `${i}-${this.loadedAt ?? 0}`;
+    const cached = this.fragmentConfigCache[key];
+    if (cached?.cacheKey === cacheKey) return cached.config;
+    const config: GuiFormInitConfig = {
+      formDef: FRAGMENTS[key].build(({ data }) => this.handleFragmentChange(key, data)),
+      data: this.formData[key] ?? {},
+      formConfig: { suppressAutomaticSubmit: true },
+    };
+    this.fragmentConfigCache[key] = { cacheKey, config };
+    return config;
+  }
 
   constructor() {
     super();
@@ -347,14 +368,8 @@ export class SerializableElement extends LitElement {
               </button>
             </header>
             ${keyed(
-              `${key}-${i}`,
-              html`<gui-form
-                .config=${{
-                  formDef: FRAGMENTS[key].build(({ data }) => this.handleFragmentChange(key, data)),
-                  data: this.formData[key] ?? {},
-                  formConfig: { suppressAutomaticSubmit: true },
-                }}
-              ></gui-form>`,
+              `${key}-${i}-${this.loadedAt ?? 0}`,
+              html`<gui-form .config=${this.getFragmentConfig(key, i)}></gui-form>`,
             )}
           </section>`,
       )}
