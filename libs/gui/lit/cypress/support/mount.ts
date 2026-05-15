@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
-import { Type } from '@golemui/lit';
 import { GuiFormInitConfig } from '@golemui/gui-shared';
-import { MountOptions } from '@golemui/ui-testing';
+import { Type } from '@golemui/lit';
+import { FormHandle, MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
 import '../../src/lib/components/form.element';
 
@@ -48,5 +48,11 @@ export const mountFramework = (options: MountOptions) => {
       @formEvent=${handleFormEvent}
       @formHealth=${handleFormHealth}
     ></gui-form>`,
-  );
+  ).then(() => {
+    const el = document.querySelector('gui-form') as HTMLElement & FormHandle;
+    options.onFormReady?.({
+      setData: (data) => el.setData(data),
+      setMeta: (meta) => el.setMeta(meta),
+    });
+  });
 };
