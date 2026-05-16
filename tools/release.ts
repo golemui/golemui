@@ -28,7 +28,7 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
           stdio: 'inherit',
         });
       } catch (e) {
-        console.warn(`Tag update failed: ${e.message}`);
+        console.warn(`Tag update failed: ${(e as Error).message}`);
       }
     });
   }
