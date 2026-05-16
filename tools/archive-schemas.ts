@@ -4,7 +4,7 @@
  *
  * On each release, schemas are written to two locations simultaneously:
  *   1. docs/public/schemas/ - latest, $id unchanged
- *   2. docs/public/schemas/v{VERSION}/ - pinnable copy with versioned $id
+ *   2. docs/public/schemas/archive/v{VERSION}/ - pinnable copy with versioned $id
  *
  * Previous versioned folders are never touched.
  * Relative $refs between schemas are left untouched (directory structure is mirrored).
@@ -23,14 +23,14 @@ export async function archiveSchemas(version: string, dryRun: boolean): Promise<
 
   if (dryRun) {
     console.log(
-      `[dry-run] Would copy schemas to ${SCHEMAS_DEST}/ and ${SCHEMAS_DEST}/v${version}/`,
+      `[dry-run] Would copy schemas to ${SCHEMAS_DEST}/ and ${SCHEMAS_DEST}/archive/v${version}/`,
     );
     console.log(`[dry-run] Would commit: chore: archive schemas for v${version}`);
     return;
   }
 
   try {
-    const versionedDir = join(SCHEMAS_DEST, `v${version}`);
+    const versionedDir = join(SCHEMAS_DEST, 'archive', `v${version}`);
     mkdirSync(join(SCHEMAS_DEST, 'components'), { recursive: true });
     mkdirSync(join(versionedDir, 'components'), { recursive: true });
 
@@ -81,7 +81,7 @@ export async function archiveSchemas(version: string, dryRun: boolean): Promise<
 function rewriteAndCopy(src: string, dest: string, version: string): void {
   const content = JSON.parse(readFileSync(src, 'utf-8'));
   if (typeof content.$id === 'string' && content.$id.startsWith(SCHEMA_BASE_URL)) {
-    content.$id = content.$id.replace(SCHEMA_BASE_URL, `${SCHEMA_BASE_URL}v${version}/`);
+    content.$id = content.$id.replace(SCHEMA_BASE_URL, `${SCHEMA_BASE_URL}archive/v${version}/`);
   }
   writeFileSync(dest, JSON.stringify(content, null, 2) + '\n');
 }
