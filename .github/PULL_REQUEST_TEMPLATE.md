@@ -29,3 +29,10 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] I have made corresponding changes to the documentation
+
+## PR Title Format
+
+> **PR Title** must follow Conventional Commits: `type(scope): subject`
+> (e.g. `feat(react): add Tooltip`, `fix(angular): correct focus trap`).
+> This title becomes the squash commit message and drives changelog + versioning.
+> An automated check will fail if the format is wrong. See [CONTRIBUTING.md](../CONTRIBUTING.md#squash-merge--pr-title) for the full type list.
