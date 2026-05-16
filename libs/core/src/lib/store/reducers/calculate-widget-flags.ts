@@ -223,8 +223,6 @@ function expandRepeaterFlags(
       const uid = toRepeaterItemUid(resolved.uid, currentIndexes);
       flags[uid] = flags[uid] || {};
 
-      // TODO: this is partially duplicating the logic in calculateFlags(). Is it worth abstracting?
-
       // show
       if (resolved.include && 'in' in resolved.include) {
         flags[uid].hidden = !resolved.include.in.some((s) => state.currentStates.includes(s));
