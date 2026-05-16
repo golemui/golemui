@@ -44,6 +44,11 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
     releaseType === 'rc' ? { preid: 'rc', dryRun } : { dryRun },
   );
 
+  // Note: this will be pushed at the same time as the changelog. One push for all.
+  if (releaseType === 'stable' && workspaceVersion) {
+    await archiveSchemas(workspaceVersion, dryRun);
+  }
+
   await releaseChangelog({
     versionData: projectsVersionData,
     version: workspaceVersion,
@@ -58,10 +63,6 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
 
   if (releaseType === 'stable' && !dryRun) {
     updateLatestDistTag(projectsVersionData);
-  }
-
-  if (releaseType === 'stable' && workspaceVersion) {
-    await archiveSchemas(workspaceVersion, dryRun);
   }
 
   const ok = Object.values(publishResult).every((result) => result.code === 0);
