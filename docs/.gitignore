@@ -20,8 +20,6 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# json schemas
-public/schemas
 
 # demo apps
 public/appetizer
