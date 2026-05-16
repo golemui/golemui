@@ -24,7 +24,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-      id-token: write
 
     steps:
       - name: Mint GitHub App token
@@ -66,6 +65,5 @@ jobs:
           npm run release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          NPM_CONFIG_PROVENANCE: true
           RELEASE_TYPE: ${{ inputs.release-type }}
           DRY_RUN: ${{ inputs.dry-run }}
