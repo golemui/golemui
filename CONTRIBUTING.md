@@ -50,6 +50,29 @@ Please open a discussion first for large or cross-cutting changes — it avoids 
 
 PRs are reviewed by maintainers. Expect feedback and possible requests for changes; this is normal and part of keeping the codebase healthy. Once approved and all checks are green, a maintainer will merge it.
 
+### Squash Merge & PR Title
+
+This repository uses **squash merges** exclusively. When your PR is merged, all commits on your branch are collapsed into a single commit whose message is taken directly from the **PR title**. That commit is what lands on `main` and what the release pipeline reads.
+
+This means: **your PR title is your commit message.** It must follow [Conventional Commits](https://www.conventionalcommits.org/) format:
+
+```text
+type(scope): subject
+```
+
+A **Validate PR title** GitHub Actions check enforces this automatically and will block the merge if the title is invalid. See [Commit Messages](#commit-messages) for the full list of allowed types and examples.
+
+Good PR titles:
+
+```text
+feat(react): add Tooltip component
+fix(angular): correct focus trap on Dialog close
+docs: clarify peerDependencies section
+chore: bump Nx to 21
+```
+
+Individual commits on your branch are squashed away and don't need to follow any format, only the PR title matters for the changelog and version bump.
+
 ### Keep PRs Focused
 
 One PR should address one concern. If you find unrelated bugs along the way, please open separate PRs for them. Smaller PRs get reviewed and merged faster.
@@ -118,7 +141,7 @@ Most editors can be set up to format on save — this is the smoothest experienc
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/). The format is:
 
-```
+```text
 <type>(<scope>): <subject>
 ```
 
@@ -140,7 +163,7 @@ Common types:
 
 Examples:
 
-```
+```text
 feat(react): add Tooltip component
 fix(angular): correct focus trap on Dialog close
 docs(readme): clarify peerDependencies section
