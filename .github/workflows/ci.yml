@@ -31,6 +31,6 @@ jobs:
         run: npm ci
 
       - name: Build affected
-        run: npx nx affected --target=build
+        run: npx nx affected --target=build --exclude=docs
 
       - run: npm run lint:affected
