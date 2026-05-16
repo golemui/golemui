@@ -30,9 +30,4 @@ cp -R dist/apps/headless docs/public/
 cp -R dist/apps/serializable docs/public/
 cp -R dist/apps/freedom docs/public/
 
-echo "Copying json schemas..."
-mkdir -p docs/public/schemas/components
-cp -R libs/gui/shared/src/lib/schemas/*.json docs/public/schemas
-cp -R libs/gui/shared/src/lib/schemas/components/*.json docs/public/schemas/components
-
 echo "Build and copy completely successfully! 🎉"
