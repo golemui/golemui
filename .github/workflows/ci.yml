@@ -30,4 +30,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build affected
+        run: npx nx affected --target=build
+
       - run: npm run lint:affected
