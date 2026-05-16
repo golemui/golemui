@@ -445,8 +445,9 @@ export class FreedomElement extends LitElement {
   // Per-row gui-form config cache. Keyed by `${origin}-${formKey}` so the cached
   // reference is reused across parent re-renders (e.g. when `formData` updates
   // on user input) and only rebuilt when the row remounts via keyed(...).
-  private rowConfigCache: Partial<Record<FieldKey, { cacheKey: string; config: GuiFormInitConfig }>> =
-    {};
+  private rowConfigCache: Partial<
+    Record<FieldKey, { cacheKey: string; config: GuiFormInitConfig }>
+  > = {};
 
   private shoelaceThemeObserver: MutationObserver | null = null;
 
