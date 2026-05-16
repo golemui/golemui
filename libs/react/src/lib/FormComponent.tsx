@@ -1,9 +1,14 @@
 import * as Core from '@golemui/core';
 import { FormInitConfig } from '@golemui/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import WidgetRenderer from './WidgetRenderer';
+
+export interface FormComponentHandle {
+  setData: (data: Record<string, any>) => void;
+  setMeta: (meta: Record<string, any>) => void;
+}
 
 export interface FormComponentProps {
   config: FormInitConfig<React.ComponentType<Core.WithWidget>>;
@@ -11,6 +16,7 @@ export interface FormComponentProps {
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (error: Core.FormHealth) => void;
   autocomplete?: string;
+  ref?: React.Ref<FormComponentHandle>;
 }
 
 export function FormComponent({
@@ -19,6 +25,7 @@ export function FormComponent({
   formHealth,
   formEvent,
   autocomplete,
+  ref,
 }: FormComponentProps) {
   const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
     new Core.FormContext(),
@@ -120,6 +127,19 @@ export function FormComponent({
       sub();
     };
   }, []);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      setData: (data) => {
+        formContextRef.current.store.dispatch({ type: 'SET_DATA', payload: { data } });
+      },
+      setMeta: (meta) => {
+        formContextRef.current.store.dispatch({ type: 'SET_META', payload: { meta } });
+      },
+    }),
+    [],
+  );
 
   if (!formLayoutField) {
     return null;

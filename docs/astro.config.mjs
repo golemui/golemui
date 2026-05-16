@@ -56,6 +56,7 @@ export default defineConfig({
             { slug: 'features/validators' },
             { slug: 'features/middlewares' },
             { slug: 'features/events' },
+            { slug: 'features/runtime-methods' },
             { slug: 'features/i18n' },
             { slug: 'features/dependencies' },
             { label: 'States', autogenerate: { directory: 'features/states' } },

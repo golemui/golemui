@@ -3,6 +3,11 @@ import { Action, Middleware, State, ValidateOn } from '@golemui/core';
 import { Dependencies } from '@golemui/gui-shared';
 import { CustomValidatorSchemas } from '@golemui/gui-validators';
 
+export interface FormHandle {
+  setData: (data: Record<string, any>) => void;
+  setMeta: (meta: Record<string, any>) => void;
+}
+
 export interface MountOptions<StateKeys extends Core.UiState = string> {
   formDef: Core.Form<StateKeys>;
   data?: Record<string, any>;
@@ -15,6 +20,7 @@ export interface MountOptions<StateKeys extends Core.UiState = string> {
   withCustomComponent?: boolean;
   localization?: Core.I18nTranslator;
   dependencies?: Dependencies;
+  onFormReady?: (handle: FormHandle) => void;
 }
 
 export type MountComponentFn<StateKeys extends Core.UiState = string> = (

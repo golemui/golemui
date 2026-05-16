@@ -54,5 +54,14 @@ export const mountFramework = (options: MountOptions) => {
       formHealth: formHealthOutput,
       formEvent: formEventOutput,
     },
+  }).then(({ fixture }) => {
+    // toObservable()'s internal effect is scheduled, not run, during the first detectChanges() call
+    // made by mount(). A second call flushes it so config$ emits and the store is initialized
+    // before onFormReady exposes the handle to the test.
+    fixture.detectChanges();
+    options.onFormReady?.({
+      setData: (data) => fixture.componentRef.instance.setData(data),
+      setMeta: (meta) => fixture.componentRef.instance.setMeta(meta),
+    });
   });
 };

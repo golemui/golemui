@@ -3,15 +3,26 @@ import { FormInitConfig, WidgetLoaders, WithWidget } from '@golemui/core';
 import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
 import { CustomValidatorSchemas, initValidators, Validator } from '@golemui/gui-validators';
 import '@golemui/lit';
+import type { FormElement as CoreFormElement } from '@golemui/lit';
 import { LitItemRenderer, Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import { widgetLoaders } from '../widget.loaders';
 
 @customElement('gui-form')
 export class FormElement extends LitElement {
   @property({ attribute: false }) config!: GuiFormInitConfig;
   @property({ type: String }) autocomplete: string | undefined = undefined;
+
+  @query('gui-core-form') private coreForm?: CoreFormElement;
+
+  setData(data: Record<string, any>): void {
+    this.coreForm?.setData(data);
+  }
+
+  setMeta(meta: Record<string, any>): void {
+    this.coreForm?.setMeta(meta);
+  }
 
   override createRenderRoot() {
     return this;

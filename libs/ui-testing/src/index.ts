@@ -9,6 +9,7 @@ export * from './lib/core-features/label.cy';
 export * from './lib/core-features/middlewares.cy';
 export * from './lib/core-features/reactive-functions.cy';
 export * from './lib/core-features/readonly.cy';
+export * from './lib/core-features/set-data-set-meta.cy';
 export * from './lib/core-features/states.cy';
 export * from './lib/core-features/string-interpolation.cy';
 export * from './lib/core-features/uid.cy';

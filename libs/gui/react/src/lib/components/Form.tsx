@@ -4,7 +4,7 @@ import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
 import { initValidators } from '@golemui/gui-validators';
 import * as React from '@golemui/react';
 import { ReactItemRenderer } from '@golemui/react';
-import { ComponentType, useMemo } from 'react';
+import { ComponentType, Ref, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {
@@ -12,14 +12,16 @@ export interface ReactFormComponentProps {
   autocomplete?: string;
   formEvent?: (event: Core.FormEvent) => void;
   formHealth?: (formHealth: Core.FormHealth) => void;
+  ref?: Ref<React.FormComponentHandle>;
 }
 
-export const GuiForm = ({
+export function GuiForm({
   config,
   formHealth = undefined,
   formEvent = undefined,
   autocomplete,
-}: ReactFormComponentProps) => {
+  ref,
+}: ReactFormComponentProps) {
   const resolved = useMemo(
     () => resolveFormInput(config.formDef, config.formSelectors, config.formConfig),
     [config],
@@ -51,13 +53,14 @@ export const GuiForm = ({
   const mergedFormEvent =
     resolved.formEvent && formEvent
       ? (event: Core.FormEvent) => {
-          resolved.formEvent!(event);
+          resolved.formEvent?.(event);
           formEvent(event);
         }
       : (formEvent ?? resolved.formEvent);
 
   return (
     <React.FormComponent
+      ref={ref}
       config={coreConfig}
       validators={allValidators}
       autocomplete={autocomplete}
@@ -65,4 +68,4 @@ export const GuiForm = ({
       formEvent={mergedFormEvent}
     />
   );
-};
+}

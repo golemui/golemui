@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, output, Type } from '@angular/core';
+import { Component, computed, input, output, Type, viewChild } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { FormInitConfig } from '@golemui/core';
@@ -15,6 +15,8 @@ import { widgetLoaders } from '../../widget.loaders';
 export class FormComponent {
   config = input.required<GuiFormInitConfig>();
   autocomplete = input<string | undefined>(undefined);
+
+  private coreForm = viewChild(Angular.FormCoreComponent);
 
   protected resolved = computed(() =>
     resolveFormInput(this.config().formDef, this.config().formSelectors, this.config().formConfig),
@@ -54,5 +56,13 @@ export class FormComponent {
   protected onCoreFormEvent(event: Core.FormEvent): void {
     this.resolved().formEvent?.(event);
     this.formEvent.emit(event);
+  }
+
+  setData(data: Record<string, any>): void {
+    this.coreForm()?.setData(data);
+  }
+
+  setMeta(meta: Record<string, any>): void {
+    this.coreForm()?.setMeta(meta);
   }
 }
