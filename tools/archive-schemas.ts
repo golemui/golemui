@@ -52,7 +52,7 @@ export async function archiveSchemas(version: string, dryRun: boolean): Promise<
       );
     }
 
-    // Copy to /schemas/v{VERSION}/ with versioned $id
+    // Copy to /schemas/archive/v{VERSION}/ with versioned $id
     for (const entry of rootFiles) {
       rewriteAndCopy(join(SCHEMAS_SOURCE, entry.name), join(versionedDir, entry.name), version);
     }
