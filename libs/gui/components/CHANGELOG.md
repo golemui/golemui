@@ -1,3 +1,7 @@
+## 0.12.2 (2026-05-16)
+
+This was a version bump only for gui-components to align it with other projects, there were no code changes.
+
 ## 0.12.1 (2026-05-16)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.
