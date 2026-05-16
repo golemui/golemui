@@ -1,3 +1,14 @@
+## 0.1.0 (2026-05-16)
+
+### 🚀 Features
+
+- **core:** add custom validation messages support, including localization ([ec5bf803](https://github.com/golemui/golemui/commit/ec5bf803))
+- **validators:** add array validator ([f31d0d86](https://github.com/golemui/golemui/commit/f31d0d86))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.19.0 (2026-03-02)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.
