@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
-import { FormInitConfig, WidgetLoaders, WithWidget } from '@golemui/core';
+import { FormInitConfig } from '@golemui/core';
+import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
 import { provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';

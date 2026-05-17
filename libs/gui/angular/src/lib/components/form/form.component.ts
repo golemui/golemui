@@ -3,7 +3,8 @@ import { Component, computed, input, output, Type, viewChild } from '@angular/co
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { FormInitConfig } from '@golemui/core';
-import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import { widgetLoaders } from '../../widget.loaders';
 

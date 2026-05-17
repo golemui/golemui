@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { WithWidget } from '@golemui/core';
+import type { WithWidget } from '@golemui/core/internals';
 import { Subject, takeUntil } from 'rxjs';
 import { LitFormContext } from '../context/form.context';
 
