@@ -83,6 +83,9 @@ function cacheKey(value: unknown, sentinel: object): object {
   return {};
 }
 
+/**
+ * @internal Used by framework Form wrappers, not part of the end-user public API.
+ */
 export function resolveFormInput<FormData extends Record<string, any> = any>(
   formDef: FormInput | undefined,
   formSelectors?: GslSelectorsInput,

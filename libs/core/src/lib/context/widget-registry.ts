@@ -1,5 +1,8 @@
 import { NonFunctionWidget } from '../form-widget';
 
+/**
+ * @internal Framework adapter contract — not part of the end-user public API.
+ */
 export type WidgetLoaders<
   ComponentType,
   Widget extends string = NonFunctionWidget['type'],
