@@ -19,6 +19,7 @@
       "@golemui/angular": ["libs/angular/src/index.ts"],
       "@golemui/apps-shared": ["apps/apps-shared/src/index.ts"],
       "@golemui/core": ["libs/core/src/index.ts"],
+      "@golemui/core/internals": ["libs/core/src/internals.ts"],
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
@@ -27,7 +28,8 @@
       "@golemui/react": ["libs/react/src/index.ts"],
       "@golemui/gui-validators": ["libs/gui/validators/src/index.ts"],
       "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"],
-      "@golemui/gui-shared": ["libs/gui/shared/src/index.ts"]
+      "@golemui/gui-shared": ["libs/gui/shared/src/index.ts"],
+      "@golemui/gui-shared/internals": ["libs/gui/shared/src/internals.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

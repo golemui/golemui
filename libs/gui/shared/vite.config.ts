@@ -23,9 +23,13 @@ export default defineConfig(() => ({
     emptyOutDir: true,
     reportCompressedSize: true,
     lib: {
-      entry: 'src/index.ts',
-      name: 'gui-shared',
-      fileName: 'index',
+      entry: {
+        index: 'src/index.ts',
+        internals: 'src/internals.ts',
+      },
+      formats: ['es', 'cjs'],
+      fileName: (format, entryName) =>
+        format === 'cjs' ? `${entryName}.umd.cjs` : `${entryName}.js`,
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
