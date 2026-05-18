@@ -1,2 +1,2 @@
-export * from './lib/widget.loaders';
-export * from './lib/components/form.element';
+export { FormElement } from './lib/components/form.element';
+export { widgetLoaders } from './lib/widget.loaders';

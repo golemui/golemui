@@ -1,13 +1,13 @@
-import { html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { live } from 'lit/directives/live.js';
-import { repeat } from 'lit-html/directives/repeat.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { GUIAriaController } from '../controllers';
-import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { mergeDateRanges, toISODateString } from '../utils/date';
-import { createIntersectionObserver } from './tabs';
 import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
+import { html, LitElement, nothing } from 'lit';
+import { repeat } from 'lit-html/directives/repeat.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { live } from 'lit/directives/live.js';
+import { GUIAriaController } from '../controllers/aria.controller';
+import { mergeDateRanges, toISODateString } from '../utils/date';
+import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { createIntersectionObserver } from './tabs';
 
 interface DateParts {
   day: string;

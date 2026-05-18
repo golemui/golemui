@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { GUIAriaController } from '../controllers/aria.controller';
 import { addLabel } from '../utils/templates';
-import { GUIAriaController } from '../controllers';
 
 @customElement('gui-label')
 export class GuiLabel extends LitElement {

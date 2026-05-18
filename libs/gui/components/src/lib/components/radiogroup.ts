@@ -1,14 +1,14 @@
+import {
+  type OneOfProps,
+  type Option,
+  type OptionValue,
+  type RadiogroupProps,
+} from '@golemui/gui-shared';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
+import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { GUIAriaController } from '../controllers';
-import {
-  type OptionValue,
-  type Option,
-  type RadiogroupProps,
-  type OneOfProps,
-} from '@golemui/gui-shared';
 import { inferOptionValue, updateOptions } from './one-of';
 
 @customElement('gui-radiogroup')
@@ -100,7 +100,7 @@ export class GuiRadiogroup extends LitElement {
                   tabindex=${focusable ? '0' : '-1'}
                   id=${`${this.uid}_${index}`}
                   data-cy=${`${this.uid}_radiogroup_${index}`}
-                  name=${this.uid}
+                  name=${this.uid!}
                   value=${opt.value}
                   ?checked=${isChecked}
                   ?required=${templateData.required}
@@ -120,7 +120,7 @@ export class GuiRadiogroup extends LitElement {
       <div
         class="gui-widget${this.direction === 'row' ? ' gui-widget--horizontal' : ''}"
         role="radiogroup"
-        id=${this.uid}
+        id=${this.uid!}
         aria-labelledby=${templateData.label ? `${this.uid}_label` : nothing}
         aria-describedby=${templateData.hint ? `${this.uid}_hint` : nothing}
       >
