@@ -1,9 +1,9 @@
+import { type CurrencyProps } from '@golemui/gui-shared';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { GUIAriaController } from '../controllers';
+import { GUIAriaController } from '../controllers/aria.controller';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { type CurrencyProps } from '@golemui/gui-shared';
 
 @customElement('gui-currency')
 export class GuiCurrency extends LitElement {
