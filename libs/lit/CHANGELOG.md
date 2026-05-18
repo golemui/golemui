@@ -1,3 +1,13 @@
+## 0.13.0 (2026-05-18)
+
+### 🚀 Features
+
+- **core,gui-shared:** introduce /internals subpath ([#90](https://github.com/golemui/golemui/pull/90))
+
+### ❤️ Thank You
+
+- mudscientist
+
 ## 0.12.2 (2026-05-16)
 
 This was a version bump only for lit to align it with other projects, there were no code changes.
