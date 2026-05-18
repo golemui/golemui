@@ -126,7 +126,11 @@ const visibleSections = computed(() => {
           role="presentation"
           class="gui-sentinel gui-sentinel__start"
         ></li>
-        <li v-for="(tab, index) in templateData.tabs" :key="`tab_${widget.uid}_${tab.uid}`" role="presentation">
+        <li
+          v-for="(tab, index) in templateData.tabs"
+          :key="`tab_${widget.uid}_${tab.uid}`"
+          role="presentation"
+        >
           <button
             :ref="setTabRef(index)"
             type="button"
@@ -139,7 +143,10 @@ const visibleSections = computed(() => {
             :class="tab.uid === activeTab ? 'active' : ''"
             @click="handleTabChange(tab.uid)"
             @keydown="onKeyDown"
-            @focus="(e) => (e.target as HTMLElement).scrollIntoView({ block: 'nearest', inline: 'nearest' })"
+            @focus="
+              (e) =>
+                (e.target as HTMLElement).scrollIntoView({ block: 'nearest', inline: 'nearest' })
+            "
           >
             {{ tab.label }}
           </button>

@@ -138,13 +138,15 @@ const ItemRenderer = computed<Component>(() => {
         >
           <component
             :is="ItemRenderer"
-            :template="(() => {
-              const labelField = templateData.labelField ?? 'label';
-              const isObject = item.template !== null && typeof item.template === 'object';
-              return isObject && labelField && !templateData.itemRenderer
-                ? (item.template as any)[labelField]
-                : item.template;
-            })()"
+            :template="
+              (() => {
+                const labelField = templateData.labelField ?? 'label';
+                const isObject = item.template !== null && typeof item.template === 'object';
+                return isObject && labelField && !templateData.itemRenderer
+                  ? (item.template as any)[labelField]
+                  : item.template;
+              })()
+            "
             :value="item.value"
             :index="idx"
             :selected="value === item.value"

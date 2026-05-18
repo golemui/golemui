@@ -38,7 +38,13 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
+          ignoredFiles: [
+            '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
+            // Cypress is a dev/test-only dependency; ignore the cypress folder
+            // so its imports aren't checked against the lib's peerDependencies.
+            '{projectRoot}/cypress/**/*',
+            '{projectRoot}/cypress.config.ts',
+          ],
           ignoredDependencies: [
             '@nx/vite',
             'vite',

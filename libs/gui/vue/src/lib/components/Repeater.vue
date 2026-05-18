@@ -68,13 +68,7 @@ const items = computed(() =>
 
 <template>
   <div class="gui-repeater gui-field" :style="{ flex: templateData.size }">
-    <div
-      ref="repeaterRef"
-      :id="uid"
-      :class="cardClass"
-      @focusin="onFocusIn"
-      @focusout="onFocusOut"
-    >
+    <div ref="repeaterRef" :id="uid" :class="cardClass" @focusin="onFocusIn" @focusout="onFocusOut">
       <gui-label
         :targetElement="repeaterRef ?? undefined"
         :uid="uid"

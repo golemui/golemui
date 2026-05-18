@@ -34,7 +34,7 @@ const widgetStyle = computed<CSSProperties>(() => {
   <div class="gui-grid gui-field" :style="{ flex: templateData.size }">
     <div :class="widgetClass" :style="widgetStyle" :id="uid">
       <div
-        v-for="child in (children as NonFunctionWidget<string>[])"
+        v-for="child in children as NonFunctionWidget<string>[]"
         :key="child.uid"
         class="gui-grid__cell"
         :style="{ gridColumn: `span ${child.size || 1}` }"

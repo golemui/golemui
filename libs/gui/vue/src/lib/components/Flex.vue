@@ -24,7 +24,7 @@ const gapStyle = computed(() =>
   <div class="gui-flex gui-field" :style="{ flex: templateData.size }">
     <div :class="widgetClass" :style="gapStyle" :id="uid">
       <WidgetRenderer
-        v-for="child in (children as NonFunctionWidget<string>[])"
+        v-for="child in children as NonFunctionWidget<string>[]"
         :key="child.uid"
         :widget="child"
       />

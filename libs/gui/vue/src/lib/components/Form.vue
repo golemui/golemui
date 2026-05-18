@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { FormEvent, FormHealth, FormInitConfig, WidgetLoaders, WithWidget } from '@golemui/core';
+import type {
+  FormEvent,
+  FormHealth,
+  FormInitConfig,
+  WidgetLoaders,
+  WithWidget,
+} from '@golemui/core';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import { FormComponent, type FormComponentHandle, type VueItemRenderer } from '@golemui/vue';

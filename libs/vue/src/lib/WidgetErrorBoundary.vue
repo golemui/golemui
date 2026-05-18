@@ -16,11 +16,11 @@ onErrorCaptured((err) => {
 </script>
 
 <template>
-  <div v-if="error" style="border: 1px solid red; padding: 4px;">
+  <div v-if="error" style="border: 1px solid red; padding: 4px">
     Component
-    <code style="font-weight: bold;">{{ widget.type }}[{{ widget.uid }}]</code>
+    <code style="font-weight: bold">{{ widget.type }}[{{ widget.uid }}]</code>
     failed with:
-    <p style="color: red; margin-top: 4px;">
+    <p style="color: red; margin-top: 4px">
       <code>{{ error.message }}</code>
     </p>
   </div>

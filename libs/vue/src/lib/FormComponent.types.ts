@@ -1,10 +1,4 @@
-import type {
-  FormEvent,
-  FormHealth,
-  FormInitConfig,
-  ValidatorFn,
-  WithWidget,
-} from '@golemui/core';
+import type { FormEvent, FormHealth, FormInitConfig, ValidatorFn, WithWidget } from '@golemui/core';
 import type { Component } from 'vue';
 
 export interface FormComponentHandle {

@@ -12,8 +12,7 @@ const localization = initializeI18n({});
 
 const ks = buildKitchenSinkDx({
   widgetLoaders: {
-    heading: async () =>
-      (await import('../../custom-fields/heading/HeadingComponent.vue')).default,
+    heading: async () => (await import('../../custom-fields/heading/HeadingComponent.vue')).default,
   },
   itemRenderers: {
     complexListItemRenderer: ComplexListItemRenderer,

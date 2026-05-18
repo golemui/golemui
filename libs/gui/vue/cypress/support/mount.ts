@@ -1,17 +1,15 @@
 import type { WidgetLoaders, WithWidget } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
-import type { GuiFormHandle } from '@golemui/gui-vue';
-import { GuiForm } from '@golemui/gui-vue';
 import type { MountOptions } from '@golemui/ui-testing';
 import { h, ref, type Component } from 'vue';
+import GuiForm from '../../src/lib/components/Form.vue';
+import type { GuiFormHandle } from '../../src/lib/components/Form.types';
 
 export const mountFramework = (options: MountOptions) => {
   const customWidgetLoaders: WidgetLoaders<Component<WithWidget>> = options.withCustomComponent
     ? {
-        heading: async () =>
-          (await import('../components/heading/HeadingComponent.vue')).default,
-        customdate: async () =>
-          (await import('../components/custom-date/Customdate.vue')).default,
+        heading: async () => (await import('../components/heading/HeadingComponent.vue')).default,
+        customdate: async () => (await import('../components/custom-date/Customdate.vue')).default,
       }
     : {};
 
@@ -43,16 +41,19 @@ export const mountFramework = (options: MountOptions) => {
     }),
   );
 
-  if (options.onFormReady) {
+  const onFormReady = options.onFormReady;
+  if (onFormReady) {
     // mount().then() resolves before Vue commits the first render and
     // defineExpose populates the ref. Retry until the ref is set.
     cy.wrap(formRef)
       .its('value')
       .should('not.be.null')
       .then(() => {
-        options.onFormReady!({
-          setData: (data) => formRef.value!.setData(data),
-          setMeta: (meta) => formRef.value!.setMeta(meta),
+        const handle = formRef.value;
+        if (!handle) return;
+        onFormReady({
+          setData: (data) => handle.setData(data),
+          setMeta: (meta) => handle.setMeta(meta),
         });
       });
   }
