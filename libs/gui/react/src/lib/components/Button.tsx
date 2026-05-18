@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
+import '@golemui/gui-components/button';
 import '../styles.scss';
 import { ButtonProps } from '@golemui/gui-shared';
 

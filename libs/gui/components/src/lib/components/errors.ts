@@ -27,3 +27,7 @@ declare global {
     'gui-errors': GuiErrors;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-errors')) {
+  customElements.define('gui-errors', GuiErrors);
+}

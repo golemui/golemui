@@ -191,3 +191,7 @@ declare global {
     'gui-currency': GuiCurrency;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-currency')) {
+  customElements.define('gui-currency', GuiCurrency);
+}

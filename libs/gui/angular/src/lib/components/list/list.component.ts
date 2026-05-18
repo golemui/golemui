@@ -14,6 +14,9 @@ import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 @Component({
   standalone: true,

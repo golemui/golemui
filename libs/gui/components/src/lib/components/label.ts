@@ -61,3 +61,7 @@ declare global {
     'gui-label': GuiLabel;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-label')) {
+  customElements.define('gui-label', GuiLabel);
+}

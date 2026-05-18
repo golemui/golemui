@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
-import { AccordionEventDetail } from '@golemui/gui-components';
+import type { AccordionEventDetail } from '@golemui/gui-components/internals';
 import { AccordionProps } from '@golemui/gui-shared';
 
 @Component({

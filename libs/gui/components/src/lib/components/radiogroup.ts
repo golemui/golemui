@@ -156,3 +156,7 @@ declare global {
     'gui-radiogroup': GuiRadiogroup;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-radiogroup')) {
+  customElements.define('gui-radiogroup', GuiRadiogroup);
+}

@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { OptionValue, RadiogroupProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/radiogroup';
 import '../styles.scss';
 
 export function RadioGroup(widgetInstance: Core.WithWidget) {

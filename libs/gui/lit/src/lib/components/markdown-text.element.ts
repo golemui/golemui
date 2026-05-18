@@ -4,6 +4,7 @@ import * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
 import { MarkdownTextProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/markdown-text';
 import { Subscription } from 'rxjs';
 
 @customElement('gui-markdown-text-display')

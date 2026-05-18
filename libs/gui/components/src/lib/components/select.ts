@@ -180,3 +180,7 @@ declare global {
     'gui-select': GuiSelect;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-select')) {
+  customElements.define('gui-select', GuiSelect);
+}

@@ -5,11 +5,117 @@
   "main": "./index.umd.cjs",
   "module": "./index.js",
   "types": "./index.d.ts",
+  "sideEffects": [
+    "./lib/components/*.js",
+    "./lib/components/*.umd.cjs",
+    "./src/lib/components/*.ts",
+    "*.css"
+  ],
   "exports": {
     ".": {
       "types": "./index.d.ts",
       "import": "./index.js",
       "require": "./index.umd.cjs"
+    },
+    "./internals": {
+      "types": "./internals.d.ts",
+      "import": "./internals.js",
+      "require": "./internals.umd.cjs"
+    },
+    "./button": {
+      "types": "./lib/components/button.d.ts",
+      "import": "./lib/components/button.js",
+      "require": "./lib/components/button.umd.cjs"
+    },
+    "./calendar": {
+      "types": "./lib/components/calendar.d.ts",
+      "import": "./lib/components/calendar.js",
+      "require": "./lib/components/calendar.umd.cjs"
+    },
+    "./checkbox": {
+      "types": "./lib/components/checkbox.d.ts",
+      "import": "./lib/components/checkbox.js",
+      "require": "./lib/components/checkbox.umd.cjs"
+    },
+    "./currency": {
+      "types": "./lib/components/currency.d.ts",
+      "import": "./lib/components/currency.js",
+      "require": "./lib/components/currency.umd.cjs"
+    },
+    "./date-input": {
+      "types": "./lib/components/date-input.d.ts",
+      "import": "./lib/components/date-input.js",
+      "require": "./lib/components/date-input.umd.cjs"
+    },
+    "./errors": {
+      "types": "./lib/components/errors.d.ts",
+      "import": "./lib/components/errors.js",
+      "require": "./lib/components/errors.umd.cjs"
+    },
+    "./label": {
+      "types": "./lib/components/label.d.ts",
+      "import": "./lib/components/label.js",
+      "require": "./lib/components/label.umd.cjs"
+    },
+    "./list": {
+      "types": "./lib/components/list.d.ts",
+      "import": "./lib/components/list.js",
+      "require": "./lib/components/list.umd.cjs"
+    },
+    "./markdown": {
+      "types": "./lib/components/markdown.d.ts",
+      "import": "./lib/components/markdown.js",
+      "require": "./lib/components/markdown.umd.cjs"
+    },
+    "./markdown-text": {
+      "types": "./lib/components/markdown-text.d.ts",
+      "import": "./lib/components/markdown-text.js",
+      "require": "./lib/components/markdown-text.umd.cjs"
+    },
+    "./number": {
+      "types": "./lib/components/number.d.ts",
+      "import": "./lib/components/number.js",
+      "require": "./lib/components/number.umd.cjs"
+    },
+    "./password": {
+      "types": "./lib/components/password.d.ts",
+      "import": "./lib/components/password.js",
+      "require": "./lib/components/password.umd.cjs"
+    },
+    "./radiogroup": {
+      "types": "./lib/components/radiogroup.d.ts",
+      "import": "./lib/components/radiogroup.js",
+      "require": "./lib/components/radiogroup.umd.cjs"
+    },
+    "./range-calendar": {
+      "types": "./lib/components/range-calendar.d.ts",
+      "import": "./lib/components/range-calendar.js",
+      "require": "./lib/components/range-calendar.umd.cjs"
+    },
+    "./range-date-input": {
+      "types": "./lib/components/range-date-input.d.ts",
+      "import": "./lib/components/range-date-input.js",
+      "require": "./lib/components/range-date-input.umd.cjs"
+    },
+    "./select": {
+      "types": "./lib/components/select.d.ts",
+      "import": "./lib/components/select.js",
+      "require": "./lib/components/select.umd.cjs"
+    },
+    "./textarea": {
+      "types": "./lib/components/textarea.d.ts",
+      "import": "./lib/components/textarea.js",
+      "require": "./lib/components/textarea.umd.cjs"
+    },
+    "./textinput": {
+      "types": "./lib/components/textinput.d.ts",
+      "import": "./lib/components/textinput.js",
+      "require": "./lib/components/textinput.umd.cjs"
+    },
+    "./toggle": {
+      "types": "./lib/components/toggle.d.ts",
+      "import": "./lib/components/toggle.js",
+      "require": "./lib/components/toggle.umd.cjs"
     },
     "./index.css": "./lib/styles/index.css"
   },
@@ -19,6 +125,9 @@
     "index.d.ts",
     "index.js",
     "index.umd.cjs",
+    "internals.d.ts",
+    "internals.js",
+    "internals.umd.cjs",
     "*.md"
   ],
   "peerDependencies": {

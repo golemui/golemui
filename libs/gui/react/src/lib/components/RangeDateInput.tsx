@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/range-date-input';
 import '../styles.scss';
 
 export function RangeDateInput(widgetInstance: Core.WithWidget) {

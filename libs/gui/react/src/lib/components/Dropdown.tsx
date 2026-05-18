@@ -4,6 +4,9 @@ import { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { ListItemRendererProps } from './item-renderers/props';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;

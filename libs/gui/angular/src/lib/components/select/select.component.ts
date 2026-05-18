@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { SelectProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/select';
 
 @Component({
   standalone: true,

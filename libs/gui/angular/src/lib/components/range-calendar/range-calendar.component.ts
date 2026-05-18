@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { RangeCalendarProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/range-calendar';
 
 @Component({
   standalone: true,

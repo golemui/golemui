@@ -125,3 +125,7 @@ declare global {
     'gui-textinput': GuiTextinput;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-textinput')) {
+  customElements.define('gui-textinput', GuiTextinput);
+}

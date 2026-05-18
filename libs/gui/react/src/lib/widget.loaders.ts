@@ -1,5 +1,4 @@
 import * as Core from '@golemui/core';
-import '@golemui/gui-components';
 import { GolemWidget } from '@golemui/gui-shared';
 
 export const widgetLoaders: Core.WidgetLoaders<

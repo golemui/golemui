@@ -59,3 +59,7 @@ declare global {
     'gui-button': GuiButton;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-button')) {
+  customElements.define('gui-button', GuiButton);
+}

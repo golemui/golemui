@@ -167,3 +167,7 @@ declare global {
     'gui-textarea': GuiTextarea;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-textarea')) {
+  customElements.define('gui-textarea', GuiTextarea);
+}

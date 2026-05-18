@@ -16,6 +16,9 @@ import * as Core from '@golemui/core';
 import { DropdownProps, ListItem } from '@golemui/gui-shared';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 @Component({
   standalone: true,

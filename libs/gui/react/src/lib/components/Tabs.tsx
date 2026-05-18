@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import { cn, useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { createIntersectionObserver } from '@golemui/gui-components';
+import { createIntersectionObserver } from '@golemui/gui-components/internals';
 import { TabsProps } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 

@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { DatePickerProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/date-input';
 import '../styles.scss';
 
 export function DateInput(widgetInstance: Core.WithWidget) {

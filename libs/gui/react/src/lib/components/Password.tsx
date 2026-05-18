@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { PasswordProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/password';
 import '../styles.scss';
 
 export function Password(widgetInstance: Core.WithWidget) {

@@ -227,3 +227,7 @@ declare global {
     'gui-number': GuiNumber;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-number')) {
+  customElements.define('gui-number', GuiNumber);
+}

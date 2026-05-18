@@ -14,6 +14,8 @@ import * as Core from '@golemui/core';
 import { DatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
+import '@golemui/gui-components/date-input';
+import '@golemui/gui-components/calendar';
 
 @Component({
   standalone: true,

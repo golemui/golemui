@@ -5,6 +5,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { ButtonProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/button';
 
 @customElement('gui-button-interactive')
 export class ButtonElement extends LitElement implements Core.WithWidget {

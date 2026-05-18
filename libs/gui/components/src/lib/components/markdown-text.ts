@@ -22,3 +22,7 @@ declare global {
     'gui-markdown-text': GuiMarkdownText;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-markdown-text')) {
+  customElements.define('gui-markdown-text', GuiMarkdownText);
+}

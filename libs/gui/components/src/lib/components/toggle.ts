@@ -129,3 +129,7 @@ declare global {
     'gui-toggle': GuiToggle;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-toggle')) {
+  customElements.define('gui-toggle', GuiToggle);
+}

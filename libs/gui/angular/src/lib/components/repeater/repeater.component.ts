@@ -3,6 +3,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { RepeaterProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/errors';
 
 @Component({
   standalone: true,

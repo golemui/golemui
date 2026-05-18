@@ -2,6 +2,7 @@ import * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { CalendarProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/calendar';
 import '../styles.scss';
 
 export function Calendar(widgetInstance: Core.WithWidget) {

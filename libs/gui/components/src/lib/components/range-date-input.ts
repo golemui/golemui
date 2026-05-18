@@ -722,3 +722,7 @@ declare global {
     'gui-range-date-input': GuiRangeDateInput;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-range-date')) {
+  customElements.define('gui-range-date', GuiRangeDateInput);
+}

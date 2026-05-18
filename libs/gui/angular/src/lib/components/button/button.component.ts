@@ -2,6 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@a
 import * as Angular from '@golemui/angular';
 import * as Core from '@golemui/core';
 import { ButtonProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/button';
 
 @Component({
   standalone: true,

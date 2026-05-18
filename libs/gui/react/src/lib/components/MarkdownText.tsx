@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
 import { MarkdownTextProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/markdown-text';
 
 export function MarkdownText(widgetInstance: Core.WithWidget) {
   const widget = widgetInstance.widget as Core.DisplayWidget;
