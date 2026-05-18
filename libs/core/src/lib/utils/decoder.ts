@@ -1,4 +1,4 @@
-import { Decoder, err, ok } from 'ts.data.json'
+import { Decoder, err, ok } from 'ts.data.json';
 
 export type KeySpec<A> = Record<
   string,

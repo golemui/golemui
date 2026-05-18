@@ -1,5 +1,5 @@
 import { type CustomValidatorSchemaFn } from '@golemui/gui-validators';
-import { string, superRefine } from 'zod/mini'
+import { string, superRefine } from 'zod/mini';
 
 export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
   string().check(

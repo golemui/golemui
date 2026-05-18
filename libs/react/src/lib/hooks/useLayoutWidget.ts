@@ -1,4 +1,4 @@
-import { type FormWidget, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core'
+import { type FormWidget, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';

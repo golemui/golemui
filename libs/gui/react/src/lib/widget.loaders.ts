@@ -1,11 +1,8 @@
-import type { WidgetLoaders, WithWidget } from '@golemui/core'
+import type { WidgetLoaders, WithWidget } from '@golemui/core';
 import '@golemui/gui-components';
 import { type GolemWidget } from '@golemui/gui-shared';
 
-export const widgetLoaders: WidgetLoaders<
-  React.ComponentType<WithWidget>,
-  GolemWidget
-> = {
+export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, GolemWidget> = {
   // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,
 

@@ -1,5 +1,5 @@
 import type { ItemRenderContext } from '@golemui/core';
-import type { ValidateOn } from '@golemui/core'
+import type { ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
 import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';

@@ -1,4 +1,9 @@
-import { type FormWidget, type FunctionWidgetParams, type NonFunctionWidget, type UiState } from '@golemui/core';
+import {
+  type FormWidget,
+  type FunctionWidgetParams,
+  type NonFunctionWidget,
+  type UiState,
+} from '@golemui/core';
 import type { GuiItemType } from './dx.domain';
 import {
   type FormConfig,

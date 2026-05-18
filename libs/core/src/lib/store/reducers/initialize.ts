@@ -1,8 +1,8 @@
 import { errorCodes } from '../../errors';
-import { type Form, formDefDecoder } from '../../form'
-import { type FormWidget, isInputWidget } from '../../form-widget'
+import { type Form, formDefDecoder } from '../../form';
+import { type FormWidget, isInputWidget } from '../../form-widget';
 import { flattenForm } from '../../utils/form';
-import type { INITIALIZE } from '../actions'
+import type { INITIALIZE } from '../actions';
 import { createInitialState, type FormHealth, type State } from '../model';
 
 export const initialize = ({ lang }: State, action: INITIALIZE): State => {
@@ -94,7 +94,6 @@ function uidCollisionErrorMessage(
   existingWidget: FormWidget<string>,
   newWidget: FormWidget<string>,
 ) {
-  const getPath = (f: FormWidget<string>) =>
-    isInputWidget(f) ? ` at "${f.path}"` : '';
+  const getPath = (f: FormWidget<string>) => (isInputWidget(f) ? ` at "${f.path}"` : '');
   return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
 }

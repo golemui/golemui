@@ -1,4 +1,8 @@
-import { type NonFunctionWidget, assertNoPropCollisions, calculatedWidgetsByUid$ } from '@golemui/core'
+import {
+  type NonFunctionWidget,
+  assertNoPropCollisions,
+  calculatedWidgetsByUid$,
+} from '@golemui/core';
 import { useEffect, useState } from 'react';
 import { Subject, takeUntil } from 'rxjs';
 import { useReactFormContext } from '../../ReactFormContext';

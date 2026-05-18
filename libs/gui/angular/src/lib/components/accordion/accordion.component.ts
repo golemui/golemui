@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular'
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { type AccordionEventDetail } from '@golemui/gui-components';
 import { type AccordionProps } from '@golemui/gui-shared';
 
@@ -20,9 +20,7 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   widget!: LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
 
-  protected adapter: LayoutWidgetAdapter<AccordionProps> = inject(
-    LayoutWidgetAdapter,
-  );
+  protected adapter: LayoutWidgetAdapter<AccordionProps> = inject(LayoutWidgetAdapter);
 
   ngOnInit(): void {
     const props: AccordionProps = this.widget.props as AccordionProps;
@@ -46,9 +44,7 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   getChild(uid: string) {
-    return this.widget.children.find(
-      (section) => section.uid === uid,
-    ) as NonFunctionWidget<string>;
+    return this.widget.children.find((section) => section.uid === uid) as NonFunctionWidget<string>;
   }
 
   ngOnDestroy(): void {

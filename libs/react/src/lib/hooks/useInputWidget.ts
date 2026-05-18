@@ -1,4 +1,10 @@
-import { type InputWidget, dataByPath$, injectedValidationByPath$, touchedControlsByPath$, validationByPath$ } from '@golemui/core'
+import {
+  type InputWidget,
+  dataByPath$,
+  injectedValidationByPath$,
+  touchedControlsByPath$,
+  validationByPath$,
+} from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { combineLatest } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';

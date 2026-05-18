@@ -1,5 +1,5 @@
 import { computed, Directive, input } from '@angular/core';
-import type { ControlTemplateData } from '@golemui/core'
+import type { ControlTemplateData } from '@golemui/core';
 
 @Directive({
   standalone: true,

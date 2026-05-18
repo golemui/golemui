@@ -1,9 +1,16 @@
-import { allowedNames, commonLanguages, initializeI18n, loggerMiddleware, onFormEvent, template } from '@golemui/apps-shared'
+import {
+  allowedNames,
+  commonLanguages,
+  initializeI18n,
+  loggerMiddleware,
+  onFormEvent,
+  template,
+} from '@golemui/apps-shared';
 import { iframeResizer } from '@golemui/apps-shared';
-import type { FormEvent, FormHealth, ValidateOn } from '@golemui/core'
+import type { FormEvent, FormHealth, ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
-import type { CustomValidatorSchemas } from '@golemui/gui-validators'
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';

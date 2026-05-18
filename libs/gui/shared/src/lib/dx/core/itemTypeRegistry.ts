@@ -1,6 +1,11 @@
 import { type FormWidget, type NonFunctionWidget, type UiState } from '@golemui/core';
 import { type DxRuntimeParams } from './dxUtilityTypes';
-import { type GslLeafSelector, type FormConfig, type MergeResult, type ValidGuiShortcut } from './dx.domain';
+import {
+  type GslLeafSelector,
+  type FormConfig,
+  type MergeResult,
+  type ValidGuiShortcut,
+} from './dx.domain';
 import type { DxCommonFields } from './dxBase.types';
 import type { GslItemType } from './dx.domain';
 

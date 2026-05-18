@@ -1,4 +1,4 @@
-import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core'
+import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type Type } from '@golemui/lit';
 import { type FormHandle, type MountOptions } from '@golemui/ui-testing';

@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { type AccordionProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useState } from 'react';
@@ -39,9 +39,7 @@ export function Accordion(widgetInstance: WithWidget) {
 
   const renderContent = useCallback(
     (uid: string) => {
-      const child = children.find(
-        (section) => section.uid === uid,
-      ) as NonFunctionWidget<string>;
+      const child = children.find((section) => section.uid === uid) as NonFunctionWidget<string>;
       const isActiveSection = activeSections[uid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section

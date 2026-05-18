@@ -11,8 +11,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
@@ -32,9 +32,7 @@ import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
 
-  protected adapter: InputWidgetAdapter<string, DropdownProps<never>> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, DropdownProps<never>> = inject(InputWidgetAdapter);
   private el = inject(ElementRef);
 
   inputRef = viewChild.required<ElementRef>('inputRef');

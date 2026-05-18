@@ -1,5 +1,9 @@
 import { inject, type WritableSignal } from '@angular/core';
-import { type NonFunctionWidget, assertNoPropCollisions, calculatedWidgetsByUid$ } from '@golemui/core'
+import {
+  type NonFunctionWidget,
+  assertNoPropCollisions,
+  calculatedWidgetsByUid$,
+} from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 

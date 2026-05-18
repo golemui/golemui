@@ -1,4 +1,4 @@
-import { lazy, object, optional, record, string } from 'ts.data.json'
+import { lazy, object, optional, record, string } from 'ts.data.json';
 import { type WidgetLoaders } from './context/widget-registry';
 import { type FormWidget, type LayoutWidget, layoutWidgetDecoder } from './form-widget';
 import { type I18nTranslator } from './i18n';

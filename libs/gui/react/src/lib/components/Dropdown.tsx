@@ -1,4 +1,4 @@
-import type { InputWidget, Validator, WithWidget } from '@golemui/core'
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
 import { type DropdownProps, type ListItem, type OptionValue } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';

@@ -1,4 +1,4 @@
-import type { I18nParams, I18nTranslator, TranslationKey } from '@golemui/core'
+import type { I18nParams, I18nTranslator, TranslationKey } from '@golemui/core';
 import i18next, { type Resource } from 'i18next';
 
 export function initializeI18n(resources: Resource): I18nTranslator {

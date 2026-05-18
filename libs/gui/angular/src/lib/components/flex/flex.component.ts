@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular'
-import type { LayoutWidget, WithWidget } from '@golemui/core'
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { type FlexProps } from '@golemui/gui-shared';
 
 @Component({

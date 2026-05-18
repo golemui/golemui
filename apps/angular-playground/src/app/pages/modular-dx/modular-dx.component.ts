@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { modularDx, onFormEvent } from '@golemui/apps-shared'
-import type { FormEvent } from '@golemui/core'
-import { FormComponent } from '@golemui/gui-angular'
+import { modularDx, onFormEvent } from '@golemui/apps-shared';
+import type { FormEvent } from '@golemui/core';
+import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 
 const md = modularDx;

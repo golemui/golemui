@@ -1,5 +1,5 @@
-import type { ActionWidget, WithWidget } from '@golemui/core'
-import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit'
+import type { ActionWidget, WithWidget } from '@golemui/core';
+import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';

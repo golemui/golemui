@@ -1,5 +1,9 @@
 import { type StandardSchemaV1 } from '@standard-schema/spec';
-import { isStandardValidateSuccess, standardValidate, type ValidatorFn } from '../../form-validator';
+import {
+  isStandardValidateSuccess,
+  standardValidate,
+  type ValidatorFn,
+} from '../../form-validator';
 import { type InputWidget, isInputWidget } from '../../form-widget';
 import { type I18nTranslator } from '../../i18n';
 import { type ValidationStatus } from '../../shared';

@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { ControlTemplateData } from '@golemui/core'
+import type { ControlTemplateData } from '@golemui/core';
 
 @Component({
   standalone: true,

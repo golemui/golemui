@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core'
+import { defineForm } from '@golemui/core';
 import { type Option } from '@golemui/gui-shared';
 import { type MountComponentFn } from '../utils';
 

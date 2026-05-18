@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { type ToggleProps } from '@golemui/gui-shared';
 
 @Component({
@@ -18,9 +24,7 @@ import { type ToggleProps } from '@golemui/gui-shared';
 })
 export class ToggleComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
-  protected adapter: InputWidgetAdapter<string, ToggleProps> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, ToggleProps> = inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

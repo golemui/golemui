@@ -1,5 +1,5 @@
 import { type MountComponentFn } from '../utils';
-import { defineForm } from '@golemui/core'
+import { defineForm } from '@golemui/core';
 
 export const runWidgetLoadersComponentTests = (mountFn: MountComponentFn) => {
   describe('Widget Loaders', () => {

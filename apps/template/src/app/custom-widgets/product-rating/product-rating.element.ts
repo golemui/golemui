@@ -1,7 +1,7 @@
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import { type Subscription } from 'rxjs';
 import './product-rating.element.scss';

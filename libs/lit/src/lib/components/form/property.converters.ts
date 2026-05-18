@@ -1,4 +1,4 @@
-import type { ValidateOn } from '@golemui/core'
+import type { ValidateOn } from '@golemui/core';
 import { type ComplexAttributeConverter } from 'lit';
 
 export const ValidateOnConverter: ComplexAttributeConverter<ValidateOn | undefined> = {

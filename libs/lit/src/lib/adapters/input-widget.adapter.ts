@@ -1,4 +1,12 @@
-import { type ControlTemplateData, type InputWidget, type ItemRenderItemData, dataByPath$, injectedValidationByPath$, touchedControlsByPath$, validationByPath$ } from '@golemui/core'
+import {
+  type ControlTemplateData,
+  type InputWidget,
+  type ItemRenderItemData,
+  dataByPath$,
+  injectedValidationByPath$,
+  touchedControlsByPath$,
+  validationByPath$,
+} from '@golemui/core';
 import { createContext } from '@lit/context';
 import { combineLatest, takeUntil } from 'rxjs';
 import { type LitItemRenderer } from '../components/item-renderers/item-renderer';

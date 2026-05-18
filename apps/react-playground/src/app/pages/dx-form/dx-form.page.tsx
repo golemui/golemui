@@ -1,4 +1,4 @@
-import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared'
+import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
 import { GuiForm } from '@golemui/gui-react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';

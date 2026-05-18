@@ -1,4 +1,12 @@
-import { type FormEvent, type FormHealth, type State, type ValidatorFn, formHealth, getDirectionFromLanguage, shortUUID } from '@golemui/core'
+import {
+  type FormEvent,
+  type FormHealth,
+  type State,
+  type ValidatorFn,
+  formHealth,
+  getDirectionFromLanguage,
+  shortUUID,
+} from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
 import { provide } from '@lit/context';

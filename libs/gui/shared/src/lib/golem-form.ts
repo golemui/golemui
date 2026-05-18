@@ -1,6 +1,44 @@
-import type { ActionWidget, DisplayWidget, Form, FormWidget, FunctionWidgetParams, InputWidget, LayoutWidget, ReactiveExpression } from '@golemui/core'
+import type {
+  ActionWidget,
+  DisplayWidget,
+  Form,
+  FormWidget,
+  FunctionWidgetParams,
+  InputWidget,
+  LayoutWidget,
+  ReactiveExpression,
+} from '@golemui/core';
 import { type Validator } from '@golemui/gui-validators';
-import type { AccordionProps, AlertProps, ButtonProps, CalendarProps, CheckboxProps, CurrencyProps, DatePickerProps, DateRange, DateinputProps, DropdownProps, FlexProps, GridProps, ListProps, MarkdownProps, MarkdownTextProps, NumberinputProps, OptionValue, PasswordProps, RadiogroupProps, RangeCalendarProps, RangeDateInputProps, RangeDatePickerProps, RepeaterProps, SelectProps, TabsProps, TextareaProps, TextinputProps, ToggleProps } from './widget.props'
+import type {
+  AccordionProps,
+  AlertProps,
+  ButtonProps,
+  CalendarProps,
+  CheckboxProps,
+  CurrencyProps,
+  DatePickerProps,
+  DateRange,
+  DateinputProps,
+  DropdownProps,
+  FlexProps,
+  GridProps,
+  ListProps,
+  MarkdownProps,
+  MarkdownTextProps,
+  NumberinputProps,
+  OptionValue,
+  PasswordProps,
+  RadiogroupProps,
+  RangeCalendarProps,
+  RangeDateInputProps,
+  RangeDatePickerProps,
+  RepeaterProps,
+  SelectProps,
+  TabsProps,
+  TextareaProps,
+  TextinputProps,
+  ToggleProps,
+} from './widget.props';
 
 // -------------------
 //
@@ -223,17 +261,21 @@ type GuiCurrency<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'currency' };
 
-type GuiDateinput<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-> = InputWidget<string, States, FormType, DateinputProps, V> & { type: 'dateInput' };
+type GuiDateinput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  DateinputProps,
+  V
+> & { type: 'dateInput' };
 
-type GuiDatePicker<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-> = InputWidget<string, States, FormType, DatePickerProps, V> & { type: 'datePicker' };
+type GuiDatePicker<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  DatePickerProps,
+  V
+> & { type: 'datePicker' };
 
 type GuiDropdown<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   OptionValue,
@@ -268,30 +310,37 @@ type GuiMarkdown<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'markdown' };
 
-type GuiMarkdownText<
-  FormType extends Record<string, any>,
-  States extends string,
-> = DisplayWidget<States, FormType, MarkdownTextProps> & { type: 'markdownText' };
+type GuiMarkdownText<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  MarkdownTextProps
+> & { type: 'markdownText' };
 
-type GuiNumberinput<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-> = InputWidget<number, States, FormType, NumberinputProps, V> & { type: 'number' };
+type GuiNumberinput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  number,
+  States,
+  FormType,
+  NumberinputProps,
+  V
+> & { type: 'number' };
 
-type GuiRadiogroup<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-> = InputWidget<OptionValue, States, FormType, RadiogroupProps, V> & {
+type GuiRadiogroup<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue,
+  States,
+  FormType,
+  RadiogroupProps,
+  V
+> & {
   type: 'radiogroup';
 };
 
-type GuiRangeCalendar<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-> = InputWidget<string, States, FormType, RangeCalendarProps, V> & {
+type GuiRangeCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  RangeCalendarProps,
+  V
+> & {
   type: 'rangeCalendar';
 };
 
@@ -328,12 +377,7 @@ type GuiRepeater<
   States,
   FormType,
   RepeaterProps<
-    LayoutWidget<
-      States,
-      FormType,
-      AccordionProps,
-      GolemWidget<FormType, States, V, CustomWidget>[]
-    >
+    LayoutWidget<States, FormType, AccordionProps, GolemWidget<FormType, States, V, CustomWidget>[]>
   >,
   V
 > & { type: 'repeater' };
@@ -351,36 +395,27 @@ type GuiFlex<
   States extends string,
   V,
   CustomWidget extends FormWidget<any, FormType>,
-> = LayoutWidget<
-  States,
-  FormType,
-  FlexProps,
-  GolemWidget<FormType, States, V, CustomWidget>[]
-> & { type: 'flex' };
+> = LayoutWidget<States, FormType, FlexProps, GolemWidget<FormType, States, V, CustomWidget>[]> & {
+  type: 'flex';
+};
 
 type GuiGrid<
   FormType extends Record<string, any>,
   States extends string,
   V,
   CustomWidget extends FormWidget<any, FormType>,
-> = LayoutWidget<
-  States,
-  FormType,
-  GridProps,
-  GolemWidget<FormType, States, V, CustomWidget>[]
-> & { type: 'grid' };
+> = LayoutWidget<States, FormType, GridProps, GolemWidget<FormType, States, V, CustomWidget>[]> & {
+  type: 'grid';
+};
 
 type GuiTabs<
   FormType extends Record<string, any>,
   States extends string,
   V,
   CustomWidget extends FormWidget<any, FormType>,
-> = LayoutWidget<
-  States,
-  FormType,
-  TabsProps,
-  GolemWidget<FormType, States, V, CustomWidget>[]
-> & { type: 'tabs' };
+> = LayoutWidget<States, FormType, TabsProps, GolemWidget<FormType, States, V, CustomWidget>[]> & {
+  type: 'tabs';
+};
 
 type GuiTextarea<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,
@@ -390,11 +425,13 @@ type GuiTextarea<FormType extends Record<string, any>, States extends string, V>
   V
 > & { type: 'textarea' };
 
-type GuiTextInput<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-> = InputWidget<string, States, FormType, TextinputProps, V> & { type: 'textinput' };
+type GuiTextInput<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  string,
+  States,
+  FormType,
+  TextinputProps,
+  V
+> & { type: 'textinput' };
 
 type GuiPassword<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

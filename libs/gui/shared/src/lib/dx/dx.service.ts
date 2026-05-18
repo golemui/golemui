@@ -1,4 +1,4 @@
-import type { EventHandlerCallback, Form, FormEvent } from '@golemui/core'
+import type { EventHandlerCallback, Form, FormEvent } from '@golemui/core';
 import { type LayoutWidget, type UiState } from '@golemui/core';
 import { type DxDefinitionItem, type DxDefinitions, type DxResult } from './formDef.domain';
 import {
@@ -16,7 +16,10 @@ import selectorResolver from './core/selectorResolver.service';
 import widgetMerger from './core/widgetMerger.service';
 import widgetMapper from './core/widgetMapper.service';
 import selectorNormalizer, { type SelectorNormalizer } from './core/selectorNormalizer.service';
-import eventWiringService, { type EventRegistry, type EventWiringService } from './core/eventWiring.service';
+import eventWiringService, {
+  type EventRegistry,
+  type EventWiringService,
+} from './core/eventWiring.service';
 import { ItemWalker } from './core/itemWalker.service';
 import stateExpansionService from './core/stateExpansion.service';
 

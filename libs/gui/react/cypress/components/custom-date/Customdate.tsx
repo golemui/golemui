@@ -1,4 +1,4 @@
-import type { InputWidget, WithWidget } from '@golemui/core'
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { useCallback } from 'react';
 

@@ -1,4 +1,4 @@
-import type { ItemRenderContext, ItemRenderItemData } from '@golemui/core'
+import type { ItemRenderContext, ItemRenderItemData } from '@golemui/core';
 import { type TemplateResult } from 'lit';
 
 /**

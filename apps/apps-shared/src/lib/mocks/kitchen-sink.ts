@@ -1,4 +1,4 @@
-import type { Form } from '@golemui/core'
+import type { Form } from '@golemui/core';
 import { resolveChunkRefs } from '@golemui/gui-shared';
 import { type Example } from './types';
 

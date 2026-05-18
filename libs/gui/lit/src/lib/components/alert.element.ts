@@ -1,8 +1,13 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
-import { DisplayWidgetAdapter, type LitFormContext, displayWidgetContext, formContext } from '@golemui/lit'
+import {
+  DisplayWidgetAdapter,
+  type LitFormContext,
+  displayWidgetContext,
+  formContext,
+} from '@golemui/lit';
 import { type AlertProps } from '@golemui/gui-shared';
 import { type Subscription } from 'rxjs';
 

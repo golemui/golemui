@@ -1,5 +1,10 @@
-import type { DisplayWidget, WithWidget } from '@golemui/core'
-import { DisplayWidgetAdapter, type LitFormContext, displayWidgetContext, formContext } from '@golemui/lit'
+import type { DisplayWidget, WithWidget } from '@golemui/core';
+import {
+  DisplayWidgetAdapter,
+  type LitFormContext,
+  displayWidgetContext,
+  formContext,
+} from '@golemui/lit';
 import { type RendererProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';

@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { DisplayWidgetAdapter } from '@golemui/angular'
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { DisplayWidgetAdapter } from '@golemui/angular';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { type MarkdownTextProps } from '@golemui/gui-shared';
 
 @Component({
@@ -19,9 +25,7 @@ import { type MarkdownTextProps } from '@golemui/gui-shared';
 export class MarkdownTextComponent implements OnInit, OnDestroy, WithWidget {
   widget!: DisplayWidget;
 
-  protected adapter: DisplayWidgetAdapter<MarkdownTextProps> = inject(
-    DisplayWidgetAdapter,
-  );
+  protected adapter: DisplayWidgetAdapter<MarkdownTextProps> = inject(DisplayWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

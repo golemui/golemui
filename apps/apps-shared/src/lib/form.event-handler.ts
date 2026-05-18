@@ -1,4 +1,4 @@
-import type { DotPath, FormEvent } from '@golemui/core'
+import type { DotPath, FormEvent } from '@golemui/core';
 import i18next from 'i18next';
 
 export const onFormEvent = (event: FormEvent) => {

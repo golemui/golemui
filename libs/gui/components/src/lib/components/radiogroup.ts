@@ -3,7 +3,12 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property } from 'lit/decorators.js';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { GUIAriaController } from '../controllers';
-import { type OptionValue, type Option, type RadiogroupProps, type OneOfProps } from '@golemui/gui-shared';
+import {
+  type OptionValue,
+  type Option,
+  type RadiogroupProps,
+  type OneOfProps,
+} from '@golemui/gui-shared';
 import { inferOptionValue, updateOptions } from './one-of';
 
 @customElement('gui-radiogroup')

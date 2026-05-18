@@ -4,7 +4,12 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
 import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
-import { type OneOfProps, type Option, type OptionValue, type SelectProps } from '@golemui/gui-shared';
+import {
+  type OneOfProps,
+  type Option,
+  type OptionValue,
+  type SelectProps,
+} from '@golemui/gui-shared';
 import { inferOptionValue, updateOptions } from './one-of';
 
 @customElement('gui-select')

@@ -1,4 +1,4 @@
-import type { InputWidget, Validator, WithWidget } from '@golemui/core'
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
 import {

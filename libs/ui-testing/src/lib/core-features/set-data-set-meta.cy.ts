@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core'
+import { defineForm } from '@golemui/core';
 import { type FormHandle, type MountComponentFn } from '../utils';
 
 export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {

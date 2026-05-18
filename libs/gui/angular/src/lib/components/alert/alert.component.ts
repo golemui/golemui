@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { DisplayWidgetAdapter } from '@golemui/angular'
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import { DisplayWidgetAdapter } from '@golemui/angular';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { type AlertProps } from '@golemui/gui-shared';
 
 @Component({
@@ -18,9 +18,7 @@ import { type AlertProps } from '@golemui/gui-shared';
 export class AlertComponent implements OnInit, OnDestroy, WithWidget {
   widget!: DisplayWidget;
 
-  protected adapter: DisplayWidgetAdapter<AlertProps> = inject(
-    DisplayWidgetAdapter,
-  );
+  protected adapter: DisplayWidgetAdapter<AlertProps> = inject(DisplayWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

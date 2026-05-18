@@ -1,4 +1,14 @@
-import { FormContext, type FormEvent, type FormHealth, formHealth as watchFormHealth, type LayoutWidget, type ValidatorFn, type WithWidget, getDirectionFromLanguage, shortUUID } from '@golemui/core'
+import {
+  FormContext,
+  type FormEvent,
+  type FormHealth,
+  formHealth as watchFormHealth,
+  type LayoutWidget,
+  type ValidatorFn,
+  type WithWidget,
+  getDirectionFromLanguage,
+  shortUUID,
+} from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
@@ -27,9 +37,7 @@ export function FormComponent({
   autocomplete,
   ref,
 }: FormComponentProps) {
-  const formContextRef = useRef<FormContext<React.ComponentType<WithWidget>>>(
-    new FormContext(),
-  );
+  const formContextRef = useRef<FormContext<React.ComponentType<WithWidget>>>(new FormContext());
   const formNameRef = useRef<string>(config.formName ?? shortUUID());
   const [formLayoutField, setFormLayoutField] = useState<LayoutWidget<string> | null>(null);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');

@@ -1,6 +1,10 @@
 import { GuiItemTypes } from '../../core/dx.domain';
 import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
-import { type ActionDecorator, type ActionDefOrCallback, type GuiActionsShortcut } from './actions.domain';
+import {
+  type ActionDecorator,
+  type ActionDefOrCallback,
+  type GuiActionsShortcut,
+} from './actions.domain';
 import { objectUtils } from '../../../utils/objectUtils.service';
 
 export function _guiButton(props: ActionDecorator): GuiActionsShortcut;

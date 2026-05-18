@@ -1,4 +1,4 @@
-import type { ActionWidget, WithWidget } from '@golemui/core'
+import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 
 export function SimpleButtonComponent(fieldInstance: WithWidget) {

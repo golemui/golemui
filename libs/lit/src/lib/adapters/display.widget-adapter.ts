@@ -1,4 +1,4 @@
-import type { DisplayWidget, DisplayWidgetTemplateData } from '@golemui/core'
+import type { DisplayWidget, DisplayWidgetTemplateData } from '@golemui/core';
 import { createContext } from '@lit/context';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 

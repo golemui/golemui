@@ -12,7 +12,15 @@ import {
   type Type,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { type FormEvent, type FormHealth, type ValidatorFn, type WithWidget, formHealth, getDirectionFromLanguage, shortUUID } from '@golemui/core'
+import {
+  type FormEvent,
+  type FormHealth,
+  type ValidatorFn,
+  type WithWidget,
+  formHealth,
+  getDirectionFromLanguage,
+  shortUUID,
+} from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';

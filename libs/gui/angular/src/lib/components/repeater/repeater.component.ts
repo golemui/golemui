@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { InputWidgetAdapter, RepeaterWidgetDirective } from '@golemui/angular'
-import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter, RepeaterWidgetDirective } from '@golemui/angular';
+import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared';
 
 @Component({

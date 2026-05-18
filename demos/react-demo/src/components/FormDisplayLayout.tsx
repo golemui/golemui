@@ -1,6 +1,11 @@
 import { GuiForm } from '@golemui/gui-react';
-import { type DxDefinitions, type DxFormConfig, formDefs, type GslSelectorsInput } from '@golemui/gui-shared';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  type DxDefinitions,
+  type DxFormConfig,
+  formDefs,
+  type GslSelectorsInput,
+} from '@golemui/gui-shared';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { type DemoLogEntry, type DemoLogFn } from '../utils/demoLog';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
@@ -106,10 +111,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
     () => (formSelectors ? formSelectors() : undefined),
     [formSelectors],
   );
-  const resolvedFormConfig = useMemo(
-    () => (formConfig ? formConfig() : undefined),
-    [formConfig],
-  );
+  const resolvedFormConfig = useMemo(() => (formConfig ? formConfig() : undefined), [formConfig]);
 
   const serializedFormSelectors = formSelectors
     ? formSelectors.toString().replace(/^\(\)\s*=>\s*/, '')

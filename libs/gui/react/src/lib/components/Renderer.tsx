@@ -1,4 +1,4 @@
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
 import { type RendererProps } from '@golemui/gui-shared';
 import { type ReactNode } from 'react';

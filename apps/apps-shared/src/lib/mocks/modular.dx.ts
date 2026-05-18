@@ -5,7 +5,7 @@ import type {
   GslSelectorsInput,
 } from '@golemui/gui-shared';
 import { gui } from '@golemui/gui-shared';
-import { testsDxModule } from './index.dx'
+import { testsDxModule } from './index.dx';
 
 const dxMock: DxModule = testsDxModule;
 

@@ -1,9 +1,9 @@
-import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core'
+import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
-import { FormComponent, type FormComponentHandle } from '@golemui/react'
+import { FormComponent, type FormComponentHandle } from '@golemui/react';
 import { type ReactItemRenderer } from '@golemui/react';
 import { type ComponentType, type Ref, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';

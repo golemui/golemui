@@ -9,8 +9,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
@@ -31,9 +31,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
 })
 export class DatePickerComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
-  protected adapter: InputWidgetAdapter<string, DatePickerProps> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, DatePickerProps> = inject(InputWidgetAdapter);
   private el = inject(ElementRef);
   currentDate = new Date();
 

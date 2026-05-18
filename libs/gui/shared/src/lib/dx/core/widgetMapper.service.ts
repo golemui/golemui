@@ -1,4 +1,9 @@
-import { type FormWidget, type FunctionWidgetParams, type NonFunctionWidget, type UiState } from '@golemui/core';
+import {
+  type FormWidget,
+  type FunctionWidgetParams,
+  type NonFunctionWidget,
+  type UiState,
+} from '@golemui/core';
 import { type GslItemType, type MergeResult } from './dx.domain';
 import { getItemTypeHandler } from './itemTypeRegistry';
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { InputWidget, Validator, WithWidget } from '@golemui/core'
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
 import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';

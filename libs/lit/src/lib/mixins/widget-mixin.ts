@@ -1,4 +1,11 @@
-import { type FormHealth, type FormWidget, type NonFunctionWidget, cloneObject, errorCodes, makeRepeaterItemConfig } from '@golemui/core'
+import {
+  type FormHealth,
+  type FormWidget,
+  type NonFunctionWidget,
+  cloneObject,
+  errorCodes,
+  makeRepeaterItemConfig,
+} from '@golemui/core';
 import { consume } from '@lit/context';
 import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -40,10 +47,7 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
 
         element.widget =
           indexes.length > 0
-            ? makeRepeaterItemConfig(
-                cloneObject(this.widget as NonFunctionWidget<string>),
-                indexes,
-              )
+            ? makeRepeaterItemConfig(cloneObject(this.widget as NonFunctionWidget<string>), indexes)
             : this.widget;
 
         element.id = `host-${this.widget.uid}`;

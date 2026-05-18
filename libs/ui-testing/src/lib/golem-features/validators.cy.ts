@@ -1,7 +1,7 @@
-import { type I18nTranslator, defineForm } from '@golemui/core'
+import { type I18nTranslator, defineForm } from '@golemui/core';
 import { golemForm } from '@golemui/gui-shared';
-import type { CustomValidatorSchemaFn, CustomValidatorSchemas } from '@golemui/gui-validators'
-import { string, superRefine } from 'zod/mini'
+import type { CustomValidatorSchemaFn, CustomValidatorSchemas } from '@golemui/gui-validators';
+import { string, superRefine } from 'zod/mini';
 import { type MountComponentFn } from '../utils';
 
 const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>

@@ -8,7 +8,13 @@ import {
   type Type,
   ViewContainerRef,
 } from '@angular/core';
-import { type NonFunctionWidget, type WithWidget, cloneObject, errorCodes, makeRepeaterItemConfig } from '@golemui/core'
+import {
+  type NonFunctionWidget,
+  type WithWidget,
+  cloneObject,
+  errorCodes,
+  makeRepeaterItemConfig,
+} from '@golemui/core';
 import { AngularFormContext } from '../context/form.context';
 import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
 

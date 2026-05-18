@@ -1,5 +1,13 @@
 import { Injectable, signal } from '@angular/core';
-import { type ControlTemplateData, type InputWidget, type ItemRenderItemData, dataByPath$, injectedValidationByPath$, touchedControlsByPath$, validationByPath$ } from '@golemui/core'
+import {
+  type ControlTemplateData,
+  type InputWidget,
+  type ItemRenderItemData,
+  dataByPath$,
+  injectedValidationByPath$,
+  touchedControlsByPath$,
+  validationByPath$,
+} from '@golemui/core';
 import { combineLatest, takeUntil } from 'rxjs';
 import { type AngularItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';

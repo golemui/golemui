@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { type LayoutWidget } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
-import { get } from '../utils/object'
+import { get } from '../utils/object';
 import { type State } from './model';
 
 // --------------------------------

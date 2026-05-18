@@ -1,5 +1,5 @@
-import { modularDx, onFormEvent } from '@golemui/apps-shared'
-import type { FormEvent } from '@golemui/core'
+import { modularDx, onFormEvent } from '@golemui/apps-shared';
+import type { FormEvent } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';

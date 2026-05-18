@@ -1,4 +1,4 @@
-import type { Action, Middleware, State } from '@golemui/core'
+import type { Action, Middleware, State } from '@golemui/core';
 
 export const loggerMiddleware: Middleware<State, Action> =
   ({ getState }) =>

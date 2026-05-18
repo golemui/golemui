@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { type RangeCalendarProps } from '@golemui/gui-shared';
 
 @Component({
@@ -18,9 +24,7 @@ import { type RangeCalendarProps } from '@golemui/gui-shared';
 })
 export class RangeCalendarComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
-  protected adapter: InputWidgetAdapter<string, RangeCalendarProps> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, RangeCalendarProps> = inject(InputWidgetAdapter);
   currentDate = new Date();
 
   ngOnInit(): void {

@@ -15,7 +15,7 @@ type FragmentChangeHandler = (e: { data: unknown }) => void;
 type Fragment = {
   key: FragmentKey;
   label: string;
-   
+
   build: (onChange: FragmentChangeHandler) => any[]; // formDef builder
   json: unknown[]; // display-friendly JSON snapshot
   dsl: string; // DSL source string

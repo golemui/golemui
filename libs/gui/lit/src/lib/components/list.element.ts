@@ -1,5 +1,5 @@
-import type { InputWidget, WithWidget } from '@golemui/core'
-import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { type ListItem, type ListProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';

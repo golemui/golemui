@@ -1,4 +1,4 @@
-import type { WidgetLoaders, WithWidget } from '@golemui/core'
+import type { WidgetLoaders, WithWidget } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { FormComponentHandle } from '@golemui/react';
 import { type MountOptions } from '@golemui/ui-testing';
@@ -7,14 +7,13 @@ import { type ComponentType, createRef } from 'react';
 import { GuiForm } from '../../src/lib/components/Form';
 
 export const mountFramework = (options: MountOptions) => {
-  const customWidgetLoaders: WidgetLoaders<ComponentType<WithWidget>> =
-    options.withCustomComponent
-      ? {
-          heading: async () =>
-            (await import('../components/heading/heading.component')).HeadingComponent,
-          customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
-        }
-      : {};
+  const customWidgetLoaders: WidgetLoaders<ComponentType<WithWidget>> = options.withCustomComponent
+    ? {
+        heading: async () =>
+          (await import('../components/heading/heading.component')).HeadingComponent,
+        customdate: async () => (await import('../components/custom-date/Customdate')).Customdate,
+      }
+    : {};
 
   const handleFormEvent = options.formEvent ? options.formEvent : cy.spy().as('formEvent');
 

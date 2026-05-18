@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 
 @Component({
   standalone: true,
@@ -15,9 +15,7 @@ import type { InputWidget, WithWidget } from '@golemui/core'
 })
 export class CustomdateComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
-  protected adapter: InputWidgetAdapter<string, Record<string, any>> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, Record<string, any>> = inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

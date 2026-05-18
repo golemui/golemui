@@ -8,7 +8,7 @@ import {
   SkipSelf,
   type Type,
 } from '@angular/core';
-import type { WithWidget } from '@golemui/core'
+import type { WithWidget } from '@golemui/core';
 import { WidgetDirective } from './widget.directive';
 import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
 

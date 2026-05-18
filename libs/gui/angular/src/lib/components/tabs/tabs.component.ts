@@ -10,8 +10,8 @@ import {
   viewChild,
   viewChildren,
 } from '@angular/core';
-import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular'
-import type { LayoutWidget, WithWidget } from '@golemui/core'
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { createIntersectionObserver, type TabsEventDetail } from '@golemui/gui-components';
 import { type TabsProps } from '@golemui/gui-shared';
 

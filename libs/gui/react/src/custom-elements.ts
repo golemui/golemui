@@ -1,4 +1,4 @@
-import type { DetailedHTMLProps, HTMLAttributes } from 'react'
+import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import {
   type GuiButton,
   type GuiCalendar,
@@ -34,14 +34,12 @@ declare module 'react' {
       'gui-currency': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCurrency>;
 
-      'gui-date': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiDate>;
+      'gui-date': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & Partial<GuiDate>;
 
       'gui-errors': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;
 
-      'gui-label': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiLabel>;
+      'gui-label': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & Partial<GuiLabel>;
       'gui-list': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<Omit<GuiList, 'children'>>;
 
@@ -59,10 +57,7 @@ declare module 'react' {
 
       'gui-radiogroup': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRadiogroup>;
-      'gui-range-calendar': DetailedHTMLProps<
-        HTMLAttributes<HTMLElement>,
-        HTMLElement
-      > &
+      'gui-range-calendar': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeCalendar>;
       'gui-range-date': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeDateInput>;

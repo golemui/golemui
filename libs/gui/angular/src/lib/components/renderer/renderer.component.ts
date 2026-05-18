@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit, type Type } from '@angular/core';
-import { DisplayWidgetAdapter } from '@golemui/angular'
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import { DisplayWidgetAdapter } from '@golemui/angular';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { type ComponentRendererProps } from '@golemui/gui-shared';
 
 @Component({
@@ -18,9 +18,8 @@ import { type ComponentRendererProps } from '@golemui/gui-shared';
 export class RendererComponent implements OnInit, OnDestroy, WithWidget {
   widget!: DisplayWidget;
 
-  protected adapter: DisplayWidgetAdapter<ComponentRendererProps<Type<any>>> = inject(
-    DisplayWidgetAdapter,
-  );
+  protected adapter: DisplayWidgetAdapter<ComponentRendererProps<Type<any>>> =
+    inject(DisplayWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

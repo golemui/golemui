@@ -10,8 +10,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
 
@@ -30,9 +30,8 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
 export class ListComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<string>;
 
-  protected adapter: InputWidgetAdapter<OptionValue, ListProps<unknown>> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<OptionValue, ListProps<unknown>> =
+    inject(InputWidgetAdapter);
 
   protected defaultListItemRenderer: AngularItemRenderer<string> = DefaultListItemRenderer;
 

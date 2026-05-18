@@ -1,5 +1,10 @@
 import { Injectable, signal } from '@angular/core';
-import { type FormWidget, type LayoutTemplateData, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core'
+import {
+  type FormWidget,
+  type LayoutTemplateData,
+  type LayoutWidget,
+  calculatedLayoutChildrenByUid$,
+} from '@golemui/core';
 import { takeUntil } from 'rxjs';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 

@@ -1,4 +1,10 @@
-import { type I18nParams, type I18nTranslator, type TranslationKey, defineForm, identityTranslator } from '@golemui/core'
+import {
+  type I18nParams,
+  type I18nTranslator,
+  type TranslationKey,
+  defineForm,
+  identityTranslator,
+} from '@golemui/core';
 import i18next from 'i18next';
 import { type MountComponentFn } from '../utils';
 

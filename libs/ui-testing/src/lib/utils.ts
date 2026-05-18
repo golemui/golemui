@@ -1,4 +1,4 @@
-import type { Form, FormEvent, FormHealth, I18nTranslator, UiState } from '@golemui/core'
+import type { Form, FormEvent, FormHealth, I18nTranslator, UiState } from '@golemui/core';
 import { type Action, type Middleware, type State, type ValidateOn } from '@golemui/core';
 import { type Dependencies } from '@golemui/gui-shared';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';

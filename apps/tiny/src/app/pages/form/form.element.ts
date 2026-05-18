@@ -1,5 +1,5 @@
-import { tiny } from '@golemui/apps-shared'
-import type { ValidateOn } from '@golemui/core'
+import { tiny } from '@golemui/apps-shared';
+import type { ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';

@@ -3,10 +3,25 @@ import { type InputWidget, isFunctionWidget, isInputWidget } from '../form-widge
 import { type I18nTranslator } from '../i18n';
 import { type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import { pipe } from '../utils/function'
+import { pipe } from '../utils/function';
 import { type Action } from './actions';
 import { type State } from './model';
-import { addWidget, calculateCurrentState, calculateWidgetFlags, calculateWidgetProps, initialize, injectValidationIssues, overrideWidgetProp, removeWidget, setData, setFormHealth, setLanguage, setMeta, setWidgetData, validateAll } from './reducers'
+import {
+  addWidget,
+  calculateCurrentState,
+  calculateWidgetFlags,
+  calculateWidgetProps,
+  initialize,
+  injectValidationIssues,
+  overrideWidgetProp,
+  removeWidget,
+  setData,
+  setFormHealth,
+  setLanguage,
+  setMeta,
+  setWidgetData,
+  validateAll,
+} from './reducers';
 import { reduceIf } from './reducers/utils';
 
 export const reducer =
@@ -41,10 +56,7 @@ export const reducer =
         );
 
       case 'SET_LANGUAGE':
-        return pipe(
-          setLanguage(state, action),
-          calculateWidgetProps(localization),
-        );
+        return pipe(setLanguage(state, action), calculateWidgetProps(localization));
 
       case 'ADD_WIDGET':
         return pipe(

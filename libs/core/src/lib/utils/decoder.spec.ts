@@ -1,4 +1,4 @@
-import { optional, string } from 'ts.data.json'
+import { optional, string } from 'ts.data.json';
 import { objectWithSuffix } from './decoder';
 
 describe('objectWithSuffix (KeySpec)', () => {

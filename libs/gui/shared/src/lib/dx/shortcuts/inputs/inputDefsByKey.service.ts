@@ -1,5 +1,10 @@
 import inputTypeDefaults, { type InputTypeDefaults } from './inputTypeDefaults.service';
-import { type InputDecorator, type InputTags, type InputDefOrCallback, type SimpleFieldDef } from './inputs.domain';
+import {
+  type InputDecorator,
+  type InputTags,
+  type InputDefOrCallback,
+  type SimpleFieldDef,
+} from './inputs.domain';
 
 export type ProcessedDxFieldsByKey = Record<string, InputDefOrCallback>;
 

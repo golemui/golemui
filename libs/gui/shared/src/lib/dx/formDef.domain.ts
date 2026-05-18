@@ -1,4 +1,4 @@
-import type { Form, FormEvent, UiState } from '@golemui/core'
+import type { Form, FormEvent, UiState } from '@golemui/core';
 import { type ValidateOn } from '@golemui/core';
 import { type ValidGuiShortcut } from './core/dx.domain';
 import { type DxCommonFields, type DxInternalFields } from './core/dxBase.types';

@@ -1,5 +1,5 @@
 import type { ValidateOn } from '@golemui/core';
-import type { Action, Form, I18nTranslator, Middleware, State } from '@golemui/core'
+import type { Action, Form, I18nTranslator, Middleware, State } from '@golemui/core';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { Dependencies } from '../shared';
 import type { DxFormConfig, GslSelectorsInput } from './core/dx.domain';

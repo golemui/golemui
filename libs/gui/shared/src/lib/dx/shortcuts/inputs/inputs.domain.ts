@@ -1,7 +1,15 @@
-import type { NumberValidator, StringValidator } from '@golemui/gui-validators'
+import type { NumberValidator, StringValidator } from '@golemui/gui-validators';
 import type { BooleanValidator } from '@golemui/gui-validators';
-import { type NumberinputProps, type TextinputProps, type ToggleProps } from '../../../widget.props';
-import { type DxCommonFields, type DxInputBase, type DxInternalFields } from '../../core/dxBase.types';
+import {
+  type NumberinputProps,
+  type TextinputProps,
+  type ToggleProps,
+} from '../../../widget.props';
+import {
+  type DxCommonFields,
+  type DxInputBase,
+  type DxInternalFields,
+} from '../../core/dxBase.types';
 import {
   type DefOrCallback,
   type DxRuntimeParams,

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, output, type Type, viewChild } from '@angular/core';
-import { type AngularItemRenderer, FormCoreComponent } from '@golemui/angular'
-import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core'
+import { type AngularItemRenderer, FormCoreComponent } from '@golemui/angular';
+import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';

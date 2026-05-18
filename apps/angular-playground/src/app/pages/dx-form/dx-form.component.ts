@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared'
-import type { FormEvent } from '@golemui/core'
-import { FormComponent } from '@golemui/gui-angular'
+import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
+import type { FormEvent } from '@golemui/core';
+import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';

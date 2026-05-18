@@ -9,8 +9,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { InputWidgetAdapter } from '@golemui/angular'
-import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
@@ -31,9 +31,8 @@ import { LabelComponent } from '../../utils/templates/label.component';
 })
 export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<DateRange[]>;
-  protected adapter: InputWidgetAdapter<DateRange[], RangeDatePickerProps> = inject(
-    InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<DateRange[], RangeDatePickerProps> =
+    inject(InputWidgetAdapter);
   private el = inject(ElementRef);
 
   dateControl = viewChild<ElementRef>('dateControlRef');

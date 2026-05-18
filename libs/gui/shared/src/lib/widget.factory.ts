@@ -1,11 +1,19 @@
 // TODO: We can probably remove this module entirely
-import type { BaseWidget, DisplayWidget, InputWidget, LayoutWidget, UiState } from '@golemui/core'
-import type { AlertProps, CheckboxProps, FlexProps, GridProps, MarkdownTextProps, NumberinputProps, PasswordProps, SelectProps, TabsProps, TextinputProps } from './widget.props'
+import type { BaseWidget, DisplayWidget, InputWidget, LayoutWidget, UiState } from '@golemui/core';
+import type {
+  AlertProps,
+  CheckboxProps,
+  FlexProps,
+  GridProps,
+  MarkdownTextProps,
+  NumberinputProps,
+  PasswordProps,
+  SelectProps,
+  TabsProps,
+  TextinputProps,
+} from './widget.props';
 
-type InputWidgetConfig<T> = Omit<
-  InputWidget<T>,
-  'kind' | 'type' | 'uid' | 'props' | 'validator'
->;
+type InputWidgetConfig<T> = Omit<InputWidget<T>, 'kind' | 'type' | 'uid' | 'props' | 'validator'>;
 type LayoutWidgetConfig = Omit<LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
 type DisplayWidgetConfig = Omit<BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 

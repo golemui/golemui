@@ -1,4 +1,4 @@
-import { type FormEvent, defineForm } from '@golemui/core'
+import { type FormEvent, defineForm } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runStatesComponentTests = (mountFn: MountComponentFn) => {

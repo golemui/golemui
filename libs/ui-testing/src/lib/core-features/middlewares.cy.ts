@@ -1,13 +1,11 @@
 import { type MountComponentFn } from '../utils';
-import { type Action, type Middleware, type State, defineForm } from '@golemui/core'
+import { type Action, type Middleware, type State, defineForm } from '@golemui/core';
 
 export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
   describe('Middlewares', () => {
     it('Should execute middlewares on initialize', () => {
-      const middleware1: Middleware<State, Action> = () => (next) => (action) =>
-        next(action);
-      const middleware2: Middleware<State, Action> = () => (next) => (action) =>
-        next(action);
+      const middleware1: Middleware<State, Action> = () => (next) => (action) => next(action);
+      const middleware2: Middleware<State, Action> = () => (next) => (action) => next(action);
       const spyMiddleware1 = cy.spy(middleware1).as('middleware1');
       const spyMiddleware2 = cy.spy(middleware2).as('middleware2');
       mountFn({
@@ -34,10 +32,8 @@ export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {
     });
 
     it('Should execute middlewares on update a value', () => {
-      const middleware1: Middleware<State, Action> = () => (next) => (action) =>
-        next(action);
-      const middleware2: Middleware<State, Action> = () => (next) => (action) =>
-        next(action);
+      const middleware1: Middleware<State, Action> = () => (next) => (action) => next(action);
+      const middleware2: Middleware<State, Action> = () => (next) => (action) => next(action);
       const spyMiddleware1 = cy.spy(middleware1).as('middleware1');
       const spyMiddleware2 = cy.spy(middleware2).as('middleware2');
       mountFn({

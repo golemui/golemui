@@ -1,5 +1,5 @@
 import { isInputWidget } from '../../form-widget';
-import { pipe } from '../../utils/function'
+import { pipe } from '../../utils/function';
 import { deleteKey } from '../../utils/object';
 import { type REMOVE_WIDGET } from '../actions';
 import { type State } from '../model';

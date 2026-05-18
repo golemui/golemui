@@ -1,4 +1,10 @@
-import { type NonFunctionWidget, type WithWidget, cloneObject, errorCodes, makeRepeaterItemConfig } from '@golemui/core'
+import {
+  type NonFunctionWidget,
+  type WithWidget,
+  cloneObject,
+  errorCodes,
+  makeRepeaterItemConfig,
+} from '@golemui/core';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';

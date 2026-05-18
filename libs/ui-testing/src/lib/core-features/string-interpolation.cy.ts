@@ -1,4 +1,4 @@
-import { defineForm } from '@golemui/core'
+import { defineForm } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runStringInterpolationTests = (mountFn: MountComponentFn) => {

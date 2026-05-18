@@ -4,7 +4,12 @@ import { type ValidatorFn } from '../form-validator';
 import { type ActionWidget, type InputWidget, type LayoutWidget, type On } from '../form-widget';
 import { type I18nTranslator, identityTranslator } from '../i18n';
 import { type ItemRenderer } from '../item-renderer';
-import { type EventHandlerCallback, type EventName, type FormEvent, type ValidateOn } from '../shared';
+import {
+  type EventHandlerCallback,
+  type EventName,
+  type FormEvent,
+  type ValidateOn,
+} from '../shared';
 import { type Action } from '../store/actions';
 import { type Middleware, type State } from '../store/model';
 import { type WidgetLoaders, WidgetRegistry } from './widget-registry';

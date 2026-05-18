@@ -1,4 +1,4 @@
-import { type ControlTemplateData, filterTap } from '@golemui/core'
+import { type ControlTemplateData, filterTap } from '@golemui/core';
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string }>

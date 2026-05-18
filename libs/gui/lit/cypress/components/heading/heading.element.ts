@@ -1,7 +1,12 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { DisplayWidgetAdapter, type LitFormContext, displayWidgetContext, formContext } from '@golemui/lit'
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import {
+  DisplayWidgetAdapter,
+  type LitFormContext,
+  displayWidgetContext,
+  formContext,
+} from '@golemui/lit';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import './heading.element.scss';
 

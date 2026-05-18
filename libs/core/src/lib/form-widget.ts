@@ -1,4 +1,19 @@
-import { Decoder, type FromDecoder, array, boolean, err, lazy, literal, number, object, ok, oneOf, optional, string, succeed } from 'ts.data.json'
+import {
+  Decoder,
+  type FromDecoder,
+  array,
+  boolean,
+  err,
+  lazy,
+  literal,
+  number,
+  object,
+  ok,
+  oneOf,
+  optional,
+  string,
+  succeed,
+} from 'ts.data.json';
 import { type Localizable, type TranslationConfig } from './i18n';
 import {
   type DotPath,
@@ -259,16 +274,14 @@ const excludeDecoder = oneOf<From | When>([fromDecoder, whenDecoder], 'Exclude')
 const boolWhenDecoder = oneOf<boolean | When>([boolean(), whenDecoder], 'Bool | When');
 
 // all widget properties that support states can potentially be a WidgetPropertyFunction
-const widgetPropFnDecoder: Decoder<WidgetPropertyFunction<any>> = new Decoder(
-  (json: unknown) => {
-    const jsonTypeof = typeof json;
-    if (jsonTypeof === 'function') {
-      return ok(json as WidgetPropertyFunction<any>);
-    } else {
-      return err(`Expected a function, got '${jsonTypeof}'`);
-    }
-  },
-);
+const widgetPropFnDecoder: Decoder<WidgetPropertyFunction<any>> = new Decoder((json: unknown) => {
+  const jsonTypeof = typeof json;
+  if (jsonTypeof === 'function') {
+    return ok(json as WidgetPropertyFunction<any>);
+  } else {
+    return err(`Expected a function, got '${jsonTypeof}'`);
+  }
+});
 const decodeWidgetPropOrWidgetPropFn = <T>(decoder: Decoder<T>) =>
   oneOf<T | WidgetPropertyFunction<any>>([decoder, widgetPropFnDecoder], '');
 
@@ -291,10 +304,7 @@ const translationConfigDecoder = object<TranslationConfig>(
   },
   'TranslationConfig',
 );
-const localizableDecoder = oneOf<Localizable>(
-  [string(), translationConfigDecoder],
-  'Localizable',
-);
+const localizableDecoder = oneOf<Localizable>([string(), translationConfigDecoder], 'Localizable');
 
 const uidDecoder = optional(string()).map((s) => s || shortUUID());
 
@@ -327,21 +337,19 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
   'ActionWidget',
 );
 
-const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder(
-  (json: unknown) => {
-    const jsonTypeof = typeof json;
-    if (jsonTypeof === 'function') {
-      const fnWidget = json as FunctionWidget<string>;
-      const widget = fnWidget(undefined);
-      fnWidget.uid = widget.uid || shortUUID();
-      fnWidget.type = widget.type;
-      fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
-      return ok(fnWidget);
-    } else {
-      return err(`Expected a function, got '${jsonTypeof}'`);
-    }
-  },
-);
+const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json: unknown) => {
+  const jsonTypeof = typeof json;
+  if (jsonTypeof === 'function') {
+    const fnWidget = json as FunctionWidget<string>;
+    const widget = fnWidget(undefined);
+    fnWidget.uid = widget.uid || shortUUID();
+    fnWidget.type = widget.type;
+    fnWidget.path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
+    return ok(fnWidget);
+  } else {
+    return err(`Expected a function, got '${jsonTypeof}'`);
+  }
+});
 
 const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>(
   {

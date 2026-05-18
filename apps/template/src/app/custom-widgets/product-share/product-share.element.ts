@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit'
-import type { ActionWidget, WithWidget } from '@golemui/core'
+import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
+import type { ActionWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import { type Subscription } from 'rxjs';
 import './product-share.element.scss';

@@ -1,5 +1,5 @@
-import { type Form, formDefDecoder } from '../form'
-import type { FormWidget, FunctionWidget } from '../form-widget'
+import { type Form, formDefDecoder } from '../form';
+import type { FormWidget, FunctionWidget } from '../form-widget';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------

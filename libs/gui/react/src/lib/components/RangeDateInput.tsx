@@ -1,4 +1,4 @@
-import type { InputWidget, Validator, WithWidget } from '@golemui/core'
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';

@@ -1,4 +1,4 @@
-import { type FormHealth, defineForm } from '@golemui/core'
+import { type FormHealth, defineForm } from '@golemui/core';
 import { type MountComponentFn } from '../utils';
 
 export const runUidTests = (mountFn: MountComponentFn) => {

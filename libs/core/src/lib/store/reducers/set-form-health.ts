@@ -1,4 +1,4 @@
-import type { SET_FORM_HEALTH } from '../actions'
+import type { SET_FORM_HEALTH } from '../actions';
 import { type State } from '../model';
 
 /**

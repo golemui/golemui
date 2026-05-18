@@ -1,11 +1,8 @@
 import { type FormWidget, isInputWidget } from '../../form-widget';
-import type { OVERRIDE_WIDGET_PROP } from '../actions'
+import type { OVERRIDE_WIDGET_PROP } from '../actions';
 import { type DerivedWidget, type State } from '../model';
 
-export const overrideWidgetProp = (
-  state: State,
-  { payload }: OVERRIDE_WIDGET_PROP,
-): State => {
+export const overrideWidgetProp = (state: State, { payload }: OVERRIDE_WIDGET_PROP): State => {
   let widget: DerivedWidget<FormWidget<string, any, any>> | undefined;
 
   if ('path' in payload) {

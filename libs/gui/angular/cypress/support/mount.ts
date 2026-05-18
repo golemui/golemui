@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { EventEmitter, type Type } from '@angular/core';
 import { FormCoreComponent } from '@golemui/angular';
-import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core'
+import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type MountOptions } from '@golemui/ui-testing';
 import { createOutputSpy, mount } from 'cypress/angular';

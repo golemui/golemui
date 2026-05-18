@@ -1,4 +1,4 @@
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
 import { createElement, type PropsWithChildren } from 'react';
 import styles from './heading.component.module.scss';

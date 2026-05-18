@@ -1,4 +1,4 @@
-import type { ActionWidget, ActionWidgetTemplateData } from '@golemui/core'
+import type { ActionWidget, ActionWidgetTemplateData } from '@golemui/core';
 import { createContext } from '@lit/context';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 

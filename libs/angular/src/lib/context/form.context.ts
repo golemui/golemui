@@ -1,5 +1,5 @@
 import { Injectable, type Type } from '@angular/core';
-import { FormContext, type WithWidget } from '@golemui/core'
+import { FormContext, type WithWidget } from '@golemui/core';
 
 @Injectable()
 export class AngularFormContext<T extends Type<WithWidget>> extends FormContext<T> {

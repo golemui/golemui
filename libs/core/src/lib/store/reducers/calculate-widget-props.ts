@@ -11,7 +11,12 @@ import {
   type LayoutWidget,
   type NonFunctionWidget,
 } from '../../form-widget';
-import { type I18nParams, type I18nTranslator, isTranslationConfig, type TranslationConfig } from '../../i18n';
+import {
+  type I18nParams,
+  type I18nTranslator,
+  isTranslationConfig,
+  type TranslationConfig,
+} from '../../i18n';
 import { type $Errors } from '../../shared';
 import {
   calculateValidationVariables,

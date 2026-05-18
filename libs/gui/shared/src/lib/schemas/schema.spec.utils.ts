@@ -1,6 +1,6 @@
-import {type ErrorObject} from 'ajv/dist/2020';
+import { type ErrorObject } from 'ajv/dist/2020';
 import type Ajv2020 from 'ajv/dist/2020';
-import { $id } from './form.schema.json'
+import { $id } from './form.schema.json';
 
 export type GetSchema = NonNullable<ReturnType<Ajv2020['getSchema']>>;
 

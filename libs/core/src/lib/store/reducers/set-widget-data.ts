@@ -1,5 +1,5 @@
 import { get, set } from '../../utils/object';
-import type { SET_WIDGET_DATA, SET_WIDGET_INITIAL_DATA } from '../actions'
+import type { SET_WIDGET_DATA, SET_WIDGET_INITIAL_DATA } from '../actions';
 import { type State } from '../model';
 
 export const setWidgetData = (

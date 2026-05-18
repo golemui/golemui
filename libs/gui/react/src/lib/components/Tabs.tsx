@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { cn, useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { createIntersectionObserver } from '@golemui/gui-components';
 import { type TabsProps } from '@golemui/gui-shared';

@@ -1,7 +1,11 @@
 import Ajv2020 from 'ajv/dist/2020';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { golemForm } from '../../golem-form';
-import { type GetSchema, registerGolemSchemas, specValidationErrorsLogger } from '../schema.spec.utils';
+import {
+  type GetSchema,
+  registerGolemSchemas,
+  specValidationErrorsLogger,
+} from '../schema.spec.utils';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/datepicker.schema.json';
 

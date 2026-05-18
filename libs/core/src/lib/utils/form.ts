@@ -1,4 +1,4 @@
-import { type FormWidget, isLayoutWidget } from '../form-widget'
+import { type FormWidget, isLayoutWidget } from '../form-widget';
 import { type $Errors, type DotPath } from '../shared';
 import { type State } from '../store/model';
 import { set } from './object';

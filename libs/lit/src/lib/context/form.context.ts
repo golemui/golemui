@@ -1,4 +1,4 @@
-import { FormContext, type WithWidget } from '@golemui/core'
+import { FormContext, type WithWidget } from '@golemui/core';
 import { createContext } from '@lit/context';
 
 export const formContext = createContext<LitFormContext<any>>('guiFormContext');

@@ -1,6 +1,6 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { join } from 'path'
+import { join } from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 

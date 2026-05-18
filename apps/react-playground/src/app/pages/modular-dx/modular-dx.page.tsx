@@ -1,4 +1,4 @@
-import { modularDx, onFormEvent } from '@golemui/apps-shared'
+import { modularDx, onFormEvent } from '@golemui/apps-shared';
 import { GuiForm } from '@golemui/gui-react';
 
 const md = modularDx;

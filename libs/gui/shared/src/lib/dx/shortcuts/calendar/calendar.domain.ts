@@ -1,7 +1,15 @@
 import type { StringValidator } from '@golemui/gui-validators';
 import { type CalendarProps } from '../../../widget.props';
-import { type DxCommonFields, type DxInputBase, type DxInternalFields } from '../../core/dxBase.types';
-import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '../../core/dxUtilityTypes';
+import {
+  type DxCommonFields,
+  type DxInputBase,
+  type DxInternalFields,
+} from '../../core/dxBase.types';
+import {
+  type DefOrCallback,
+  type GslConfigBase,
+  type GuiShortcutOf,
+} from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
 // Calendar Decorators

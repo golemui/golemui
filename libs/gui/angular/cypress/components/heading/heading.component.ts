@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { DisplayWidgetAdapter } from '@golemui/angular'
-import type { DisplayWidget, WithWidget } from '@golemui/core'
+import { DisplayWidgetAdapter } from '@golemui/angular';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 
 type OwnWidgetProps = {
   text: string;
@@ -19,9 +19,7 @@ type OwnWidgetProps = {
 export class HeadingComponent implements OnInit, OnDestroy, WithWidget {
   widget!: DisplayWidget;
 
-  protected adapter: DisplayWidgetAdapter<OwnWidgetProps> = inject(
-    DisplayWidgetAdapter,
-  );
+  protected adapter: DisplayWidgetAdapter<OwnWidgetProps> = inject(DisplayWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

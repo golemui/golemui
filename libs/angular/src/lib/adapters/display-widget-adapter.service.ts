@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import type { DisplayWidget, DisplayWidgetTemplateData } from '@golemui/core'
+import type { DisplayWidget, DisplayWidgetTemplateData } from '@golemui/core';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()

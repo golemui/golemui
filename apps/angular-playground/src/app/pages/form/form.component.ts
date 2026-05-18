@@ -1,11 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { type AngularItemRenderer } from '@golemui/angular';
-import { allowedNames, commonLanguages, initializeI18n, kitchenSink, onFormEvent } from '@golemui/apps-shared'
-import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core'
-import { FormComponent } from '@golemui/gui-angular'
+import {
+  allowedNames,
+  commonLanguages,
+  initializeI18n,
+  kitchenSink,
+  onFormEvent,
+} from '@golemui/apps-shared';
+import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core';
+import { FormComponent } from '@golemui/gui-angular';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
-import type { CustomValidatorSchemas } from '@golemui/gui-validators'
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
 import snarkdown from 'snarkdown';
 import { APP_CONFIG } from '../../../environments/environment.model';

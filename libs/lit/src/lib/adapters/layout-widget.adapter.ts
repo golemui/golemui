@@ -1,4 +1,8 @@
-import { type LayoutTemplateData, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core'
+import {
+  type LayoutTemplateData,
+  type LayoutWidget,
+  calculatedLayoutChildrenByUid$,
+} from '@golemui/core';
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseWidgetAdapter } from './base-widget.adapter';

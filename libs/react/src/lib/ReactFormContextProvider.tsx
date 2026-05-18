@@ -1,4 +1,4 @@
-import type { FormContext, WithWidget } from '@golemui/core'
+import type { FormContext, WithWidget } from '@golemui/core';
 import { ReactFormContext } from './ReactFormContext';
 
 export function ReactFormContextProvider({
