@@ -1,1 +1,1 @@
-export * from './aria.controller';
+export { GUIAriaController } from './aria.controller';

@@ -1,1 +1,1 @@
-export * from './devtools/devtools.middleware';
+export { devToolsMiddleware } from './devtools/devtools.middleware';
