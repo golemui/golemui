@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { ItemRenderContext } from '@golemui/core';
+import { type ItemRenderContext } from '@golemui/core';
 
 export const defaultListItemRenderer = (ctx: ItemRenderContext<any>) => {
   const classes = {

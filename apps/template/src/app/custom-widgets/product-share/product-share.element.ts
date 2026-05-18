@@ -2,9 +2,9 @@ import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import * as Lit from '@golemui/lit';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import './product-share.element.scss';
 
 interface ShareNetwork {

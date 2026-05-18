@@ -1,4 +1,4 @@
-import { GslAggregatedSelector, GslLeafSelector } from '../../core/dx.domain';
+import { type GslAggregatedSelector, type GslLeafSelector } from '../../core/dx.domain';
 
 export function _gslTag(tag: string, ...children: GslLeafSelector[]): GslAggregatedSelector {
   return {

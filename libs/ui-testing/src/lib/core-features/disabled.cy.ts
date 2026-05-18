@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
-import { Option } from '@golemui/gui-shared';
-import { MountComponentFn } from '../utils';
+import { type Option } from '@golemui/gui-shared';
+import { type MountComponentFn } from '../utils';
 
 const options: Option[] = [
   { label: 'Opt 1', value: 'o1' },

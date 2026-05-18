@@ -1,6 +1,6 @@
 import * as Form from '../form';
-import * as Widget from '../form-widget';
-import { DotPath, Uid, ValidationStatus } from '../shared';
+import type * as Widget from '../form-widget';
+import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
 //

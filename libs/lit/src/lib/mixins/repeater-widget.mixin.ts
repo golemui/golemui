@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { consume, ContextProvider } from '@lit/context';
-import { LitElement } from 'lit';
+import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { formContext, LitFormContext } from '../context/form.context';
+import { formContext, type LitFormContext } from '../context/form.context';
 import { repeaterIndexesContext } from '../context/repeater-index-token.context';
 
 export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement>(

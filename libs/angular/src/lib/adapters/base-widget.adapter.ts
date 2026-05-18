@@ -1,4 +1,4 @@
-import { inject, WritableSignal } from '@angular/core';
+import { inject, type WritableSignal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';

@@ -1,10 +1,10 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
-import { MarkdownTextProps } from '@golemui/gui-shared';
-import { Subscription } from 'rxjs';
+import { type MarkdownTextProps } from '@golemui/gui-shared';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-markdown-text-display')
 export class MarkdownTextElement extends LitElement implements Core.WithWidget {

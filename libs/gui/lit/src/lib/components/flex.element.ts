@@ -1,10 +1,10 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { FlexProps } from '@golemui/gui-shared';
+import { type FlexProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 

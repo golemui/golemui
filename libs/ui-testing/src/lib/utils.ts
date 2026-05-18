@@ -1,7 +1,7 @@
-import * as Core from '@golemui/core';
-import { Action, Middleware, State, ValidateOn } from '@golemui/core';
-import { Dependencies } from '@golemui/gui-shared';
-import { CustomValidatorSchemas } from '@golemui/gui-validators';
+import type * as Core from '@golemui/core';
+import { type Action, type Middleware, type State, type ValidateOn } from '@golemui/core';
+import { type Dependencies } from '@golemui/gui-shared';
+import { type CustomValidatorSchemas } from '@golemui/gui-validators';
 
 export interface FormHandle {
   setData: (data: Record<string, any>) => void;

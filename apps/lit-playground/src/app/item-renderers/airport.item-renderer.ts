@@ -1,7 +1,7 @@
-import { html, TemplateResult } from 'lit';
+import { html, type TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { ItemRenderContext } from '@golemui/core';
-import { AirportItem } from '@golemui/apps-shared';
+import { type ItemRenderContext } from '@golemui/core';
+import { type AirportItem } from '@golemui/apps-shared';
 
 export const airportItemRenderer = (ctx: ItemRenderContext<AirportItem>): TemplateResult => {
   const classes = {

@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { addErrors, addIcon, addLabel } from '@golemui/gui-components';
-import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
+import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-range-date-picker-input')

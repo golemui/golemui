@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { resolveChunkRefs } from '@golemui/gui-shared';
-import { Example } from './types';
+import { type Example } from './types';
 
 const data = {
   listName: 'Development Team',

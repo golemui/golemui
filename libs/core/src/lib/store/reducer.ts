@@ -1,11 +1,11 @@
-import { ValidatorFn } from '../form-validator';
-import { InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
-import { I18nTranslator } from '../i18n';
-import { ValidateOn } from '../shared';
+import { type ValidatorFn } from '../form-validator';
+import { type InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
+import { type I18nTranslator } from '../i18n';
+import { type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
 import * as Fn from '../utils/function';
-import { Action } from './actions';
-import { State } from './model';
+import { type Action } from './actions';
+import { type State } from './model';
 import * as Reducers from './reducers';
 import { reduceIf } from './reducers/utils';
 

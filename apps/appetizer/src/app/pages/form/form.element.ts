@@ -1,7 +1,7 @@
 import type { ItemRenderContext } from '@golemui/core';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import { gui, GuiFormInitConfig } from '@golemui/gui-shared';
+import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';

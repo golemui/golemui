@@ -1,12 +1,12 @@
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import type * as ValidatorsVanilla from '@golemui/gui-validators';
 import type { BooleanValidator } from '@golemui/gui-validators';
-import { NumberinputProps, TextinputProps, ToggleProps } from '../../../widget.props';
-import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
+import { type NumberinputProps, type TextinputProps, type ToggleProps } from '../../../widget.props';
+import { type DxCommonFields, type DxInputBase, type DxInternalFields } from '../../core/dxBase.types';
 import {
-  DefOrCallback,
-  DxRuntimeParams,
-  GslConfigBase,
-  GuiShortcutOf,
+  type DefOrCallback,
+  type DxRuntimeParams,
+  type GslConfigBase,
+  type GuiShortcutOf,
 } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════

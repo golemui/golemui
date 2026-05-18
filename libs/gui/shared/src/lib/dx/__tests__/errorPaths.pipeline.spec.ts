@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formDefs } from '../dx.service';
-import { ValidGuiShortcut, GuiItemTypes } from '../core/dx.domain';
+import { type ValidGuiShortcut, GuiItemTypes } from '../core/dx.domain';
 import { registerItemType, hasItemTypeHandler } from '../core/itemTypeRegistry';
 
 describe('DX Pipeline — Error Paths', () => {

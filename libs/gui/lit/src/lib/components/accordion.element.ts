@@ -1,13 +1,13 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { AccordionProps } from '@golemui/gui-shared';
+import { type AccordionProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { AccordionEventDetail } from '@golemui/gui-components';
+import { type AccordionEventDetail } from '@golemui/gui-components';
 
 @customElement('gui-accordion-layout')
 export class AccordionElement extends LitElement implements Core.WithWidget {

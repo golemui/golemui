@@ -4,10 +4,10 @@ import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
-import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
+import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { mergeDateRanges, toISODateString } from '../utils/date';
 import { createIntersectionObserver } from './tabs';
-import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
+import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
 
 interface DateParts {
   day: string;

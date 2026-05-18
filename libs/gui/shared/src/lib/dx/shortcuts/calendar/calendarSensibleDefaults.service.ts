@@ -1,4 +1,4 @@
-import { CalendarDecorator, CalendarSensibleDefaultsConfig } from './calendar.domain';
+import { type CalendarDecorator, type CalendarSensibleDefaultsConfig } from './calendar.domain';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
 
 export class CalendarSensibleDefaultsService {

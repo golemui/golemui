@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import * as Lit from '@golemui/lit';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import './heading.element.scss';
 

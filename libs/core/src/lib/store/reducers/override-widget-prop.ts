@@ -1,6 +1,6 @@
-import { FormWidget, isInputWidget } from '../../form-widget';
-import * as Actions from '../actions';
-import { DerivedWidget, State } from '../model';
+import { type FormWidget, isInputWidget } from '../../form-widget';
+import type * as Actions from '../actions';
+import { type DerivedWidget, type State } from '../model';
 
 export const overrideWidgetProp = (
   state: State,

@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { AccordionProps } from '@golemui/gui-shared';
+import { type AccordionProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};

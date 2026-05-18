@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';

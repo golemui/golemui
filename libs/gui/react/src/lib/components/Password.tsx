@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { PasswordProps } from '@golemui/gui-shared';
+import { type PasswordProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 

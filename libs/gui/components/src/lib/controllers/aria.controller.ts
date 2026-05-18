@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { ReactiveController, ReactiveControllerHost } from 'lit';
+import { type ReactiveController, type ReactiveControllerHost } from 'lit';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string }>
   implements ReactiveController

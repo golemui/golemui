@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import { createContext } from '@lit/context';
 import { combineLatest, takeUntil } from 'rxjs';
-import { LitItemRenderer } from '../components/item-renderers/item-renderer';
+import { type LitItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 export const inputContext = createContext<InputWidgetAdapter<any, any>>('guiInputWidgetAdapter');

@@ -1,13 +1,13 @@
 import { Subject } from 'rxjs';
-import { createFormStore, FormStore } from '../form-store';
-import { ValidatorFn } from '../form-validator';
-import { ActionWidget, InputWidget, LayoutWidget, On } from '../form-widget';
-import { I18nTranslator, identityTranslator } from '../i18n';
-import { ItemRenderer } from '../item-renderer';
-import { EventHandlerCallback, EventName, FormEvent, ValidateOn } from '../shared';
-import { Action } from '../store/actions';
-import { Middleware, State } from '../store/model';
-import { WidgetLoaders, WidgetRegistry } from './widget-registry';
+import { createFormStore, type FormStore } from '../form-store';
+import { type ValidatorFn } from '../form-validator';
+import { type ActionWidget, type InputWidget, type LayoutWidget, type On } from '../form-widget';
+import { type I18nTranslator, identityTranslator } from '../i18n';
+import { type ItemRenderer } from '../item-renderer';
+import { type EventHandlerCallback, type EventName, type FormEvent, type ValidateOn } from '../shared';
+import { type Action } from '../store/actions';
+import { type Middleware, type State } from '../store/model';
+import { type WidgetLoaders, WidgetRegistry } from './widget-registry';
 
 export class FormContext<ComponentType> {
   widgetRegistry = new WidgetRegistry<ComponentType>();

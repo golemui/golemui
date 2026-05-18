@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { useCallback } from 'react';
 

@@ -1,5 +1,5 @@
-import { Type } from '@angular/core';
-import * as Core from '@golemui/core';
+import { type Type } from '@angular/core';
+import type * as Core from '@golemui/core';
 
 /**
  * The Angular-specific Core.ItemRenderer type.

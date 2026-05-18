@@ -1,4 +1,4 @@
-import { NonFunctionWidget } from '../form-widget';
+import { type NonFunctionWidget } from '../form-widget';
 
 /**
  * @internal Framework adapter contract — not part of the end-user public API.

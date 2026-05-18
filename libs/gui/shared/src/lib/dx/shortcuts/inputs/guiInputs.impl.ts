@@ -1,5 +1,5 @@
 import { GuiItemTypes } from '../../core/dx.domain';
-import { GuiInputsShortcut, InputEntry, InputDefOrCallback, SimpleFieldDef } from './inputs.domain';
+import { type GuiInputsShortcut, type InputEntry, type InputDefOrCallback, type SimpleFieldDef } from './inputs.domain';
 import inputDefsByKeyService from './inputDefsByKey.service';
 
 export function _guiInputs(

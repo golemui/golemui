@@ -1,4 +1,4 @@
-import { InputDecorator, InputSensibleDefaultsConfig } from './inputs.domain';
+import { type InputDecorator, type InputSensibleDefaultsConfig } from './inputs.domain';
 import {
   pathToLabel,
   processAutoLabel,

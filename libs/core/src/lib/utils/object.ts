@@ -1,4 +1,4 @@
-import { DotPath } from '../shared';
+import { type DotPath } from '../shared';
 
 /**
  * Retrieves a value from a nested object using a dot-separated path.

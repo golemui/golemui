@@ -1,10 +1,10 @@
 // Complexity: MODERATE — always produces a FunctionWidget (dynamic). The buildCustomWidget
 // hook wraps the developer's render function so it re-evaluates on form state changes.
-import { FormWidget, FunctionWidgetParams, NonFunctionWidget, UiState } from '@golemui/core';
-import { MergeResult } from '../../core/dx.domain';
-import { BuildWidgetContext } from '../../core/itemTypeRegistry';
+import { type FormWidget, type FunctionWidgetParams, type NonFunctionWidget, type UiState } from '@golemui/core';
+import { type MergeResult } from '../../core/dx.domain';
+import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
-import { DisplayDecorator, DisplayEntry, GslDisplaysConfig } from './display.domain';
+import { type DisplayDecorator, type DisplayEntry, type GslDisplaysConfig } from './display.domain';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
   def: DisplayDecorator,

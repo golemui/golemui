@@ -1,12 +1,12 @@
-import { I18nTranslator, isStandardValidateSuccess, standardValidate } from '@golemui/core';
-import { StandardSchemaV1 } from '@standard-schema/spec';
+import { type I18nTranslator, isStandardValidateSuccess, standardValidate } from '@golemui/core';
+import { type StandardSchemaV1 } from '@standard-schema/spec';
 import {
-  ArrayValidator,
-  BooleanValidator,
-  CustomValidatorSchemas,
+  type ArrayValidator,
+  type BooleanValidator,
+  type CustomValidatorSchemas,
   initValidators,
-  NumberValidator,
-  StringValidator,
+  type NumberValidator,
+  type StringValidator,
 } from './validators';
 
 const validate = initValidators();

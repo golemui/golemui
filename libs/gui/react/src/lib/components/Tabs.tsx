@@ -1,7 +1,7 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { cn, useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { createIntersectionObserver } from '@golemui/gui-components';
-import { TabsProps } from '@golemui/gui-shared';
+import { type TabsProps } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Tabs(widgetInstance: Core.WithWidget) {

@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { ComplexAttributeConverter } from 'lit';
+import type * as Core from '@golemui/core';
+import { type ComplexAttributeConverter } from 'lit';
 
 export const ValidateOnConverter: ComplexAttributeConverter<Core.ValidateOn | undefined> = {
   fromAttribute(value: string | null): Core.ValidateOn | undefined {

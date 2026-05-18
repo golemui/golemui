@@ -1,6 +1,6 @@
 import { iframeResizer, iframeThemeSync } from '@golemui/apps-shared';
 import '@golemui/gui-lit';
-import { gui, GuiFormInitConfig } from '@golemui/gui-shared';
+import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
@@ -15,7 +15,7 @@ type FragmentChangeHandler = (e: { data: unknown }) => void;
 type Fragment = {
   key: FragmentKey;
   label: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   build: (onChange: FragmentChangeHandler) => any[]; // formDef builder
   json: unknown[]; // display-friendly JSON snapshot
   dsl: string; // DSL source string

@@ -1,16 +1,16 @@
 import * as jd from 'ts.data.json';
-import { Localizable, TranslationConfig } from './i18n';
+import { type Localizable, type TranslationConfig } from './i18n';
 import {
-  DotPath,
-  FunctionWidgetParams,
-  ReactiveExpression,
-  Uid,
-  UiState,
-  WidgetPropertyFunction,
+  type DotPath,
+  type FunctionWidgetParams,
+  type ReactiveExpression,
+  type Uid,
+  type UiState,
+  type WidgetPropertyFunction,
 } from './shared';
 import { objectWithSuffix } from './utils/decoder';
 import { shortUUID } from './utils/random';
-import { AllSuffixable, SomeSuffixable } from './utils/suffixable';
+import { type AllSuffixable, type SomeSuffixable } from './utils/suffixable';
 
 // --------------------------------
 //

@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import * as Core from '@golemui/core';
 import { combineLatest, takeUntil } from 'rxjs';
-import { AngularItemRenderer } from '../components/item-renderers/item-renderer';
+import { type AngularItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()

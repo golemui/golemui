@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useDisplayWdiget } from '@golemui/react';
-import { createElement, PropsWithChildren } from 'react';
+import { createElement, type PropsWithChildren } from 'react';
 
 type HeadingWidgetProps = {
   text: string;

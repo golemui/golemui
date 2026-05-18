@@ -1,12 +1,12 @@
 import {
-  ActionWidget,
-  DisplayWidget,
-  FunctionWidget,
-  InputWidget,
-  LayoutWidget,
+  type ActionWidget,
+  type DisplayWidget,
+  type FunctionWidget,
+  type InputWidget,
+  type LayoutWidget,
 } from '../../form-widget';
-import { I18nParams, I18nTranslator, TranslationKey } from '../../i18n';
-import { createInitialState, State } from '../model';
+import { type I18nParams, type I18nTranslator, type TranslationKey } from '../../i18n';
+import { createInitialState, type State } from '../model';
 import { calculateWidgetProps } from './calculate-widget-props';
 
 // -----------------------------------------------------------------------------

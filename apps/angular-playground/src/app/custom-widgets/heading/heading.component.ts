@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 
 type OwnWidgetProps = {
   text: string;

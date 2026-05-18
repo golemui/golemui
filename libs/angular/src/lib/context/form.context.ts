@@ -1,4 +1,4 @@
-import { Injectable, Type } from '@angular/core';
+import { Injectable, type Type } from '@angular/core';
 import * as Core from '@golemui/core';
 
 @Injectable()

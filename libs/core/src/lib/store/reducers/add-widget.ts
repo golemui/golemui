@@ -1,6 +1,6 @@
-import { NonFunctionWidget } from '../../form-widget';
-import { ADD_WIDGET } from '../actions';
-import { State } from '../model';
+import { type NonFunctionWidget } from '../../form-widget';
+import { type ADD_WIDGET } from '../actions';
+import { type State } from '../model';
 
 export function addWidget(state: State, action: ADD_WIDGET): State {
   return {

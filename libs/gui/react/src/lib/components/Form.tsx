@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
-import { FormInitConfig } from '@golemui/core';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
+import type * as Core from '@golemui/core';
+import { type FormInitConfig } from '@golemui/core';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import * as React from '@golemui/react';
-import { ReactItemRenderer } from '@golemui/react';
-import { ComponentType, Ref, useMemo } from 'react';
+import { type ReactItemRenderer } from '@golemui/react';
+import { type ComponentType, type Ref, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 
 export interface ReactFormComponentProps {

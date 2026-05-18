@@ -1,9 +1,9 @@
-import * as Core from '@golemui/core';
-import { ValidateOn } from '@golemui/core';
-import { ValidGuiShortcut } from './core/dx.domain';
-import { DxCommonFields, DxInternalFields } from './core/dxBase.types';
-import { DxRuntimeParams } from './core/dxUtilityTypes';
-import { Dependencies } from '../shared';
+import type * as Core from '@golemui/core';
+import { type ValidateOn } from '@golemui/core';
+import { type ValidGuiShortcut } from './core/dx.domain';
+import { type DxCommonFields, type DxInternalFields } from './core/dxBase.types';
+import { type DxRuntimeParams } from './core/dxUtilityTypes';
+import { type Dependencies } from '../shared';
 
 // ═══════════════════════════════════════════════════
 // Base Types (owned here)

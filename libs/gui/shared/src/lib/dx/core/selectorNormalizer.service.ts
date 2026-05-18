@@ -1,4 +1,4 @@
-import { FormConfig, GslLeafSelector, GslSelector, GslSelectorsInput } from './dx.domain';
+import { type FormConfig, type GslLeafSelector, type GslSelector, type GslSelectorsInput } from './dx.domain';
 
 export class SelectorNormalizer {
   /**

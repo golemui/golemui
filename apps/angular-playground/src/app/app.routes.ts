@@ -1,4 +1,4 @@
-import { Route } from '@angular/router';
+import { type Route } from '@angular/router';
 import { LandingPage } from './pages/landing/landing.component';
 import { AppFormPage } from './pages/form/form.component';
 import { DxFormPage } from './pages/dx-form/dx-form.component';

@@ -1,5 +1,5 @@
 import { computed, Directive, input } from '@angular/core';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 
 @Directive({
   standalone: true,

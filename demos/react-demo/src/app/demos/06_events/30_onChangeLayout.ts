@@ -1,5 +1,5 @@
-import { FormDemoDefinition } from '../../../formRegistry.domain';
-import { DemoLogFn } from '../../../../utils/demoLog';
+import { type FormDemoDefinition } from '../../../formRegistry.domain';
+import { type DemoLogFn } from '../../../../utils/demoLog';
 import { gui } from '@golemui/gui-shared';
 
 export const onChangeLayoutDemo: FormDemoDefinition = {

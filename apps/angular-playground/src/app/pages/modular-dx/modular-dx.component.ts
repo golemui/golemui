@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as GuiAngular from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 

@@ -1,4 +1,4 @@
-import { Option } from '../widget.props';
+import { type Option } from '../widget.props';
 
 /**
  * Checks whether a value is a fully compliant Option (with label and value fields)

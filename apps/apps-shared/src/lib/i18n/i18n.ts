@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import i18next, { Resource } from 'i18next';
+import type * as Core from '@golemui/core';
+import i18next, { type Resource } from 'i18next';
 
 export function initializeI18n(resources: Resource): Core.I18nTranslator {
   i18next.init({

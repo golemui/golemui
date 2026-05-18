@@ -1,10 +1,10 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { DropdownProps, ListItem } from '@golemui/gui-shared';
+import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-dropdown-input')

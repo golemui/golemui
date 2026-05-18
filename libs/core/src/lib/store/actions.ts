@@ -1,6 +1,6 @@
-import { FormWidget } from '../form-widget';
-import { DotPath, Uid, ValidateOn } from '../shared';
-import { FormHealth } from './model';
+import { type FormWidget } from '../form-widget';
+import { type DotPath, type Uid, type ValidateOn } from '../shared';
+import { type FormHealth } from './model';
 
 export type INITIALIZE = {
   type: 'INITIALIZE';

@@ -1,4 +1,4 @@
-import { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
 import type { GuiSelectShortcut, SelectDecorator, SelectEntry } from './select.domain';
 
 type SelectFactoryProps = Omit<SelectDecorator, 'type'>;

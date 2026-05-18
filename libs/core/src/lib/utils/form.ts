@@ -1,6 +1,6 @@
 import * as Widget from '../form-widget';
-import { $Errors, DotPath } from '../shared';
-import { State } from '../store/model';
+import { type $Errors, type DotPath } from '../shared';
+import { type State } from '../store/model';
 import { set } from './object';
 
 /**

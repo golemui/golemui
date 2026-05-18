@@ -1,6 +1,6 @@
 import { get, set } from '../../utils/object';
-import * as Actions from '../actions';
-import { State } from '../model';
+import type * as Actions from '../actions';
+import { type State } from '../model';
 
 export const setWidgetData = (
   state: State,

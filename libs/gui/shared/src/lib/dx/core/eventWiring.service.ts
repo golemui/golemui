@@ -1,13 +1,13 @@
-import { FormEvent, FunctionWidgetParams } from '@golemui/core';
+import { type FormEvent, type FunctionWidgetParams } from '@golemui/core';
 import {
-  FormConfig,
+  type FormConfig,
   GuiItemTypes,
-  MergeResult,
-  RuntimeFunction,
-  ValidGuiShortcut,
+  type MergeResult,
+  type RuntimeFunction,
+  type ValidGuiShortcut,
 } from './dx.domain';
-import { ActionDecorator } from '../shortcuts/actions/actions.domain';
-import { EventIdGenerator, getItemTypeHandler } from './itemTypeRegistry';
+import { type ActionDecorator } from '../shortcuts/actions/actions.domain';
+import { type EventIdGenerator, getItemTypeHandler } from './itemTypeRegistry';
 
 export type EventRegistry = Map<string, (event: FormEvent) => void>;
 

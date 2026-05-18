@@ -1,7 +1,7 @@
 import * as Core from '@golemui/core';
 import type { WithWidget } from '@golemui/core/internals';
 import { Subject, takeUntil } from 'rxjs';
-import { LitFormContext } from '../context/form.context';
+import { type LitFormContext } from '../context/form.context';
 
 export abstract class BaseWidgetAdapter<F extends Core.FormWidget> {
   context!: LitFormContext<WithWidget>;

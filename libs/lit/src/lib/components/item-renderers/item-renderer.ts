@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { TemplateResult } from 'lit';
+import type * as Core from '@golemui/core';
+import { type TemplateResult } from 'lit';
 
 /**
  * The Lit-specific Core.ItemRenderer type.

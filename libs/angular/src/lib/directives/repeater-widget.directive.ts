@@ -6,9 +6,9 @@ import {
   input,
   Optional,
   SkipSelf,
-  Type,
+  type Type,
 } from '@angular/core';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { WidgetDirective } from './widget.directive';
 import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
 

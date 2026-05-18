@@ -1,7 +1,7 @@
 import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import snarkdown from 'snarkdown';

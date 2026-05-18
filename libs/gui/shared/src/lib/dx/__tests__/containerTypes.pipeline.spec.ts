@@ -1,4 +1,4 @@
-import { LayoutWidget } from '@golemui/core';
+import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
 import { _guiTabs, _guiList, _guiCheckbox, _guiButton, _gslTabs, _gslLists } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';

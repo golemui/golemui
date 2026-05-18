@@ -1,4 +1,4 @@
-import { MountComponentFn } from '../utils';
+import { type MountComponentFn } from '../utils';
 import * as Core from '@golemui/core';
 
 export const runMiddlewaresComponentTests = (mountFn: MountComponentFn) => {

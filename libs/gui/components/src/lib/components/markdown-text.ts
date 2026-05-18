@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { Dependencies } from '@golemui/gui-shared';
+import { type Dependencies } from '@golemui/gui-shared';
 
 @customElement('gui-markdown-text')
 export class GuiMarkdownText extends LitElement {

@@ -1,10 +1,10 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { DateRange, RangeCalendarProps } from '@golemui/gui-shared';
+import { type DateRange, type RangeCalendarProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-range-calendar-input')
 export class RangeCalendarElement extends LitElement implements Core.WithWidget {

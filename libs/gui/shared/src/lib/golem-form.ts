@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
-import { Validator } from '@golemui/gui-validators';
-import * as Props from './widget.props';
+import type * as Core from '@golemui/core';
+import { type Validator } from '@golemui/gui-validators';
+import type * as Props from './widget.props';
 
 // -------------------
 //

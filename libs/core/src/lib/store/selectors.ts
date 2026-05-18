@@ -3,14 +3,14 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  Observable,
+  type Observable,
   pipe,
   startWith,
 } from 'rxjs';
-import { LayoutWidget } from '../form-widget';
-import { DotPath, Uid } from '../shared';
+import { type LayoutWidget } from '../form-widget';
+import { type DotPath, type Uid } from '../shared';
 import * as Obj from '../utils/object';
-import { State } from './model';
+import { type State } from './model';
 
 // --------------------------------
 //

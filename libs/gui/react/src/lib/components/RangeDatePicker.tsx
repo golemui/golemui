@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
+import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';

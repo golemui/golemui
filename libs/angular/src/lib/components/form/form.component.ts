@@ -5,15 +5,15 @@ import {
   DestroyRef,
   inject,
   input,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   output,
   signal,
-  Type,
+  type Type,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import * as Core from '@golemui/core';
-import { FormInitConfig } from '@golemui/core';
+import { type FormInitConfig } from '@golemui/core';
 import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';

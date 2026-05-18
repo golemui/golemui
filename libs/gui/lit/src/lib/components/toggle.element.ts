@@ -1,10 +1,10 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { ToggleProps } from '@golemui/gui-shared';
+import { type ToggleProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-toggle-input')
 export class ToggleElement extends LitElement implements Core.WithWidget {

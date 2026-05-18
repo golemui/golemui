@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { type MountComponentFn } from '../utils';
 
 export const runUidTests = (mountFn: MountComponentFn) => {
   describe('Field Uid', () => {

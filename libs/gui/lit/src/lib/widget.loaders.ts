@@ -1,7 +1,7 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import '@golemui/gui-components';
-import { GolemWidget } from '@golemui/gui-shared';
-import { Type } from '@golemui/lit';
+import { type GolemWidget } from '@golemui/gui-shared';
+import { type Type } from '@golemui/lit';
 
 export const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, GolemWidget> = {
   // ACTION

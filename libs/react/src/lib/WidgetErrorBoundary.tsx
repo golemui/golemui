@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { Component, ErrorInfo, ReactNode } from 'react';
+import type * as Core from '@golemui/core';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;

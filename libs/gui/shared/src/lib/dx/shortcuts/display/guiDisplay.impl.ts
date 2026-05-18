@@ -1,6 +1,6 @@
 import { GuiItemTypes } from '../../core/dx.domain';
-import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import { GuiDisplayItemsShortcut } from './display.domain';
+import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type GuiDisplayItemsShortcut } from './display.domain';
 
 export const _guiDisplay = (
   render: (params: DxRuntimeParams) => any,

@@ -1,4 +1,4 @@
-import { GuiItemTypes, ValidGuiShortcut } from '../../core/dx.domain';
+import { GuiItemTypes, type ValidGuiShortcut } from '../../core/dx.domain';
 import type { GuiTabsShortcut, TabsDecorator } from './tabs.domain';
 
 type TabsFactoryProps = Omit<TabsDecorator, 'tabs'>;

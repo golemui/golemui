@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { type MountComponentFn } from '../utils';
 
 export const runComponentDependenciesTests = (mountFn: MountComponentFn) => {
   describe('3rd party dependencies', () => {

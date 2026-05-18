@@ -1,10 +1,10 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { ListItem, ListProps } from '@golemui/gui-shared';
+import { type ListItem, type ListProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-list-input')

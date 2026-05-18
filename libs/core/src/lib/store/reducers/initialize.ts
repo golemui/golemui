@@ -2,8 +2,8 @@ import { errorCodes } from '../../errors';
 import * as Form from '../../form';
 import * as Widget from '../../form-widget';
 import { flattenForm } from '../../utils/form';
-import * as Actions from '../actions';
-import { createInitialState, FormHealth, State } from '../model';
+import type * as Actions from '../actions';
+import { createInitialState, type FormHealth, type State } from '../model';
 
 export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State => {
   const initialState = {

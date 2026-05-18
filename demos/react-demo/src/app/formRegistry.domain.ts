@@ -1,5 +1,5 @@
-import { DxDefinitions, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
-import { DemoLogFn } from '../utils/demoLog';
+import { type DxDefinitions, type GslSelectorsInput, type DxFormConfig } from '@golemui/gui-shared';
+import { type DemoLogFn } from '../utils/demoLog';
 
 export interface FormDemoDefinition<T extends Record<string, any> = any> {
   title: string;

@@ -1,14 +1,14 @@
 // Complexity: COMPOUND — recursive children via buildCustomWidget + getChildren hooks.
 // Study this when your widget contains other widgets. See also accordion/ (same pattern).
 import {
-  FormWidget,
-  FunctionWidgetParams,
-  LayoutWidget,
-  NonFunctionWidget,
-  UiState,
+  type FormWidget,
+  type FunctionWidgetParams,
+  type LayoutWidget,
+  type NonFunctionWidget,
+  type UiState,
 } from '@golemui/core';
 import type { MergeResult } from '../../core/dx.domain';
-import { BuildWidgetContext } from '../../core/itemTypeRegistry';
+import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import type { GslTabsConfig, TabsDecorator, TabsEntry } from './tabs.domain';
 

@@ -1,6 +1,6 @@
 import * as Core from '@golemui/core';
 import i18next from 'i18next';
-import { MountComponentFn } from '../utils';
+import { type MountComponentFn } from '../utils';
 
 i18next.init({
   fallbackLng: 'en',

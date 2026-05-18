@@ -1,8 +1,8 @@
 import { GuiForm } from '@golemui/gui-react';
-import { DxDefinitions, DxFormConfig, formDefs, GslSelectorsInput } from '@golemui/gui-shared';
+import { type DxDefinitions, type DxFormConfig, formDefs, type GslSelectorsInput } from '@golemui/gui-shared';
 import * as React from 'react';
-import { Component, ErrorInfo, ReactNode } from 'react';
-import { DemoLogEntry, DemoLogFn } from '../utils/demoLog';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { type DemoLogEntry, type DemoLogFn } from '../utils/demoLog';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 

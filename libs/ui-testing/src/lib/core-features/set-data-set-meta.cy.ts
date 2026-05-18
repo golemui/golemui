@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { FormHandle, MountComponentFn } from '../utils';
+import { type FormHandle, type MountComponentFn } from '../utils';
 
 export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
   describe('setData / setMeta', () => {

@@ -1,28 +1,28 @@
-import { FormWidget, FunctionWidgetParams, NonFunctionWidget, UiState } from '@golemui/core';
+import { type FormWidget, type FunctionWidgetParams, type NonFunctionWidget, type UiState } from '@golemui/core';
 import type { GuiItemType } from './dx.domain';
 import {
-  FormConfig,
-  GslSelector,
-  MergeResult,
-  ResolvedSelectors,
-  RuntimeFunction,
-  ValidGuiShortcut,
+  type FormConfig,
+  type GslSelector,
+  type MergeResult,
+  type ResolvedSelectors,
+  type RuntimeFunction,
+  type ValidGuiShortcut,
 } from './dx.domain';
 import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import type { GslItemType } from '../formDef.domain';
-import { SelectorResolver } from './selectorResolver.service';
-import { WidgetMerger } from './widgetMerger.service';
-import { WidgetMapper } from './widgetMapper.service';
+import { type SelectorResolver } from './selectorResolver.service';
+import { type WidgetMerger } from './widgetMerger.service';
+import { type WidgetMapper } from './widgetMapper.service';
 import {
-  EventIdGenerator,
-  EventRegistry,
-  BuildWidgetContext,
+  type EventIdGenerator,
+  type EventRegistry,
+  type BuildWidgetContext,
   getItemTypeHandler,
-  ItemTypeHandler,
-  ParsedEntry,
+  type ItemTypeHandler,
+  type ParsedEntry,
 } from './itemTypeRegistry';
-import { EventWiringService } from './eventWiring.service';
-import { StateExpansionService } from './stateExpansion.service';
+import { type EventWiringService } from './eventWiring.service';
+import { type StateExpansionService } from './stateExpansion.service';
 
 function createEventIdGenerator(): EventIdGenerator {
   let count = 0;

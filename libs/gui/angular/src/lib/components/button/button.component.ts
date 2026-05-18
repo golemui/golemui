@@ -1,7 +1,7 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
 import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { ButtonProps } from '@golemui/gui-shared';
+import type * as Core from '@golemui/core';
+import { type ButtonProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,

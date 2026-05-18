@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { defineShortcutType } from '../core/defineShortcutType';
 import { processAutoLabel } from '../core/sharedSensibleDefaults.service';
-import { DxCommonFields, DxInputBase } from '../core/dxBase.types';
-import { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../core/dxUtilityTypes';
+import { type DxCommonFields, type DxInputBase } from '../core/dxBase.types';
+import { type DefOrCallback, type GslConfigBase, type GuiShortcutOf } from '../core/dxUtilityTypes';
 import { processDx, getStaticChild } from './helpers';
 
 interface CustomDecorator extends DxInputBase, DxCommonFields {

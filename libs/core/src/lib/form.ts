@@ -1,11 +1,11 @@
 import * as jd from 'ts.data.json';
-import { WidgetLoaders } from './context/widget-registry';
-import { FormWidget, LayoutWidget, layoutWidgetDecoder } from './form-widget';
-import { I18nTranslator } from './i18n';
-import { ItemRenderer } from './item-renderer';
-import { ReactiveExpression, UiState, ValidateOn } from './shared';
-import { Action } from './store/actions';
-import { Middleware, State } from './store/model';
+import { type WidgetLoaders } from './context/widget-registry';
+import { type FormWidget, type LayoutWidget, layoutWidgetDecoder } from './form-widget';
+import { type I18nTranslator } from './i18n';
+import { type ItemRenderer } from './item-renderer';
+import { type ReactiveExpression, type UiState, type ValidateOn } from './shared';
+import { type Action } from './store/actions';
+import { type Middleware, type State } from './store/model';
 
 // --------------------------------
 //
@@ -63,7 +63,7 @@ export interface FormInitConfig<ComponentType = unknown> {
 export const formDefDecoder = jd.object(
   {
     states: jd.optional(jd.record(jd.string(), 'states')),
-    form: layoutWidgetDecoder,
+    form: jd.lazy(() => layoutWidgetDecoder),
   },
   'FormDef',
 );

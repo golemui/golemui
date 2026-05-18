@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { RepeaterProps } from '@golemui/gui-shared';
+import type * as Core from '@golemui/core';
+import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
 import {
   RepeaterIndexesContext,

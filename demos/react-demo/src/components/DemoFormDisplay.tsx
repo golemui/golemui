@@ -1,7 +1,7 @@
 import * as React from '@golemui/react';
-import { Component, ErrorInfo, ReactNode } from 'react';
-import { DxDefinitions, GslSelectorsInput, DxFormConfig } from '@golemui/gui-shared';
-import { DemoLogFn } from '../utils/demoLog';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { type DxDefinitions, type GslSelectorsInput, type DxFormConfig } from '@golemui/gui-shared';
+import { type DemoLogFn } from '../utils/demoLog';
 import { FormDisplayLayout } from './FormDisplayLayout';
 
 interface DemoFormDisplayProps<T extends Record<string, any>> {

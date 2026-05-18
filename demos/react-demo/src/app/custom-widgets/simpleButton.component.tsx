@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 
 export function SimpleButtonComponent(fieldInstance: Core.WithWidget) {

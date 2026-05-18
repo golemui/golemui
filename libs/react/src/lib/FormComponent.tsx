@@ -1,5 +1,5 @@
 import * as Core from '@golemui/core';
-import { FormInitConfig } from '@golemui/core';
+import { type FormInitConfig } from '@golemui/core';
 import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
 import WidgetErrorBoundary from './WidgetErrorBoundary';

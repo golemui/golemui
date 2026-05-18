@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { GridProps } from '@golemui/gui-shared';
+import { type GridProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 

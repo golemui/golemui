@@ -1,8 +1,8 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import '@golemui/gui-lit';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
+import type * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';

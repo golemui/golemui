@@ -1,11 +1,11 @@
 import * as Core from '@golemui/core';
-import { FormInitConfig } from '@golemui/core';
+import { type FormInitConfig } from '@golemui/core';
 import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
 import { provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { formContext, LitFormContext } from '../../context/form.context';
 import '../widget/widget-element';
 

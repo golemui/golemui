@@ -1,6 +1,6 @@
 // TODO: We can probably remove this module entirely
-import * as Core from '@golemui/core';
-import * as Props from './widget.props';
+import type * as Core from '@golemui/core';
+import type * as Props from './widget.props';
 
 type InputWidgetConfig<T> = Omit<
   Core.InputWidget<T>,

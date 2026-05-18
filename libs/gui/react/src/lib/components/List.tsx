@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
-import { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
+import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
-import { ListItemRendererProps } from './item-renderers/props';
+import { type ListItemRendererProps } from './item-renderers/props';
 
 interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;

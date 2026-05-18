@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
-import { AngularItemRenderer } from '@golemui/angular';
+import { type AngularItemRenderer } from '@golemui/angular';
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import * as GuiAngular from '@golemui/gui-angular';
-import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
+import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
+import type * as GuiValidators from '@golemui/gui-validators';
 import i18next from 'i18next';
 import snarkdown from 'snarkdown';
 import { APP_CONFIG } from '../../../environments/environment.model';

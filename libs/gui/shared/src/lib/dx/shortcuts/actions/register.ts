@@ -1,8 +1,8 @@
 // Complexity: MODERATE — bare entry shape with afterMerge hook for onClick wiring.
 // The hook pattern is straightforward; the onClick service does the heavy lifting.
-import { ActionWidget, NonFunctionWidget, UiState } from '@golemui/core';
+import { type ActionWidget, type NonFunctionWidget, type UiState } from '@golemui/core';
 import { defineShortcutType } from '../../core/defineShortcutType';
-import { ActionDecorator, ActionEntry, GslActionsConfig } from './actions.domain';
+import { type ActionDecorator, type ActionEntry, type GslActionsConfig } from './actions.domain';
 import eventWiringService from '../../core/eventWiring.service';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(

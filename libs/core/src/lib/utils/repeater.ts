@@ -1,5 +1,5 @@
-import { isInputWidget, NonFunctionWidget } from '../form-widget';
-import { DotPath, Uid } from '../shared';
+import { isInputWidget, type NonFunctionWidget } from '../form-widget';
+import { type DotPath, type Uid } from '../shared';
 
 /**
  * Derives a concrete widget config for a specific repeater item by stamping

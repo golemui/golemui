@@ -1,6 +1,6 @@
-import { FunctionWidgetParams } from '@golemui/core';
-import { GslItemType, MergeResult, ResolvedSelectors, RuntimeFunction } from './dx.domain';
-import { objectUtils, ObjectUtils } from '../../utils/objectUtils.service';
+import { type FunctionWidgetParams } from '@golemui/core';
+import { type GslItemType, type MergeResult, type ResolvedSelectors, type RuntimeFunction } from './dx.domain';
+import { objectUtils, type ObjectUtils } from '../../utils/objectUtils.service';
 import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';
 
 export class WidgetMerger {

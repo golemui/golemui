@@ -1,6 +1,6 @@
-import { FormWidget, FunctionWidgetParams, LayoutWidget } from '@golemui/core';
-import { MergeResult, ValidGuiShortcut } from '../../core/dx.domain';
-import { BuildWidgetContext } from '../../core/itemTypeRegistry';
+import { type FormWidget, type FunctionWidgetParams, type LayoutWidget } from '@golemui/core';
+import { type MergeResult, type ValidGuiShortcut } from '../../core/dx.domain';
+import { type BuildWidgetContext } from '../../core/itemTypeRegistry';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import type {
   CustomLayoutDecorator,

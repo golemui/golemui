@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { RepeaterProps } from '@golemui/gui-shared';
+import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 /**
  * Monotonically increasing counter for generating unique repeater item IDs.

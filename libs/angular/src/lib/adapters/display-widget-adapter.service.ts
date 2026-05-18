@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()

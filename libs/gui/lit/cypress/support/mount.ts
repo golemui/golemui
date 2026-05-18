@@ -1,7 +1,7 @@
-import * as Core from '@golemui/core';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
-import { Type } from '@golemui/lit';
-import { FormHandle, MountOptions } from '@golemui/ui-testing';
+import type * as Core from '@golemui/core';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
+import { type Type } from '@golemui/lit';
+import { type FormHandle, type MountOptions } from '@golemui/ui-testing';
 import { html } from 'lit';
 import '../../src/lib/components/form.element';
 

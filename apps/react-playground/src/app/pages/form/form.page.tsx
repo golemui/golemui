@@ -1,9 +1,9 @@
 import * as AppsShared from '@golemui/apps-shared';
 import * as Core from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
-import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
-import { ReactItemRenderer } from '@golemui/react';
+import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
+import type * as GuiValidators from '@golemui/gui-validators';
+import { type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import snarkdown from 'snarkdown';

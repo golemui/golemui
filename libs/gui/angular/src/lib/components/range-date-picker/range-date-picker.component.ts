@@ -4,14 +4,14 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   signal,
   viewChild,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
+import type * as Core from '@golemui/core';
+import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
 

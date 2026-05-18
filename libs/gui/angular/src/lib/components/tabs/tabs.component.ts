@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
+  type AfterViewInit,
   Component,
   ElementRef,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   signal,
   viewChild,
   viewChildren,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { createIntersectionObserver, TabsEventDetail } from '@golemui/gui-components';
-import { TabsProps } from '@golemui/gui-shared';
+import type * as Core from '@golemui/core';
+import { createIntersectionObserver, type TabsEventDetail } from '@golemui/gui-components';
+import { type TabsProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,

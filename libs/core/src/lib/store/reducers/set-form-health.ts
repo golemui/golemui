@@ -1,5 +1,5 @@
-import * as Actions from '../actions';
-import { State } from '../model';
+import type * as Actions from '../actions';
+import { type State } from '../model';
 
 /**
  * Updates the operational state of the form.

@@ -1,8 +1,8 @@
 import * as Core from '@golemui/core';
 import { golemForm } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
+import type * as GuiValidators from '@golemui/gui-validators';
 import * as z from 'zod/mini';
-import { MountComponentFn } from '../utils';
+import { type MountComponentFn } from '../utils';
 
 const allowedNames: GuiValidators.CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(

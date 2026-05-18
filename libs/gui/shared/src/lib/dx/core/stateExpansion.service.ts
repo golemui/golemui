@@ -1,6 +1,6 @@
-import { FunctionWidgetParams, NonFunctionWidget } from '@golemui/core';
-import { GslLeafSelector, MergeResult, RuntimeFunction } from './dx.domain';
-import { EventIdGenerator, EventRegistry } from './itemTypeRegistry';
+import { type FunctionWidgetParams, type NonFunctionWidget } from '@golemui/core';
+import { type GslLeafSelector, type MergeResult, type RuntimeFunction } from './dx.domain';
+import { type EventIdGenerator, type EventRegistry } from './itemTypeRegistry';
 
 // ═══════════════════════════════════════════════════
 // State Expansion Service

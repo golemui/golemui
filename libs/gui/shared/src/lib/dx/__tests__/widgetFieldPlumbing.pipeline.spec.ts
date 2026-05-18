@@ -25,7 +25,7 @@ import { _guiMarkdown } from '../shortcuts/markdown/guiMarkdown.impl';
 import { _guiRangeDateInput } from '../shortcuts/range-date-input/guiRangeDateInput.impl';
 import { _guiRangeDatePicker } from '../shortcuts/range-date-picker/guiRangeDatePicker.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
-import { GuiItemTypes, ValidGuiShortcut } from '../core/dx.domain';
+import { GuiItemTypes, type ValidGuiShortcut } from '../core/dx.domain';
 
 // ═══════════════════════════════════════════════════
 // Gap 4: defaultValue pass-through

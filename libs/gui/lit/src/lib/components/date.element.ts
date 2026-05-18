@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
 import { addIcon } from '@golemui/gui-components';
-import { DatePickerProps } from '@golemui/gui-shared';
+import { type DatePickerProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-date-input')

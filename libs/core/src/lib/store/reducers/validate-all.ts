@@ -1,11 +1,11 @@
-import { StandardSchemaV1 } from '@standard-schema/spec';
-import { isStandardValidateSuccess, standardValidate, ValidatorFn } from '../../form-validator';
-import { InputWidget, isInputWidget } from '../../form-widget';
-import { I18nTranslator } from '../../i18n';
-import { ValidationStatus } from '../../shared';
+import { type StandardSchemaV1 } from '@standard-schema/spec';
+import { isStandardValidateSuccess, standardValidate, type ValidatorFn } from '../../form-validator';
+import { type InputWidget, isInputWidget } from '../../form-widget';
+import { type I18nTranslator } from '../../i18n';
+import { type ValidationStatus } from '../../shared';
 import { filterMap, SKIP, zipEvery } from '../../utils/array';
 import { get } from '../../utils/object';
-import { State } from '../model';
+import { type State } from '../model';
 
 export const validateAll =
   (validators: ValidatorFn<any>, localization: I18nTranslator) =>

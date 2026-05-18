@@ -1,11 +1,11 @@
 import {
-  ComponentRef,
+  type ComponentRef,
   Directive,
   inject,
-  Injector,
+  type Injector,
   input,
-  OnInit,
-  Type,
+  type OnInit,
+  type Type,
   ViewContainerRef,
 } from '@angular/core';
 import * as Core from '@golemui/core';

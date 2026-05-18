@@ -1,7 +1,7 @@
-import { Type } from '@angular/core';
-import * as Core from '@golemui/core';
+import { type Type } from '@angular/core';
+import type * as Core from '@golemui/core';
 import '@golemui/gui-components';
-import { GolemWidget } from '@golemui/gui-shared';
+import { type GolemWidget } from '@golemui/gui-shared';
 
 export const widgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>, GolemWidget> = {
   // ACTION WIDGETS

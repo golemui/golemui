@@ -1,4 +1,4 @@
-import { ListItem, ListProps } from '@golemui/gui-shared';
+import { type ListItem, type ListProps } from '@golemui/gui-shared';
 
 export type ListItemValue = string | number;
 

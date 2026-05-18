@@ -6,15 +6,15 @@ import {
   ElementRef,
   HostListener,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   signal,
   viewChild,
 } from '@angular/core';
 import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { DropdownProps, ListItem } from '@golemui/gui-shared';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import type * as Core from '@golemui/core';
+import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
+import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 
 @Component({

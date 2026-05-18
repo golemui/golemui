@@ -1,10 +1,10 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import * as Core from '@golemui/core';
+import type * as Core from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import * as Lit from '@golemui/lit';
-import { AlertProps } from '@golemui/gui-shared';
-import { Subscription } from 'rxjs';
+import { type AlertProps } from '@golemui/gui-shared';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-alert-display')
 export class AlertElement extends LitElement implements Core.WithWidget {

@@ -1,4 +1,4 @@
-import { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
 import type { DateInputDecorator, DateInputEntry, GuiDateInputShortcut } from './dateInput.domain';
 
 export function _guiDateInput(path: string): GuiDateInputShortcut;

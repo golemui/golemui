@@ -1,9 +1,9 @@
-import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
-import { ValidatorFn } from './form-validator';
-import { I18nTranslator } from './i18n';
-import { ValidateOn } from './shared';
-import { Action } from './store/actions';
-import { createInitialState, Middleware, MiddlewareAPI, State } from './store/model';
+import { BehaviorSubject, distinctUntilChanged, type Observable } from 'rxjs';
+import { type ValidatorFn } from './form-validator';
+import { type I18nTranslator } from './i18n';
+import { type ValidateOn } from './shared';
+import { type Action } from './store/actions';
+import { createInitialState, type Middleware, type MiddlewareAPI, type State } from './store/model';
 import { reducer } from './store/reducer';
 
 export function createFormStore(
