@@ -19,7 +19,6 @@ import type { GuiTextarea } from '@golemui/gui-components/textarea';
 import type { GuiTextinput } from '@golemui/gui-components/textinput';
 import type { GuiToggle } from '@golemui/gui-components/toggle';
 
-
 declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {

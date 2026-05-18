@@ -16,6 +16,7 @@ import {
   type GslConfigBase,
   type GuiShortcutOf,
 } from '../../core/dxUtilityTypes';
+import { type DxValidator } from '../../core/dxValidatorHelper';
 
 // ═══════════════════════════════════════════════════
 // Input Decorators
@@ -30,7 +31,7 @@ export interface DataInputDecorator extends DxInputBase, DxCommonFields {
   placeholder?: string;
 }
 
-export type NumberDataInputValidator = Omit<NumberValidator, 'type'>;
+export type NumberDataInputValidator = DxValidator<NumberValidator>;
 
 export interface NumberDataInputDecorator
   extends DxInputBase,
@@ -40,7 +41,7 @@ export interface NumberDataInputDecorator
   validator?: NumberDataInputValidator;
 }
 
-export type TextDataInputValidator = Omit<StringValidator, 'type'>;
+export type TextDataInputValidator = DxValidator<StringValidator>;
 
 export interface TextDataInputDecorator
   extends DxInputBase,
@@ -55,7 +56,7 @@ export interface BooleanDataInputDecorator
     DxCommonFields,
     Partial<ToggleProps> {
   type: 'boolean';
-  validator?: Omit<BooleanValidator, 'type'>;
+  validator?: DxValidator<BooleanValidator>;
 }
 
 export type InputDecorator =

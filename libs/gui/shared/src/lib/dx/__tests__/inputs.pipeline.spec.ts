@@ -125,6 +125,48 @@ describe('DX Pipeline — Inputs', () => {
 
       expect(input.validator?.pattern).toBe('^[^@]+@[^@]+$');
     });
+
+    it('accepts a CustomValidator on a text input and preserves type: "custom"', () => {
+      const result = processDx(
+        _guiTextInput('username', {
+          validator: { type: 'custom', allowedNames: ['John', 'Jane'] },
+        }),
+      );
+      const input = getStaticChild(result, 0) as {
+        validator?: { type?: string; allowedNames?: string[] };
+      };
+
+      expect(input.validator?.type).toBe('custom');
+      expect(input.validator?.allowedNames).toEqual(['John', 'Jane']);
+    });
+
+    it('accepts a CustomValidator on a number input and preserves type: "custom"', () => {
+      const result = processDx(
+        _guiNumberInput('age', {
+          validator: { type: 'custom', positiveEven: true },
+        }),
+      );
+      const input = getStaticChild(result, 0) as {
+        validator?: { type?: string; positiveEven?: boolean };
+      };
+
+      expect(input.validator?.type).toBe('custom');
+      expect(input.validator?.positiveEven).toBe(true);
+    });
+
+    it('accepts a CustomValidator on a boolean input and preserves type: "custom"', () => {
+      const result = processDx(
+        _guiBooleanInput('terms', {
+          validator: { type: 'custom', mustBeAccepted: true },
+        }),
+      );
+      const input = getStaticChild(result, 0) as {
+        validator?: { type?: string; mustBeAccepted?: boolean };
+      };
+
+      expect(input.validator?.type).toBe('custom');
+      expect(input.validator?.mustBeAccepted).toBe(true);
+    });
   });
 
   describe('GSL selector overrides', () => {

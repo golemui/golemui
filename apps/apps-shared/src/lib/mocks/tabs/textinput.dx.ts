@@ -19,4 +19,9 @@ export const textinputTab = gui.layouts.flex([
     placeholder: 'Please enter your phone number',
     validator: { required: true },
   }),
+  gui.inputs.textInput('textinputCustomValidator', {
+    hint: 'Try a name other than John or Jane',
+    placeholder: 'Enter a name',
+    validator: { type: 'custom', allowedNames: ['John', 'Jane'] },
+  }),
 ]);

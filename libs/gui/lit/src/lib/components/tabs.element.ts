@@ -1,6 +1,9 @@
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
-import { createIntersectionObserver, type TabsEventDetail } from '@golemui/gui-components/internals';
+import {
+  createIntersectionObserver,
+  type TabsEventDetail,
+} from '@golemui/gui-components/internals';
 import { type TabsProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing, type PropertyValues } from 'lit';

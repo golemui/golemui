@@ -33,6 +33,7 @@ const config: GuiFormInitConfig = {
   data: ks.data,
   formSelectors: ks.formSelectors,
   formConfig: ks.formConfig,
+  customValidators: ks.customValidators,
   localization: initializeI18n({}),
 };
 

@@ -2,13 +2,14 @@ import type { ArrayValidator } from '@golemui/gui-validators';
 import type { RangeCalendarProps } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+import type { DxValidator } from '../../core/dxValidatorHelper';
 
 export interface RangeCalendarDecorator
   extends DxInputBase,
     DxCommonFields,
     Partial<RangeCalendarProps> {
   type: 'rangeCalendar';
-  validator?: Omit<ArrayValidator, 'type'>;
+  validator?: DxValidator<ArrayValidator>;
 }
 
 export interface GslRangeCalendarConfig extends GslConfigBase<RangeCalendarDecorator> {

@@ -320,6 +320,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
             ],
           }),
         });
+        cy.get('[data-cy="requiredNumber_number"]').should('exist');
         cy.get('[data-cy="testButton_button"]').click();
         cy.get('[data-cy="requiredNumber_validator-errors"]').should('exist');
         cy.get('[data-cy="requiredNumber_validator-error"]').contains(

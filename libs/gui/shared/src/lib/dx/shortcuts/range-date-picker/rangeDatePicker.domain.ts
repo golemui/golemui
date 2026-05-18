@@ -2,13 +2,14 @@ import type { ArrayValidator } from '@golemui/gui-validators';
 import type { RangeDatePickerProps } from '../../../widget.props';
 import type { DxCommonFields, DxInputBase } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
+import type { DxValidator } from '../../core/dxValidatorHelper';
 
 export interface RangeDatePickerDecorator
   extends DxInputBase,
     DxCommonFields,
     Partial<RangeDatePickerProps> {
   type: 'rangeDatePicker';
-  validator?: Omit<ArrayValidator, 'type'>;
+  validator?: DxValidator<ArrayValidator>;
 }
 
 export interface GslRangeDatePickerConfig extends GslConfigBase<RangeDatePickerDecorator> {

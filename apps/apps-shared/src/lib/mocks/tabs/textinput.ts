@@ -62,5 +62,16 @@ export const textinput = (uid: string): any => ({
       },
       validator: { type: 'string', required: true },
     },
+    {
+      uid: '',
+      kind: 'input',
+      type: 'textinput',
+      path: 'textinputCustomValidator',
+      props: {
+        hint: 'Try a name other than John or Jane',
+        placeholder: 'Enter a name',
+      },
+      validator: { type: 'custom', allowedNames: ['John', 'Jane'] },
+    },
   ],
 });

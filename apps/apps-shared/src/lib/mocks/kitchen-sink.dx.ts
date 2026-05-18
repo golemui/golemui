@@ -5,7 +5,9 @@ import {
   type GslSelectorsInput,
   gui,
 } from '@golemui/gui-shared';
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 
+import { allowedNames } from '../custom-validators/allowed-names';
 import { accordionTab } from './tabs/accordion.dx';
 import { alertTab } from './tabs/alert.dx';
 import { calendarTab } from './tabs/calendar.dx';
@@ -49,6 +51,7 @@ export interface KitchenSinkDx {
   formDef: DxDefinitions;
   formSelectors: GslSelectorsInput;
   formConfig: DxFormConfig;
+  customValidators: CustomValidatorSchemas;
 }
 
 const states = {
@@ -138,4 +141,5 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
     itemRenderers: options.itemRenderers,
     dependencies: options.dependencies,
   },
+  customValidators: { allowedNames },
 });

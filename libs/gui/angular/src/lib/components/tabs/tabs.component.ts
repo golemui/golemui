@@ -12,7 +12,10 @@ import {
 } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { LayoutWidget, WithWidget } from '@golemui/core';
-import { createIntersectionObserver, type TabsEventDetail } from '@golemui/gui-components/internals';
+import {
+  createIntersectionObserver,
+  type TabsEventDetail,
+} from '@golemui/gui-components/internals';
 import { type TabsProps } from '@golemui/gui-shared';
 
 @Component({
