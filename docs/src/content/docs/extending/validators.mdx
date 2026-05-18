@@ -159,6 +159,64 @@ gui.inputs.textInput('user.name', {
 
 The form engine resolves `allowedNames` against the registered map (`formConfig.customValidators` for Programmatic, `config.customValidators` for JSON) at validation time.
 
+## Cross-field validation with runtime functions
+
+A `CustomValidatorSchemaFn` only sees the value of the field it's attached to. To validate against **another** field — e.g. a `confirmPassword` that must equal an earlier `password` field — pair the custom validator with a [runtime function](/form-definition/runtime-functions/) on the widget. The runtime function reads `$form` and re-runs on every form-data change, feeding the live value of the other field into the validator's config.
+
+This combination is Programmatic-only: pure JSON forms cannot host a runtime function.
+
+### 1. Implement the schema function
+
+```ts
+import * as z from 'zod';
+import type { CustomValidatorSchemaFn } from '@golemui/gui-validators';
+
+export const passwordsMatch: CustomValidatorSchemaFn = (other: string) =>
+  z.string().check(
+    z.superRefine((val, ctx) => {
+      if (val && val !== other) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Passwords do not match',
+          input: val,
+        });
+      }
+    }),
+  );
+```
+
+`other` is the live value of the *other* password field, fed in by the runtime function below.
+
+### 2. Register it on the form
+
+```ts
+import { passwordsMatch } from './custom-validators/passwords-match';
+
+const formConfig = {
+  customValidators: { passwordsMatch },
+};
+```
+
+### 3. Wire it on the widget with a runtime function
+
+```ts
+import { gui } from '@golemui/gui-shared';
+
+gui.inputs.password('password', { label: 'Password' }),
+gui.inputs.password('confirmPassword', {
+  label: 'Confirm password',
+  validator: ({ $form }) => ({
+    type: 'custom',
+    passwordsMatch: $form.password ?? '',
+  }),
+}),
+```
+
+Each time `$form.password` changes, the runtime function re-evaluates and the validator's schema sees the new value.
+
+<Demo src="/template/index.html?renderer=extending-passwords-match" minHeight="240" />
+
 ## See also
 
 - [Features / Validators](/features/validators/) — built-in validator types.
+- [Runtime functions](/form-definition/runtime-functions/) — reading `$form` from inside a widget definition.

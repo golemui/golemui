@@ -4,6 +4,7 @@ import {
   initializeI18n,
   loggerMiddleware,
   onFormEvent,
+  passwordsMatch,
   template,
 } from '@golemui/apps-shared';
 import { iframeResizer } from '@golemui/apps-shared';
@@ -23,7 +24,10 @@ import {
   eventsLoadFilterDemo,
   eventsSubmitDemo,
 } from '../../forms/events';
-import { extendingCustomValidatorDemo } from '../../forms/extending-validators';
+import {
+  extendingCustomValidatorDemo,
+  extendingPasswordsMatchDemo,
+} from '../../forms/extending-validators';
 import { multiValueAndDemo, multiValueOrDemo } from '../../forms/multi-value-scopes';
 import {
   runtimeDisplayDemo,
@@ -67,6 +71,7 @@ const RENDERER_FORMS: Record<string, { data: any; form: any; selectors?: any; co
   'events-blur': eventsBlurDemo,
   'events-submit': eventsSubmitDemo,
   'extending-custom-validator': extendingCustomValidatorDemo,
+  'extending-passwords-match': extendingPasswordsMatchDemo,
   'type-selector-dropdowns': typeSelectorDropdownsDemo,
   'type-selector-byuid': typeSelectorByUidDemo,
   'chaining-profile': chainingProfileDemo,
@@ -116,7 +121,8 @@ export class FormElement extends LitElement {
   };
   middlewares = [loggerMiddleware];
   customValidators: CustomValidatorSchemas = {
-    allowedNames: allowedNames,
+    allowedNames,
+    passwordsMatch,
   };
   validateOn: ValidateOn = 'eager';
   deps: Dependencies = {
