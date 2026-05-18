@@ -100,6 +100,7 @@ export { _gslTag } from './shortcuts/scopes/gslTag.impl';
 
 export type { DxFormConfig, FormConfig, GslSelectorsInput } from './core/dx.domain';
 export type { DxRuntimeParams } from './core/dxUtilityTypes';
+export type { DxValidator } from './core/dxValidatorHelper';
 export { formDefs } from './dx.service';
 export type {
   DxDefinitionItem,

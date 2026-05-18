@@ -1,6 +1,20 @@
-import type { Validator } from '@golemui/gui-validators';
+import type { CustomValidator, Validator } from '@golemui/gui-validators';
 
 type ValidatorFn = (api: any) => Partial<Validator>;
+
+/**
+ * Validator shape accepted by a DX widget whose value type is fixed (e.g.
+ * a `textInput`'s value is always a string). The user may either:
+ *   - omit the `type` discriminator and write only the rules for that fixed
+ *     kind (`{ minLength: 5 }`), which `buildTypedValidator` will tag with the
+ *     correct `type` at form-def construction time, or
+ *   - opt out and supply a fully-typed `CustomValidator`
+ *     (`{ type: 'custom', <validatorName>: <config> }`), which the engine
+ *     resolves against `customValidators` at validation time.
+ *
+ * The two branches are discriminated by the presence of `type: 'custom'`.
+ */
+export type DxValidator<T extends Validator> = Omit<T, 'type'> | CustomValidator;
 
 /**
  * Build a fixed-type validator from a user-supplied partial validator and a

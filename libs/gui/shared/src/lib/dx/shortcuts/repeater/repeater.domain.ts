@@ -2,6 +2,7 @@ import type { ArrayValidator } from '@golemui/gui-validators';
 import type { DxCommonFields } from '../../core/dxBase.types';
 import type { DefOrCallback, GslConfigBase, GuiShortcutOf } from '../../core/dxUtilityTypes';
 import type { ValidGuiShortcut } from '../../core/dx.domain';
+import type { DxValidator } from '../../core/dxValidatorHelper';
 
 export interface RepeaterDecorator extends DxCommonFields {
   label?: string;
@@ -11,7 +12,7 @@ export interface RepeaterDecorator extends DxCommonFields {
   title?: string;
   addButtonIcon?: string;
   removeButtonIcon?: string;
-  validator?: Omit<ArrayValidator, 'type'>;
+  validator?: DxValidator<ArrayValidator>;
 }
 
 export type GslRepeaterConfig = GslConfigBase<RepeaterDecorator>;

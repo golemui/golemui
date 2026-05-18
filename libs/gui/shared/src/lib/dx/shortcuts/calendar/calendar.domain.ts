@@ -10,6 +10,7 @@ import {
   type GslConfigBase,
   type GuiShortcutOf,
 } from '../../core/dxUtilityTypes';
+import { type DxValidator } from '../../core/dxValidatorHelper';
 
 // ═══════════════════════════════════════════════════
 // Calendar Decorators
@@ -17,7 +18,7 @@ import {
 
 export interface CalendarDecorator extends DxInputBase, DxCommonFields, Partial<CalendarProps> {
   type: 'calendar';
-  validator?: Omit<StringValidator, 'type'>;
+  validator?: DxValidator<StringValidator>;
 }
 
 /**

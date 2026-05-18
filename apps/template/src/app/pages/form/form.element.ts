@@ -23,6 +23,7 @@ import {
   eventsLoadFilterDemo,
   eventsSubmitDemo,
 } from '../../forms/events';
+import { extendingCustomValidatorDemo } from '../../forms/extending-validators';
 import { multiValueAndDemo, multiValueOrDemo } from '../../forms/multi-value-scopes';
 import {
   runtimeDisplayDemo,
@@ -65,6 +66,7 @@ const RENDERER_FORMS: Record<string, { data: any; form: any; selectors?: any; co
   'events-load-filter': eventsLoadFilterDemo,
   'events-blur': eventsBlurDemo,
   'events-submit': eventsSubmitDemo,
+  'extending-custom-validator': extendingCustomValidatorDemo,
   'type-selector-dropdowns': typeSelectorDropdownsDemo,
   'type-selector-byuid': typeSelectorByUidDemo,
   'chaining-profile': chainingProfileDemo,

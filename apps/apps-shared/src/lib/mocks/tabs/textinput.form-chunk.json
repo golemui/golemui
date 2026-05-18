@@ -56,6 +56,16 @@
         "placeholder": "Please enter your phone number"
       },
       "validator": { "type": "string", "required": true }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "textinputCustomValidator",
+      "props": {
+        "hint": "Try a name other than John or Jane",
+        "placeholder": "Enter a name"
+      },
+      "validator": { "type": "custom", "allowedNames": ["John", "Jane"] }
     }
   ]
 }

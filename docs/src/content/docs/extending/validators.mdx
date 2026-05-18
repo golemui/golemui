@@ -5,6 +5,7 @@ sidebar:
   order: 2
 ---
 
+import Demo from '../../../../src/components/landing/Demo.astro';
 import DslTabs from '../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
@@ -137,6 +138,8 @@ gui.inputs.textInput('user.name', {
 });
 ```
 
+<Demo src="/template/index.html?renderer=extending-custom-validator" minHeight="160" />
+
   </Fragment>
   <Fragment slot="json">
 
@@ -148,6 +151,8 @@ gui.inputs.textInput('user.name', {
   "validator": { "type": "custom", "allowedNames": ["John", "Jane"] }
 }
 ```
+
+<Demo src="/template/index.html?form=template/validators/custom-validators.json" minHeight="160" />
 
   </Fragment>
 </DslTabs>
