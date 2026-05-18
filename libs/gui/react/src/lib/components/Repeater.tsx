@@ -1,5 +1,6 @@
 import * as Core from '@golemui/core';
-import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
+import { RepeaterProps } from '@golemui/gui-shared';
+import { getItemKey } from '@golemui/gui-shared/internals';
 import {
   RepeaterIndexesContext,
   useInputWidget,

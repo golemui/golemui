@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import * as Lit from '@golemui/lit';
-import { getItemKey, RepeaterProps } from '@golemui/gui-shared';
+import { RepeaterProps } from '@golemui/gui-shared';
+import { getItemKey } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';

@@ -1,4 +1,6 @@
 /**
+ * @internal Used by framework Repeater components, not part of the end-user public API.
+ *
  * Returns a stable unique key for a repeater data item.
  * Assigns a non-enumerable `__rid` property on first access so the ID
  * survives array operations (splice, filter, spread) without polluting

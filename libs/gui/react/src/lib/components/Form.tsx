@@ -1,6 +1,7 @@
 import * as Core from '@golemui/core';
 import { FormInitConfig } from '@golemui/core';
-import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
 import * as React from '@golemui/react';
 import { ReactItemRenderer } from '@golemui/react';

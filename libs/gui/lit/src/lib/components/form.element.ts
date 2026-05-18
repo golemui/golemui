@@ -1,6 +1,8 @@
 import * as Core from '@golemui/core';
-import { FormInitConfig, WidgetLoaders, WithWidget } from '@golemui/core';
-import { GuiFormInitConfig, resolveFormInput } from '@golemui/gui-shared';
+import { FormInitConfig } from '@golemui/core';
+import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
+import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { CustomValidatorSchemas, initValidators, Validator } from '@golemui/gui-validators';
 import '@golemui/lit';
 import type { FormElement as CoreFormElement } from '@golemui/lit';
