@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { Form, FormEvent, UiState } from '@golemui/core'
 import { type ValidateOn } from '@golemui/core';
 import { type ValidGuiShortcut } from './core/dx.domain';
 import { type DxCommonFields, type DxInternalFields } from './core/dxBase.types';
@@ -28,10 +28,10 @@ export type DxDisplayRenderFn = (params: DxRuntimeParams) => any;
 export type DxDefinitionItem = ValidGuiShortcut | DxDisplayRenderFn;
 export type DxDefinitions = DxDefinitionItem | DxDefinitionItem[];
 
-export type FormEvents = (event: Core.FormEvent) => void;
+export type FormEvents = (event: FormEvent) => void;
 
-export interface DxResult<S extends Core.UiState = never, F extends Record<string, any> = any> {
-  form: Core.Form<S, F>;
+export interface DxResult<S extends UiState = never, F extends Record<string, any> = any> {
+  form: Form<S, F>;
   events?: FormEvents;
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;

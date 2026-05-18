@@ -1,13 +1,13 @@
 // TODO: We can probably remove this module entirely
-import type * as Core from '@golemui/core';
-import type * as Props from './widget.props';
+import type { BaseWidget, DisplayWidget, InputWidget, LayoutWidget, UiState } from '@golemui/core'
+import type { AlertProps, CheckboxProps, FlexProps, GridProps, MarkdownTextProps, NumberinputProps, PasswordProps, SelectProps, TabsProps, TextinputProps } from './widget.props'
 
 type InputWidgetConfig<T> = Omit<
-  Core.InputWidget<T>,
+  InputWidget<T>,
   'kind' | 'type' | 'uid' | 'props' | 'validator'
 >;
-type LayoutWidgetConfig = Omit<Core.LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
-type DisplayWidgetConfig = Omit<Core.BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
+type LayoutWidgetConfig = Omit<LayoutWidget, 'kind' | 'type' | 'uid' | 'props'>;
+type DisplayWidgetConfig = Omit<BaseWidget, 'kind' | 'type' | 'uid' | 'props'>;
 
 /**
  * Golem widget factory
@@ -16,16 +16,16 @@ export const GolemWidgets = {
   //
   // Input widgets
   //
-  textinput: <StateKeys extends Core.UiState = string, V = any>({
+  textinput: <StateKeys extends UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: InputWidgetConfig<string>;
-    props?: Props.TextinputProps;
+    props?: TextinputProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.InputWidget<string, StateKeys> => ({
+  }): InputWidget<string, StateKeys> => ({
     uid: '',
     kind: 'input',
     type: 'textinput',
@@ -34,16 +34,16 @@ export const GolemWidgets = {
     ...(validator && { validator }),
     ...config,
   }),
-  password: <StateKeys extends Core.UiState = string, V = any>({
+  password: <StateKeys extends UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: InputWidgetConfig<string>;
-    props?: Props.PasswordProps;
+    props?: PasswordProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.InputWidget<string, StateKeys> => ({
+  }): InputWidget<string, StateKeys> => ({
     uid: '',
     kind: 'input',
     type: 'password',
@@ -52,16 +52,16 @@ export const GolemWidgets = {
     ...(validator && { validator }),
     ...config,
   }),
-  numberinput: <StateKeys extends Core.UiState = string, V = any>({
+  numberinput: <StateKeys extends UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: InputWidgetConfig<number>;
-    props?: Props.NumberinputProps;
+    props?: NumberinputProps;
     // validator?: Core.NumberValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.InputWidget<number, StateKeys> => ({
+  }): InputWidget<number, StateKeys> => ({
     uid: '',
     kind: 'input',
     type: 'numberinput',
@@ -69,16 +69,16 @@ export const GolemWidgets = {
     ...(validator && { validator }),
     ...config,
   }),
-  checkbox: <StateKeys extends Core.UiState = string, V = any>({
+  checkbox: <StateKeys extends UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: InputWidgetConfig<boolean>;
-    props?: Props.CheckboxProps;
+    props?: CheckboxProps;
     // validator?: Core.BooleanValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.InputWidget<boolean, StateKeys> => ({
+  }): InputWidget<boolean, StateKeys> => ({
     uid: '',
     kind: 'input',
     type: 'checkbox',
@@ -86,16 +86,16 @@ export const GolemWidgets = {
     ...(validator && { validator }),
     ...config,
   }),
-  select: <StateKeys extends Core.UiState = string, V = any>({
+  select: <StateKeys extends UiState = string, V = any>({
     config,
     props,
     validator,
   }: {
     config: InputWidgetConfig<string>;
-    props?: Props.SelectProps;
+    props?: SelectProps;
     // validator?: Core.StringValidator | Core.CustomValidator;
     validator?: V;
-  }): Core.InputWidget<string, StateKeys> => ({
+  }): InputWidget<string, StateKeys> => ({
     uid: '',
     kind: 'input',
     type: 'select',
@@ -107,30 +107,30 @@ export const GolemWidgets = {
   //
   // Layout widgets
   //
-  flex: <StateKeys extends Core.UiState = string>(
+  flex: <StateKeys extends UiState = string>(
     config: LayoutWidgetConfig,
-    props?: Props.FlexProps,
-  ): Core.LayoutWidget<StateKeys> => ({
+    props?: FlexProps,
+  ): LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
     type: 'flex',
     ...(props && { props }),
     ...config,
   }),
-  grid: <StateKeys extends Core.UiState = string>(
+  grid: <StateKeys extends UiState = string>(
     config: LayoutWidgetConfig,
-    props?: Props.GridProps,
-  ): Core.LayoutWidget<StateKeys> => ({
+    props?: GridProps,
+  ): LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
     type: 'grid',
     ...(props && { props }),
     ...config,
   }),
-  tabs: <StateKeys extends Core.UiState = string>(
+  tabs: <StateKeys extends UiState = string>(
     config: LayoutWidgetConfig,
-    props?: Props.TabsProps,
-  ): Core.LayoutWidget<StateKeys> => ({
+    props?: TabsProps,
+  ): LayoutWidget<StateKeys> => ({
     uid: '',
     kind: 'layout',
     type: 'tabs',
@@ -141,20 +141,20 @@ export const GolemWidgets = {
   //
   // Display widgets
   //
-  alert: <StateKeys extends Core.UiState = string>(
+  alert: <StateKeys extends UiState = string>(
     config: DisplayWidgetConfig,
-    props?: Props.AlertProps,
-  ): Core.DisplayWidget<StateKeys> => ({
+    props?: AlertProps,
+  ): DisplayWidget<StateKeys> => ({
     uid: '',
     kind: 'display',
     type: 'alert',
     ...(props && { props }),
     ...config,
   }),
-  markdownText: <StateKeys extends Core.UiState = string>(
+  markdownText: <StateKeys extends UiState = string>(
     config: DisplayWidgetConfig,
-    props?: Props.MarkdownTextProps,
-  ): Core.DisplayWidget<StateKeys> => ({
+    props?: MarkdownTextProps,
+  ): DisplayWidget<StateKeys> => ({
     uid: '',
     kind: 'display',
     type: 'markdownText',

@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import type * as Core from '@golemui/core';
+import { InputWidgetAdapter } from '@golemui/angular'
+import type { InputWidget, WithWidget } from '@golemui/core'
 import { type ToggleProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-toggle-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './toggle.component.html',
   host: {
     class: 'gui-toggle gui-field',
@@ -16,10 +16,10 @@ import { type ToggleProps } from '@golemui/gui-shared';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ToggleComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
-  protected adapter: Angular.InputWidgetAdapter<string, ToggleProps> = inject(
-    Angular.InputWidgetAdapter,
+export class ToggleComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
+  protected adapter: InputWidgetAdapter<string, ToggleProps> = inject(
+    InputWidgetAdapter,
   );
 
   ngOnInit(): void {

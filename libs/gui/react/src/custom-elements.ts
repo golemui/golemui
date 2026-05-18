@@ -1,4 +1,4 @@
-import type * as React from 'react';
+import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 import {
   type GuiButton,
   type GuiCalendar,
@@ -25,56 +25,56 @@ declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
-      'gui-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-button': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiButton>;
-      'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-calendar': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCalendar>;
-      'gui-checkbox': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-checkbox': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCheckbox>;
-      'gui-currency': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-currency': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiCurrency>;
 
-      'gui-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-date': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiDate>;
 
-      'gui-errors': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-errors': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiErrors>;
 
-      'gui-label': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-label': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiLabel>;
-      'gui-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-list': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<Omit<GuiList, 'children'>>;
 
-      'gui-markdown': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-markdown': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiMarkdown>;
 
-      'gui-markdown-text': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-markdown-text': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiMarkdownText>;
 
-      'gui-number': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-number': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiNumber>;
 
-      'gui-password': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-password': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiPassword>;
 
-      'gui-radiogroup': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-radiogroup': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRadiogroup>;
-      'gui-range-calendar': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
+      'gui-range-calendar': DetailedHTMLProps<
+        HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
         Partial<GuiRangeCalendar>;
-      'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-range-date': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRangeDateInput>;
 
-      'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-select': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSelect>;
 
-      'gui-textarea': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-textarea': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTextarea>;
-      'gui-textinput': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-textinput': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiTextinput>;
-      'gui-toggle': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+      'gui-toggle': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiToggle>;
     }
   }

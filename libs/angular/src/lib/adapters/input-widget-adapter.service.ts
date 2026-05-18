@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import * as Core from '@golemui/core';
+import { type ControlTemplateData, type InputWidget, type ItemRenderItemData, dataByPath$, injectedValidationByPath$, touchedControlsByPath$, validationByPath$ } from '@golemui/core'
 import { combineLatest, takeUntil } from 'rxjs';
 import { type AngularItemRenderer } from '../components/item-renderers/item-renderer';
 import { BaseWidgetAdapter } from './base-widget.adapter';
@@ -8,12 +8,12 @@ import { BaseWidgetAdapter } from './base-widget.adapter';
 export class InputWidgetAdapter<
   T,
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.InputWidget<T>> {
-  templateData = signal<Core.ControlTemplateData<T> & ExtraProps>(
-    {} as Core.ControlTemplateData<T> & ExtraProps,
+> extends BaseWidgetAdapter<InputWidget<T>> {
+  templateData = signal<ControlTemplateData<T> & ExtraProps>(
+    {} as ControlTemplateData<T> & ExtraProps,
   );
 
-  init(widget: Core.InputWidget<T>) {
+  init(widget: InputWidget<T>) {
     this.widget = widget;
 
     this.addWidgetToTheStore(widget);
@@ -27,17 +27,17 @@ export class InputWidgetAdapter<
 
     // Set the initial templateData, including the controls's data value
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.dataByPath$<T>(widget.path))
+      .pipe(takeUntil(this.destroy$), dataByPath$<T>(widget.path))
       .subscribe((data) => this.templateData.update((current) => ({ ...current, value: data })));
 
     // Listen to the validation stream for this control
     const validation$ = this.context.store.state$.pipe(
       takeUntil(this.destroy$),
-      Core.validationByPath$(widget.path),
+      validationByPath$(widget.path),
     );
     const injectedValidation$ = this.context.store.state$.pipe(
       takeUntil(this.destroy$),
-      Core.injectedValidationByPath$(widget.path),
+      injectedValidationByPath$(widget.path),
     );
 
     combineLatest([validation$, injectedValidation$]).subscribe(
@@ -51,7 +51,7 @@ export class InputWidgetAdapter<
 
     // Listen to the touchedControls stream for this control
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.touchedControlsByPath$(widget.path))
+      .pipe(takeUntil(this.destroy$), touchedControlsByPath$(widget.path))
       .subscribe((touched) => {
         this.templateData.update((current) => ({
           ...current,
@@ -84,7 +84,7 @@ export class InputWidgetAdapter<
   /**
    * This is a helper to get the item renderer from the context
    */
-  getItemRenderer<T extends Core.ItemRenderItemData>(
+  getItemRenderer<T extends ItemRenderItemData>(
     itemRendererKey: string | undefined,
     defaultItemRenderer: AngularItemRenderer<T>,
   ): AngularItemRenderer<T> {

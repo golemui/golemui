@@ -1,12 +1,12 @@
-import type * as Core from '@golemui/core';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { type AccordionProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useState } from 'react';
 
 const empty = {};
 
-export function Accordion(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.LayoutWidget;
+export function Accordion(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as LayoutWidget;
   const { uid, children, templateData, onChange } = useLayoutWidget<AccordionProps>(widget);
   const [activeSections, setActiveSections] =
     useState<NonNullable<AccordionProps['defaultOpen']>>(empty);
@@ -41,7 +41,7 @@ export function Accordion(widgetInstance: Core.WithWidget) {
     (uid: string) => {
       const child = children.find(
         (section) => section.uid === uid,
-      ) as Core.NonFunctionWidget<string>;
+      ) as NonFunctionWidget<string>;
       const isActiveSection = activeSections[uid];
       return (isActiveSection || templateData.renderMode !== 'activeOnly') && child ? (
         <section

@@ -1,15 +1,15 @@
-import * as Core from '@golemui/core';
+import { type NonFunctionWidget, type WithWidget, cloneObject, errorCodes, makeRepeaterItemConfig } from '@golemui/core'
 import { useEffect, useMemo, useRef, useState } from 'react';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';
 import { useRepeaterIndexes } from './RepeaterIndexesContext';
 
 type Props = {
-  widget: Core.NonFunctionWidget<string>;
+  widget: NonFunctionWidget<string>;
   repeaterIndex?: number;
 };
 
-type WidgetComponent = React.ComponentType<Core.WithWidget>;
+type WidgetComponent = React.ComponentType<WithWidget>;
 
 function WidgetRenderer(props: Props) {
   const { formContext } = useReactFormContext();
@@ -32,12 +32,12 @@ function WidgetRenderer(props: Props) {
         const loadedComponent = await formContext.widgetRegistry.loadWidget(props.widget.type);
         if (isMounted.current) {
           if (repeaterIndexes.length > 0) {
-            setWidget(Core.makeRepeaterItemConfig(Core.cloneObject(props.widget), repeaterIndexes));
+            setWidget(makeRepeaterItemConfig(cloneObject(props.widget), repeaterIndexes));
           }
           setComponent(() => loadedComponent);
         }
       } catch {
-        const code = Core.errorCodes.widgetCouldNotBeLoaded;
+        const code = errorCodes.widgetCouldNotBeLoaded;
         formContext.store.dispatch({
           type: 'SET_FORM_HEALTH',
           payload: {

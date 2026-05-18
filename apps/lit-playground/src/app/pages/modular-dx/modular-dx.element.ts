@@ -1,11 +1,11 @@
-import * as AppsShared from '@golemui/apps-shared';
-import type * as Core from '@golemui/core';
+import { modularDx, onFormEvent } from '@golemui/apps-shared'
+import type { FormEvent } from '@golemui/core'
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-const md = AppsShared.modularDx;
+const md = modularDx;
 
 const config: GuiFormInitConfig = {
   formDef: md.formDef,
@@ -20,8 +20,8 @@ export class ModularDxElement extends LitElement {
     return this;
   }
 
-  protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
-    await AppsShared.onFormEvent(event.detail);
+  protected async onFormEvent(event: CustomEvent<FormEvent>) {
+    await onFormEvent(event.detail);
   }
 
   override render() {

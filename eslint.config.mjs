@@ -1,4 +1,5 @@
 import nx from '@nx/eslint-plugin';
+import importPlugin from 'eslint-plugin-import';
 
 export default [
   ...nx.configs['flat/base'],
@@ -41,8 +42,12 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
+    plugins: {
+      import: importPlugin,
+    },
     // Override or add rules here
     rules: {
+      'import/no-namespace': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },

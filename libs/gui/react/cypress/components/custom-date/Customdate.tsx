@@ -1,9 +1,9 @@
-import type * as Core from '@golemui/core';
+import type { InputWidget, WithWidget } from '@golemui/core'
 import { useInputWidget } from '@golemui/react';
 import { useCallback } from 'react';
 
-export function Customdate(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.InputWidget<string>;
+export function Customdate(fieldInstance: WithWidget) {
+  const field = fieldInstance.widget as InputWidget<string>;
   const { uid, errors, value, isTouched, onValueChanged, onBlur, injectValidationIssues } =
     useInputWidget<string, Record<string, any>>(field);
 

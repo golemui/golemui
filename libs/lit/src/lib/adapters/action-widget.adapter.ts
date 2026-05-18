@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { ActionWidget, ActionWidgetTemplateData } from '@golemui/core'
 import { createContext } from '@lit/context';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
@@ -6,10 +6,10 @@ export const actionContext = createContext<ActionWidgetAdapter<any>>('guiActionW
 
 export class ActionWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.ActionWidget> {
-  override templateData = {} as Core.ActionWidgetTemplateData & ExtraProps;
+> extends BaseWidgetAdapter<ActionWidget> {
+  override templateData = {} as ActionWidgetTemplateData & ExtraProps;
 
-  init(widget: Core.ActionWidget) {
+  init(widget: ActionWidget) {
     this.widget = widget;
     this.setTemplateData({
       label: this.widget.label,

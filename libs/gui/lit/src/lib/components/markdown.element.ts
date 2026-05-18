@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
 import { type MarkdownProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
@@ -7,15 +7,15 @@ import { customElement, property } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
 
 @customElement('gui-markdown-input')
-export class MarkdownElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class MarkdownElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, MarkdownProps>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, MarkdownProps>();
 
   subscriptions: Subscription[] = [];
 

@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { type FormEvent, type FormHealth, type State, type ValidatorFn, formHealth, getDirectionFromLanguage, shortUUID } from '@golemui/core'
 import { type FormInitConfig } from '@golemui/core';
 import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
 import { provide } from '@lit/context';
@@ -15,7 +15,7 @@ export class FormElement extends LitElement {
   context = new LitFormContext();
 
   @property({ attribute: false }) config!: FormInitConfig<WithWidget>;
-  @property({ attribute: false }) validators!: Core.ValidatorFn<any>;
+  @property({ attribute: false }) validators!: ValidatorFn<any>;
   @property({ type: String }) autocomplete: string | undefined = undefined;
 
   @state() direction: 'ltr' | 'rtl' = 'ltr';
@@ -23,7 +23,7 @@ export class FormElement extends LitElement {
   // Tracks the current form state for rendering. Not a @state() to avoid
   // re-rendering on every store emission - we call requestUpdate() explicitly
   // only when needed (on store subscription setup).
-  private formState: Core.State | undefined;
+  private formState: State | undefined;
 
   // Subscriptions replaced on each config change (store is recreated on init).
   private stateSub: Subscription | undefined;
@@ -31,7 +31,7 @@ export class FormElement extends LitElement {
   // Subscriptions stable for the element lifetime.
   private eventSub: Subscription | undefined;
   private unsubscribeI18n: () => void = () => undefined;
-  private readonly _defaultFormName = Core.shortUUID();
+  private readonly _defaultFormName = shortUUID();
 
   static FORM_HEALTH_EVENT = 'formHealth';
   static FORM_EVENT = 'formEvent';
@@ -42,7 +42,7 @@ export class FormElement extends LitElement {
     // events$ is a stable Subject - subscribe once for the element lifetime.
     this.eventSub = this.context.events$.subscribe((event) =>
       this.dispatchEvent(
-        new CustomEvent<Core.FormEvent>(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
+        new CustomEvent<FormEvent>(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
       ),
     );
   }
@@ -70,16 +70,16 @@ export class FormElement extends LitElement {
       c.dependencies ?? {},
     );
 
-    this.direction = Core.getDirectionFromLanguage(this.context.localization.lang);
+    this.direction = getDirectionFromLanguage(this.context.localization.lang);
 
     this.stateSub = this.context.store.state$.subscribe((s) => {
       this.formState = s;
       this.requestUpdate();
     });
 
-    this.healthSub = Core.formHealth(this.context.store.state$).subscribe((health) => {
+    this.healthSub = formHealth(this.context.store.state$).subscribe((health) => {
       this.dispatchEvent(
-        new CustomEvent<Core.FormHealth>(FormElement.FORM_HEALTH_EVENT, {
+        new CustomEvent<FormHealth>(FormElement.FORM_HEALTH_EVENT, {
           detail: health,
           bubbles: true,
         }),
@@ -94,7 +94,7 @@ export class FormElement extends LitElement {
     this.context.store.dispatch({ type: 'SET_META', payload: { meta: c.meta ?? {} } });
 
     this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
-      this.direction = Core.getDirectionFromLanguage(lang);
+      this.direction = getDirectionFromLanguage(lang);
       this.context.store.dispatch({ type: 'SET_LANGUAGE', payload: { lang } });
     });
   }

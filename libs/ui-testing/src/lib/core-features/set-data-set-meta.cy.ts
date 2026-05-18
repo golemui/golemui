@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type FormHandle, type MountComponentFn } from '../utils';
 
 export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
@@ -8,7 +8,7 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         let handle!: FormHandle;
         mountFn({
           data: { name: 'initial' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [{ uid: 'name', kind: 'input', type: 'textinput', path: 'name' }],
           }),
           onFormReady: (h) => {
@@ -24,7 +24,7 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         let handle!: FormHandle;
         mountFn({
           data: { firstName: 'John', lastName: 'Doe' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               { uid: 'firstName', kind: 'input', type: 'textinput', path: 'firstName' },
               { uid: 'lastName', kind: 'input', type: 'textinput', path: 'lastName' },
@@ -47,7 +47,7 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         let handle!: FormHandle;
         mountFn({
           meta: { status: 'offline' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'status-display',
@@ -70,7 +70,7 @@ export const runSetDataSetMetaTests = (mountFn: MountComponentFn) => {
         let handle!: FormHandle;
         mountFn({
           meta: { showField: false },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: { visible: '$meta.showField === true' },
             form: [
               {

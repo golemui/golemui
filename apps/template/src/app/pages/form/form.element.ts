@@ -1,9 +1,9 @@
-import * as AppsShared from '@golemui/apps-shared';
+import { allowedNames, commonLanguages, initializeI18n, loggerMiddleware, onFormEvent, template } from '@golemui/apps-shared'
 import { iframeResizer } from '@golemui/apps-shared';
-import type * as Core from '@golemui/core';
+import type { FormEvent, FormHealth, ValidateOn } from '@golemui/core'
 import '@golemui/gui-lit';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
-import type * as GuiValidators from '@golemui/gui-validators';
+import type { CustomValidatorSchemas } from '@golemui/gui-validators'
 import i18next from 'i18next';
 import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
@@ -69,15 +69,15 @@ const RENDERER_FORMS: Record<string, { data: any; form: any; selectors?: any; co
   'sensible-defaults': sensibleDefaultsDemo,
 };
 
-const mock = AppsShared.template;
+const mock = template;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
   formThemes: string[] = [];
   formDir: string | null = null;
   config: GuiFormInitConfig | undefined;
-  localization = AppsShared.initializeI18n(mock.resources);
-  languages = AppsShared.commonLanguages
+  localization = initializeI18n(mock.resources);
+  languages = commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
       value: code,
@@ -105,11 +105,11 @@ export class FormElement extends LitElement {
     countryItemRenderer: countryItemRenderer,
     carItemRenderer: carItemRenderer,
   };
-  middlewares = [AppsShared.loggerMiddleware];
-  customValidators: GuiValidators.CustomValidatorSchemas = {
-    allowedNames: AppsShared.allowedNames,
+  middlewares = [loggerMiddleware];
+  customValidators: CustomValidatorSchemas = {
+    allowedNames: allowedNames,
   };
-  validateOn: Core.ValidateOn = 'eager';
+  validateOn: ValidateOn = 'eager';
   deps: Dependencies = {
     markdown: {
       parse: (md: string) => snarkdown(md),
@@ -181,7 +181,7 @@ export class FormElement extends LitElement {
     this.requestUpdate();
   }
 
-  protected onFormHealth(event: CustomEvent<Core.FormHealth>) {
+  protected onFormHealth(event: CustomEvent<FormHealth>) {
     const health = event.detail;
     if (health.status === 'errored') {
       this.error = health.message;
@@ -189,8 +189,8 @@ export class FormElement extends LitElement {
     Promise.resolve().then(() => this.requestUpdate());
   }
 
-  protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
-    await AppsShared.onFormEvent(event.detail);
+  protected async onFormEvent(event: CustomEvent<FormEvent>) {
+    await onFormEvent(event.detail);
     Promise.resolve().then(() => this.requestUpdate());
   }
 

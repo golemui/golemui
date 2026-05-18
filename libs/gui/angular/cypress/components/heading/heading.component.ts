@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import type * as Core from '@golemui/core';
+import { DisplayWidgetAdapter } from '@golemui/angular'
+import type { DisplayWidget, WithWidget } from '@golemui/core'
 
 type OwnWidgetProps = {
   text: string;
@@ -12,15 +12,15 @@ type OwnWidgetProps = {
   standalone: true,
   selector: 'gui-heading',
   imports: [CommonModule],
-  providers: [Angular.DisplayWidgetAdapter],
+  providers: [DisplayWidgetAdapter],
   templateUrl: './heading.component.html',
   styleUrls: ['./heading.component.scss'],
 })
-export class HeadingComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.DisplayWidget;
+export class HeadingComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: DisplayWidget;
 
-  protected adapter: Angular.DisplayWidgetAdapter<OwnWidgetProps> = inject(
-    Angular.DisplayWidgetAdapter,
+  protected adapter: DisplayWidgetAdapter<OwnWidgetProps> = inject(
+    DisplayWidgetAdapter,
   );
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { FormContext, type FormEvent, type FormHealth, formHealth as watchFormHealth, type LayoutWidget, type ValidatorFn, type WithWidget, getDirectionFromLanguage, shortUUID } from '@golemui/core'
 import { type FormInitConfig } from '@golemui/core';
 import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ReactFormContextProvider } from './ReactFormContextProvider';
@@ -11,10 +11,10 @@ export interface FormComponentHandle {
 }
 
 export interface FormComponentProps {
-  config: FormInitConfig<React.ComponentType<Core.WithWidget>>;
-  validators: Core.ValidatorFn<any>;
-  formEvent?: (event: Core.FormEvent) => void;
-  formHealth?: (error: Core.FormHealth) => void;
+  config: FormInitConfig<React.ComponentType<WithWidget>>;
+  validators: ValidatorFn<any>;
+  formEvent?: (event: FormEvent) => void;
+  formHealth?: (error: FormHealth) => void;
   autocomplete?: string;
   ref?: React.Ref<FormComponentHandle>;
 }
@@ -27,11 +27,11 @@ export function FormComponent({
   autocomplete,
   ref,
 }: FormComponentProps) {
-  const formContextRef = useRef<Core.FormContext<React.ComponentType<Core.WithWidget>>>(
-    new Core.FormContext(),
+  const formContextRef = useRef<FormContext<React.ComponentType<WithWidget>>>(
+    new FormContext(),
   );
-  const formNameRef = useRef<string>(config.formName ?? Core.shortUUID());
-  const [formLayoutField, setFormLayoutField] = useState<Core.LayoutWidget<string> | null>(null);
+  const formNameRef = useRef<string>(config.formName ?? shortUUID());
+  const [formLayoutField, setFormLayoutField] = useState<LayoutWidget<string> | null>(null);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
   const [storeVersion, setStoreVersion] = useState(0);
 
@@ -66,7 +66,7 @@ export function FormComponent({
   // FORM HEALTH
   // Re-subscribes when store is recreated (storeVersion changes).
   useEffect(() => {
-    const sub = Core.formHealth(formContextRef.current.store.state$).subscribe((health) =>
+    const sub = watchFormHealth(formContextRef.current.store.state$).subscribe((health) =>
       formHealth?.(health),
     );
     return () => {
@@ -88,7 +88,7 @@ export function FormComponent({
   useEffect(() => {
     const sub = formContextRef.current.store.state$.subscribe((state) => {
       setFormLayoutField(state.formDef.form);
-      setDirection(Core.getDirectionFromLanguage(formContextRef.current.localization.lang));
+      setDirection(getDirectionFromLanguage(formContextRef.current.localization.lang));
     });
     return () => {
       sub.unsubscribe();
@@ -115,7 +115,7 @@ export function FormComponent({
   // I18n
   useEffect(() => {
     const sub = formContextRef.current.localization.subscribe((lang) => {
-      setDirection(Core.getDirectionFromLanguage(lang));
+      setDirection(getDirectionFromLanguage(lang));
       formContextRef.current.store.dispatch({
         type: 'SET_LANGUAGE',
         payload: {

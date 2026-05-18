@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import type * as Core from '@golemui/core';
+import { InputWidgetAdapter, RepeaterWidgetDirective } from '@golemui/angular'
+import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
 import { type RepeaterProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-repeater-control',
-  imports: [CommonModule, Angular.RepeaterWidgetDirective],
-  providers: [Angular.InputWidgetAdapter, Angular.RepeaterWidgetDirective],
+  imports: [CommonModule, RepeaterWidgetDirective],
+  providers: [InputWidgetAdapter, RepeaterWidgetDirective],
   templateUrl: './repeater.component.html',
   host: {
     class: 'gui-repeater gui-field',
@@ -16,12 +16,12 @@ import { type RepeaterProps } from '@golemui/gui-shared';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class RepeaterComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<Record<string, unknown>[]>;
-  protected adapter: Angular.InputWidgetAdapter<
+export class RepeaterComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<Record<string, unknown>[]>;
+  protected adapter: InputWidgetAdapter<
     Record<string, unknown>[],
-    RepeaterProps<Core.NonFunctionWidget>
-  > = inject(Angular.InputWidgetAdapter);
+    RepeaterProps<NonFunctionWidget>
+  > = inject(InputWidgetAdapter);
 
   isFocused = false;
 

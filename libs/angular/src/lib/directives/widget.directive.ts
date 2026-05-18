@@ -8,7 +8,7 @@ import {
   type Type,
   ViewContainerRef,
 } from '@angular/core';
-import * as Core from '@golemui/core';
+import { type NonFunctionWidget, type WithWidget, cloneObject, errorCodes, makeRepeaterItemConfig } from '@golemui/core'
 import { AngularFormContext } from '../context/form.context';
 import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
 
@@ -23,21 +23,21 @@ import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
   standalone: true,
 })
 export class WidgetDirective implements OnInit {
-  widget = input.required<Core.NonFunctionWidget<string>>();
+  widget = input.required<NonFunctionWidget<string>>();
   /**
    * It's either `[]` (not part of a repeater) or `[n1,n2,n...]` (it's the child of a repeater)
    */
   private repeaterIndexesToken = inject(REPEATER_INDEXES_TOKEN);
 
-  private formContext: AngularFormContext<Type<Core.WithWidget>> = inject(AngularFormContext);
+  private formContext: AngularFormContext<Type<WithWidget>> = inject(AngularFormContext);
   private viewContainerRef = inject(ViewContainerRef);
-  private componentRef!: ComponentRef<Core.WithWidget>;
+  private componentRef!: ComponentRef<WithWidget>;
 
   async ngOnInit() {
     try {
       this.createComponent(await this.formContext.widgetRegistry.loadWidget(this.widget().type));
     } catch {
-      const code = Core.errorCodes.widgetCouldNotBeLoaded;
+      const code = errorCodes.widgetCouldNotBeLoaded;
       this.formContext.store.dispatch({
         type: 'SET_FORM_HEALTH',
         payload: {
@@ -59,7 +59,7 @@ export class WidgetDirective implements OnInit {
    *                      not yet defined.
    */
   protected createComponent(
-    component: Type<Core.WithWidget>,
+    component: Type<WithWidget>,
     injector?: Injector,
     repeaterIndex?: number,
   ) {
@@ -75,8 +75,8 @@ export class WidgetDirective implements OnInit {
     }
 
     if (repeaterIndexes.length > 0) {
-      this.componentRef.instance.widget = Core.makeRepeaterItemConfig(
-        Core.cloneObject(this.widget()),
+      this.componentRef.instance.widget = makeRepeaterItemConfig(
+        cloneObject(this.widget()),
         repeaterIndexes,
       );
     } else {

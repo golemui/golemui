@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, type OnDestroy, type OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import type * as Core from '@golemui/core';
+import { InputWidgetAdapter } from '@golemui/angular'
+import type { InputWidget, WithWidget } from '@golemui/core'
 import { type CurrencyProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-currency-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './currency.component.html',
   host: {
     class: 'gui-currency gui-field',
@@ -16,10 +16,10 @@ import { type CurrencyProps } from '@golemui/gui-shared';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class CurrencyComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<number>;
-  protected adapter: Angular.InputWidgetAdapter<number, CurrencyProps> = inject(
-    Angular.InputWidgetAdapter,
+export class CurrencyComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<number>;
+  protected adapter: InputWidgetAdapter<number, CurrencyProps> = inject(
+    InputWidgetAdapter,
   );
 
   ngOnInit(): void {

@@ -1,16 +1,16 @@
 import { Injectable, signal } from '@angular/core';
-import type * as Core from '@golemui/core';
+import type { ActionWidget, ActionWidgetTemplateData } from '@golemui/core'
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
 export class ActionWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.ActionWidget> {
-  templateData = signal<Core.ActionWidgetTemplateData & ExtraProps>(
-    {} as Core.ActionWidgetTemplateData & ExtraProps,
+> extends BaseWidgetAdapter<ActionWidget> {
+  templateData = signal<ActionWidgetTemplateData & ExtraProps>(
+    {} as ActionWidgetTemplateData & ExtraProps,
   );
 
-  init(widget: Core.ActionWidget) {
+  init(widget: ActionWidget) {
     this.widget = widget;
     this.templateData.update((current) => ({
       ...current,

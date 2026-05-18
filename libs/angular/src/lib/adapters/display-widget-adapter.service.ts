@@ -1,16 +1,16 @@
 import { Injectable, signal } from '@angular/core';
-import type * as Core from '@golemui/core';
+import type { DisplayWidget, DisplayWidgetTemplateData } from '@golemui/core'
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
 export class DisplayWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.DisplayWidget> {
-  templateData = signal<Core.DisplayWidgetTemplateData & ExtraProps>(
-    {} as Core.DisplayWidgetTemplateData & ExtraProps,
+> extends BaseWidgetAdapter<DisplayWidget> {
+  templateData = signal<DisplayWidgetTemplateData & ExtraProps>(
+    {} as DisplayWidgetTemplateData & ExtraProps,
   );
 
-  init(widget: Core.DisplayWidget) {
+  init(widget: DisplayWidget) {
     this.widget = widget;
 
     // Set initial templateData

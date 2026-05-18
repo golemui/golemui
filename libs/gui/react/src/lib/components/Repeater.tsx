@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core'
 import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
 import {
@@ -16,8 +16,8 @@ import '../styles.scss';
 let nextRepeaterItemId = 0;
 const idIncrementer = () => nextRepeaterItemId++;
 
-export function Repeater(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<Record<string, unknown>[]>;
+export function Repeater(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<Record<string, unknown>[]>;
   const { uid, value, onValueChanged, templateData, errors, isTouched, onBlur } = useInputWidget<
     Record<string, unknown>[],
     RepeaterProps<any>
@@ -96,7 +96,7 @@ export function Repeater(widgetInstance: Core.WithWidget) {
     });
   }, [templateData, value, uid, removeItem, repeaterIndexesFromContext]);
 
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
   const showErrors = isTouched && errors && errors.length > 0;
 
   return (

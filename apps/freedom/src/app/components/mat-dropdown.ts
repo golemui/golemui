@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
@@ -13,14 +13,14 @@ export type FreedomMatDropdownProps = {
 };
 
 @customElement('freedom-mat-dropdown')
-export class FreedomMatDropdownElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class FreedomMatDropdownElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, FreedomMatDropdownProps>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, FreedomMatDropdownProps>();
 
   subscriptions: Subscription[] = [];
 

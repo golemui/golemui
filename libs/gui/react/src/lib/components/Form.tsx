@@ -1,9 +1,9 @@
-import type * as Core from '@golemui/core';
+import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core'
 import { type FormInitConfig } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
 import { initValidators } from '@golemui/gui-validators';
-import * as React from '@golemui/react';
+import { FormComponent, type FormComponentHandle } from '@golemui/react'
 import { type ReactItemRenderer } from '@golemui/react';
 import { type ComponentType, type Ref, useMemo } from 'react';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
@@ -11,9 +11,9 @@ import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
 export interface ReactFormComponentProps {
   config: GuiFormInitConfig;
   autocomplete?: string;
-  formEvent?: (event: Core.FormEvent) => void;
-  formHealth?: (formHealth: Core.FormHealth) => void;
-  ref?: Ref<React.FormComponentHandle>;
+  formEvent?: (event: FormEvent) => void;
+  formHealth?: (formHealth: FormHealth) => void;
+  ref?: Ref<FormComponentHandle>;
 }
 
 export function GuiForm({
@@ -28,12 +28,12 @@ export function GuiForm({
     [config],
   );
 
-  const coreConfig: FormInitConfig<ComponentType<Core.WithWidget>> = {
+  const coreConfig: FormInitConfig<ComponentType<WithWidget>> = {
     formDef: resolved.formDef as string | Record<string, any>,
     widgetLoaders: {
       ...golemWidgetLoaders,
-      ...(resolved.widgetLoaders as Core.WidgetLoaders<ComponentType<Core.WithWidget>>),
-      ...((config.customWidgetLoaders ?? {}) as Core.WidgetLoaders<ComponentType<Core.WithWidget>>),
+      ...(resolved.widgetLoaders as WidgetLoaders<ComponentType<WithWidget>>),
+      ...((config.customWidgetLoaders ?? {}) as WidgetLoaders<ComponentType<WithWidget>>),
     },
     dependencies: { ...(resolved.dependencies ?? {}), ...(config.dependencies ?? {}) },
     validateOn: config.validateOn ?? resolved.validateOn ?? 'eager',
@@ -53,14 +53,14 @@ export function GuiForm({
   // Chain DX-registered event handlers with the user-supplied callback so both fire.
   const mergedFormEvent =
     resolved.formEvent && formEvent
-      ? (event: Core.FormEvent) => {
+      ? (event: FormEvent) => {
           resolved.formEvent?.(event);
           formEvent(event);
         }
       : (formEvent ?? resolved.formEvent);
 
   return (
-    <React.FormComponent
+    <FormComponent
       ref={ref}
       config={coreConfig}
       validators={allValidators}

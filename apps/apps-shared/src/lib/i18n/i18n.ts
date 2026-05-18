@@ -1,7 +1,7 @@
-import type * as Core from '@golemui/core';
+import type { I18nParams, I18nTranslator, TranslationKey } from '@golemui/core'
 import i18next, { type Resource } from 'i18next';
 
-export function initializeI18n(resources: Resource): Core.I18nTranslator {
+export function initializeI18n(resources: Resource): I18nTranslator {
   i18next.init({
     fallbackLng: 'en',
     resources,
@@ -11,7 +11,7 @@ export function initializeI18n(resources: Resource): Core.I18nTranslator {
     get lang() {
       return i18next.language;
     },
-    translate(key: Core.TranslationKey, params?: Core.I18nParams, defaultValue?: string): string {
+    translate(key: TranslationKey, params?: I18nParams, defaultValue?: string): string {
       return i18next.t(key, { ...params, defaultValue });
     },
     subscribe(listener: (lang: string) => void) {

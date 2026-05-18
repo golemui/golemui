@@ -1,9 +1,9 @@
-import type * as Core from '@golemui/core';
+import type { NonFunctionWidget } from '@golemui/core'
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
-  widget: Core.NonFunctionWidget<string, any>;
+  widget: NonFunctionWidget<string, any>;
 }
 
 interface State {

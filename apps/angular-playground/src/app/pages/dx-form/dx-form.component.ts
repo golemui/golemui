@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import * as AppsShared from '@golemui/apps-shared';
-import type * as Core from '@golemui/core';
-import * as GuiAngular from '@golemui/gui-angular';
+import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared'
+import type { FormEvent } from '@golemui/core'
+import { FormComponent } from '@golemui/gui-angular'
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer';
@@ -10,9 +10,9 @@ import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const localization = AppsShared.initializeI18n({});
+const localization = initializeI18n({});
 
-const ks = AppsShared.buildKitchenSinkDx({
+const ks = buildKitchenSinkDx({
   widgetLoaders: {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
@@ -31,7 +31,7 @@ const ks = AppsShared.buildKitchenSinkDx({
 });
 
 @Component({
-  imports: [CommonModule, GuiAngular.FormComponent],
+  imports: [CommonModule, FormComponent],
   selector: 'app-dx-form-page',
   templateUrl: './dx-form.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -45,7 +45,7 @@ export class DxFormPage {
     localization,
   };
 
-  protected onFormEvent(event: Core.FormEvent) {
-    AppsShared.onFormEvent(event);
+  protected onFormEvent(event: FormEvent) {
+    onFormEvent(event);
   }
 }

@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { type ControlTemplateData, type InputWidget, type ItemRenderItemData, dataByPath$, injectedValidationByPath$, touchedControlsByPath$, validationByPath$ } from '@golemui/core'
 import { createContext } from '@lit/context';
 import { combineLatest, takeUntil } from 'rxjs';
 import { type LitItemRenderer } from '../components/item-renderers/item-renderer';
@@ -9,10 +9,10 @@ export const inputContext = createContext<InputWidgetAdapter<any, any>>('guiInpu
 export class InputWidgetAdapter<
   T,
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.InputWidget<T>> {
-  override templateData = {} as Core.ControlTemplateData<T> & ExtraProps;
+> extends BaseWidgetAdapter<InputWidget<T>> {
+  override templateData = {} as ControlTemplateData<T> & ExtraProps;
 
-  init(widget: Core.InputWidget<T>) {
+  init(widget: InputWidget<T>) {
     this.widget = widget;
 
     this.addWidgetToTheStore(widget);
@@ -26,17 +26,17 @@ export class InputWidgetAdapter<
 
     // Set the initial templateData, including the control's data value
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.dataByPath$(widget.path))
+      .pipe(takeUntil(this.destroy$), dataByPath$(widget.path))
       .subscribe((data) => this.setTemplateData({ value: data }));
 
     // Listen to the validation stream for this control
     const validation$ = this.context.store.state$.pipe(
       takeUntil(this.destroy$),
-      Core.validationByPath$(widget.path),
+      validationByPath$(widget.path),
     );
     const injectedValidation$ = this.context.store.state$.pipe(
       takeUntil(this.destroy$),
-      Core.injectedValidationByPath$(widget.path),
+      injectedValidationByPath$(widget.path),
     );
 
     combineLatest([validation$, injectedValidation$]).subscribe(
@@ -49,7 +49,7 @@ export class InputWidgetAdapter<
 
     // Listen to the touchedControls stream for this control
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.touchedControlsByPath$(widget.path))
+      .pipe(takeUntil(this.destroy$), touchedControlsByPath$(widget.path))
       .subscribe((touched) => this.setTemplateData({ touched }));
 
     this.context.emitEvent('load', this.widget);
@@ -77,7 +77,7 @@ export class InputWidgetAdapter<
   /**
    * This is a helper to get the item renderer from the context
    */
-  getItemRenderer<T extends Core.ItemRenderItemData>(
+  getItemRenderer<T extends ItemRenderItemData>(
     itemRendererKey: string | undefined,
     defaultItemRenderer: LitItemRenderer<T>,
   ): LitItemRenderer<T> {

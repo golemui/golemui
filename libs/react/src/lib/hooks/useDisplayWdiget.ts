@@ -1,14 +1,14 @@
-import type * as Core from '@golemui/core';
+import type { DisplayWidget } from '@golemui/core'
 import { useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useDisplayWdiget<ExtraProps extends Record<string, any>>(
-  widget: Core.DisplayWidget<string>,
+  widget: DisplayWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const templateData = useTemplateData<Core.DisplayWidget<string>, ExtraProps>(widget);
+  const templateData = useTemplateData<DisplayWidget<string>, ExtraProps>(widget);
 
   useEffect(() => {
     setUid(widget.uid);

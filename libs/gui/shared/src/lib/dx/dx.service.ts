@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { EventHandlerCallback, Form, FormEvent } from '@golemui/core'
 import { type LayoutWidget, type UiState } from '@golemui/core';
 import { type DxDefinitionItem, type DxDefinitions, type DxResult } from './formDef.domain';
 import {
@@ -151,7 +151,7 @@ export class DxService {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    form: Core.Form<StateKeys, FormData>,
+    form: Form<StateKeys, FormData>,
     eventRegistry: EventRegistry,
     formConfig: FormConfig,
   ): DxResult<StateKeys, FormData> {
@@ -166,7 +166,7 @@ export class DxService {
     const result: DxResult<StateKeys, FormData> = { form };
 
     if (eventRegistry.size > 0) {
-      result.events = (event: Core.FormEvent) => {
+      result.events = (event: FormEvent) => {
         const handler = eventRegistry.get(event.name);
         if (handler) {
           const dxUpdate = (callbackArg: any) => {
@@ -183,7 +183,7 @@ export class DxService {
                 event.callback({
                   type: 'OVERRIDE_WIDGET_PROP',
                   payload: { path, prop, value },
-                } as Core.EventHandlerCallback);
+                } as EventHandlerCallback);
               }
             } else {
               // Raw action passthrough (backward compat)

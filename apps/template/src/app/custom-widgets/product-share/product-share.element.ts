@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import * as Lit from '@golemui/lit';
-import type * as Core from '@golemui/core';
+import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit'
+import type { ActionWidget, WithWidget } from '@golemui/core'
 import { consume, provide } from '@lit/context';
 import { type Subscription } from 'rxjs';
 import './product-share.element.scss';
@@ -28,14 +28,14 @@ function isInlineSvg(icon: string): boolean {
 }
 
 @customElement('app-product-share')
-export class ProductShareElement extends LitElement implements Core.WithWidget {
-  widget!: Core.ActionWidget;
+export class ProductShareElement extends LitElement implements WithWidget {
+  widget!: ActionWidget;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.actionContext })
-  adapter = new Lit.ActionWidgetAdapter<ProductShareProps>();
+  @provide({ context: actionContext })
+  adapter = new ActionWidgetAdapter<ProductShareProps>();
 
   subscriptions: Subscription[] = [];
 

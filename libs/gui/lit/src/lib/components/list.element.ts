@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
 import { type ListItem, type ListProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
@@ -8,15 +8,15 @@ import { type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-list-input')
-export class ListElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class ListElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, ListProps<any>>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, ListProps<any>>();
 
   subscriptions: Subscription[] = [];
 

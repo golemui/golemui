@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runDataComponentTests = (mountFn: MountComponentFn) => {
@@ -12,7 +12,7 @@ export const runDataComponentTests = (mountFn: MountComponentFn) => {
           selectData: 'option2',
           radioData: 'radio2',
         },
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'stringData',

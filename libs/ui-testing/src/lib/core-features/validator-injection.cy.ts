@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
@@ -6,7 +6,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
     it(`Should inject an 'Invalid date format' validation issue`, () => {
       mountFn({
         withCustomComponent: true,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'testSubject',
@@ -26,7 +26,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
     it(`Should inject an 'Impossible date' validation issue and then clear it after fixing the issue`, () => {
       mountFn({
         withCustomComponent: true,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'testSubject',
@@ -50,7 +50,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
     it(`Should inject an 'Invalid date' validation issue`, () => {
       mountFn({
         withCustomComponent: true,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'testSubject',
@@ -71,7 +71,7 @@ export const runValidatorInjectionTests = (mountFn: MountComponentFn) => {
     it(`Should combine injected and managed validations`, () => {
       mountFn({
         withCustomComponent: true,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'testSubject',

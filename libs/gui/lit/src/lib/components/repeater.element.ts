@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
 import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
 import { consume, provide } from '@lit/context';
@@ -15,15 +15,15 @@ let nextRepeaterItemId = 0;
 const idIncrementer = () => nextRepeaterItemId++;
 
 @customElement('gui-repeater-input')
-export class RepeaterElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<Record<string, unknown>[]>;
+export class RepeaterElement extends LitElement implements WithWidget {
+  widget!: InputWidget<Record<string, unknown>[]>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
 
   @state() isFocused = false;
 

@@ -10,34 +10,34 @@ import {
   viewChild,
   viewChildren,
 } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import type * as Core from '@golemui/core';
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular'
+import type { LayoutWidget, WithWidget } from '@golemui/core'
 import { createIntersectionObserver, type TabsEventDetail } from '@golemui/gui-components';
 import { type TabsProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-tabs-layout',
-  imports: [CommonModule, Angular.WidgetDirective],
-  providers: [Angular.LayoutWidgetAdapter],
+  imports: [CommonModule, WidgetDirective],
+  providers: [LayoutWidgetAdapter],
   templateUrl: './tabs.component.html',
   host: {
     class: 'gui-tabs gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, Core.WithWidget {
+export class TabsComponent implements OnInit, AfterViewInit, OnDestroy, WithWidget {
   elementRef = inject(ElementRef);
   tabButtons = viewChildren<ElementRef>('tabButtonRef');
   startSentinel = viewChild.required<ElementRef>('startSentinel');
   endSentinel = viewChild.required<ElementRef>('endSentinel');
-  widget!: Core.LayoutWidget;
+  widget!: LayoutWidget;
 
   activeTab = signal('');
   isStartVisible = signal(false);
   isEndVisible = signal(false);
 
-  protected adapter: Angular.LayoutWidgetAdapter<TabsProps> = inject(Angular.LayoutWidgetAdapter);
+  protected adapter: LayoutWidgetAdapter<TabsProps> = inject(LayoutWidgetAdapter);
   private startObserver: IntersectionObserver | undefined;
   private endObserver: IntersectionObserver | undefined;
 

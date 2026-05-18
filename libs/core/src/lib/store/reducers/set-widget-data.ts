@@ -1,10 +1,10 @@
 import { get, set } from '../../utils/object';
-import type * as Actions from '../actions';
+import type { SET_WIDGET_DATA, SET_WIDGET_INITIAL_DATA } from '../actions'
 import { type State } from '../model';
 
 export const setWidgetData = (
   state: State,
-  action: Actions.SET_WIDGET_DATA | Actions.SET_WIDGET_INITIAL_DATA,
+  action: SET_WIDGET_DATA | SET_WIDGET_INITIAL_DATA,
 ): State => {
   const oldValue = get(state.data, action.payload.path);
   const shouldUpdate =

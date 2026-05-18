@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { ActionWidget, WithWidget } from '@golemui/core'
+import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit'
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -8,15 +8,15 @@ import { type Subscription } from 'rxjs';
 import '@material/web/button/filled-button.js';
 
 @customElement('mat-button')
-export class MatButtonElement extends LitElement implements Core.WithWidget {
-  widget!: Core.ActionWidget;
+export class MatButtonElement extends LitElement implements WithWidget {
+  widget!: ActionWidget;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.actionContext })
-  adapter = new Lit.ActionWidgetAdapter();
+  @provide({ context: actionContext })
+  adapter = new ActionWidgetAdapter();
 
   subscriptions: Subscription[] = [];
 

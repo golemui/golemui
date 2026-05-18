@@ -1,24 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import type * as Core from '@golemui/core';
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular'
+import type { LayoutWidget, WithWidget } from '@golemui/core'
 import { type GridProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-grid-layout',
-  imports: [CommonModule, Angular.WidgetDirective],
-  providers: [Angular.LayoutWidgetAdapter],
+  imports: [CommonModule, WidgetDirective],
+  providers: [LayoutWidgetAdapter],
   templateUrl: './grid.component.html',
   host: {
     class: 'gui-grid gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class GridComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class GridComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: LayoutWidget;
 
-  protected adapter: Angular.LayoutWidgetAdapter<GridProps> = inject(Angular.LayoutWidgetAdapter);
+  protected adapter: LayoutWidgetAdapter<GridProps> = inject(LayoutWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

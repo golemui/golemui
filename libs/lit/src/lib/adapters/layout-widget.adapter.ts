@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { type LayoutTemplateData, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core'
 import { createContext } from '@lit/context';
 import { takeUntil } from 'rxjs';
 import { BaseWidgetAdapter } from './base-widget.adapter';
@@ -7,10 +7,10 @@ export const layoutContext = createContext<LayoutWidgetAdapter<any>>('guiLayoutW
 
 export class LayoutWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.LayoutWidget> {
-  override templateData = {} as Core.LayoutTemplateData & ExtraProps;
+> extends BaseWidgetAdapter<LayoutWidget> {
+  override templateData = {} as LayoutTemplateData & ExtraProps;
 
-  init(widget: Core.LayoutWidget) {
+  init(widget: LayoutWidget) {
     this.widget = widget;
 
     // Set initial templateData
@@ -20,7 +20,7 @@ export class LayoutWidgetAdapter<
 
     // Listen to the layout's `hidden`-flag-filtered children stream
     this.context.store.state$
-      .pipe(Core.calculatedLayoutChildrenByUid$(this.widget.uid))
+      .pipe(calculatedLayoutChildrenByUid$(this.widget.uid))
       .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
         this.setTemplateData({

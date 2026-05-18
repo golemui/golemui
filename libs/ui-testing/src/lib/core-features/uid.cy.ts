@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import { type FormHealth, defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runUidTests = (mountFn: MountComponentFn) => {
   describe('Field Uid', () => {
     it('should send an error when the same uid is used more than once', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'uid1',
@@ -30,7 +30,7 @@ export const runUidTests = (mountFn: MountComponentFn) => {
         message:
           '[21] Duplicate UID "uid1": Assigned to widget "textinput" at "something1" and "alert".',
         code: 21,
-      } satisfies Core.FormHealth);
+      } satisfies FormHealth);
     });
   });
 };

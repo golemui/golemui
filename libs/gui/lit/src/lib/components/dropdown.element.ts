@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
 import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
@@ -8,15 +8,15 @@ import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
 
 @customElement('gui-dropdown-input')
-export class DropdownElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class DropdownElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, DropdownProps<never>>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, DropdownProps<never>>();
 
   debouncer = new Subject<string>();
   subscriptions: Subscription[] = [];

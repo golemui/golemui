@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { DisplayWidget, WithWidget } from '@golemui/core'
 import { useDisplayWdiget } from '@golemui/react';
 import { createElement, type PropsWithChildren } from 'react';
 import styles from './heading.component.module.scss';
@@ -8,8 +8,8 @@ type OwnWidgetProps = {
   level?: number;
 };
 
-export function HeadingComponent(fieldInstance: Core.WithWidget) {
-  const field = fieldInstance.widget as Core.DisplayWidget;
+export function HeadingComponent(fieldInstance: WithWidget) {
+  const field = fieldInstance.widget as DisplayWidget;
   const { uid, templateData } = useDisplayWdiget<OwnWidgetProps>(field);
 
   return (

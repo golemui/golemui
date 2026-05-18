@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import { type FormEvent, type FormHealth, defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runEventsComponentTests = (mountFn: MountComponentFn) => {
   describe('Events', () => {
     it('Should execute form errors', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: '',
@@ -22,14 +22,14 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
         status: 'errored',
         message: '[30] Widget "asdf" could not be loaded',
         code: 30,
-      } satisfies Core.FormHealth);
+      } satisfies FormHealth);
     });
 
     it('Should execute form events on load', () => {
       const mockSubregions = ['Europe', 'Asia', 'Americas'];
 
       const formEventHandler = cy.stub().as('formEventHandler');
-      formEventHandler.callsFake(async (event: Core.FormEvent) => {
+      formEventHandler.callsFake(async (event: FormEvent) => {
         if (event.name === 'getSubregionsForSelect') {
           await new Promise((r) => setTimeout(r, 50));
 
@@ -47,7 +47,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'eventSelect',
@@ -76,7 +76,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       };
 
       const formEventHandler = cy.stub().as('formEventHandler');
-      formEventHandler.callsFake(async (event: Core.FormEvent) => {
+      formEventHandler.callsFake(async (event: FormEvent) => {
         if (event.name === 'getCountriesForSelect') {
           await new Promise((r) => setTimeout(r, 50));
 
@@ -94,7 +94,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'regionSelect',
@@ -137,7 +137,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       const formEventHandler = cy.stub().as('formEventHandler');
 
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'tabsComponent',
@@ -196,7 +196,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       const mockRegions: any = ['Spain', 'France', 'Italy'];
 
       const formEventHandler = cy.stub().as('formEventHandler');
-      formEventHandler.callsFake(async (event: Core.FormEvent) => {
+      formEventHandler.callsFake(async (event: FormEvent) => {
         if (event.name === 'getRegionsForSelect') {
           await new Promise((r) => setTimeout(r, 50));
 
@@ -214,7 +214,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'regionSelect',
@@ -243,7 +243,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
 
     it('Should override widget props by uid on button click', () => {
       const formEventHandler = cy.stub().as('formEventHandler');
-      formEventHandler.callsFake((event: Core.FormEvent) => {
+      formEventHandler.callsFake((event: FormEvent) => {
         if (event.name === 'updateAlerts') {
           if (event.callback) {
             event.callback({
@@ -259,7 +259,7 @@ export const runEventsComponentTests = (mountFn: MountComponentFn) => {
       });
 
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'alertFirst',

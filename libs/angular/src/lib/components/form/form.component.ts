@@ -12,7 +12,7 @@ import {
   type Type,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import * as Core from '@golemui/core';
+import { type FormEvent, type FormHealth, type ValidatorFn, type WithWidget, formHealth, getDirectionFromLanguage, shortUUID } from '@golemui/core'
 import { type FormInitConfig } from '@golemui/core';
 import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
@@ -31,22 +31,22 @@ import { WidgetDirective } from '../../directives/widget.directive';
 })
 export class FormCoreComponent implements OnInit, OnDestroy {
   // INPUTS
-  config = input.required<FormInitConfig<Type<Core.WithWidget>>>();
-  validators = input.required<Core.ValidatorFn<any>>();
+  config = input.required<FormInitConfig<Type<WithWidget>>>();
+  validators = input.required<ValidatorFn<any>>();
   autocomplete = input<string | undefined>(undefined);
   protected direction = signal<'ltr' | 'rtl'>('ltr');
 
   // OUTPUTS
-  protected formHealth = output<Core.FormHealth>();
-  protected formEvent = output<Core.FormEvent>();
+  protected formHealth = output<FormHealth>();
+  protected formEvent = output<FormEvent>();
 
   // INJECTS
-  protected context: AngularFormContext<Type<Core.WithWidget>> = inject(AngularFormContext);
+  protected context: AngularFormContext<Type<WithWidget>> = inject(AngularFormContext);
 
   // PRIVATE
   private destroyRef = inject(DestroyRef);
   private unsubscribeI18n: () => void = () => undefined;
-  protected readonly _defaultFormName = Core.shortUUID();
+  protected readonly _defaultFormName = shortUUID();
 
   // `tap()` runs synchronously before `switchMap` accesses the new store, ensuring
   // that `context.initialize()` always fires before we resubscribe to `formHealth`
@@ -77,9 +77,9 @@ export class FormCoreComponent implements OnInit, OnDestroy {
         type: 'SET_META',
         payload: { meta: c.meta ?? {} },
       });
-      this.direction.set(Core.getDirectionFromLanguage(this.context.localization.lang));
+      this.direction.set(getDirectionFromLanguage(this.context.localization.lang));
       this.unsubscribeI18n = this.context.localization.subscribe((lang) => {
-        this.direction.set(Core.getDirectionFromLanguage(lang));
+        this.direction.set(getDirectionFromLanguage(lang));
         this.context.store.dispatch({
           type: 'SET_LANGUAGE',
           payload: { lang },
@@ -93,7 +93,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
     // Resubscribe to the new store `formHealth` whenever config changes
     this.config$
       .pipe(
-        switchMap(() => Core.formHealth(this.context.store.state$)),
+        switchMap(() => formHealth(this.context.store.state$)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((health) => this.formHealth.emit(health));

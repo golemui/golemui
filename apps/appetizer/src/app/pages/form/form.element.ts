@@ -1,5 +1,5 @@
 import type { ItemRenderContext } from '@golemui/core';
-import type * as Core from '@golemui/core';
+import type { ValidateOn } from '@golemui/core'
 import '@golemui/gui-lit';
 import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement, type TemplateResult } from 'lit';
@@ -240,7 +240,7 @@ export class FormElement extends LitElement {
   formDef: ReturnType<FormElement['buildFormDef']>;
   formData: Record<string, unknown> = {};
   formConfig = {
-    validateOn: 'submit' as Core.ValidateOn,
+    validateOn: 'submit' as ValidateOn,
     suppressAutomaticSubmit: true,
     itemRenderers: {
       currencyItemRenderer,

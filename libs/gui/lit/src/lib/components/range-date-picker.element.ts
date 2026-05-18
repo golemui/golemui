@@ -1,5 +1,5 @@
-import type * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core'
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit'
 import { addErrors, addIcon, addLabel } from '@golemui/gui-components';
 import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
@@ -9,15 +9,15 @@ import { type Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-range-date-picker-input')
-export class RangeDatePickerElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<DateRange[]>;
+export class RangeDatePickerElement extends LitElement implements WithWidget {
+  widget!: InputWidget<DateRange[]>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<DateRange[], RangeDatePickerProps>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<DateRange[], RangeDatePickerProps>();
 
   @query('#date-input') dateInput?: HTMLElement;
   @query('#calendar-input') calendarInput?: HTMLElement;

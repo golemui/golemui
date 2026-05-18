@@ -1,11 +1,11 @@
 import { errorCodes } from '../../errors';
-import * as Form from '../../form';
-import * as Widget from '../../form-widget';
+import { type Form, formDefDecoder } from '../../form'
+import { type FormWidget, isInputWidget } from '../../form-widget'
 import { flattenForm } from '../../utils/form';
-import type * as Actions from '../actions';
+import type { INITIALIZE } from '../actions'
 import { createInitialState, type FormHealth, type State } from '../model';
 
-export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State => {
+export const initialize = ({ lang }: State, action: INITIALIZE): State => {
   const initialState = {
     ...createInitialState(lang),
     formName: action.payload.formName,
@@ -45,13 +45,13 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
     };
   }
 
-  const result = Form.formDefDecoder.decode(formDef);
+  const result = formDefDecoder.decode(formDef);
 
   if (result.isOk()) {
     formHealth = { status: 'ok' };
     let flatForm = {} as State['flatForm'];
     try {
-      flatForm = flattenForm([result.value.form] as Widget.FormWidget[]).reduce(
+      flatForm = flattenForm([result.value.form] as FormWidget[]).reduce(
         (acc, cur) => {
           if (acc[cur.uid!]) {
             throw { existingWidget: acc[cur.uid!], newWidget: cur };
@@ -73,7 +73,7 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
 
     return {
       ...initialState,
-      formDef: result.value as Form.Form,
+      formDef: result.value as Form,
       flatForm,
       formHealth,
     };
@@ -91,10 +91,10 @@ export const initialize = ({ lang }: State, action: Actions.INITIALIZE): State =
 };
 
 function uidCollisionErrorMessage(
-  existingWidget: Widget.FormWidget<string>,
-  newWidget: Widget.FormWidget<string>,
+  existingWidget: FormWidget<string>,
+  newWidget: FormWidget<string>,
 ) {
-  const getPath = (f: Widget.FormWidget<string>) =>
-    Widget.isInputWidget(f) ? ` at "${f.path}"` : '';
+  const getPath = (f: FormWidget<string>) =>
+    isInputWidget(f) ? ` at "${f.path}"` : '';
   return `Duplicate UID "${newWidget.uid}": Assigned to widget "${existingWidget.type}"${getPath(existingWidget)} and "${newWidget.type}"${getPath(newWidget)}.`;
 }

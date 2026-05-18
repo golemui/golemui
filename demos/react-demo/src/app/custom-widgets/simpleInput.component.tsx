@@ -1,8 +1,8 @@
-import type * as Core from '@golemui/core';
+import type { InputWidget, WithWidget } from '@golemui/core'
 import { useInputWidget } from '@golemui/react';
 
-export function SimpleInputComponent(fieldInstance: Core.WithWidget) {
-  const widget = fieldInstance.widget as Core.InputWidget<string, string>;
+export function SimpleInputComponent(fieldInstance: WithWidget) {
+  const widget = fieldInstance.widget as InputWidget<string, string>;
   const { uid, value, errors, isTouched, onValueChanged, onBlur } = useInputWidget<
     string,
     Record<string, any>

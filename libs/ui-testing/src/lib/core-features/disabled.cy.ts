@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type Option } from '@golemui/gui-shared';
 import { type MountComponentFn } from '../utils';
 
@@ -17,7 +17,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -26,7 +26,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: false }],
             }),
           });
@@ -35,7 +35,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: true }],
             }),
           });
@@ -44,7 +44,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -63,7 +63,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -97,7 +97,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -106,7 +106,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: false }],
             }),
           });
@@ -115,7 +115,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: true }],
             }),
           });
@@ -124,7 +124,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -143,7 +143,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -176,7 +176,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -185,7 +185,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: false }],
             }),
           });
@@ -194,7 +194,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: true }],
             }),
           });
@@ -203,7 +203,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -222,7 +222,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -255,7 +255,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -264,7 +264,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: false }],
             }),
           });
@@ -273,7 +273,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', disabled: true }],
             }),
           });
@@ -282,7 +282,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -301,7 +301,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -334,7 +334,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -351,7 +351,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -369,7 +369,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -387,7 +387,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -407,7 +407,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -442,7 +442,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'action', type: 'button', label: 'Send' }],
             }),
           });
@@ -451,7 +451,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be disabled when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -468,7 +468,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -485,7 +485,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -504,7 +504,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -531,7 +531,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via $formIsInvalid when form has validation errors', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'userName',

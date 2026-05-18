@@ -1,7 +1,7 @@
-import type * as Core from '@golemui/core';
+import type { DotPath, FormEvent } from '@golemui/core'
 import i18next from 'i18next';
 
-export const onFormEvent = (event: Core.FormEvent) => {
+export const onFormEvent = (event: FormEvent) => {
   const eventHandler = eventHandlers[event.name as keyof typeof eventHandlers];
   if (eventHandler) {
     console.log(`✅ onFormEvent('${event.name}')`, event.data);
@@ -23,56 +23,56 @@ const SHARE_URLS: Record<string, (url: string) => string> = {
 };
 
 const eventHandlers = {
-  shareEvent(event: Core.FormEvent) {
+  shareEvent(event: FormEvent) {
     const network = event.detail as string;
     const buildUrl = SHARE_URLS[network];
     if (buildUrl) {
       window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
     }
   },
-  getSubregionsForSelect(event: Core.FormEvent) {
+  getSubregionsForSelect(event: FormEvent) {
     getSubregions(event, 'selects.subregion');
   },
-  getCountriesForSelect(event: Core.FormEvent) {
+  getCountriesForSelect(event: FormEvent) {
     const subregion = event.data['selects'].subregion as string;
     getCountries(event, subregion, 'selects.country');
   },
-  getSubregionsForRadio(event: Core.FormEvent) {
+  getSubregionsForRadio(event: FormEvent) {
     getSubregions(event, 'radiogroups.subregion');
   },
-  getCountriesForRadio(event: Core.FormEvent) {
+  getCountriesForRadio(event: FormEvent) {
     const subregion = event.data['radiogroups'].subregion as string;
     getCountries(event, subregion, 'radiogroups.country');
   },
-  searchProductForDropdown(event: Core.FormEvent) {
+  searchProductForDropdown(event: FormEvent) {
     getProducts(event, event.detail, 'dropdowns.searchAsYouType');
   },
-  getFromAirports(event: Core.FormEvent) {
+  getFromAirports(event: FormEvent) {
     getAirports(event, event.detail, 'from');
   },
-  getToAirports(event: Core.FormEvent) {
+  getToAirports(event: FormEvent) {
     getAirports(event, event.detail, 'to');
   },
-  loadCars(event: Core.FormEvent) {
+  loadCars(event: FormEvent) {
     getCars(event, '', 'car');
   },
-  filterCars(event: Core.FormEvent) {
+  filterCars(event: FormEvent) {
     getCars(event, (event.detail as string) ?? '', 'car');
   },
-  async changeLanguage(event: Core.FormEvent) {
+  async changeLanguage(event: FormEvent) {
     const lang = (event.data as Record<string, unknown>)['lang'] as string | undefined;
     if (lang) {
       await i18next.changeLanguage(lang);
     }
   },
-  evClick(event: Core.FormEvent) {
+  evClick(event: FormEvent) {
     const time = new Date().toLocaleTimeString();
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: { path: 'evClickResult', prop: 'hint', value: `Clicked at ${time}.` },
     });
   },
-  evChange(event: Core.FormEvent) {
+  evChange(event: FormEvent) {
     const text = String((event.data as any).evSource ?? '');
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
@@ -83,7 +83,7 @@ const eventHandlers = {
       },
     });
   },
-  evLoadColors(event: Core.FormEvent) {
+  evLoadColors(event: FormEvent) {
     setTimeout(() => {
       event.callback({
         type: 'OVERRIDE_WIDGET_PROP',
@@ -91,7 +91,7 @@ const eventHandlers = {
       });
     }, 250);
   },
-  evFilterColors(event: Core.FormEvent) {
+  evFilterColors(event: FormEvent) {
     const q = String(event.detail ?? '').toLowerCase();
     const filtered = q ? ALL_COLORS.filter((c) => c.label.toLowerCase().includes(q)) : ALL_COLORS;
     event.callback({
@@ -99,7 +99,7 @@ const eventHandlers = {
       payload: { path: 'evColorPick', prop: 'items', value: filtered },
     });
   },
-  evBlur(event: Core.FormEvent) {
+  evBlur(event: FormEvent) {
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
       payload: {
@@ -109,7 +109,7 @@ const eventHandlers = {
       },
     });
   },
-  submit(event: Core.FormEvent) {
+  submit(event: FormEvent) {
     const email = (event.data as any).evEmail;
     if (email !== undefined) {
       event.callback({
@@ -122,7 +122,7 @@ const eventHandlers = {
       });
     }
   },
-  send(event: Core.FormEvent) {
+  send(event: FormEvent) {
     const name = String((event.data as any).userName ?? '');
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
@@ -155,7 +155,7 @@ const ALL_CARS = [
   { id: 'pickup', label: 'Pickup', img: '🛻', price: 85 },
 ];
 
-function getCars(event: Core.FormEvent, filter: string, path: Core.DotPath) {
+function getCars(event: FormEvent, filter: string, path: DotPath) {
   setTimeout(() => {
     const q = filter.toLowerCase();
     const filtered = q ? ALL_CARS.filter((c) => c.label.toLowerCase().includes(q)) : ALL_CARS;
@@ -166,7 +166,7 @@ function getCars(event: Core.FormEvent, filter: string, path: Core.DotPath) {
   }, 250);
 }
 
-async function getSubregions(event: Core.FormEvent, path: Core.DotPath) {
+async function getSubregions(event: FormEvent, path: DotPath) {
   const response = await fetch('/data/subregions.json');
   const subregions = await response.json();
   event.callback({
@@ -175,7 +175,7 @@ async function getSubregions(event: Core.FormEvent, path: Core.DotPath) {
   });
 }
 
-async function getCountries(event: Core.FormEvent, subregion: string, path: Core.DotPath) {
+async function getCountries(event: FormEvent, subregion: string, path: DotPath) {
   const response = await fetch('/data/countries.json');
   const countries = await response.json();
   event.callback({
@@ -188,7 +188,7 @@ async function getCountries(event: Core.FormEvent, subregion: string, path: Core
   });
 }
 
-async function getProducts(event: Core.FormEvent, filter: string, path: Core.DotPath) {
+async function getProducts(event: FormEvent, filter: string, path: DotPath) {
   const response = await fetch('/data/products.json');
   const products = await response.json();
   setTimeout(() => {
@@ -218,7 +218,7 @@ export type AirportItem = {
   size: string;
 };
 
-async function getAirports(event: Core.FormEvent, filter: string, path: Core.DotPath) {
+async function getAirports(event: FormEvent, filter: string, path: DotPath) {
   const response = await fetch(
     'https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/refs/heads/master/airports.json',
   );

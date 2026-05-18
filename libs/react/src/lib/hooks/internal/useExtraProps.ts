@@ -1,16 +1,16 @@
-import * as Core from '@golemui/core';
+import { type NonFunctionWidget, assertNoPropCollisions, calculatedWidgetsByUid$ } from '@golemui/core'
 import { useEffect, useState } from 'react';
 import { Subject, takeUntil } from 'rxjs';
 import { useReactFormContext } from '../../ReactFormContext';
 
 export type WithFlattenedProps<
-  F extends Core.NonFunctionWidget<string>,
-  ExtraProps extends Core.NonFunctionWidget<string>['props'],
+  F extends NonFunctionWidget<string>,
+  ExtraProps extends NonFunctionWidget<string>['props'],
 > = F & ExtraProps & { lang: string; deps: Record<string, unknown> };
 
 export function useTemplateData<
-  F extends Core.NonFunctionWidget<string>,
-  ExtraProps extends Core.NonFunctionWidget<string>['props'],
+  F extends NonFunctionWidget<string>,
+  ExtraProps extends NonFunctionWidget<string>['props'],
 >(widget: F) {
   const [templateData, setTemplateData] = useState<WithFlattenedProps<F, ExtraProps>>(
     {} as WithFlattenedProps<F, ExtraProps>,
@@ -20,14 +20,14 @@ export function useTemplateData<
   useEffect(() => {
     const destroy$ = new Subject<void>();
     formContext.store.state$
-      .pipe(takeUntil(destroy$), Core.calculatedWidgetsByUid$(widget.uid))
+      .pipe(takeUntil(destroy$), calculatedWidgetsByUid$(widget.uid))
       .subscribe((calculatedWidget) => {
         const obj = {
           ...calculatedWidget,
           lang: formContext.store.getState().lang,
           deps: formContext.dependencies,
         };
-        Core.assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
+        assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
         const templateData = {
           ...obj,
           ...calculatedWidget.props,

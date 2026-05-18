@@ -1,11 +1,11 @@
-import type * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core'
 import { useInputWidget } from '@golemui/react';
 import { type DateRange, type RangeCalendarProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function RangeCalendar(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<DateRange[]>;
+export function RangeCalendar(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<DateRange[]>;
   const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useInputWidget<
     DateRange[],
     RangeCalendarProps
@@ -48,7 +48,7 @@ export function RangeCalendar(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className="gui-range-calendar gui-field" style={{ flex: templateData.size }}>

@@ -1,4 +1,3 @@
-import * as React from '@golemui/react';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { type DxDefinitions, type GslSelectorsInput, type DxFormConfig } from '@golemui/gui-shared';
 import { type DemoLogFn } from '../utils/demoLog';

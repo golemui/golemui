@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { type FormEvent, defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runStatesComponentTests = (mountFn: MountComponentFn) => {
@@ -6,7 +6,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
     context('Validators with boolean values', () => {
       it(`should add a validator with a state`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               check1: '$form.check1 === true',
               'check1:check2': '$form.check2 === true',
@@ -74,7 +74,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
     context('Validators with number values', () => {
       it(`should add a validator with a state`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               number1: '$form.number1 > 10',
               number2: '$form.number2 < 20',
@@ -174,7 +174,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
     context('Validators with string values', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               textinput1: '$form.textinput1 === "abc"',
               textinput2: '$form.textinput2 === "def"',
@@ -280,7 +280,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         const mockSubregions = ['Europe', 'Asia', 'Americas'];
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getSubregionsForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -298,7 +298,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doLoad: '$form.onLoad === true',
             },
@@ -339,7 +339,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         };
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getCountriesForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -357,7 +357,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doChange: '$form.onChange === true',
             },
@@ -413,7 +413,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         const mockRegions: any = ['Spain', 'France', 'Italy'];
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getRegionsForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -431,7 +431,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doClick: '$form.onClick === true',
             },
@@ -480,7 +480,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         const mockSubregions = ['Europe', 'Asia', 'Americas'];
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getSubregionsForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -498,7 +498,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doLoad: '$form.onLoad === 10',
             },
@@ -539,7 +539,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         };
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getCountriesForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -557,7 +557,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doChange: '$form.onChange === 10',
             },
@@ -612,7 +612,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         const mockRegions: any = ['Spain', 'France', 'Italy'];
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getRegionsForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -630,7 +630,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doClick: '$form.onClick === 10',
             },
@@ -679,7 +679,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         const mockSubregions = ['Europe', 'Asia', 'Americas'];
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getSubregionsForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -697,7 +697,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doLoad: '$form.onLoad === "abc"',
             },
@@ -738,7 +738,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         };
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getCountriesForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -756,7 +756,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doChange: '$form.onChange === "abc"',
             },
@@ -811,7 +811,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         const mockRegions: any = ['Spain', 'France', 'Italy'];
 
         const formEventHandler = cy.stub().as('formEventHandler');
-        formEventHandler.callsFake(async (event: Core.FormEvent) => {
+        formEventHandler.callsFake(async (event: FormEvent) => {
           if (event.name === 'getRegionsForSelect') {
             await new Promise((r) => setTimeout(r, 50));
 
@@ -829,7 +829,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
         });
 
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               doClick: '$form.onClick === "abc"',
             },
@@ -876,7 +876,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
     context('$errors and $formIsInvalid in state expressions', () => {
       it('should activate a state based on $errors field and drive include.in visibility', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               hasErrors: '$errors.userName?.length > 0',
             },
@@ -920,7 +920,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
 
       it('should activate a state based on $formIsInvalid and drive include.in / exclude.from', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               formInvalid: '$formIsInvalid',
             },

@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
@@ -11,7 +11,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be readonly by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -20,7 +20,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be readonly when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
@@ -29,7 +29,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
@@ -38,7 +38,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -57,7 +57,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -91,7 +91,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be readonly by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -100,7 +100,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be readonly when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
@@ -109,7 +109,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
@@ -118,7 +118,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -137,7 +137,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',
@@ -170,7 +170,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be readonly by default', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test' }],
             }),
           });
@@ -179,7 +179,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should not be readonly when set to false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: false }],
             }),
           });
@@ -188,7 +188,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly when set to true', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [{ uid, kind: 'input', type: widget, path: 'test', readonly: true }],
             }),
           });
@@ -198,7 +198,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly via a state', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -218,7 +218,7 @@ export const runReadonlyComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be readonly via a when expression', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'lock-uid',

@@ -1,10 +1,10 @@
-import * as jd from 'ts.data.json';
+import { Decoder, err, ok } from 'ts.data.json'
 
 export type KeySpec<A> = Record<
   string,
   {
     suffixed?: boolean;
-    decoder: jd.Decoder<A>;
+    decoder: Decoder<A>;
   }
 >;
 
@@ -57,10 +57,10 @@ export type KeySpec<A> = Record<
 export function objectWithSuffix<T extends Record<string, any>>(
   specs: KeySpec<any>,
   decoderName: string,
-): jd.Decoder<T> {
-  return new jd.Decoder<T>((json: any) => {
+): Decoder<T> {
+  return new Decoder<T>((json: any) => {
     if (typeof json !== 'object' || json === null) {
-      return jd.err<T>(`<${decoderName}> failed. Expected object literal, got "${typeof json}"`);
+      return err<T>(`<${decoderName}> failed. Expected object literal, got "${typeof json}"`);
     }
 
     const out: Record<string, any> = {};
@@ -69,7 +69,7 @@ export function objectWithSuffix<T extends Record<string, any>>(
       // decode normal properties (without state)
       const res = spec.decoder.decode(json[specKey]);
       if (!res.isOk()) {
-        return jd.err<T>(`<${decoderName}> failed at "${specKey}" with ${res.error}`);
+        return err<T>(`<${decoderName}> failed at "${specKey}" with ${res.error}`);
       }
       out[specKey] = res.value;
 
@@ -79,7 +79,7 @@ export function objectWithSuffix<T extends Record<string, any>>(
           if (jsonKey.startsWith(specKey + '.')) {
             const res = spec.decoder.decode(jsonValue);
             if (!res.isOk()) {
-              return jd.err<T>(`<${decoderName}> failed at "${jsonKey}" with ${res.error}`);
+              return err<T>(`<${decoderName}> failed at "${jsonKey}" with ${res.error}`);
             }
             out[jsonKey] = res.value;
           }
@@ -87,6 +87,6 @@ export function objectWithSuffix<T extends Record<string, any>>(
       }
     }
 
-    return jd.ok<T>(out as T);
+    return ok<T>(out as T);
   });
 }

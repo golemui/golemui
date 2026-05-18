@@ -1,12 +1,12 @@
-import type * as Core from '@golemui/core';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core'
 import { cn, useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import { createIntersectionObserver } from '@golemui/gui-components';
 import { type TabsProps } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export function Tabs(widgetInstance: Core.WithWidget) {
+export function Tabs(widgetInstance: WithWidget) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const widget = widgetInstance.widget as Core.LayoutWidget;
+  const widget = widgetInstance.widget as LayoutWidget;
   const { uid, children, templateData, onChange } = useLayoutWidget<TabsProps>(widget);
   const tabRefs = useRef<HTMLButtonElement[]>([]);
   const startSentinelRef = useRef<HTMLLIElement>(null);
@@ -146,7 +146,7 @@ export function Tabs(widgetInstance: Core.WithWidget) {
           hidden={section.uid !== activeTab && templateData.renderMode !== 'activeOnly'}
           aria-labelledby={`tab_${widget.uid}_${activeSectionIndex}`}
         >
-          <WidgetRenderer key={section.uid} widget={section as Core.NonFunctionWidget<string>} />
+          <WidgetRenderer key={section.uid} widget={section as NonFunctionWidget<string>} />
         </section>
       ));
   }, [children, activeTab, widget]);

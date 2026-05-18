@@ -8,7 +8,7 @@ import {
   SkipSelf,
   type Type,
 } from '@angular/core';
-import type * as Core from '@golemui/core';
+import type { WithWidget } from '@golemui/core'
 import { WidgetDirective } from './widget.directive';
 import { REPEATER_INDEXES_TOKEN } from './repeater-indexes.token';
 
@@ -28,7 +28,7 @@ export class RepeaterWidgetDirective extends WidgetDirective {
   repeaterIndex = input.required<number>();
   private injector = inject(Injector);
 
-  protected override createComponent(component: Type<Core.WithWidget>) {
+  protected override createComponent(component: Type<WithWidget>) {
     const injector = Injector.create({
       providers: [
         {

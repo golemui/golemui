@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runComponentDependenciesTests = (mountFn: MountComponentFn) => {
@@ -9,7 +9,7 @@ export const runComponentDependenciesTests = (mountFn: MountComponentFn) => {
           markdown: { parse: (md: string) => `PARSED: ${md}` },
         },
         data: { sample: 'Some markdown' },
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'md1',

@@ -1,4 +1,4 @@
-import * as Core from '@golemui/core';
+import { type ControlTemplateData, filterTap } from '@golemui/core'
 import { type ReactiveController, type ReactiveControllerHost } from 'lit';
 
 export class GUIAriaController<T, ExtraProps extends { hint?: string }>
@@ -7,7 +7,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
   private getTargets: () => NodeListOf<Element> | HTMLElement[] | HTMLElement | null;
   private getState: () => {
     uid: string;
-    templateData: Core.ControlTemplateData<T> & ExtraProps;
+    templateData: ControlTemplateData<T> & ExtraProps;
   };
 
   constructor(
@@ -16,7 +16,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
       getTargets: () => NodeListOf<Element> | HTMLElement[] | HTMLElement | null;
       getState: () => {
         uid: string;
-        templateData: Core.ControlTemplateData<T> & ExtraProps;
+        templateData: ControlTemplateData<T> & ExtraProps;
       };
     },
   ) {
@@ -47,7 +47,7 @@ export class GUIAriaController<T, ExtraProps extends { hint?: string }>
     const { touched, errors, readonly, disabled, hint } = templateData;
     const showErrors = touched && errors && errors.length > 0;
 
-    Core.filterTap(
+    filterTap(
       elements,
       (e) => !!e,
       (element) => {

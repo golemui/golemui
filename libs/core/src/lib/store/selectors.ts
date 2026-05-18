@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { type LayoutWidget } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
-import * as Obj from '../utils/object';
+import { get } from '../utils/object'
 import { type State } from './model';
 
 // --------------------------------
@@ -26,7 +26,7 @@ const selectData = pipe(
 export const dataByPath$ = <T = any>(path: DotPath) =>
   pipe(
     selectData,
-    map((data) => Obj.get<T>(data, path)),
+    map((data) => get<T>(data, path)),
     distinctUntilChanged(),
   );
 

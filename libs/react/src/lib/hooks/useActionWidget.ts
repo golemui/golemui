@@ -1,14 +1,14 @@
-import type * as Core from '@golemui/core';
+import type { ActionWidget } from '@golemui/core'
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useActionWidget<ExtraProps extends Record<string, any>>(
-  widget: Core.ActionWidget<string>,
+  widget: ActionWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const templateData = useTemplateData<Core.ActionWidget<string>, ExtraProps>(widget);
+  const templateData = useTemplateData<ActionWidget<string>, ExtraProps>(widget);
 
   useEffect(() => {
     setUid(widget.uid);

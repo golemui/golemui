@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { DisplayWidget, DisplayWidgetTemplateData } from '@golemui/core'
 import { createContext } from '@lit/context';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
@@ -7,10 +7,10 @@ export const displayWidgetContext =
 
 export class DisplayWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.DisplayWidget> {
-  override templateData = {} as Core.DisplayWidgetTemplateData & ExtraProps;
+> extends BaseWidgetAdapter<DisplayWidget> {
+  override templateData = {} as DisplayWidgetTemplateData & ExtraProps;
 
-  init(widget: Core.DisplayWidget) {
+  init(widget: DisplayWidget) {
     this.widget = widget;
 
     // Set initial templateData

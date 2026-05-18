@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import { defineForm } from '@golemui/core'
 import { type MountComponentFn } from '../utils';
 
 export const runAlertComponentTests = (mountFn: MountComponentFn) => {
   describe('Alert Component', () => {
     beforeEach(() => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: '',

@@ -1,9 +1,9 @@
-import type * as Core from '@golemui/core';
+import type { WidgetLoaders, WithWidget } from '@golemui/core'
 import '@golemui/gui-components';
 import { type GolemWidget } from '@golemui/gui-shared';
 
-export const widgetLoaders: Core.WidgetLoaders<
-  React.ComponentType<Core.WithWidget>,
+export const widgetLoaders: WidgetLoaders<
+  React.ComponentType<WithWidget>,
   GolemWidget
 > = {
   // INTERACTIVE

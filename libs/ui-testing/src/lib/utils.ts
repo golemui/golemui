@@ -1,4 +1,4 @@
-import type * as Core from '@golemui/core';
+import type { Form, FormEvent, FormHealth, I18nTranslator, UiState } from '@golemui/core'
 import { type Action, type Middleware, type State, type ValidateOn } from '@golemui/core';
 import { type Dependencies } from '@golemui/gui-shared';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -8,22 +8,22 @@ export interface FormHandle {
   setMeta: (meta: Record<string, any>) => void;
 }
 
-export interface MountOptions<StateKeys extends Core.UiState = string> {
-  formDef: Core.Form<StateKeys>;
+export interface MountOptions<StateKeys extends UiState = string> {
+  formDef: Form<StateKeys>;
   data?: Record<string, any>;
   meta?: Record<string, any>;
   middlewares?: Middleware<State, Action>[];
   validators?: CustomValidatorSchemas;
-  formEvent?: (event: Core.FormEvent) => void | Promise<void>;
-  formHealth?: (error: Core.FormHealth) => void | Promise<void>;
+  formEvent?: (event: FormEvent) => void | Promise<void>;
+  formHealth?: (error: FormHealth) => void | Promise<void>;
   validateOn?: ValidateOn;
   withCustomComponent?: boolean;
-  localization?: Core.I18nTranslator;
+  localization?: I18nTranslator;
   dependencies?: Dependencies;
   onFormReady?: (handle: FormHandle) => void;
 }
 
-export type MountComponentFn<StateKeys extends Core.UiState = string> = (
+export type MountComponentFn<StateKeys extends UiState = string> = (
   options: MountOptions<StateKeys>,
 ) => void;
 

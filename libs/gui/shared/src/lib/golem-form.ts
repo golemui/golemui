@@ -1,6 +1,6 @@
-import type * as Core from '@golemui/core';
+import type { ActionWidget, DisplayWidget, Form, FormWidget, FunctionWidgetParams, InputWidget, LayoutWidget, ReactiveExpression } from '@golemui/core'
 import { type Validator } from '@golemui/gui-validators';
-import type * as Props from './widget.props';
+import type { AccordionProps, AlertProps, ButtonProps, CalendarProps, CheckboxProps, CurrencyProps, DatePickerProps, DateRange, DateinputProps, DropdownProps, FlexProps, GridProps, ListProps, MarkdownProps, MarkdownTextProps, NumberinputProps, OptionValue, PasswordProps, RadiogroupProps, RangeCalendarProps, RangeDateInputProps, RangeDatePickerProps, RepeaterProps, SelectProps, TabsProps, TextareaProps, TextinputProps, ToggleProps } from './widget.props'
 
 // -------------------
 //
@@ -8,7 +8,7 @@ import type * as Props from './widget.props';
 //
 // -------------------
 
-type ExtractStates<S> = S extends Record<string, Core.ReactiveExpression> ? keyof S : never;
+type ExtractStates<S> = S extends Record<string, ReactiveExpression> ? keyof S : never;
 
 /**
  * Make the uid propery optional on all widgets
@@ -37,12 +37,12 @@ type DeepPartialUidArray<T extends any[]> = {
 
 class GolemFormBuilder<
   FormType extends Record<string, any>,
-  CustomWidget extends Core.FormWidget<any, FormType> = never,
+  CustomWidget extends FormWidget<any, FormType> = never,
 > {
-  public create<States extends Record<string, Core.ReactiveExpression>>(config: {
+  public create<States extends Record<string, ReactiveExpression>>(config: {
     states?: States;
     form: DeepPartialUid<GolemWidget<FormType, ExtractStates<States>, Validator, CustomWidget>>[];
-  }): Core.Form<ExtractStates<States>, FormType> {
+  }): Form<ExtractStates<States>, FormType> {
     return {
       states: config.states,
       form: {
@@ -50,7 +50,7 @@ class GolemFormBuilder<
         type: 'flex',
         kind: 'layout',
         children: config.form as any,
-      } as Core.LayoutWidget<ExtractStates<States>, FormType>,
+      } as LayoutWidget<ExtractStates<States>, FormType>,
     };
   }
 }
@@ -128,7 +128,7 @@ class GolemFormBuilder<
  */
 export function golemForm<
   FormType extends Record<string, any>,
-  CustomWidget extends Core.FormWidget<any, FormType> = never,
+  CustomWidget extends FormWidget<any, FormType> = never,
 >(): GolemFormBuilder<FormType, CustomWidget> {
   return new GolemFormBuilder<FormType, CustomWidget>();
 }
@@ -143,7 +143,7 @@ type GolemWidget<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType> = never,
+  CustomWidget extends FormWidget<any, FormType> = never,
 > =
   | GuiAccordion<FormType, States, V, CustomWidget>
   | GuiAlert<FormType, States>
@@ -179,47 +179,47 @@ type GuiAccordion<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType>,
-> = Core.LayoutWidget<
+  CustomWidget extends FormWidget<any, FormType>,
+> = LayoutWidget<
   States,
   FormType,
-  Props.AccordionProps,
+  AccordionProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'accordion' };
 
-type GuiAlert<FormType extends Record<string, any>, States extends string> = Core.DisplayWidget<
+type GuiAlert<FormType extends Record<string, any>, States extends string> = DisplayWidget<
   States,
   FormType,
-  Props.AlertProps
+  AlertProps
 > & { type: 'alert' };
 
-type GuiButton<FormType extends Record<string, any>, States extends string> = Core.ActionWidget<
+type GuiButton<FormType extends Record<string, any>, States extends string> = ActionWidget<
   States,
   FormType,
-  Props.ButtonProps
+  ButtonProps
 > & { type: 'button' };
 
-type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,
   States,
   FormType,
-  Props.CalendarProps,
+  CalendarProps,
   V
 > & { type: 'calendar' };
 
-type GuiCheckbox<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiCheckbox<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   boolean,
   States,
   FormType,
-  Props.CheckboxProps,
+  CheckboxProps,
   V
 > & { type: 'checkbox' };
 
-type GuiCurrency<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiCurrency<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   number,
   States,
   FormType,
-  Props.CurrencyProps,
+  CurrencyProps,
   V
 > & { type: 'currency' };
 
@@ -227,19 +227,19 @@ type GuiDateinput<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<string, States, FormType, Props.DateinputProps, V> & { type: 'dateInput' };
+> = InputWidget<string, States, FormType, DateinputProps, V> & { type: 'dateInput' };
 
 type GuiDatePicker<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<string, States, FormType, Props.DatePickerProps, V> & { type: 'datePicker' };
+> = InputWidget<string, States, FormType, DatePickerProps, V> & { type: 'datePicker' };
 
-type GuiDropdown<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
-  Props.OptionValue,
+type GuiDropdown<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue,
   States,
   FormType,
-  Props.DropdownProps<unknown>,
+  DropdownProps<unknown>,
   V
 > & { type: 'dropdown' };
 
@@ -247,43 +247,43 @@ type GuiFunctionWidget<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType>,
+  CustomWidget extends FormWidget<any, FormType>,
 > = (
-  api?: Core.FunctionWidgetParams<FormType>,
+  api?: FunctionWidgetParams<FormType>,
 ) => Exclude<GolemWidget<FormType, States, V, CustomWidget>, () => any>;
 
-type GuiList<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
-  Props.OptionValue,
+type GuiList<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue,
   States,
   FormType,
-  Props.ListProps<unknown>,
+  ListProps<unknown>,
   V
 > & { type: 'list' };
 
-type GuiMarkdown<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiMarkdown<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   number,
   States,
   FormType,
-  Props.MarkdownProps,
+  MarkdownProps,
   V
 > & { type: 'markdown' };
 
 type GuiMarkdownText<
   FormType extends Record<string, any>,
   States extends string,
-> = Core.DisplayWidget<States, FormType, Props.MarkdownTextProps> & { type: 'markdownText' };
+> = DisplayWidget<States, FormType, MarkdownTextProps> & { type: 'markdownText' };
 
 type GuiNumberinput<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<number, States, FormType, Props.NumberinputProps, V> & { type: 'number' };
+> = InputWidget<number, States, FormType, NumberinputProps, V> & { type: 'number' };
 
 type GuiRadiogroup<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<Props.OptionValue, States, FormType, Props.RadiogroupProps, V> & {
+> = InputWidget<OptionValue, States, FormType, RadiogroupProps, V> & {
   type: 'radiogroup';
 };
 
@@ -291,7 +291,7 @@ type GuiRangeCalendar<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<string, States, FormType, Props.RangeCalendarProps, V> & {
+> = InputWidget<string, States, FormType, RangeCalendarProps, V> & {
   type: 'rangeCalendar';
 };
 
@@ -299,7 +299,7 @@ type GuiRangeDateInput<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<Props.DateRange[], States, FormType, Props.RangeDateInputProps, V> & {
+> = InputWidget<DateRange[], States, FormType, RangeDateInputProps, V> & {
   type: 'rangeDateInput';
 };
 
@@ -307,7 +307,7 @@ type GuiRangeDatePicker<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<Props.DateRange[], States, FormType, Props.RangeDatePickerProps, V> & {
+> = InputWidget<DateRange[], States, FormType, RangeDatePickerProps, V> & {
   type: 'rangeDatePicker';
 };
 
@@ -322,27 +322,27 @@ type GuiRepeater<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType>,
-> = Core.InputWidget<
+  CustomWidget extends FormWidget<any, FormType>,
+> = InputWidget<
   Record<string, unknown>[],
   States,
   FormType,
-  Props.RepeaterProps<
-    Core.LayoutWidget<
+  RepeaterProps<
+    LayoutWidget<
       States,
       FormType,
-      Props.AccordionProps,
+      AccordionProps,
       GolemWidget<FormType, States, V, CustomWidget>[]
     >
   >,
   V
 > & { type: 'repeater' };
 
-type GuiSelect<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
-  Props.OptionValue,
+type GuiSelect<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  OptionValue,
   States,
   FormType,
-  Props.SelectProps,
+  SelectProps,
   V
 > & { type: 'select' };
 
@@ -350,11 +350,11 @@ type GuiFlex<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType>,
-> = Core.LayoutWidget<
+  CustomWidget extends FormWidget<any, FormType>,
+> = LayoutWidget<
   States,
   FormType,
-  Props.FlexProps,
+  FlexProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'flex' };
 
@@ -362,11 +362,11 @@ type GuiGrid<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType>,
-> = Core.LayoutWidget<
+  CustomWidget extends FormWidget<any, FormType>,
+> = LayoutWidget<
   States,
   FormType,
-  Props.GridProps,
+  GridProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'grid' };
 
@@ -374,19 +374,19 @@ type GuiTabs<
   FormType extends Record<string, any>,
   States extends string,
   V,
-  CustomWidget extends Core.FormWidget<any, FormType>,
-> = Core.LayoutWidget<
+  CustomWidget extends FormWidget<any, FormType>,
+> = LayoutWidget<
   States,
   FormType,
-  Props.TabsProps,
+  TabsProps,
   GolemWidget<FormType, States, V, CustomWidget>[]
 > & { type: 'tabs' };
 
-type GuiTextarea<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiTextarea<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,
   States,
   FormType,
-  Props.TextareaProps,
+  TextareaProps,
   V
 > & { type: 'textarea' };
 
@@ -394,20 +394,20 @@ type GuiTextInput<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = Core.InputWidget<string, States, FormType, Props.TextinputProps, V> & { type: 'textinput' };
+> = InputWidget<string, States, FormType, TextinputProps, V> & { type: 'textinput' };
 
-type GuiPassword<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiPassword<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,
   States,
   FormType,
-  Props.PasswordProps,
+  PasswordProps,
   V
 > & { type: 'password' };
 
-type GuiToggle<FormType extends Record<string, any>, States extends string, V> = Core.InputWidget<
+type GuiToggle<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   boolean,
   States,
   FormType,
-  Props.ToggleProps,
+  ToggleProps,
   V
 > & { type: 'toggle' };

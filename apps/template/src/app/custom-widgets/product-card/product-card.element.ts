@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import * as Lit from '@golemui/lit';
-import type * as Core from '@golemui/core';
+import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit'
+import type { LayoutWidget, WithWidget } from '@golemui/core'
 import { consume, provide } from '@lit/context';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { type Subscription } from 'rxjs';
@@ -12,14 +12,14 @@ type ProductCardProps = {
 };
 
 @customElement('app-product-card')
-export class ProductCardElement extends LitElement implements Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class ProductCardElement extends LitElement implements WithWidget {
+  widget!: LayoutWidget;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutWidgetAdapter<ProductCardProps>();
+  @provide({ context: layoutContext })
+  adapter = new LayoutWidgetAdapter<ProductCardProps>();
 
   subscriptions: Subscription[] = [];
 
