@@ -23,6 +23,7 @@
       "@golemui/gui-angular": ["libs/gui/angular/src/index.ts"],
       "@golemui/gui-lit": ["libs/gui/lit/src/index.ts"],
       "@golemui/gui-react": ["libs/gui/react/src/index.ts"],
+      "@golemui/gui-vue": ["libs/gui/vue/src/index.ts"],
       "@golemui/gui-components": ["libs/gui/components/src/index.ts"],
       "@golemui/gui-components/internals": ["libs/gui/components/src/internals.ts"],
       "@golemui/gui-components/button": ["libs/gui/components/src/lib/components/button.ts"],
