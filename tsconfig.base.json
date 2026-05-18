@@ -56,6 +56,7 @@
       "@golemui/gui-components/toggle": ["libs/gui/components/src/lib/components/toggle.ts"],
       "@golemui/lit": ["libs/lit/src/index.ts"],
       "@golemui/react": ["libs/react/src/index.ts"],
+      "@golemui/vue": ["libs/vue/src/index.ts"],
       "@golemui/gui-validators": ["libs/gui/validators/src/index.ts"],
       "@golemui/ui-testing": ["libs/ui-testing/src/index.ts"],
       "@golemui/gui-shared": ["libs/gui/shared/src/index.ts"],

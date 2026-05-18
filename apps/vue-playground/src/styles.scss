@@ -1,0 +1,25 @@
+@use '../../../libs/gui/components/src/styles/index';
+
+html,
+body {
+  background-color: var(--gui-bg-default);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  padding: 1rem;
+}
