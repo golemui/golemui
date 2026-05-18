@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
-import { VersionData } from 'nx/src/command-line/release/utils/shared';
+import { type VersionData } from 'nx/src/command-line/release/utils/shared';
 import { archiveSchemas } from './archive-schemas';
 
 process.setMaxListeners(20);

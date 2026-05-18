@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ItemRenderContext } from '@golemui/core';
+import { type ItemRenderContext } from '@golemui/core';
 
 type ComplexItem = {
   title: string;

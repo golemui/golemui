@@ -1,19 +1,19 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { ActionWidget, WithWidget } from '@golemui/core';
+import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('freedom-button')
-export class FreedomButtonElement extends LitElement implements Core.WithWidget {
-  widget!: Core.ActionWidget;
+export class FreedomButtonElement extends LitElement implements WithWidget {
+  widget!: ActionWidget;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.actionContext })
-  adapter = new Lit.ActionWidgetAdapter();
+  @provide({ context: actionContext })
+  adapter = new ActionWidgetAdapter();
 
   subscriptions: Subscription[] = [];
 

@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { MarkdownProps } from '@golemui/gui-shared';
+import { type MarkdownProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Markdown(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<string>;
+export function Markdown(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<string>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
     string,
     MarkdownProps
@@ -21,7 +21,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
   const hint = templateData.hint;
   const placeholder = templateData.placeholder;
   const autocomplete = templateData.autocomplete;
-  const maxLength = (templateData.validator as Core.Validator)?.maxLength;
+  const maxLength = (templateData.validator as Validator)?.maxLength;
   const counterMode = templateData.counterMode;
   const autoGrow = templateData.autoGrow;
   const minimumHeight = templateData.minimumHeight;
@@ -38,7 +38,7 @@ export function Markdown(widgetInstance: Core.WithWidget) {
   const splitViewTitle = templateData.splitViewTitle;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className="gui-markdown gui-field" style={{ flex: templateData.size }}>

@@ -1,13 +1,13 @@
 import {
-  FormWidget,
-  InputWidget,
+  type FormWidget,
+  type InputWidget,
   isActionWidget,
   isFunctionWidget,
   isInputWidget,
-  LayoutWidget,
-  NonFunctionWidget,
+  type LayoutWidget,
+  type NonFunctionWidget,
 } from '../../form-widget';
-import { $Errors } from '../../shared';
+import { type $Errors } from '../../shared';
 import { filterMap, filterReduce, SKIP } from '../../utils/array';
 import { calculateValidationVariables, flattenForm } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
@@ -17,7 +17,7 @@ import {
   toRepeaterItemUid,
   transformRepeaterItemWhenExpression,
 } from '../../utils/repeater';
-import { State } from '../model';
+import { type State } from '../model';
 import { hasWhen } from './utils';
 
 export const calculateWidgetFlags = (state: State): State => {
@@ -48,7 +48,7 @@ function calculateFlags(
           touched: undefined,
           translate: undefined,
         });
-        widget_.uid = widget.uid!;
+        widget_.uid = widget.uid as string;
         return widget_;
       }
       return widget;

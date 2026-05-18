@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { defineForm } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
 
 type TestData = {
   myInput: string;
@@ -12,7 +12,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
         data: {
           myInput: 'My Label',
         },
-        formDef: Core.defineForm<TestData>({
+        formDef: defineForm<TestData>({
           form: [
             {
               uid: 'propertyFunctionLabel',
@@ -57,7 +57,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
         data: {
           myInput: 'Hello',
         },
-        formDef: Core.defineForm<TestData>({
+        formDef: defineForm<TestData>({
           form: [
             (api) => ({
               uid: 'propertyFunctionLabel',
@@ -94,7 +94,7 @@ export const runReactiveFunctionsComponentTests = (mountFn: MountComponentFn) =>
     it('Should provide the api.touched property as an argument', () => {
       mountFn({
         data: {},
-        formDef: Core.defineForm<TestData>({
+        formDef: defineForm<TestData>({
           form: [
             {
               uid: 'openUid',

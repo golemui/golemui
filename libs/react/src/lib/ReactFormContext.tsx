@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react';
 
-import * as Core from '@golemui/core';
+import type { FormContext, WithWidget } from '@golemui/core';
 
 export const ReactFormContext = createContext<{
-  formContext: Core.FormContext<React.ComponentType<Core.WithWidget>>;
+  formContext: FormContext<React.ComponentType<WithWidget>>;
 } | null>(null);
 
 export function useReactFormContext() {

@@ -1,4 +1,4 @@
-import { GslLeafSelector } from '../../core/dx.domain';
+import { type GslLeafSelector } from '../../core/dx.domain';
 
 /**
  * Internal underscore-era state-targeting primitive. Pending focus-closeout

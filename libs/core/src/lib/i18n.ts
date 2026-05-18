@@ -1,4 +1,4 @@
-import { DotPath } from './shared';
+import { type DotPath } from './shared';
 
 export type I18nParams = Record<string, string | number | DotPath>;
 

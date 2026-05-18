@@ -1,18 +1,23 @@
 import {
-  ActionWidget,
-  FormWidget,
-  FunctionWidget,
-  InputWidget,
+  type ActionWidget,
+  type FormWidget,
+  type FunctionWidget,
+  type InputWidget,
   isActionWidget,
   isDisplayWidget,
   isFunctionWidget,
   isInputWidget,
   isLayoutWidget,
-  LayoutWidget,
-  NonFunctionWidget,
+  type LayoutWidget,
+  type NonFunctionWidget,
 } from '../../form-widget';
-import { I18nParams, I18nTranslator, isTranslationConfig, TranslationConfig } from '../../i18n';
-import { $Errors } from '../../shared';
+import {
+  type I18nParams,
+  type I18nTranslator,
+  isTranslationConfig,
+  type TranslationConfig,
+} from '../../i18n';
+import { type $Errors } from '../../shared';
 import {
   calculateValidationVariables,
   isPotentialScopedPath,
@@ -20,7 +25,7 @@ import {
   resolveScopedPaths,
 } from '../../utils/form';
 import { get, set } from '../../utils/object';
-import { DerivedWidget, State } from '../model';
+import { type DerivedWidget, type State } from '../model';
 import { hasWhen } from './utils';
 
 // -----------------------------------------------------------------------------

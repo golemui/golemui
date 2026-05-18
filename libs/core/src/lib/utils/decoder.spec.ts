@@ -1,4 +1,4 @@
-import * as jd from 'ts.data.json';
+import { optional, string } from 'ts.data.json';
 import { objectWithSuffix } from './decoder';
 
 describe('objectWithSuffix (KeySpec)', () => {
@@ -7,7 +7,7 @@ describe('objectWithSuffix (KeySpec)', () => {
       {
         label: {
           suffixed: false,
-          decoder: jd.string(),
+          decoder: string(),
         },
       },
       'MyObj',
@@ -26,7 +26,7 @@ describe('objectWithSuffix (KeySpec)', () => {
       {
         label: {
           suffixed: true,
-          decoder: jd.string(),
+          decoder: string(),
         },
       },
       'MyObj',
@@ -51,7 +51,7 @@ describe('objectWithSuffix (KeySpec)', () => {
       {
         label: {
           suffixed: false,
-          decoder: jd.string(),
+          decoder: string(),
         },
       },
       'MyObj',
@@ -72,7 +72,7 @@ describe('objectWithSuffix (KeySpec)', () => {
       {
         label: {
           suffixed: false,
-          decoder: jd.string(),
+          decoder: string(),
         },
       },
       'MyObj',
@@ -93,7 +93,7 @@ describe('objectWithSuffix (KeySpec)', () => {
       {
         label: {
           suffixed: true,
-          decoder: jd.string(),
+          decoder: string(),
         },
       },
       'MyObj',
@@ -111,7 +111,7 @@ describe('objectWithSuffix (KeySpec)', () => {
       {
         label: {
           suffixed: true,
-          decoder: jd.string(),
+          decoder: string(),
         },
       },
       'MyObj',
@@ -127,7 +127,7 @@ describe('objectWithSuffix (KeySpec)', () => {
 
   it('autogenerates uid when empty string', () => {
     const generateId = vi.fn(() => 'generated-id-123');
-    const uidDecoder = jd.optional(jd.string()).map((s) => s || generateId());
+    const uidDecoder = optional(string()).map((s) => s || generateId());
 
     const decoder = objectWithSuffix<{ uid: string }>(
       {
@@ -145,7 +145,7 @@ describe('objectWithSuffix (KeySpec)', () => {
 
   it('autogenerates uid when undefined', () => {
     const generateId = vi.fn(() => 'generated-id-123');
-    const uidDecoder = jd.optional(jd.string()).map((s) => s || generateId());
+    const uidDecoder = optional(string()).map((s) => s || generateId());
 
     const decoder = objectWithSuffix<{ uid: string }>(
       {
@@ -163,7 +163,7 @@ describe('objectWithSuffix (KeySpec)', () => {
 
   it('preserves custom uid when provided', () => {
     const generateId = vi.fn(() => 'generated-id-123');
-    const uidDecoder = jd.optional(jd.string()).map((s) => s || generateId());
+    const uidDecoder = optional(string()).map((s) => s || generateId());
 
     const decoder = objectWithSuffix<{ uid: string }>(
       {

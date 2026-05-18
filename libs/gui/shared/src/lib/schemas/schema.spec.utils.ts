@@ -1,7 +1,6 @@
-import Ajv2020, { ErrorObject } from 'ajv/dist/2020';
-import * as commonSchema from './common.schema.json';
-import * as validatorsSchema from './validators.schema.json';
-import * as formSchema from './form.schema.json';
+import { type ErrorObject } from 'ajv/dist/2020';
+import type Ajv2020 from 'ajv/dist/2020';
+import { $id } from './form.schema.json';
 
 export type GetSchema = NonNullable<ReturnType<Ajv2020['getSchema']>>;
 
@@ -40,7 +39,7 @@ export function registerGolemSchemas(ajv: Ajv2020) {
     }
   }
 
-  if (!ajv.getSchema(formSchema.$id)) {
+  if (!ajv.getSchema($id)) {
     ajv.addSchema(formSchema);
   }
 }

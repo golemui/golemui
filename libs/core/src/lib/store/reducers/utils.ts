@@ -1,4 +1,4 @@
-import { State } from '../model';
+import { type State } from '../model';
 
 /**
  * Conditionally applies a reducer function based on a predicate

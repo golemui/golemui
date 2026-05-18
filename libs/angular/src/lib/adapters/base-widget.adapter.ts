@@ -1,9 +1,13 @@
-import { inject, WritableSignal } from '@angular/core';
-import * as Core from '@golemui/core';
+import { inject, type WritableSignal } from '@angular/core';
+import {
+  type NonFunctionWidget,
+  assertNoPropCollisions,
+  calculatedWidgetsByUid$,
+} from '@golemui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
-export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
+export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
   protected context = inject(AngularFormContext);
   protected destroy$ = new Subject<void>();
   protected widget!: F;
@@ -20,7 +24,7 @@ export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
     templateData: WritableSignal<TemplateData>,
   ) {
     this.context.store.state$
-      .pipe(takeUntil(this.destroy$), Core.calculatedWidgetsByUid$(this.widget.uid))
+      .pipe(takeUntil(this.destroy$), calculatedWidgetsByUid$(this.widget.uid))
       .subscribe((calculatedWidget) => {
         templateData.update((current) => {
           const obj = {
@@ -28,7 +32,7 @@ export abstract class BaseWidgetAdapter<F extends Core.NonFunctionWidget> {
             lang: this.context.store.getState().lang,
             deps: this.context.dependencies,
           };
-          Core.assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
+          assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
           return {
             ...current,
             ...obj,

@@ -1,8 +1,13 @@
 import { GuiForm } from '@golemui/gui-react';
-import { DxDefinitions, DxFormConfig, formDefs, GslSelectorsInput } from '@golemui/gui-shared';
-import * as React from 'react';
-import { Component, ErrorInfo, ReactNode } from 'react';
-import { DemoLogEntry, DemoLogFn } from '../utils/demoLog';
+import {
+  type DxDefinitions,
+  type DxFormConfig,
+  formDefs,
+  type GslSelectorsInput,
+} from '@golemui/gui-shared';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { type DemoLogEntry, type DemoLogFn } from '../utils/demoLog';
 import { serializeFormDefForDisplay } from '../utils/formDefSerializer';
 import styles from './FormDisplayLayout.module.css';
 
@@ -71,15 +76,15 @@ export function FormDisplayLayout<T extends Record<string, any>>({
   formSelectors,
   formConfig,
 }: FormDisplayLayoutProps<T>) {
-  const [isConfigExpanded, setIsConfigExpanded] = React.useState(showingSingleForm);
-  const [logEntries, setLogEntries] = React.useState<DemoLogEntry[]>([]);
-  const logPanelRef = React.useRef<HTMLDivElement>(null);
+  const [isConfigExpanded, setIsConfigExpanded] = useState(showingSingleForm);
+  const [logEntries, setLogEntries] = useState<DemoLogEntry[]>([]);
+  const logPanelRef = useRef<HTMLDivElement>(null);
 
-  const demoLog: DemoLogFn = React.useCallback((label: string, ...args: any[]) => {
+  const demoLog: DemoLogFn = useCallback((label: string, ...args: any[]) => {
     setLogEntries((prev) => [...prev, { timestamp: new Date().toLocaleTimeString(), label, args }]);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (logPanelRef.current) {
       logPanelRef.current.scrollTop = logPanelRef.current.scrollHeight;
     }
@@ -87,7 +92,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
 
   // Check if dx is a function to get source code with helper functions
   const isFormDefFunction = typeof formDef === 'function';
-  const resolvedFormDef = React.useMemo(
+  const resolvedFormDef = useMemo(
     () => (isFormDefFunction ? (formDef as (log: DemoLogFn) => DxDefinitions)(demoLog) : formDef),
     [formDef, isFormDefFunction, demoLog],
   );
@@ -102,14 +107,11 @@ export function FormDisplayLayout<T extends Record<string, any>>({
           (formDef as Function).toString().replace(/^\(\)\s*=>\s*/, '')
         : serializeFormDefForDisplay(formDef)
       : '';
-  const resolvedFormSelectors = React.useMemo(
+  const resolvedFormSelectors = useMemo(
     () => (formSelectors ? formSelectors() : undefined),
     [formSelectors],
   );
-  const resolvedFormConfig = React.useMemo(
-    () => (formConfig ? formConfig() : undefined),
-    [formConfig],
-  );
+  const resolvedFormConfig = useMemo(() => (formConfig ? formConfig() : undefined), [formConfig]);
 
   const serializedFormSelectors = formSelectors
     ? formSelectors.toString().replace(/^\(\)\s*=>\s*/, '')
@@ -117,7 +119,7 @@ export function FormDisplayLayout<T extends Record<string, any>>({
 
   const serializedFormConfig = formConfig ? formConfig.toString().replace(/^\(\)\s*=>\s*/, '') : '';
 
-  const processedConfig = React.useMemo(
+  const processedConfig = useMemo(
     () =>
       resolvedFormDef
         ? formDefs.processDxFacade(resolvedFormDef, resolvedFormSelectors, resolvedFormConfig)

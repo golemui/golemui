@@ -1,23 +1,23 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { FlexProps } from '@golemui/gui-shared';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
+import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
+import { type FlexProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-flex-layout')
-export class FlexElement extends LitElement implements Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class FlexElement extends LitElement implements WithWidget {
+  widget!: LayoutWidget;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutWidgetAdapter<FlexProps>();
+  @provide({ context: layoutContext })
+  adapter = new LayoutWidgetAdapter<FlexProps>();
 
   subscriptions: Subscription[] = [];
 

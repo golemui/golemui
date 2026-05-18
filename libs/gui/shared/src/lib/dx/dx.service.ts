@@ -1,22 +1,25 @@
-import * as Core from '@golemui/core';
-import { LayoutWidget, UiState } from '@golemui/core';
-import { DxDefinitionItem, DxDefinitions, DxResult } from './formDef.domain';
+import type { EventHandlerCallback, Form, FormEvent } from '@golemui/core';
+import { type LayoutWidget, type UiState } from '@golemui/core';
+import { type DxDefinitionItem, type DxDefinitions, type DxResult } from './formDef.domain';
 import {
-  DxFormConfig,
-  FormConfig,
-  GslSelector,
-  GslSelectorsInput,
+  type DxFormConfig,
+  type FormConfig,
+  type GslSelector,
+  type GslSelectorsInput,
   GuiItemTypes,
-  ValidGuiShortcut,
+  type ValidGuiShortcut,
 } from './core/dx.domain';
-import { LayoutEntry } from './shortcuts/layouts/layouts.domain';
+import { type LayoutEntry } from './shortcuts/layouts/layouts.domain';
 import { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
 import { _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
 import selectorResolver from './core/selectorResolver.service';
 import widgetMerger from './core/widgetMerger.service';
 import widgetMapper from './core/widgetMapper.service';
-import selectorNormalizer, { SelectorNormalizer } from './core/selectorNormalizer.service';
-import eventWiringService, { EventRegistry, EventWiringService } from './core/eventWiring.service';
+import selectorNormalizer, { type SelectorNormalizer } from './core/selectorNormalizer.service';
+import eventWiringService, {
+  type EventRegistry,
+  type EventWiringService,
+} from './core/eventWiring.service';
 import { ItemWalker } from './core/itemWalker.service';
 import stateExpansionService from './core/stateExpansion.service';
 
@@ -151,7 +154,7 @@ export class DxService {
     StateKeys extends UiState = never,
     FormData extends Record<string, any> = any,
   >(
-    form: Core.Form<StateKeys, FormData>,
+    form: Form<StateKeys, FormData>,
     eventRegistry: EventRegistry,
     formConfig: FormConfig,
   ): DxResult<StateKeys, FormData> {
@@ -166,7 +169,7 @@ export class DxService {
     const result: DxResult<StateKeys, FormData> = { form };
 
     if (eventRegistry.size > 0) {
-      result.events = (event: Core.FormEvent) => {
+      result.events = (event: FormEvent) => {
         const handler = eventRegistry.get(event.name);
         if (handler) {
           const dxUpdate = (callbackArg: any) => {
@@ -183,7 +186,7 @@ export class DxService {
                 event.callback({
                   type: 'OVERRIDE_WIDGET_PROP',
                   payload: { path, prop, value },
-                } as Core.EventHandlerCallback);
+                } as EventHandlerCallback);
               }
             } else {
               // Raw action passthrough (backward compat)

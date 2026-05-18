@@ -1,12 +1,16 @@
-import * as Core from '@golemui/core';
-import { FormInitConfig } from '@golemui/core';
+import type { FormEvent, ValidatorFn } from '@golemui/core';
+import { type FormInitConfig } from '@golemui/core';
 import type { WidgetLoaders, WithWidget } from '@golemui/core/internals';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
-import { CustomValidatorSchemas, initValidators, Validator } from '@golemui/gui-validators';
+import {
+  type CustomValidatorSchemas,
+  initValidators,
+  type Validator,
+} from '@golemui/gui-validators';
 import '@golemui/lit';
 import type { FormElement as CoreFormElement } from '@golemui/lit';
-import { LitItemRenderer, Type } from '@golemui/lit';
+import { type LitItemRenderer, type Type } from '@golemui/lit';
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { widgetLoaders } from '../widget.loaders';
@@ -54,13 +58,13 @@ export class FormElement extends LitElement {
       formName: c.formName,
     };
 
-    const allValidators: Core.ValidatorFn<Validator> = initValidators({
+    const allValidators: ValidatorFn<Validator> = initValidators({
       ...((c.customValidators ?? {}) as CustomValidatorSchemas),
     });
 
     const onFormEvent = resolved.formEvent;
     const formEventListener = onFormEvent
-      ? (e: Event) => onFormEvent((e as CustomEvent<Core.FormEvent>).detail)
+      ? (e: Event) => onFormEvent((e as CustomEvent<FormEvent>).detail)
       : undefined;
 
     return html`

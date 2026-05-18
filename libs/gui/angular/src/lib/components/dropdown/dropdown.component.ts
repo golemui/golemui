@@ -6,22 +6,22 @@ import {
   ElementRef,
   HostListener,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   signal,
   viewChild,
 } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { DropdownProps, ListItem } from '@golemui/gui-shared';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
+import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
 
 @Component({
   standalone: true,
   selector: 'gui-dropdown-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './dropdown.component.html',
   host: {
     class: 'gui-dropdown gui-field',
@@ -29,18 +29,16 @@ import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DropdownComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class DropdownComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
 
-  protected adapter: Angular.InputWidgetAdapter<string, DropdownProps<never>> = inject(
-    Angular.InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, DropdownProps<never>> = inject(InputWidgetAdapter);
   private el = inject(ElementRef);
 
   inputRef = viewChild.required<ElementRef>('inputRef');
   listRef = viewChild.required<ElementRef>('listRef');
 
-  protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
+  protected defaultListItemRenderer: AngularItemRenderer<string> = DefaultListItemRenderer;
 
   protected currentRange = signal({ start: 0, end: 10 });
   protected listItems = signal<ListItem<never>[]>([]);

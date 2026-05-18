@@ -1,6 +1,6 @@
-import { Example } from './types';
+import { type Example } from './types';
 import shippingManifestForm from './shipping-manifest.form.json';
-import { Form } from '@golemui/core';
+import { type Form } from '@golemui/core';
 
 const data = {
   imoNumber: 'IMO-666',

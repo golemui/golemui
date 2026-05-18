@@ -1,4 +1,4 @@
-import { FormDemoDefinition } from '../../../formRegistry.domain';
+import { type FormDemoDefinition } from '../../../formRegistry.domain';
 import { gui } from '@golemui/gui-shared';
 
 const countries = [

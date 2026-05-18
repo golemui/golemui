@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
+import { type I18nTranslator, defineForm } from '@golemui/core';
 import { golemForm } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
-import * as z from 'zod/mini';
-import { MountComponentFn } from '../utils';
+import type { CustomValidatorSchemaFn, CustomValidatorSchemas } from '@golemui/gui-validators';
+import { string, superRefine } from 'zod/mini';
+import { type MountComponentFn } from '../utils';
 
-const allowedNames: GuiValidators.CustomValidatorSchemaFn = (names: string[]) =>
-  z.string().check(
-    z.superRefine((val, ctx) => {
+const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
+  string().check(
+    superRefine((val, ctx) => {
       if (val && names.includes(val) === false) {
         ctx.addIssue({
           code: 'custom',
@@ -22,7 +22,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     context('String validators', () => {
       it('should display an error validating required strings on submit', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'requiredString',
@@ -52,7 +52,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating required strings', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'requiredString',
@@ -81,7 +81,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating minLength', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'minLength',
@@ -118,7 +118,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating maxLength', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'maxLength',
@@ -155,7 +155,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating pattern', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -192,7 +192,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating enum', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'enumString',
@@ -227,7 +227,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating const', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'const',
@@ -262,7 +262,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating format', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'format',
@@ -299,7 +299,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     context('Number validators', () => {
       it('should display an error validating required numbers on submit', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'requiredNumber',
@@ -329,7 +329,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating required numbers', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'requiredNumber',
@@ -362,7 +362,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating min number', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'min',
@@ -395,7 +395,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating max number', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'max',
@@ -428,7 +428,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating exclusive minimum number', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'exclusiveMinimum',
@@ -461,7 +461,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating exclusive maximum number', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'exclusiveMaximum',
@@ -494,7 +494,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
       it('should display an error validating multipleOf number', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'multipleOf',
@@ -529,7 +529,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     context('Boolean validators', () => {
       it('should display an error validating boolean const', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'boolean',
@@ -718,13 +718,13 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     });
 
     context('Custom validators', () => {
-      const validators: GuiValidators.CustomValidatorSchemas = {
+      const validators: CustomValidatorSchemas = {
         allowedNames: allowedNames,
       };
 
       it('should display an error validating a custom validator', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'allowedNamesCustomValidator',
@@ -763,7 +763,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       it('should validate on blur', () => {
         mountFn({
           validateOn: 'blur',
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -802,7 +802,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       it('should validate on change', () => {
         mountFn({
           validateOn: 'change',
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -842,7 +842,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       it('should validate on submit', () => {
         mountFn({
           validateOn: 'submit',
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -886,7 +886,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       it('should validate eager on blur', () => {
         mountFn({
           validateOn: 'eager',
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -922,7 +922,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       it('should validate eager on change', () => {
         mountFn({
           validateOn: 'eager',
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -957,7 +957,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       it('should validate eager on submit', () => {
         mountFn({
           validateOn: 'eager',
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'pattern',
@@ -991,7 +991,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
     });
 
     context('Custom messages', () => {
-      const makeTranslator = (translations: Record<string, string>): Core.I18nTranslator => ({
+      const makeTranslator = (translations: Record<string, string>): I18nTranslator => ({
         get lang() {
           return 'en';
         },
@@ -1007,7 +1007,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       context('String validators', () => {
         it('should show custom message for required', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'username',
@@ -1038,7 +1038,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom message for minLength', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'username',
@@ -1075,7 +1075,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom message for maxLength', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'username',
@@ -1112,7 +1112,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show translated message for pattern (TranslationConfig)', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'zipCode',
@@ -1152,7 +1152,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show translated message for format (TranslationConfig)', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'website',
@@ -1192,7 +1192,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
       context('Number validators', () => {
         it('should show custom invalid message when value is not a number', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'age',
@@ -1222,7 +1222,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom message for minimum', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'age',
@@ -1257,7 +1257,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom message for maximum', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'age',
@@ -1292,7 +1292,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show translated message for exclusiveMinimum (TranslationConfig)', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'score',
@@ -1332,7 +1332,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show translated message for exclusiveMaximum (TranslationConfig)', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'score',
@@ -1410,7 +1410,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
         it('should show custom invalid message when value is not a boolean', () => {
           mountFn({
             data: { acceptTerms: null },
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'acceptTerms',
@@ -1444,7 +1444,7 @@ export const runValidatorsComponentTests = (mountFn: MountComponentFn) => {
 
         it('should show custom const message when value is false', () => {
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid: 'acceptTerms',

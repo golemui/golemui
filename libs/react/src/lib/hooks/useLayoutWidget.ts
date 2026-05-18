@@ -1,15 +1,15 @@
-import * as Core from '@golemui/core';
+import { type FormWidget, type LayoutWidget, calculatedLayoutChildrenByUid$ } from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useLayoutWidget<ExtraProps extends Record<string, any>>(
-  widget: Core.LayoutWidget<string>,
+  widget: LayoutWidget<string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
-  const [children, setChildren] = useState<Core.FormWidget<string>[]>([]);
-  const templateData = useTemplateData<Core.LayoutWidget<string>, ExtraProps>(widget);
+  const [children, setChildren] = useState<FormWidget<string>[]>([]);
+  const templateData = useTemplateData<LayoutWidget<string>, ExtraProps>(widget);
 
   useEffect(() => {
     setUid(widget.uid);
@@ -25,7 +25,7 @@ export function useLayoutWidget<ExtraProps extends Record<string, any>>(
   // Listen to the layout's `hidden`-flag-filtered children stream
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(Core.calculatedLayoutChildrenByUid$(widget.uid))
+      .pipe(calculatedLayoutChildrenByUid$(widget.uid))
       .subscribe(setChildren);
     return () => sub.unsubscribe();
   }, [formContext.store, widget]);

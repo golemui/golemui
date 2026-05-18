@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { OptionValue, SelectProps } from '@golemui/gui-shared';
+import { type OptionValue, type SelectProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Select(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<string>;
+export function Select(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<string>;
   const {
     uid,
     errors,
@@ -52,7 +52,7 @@ export function Select(widgetInstance: Core.WithWidget) {
   const labelField = templateData.labelField;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className="gui-select gui-field" style={{ flex: templateData.size }}>

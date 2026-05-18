@@ -1,4 +1,4 @@
-import { Localizable, WidgetPropertyFunctionParams } from '@golemui/core';
+import { type Localizable, type WidgetPropertyFunctionParams } from '@golemui/core';
 
 export interface DateRange {
   start: string;

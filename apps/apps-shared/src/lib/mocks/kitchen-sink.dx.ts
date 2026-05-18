@@ -1,8 +1,8 @@
 import {
-  Dependencies,
-  DxDefinitions,
-  DxFormConfig,
-  GslSelectorsInput,
+  type Dependencies,
+  type DxDefinitions,
+  type DxFormConfig,
+  type GslSelectorsInput,
   gui,
 } from '@golemui/gui-shared';
 

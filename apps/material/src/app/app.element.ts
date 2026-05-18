@@ -1,7 +1,7 @@
 import { iframeResizer } from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
+import type { ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './app.element.scss';
@@ -44,7 +44,7 @@ export class AppElement extends LitElement {
       matTextInput: async () => (await import('./components/mat-input')).MatTextInputElement,
       matButton: async () => (await import('./components/mat-button')).MatButtonElement,
     },
-    validateOn: 'eager' as Core.ValidateOn,
+    validateOn: 'eager' as ValidateOn,
   };
 
   error = '';

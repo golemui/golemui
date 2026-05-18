@@ -1,18 +1,18 @@
-import * as Core from '@golemui/core';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
-import { GridProps } from '@golemui/gui-shared';
+import { type GridProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Grid(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.LayoutWidget;
+export function Grid(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as LayoutWidget;
   const { uid, children, templateData } = useLayoutWidget<GridProps>(widget);
 
   const isRow = templateData.direction !== 'column';
 
   const renderWidgets = useCallback(() => {
     return children.map((child) => {
-      const widget = child as Core.NonFunctionWidget<string>;
+      const widget = child as NonFunctionWidget<string>;
       return (
         <div
           key={widget.uid}

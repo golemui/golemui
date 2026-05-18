@@ -1,4 +1,4 @@
-import { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
 import type {
   GuiRangeCalendarShortcut,
   RangeCalendarDecorator,

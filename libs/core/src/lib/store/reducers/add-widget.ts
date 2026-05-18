@@ -1,13 +1,17 @@
-import { NonFunctionWidget } from '../../form-widget';
-import { ADD_WIDGET } from '../actions';
-import { State } from '../model';
+import { type NonFunctionWidget } from '../../form-widget';
+import { type ADD_WIDGET } from '../actions';
+import { type State } from '../model';
 
 export function addWidget(state: State, action: ADD_WIDGET): State {
+  const uid = action.payload.widget.uid;
+  if (!uid) {
+    throw new Error('addWidget: widget must have a uid');
+  }
   return {
     ...state,
     calculatedWidgets: {
       ...state.calculatedWidgets,
-      [action.payload.widget.uid!]: {
+      [uid]: {
         source: action.payload.widget,
         current: {} as NonFunctionWidget,
       },

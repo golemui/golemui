@@ -1,8 +1,8 @@
 import {
-  InputDecorator,
-  TextDataInputDecorator,
-  DataInputDecorator,
-  ValidShortcutType,
+  type InputDecorator,
+  type TextDataInputDecorator,
+  type DataInputDecorator,
+  type ValidShortcutType,
 } from './inputs.domain';
 
 export class InputTypeDefaults {

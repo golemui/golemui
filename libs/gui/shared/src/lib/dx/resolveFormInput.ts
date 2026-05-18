@@ -1,5 +1,5 @@
 import type { ValidateOn } from '@golemui/core';
-import * as Core from '@golemui/core';
+import type { Action, Form, I18nTranslator, Middleware, State } from '@golemui/core';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import type { Dependencies } from '../shared';
 import type { DxFormConfig, GslSelectorsInput } from './core/dx.domain';
@@ -30,16 +30,16 @@ export interface GuiFormInitConfig {
   customValidators?: CustomValidatorSchemas;
   data?: Record<string, any>;
   meta?: Record<string, any>;
-  middlewares?: Core.Middleware<Core.State, Core.Action>[];
+  middlewares?: Middleware<State, Action>[];
   validateOn?: ValidateOn;
   itemRenderers?: Record<string, unknown>;
-  localization?: Core.I18nTranslator;
+  localization?: I18nTranslator;
   dependencies?: Dependencies;
   formName?: string;
 }
 
 export interface ResolvedFormInput<FormData extends Record<string, any> = any> {
-  formDef: string | Record<string, any> | Core.Form<any, FormData>;
+  formDef: string | Record<string, any> | Form<any, FormData>;
   formEvent?: FormEvents;
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;

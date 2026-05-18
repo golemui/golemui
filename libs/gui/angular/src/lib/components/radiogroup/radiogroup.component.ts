@@ -1,14 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { OptionValue, RadiogroupProps } from '@golemui/gui-shared';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type OptionValue, type RadiogroupProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-radiogroup-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './radiogroup.component.html',
   host: {
     class: 'gui-radiogroup gui-field',
@@ -16,11 +22,9 @@ import { OptionValue, RadiogroupProps } from '@golemui/gui-shared';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class RadiogroupComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
-  protected adapter: Angular.InputWidgetAdapter<OptionValue, RadiogroupProps> = inject(
-    Angular.InputWidgetAdapter,
-  );
+export class RadiogroupComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
+  protected adapter: InputWidgetAdapter<OptionValue, RadiogroupProps> = inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

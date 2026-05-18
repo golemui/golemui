@@ -1,5 +1,6 @@
 {
   "json.schemaDownload.trustedDomains": {
     "https://golemui.com/schemas/": true
-  }
+  },
+  "eslint.useFlatConfig": true
 }

@@ -1,5 +1,5 @@
 import { gui } from '@golemui/gui-shared';
-import { FormDemoDefinition } from '../../formRegistry.domain';
+import { type FormDemoDefinition } from '../../formRegistry.domain';
 
 export const gslStatesDemo: FormDemoDefinition = {
   title: '39. GSL State Overrides',

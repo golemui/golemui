@@ -1,12 +1,20 @@
-import * as ValidatorsVanilla from '@golemui/gui-validators';
+import type { NumberValidator, StringValidator } from '@golemui/gui-validators';
 import type { BooleanValidator } from '@golemui/gui-validators';
-import { NumberinputProps, TextinputProps, ToggleProps } from '../../../widget.props';
-import { DxCommonFields, DxInputBase, DxInternalFields } from '../../core/dxBase.types';
 import {
-  DefOrCallback,
-  DxRuntimeParams,
-  GslConfigBase,
-  GuiShortcutOf,
+  type NumberinputProps,
+  type TextinputProps,
+  type ToggleProps,
+} from '../../../widget.props';
+import {
+  type DxCommonFields,
+  type DxInputBase,
+  type DxInternalFields,
+} from '../../core/dxBase.types';
+import {
+  type DefOrCallback,
+  type DxRuntimeParams,
+  type GslConfigBase,
+  type GuiShortcutOf,
 } from '../../core/dxUtilityTypes';
 
 // ═══════════════════════════════════════════════════
@@ -22,7 +30,7 @@ export interface DataInputDecorator extends DxInputBase, DxCommonFields {
   placeholder?: string;
 }
 
-export type NumberDataInputValidator = Omit<ValidatorsVanilla.NumberValidator, 'type'>;
+export type NumberDataInputValidator = Omit<NumberValidator, 'type'>;
 
 export interface NumberDataInputDecorator
   extends DxInputBase,
@@ -32,7 +40,7 @@ export interface NumberDataInputDecorator
   validator?: NumberDataInputValidator;
 }
 
-export type TextDataInputValidator = Omit<ValidatorsVanilla.StringValidator, 'type'>;
+export type TextDataInputValidator = Omit<StringValidator, 'type'>;
 
 export interface TextDataInputDecorator
   extends DxInputBase,

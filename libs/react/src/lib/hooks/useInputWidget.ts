@@ -1,11 +1,17 @@
-import * as Core from '@golemui/core';
+import {
+  type InputWidget,
+  dataByPath$,
+  injectedValidationByPath$,
+  touchedControlsByPath$,
+  validationByPath$,
+} from '@golemui/core';
 import { useCallback, useEffect, useState } from 'react';
 import { combineLatest } from 'rxjs';
 import { useReactFormContext } from '../ReactFormContext';
 import { useTemplateData } from './internal/useExtraProps';
 
 export function useInputWidget<T, ExtraProps extends Record<string, any>>(
-  widget: Core.InputWidget<T, string>,
+  widget: InputWidget<T, string>,
 ) {
   const { formContext } = useReactFormContext();
   const [uid, setUid] = useState('');
@@ -13,7 +19,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean | undefined>(undefined);
 
-  const templateData = useTemplateData<Core.InputWidget<T, string>, ExtraProps>(widget);
+  const templateData = useTemplateData<InputWidget<T, string>, ExtraProps>(widget);
 
   useEffect(() => {
     formContext.store.dispatch({
@@ -30,16 +36,16 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   // Set the initial templateData, including the controls's data value
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(Core.dataByPath$<T>(widget.path))
+      .pipe(dataByPath$<T>(widget.path))
       .subscribe((data) => setValue(data));
     return () => sub.unsubscribe();
   }, [widget.path, formContext.store.state$]);
 
   // Listen to the validation stream for this control
   useEffect(() => {
-    const validation$ = formContext.store.state$.pipe(Core.validationByPath$(widget.path));
+    const validation$ = formContext.store.state$.pipe(validationByPath$(widget.path));
     const injectedValidation$ = formContext.store.state$.pipe(
-      Core.injectedValidationByPath$(widget.path),
+      injectedValidationByPath$(widget.path),
     );
 
     const sub = combineLatest([validation$, injectedValidation$]).subscribe(
@@ -53,7 +59,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   // Listen to the touchedControls stream for this control
   useEffect(() => {
     const sub = formContext.store.state$
-      .pipe(Core.touchedControlsByPath$(widget.path))
+      .pipe(touchedControlsByPath$(widget.path))
       .subscribe((touched) => {
         setIsTouched(touched);
       });

@@ -1,7 +1,7 @@
-import * as AppsShared from '@golemui/apps-shared';
+import { modularDx, onFormEvent } from '@golemui/apps-shared';
 import { GuiForm } from '@golemui/gui-react';
 
-const md = AppsShared.modularDx;
+const md = modularDx;
 const config = {
   formDef: md.formDef,
   data: md.data,
@@ -12,7 +12,7 @@ const config = {
 export function ModularDxPage() {
   return (
     <div>
-      <GuiForm config={config} formEvent={AppsShared.onFormEvent} />
+      <GuiForm config={config} formEvent={onFormEvent} />
     </div>
   );
 }

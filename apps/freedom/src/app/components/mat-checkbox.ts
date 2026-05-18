@@ -1,21 +1,21 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 import '@material/web/checkbox/checkbox.js';
 
 @customElement('freedom-mat-checkbox')
-export class FreedomMatCheckboxElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<boolean>;
+export class FreedomMatCheckboxElement extends LitElement implements WithWidget {
+  widget!: InputWidget<boolean>;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<boolean, Record<string, never>>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<boolean, Record<string, never>>();
 
   subscriptions: Subscription[] = [];
 

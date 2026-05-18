@@ -1,24 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { FlexProps } from '@golemui/gui-shared';
+import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
+import { type FlexProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-flex-layout',
-  imports: [CommonModule, Angular.WidgetDirective],
-  providers: [Angular.LayoutWidgetAdapter],
+  imports: [CommonModule, WidgetDirective],
+  providers: [LayoutWidgetAdapter],
   templateUrl: './flex.component.html',
   host: {
     class: 'gui-flex gui-field',
     '[style.flex]': 'this.adapter.templateData().size ?? 1',
   },
 })
-export class FlexComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class FlexComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: LayoutWidget;
 
-  protected adapter: Angular.LayoutWidgetAdapter<FlexProps> = inject(Angular.LayoutWidgetAdapter);
+  protected adapter: LayoutWidgetAdapter<FlexProps> = inject(LayoutWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

@@ -1,9 +1,9 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useDebounceCallback, useInputWidget, useItemRenderer } from '@golemui/react';
-import { DropdownProps, ListItem, OptionValue } from '@golemui/gui-shared';
+import { type DropdownProps, type ListItem, type OptionValue } from '@golemui/gui-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
-import { ListItemRendererProps } from './item-renderers/props';
+import { type ListItemRendererProps } from './item-renderers/props';
 
 interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
@@ -14,8 +14,8 @@ interface GuiLabelElement extends HTMLElement {
   targetElement?: HTMLElement | HTMLElement[];
 }
 
-export function Dropdown(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<string | null>;
+export function Dropdown(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<string | null>;
 
   const { uid, errors, value, isTouched, templateData, onFilter, onValueChanged, onBlur } =
     useInputWidget<string | number | null, DropdownProps<never>>(widget);
@@ -277,7 +277,7 @@ export function Dropdown(widgetInstance: Core.WithWidget) {
   const ItemRenderer = (useItemRenderer(templateData.itemRenderer as string) ||
     DefaultListItemRenderer) as React.ComponentType<ListItemRendererProps<any>>;
   const label = templateData.label as string;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
   const asyncFiltering = !!widget.on?.filter;

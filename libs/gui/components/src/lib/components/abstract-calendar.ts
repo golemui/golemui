@@ -1,10 +1,10 @@
-import { html, LitElement, nothing, TemplateResult } from 'lit';
+import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { getMonthYearParts, getWeekdayLabels, toISODateString, weekDaysOrder } from '../utils/date';
 import { addErrors, addLabel } from '../utils/templates';
-import { DateRange } from '@golemui/gui-shared';
+import { type DateRange } from '@golemui/gui-shared';
 
 export interface AbstractCalendarDay {
   date: Date;

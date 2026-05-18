@@ -1,17 +1,22 @@
 import { Injectable, signal } from '@angular/core';
-import * as Core from '@golemui/core';
+import {
+  type FormWidget,
+  type LayoutTemplateData,
+  type LayoutWidget,
+  calculatedLayoutChildrenByUid$,
+} from '@golemui/core';
 import { takeUntil } from 'rxjs';
 import { BaseWidgetAdapter } from './base-widget.adapter';
 
 @Injectable()
 export class LayoutWidgetAdapter<
   ExtraProps extends Record<string, any>,
-> extends BaseWidgetAdapter<Core.LayoutWidget> {
-  templateData = signal<Core.LayoutTemplateData & ExtraProps>({
-    children: [] as Core.FormWidget<string>[],
-  } as Core.LayoutTemplateData & ExtraProps);
+> extends BaseWidgetAdapter<LayoutWidget> {
+  templateData = signal<LayoutTemplateData & ExtraProps>({
+    children: [] as FormWidget<string>[],
+  } as LayoutTemplateData & ExtraProps);
 
-  init(widget: Core.LayoutWidget) {
+  init(widget: LayoutWidget) {
     this.widget = widget;
 
     // Set initial templateData
@@ -22,7 +27,7 @@ export class LayoutWidgetAdapter<
 
     // Listen to the layout's `hidden`-flag-filtered children stream
     this.context.store.state$
-      .pipe(Core.calculatedLayoutChildrenByUid$(this.widget.uid))
+      .pipe(calculatedLayoutChildrenByUid$(this.widget.uid))
       .pipe(takeUntil(this.destroy$))
       .subscribe((children) => {
         this.templateData.update((current) => ({

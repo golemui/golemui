@@ -2,7 +2,11 @@ import { defineShortcutType } from '../../core/defineShortcutType';
 import { buildTypedValidator } from '../../core/dxValidatorHelper';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { processAutoLabel } from '../../core/sharedSensibleDefaults.service';
-import { CalendarDecorator, CalendarEntry, GslCalendarConfig } from './calendar.domain';
+import {
+  type CalendarDecorator,
+  type CalendarEntry,
+  type GslCalendarConfig,
+} from './calendar.domain';
 
 export const { gsl: _gslCalendars, gslByUid: _gslCalendarByUid } = defineShortcutType<
   CalendarEntry,

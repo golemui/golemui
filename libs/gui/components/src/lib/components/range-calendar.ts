@@ -1,4 +1,4 @@
-import { html, nothing, PropertyValues, TemplateResult } from 'lit';
+import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
@@ -11,8 +11,8 @@ import {
   mergeDateRanges,
 } from '../utils/date';
 import { createIntersectionObserver } from './tabs';
-import { AbstractCalendar, AbstractCalendarDay } from './abstract-calendar';
-import { DateRange } from '@golemui/gui-shared';
+import { AbstractCalendar, type AbstractCalendarDay } from './abstract-calendar';
+import { type DateRange } from '@golemui/gui-shared';
 
 export interface RangeCalendarDay extends AbstractCalendarDay {
   isToday: boolean;

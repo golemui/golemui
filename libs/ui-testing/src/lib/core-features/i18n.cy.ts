@@ -1,6 +1,12 @@
-import * as Core from '@golemui/core';
+import {
+  type I18nParams,
+  type I18nTranslator,
+  type TranslationKey,
+  defineForm,
+  identityTranslator,
+} from '@golemui/core';
 import i18next from 'i18next';
-import { MountComponentFn } from '../utils';
+import { type MountComponentFn } from '../utils';
 
 i18next.init({
   fallbackLng: 'en',
@@ -16,11 +22,11 @@ i18next.init({
   },
 });
 
-export const i18nTranslator: Core.I18nTranslator = {
+export const i18nTranslator: I18nTranslator = {
   get lang() {
     return i18next.language;
   },
-  translate(key: Core.TranslationKey, params?: Core.I18nParams, defaultValue?: string): string {
+  translate(key: TranslationKey, params?: I18nParams, defaultValue?: string): string {
     return i18next.t(key, { ...params, defaultValue });
   },
   subscribe(listener: (lang: string) => void) {
@@ -38,7 +44,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       const uid = 'textinput-uid';
       mountFn({
         localization: i18nTranslator,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid,
@@ -59,7 +65,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       const uid = 'textinput-uid';
       mountFn({
         localization: i18nTranslator,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid,
@@ -81,7 +87,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       mountFn({
         localization: i18nTranslator,
         meta: { connectionStatus: 'online' },
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'first-name',
@@ -122,7 +128,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
 
       mountFn({
         localization: i18nTranslator,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'userName',
@@ -182,7 +188,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       mountFn({
         localization: i18nTranslator,
         data: { count: 0, isActive: false },
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'stats',
@@ -208,11 +214,11 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
 
   describe('identityTranslator', () => {
     it('should update the form direction to rtl when setLang is called with an rtl language', () => {
-      const translator = Core.identityTranslator('en-US');
+      const translator = identityTranslator('en-US');
 
       mountFn({
         localization: translator,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'date',
@@ -232,13 +238,13 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
     });
 
     it('should update the calendar locale when setLang is called', () => {
-      const translator = Core.identityTranslator('en-US');
+      const translator = identityTranslator('en-US');
 
       cy.clock(new Date(2024, 1, 15).getTime()); // February 15, 2024
 
       mountFn({
         localization: translator,
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'date',

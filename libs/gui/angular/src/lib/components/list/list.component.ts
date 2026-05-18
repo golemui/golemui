@@ -3,23 +3,23 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
+  type ElementRef,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   signal,
   viewChild,
 } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
+import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
 
 @Component({
   standalone: true,
   selector: 'gui-list-control',
   imports: [CommonModule, NgComponentOutlet],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './list.component.html',
   host: {
     class: 'gui-list gui-field',
@@ -27,14 +27,13 @@ import { DefaultListItemRenderer } from './default-list.item-renderer';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ListComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class ListComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
 
-  protected adapter: Angular.InputWidgetAdapter<OptionValue, ListProps<unknown>> = inject(
-    Angular.InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<OptionValue, ListProps<unknown>> =
+    inject(InputWidgetAdapter);
 
-  protected defaultListItemRenderer: Angular.AngularItemRenderer<string> = DefaultListItemRenderer;
+  protected defaultListItemRenderer: AngularItemRenderer<string> = DefaultListItemRenderer;
 
   protected listElementRef = viewChild.required<ElementRef>('listRef');
 

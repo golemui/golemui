@@ -1,21 +1,21 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { PasswordProps } from '@golemui/gui-shared';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
+import { type PasswordProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-password-input')
-export class PasswordElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class PasswordElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, PasswordProps>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, PasswordProps>();
 
   subscriptions: Subscription[] = [];
 

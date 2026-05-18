@@ -1,12 +1,27 @@
-import { ValidatorFn } from '../form-validator';
-import { InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
-import { I18nTranslator } from '../i18n';
-import { ValidateOn } from '../shared';
+import { type ValidatorFn } from '../form-validator';
+import { type InputWidget, isFunctionWidget, isInputWidget } from '../form-widget';
+import { type I18nTranslator } from '../i18n';
+import { type ValidateOn } from '../shared';
 import { assertNever } from '../utils/assert-never';
-import * as Fn from '../utils/function';
-import { Action } from './actions';
-import { State } from './model';
-import * as Reducers from './reducers';
+import { pipe } from '../utils/function';
+import { type Action } from './actions';
+import { type State } from './model';
+import {
+  addWidget,
+  calculateCurrentState,
+  calculateWidgetFlags,
+  calculateWidgetProps,
+  initialize,
+  injectValidationIssues,
+  overrideWidgetProp,
+  removeWidget,
+  setData,
+  setFormHealth,
+  setLanguage,
+  setMeta,
+  setWidgetData,
+  validateAll,
+} from './reducers';
 import { reduceIf } from './reducers/utils';
 
 export const reducer =
@@ -22,61 +37,58 @@ export const reducer =
   (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
-        return Reducers.initialize(state, action);
+        return initialize(state, action);
 
       case 'SET_DATA':
-        return Fn.pipe(
-          Reducers.setData(state, action),
-          Reducers.calculateCurrentState,
-          Reducers.calculateWidgetFlags,
-          Reducers.calculateWidgetProps(localization),
+        return pipe(
+          setData(state, action),
+          calculateCurrentState,
+          calculateWidgetFlags,
+          calculateWidgetProps(localization),
         );
 
       case 'SET_META':
-        return Fn.pipe(
-          Reducers.setMeta(state, action),
-          Reducers.calculateCurrentState,
-          Reducers.calculateWidgetFlags,
-          Reducers.calculateWidgetProps(localization),
+        return pipe(
+          setMeta(state, action),
+          calculateCurrentState,
+          calculateWidgetFlags,
+          calculateWidgetProps(localization),
         );
 
       case 'SET_LANGUAGE':
-        return Fn.pipe(
-          Reducers.setLanguage(state, action),
-          Reducers.calculateWidgetProps(localization),
-        );
+        return pipe(setLanguage(state, action), calculateWidgetProps(localization));
 
       case 'ADD_WIDGET':
-        return Fn.pipe(
-          Reducers.addWidget(state, action),
-          reduceIf(formIsHealthy, Reducers.calculateCurrentState),
-          reduceIf(formIsHealthy, Reducers.calculateWidgetFlags),
-          reduceIf(formIsHealthy, Reducers.calculateWidgetProps(localization)),
+        return pipe(
+          addWidget(state, action),
+          reduceIf(formIsHealthy, calculateCurrentState),
+          reduceIf(formIsHealthy, calculateWidgetFlags),
+          reduceIf(formIsHealthy, calculateWidgetProps(localization)),
         );
 
       case 'REMOVE_WIDGET':
-        return Fn.pipe(
-          Reducers.removeWidget(state, action),
-          Reducers.calculateCurrentState,
-          Reducers.calculateWidgetFlags,
-          Reducers.calculateWidgetProps(localization),
+        return pipe(
+          removeWidget(state, action),
+          calculateCurrentState,
+          calculateWidgetFlags,
+          calculateWidgetProps(localization),
         );
 
       case 'SET_WIDGET_INITIAL_DATA':
       case 'SET_WIDGET_DATA':
-        return Fn.pipe(
-          Reducers.setWidgetData(state, action),
-          Reducers.calculateCurrentState,
-          Reducers.calculateWidgetFlags,
-          Reducers.calculateWidgetProps(localization),
+        return pipe(
+          setWidgetData(state, action),
+          calculateCurrentState,
+          calculateWidgetFlags,
+          calculateWidgetProps(localization),
         );
 
       case 'OVERRIDE_WIDGET_PROP':
-        return Fn.pipe(
-          Reducers.overrideWidgetProp(state, action),
-          Reducers.calculateCurrentState,
-          Reducers.calculateWidgetFlags,
-          Reducers.calculateWidgetProps(localization),
+        return pipe(
+          overrideWidgetProp(state, action),
+          calculateCurrentState,
+          calculateWidgetFlags,
+          calculateWidgetProps(localization),
           // Apply validation here because this action can be dispatched from the form's event handlers callback
           // Apply only when the action is related to an input
           reduceIf(
@@ -96,15 +108,15 @@ export const reducer =
               const touched = isInput && state.touchedControls[path];
               return state.touched && touched;
             },
-            Reducers.validateAll(validators, localization),
+            validateAll(validators, localization),
           ),
         );
 
       case 'SET_FORM_HEALTH':
-        return Reducers.setFormHealth(state, action);
+        return setFormHealth(state, action);
 
       case 'VALIDATE_ALL': {
-        return Fn.pipe(
+        return pipe(
           {
             ...state,
             touched: true,
@@ -119,11 +131,11 @@ export const reducer =
               {} as State['touchedControls'],
             ),
           },
-          Reducers.validateAll(validators, localization),
+          validateAll(validators, localization),
           // This handles $errors and $formIsValid expressions variables
-          Reducers.calculateCurrentState,
-          Reducers.calculateWidgetFlags,
-          Reducers.calculateWidgetProps(localization),
+          calculateCurrentState,
+          calculateWidgetFlags,
+          calculateWidgetProps(localization),
         );
       }
 
@@ -135,17 +147,17 @@ export const reducer =
           reason === validateOn ||
           (validateOn as string[]).includes(reason);
         if (shouldValidate) {
-          return Fn.pipe(
+          return pipe(
             {
               ...state,
               touched: true,
               touchedControls: { ...state.touchedControls, [path]: true },
             },
-            Reducers.validateAll(validators, localization),
+            validateAll(validators, localization),
             // This handles $errors and $formIsValid expressions variables
-            Reducers.calculateCurrentState,
-            Reducers.calculateWidgetFlags,
-            Reducers.calculateWidgetProps(localization),
+            calculateCurrentState,
+            calculateWidgetFlags,
+            calculateWidgetProps(localization),
             // TODO: extract this into a separate function
             // When the widget is a Widget Function, we propagate the validation result immediately
             (state) => {
@@ -180,7 +192,7 @@ export const reducer =
       }
 
       case 'INJECT_VALIDATION_ISSUES': {
-        return Reducers.injectValidationIssues(state, action);
+        return injectValidationIssues(state, action);
       }
 
       default: {

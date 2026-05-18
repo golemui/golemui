@@ -1,14 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { DatePickerProps } from '@golemui/gui-shared';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type DatePickerProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-date-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './date.component.html',
   host: {
     class: 'gui-date gui-field',
@@ -16,11 +22,9 @@ import { DatePickerProps } from '@golemui/gui-shared';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DateComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
-  protected adapter: Angular.InputWidgetAdapter<string, DatePickerProps> = inject(
-    Angular.InputWidgetAdapter,
-  );
+export class DateComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
+  protected adapter: InputWidgetAdapter<string, DatePickerProps> = inject(InputWidgetAdapter);
   currentDate = new Date();
 
   ngOnInit(): void {

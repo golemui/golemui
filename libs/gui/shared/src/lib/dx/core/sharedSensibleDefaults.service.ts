@@ -2,7 +2,7 @@
 // Shared Sensible Defaults — reusable processors for input-like types
 // ═══════════════════════════════════════════════════
 
-import { Localizable } from '@golemui/core';
+import { type Localizable } from '@golemui/core';
 
 /**
  * Config interface for types that support automatic labels.

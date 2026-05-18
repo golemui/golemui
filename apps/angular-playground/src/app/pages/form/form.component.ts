@@ -1,11 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
-import { AngularItemRenderer } from '@golemui/angular';
-import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
-import * as GuiAngular from '@golemui/gui-angular';
-import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
+import { type AngularItemRenderer } from '@golemui/angular';
+import {
+  allowedNames,
+  commonLanguages,
+  initializeI18n,
+  kitchenSink,
+  onFormEvent,
+} from '@golemui/apps-shared';
+import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core';
+import { FormComponent } from '@golemui/gui-angular';
+import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
 import snarkdown from 'snarkdown';
 import { APP_CONFIG } from '../../../environments/environment.model';
@@ -14,10 +20,10 @@ import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const mock = AppsShared.kitchenSink;
+const mock = kitchenSink;
 
 @Component({
-  imports: [CommonModule, GuiAngular.FormComponent],
+  imports: [CommonModule, FormComponent],
   selector: 'app-form-page',
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
@@ -25,7 +31,7 @@ const mock = AppsShared.kitchenSink;
 })
 export class AppFormPage {
   private readonly appConfig = inject(APP_CONFIG);
-  protected languages = AppsShared.commonLanguages
+  protected languages = commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
       code,
@@ -48,36 +54,36 @@ export class AppFormPage {
       data: mock.data,
       meta: mock.meta || {},
       dependencies: deps,
-      middlewares: [Core.devToolsMiddleware()],
+      middlewares: [devToolsMiddleware()],
       customWidgetLoaders: {
         heading: async () =>
           (await import('../../custom-widgets/heading/heading.component')).HeadingComponent,
       },
       customValidators: {
-        allowedNames: AppsShared.allowedNames,
-      } as GuiValidators.CustomValidatorSchemas,
+        allowedNames: allowedNames,
+      } as CustomValidatorSchemas,
       itemRenderers: {
         complexListItemRenderer: ComplexListItemRenderer,
         productItemRenderer: ProductItemRenderer,
         airportItemRenderer: AirportItemRenderer,
         countryItemRenderer: CountryItemRenderer,
       } as Record<string, AngularItemRenderer<any>>,
-      localization: AppsShared.initializeI18n(mock.resources),
+      localization: initializeI18n(mock.resources),
       validateOn: 'eager',
     };
   }
 
-  protected onFormHealth(formHealth: Core.FormHealth) {
+  protected onFormHealth(formHealth: FormHealth) {
     if (formHealth.status === 'errored') {
       this.error = formHealth.message;
     }
   }
 
-  protected onFormEvent(event: Core.FormEvent) {
+  protected onFormEvent(event: FormEvent) {
     if (mock.onFormEvent) {
       mock.onFormEvent(event);
     }
-    AppsShared.onFormEvent(event);
+    onFormEvent(event);
   }
 
   protected onLanguageChanged(event: Event) {

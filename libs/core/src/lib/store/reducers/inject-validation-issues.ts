@@ -1,5 +1,5 @@
-import { INJECT_VALIDATION_ISSUES } from '../actions';
-import { State } from '../model';
+import { type INJECT_VALIDATION_ISSUES } from '../actions';
+import { type State } from '../model';
 
 export function injectValidationIssues(state: State, action: INJECT_VALIDATION_ISSUES): State {
   return {

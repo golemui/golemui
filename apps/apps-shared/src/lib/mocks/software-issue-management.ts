@@ -1,5 +1,5 @@
-import { Form, FunctionWidgetParams } from '@golemui/core';
-import { Example } from './types';
+import { type Form, type FunctionWidgetParams } from '@golemui/core';
+import { type Example } from './types';
 
 const data = {
   projects: [

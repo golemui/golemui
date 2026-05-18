@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { ToggleProps } from '@golemui/gui-shared';
+import { type ToggleProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function Toggle(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<boolean>;
+export function Toggle(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<boolean>;
   const { uid, errors, value, onValueChanged, onBlur, templateData, isTouched } = useInputWidget<
     boolean,
     ToggleProps
@@ -22,7 +22,7 @@ export function Toggle(widgetInstance: Core.WithWidget) {
   const togglePosition = templateData.togglePosition;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className={`gui-toggle gui-field`} style={{ flex: templateData.size }}>

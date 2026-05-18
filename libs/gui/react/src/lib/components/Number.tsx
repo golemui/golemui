@@ -1,11 +1,11 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { NumberinputProps } from '@golemui/gui-shared';
+import { type NumberinputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '../styles.scss';
 
-export function NumberInput(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<number>;
+export function NumberInput(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<number>;
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
     number,
     NumberinputProps
@@ -27,7 +27,7 @@ export function NumberInput(widgetInstance: Core.WithWidget) {
   const autoGrow = templateData.autoGrow;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className="gui-number gui-field" style={{ flex: templateData.size }}>

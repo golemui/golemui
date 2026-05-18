@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { defineForm } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
 
 export const runSelectComponentTests = (mountFn: MountComponentFn) => {
   describe('Select Component', () => {
     it('should display validation error when defaultValue is not in options and click submit', () => {
       mountFn({
         data: { myField: 'd' },
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'testSubject',

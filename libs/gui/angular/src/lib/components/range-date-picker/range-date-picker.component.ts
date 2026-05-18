@@ -4,14 +4,14 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   signal,
   viewChild,
 } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { DateRange, RangeDatePickerProps } from '@golemui/gui-shared';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
 
@@ -19,7 +19,7 @@ import { LabelComponent } from '../../utils/templates/label.component';
   standalone: true,
   selector: 'gui-range-date-picker-control',
   imports: [CommonModule, ErrorsComponent, LabelComponent],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './range-date-picker.component.html',
   host: {
     class: 'gui-range-date-picker gui-field',
@@ -29,11 +29,10 @@ import { LabelComponent } from '../../utils/templates/label.component';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class RangeDatePickerComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<DateRange[]>;
-  protected adapter: Angular.InputWidgetAdapter<DateRange[], RangeDatePickerProps> = inject(
-    Angular.InputWidgetAdapter,
-  );
+export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<DateRange[]>;
+  protected adapter: InputWidgetAdapter<DateRange[], RangeDatePickerProps> =
+    inject(InputWidgetAdapter);
   private el = inject(ElementRef);
 
   dateControl = viewChild<ElementRef>('dateControlRef');

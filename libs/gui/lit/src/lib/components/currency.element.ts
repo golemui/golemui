@@ -1,21 +1,21 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { CurrencyProps } from '@golemui/gui-shared';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
+import { type CurrencyProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-currency-input')
-export class CurrencyElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<number>;
+export class CurrencyElement extends LitElement implements WithWidget {
+  widget!: InputWidget<number>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<number, CurrencyProps>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<number, CurrencyProps>();
 
   subscriptions: Subscription[] = [];
 

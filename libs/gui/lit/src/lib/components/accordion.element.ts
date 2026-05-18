@@ -1,25 +1,25 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { AccordionProps } from '@golemui/gui-shared';
+import type { FormWidget, LayoutWidget, WithWidget } from '@golemui/core';
+import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
+import { type AccordionProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { AccordionEventDetail } from '@golemui/gui-components';
+import { type AccordionEventDetail } from '@golemui/gui-components';
 
 @customElement('gui-accordion-layout')
-export class AccordionElement extends LitElement implements Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class AccordionElement extends LitElement implements WithWidget {
+  widget!: LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutWidgetAdapter<AccordionProps>();
+  @provide({ context: layoutContext })
+  adapter = new LayoutWidgetAdapter<AccordionProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -68,7 +68,7 @@ export class AccordionElement extends LitElement implements Core.WithWidget {
   }
 
   getChild(uid: string) {
-    return this.widget.children.find((section) => section.uid === uid) as Core.FormWidget<string>;
+    return this.widget.children.find((section) => section.uid === uid) as FormWidget<string>;
   }
 
   override render() {

@@ -1,5 +1,9 @@
-import { ValidGuiShortcut, GuiItemTypes } from '../../core/dx.domain';
-import { FlexFamilyProps, GridFamilyProps, GuiLayoutItemsShortcut } from './layouts.domain';
+import { type ValidGuiShortcut, GuiItemTypes } from '../../core/dx.domain';
+import {
+  type FlexFamilyProps,
+  type GridFamilyProps,
+  type GuiLayoutItemsShortcut,
+} from './layouts.domain';
 
 // ── Flex family — uniform (children, props?, tags?) ──
 

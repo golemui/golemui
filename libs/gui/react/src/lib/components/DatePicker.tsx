@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { DatePickerProps } from '@golemui/gui-shared';
+import { type DatePickerProps } from '@golemui/gui-shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import '../styles.scss';
 import { Errors } from './shared/Errors';
 
-export function DatePicker(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<string>;
+export function DatePicker(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<string>;
   const {
     uid,
     errors,
@@ -140,7 +140,7 @@ export function DatePicker(widgetInstance: Core.WithWidget) {
   const showErrors = isTouched && errors && errors.length > 0;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
   const lang = templateData.lang;
 
   return (
