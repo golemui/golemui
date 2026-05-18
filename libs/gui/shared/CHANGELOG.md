@@ -1,3 +1,13 @@
+## 0.13.1 (2026-05-18)
+
+### 🩹 Fixes
+
+- dx layer custom validators ([#95](https://github.com/golemui/golemui/pull/95))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.13.0 (2026-05-18)
 
 ### 🚀 Features
