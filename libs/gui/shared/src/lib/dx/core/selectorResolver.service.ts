@@ -1,8 +1,8 @@
 import {
-  GslAggregatedSelector,
-  GslLeafSelector,
-  GslSelector,
-  ResolvedSelectors,
+  type GslAggregatedSelector,
+  type GslLeafSelector,
+  type GslSelector,
+  type ResolvedSelectors,
 } from './dx.domain';
 import type { DxCommonFields, DxInternalFields } from './dxBase.types';
 import { getItemTypeHandler, hasItemTypeHandler } from './itemTypeRegistry';

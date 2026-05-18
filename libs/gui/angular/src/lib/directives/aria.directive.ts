@@ -1,5 +1,5 @@
 import { computed, Directive, input } from '@angular/core';
-import * as Core from '@golemui/core';
+import type { ControlTemplateData } from '@golemui/core';
 
 @Directive({
   standalone: true,
@@ -13,7 +13,7 @@ import * as Core from '@golemui/core';
 })
 export class GuiAriaDirective<T, ExtraProps extends { hint?: string }> {
   uid = input.required<string>();
-  templateData = input.required<Core.ControlTemplateData<T> & ExtraProps>();
+  templateData = input.required<ControlTemplateData<T> & ExtraProps>();
 
   protected ariaDescribedBy = computed(() => {
     const data = this.templateData();

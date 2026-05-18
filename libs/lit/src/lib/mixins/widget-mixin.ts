@@ -1,8 +1,15 @@
-import * as Core from '@golemui/core';
+import {
+  type FormHealth,
+  type FormWidget,
+  type NonFunctionWidget,
+  cloneObject,
+  errorCodes,
+  makeRepeaterItemConfig,
+} from '@golemui/core';
 import { consume } from '@lit/context';
-import { LitElement } from 'lit';
+import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { formContext, LitFormContext } from '../context/form.context';
+import { formContext, type LitFormContext } from '../context/form.context';
 import { repeaterIndexesContext } from '../context/repeater-index-token.context';
 
 export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superClass: T) => {
@@ -11,7 +18,7 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
-    @property({ type: Object }) widget!: Core.FormWidget<string> | undefined;
+    @property({ type: Object }) widget!: FormWidget<string> | undefined;
     @property({ type: Number }) repeaterIndex: number | undefined;
 
     @consume({ context: repeaterIndexesContext, subscribe: true })
@@ -40,10 +47,7 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
 
         element.widget =
           indexes.length > 0
-            ? Core.makeRepeaterItemConfig(
-                Core.cloneObject(this.widget as Core.NonFunctionWidget<string>),
-                indexes,
-              )
+            ? makeRepeaterItemConfig(cloneObject(this.widget as NonFunctionWidget<string>), indexes)
             : this.widget;
 
         element.id = `host-${this.widget.uid}`;
@@ -52,9 +56,9 @@ export const WidgetMixin = <T extends new (...args: any[]) => LitElement>(superC
       } catch (err) {
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
 
-        const code = Core.errorCodes.widgetCouldNotBeLoaded;
+        const code = errorCodes.widgetCouldNotBeLoaded;
         this.dispatchEvent(
-          new CustomEvent<Core.FormHealth>('formHealth', {
+          new CustomEvent<FormHealth>('formHealth', {
             detail: {
               status: 'errored',
               message: `[${code}] Widget "${this.widget.type}" could not be loaded`,

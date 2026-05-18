@@ -1,15 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { SelectProps } from '@golemui/gui-shared';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type SelectProps } from '@golemui/gui-shared';
 import '@golemui/gui-components/select';
 
 @Component({
   standalone: true,
   selector: 'gui-select-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './select.component.html',
   host: {
     class: 'gui-select gui-field',
@@ -17,11 +23,9 @@ import '@golemui/gui-components/select';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SelectComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
-  protected adapter: Angular.InputWidgetAdapter<string, SelectProps> = inject(
-    Angular.InputWidgetAdapter,
-  );
+export class SelectComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
+  protected adapter: InputWidgetAdapter<string, SelectProps> = inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

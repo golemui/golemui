@@ -1,8 +1,15 @@
-import * as Core from '@golemui/core';
+import {
+  type FormHealth,
+  type FormWidget,
+  type NonFunctionWidget,
+  cloneObject,
+  errorCodes,
+  makeRepeaterItemConfig,
+} from '@golemui/core';
 import { consume, ContextProvider } from '@lit/context';
-import { LitElement } from 'lit';
+import { type LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import { formContext, LitFormContext } from '../context/form.context';
+import { formContext, type LitFormContext } from '../context/form.context';
 import { repeaterIndexesContext } from '../context/repeater-index-token.context';
 
 export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement>(
@@ -13,7 +20,7 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
     @property({ attribute: false })
     formContext!: LitFormContext<any>;
 
-    @property({ type: Object }) widget!: Core.FormWidget<string>;
+    @property({ type: Object }) widget!: FormWidget<string>;
     @property({ type: Number }) repeaterIndex = -1;
 
     @consume({ context: repeaterIndexesContext, subscribe: true })
@@ -38,17 +45,17 @@ export const RepeaterWidgetMixin = <T extends new (...args: any[]) => LitElement
           initialValue: repeaterIndexes,
         });
 
-        element.widget = Core.makeRepeaterItemConfig(
-          Core.cloneObject(this.widget as Core.NonFunctionWidget<string>),
+        element.widget = makeRepeaterItemConfig(
+          cloneObject(this.widget as NonFunctionWidget<string>),
           repeaterIndexes,
         );
         element.id = `host-${this.widget.uid}`;
         this.replaceWith(element);
       } catch (err) {
         console.error(`Widget "${this.widget.type}" could not be loaded`, err);
-        const code = Core.errorCodes.widgetCouldNotBeLoaded;
+        const code = errorCodes.widgetCouldNotBeLoaded;
         this.dispatchEvent(
-          new CustomEvent<Core.FormHealth>('formHealth', {
+          new CustomEvent<FormHealth>('formHealth', {
             detail: {
               status: 'errored',
               message: `[${code}] Widget "${this.widget.type}" could not be loaded`,

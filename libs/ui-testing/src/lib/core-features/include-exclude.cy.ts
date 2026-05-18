@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { defineForm } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
 
 export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
   describe('Include.in/Exclude.in fields with boolean values', () => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               check1: '$form.check1 === true',
               'check1:check2': '$form.check2 === true',
@@ -49,7 +49,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
       it(`control fields should hide/show with exclude from`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               check1: '$form.check1 === true',
               'check1:check2': '$form.check2 === true',
@@ -96,7 +96,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               number1: '$form.number1 > 10',
               'number1:number2': '$form.number2 < 10',
@@ -139,7 +139,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
       it(`control fields should hide/show with exclude from`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               number1: '$form.number1 > 10',
               'number1:number2': '$form.number2 < 10',
@@ -186,7 +186,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
     context('include fields', () => {
       it(`control fields should hide/show with include in`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               textinput1: '$form.textinput1 === "abc"',
               'textinput1:textinput2': '$form.textinput2 === "def"',
@@ -229,7 +229,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
       it(`control fields should hide/show with exclude from`, () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               textinput1: `$form.textinput1 === 'abc'`,
               'textinput1:textinput2': `$form.textinput2 === 'def'`,
@@ -275,7 +275,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
   describe('Include.when/Exclude.when fields', () => {
     it('should show field when include.when expression is met', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'toggle',
@@ -305,7 +305,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
     it('should hide field when exclude.when expression is met', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'mode',
@@ -333,7 +333,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
     it('should evaluate complex expressions involving multiple values', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'qty',
@@ -374,7 +374,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
   describe('Include.when/Exclude.when with $errors and $formIsInvalid', () => {
     it('should show element via include.when when $errors exist for a field', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'userName',
@@ -412,7 +412,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
     it('should show element via include.when when $formIsInvalid is true', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'userName',
@@ -450,7 +450,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
 
     it('should hide element via exclude.when when $errors exist for a field', () => {
       mountFn({
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'userName',

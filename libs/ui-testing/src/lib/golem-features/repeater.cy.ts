@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { defineForm } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
 
 export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
   describe('Repeater Component', () => {
@@ -9,7 +9,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
     const SUBMIT_BUTTON_UID = 'submitBtn';
 
     const getFormDefinition = () =>
-      Core.defineForm({
+      defineForm({
         states: {
           limitReached: `$form.repeaters?.teams?.[0]?.developers?.length === 5`,
         },
@@ -270,7 +270,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
             teams: [{ teamName: '' }],
           },
         },
-        formDef: Core.defineForm({
+        formDef: defineForm({
           form: [
             {
               uid: 'teamRepeater',
@@ -324,7 +324,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
 
     describe('states inside repeater items', () => {
       const getStatesFormDefinition = () =>
-        Core.defineForm({
+        defineForm({
           states: {
             isApple: `$form.company === 'appl'`,
             isMsoft: `$form.company === 'msf'`,

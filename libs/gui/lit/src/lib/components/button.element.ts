@@ -1,22 +1,22 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { ActionWidget, WithWidget } from '@golemui/core';
+import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
-import { ButtonProps } from '@golemui/gui-shared';
+import { type Subscription } from 'rxjs';
+import { type ButtonProps } from '@golemui/gui-shared';
 import '@golemui/gui-components/button';
 
 @customElement('gui-button-interactive')
-export class ButtonElement extends LitElement implements Core.WithWidget {
-  widget!: Core.ActionWidget;
+export class ButtonElement extends LitElement implements WithWidget {
+  widget!: ActionWidget;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.actionContext })
-  adapter = new Lit.ActionWidgetAdapter<ButtonProps>();
+  @provide({ context: actionContext })
+  adapter = new ActionWidgetAdapter<ButtonProps>();
 
   subscriptions: Subscription[] = [];
 

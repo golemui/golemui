@@ -1,4 +1,4 @@
-import * as AppsShared from '@golemui/apps-shared';
+import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
 import { GuiForm } from '@golemui/gui-react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
@@ -6,9 +6,9 @@ import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRen
 import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 
-const localization = AppsShared.initializeI18n({});
+const localization = initializeI18n({});
 
-const ks = AppsShared.buildKitchenSinkDx({
+const ks = buildKitchenSinkDx({
   widgetLoaders: {
     heading: async () =>
       (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
@@ -37,7 +37,7 @@ const config = {
 export function DxFormPage() {
   return (
     <div>
-      <GuiForm config={config} formEvent={AppsShared.onFormEvent} />
+      <GuiForm config={config} formEvent={onFormEvent} />
     </div>
   );
 }

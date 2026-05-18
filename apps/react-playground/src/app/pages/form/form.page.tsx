@@ -1,9 +1,21 @@
-import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
+import {
+  allowedNames,
+  commonLanguages,
+  initializeI18n,
+  kitchenSink,
+  onFormEvent,
+} from '@golemui/apps-shared';
+import {
+  type Form,
+  type FormEvent,
+  type FormHealth,
+  type ValidateOn,
+  devToolsMiddleware,
+} from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
-import { Dependencies, GuiFormInitConfig } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
-import { ReactItemRenderer } from '@golemui/react';
+import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
+import { type ReactItemRenderer } from '@golemui/react';
 import i18next from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import snarkdown from 'snarkdown';
@@ -13,11 +25,11 @@ import { CountryItemRenderer } from '../../item-renderers/CountryItemRenderer';
 import { ProductItemRenderer } from '../../item-renderers/ProductItemRenderer';
 import styles from './form.page.module.scss';
 
-const mock = AppsShared.kitchenSink;
+const mock = kitchenSink;
 const formData = mock.data;
 const formMeta = mock.meta;
-const localization = AppsShared.initializeI18n(mock.resources);
-const languages = AppsShared.commonLanguages
+const localization = initializeI18n(mock.resources);
+const languages = commonLanguages
   .filter(({ code }) => Object.keys(mock.resources).includes(code))
   .map(({ code, label, flag }) => ({
     value: code,
@@ -32,9 +44,9 @@ const customWidgetLoaders = {
   heading: async () =>
     (await import('../../custom-fields/heading/heading.component')).HeadingComponent,
 };
-const middlewares = [Core.devToolsMiddleware()];
-const customValidators: GuiValidators.CustomValidatorSchemas = {
-  allowedNames: AppsShared.allowedNames,
+const middlewares = [devToolsMiddleware()];
+const customValidators: CustomValidatorSchemas = {
+  allowedNames: allowedNames,
 };
 const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   complexListItemRenderer: ComplexListItemRenderer,
@@ -42,17 +54,17 @@ const itemRenderers: Record<string, ReactItemRenderer<any>> = {
   airportItemRenderer: AirportItemRenderer,
   countryItemRenderer: CountryItemRenderer,
 };
-const validateOn: Core.ValidateOn = 'eager';
-function onFormEvent(event: Core.FormEvent) {
+const validateOn: ValidateOn = 'eager';
+function formEventHandler(event: FormEvent) {
   if (mock.onFormEvent) {
     mock.onFormEvent(event);
   }
-  AppsShared.onFormEvent(event);
+  onFormEvent(event);
 }
 
 export function FormPage() {
   const [error, setError] = useState('');
-  const [formDef, setFormDef] = useState<Core.Form<string> | undefined>(undefined);
+  const [formDef, setFormDef] = useState<Form<string> | undefined>(undefined);
 
   useEffect(() => {
     const { form } = mock;
@@ -82,7 +94,7 @@ export function FormPage() {
     [formDef],
   );
 
-  function onFormHealth(formHealth: Core.FormHealth) {
+  function onFormHealth(formHealth: FormHealth) {
     if (formHealth.status === 'errored') {
       setError(formHealth.message);
     }
@@ -97,7 +109,7 @@ export function FormPage() {
           config={config}
           autocomplete="off"
           formHealth={onFormHealth}
-          formEvent={onFormEvent}
+          formEvent={formEventHandler}
         />
       )}
     </div>

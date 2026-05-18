@@ -1,11 +1,8 @@
-import { FormWidget, isInputWidget } from '../../form-widget';
-import * as Actions from '../actions';
-import { DerivedWidget, State } from '../model';
+import { type FormWidget, isInputWidget } from '../../form-widget';
+import type { OVERRIDE_WIDGET_PROP } from '../actions';
+import { type DerivedWidget, type State } from '../model';
 
-export const overrideWidgetProp = (
-  state: State,
-  { payload }: Actions.OVERRIDE_WIDGET_PROP,
-): State => {
+export const overrideWidgetProp = (state: State, { payload }: OVERRIDE_WIDGET_PROP): State => {
   let widget: DerivedWidget<FormWidget<string, any, any>> | undefined;
 
   if ('path' in payload) {
@@ -24,12 +21,13 @@ export const overrideWidgetProp = (
     }
   }
 
-  const propOverrides = state.widgetPropOverrides[widget.source.uid!] || {};
+  const uid = widget.source.uid as string;
+  const propOverrides = state.widgetPropOverrides[uid] || {};
   return {
     ...state,
     widgetPropOverrides: {
       ...state.widgetPropOverrides,
-      [widget.source.uid!]: { ...propOverrides, [payload.prop]: payload.value },
+      [uid]: { ...propOverrides, [payload.prop]: payload.value },
     },
   };
 };

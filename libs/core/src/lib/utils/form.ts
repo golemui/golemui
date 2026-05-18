@@ -1,6 +1,6 @@
-import * as Widget from '../form-widget';
-import { $Errors, DotPath } from '../shared';
-import { State } from '../store/model';
+import { type FormWidget, isLayoutWidget } from '../form-widget';
+import { type $Errors, type DotPath } from '../shared';
+import { type State } from '../store/model';
 import { set } from './object';
 
 /**
@@ -161,10 +161,10 @@ export const resolveScopedPath = (variable: string, resolvers: ScopedPathResolve
  * // Result: [firstName, layout, street, city]
  * ```
  */
-export function flattenForm(widgets: Widget.FormWidget[]): Widget.FormWidget[] {
+export function flattenForm(widgets: FormWidget[]): FormWidget[] {
   return widgets.flatMap((widget) => [
     widget,
-    ...(Widget.isLayoutWidget(widget) ? flattenForm(widget.children) : []),
+    ...(isLayoutWidget(widget) ? flattenForm(widget.children) : []),
   ]);
 }
 

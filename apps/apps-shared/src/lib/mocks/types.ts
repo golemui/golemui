@@ -1,5 +1,5 @@
-import { Form, FormEvent } from '@golemui/core';
-import { Resource } from 'i18next';
+import { type Form, type FormEvent } from '@golemui/core';
+import { type Resource } from 'i18next';
 
 export type FromLoaderFn = () => Promise<Form<string>>;
 

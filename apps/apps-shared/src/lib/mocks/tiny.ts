@@ -1,5 +1,5 @@
-import { Form } from '@golemui/core';
-import { Example } from './types';
+import { type Form } from '@golemui/core';
+import { type Example } from './types';
 
 const data = {};
 

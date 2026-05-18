@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { defineForm } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
 
 export const runLabelComponentTests = (mountFn: MountComponentFn) => {
   describe('Field label', () => {
@@ -9,7 +9,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'textinput-uid';
           const label = 'textinput label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -28,7 +28,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'textinput-uid';
           const label = 'textinput label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -51,7 +51,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'checkbox-uid';
           const label = 'checkbox label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -70,7 +70,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'checkbox-uid';
           const label = 'checkbox label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -93,7 +93,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'number-uid';
           const label = 'number label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -112,7 +112,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'number-uid';
           const label = 'number label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -135,7 +135,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'select-uid';
           const label = 'select label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -154,7 +154,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'select-uid';
           const label = 'select label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -177,7 +177,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'radiogroup-uid';
           const label = 'radiogroup label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -196,7 +196,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = 'radiogroup-uid';
           const label = 'radiogroup label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {
@@ -221,7 +221,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = '123';
           const label = 'button label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               form: [
                 {
                   uid,
@@ -239,7 +239,7 @@ export const runLabelComponentTests = (mountFn: MountComponentFn) => {
           const uid = '123';
           const label = 'button label';
           mountFn({
-            formDef: Core.defineForm({
+            formDef: defineForm({
               states: { register: 'true' },
               form: [
                 {

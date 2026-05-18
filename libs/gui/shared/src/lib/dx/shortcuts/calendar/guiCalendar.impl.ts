@@ -1,5 +1,5 @@
-import { DxRuntimeParams } from '../../core/dxUtilityTypes';
-import { GuiCalendarShortcut, CalendarDecorator } from './calendar.domain';
+import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type GuiCalendarShortcut, type CalendarDecorator } from './calendar.domain';
 
 export function _guiCalendar(path: string): GuiCalendarShortcut;
 export function _guiCalendar(

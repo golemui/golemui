@@ -1,8 +1,8 @@
 import { isInputWidget } from '../../form-widget';
-import * as Fn from '../../utils/function';
+import { pipe } from '../../utils/function';
 import { deleteKey } from '../../utils/object';
-import { REMOVE_WIDGET } from '../actions';
-import { State } from '../model';
+import { type REMOVE_WIDGET } from '../actions';
+import { type State } from '../model';
 
 // TODO: should we remove data as well?
 export function removeWidget(state: State, action: REMOVE_WIDGET): State {
@@ -19,7 +19,7 @@ export function removeWidget(state: State, action: REMOVE_WIDGET): State {
       ...deleteKey(state.widgetPropOverrides, action.payload.uid),
     },
     touchedControls: {
-      ...Fn.pipe(state.touchedControls, (touchedControls) => {
+      ...pipe(state.touchedControls, (touchedControls) => {
         // TODO: this doesn't account for repeater items
         const widget = state.flatForm[action.payload.uid];
         if (widget && isInputWidget(widget)) {

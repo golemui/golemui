@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { State } from '../store/model';
+import { type State } from '../store/model';
 import {
-  ScopedPathResolvers,
+  type ScopedPathResolvers,
   calculateValidationVariables,
   flattenForm,
   isPotentialScopedPath,

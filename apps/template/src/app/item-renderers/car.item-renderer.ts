@@ -1,6 +1,6 @@
-import { html, TemplateResult } from 'lit';
+import { html, type TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { ItemRenderContext } from '@golemui/core';
+import { type ItemRenderContext } from '@golemui/core';
 
 type CarItem = {
   id: string;

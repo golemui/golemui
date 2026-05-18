@@ -1,6 +1,6 @@
-import * as Form from '../form';
-import * as Widget from '../form-widget';
-import { DotPath, Uid, ValidationStatus } from '../shared';
+import { type Form, formDefDecoder } from '../form';
+import type { FormWidget, FunctionWidget } from '../form-widget';
+import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
 //
@@ -14,13 +14,13 @@ export type State = {
   /**
    * The complete form definition.
    */
-  formDef: Form.Form<string>;
+  formDef: Form<string>;
 
   /**
    * Flattened representation of `formDef` as a map from UID to widget definition.
    * Enables more efficient lookup and processing in downstream operations.
    */
-  flatForm: Record<Uid, Widget.FormWidget<string>>;
+  flatForm: Record<Uid, FormWidget<string>>;
 
   /**
    * List of states computed for the current form state.
@@ -31,7 +31,7 @@ export type State = {
    * Tracks widgets whose components have been rendered.
    * A widget is added when its component mounts and removed when it unmounts.
    */
-  calculatedWidgets: Record<Uid, DerivedWidget<Widget.FormWidget<string>>>;
+  calculatedWidgets: Record<Uid, DerivedWidget<FormWidget<string>>>;
 
   /**
    * Validations statuses derived from the schema validators expressed declaratively.
@@ -100,13 +100,13 @@ export type State = {
 
 export const createInitialState = (lang: string): State => ({
   formName: '',
-  formDef: Form.formDefDecoder.parse({
+  formDef: formDefDecoder.parse({
     form: {
       kind: 'layout',
       type: 'flex',
       children: [],
     },
-  }) as Form.Form,
+  }) as Form,
   flatForm: {},
   currentStates: [],
   calculatedWidgets: {},
@@ -160,9 +160,9 @@ export type FormHealth =
  * recently computed, fully resolved widget. Reference identity is used for
  * change detection: a new object is created only when a property has changed.
  */
-export type DerivedWidget<F extends Widget.FormWidget<string>> = {
+export type DerivedWidget<F extends FormWidget<string>> = {
   /** The source widget from which the derived value is computed */
   source: F;
   /** The most recently computed, fully resolved widget */
-  current: Exclude<F, Widget.FunctionWidget<string>>;
+  current: Exclude<F, FunctionWidget<string>>;
 };

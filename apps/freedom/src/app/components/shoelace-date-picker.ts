@@ -1,21 +1,21 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
 @customElement('freedom-shoelace-date-picker')
-export class FreedomShoelaceDatePickerElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class FreedomShoelaceDatePickerElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, Record<string, never>>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, Record<string, never>>();
 
   subscriptions: Subscription[] = [];
 

@@ -1,10 +1,15 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import * as Lit from '@golemui/lit';
-import * as Core from '@golemui/core';
+import {
+  DisplayWidgetAdapter,
+  type LitFormContext,
+  displayWidgetContext,
+  formContext,
+} from '@golemui/lit';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
 import { consume, provide } from '@lit/context';
 import './heading.element.scss';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 type OwnWidgetProps = {
   text: string;
@@ -12,14 +17,14 @@ type OwnWidgetProps = {
 };
 
 @customElement('app-heading')
-export class HeadingElement extends LitElement implements Core.WithWidget {
-  widget!: Core.DisplayWidget;
+export class HeadingElement extends LitElement implements WithWidget {
+  widget!: DisplayWidget;
 
-  @consume({ context: Lit.formContext })
-  formContext!: Lit.LitFormContext<any>;
+  @consume({ context: formContext })
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.displayWidgetContext })
-  adapter: Lit.DisplayWidgetAdapter<OwnWidgetProps> = new Lit.DisplayWidgetAdapter();
+  @provide({ context: displayWidgetContext })
+  adapter: DisplayWidgetAdapter<OwnWidgetProps> = new DisplayWidgetAdapter();
 
   subscriptions: Subscription[] = [];
 

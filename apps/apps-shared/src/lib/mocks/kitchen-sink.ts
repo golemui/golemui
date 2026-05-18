@@ -1,6 +1,6 @@
-import * as Core from '@golemui/core';
+import type { Form } from '@golemui/core';
 import { resolveChunkRefs } from '@golemui/gui-shared';
-import { Example } from './types';
+import { type Example } from './types';
 
 const data = {
   listName: 'Development Team',
@@ -56,7 +56,7 @@ export const kitchenSink: Example = {
   form: async () => {
     const baseUrl = new URL('/assets/mocks/kitchen-sink.form.json', window.location.href).href;
     const json = await fetch(baseUrl).then((r) => r.json());
-    return resolveChunkRefs(json, baseUrl) as unknown as Core.Form<string>;
+    return resolveChunkRefs(json, baseUrl) as unknown as Form<string>;
   },
   resources,
 };

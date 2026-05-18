@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ItemRenderContext } from '@golemui/core';
-import { AirportItem } from '@golemui/apps-shared';
+import { type ItemRenderContext } from '@golemui/core';
+import { type AirportItem } from '@golemui/apps-shared';
 
 @Component({
   selector: 'app-airport-item-renderer',

@@ -1,24 +1,24 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
 import { addIcon } from '@golemui/gui-components/internals';
-import { DatePickerProps } from '@golemui/gui-shared';
+import { type DatePickerProps } from '@golemui/gui-shared';
 import '@golemui/gui-components/date-input';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('gui-date-input')
-export class DateElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class DateElement extends LitElement implements WithWidget {
+  widget!: InputWidget<string>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<string, DatePickerProps>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<string, DatePickerProps>();
 
   subscriptions: Subscription[] = [];
 

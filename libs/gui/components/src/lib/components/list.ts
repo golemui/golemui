@@ -1,7 +1,7 @@
-import { html, LitElement, nothing, PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { updateListItems } from './list-items';
-import { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
+import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 
 @customElement('gui-list')
 export class GuiList extends LitElement {

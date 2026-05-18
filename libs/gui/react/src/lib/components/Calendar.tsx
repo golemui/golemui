@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { CalendarProps } from '@golemui/gui-shared';
+import { type CalendarProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '@golemui/gui-components/calendar';
 import '../styles.scss';
 
-export function Calendar(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<string>;
+export function Calendar(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<string>;
   const { uid, errors, value, isTouched, templateData, onBlur, onValueChanged } = useInputWidget<
     string,
     CalendarProps
@@ -48,7 +48,7 @@ export function Calendar(widgetInstance: Core.WithWidget) {
   const lang = templateData.lang;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className="gui-calendar gui-field" style={{ flex: templateData.size }}>

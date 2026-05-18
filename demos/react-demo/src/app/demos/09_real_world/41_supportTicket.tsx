@@ -1,5 +1,5 @@
-import { FormDemoDefinition } from '../../formRegistry.domain';
-import { gui, DxRuntimeParams } from '@golemui/gui-shared';
+import { type FormDemoDefinition } from '../../formRegistry.domain';
+import { gui, type DxRuntimeParams } from '@golemui/gui-shared';
 
 const products = [
   { label: 'Cloud Platform', value: 'cloud' },

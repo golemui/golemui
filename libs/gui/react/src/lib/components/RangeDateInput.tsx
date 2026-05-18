@@ -1,12 +1,12 @@
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
-import { DateRange, RangeDateInputProps } from '@golemui/gui-shared';
+import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
 import '@golemui/gui-components/range-date-input';
 import '../styles.scss';
 
-export function RangeDateInput(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<DateRange[]>;
+export function RangeDateInput(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<DateRange[]>;
   const {
     uid,
     errors,
@@ -57,7 +57,7 @@ export function RangeDateInput(widgetInstance: Core.WithWidget) {
   const endDateAriaLabel = templateData.endDateAriaLabel;
   const isDisabled = templateData.disabled as boolean;
   const isReadonly = templateData.readonly as boolean;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
 
   return (
     <div className="gui-range-date-input gui-field" style={{ flex: templateData.size }}>

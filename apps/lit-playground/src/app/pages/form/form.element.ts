@@ -1,8 +1,14 @@
-import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
+import {
+  allowedNames,
+  commonLanguages,
+  initializeI18n,
+  kitchenSink,
+  onFormEvent,
+} from '@golemui/apps-shared';
+import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core';
 import '@golemui/gui-lit';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
-import * as GuiValidators from '@golemui/gui-validators';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
+import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import i18next from 'i18next';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
@@ -13,12 +19,12 @@ import { countryItemRenderer } from '../../item-renderers/country.item-renderer'
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 import './form.element.scss';
 
-const mock = AppsShared.kitchenSink;
+const mock = kitchenSink;
 
 @customElement('lit-form')
 export class FormElement extends LitElement {
   config: GuiFormInitConfig | undefined;
-  languages = AppsShared.commonLanguages
+  languages = commonLanguages
     .filter(({ code }) => Object.keys(mock.resources).includes(code))
     .map(({ code, label, flag }) => ({
       value: code,
@@ -35,7 +41,7 @@ export class FormElement extends LitElement {
       formDef,
       data: mock.data,
       meta: mock.meta || {},
-      localization: AppsShared.initializeI18n(mock.resources),
+      localization: initializeI18n(mock.resources),
       dependencies: {
         markdown: {
           parse: (md: string) => snarkdown(md),
@@ -51,10 +57,10 @@ export class FormElement extends LitElement {
         airportItemRenderer,
         countryItemRenderer,
       },
-      middlewares: [Core.devToolsMiddleware()],
+      middlewares: [devToolsMiddleware()],
       customValidators: {
-        allowedNames: AppsShared.allowedNames,
-      } as GuiValidators.CustomValidatorSchemas,
+        allowedNames: allowedNames,
+      } as CustomValidatorSchemas,
       validateOn: 'eager',
     };
     this.requestUpdate();
@@ -64,7 +70,7 @@ export class FormElement extends LitElement {
     return this;
   }
 
-  protected onFormHealth(event: CustomEvent<Core.FormHealth>) {
+  protected onFormHealth(event: CustomEvent<FormHealth>) {
     const health = event.detail;
     if (health.status === 'errored') {
       this.error = health.message;
@@ -72,11 +78,11 @@ export class FormElement extends LitElement {
     Promise.resolve().then(() => this.requestUpdate());
   }
 
-  protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
+  protected async onFormEvent(event: CustomEvent<FormEvent>) {
     if (mock.onFormEvent) {
       mock.onFormEvent(event.detail);
     }
-    AppsShared.onFormEvent(event.detail);
+    onFormEvent(event.detail);
     Promise.resolve().then(() => this.requestUpdate());
   }
 

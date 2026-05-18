@@ -1,28 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import type { AccordionEventDetail } from '@golemui/gui-components/internals';
-import { AccordionProps } from '@golemui/gui-shared';
+import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
+import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
+import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { type AccordionEventDetail } from '@golemui/gui-components/internals';
+import { type AccordionProps } from '@golemui/gui-shared';
 
 @Component({
   standalone: true,
   selector: 'gui-accordion-layout',
-  imports: [CommonModule, Angular.WidgetDirective],
-  providers: [Angular.LayoutWidgetAdapter],
+  imports: [CommonModule, WidgetDirective],
+  providers: [LayoutWidgetAdapter],
   templateUrl: './accordion.component.html',
   host: {
     class: 'gui-accordion gui-field',
     '[style.flex]': 'this.adapter.templateData().size',
   },
 })
-export class AccordionComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: LayoutWidget;
   activeSections: { [key: string]: boolean } = {};
 
-  protected adapter: Angular.LayoutWidgetAdapter<AccordionProps> = inject(
-    Angular.LayoutWidgetAdapter,
-  );
+  protected adapter: LayoutWidgetAdapter<AccordionProps> = inject(LayoutWidgetAdapter);
 
   ngOnInit(): void {
     const props: AccordionProps = this.widget.props as AccordionProps;
@@ -46,9 +44,7 @@ export class AccordionComponent implements OnInit, OnDestroy, Core.WithWidget {
   }
 
   getChild(uid: string) {
-    return this.widget.children.find(
-      (section) => section.uid === uid,
-    ) as Core.NonFunctionWidget<string>;
+    return this.widget.children.find((section) => section.uid === uid) as NonFunctionWidget<string>;
   }
 
   ngOnDestroy(): void {

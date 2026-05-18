@@ -1,7 +1,7 @@
 // Complexity: COMPLEX — batch factory with 3 sub-types (text, number, boolean).
 // This is NOT representative of a typical shortcut. If you're learning the system,
 // start with alert/ (minimal) or date-picker/ (standard keyed type).
-import { InputWidget, NonFunctionWidget, UiState } from '@golemui/core';
+import { type InputWidget, type NonFunctionWidget, type UiState } from '@golemui/core';
 import { defineShortcutType } from '../../core/defineShortcutType';
 import { extractWidgetProps } from '../../core/dxPropsHelper';
 import { buildTypedValidator } from '../../core/dxValidatorHelper';
@@ -10,12 +10,12 @@ import {
   processAutoPlaceholder,
 } from '../../core/sharedSensibleDefaults.service';
 import {
-  InputDecorator,
-  InputEntry,
-  GslInputsConfig,
-  BooleanDataInputDecorator,
-  NumberDataInputDecorator,
-  TextDataInputDecorator,
+  type InputDecorator,
+  type InputEntry,
+  type GslInputsConfig,
+  type BooleanDataInputDecorator,
+  type NumberDataInputDecorator,
+  type TextDataInputDecorator,
 } from './inputs.domain';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(

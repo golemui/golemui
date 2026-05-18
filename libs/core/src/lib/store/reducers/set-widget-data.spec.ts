@@ -1,5 +1,5 @@
-import { DotPath } from '../../shared';
-import { SET_WIDGET_DATA, SET_WIDGET_INITIAL_DATA } from '../actions';
+import { type DotPath } from '../../shared';
+import { type SET_WIDGET_DATA, type SET_WIDGET_INITIAL_DATA } from '../actions';
 import { createInitialState } from '../model';
 import { setWidgetData } from './set-widget-data';
 

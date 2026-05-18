@@ -1,5 +1,5 @@
-import { Action } from '../../store/actions';
-import { Middleware, State } from '../../store/model';
+import { type Action } from '../../store/actions';
+import { type Middleware, type State } from '../../store/model';
 
 interface DevToolsConnection {
   init(state: unknown): void;

@@ -1,5 +1,5 @@
-import * as Core from '@golemui/core';
-import { MountComponentFn } from '../utils';
+import { defineForm } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
 
 export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
   describe('String interpolation', () => {
@@ -7,7 +7,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should interpolate $meta variables in display text', () => {
         mountFn({
           meta: { connectionStatus: 'online' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'status-alert',
@@ -30,7 +30,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
             connectionStatus: 'online',
             version: '1.0.0',
           },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'multi-alert',
@@ -50,7 +50,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should handle undefined $meta variables gracefully', () => {
         mountFn({
           meta: {},
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'undefined-alert',
@@ -72,7 +72,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should interpolate $form variables in display text', () => {
         mountFn({
           data: { details: { clientName: 'John Doe' } },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'client-name-input',
@@ -98,7 +98,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should update display when $form variable changes', () => {
         mountFn({
           data: { details: { clientName: 'John' } },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'client-name-input',
@@ -129,7 +129,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
             firstName: 'John',
             lastName: 'Doe',
           },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'first-name',
@@ -163,7 +163,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should handle empty/undefined $form variables', () => {
         mountFn({
           data: { details: {} },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'greeting',
@@ -186,7 +186,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
         mountFn({
           data: { details: { clientName: 'David' } },
           meta: { connectionStatus: 'online' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'client-name',
@@ -213,7 +213,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
         mountFn({
           data: { clientName: 'Eve' },
           meta: { connectionStatus: 'offline' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'client-name',
@@ -243,7 +243,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should interpolate $form in conditional display based on state', () => {
         mountFn({
           data: { userName: 'Grace', isVip: false },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               vip: '$form.isVip === true',
             },
@@ -282,7 +282,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should interpolate $meta in state-based conditional display', () => {
         mountFn({
           meta: { isAdmin: true },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             states: {
               admin: '$meta.isAdmin === true',
             },
@@ -317,7 +317,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
     describe('$errors and $formIsInvalid interpolation in text', () => {
       it('should interpolate $formIsInvalid as "false" when form has no errors', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'userName',
@@ -341,7 +341,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
 
       it('should interpolate $formIsInvalid as "true" after submit with a required field empty', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'userName',
@@ -375,7 +375,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
 
       it('should interpolate $formIsInvalid back to "false" when validation error is resolved', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'userName',
@@ -410,7 +410,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
 
       it('should not show an error message in $errors.fieldName placeholder when there are no errors', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'userName',
@@ -437,7 +437,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
 
       it('should interpolate $errors.fieldName as the error message after validation fails', () => {
         mountFn({
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'userName',
@@ -474,7 +474,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should handle nested path with numbers in property names', () => {
         mountFn({
           data: { user: { phone2024: '555-1234' } },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'phone',
@@ -494,7 +494,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should handle special characters in interpolated values', () => {
         mountFn({
           data: { message: 'Hello & goodbye "quoted"' },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'special-chars',
@@ -514,7 +514,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       it('should handle zero and false values in interpolation', () => {
         mountFn({
           data: { count: 0, isActive: false },
-          formDef: Core.defineForm({
+          formDef: defineForm({
             form: [
               {
                 uid: 'false-values',

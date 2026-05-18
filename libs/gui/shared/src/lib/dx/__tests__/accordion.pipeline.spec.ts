@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LayoutWidget, NonFunctionWidget } from '@golemui/core';
+import { type LayoutWidget, type NonFunctionWidget } from '@golemui/core';
 import { _guiAccordion, _gslAccordions, _gslAccordionByUid } from '../index';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiTextInput, _guiNumberInput } from '../index';

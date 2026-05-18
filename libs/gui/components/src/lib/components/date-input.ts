@@ -1,12 +1,12 @@
-import { html, LitElement, nothing, PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers';
-import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
+import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
 import { toISODateString } from '../utils/date';
-import { DateinputProps } from '@golemui/gui-shared';
+import { type DateinputProps } from '@golemui/gui-shared';
 
 @customElement('gui-date')
 export class GuiDate extends LitElement {

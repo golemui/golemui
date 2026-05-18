@@ -1,17 +1,17 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { createIntersectionObserver, TabsEventDetail } from '@golemui/gui-components/internals';
-import { TabsProps } from '@golemui/gui-shared';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
+import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
+import { createIntersectionObserver, type TabsEventDetail } from '@golemui/gui-components/internals';
+import { type TabsProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
-import { html, LitElement, nothing, PropertyValues } from 'lit';
+import { html, LitElement, nothing, type PropertyValues } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, query, queryAll, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-tabs-layout')
-export class TabsElement extends LitElement implements Core.WithWidget {
-  widget!: Core.LayoutWidget;
+export class TabsElement extends LitElement implements WithWidget {
+  widget!: LayoutWidget;
 
   @query('#start-sentinel') startSentinel!: HTMLElement;
   @query('#end-sentinel') endSentinel!: HTMLElement;
@@ -24,12 +24,12 @@ export class TabsElement extends LitElement implements Core.WithWidget {
 
   @property({ type: String }) activeTab = '';
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.layoutContext })
-  adapter = new Lit.LayoutWidgetAdapter<TabsProps>();
+  @provide({ context: layoutContext })
+  adapter = new LayoutWidgetAdapter<TabsProps>();
 
   subscriptions: Subscription[] = [];
 

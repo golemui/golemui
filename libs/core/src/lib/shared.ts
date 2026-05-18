@@ -1,7 +1,7 @@
-import { NonFunctionWidget } from './form-widget';
-import { I18nTranslator } from './i18n';
-import { OVERRIDE_WIDGET_PROP } from './store/actions';
-import { ImmutableRecord } from './utils/types';
+import { type NonFunctionWidget } from './form-widget';
+import { type I18nTranslator } from './i18n';
+import { type OVERRIDE_WIDGET_PROP } from './store/actions';
+import { type ImmutableRecord } from './utils/types';
 
 /**
  * The UI state name.

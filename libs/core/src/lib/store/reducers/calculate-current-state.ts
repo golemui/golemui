@@ -1,7 +1,7 @@
 import { errorCodes } from '../../errors';
 import { calculateValidationVariables } from '../../utils/form';
 import { expressionIsTrue } from '../../utils/justin';
-import { FormHealth, State } from '../model';
+import { type FormHealth, type State } from '../model';
 
 export const calculateCurrentState = (state: State): State => {
   let stateExpressions = state.formDef.states;

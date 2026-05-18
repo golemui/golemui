@@ -2,8 +2,8 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
-import { addErrors, addLabel, ControlTemplateData } from '../utils/templates';
-import { TextareaProps } from '@golemui/gui-shared';
+import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
+import { type TextareaProps } from '@golemui/gui-shared';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 @customElement('gui-textarea')

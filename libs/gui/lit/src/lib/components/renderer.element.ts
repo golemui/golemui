@@ -1,21 +1,26 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { RendererProps } from '@golemui/gui-shared';
+import type { DisplayWidget, WithWidget } from '@golemui/core';
+import {
+  DisplayWidgetAdapter,
+  type LitFormContext,
+  displayWidgetContext,
+  formContext,
+} from '@golemui/lit';
+import { type RendererProps } from '@golemui/gui-shared';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 @customElement('gui-renderer-component')
-export class RendererElement extends LitElement implements Core.WithWidget {
-  widget!: Core.DisplayWidget;
+export class RendererElement extends LitElement implements WithWidget {
+  widget!: DisplayWidget;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.displayWidgetContext })
-  adapter = new Lit.DisplayWidgetAdapter<RendererProps>();
+  @provide({ context: displayWidgetContext })
+  adapter = new DisplayWidgetAdapter<RendererProps>();
 
   subscriptions: Subscription[] = [];
 

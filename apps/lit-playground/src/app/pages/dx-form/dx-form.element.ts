@@ -1,7 +1,7 @@
-import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
+import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
+import type { FormEvent } from '@golemui/core';
 import '@golemui/gui-lit';
-import { GuiFormInitConfig } from '@golemui/gui-shared';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import snarkdown from 'snarkdown';
@@ -10,7 +10,7 @@ import { complexListItemRenderer } from '../../item-renderers/complex-list.item-
 import { countryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { productItemRenderer } from '../../item-renderers/product.item-renderer';
 
-const ks = AppsShared.buildKitchenSinkDx({
+const ks = buildKitchenSinkDx({
   widgetLoaders: {
     heading: async () =>
       (await import('../../custom-widgets/heading/heading.element')).HeadingElement,
@@ -33,7 +33,7 @@ const config: GuiFormInitConfig = {
   data: ks.data,
   formSelectors: ks.formSelectors,
   formConfig: ks.formConfig,
-  localization: AppsShared.initializeI18n({}),
+  localization: initializeI18n({}),
 };
 
 @customElement('lit-dx-form')
@@ -42,8 +42,8 @@ export class DxFormElement extends LitElement {
     return this;
   }
 
-  protected async onFormEvent(event: CustomEvent<Core.FormEvent>) {
-    await AppsShared.onFormEvent(event.detail);
+  protected async onFormEvent(event: CustomEvent<FormEvent>) {
+    await onFormEvent(event.detail);
   }
 
   override render() {

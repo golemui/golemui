@@ -1,4 +1,4 @@
-import { FormEvent, LayoutWidget } from '@golemui/core';
+import { type FormEvent, type LayoutWidget } from '@golemui/core';
 import { describe, expect, it, vi } from 'vitest';
 import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
 import { _guiSelect } from '../shortcuts/select/guiSelect.impl';

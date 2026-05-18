@@ -1,4 +1,4 @@
-import { LayoutWidget } from '@golemui/core';
+import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it, vi } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';

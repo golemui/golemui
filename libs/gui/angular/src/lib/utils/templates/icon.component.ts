@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import * as Core from '@golemui/core';
+import type { ControlTemplateData } from '@golemui/core';
 
 @Component({
   standalone: true,
@@ -13,5 +13,5 @@ import * as Core from '@golemui/core';
   },
 })
 export class IconComponent<T, ExtraProps extends { icon?: string }> {
-  templateData = input.required<Core.ControlTemplateData<T> & ExtraProps>();
+  templateData = input.required<ControlTemplateData<T> & ExtraProps>();
 }

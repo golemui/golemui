@@ -1,6 +1,6 @@
 import { compile, parse } from 'subscript/justin';
-import { $Errors, ReactiveExpression } from '../shared';
-import { State } from '../store/model';
+import { type $Errors, type ReactiveExpression } from '../shared';
+import { type State } from '../store/model';
 import { Debug } from './debug';
 
 // TODO: caching or memoization

@@ -1,4 +1,4 @@
-import { DxRuntimeParams } from '../../core/dxUtilityTypes';
+import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
 import type { GuiListShortcut, ListDecorator, ListEntry } from './list.domain';
 
 type ListFactoryProps = Omit<ListDecorator, 'type'>;

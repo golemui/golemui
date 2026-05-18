@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as Core from '@golemui/core';
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget, useItemRenderer } from '@golemui/react';
-import { ListItem, ListProps, OptionValue } from '@golemui/gui-shared';
+import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
-import { ListItemRendererProps } from './item-renderers/props';
+import { type ListItemRendererProps } from './item-renderers/props';
 import '@golemui/gui-components/label';
 import '@golemui/gui-components/list';
 import '@golemui/gui-components/errors';
@@ -12,8 +12,8 @@ interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
 }
 
-export function List(widgetInstance: Core.WithWidget) {
-  const widget = widgetInstance.widget as Core.InputWidget<OptionValue>;
+export function List(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<OptionValue>;
 
   const { uid, errors, value, isTouched, templateData, onValueChanged, onBlur } = useInputWidget<
     OptionValue,
@@ -99,7 +99,7 @@ export function List(widgetInstance: Core.WithWidget) {
   const ItemRenderer = (useItemRenderer(templateData.itemRenderer as string) ||
     DefaultListItemRenderer) as React.ComponentType<ListItemRendererProps<any>>;
   const label = templateData.label as string;
-  const isRequired = (templateData.validator as Core.Validator)?.required;
+  const isRequired = (templateData.validator as Validator)?.required;
   const isDisabled = templateData.disabled as boolean;
   const isReadOnly = templateData.readonly as boolean;
   const showErrors = isTouched && errors && errors.length > 0;

@@ -2,8 +2,8 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { GUIAriaController } from '../controllers/aria.controller';
-import { addErrors, addIcon, addLabel, ControlTemplateData } from '../utils/templates';
-import { PasswordProps } from '@golemui/gui-shared';
+import { addErrors, addIcon, addLabel, type ControlTemplateData } from '../utils/templates';
+import { type PasswordProps } from '@golemui/gui-shared';
 
 @customElement('gui-password')
 export class GuiPassword extends LitElement {

@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import * as AppsShared from '@golemui/apps-shared';
-import * as Core from '@golemui/core';
-import * as GuiAngular from '@golemui/gui-angular';
+import { modularDx, onFormEvent } from '@golemui/apps-shared';
+import type { FormEvent } from '@golemui/core';
+import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 
-const md = AppsShared.modularDx;
+const md = modularDx;
 
 @Component({
-  imports: [CommonModule, GuiAngular.FormComponent],
+  imports: [CommonModule, FormComponent],
   selector: 'app-modular-dx-page',
   templateUrl: './modular-dx.component.html',
 })
@@ -20,7 +20,7 @@ export class ModularDxPage {
     formConfig: md.formConfig,
   };
 
-  protected async onFormEvent(event: Core.FormEvent) {
-    await AppsShared.onFormEvent(event);
+  protected async onFormEvent(event: FormEvent) {
+    await onFormEvent(event);
   }
 }

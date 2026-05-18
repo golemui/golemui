@@ -1,14 +1,14 @@
-import * as Core from '@golemui/core';
-import * as Lit from '@golemui/lit';
-import { RepeaterProps } from '@golemui/gui-shared';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type RepeaterProps } from '@golemui/gui-shared';
 import { getItemKey } from '@golemui/gui-shared/internals';
-import '@golemui/gui-components/label';
-import '@golemui/gui-components/errors';
+import { formContext, inputContext, InputWidgetAdapter, type LitFormContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/errors';
 
 /**
  * Monotonically increasing counter for generating unique repeater item IDs.
@@ -17,15 +17,15 @@ let nextRepeaterItemId = 0;
 const idIncrementer = () => nextRepeaterItemId++;
 
 @customElement('gui-repeater-input')
-export class RepeaterElement extends LitElement implements Core.WithWidget {
-  widget!: Core.InputWidget<Record<string, unknown>[]>;
+export class RepeaterElement extends LitElement implements WithWidget {
+  widget!: InputWidget<Record<string, unknown>[]>;
 
-  @consume({ context: Lit.formContext })
+  @consume({ context: formContext })
   @property({ attribute: false })
-  formContext!: Lit.LitFormContext<any>;
+  formContext!: LitFormContext<any>;
 
-  @provide({ context: Lit.inputContext })
-  adapter = new Lit.InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<any>>();
 
   @state() isFocused = false;
 

@@ -3,14 +3,14 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  Observable,
+  type Observable,
   pipe,
   startWith,
 } from 'rxjs';
-import { LayoutWidget } from '../form-widget';
-import { DotPath, Uid } from '../shared';
-import * as Obj from '../utils/object';
-import { State } from './model';
+import { type LayoutWidget } from '../form-widget';
+import { type DotPath, type Uid } from '../shared';
+import { get } from '../utils/object';
+import { type State } from './model';
 
 // --------------------------------
 //
@@ -26,7 +26,7 @@ const selectData = pipe(
 export const dataByPath$ = <T = any>(path: DotPath) =>
   pipe(
     selectData,
-    map((data) => Obj.get<T>(data, path)),
+    map((data) => get<T>(data, path)),
     distinctUntilChanged(),
   );
 

@@ -1,6 +1,6 @@
-import { FunctionWidgetParams, ValidateOn } from '@golemui/core';
+import { type FunctionWidgetParams, type ValidateOn } from '@golemui/core';
 import type { WidgetItemDecorator, GslItemType } from '../formDef.domain';
-import { Dependencies } from '../../shared';
+import { type Dependencies } from '../../shared';
 
 export type { GslItemType } from '../formDef.domain';
 

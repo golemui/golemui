@@ -1,15 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit } from '@angular/core';
-import * as Angular from '@golemui/angular';
-import * as Core from '@golemui/core';
-import { MarkdownProps } from '@golemui/gui-shared';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { type MarkdownProps } from '@golemui/gui-shared';
 import '@golemui/gui-components/markdown';
 
 @Component({
   standalone: true,
   selector: 'gui-markdown-control',
   imports: [CommonModule],
-  providers: [Angular.InputWidgetAdapter],
+  providers: [InputWidgetAdapter],
   templateUrl: './markdown.component.html',
   host: {
     class: 'gui-markdown gui-field',
@@ -17,12 +23,10 @@ import '@golemui/gui-components/markdown';
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class MarkdownComponent implements OnInit, OnDestroy, Core.WithWidget {
-  widget!: Core.InputWidget<string>;
+export class MarkdownComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<string>;
 
-  protected adapter: Angular.InputWidgetAdapter<string, MarkdownProps> = inject(
-    Angular.InputWidgetAdapter,
-  );
+  protected adapter: InputWidgetAdapter<string, MarkdownProps> = inject(InputWidgetAdapter);
 
   ngOnInit(): void {
     this.adapter.init(this.widget);

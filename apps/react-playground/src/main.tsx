@@ -1,6 +1,6 @@
 import { enableDevMode } from '@golemui/core';
 import { StrictMode } from 'react';
-import * as ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import App from './app/app';
 
 import { BrowserRouter } from 'react-router';
@@ -10,7 +10,7 @@ if (import.meta.env.DEV) {
   enableDevMode();
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
   <StrictMode>

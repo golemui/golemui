@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { isInputWidget, NonFunctionWidget } from '../form-widget';
+import { isInputWidget, type NonFunctionWidget } from '../form-widget';
 import { makeRepeaterItemConfig, transformRepeaterItemWhenExpression } from './repeater';
 
 // Mock the external dependency to easily control the execution branch

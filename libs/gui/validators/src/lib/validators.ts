@@ -1,12 +1,12 @@
 import {
   filterTap,
-  I18nTranslator,
+  type I18nTranslator,
   isStandardValidateSuccess,
-  Localizable,
+  type Localizable,
   standardValidate,
-  ValidatorFn,
+  type ValidatorFn,
 } from '@golemui/core';
-import { StandardSchemaV1 } from '@standard-schema/spec';
+import { type StandardSchemaV1 } from '@standard-schema/spec';
 import { iso } from 'zod';
 import {
   any,
@@ -29,8 +29,8 @@ import {
   superRefine,
   url,
   uuid,
-  ZodMiniOptional,
-  ZodMiniType,
+  type ZodMiniOptional,
+  type ZodMiniType,
 } from 'zod/mini';
 
 // --------------------------------

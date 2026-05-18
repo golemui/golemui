@@ -5,9 +5,9 @@ import type {
   GslSelectorsInput,
 } from '@golemui/gui-shared';
 import { gui } from '@golemui/gui-shared';
-import * as DxMocks from './index.dx';
+import { testsDxModule } from './index.dx';
 
-const dxMock: DxModule = DxMocks.testsDxModule;
+const dxMock: DxModule = testsDxModule;
 
 export interface DxModule {
   label: string;

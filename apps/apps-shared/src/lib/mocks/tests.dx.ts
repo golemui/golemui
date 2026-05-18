@@ -1,6 +1,6 @@
 import type { DxDefinitionItem, DxFormConfig } from '@golemui/gui-shared';
 import { gui } from '@golemui/gui-shared';
-import { DxModule } from './modular.dx';
+import { type DxModule } from './modular.dx';
 
 const data = { userName: 'Grace', isVip: false };
 
