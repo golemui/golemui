@@ -48,7 +48,7 @@ function calculateFlags(
           touched: undefined,
           translate: undefined,
         });
-        widget_.uid = widget.uid!;
+        widget_.uid = widget.uid as string;
         return widget_;
       }
       return widget;

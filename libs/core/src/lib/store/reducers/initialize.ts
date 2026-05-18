@@ -53,10 +53,11 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
     try {
       flatForm = flattenForm([result.value.form] as FormWidget[]).reduce(
         (acc, cur) => {
-          if (acc[cur.uid!]) {
-            throw { existingWidget: acc[cur.uid!], newWidget: cur };
+          const uid = cur.uid as string;
+          if (acc[uid]) {
+            throw { existingWidget: acc[uid], newWidget: cur };
           }
-          acc[cur.uid!] = cur;
+          acc[uid] = cur;
           return acc;
         },
         {} as State['flatForm'],

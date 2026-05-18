@@ -21,12 +21,13 @@ export const overrideWidgetProp = (state: State, { payload }: OVERRIDE_WIDGET_PR
     }
   }
 
-  const propOverrides = state.widgetPropOverrides[widget.source.uid!] || {};
+  const uid = widget.source.uid as string;
+  const propOverrides = state.widgetPropOverrides[uid] || {};
   return {
     ...state,
     widgetPropOverrides: {
       ...state.widgetPropOverrides,
-      [widget.source.uid!]: { ...propOverrides, [payload.prop]: payload.value },
+      [uid]: { ...propOverrides, [payload.prop]: payload.value },
     },
   };
 };
