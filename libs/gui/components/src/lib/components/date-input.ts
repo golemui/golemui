@@ -370,3 +370,7 @@ declare global {
     'gui-date': GuiDate;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-date')) {
+  customElements.define('gui-date', GuiDate);
+}

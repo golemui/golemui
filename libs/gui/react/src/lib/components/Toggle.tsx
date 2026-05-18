@@ -2,6 +2,7 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type ToggleProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/toggle';
 import '../styles.scss';
 
 export function Toggle(widgetInstance: WithWidget) {

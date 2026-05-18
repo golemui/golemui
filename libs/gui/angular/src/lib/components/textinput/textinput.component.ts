@@ -9,6 +9,7 @@ import {
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type TextinputProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/textinput';
 
 @Component({
   standalone: true,

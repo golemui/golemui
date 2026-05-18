@@ -14,6 +14,9 @@ import { type AngularItemRenderer, InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './default-list.item-renderer';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 @Component({
   standalone: true,

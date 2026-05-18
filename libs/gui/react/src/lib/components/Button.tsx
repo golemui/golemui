@@ -1,5 +1,6 @@
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
+import '@golemui/gui-components/button';
 import '../styles.scss';
 import { type ButtonProps } from '@golemui/gui-shared';
 

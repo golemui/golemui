@@ -141,3 +141,7 @@ declare global {
     'gui-calendar': GuiCalendar;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-calendar')) {
+  customElements.define('gui-calendar', GuiCalendar);
+}

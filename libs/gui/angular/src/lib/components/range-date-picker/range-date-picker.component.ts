@@ -14,6 +14,8 @@ import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DateRange, type RangeDatePickerProps } from '@golemui/gui-shared';
 import { ErrorsComponent } from '../../utils/templates/errors.component';
 import { LabelComponent } from '../../utils/templates/label.component';
+import '@golemui/gui-components/range-calendar';
+import '@golemui/gui-components/range-date-input';
 
 @Component({
   standalone: true,

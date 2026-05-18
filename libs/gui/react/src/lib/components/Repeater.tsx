@@ -8,6 +8,8 @@ import {
   WidgetRenderer,
 } from '@golemui/react';
 import React, { useCallback, useRef, useState } from 'react';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/errors';
 import '../styles.scss';
 
 /**

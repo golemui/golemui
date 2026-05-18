@@ -514,3 +514,7 @@ declare global {
     'gui-range-calendar': GuiRangeCalendar;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-range-calendar')) {
+  customElements.define('gui-range-calendar', GuiRangeCalendar);
+}

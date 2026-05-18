@@ -9,6 +9,8 @@ import {
 import { InputWidgetAdapter, RepeaterWidgetDirective } from '@golemui/angular';
 import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
 import { type RepeaterProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/errors';
 
 @Component({
   standalone: true,

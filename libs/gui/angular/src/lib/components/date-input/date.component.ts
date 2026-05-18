@@ -9,6 +9,7 @@ import {
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DatePickerProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/date-input';
 
 @Component({
   standalone: true,

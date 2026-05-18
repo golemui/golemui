@@ -2,6 +2,7 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type OptionValue, type SelectProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/select';
 import '../styles.scss';
 
 export function Select(widgetInstance: WithWidget) {

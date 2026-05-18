@@ -292,3 +292,7 @@ declare global {
     'gui-list': GuiList;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-list')) {
+  customElements.define('gui-list', GuiList);
+}

@@ -2,6 +2,7 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type PasswordProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/password';
 import '../styles.scss';
 
 export function Password(widgetInstance: WithWidget) {

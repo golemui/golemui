@@ -16,6 +16,9 @@ import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DropdownProps, type ListItem } from '@golemui/gui-shared';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { DefaultListItemRenderer } from '../list/default-list.item-renderer';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 @Component({
   standalone: true,

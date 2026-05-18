@@ -9,6 +9,7 @@ import {
   formContext,
 } from '@golemui/lit';
 import { type MarkdownTextProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/markdown-text';
 import { type Subscription } from 'rxjs';
 
 @customElement('gui-markdown-text-display')

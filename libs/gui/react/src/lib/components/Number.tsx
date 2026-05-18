@@ -2,6 +2,7 @@ import type { InputWidget, Validator, WithWidget } from '@golemui/core';
 import { useInputWidget } from '@golemui/react';
 import { type NumberinputProps } from '@golemui/gui-shared';
 import { useCallback } from 'react';
+import '@golemui/gui-components/number';
 import '../styles.scss';
 
 export function NumberInput(widgetInstance: WithWidget) {

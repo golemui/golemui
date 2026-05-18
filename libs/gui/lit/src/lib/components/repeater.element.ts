@@ -7,6 +7,8 @@ import { html, LitElement, nothing } from 'lit';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/errors';
 
 /**
  * Monotonically increasing counter for generating unique repeater item IDs.

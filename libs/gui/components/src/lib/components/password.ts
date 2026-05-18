@@ -152,3 +152,7 @@ declare global {
     'gui-password': GuiPassword;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-password')) {
+  customElements.define('gui-password', GuiPassword);
+}

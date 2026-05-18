@@ -1,25 +1,24 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import {
-  type GuiButton,
-  type GuiCalendar,
-  type GuiCheckbox,
-  type GuiCurrency,
-  type GuiDate,
-  type GuiErrors,
-  type GuiLabel,
-  type GuiList,
-  type GuiMarkdown,
-  type GuiMarkdownText,
-  type GuiNumber,
-  type GuiPassword,
-  type GuiRadiogroup,
-  type GuiRangeCalendar,
-  type GuiRangeDateInput,
-  type GuiSelect,
-  type GuiTextarea,
-  type GuiTextinput,
-  type GuiToggle,
-} from '@golemui/gui-components';
+import type { GuiButton } from '@golemui/gui-components/button';
+import type { GuiCalendar } from '@golemui/gui-components/calendar';
+import type { GuiCheckbox } from '@golemui/gui-components/checkbox';
+import type { GuiCurrency } from '@golemui/gui-components/currency';
+import type { GuiDate } from '@golemui/gui-components/date-input';
+import type { GuiErrors } from '@golemui/gui-components/errors';
+import type { GuiLabel } from '@golemui/gui-components/label';
+import type { GuiList } from '@golemui/gui-components/list';
+import type { GuiMarkdown } from '@golemui/gui-components/markdown';
+import type { GuiMarkdownText } from '@golemui/gui-components/markdown-text';
+import type { GuiNumber } from '@golemui/gui-components/number';
+import type { GuiPassword } from '@golemui/gui-components/password';
+import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
+import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
+import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import type { GuiSelect } from '@golemui/gui-components/select';
+import type { GuiTextarea } from '@golemui/gui-components/textarea';
+import type { GuiTextinput } from '@golemui/gui-components/textinput';
+import type { GuiToggle } from '@golemui/gui-components/toggle';
+
 
 declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/no-namespace

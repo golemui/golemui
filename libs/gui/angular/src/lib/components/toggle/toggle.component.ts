@@ -9,6 +9,7 @@ import {
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type ToggleProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/toggle';
 
 @Component({
   standalone: true,

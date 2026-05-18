@@ -127,3 +127,7 @@ declare global {
     'gui-checkbox': GuiCheckbox;
   }
 }
+
+if (typeof customElements !== 'undefined' && !customElements.get('gui-checkbox')) {
+  customElements.define('gui-checkbox', GuiCheckbox);
+}

@@ -9,6 +9,7 @@ import {
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type PasswordProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/password';
 
 @Component({
   standalone: true,

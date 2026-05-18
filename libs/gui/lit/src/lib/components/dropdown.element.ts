@@ -6,6 +6,9 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { debounceTime, Subject, type Subscription } from 'rxjs';
 import { defaultListItemRenderer } from './default-list-item-renderer';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 @customElement('gui-dropdown-input')
 export class DropdownElement extends LitElement implements WithWidget {

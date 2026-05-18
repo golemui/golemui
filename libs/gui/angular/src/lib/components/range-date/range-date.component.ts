@@ -9,6 +9,7 @@ import {
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
 import { type DateRange, type RangeDateInputProps } from '@golemui/gui-shared';
+import '@golemui/gui-components/range-date-input';
 
 @Component({
   standalone: true,

@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { type AccordionEventDetail } from '@golemui/gui-components';
+import type { AccordionEventDetail } from '@golemui/gui-components/internals';
 
 @customElement('gui-accordion-layout')
 export class AccordionElement extends LitElement implements WithWidget {

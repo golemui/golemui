@@ -4,6 +4,9 @@ import { useInputWidget, useItemRenderer } from '@golemui/react';
 import { type ListItem, type ListProps, type OptionValue } from '@golemui/gui-shared';
 import { DefaultListItemRenderer } from './item-renderers/DefaultListItemRenderer';
 import { type ListItemRendererProps } from './item-renderers/props';
+import '@golemui/gui-components/label';
+import '@golemui/gui-components/list';
+import '@golemui/gui-components/errors';
 
 interface GuiListElement extends HTMLElement {
   focusItemAtIndex(index: number): void;
