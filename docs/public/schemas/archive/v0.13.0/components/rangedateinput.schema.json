@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.13.0/components/rangedateinput.schema.json",
+  "title": "RangeDateInput Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "separatorProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "startDateAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "endDateAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "rangeDateInput"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "separator": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "startDateAriaLabel": {
+          "$ref": "#/$defs/startDateAriaLabelProp"
+        },
+        "endDateAriaLabel": {
+          "$ref": "#/$defs/endDateAriaLabelProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^separator\\.[^.]+$": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "^startDateAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/startDateAriaLabelProp"
+        },
+        "^endDateAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/endDateAriaLabelProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
+  "unevaluatedProperties": false
+}
