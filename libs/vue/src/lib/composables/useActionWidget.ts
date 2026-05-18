@@ -20,11 +20,16 @@ export function useActionWidget<ExtraProps extends Record<string, any> = Record<
   formContext.store.dispatch({ type: 'ADD_WIDGET', payload: { widget } });
   formContext.emitEvent('load', widget);
 
+  // See `useInputWidget` for the rationale — same teardown race applies here.
+  let disposed = false;
+
   onScopeDispose(() => {
+    disposed = true;
     formContext.store.dispatch({ type: 'REMOVE_WIDGET', payload: { uid: widget.uid } });
   });
 
   const onClick = () => {
+    if (disposed) return;
     formContext.emitEvent('click', widget);
   };
 

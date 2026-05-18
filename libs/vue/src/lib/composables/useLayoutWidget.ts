@@ -25,12 +25,17 @@ export function useLayoutWidget<ExtraProps extends Record<string, any> = Record<
     .pipe(calculatedLayoutChildrenByUid$(widget.uid))
     .subscribe((next) => (children.value = next));
 
+  // See `useInputWidget` for the rationale — same teardown race applies here.
+  let disposed = false;
+
   onScopeDispose(() => {
+    disposed = true;
     childrenSub.unsubscribe();
     formContext.store.dispatch({ type: 'REMOVE_WIDGET', payload: { uid: widget.uid } });
   });
 
   const onChange = (detail: any) => {
+    if (disposed) return;
     formContext.emitEvent('change', widget, detail);
   };
 

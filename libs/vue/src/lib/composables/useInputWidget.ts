@@ -58,7 +58,16 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
 
   formContext.emitEvent('load', widget);
 
+  // Vue keeps native DOM event listeners (e.g. @blur on <input>) bound until DOM
+  // removal, so a focused input losing focus during unmount (browser back-nav,
+  // route change, modal close…) can fire a `blur` after REMOVE_WIDGET ran. Any
+  // dispatch on a removed widget crashes the reducer (state.calculatedWidgets[uid]
+  // is undefined). React escapes this via its synthetic event teardown; Vue
+  // doesn't, so we gate every dispatcher behind this flag.
+  let disposed = false;
+
   onScopeDispose(() => {
+    disposed = true;
     dataSub.unsubscribe();
     validationSub.unsubscribe();
     touchedSub.unsubscribe();
@@ -66,6 +75,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
   });
 
   const onValueChanged = (newValue: T) => {
+    if (disposed) return;
     formContext.store.dispatch({
       type: 'SET_WIDGET_DATA',
       payload: { path: widget.path, data: newValue },
@@ -74,10 +84,12 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
   };
 
   const onFilter = (newValue: T) => {
+    if (disposed) return;
     formContext.emitEvent('filter', widget, newValue);
   };
 
   const injectValidationIssues = (issues: string[] | null) => {
+    if (disposed) return;
     formContext.store.dispatch({
       type: 'INJECT_VALIDATION_ISSUES',
       payload: { path: widget.path, issues },
@@ -85,6 +97,7 @@ export function useInputWidget<T, ExtraProps extends Record<string, any> = Recor
   };
 
   const onBlur = () => {
+    if (disposed) return;
     formContext.store.dispatch({
       type: 'ATTEMPT_VALIDATION',
       payload: { reason: 'blur', path: widget.path, uid: widget.uid },
