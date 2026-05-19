@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.13.2/components/markdown.schema.json",
+  "title": "Markdown Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "counterModeProp": {
+      "enum": [
+        "remaining",
+        "current"
+      ]
+    },
+    "minimumHeightProp": {
+      "type": "number"
+    },
+    "autoGrowProp": {
+      "type": "boolean"
+    },
+    "defaultOpenPreviewProp": {
+      "type": "boolean"
+    },
+    "maxLengthProp": {
+      "type": "number"
+    },
+    "toolsProp": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "H",
+          "B",
+          "I",
+          "Q",
+          "L",
+          "OL",
+          "UL",
+          "|"
+        ]
+      }
+    },
+    "writeTabLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "previewTabLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "headingTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "boldTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "italicTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "strikethroughTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "quoteTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "linkTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "orderedListTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "unorderedListTitleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "autocompleteProp": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "markdown"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "string"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "counterMode": {
+          "$ref": "#/$defs/counterModeProp"
+        },
+        "minimumHeight": {
+          "$ref": "#/$defs/minimumHeightProp"
+        },
+        "autoGrow": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "defaultOpenPreview": {
+          "$ref": "#/$defs/defaultOpenPreviewProp"
+        },
+        "maxLength": {
+          "$ref": "#/$defs/maxLengthProp"
+        },
+        "tools": {
+          "$ref": "#/$defs/toolsProp"
+        },
+        "writeTabLabel": {
+          "$ref": "#/$defs/writeTabLabelProp"
+        },
+        "previewTabLabel": {
+          "$ref": "#/$defs/previewTabLabelProp"
+        },
+        "headingTitle": {
+          "$ref": "#/$defs/headingTitleProp"
+        },
+        "boldTitle": {
+          "$ref": "#/$defs/boldTitleProp"
+        },
+        "italicTitle": {
+          "$ref": "#/$defs/italicTitleProp"
+        },
+        "strikethroughTitle": {
+          "$ref": "#/$defs/strikethroughTitleProp"
+        },
+        "quoteTitle": {
+          "$ref": "#/$defs/quoteTitleProp"
+        },
+        "linkTitle": {
+          "$ref": "#/$defs/linkTitleProp"
+        },
+        "orderedListTitle": {
+          "$ref": "#/$defs/orderedListTitleProp"
+        },
+        "unorderedListTitle": {
+          "$ref": "#/$defs/unorderedListTitleProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^counterMode\\.[^.]+$": {
+          "$ref": "#/$defs/counterModeProp"
+        },
+        "^minimumHeight\\.[^.]+$": {
+          "$ref": "#/$defs/minimumHeightProp"
+        },
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "^defaultOpenPreview\\.[^.]+$": {
+          "$ref": "#/$defs/defaultOpenPreviewProp"
+        },
+        "^maxLength\\.[^.]+$": {
+          "$ref": "#/$defs/maxLengthProp"
+        },
+        "^tools\\.[^.]+$": {
+          "$ref": "#/$defs/toolsProp"
+        },
+        "^writeTabLabel\\.[^.]+$": {
+          "$ref": "#/$defs/writeTabLabelProp"
+        },
+        "^previewTabLabel\\.[^.]+$": {
+          "$ref": "#/$defs/previewTabLabelProp"
+        },
+        "^headingTitle\\.[^.]+$": {
+          "$ref": "#/$defs/headingTitleProp"
+        },
+        "^boldTitle\\.[^.]+$": {
+          "$ref": "#/$defs/boldTitleProp"
+        },
+        "^italicTitle\\.[^.]+$": {
+          "$ref": "#/$defs/italicTitleProp"
+        },
+        "^strikethroughTitle\\.[^.]+$": {
+          "$ref": "#/$defs/strikethroughTitleProp"
+        },
+        "^quoteTitle\\.[^.]+$": {
+          "$ref": "#/$defs/quoteTitleProp"
+        },
+        "^linkTitle\\.[^.]+$": {
+          "$ref": "#/$defs/linkTitleProp"
+        },
+        "^orderedListTitle\\.[^.]+$": {
+          "$ref": "#/$defs/orderedListTitleProp"
+        },
+        "^unorderedListTitle\\.[^.]+$": {
+          "$ref": "#/$defs/unorderedListTitleProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
+  "unevaluatedProperties": false
+}
