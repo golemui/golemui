@@ -450,11 +450,11 @@ export const golemui: Snippet = {
 export const signupForm = [
   gui.inputs.textInput('email', {
     label: 'Email',
-    validator: { type: 'string', required: true, format: 'email' },
+    validator: { required: true, format: 'email' },
   }),
   gui.inputs.password('password', {
     label: 'Password',
-    validator: { type: 'string', required: true, minLength: 8 },
+    validator: { required: true, minLength: 8 },
   }),
   gui.inputs.dropdown('accountType', {
     label: 'Account type',
@@ -464,12 +464,12 @@ export const signupForm = [
   }),
   gui.inputs.textInput('companyName', {
     label: 'Company name',
-    validator: { type: 'string', required: true },
+    validator: { required: true },
     include: { when: '$form.accountType !== "Free"' },
   }),
   gui.inputs.numberInput('seats', {
     label: 'Seats',
-    validator: { type: 'number', required: true, minimum: 5, maximum: 1000 },
+    validator: { required: true, minimum: 5, maximum: 1000 },
     include: { when: '$form.accountType === "Enterprise"' },
   }),
   gui.inputs.checkbox('subscribe', {
@@ -483,7 +483,7 @@ export const signupForm = [
   }),
   gui.inputs.checkbox('terms', {
     label: 'I accept the terms of service',
-    validator: { type: 'boolean', const: true },
+    validator: { const: true },
   }),
   gui.actions.button({ label: 'Sign up', onClick: 'submit' }),
 ];`,

@@ -7,7 +7,6 @@ export default [
     max: 2.5,
     label: 'Height in meters',
     validator: {
-      type: 'number',
       minimum: 0,
       maximum: 2.5,
     },

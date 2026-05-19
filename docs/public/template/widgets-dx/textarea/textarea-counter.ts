@@ -5,7 +5,6 @@ export default [
     counterMode: 'remaining',
     label: 'Comments',
     validator: {
-      type: 'string',
       maxLength: 10,
       required: true,
     },
@@ -14,7 +13,6 @@ export default [
     counterMode: 'current',
     label: 'Comments',
     validator: {
-      type: 'string',
       maxLength: 10,
       required: true,
     },

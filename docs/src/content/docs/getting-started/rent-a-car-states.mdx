@@ -47,7 +47,7 @@ gui.inputs.dropdown('returnOffice', {
 gui.inputs.textInput('discountCode', {
   label: 'Discount code',
   include: { in: ['hasDiscount'] },
-  validator: { type: 'string', required: true, minLength: 4 },
+  validator: { required: true, minLength: 4 },
 });
 ```
 
@@ -67,12 +67,12 @@ gui.inputs.dropdown('car', {
 gui.inputs.rangeCalendar('rentalDates', {
   label: 'Rental dates',
   numberOfMonths: 2,
-  validator: { type: 'array', required: true, minItems: 1, maxItems: 1 },
+  validator: { required: true, minItems: 1, maxItems: 1 },
 });
 
 gui.inputs.booleanInput('driverOver25', {
   label: 'Driver aged over 25',
-  validator: { type: 'boolean', const: true, required: true },
+  validator: { const: true, required: true },
 });
 ```
 

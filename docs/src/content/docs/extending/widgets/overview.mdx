@@ -120,7 +120,7 @@ The declarative form engine.`,
       hint: 'Enter your comment (maximum 500 characters)',
       placeholder: 'Let us know why you love our product',
       counterMode: 'current',
-      validator: { type: 'string', maxLength: 500, required: true },
+      validator: { maxLength: 500, required: true },
     }),
     gui.actions.custom('productShare', {
       onClick: 'shareEvent',
