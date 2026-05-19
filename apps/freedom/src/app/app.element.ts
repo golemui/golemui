@@ -203,7 +203,6 @@ function buildField(field: FieldKey, origin: Origin, onChangeCb: (value: unknown
       return gui.inputs.datePicker(field, {
         uid: field,
         label,
-        icon: 'calendar_month',
         onChange,
       });
     if (origin === 'material')
@@ -295,7 +294,7 @@ function fieldLineJson(field: FieldKey, origin: Origin): unknown {
 
   if (type === 'datepicker') {
     if (origin === 'golem')
-      return { type: 'datePicker', path: field, label, icon: 'calendar_month' };
+      return { type: 'datePicker', path: field, label };
     return {
       type: 'custom',
       widget:
@@ -361,7 +360,7 @@ function fieldLineSource(field: FieldKey, origin: Origin): string {
 
   if (type === 'datepicker') {
     if (origin === 'golem')
-      return `gui.inputs.datePicker('${field}', { label: 'Birthday', icon: 'calendar_month' }),`;
+      return `gui.inputs.datePicker('${field}', { label: 'Birthday' }),`;
     if (origin === 'material')
       return `gui.inputs.custom('matDatePicker', '${field}', { label: 'Birthday' }),`;
     if (origin === 'shoelace')
