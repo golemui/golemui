@@ -1,3 +1,13 @@
+## 0.13.3 (2026-05-19)
+
+### 🩹 Fixes
+
+- first install issues ([#108](https://github.com/golemui/golemui/pull/108))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.13.2 (2026-05-19)
 
 ### 🩹 Fixes
