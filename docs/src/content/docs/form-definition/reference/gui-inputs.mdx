@@ -7,6 +7,8 @@ sidebar:
 
 Every input shortcut takes a `path` string and an optional props object. The props object inherits the widget's typed `WidgetProps`, plus the DX-specific props (`label`, `disabled`, `readonly`, `validator`, `defaultValue`, `uid`, `tags`, `size`, `states`, `include`, `exclude`, `onChange`, `onLoad`, `onFilter`, `onBlur`).
 
+When `label` (and `placeholder`, for inputs that accept one) is omitted, the engine derives one from `path` — `gui.inputs.textInput('firstName')` renders with the label `First Name`. See [Sensible defaults / Auto-label](/form-definition/selectors/sensible-defaults/#auto-label) for the exact transform, how to override, and how to suppress.
+
 ## Signature
 
 ```ts
