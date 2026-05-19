@@ -84,7 +84,7 @@ describe('DX Pipeline — Layouts', () => {
       expect(typeof rawChild).toBe('function');
 
       const horizontal = resolveDynamic(rawChild, { $form: { x: true } }) as LayoutWidget;
-      const vertical = resolveDynamic(rawChild, {}) as LayoutWidget;
+      const vertical = resolveDynamic(rawChild) as LayoutWidget;
 
       expect((horizontal.props as { direction?: string }).direction).toBe('row');
       expect((vertical.props as { direction?: string }).direction).toBe('column');

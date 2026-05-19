@@ -33,7 +33,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { editing: '!!$form.name' } },
+        { states: { editing: '!!$form.name' } },
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -51,7 +51,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -67,7 +67,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { wide: '!!$form.wide' } },
+        { states: { wide: '!!$form.wide' } },
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -87,7 +87,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -106,7 +106,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           states: { compact: { direction: 'column' } },
         }),
         undefined,
-        { suppressAutomaticSubmit: true, states: { compact: '!!$form.compact' } },
+        { states: { compact: '!!$form.compact' } },
       );
 
       // The root IS the vertical flex (wrapped in auto-stack root)
@@ -122,7 +122,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiButton({ label: 'Save', states: { saving: { label: 'Saving...', disabled: true } } })],
         undefined,
-        { suppressAutomaticSubmit: true, states: { saving: '!!$form.saving' } },
+        { states: { saving: '!!$form.saving' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -147,7 +147,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           ]),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { editing: '!!$form.name' } },
+        { states: { editing: '!!$form.name' } },
       );
 
       // _guiInputs produces 2 children (name, email), then hstack is at index 2
@@ -178,7 +178,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { limitReached: '$form.users?.length >= 5' } },
+        { states: { limitReached: '$form.users?.length >= 5' } },
       );
 
       // Repeater is a layout-like compound widget
@@ -203,7 +203,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { hasCountry: '!!$form.country' } },
+        { states: { hasCountry: '!!$form.country' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -218,7 +218,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -238,7 +238,6 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
         ],
         undefined,
         {
-          suppressAutomaticSubmit: true,
           states: { register: '!!$form.register', premium: '!!$form.premium' },
         },
       );
@@ -271,7 +270,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           },
         ),
         undefined,
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       // Input: disabled.locked at root level
@@ -291,7 +290,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { strict: '!!$form.strict' } },
+        { states: { strict: '!!$form.strict' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -309,7 +308,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
+        { states: { editing: '!!$form.editing' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -330,7 +329,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         [],
-        { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
+        { states: { editing: '!!$form.editing' } },
       );
 
       const rootLayout = result.form.form as LayoutWidget;
@@ -364,7 +363,6 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
         ],
         undefined,
         {
-          suppressAutomaticSubmit: true,
           states: {
             register: '!!$form.register',
             'register:adult': '$form.age >= 18',
@@ -388,7 +386,6 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
         ],
         undefined,
         {
-          suppressAutomaticSubmit: true,
           states: {
             register: '!!$form.register',
             'register:adult': '$form.age >= 18',
@@ -415,7 +412,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0);
@@ -430,7 +427,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0);
@@ -445,7 +442,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0);
@@ -460,7 +457,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0);
@@ -478,7 +475,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const guardian = getStaticChild(root, 0);
@@ -491,7 +488,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiTextInput('name', { disabled: true, readonly: true })],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0);
@@ -508,7 +505,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0);
@@ -526,7 +523,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiTextInput('name'), _guiTextInput('email')],
         _gslStates('locked', _gslInputs({ override: { disabled: true } })),
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const name = getStaticChild(root, 0);
@@ -539,7 +536,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         _guiVerticalFlex([_guiTextInput('a')], { direction: 'row' }),
         _gslStates('compact', _gslLayouts({ override: { direction: 'column' } })),
-        { suppressAutomaticSubmit: true, states: { compact: '!!$form.compact' } },
+        { states: { compact: '!!$form.compact' } },
       );
 
       const innerLayout = getStaticChild(root, 0) as LayoutWidget;
@@ -550,7 +547,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiHorizontalFlex([_guiTextInput('a'), _guiTextInput('b')])],
         _gslStates('locked', _gslLayouts({ override: { direction: 'column' } })),
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const hFlex = getStaticChild(root, 0) as LayoutWidget;
@@ -563,7 +560,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiButton({ label: 'Save' })],
         _gslStates('saving', _gslActions({ override: { label: 'Saving...' } })),
-        { suppressAutomaticSubmit: true, states: { saving: '!!$form.saving' } },
+        { states: { saving: '!!$form.saving' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -574,7 +571,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiTextInput('name'), _guiTextInput('email')],
         _gslStates('hidden', _gslInputs({ override: { visible: false } as any })),
-        { suppressAutomaticSubmit: true, states: { hidden: '!!$form.hidden' } },
+        { states: { hidden: '!!$form.hidden' } },
       );
 
       const name = getStaticChild(root, 0);
@@ -589,7 +586,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         _gslStates('locked', _gslInputs({ override: { label: 'GSL label', disabled: true } })),
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -606,7 +603,6 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           ..._gslStates('editing', _gslInputs({ override: { label: 'Edit name' } })),
         ],
         {
-          suppressAutomaticSubmit: true,
           states: { locked: '!!$form.locked', editing: '!!$form.editing' },
         },
       );
@@ -623,7 +619,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           ..._gslStates('locked', _gslInputs({ override: { disabled: true } })),
           _gslInputs({ override: { size: 6 } }),
         ],
-        { suppressAutomaticSubmit: true, states: { locked: '!!$form.locked' } },
+        { states: { locked: '!!$form.locked' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -647,7 +643,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { hasCountry: '!!$form.country' } },
+        { states: { hasCountry: '!!$form.country' } },
       );
 
       const widget = getStaticChild(root, 0);
@@ -666,7 +662,6 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
         ],
         _gslStates('locked', _gslInputs({ override: { disabled: true } })),
         {
-          suppressAutomaticSubmit: true,
           states: {
             editing: '!!$form.editing',
             locked: '!!$form.locked',
@@ -687,9 +682,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
   describe('edge cases', () => {
     it('no states or when — widget unchanged', () => {
-      const root = processDx([_guiTextInput('name', { label: 'Name' })], undefined, {
-        suppressAutomaticSubmit: true,
-      });
+      const root = processDx([_guiTextInput('name', { label: 'Name' })], undefined);
 
       const widget = getStaticChild(root, 0) as any;
       expect(widget.label).toBe('Name');
@@ -699,7 +692,6 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
 
     it('states block with empty overrides — no state-suffixed props added', () => {
       const root = processDx([_guiTextInput('name', { states: { editing: {} } })], undefined, {
-        suppressAutomaticSubmit: true,
         states: { editing: '!!$form.editing' },
       });
 
@@ -717,7 +709,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { editing: '!!$form.editing' } },
+        { states: { editing: '!!$form.editing' } },
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -735,7 +727,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
           }),
         ],
         undefined,
-        { suppressAutomaticSubmit: true, states: { hidden: '!!$form.hide' } },
+        { states: { hidden: '!!$form.hide' } },
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -756,7 +748,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiButton({ label: 'Save', disabled: { when: '!$form.country' } })],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -769,7 +761,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiButton({ label: 'Reset', include: { when: '!!$form.debug' } })],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -783,7 +775,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         _guiVerticalFlex([_guiTextInput('a')], { include: { in: ['debugMode'] } }),
         undefined,
-        { suppressAutomaticSubmit: true, states: { debugMode: '!!$form.debug' } },
+        { states: { debugMode: '!!$form.debug' } },
       );
 
       const layout = getStaticChild(root, 0) as LayoutWidget & { include?: any };
@@ -796,7 +788,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         _guiHorizontalFlex([_guiTextInput('a')], { exclude: { when: '$form.compact === true' } }),
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const layout = getStaticChild(root, 0) as LayoutWidget & { exclude?: any };
@@ -810,7 +802,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiAlert({ text: 'Heads up', include: { when: '!!$form.show' } })],
         undefined,
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const widget = getStaticChild(root, 0) as any;
@@ -823,7 +815,7 @@ describe('DX Pipeline — Per-Widget State Behaviour (Phase 1.2.2.4)', () => {
       const root = processDx(
         [_guiAlert({ text: 'Hide in production', exclude: { from: ['production'] } })],
         undefined,
-        { suppressAutomaticSubmit: true, states: { production: '$form.env === "prod"' } },
+        { states: { production: '$form.env === "prod"' } },
       );
 
       const widget = getStaticChild(root, 0) as any;

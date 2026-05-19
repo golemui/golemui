@@ -24,7 +24,6 @@ export const scopeStateDemo = {
     gui.actions.button({ label: 'Submit' }),
   ],
   config: {
-    suppressAutomaticSubmit: true,
     states: {
       submitting: '$form.submitting === true',
     },

@@ -148,7 +148,7 @@ describe('DX Pipeline — Custom Action', () => {
     const dxResult = formDefs.processDxFacade(
       [_guiCustomAction('matButton', { label: 'Go', onClick: handler })],
       [],
-      { suppressAutomaticSubmit: true },
+      {},
     );
 
     expect(dxResult.events).toBeDefined();
@@ -168,7 +168,7 @@ describe('DX Pipeline — Custom Action', () => {
     const dxResult = formDefs.processDxFacade(
       [_guiCustomAction('matButton', { label: 'Submit', onClick: 'submit' })],
       [],
-      { suppressAutomaticSubmit: true },
+      {},
     );
     const root = dxResult.form.form as LayoutWidget;
     const submit = root.children?.find(
@@ -261,9 +261,7 @@ describe('DX Pipeline — widgetLoaders transport', () => {
   });
 
   it('omits widgetLoaders from DxResult when formConfig has none', () => {
-    const result = formDefs.processDxFacade([_guiTextInput('name')], [], {
-      suppressAutomaticSubmit: true,
-    });
+    const result = formDefs.processDxFacade([_guiTextInput('name')], []);
 
     expect(result.widgetLoaders).toBeUndefined();
   });

@@ -12,8 +12,6 @@ import { formDefs } from '../dx.service';
  * Process a form definition through the full DX pipeline.
  *
  * Returns the root layout widget with its children.
- * Strips the auto-injected submit button for cleaner assertions
- * (it's always the last child if present).
  *
  * IMPORTANT: Asserts that the root widget IS a layout with uid '#root'
  * before unwrapping. This makes the helper a canary for auto-stack
@@ -36,18 +34,7 @@ export function processDx(
     );
   }
 
-  // Strip auto-injected submit button (last child with uid '#submit')
-  const children = [...(root.children ?? [])];
-  const lastChild = children[children.length - 1];
-  if (
-    lastChild &&
-    typeof lastChild !== 'function' &&
-    (lastChild as NonFunctionWidget & { uid?: string }).uid === '#submit'
-  ) {
-    children.pop();
-  }
-
-  return { ...root, children };
+  return root;
 }
 
 /**

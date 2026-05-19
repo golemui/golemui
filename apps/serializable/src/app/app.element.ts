@@ -156,7 +156,6 @@ export class SerializableElement extends LitElement {
     const config: GuiFormInitConfig = {
       formDef: FRAGMENTS[key].build(({ data }) => this.handleFragmentChange(key, data)),
       data: this.formData[key] ?? {},
-      formConfig: { suppressAutomaticSubmit: true },
     };
     this.fragmentConfigCache[key] = { cacheKey, config };
     return config;

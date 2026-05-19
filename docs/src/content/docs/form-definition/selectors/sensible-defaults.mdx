@@ -9,16 +9,15 @@ import Demo from '../../../../components/landing/Demo.astro';
 
 The DX layer applies a small set of **sensible defaults** to keep your form definitions concise:
 
-| Default                | Behavior                                                                                                          |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Auto-label**         | If you don't provide `label`, the engine derives one from `path` (e.g. `user.firstName` → `First Name`).          |
-| **Auto-placeholder**   | If you don't provide `placeholder`, the engine uses `path` as a placeholder.                                      |
-| **Auto-submit-button** | If your `formDef` has no `gui.actions.button`/`submitButton`, the engine appends a default submit button.         |
-| **Auto-stack**         | If your `formDef` has multiple top-level items and no top-level layout, the engine wraps them in a vertical flex. |
+| Default              | Behavior                                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Auto-label**       | If you don't provide `label`, the engine derives one from `path` (e.g. `user.firstName` → `First Name`).          |
+| **Auto-placeholder** | If you don't provide `placeholder`, the engine uses `path` as a placeholder.                                      |
+| **Auto-stack**       | If your `formDef` has multiple top-level items and no top-level layout, the engine wraps them in a vertical flex. |
 
 ## Suppressing them
 
-Each default can be turned off, either globally (via `formConfig`) or scoped (via a selector).
+Each default can be turned off via selectors scoped to the inputs you want to opt out.
 
 ```ts
 const formDef = [
@@ -31,10 +30,6 @@ const formDef = [
     { direction: 'column', gap: 12 },
   ),
 ];
-
-const formConfig = {
-  suppressAutomaticSubmit: true, // no auto submit button
-};
 
 const formSelectors = [
   // suppress auto-labels and auto-placeholders on every input
@@ -57,7 +52,6 @@ What you should see in the demo:
 - **No labels** on any of the three inputs — `suppressAutomaticLabels` is on for every input.
 - **No placeholder** on `firstName` or `lastName` — `suppressAutomaticPlaceholders` is on for every input.
 - **A `username` placeholder** on the first field — the tag-scoped selector re-enables auto-placeholders for inputs tagged `'identity'`, beating the broader rule by [precedence](/form-definition/selectors/precedence/).
-- **No submit button** — `suppressAutomaticSubmit: true` skips the engine's default action.
 
 ## See also
 

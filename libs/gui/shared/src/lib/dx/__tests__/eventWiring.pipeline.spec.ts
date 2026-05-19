@@ -39,7 +39,7 @@ describe('DX Pipeline — Event Wiring', () => {
       const result = formDefs.processDxFacade(
         [_guiSelect('country', { options: [], onLoad: loadFn })],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       expect(result.events).toBeDefined();
@@ -86,7 +86,7 @@ describe('DX Pipeline — Event Wiring', () => {
       const result = formDefs.processDxFacade(
         [_guiSelect('country', { options: [], onChange: changeFn })],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);
@@ -199,7 +199,7 @@ describe('DX Pipeline — Event Wiring', () => {
           ),
         ],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);
@@ -261,7 +261,7 @@ describe('DX Pipeline — Event Wiring', () => {
           _guiButton({ label: 'Go', onClick: vi.fn() }),
         ],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);
@@ -280,9 +280,7 @@ describe('DX Pipeline — Event Wiring', () => {
 
     it('action onClick still passes event.data to callback (backward compat)', () => {
       const clickFn = vi.fn();
-      const result = formDefs.processDxFacade([_guiButton({ label: 'Go', onClick: clickFn })], [], {
-        suppressAutomaticSubmit: true,
-      });
+      const result = formDefs.processDxFacade([_guiButton({ label: 'Go', onClick: clickFn })], []);
 
       const root = getRootFromFacadeResult(result);
       const button = (root.children ?? []).find(
@@ -298,7 +296,7 @@ describe('DX Pipeline — Event Wiring', () => {
       const result = formDefs.processDxFacade(
         [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
         [],
-        { onSubmit: submitFn, suppressAutomaticSubmit: true },
+        { onSubmit: submitFn },
       );
 
       result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
@@ -309,7 +307,7 @@ describe('DX Pipeline — Event Wiring', () => {
       const result = formDefs.processDxFacade(
         [_guiButton({ label: 'Click me', onClick: 'evClick' })],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);
@@ -355,7 +353,7 @@ describe('DX Pipeline — Event Wiring', () => {
           _guiSelect('subregion', { options: [] }),
         ],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);
@@ -390,7 +388,7 @@ describe('DX Pipeline — Event Wiring', () => {
       const result = formDefs.processDxFacade(
         [_guiSelect('tz', { options: [], onLoad: loadFn })],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);
@@ -420,7 +418,7 @@ describe('DX Pipeline — Event Wiring', () => {
       const result = formDefs.processDxFacade(
         [_guiSelect('country', { options: [], onChange: changeFn })],
         [],
-        { suppressAutomaticSubmit: true },
+        {},
       );
 
       const root = getRootFromFacadeResult(result);

@@ -19,21 +19,21 @@ describe('DX Pipeline — DatePicker', () => {
   });
 
   it('auto-generates label from path', () => {
-    const result = processDx(_guiDatePicker('birthDate', {}));
+    const result = processDx(_guiDatePicker('birthDate'));
     const w = getStaticChild(result, 0) as { label?: string };
 
     expect(w.label).toBe('Birth Date');
   });
 
   it('auto-generates placeholder from path', () => {
-    const result = processDx(_guiDatePicker('birthDate', {}));
+    const result = processDx(_guiDatePicker('birthDate'));
     const w = getStaticChild(result, 0) as { props?: { placeholder?: string } };
 
     expect(w.props?.placeholder).toBe('birthDate');
   });
 
   it('suppresses auto-label via GSL config', () => {
-    const result = processDx(_guiDatePicker('birthDate', {}), [
+    const result = processDx(_guiDatePicker('birthDate'), [
       _gslDatePickers({ suppressAutomaticLabels: true }),
     ]);
     const w = getStaticChild(result, 0) as { label?: string };
@@ -42,7 +42,7 @@ describe('DX Pipeline — DatePicker', () => {
   });
 
   it('suppresses auto-placeholder via GSL config', () => {
-    const result = processDx(_guiDatePicker('birthDate', {}), [
+    const result = processDx(_guiDatePicker('birthDate'), [
       _gslDatePickers({ suppressAutomaticPlaceholders: true }),
     ]);
     const w = getStaticChild(result, 0) as { props?: { placeholder?: string } };

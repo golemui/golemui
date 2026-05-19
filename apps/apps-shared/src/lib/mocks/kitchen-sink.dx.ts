@@ -133,9 +133,6 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
     }),
   ],
   formConfig: {
-    // JSON KS does not auto-add a submit button; suppress the DX default so the
-    // two pipelines emit equivalent action lists.
-    suppressAutomaticSubmit: true,
     states,
     widgetLoaders: options.widgetLoaders ?? {},
     itemRenderers: options.itemRenderers,

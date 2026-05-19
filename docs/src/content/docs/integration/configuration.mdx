@@ -166,7 +166,7 @@ Wire it alongside `formDef`:
 
 #### `formConfig`
 
-DX engine wiring container. Holds `widgetLoaders`, `itemRenderers`, `dependencies`, `validateOn`, `customValidators`, `states`, `suppressAutomaticSubmit`, `suppressAutomaticStack`. The Programmatic API treats `formConfig` as the single home for all of these knobs.
+DX engine wiring container. Holds `widgetLoaders`, `itemRenderers`, `dependencies`, `validateOn`, `customValidators`, `states`, `suppressAutomaticStack`. The Programmatic API treats `formConfig` as the single home for all of these knobs.
 
 ```ts
 const formConfig = {
@@ -177,7 +177,6 @@ const formConfig = {
   states: {
     hasDiscount: '$form.hasDiscountCode === true',
   },
-  suppressAutomaticSubmit: true,
 };
 ```
 

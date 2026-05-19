@@ -405,7 +405,6 @@ export class FreedomElement extends LitElement {
   private dataFlashTimer: ReturnType<typeof setTimeout> | null = null;
 
   private formConfig = {
-    suppressAutomaticSubmit: true,
     itemRenderers: {
       flagItem: flagItemRenderer,
     },
