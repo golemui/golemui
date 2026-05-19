@@ -23,20 +23,20 @@ Import the core styles in your HTML or application entry point:
 
 ## Usage
 
+`<gui-form>` only needs a `formDef`. The framework's built-in widget set is loaded automatically, and an empty form renders fine without initial `data`.
+
 <DslTabs>
   <Fragment slot="dx">
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import { widgetLoaders } from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef: [gui.inputs.textInput('username', { label: 'Username' })],
-        data: { username: '' },
-        formConfig: { widgetLoaders },
       };
 
       override createRenderRoot() {
@@ -54,15 +54,72 @@ Import the core styles in your HTML or application entry point:
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import { widgetLoaders } from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      config = { formDef };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      render() {
+        return html`<gui-form .config=${this.config}></gui-form>`;
+      }
+    }
+    ```
+
+  </Fragment>
+</DslTabs>
+
+### Adding optional config
+
+Reach for these only when you need them. `data` prefills the form; `customWidgetLoaders` is for widgets you've built yourself (the framework's built-ins are merged automatically). Every other `config` property in the [table below](#gui-form-properties) follows the same rule — opt in as the form grows.
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import { gui } from '@golemui/gui-shared';
+    import '@golemui/gui-lit';
+    import { myCustomWidgets } from './my-custom-widgets';
+
+    @customElement('my-form')
+    export class MyForm extends LitElement {
+      config = {
+        formDef: [gui.inputs.textInput('username', { label: 'Username' })],
+        data: { username: 'octocat' }, // optional — initial form data
+        customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
+      };
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      render() {
+        return html`<gui-form .config=${this.config}></gui-form>`;
+      }
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="json">
+    ```ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import '@golemui/gui-lit';
+    import { myCustomWidgets } from './my-custom-widgets';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef,
-        data: { username: '' },
-        customWidgetLoaders: widgetLoaders,
+        data: { username: 'octocat' }, // optional — initial form data
+        customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
       };
 
       override createRenderRoot() {
