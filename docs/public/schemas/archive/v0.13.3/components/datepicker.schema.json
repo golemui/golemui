@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.13.3/components/datepicker.schema.json",
+  "title": "DatePicker Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "prevMonthIconProp": {
+      "type": "string"
+    },
+    "nextMonthIconProp": {
+      "type": "string"
+    },
+    "prevMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "nextMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayFormatProp": {
+      "enum": [
+        "numeric",
+        "2-digit"
+      ]
+    },
+    "weekdayFormatProp": {
+      "enum": [
+        "short",
+        "long",
+        "narrow"
+      ]
+    },
+    "monthFormatProp": {
+      "enum": [
+        "numeric",
+        "2-digit",
+        "long",
+        "short",
+        "narrow"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "datePicker"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "prevMonthIcon": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "nextMonthIcon": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "prevMonthAriaLabel": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "nextMonthAriaLabel": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "dayFormat": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "weekdayFormat": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "monthFormat": {
+          "$ref": "#/$defs/monthFormatProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^prevMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "^nextMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "^prevMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "^nextMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^dayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "^weekdayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "^monthFormat\\.[^.]+$": {
+          "$ref": "#/$defs/monthFormatProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
+  "unevaluatedProperties": false
+}
