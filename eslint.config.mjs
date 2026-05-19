@@ -36,7 +36,7 @@ export default [
       // Notes
       // ------------------------
       // - ui-testing is tagged scope:framework so both framework and app scopes can import it in tests
-      // - apps-shared is intentionally projectType: "library" -> type:lib (not type:app), so the /internals ban does not apply to it
+      // - apps-shared is intentionally type:lib (not type:app), so the /internals ban does not apply to it
       // ------------------------
       '@nx/enforce-module-boundaries': [
         'error',
