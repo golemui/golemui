@@ -31,7 +31,6 @@ export default [
       default: 'Password',
     },
     validator: {
-      type: 'string',
       required: true,
       minLength: 8,
       maxLength: 20,
@@ -62,7 +61,6 @@ export default [
       default: 'Age',
     },
     validator: {
-      type: 'number',
       required: true,
       minimum: 18,
       maximum: 120,
@@ -88,7 +86,6 @@ export default [
       default: 'I accept the terms and conditions',
     },
     validator: {
-      type: 'boolean',
       const: true,
       required: true,
       messages: {

@@ -96,7 +96,7 @@ npm i @golemui/gui-lit
 Then import the styles once:
 
 ```scss
-@import '@golemui/core/styles/index.css';
+@import '@golemui/gui-components/index.css';
 ```
 
 Full walkthrough at [golemui.com/getting-started/installation](https://golemui.com/getting-started/installation/).

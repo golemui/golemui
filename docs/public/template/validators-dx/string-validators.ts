@@ -4,7 +4,6 @@ export default [
   gui.inputs.textInput('user.password', {
     label: 'Password',
     validator: {
-      type: 'string',
       required: true,
       minLength: 8,
       maxLength: 20,

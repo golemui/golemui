@@ -18,10 +18,12 @@ npm i @golemui/core @golemui/angular @golemui/gui-angular --save
 Import the core styles in your `styles.scss` or `angular.json`:
 
 ```scss
-@import '@golemui/core/styles/index.css';
+@import '@golemui/gui-components/index.css';
 ```
 
 ## Usage
+
+`<gui-form>` only needs a `formDef`. The framework's built-in widget set is loaded automatically, and an empty form renders fine without initial `data`.
 
 <DslTabs>
   <Fragment slot="dx">
@@ -29,7 +31,7 @@ Import the core styles in your `styles.scss` or `angular.json`:
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import { FormComponent, widgetLoaders } from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
       imports: [CommonModule, FormComponent],
@@ -39,8 +41,6 @@ Import the core styles in your `styles.scss` or `angular.json`:
     export class MyFormComponent {
       protected config = {
         formDef: [gui.inputs.textInput('username', { label: 'Username' })],
-        data: { username: '' },
-        formConfig: { widgetLoaders },
       };
     }
     ```
@@ -50,7 +50,56 @@ Import the core styles in your `styles.scss` or `angular.json`:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import { FormComponent, widgetLoaders } from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
+    import formDef from './my-form.json';
+
+    @Component({
+      imports: [CommonModule, FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form [config]="config"></gui-form>`,
+    })
+    export class MyFormComponent {
+      protected config = { formDef };
+    }
+    ```
+
+  </Fragment>
+</DslTabs>
+
+### Adding optional config
+
+Reach for these only when you need them. `data` prefills the form; `customWidgetLoaders` is for widgets you've built yourself (the framework's built-ins are merged automatically). Every other `config` property in the [table below](#gui-form-inputs) follows the same rule — opt in as the form grows.
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { gui } from '@golemui/gui-shared';
+    import { FormComponent } from '@golemui/gui-angular';
+    import { myCustomWidgets } from './my-custom-widgets';
+
+    @Component({
+      imports: [CommonModule, FormComponent],
+      selector: 'app-my-form',
+      template: `<gui-form [config]="config"></gui-form>`,
+    })
+    export class MyFormComponent {
+      protected config = {
+        formDef: [gui.inputs.textInput('username', { label: 'Username' })],
+        data: { username: 'octocat' }, // optional — initial form data
+        customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
+      };
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="json">
+    ```ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { FormComponent } from '@golemui/gui-angular';
+    import { myCustomWidgets } from './my-custom-widgets';
     import formDef from './my-form.json';
 
     @Component({
@@ -61,8 +110,8 @@ Import the core styles in your `styles.scss` or `angular.json`:
     export class MyFormComponent {
       protected config = {
         formDef,
-        data: { username: '' },
-        customWidgetLoaders: widgetLoaders,
+        data: { username: 'octocat' }, // optional — initial form data
+        customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
       };
     }
     ```

@@ -11,15 +11,11 @@ import {
 } from './core/dx.domain';
 import { type LayoutEntry } from './shortcuts/layouts/layouts.domain';
 import { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
-import { _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
 import selectorResolver from './core/selectorResolver.service';
 import widgetMerger from './core/widgetMerger.service';
 import widgetMapper from './core/widgetMapper.service';
 import selectorNormalizer, { type SelectorNormalizer } from './core/selectorNormalizer.service';
-import eventWiringService, {
-  type EventRegistry,
-  type EventWiringService,
-} from './core/eventWiring.service';
+import eventWiringService, { type EventRegistry } from './core/eventWiring.service';
 import { ItemWalker } from './core/itemWalker.service';
 import stateExpansionService from './core/stateExpansion.service';
 
@@ -32,7 +28,7 @@ import './registerAll';
  *
  * - `defs` — widget definitions, possibly wrapped in a synthetic root layout
  * - `gslSelectors` — normalized selectors (always aggregated shape)
- * - `formConfig` — form-level behavioral settings (auto-submit, auto-stack, onSubmit, etc.)
+ * - `formConfig` — form-level behavioral settings (auto-stack, onSubmit, etc.)
  */
 interface PreparedForm {
   defs: ValidGuiShortcut[];
@@ -49,7 +45,6 @@ interface PreparedForm {
 export class DxService {
   constructor(
     private readonly selectorNormalizer: SelectorNormalizer,
-    private readonly eventWiring: EventWiringService,
     private readonly walker: ItemWalker,
   ) {}
 
@@ -58,7 +53,7 @@ export class DxService {
     gslSelectorsInput: GslSelectorsInput = [],
     formConfigInput?: DxFormConfig<STATE_KEYS>,
   ): DxResult<STATE_KEYS, FORM_DATA> {
-    // ── 1. Prepare: normalize, auto-submit, auto-stack ──
+    // ── 1. Prepare: normalize, auto-stack ──
     const { defs, gslSelectors, formConfig } = this.prepareForm(
       dxDefinitionsRaw,
       gslSelectorsInput,
@@ -84,9 +79,7 @@ export class DxService {
    *  1. Normalize definitions — ensure a flat array; convert bare functions to display widgets.
    *  2. Normalize selectors — convert mixed leaf/aggregated selectors into a uniform
    *     aggregated shape, and extract form-level config (see {@link FormConfig}).
-   *  3. Auto-submit — unless suppressed, append a submit button if none was declared.
-   *     Throws if more than one submit button is found.
-   *  4. Auto-stack — unless suppressed, wrap all definitions in a synthetic root
+   *  3. Auto-stack — unless suppressed, wrap all definitions in a synthetic root
    *     flex column layout so the form renders as a single vertical container.
    */
   private prepareForm(
@@ -110,19 +103,7 @@ export class DxService {
       ...formConfigInput,
     };
 
-    // 3. Auto-submit
-    const submitCount = this.eventWiring.countSubmitButtons(defs);
-    if (submitCount > 1) {
-      throw new Error(
-        `Only one submit button is allowed per form, but ${submitCount} were found. ` +
-          `A button is a submit button if it has uid: '#submit' or onClick: 'submit'.`,
-      );
-    }
-    if (!formConfig.suppressAutomaticSubmit && submitCount === 0) {
-      defs.push(_guiSubmitButton());
-    }
-
-    // 4. Auto-stack: wrap all defs in a synthetic root layout
+    // 3. Auto-stack: wrap all defs in a synthetic root layout
     if (!formConfig.suppressAutomaticStack) {
       const rootEntry: LayoutEntry = {
         def: { uid: '#root', direction: 'column', widgetName: 'flex' },
@@ -230,5 +211,5 @@ const walker = new ItemWalker(
   eventWiringService,
   stateExpansionService,
 );
-const formDefs = new DxService(selectorNormalizer, eventWiringService, walker);
+const formDefs = new DxService(selectorNormalizer, walker);
 export { formDefs };

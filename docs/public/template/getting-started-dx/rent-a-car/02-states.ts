@@ -89,7 +89,6 @@ export default [
     numberOfMonths: 2,
     label: 'Rental dates',
     validator: {
-      type: 'array',
       required: true,
       minItems: 1,
       maxItems: 1,
@@ -119,7 +118,6 @@ export default [
   gui.inputs.booleanInput('driverOver25', {
     label: 'Driver aged over 25',
     validator: {
-      type: 'boolean',
       const: true,
       required: true,
     },
@@ -130,7 +128,6 @@ export default [
   gui.inputs.textInput('discountCode', {
     label: 'Discount code',
     validator: {
-      type: 'string',
       required: true,
       minLength: 4,
     },

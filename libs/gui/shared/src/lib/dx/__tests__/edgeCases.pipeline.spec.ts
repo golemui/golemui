@@ -5,7 +5,6 @@ import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { _guiHorizontalFlex, _guiVerticalFlex } from '../shortcuts/layouts/guiFlex.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
-import { formDefs } from '../dx.service';
 import { _guiTextInput } from '../index';
 
 describe('DX Pipeline — Edge Cases', () => {
@@ -51,20 +50,6 @@ describe('DX Pipeline — Edge Cases', () => {
       const button = getStaticChild(root, 2) as { kind?: string; label?: string };
       expect(button.kind).toBe('action');
       expect(button.label).toBe('Go');
-    });
-  });
-
-  describe('Display-only form', () => {
-    it('auto-injects submit button even when form has no inputs', () => {
-      const { form } = formDefs.processDxFacade([_guiDisplay(() => 'info')], []);
-      const root = form.form as LayoutWidget;
-      const lastChild = root.children?.[root.children.length - 1] as {
-        uid?: string;
-        kind?: string;
-      };
-
-      expect(lastChild.uid).toBe('#submit');
-      expect(lastChild.kind).toBe('action');
     });
   });
 
