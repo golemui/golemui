@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/angular-playground/src",
-  "tags": [],
+  "tags": ["scope:app", "type:app"],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",

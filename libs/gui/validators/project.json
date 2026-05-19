@@ -9,7 +9,7 @@
       "currentVersionResolver": "git-tag"
     }
   },
-  "tags": [],
+  "tags": ["scope:core", "type:lib"],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",

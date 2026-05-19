@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/ui-testing/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:framework", "type:lib"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
