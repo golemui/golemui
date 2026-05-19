@@ -137,6 +137,17 @@ npm run format
 
 Most editors can be set up to format on save — this is the smoothest experience.
 
+### Export conventions
+
+| Convention        | Rule                                                                    |
+| ----------------- | ----------------------------------------------------------------------- |
+| No `export *`     | Explicit named re-exports only in every `src/index.ts` and barrel       |
+| `export type`     | Type-only exports (interfaces, types, enums) must use `export type { }` |
+| `/internals`      | Cross-package symbols only; end-users must not import from here         |
+| Module boundaries | Imports flow one way: `app → framework → gui → core`                    |
+
+When in doubt: start in `src/internals.ts` — promoting to public is non-breaking, demoting is not.
+
 ### Commit Messages
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/). The format is:
