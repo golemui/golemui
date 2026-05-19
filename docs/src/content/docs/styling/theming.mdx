@@ -8,7 +8,7 @@ sidebar:
 import { Aside, Steps } from '@astrojs/starlight/components';
 import Demo from '../../../../src/components/landing/Demo.astro';
 
-GolemUI ships with a default theme, a bundled alternative (Clay), automatic dark mode, and a clear pattern for creating and scoping your own themes.
+GolemUI ships with a default theme, a bundled alternative (Clay), opt-in dark mode, and a clear pattern for creating and scoping your own themes.
 
 ## Loading the default theme
 
@@ -18,13 +18,39 @@ The default theme is included in `@golemui/gui-components/index.css`. Import it 
 @import '@golemui/gui-components/index.css';
 ```
 
-That's all that's needed — every widget renders with the default look, dark mode works automatically, and the design tokens documented in [Customization](/styling/customization/#design-tokens-reference) are available for overrides.
+That's all that's needed — every widget renders with the default look and the design tokens documented in [Customization](/styling/customization/#design-tokens-reference) are available for overrides. Dark mode is opt-in; the section below covers it.
 
 ## Dark mode
 
-Dark mode activates automatically based on the user's system preference. No JavaScript, no class toggles, no configuration — just import the stylesheet and it works.
+Dark mode is **opt-in**, picked via a `data-theme` attribute on any ancestor element (most often `<html>` or `<body>`). The library never silently flips your page based on system preference — a component-library CSS import that quietly restyles a host page in dark systems is a surprise nobody wants, so you say what you want explicitly.
+
+| `data-theme` value | Effect                                                                            |
+| ------------------ | --------------------------------------------------------------------------------- |
+| _(no attribute)_   | Default light tokens everywhere.                                                  |
+| `"auto"`           | Default theme, system-follow. Reads `prefers-color-scheme` — light by day, dark by night. |
+| `"dark"`           | Default theme, forced dark regardless of system preference.                       |
+| `"clay"`           | The bundled [Clay theme](#using-the-alternative-clay-theme), always light.        |
+| `"clay-auto"`      | Clay theme, system-follow.                                                        |
+| `"clay-dark"`      | Clay theme, forced dark.                                                          |
+
+```html
+<!-- Always light (default) -->
+<html lang="en">
+
+<!-- Follow the user's system preference -->
+<html lang="en" data-theme="auto">
+
+<!-- Force dark for everyone, ignore system preference -->
+<html lang="en" data-theme="dark">
+```
+
+The attribute can sit on `<html>`, `<body>`, or any container — the cascade decides what each form picks up. See [Scoped themes](#scoped-themes) below for mixing modes on the same page.
 
 All colors, backgrounds, borders, and status indicators adjust for dark backgrounds. You can see the exact light and dark values for every token in the [Customization](/styling/customization/#semantic-tokens) reference.
+
+<Aside type="tip">
+The form container ships without its own `background-color` so the host page's background (solid, gradient, image) shows through. In dark mode you'll likely want the page itself to follow the same tokens — add `body { background-color: var(--gui-bg-default); color: var(--gui-text-default); }` to your own CSS and the page will track whatever mode `data-theme` resolves to.
+</Aside>
 
 <Aside type="tip">
 Want to customize the dark palette? Override the [primitive color variables](/styling/customization/#primitive-colors). For example, changing `--gui-color-neutral-950` updates the dark mode background across every widget.
@@ -32,7 +58,7 @@ Want to customize the dark palette? Override the [primitive color variables](/st
 
 ## Using the alternative Clay theme
 
-Clay is a warm, terracotta-inspired theme that replaces the neutral slate palette with earthy tones and uses terracotta as the primary accent color. It includes both light and dark mode variants.
+Clay is a warm, terracotta-inspired theme that replaces the neutral slate palette with earthy tones and uses terracotta as the primary accent color. It mirrors the base theme's opt-in light/dark/auto split.
 
 **Loading the Clay theme:**
 
@@ -44,7 +70,18 @@ Clay is a warm, terracotta-inspired theme that replaces the neutral slate palett
 **Applying the theme:**
 
 ```html
+<!-- Clay, always light -->
 <div data-theme="clay">
+  <gui-form ...></gui-form>
+</div>
+
+<!-- Clay, follow the user's system preference -->
+<div data-theme="clay-auto">
+  <gui-form ...></gui-form>
+</div>
+
+<!-- Clay, forced dark -->
+<div data-theme="clay-dark">
   <gui-form ...></gui-form>
 </div>
 ```
@@ -57,24 +94,30 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
 
 ## Creating a custom theme
 
+Follow the same light/dark/auto split as the base theme and Clay — three `data-theme` values for one theme, so consumers can pick exactly which mode they want.
+
 <Steps>
 
-1.  ##### Choose a theme selector
+1.  ##### Choose the three theme selectors
 
-    Use the `[data-theme='your-theme-name']` attribute selector. This keeps your theme scoped and composable:
+    Pick a base name (e.g. `sunset`) and reserve three `data-theme` values: `sunset` (always light), `sunset-dark` (forced dark), `sunset-auto` (system-follow):
 
     ```css
-    [data-theme='sunset'] {
-      /* your overrides go here */
+    [data-theme='sunset'],
+    [data-theme='sunset-dark'],
+    [data-theme='sunset-auto'] {
+      /* light tokens shared by all three */
     }
     ```
 
-2.  ##### Override the tokens you need
+2.  ##### Override the tokens you need (light variant)
 
-    Start with semantic tokens for quick results, or replace entire primitive palettes for a deeper transformation:
+    Define the light palette on the selector list above. All three variants start here; the dark variant later only overrides what actually changes.
 
     ```css
-    [data-theme='sunset'] {
+    [data-theme='sunset'],
+    [data-theme='sunset-dark'],
+    [data-theme='sunset-auto'] {
       /* Override primitives for a warm palette */
       --gui-color-primary-400: #fb923c;
       --gui-color-primary-500: #f97316;
@@ -100,13 +143,21 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
     }
     ```
 
-3.  ##### Add dark mode overrides
+3.  ##### Add the dark variant
 
-    Wrap your dark mode adjustments in a `prefers-color-scheme` media query nested under your theme selector:
+    Apply dark token overrides via two selectors: `[data-theme='sunset-dark']` for the forced-dark variant, and `[data-theme='sunset-auto']` inside a `prefers-color-scheme: dark` media query for the system-follow variant.
 
     ```css
+    [data-theme='sunset-dark'] {
+      --gui-bg-default: #1c1210;
+      --gui-bg-surface: #271a16;
+      --gui-border-default: var(--gui-color-warning-600);
+      --gui-intent-primary: var(--gui-color-warning-500);
+      --gui-intent-primary-hover: var(--gui-color-warning-400);
+    }
+
     @media (prefers-color-scheme: dark) {
-      [data-theme='sunset'] {
+      [data-theme='sunset-auto'] {
         --gui-bg-default: #1c1210;
         --gui-bg-surface: #271a16;
         --gui-border-default: var(--gui-color-warning-600);
@@ -116,12 +167,25 @@ The `data-theme` attribute can be placed on any ancestor element. Set it on `<ht
     }
     ```
 
+    If repeating the dark overrides feels noisy, factor them into a Sass `@mixin` (or a PostCSS custom property block) and include it in both selectors — that's what the base theme and Clay do internally.
+
 4.  ##### Apply the theme
 
-    Add `data-theme="sunset"` to any ancestor element:
+    Pick one of the three values when applying:
 
     ```html
+    <!-- Sunset, always light -->
     <div data-theme="sunset">
+      <gui-form ...></gui-form>
+    </div>
+
+    <!-- Sunset, follow the user's system preference -->
+    <div data-theme="sunset-auto">
+      <gui-form ...></gui-form>
+    </div>
+
+    <!-- Sunset, forced dark -->
+    <div data-theme="sunset-dark">
       <gui-form ...></gui-form>
     </div>
     ```

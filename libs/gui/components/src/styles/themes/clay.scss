@@ -1,4 +1,9 @@
-[data-theme='clay'] {
+// Clay theme — light variant. Applied to every Clay opt-in (`clay`,
+// `clay-dark`, `clay-auto`) so the dark variant only has to override the
+// tokens that actually change.
+[data-theme='clay'],
+[data-theme='clay-dark'],
+[data-theme='clay-auto'] {
   /* Primitive Colors - Neutral (Slate) */
   --gui-color-neutral-50: #ffceb0;
   --gui-color-neutral-100: #f1c2a7;
@@ -41,46 +46,59 @@
   --gui-intent-primary-text: #ffffff;
 }
 
+// Clay dark token overrides — applied via opt-in selectors only:
+//   - `[data-theme='clay-dark']` forces Clay dark unconditionally.
+//   - `[data-theme='clay-auto']` follows `prefers-color-scheme`.
+// Pure `[data-theme='clay']` stays light by design, mirroring the base
+// theme's convention (no attribute → light, explicit opt-in → dark).
+@mixin clay-dark-tokens {
+  /* Primitive Colors - Neutral (Slate) */
+  --gui-color-neutral-50: #0e0b0a;
+  --gui-color-neutral-100: #1b1612;
+  --gui-color-neutral-200: #29211c;
+  --gui-color-neutral-300: #493b32;
+  --gui-color-neutral-400: #57463c;
+  --gui-color-neutral-500: #675246;
+  --gui-color-neutral-600: #917664;
+  --gui-color-neutral-700: #c6a188;
+  --gui-color-neutral-800: #e3b99d;
+  --gui-color-neutral-900: #f1c2a7;
+  --gui-color-neutral-950: #ffceb0;
+
+  /* Semantic Tokens - Backgrounds (Dark Mode) */
+  --gui-bg-default: #24201e;
+  --gui-bg-surface: #2d2623;
+  --gui-bg-surface-hover: #3b322c;
+  --gui-bg-surface-active: #4a3e37;
+  --gui-bg-disabled: #322b27;
+  --gui-bg-inverse: #fdfcfb;
+
+  /* Semantic Tokens - Foreground / Text (Dark Mode) */
+  --gui-text-default: #f5f0eb;
+  --gui-text-secondary: #c2b4a8;
+  --gui-text-muted: #a89a8e;
+  --gui-text-inverse: #2d241f;
+  --gui-text-disabled: #8c7b6f;
+
+  /* Semantic Tokens - Borders (Dark Mode) */
+  --gui-border-default: #5c4e45;
+  --gui-border-subtle: #4a3e37;
+  --gui-border-strong: #7a6a5e;
+  --gui-border-disabled: #4a3e37;
+  --gui-border-focus: #db7665;
+
+  /* Semantic Tokens - Status / Intent (Primary = Terracotta Dark) */
+  --gui-intent-primary: #db7665;
+  --gui-intent-primary-hover: #e38d7e;
+  --gui-intent-primary-active: #eba598;
+}
+
+[data-theme='clay-dark'] {
+  @include clay-dark-tokens;
+}
+
 @media (prefers-color-scheme: dark) {
-  [data-theme='clay'] {
-    /* Primitive Colors - Neutral (Slate) */
-    --gui-color-neutral-50: #0e0b0a;
-    --gui-color-neutral-100: #1b1612;
-    --gui-color-neutral-200: #29211c;
-    --gui-color-neutral-300: #493b32;
-    --gui-color-neutral-400: #57463c;
-    --gui-color-neutral-500: #675246;
-    --gui-color-neutral-600: #917664;
-    --gui-color-neutral-700: #c6a188;
-    --gui-color-neutral-800: #e3b99d;
-    --gui-color-neutral-900: #f1c2a7;
-    --gui-color-neutral-950: #ffceb0;
-
-    /* Semantic Tokens - Backgrounds (Dark Mode) */
-    --gui-bg-default: #24201e;
-    --gui-bg-surface: #2d2623;
-    --gui-bg-surface-hover: #3b322c;
-    --gui-bg-surface-active: #4a3e37;
-    --gui-bg-disabled: #322b27;
-    --gui-bg-inverse: #fdfcfb;
-
-    /* Semantic Tokens - Foreground / Text (Dark Mode) */
-    --gui-text-default: #f5f0eb;
-    --gui-text-secondary: #c2b4a8;
-    --gui-text-muted: #a89a8e;
-    --gui-text-inverse: #2d241f;
-    --gui-text-disabled: #8c7b6f;
-
-    /* Semantic Tokens - Borders (Dark Mode) */
-    --gui-border-default: #5c4e45;
-    --gui-border-subtle: #4a3e37;
-    --gui-border-strong: #7a6a5e;
-    --gui-border-disabled: #4a3e37;
-    --gui-border-focus: #db7665;
-
-    /* Semantic Tokens - Status / Intent (Primary = Terracotta Dark) */
-    --gui-intent-primary: #db7665;
-    --gui-intent-primary-hover: #e38d7e;
-    --gui-intent-primary-active: #eba598;
+  [data-theme='clay-auto'] {
+    @include clay-dark-tokens;
   }
 }

@@ -164,7 +164,7 @@ GolemUI ships full 50–900 scales for each status palette. Override individual 
 
 ### Semantic tokens
 
-Semantic tokens control how widgets actually look — backgrounds, text colors, borders, and status indicators. They adapt automatically between light and dark mode.
+Semantic tokens control how widgets actually look — backgrounds, text colors, borders, and status indicators. Each token has a light and a dark value; the **dark column applies when** dark mode is active via [`data-theme="dark"` or `data-theme="auto"`](/styling/theming/#dark-mode), and the **light column applies otherwise**.
 
 <Aside type="tip">
 Override semantic tokens to change specific roles (e.g., what "default background" looks like). Override [primitive colors](#primitive-colors) to change the entire palette at once.
