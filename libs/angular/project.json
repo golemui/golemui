@@ -10,7 +10,7 @@
       "currentVersionResolver": "git-tag"
     }
   },
-  "tags": [],
+  "tags": ["scope:framework", "type:lib"],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",

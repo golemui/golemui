@@ -10,7 +10,7 @@
       "fallbackCurrentVersionResolver": "disk"
     }
   },
-  "tags": [],
+  "tags": ["scope:gui", "type:lib"],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
