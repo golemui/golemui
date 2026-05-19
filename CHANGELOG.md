@@ -1,3 +1,13 @@
+## 0.13.2 (2026-05-19)
+
+### 🩹 Fixes
+
+- add missing files to npm packages ([#107](https://github.com/golemui/golemui/pull/107))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.13.1 (2026-05-18)
 
 ### 🩹 Fixes
