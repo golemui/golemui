@@ -4,9 +4,9 @@ import {
   type DxCommonFields,
   type DxInternalFields,
 } from '../../core/dxBase.types';
-import { type DxRuntimeParams } from '../../core/dxUtilityTypes';
 import {
   type DefOrCallback,
+  type DxRuntimeParams,
   type GslConfigBase,
   type GuiShortcutOf,
 } from '../../core/dxUtilityTypes';
@@ -18,8 +18,7 @@ import {
 export interface ActionDecorator extends DxActionBase, DxCommonFields, Partial<ButtonProps> {
   data?: any | null;
   type?: 'button';
-  on?: { click: string };
-  onClick?: ((data: any) => void) | string;
+  onClick?: (data: any) => void | string;
 }
 
 /**

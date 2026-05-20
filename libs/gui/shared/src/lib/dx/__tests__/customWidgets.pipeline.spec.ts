@@ -1,22 +1,22 @@
 import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it, vi } from 'vitest';
-import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
+import { formDefs } from '../dx.service';
 import {
+  _gslCustomActionByUid,
+  _gslCustomActions,
+  _gslCustomDisplayByUid,
+  _gslCustomDisplays,
+  _gslCustomInputByUid,
+  _gslCustomInputs,
+  _gslCustomLayoutByUid,
+  _gslCustomLayouts,
+  _guiCustomAction,
   _guiCustomDisplay,
   _guiCustomInput,
-  _guiCustomAction,
   _guiCustomLayout,
-  _gslCustomDisplays,
-  _gslCustomDisplayByUid,
-  _gslCustomInputs,
-  _gslCustomInputByUid,
-  _gslCustomActions,
-  _gslCustomActionByUid,
-  _gslCustomLayouts,
-  _gslCustomLayoutByUid,
+  _guiTextInput,
 } from '../index';
-import { formDefs } from '../dx.service';
-import { _guiTextInput } from '../index';
+import { getRawChild, getStaticChild, processDx, resolveDynamic } from './helpers';
 
 describe('DX Pipeline — Custom Display', () => {
   it('expands _guiCustomDisplay into a display widget with custom type', () => {
@@ -162,21 +162,6 @@ describe('DX Pipeline — Custom Action', () => {
 
     dxResult.events!({ name: btn.on.click, data: { ok: true }, callback: vi.fn() });
     expect(handler).toHaveBeenCalledWith({ ok: true });
-  });
-
-  it('supports onClick: "submit" for custom action', () => {
-    const dxResult = formDefs.processDxFacade(
-      [_guiCustomAction('matButton', { label: 'Submit', onClick: 'submit' })],
-      [],
-      {},
-    );
-    const root = dxResult.form.form as LayoutWidget;
-    const submit = root.children?.find(
-      (c) => typeof c !== 'function' && (c as any).kind === 'action',
-    ) as any;
-
-    expect(submit.uid).toBe('#submit');
-    expect(submit.on?.click).toBe('submit');
   });
 
   it('passes through custom props', () => {

@@ -2,11 +2,11 @@
 // The hook pattern is straightforward; the onClick service does the heavy lifting.
 import { type ActionWidget, type NonFunctionWidget, type UiState } from '@golemui/core';
 import { defineShortcutType } from '../../core/defineShortcutType';
-import { type ActionDecorator, type ActionEntry, type GslActionsConfig } from './actions.domain';
 import eventWiringService from '../../core/eventWiring.service';
+import { type ActionDecorator, type ActionEntry, type GslActionsConfig } from './actions.domain';
 
 function mapToWidget<StateKeys extends UiState = never, FormData extends Record<string, any> = any>(
-  def: ActionDecorator,
+  def: ActionDecorator & { on: { click: string } },
 ): NonFunctionWidget<StateKeys, FormData> {
   const {
     uid,
@@ -36,7 +36,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
 
 export const { gsl: _gslActions, gslByUid: _gslActionByUid } = defineShortcutType<
   ActionEntry,
-  ActionDecorator,
+  ActionDecorator & { on: { click: string } },
   GslActionsConfig
 >({
   itemType: 'ACTIONS',

@@ -1,12 +1,12 @@
 import { type FormEvent, type LayoutWidget } from '@golemui/core';
 import { describe, expect, it, vi } from 'vitest';
-import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
-import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
-import { _guiDropdown } from '../shortcuts/dropdown/guiDropdown.impl';
-import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
-import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
-import { _guiTextInput, _guiNumberInput } from '../index';
+import { _guiNumberInput, _guiTextInput } from '../index';
+import { _guiButton } from '../shortcuts/actions/guiActions.impl';
+import { _guiDropdown } from '../shortcuts/dropdown/guiDropdown.impl';
+import { _guiSelect } from '../shortcuts/select/guiSelect.impl';
+import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
+import { getRawChild, getStaticChild, processDx, resolveDynamic } from './helpers';
 
 function getRootFromFacadeResult(
   result: ReturnType<typeof formDefs.processDxFacade>,
@@ -289,39 +289,6 @@ describe('DX Pipeline — Event Wiring', () => {
 
       result.events!({ name: button.on.click, data: { x: 1 }, callback: vi.fn() });
       expect(clickFn).toHaveBeenCalledWith({ x: 1 });
-    });
-
-    it('onSubmit still receives event.data (backward compat)', () => {
-      const submitFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
-      expect(submitFn).toHaveBeenCalledWith({ ok: true });
-    });
-
-    it('arbitrary string onClick lands as on.click for host-managed dispatch', () => {
-      const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Click me', onClick: 'evClick' })],
-        [],
-        {},
-      );
-
-      const root = getRootFromFacadeResult(result);
-      const button = (root.children ?? []).find(
-        (c) => typeof c !== 'function' && (c as any).kind === 'action',
-      ) as any;
-
-      // The DX layer translates `onClick: 'evClick'` to `on: { click: 'evClick' }`
-      // — exactly the shape host applications listen for via formEvent.
-      expect(button.on?.click).toBe('evClick');
-      // No internal event registry entry — the engine just routes the name through.
-      const clickFn = vi.fn();
-      result.events?.({ name: 'evClick', data: {}, callback: clickFn });
-      expect(clickFn).not.toHaveBeenCalled();
     });
   });
 

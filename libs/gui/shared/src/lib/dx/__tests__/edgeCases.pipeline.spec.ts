@@ -1,11 +1,11 @@
 import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
-import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
-import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
+import { _guiTextInput } from '../index';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
+import { _guiDisplay } from '../shortcuts/display/guiDisplay.impl';
 import { _guiHorizontalFlex, _guiVerticalFlex } from '../shortcuts/layouts/guiFlex.impl';
 import { _guiTabs } from '../shortcuts/tabs/guiTabs.impl';
-import { _guiTextInput } from '../index';
+import { getRawChild, getStaticChild, processDx, resolveDynamic } from './helpers';
 
 describe('DX Pipeline — Edge Cases', () => {
   describe('Deeply nested layouts', () => {
@@ -32,7 +32,7 @@ describe('DX Pipeline — Edge Cases', () => {
       const root = processDx([
         _guiTextInput('name'),
         _guiDisplay(() => 'mid'),
-        _guiButton({ label: 'Go', onClick: () => null }),
+        _guiButton({ label: 'Go', onClick: () => undefined }),
       ]);
 
       // child 0: static input

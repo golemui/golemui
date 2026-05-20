@@ -1,6 +1,6 @@
 import { type FormEvent, type FunctionWidgetParams } from '@golemui/core';
-import { type FormConfig, type MergeResult, type RuntimeFunction } from './dx.domain';
 import { type ActionDecorator } from '../shortcuts/actions/actions.domain';
+import { type FormConfig, type MergeResult, type RuntimeFunction } from './dx.domain';
 import { type EventIdGenerator } from './itemTypeRegistry';
 
 export type EventRegistry = Map<string, (event: FormEvent) => void>;
@@ -17,6 +17,8 @@ const INPUT_LAYOUT_EVENT_PROPS: Record<string, string> = {
 };
 
 const INPUT_LAYOUT_EVENT_KEYS = Object.keys(INPUT_LAYOUT_EVENT_PROPS);
+
+type ActionDecoratorWithPresetClick = ActionDecorator & { on?: { click: string } };
 
 /**
  * Generalisation of ActionOnClickService.
@@ -39,49 +41,64 @@ export class EventWiringService {
     if (mergeResult.kind === 'dynamic') {
       const originalFn = mergeResult.fn;
       const wrappedFn: RuntimeFunction = (params: FunctionWidgetParams<any>) => {
-        const result = originalFn(params) as ActionDecorator & Record<string, any>;
+        const result = originalFn(params) as ActionDecoratorWithPresetClick;
         return this.wireOnClick(result, eventRegistry, formConfig, eventIdGenerator);
       };
       return { kind: 'dynamic', fn: wrappedFn };
     }
 
-    const actionDef = mergeResult.def as ActionDecorator & Record<string, any>;
+    const actionDef = mergeResult.def as ActionDecoratorWithPresetClick;
     const wired = this.wireOnClick(actionDef, eventRegistry, formConfig, eventIdGenerator);
     return { kind: 'static', def: wired as ActionDecorator };
   }
 
   private wireOnClick(
-    actionDef: ActionDecorator & Record<string, any>,
+    actionDef: ActionDecoratorWithPresetClick,
     eventRegistry: EventRegistry,
     formConfig: FormConfig,
     eventIdGenerator: EventIdGenerator,
   ): Record<string, any> {
-    const isSubmit = actionDef.uid === '#submit' || actionDef.onClick === 'submit';
-    const actionId = isSubmit ? '#submit' : eventIdGenerator.next();
-    const eventName = isSubmit ? 'submit' : actionId;
+    const rawOnClick = actionDef.onClick as ((data: any) => string | void) | undefined;
+    const preSetEventName = actionDef.on?.click as string | undefined;
 
-    const rawOnClick = actionDef.onClick;
-    const explicitCallback = typeof rawOnClick === 'function' ? rawOnClick : undefined;
-    const effectiveOnClick = explicitCallback ?? (isSubmit ? formConfig.onSubmit : undefined);
-
-    if (effectiveOnClick) {
-      // Wrap action onClick: callback receives event.data for backward compat
-      eventRegistry.set(eventName, (event: FormEvent) => effectiveOnClick(event.data));
+    // Case 1: on.click already set (only _guiSubmitButton pre-sets this)
+    // Register formConfig.onSubmit or user onClick against the pre-set event name.
+    if (preSetEventName) {
+      const effectiveOnClick =
+        rawOnClick ?? (preSetEventName === 'submit' ? formConfig.onSubmit : undefined);
+      if (effectiveOnClick) {
+        eventRegistry.set(preSetEventName, (event: FormEvent) => {
+          const returned = effectiveOnClick(event.data);
+          if (typeof returned === 'string') {
+            const secondary = eventRegistry.get(returned);
+            if (secondary) {
+              secondary(event);
+            }
+          }
+        });
+      }
       const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: eventName } };
+      return rest;
     }
 
-    if (isSubmit) {
+    // Case 2: user-provided onClick - generate event name and register handler.
+    if (rawOnClick) {
+      const eventName = eventIdGenerator.next();
+      eventRegistry.set(eventName, (event: FormEvent) => {
+        const returned = rawOnClick(event.data);
+        if (typeof returned === 'string') {
+          const secondary = eventRegistry.get(returned);
+          if (secondary) {
+            secondary(event);
+          }
+        }
+      });
       const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: 'submit' } };
+      return { ...rest, uid: actionDef.uid ?? eventName, on: { click: eventName } };
     }
 
-    if (typeof rawOnClick === 'string') {
-      const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: rawOnClick } };
-    }
-
-    return { ...actionDef, uid: actionId };
+    // Case 3: no onClick, no pre-set on.click - no event wiring, ensure uid exists.
+    return { ...actionDef, uid: actionDef.uid ?? eventIdGenerator.next() };
   }
 
   // ── Universal: onLoad, onChange, onFilter ──────────────────────

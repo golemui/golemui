@@ -1,8 +1,15 @@
 import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
-import { _guiTabs, _guiList, _guiCheckbox, _guiButton, _gslTabs, _gslLists } from '../index';
-import { processDx, getStaticChild, getRawChild, resolveDynamic } from './helpers';
-import { _guiTextInput } from '../index';
+import {
+  _gslLists,
+  _gslTabs,
+  _guiCheckbox,
+  _guiList,
+  _guiSubmitButton,
+  _guiTabs,
+  _guiTextInput,
+} from '../index';
+import { getRawChild, getStaticChild, processDx, resolveDynamic } from './helpers';
 
 describe('DX Pipeline — Container Types (Phase 6.3)', () => {
   describe('Tabs', () => {
@@ -119,7 +126,7 @@ describe('DX Pipeline — Container Types (Phase 6.3)', () => {
         _guiTabs([
           {
             label: 'Main',
-            children: [_guiTextInput('name'), _guiButton({ label: 'Submit', onClick: 'submit' })],
+            children: [_guiTextInput('name'), _guiSubmitButton({ label: 'Submit' })],
           },
         ]),
       );
