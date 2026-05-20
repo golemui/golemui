@@ -241,7 +241,6 @@ export class FormElement extends LitElement {
   formData: Record<string, unknown> = {};
   formConfig = {
     validateOn: 'submit' as ValidateOn,
-    suppressAutomaticSubmit: true,
     itemRenderers: {
       currencyItemRenderer,
     },

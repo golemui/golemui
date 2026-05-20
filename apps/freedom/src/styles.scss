@@ -4,7 +4,6 @@
 @use '@shoelace-style/shoelace/dist/themes/dark.css';
 @use '../../apps-shared/src/lib/demo-shell/demo-shell.scss';
 @use '../../apps-shared/src/lib/demo-shell/gui-tokens-bridge';
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 /* Three widget sources to keep aligned with the docs theme:
    - GolemUI OOB widgets — handled by gui-tokens-bridge (above).

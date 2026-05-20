@@ -11,7 +11,13 @@ import Demo from '../../../../src/components/landing/Demo.astro';
 
 Validators provide contextual error messages on input widgets. Each validator validates a particular shape of data — string, number, boolean, array — and supports a set of rules tailored to that shape. You can also create [custom validators](/extending/validators/) for application-specific rules.
 
-A validator is just a `validator: { type: ..., ...rules, messages: ... }` object on an input widget. **It lives inline on the widget**, identically in both paths.
+A validator is just a `validator` object on an input widget, with the rules for that input's value shape plus an optional `messages` block. The shape depends on how much the widget already knows about the value:
+
+- **DX, typed-value inputs** — `textInput`, `numberInput`, `booleanInput`, `password`, `currency`, `textarea`, `markdown`, `checkbox`, `calendar`, `dateInput`, `datePicker`, `rangeCalendar`, `rangeDateInput`, `rangeDatePicker`, `repeater`. The widget pins the value type (a `textInput` is always a string, a `numberInput` is always a number, etc.), so the validator's `type` is inferred. Write only the rules: `validator: { minLength: 8, ... }`.
+- **DX, polymorphic inputs** — `dropdown`, `radiogroup`, `select`, `list`, and any `gui.inputs.custom`. The value type depends on the items or component you wire up, so the widget can't pin it. The validator carries an explicit `type:` discriminator: `validator: { type: 'string', required: true }`.
+- **JSON** — the validator always carries an explicit `type:` discriminator: `validator: { type: 'string', minLength: 8, ... }`. The JSON path has no type inference; what you write is what the engine validates.
+
+The rest of this page uses DX typed-value inputs in its examples; the JSON tab next to each shows the shape with the discriminator. The rules and message keys are identical in all three cases — only the presence of `type:` changes.
 
 ## Adding validators to your inputs
 
@@ -29,7 +35,6 @@ import { gui } from '@golemui/gui-shared';
 
 gui.inputs.textInput('user.password', {
   validator: {
-    type: 'string',
     required: true,
     messages: {
       required: 'Please enter your password',
@@ -67,7 +72,6 @@ Validators stack — combine multiple rules and you'll see one message per faili
 ```ts
 gui.inputs.textInput('user.password', {
   validator: {
-    type: 'string',
     required: true,
     minLength: 8,
     maxLength: 20,
@@ -123,7 +127,6 @@ A `messages` entry can be a plain string (as above) or a `Localizable` shape —
 ```ts
 gui.inputs.textInput('user.password', {
   validator: {
-    type: 'string',
     required: true,
     messages: {
       required: {
@@ -249,7 +252,6 @@ Where `validateOn` lives on the form component depends on the path:
     const formDef = [
       gui.inputs.textInput('username', {
         validator: {
-          type: 'string',
           required: true,
           minLength: 2,
           messages: {
@@ -292,7 +294,6 @@ Where `validateOn` lives on the form component depends on the path:
         formDef: [
           gui.inputs.textInput('username', {
             validator: {
-              type: 'string',
               required: true,
               minLength: 2,
               messages: {
@@ -327,7 +328,6 @@ Where `validateOn` lives on the form component depends on the path:
         formDef: [
           gui.inputs.textInput('username', {
             validator: {
-              type: 'string',
               required: true,
               minLength: 2,
               messages: {

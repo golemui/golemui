@@ -1,7 +1,7 @@
 import { gui } from '@golemui/gui-shared';
 
 // Suppression demo — labels and placeholders are suppressed globally,
-// then re-enabled for 'identity'-tagged inputs. Auto-submit is off.
+// then re-enabled for 'identity'-tagged inputs.
 export const sensibleDefaultsDemo = {
   data: {},
   form: [
@@ -14,9 +14,6 @@ export const sensibleDefaultsDemo = {
       { direction: 'column', gap: 12 },
     ),
   ],
-  config: {
-    suppressAutomaticSubmit: true,
-  },
   selectors: [
     // Suppress auto-labels and auto-placeholders on every input.
     gui.selectors.inputs({

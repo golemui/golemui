@@ -1,3 +1,11 @@
+## 0.13.3 (2026-05-19)
+
+This was a version bump only for gui-react to align it with other projects, there were no code changes.
+
+## 0.13.2 (2026-05-19)
+
+This was a version bump only for gui-react to align it with other projects, there were no code changes.
+
 ## 0.13.1 (2026-05-18)
 
 ### 🩹 Fixes

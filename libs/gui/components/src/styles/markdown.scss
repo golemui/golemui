@@ -175,8 +175,20 @@ gui-markdown {
   }
 }
 
+// Active-state fill override — mirrors the dark-token opt-in pattern in
+// variables.scss so the active toolbar button reads correctly when dark
+// tokens are applied (forced via `[data-theme='dark']` or system-follow via
+// `[data-theme='auto']` + `prefers-color-scheme: dark`).
+@mixin dark-active-fill {
+  fill: var(--gui-text-default);
+}
+
+[data-theme='dark'] gui-markdown .gui-markdown__toolbar-button--active {
+  @include dark-active-fill;
+}
+
 @media (prefers-color-scheme: dark) {
-  gui-markdown .gui-markdown__toolbar-button--active {
-    fill: var(--gui-text-default);
+  [data-theme='auto'] gui-markdown .gui-markdown__toolbar-button--active {
+    @include dark-active-fill;
   }
 }

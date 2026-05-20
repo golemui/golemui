@@ -1,13 +1,7 @@
 import { type FormEvent, type FunctionWidgetParams } from '@golemui/core';
-import {
-  type FormConfig,
-  GuiItemTypes,
-  type MergeResult,
-  type RuntimeFunction,
-  type ValidGuiShortcut,
-} from './dx.domain';
+import { type FormConfig, type MergeResult, type RuntimeFunction } from './dx.domain';
 import { type ActionDecorator } from '../shortcuts/actions/actions.domain';
-import { type EventIdGenerator, getItemTypeHandler } from './itemTypeRegistry';
+import { type EventIdGenerator } from './itemTypeRegistry';
 
 export type EventRegistry = Map<string, (event: FormEvent) => void>;
 
@@ -54,30 +48,6 @@ export class EventWiringService {
     const actionDef = mergeResult.def as ActionDecorator & Record<string, any>;
     const wired = this.wireOnClick(actionDef, eventRegistry, formConfig, eventIdGenerator);
     return { kind: 'static', def: wired as ActionDecorator };
-  }
-
-  countSubmitButtons(defs: ValidGuiShortcut[]): number {
-    let count = 0;
-    for (const def of defs) {
-      if (def.type !== 'ITEMS') continue;
-      const handler = getItemTypeHandler(def.itemType);
-
-      for (const item of def.items) {
-        const children = handler.getChildren?.(item);
-        if (children) {
-          count += this.countSubmitButtons(children);
-        }
-
-        if (def.itemType === GuiItemTypes.ACTIONS) {
-          if (typeof item === 'function') continue;
-          const action = item as ActionDecorator;
-          if (action.uid === '#submit' || action.onClick === 'submit') {
-            count++;
-          }
-        }
-      }
-    }
-    return count;
   }
 
   private wireOnClick(

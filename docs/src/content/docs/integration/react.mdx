@@ -19,34 +19,25 @@ npm i @golemui/core @golemui/react @golemui/gui-react --save
 Import the core styles in your application entry point or global stylesheet:
 
 ```scss
-@import '@golemui/core/styles/index.css';
+@import '@golemui/gui-components/index.css';
 ```
 
 ## Usage
+
+`<GuiForm>` only needs a `formDef`. The framework's built-in widget set is loaded automatically, and an empty form renders fine without initial `data`.
 
 <DslTabs>
   <Fragment slot="dx">
     ```tsx
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
-    import * as GuiReact from '@golemui/gui-react';
 
     const formDef = [
       gui.inputs.textInput('username', { label: 'Username' }),
     ];
 
-    const formConfig = {
-      widgetLoaders: { ...GuiReact.widgetLoaders },
-    };
-
-    const config = {
-      formDef,
-      data: { username: '' },
-      formConfig,
-    };
-
     export function MyForm() {
-      return <GuiForm config={config} />;
+      return <GuiForm config={{ formDef }} />;
     }
     ```
 
@@ -54,19 +45,61 @@ Import the core styles in your application entry point or global stylesheet:
   <Fragment slot="json">
     ```tsx
     import { GuiForm } from '@golemui/gui-react';
-    import * as GuiReact from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const customWidgetLoaders = { ...GuiReact.widgetLoaders };
+    export function MyForm() {
+      return <GuiForm config={{ formDef }} />;
+    }
+    ```
 
-    const config = {
-      formDef,
-      data: { username: '' },
-      customWidgetLoaders,
-    };
+  </Fragment>
+</DslTabs>
+
+### Adding optional config
+
+Reach for these only when you need them. `data` prefills the form; `customWidgetLoaders` is for widgets you've built yourself (the framework's built-ins are merged automatically). Every other `config` property in the [table below](#guiform-props) follows the same rule — opt in as the form grows.
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```tsx
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm } from '@golemui/gui-react';
+    import { myCustomWidgets } from './my-custom-widgets';
+
+    const formDef = [
+      gui.inputs.textInput('username', { label: 'Username' }),
+    ];
 
     export function MyForm() {
-      return <GuiForm config={config} />;
+      return (
+        <GuiForm
+          config={{
+            formDef,
+            data: { username: 'octocat' }, // optional — initial form data
+            customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
+          }}
+        />
+      );
+    }
+    ```
+
+  </Fragment>
+  <Fragment slot="json">
+    ```tsx
+    import { GuiForm } from '@golemui/gui-react';
+    import { myCustomWidgets } from './my-custom-widgets';
+    import formDef from './my-form.json';
+
+    export function MyForm() {
+      return (
+        <GuiForm
+          config={{
+            formDef,
+            data: { username: 'octocat' }, // optional — initial form data
+            customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
+          }}
+        />
+      );
     }
     ```
 

@@ -47,9 +47,9 @@ The `index.css` file bundles everything you need in a single import:
 
 ## Dark and light mode
 
-Dark mode activates automatically based on the user's system preference. No JavaScript, no class toggles, no configuration — just import the stylesheet and it works. Every semantic token has both a light and a dark value; widgets switch between them seamlessly.
+The default is light. Dark mode is **opt-in** via a single `data-theme` attribute — `"dark"` forces dark, `"auto"` follows the user's system preference, no attribute keeps things light. Every semantic token has both a light and a dark value; once dark tokens are applied, widgets switch over seamlessly.
 
-See [Theming](/styling/theming/) for built-in themes and how to build your own.
+See [Theming / Dark mode](/styling/theming/#dark-mode) for the full opt-in table and rationale.
 
 ## Responsive
 

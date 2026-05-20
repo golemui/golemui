@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.13.2/layout-widget.schema.json",
+  "title": "Golem Layout Widget",
+  "oneOf": [
+    {
+      "$ref": "./components/accordion.schema.json"
+    },
+    {
+      "$ref": "./components/flex.schema.json"
+    },
+    {
+      "$ref": "./components/grid.schema.json"
+    },
+    {
+      "$ref": "./components/tabs.schema.json"
+    }
+  ]
+}

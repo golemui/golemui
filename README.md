@@ -96,10 +96,20 @@ npm i @golemui/gui-lit
 Then import the styles once:
 
 ```scss
-@import '@golemui/core/styles/index.css';
+@import '@golemui/gui-components/index.css';
 ```
 
 Full walkthrough at [golemui.com/getting-started/installation](https://golemui.com/getting-started/installation/).
+
+Then use named imports:
+
+```ts
+import { gui } from '@golemui/gui-shared'; // primary API
+import type { GuiFormInitConfig } from '@golemui/gui-shared'; // types
+import { GuiForm } from '@golemui/gui-react'; // framework component
+```
+
+> Do not import from `@golemui/*/internals` — those paths are internal and unstable.
 
 ## Your forms can live anywhere
 

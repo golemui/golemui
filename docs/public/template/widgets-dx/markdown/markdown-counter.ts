@@ -5,7 +5,6 @@ export default [
     counterMode: 'remaining',
     label: 'Content',
     validator: {
-      type: 'string',
       maxLength: 200,
       required: true,
     },
@@ -14,7 +13,6 @@ export default [
     counterMode: 'current',
     label: 'Content',
     validator: {
-      type: 'string',
       maxLength: 200,
       required: true,
     },

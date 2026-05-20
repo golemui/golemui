@@ -37,7 +37,6 @@ export function buildModularDx(modules: DxModule[]): ModularDx {
     formSelectors: [],
     formConfig: {
       states: Object.assign({}, ...modules.map((m) => m.formConfig?.states ?? {})),
-      suppressAutomaticSubmit: true,
     },
   };
 }

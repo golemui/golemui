@@ -103,7 +103,7 @@ describe('DX Pipeline — Inputs', () => {
       expect(typeof rawChild).toBe('function');
 
       const withErrors = resolveDynamic(rawChild, { errors: ['x'] }) as { label?: string };
-      const withoutErrors = resolveDynamic(rawChild, {}) as { label?: string };
+      const withoutErrors = resolveDynamic(rawChild) as { label?: string };
 
       expect(withErrors.label).toBe('Fix!');
       expect(withoutErrors.label).toBe('Msg');
