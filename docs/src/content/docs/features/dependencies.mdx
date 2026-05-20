@@ -38,18 +38,17 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     ```tsx
     import snarkdown from 'snarkdown';
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [gui.inputs.markdown('content')];
 
     const formConfig = {
-      widgetLoaders: React.widgetLoaders,
       dependencies: {
         markdown: { parse: (md: string) => snarkdown(md) },
       },
     };
 
-    const config = { formDef, data: {}, formConfig };
+    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -63,19 +62,17 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     import { CommonModule } from '@angular/common';
     import snarkdown from 'snarkdown';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef: [gui.inputs.markdown('content')],
-        data: {},
         formConfig: {
-          widgetLoaders: Angular.widgetLoaders,
           dependencies: {
             markdown: { parse: (md: string) => snarkdown(md) },
           },
@@ -91,15 +88,13 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     import { customElement } from 'lit/decorators.js';
     import snarkdown from 'snarkdown';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef: [gui.inputs.markdown('content')],
-        data: {},
         formConfig: {
-          widgetLoaders: Lit.widgetLoaders,
           dependencies: {
             markdown: { parse: (md: string) => snarkdown(md) },
           },
@@ -120,18 +115,17 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     <script setup lang="ts">
     import snarkdown from 'snarkdown';
     import { gui } from '@golemui/gui-shared';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
 
     const formDef = [gui.inputs.markdown('content')];
 
     const formConfig = {
-      widgetLoaders,
       dependencies: {
         markdown: { parse: (md: string) => snarkdown(md) },
       },
     };
 
-    const config = { formDef, data: {}, formConfig };
+    const config = { formDef, formConfig };
     </script>
 
     <template>
@@ -157,19 +151,14 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
   <Fragment slot="react">
     ```tsx
     import snarkdown from 'snarkdown';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
     const dependencies = {
       markdown: { parse: (md: string) => snarkdown(md) },
     };
 
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: React.widgetLoaders,
-      dependencies,
-    };
+    const config = { formDef, dependencies };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -182,19 +171,17 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import snarkdown from 'snarkdown';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
         dependencies: {
           markdown: { parse: (md: string) => snarkdown(md) },
         },
@@ -208,15 +195,13 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import snarkdown from 'snarkdown';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
         dependencies: {
           markdown: { parse: (md: string) => snarkdown(md) },
         },
@@ -235,19 +220,14 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
     ```vue
     <script setup lang="ts">
     import snarkdown from 'snarkdown';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
     const dependencies = {
       markdown: { parse: (md: string) => snarkdown(md) },
     };
 
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: widgetLoaders,
-      dependencies,
-    };
+    const config = { formDef, dependencies };
     </script>
 
     <template>

@@ -61,14 +61,11 @@ Then import that default export from your component and include it in the `confi
   <Fragment slot="react">
     ```tsx
     // rent-a-car.page.tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import rentACarForm from './rent-a-car.form';
 
-    const formConfig = { widgetLoaders: React.widgetLoaders };
-    const config = { formDef: rentACarForm, data: {}, formConfig };
-
     export function RentACarPage() {
-      return <GuiForm config={config} />;
+      return <GuiForm config={{ formDef: rentACarForm }} />;
     }
     ```
 
@@ -78,20 +75,16 @@ Then import that default export from your component and include it in the `confi
     // rent-a-car.page.component.ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import rentACarForm from './rent-a-car.form';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-rent-a-car',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class RentACarPage {
-      protected config = {
-        formDef: rentACarForm,
-        data: {},
-        formConfig: { widgetLoaders: Angular.widgetLoaders },
-      };
+      protected config = { formDef: rentACarForm };
     }
     ```
 
@@ -101,16 +94,12 @@ Then import that default export from your component and include it in the `confi
     // rent-a-car.page.element.ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import rentACarForm from './rent-a-car.form';
 
     @customElement('rent-a-car-page')
     export class RentACarPage extends LitElement {
-      config = {
-        formDef: rentACarForm,
-        data: {},
-        formConfig: { widgetLoaders: Lit.widgetLoaders },
-      };
+      config = { formDef: rentACarForm };
 
       override createRenderRoot() {
         return this;
@@ -127,14 +116,10 @@ Then import that default export from your component and include it in the `confi
     ```vue
     <!-- RentACarPage.vue -->
     <script setup lang="ts">
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import rentACarForm from './rent-a-car.form';
 
-    const config = {
-      formDef: rentACarForm,
-      data: {},
-      formConfig: { widgetLoaders },
-    };
+    const config = { formDef: rentACarForm };
     </script>
 
     <template>

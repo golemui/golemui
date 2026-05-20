@@ -11,27 +11,25 @@ import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
 Widget loaders are a `Record<string, () => Promise<unknown>>` map that tells the form engine how to lazy-load each widget kind. The map key is the widget `type` (e.g. `'textinput'`, `'dropdown'`) and the value is an async loader that returns the widget implementation.
 
-Each framework adapter exports a default `widgetLoaders` object preloaded with the GolemUI widget set. You always start from that and merge in your own custom widgets as needed. **Where** that map lives on the form component depends on which path you took to define the form.
+Each framework adapter ships the GolemUI widget set as a default `widgetLoaders` export. **You don't need to pass them yourself** — `<GuiForm>` includes the framework defaults automatically. You only wire `widgetLoaders` (DX path) or `customWidgetLoaders` (JSON path) when you have your own custom widgets to register.
 
 ## Default loaders
 
+The built-in widget set covers every input, layout, display, and action widget. A form that uses only built-in widgets needs nothing but `formDef`:
+
 <DslTabs>
   <Fragment slot="dx">
-
-In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. The form component reads them through `formConfig`.
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [gui.inputs.textInput('username')];
-    const formConfig = { widgetLoaders: React.widgetLoaders };
-    const config = { formDef, data: {}, formConfig };
 
     export function MyForm() {
-      return <GuiForm config={config} />;
+      return <GuiForm config={{ formDef }} />;
     }
     ```
 
@@ -41,19 +39,15 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef: [gui.inputs.textInput('username')],
-        data: {},
-        formConfig: { widgetLoaders: Angular.widgetLoaders },
-      };
+      protected config = { formDef: [gui.inputs.textInput('username')] };
     }
     ```
 
@@ -63,15 +57,11 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = {
-        formDef: [gui.inputs.textInput('username')],
-        data: {},
-        formConfig: { widgetLoaders: Lit.widgetLoaders },
-      };
+      config = { formDef: [gui.inputs.textInput('username')] };
 
       override createRenderRoot() { return this; }
 
@@ -86,10 +76,9 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
     ```vue
     <script setup lang="ts">
     import { gui } from '@golemui/gui-shared';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
 
-    const formDef = [gui.inputs.textInput('username')];
-    const config = { formDef, data: {}, formConfig: { widgetLoaders } };
+    const config = { formDef: [gui.inputs.textInput('username')] };
     </script>
 
     <template>
@@ -103,18 +92,14 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
   </Fragment>
   <Fragment slot="json">
 
-In the JSON path, widget loaders go into the `customWidgetLoaders` property on the `config` object.
-
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
-
     export function MyForm() {
-      return <GuiForm config={config} />;
+      return <GuiForm config={{ formDef }} />;
     }
     ```
 
@@ -123,20 +108,16 @@ In the JSON path, widget loaders go into the `customWidgetLoaders` property on t
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
-      };
+      protected config = { formDef };
     }
     ```
 
@@ -145,16 +126,12 @@ In the JSON path, widget loaders go into the `customWidgetLoaders` property on t
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
-      };
+      config = { formDef };
 
       override createRenderRoot() { return this; }
 
@@ -168,10 +145,10 @@ In the JSON path, widget loaders go into the `customWidgetLoaders` property on t
   <Fragment slot="vue">
     ```vue
     <script setup lang="ts">
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
-    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
+    const config = { formDef };
     </script>
 
     <template>
@@ -185,22 +162,20 @@ In the JSON path, widget loaders go into the `customWidgetLoaders` property on t
   </Fragment>
 </DslTabs>
 
-The exported map covers every built-in input, layout, display, and action widget for that framework.
-
 ## Adding custom widgets
 
-Spread the defaults and add your own loader entries to the same map. The key (e.g. `productCard`) must match the `type` field on the widget instances in your `formDef`.
+Pass only your own loader entries — `<GuiForm>` merges them with the built-in defaults internally. The key (e.g. `productCard`) must match the `type` field on the widget instances in your `formDef`.
 
 <DslTabs>
   <Fragment slot="dx">
 
-The `formConfig.widgetLoaders` object now carries both the defaults and your custom entries.
+In the Programmatic API your loaders go into `formConfig.widgetLoaders`.
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [
       gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
@@ -208,13 +183,12 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
 
     const formConfig = {
       widgetLoaders: {
-        ...React.widgetLoaders,
         productCard: async () =>
           (await import('./widgets/ProductCard')).ProductCard,
       },
     };
 
-    const config = { formDef, data: {}, formConfig };
+    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -227,10 +201,10 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
@@ -239,10 +213,8 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
         formDef: [
           gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
         ],
-        data: {},
         formConfig: {
           widgetLoaders: {
-            ...Angular.widgetLoaders,
             productCard: async () =>
               (await import('./widgets/product-card.component')).ProductCardComponent,
           },
@@ -257,7 +229,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -265,10 +237,8 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
         formDef: [
           gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
         ],
-        data: {},
         formConfig: {
           widgetLoaders: {
-            ...Lit.widgetLoaders,
             productCard: async () =>
               (await import('./widgets/product-card.element')).ProductCardElement,
           },
@@ -288,16 +258,14 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
     ```vue
     <script setup lang="ts">
     import { gui } from '@golemui/gui-shared';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
 
     const config = {
       formDef: [
         gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
       ],
-      data: {},
       formConfig: {
         widgetLoaders: {
-          ...widgetLoaders,
           productCard: async () =>
             (await import('./widgets/ProductCard.vue')).default,
         },
@@ -316,7 +284,7 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
   </Fragment>
   <Fragment slot="json">
 
-The `customWidgetLoaders` property in `config` carries both the defaults and your custom entries. The JSON itself references the widget by `"type": "productCard"`.
+In the JSON path your loaders go into `customWidgetLoaders` on the `config` object. The JSON itself references the widget by `"type": "productCard"`.
 
 ```json
 {
@@ -334,15 +302,15 @@ The `customWidgetLoaders` property in `config` carries both the defaults and you
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const widgetLoaders = {
-      ...React.widgetLoaders,
-      productCard: async () => (await import('./widgets/ProductCard')).ProductCard,
+    const config = {
+      formDef,
+      customWidgetLoaders: {
+        productCard: async () => (await import('./widgets/ProductCard')).ProductCard,
+      },
     };
-
-    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -354,20 +322,18 @@ The `customWidgetLoaders` property in `config` carries both the defaults and you
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef,
-        data: {},
         customWidgetLoaders: {
-          ...Angular.widgetLoaders,
           productCard: async () =>
             (await import('./widgets/product-card.component')).ProductCardComponent,
         },
@@ -380,16 +346,14 @@ The `customWidgetLoaders` property in `config` carries both the defaults and you
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef,
-        data: {},
         customWidgetLoaders: {
-          ...Lit.widgetLoaders,
           productCard: async () =>
             (await import('./widgets/product-card.element')).ProductCardElement,
         },
@@ -407,14 +371,12 @@ The `customWidgetLoaders` property in `config` carries both the defaults and you
   <Fragment slot="vue">
     ```vue
     <script setup lang="ts">
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
     const config = {
       formDef,
-      data: {},
       customWidgetLoaders: {
-        ...widgetLoaders,
         productCard: async () =>
           (await import('./widgets/ProductCard.vue')).default,
       },

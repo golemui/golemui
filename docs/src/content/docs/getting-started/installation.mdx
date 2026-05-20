@@ -101,12 +101,11 @@ This guide walks you from an empty directory to a rendered form in five steps.
           <Fragment slot="react">
             ```ts
             import { gui } from '@golemui/gui-shared';
-            import * as React from '@golemui/gui-react';
+            import { GuiForm } from '@golemui/gui-react';
 
             const formDef = [gui.inputs.textInput('username')];
             const formData = { username: 'golemui' };
-            const formConfig = { widgetLoaders: React.widgetLoaders };
-            const config = { formDef, data: formData, formConfig };
+            const config = { formDef, data: formData };
 
             export function FormPage() {
               return (
@@ -122,10 +121,10 @@ This guide walks you from an empty directory to a rendered form in five steps.
             import { Component } from '@angular/core';
             import { CommonModule } from '@angular/common';
             import { gui } from '@golemui/gui-shared';
-            import * as Angular from '@golemui/gui-angular';
+            import { FormComponent } from '@golemui/gui-angular';
 
             @Component({
-              imports: [CommonModule, Angular.FormComponent],
+              imports: [CommonModule, FormComponent],
               selector: 'app-dynamic-form',
               template: `<gui-form [config]="config"></gui-form>`,
             })
@@ -133,7 +132,6 @@ This guide walks you from an empty directory to a rendered form in five steps.
               protected config = {
                 formDef: [gui.inputs.textInput('username')],
                 data: { username: 'golemui' },
-                formConfig: { widgetLoaders: Angular.widgetLoaders },
               };
             }
             ```
@@ -143,14 +141,13 @@ This guide walks you from an empty directory to a rendered form in five steps.
             import { LitElement, html } from 'lit';
             import { customElement } from 'lit/decorators.js';
             import { gui } from '@golemui/gui-shared';
-            import * as Lit from '@golemui/gui-lit';
+            import '@golemui/gui-lit';
 
             @customElement('lit-form')
             export class FormElement extends LitElement {
               config = {
                 formDef: [gui.inputs.textInput('username')],
                 data: { username: 'golemui' },
-                formConfig: { widgetLoaders: Lit.widgetLoaders },
               };
 
               override createRenderRoot() {
@@ -167,15 +164,11 @@ This guide walks you from an empty directory to a rendered form in five steps.
             ```vue
             <script setup lang="ts">
             import { gui } from '@golemui/gui-shared';
-            import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+            import { GuiForm } from '@golemui/gui-vue';
 
             const formDef = [gui.inputs.textInput('username')];
             const formData = { username: 'golemui' };
-            const config = {
-              formDef,
-              data: formData,
-              formConfig: { widgetLoaders },
-            };
+            const config = { formDef, data: formData };
             </script>
 
             <template>

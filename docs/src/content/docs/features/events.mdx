@@ -67,17 +67,16 @@ const formDef = [
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [
       gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
       gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
     ];
-    const formConfig = { widgetLoaders: React.widgetLoaders };
 
-    function handleFormEvent(event: Core.FormEvent) {
+    function handleFormEvent(event: FormEvent) {
       switch (event.name) {
         case 'countryChanged':
           console.log('Country selected:', event.data.country);
@@ -88,10 +87,8 @@ const formDef = [
       }
     }
 
-    const config = { formDef, data: {}, formConfig };
-
     export function MyForm() {
-      return <GuiForm config={config} formEvent={handleFormEvent} />;
+      return <GuiForm config={{ formDef }} formEvent={handleFormEvent} />;
     }
     ```
 
@@ -100,12 +97,12 @@ const formDef = [
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>`,
     })
@@ -115,11 +112,9 @@ const formDef = [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
           gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
         ],
-        data: {},
-        formConfig: { widgetLoaders: Angular.widgetLoaders },
       };
 
-      protected onFormEvent(event: Core.FormEvent) {
+      protected onFormEvent(event: FormEvent) {
         switch (event.name) {
           case 'countryChanged':
             console.log('Country selected:', event.data.country);
@@ -137,9 +132,9 @@ const formDef = [
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -148,13 +143,11 @@ const formDef = [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
           gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
         ],
-        data: {},
-        formConfig: { widgetLoaders: Lit.widgetLoaders },
       };
 
       override createRenderRoot() { return this; }
 
-      protected onFormEvent(event: Core.FormEvent) {
+      protected onFormEvent(event: FormEvent) {
         switch (event.name) {
           case 'countryChanged':
             console.log('Country selected:', event.data.country);
@@ -169,7 +162,7 @@ const formDef = [
         return html`
           <gui-form
             .config=${this.config}
-            @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
+            @formEvent=${(e: CustomEvent<FormEvent>) => this.onFormEvent(e.detail)}
           ></gui-form>
         `;
       }
@@ -182,15 +175,13 @@ const formDef = [
     <script setup lang="ts">
     import type { FormEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
 
     const config = {
       formDef: [
         gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
         gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
       ],
-      data: {},
-      formConfig: { widgetLoaders },
     };
 
     function onFormEvent(event: FormEvent) {
@@ -219,11 +210,11 @@ const formDef = [
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
-    import * as React from '@golemui/gui-react';
+    import type { FormEvent } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    function handleFormEvent(event: Core.FormEvent) {
+    function handleFormEvent(event: FormEvent) {
       switch (event.name) {
         case 'countryChanged':
           console.log('Country selected:', event.data.country);
@@ -234,10 +225,8 @@ const formDef = [
       }
     }
 
-    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
-
     export function MyForm() {
-      return <GuiForm config={config} formEvent={handleFormEvent} />;
+      return <GuiForm config={{ formDef }} formEvent={handleFormEvent} />;
     }
     ```
 
@@ -246,23 +235,19 @@ const formDef = [
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Core from '@golemui/core';
-    import * as Angular from '@golemui/gui-angular';
+    import type { FormEvent } from '@golemui/core';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
-      };
+      protected config = { formDef };
 
-      protected onFormEvent(event: Core.FormEvent) {
+      protected onFormEvent(event: FormEvent) {
         switch (event.name) {
           case 'countryChanged':
             console.log('Country selected:', event.data.country);
@@ -280,21 +265,17 @@ const formDef = [
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
-    import * as Lit from '@golemui/gui-lit';
+    import type { FormEvent } from '@golemui/core';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
-      };
+      config = { formDef };
 
       override createRenderRoot() { return this; }
 
-      protected onFormEvent(event: Core.FormEvent) {
+      protected onFormEvent(event: FormEvent) {
         switch (event.name) {
           case 'countryChanged':
             console.log('Country selected:', event.data.country);
@@ -309,7 +290,7 @@ const formDef = [
         return html`
           <gui-form
             .config=${this.config}
-            @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
+            @formEvent=${(e: CustomEvent<FormEvent>) => this.onFormEvent(e.detail)}
           ></gui-form>
         `;
       }
@@ -321,10 +302,10 @@ const formDef = [
     ```vue
     <script setup lang="ts">
     import type { FormEvent } from '@golemui/core';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
-    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
+    const config = { formDef };
 
     function onFormEvent(event: FormEvent) {
       switch (event.name) {

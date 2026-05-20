@@ -210,7 +210,7 @@ Replaces the form's current meta state. Meta values are available inside the for
       }),
     ];
 
-    const config = { formDef, data: {}, meta: { status: 'offline' } };
+    const config = { formDef, meta: { status: 'offline' } };
 
     export function MyForm() {
       const formRef = useRef<FormComponentHandle>(null);
@@ -252,7 +252,6 @@ Replaces the form's current meta state. Meta values are available inside the for
             text: 'Connection: {{$meta.status}}',
           }),
         ],
-        data: {},
         meta: { status: 'offline' },
       };
 
@@ -280,7 +279,6 @@ Replaces the form's current meta state. Meta values are available inside the for
             text: 'Connection: {{$meta.status}}',
           }),
         ],
-        data: {},
         meta: { status: 'offline' },
       };
 
@@ -315,7 +313,6 @@ Replaces the form's current meta state. Meta values are available inside the for
           text: 'Connection: {{$meta.status}}',
         }),
       ],
-      data: {},
       meta: { status: 'offline' },
     };
 

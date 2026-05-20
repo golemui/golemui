@@ -331,7 +331,7 @@ With all four widgets implemented and registered, here's the complete form setup
     ];
 
     const formConfig = { widgetLoaders: customWidgetLoaders };
-    const config = { formDef, formConfig, data: {} };
+    const config = { formDef, formConfig };
 
     export function ProductPage() {
       const SHARE_URLS: Record<string, (url: string) => string> = {
@@ -376,7 +376,6 @@ With all four widgets implemented and registered, here's the complete form setup
     export class ProductPage {
       config = {
         formConfig: { widgetLoaders: customWidgetLoaders },
-        data: {},
         formDef: [
           gui.layouts.custom('productCard', [
             gui.displays.custom('productDescription', {
@@ -425,7 +424,6 @@ With all four widgets implemented and registered, here's the complete form setup
     export class ProductPage extends LitElement {
       config = {
         formConfig: { widgetLoaders: customWidgetLoaders },
-        data: {},
         formDef: [
           gui.layouts.custom('productCard', [
             gui.displays.custom('productDescription', {
@@ -499,7 +497,7 @@ With all four widgets implemented and registered, here's the complete form setup
     ];
 
     const formConfig = { widgetLoaders: customWidgetLoaders };
-    const config = { formDef, formConfig, data: {} };
+    const config = { formDef, formConfig };
 
     const SHARE_URLS: Record<string, (url: string) => string> = {
       twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,

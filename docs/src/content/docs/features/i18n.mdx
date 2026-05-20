@@ -172,7 +172,7 @@ The form definition references translation keys through `Localizable` shapes (`{
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
     const formDef = [
@@ -181,14 +181,12 @@ The form definition references translation keys through `Localizable` shapes (`{
       }),
     ];
 
-    const formConfig = { widgetLoaders: React.widgetLoaders };
-
     const localization = createI18nextTranslator({
       en: { translation: { username: { label: 'Username' } } },
       es: { translation: { username: { label: 'Usuario' } } },
     });
 
-    const config = { formDef, data: {}, formConfig, localization };
+    const config = { formDef, localization };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -201,11 +199,11 @@ The form definition references translation keys through `Localizable` shapes (`{
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
@@ -216,8 +214,6 @@ The form definition references translation keys through `Localizable` shapes (`{
             label: { key: 'username.label', default: 'Username' },
           }),
         ],
-        data: {},
-        formConfig: { widgetLoaders: Angular.widgetLoaders },
         localization: createI18nextTranslator({
           en: { translation: { username: { label: 'Username' } } },
           es: { translation: { username: { label: 'Usuario' } } },
@@ -232,7 +228,7 @@ The form definition references translation keys through `Localizable` shapes (`{
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
     @customElement('my-form')
@@ -243,8 +239,6 @@ The form definition references translation keys through `Localizable` shapes (`{
             label: { key: 'username.label', default: 'Username' },
           }),
         ],
-        data: {},
-        formConfig: { widgetLoaders: Lit.widgetLoaders },
         localization: createI18nextTranslator({
           en: { translation: { username: { label: 'Username' } } },
           es: { translation: { username: { label: 'Usuario' } } },
@@ -264,7 +258,7 @@ The form definition references translation keys through `Localizable` shapes (`{
     ```vue
     <script setup lang="ts">
     import { gui } from '@golemui/gui-shared';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
     const formDef = [
@@ -273,14 +267,12 @@ The form definition references translation keys through `Localizable` shapes (`{
       }),
     ];
 
-    const formConfig = { widgetLoaders };
-
     const localization = createI18nextTranslator({
       en: { translation: { username: { label: 'Username' } } },
       es: { translation: { username: { label: 'Usuario' } } },
     });
 
-    const config = { formDef, data: {}, formConfig, localization };
+    const config = { formDef, localization };
     </script>
 
     <template>
@@ -312,7 +304,7 @@ The JSON form references the same translation keys inline:
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
@@ -321,12 +313,7 @@ The JSON form references the same translation keys inline:
       es: { translation: { username: { label: 'Usuario' } } },
     });
 
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: React.widgetLoaders,
-      localization,
-    };
+    const config = { formDef, localization };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -338,20 +325,18 @@ The JSON form references the same translation keys inline:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
         localization: createI18nextTranslator({
           en: { translation: { username: { label: 'Username' } } },
           es: { translation: { username: { label: 'Usuario' } } },
@@ -365,7 +350,7 @@ The JSON form references the same translation keys inline:
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
@@ -373,8 +358,6 @@ The JSON form references the same translation keys inline:
     export class MyForm extends LitElement {
       config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
         localization: createI18nextTranslator({
           en: { translation: { username: { label: 'Username' } } },
           es: { translation: { username: { label: 'Usuario' } } },
@@ -393,7 +376,7 @@ The JSON form references the same translation keys inline:
   <Fragment slot="vue">
     ```vue
     <script setup lang="ts">
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
@@ -402,12 +385,7 @@ The JSON form references the same translation keys inline:
       es: { translation: { username: { label: 'Usuario' } } },
     });
 
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: widgetLoaders,
-      localization,
-    };
+    const config = { formDef, localization };
     </script>
 
     <template>

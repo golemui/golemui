@@ -247,7 +247,7 @@ Where `validateOn` lives on the form component depends on the path:
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [
       gui.inputs.textInput('username', {
@@ -263,12 +263,8 @@ Where `validateOn` lives on the form component depends on the path:
       gui.actions.submitButton({ label: 'Create User' }),
     ];
 
-    const formConfig = {
-      widgetLoaders: React.widgetLoaders,
-      validateOn: 'change' as const,
-    };
-
-    const config = { formDef, data: {}, formConfig };
+    const formConfig = { validateOn: 'change' as const };
+    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -280,12 +276,12 @@ Where `validateOn` lives on the form component depends on the path:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Core from '@golemui/core';
+    import type { ValidateOn } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
@@ -304,11 +300,7 @@ Where `validateOn` lives on the form component depends on the path:
           }),
           gui.actions.submitButton({ label: 'Create User' }),
         ],
-        data: {},
-        formConfig: {
-          widgetLoaders: Angular.widgetLoaders,
-          validateOn: 'change' as Core.ValidateOn,
-        },
+        formConfig: { validateOn: 'change' as ValidateOn },
       };
     }
     ```
@@ -318,9 +310,9 @@ Where `validateOn` lives on the form component depends on the path:
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
+    import type { ValidateOn } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -338,11 +330,7 @@ Where `validateOn` lives on the form component depends on the path:
           }),
           gui.actions.submitButton({ label: 'Create User' }),
         ],
-        data: {},
-        formConfig: {
-          widgetLoaders: Lit.widgetLoaders,
-          validateOn: 'change' as Core.ValidateOn,
-        },
+        formConfig: { validateOn: 'change' as ValidateOn },
       };
 
       override createRenderRoot() { return this; }
@@ -358,7 +346,7 @@ Where `validateOn` lives on the form component depends on the path:
     ```vue
     <script setup lang="ts">
     import { gui } from '@golemui/gui-shared';
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
 
     const formDef = [
       gui.inputs.textInput('username', {
@@ -374,12 +362,8 @@ Where `validateOn` lives on the form component depends on the path:
       gui.actions.submitButton({ label: 'Create User' }),
     ];
 
-    const formConfig = {
-      widgetLoaders,
-      validateOn: 'change' as const,
-    };
-
-    const config = { formDef, data: {}, formConfig };
+    const formConfig = { validateOn: 'change' as const };
+    const config = { formDef, formConfig };
     </script>
 
     <template>
@@ -398,15 +382,10 @@ Where `validateOn` lives on the form component depends on the path:
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: React.widgetLoaders,
-      validateOn: 'change' as const,
-    };
+    const config = { formDef, validateOn: 'change' as const };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -418,21 +397,16 @@ Where `validateOn` lives on the form component depends on the path:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
-        validateOn: 'change',
-      };
+      protected config = { formDef, validateOn: 'change' };
     }
     ```
 
@@ -441,17 +415,12 @@ Where `validateOn` lives on the form component depends on the path:
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
-        validateOn: 'change',
-      };
+      config = { formDef, validateOn: 'change' };
 
       override createRenderRoot() { return this; }
 
@@ -465,15 +434,10 @@ Where `validateOn` lives on the form component depends on the path:
   <Fragment slot="vue">
     ```vue
     <script setup lang="ts">
-    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: widgetLoaders,
-      validateOn: 'change' as const,
-    };
+    const config = { formDef, validateOn: 'change' as const };
     </script>
 
     <template>
