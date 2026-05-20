@@ -46,6 +46,14 @@ type FormShape = {
   startDate?: string;
 };
 
+type TemplateId = 'lit' | 'react' | 'angular' | 'vue' | 'js';
+const TEMPLATE_IDS: ReadonlyArray<TemplateId> = ['lit', 'react', 'angular', 'vue', 'js'];
+const STACKBLITZ_REPO = 'golemui/golemui';
+
+function isTemplateId(value: unknown): value is TemplateId {
+  return typeof value === 'string' && (TEMPLATE_IDS as ReadonlyArray<string>).includes(value);
+}
+
 type Stage =
   | 'start'
   | 'countryPicked'
@@ -262,6 +270,7 @@ export class FormElement extends LitElement {
   @state() declare confettiOrigin: { left: number; top: number } | null;
   @state() declare resetCounter: number;
   @state() declare isFlipped: boolean;
+  @state() declare selectedFramework: TemplateId;
 
   private resizeObserver: ResizeObserver | null = null;
   private mutationObserver: MutationObserver | null = null;
@@ -269,6 +278,12 @@ export class FormElement extends LitElement {
   private celebrateTimer: ReturnType<typeof setTimeout> | null = null;
   private petsTouched = false;
   private latestFormData: FormShape = {};
+  private frameworkMessageHandler = (event: MessageEvent) => {
+    const data = event.data as { type?: string; framework?: string } | null;
+    if (data?.type === 'golemui-framework' && isTemplateId(data.framework)) {
+      this.selectedFramework = data.framework;
+    }
+  };
 
   constructor() {
     super();
@@ -282,6 +297,7 @@ export class FormElement extends LitElement {
     this.confettiOrigin = null;
     this.resetCounter = 0;
     this.isFlipped = false;
+    this.selectedFramework = 'lit';
     this.formDef = this.buildFormDef();
     this.config = { formDef: this.formDef, data: this.formData, formConfig: this.formConfig };
   }
@@ -371,6 +387,8 @@ export class FormElement extends LitElement {
 
     this.mutationObserver = new MutationObserver(() => this.scheduleFieldRectCompute());
     this.mutationObserver.observe(this, { childList: true, subtree: true });
+
+    window.addEventListener('message', this.frameworkMessageHandler);
   }
 
   override disconnectedCallback() {
@@ -379,6 +397,12 @@ export class FormElement extends LitElement {
     this.resizeObserver = null;
     this.mutationObserver?.disconnect();
     this.mutationObserver = null;
+    window.removeEventListener('message', this.frameworkMessageHandler);
+  }
+
+  private openInStackBlitz() {
+    const url = `https://stackblitz.com/github/${STACKBLITZ_REPO}/tree/main/templates/${this.selectedFramework}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   override updated() {
@@ -854,9 +878,9 @@ const formConfig = { onSubmit: (data) => process(data) };</code></pre>
               <button
                 type="button"
                 class="poc-stage__back-codesandbox"
-                @click=${() => alert('Coming soon')}
+                @click=${() => this.openInStackBlitz()}
               >
-                Open in Codesandbox →
+                Open ${this.selectedFramework} in StackBlitz →
               </button>
             </div>
           </div>
