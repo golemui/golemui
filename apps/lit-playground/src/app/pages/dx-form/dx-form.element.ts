@@ -26,6 +26,10 @@ const ks = buildKitchenSinkDx({
       parse: (md: string) => snarkdown(md),
     },
   },
+  // Lit-flavored Renderer example — the `render` function is called with the
+  // form API and returns a Lit `TemplateResult`.
+  rendererExample: (api: any) =>
+    html`<h1>Client name: ${api?.$form?.rendererClientName || 'unknown'}</h1>`,
 });
 
 const config: GuiFormInitConfig = {
