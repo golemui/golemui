@@ -102,6 +102,30 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const formDef = [
+      gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
+      gui.inputs.numberInput('pets', {
+        label: 'Number of pets',
+        include: { when: '$form.includePets === true' },
+      }),
+    ];
+
+    const formConfig = { widgetLoaders };
+    const config = { formDef, data: {}, formConfig };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -188,6 +212,21 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

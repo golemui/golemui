@@ -374,6 +374,72 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+
+    **Key concepts (Vue)**
+
+    - `useActionWidget` returns `uid`, `templateData` (as a `Ref`), and an `onClick()` callback that emits the wired event.
+    - Pass the network id as `onClick(network.id)` so the consumer's `formEvent` handler reads `event.detail` to know which button was clicked.
+    - For URL icons, render an `<img>`. For inline SVG strings, use Vue's `v-html` directive — Vue's template compiler won't escape the markup.
+    - `:style="{ flex: templateData.size }"` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```vue
+    <!-- ProductShare.vue -->
+    <script setup lang="ts">
+    import type { ActionWidget, WithWidget } from '@golemui/core';
+    import { useActionWidget } from '@golemui/vue';
+    import { computed } from 'vue';
+
+    interface ShareNetwork {
+      id: string;
+      label: string;
+      icon?: string;
+    }
+    interface ProductShareProps {
+      networks?: ShareNetwork[];
+    }
+
+    const DEFAULT_NETWORKS: ShareNetwork[] = [
+      { id: 'twitter', label: 'X' },
+      { id: 'facebook', label: 'Facebook' },
+      { id: 'reddit', label: 'Reddit' },
+    ];
+
+    const props = defineProps<WithWidget>();
+    const widget = props.widget as ActionWidget;
+    const { uid, templateData, onClick } = useActionWidget<ProductShareProps>(widget);
+
+    const networks = computed(() => templateData.value.networks ?? DEFAULT_NETWORKS);
+    const isInlineSvg = (icon: string) => icon.trim().startsWith('<svg');
+    </script>
+
+    <template>
+      <div class="product-share" :style="{ flex: templateData.size }">
+        <div class="product-share__widget" :id="uid">
+          <span class="product-share__label">Share this product:</span>
+          <div class="product-share__buttons">
+            <button
+              v-for="n in networks"
+              :key="n.id"
+              type="button"
+              class="product-share__button"
+              :title="n.label"
+              :aria-label="n.label"
+              @click="onClick(n.id)"
+            >
+              <template v-if="n.icon">
+                <span v-if="isInlineSvg(n.icon)" class="product-share__icon" v-html="n.icon"></span>
+                <img v-else class="product-share__icon" :src="n.icon" alt="" aria-hidden="true" />
+              </template>
+              <span v-else class="product-share__network">{{ n.label }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Result

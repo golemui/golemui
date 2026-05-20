@@ -82,6 +82,22 @@ In the Programmatic API, widget loaders go inside `formConfig.widgetLoaders`. Th
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const formDef = [gui.inputs.textInput('username')];
+    const config = { formDef, data: {}, formConfig: { widgetLoaders } };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -146,6 +162,21 @@ In the JSON path, widget loaders go into the `customWidgetLoaders` property on t
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
@@ -253,6 +284,33 @@ The `formConfig.widgetLoaders` object now carries both the defaults and your cus
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const config = {
+      formDef: [
+        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+      ],
+      data: {},
+      formConfig: {
+        widgetLoaders: {
+          ...widgetLoaders,
+          productCard: async () =>
+            (await import('./widgets/ProductCard.vue')).default,
+        },
+      },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -343,6 +401,29 @@ The `customWidgetLoaders` property in `config` carries both the defaults and you
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: {
+        ...widgetLoaders,
+        productCard: async () =>
+          (await import('./widgets/ProductCard.vue')).default,
+      },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

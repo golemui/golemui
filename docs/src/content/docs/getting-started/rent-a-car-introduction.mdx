@@ -39,7 +39,7 @@ This tutorial follows the GolemUI default: **`gui.layouts.grid` for rows** (CSS 
 
 ## Where the form definition lives
 
-In [Installation](/getting-started/installation/) we authored the `formDef` array inline, in the same file as the React / Angular / Lit component. That keeps everything in one place while you're getting started, but for any non-trivial form it's a maintenance trap — the component file balloons, and reusing the form shape from a test, a script, or a backend becomes awkward.
+In [Installation](/getting-started/installation/) we authored the `formDef` array inline, in the same file as the React / Angular / Lit / Vue component. That keeps everything in one place while you're getting started, but for any non-trivial form it's a maintenance trap — the component file balloons, and reusing the form shape from a test, a script, or a backend becomes awkward.
 
 From this chapter on, **the tutorial moves the form definition into its own `.ts` file** and exports it as `default`:
 
@@ -120,6 +120,26 @@ Then import that default export from your component and include it in the `confi
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <!-- RentACarPage.vue -->
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import rentACarForm from './rent-a-car.form';
+
+    const config = {
+      formDef: rentACarForm,
+      data: {},
+      formConfig: { widgetLoaders },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

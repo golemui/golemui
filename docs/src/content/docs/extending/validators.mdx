@@ -75,6 +75,16 @@ In the Programmatic API, register custom validators inside `formConfig.customVal
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import { allowedNames } from './custom-validators/allowed-names';
+
+    const formConfig = {
+      customValidators: { allowedNames },
+    };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -115,6 +125,16 @@ In the JSON path, custom validators go in the `customValidators` property in the
       config = { formDef, customValidators: { allowedNames } };
       // render: html`<gui-form .config=${this.config}></gui-form>`
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import { allowedNames } from './custom-validators/allowed-names';
+    import formDef from './my-form.json';
+
+    const config = { formDef, customValidators: { allowedNames } };
+    // <GuiForm :config="config" />
     ```
 
   </Fragment>

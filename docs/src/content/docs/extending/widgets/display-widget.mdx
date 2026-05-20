@@ -243,6 +243,43 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+
+    **Key concepts (Vue)**
+
+    - `useDisplayWidget` is the simplest of the four composables — it returns just `uid` and the merged `templateData` ref.
+    - There's no `onValueChanged`, no events; you just render.
+    - Importing `@golemui/gui-components` once unlocks every GolemUI custom element (like `<gui-markdown-text>`) inside your SFC template. Make sure your Vite plugin marks `gui-*` tags as custom elements (see [Integration / Vue](/integration/vue/)).
+    - `:style="{ flex: templateData.size }"` lets the display participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```vue
+    <!-- ProductDescription.vue -->
+    <script setup lang="ts">
+    import type { DisplayWidget, WithWidget } from '@golemui/core';
+    import { useDisplayWidget } from '@golemui/vue';
+    import '@golemui/gui-components';
+
+    interface ProductDescriptionProps {
+      img: string;
+      description: string;
+    }
+
+    const props = defineProps<WithWidget>();
+    const widget = props.widget as DisplayWidget;
+    const { uid, templateData } = useDisplayWidget<ProductDescriptionProps>(widget);
+    </script>
+
+    <template>
+      <div class="product-description" :style="{ flex: templateData.size }">
+        <div class="product-description__widget" :id="uid">
+          <img class="product-description__image" :src="templateData.img" alt="Product" />
+          <gui-markdown-text :md.prop="templateData.description" />
+        </div>
+      </div>
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Result

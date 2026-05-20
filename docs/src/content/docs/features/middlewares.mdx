@@ -96,6 +96,25 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import * as Core from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const formDef = [gui.inputs.textInput('username')];
+    const formConfig = { widgetLoaders };
+    const middlewares = [Core.devToolsMiddleware()];
+    const config = { formDef, data: {}, formConfig, middlewares };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -170,6 +189,28 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import * as Core from '@golemui/core';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const middlewares = [Core.devToolsMiddleware()];
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: widgetLoaders,
+      middlewares,
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

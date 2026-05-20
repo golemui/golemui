@@ -96,6 +96,25 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import type { FormEvent } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = { formDef };
+
+    function handleFormEvent(event: FormEvent) {
+      // see each per-hook section below for the case body.
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-event="handleFormEvent" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 The per-hook sections below show only the `formDef` and the relevant `if (event.name === '…')` branch — drop them into your framework's wiring above.

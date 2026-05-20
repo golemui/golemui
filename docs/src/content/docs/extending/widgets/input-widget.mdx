@@ -9,7 +9,7 @@ import Demo from '../../../../../src/components/landing/Demo.astro';
 import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 
-An **input widget** binds to a `path` in the form data, supports validation, and tracks touched state. The framework helpers (`useInputWidget` in React, `InputWidgetAdapter` in Angular and Lit) handle data binding for you — your widget calls a few methods, the engine does the rest. The example we'll walk through is `productRating` — a star-based rating control.
+An **input widget** binds to a `path` in the form data, supports validation, and tracks touched state. The framework helpers (`useInputWidget` in React and Vue, `InputWidgetAdapter` in Angular and Lit) handle data binding for you — your widget calls a few methods, the engine does the rest. The example we'll walk through is `productRating` — a star-based rating control.
 
 ## Widget definition
 
@@ -301,6 +301,60 @@ gui.inputs.custom('productRating', 'product.rating', {
         this.subscriptions.forEach((s) => s.unsubscribe());
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+
+    **Key concepts (Vue)**
+
+    - `useInputWidget` returns reactive `Ref`s for `value`, `errors`, `isTouched`, and `templateData` (your custom props + engine-managed values). Vue's template auto-unwraps refs.
+    - Call `onValueChanged(newValue)` from a click handler — the engine writes through to the form data and runs validation.
+    - Call `onBlur()` when the user leaves the field. With `validateOn: 'blur'` (or `'eager'`), this triggers validation; either way, it sets `isTouched`.
+    - `:style="{ flex: templateData.size }"` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```vue
+    <!-- ProductRating.vue -->
+    <script setup lang="ts">
+    import type { InputWidget, WithWidget } from '@golemui/core';
+    import { useInputWidget } from '@golemui/vue';
+    import { computed } from 'vue';
+
+    interface ProductRatingProps {
+      maxRating: number;
+    }
+
+    const props = defineProps<WithWidget>();
+    const widget = props.widget as InputWidget<number>;
+    const { uid, value, errors, isTouched, templateData, onValueChanged, onBlur } =
+      useInputWidget<number, ProductRatingProps>(widget);
+
+    const maxRating = computed(() => templateData.value.maxRating || 5);
+    const stars = computed(() => Array.from({ length: maxRating.value }, (_, i) => i + 1));
+    </script>
+
+    <template>
+      <div class="product-rating" :style="{ flex: templateData.size }">
+        <div class="product-rating__widget" :id="uid">
+          <div class="product-rating__stars" tabindex="0" @blur="onBlur">
+            <span
+              v-for="star in stars"
+              :key="star"
+              role="button"
+              :class="['product-rating__star', star <= (value || 0) && 'product-rating__star--active']"
+              @click="onValueChanged(star)"
+            >
+              {{ star <= (value || 0) ? '★' : '☆' }}
+            </span>
+          </div>
+          <div v-if="isTouched && errors.length > 0" class="product-rating__errors">
+            <span v-for="(error, i) in errors" :key="i" class="product-rating__error">
+              {{ error }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </template>
     ```
 
   </Fragment>

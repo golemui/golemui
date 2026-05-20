@@ -131,6 +131,39 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import CountryItemRenderer from './CountryItemRenderer.vue';
+
+    const config = {
+      formDef: [
+        gui.inputs.dropdown('country', {
+          items: [
+            { id: 'US', flag: '🇺🇸', label: 'United States' },
+            { id: 'CA', flag: '🇨🇦', label: 'Canada' },
+          ],
+          labelField: 'label',
+          valueField: 'id',
+          itemRenderer: 'countryItemRenderer',
+        }),
+      ],
+      data: {},
+      formConfig: {
+        widgetLoaders,
+        itemRenderers: { countryItemRenderer: CountryItemRenderer },
+      },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -224,6 +257,27 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import CountryItemRenderer from './CountryItemRenderer.vue';
+    import formDef from './my-form.json';
+
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: widgetLoaders,
+      itemRenderers: { countryItemRenderer: CountryItemRenderer },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

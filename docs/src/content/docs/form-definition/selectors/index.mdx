@@ -78,6 +78,20 @@ Pass the array as `formSelectors` inside the `config` object:
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = { formDef, formSelectors, data: {} };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Read on

@@ -9,7 +9,7 @@ import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-Widgets emit named events through the `formEvent` callback you pass to `<gui-form>`. The form definition wires the widget event (a click, a value change, a load) to a name; your application matches on that name and reacts.
+Widgets emit named events through the `formEvent` callback you pass to `<gui-form>` (or the `@form-event` emit in Vue). The form definition wires the widget event (a click, a value change, a load) to a name; your application matches on that name and reacts.
 
 The event **name** is just a string you pick — your application listens for it. The form definition declares the wiring inline on the widget, identically in both paths.
 
@@ -59,7 +59,7 @@ const formDef = [
 
 ## Handling events in your component
 
-`formEvent` is a callback prop in React, an output in Angular, and a `CustomEvent` in Lit. Match on `event.name` and read `event.data`:
+`formEvent` is a callback prop in React, an output in Angular, a `CustomEvent` in Lit, and an emitted event (`@form-event`) in Vue. Match on `event.name` and read `event.data`:
 
 <DslTabs>
   <Fragment slot="dx">
@@ -177,6 +177,40 @@ const formDef = [
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import type { FormEvent } from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const config = {
+      formDef: [
+        gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+        gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+      ],
+      data: {},
+      formConfig: { widgetLoaders },
+    };
+
+    function onFormEvent(event: FormEvent) {
+      switch (event.name) {
+        case 'countryChanged':
+          console.log('Country selected:', event.data.country);
+          break;
+        case 'submitForm':
+          console.log('Submitting:', event.data);
+          break;
+      }
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-event="onFormEvent" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -280,6 +314,33 @@ const formDef = [
         `;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import type { FormEvent } from '@golemui/core';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = { formDef, data: {}, customWidgetLoaders: widgetLoaders };
+
+    function onFormEvent(event: FormEvent) {
+      switch (event.name) {
+        case 'countryChanged':
+          console.log('Country selected:', event.data.country);
+          break;
+        case 'submitForm':
+          console.log('Submitting:', event.data);
+          break;
+      }
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-event="onFormEvent" />
+    </template>
     ```
 
   </Fragment>

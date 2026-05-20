@@ -166,6 +166,25 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const config = {
+      formDef,
+      data: formData,
+      formConfig: { widgetLoaders },
+      localization: { /* i18next implementation */ },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 <Demo src="/template/index.html?form=template/styling/rtl.json&dir=rtl" />

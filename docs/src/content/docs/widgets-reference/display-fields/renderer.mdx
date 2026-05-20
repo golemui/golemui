@@ -82,6 +82,24 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import { gui } from '@golemui/gui-shared';
+    import { h } from 'vue';
+
+    const formDef = [
+      gui.displays.display((params) =>
+        h('div', { class: 'summary' }, [
+          h('h2', 'Booking summary'),
+          h('p', `Customer: ${params?.$form?.customer?.name ?? ''}`),
+        ]),
+      ),
+    ];
+    ```
+
+    The render callback returns a Vue `VNode` (built with `h()`). For richer templates, prefer a [custom display widget](/extending/widgets/display-widget/) that uses a full SFC.
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Reactivity

@@ -354,6 +354,40 @@ Where `validateOn` lives on the form component depends on the path:
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const formDef = [
+      gui.inputs.textInput('username', {
+        validator: {
+          required: true,
+          minLength: 2,
+          messages: {
+            required: 'Please enter a username',
+            minLength: 'Username must be at least 2 characters',
+          },
+        },
+      }),
+      gui.actions.submitButton({ label: 'Create User' }),
+    ];
+
+    const formConfig = {
+      widgetLoaders,
+      validateOn: 'change' as const,
+    };
+
+    const config = { formDef, data: {}, formConfig };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -425,6 +459,26 @@ Where `validateOn` lives on the form component depends on the path:
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: widgetLoaders,
+      validateOn: 'change' as const,
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

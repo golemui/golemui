@@ -9,10 +9,10 @@ import { Aside } from '@astrojs/starlight/components';
 import DslTabs from '../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../src/components/IntegrationTabs.astro';
 
-This page is the canonical reference for every input the form component accepts. The same surface ships in React, Angular, and Lit — only the binding syntax differs (`prop={...}` for React, `[prop]="..."` for Angular, `.prop=${...}` for Lit). For the framework-typed signatures, see [React](/integration/react/), [Angular](/integration/angular/), [Lit](/integration/lit/).
+This page is the canonical reference for every input the form component accepts. The same surface ships in React, Angular, Lit, and Vue — only the binding syntax differs (`prop={...}` for React, `[prop]="..."` for Angular, `.prop=${...}` for Lit, `:prop="..."` for Vue). For the framework-typed signatures, see [React](/integration/react/), [Angular](/integration/angular/), [Lit](/integration/lit/), [Vue](/integration/vue/).
 
 <Aside type="caution" title="Pass `config` as a stable reference">
-Assemble the `config` object **once** — as a module-level constant in React, a class field in Lit/Angular — and pass that named reference to the form component. The wrappers treat a new `config` reference as a signal to tear down and rebuild the form's internal store; passing a fresh object literal on every render reinitializes the store every render (and, if a parent re-renders in response to a form event, can produce an infinite reinit loop). Every snippet on this page follows that pattern — `const config = { … }` in React, `protected config = { … }` / `config = { … }` for Angular and Lit class fields — then `<GuiForm config={config} />` (or the framework equivalent).
+Assemble the `config` object **once** — as a module-level constant in React/Vue, a class field in Lit/Angular — and pass that named reference to the form component. The wrappers treat a new `config` reference as a signal to tear down and rebuild the form's internal store; passing a fresh object literal on every render reinitializes the store every render (and, if a parent re-renders in response to a form event, can produce an infinite reinit loop). Every snippet on this page follows that pattern — `const config = { … }` in React/Vue, `protected config = { … }` / `config = { … }` for Angular and Lit class fields — then `<GuiForm config={config} />` (or the framework equivalent).
 </Aside>
 
 <DslTabs>
@@ -66,6 +66,12 @@ Assemble the `config` object **once** — as a module-level constant in React, a
         // render(): html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const config = { formDef, data: {} };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
     See [Form Definition API](/form-definition/overview/).
@@ -110,6 +116,14 @@ Assemble the `config` object **once** — as a module-level constant in React, a
         // class field:
         config = { formDef, data: {} };
         // render(): html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import formDef from './my-form.json';
+
+        const config = { formDef, data: {} };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -162,6 +176,12 @@ Wire it alongside `formDef`:
     // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    const config = { formDef, formSelectors, data: {} };
+    // <GuiForm :config="config" />
+    ```
+  </Fragment>
 </IntegrationTabs>
 
 #### `formConfig`
@@ -201,6 +221,12 @@ Wire it alongside `formDef`:
     // class field:
     config = { formDef, formConfig, data: {} };
     // render(): html`<gui-form .config=${this.config}></gui-form>`
+    ```
+  </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    const config = { formDef, formConfig, data: {} };
+    // <GuiForm :config="config" />
     ```
   </Fragment>
 </IntegrationTabs>
@@ -301,6 +327,34 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, widgetLoaders } from '@golemui/gui-vue';
+
+    const config = {
+      formDef: [
+        gui.inputs.textInput('name', { label: 'Name' }),
+        gui.actions.submitButton({ label: 'Submit' }),
+      ],
+      formSelectors: [
+        gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
+      ],
+      formConfig: {
+        widgetLoaders,
+        validateOn: 'eager' as const,
+      },
+      data: {},
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
@@ -430,6 +484,32 @@ A complete component skeleton wiring a JSON `formDef` plus the standalone engine
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+    import CountryRenderer from './renderers/CountryRenderer.vue';
+    import { allowedNames } from './validators/allowed-names';
+
+    const config = {
+      formDef,
+      data: {},
+      customWidgetLoaders: {
+        productCard: async () => (await import('./widgets/ProductCard.vue')).default,
+      },
+      itemRenderers: { countryRenderer: CountryRenderer },
+      customValidators: { allowedNames },
+      validateOn: 'eager' as const,
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -468,6 +548,14 @@ The initial form data object. Reads/writes flow through the engine's reactive st
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    const formData = { username: 'golemui', email: 'hello@example.com' };
+    const config = { formDef, data: formData };
+    // <GuiForm :config="config" />
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 #### `meta`
@@ -499,6 +587,14 @@ Optional out-of-band metadata you want to thread through events and state. The e
       meta: { tenantId: 'acme-co', sessionId: 'abc-123' },
     };
     // render(): html`<gui-form .config=${this.config}></gui-form>`
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    const formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
+    const config = { formDef, data: formData, meta: formMeta };
+    // <GuiForm :config="config" />
     ```
 
   </Fragment>
@@ -567,6 +663,19 @@ Map of widget `type` → async loader. Merged with the framework's default widge
         // html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import { widgetLoaders } from '@golemui/gui-vue';
+
+        const formConfig = {
+          widgetLoaders: {
+            ...widgetLoaders,
+            productCard: async () => (await import('./ProductCard.vue')).default,
+          },
+        };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -598,6 +707,14 @@ Map of widget `type` → async loader. Merged with the framework's default widge
             (await import('./product-card.element')).ProductCardElement,
         };
         // html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const customWidgetLoaders = {
+          productCard: async () => (await import('./ProductCard.vue')).default,
+        };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -646,6 +763,16 @@ Map of renderer name → framework-specific component. Referenced from a widget'
         // html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import CountryRenderer from './CountryRenderer.vue';
+
+        const formConfig = {
+          itemRenderers: { countryRenderer: CountryRenderer },
+        };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -675,6 +802,14 @@ Map of renderer name → framework-specific component. Referenced from a widget'
 
         itemRenderers = { countryRenderer };
         // html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import CountryRenderer from './CountryRenderer.vue';
+
+        const itemRenderers = { countryRenderer: CountryRenderer };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -741,6 +876,16 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
         // html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
+
+        const formConfig = {
+          customValidators: { allowedNames },
+        };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -770,6 +915,14 @@ export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
 
         customValidators = { allowedNames };
         // html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import { allowedNames } from './validators/allowed-names';
+
+        const customValidators = { allowedNames };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -830,6 +983,12 @@ type ValidateOn =
         // html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const formConfig = { validateOn: 'change' as const };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -855,6 +1014,12 @@ type ValidateOn =
         // class field:
         config = { formDef: this.formDef, validateOn: 'change' as Core.ValidateOn };
         // render(): html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const config = { formDef, validateOn: 'change' as const };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -905,6 +1070,16 @@ You can use any markdown parser that exposes a `(markdown: string) => string` fu
         // html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        const formConfig = {
+          dependencies: { markdown: { parse: snarkdown } },
+        };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -934,6 +1109,14 @@ You can use any markdown parser that exposes a `(markdown: string) => string` fu
 
         dependencies = { markdown: { parse: snarkdown } };
         // html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        import snarkdown from 'snarkdown';
+
+        const dependencies = { markdown: { parse: snarkdown } };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -980,6 +1163,16 @@ Named boolean expressions evaluated against `$form`.
           },
         };
         // html`<gui-form .config=${this.config}></gui-form>`
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const formConfig = {
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -1031,6 +1224,12 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
         html`<gui-form .config=${this.config}></gui-form>`;
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const config = { formDef, data: formData, formConfig, localization };
+        // <GuiForm :config="config" />
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -1052,6 +1251,12 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
       <Fragment slot="lit">
         ```ts
         html`<gui-form .config=${this.config}></gui-form>`;
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```ts
+        const config = { formDef, data: formData, customWidgetLoaders, localization };
+        // <GuiForm :config="config" />
         ```
       </Fragment>
     </IntegrationTabs>
@@ -1098,6 +1303,16 @@ Array of `Core.Middleware` functions wrapping the form's reactive store — used
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import * as Core from '@golemui/core';
+
+    const middlewares = [Core.devToolsMiddleware()];
+    const config = { formDef, data: formData, middlewares };
+    // <GuiForm :config="config" />
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 #### `autocomplete`
@@ -1119,6 +1334,11 @@ Sets the underlying `<form>` element's `autocomplete` attribute. Useful to disab
   <Fragment slot="lit">
     ```ts
     html`<gui-form .config=${this.config} .autocomplete=${'off'}></gui-form>`;
+    ```
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <GuiForm :config="config" autocomplete="off" />
     ```
   </Fragment>
 </IntegrationTabs>
@@ -1146,6 +1366,12 @@ Optional form identifier. Useful when you have several `<gui-form>` instances on
     // class field:
     config = { formDef: this.formDef, formName: 'checkout' };
     // render(): html`<gui-form .config=${this.config}></gui-form>`
+    ```
+  </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    const config = { formDef, formName: 'checkout' };
+    // <GuiForm :config="config" />
     ```
   </Fragment>
 </IntegrationTabs>
@@ -1204,6 +1430,27 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import type { FormEvent } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = { formDef, data: formData };
+
+    function onFormEvent(event: FormEvent) {
+      if (event.name === 'submit') {
+        console.log('Submit:', event.data);
+      }
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-event="onFormEvent" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 #### `formHealth`
@@ -1249,6 +1496,25 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
       .config=${this.config}
       @formHealth=${(e: CustomEvent<Core.FormHealth>) => this.onFormHealth(e.detail)}
     ></gui-form>`;
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import type { FormHealth } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = { formDef, data: formData };
+
+    function onFormHealth(health: FormHealth) {
+      console.log('Health:', health.status);
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-health="onFormHealth" />
+    </template>
     ```
 
   </Fragment>
