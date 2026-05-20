@@ -34,7 +34,7 @@ const formDef: DxDefinitionItem[] = [
     uid: 'button',
     label: 'Send',
     disabled: { when: '$formIsInvalid' },
-    on: { click: 'send' },
+    onClick: () => 'send',
   }),
   gui.displays.alert({
     uid: 'send-result',

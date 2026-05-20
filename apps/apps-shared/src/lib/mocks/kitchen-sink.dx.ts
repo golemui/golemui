@@ -121,7 +121,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
       ],
       { defaultOpen: 'tabAlert', onChange: 'onTabEvent' },
     ),
-    gui.actions.button({ label: 'Create', icon: 'save', iconPosition: 'right', onClick: 'submit' }),
+    gui.actions.submitButton({ label: 'Create', icon: 'save', iconPosition: 'right' }),
   ],
   formSelectors: [
     // Suppress DX-layer auto-labels and auto-placeholders on every input —
