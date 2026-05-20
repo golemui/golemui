@@ -1,0 +1,27 @@
+{
+  "name": "golemui-vue-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@golemui/core": "0.14.0",
+    "@golemui/gui-components": "0.14.0",
+    "@golemui/gui-shared": "0.14.0",
+    "@golemui/gui-validators": "0.14.0",
+    "@golemui/gui-vue": "0.14.0",
+    "@golemui/vue": "0.14.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.5",
+    "vue-tsc": "^2.2.0"
+  }
+}
