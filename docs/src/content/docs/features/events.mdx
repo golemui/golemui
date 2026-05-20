@@ -26,7 +26,10 @@ const formDef = [
     onChange: 'countryChanged',
     items: ['US', 'CA', 'MX'],
   }),
-  gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+  gui.actions.button('submit', {
+    label: 'Submit',
+    onClick: () => 'submitForm',
+  }),
 ];
 ```
 
@@ -73,7 +76,7 @@ const formDef = [
 
     const formDef = [
       gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-      gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+      gui.actions.button('submit', { label: 'Submit', onClick: () => 'submitForm' }),
     ];
     const formConfig = { widgetLoaders: React.widgetLoaders };
 
@@ -113,7 +116,7 @@ const formDef = [
       protected config = {
         formDef: [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-          gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+          gui.actions.button('submit', { label: 'Submit', onClick: () => 'submitForm' }),
         ],
         data: {},
         formConfig: { widgetLoaders: Angular.widgetLoaders },
@@ -146,7 +149,7 @@ const formDef = [
       config = {
         formDef: [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-          gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+          gui.actions.button('submit', { label: 'Submit', onClick: () => 'submitForm' }),
         ],
         data: {},
         formConfig: { widgetLoaders: Lit.widgetLoaders },

@@ -24,7 +24,7 @@ gui.actions.button(
     iconPosition: 'right',
     disabled: false,
     uid: 'save-btn',
-    onClick: 'saveChanges', // event name routed through `formEvent` (or 'submit' to trigger validation)
+    onClick: () => 'saveChanges', // event name routed through `formEvent`
     states: {
       // per-state overrides — see /form-definition/states/
       submitting: { label: 'Saving…', disabled: true },
@@ -33,10 +33,10 @@ gui.actions.button(
   ['primary'], // tags — addressable groups for selectors
 );
 
-gui.actions.submitButton({ label: 'Submit' }); // shorthand for { uid: '#submit', label: '…' }
+gui.actions.submitButton({ label: 'Submit' }); // shorthand for { uid: '#submit', on: {click: 'submit'}, label: '…' } - triggers validation - doesn't accept onClick (it's pre-baked)
 ```
 
-`onClick` accepts a literal `'submit'` (triggers form-level validation first), any other string (the event name your `formEvent` callback receives), or a function callback that runs on click. See [Events](/form-definition/events/) for the full table.
+`onClick` accepts a string (the event name your `formEvent` callback receives), or a function callback that runs on click. See [Events](/form-definition/events/) for the full table.
 
 ## Shortcuts
 

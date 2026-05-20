@@ -5,8 +5,8 @@ sidebar:
   order: 4
 ---
 
-import DslTabs from '../../../../components/DslTabs.astro';
 import { Aside } from '@astrojs/starlight/components';
+import DslTabs from '../../../../components/DslTabs.astro';
 
 States are simple boolean expressions, so you can compose them inline with `&&` and `||`. The convention in GolemUI is to **define one canonical expression per state** — don't reference state names inside other state expressions; recombine raw `$form.*` reads instead.
 
@@ -184,9 +184,7 @@ gui.actions.button('login', {
     'register:minor:canSubmit': { disabled: false },
     'register:adult:canSubmit': { disabled: false },
   },
-  on: {
-    click: 'handleLogin',
-  },
+  onClick: () => 'handleLogin',
 });
 ```
 

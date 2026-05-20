@@ -5,8 +5,8 @@ sidebar:
   order: 3
 ---
 
-import Demo from '../../../components/landing/Demo.astro';
 import DslTabs from '../../../components/DslTabs.astro';
+import Demo from '../../../components/landing/Demo.astro';
 
 Each shortcut group exposes a `.custom()` factory for widgets you've implemented yourself. The shape mirrors the built-in shortcuts but takes the widget `type` as the first argument.
 
@@ -111,11 +111,10 @@ const formDef = [
         ],
         onClick: 'shareEvent',
       }),
-      gui.actions.button({
+      gui.actions.submitButton({
         label: 'Submit',
         icon: 'save',
         iconPosition: 'right',
-        onClick: 'submit',
       }),
     ],
     { title: 'Rate Our Product' },

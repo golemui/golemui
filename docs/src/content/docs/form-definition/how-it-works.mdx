@@ -84,7 +84,7 @@ through the `formEvent` callback when clicked.
 
 ```ts
 gui.actions.submitButton({ label: 'Save' });
-gui.actions.button({ label: 'Cancel', onClick: 'cancelForm' });
+gui.actions.button({ label: 'Cancel', onClick: () => 'cancelForm' });
 ```
 
 → See the full list at **[`gui.actions` reference](/form-definition/reference/gui-actions/)**.

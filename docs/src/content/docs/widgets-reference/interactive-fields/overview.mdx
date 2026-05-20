@@ -17,18 +17,18 @@ const formDef = [
   gui.actions.submitButton({ label: 'Submit' }),
 
   // A free-form button — emits whatever event name you provide.
-  gui.actions.button({ label: 'Cancel', on: { click: 'cancelForm' } }),
+  gui.actions.button({ label: 'Cancel', onClick: () => 'cancelForm' }),
 
   // Plug in your own action widget.
-  gui.actions.custom('productShare', { onClick: 'shareEvent' }),
+  gui.actions.custom('productShare', { onClick: () => 'shareEvent' }),
 ];
 ```
 
-| Shortcut                   | Description                                                                                                                                                                             |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `gui.actions.button`       | A button widget ([Button](/widgets-reference/interactive-fields/button/)). Use `onClick: 'submit'` for the form-submit literal, or `on: { click: '<eventName>' }` for arbitrary events. |
-| `gui.actions.submitButton` | A button preconfigured with `onClick: 'submit'`.                                                                                                                                        |
-| `gui.actions.custom`       | Plug in your own action widget ([Custom Widgets](/form-definition/custom-widgets/)).                                                                                                    |
+| Shortcut                   | Description                                                                                                                                                                                   |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gui.actions.button`       | A button widget ([Button](/widgets-reference/interactive-fields/button/)). Use `onClick: () => 'submit'` for the form-submit literal, or `onClick: () => '<eventName>'` for arbitrary events. |
+| `gui.actions.submitButton` | A button preconfigured with `onClick: () => 'submit'`.                                                                                                                                        |
+| `gui.actions.custom`       | Plug in your own action widget ([Custom Widgets](/form-definition/custom-widgets/)).                                                                                                          |
 
 ## JSON form
 

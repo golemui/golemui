@@ -108,7 +108,7 @@ Buttons fire `onClick` events. The handler matches by `event.name` and dispatche
 const formDef = [
   gui.actions.button({
     label: 'Click me',
-    onClick: 'evClick',
+    onClick: () => 'evClick',
   }),
   gui.inputs.textInput('evClickResult', {
     label: 'Last click',
@@ -276,7 +276,7 @@ const formDef = [
   }),
   gui.actions.submitButton({ label: 'Submit' }),
   // — or equivalently —
-  // gui.actions.button({ label: 'Submit', onClick: 'submit' }),
+  // gui.actions.button({ label: 'Submit', onClick: () => 'submit' }),
   gui.inputs.textInput('evSubmittedEmail', {
     label: 'Result',
     readonly: true,
