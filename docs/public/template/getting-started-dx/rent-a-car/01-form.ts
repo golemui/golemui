@@ -99,9 +99,5 @@ export default [
   gui.inputs.textInput('discountCode', {
     label: 'Discount code',
   }),
-  gui.actions.button({
-    label: 'Reserve',
-    uid: 'submit',
-    onClick: 'submit',
-  }),
+  gui.actions.submitButton({ label: 'Reserve' }),
 ];

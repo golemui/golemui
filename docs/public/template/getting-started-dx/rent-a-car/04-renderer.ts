@@ -170,9 +170,5 @@ export default [
       in: ['hasDiscount'],
     },
   }),
-  gui.actions.button({
-    label: 'Reserve',
-    uid: 'submit',
-    onClick: 'submit',
-  }),
+  gui.actions.submitButton({ label: 'Reserve' }),
 ];

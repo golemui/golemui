@@ -485,7 +485,7 @@ export const signupForm = [
     label: 'I accept the terms of service',
     validator: { const: true },
   }),
-  gui.actions.button({ label: 'Sign up', onClick: 'submit' }),
+  gui.actions.submitButton({ label: 'Sign up' }),
 ];`,
 };
 
