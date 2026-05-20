@@ -213,10 +213,11 @@ Before GolemUI can render your custom widgets, you need to register them in the 
 <IntegrationTabs>
   <Fragment slot="react">
     ```ts
-    import * as Core from '@golemui/core';
+    import type { WidgetLoaders, WithWidget } from '@golemui/core';
+    import type { ComponentType } from 'react';
 
-    export const customWidgetLoaders: Core.WidgetLoaders<
-      React.ComponentType<Core.WithWidget>
+    export const customWidgetLoaders: WidgetLoaders<
+      ComponentType<WithWidget>
     > = {
       productCard: async () =>
         (await import('./widgets/ProductCard')).ProductCard,
@@ -232,10 +233,10 @@ Before GolemUI can render your custom widgets, you need to register them in the 
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Core from '@golemui/core';
-    import { Type } from '@angular/core';
+    import type { WidgetLoaders, WithWidget } from '@golemui/core';
+    import type { Type } from '@angular/core';
 
-    export const customWidgetLoaders: Core.WidgetLoaders<Type<Core.WithWidget>> = {
+    export const customWidgetLoaders: WidgetLoaders<Type<WithWidget>> = {
       productCard: async () =>
         (await import('./widgets/product-card/product-card.component'))
           .ProductCardComponent,
@@ -257,9 +258,9 @@ Before GolemUI can render your custom widgets, you need to register them in the 
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Core from '@golemui/core';
+    import type { WidgetLoaders } from '@golemui/core';
 
-    export const customWidgetLoaders: Core.WidgetLoaders<any> = {
+    export const customWidgetLoaders: WidgetLoaders<any> = {
       productCard: async () => {
         await import('./widgets/product-card.element');
         return 'app-product-card';
@@ -309,8 +310,8 @@ With all four widgets implemented and registered, here's the complete form setup
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
-    import * as React from '@golemui/react';
+    import type { FormEvent } from '@golemui/core';
+    import { GuiForm } from '@golemui/react';
     import { gui } from '@golemui/gui-shared';
     import { customWidgetLoaders } from './custom-widget-loaders';
 
@@ -340,7 +341,7 @@ With all four widgets implemented and registered, here's the complete form setup
         linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       };
 
-      const handleFormEvent = (event: Core.FormEvent) => {
+      const handleFormEvent = (event: FormEvent) => {
         if (event.name === 'shareEvent') {
           const network = event.detail as string;
           const buildUrl = SHARE_URLS[network];
@@ -350,7 +351,7 @@ With all four widgets implemented and registered, here's the complete form setup
         }
       };
 
-      return <React.GuiForm config={config} formEvent={handleFormEvent} />;
+      return <GuiForm config={config} formEvent={handleFormEvent} />;
     }
     ```
 
@@ -358,14 +359,14 @@ With all four widgets implemented and registered, here's the complete form setup
   <Fragment slot="angular">
     ```ts
     import { Component } from '@angular/core';
-    import * as Angular from '@golemui/angular';
-    import * as Core from '@golemui/core';
+    import { FormComponent } from '@golemui/angular';
+    import type { FormEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
     import { customWidgetLoaders } from './widget-loaders';
 
     @Component({
       standalone: true,
-      imports: [Angular.FormComponent],
+      imports: [FormComponent],
       template: `
         <gui-form
           [config]="config"
@@ -399,7 +400,7 @@ With all four widgets implemented and registered, here's the complete form setup
         linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       };
 
-      handleFormEvent(event: Core.FormEvent) {
+      handleFormEvent(event: FormEvent) {
         if (event.name === 'shareEvent') {
           const network = event.detail as string;
           const buildUrl = this.SHARE_URLS[network];
@@ -416,7 +417,8 @@ With all four widgets implemented and registered, here's the complete form setup
     ```ts
     import { html, LitElement } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
+    import '@golemui/lit';
     import { gui } from '@golemui/gui-shared';
     import { customWidgetLoaders } from './widget-loaders';
 
@@ -449,7 +451,7 @@ With all four widgets implemented and registered, here's the complete form setup
         return html`
           <gui-form
             .config=${this.config}
-            @form-event=${(e: CustomEvent<Core.FormEvent>) =>
+            @form-event=${(e: CustomEvent<FormEvent>) =>
               this.handleFormEvent(e.detail)}
           ></gui-form>
         `;
@@ -461,7 +463,7 @@ With all four widgets implemented and registered, here's the complete form setup
         linkedin: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       };
 
-      handleFormEvent(event: Core.FormEvent) {
+      handleFormEvent(event: FormEvent) {
         if (event.name === 'shareEvent') {
           const network = event.detail as string;
           const buildUrl = this.SHARE_URLS[network];

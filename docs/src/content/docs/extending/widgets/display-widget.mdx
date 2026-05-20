@@ -66,7 +66,7 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
 
     ```tsx
     // ProductDescription.tsx
-    import * as Core from '@golemui/core';
+    import type { DisplayWidget, WithWidget } from '@golemui/core';
     import { useDisplayWidget } from '@golemui/react';
     import '@golemui/gui-components';
 
@@ -75,8 +75,8 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
       description: string;
     }
 
-    export function ProductDescription(widgetInstance: Core.WithWidget) {
-      const widget = widgetInstance.widget as Core.DisplayWidget;
+    export function ProductDescription(widgetInstance: WithWidget) {
+      const widget = widgetInstance.widget as DisplayWidget;
       const { uid, templateData } =
         useDisplayWidget<ProductDescriptionProps>(widget);
 
@@ -100,7 +100,7 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
 
     **Key concepts (Angular)**
 
-    - Provide `Angular.DisplayWidgetAdapter`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter exposes a reactive `templateData` signal.
+    - Provide `DisplayWidgetAdapter`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter exposes a reactive `templateData` signal.
     - Since `gui-markdown-text` is a web component (not an Angular component), add `CUSTOM_ELEMENTS_SCHEMA` to the `schemas` array so Angular doesn't complain about unknown elements.
     - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the display participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
 
@@ -113,8 +113,8 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
       OnDestroy,
       OnInit,
     } from '@angular/core';
-    import * as Angular from '@golemui/angular';
-    import * as Core from '@golemui/core';
+    import { DisplayWidgetAdapter } from '@golemui/angular';
+    import type { DisplayWidget, WithWidget } from '@golemui/core';
     import '@golemui/gui-components';
 
     interface ProductDescriptionProps {
@@ -125,7 +125,7 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     @Component({
       standalone: true,
       selector: 'app-product-description',
-      providers: [Angular.DisplayWidgetAdapter],
+      providers: [DisplayWidgetAdapter],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       host: {
         class: 'product-description',
@@ -145,12 +145,12 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
       `,
     })
     export class ProductDescriptionComponent
-      implements OnInit, OnDestroy, Core.WithWidget
+      implements OnInit, OnDestroy, WithWidget
     {
-      widget!: Core.DisplayWidget;
+      widget!: DisplayWidget;
 
-      protected adapter: Angular.DisplayWidgetAdapter<ProductDescriptionProps> =
-        inject(Angular.DisplayWidgetAdapter);
+      protected adapter: DisplayWidgetAdapter<ProductDescriptionProps> =
+        inject(DisplayWidgetAdapter);
 
       ngOnInit(): void {
         this.adapter.init(this.widget);
@@ -178,8 +178,13 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     import { customElement } from 'lit/decorators.js';
     import { consume, provide } from '@lit/context';
     import { Subscription } from 'rxjs';
-    import * as Core from '@golemui/core';
-    import * as Lit from '@golemui/lit';
+    import type { DisplayWidget, WithWidget } from '@golemui/core';
+    import {
+      DisplayWidgetAdapter,
+      displayWidgetContext,
+      formContext,
+      type LitFormContext,
+    } from '@golemui/lit';
     import '@golemui/gui-components';
 
     interface ProductDescriptionProps {
@@ -190,15 +195,15 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     @customElement('app-product-description')
     export class ProductDescriptionElement
       extends LitElement
-      implements Core.WithWidget
+      implements WithWidget
     {
-      widget!: Core.DisplayWidget;
+      widget!: DisplayWidget;
 
-      @consume({ context: Lit.formContext })
-      formContext!: Lit.LitFormContext<any>;
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
 
-      @provide({ context: Lit.displayWidgetContext })
-      adapter = new Lit.DisplayWidgetAdapter<ProductDescriptionProps>();
+      @provide({ context: displayWidgetContext })
+      adapter = new DisplayWidgetAdapter<ProductDescriptionProps>();
 
       subscriptions: Subscription[] = [];
 

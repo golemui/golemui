@@ -49,7 +49,7 @@ In your `formEvent` callback, match the event name and read `event.data`:
       `,
     })
     export class AppPage {
-      onFormEvent(event: Core.FormEvent) {
+      onFormEvent(event: FormEvent) {
         if (event.name === 'handleReservation') {
           console.log('Reservation:', event.data);
         }

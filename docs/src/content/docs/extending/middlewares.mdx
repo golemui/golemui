@@ -8,9 +8,9 @@ sidebar:
 A middleware is a function that wraps the store's dispatch pipeline. The signature is the standard Redux-style triple-function:
 
 ```ts
-import * as Core from '@golemui/core';
+import type { Middleware, State, Action } from '@golemui/core';
 
-export const myMiddleware: Core.Middleware<Core.State, Core.Action> =
+export const myMiddleware: Middleware<State, Action> =
   (store) => (next) => (action) => {
     // inspect / branch on `action` and `store.getState()` here
     return next(action);
@@ -24,13 +24,10 @@ Pass it through the `middlewares` prop of the form component (this stays as a se
 Suppose you want to know which languages your users actually pick. GolemUI dispatches a `SET_LANGUAGE` action every time the active translator notifies of a language change (see [i18n](/features/i18n/)), so a middleware can forward that to your analytics service without touching the form definition.
 
 ```ts
-import * as Core from '@golemui/core';
+import type { Middleware, State, Action } from '@golemui/core';
 import { analytics } from './analytics'; // your analytics SDK
 
-export const languageAnalyticsMiddleware: Core.Middleware<
-  Core.State,
-  Core.Action
-> = (store) => (next) => (action) => {
+export const languageAnalyticsMiddleware: Middleware<State, Action> = (store) => (next) => (action) => {
   if (action.type !== 'SET_LANGUAGE') {
     return next(action);
   }
@@ -65,7 +62,7 @@ That's all — the next time the user switches the language dropdown your analyt
 
 ## Other patterns
 
-- **Logging.** Log every action and resulting state — useful during development. The built-in `Core.loggerMiddleware` does this.
+- **Logging.** Log every action and resulting state — useful during development. The built-in `loggerMiddleware` from `@golemui/core` does this.
 - **Persistence.** Watch `SET_WIDGET_DATA` actions and persist the form state to `localStorage`, then rehydrate on next mount.
 - **Telemetry.** Same shape as the example above, but track other actions — `'INJECT_VALIDATION_ISSUES'` for validation failures, `'SET_WIDGET_DATA'` for engagement on specific fields, etc.
 

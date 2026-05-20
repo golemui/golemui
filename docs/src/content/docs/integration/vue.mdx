@@ -147,10 +147,10 @@ All initialization properties are bundled in the required `config` prop (`GuiFor
 | `customWidgetLoaders` | `WidgetLoaders<Component<WithWidget>>`       | Custom widget map; merged with the default Vue widget set.                                      |
 | `itemRenderers`       | `Record<string, VueItemRenderer<any>>`       | Custom item-renderer map (for dropdown, list, etc.).                                            |
 | `customValidators`    | `CustomValidatorSchemas`                     | Custom validator schemas referenced by `validator: { type: 'custom', ... }`.                    |
-| `middlewares`         | `Core.Middleware<Core.State, Core.Action>[]` | Store middlewares (logging, persistence, devtools).                                             |
-| `validateOn`          | `Core.ValidateOn`                            | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
+| `middlewares`         | `Middleware<State, Action>[]`                | Store middlewares (logging, persistence, devtools).                                             |
+| `validateOn`          | `ValidateOn`                                 | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
 | `dependencies`        | `Dependencies`                               | External helpers (e.g. a markdown parser).                                                      |
-| `localization`        | `Core.I18nTranslator`                        | Translator implementing the `I18nTranslator` interface.                                         |
+| `localization`        | `I18nTranslator`                             | Translator implementing the `I18nTranslator` interface.                                         |
 | `formName`            | `string`                                     | Optional form identifier (useful when you have several forms on a page).                        |
 
 Direct props (outside `config`):
@@ -163,8 +163,8 @@ The component also emits two **events**:
 
 | Event          | Payload type      | Description                                      |
 | -------------- | ----------------- | ------------------------------------------------ |
-| `@form-event`  | `Core.FormEvent`  | Fired when a widget fires a wired event.         |
-| `@form-health` | `Core.FormHealth` | Fired when the form's validation status changes. |
+| `@form-event`  | `FormEvent`       | Fired when a widget fires a wired event.         |
+| `@form-health` | `FormHealth`      | Fired when the form's validation status changes. |
 
 See [Configuration](/integration/configuration/) for details on each prop, plus the **Programmatic-only vs JSON-form** notes.
 

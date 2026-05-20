@@ -14,7 +14,7 @@ Custom validators are functions that follow the `CustomValidatorSchemaFn` interf
 ## Implementing a custom validator
 
 ```ts
-import * as z from 'zod';
+import { z } from 'zod';
 import type { CustomValidatorSchemaFn } from '@golemui/gui-validators';
 
 export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
@@ -188,7 +188,7 @@ This combination is Programmatic-only: pure JSON forms cannot host a runtime fun
 ### 1. Implement the schema function
 
 ```ts
-import * as z from 'zod';
+import { z } from 'zod';
 import type { CustomValidatorSchemaFn } from '@golemui/gui-validators';
 
 export const passwordsMatch: CustomValidatorSchemaFn = (other: string) =>

@@ -60,15 +60,15 @@ Pick your framework — each tab walks through the key concepts and the full imp
 
     ```tsx
     // ProductCard.tsx
-    import * as Core from '@golemui/core';
+    import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
     import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 
     interface ProductCardProps {
       title: string;
     }
 
-    export function ProductCard(widgetInstance: Core.WithWidget) {
-      const widget = widgetInstance.widget as Core.LayoutWidget;
+    export function ProductCard(widgetInstance: WithWidget) {
+      const widget = widgetInstance.widget as LayoutWidget;
       const { uid, children, templateData } =
         useLayoutWidget<ProductCardProps>(widget);
 
@@ -78,7 +78,7 @@ Pick your framework — each tab walks through the key concepts and the full imp
             <h2 className="product-card__title">{templateData.title}</h2>
             <div className="product-card__content">
               {children.map((child) => {
-                const w = child as Core.NonFunctionWidget<string>;
+                const w = child as NonFunctionWidget<string>;
                 return <WidgetRenderer key={w.uid} widget={w} />;
               })}
             </div>
@@ -93,15 +93,15 @@ Pick your framework — each tab walks through the key concepts and the full imp
 
     **Key concepts (Angular)**
 
-    - Provide `Angular.LayoutWidgetAdapter` in the component's `providers`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter exposes a reactive `templateData` signal.
+    - Provide `LayoutWidgetAdapter` in the component's `providers`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter exposes a reactive `templateData` signal.
     - Render children with the structural `guiWidget` directive, which resolves and instantiates each child from the registry.
     - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the layout participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
 
     ```ts
     // product-card.component.ts
     import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-    import * as Angular from '@golemui/angular';
-    import * as Core from '@golemui/core';
+    import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
+    import type { LayoutWidget, WithWidget } from '@golemui/core';
 
     interface ProductCardProps {
       title: string;
@@ -110,8 +110,8 @@ Pick your framework — each tab walks through the key concepts and the full imp
     @Component({
       standalone: true,
       selector: 'app-product-card',
-      imports: [Angular.WidgetDirective],
-      providers: [Angular.LayoutWidgetAdapter],
+      imports: [WidgetDirective],
+      providers: [LayoutWidgetAdapter],
       host: {
         class: 'product-card',
         '[style.flex]': 'this.adapter.templateData().size',
@@ -130,12 +130,12 @@ Pick your framework — each tab walks through the key concepts and the full imp
       `,
     })
     export class ProductCardComponent
-      implements OnInit, OnDestroy, Core.WithWidget
+      implements OnInit, OnDestroy, WithWidget
     {
-      widget!: Core.LayoutWidget;
+      widget!: LayoutWidget;
 
-      protected adapter: Angular.LayoutWidgetAdapter<ProductCardProps> =
-        inject(Angular.LayoutWidgetAdapter);
+      protected adapter: LayoutWidgetAdapter<ProductCardProps> =
+        inject(LayoutWidgetAdapter);
 
       ngOnInit(): void {
         this.adapter.init(this.widget);
@@ -164,8 +164,13 @@ Pick your framework — each tab walks through the key concepts and the full imp
     import { consume, provide } from '@lit/context';
     import { repeat } from 'lit-html/directives/repeat.js';
     import { Subscription } from 'rxjs';
-    import * as Core from '@golemui/core';
-    import * as Lit from '@golemui/lit';
+    import type { LayoutWidget, WithWidget } from '@golemui/core';
+    import {
+      formContext,
+      layoutContext,
+      LayoutWidgetAdapter,
+      type LitFormContext,
+    } from '@golemui/lit';
 
     interface ProductCardProps {
       title: string;
@@ -174,15 +179,15 @@ Pick your framework — each tab walks through the key concepts and the full imp
     @customElement('app-product-card')
     export class ProductCardElement
       extends LitElement
-      implements Core.WithWidget
+      implements WithWidget
     {
-      widget!: Core.LayoutWidget;
+      widget!: LayoutWidget;
 
-      @consume({ context: Lit.formContext })
-      formContext!: Lit.LitFormContext<any>;
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
 
-      @provide({ context: Lit.layoutContext })
-      adapter = new Lit.LayoutWidgetAdapter<ProductCardProps>();
+      @provide({ context: layoutContext })
+      adapter = new LayoutWidgetAdapter<ProductCardProps>();
 
       subscriptions: Subscription[] = [];
 

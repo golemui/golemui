@@ -30,10 +30,10 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
-    import * as React from '@golemui/gui-react';
+    import type { FormEvent } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-react';
 
-    function handleFormEvent(event: Core.FormEvent) {
+    function handleFormEvent(event: FormEvent) {
       // see each per-hook section below for the case body.
     }
 
@@ -49,18 +49,18 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Core from '@golemui/core';
-    import * as Angular from '@golemui/gui-angular';
+    import type { FormEvent } from '@golemui/core';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config" (formEvent)="handleFormEvent($event)"></gui-form>`,
     })
     export class MyForm {
       protected config = { formDef };
 
-      protected handleFormEvent(event: Core.FormEvent) {
+      protected handleFormEvent(event: FormEvent) {
         // see each per-hook section below for the case body.
       }
     }
@@ -71,7 +71,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
     ```ts
     import { html, LitElement } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
     import '@golemui/gui-lit';
 
     @customElement('my-form')
@@ -80,7 +80,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
 
       override createRenderRoot() { return this; }
 
-      handleFormEvent(event: Core.FormEvent) {
+      handleFormEvent(event: FormEvent) {
         // see each per-hook section below for the case body.
       }
 
@@ -88,7 +88,7 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
         return html`
           <gui-form
             .config=${this.config}
-            @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.handleFormEvent(e.detail)}
+            @formEvent=${(e: CustomEvent<FormEvent>) => this.handleFormEvent(e.detail)}
           ></gui-form>
         `;
       }
@@ -136,7 +136,7 @@ const formDef = [
   }),
 ];
 
-function handleFormEvent(event: Core.FormEvent) {
+function handleFormEvent(event: FormEvent) {
   if (event.name === 'evClick') {
     const time = new Date().toLocaleTimeString();
     event.callback({
@@ -170,7 +170,7 @@ const formDef = [
   }),
 ];
 
-function handleFormEvent(event: Core.FormEvent) {
+function handleFormEvent(event: FormEvent) {
   if (event.name === 'evChange') {
     const text = String(event.data.evSource ?? '');
     event.callback({
@@ -216,7 +216,7 @@ const ALL_COLORS = [
   { value: 'purple', label: 'Purple' },
 ];
 
-function handleFormEvent(event: Core.FormEvent) {
+function handleFormEvent(event: FormEvent) {
   if (event.name === 'evLoadColors') {
     setTimeout(() => {
       event.callback({
@@ -260,7 +260,7 @@ const formDef = [
   }),
 ];
 
-function handleFormEvent(event: Core.FormEvent) {
+function handleFormEvent(event: FormEvent) {
   if (event.name === 'evBlur') {
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',
@@ -303,7 +303,7 @@ const formDef = [
   }),
 ];
 
-function handleFormEvent(event: Core.FormEvent) {
+function handleFormEvent(event: FormEvent) {
   if (event.name === 'submit') {
     event.callback({
       type: 'OVERRIDE_WIDGET_PROP',

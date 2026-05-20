@@ -782,10 +782,10 @@ See [Features / Item Renderers](/features/item-renderers/).
 Map of validator name → schema factory. Referenced from a widget's `validator: { type: 'custom', <name>: <config> }`. The factory follows the `CustomValidatorSchemaFn` interface and returns a schema (typically a Zod check):
 
 ```ts
-import * as Core from '@golemui/core';
-import * as z from 'zod';
+import type { CustomValidatorSchemaFn } from '@golemui/core';
+import { z } from 'zod';
 
-export const allowedNames: Core.CustomValidatorSchemaFn = (names: string[]) =>
+export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
   z.string().check(
     z.superRefine((val, ctx) => {
       if (val && names.includes(val) === false) {
@@ -923,20 +923,20 @@ type ValidateOn =
       </Fragment>
       <Fragment slot="angular">
         ```ts
-        import * as Core from '@golemui/core';
+        import type { ValidateOn } from '@golemui/core';
 
         protected formConfig = {
-          validateOn: 'change' as Core.ValidateOn,
+          validateOn: 'change' as ValidateOn,
         };
         // <gui-form [config]="config"></gui-form>
         ```
       </Fragment>
       <Fragment slot="lit">
         ```ts
-        import * as Core from '@golemui/core';
+        import type { ValidateOn } from '@golemui/core';
 
         formConfig = {
-          validateOn: 'change' as Core.ValidateOn,
+          validateOn: 'change' as ValidateOn,
         };
         // html`<gui-form .config=${this.config}></gui-form>`
         ```
@@ -962,15 +962,19 @@ type ValidateOn =
       </Fragment>
       <Fragment slot="angular">
         ```ts
+        import type { ValidateOn } from '@golemui/core';
+
         // template:
         // <gui-form [config]="config"></gui-form>
-        protected config = { formDef, validateOn: 'change' as Core.ValidateOn };
+        protected config = { formDef, validateOn: 'change' as ValidateOn };
         ```
       </Fragment>
       <Fragment slot="lit">
         ```ts
+        import type { ValidateOn } from '@golemui/core';
+
         // class field:
-        config = { formDef: this.formDef, validateOn: 'change' as Core.ValidateOn };
+        config = { formDef: this.formDef, validateOn: 'change' as ValidateOn };
         // render(): html`<gui-form .config=${this.config}></gui-form>`
         ```
       </Fragment>
@@ -1224,14 +1228,14 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
 
 #### `middlewares`
 
-Array of `Core.Middleware` functions wrapping the form's reactive store — used for logging, persistence, devtools. See [Features / Middlewares](/features/middlewares/).
+Array of `Middleware` functions wrapping the form's reactive store — used for logging, persistence, devtools. See [Features / Middlewares](/features/middlewares/).
 
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
 
-    const middlewares = [Core.devToolsMiddleware()];
+    const middlewares = [devToolsMiddleware()];
     const config = { formDef, data: formData, middlewares };
     // <GuiForm config={config} />
     ```
@@ -1239,22 +1243,22 @@ Array of `Core.Middleware` functions wrapping the form's reactive store — used
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
 
     // template:
     // <gui-form [config]="config"></gui-form>
-    protected config = { formDef, middlewares: [Core.devToolsMiddleware()] };
+    protected config = { formDef, middlewares: [devToolsMiddleware()] };
     ```
 
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
 
     // class field:
     config = {
       formDef: this.formDef,
-      middlewares: [Core.devToolsMiddleware()],
+      middlewares: [devToolsMiddleware()],
     };
     // render(): html`<gui-form .config=${this.config}></gui-form>`
     ```
@@ -1262,9 +1266,9 @@ Array of `Core.Middleware` functions wrapping the form's reactive store — used
   </Fragment>
   <Fragment slot="vue">
     ```ts
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
 
-    const middlewares = [Core.devToolsMiddleware()];
+    const middlewares = [devToolsMiddleware()];
     const config = { formDef, data: formData, middlewares };
     // <GuiForm :config="config" />
     ```
@@ -1342,9 +1346,9 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
 
-    function handleFormEvent(event: Core.FormEvent) {
+    function handleFormEvent(event: FormEvent) {
       if (event.name === 'submit') {
         console.log('Submit:', event.data);
       }
@@ -1357,11 +1361,11 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
 
     // template:
     // <gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>
-    protected onFormEvent(event: Core.FormEvent) {
+    protected onFormEvent(event: FormEvent) {
       if (event.name === 'submit') {
         console.log('Submit:', event.data);
       }
@@ -1371,9 +1375,9 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Core from '@golemui/core';
+    import type { FormEvent } from '@golemui/core';
 
-    onFormEvent(event: Core.FormEvent) {
+    onFormEvent(event: FormEvent) {
       if (event.name === 'submit') {
         console.log('Submit:', event.data);
       }
@@ -1382,7 +1386,7 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
     // render():
     html`<gui-form
       .config=${this.config}
-      @formEvent=${(e: CustomEvent<Core.FormEvent>) => this.onFormEvent(e.detail)}
+      @formEvent=${(e: CustomEvent<FormEvent>) => this.onFormEvent(e.detail)}
     ></gui-form>`;
     ```
 
@@ -1417,9 +1421,9 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
+    import type { FormHealth } from '@golemui/core';
 
-    function handleFormHealth(health: Core.FormHealth) {
+    function handleFormHealth(health: FormHealth) {
       console.log('Health:', health.status);
     }
 
@@ -1430,11 +1434,11 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
   </Fragment>
   <Fragment slot="angular">
     ```ts
-    import * as Core from '@golemui/core';
+    import type { FormHealth } from '@golemui/core';
 
     // template:
     // <gui-form [config]="config" (formHealth)="onFormHealth($event)"></gui-form>
-    protected onFormHealth(health: Core.FormHealth) {
+    protected onFormHealth(health: FormHealth) {
       console.log('Health:', health.status);
     }
     ```
@@ -1442,16 +1446,16 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
   </Fragment>
   <Fragment slot="lit">
     ```ts
-    import * as Core from '@golemui/core';
+    import type { FormHealth } from '@golemui/core';
 
-    onFormHealth(health: Core.FormHealth) {
+    onFormHealth(health: FormHealth) {
       console.log('Health:', health.status);
     }
 
     // render():
     html`<gui-form
       .config=${this.config}
-      @formHealth=${(e: CustomEvent<Core.FormHealth>) => this.onFormHealth(e.detail)}
+      @formHealth=${(e: CustomEvent<FormHealth>) => this.onFormHealth(e.detail)}
     ></gui-form>`;
     ```
 

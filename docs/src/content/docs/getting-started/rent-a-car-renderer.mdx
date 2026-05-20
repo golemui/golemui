@@ -36,7 +36,6 @@ Item renderers are framework-specific components.
   <Fragment slot="react">
     ```tsx
     // CarItemRenderer.tsx
-    import * as React from 'react';
     import type { ReactItemRenderer } from '@golemui/react';
 
     type Car = { id: string; label: string; img: string; price: number };
@@ -55,7 +54,7 @@ Item renderers are framework-specific components.
     ```ts
     // car-item-renderer.component.ts
     import { Component } from '@angular/core';
-    import * as Angular from '@golemui/angular';
+    import type { AngularItemRenderer } from '@golemui/angular';
 
     type Car = { id: string; label: string; img: string; price: number };
 
@@ -70,7 +69,7 @@ Item renderers are framework-specific components.
         </div>
       `,
     })
-    export class CarItemRenderer implements Angular.AngularItemRenderer<Car> {
+    export class CarItemRenderer implements AngularItemRenderer<Car> {
       item!: Car;
     }
     ```

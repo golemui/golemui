@@ -54,7 +54,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
       reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out this product!')}`,
     };
 
-    function handleFormEvent(event: Core.FormEvent) {
+    function handleFormEvent(event: FormEvent) {
       if (event.name === 'shareEvent') {
         const network = event.detail as string;
         const buildUrl = SHARE_URLS[network];
@@ -72,7 +72,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
   <Fragment slot="angular">
     ```ts
     @Component({
-      imports: [Angular.FormComponent],
+      imports: [FormComponent],
       template: `
         <gui-form
           [config]="config"
@@ -87,7 +87,7 @@ The application-side handler receives a `FormEvent` object with the event `name`
         reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out this product!')}`,
       };
 
-      handleFormEvent(event: Core.FormEvent) {
+      handleFormEvent(event: FormEvent) {
         if (event.name === 'shareEvent') {
           const network = event.detail as string;
           const buildUrl = this.SHARE_URLS[network];
@@ -114,13 +114,13 @@ The application-side handler receives a `FormEvent` object with the event `name`
         return html`
           <gui-form
             .config=${this.config}
-            @form-event=${(e: CustomEvent<Core.FormEvent>) =>
+            @form-event=${(e: CustomEvent<FormEvent>) =>
               this.handleFormEvent(e.detail)}
           ></gui-form>
         `;
       }
 
-      handleFormEvent(event: Core.FormEvent) {
+      handleFormEvent(event: FormEvent) {
         if (event.name === 'shareEvent') {
           const network = event.detail as string;
           const buildUrl = SHARE_URLS[network];
