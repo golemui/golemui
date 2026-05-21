@@ -14,6 +14,8 @@
   <a href="https://golemui.com/integration/angular/" title="Angular"><img alt="Angular" src="https://cdn.simpleicons.org/angular/DD0031" height="44"></a>
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://golemui.com/integration/lit/" title="Lit"><img alt="Lit" src="https://cdn.simpleicons.org/lit/324FFF" height="44"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://golemui.com/integration/vue/" title="Vue"><img alt="Vue" src="https://cdn.simpleicons.org/vuedotjs/4FC08D" height="44"></a>
 </p>
 
 <p align="center">
@@ -65,7 +67,7 @@ export const signupForm = [
 ];
 ```
 
-Conditional fields, validation, accessibility, and i18n come built in. The same schema renders in React, Angular, or Lit. No `useState`, no `register`, no `FormControl`.
+Conditional fields, validation, accessibility, and i18n come built in. The same schema renders in React, Angular, Lit, or Vue. No `useState`, no `register`, no `FormControl`.
 
 [How it works →](https://golemui.com/form-definition/how-it-works/)
 
@@ -91,6 +93,9 @@ npm i @golemui/gui-angular
 
 # Lit → https://golemui.com/integration/lit/
 npm i @golemui/gui-lit
+
+# Vue → https://golemui.com/integration/vue/
+npm i @golemui/gui-vue
 ```
 
 Then import the styles once:

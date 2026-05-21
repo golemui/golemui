@@ -19,6 +19,7 @@ Each framework adapts the same `ItemRenderContext<T>` to its idiomatic shape:
 | React     | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                 |
 | Angular   | `AngularItemRenderer<T>` | A `Type<ItemRenderContext<T>>` — the component declares a signal `input()` for each context field.  |
 | Lit       | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element. |
+| Vue       | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.       |
 
 The shared context shape comes from `@golemui/core`:
 
@@ -129,6 +130,36 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
     ```
 
     Lit renderers are **functions** — the engine invokes them with an `ItemRenderContext<T>` argument and inlines the returned template into the dropdown / list. A `LitElement` class with an `@property() item` field will not be picked up by the engine.
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <!-- CountryItemRenderer.vue -->
+    <script setup lang="ts">
+    import type { ListItemRendererProps } from '@golemui/gui-vue';
+
+    type Country = { id: string; flag: string; label: string };
+
+    defineProps<ListItemRendererProps<Country>>();
+    </script>
+
+    <template>
+      <div
+        :class="{
+          'country-item': true,
+          'country-item--selected': !!selected,
+          'country-item--disabled': !!disabled,
+          'country-item--focused': !!focused,
+          'country-item--odd': index % 2 !== 0,
+        }"
+      >
+        <span class="country-item__flag">{{ template?.flag }}</span>
+        <span class="country-item__label">{{ template?.label }}</span>
+      </div>
+    </template>
+    ```
+
+    Vue renderers are **SFCs**. Use optional chaining on `template?.flag` because the props can be undefined while items are loading (`ListItemRendererProps<T>` marks `template` and `value` optional for that reason).
 
   </Fragment>
 </IntegrationTabs>

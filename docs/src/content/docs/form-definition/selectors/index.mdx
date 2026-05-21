@@ -31,9 +31,9 @@ Pass the array as `formSelectors` inside the `config` object:
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
-    const config = { formDef, formSelectors, data: {} };
+    const config = { formDef, formSelectors };
     // <GuiForm config={config} />
     ```
 
@@ -42,19 +42,15 @@ Pass the array as `formSelectors` inside the `config` object:
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef,
-        formSelectors,
-        data: {},
-      };
+      protected config = { formDef, formSelectors };
     }
     ```
 
@@ -67,7 +63,7 @@ Pass the array as `formSelectors` inside the `config` object:
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = { formDef, formSelectors, data: {} };
+      config = { formDef, formSelectors };
 
       override createRenderRoot() { return this; }
 
@@ -75,6 +71,20 @@ Pass the array as `formSelectors` inside the `config` object:
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = { formDef, formSelectors };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

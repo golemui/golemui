@@ -14,9 +14,11 @@
     "start:angular": "nx run angular-playground:serve",
     "start:lit": "nx run lit-playground:serve",
     "start:react": "nx run react-playground:serve",
+    "start:vue": "nx run vue-playground:serve",
     "test:angular": "nx run gui-angular:component-test --watch",
     "test:lit": "nx run gui-lit:component-test --watch",
     "test:react": "nx run gui-react:component-test --watch",
+    "test:vue": "nx run gui-vue:component-test --watch",
     "test:all": "nx run-many --target=component-test",
     "test:affected": "nx affected --target=component-test",
     "lint:affected": "nx affected -t lint test --no-cloud",
@@ -43,6 +45,7 @@
     "rxjs": "~7.8.0",
     "subscript": "^10.1.8",
     "ts.data.json": "^3.3.0",
+    "vue": "^3.5.0",
     "zod": "^4.0.0",
     "zone.js": "~0.15.0"
   },
@@ -83,6 +86,7 @@
     "@types/react-dom": "19.0.0",
     "@typescript-eslint/utils": "^8.40.0",
     "@vitejs/plugin-react": "^4.2.0",
+    "@vitejs/plugin-vue": "^5.0.0",
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/ui": "^4.0.0",
     "ajv": "^8.0.0",
@@ -110,6 +114,7 @@
     "postcss-url": "~10.1.3",
     "prettier": "~3.6.2",
     "react-router": "^7.9.3",
+    "vue-router": "^4.5.0",
     "sass": "^1.55.0",
     "snarkdown": "^2.0.0",
     "swc-loader": "0.1.15",
@@ -118,10 +123,13 @@
     "tsx": "^4.20.6",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.40.0",
+    "eslint-plugin-vue": "^9.30.0",
+    "vue-eslint-parser": "^9.4.3",
     "verdaccio": "^6.0.5",
     "vite": "7.2.7",
     "vite-plugin-dts": "~4.5.0",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "vue-tsc": "^2.1.0"
   },
   "nx": {
     "includedScripts": []

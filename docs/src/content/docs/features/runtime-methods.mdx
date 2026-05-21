@@ -68,6 +68,22 @@ Each framework has its own mechanism for obtaining a handle to the form componen
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { ref } from 'vue';
+    import { GuiForm, type GuiFormHandle } from '@golemui/gui-vue';
+
+    const formRef = ref<GuiFormHandle | null>(null);
+    const config = { /* ... */ };
+    </script>
+
+    <template>
+      <GuiForm ref="formRef" :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## `setData`
@@ -152,6 +168,28 @@ Replaces the form's current data state. All field values are overwritten with th
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { ref } from 'vue';
+    import { GuiForm, type GuiFormHandle } from '@golemui/gui-vue';
+
+    const formRef = ref<GuiFormHandle | null>(null);
+    const config = { /* ... */ };
+
+    async function loadUser(userId: string) {
+      const user = await fetchUser(userId);
+      formRef.value?.setData({ name: user.name, email: user.email });
+    }
+    </script>
+
+    <template>
+      <button @click="loadUser('42')">Load user</button>
+      <GuiForm ref="formRef" :config="config" />
+    </template>
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## `setMeta`
@@ -172,7 +210,7 @@ Replaces the form's current meta state. Meta values are available inside the for
       }),
     ];
 
-    const config = { formDef, data: {}, meta: { status: 'offline' } };
+    const config = { formDef, meta: { status: 'offline' } };
 
     export function MyForm() {
       const formRef = useRef<FormComponentHandle>(null);
@@ -214,7 +252,6 @@ Replaces the form's current meta state. Meta values are available inside the for
             text: 'Connection: {{$meta.status}}',
           }),
         ],
-        data: {},
         meta: { status: 'offline' },
       };
 
@@ -242,7 +279,6 @@ Replaces the form's current meta state. Meta values are available inside the for
             text: 'Connection: {{$meta.status}}',
           }),
         ],
-        data: {},
         meta: { status: 'offline' },
       };
 
@@ -259,6 +295,36 @@ Replaces the form's current meta state. Meta values are available inside the for
         `;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { ref } from 'vue';
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm, type GuiFormHandle } from '@golemui/gui-vue';
+
+    const formRef = ref<GuiFormHandle | null>(null);
+
+    const config = {
+      formDef: [
+        gui.displays.alert('status-banner', {
+          text: 'Connection: {{$meta.status}}',
+        }),
+      ],
+      meta: { status: 'offline' },
+    };
+
+    function goOnline() {
+      formRef.value?.setMeta({ status: 'online' });
+    }
+    </script>
+
+    <template>
+      <button @click="goOnline">Connect</button>
+      <GuiForm ref="formRef" :config="config" />
+    </template>
     ```
 
   </Fragment>

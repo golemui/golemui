@@ -61,6 +61,15 @@ So in every chapter you'll see one of these:
     The Lit examples in this section read `templateData.size` and bind `flex` directly on the host element instead of via CSS variables — either is fine.
 
   </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <template>
+      <div class="my-widget" :style="{ flex: templateData.size }">
+        <!-- widget body -->
+      </div>
+    </template>
+    ```
+  </Fragment>
 </IntegrationTabs>
 
 That single line is what lets a consumer write:

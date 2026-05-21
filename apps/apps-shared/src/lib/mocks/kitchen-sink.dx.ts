@@ -23,6 +23,7 @@ import { numberTab } from './tabs/number.dx';
 import { passwordTab } from './tabs/password.dx';
 import { radiogroupTab } from './tabs/radiogroup.dx';
 import { repeaterTab } from './tabs/repeater.dx';
+import { buildRendererTab } from './tabs/renderer.dx';
 import { selectTab } from './tabs/select.dx';
 import { textareaTab } from './tabs/textarea.dx';
 import { textinputTab } from './tabs/textinput.dx';
@@ -44,6 +45,13 @@ export interface KitchenSinkDxOptions {
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   itemRenderers?: Record<string, unknown>;
   dependencies?: Dependencies;
+  /**
+   * Optional render function for the Renderer widget tab. The form engine calls
+   * it on every form-data change with the form API as `params`. The return value
+   * is framework-specific — Lit `TemplateResult`, React `ReactNode`, Vue `VNode`,
+   * Angular `{ component, api }`. When omitted, the Renderer tab is skipped.
+   */
+  rendererExample?: (api: any) => unknown;
 }
 
 export interface KitchenSinkDx {
@@ -118,6 +126,15 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },
         { label: 'Repeater Component', uid: 'tabRepeater', children: [repeaterTab] },
+        ...(options.rendererExample !== undefined
+          ? [
+              {
+                label: 'Renderer Component',
+                uid: 'tabRenderer',
+                children: [buildRendererTab(options.rendererExample)],
+              },
+            ]
+          : []),
       ],
       { defaultOpen: 'tabAlert', onChange: 'onTabEvent' },
     ),

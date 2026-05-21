@@ -106,6 +106,23 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import snarkdown from 'snarkdown';
+
+    const formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
+      },
+    };
+
+    const config = { formDef, data: formData, formConfig };
+    // <GuiForm :config="config" />
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 <Aside>The live preview will only render parsed HTML when a `dependencies.markdown.parse` function is provided. Without it, the toolbar and editor still work, but the preview panel will be empty.</Aside>

@@ -31,14 +31,13 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [gui.inputs.textInput('username')];
-    const formConfig = { widgetLoaders: React.widgetLoaders };
-    const middlewares = [Core.devToolsMiddleware()];
-    const config = { formDef, data: {}, formConfig, middlewares };
+    const middlewares = [devToolsMiddleware()];
+    const config = { formDef, middlewares };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -50,21 +49,19 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef: [gui.inputs.textInput('username')],
-        data: {},
-        formConfig: { widgetLoaders: Angular.widgetLoaders },
-        middlewares: [Core.devToolsMiddleware()],
+        middlewares: [devToolsMiddleware()],
       };
     }
     ```
@@ -74,17 +71,15 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
+    import { devToolsMiddleware } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef: [gui.inputs.textInput('username')],
-        data: {},
-        formConfig: { widgetLoaders: Lit.widgetLoaders },
-        middlewares: [Core.devToolsMiddleware()],
+        middlewares: [devToolsMiddleware()],
       };
 
       override createRenderRoot() { return this; }
@@ -93,6 +88,24 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { devToolsMiddleware } from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const formDef = [gui.inputs.textInput('username')];
+    const middlewares = [devToolsMiddleware()];
+    const config = { formDef, middlewares };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
@@ -104,18 +117,11 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as Core from '@golemui/core';
-    import * as React from '@golemui/gui-react';
+    import { devToolsMiddleware } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const middlewares = [Core.devToolsMiddleware()];
-
-    const config = {
-      formDef,
-      data: {},
-      customWidgetLoaders: React.widgetLoaders,
-      middlewares,
-    };
+    const config = { formDef, middlewares: [devToolsMiddleware()] };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -127,21 +133,19 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Core from '@golemui/core';
-    import * as Angular from '@golemui/gui-angular';
+    import { devToolsMiddleware } from '@golemui/core';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
-        middlewares: [Core.devToolsMiddleware()],
+        middlewares: [devToolsMiddleware()],
       };
     }
     ```
@@ -151,17 +155,15 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Core from '@golemui/core';
-    import * as Lit from '@golemui/gui-lit';
+    import { devToolsMiddleware } from '@golemui/core';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
       config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
-        middlewares: [Core.devToolsMiddleware()],
+        middlewares: [devToolsMiddleware()],
       };
 
       override createRenderRoot() { return this; }
@@ -170,6 +172,22 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { devToolsMiddleware } from '@golemui/core';
+    import { GuiForm } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = { formDef, middlewares: [devToolsMiddleware()] };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

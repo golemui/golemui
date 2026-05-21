@@ -46,7 +46,6 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from 'react';
 
     const formDef = [
       gui.displays.display(
@@ -62,7 +61,33 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
 
   </Fragment>
   <Fragment slot="angular">
-    Renderer widgets in Angular accept a callback that returns an Angular template ref or a string of HTML. Most teams prefer a [custom display widget](/extending/widgets/display-widget/) for non-trivial Angular templates.
+    Angular cannot render raw markup the way React/Vue/Lit can, so the callback returns `{ component, api }` instead. The engine calls the outer callback on every form-data change, threads the live form API into `api`, and `RendererComponent` passes it as an Input to your standalone component:
+
+    ```ts
+    import { Component, input } from '@angular/core';
+    import { gui } from '@golemui/gui-shared';
+    import type { WidgetPropertyFunctionParams } from '@golemui/core';
+
+    @Component({
+      standalone: true,
+      selector: 'app-booking-summary',
+      template: `
+        <div class="summary">
+          <h2>Booking summary</h2>
+          <p>Customer: {{ api().$form?.customer?.name }}</p>
+        </div>
+      `,
+    })
+    class BookingSummary {
+      api = input.required<WidgetPropertyFunctionParams<any>>();
+    }
+
+    const formDef = [
+      gui.displays.display((api) => ({ component: BookingSummary, api })),
+    ];
+    ```
+
+    For richer cases, prefer a [custom display widget](/extending/widgets/display-widget/) with its own widget loader.
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -80,6 +105,24 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
       ),
     ];
     ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import { gui } from '@golemui/gui-shared';
+    import { h } from 'vue';
+
+    const formDef = [
+      gui.displays.display((params) =>
+        h('div', { class: 'summary' }, [
+          h('h2', 'Booking summary'),
+          h('p', `Customer: ${params?.$form?.customer?.name ?? ''}`),
+        ]),
+      ),
+    ];
+    ```
+
+    The render callback returns a Vue `VNode` (built with `h()`). For richer templates, prefer a [custom display widget](/extending/widgets/display-widget/) that uses a full SFC.
 
   </Fragment>
 </IntegrationTabs>

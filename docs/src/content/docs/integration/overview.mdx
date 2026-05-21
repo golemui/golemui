@@ -1,13 +1,13 @@
 ---
 title: Integration Overview
-description: Install GolemUI for React, Angular, or Lit and render your first form.
+description: Install GolemUI for React, Angular, Lit, or Vue and render your first form.
 sidebar:
   order: 0
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-GolemUI is **framework-agnostic** — your form definition runs unchanged in React, Angular, and Lit. Pick the adapter package for your framework; the form component, props, and behavior are identical across all three.
+GolemUI is **framework-agnostic** — your form definition runs unchanged in React, Angular, Lit, and Vue. Pick the adapter package for your framework; the form component, props, and behavior are identical across all four.
 
 ## Pick your framework
 
@@ -16,6 +16,7 @@ GolemUI is **framework-agnostic** — your form definition runs unchanged in Rea
 | React     | `@golemui/gui-react`   | `<GuiForm />`                | [React →](/integration/react/)     |
 | Angular   | `@golemui/gui-angular` | `<gui-form>`                 | [Angular →](/integration/angular/) |
 | Lit       | `@golemui/gui-lit`     | `<gui-form>` (web component) | [Lit →](/integration/lit/)         |
+| Vue       | `@golemui/gui-vue`     | `<GuiForm />`                | [Vue →](/integration/vue/)         |
 
 ## What `<gui-form>` does
 
@@ -32,6 +33,6 @@ Switching frameworks later only requires changing the adapter package and the co
 
 ## Next steps
 
-- [React Integration](/integration/react/) · [Angular Integration](/integration/angular/) · [Lit Integration](/integration/lit/)
+- [React Integration](/integration/react/) · [Angular Integration](/integration/angular/) · [Lit Integration](/integration/lit/) · [Vue Integration](/integration/vue/)
 - [Configuration](/integration/configuration/) — typed reference for every `formConfig` option.
 - [Features Overview](/features/overview/) — every `<gui-form>` input explained.

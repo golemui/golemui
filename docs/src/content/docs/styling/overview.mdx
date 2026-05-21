@@ -138,13 +138,13 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
   <Fragment slot="angular">
     ```ts
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-dynamic-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class AppFormPage {
       protected config = {
-        formConfig: { widgetLoaders },
+        formDef,
         localization: { /* i18next implementation */ },
       };
     }
@@ -155,7 +155,7 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     @customElement('lit-form')
     export class FormElement extends LitElement {
       protected config = {
-        formConfig: { widgetLoaders },
+        formDef,
         localization: { /* i18next implementation */ },
       };
 
@@ -163,6 +163,24 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = {
+      formDef,
+      data: formData,
+      localization: { /* i18next implementation */ },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

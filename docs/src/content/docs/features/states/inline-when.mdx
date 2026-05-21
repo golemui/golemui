@@ -25,7 +25,7 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [
       gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
@@ -35,11 +35,8 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
       }),
     ];
 
-    const formConfig = { widgetLoaders: React.widgetLoaders };
-    const config = { formDef, data: {}, formConfig };
-
     export function MyForm() {
-      return <React.GuiForm config={config} />;
+      return <GuiForm config={{ formDef }} />;
     }
     ```
 
@@ -49,10 +46,10 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
@@ -65,8 +62,6 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
             include: { when: '$form.includePets === true' },
           }),
         ],
-        data: {},
-        formConfig: { widgetLoaders: Angular.widgetLoaders },
       };
     }
     ```
@@ -77,7 +72,7 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -89,8 +84,6 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
             include: { when: '$form.includePets === true' },
           }),
         ],
-        data: {},
-        formConfig: { widgetLoaders: Lit.widgetLoaders },
       };
 
       override createRenderRoot() { return this; }
@@ -99,6 +92,29 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = {
+      formDef: [
+        gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
+        gui.inputs.numberInput('pets', {
+          label: 'Number of pets',
+          include: { when: '$form.includePets === true' },
+        }),
+      ],
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
@@ -134,13 +150,11 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
-
     export function MyForm() {
-      return <React.GuiForm config={config} />;
+      return <GuiForm config={{ formDef }} />;
     }
     ```
 
@@ -149,20 +163,16 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
-      };
+      protected config = { formDef };
     }
     ```
 
@@ -171,16 +181,12 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
-      };
+      config = { formDef };
 
       override createRenderRoot() { return this; }
 
@@ -188,6 +194,21 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = { formDef };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

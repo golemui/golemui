@@ -10,12 +10,14 @@ const { inline } = Astro.props;
     <span data-fw="react" hidden><slot name="react" /></span>
     <span data-fw="angular" hidden><slot name="angular" /></span>
     <span data-fw="lit" hidden><slot name="lit" /></span>
+    <span data-fw="vue" hidden><slot name="vue" /></span>
   </framework-content>
 ) : (
   <framework-content>
     <div data-fw="react" hidden><slot name="react" /></div>
     <div data-fw="angular" hidden><slot name="angular" /></div>
     <div data-fw="lit" hidden><slot name="lit" /></div>
+    <div data-fw="vue" hidden><slot name="vue" /></div>
   </framework-content>
 )}
 

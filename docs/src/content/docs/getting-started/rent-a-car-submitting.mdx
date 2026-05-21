@@ -49,7 +49,7 @@ In your `formEvent` callback, match the event name and read `event.data`:
       `,
     })
     export class AppPage {
-      onFormEvent(event: Core.FormEvent) {
+      onFormEvent(event: FormEvent) {
         if (event.name === 'handleReservation') {
           console.log('Reservation:', event.data);
         }
@@ -76,6 +76,27 @@ In your `formEvent` callback, match the event name and read `event.data`:
         }
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const config = { formDef, formConfig };
+
+    function onFormEvent(event) {
+      if (event.name === 'handleReservation') {
+        console.log('Reservation:', event.data);
+        alert(`Reserved ${event.data.car} from ${event.data.collectOffice}`);
+      }
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-event="onFormEvent" />
+    </template>
     ```
 
   </Fragment>

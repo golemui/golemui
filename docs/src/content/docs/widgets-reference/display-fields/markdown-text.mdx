@@ -90,6 +90,23 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     ```
 
   </Fragment>
+  <Fragment slot="vue">
+    ```ts
+    import snarkdown from 'snarkdown';
+
+    const formConfig = {
+      dependencies: {
+        markdown: {
+          parse: (md: string) => snarkdown(md),
+        },
+      },
+    };
+
+    const config = { formDef, data: formData, formConfig };
+    // <GuiForm :config="config" />
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 <Aside>The markdown content will only be rendered as HTML when a `dependencies.markdown.parse` function is provided. Without it, the widget renders nothing.</Aside>

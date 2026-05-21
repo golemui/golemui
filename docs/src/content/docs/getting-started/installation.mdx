@@ -12,7 +12,7 @@ import DslTabs from '../../../components/DslTabs.astro';
 import FrameworkContent from '../../../components/FrameworkContent.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files. It provides a free set of UI widgets with support for React, Angular, and Lit.
+GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files. It provides a free set of UI widgets with support for React, Angular, Lit, and Vue.
 
 This guide walks you from an empty directory to a rendered form in five steps.
 
@@ -41,6 +41,12 @@ This guide walks you from an empty directory to a rendered form in five steps.
         cd my-form && npm install
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```bash
+        npm create vite@latest my-form -- --template vue-ts
+        cd my-form && npm install
+        ```
+      </Fragment>
     </IntegrationTabs>
 
 2.  ##### Install GolemUI and the Golem Widgets
@@ -63,12 +69,17 @@ This guide walks you from an empty directory to a rendered form in five steps.
         npm i @golemui/gui-lit --save
         ```
       </Fragment>
+      <Fragment slot="vue">
+        ```bash
+        npm i @golemui/gui-vue --save
+        ```
+      </Fragment>
     </IntegrationTabs>
 
     This installs the adapter along with all its peer dependencies.
     - **GolemUI packages** (shared across all adapters): `@golemui/core`, `@golemui/gui-shared`, `@golemui/gui-components`, `@golemui/gui-validators`.
 
-    - **GolemUI Framework adapter**: <FrameworkContent inline><Fragment slot="react">`@golemui/react`</Fragment><Fragment slot="angular">`@golemui/angular`</Fragment><Fragment slot="lit">`@golemui/lit`</Fragment></FrameworkContent>
+    - **GolemUI Framework adapter**: <FrameworkContent inline><Fragment slot="react">`@golemui/react`</Fragment><Fragment slot="angular">`@golemui/angular`</Fragment><Fragment slot="lit">`@golemui/lit`</Fragment><Fragment slot="vue">`@golemui/vue`</Fragment></FrameworkContent>
 
 3.  ##### Import the Golem Widgets styles
 
@@ -90,12 +101,11 @@ This guide walks you from an empty directory to a rendered form in five steps.
           <Fragment slot="react">
             ```ts
             import { gui } from '@golemui/gui-shared';
-            import * as React from '@golemui/gui-react';
+            import { GuiForm } from '@golemui/gui-react';
 
             const formDef = [gui.inputs.textInput('username')];
             const formData = { username: 'golemui' };
-            const formConfig = { widgetLoaders: React.widgetLoaders };
-            const config = { formDef, data: formData, formConfig };
+            const config = { formDef, data: formData };
 
             export function FormPage() {
               return (
@@ -111,10 +121,10 @@ This guide walks you from an empty directory to a rendered form in five steps.
             import { Component } from '@angular/core';
             import { CommonModule } from '@angular/common';
             import { gui } from '@golemui/gui-shared';
-            import * as Angular from '@golemui/gui-angular';
+            import { FormComponent } from '@golemui/gui-angular';
 
             @Component({
-              imports: [CommonModule, Angular.FormComponent],
+              imports: [CommonModule, FormComponent],
               selector: 'app-dynamic-form',
               template: `<gui-form [config]="config"></gui-form>`,
             })
@@ -122,7 +132,6 @@ This guide walks you from an empty directory to a rendered form in five steps.
               protected config = {
                 formDef: [gui.inputs.textInput('username')],
                 data: { username: 'golemui' },
-                formConfig: { widgetLoaders: Angular.widgetLoaders },
               };
             }
             ```
@@ -132,14 +141,13 @@ This guide walks you from an empty directory to a rendered form in five steps.
             import { LitElement, html } from 'lit';
             import { customElement } from 'lit/decorators.js';
             import { gui } from '@golemui/gui-shared';
-            import * as Lit from '@golemui/gui-lit';
+            import '@golemui/gui-lit';
 
             @customElement('lit-form')
             export class FormElement extends LitElement {
               config = {
                 formDef: [gui.inputs.textInput('username')],
                 data: { username: 'golemui' },
-                formConfig: { widgetLoaders: Lit.widgetLoaders },
               };
 
               override createRenderRoot() {
@@ -150,6 +158,24 @@ This guide walks you from an empty directory to a rendered form in five steps.
                 return html`<gui-form .config=${this.config}></gui-form>`;
               }
             }
+            ```
+          </Fragment>
+          <Fragment slot="vue">
+            ```vue
+            <script setup lang="ts">
+            import { gui } from '@golemui/gui-shared';
+            import { GuiForm } from '@golemui/gui-vue';
+
+            const formDef = [gui.inputs.textInput('username')];
+            const formData = { username: 'golemui' };
+            const config = { formDef, data: formData };
+            </script>
+
+            <template>
+              <div>
+                <GuiForm :config="config" />
+              </div>
+            </template>
             ```
           </Fragment>
         </IntegrationTabs>
@@ -183,4 +209,4 @@ This guide walks you from an empty directory to a rendered form in five steps.
 
 Ready for something more substantial? Walk through the [Rent a Car form tutorial](/getting-started/rent-a-car-introduction/), where you'll build a real, multi-field form with conditional logic, custom item renderers, async data loading, and form submission.
 
-For framework-specific configuration (React, Angular, Lit), see the [Integration](/integration/overview/) section.
+For framework-specific configuration (React, Angular, Lit, Vue), see the [Integration](/integration/overview/) section.

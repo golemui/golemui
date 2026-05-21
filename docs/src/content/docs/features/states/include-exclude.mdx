@@ -25,7 +25,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [
       gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
@@ -36,16 +36,13 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
     ];
 
     const formConfig = {
-      widgetLoaders: React.widgetLoaders,
-      states: {
-        hasDiscount: '$form.hasDiscountCode === true',
-      },
+      states: { hasDiscount: '$form.hasDiscountCode === true' },
     };
 
-    const config = { formDef, data: {}, formConfig };
+    const config = { formDef, formConfig };
 
     export function MyForm() {
-      return <React.GuiForm config={config} />;
+      return <GuiForm config={config} />;
     }
     ```
 
@@ -55,10 +52,10 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
@@ -71,12 +68,8 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
             include: { in: ['hasDiscount'] },
           }),
         ],
-        data: {},
         formConfig: {
-          widgetLoaders: Angular.widgetLoaders,
-          states: {
-            hasDiscount: '$form.hasDiscountCode === true',
-          },
+          states: { hasDiscount: '$form.hasDiscountCode === true' },
         },
       };
     }
@@ -88,7 +81,7 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
@@ -100,12 +93,8 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
             include: { in: ['hasDiscount'] },
           }),
         ],
-        data: {},
         formConfig: {
-          widgetLoaders: Lit.widgetLoaders,
-          states: {
-            hasDiscount: '$form.hasDiscountCode === true',
-          },
+          states: { hasDiscount: '$form.hasDiscountCode === true' },
         },
       };
 
@@ -115,6 +104,33 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm } from '@golemui/gui-vue';
+
+    const formDef = [
+      gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+      gui.inputs.textInput('discountCode', {
+        label: 'Discount code',
+        include: { in: ['hasDiscount'] },
+      }),
+    ];
+
+    const formConfig = {
+      states: { hasDiscount: '$form.hasDiscountCode === true' },
+    };
+
+    const config = { formDef, formConfig };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
@@ -153,13 +169,11 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const config = { formDef, data: {}, customWidgetLoaders: React.widgetLoaders };
-
     export function MyForm() {
-      return <React.GuiForm config={config} />;
+      return <GuiForm config={{ formDef }} />;
     }
     ```
 
@@ -168,20 +182,16 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
-      protected config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
-      };
+      protected config = { formDef };
     }
     ```
 
@@ -190,16 +200,12 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
     @customElement('my-form')
     export class MyForm extends LitElement {
-      config = {
-        formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
-      };
+      config = { formDef };
 
       override createRenderRoot() { return this; }
 
@@ -207,6 +213,21 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+    import formDef from './my-form.json';
+
+    const config = { formDef };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>

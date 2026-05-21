@@ -55,6 +55,11 @@ const oobHighlights = [
                 <path d="M192 960V576l192 192"/>
               </svg>
             )}
+            {s.pillIcon === 'vue' && (
+              <svg viewBox="0 0 128 128" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z"/>
+              </svg>
+            )}
             {s.pillIcon === 'js' && (
               <svg class="js-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <rect class="js-rect" width="24" height="24" rx="4" fill="currentColor"/>
@@ -225,6 +230,7 @@ const oobHighlights = [
     'react-rhf': { label: 'React + React Hook Form', lines: 76, branches: 8 },
     'angular':   { label: 'Angular Signal Forms',    lines: 80, branches: 6 },
     'lit':       { label: 'Lit + Reactive Properties', lines: 93, branches: 8 },
+    'vue':       { label: 'Vue + VeeValidate',       lines: 88, branches: 8 },
     'vanilla':   { label: 'Vanilla JS',              lines: 86, branches: 9 },
   };
 
@@ -434,6 +440,7 @@ const oobHighlights = [
     &--react.is-active   { background: #61dafb; color: #0a1530; box-shadow: 0 0 0 4px rgba(97, 218, 251, 0.22), 0 8px 22px rgba(97, 218, 251, 0.35); }
     &--angular.is-active { background: #dd0031; box-shadow: 0 0 0 4px rgba(221, 0, 49, 0.22), 0 8px 22px rgba(221, 0, 49, 0.35); }
     &--lit.is-active     { background: #324fff; box-shadow: 0 0 0 4px rgba(50, 79, 255, 0.22), 0 8px 22px rgba(50, 79, 255, 0.35); }
+    &--vue.is-active     { background: #4FC08D; color: #0a1530; box-shadow: 0 0 0 4px rgba(79, 192, 141, 0.22), 0 8px 22px rgba(79, 192, 141, 0.35); }
     &--js.is-active      { background: #f7df1e; color: #0a1530; box-shadow: 0 0 0 4px rgba(247, 223, 30, 0.28), 0 8px 22px rgba(247, 223, 30, 0.4); }
   }
 
@@ -461,6 +468,7 @@ const oobHighlights = [
   .versus[data-stack="react-rhf"] { --stack-color: 97, 218, 251; }
   .versus[data-stack="angular"]   { --stack-color: 221, 0, 49; }
   .versus[data-stack="lit"]       { --stack-color: 50, 79, 255; }
+  .versus[data-stack="vue"]       { --stack-color: 79, 192, 141; }
   .versus[data-stack="vanilla"]   { --stack-color: 247, 223, 30; }
 
   .col {

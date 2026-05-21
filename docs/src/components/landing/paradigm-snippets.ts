@@ -4,7 +4,7 @@ export type Snippet = {
   label: string;
   /** Full header label inside the column — framework + library. */
   headerLabel: string;
-  pillIcon: 'react' | 'angular' | 'lit' | 'js';
+  pillIcon: 'react' | 'angular' | 'lit' | 'vue' | 'js';
   lang: string;
   code: string;
   /** Lines of code in the form definition. */
@@ -433,6 +433,109 @@ export const vanilla: Snippet = {
 </script>`,
 };
 
+export const vueVeeValidate: Snippet = {
+  id: 'vue',
+  label: 'Vue',
+  headerLabel: 'Vue + VeeValidate',
+  pillIcon: 'vue',
+  lang: 'vue',
+  lines: 88,
+  branches: 8,
+  tokens: 681,
+  concepts: ['useForm', 'useField', 'handleSubmit', 'yup.object'],
+  color: '#4FC08D',
+  colorRgb: '79, 192, 141',
+  code: `<script setup lang="ts">
+import { useForm, useField } from 'vee-validate';
+import * as yup from 'yup';
+
+type Account = 'Free' | 'Pro' | 'Enterprise';
+
+const schema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().min(8).required(),
+  accountType: yup.mixed<Account>().oneOf(['Free', 'Pro', 'Enterprise']).required(),
+  companyName: yup.string().when('accountType', {
+    is: (t: Account) => t !== 'Free',
+    then: (s) => s.required(),
+  }),
+  seats: yup.number().when('accountType', {
+    is: 'Enterprise',
+    then: (s) => s.required().min(5).max(1000),
+  }),
+  subscribe: yup.boolean(),
+  frequency: yup.string().when('subscribe', {
+    is: true,
+    then: (s) => s.required(),
+  }),
+  terms: yup.boolean().oneOf([true], 'Required'),
+});
+
+const { handleSubmit, errors } = useForm({
+  validationSchema: schema,
+  initialValues: { accountType: 'Free', subscribe: false, terms: false },
+});
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
+const { value: accountType } = useField<Account>('accountType');
+const { value: companyName } = useField<string>('companyName');
+const { value: seats } = useField<number | null>('seats');
+const { value: subscribe } = useField<boolean>('subscribe');
+const { value: frequency } = useField<string>('frequency');
+const { value: terms } = useField<boolean>('terms');
+
+const onSubmit = handleSubmit((vals) => console.log(vals));
+</script>
+
+<template>
+  <form @submit="onSubmit">
+    <label>Email
+      <input v-model="email" type="email" />
+      <span v-if="errors.email">{{ errors.email }}</span>
+    </label>
+
+    <label>Password
+      <input v-model="password" type="password" />
+      <span v-if="errors.password">{{ errors.password }}</span>
+    </label>
+
+    <label>Account type
+      <select v-model="accountType">
+        <option>Free</option><option>Pro</option><option>Enterprise</option>
+      </select>
+    </label>
+
+    <label v-if="accountType !== 'Free'">Company name
+      <input v-model="companyName" />
+      <span v-if="errors.companyName">{{ errors.companyName }}</span>
+    </label>
+
+    <label v-if="accountType === 'Enterprise'">Seats
+      <input v-model.number="seats" type="number" min="5" max="1000" />
+      <span v-if="errors.seats">{{ errors.seats }}</span>
+    </label>
+
+    <label>
+      <input v-model="subscribe" type="checkbox" />
+      Subscribe to product updates
+    </label>
+
+    <label v-if="subscribe">Frequency
+      <select v-model="frequency">
+        <option>Daily</option><option>Weekly</option><option>Monthly</option>
+      </select>
+    </label>
+
+    <label>
+      <input v-model="terms" type="checkbox" />
+      I accept the terms of service
+    </label>
+
+    <button type="submit">Sign up</button>
+  </form>
+</template>`,
+};
+
 export const golemui: Snippet = {
   id: 'golemui',
   label: 'GolemUI',
@@ -489,4 +592,4 @@ export const signupForm = [
 ];`,
 };
 
-export const stackTabs: Snippet[] = [reactRhf, angularReactive, litElement, vanilla];
+export const stackTabs: Snippet[] = [reactRhf, angularReactive, litElement, vueVeeValidate, vanilla];

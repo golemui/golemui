@@ -146,13 +146,13 @@ All initialization properties are bundled in the required `.config` property (`G
 | `formConfig`          | `DxFormConfig`                               | DX engine wiring (loaders, item renderers, dependencies, validateOn, …). **Programmatic-only.** |
 | `data`                | `Record<string, any>`                        | Initial form data.                                                                              |
 | `meta`                | `Record<string, any>`                        | Out-of-band metadata you want to thread through events and state.                               |
-| `customWidgetLoaders` | `Core.WidgetLoaders<Type<Core.WithWidget>>`  | Custom widget map; merged with the default Lit widget set.                                      |
+| `customWidgetLoaders` | `WidgetLoaders<Type<WithWidget>>`            | Custom widget map; merged with the default Lit widget set.                                      |
 | `itemRenderers`       | `Record<string, LitItemRenderer<any>>`       | Custom item-renderer map (for dropdown, list, etc.).                                            |
 | `customValidators`    | `CustomValidatorSchemas`                     | Custom validator schemas referenced by `validator: { type: 'custom', ... }`.                    |
-| `middlewares`         | `Core.Middleware<Core.State, Core.Action>[]` | Store middlewares (logging, persistence, devtools).                                             |
-| `validateOn`          | `Core.ValidateOn`                            | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
+| `middlewares`         | `Middleware<State, Action>[]`                | Store middlewares (logging, persistence, devtools).                                             |
+| `validateOn`          | `ValidateOn`                                 | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
 | `dependencies`        | `Dependencies`                               | External helpers (e.g. a markdown parser).                                                      |
-| `localization`        | `Core.I18nTranslator`                        | Translator implementing the `I18nTranslator` interface.                                         |
+| `localization`        | `I18nTranslator`                             | Translator implementing the `I18nTranslator` interface.                                         |
 
 Direct properties (outside `config`):
 
@@ -164,11 +164,11 @@ The element also dispatches two **custom events**:
 
 | Event         | Detail type       | Description                                      |
 | ------------- | ----------------- | ------------------------------------------------ |
-| `@formEvent`  | `Core.FormEvent`  | Fired when a widget fires a wired event.         |
-| `@formHealth` | `Core.FormHealth` | Fired when the form's validation status changes. |
+| `@formEvent`  | `FormEvent`       | Fired when a widget fires a wired event.         |
+| `@formHealth` | `FormHealth`      | Fired when the form's validation status changes. |
 
 See [Configuration](/integration/configuration/) for details on each property, plus the **Programmatic-only vs JSON-form** notes.
 
 ## Custom widgets in Lit
 
-Build your own widgets by extending `LitElement`, consuming the form context with `@consume({ context: Lit.formContext })`, and providing the appropriate adapter (`@provide({ context: Lit.inputContext })` and friends). Because Lit widgets are native web components, they also work inside React or Angular hosts when paired with a thin shim. See [Extending GolemUI / Widgets](/extending/widgets/overview/) for the full walkthrough.
+Build your own widgets by extending `LitElement`, consuming the form context with `@consume({ context: formContext })`, and providing the appropriate adapter (`@provide({ context: inputContext })` and friends — all named imports from `@golemui/lit`). Because Lit widgets are native web components, they also work inside React or Angular hosts when paired with a thin shim. See [Extending GolemUI / Widgets](/extending/widgets/overview/) for the full walkthrough.

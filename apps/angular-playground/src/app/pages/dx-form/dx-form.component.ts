@@ -9,6 +9,7 @@ import { AirportItemRenderer } from '../../item-renderers/airport.item-renderer'
 import { ComplexListItemRenderer } from '../../item-renderers/complex-list.item-renderer';
 import { CountryItemRenderer } from '../../item-renderers/country.item-renderer';
 import { ProductItemRenderer } from '../../item-renderers/product.item-renderer';
+import { RendererExampleComponent } from '../../renderer-example/renderer-example.component';
 
 const localization = initializeI18n({});
 
@@ -28,6 +29,14 @@ const ks = buildKitchenSinkDx({
       parse: (md: string) => snarkdown(md),
     },
   },
+  // Angular-flavored Renderer example — returns `{ component, api }`. The
+  // engine calls this fn on every form-data change with the live form API and
+  // we forward it through as `api`; Angular's RendererComponent passes it as
+  // an Input to the dynamic component.
+  rendererExample: (api: any) => ({
+    component: RendererExampleComponent,
+    api,
+  }),
 });
 
 @Component({

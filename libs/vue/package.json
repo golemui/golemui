@@ -1,0 +1,32 @@
+{
+  "name": "@golemui/vue",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    }
+  },
+  "files": [
+    "lib",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
+    "*.md"
+  ],
+  "peerDependencies": {
+    "vue": ">=3.3.0",
+    "rxjs": "^7.8.0",
+    "@golemui/core": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/vue"
+  }
+}

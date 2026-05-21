@@ -9,7 +9,7 @@ import Demo from '../../../../../src/components/landing/Demo.astro';
 import DslTabs from '../../../../../src/components/DslTabs.astro';
 import IntegrationTabs from '../../../../../src/components/IntegrationTabs.astro';
 
-An **input widget** binds to a `path` in the form data, supports validation, and tracks touched state. The framework helpers (`useInputWidget` in React, `InputWidgetAdapter` in Angular and Lit) handle data binding for you — your widget calls a few methods, the engine does the rest. The example we'll walk through is `productRating` — a star-based rating control.
+An **input widget** binds to a `path` in the form data, supports validation, and tracks touched state. The framework helpers (`useInputWidget` in React and Vue, `InputWidgetAdapter` in Angular and Lit) handle data binding for you — your widget calls a few methods, the engine does the rest. The example we'll walk through is `productRating` — a star-based rating control.
 
 ## Widget definition
 
@@ -67,15 +67,15 @@ gui.inputs.custom('productRating', 'product.rating', {
 
     ```tsx
     // ProductRating.tsx
-    import * as Core from '@golemui/core';
+    import type { InputWidget, WithWidget } from '@golemui/core';
     import { useInputWidget } from '@golemui/react';
 
     interface ProductRatingProps {
       maxRating: number;
     }
 
-    export function ProductRating(widgetInstance: Core.WithWidget) {
-      const widget = widgetInstance.widget as Core.InputWidget<number>;
+    export function ProductRating(widgetInstance: WithWidget) {
+      const widget = widgetInstance.widget as InputWidget<number>;
       const { uid, value, errors, isTouched, templateData, onValueChanged, onBlur } =
         useInputWidget<number, ProductRatingProps>(widget);
 
@@ -116,7 +116,7 @@ gui.inputs.custom('productRating', 'product.rating', {
 
     **Key concepts (Angular)**
 
-    - Provide `Angular.InputWidgetAdapter` in the component's `providers`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter's `templateData()` signal exposes `value`, `errors`, `touched`, plus your custom props.
+    - Provide `InputWidgetAdapter` in the component's `providers`, then `init()` it in `ngOnInit` and `destroy()` it in `ngOnDestroy`. The adapter's `templateData()` signal exposes `value`, `errors`, `touched`, plus your custom props.
     - Call `this.adapter.valueChanged(newValue)` to write through to the form data and trigger validation.
     - Call `this.adapter.onBlur()` from a `(blur)` handler to mark the field touched and run blur-time validation.
     - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
@@ -125,8 +125,8 @@ gui.inputs.custom('productRating', 'product.rating', {
     // product-rating.component.ts
     import { CommonModule } from '@angular/common';
     import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-    import * as Angular from '@golemui/angular';
-    import * as Core from '@golemui/core';
+    import { InputWidgetAdapter } from '@golemui/angular';
+    import type { InputWidget, WithWidget } from '@golemui/core';
 
     interface ProductRatingProps {
       maxRating: number;
@@ -136,7 +136,7 @@ gui.inputs.custom('productRating', 'product.rating', {
       standalone: true,
       selector: 'app-product-rating',
       imports: [CommonModule],
-      providers: [Angular.InputWidgetAdapter],
+      providers: [InputWidgetAdapter],
       host: {
         class: 'product-rating',
         '[style.flex]': 'this.adapter.templateData().size',
@@ -169,12 +169,12 @@ gui.inputs.custom('productRating', 'product.rating', {
       `,
     })
     export class ProductRatingComponent
-      implements OnInit, OnDestroy, Core.WithWidget
+      implements OnInit, OnDestroy, WithWidget
     {
-      widget!: Core.InputWidget<number>;
+      widget!: InputWidget<number>;
 
-      protected adapter: Angular.InputWidgetAdapter<number, ProductRatingProps> =
-        inject(Angular.InputWidgetAdapter);
+      protected adapter: InputWidgetAdapter<number, ProductRatingProps> =
+        inject(InputWidgetAdapter);
 
       ngOnInit(): void {
         this.adapter.init(this.widget);
@@ -214,8 +214,13 @@ gui.inputs.custom('productRating', 'product.rating', {
     import { customElement } from 'lit/decorators.js';
     import { consume, provide } from '@lit/context';
     import { Subscription } from 'rxjs';
-    import * as Core from '@golemui/core';
-    import * as Lit from '@golemui/lit';
+    import type { InputWidget, WithWidget } from '@golemui/core';
+    import {
+      formContext,
+      inputContext,
+      InputWidgetAdapter,
+      type LitFormContext,
+    } from '@golemui/lit';
 
     interface ProductRatingProps {
       maxRating: number;
@@ -224,15 +229,15 @@ gui.inputs.custom('productRating', 'product.rating', {
     @customElement('app-product-rating')
     export class ProductRatingElement
       extends LitElement
-      implements Core.WithWidget
+      implements WithWidget
     {
-      widget!: Core.InputWidget<number>;
+      widget!: InputWidget<number>;
 
-      @consume({ context: Lit.formContext })
-      formContext!: Lit.LitFormContext<any>;
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
 
-      @provide({ context: Lit.inputContext })
-      adapter = new Lit.InputWidgetAdapter<number, ProductRatingProps>();
+      @provide({ context: inputContext })
+      adapter = new InputWidgetAdapter<number, ProductRatingProps>();
 
       subscriptions: Subscription[] = [];
 
@@ -301,6 +306,60 @@ gui.inputs.custom('productRating', 'product.rating', {
         this.subscriptions.forEach((s) => s.unsubscribe());
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+
+    **Key concepts (Vue)**
+
+    - `useInputWidget` returns reactive `Ref`s for `value`, `errors`, `isTouched`, and `templateData` (your custom props + engine-managed values). Vue's template auto-unwraps refs.
+    - Call `onValueChanged(newValue)` from a click handler — the engine writes through to the form data and runs validation.
+    - Call `onBlur()` when the user leaves the field. With `validateOn: 'blur'` (or `'eager'`), this triggers validation; either way, it sets `isTouched`.
+    - `:style="{ flex: templateData.size }"` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```vue
+    <!-- ProductRating.vue -->
+    <script setup lang="ts">
+    import type { InputWidget, WithWidget } from '@golemui/core';
+    import { useInputWidget } from '@golemui/vue';
+    import { computed } from 'vue';
+
+    interface ProductRatingProps {
+      maxRating: number;
+    }
+
+    const props = defineProps<WithWidget>();
+    const widget = props.widget as InputWidget<number>;
+    const { uid, value, errors, isTouched, templateData, onValueChanged, onBlur } =
+      useInputWidget<number, ProductRatingProps>(widget);
+
+    const maxRating = computed(() => templateData.value.maxRating || 5);
+    const stars = computed(() => Array.from({ length: maxRating.value }, (_, i) => i + 1));
+    </script>
+
+    <template>
+      <div class="product-rating" :style="{ flex: templateData.size }">
+        <div class="product-rating__widget" :id="uid">
+          <div class="product-rating__stars" tabindex="0" @blur="onBlur">
+            <span
+              v-for="star in stars"
+              :key="star"
+              role="button"
+              :class="['product-rating__star', star <= (value || 0) && 'product-rating__star--active']"
+              @click="onValueChanged(star)"
+            >
+              {{ star <= (value || 0) ? '★' : '☆' }}
+            </span>
+          </div>
+          <div v-if="isTouched && errors.length > 0" class="product-rating__errors">
+            <span v-for="(error, i) in errors" :key="i" class="product-rating__error">
+              {{ error }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </template>
     ```
 
   </Fragment>

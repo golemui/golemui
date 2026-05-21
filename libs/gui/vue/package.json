@@ -1,0 +1,36 @@
+{
+  "name": "@golemui/gui-vue",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    }
+  },
+  "files": [
+    "lib",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
+    "*.js",
+    "*.md"
+  ],
+  "peerDependencies": {
+    "vue": ">=3.3.0",
+    "@golemui/core": "*",
+    "@golemui/vue": "*",
+    "@golemui/gui-components": "*",
+    "@golemui/gui-shared": "*",
+    "@golemui/gui-validators": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/gui/vue"
+  }
+}

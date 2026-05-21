@@ -93,7 +93,7 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
 
     ```tsx
     // ProductShare.tsx
-    import * as Core from '@golemui/core';
+    import type { ActionWidget, WithWidget } from '@golemui/core';
     import { useActionWidget } from '@golemui/react';
 
     interface ShareNetwork {
@@ -115,8 +115,8 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
       return icon.trim().startsWith('<svg');
     }
 
-    export function ProductShare(widgetInstance: Core.WithWidget) {
-      const widget = widgetInstance.widget as Core.ActionWidget;
+    export function ProductShare(widgetInstance: WithWidget) {
+      const widget = widgetInstance.widget as ActionWidget;
       const { uid, templateData, onClick } =
         useActionWidget<ProductShareProps>(widget);
 
@@ -160,7 +160,7 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
 
     **Key concepts (Angular)**
 
-    - Provide `Angular.ActionWidgetAdapter`, then `init()`/`destroy()` it. The adapter exposes a reactive `templateData()` signal.
+    - Provide `ActionWidgetAdapter`, then `init()`/`destroy()` it. The adapter exposes a reactive `templateData()` signal.
     - Call `this.adapter.click(networkId)` to emit the wired event with the chosen network as `detail`.
     - For URL icons, use `<img [src]="...">`. For inline SVG strings, bind via `[innerHTML]` on a wrapping span (Angular's sanitizer will strip unsafe content unless you explicitly trust it via `DomSanitizer`).
     - The host binding `'[style.flex]': 'this.adapter.templateData().size'` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
@@ -170,8 +170,8 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
     import { CommonModule } from '@angular/common';
     import { Component, inject, OnDestroy, OnInit } from '@angular/core';
     import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-    import * as Angular from '@golemui/angular';
-    import * as Core from '@golemui/core';
+    import { ActionWidgetAdapter } from '@golemui/angular';
+    import type { ActionWidget, WithWidget } from '@golemui/core';
 
     interface ShareNetwork {
       id: string;
@@ -192,7 +192,7 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
       standalone: true,
       selector: 'app-product-share',
       imports: [CommonModule],
-      providers: [Angular.ActionWidgetAdapter],
+      providers: [ActionWidgetAdapter],
       host: {
         class: 'product-share',
         '[style.flex]': 'this.adapter.templateData().size',
@@ -227,12 +227,12 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
       `,
     })
     export class ProductShareComponent
-      implements OnInit, OnDestroy, Core.WithWidget
+      implements OnInit, OnDestroy, WithWidget
     {
-      widget!: Core.ActionWidget;
+      widget!: ActionWidget;
 
-      protected adapter: Angular.ActionWidgetAdapter<ProductShareProps> =
-        inject(Angular.ActionWidgetAdapter);
+      protected adapter: ActionWidgetAdapter<ProductShareProps> =
+        inject(ActionWidgetAdapter);
 
       private sanitizer = inject(DomSanitizer);
       protected defaults = DEFAULT_NETWORKS;
@@ -276,8 +276,13 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
     import { unsafeHTML } from 'lit/directives/unsafe-html.js';
     import { consume, provide } from '@lit/context';
     import { Subscription } from 'rxjs';
-    import * as Core from '@golemui/core';
-    import * as Lit from '@golemui/lit';
+    import type { ActionWidget, WithWidget } from '@golemui/core';
+    import {
+      actionContext,
+      ActionWidgetAdapter,
+      formContext,
+      type LitFormContext,
+    } from '@golemui/lit';
 
     interface ShareNetwork {
       id: string;
@@ -301,15 +306,15 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
     @customElement('app-product-share')
     export class ProductShareElement
       extends LitElement
-      implements Core.WithWidget
+      implements WithWidget
     {
-      widget!: Core.ActionWidget;
+      widget!: ActionWidget;
 
-      @consume({ context: Lit.formContext })
-      formContext!: Lit.LitFormContext<any>;
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
 
-      @provide({ context: Lit.actionContext })
-      adapter = new Lit.ActionWidgetAdapter<ProductShareProps>();
+      @provide({ context: actionContext })
+      adapter = new ActionWidgetAdapter<ProductShareProps>();
 
       subscriptions: Subscription[] = [];
 
@@ -371,6 +376,72 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
         this.subscriptions.forEach((s) => s.unsubscribe());
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+
+    **Key concepts (Vue)**
+
+    - `useActionWidget` returns `uid`, `templateData` (as a `Ref`), and an `onClick()` callback that emits the wired event.
+    - Pass the network id as `onClick(network.id)` so the consumer's `formEvent` handler reads `event.detail` to know which button was clicked.
+    - For URL icons, render an `<img>`. For inline SVG strings, use Vue's `v-html` directive — Vue's template compiler won't escape the markup.
+    - `:style="{ flex: templateData.size }"` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```vue
+    <!-- ProductShare.vue -->
+    <script setup lang="ts">
+    import type { ActionWidget, WithWidget } from '@golemui/core';
+    import { useActionWidget } from '@golemui/vue';
+    import { computed } from 'vue';
+
+    interface ShareNetwork {
+      id: string;
+      label: string;
+      icon?: string;
+    }
+    interface ProductShareProps {
+      networks?: ShareNetwork[];
+    }
+
+    const DEFAULT_NETWORKS: ShareNetwork[] = [
+      { id: 'twitter', label: 'X' },
+      { id: 'facebook', label: 'Facebook' },
+      { id: 'reddit', label: 'Reddit' },
+    ];
+
+    const props = defineProps<WithWidget>();
+    const widget = props.widget as ActionWidget;
+    const { uid, templateData, onClick } = useActionWidget<ProductShareProps>(widget);
+
+    const networks = computed(() => templateData.value.networks ?? DEFAULT_NETWORKS);
+    const isInlineSvg = (icon: string) => icon.trim().startsWith('<svg');
+    </script>
+
+    <template>
+      <div class="product-share" :style="{ flex: templateData.size }">
+        <div class="product-share__widget" :id="uid">
+          <span class="product-share__label">Share this product:</span>
+          <div class="product-share__buttons">
+            <button
+              v-for="n in networks"
+              :key="n.id"
+              type="button"
+              class="product-share__button"
+              :title="n.label"
+              :aria-label="n.label"
+              @click="onClick(n.id)"
+            >
+              <template v-if="n.icon">
+                <span v-if="isInlineSvg(n.icon)" class="product-share__icon" v-html="n.icon"></span>
+                <img v-else class="product-share__icon" :src="n.icon" alt="" aria-hidden="true" />
+              </template>
+              <span v-else class="product-share__network">{{ n.label }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
     ```
 
   </Fragment>

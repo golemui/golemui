@@ -25,7 +25,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
   <Fragment slot="react">
     ```tsx
     import { gui } from '@golemui/gui-shared';
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import { CountryItemRenderer } from './CountryItemRenderer';
 
     const formDef = [
@@ -41,13 +41,10 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
     ];
 
     const formConfig = {
-      widgetLoaders: React.widgetLoaders,
-      itemRenderers: {
-        countryItemRenderer: CountryItemRenderer,
-      },
+      itemRenderers: { countryItemRenderer: CountryItemRenderer },
     };
 
-    const config = { formDef, data: {}, formConfig };
+    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -60,11 +57,11 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { gui } from '@golemui/gui-shared';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import { CountryItemRenderer } from './country-item-renderer.component';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
@@ -81,12 +78,8 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
             itemRenderer: 'countryItemRenderer',
           }),
         ],
-        data: {},
         formConfig: {
-          widgetLoaders: Angular.widgetLoaders,
-          itemRenderers: {
-            countryItemRenderer: CountryItemRenderer,
-          },
+          itemRenderers: { countryItemRenderer: CountryItemRenderer },
         },
       };
     }
@@ -98,7 +91,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
     import { gui } from '@golemui/gui-shared';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import { countryItemRenderer } from './country-item-renderer';
 
     @customElement('my-form')
@@ -115,9 +108,7 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
             itemRenderer: 'countryItemRenderer',
           }),
         ],
-        data: {},
         formConfig: {
-          widgetLoaders: Lit.widgetLoaders,
           itemRenderers: { countryItemRenderer },
         },
       };
@@ -128,6 +119,37 @@ In the Programmatic API, item renderers go inside `formConfig.itemRenderers`. Th
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { gui } from '@golemui/gui-shared';
+    import { GuiForm } from '@golemui/gui-vue';
+    import CountryItemRenderer from './CountryItemRenderer.vue';
+
+    const config = {
+      formDef: [
+        gui.inputs.dropdown('country', {
+          items: [
+            { id: 'US', flag: '🇺🇸', label: 'United States' },
+            { id: 'CA', flag: '🇨🇦', label: 'Canada' },
+          ],
+          labelField: 'label',
+          valueField: 'id',
+          itemRenderer: 'countryItemRenderer',
+        }),
+      ],
+      formConfig: {
+        itemRenderers: { countryItemRenderer: CountryItemRenderer },
+      },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
@@ -160,14 +182,12 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import * as React from '@golemui/gui-react';
+    import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
     import { CountryItemRenderer } from './CountryItemRenderer';
 
     const config = {
       formDef,
-      data: {},
-      customWidgetLoaders: React.widgetLoaders,
       itemRenderers: { countryItemRenderer: CountryItemRenderer },
     };
 
@@ -181,20 +201,18 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import * as Angular from '@golemui/gui-angular';
+    import { FormComponent } from '@golemui/gui-angular';
     import { CountryItemRenderer } from './country-item-renderer.component';
     import formDef from './my-form.json';
 
     @Component({
-      imports: [CommonModule, Angular.FormComponent],
+      imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
       template: `<gui-form [config]="config"></gui-form>`,
     })
     export class MyForm {
       protected config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Angular.widgetLoaders,
         itemRenderers: { countryItemRenderer: CountryItemRenderer },
       };
     }
@@ -205,7 +223,7 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import * as Lit from '@golemui/gui-lit';
+    import '@golemui/gui-lit';
     import { countryItemRenderer } from './country-item-renderer';
     import formDef from './my-form.json';
 
@@ -213,8 +231,6 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
     export class MyForm extends LitElement {
       config = {
         formDef,
-        data: {},
-        customWidgetLoaders: Lit.widgetLoaders,
         itemRenderers: { countryItemRenderer },
       };
 
@@ -224,6 +240,25 @@ In the JSON path, item renderers go into the `itemRenderers` property on the `co
         return html`<gui-form .config=${this.config}></gui-form>`;
       }
     }
+    ```
+
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+    import CountryItemRenderer from './CountryItemRenderer.vue';
+    import formDef from './my-form.json';
+
+    const config = {
+      formDef,
+      itemRenderers: { countryItemRenderer: CountryItemRenderer },
+    };
+    </script>
+
+    <template>
+      <GuiForm :config="config" />
+    </template>
     ```
 
   </Fragment>
