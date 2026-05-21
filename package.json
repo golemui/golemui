@@ -121,7 +121,7 @@
     "ts-lit-plugin": "^2.0.2",
     "tslib": "^2.3.0",
     "tsx": "^4.20.6",
-    "typescript": "~5.9.2",
+    "typescript": "~6.0.3",
     "typescript-eslint": "^8.40.0",
     "eslint-plugin-vue": "^9.30.0",
     "vue-eslint-parser": "^9.4.3",
