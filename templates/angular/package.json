@@ -15,12 +15,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
-    "@golemui/angular": "0.13.3",
-    "@golemui/core": "0.13.3",
-    "@golemui/gui-angular": "0.13.3",
-    "@golemui/gui-components": "0.13.3",
-    "@golemui/gui-shared": "0.13.3",
-    "@golemui/gui-validators": "0.13.3",
+    "@golemui/gui-angular": "0.14.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

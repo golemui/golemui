@@ -4,8 +4,6 @@ A starter for [GolemUI](https://golemui.com) using [Vue](https://vuejs.org) 3 an
 
 It renders a 5-field signup form (country → city → currency → pets → date) that demonstrates conditional fields, cascading options, and a custom item renderer.
 
-> **Status:** requires GolemUI **v0.14.0 or newer**. Vue support (`@golemui/gui-vue`, `@golemui/vue`) lands in that release. `npm install` will fail against earlier versions.
-
 ## Quick start
 
 ```bash
