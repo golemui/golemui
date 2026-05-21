@@ -1,3 +1,7 @@
+## 0.14.0 (2026-05-21)
+
+This was a version bump only for gui-validators to align it with other projects, there were no code changes.
+
 ## 0.13.3 (2026-05-19)
 
 This was a version bump only for gui-validators to align it with other projects, there were no code changes.

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.14.0/components/repeater.schema.json",
+  "title": "Repeater Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "addLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removeLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "limitProp": {
+      "type": "number"
+    },
+    "templateProp": {
+      "$ref": "./flex.schema.json"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "repeater"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "addLabel": {
+          "$ref": "#/$defs/addLabelProp"
+        },
+        "removeLabel": {
+          "$ref": "#/$defs/removeLabelProp"
+        },
+        "limit": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "template": {
+          "$ref": "#/$defs/templateProp"
+        }
+      },
+      "required": [
+        "template"
+      ],
+      "patternProperties": {
+        "^addLabel\\.[^.]+$": {
+          "$ref": "#/$defs/addLabelProp"
+        },
+        "^removeLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removeLabelProp"
+        },
+        "^limit\\.[^.]+$": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "^template\\.[^.]+$": {
+          "$ref": "#/$defs/templateProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path",
+    "props"
+  ],
+  "unevaluatedProperties": false
+}
