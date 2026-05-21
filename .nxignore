@@ -1,0 +1,4 @@
+# Templates are standalone projects (no project.json, no Nx tags) shipped to
+# end users via `degit`. They have their own npm install/build flow and are not
+# part of the monorepo build graph.
+templates
