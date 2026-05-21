@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
 import { type VersionData } from 'nx/src/command-line/release/utils/shared';
 import { archiveSchemas } from './archive-schemas';
+import { updateTemplateVersions } from './update-template-versions';
 
 process.setMaxListeners(20);
 
@@ -49,6 +50,7 @@ function updateLatestDistTag(projectsVersionData: VersionData) {
   // Note: this will be pushed at the same time as the changelog. One push for all.
   if (releaseType === 'stable' && workspaceVersion) {
     await archiveSchemas(workspaceVersion, dryRun);
+    updateTemplateVersions(workspaceVersion, dryRun);
   }
 
   await releaseChangelog({

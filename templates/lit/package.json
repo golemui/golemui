@@ -1,0 +1,20 @@
+{
+  "name": "golemui-lit-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@golemui/gui-lit": "0.14.0",
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.3",
+    "vite": "^6.0.5"
+  }
+}

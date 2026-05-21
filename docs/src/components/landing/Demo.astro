@@ -26,8 +26,25 @@ if (typeof minHeight === 'number') {
 </div>
 
 <script>
+  type StackId = 'react-rhf' | 'angular' | 'lit' | 'vue' | 'vanilla';
+  type TemplateId = 'react' | 'angular' | 'lit' | 'vue' | 'js';
+
+  const STACK_TO_TEMPLATE: Record<StackId, TemplateId> = {
+    'react-rhf': 'react',
+    angular: 'angular',
+    lit: 'lit',
+    vue: 'vue',
+    vanilla: 'js',
+  };
+
   const currentTheme = (): 'dark' | 'light' =>
     document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
+  const currentFramework = (): TemplateId => {
+    const versus = document.querySelector<HTMLElement>('.versus[data-stack]');
+    const stack = (versus?.dataset['stack'] ?? 'lit') as StackId;
+    return STACK_TO_TEMPLATE[stack] ?? 'lit';
+  };
 
   const broadcastTheme = (target?: Window) => {
     const message = { type: 'golemui-theme', theme: currentTheme() };
@@ -40,13 +57,29 @@ if (typeof minHeight === 'number') {
     });
   };
 
+  const broadcastFramework = (target?: Window) => {
+    const message = { type: 'golemui-framework', framework: currentFramework() };
+    if (target) {
+      target.postMessage(message, '*');
+      return;
+    }
+    document.querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe').forEach((iframe) => {
+      iframe.contentWindow?.postMessage(message, '*');
+    });
+  };
+
   document.querySelectorAll<HTMLIFrameElement>('iframe.demo-iframe').forEach((iframe) => {
-    iframe.addEventListener('load', () => broadcastTheme(iframe.contentWindow ?? undefined));
+    iframe.addEventListener('load', () => {
+      broadcastTheme(iframe.contentWindow ?? undefined);
+      broadcastFramework(iframe.contentWindow ?? undefined);
+    });
   });
 
   window.addEventListener('message', (event) => {
-    if ((event.data as { type?: string } | null)?.type === 'golemui-theme-ready') {
+    const type = (event.data as { type?: string } | null)?.type;
+    if (type === 'golemui-theme-ready') {
       broadcastTheme((event.source as Window) ?? undefined);
+      broadcastFramework((event.source as Window) ?? undefined);
     }
   });
 
@@ -55,6 +88,8 @@ if (typeof minHeight === 'number') {
     attributes: true,
     attributeFilter: ['class', 'data-theme'],
   });
+
+  document.addEventListener('golemui:stack', () => broadcastFramework());
 </script>
 
 <style>
