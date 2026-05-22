@@ -21,6 +21,7 @@
         "defaultOpen": "tabAlert",
         "tabs": [
           { "label": "Alert Component", "uid": "tabAlert" },
+          { "label": "Button Component", "uid": "tabButton" },
           { "label": "Markdown Text Component", "uid": "tabMarkdownText" },
           { "label": "Accordion Layout", "uid": "tabAccordion" },
           { "label": "Flex Layout", "uid": "tabFlex" },
@@ -44,6 +45,7 @@
       "on": { "change": "onTabEvent" },
       "children": [
         { "$ref": "./tabs/alert.form-chunk.json" },
+        { "$ref": "./tabs/button.form-chunk.json" },
         { "$ref": "./tabs/markdown-text.form-chunk.json" },
         { "$ref": "./tabs/accordion.form-chunk.json" },
         { "$ref": "./tabs/flex.form-chunk.json" },
@@ -65,16 +67,16 @@
       ]
     },
     {
+      "uid": "submit-button",
       "kind": "action",
       "type": "button",
-      "label": "Create",
+      "actionType": "submit",
+      "label": "Submit",
       "props": {
         "icon": "save",
         "iconPosition": "right"
       },
-      "on": {
-        "click": "submit"
-      }
+      "disabled": { "when": "$formIsInvalid" }
     }
   ]
 }

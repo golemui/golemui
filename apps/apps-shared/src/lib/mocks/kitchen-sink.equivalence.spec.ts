@@ -6,6 +6,8 @@ import { accordion as jsonAccordionTab } from './tabs/accordion';
 import { accordionTab as dxAccordionTab } from './tabs/accordion.dx';
 import { alert as jsonAlertTab } from './tabs/alert';
 import { alertTab as dxAlertTab } from './tabs/alert.dx';
+import { button as jsonButtonTab } from './tabs/button';
+import { buttonTab as dxButtonTab } from './tabs/button.dx';
 import { calendar as jsonCalendarTab } from './tabs/calendar';
 import { calendarTab as dxCalendarTab } from './tabs/calendar.dx';
 import { checkbox as jsonCheckboxTab } from './tabs/checkbox';
@@ -175,6 +177,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('alert tab', () => {
     const json = buildJsonTab(jsonAlertTab('tabAlert')).form;
     const dx = buildDxTab(dxAlertTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('button tab', () => {
+    const json = buildJsonTab(jsonButtonTab('tabButton')).form;
+    const dx = buildDxTab(dxButtonTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 

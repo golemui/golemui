@@ -2,7 +2,7 @@ import type { DxDefinitionItem, DxFormConfig } from '@golemui/gui-shared';
 import { gui } from '@golemui/gui-shared';
 import { type DxModule } from './modular.dx';
 
-const data = { userName: 'Grace', isVip: false };
+const data = { isVip: false };
 
 const formDef: DxDefinitionItem[] = [
   gui.inputs.textInput('userName', {
@@ -31,14 +31,19 @@ const formDef: DxDefinitionItem[] = [
     include: { when: '$errors.userName?.length === 2' },
   }),
   gui.actions.button({
-    uid: 'button',
-    label: 'Send',
+    uid: 'dx-button-send',
+    label: 'Send Event',
+    onClick: 'testingEvens',
+  }),
+  gui.actions.button({
+    uid: 'dx-button-submit',
+    actionType: 'submit',
+    label: 'Submit',
     disabled: { when: '$formIsInvalid' },
-    on: { click: 'send' },
   }),
   gui.displays.alert({
     uid: 'send-result',
-    text: 'Press Send to submit.',
+    text: 'Press Submit to send the form',
     level: 'info',
   }),
 ];
