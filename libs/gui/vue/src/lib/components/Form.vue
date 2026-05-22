@@ -3,6 +3,7 @@ import type {
   FormEvent,
   FormHealth,
   FormInitConfig,
+  FormSubmitEvent,
   WidgetLoaders,
   WithWidget,
 } from '@golemui/core';
@@ -11,10 +12,19 @@ import { initValidators } from '@golemui/gui-validators';
 import { FormComponent, type FormComponentHandle, type VueItemRenderer } from '@golemui/vue';
 import { computed, ref, type Component } from 'vue';
 import { widgetLoaders as golemWidgetLoaders } from '../widget.loaders';
-import type { GuiFormEmits, GuiFormHandle, GuiFormProps } from './Form.types';
+import type { GuiFormHandle, GuiFormProps } from './Form.types';
+
+// Needed to avoid double 'form-submit' events
+defineOptions({
+  inheritAttrs: false,
+});
 
 const props = defineProps<GuiFormProps>();
-const emit = defineEmits<GuiFormEmits>();
+const emit = defineEmits<{
+  'form-event': [event: FormEvent];
+  'form-submit': [event: FormSubmitEvent];
+  'form-health': [health: FormHealth];
+}>();
 
 const formRef = ref<FormComponentHandle | null>(null);
 
@@ -67,6 +77,8 @@ defineExpose<GuiFormHandle>({
     :validators="allValidators"
     :autocomplete="autocomplete"
     @form-event="onInnerFormEvent"
+    @form-submit="$emit('form-submit', $event)"
     @form-health="onInnerFormHealth"
   />
 </template>
+<!-- @form-submit="onInnerFormSubmit" -->
