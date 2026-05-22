@@ -198,7 +198,10 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
         type: 'flex',
         props: { direction: 'column' },
         children: [
-          { kind: 'input', type: 'textinput', path: 'street', label: 'Street' },
+          // Child paths inside a repeater template MUST be `<repeater.path>.items.<field>` —
+          // `items` is the reserved segment that the runtime expands per array entry.
+          { kind: 'input', type: 'textinput', path: 'addresses.items.street', label: 'Street' },
+          { kind: 'input', type: 'textinput', path: 'addresses.items.city', label: 'City' },
         ],
       },
     },
@@ -224,10 +227,18 @@ const NOTES: Record<string, string[]> = {
   ],
   flex: ['`children` is an array of any widgets (inputs, displays, nested layouts).'],
   grid: ['`children` is an array of any widgets. `props.columns` controls layout.'],
-  tabs: ['`props.tabs[].uid` must match the `tag` on each child widget that belongs to that tab.'],
+  tabs: [
+    'Children are associated with tabs by **`uid` matching**, not by array order: each direct child must have a `uid` field at the widget level (alongside `kind`/`type`) whose string value equals one of the `props.tabs[].uid` entries. There is no `tag` property — that is not a real GolemUI field.',
+    'Children are typically written in display order for readability, but rearranging them does not change which tab they belong to — only the `uid` string match does.',
+  ],
+  accordion: [
+    'Children are associated with sections by **`uid` matching** (same pattern as `tabs`): each direct child must have a `uid` field at the widget level whose value equals one of the `props.sections[].uid` entries. There is no `tag` property.',
+    '`props.defaultOpen` is a map of `{ <sectionUid>: boolean }` controlling which sections start expanded.',
+  ],
   repeater: [
-    '`props.template` must be a layout widget (flex/grid/etc.) whose children are the per-item fields.',
-    'Paths inside the template are relative to each item.',
+    '`props.template` must be a layout widget (flex/grid/tabs/accordion) whose children are the per-item fields.',
+    'Child paths inside the template MUST follow the form `<repeater.path>.items.<fieldName>`. The `items` segment is reserved — the runtime substitutes it with the current array index per row. For example, a repeater at `path: "users"` with a child `firstName` uses `path: "users.items.firstName"`. Plain `firstName` will NOT bind to the array.',
+    'Nested repeaters chain the convention: a repeater at `path: "teams"` whose template contains a repeater at `path: "teams.items.members"` whose children use `path: "teams.items.members.items.<field>"`.',
   ],
   button: ['`on.click` references an event handler name registered in form config.'],
   checkbox: ['Set `validator.const: true` to require the user to tick it (e.g. terms acceptance).'],

@@ -317,9 +317,11 @@ function buildArrayField(
   if (items.type === 'object') {
     const templateChildren: unknown[] = [];
     const required = new Set(items.required ?? []);
+    // Child paths inside a repeater template MUST be `<repeater.path>.items.<field>`.
+    // `items` is the reserved segment the runtime expands per array entry.
+    const childParent = `${path}.items`;
     for (const [childName, childSchema] of Object.entries(items.properties ?? {})) {
-      // Inside a repeater template, paths are relative — no dotted parent prefix.
-      const w = mapProperty(childName, unwrap(childSchema), required.has(childName), '', unmapped);
+      const w = mapProperty(childName, unwrap(childSchema), required.has(childName), childParent, unmapped);
       if (w) templateChildren.push(w);
     }
     if (!templateChildren.length) {

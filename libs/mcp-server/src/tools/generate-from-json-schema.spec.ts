@@ -111,7 +111,7 @@ describe('generate_from_json_schema', () => {
     expect(group.children.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('renders array-of-object as a repeater', () => {
+  it('renders array-of-object as a repeater with `<path>.items.<field>` child paths', () => {
     const r = generateFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -120,7 +120,11 @@ describe('generate_from_json_schema', () => {
             type: 'array',
             items: {
               type: 'object',
-              properties: { street: { type: 'string' } },
+              required: ['street'],
+              properties: {
+                street: { type: 'string' },
+                city: { type: 'string' },
+              },
             },
           },
         },
@@ -130,7 +134,14 @@ describe('generate_from_json_schema', () => {
     expect(r.validation.valid).toBe(true);
     const rep = (r.formDefinition.form as any[])[0];
     expect(rep.type).toBe('repeater');
+    expect(rep.path).toBe('addresses');
     expect(rep.props.template.type).toBe('flex');
+    // `items` is the reserved segment the runtime expands per array entry.
+    const tplChildren = rep.props.template.children as any[];
+    expect(tplChildren.map((c) => c.path)).toEqual([
+      'addresses.items.street',
+      'addresses.items.city',
+    ]);
   });
 
   it('reports unmapped fields without failing', () => {
