@@ -11,6 +11,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
   const {
     uid,
     label,
+    actionType,
     disabled,
     on,
     onClick: _onClick,
@@ -28,6 +29,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
     kind: 'action',
     type: 'button',
     disabled,
+    actionType,
     label,
     ...(on != null ? { on } : {}),
     props: buttonProps,

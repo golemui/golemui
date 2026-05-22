@@ -28,6 +28,7 @@ export function _guiButton(
   };
 }
 
+// TODO: This has to be removed. Only actions.button() and actios.custom() has to exist
 export const _guiSubmitButton = (
   defs?: ActionDecorator | ActionDefOrCallback,
 ): GuiActionsShortcut => {

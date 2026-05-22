@@ -81,6 +81,7 @@ export const gui = {
   },
   actions: {
     button: _guiButton,
+    // TODO: This has to be removed. Only button() and custom() has to exist
     submitButton: _guiSubmitButton,
     custom: _guiCustomAction,
   },
