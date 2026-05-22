@@ -39,6 +39,8 @@ export const GENERATE_FROM_JSON_SCHEMA_TOOL = {
     type: 'object' as const,
     properties: {
       jsonSchema: {
+        type: 'object' as const,
+        additionalProperties: true,
         description:
           'A standard JSON Schema. The top level must be an `object` schema with a `properties` map. ' +
           'Supports primitive types (string/number/integer/boolean) with formats and constraints, ' +

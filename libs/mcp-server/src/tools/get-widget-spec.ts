@@ -82,9 +82,11 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     path: 'country',
     label: 'Country',
     props: {
+      labelField: 'label',
+      valueField: 'value',
       items: [
-        { value: 'us', template: { kind: 'display', type: 'markdownText', props: { md: 'United States' } } },
-        { value: 'ca', template: { kind: 'display', type: 'markdownText', props: { md: 'Canada' } } },
+        { label: 'United States', value: 'us', flag: '🇺🇸' },
+        { label: 'Canada', value: 'ca', flag: '🇨🇦' },
       ],
     },
   },
@@ -213,11 +215,12 @@ const NOTES: Record<string, string[]> = {
     'The required prop is `md` (the markdown string), not `text`.',
   ],
   dropdown: [
-    '`props.items[].template` is itself a widget (typically `markdownText`) that renders the option label.',
-    'Use `select` instead if you only need plain text options.',
+    'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',
+    '`props.items` is EITHER primitives `["one", 2, ...]` OR arbitrary objects `[{ label, value, ...extras }]`. Pair the object form with `labelField`/`valueField` to tell the dropdown which fields to render as label and which to use as the value. **Widget templates inside items (the `{template, value}` shape) are NOT supported — only `repeater` accepts widget templates.**',
   ],
   select: [
-    '`props.options[]` is the simple form: `{ label, value }`. Use `dropdown` for richer rendered options.',
+    '`props.options[]` is the simple form: `[{ label: "United States", value: "us" }, ...]`. Use this for ANY plain text list — countries, plans, sizes, status enums. Only switch to `dropdown` if you need custom per-item rendering (icons, flags, rich layouts).',
+    'For very large lists (>50 items) consider `dropdown` for its virtualization (`height`, `itemHeight`, `searchFields`).',
   ],
   flex: ['`children` is an array of any widgets (inputs, displays, nested layouts).'],
   grid: ['`children` is an array of any widgets. `props.columns` controls layout.'],

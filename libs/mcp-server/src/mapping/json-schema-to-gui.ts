@@ -239,10 +239,9 @@ function buildEnumField(
     label,
     validator,
     props: {
-      items: values.map((v) => ({
-        value: v,
-        template: { kind: 'display', type: 'markdownText', props: { md: humanLabel(v) } },
-      })),
+      labelField: 'label',
+      valueField: 'value',
+      items: values.map((v) => ({ label: humanLabel(v), value: v })),
     },
   });
 }

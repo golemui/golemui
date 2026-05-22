@@ -57,6 +57,8 @@ export const VALIDATE_FORM_DEFINITION_TOOL = {
     type: 'object' as const,
     properties: {
       formDefinition: {
+        type: 'object' as const,
+        additionalProperties: true,
         description:
           'The full GolemUI form definition object, shaped as `{ form: [...widgets], states?: {...} }`. ' +
           'Pass the JSON object, not a stringified version.',

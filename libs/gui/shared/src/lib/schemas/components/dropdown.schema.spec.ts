@@ -59,7 +59,7 @@ describe('Dropdown schema validation', () => {
             props: {
               placeholder: 'Select a country',
               hint: 'Choose your location',
-              items: [{ template: { label: 'USA' }, value: 'US' }],
+              items: [{ label: 'USA', value: 'US' }],
               labelField: 'label',
               valueField: 'value',
               searchFields: ['label'],
@@ -92,7 +92,7 @@ describe('Dropdown schema validation', () => {
               items: [],
               'placeholder.isEmpty': 'No countries available',
               'hint.hasError': 'Selection required',
-              'items.hasData': [{ template: { label: 'UK' }, value: 'UK' }],
+              'items.hasData': [{ label: 'UK', value: 'UK' }],
               'inputDebounce.isSlow': 1000,
             },
           },
@@ -303,5 +303,6 @@ describe('Dropdown schema validation', () => {
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/items'),
       ).toBe(true);
     });
+
   });
 });

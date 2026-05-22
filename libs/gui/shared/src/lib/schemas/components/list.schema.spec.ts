@@ -60,7 +60,7 @@ describe('List schema validation', () => {
             type: 'list',
             props: {
               hint: 'Select tags',
-              items: [{ template: { label: 'Tech' }, value: 'tech' }],
+              items: [{ label: 'Tech', value: 'tech' }],
               labelField: 'label',
               valueField: 'value',
               height: 300,
@@ -95,7 +95,7 @@ describe('List schema validation', () => {
             props: {
               items: [],
               'hint.hasError': 'Must select at least one',
-              'items.isLoaded': [{ template: { label: 'Science' }, value: 'science' }],
+              'items.isLoaded': [{ label: 'Science', value: 'science' }],
               'height.isMobile': 200,
             },
           },
@@ -233,5 +233,6 @@ describe('List schema validation', () => {
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/items'),
       ).toBe(true);
     });
+
   });
 });

@@ -208,6 +208,8 @@ export const GENERATE_FROM_OPENAPI_TOOL = {
         description: 'URL of a JSON OpenAPI document. Either this or `document` is required.',
       },
       document: {
+        type: 'object' as const,
+        additionalProperties: true,
         description: 'Parsed OpenAPI document (JSON object). Either this or `documentUrl` is required.',
       },
       operation: {
