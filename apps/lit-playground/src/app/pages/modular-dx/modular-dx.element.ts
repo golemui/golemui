@@ -1,8 +1,8 @@
 import { modularDx, onFormEvent } from '@golemui/apps-shared';
-import type { FormEvent } from '@golemui/core';
+import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 const md = modularDx;
@@ -16,18 +16,42 @@ const config: GuiFormInitConfig = {
 
 @customElement('lit-modular-dx')
 export class ModularDxElement extends LitElement {
+  private errors: string[] = [];
+
   override createRenderRoot() {
     return this;
   }
 
-  protected async onFormEvent(event: CustomEvent<FormEvent>) {
-    await onFormEvent(event.detail);
+  private onFormEvent(event: CustomEvent<FormEvent>) {
+    onFormEvent(event.detail);
+  }
+
+  private onFormSubmit(event: FormSubmitEvent) {
+    console.log('👉 onFormSubmit', event.data);
+  }
+
+  private onFormHealth(event: FormHealth) {
+    if (event.status === 'errored') {
+      this.errors = [...this.errors, event.message];
+    }
   }
 
   override render() {
     return html`
       <div>
-        <gui-form .config=${config} @formEvent=${this.onFormEvent}></gui-form>
+        ${this.errors.length > 0
+          ? html`<div
+              style="border: 2px solid red; padding: 8px 12px; margin-bottom: 12px; color: red"
+            >
+              ${this.errors.toString()}
+            </div>`
+          : nothing}
+        <gui-form
+          .config=${config}
+          @formEvent=${this.onFormEvent}
+          @formSubmit=${this.onFormSubmit}
+          @formHealth=${this.onFormHealth}
+        ></gui-form>
       </div>
     `;
   }

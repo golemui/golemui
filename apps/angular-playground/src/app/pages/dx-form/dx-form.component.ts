@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
-import type { FormEvent } from '@golemui/core';
+import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import snarkdown from 'snarkdown';
@@ -54,8 +54,19 @@ export class DxFormPage {
     customValidators: ks.customValidators,
     localization,
   };
+  protected errors = signal<string[]>([]);
 
   protected onFormEvent(event: FormEvent) {
     onFormEvent(event);
+  }
+
+  protected onFormSubmit(event: FormSubmitEvent) {
+    console.log('👉 onFormSubmit', event.data);
+  }
+
+  protected onFormHealth(event: FormHealth) {
+    if (event.status === 'errored') {
+      this.errors.set([...this.errors(), event.message]);
+    }
   }
 }

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
-import { GuiForm } from '@golemui/gui-vue';
+import type { FormHealth } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
-import { h } from 'vue';
+import { GuiForm } from '@golemui/gui-vue';
 import snarkdown from 'snarkdown';
+import { h, ref } from 'vue';
 import AirportItemRenderer from '../../item-renderers/AirportItemRenderer.vue';
 import ComplexListItemRenderer from '../../item-renderers/ComplexListItemRenderer.vue';
 import CountryItemRenderer from '../../item-renderers/CountryItemRenderer.vue';
@@ -40,10 +41,26 @@ const config: GuiFormInitConfig = {
   customValidators: ks.customValidators,
   localization,
 };
+
+const errors = ref<string[]>([]);
+
+function onFormHealth(event: FormHealth) {
+  if (event.status === 'errored') {
+    errors.value = [...errors.value, event.message];
+  }
+}
 </script>
 
 <template>
   <div>
-    <GuiForm :config="config" @form-event="onFormEvent" />
+    <div
+      v-if="errors.length"
+      style="border: 2px solid red; padding: 8px 12px; margin-bottom: 12px; color: red"
+    >
+      <ul style="margin: 0; padding-left: 20px">
+        <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
+      </ul>
+    </div>
+    <GuiForm :config="config" @form-event="onFormEvent" @form-health="onFormHealth" />
   </div>
 </template>

@@ -9,6 +9,7 @@ import {
   type Form,
   type FormEvent,
   type FormHealth,
+  type FormSubmitEvent,
   type ValidateOn,
   devToolsMiddleware,
 } from '@golemui/core';
@@ -61,6 +62,9 @@ function formEventHandler(event: FormEvent) {
   }
   onFormEvent(event);
 }
+function formSubmitHandler(event: FormSubmitEvent) {
+  console.log('👉 onFormSubmit', event.data);
+}
 
 export function FormPage() {
   const [error, setError] = useState('');
@@ -110,6 +114,7 @@ export function FormPage() {
           autocomplete="off"
           formHealth={onFormHealth}
           formEvent={formEventHandler}
+          formSubmit={formSubmitHandler}
         />
       )}
     </div>
