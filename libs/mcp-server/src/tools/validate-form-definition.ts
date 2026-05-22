@@ -9,22 +9,22 @@ export type ValidateInput = {
 export type ValidateResult = {
   valid: boolean;
   errors: FormattedError[];
+  warnings: FormattedError[];
   expressionWarnings: ExpressionFinding[];
 };
 
 export function validateFormDefinition(input: ValidateInput): ValidateResult {
   const validate = getFormValidator();
-  const valid = validate(input.formDefinition) as boolean;
-  const errors = formatAjvErrors(validate.errors, input.formDefinition);
+  const ajvOk = validate(input.formDefinition) as boolean;
+  const { errors, warnings } = formatAjvErrors(validate.errors, input.formDefinition);
   const expressionWarnings = lintReactiveExpressions(input.formDefinition);
 
-  // Safety net: if ajv said the form is invalid but our collapser produced zero errors, the
-  // form definition has something the schema rejects that our targeted re-validation didn't
-  // surface (typically a widget type accepted in isolation but not allowed at its position by
-  // the formWidget oneOf, or an obscure shape we haven't accounted for). Returning `valid:false`
-  // with no errors gives the caller nothing to act on, so emit a generic fallback pointing at
-  // the form root.
-  if (!valid && errors.length === 0) {
+  // Safety net: if ajv said the form is invalid but our collapser produced zero errors AND no
+  // custom-widget warnings, something in the form definition is being rejected by the schema
+  // that our targeted re-validation didn't surface (typically a widget type accepted in
+  // isolation but not allowed at its position by the formWidget oneOf, or an obscure shape we
+  // haven't accounted for). Surface a generic fallback so the caller has something to act on.
+  if (!ajvOk && errors.length === 0 && warnings.length === 0) {
     errors.push({
       path: '/',
       keyword: 'oneOf',
@@ -33,9 +33,11 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
     });
   }
 
+  // `valid` follows hard errors only — custom-widget warnings don't fail validation.
   return {
-    valid: valid && errors.length === 0,
+    valid: errors.length === 0,
     errors,
+    warnings,
     expressionWarnings,
   };
 }
@@ -45,9 +47,12 @@ export const VALIDATE_FORM_DEFINITION_TOOL = {
   description:
     'Validate a GolemUI form definition against the bundled JSON Schemas. Use this AFTER ' +
     'generating or modifying a form definition to guarantee it is correct before the user ' +
-    'pastes it into their codebase. Returns either { valid: true } or a structured list of ' +
-    'errors with JSON Pointer paths and concrete fix suggestions. Also lints reactive ' +
-    'expressions (`include.when`, `disabled.when`, etc.) for common mistakes.',
+    'pastes it into their codebase. Returns `{ valid, errors, warnings, expressionWarnings }`. ' +
+    'Hard mistakes (typos in widget `type`, missing required props, invalid validator shapes) ' +
+    'show up in `errors` and flip `valid` to false. Likely-custom widgets (a `type` value that ' +
+    'isn\'t a built-in and isn\'t close to one) show up in `warnings` instead — they don\'t ' +
+    'affect `valid`. Reactive expressions (`include.when`, `disabled.when`, etc.) are linted ' +
+    'separately into `expressionWarnings`.',
   inputSchema: {
     type: 'object' as const,
     properties: {

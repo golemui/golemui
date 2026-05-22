@@ -14,6 +14,11 @@ export type FormattedError = {
   params?: Record<string, unknown>;
 };
 
+export type FormattedResult = {
+  errors: FormattedError[];
+  warnings: FormattedError[];
+};
+
 const STRING_FORMATS = ['email', 'hostname', 'ipv4', 'ipv6', 'url', 'uuid', 'date', 'time', 'date-time', 'duration'];
 const WIDGET_TYPES = Object.keys(COMPONENT_SCHEMAS);
 
@@ -109,9 +114,13 @@ function describe(value: unknown): string {
 export function formatAjvErrors(
   errors: ErrorObject[] | null | undefined,
   dataRoot?: unknown,
-): FormattedError[] {
-  if (!errors?.length) return [];
-  const filtered = dataRoot !== undefined ? collapseOneOfErrors(errors, dataRoot) : errors;
+): FormattedResult {
+  if (!errors?.length) return { errors: [], warnings: [] };
+  const collapsed =
+    dataRoot !== undefined
+      ? collapseOneOfErrors(errors, dataRoot)
+      : { errors, warnings: [] as FormattedError[] };
+  const filtered = collapsed.errors;
   const out: FormattedError[] = [];
   for (const err of filtered) {
     const path = err.instancePath || '/';
@@ -177,7 +186,7 @@ export function formatAjvErrors(
       params: err.params as Record<string, unknown>,
     });
   }
-  return dedupe(out);
+  return { errors: dedupe(out), warnings: collapsed.warnings };
 }
 
 /**
@@ -237,42 +246,73 @@ function pickIntendedBranch(widget: unknown): { $id: string; type: string } | nu
  * Top-level errors (form-level required, unknown root props, state expressions) are preserved
  * from the original validation pass.
  */
-function collapseOneOfErrors(errors: ErrorObject[], dataRoot: unknown): ErrorObject[] {
+function collapseOneOfErrors(
+  errors: ErrorObject[],
+  dataRoot: unknown,
+): { errors: ErrorObject[]; warnings: FormattedError[] } {
   const topLevel: ErrorObject[] = [];
   for (const err of errors) {
     if (extractWidgetPath(err.instancePath) === null) topLevel.push(err);
   }
 
   const widgetErrors: ErrorObject[] = [];
+  const warnings: FormattedError[] = [];
   const form = (dataRoot as { form?: unknown })?.form;
   if (Array.isArray(form)) {
     form.forEach((widget, i) => {
-      collectWidgetErrors(widget, `/form/${i}`, widgetErrors);
+      collectWidgetErrors(widget, `/form/${i}`, widgetErrors, warnings);
     });
   }
 
-  return [...topLevel, ...widgetErrors];
+  return { errors: [...topLevel, ...widgetErrors], warnings };
 }
 
 /**
  * Recursively validates a single widget against its intended branch's shallow schema, then
  * descends into its `children` / `props.template`. Errors are returned with full instance paths
  * (rooted at the form definition, not the widget).
+ *
+ * When the widget's `type` is set to something that doesn't match (even fuzzily) any built-in
+ * widget, we treat it as a custom widget and emit a `warning` instead of a hard error — devs
+ * who extend GolemUI with their own widget types shouldn't fail validation just because we
+ * can't introspect their props.
  */
-function collectWidgetErrors(widget: unknown, widgetPath: string, out: ErrorObject[]): void {
+function collectWidgetErrors(
+  widget: unknown,
+  widgetPath: string,
+  out: ErrorObject[],
+  warnings: FormattedError[],
+): void {
   const intended = pickIntendedBranch(widget);
   if (!intended) {
-    // Unknown widget type and not even close to one — emit a synthetic top-level error.
-    out.push(
-      {
-        keyword: 'const',
-        instancePath: `${widgetPath}/type`,
-        schemaPath: '',
-        params: { allowedValue: Object.keys(COMPONENT_SCHEMAS).join('|') },
-        message: `Widget type at ${widgetPath} is not a known GolemUI widget`,
-        data: (widget as { type?: unknown })?.type,
-      } as unknown as ErrorObject,
-    );
+    const widgetType = (widget as { type?: unknown } | undefined)?.type;
+    if (typeof widgetType !== 'string' || !widgetType) {
+      // No usable `type` at all — that's a hard error.
+      out.push(
+        {
+          keyword: 'required',
+          instancePath: widgetPath,
+          schemaPath: '',
+          params: { missingProperty: 'type' },
+          message: `Widget at ${widgetPath} is missing or has an invalid \`type\``,
+        } as unknown as ErrorObject,
+      );
+    } else {
+      // Type is set but doesn't match any built-in — assume custom widget and warn.
+      warnings.push({
+        path: `${widgetPath}/type`,
+        keyword: 'customWidget',
+        message: `Widget type \`${widgetType}\` at \`${widgetPath}\` is not a built-in GolemUI widget — assumed custom. Its props were not validated.`,
+        suggestion:
+          'Built-in widget types: ' +
+          Object.keys(COMPONENT_SCHEMAS).join(', ') +
+          '. If this is intentional (a custom widget registered via the framework loader), you can ignore this warning.',
+        params: { type: widgetType },
+      });
+    }
+    // Even for an unknown widget, recurse into nested standard widgets so we don't miss errors
+    // in their content (a custom layout may wrap normal form widgets in its `children`).
+    recurseIntoChildren(widget, widgetPath, out, warnings);
     return;
   }
 
@@ -306,15 +346,25 @@ function collectWidgetErrors(widget: unknown, widgetPath: string, out: ErrorObje
     }
   }
 
-  // Recurse into nested widgets. Layout widgets (flex/grid/tabs/accordion) have `children`;
-  // repeater has `props.template` which is itself a layout widget.
+  recurseIntoChildren(widget, widgetPath, out, warnings);
+}
+
+function recurseIntoChildren(
+  widget: unknown,
+  widgetPath: string,
+  out: ErrorObject[],
+  warnings: FormattedError[],
+): void {
+  const w = widget as
+    | { type?: unknown; children?: unknown; props?: { template?: unknown } }
+    | undefined;
   if (Array.isArray(w?.children)) {
     w.children.forEach((child, i) => {
-      collectWidgetErrors(child, `${widgetPath}/children/${i}`, out);
+      collectWidgetErrors(child, `${widgetPath}/children/${i}`, out, warnings);
     });
   }
   if (w?.type === 'repeater' && w.props?.template) {
-    collectWidgetErrors(w.props.template, `${widgetPath}/props/template`, out);
+    collectWidgetErrors(w.props.template, `${widgetPath}/props/template`, out, warnings);
   }
 }
 

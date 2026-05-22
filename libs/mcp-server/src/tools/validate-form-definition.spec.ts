@@ -125,6 +125,54 @@ describe('validate_form_definition', () => {
     }
   });
 
+  it('treats unknown widget types far from any built-in as custom widgets (warning, not error)', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        form: [
+          // `heading` isn't a built-in widget and isn't close to one — must be a custom widget.
+          { kind: 'display', type: 'heading', props: { text: 'Hi', level: 2 } } as never,
+          // Real built-in alongside it to prove normal validation still runs.
+          { kind: 'input', type: 'textinput', path: 'name' },
+        ],
+      },
+    });
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toHaveLength(1);
+    expect(result.warnings[0]!.keyword).toBe('customWidget');
+    expect(result.warnings[0]!.path).toBe('/form/0/type');
+    expect(result.warnings[0]!.message).toMatch(/heading/);
+  });
+
+  it('still errors (not warns) when a widget type is a clear typo of a built-in', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        form: [{ kind: 'input', type: 'textimput', path: 'name' }],
+      },
+    });
+    expect(result.valid).toBe(false);
+    expect(result.warnings).toEqual([]);
+    expect(result.errors.some((e) => e.suggestion?.includes('textinput'))).toBe(true);
+  });
+
+  it('recurses into a custom layout widget to validate its standard children', () => {
+    // A custom `wrapper` layout containing a real textinput with a typo: the wrapper itself
+    // produces a warning, but the typo inside should still produce an error.
+    const result = validateFormDefinition({
+      formDefinition: {
+        form: [
+          {
+            kind: 'layout',
+            type: 'customWrapper',
+            children: [{ kind: 'input', type: 'textimput', path: 'name' }],
+          } as never,
+        ],
+      },
+    });
+    expect(result.warnings).toHaveLength(1);
+    expect(result.errors.some((e) => e.path === '/form/0/children/0/type')).toBe(true);
+  });
+
   it('accepts $meta.* references in reactive expressions', () => {
     const result = validateFormDefinition({
       formDefinition: {
