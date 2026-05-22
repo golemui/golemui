@@ -26,6 +26,9 @@
     "type": {
       "const": "button"
     },
+    "actionType": {
+      "enum": ["button", "submit"]
+    },
     "label": {
       "$ref": "#/$defs/labelDef"
     },

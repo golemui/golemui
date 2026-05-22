@@ -10,6 +10,7 @@ export class GuiButton extends LitElement {
   @property({ type: String }) icon: string | undefined = undefined;
   @property({ type: String }) variant: 'filled' | 'outlined' | 'link' | undefined = 'filled';
   @property({ type: String }) iconPosition: 'left' | 'right' | undefined = 'left';
+  @property({ type: String }) actionType: 'submit' | 'button' | undefined = 'button';
 
   override createRenderRoot() {
     return this;
@@ -38,9 +39,9 @@ export class GuiButton extends LitElement {
     return html`
       <div class="gui-widget">
         <button
-          type="button"
+          type=${this.actionType ?? 'button'}
           tabindex="0"
-          id=${this.uid}
+          id=${this.uid!}
           class=${classMap(buttonClasses)}
           data-cy=${`${this.uid}_button`}
           ?disabled=${this.disabled}
