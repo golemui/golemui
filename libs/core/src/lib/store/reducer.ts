@@ -136,6 +136,7 @@ export const reducer =
           calculateCurrentState,
           calculateWidgetFlags,
           calculateWidgetProps(localization),
+          calculateIsFormValid,
         );
       }
 
@@ -185,6 +186,7 @@ export const reducer =
               }
               return state;
             },
+            calculateIsFormValid,
           );
         }
 
@@ -202,3 +204,30 @@ export const reducer =
   };
 
 const formIsHealthy = (state: State) => state.formHealth.status === 'ok';
+
+// TODO: dedupe this. we already have $formIsInvalid (although it doesnt take into account injected validations)
+function calculateIsFormValid(state: State): State {
+  const injectedValidationsKeys = Object.keys(state.injectedValidations);
+  const validationsKeys = Object.keys(state.validations);
+
+  if (injectedValidationsKeys.length === 0 && validationsKeys.length === 0) {
+    return { ...state, isFormValid: true };
+  }
+
+  let issues = injectedValidationsKeys.find(
+    (key) =>
+      state.injectedValidations[key] !== null && Array.isArray(state.injectedValidations[key]),
+  );
+  if (issues !== undefined) {
+    return { ...state, isFormValid: false };
+  }
+
+  issues = validationsKeys.find(
+    (key) => state.validations[key] !== null && Array.isArray(state.validations[key]),
+  );
+  if (issues !== undefined) {
+    return { ...state, isFormValid: false };
+  }
+
+  return { ...state, isFormValid: true };
+}
