@@ -15,13 +15,14 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
   type FormEvent,
   type FormHealth,
-  type ValidatorFn,
-  type WithWidget,
   formHealth,
+  type FormInitConfig,
+  type FormSubmitEvent,
   getDirectionFromLanguage,
   shortUUID,
+  type ValidatorFn,
+  type WithWidget,
 } from '@golemui/core';
-import { type FormInitConfig } from '@golemui/core';
 import { share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';
@@ -47,6 +48,7 @@ export class FormCoreComponent implements OnInit, OnDestroy {
   // OUTPUTS
   protected formHealth = output<FormHealth>();
   protected formEvent = output<FormEvent>();
+  protected formSubmit = output<FormSubmitEvent>();
 
   // INJECTS
   protected context: AngularFormContext<Type<WithWidget>> = inject(AngularFormContext);
@@ -106,10 +108,21 @@ export class FormCoreComponent implements OnInit, OnDestroy {
       )
       .subscribe((health) => this.formHealth.emit(health));
 
-    // `events$` is stable. Survives store replacements
+    this.configureLongLivedEvents();
+  }
+
+  /**
+   * Stable events subscriptions.
+   * ( Stable events are those that survive store replacements )
+   */
+  private configureLongLivedEvents() {
     this.context.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => this.formEvent.emit(event));
+
+    this.context.submit$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => this.formSubmit.emit(event));
   }
 
   ngOnDestroy(): void {
@@ -122,5 +135,10 @@ export class FormCoreComponent implements OnInit, OnDestroy {
 
   setMeta(meta: Record<string, any>): void {
     this.context.store.dispatch({ type: 'SET_META', payload: { meta } });
+  }
+
+  protected onFormSubmit(event: SubmitEvent) {
+    event.preventDefault();
+    this.context.emitSubmitEvent();
   }
 }
