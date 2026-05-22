@@ -1,0 +1,44 @@
+{
+  "name": "@golemui/mcp-server",
+  "version": "0.0.1",
+  "description": "Model Context Protocol server for GolemUI — gives AI coding assistants deterministic schema validation and form generation for GolemUI form definitions.",
+  "type": "module",
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "bin": {
+    "golemui-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "*.md"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "golemui",
+    "ai",
+    "form",
+    "json-schema"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/mcp-server"
+  }
+}

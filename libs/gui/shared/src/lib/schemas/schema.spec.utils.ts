@@ -2,6 +2,7 @@ import { type ErrorObject } from 'ajv/dist/2020';
 import type Ajv2020 from 'ajv/dist/2020';
 import commonSchema from './common.schema.json';
 import formSchema, { $id } from './form.schema.json';
+import layoutWidgetSchema from './layout-widget.schema.json';
 import validatorsSchema from './validators.schema.json';
 
 export type GetSchema = NonNullable<ReturnType<Ajv2020['getSchema']>>;
@@ -25,6 +26,7 @@ export function specValidationErrorsLogger(validate: any, data: any) {
 export function registerGolemSchemas(ajv: Ajv2020) {
   ajv.addSchema(commonSchema);
   ajv.addSchema(validatorsSchema);
+  ajv.addSchema(layoutWidgetSchema);
 
   // @ts-expect-error The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'.ts(1343)
   // Automatically assemble all component schemas in this folder

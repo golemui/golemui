@@ -136,15 +136,6 @@
       "label": {
         "key": "consultation.btn.submit",
         "default": "Confirm Booking"
-      },
-      "props": {
-        "title": {
-          "key": "consultation.btn.tooltip",
-          "default": "Submit booking for {{name}}",
-          "params": {
-            "name": "$form.details.clientName"
-          }
-        }
       }
     }
   ]

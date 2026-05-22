@@ -127,6 +127,46 @@ describe('Select schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate options as primitive values', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'sel-1',
+            path: 'choice',
+            kind: 'input',
+            type: 'select',
+            props: { options: ['one', 'two', 3] },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate options as arbitrary objects with labelField/valueField', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'sel-country',
+            path: 'country',
+            kind: 'input',
+            type: 'select',
+            props: {
+              labelField: 'label',
+              valueField: 'id',
+              options: [{ id: 'AU', label: 'Australia' }],
+            },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('validator field', () => {

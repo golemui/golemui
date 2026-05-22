@@ -71,6 +71,10 @@ describe('RangeDatePicker schema validation', () => {
               minDate: '2024-01-01',
               maxDate: '2025-12-31',
               numberOfMonths: 2,
+              disabledRanges: [
+                { start: '2024-12-25', end: '2025-01-01' },
+                { start: '2025-07-04' },
+              ],
             },
           },
         ],

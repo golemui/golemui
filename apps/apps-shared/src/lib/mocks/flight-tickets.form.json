@@ -17,7 +17,6 @@
             "height": 300,
             "itemHeight": 60,
             "itemRenderer": "airportItemRenderer",
-            "asyncFiltering": true,
             "labelField": "name",
             "valueField": "iata",
             "inputDebounce": 300,
@@ -38,7 +37,6 @@
             "height": 300,
             "itemHeight": 60,
             "itemRenderer": "airportItemRenderer",
-            "asyncFiltering": true,
             "labelField": "name",
             "valueField": "iata",
             "inputDebounce": 300,
@@ -64,7 +62,6 @@
       "path": "dates",
       "label": "Outbound/Return Dates",
       "props": {
-        "icon": "calendar_month",
         "prevMonthIcon": "chevron_left",
         "nextMonthIcon": "chevron_right",
         "minDate": "2026-05-13",

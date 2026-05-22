@@ -19,6 +19,7 @@ const PUBLISHABLE_PACKAGES = [
   '@golemui/gui-components',
   '@golemui/gui-validators',
   '@golemui/gui-shared',
+  '@golemui/mcp-server',
 ];
 
 function updateLatestDistTag(projectsVersionData: VersionData) {

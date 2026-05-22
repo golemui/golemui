@@ -6,7 +6,7 @@
       "type": "grid",
       "props": {
         "direction": "row",
-        "gap": 50
+        "rowGap": 50
       },
       "children": [
         {
@@ -83,7 +83,6 @@
       "size": 1,
       "props": {
         "numberOfMonths": 2,
-        "icon": "calendar_month",
         "prevMonthIcon": "chevron_left",
         "nextMonthIcon": "chevron_right",
         "prevMonthAriaLabel": {

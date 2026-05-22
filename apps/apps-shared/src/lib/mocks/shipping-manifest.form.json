@@ -1,5 +1,4 @@
 {
-  "title": "Global Logistics & Shipping Manifest (Goliath)",
   "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
   "states": {
     "isHazardous": "$form.isHazardous === true"
@@ -161,7 +160,7 @@
               "type": "repeater",
               "path": "containers.items.pallets",
               "label": "Pallets in Container",
-              "validator": { "type": "array", "minLength": 2 },
+              "validator": { "type": "array", "minItems": 2, "maxItems": 10 },
               "props": {
                 "addLabel": "Add Pallet",
                 "limit": 20,

@@ -187,6 +187,50 @@ describe('Dropdown schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate items as primitive values (string/number)', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'dd-1',
+            path: 'choice',
+            kind: 'input',
+            type: 'dropdown',
+            props: { items: ['one', 'two', 3] },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate items as arbitrary objects paired with labelField/valueField/itemRenderer', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'dd-country',
+            path: 'country',
+            kind: 'input',
+            type: 'dropdown',
+            props: {
+              labelField: 'label',
+              valueField: 'id',
+              itemRenderer: 'countryItemRenderer',
+              items: [
+                { id: 'AU', flag: '🇦🇺', label: 'Australia' },
+                { id: 'BR', flag: '🇧🇷', label: 'Brazil' },
+              ],
+            },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {

@@ -166,6 +166,47 @@ describe('List schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate items as primitive values', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'ls-1',
+            path: 'pick',
+            kind: 'input',
+            type: 'list',
+            props: { items: ['one', 'two', 3] },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate items as arbitrary objects with labelField/valueField/itemRenderer', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'ls-country',
+            path: 'country',
+            kind: 'input',
+            type: 'list',
+            props: {
+              labelField: 'label',
+              valueField: 'id',
+              itemRenderer: 'countryItemRenderer',
+              items: [{ id: 'AU', label: 'Australia' }],
+            },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {
