@@ -1,4 +1,4 @@
-import { type NonFunctionWidget } from './form-widget';
+import { type ActionWidget, type NonFunctionWidget } from './form-widget';
 import { type I18nTranslator } from './i18n';
 import { type OVERRIDE_WIDGET_PROP } from './store/actions';
 import { type ImmutableRecord } from './utils/types';
@@ -70,14 +70,13 @@ export type FunctionWidgetParams<FormType> = {
 /**
  * Defines when widget validation should run.
  * - `'eager'` validates on `'change'`, `'blur'` and `'submit'`.
- * - When using 'submit', validation triggers when the 'submit' event is emitted. When that happens, all widgets are also _touched_ first.
+ * - When using 'submit', validation triggers when the submit button is clicked or Enter is pressed. When that happens, all widgets are also _touched_ first.
  * ```ts
  * {
- *   widget: 'button',
- *   label: 'Create User',
- *   on: {
- *     click: 'submit',
- *   }
+ *   type: 'button',
+ *   kind: 'action',
+ *   actionType: 'submit',
+ *   label: 'Create User'
  * }
  * ```
  */
@@ -109,6 +108,8 @@ export type FormEvent<T = any> = {
   /** Actions that the client can execute to interact with the forms engine from the application scope */
   callback: (action: EventHandlerCallback) => void;
 };
+
+export type FormSubmitEvent<T = any> = Omit<FormEvent<T>, 'name' | 'detail'>;
 
 /**
  * Control adapter templateData
@@ -170,6 +171,7 @@ export type DisplayWidgetTemplateData = {
  * Action widget adapter templateData
  */
 export type ActionWidgetTemplateData = {
+  actionType?: ActionWidget['actionType'];
   lang?: string;
   deps?: Record<string, unknown>;
   label?: string;
