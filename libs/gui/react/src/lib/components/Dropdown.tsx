@@ -305,6 +305,7 @@ export function Dropdown(widgetInstance: WithWidget) {
           type="text"
           id={uid}
           data-cy={`${uid}_textinput`}
+          className="gui-widget-input"
           defaultValue={value ?? ''}
           required={isRequired}
           disabled={isDisabled}

@@ -77,6 +77,7 @@ export class GuiPassword extends LitElement {
     const passwordIcon = addIcon('password', templateData);
 
     const fieldClasses: { [key: string]: boolean } = {
+      'gui-widget-input': true,
       [`gui-password--icon`]: !!this.icon,
     };
 

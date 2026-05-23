@@ -53,6 +53,9 @@ import { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl
 // ─── Repeater ───
 import { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 
+// ─── Tags ───
+import { _guiTags } from './shortcuts/tags/guiTags.impl';
+
 // ─── Selectors — chain root ───
 import { ScopeChain } from './shortcuts/scopes/scopeChain';
 
@@ -77,6 +80,7 @@ export const gui = {
     rangeDateInput: _guiRangeDateInput,
     rangeDatePicker: _guiRangeDatePicker,
     repeater: _guiRepeater,
+    tags: _guiTags,
     custom: _guiCustomInput,
   },
   actions: {

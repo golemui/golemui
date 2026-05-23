@@ -39,7 +39,8 @@
           { "label": "Select Component", "uid": "tabSelect" },
           { "label": "Dropdown Component", "uid": "tabDropdown" },
           { "label": "List Component", "uid": "tabList" },
-          { "label": "Repeater Component", "uid": "tabRepeater" }
+          { "label": "Repeater Component", "uid": "tabRepeater" },
+          { "label": "Tags Component", "uid": "tabTags" }
         ]
       },
       "on": { "change": "onTabEvent" },
@@ -63,7 +64,8 @@
         { "$ref": "./tabs/select.form-chunk.json" },
         { "$ref": "./tabs/dropdown.form-chunk.json" },
         { "$ref": "./tabs/list.form-chunk.json" },
-        { "$ref": "./tabs/repeater.form-chunk.json" }
+        { "$ref": "./tabs/repeater.form-chunk.json" },
+        { "$ref": "./tabs/tags.form-chunk.json" }
       ]
     },
     {

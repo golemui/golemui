@@ -41,6 +41,7 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   list: async () => (await import('./components/list/list.component')).ListComponent,
   markdown: async () =>
     (await import('./components/markdown/markdown.component')).MarkdownComponent,
+  tags: async () => (await import('./components/tags/tags.component')).TagsComponent,
 
   // LAYOUT WIDGETS
   flex: async () => (await import('./components/flex/flex.component')).FlexComponent,

@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "tags",
+      "path": "keywords",
+      "label": "Keywords",
+      "props": {
+        "hint": "Use Enter, Tab or comma to add a tag",
+        "placeholder": "Add a keyword…"
+      }
+    }
+  ]
+}

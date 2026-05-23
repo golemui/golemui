@@ -281,6 +281,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           type="text"
           id=${this.widget.uid}
           data-cy=${`${this.widget.uid}_textinput`}
+          class="gui-widget-input"
           .value=${selectedItemValue ?? templateData.value ?? ''}
           ?required=${templateData.validator?.required}
           ?disabled=${templateData.disabled}

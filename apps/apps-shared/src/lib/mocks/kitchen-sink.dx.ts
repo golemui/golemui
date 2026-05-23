@@ -26,6 +26,7 @@ import { radiogroupTab } from './tabs/radiogroup.dx';
 import { buildRendererTab } from './tabs/renderer.dx';
 import { repeaterTab } from './tabs/repeater.dx';
 import { selectTab } from './tabs/select.dx';
+import { tagsTab } from './tabs/tags.dx';
 import { textareaTab } from './tabs/textarea.dx';
 import { textinputTab } from './tabs/textinput.dx';
 import { toggleTab } from './tabs/toggle.dx';
@@ -100,6 +101,28 @@ const data: Record<string, unknown> = {
       { firstName: 'Diana', lastName: 'Rodriguez' },
     ],
   },
+  tags: {
+    basic: ['hello', 'world'],
+    withIcon: [],
+    noDuplicates: ['unique'],
+    limited: [],
+    scrollable: [
+      'design',
+      'product',
+      'engineering',
+      'research',
+      'marketing',
+      'analytics',
+      'operations',
+      'support',
+      'finance',
+      'legal',
+      'people',
+    ],
+    validated: ['design', 'product'],
+    disabled: ['read', 'only'],
+    readonly: ['frozen'],
+  },
 };
 
 export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenSinkDx => ({
@@ -128,6 +151,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },
         { label: 'Repeater Component', uid: 'tabRepeater', children: [repeaterTab] },
+        { label: 'Tags Component', uid: 'tabTags', children: [tagsTab] },
         ...(options.rendererExample !== undefined
           ? [
               {

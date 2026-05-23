@@ -114,6 +114,7 @@ export class GuiMarkdown extends LitElement {
 
     // Icon
     const fieldClasses: { [key: string]: boolean } = {
+      'gui-widget-input': true,
       [`gui-markdown--icon`]: false,
     };
 

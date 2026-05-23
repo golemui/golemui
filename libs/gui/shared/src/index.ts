@@ -245,6 +245,8 @@ export type {
   RepeaterProps,
   SelectProps,
   TabsProps,
+  TagsProps,
+  TagsSeparator,
   TextareaProps,
   TextinputProps,
   ToggleProps,

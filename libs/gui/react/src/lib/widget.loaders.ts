@@ -24,6 +24,7 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   rangeCalendar: async () => (await import('./components/RangeCalendar')).RangeCalendar,
   rangeDateInput: async () => (await import('./components/RangeDateInput')).RangeDateInput,
   rangeDatePicker: async () => (await import('./components/RangeDatePicker')).RangeDatePicker,
+  tags: async () => (await import('./components/Tags')).Tags,
 
   // REPEATER
   repeater: async () => (await import('./components/Repeater')).Repeater,

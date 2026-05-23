@@ -43,6 +43,7 @@ export { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDateP
 export { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
 export { _guiSelect } from './shortcuts/select/guiSelect.impl';
 export { _guiTabs } from './shortcuts/tabs/guiTabs.impl';
+export { _guiTags } from './shortcuts/tags/guiTags.impl';
 export { _guiTextarea } from './shortcuts/textarea/guiTextarea.impl';
 
 // ─── GSL selectors (behavior) ───
@@ -84,6 +85,7 @@ export {
 export { _gslRepeaterByUid, _gslRepeaters } from './shortcuts/repeater/register';
 export { _gslSelectByUid, _gslSelects } from './shortcuts/select/register';
 export { _gslTabs, _gslTabsByUid } from './shortcuts/tabs/register';
+export { _gslTags, _gslTagsByUid } from './shortcuts/tags/register';
 export { _gslTextareaByUid, _gslTextareas } from './shortcuts/textarea/register';
 
 // ─── Scope selectors ───
@@ -179,6 +181,7 @@ export type {
 export type { GslRepeaterConfig, RepeaterDecorator } from './shortcuts/repeater/repeater.domain';
 export type { GslSelectConfig, SelectDecorator } from './shortcuts/select/select.domain';
 export type { GslTabsConfig, TabsDecorator } from './shortcuts/tabs/tabs.domain';
+export type { GslTagsConfig, TagsDecorator } from './shortcuts/tags/tags.domain';
 export type { GslTextareaConfig, TextareaDecorator } from './shortcuts/textarea/textarea.domain';
 
 // ─── Extension API (for adding custom shortcut types) ───
