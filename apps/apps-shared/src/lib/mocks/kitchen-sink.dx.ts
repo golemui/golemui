@@ -146,6 +146,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
       label: 'Submit',
       icon: 'save',
       iconPosition: 'right',
+      disabled: { when: '$formIsInvalid' },
     }),
   ],
   formSelectors: [
