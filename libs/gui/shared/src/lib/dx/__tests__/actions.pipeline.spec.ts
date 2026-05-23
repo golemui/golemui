@@ -1,15 +1,8 @@
-import { type LayoutWidget } from '@golemui/core';
 import { describe, expect, it } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
 import { _guiTextInput } from '../index';
-
-function getRootFromFacadeResult(
-  result: ReturnType<typeof formDefs.processDxFacade>,
-): LayoutWidget {
-  return result.form.form as LayoutWidget;
-}
 
 describe('DX Pipeline — Actions', () => {
   describe('Basic action expansion', () => {
