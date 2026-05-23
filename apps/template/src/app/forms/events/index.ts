@@ -85,7 +85,7 @@ export const eventsSubmitDemo = {
         },
       },
     }),
-    gui.actions.submitButton({ label: 'Submit' }),
+    gui.actions.button({ label: 'Submit', actionType: 'submit' }),
     gui.inputs.textInput('evSubmittedEmail', {
       label: 'Result',
       readonly: true,

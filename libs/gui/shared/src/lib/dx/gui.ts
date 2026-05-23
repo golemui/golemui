@@ -29,7 +29,7 @@ import { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDateP
 import { _guiCustomInput } from './shortcuts/custom-input/guiCustomInput.impl';
 
 // ─── Actions ───
-import { _guiButton, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
+import { _guiButton } from './shortcuts/actions/guiActions.impl';
 import { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
 
 // ─── Displays ───
@@ -81,8 +81,6 @@ export const gui = {
   },
   actions: {
     button: _guiButton,
-    // TODO: This has to be removed. Only button() and custom() has to exist
-    submitButton: _guiSubmitButton,
     custom: _guiCustomAction,
   },
   displays: {

@@ -48,7 +48,6 @@ export const { gsl: _gslActions, gslByUid: _gslActionByUid } = defineShortcutTyp
     eventWiringService.extractOnClickFromMergeResult(
       mergeResult,
       context.eventRegistry,
-      context.formConfig,
       context.eventIdGenerator,
     ),
 });

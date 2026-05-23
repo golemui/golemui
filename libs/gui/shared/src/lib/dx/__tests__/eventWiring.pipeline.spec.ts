@@ -291,18 +291,6 @@ describe('DX Pipeline — Event Wiring', () => {
       expect(clickFn).toHaveBeenCalledWith({ x: 1 });
     });
 
-    it('onSubmit still receives event.data (backward compat)', () => {
-      const submitFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
-      expect(submitFn).toHaveBeenCalledWith({ ok: true });
-    });
-
     it('arbitrary string onClick lands as on.click for host-managed dispatch', () => {
       const result = formDefs.processDxFacade(
         [_guiButton({ label: 'Click me', onClick: 'evClick' })],

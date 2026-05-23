@@ -1,5 +1,5 @@
 import { type LayoutWidget } from '@golemui/core';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
@@ -57,82 +57,6 @@ describe('DX Pipeline — Actions', () => {
       expect(actions[0].on?.click).toBeDefined();
       expect(actions[1].on?.click).toBeDefined();
       expect(actions[0].on?.click).not.toBe(actions[1].on?.click);
-    });
-  });
-
-  describe('Submit button handling', () => {
-    it("promotes onClick: 'submit' action to #submit with submit event", () => {
-      const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        {},
-      );
-      const root = getRootFromFacadeResult(result);
-      const submit = root.children?.find(
-        (child) => typeof child !== 'function' && (child as { kind?: string }).kind === 'action',
-      ) as { uid?: string; on?: { click?: string } };
-
-      expect(submit.uid).toBe('#submit');
-      expect(submit.on?.click).toBe('submit');
-    });
-
-    it("treats uid '#submit' action as submit and wires submit event", () => {
-      const result = formDefs.processDxFacade([_guiButton({ uid: '#submit', label: 'Send' })], []);
-      const root = getRootFromFacadeResult(result);
-      const submit = root.children?.find(
-        (child) => typeof child !== 'function' && (child as { uid?: string }).uid === '#submit',
-      ) as { on?: { click?: string } };
-
-      expect(submit.on?.click).toBe('submit');
-    });
-
-    it('registers root onSubmit callback into form events when submit action is present', () => {
-      const submitFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      expect(result.events).toBeDefined();
-      expect(typeof result.events).toBe('function');
-
-      result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
-      expect(submitFn).toHaveBeenCalledWith({ ok: true });
-    });
-
-    it('uses explicit onClick callback instead of root onSubmit', () => {
-      const myFn = vi.fn();
-      const submitFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Custom', onClick: myFn })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      expect(result.events).toBeDefined();
-      const root = result.form.form as LayoutWidget;
-      const customButton = root.children?.find(
-        (child) => typeof child !== 'function' && (child as { label?: string }).label === 'Custom',
-      ) as { on?: { click?: string } };
-
-      expect(typeof customButton.on?.click).toBe('string');
-      result.events!({ name: customButton.on?.click ?? '', data: { a: 1 }, callback: vi.fn() });
-
-      expect(myFn).toHaveBeenCalledWith({ a: 1 });
-      expect(submitFn).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('No auto-submit', () => {
-    it('does not inject a submit button when none is declared', () => {
-      const result = formDefs.processDxFacade([_guiTextInput('name')], []);
-      const root = getRootFromFacadeResult(result);
-      const hasSubmit = (root.children ?? []).some(
-        (child) => typeof child !== 'function' && (child as { uid?: string }).uid === '#submit',
-      );
-
-      expect(hasSubmit).toBe(false);
     });
   });
 

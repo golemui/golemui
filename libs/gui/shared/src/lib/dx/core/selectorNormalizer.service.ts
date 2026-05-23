@@ -46,8 +46,6 @@ export class SelectorNormalizer {
   extractFormConfig(): FormConfig {
     return {
       suppressAutomaticStack: false,
-      // TODO: this is not wired?
-      onSubmit: (data: any) => console.log('Form submitted:', data),
     };
   }
 }

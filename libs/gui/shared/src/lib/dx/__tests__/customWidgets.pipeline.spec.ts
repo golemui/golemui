@@ -164,21 +164,6 @@ describe('DX Pipeline — Custom Action', () => {
     expect(handler).toHaveBeenCalledWith({ ok: true });
   });
 
-  it('supports onClick: "submit" for custom action', () => {
-    const dxResult = formDefs.processDxFacade(
-      [_guiCustomAction('matButton', { label: 'Submit', onClick: 'submit' })],
-      [],
-      {},
-    );
-    const root = dxResult.form.form as LayoutWidget;
-    const submit = root.children?.find(
-      (c) => typeof c !== 'function' && (c as any).kind === 'action',
-    ) as any;
-
-    expect(submit.uid).toBe('#submit');
-    expect(submit.on?.click).toBe('submit');
-  });
-
   it('passes through custom props', () => {
     const result = processDx(
       _guiCustomAction('matButton', { label: 'Go', props: { variant: 'outlined' } }),

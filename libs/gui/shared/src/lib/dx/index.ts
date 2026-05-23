@@ -9,7 +9,7 @@ export { gui } from './gui';
 // ─── GUI factories (structure) ───
 
 export { _guiAccordion } from './shortcuts/accordion/guiAccordion.impl';
-export { _guiButton, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
+export { _guiButton } from './shortcuts/actions/guiActions.impl';
 export { _guiAlert } from './shortcuts/alert/guiAlert.impl';
 export { _guiCalendar } from './shortcuts/calendar/guiCalendar.impl';
 export { _guiCheckbox } from './shortcuts/checkbox/guiCheckbox.impl';
