@@ -166,6 +166,7 @@ export class GuiTags extends LitElement {
             @keydown=${this.onInputKeydown}
             @blur=${this.onInputBlur}
             @paste=${this.onPaste}
+            @change=${(e: Event) => e.stopPropagation()}
           />
         </div>
         ${this._showPillsList && tags.length > 0
