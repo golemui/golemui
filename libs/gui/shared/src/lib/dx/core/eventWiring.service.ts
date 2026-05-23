@@ -58,14 +58,13 @@ export class EventWiringService {
     const rawOnClick = actionDef.onClick;
 
     if (typeof rawOnClick === 'function') {
+      const { onClick: _, ...rest } = actionDef;
+      const probeResult = rawOnClick(undefined);
+      if (typeof probeResult === 'string') {
+        return { ...rest, uid: actionId, on: { click: probeResult } };
+      }
       eventRegistry.set(actionId, (event: FormEvent) => rawOnClick(event.data));
-      const { onClick: _, ...rest } = actionDef;
       return { ...rest, uid: actionId, on: { click: actionId } };
-    }
-
-    if (typeof rawOnClick === 'string') {
-      const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: rawOnClick } };
     }
 
     return { ...actionDef, uid: actionId };

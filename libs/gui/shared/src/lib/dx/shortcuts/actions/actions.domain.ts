@@ -18,8 +18,7 @@ import {
 export interface ActionDecorator extends DxActionBase, DxCommonFields, Partial<ButtonProps> {
   data?: any | null;
   type?: 'button';
-  on?: { click: string };
-  onClick?: ((data: any) => void) | string;
+  onClick?: (data: any) => void | string;
 }
 
 /**

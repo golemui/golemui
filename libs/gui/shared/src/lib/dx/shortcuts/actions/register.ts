@@ -23,7 +23,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
     exclude: _exclude,
     states: _states,
     ...buttonProps
-  } = def;
+  } = def as ActionDecorator & { on?: { click: string } };
   return {
     uid: uid ?? '',
     kind: 'action',
