@@ -1,5 +1,5 @@
 import { iframeResizer } from '@golemui/apps-shared';
-import type { ValidateOn } from '@golemui/core';
+import type { FormSubmitEvent, ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
@@ -32,9 +32,7 @@ export class AppElement extends LitElement {
           uid: 'btn-submit',
           kind: 'action',
           type: 'matButton',
-          on: {
-            click: 'handleSubmit',
-          },
+          actionType: 'submit',
           label: 'Send',
         },
       ],
@@ -58,12 +56,19 @@ export class AppElement extends LitElement {
     iframeResizer();
   }
 
+  protected onFormSubmit(event: FormSubmitEvent) {
+    console.log('👉 onFormSubmit', event.data);
+  }
+
   render() {
     return html`
       <div>
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
-        <gui-form .config=${this.config}></gui-form>
+        <gui-form
+          .config=${this.config}
+          @formSubmit=${this.onFormSubmit}
+        ></gui-form>
       </div>
     `;
   }

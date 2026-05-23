@@ -13,7 +13,7 @@ import { gui } from '@golemui/gui-shared';
 const formDef = [
   gui.inputs.textInput('name', { label: 'Name' }),
   gui.inputs.dropdown('country', { items: ['US', 'CA'] }),
-  gui.actions.submitButton({ label: 'Submit' }),
+  gui.actions.button({ label: 'Submit', actionType: 'submit' }),
 ];
 ```
 
