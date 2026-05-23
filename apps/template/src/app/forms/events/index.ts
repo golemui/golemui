@@ -6,7 +6,7 @@ export const eventsClickDemo = {
   form: [
     gui.actions.button({
       label: 'Click me',
-      onClick: 'evClick',
+      onClick: () => 'evClick',
     }),
     gui.inputs.textInput('evClickResult', {
       label: 'Last click',

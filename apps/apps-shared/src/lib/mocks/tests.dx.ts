@@ -33,7 +33,7 @@ const formDef: DxDefinitionItem[] = [
   gui.actions.button({
     uid: 'dx-button-send',
     label: 'Send Event',
-    onClick: 'testingEvens',
+    onClick: () => 'testingEvens',
   }),
   gui.actions.button({
     uid: 'dx-button-submit',
