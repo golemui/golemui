@@ -118,7 +118,7 @@ export class GuiSelect extends LitElement {
           id=${this.uid as string}
           tabindex="0"
           data-cy=${`${this.uid}_select`}
-          class=${classMap(selectIcon.widgetClasses)}
+          class=${classMap({ 'gui-widget-input': true, ...selectIcon.widgetClasses })}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled || templateData.readonly}
           autocomplete=${this.autocomplete || nothing}

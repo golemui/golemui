@@ -15,6 +15,7 @@ export const inputWidgets = [
   'rangeDatePicker',
   'repeater',
   'select',
+  'tags',
   'textarea',
   'textinput',
   'toggle',

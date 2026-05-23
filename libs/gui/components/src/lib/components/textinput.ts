@@ -67,6 +67,7 @@ export class GuiTextinput extends LitElement {
     const textinputIcon = addIcon('textinput', templateData);
 
     const fieldClasses: { [key: string]: boolean } = {
+      'gui-widget-input': true,
       [`gui-textinput--icon`]: !!this.icon,
     };
 

@@ -264,6 +264,7 @@ const ItemRenderer = computed<Component>(() => {
         type="text"
         :id="uid"
         :data-cy="`${uid}_textinput`"
+        class="gui-widget-input"
         :required="required"
         :disabled="isDisabled"
         :readonly="isReadOnly"

@@ -37,6 +37,7 @@ const UMBRELLA_ITEMTYPES: Record<string, ReadonlySet<string>> = {
     'LIST',
     'CUSTOM_INPUT',
     'REPEATER',
+    'TAGS',
   ]),
   ACTIONS: new Set(['ACTIONS', 'CUSTOM_ACTION']),
   DISPLAYS: new Set(['DISPLAYS', 'ALERTS', 'CUSTOM_DISPLAY']),

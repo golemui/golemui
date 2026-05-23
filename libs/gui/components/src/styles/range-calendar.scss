@@ -1,3 +1,5 @@
+@use 'pill' as *;
+
 :root {
   --gui-radius-range: calc(var(--gui-radius-md) * 2);
 }
@@ -130,37 +132,14 @@ gui-range-calendar {
   }
 
   .gui-range-calendar__pill {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
-    gap: var(--gui-space-3);
-    color: var(--gui-color-white);
-    background-color: var(--gui-intent-primary);
-    border-radius: var(--gui-radius-md);
-    padding: var(--gui-space-1);
-    cursor: pointer;
+    @include gui-pill;
 
     &-text {
-      font-size: var(--gui-font-xs);
+      @include gui-pill-text;
     }
 
     &-remove {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: 0;
-      color: white;
-      padding: 0;
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-
-    &:focus {
-      outline: 0;
-      border-color: var(--gui-border-focus);
-      box-shadow: var(--gui-shadow-focus);
+      @include gui-pill-remove;
     }
   }
 

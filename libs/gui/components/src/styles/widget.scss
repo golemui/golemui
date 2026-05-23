@@ -45,11 +45,14 @@
     cursor: not-allowed;
   }
 
-  input,
-  select,
-  textarea,
-  .gui-date-input,
-  .gui-range-date-input {
+  // `.gui-widget-input` is the marker for "this element acts as the field"
+  // — applied to the native form element in simple widgets (textinput's
+  // `<input>`, textarea's `<textarea>`, etc.) and to the wrapper `<div>` in
+  // composite widgets (tags, date-input, range-date-input). It lets us style
+  // the field as a single unit without enumerating every wrapper class, and
+  // without accidentally re-styling inner inputs that live INSIDE a
+  // composite-widget field (e.g. the text input nested inside `<gui-tags>`).
+  .gui-widget-input {
     font-family: var(--gui-font-family);
     font-size: var(--gui-font-sm);
     padding: 0 0.75rem;
@@ -78,7 +81,11 @@
       }
     }
 
-    &:disabled {
+    // Disabled — `:disabled` fires when the field IS a form element;
+    // `:has(input:disabled)` fires when the field is a wrapper whose inner
+    // input is disabled. One rule covers both shapes.
+    &:disabled,
+    &:has(input:disabled) {
       background-color: var(--gui-bg-disabled);
       color: var(--gui-text-disabled);
       pointer-events: none;
@@ -107,6 +114,7 @@
   }
 }
 
+.gui-widget .gui-tags-input,
 .gui-widget .gui-range-date-input {
   padding: 0;
   min-height: 40px;
