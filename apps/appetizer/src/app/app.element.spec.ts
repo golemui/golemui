@@ -3,6 +3,22 @@ import { AppElement } from './app.element';
 describe('AppElement', () => {
   let app: AppElement;
 
+  beforeAll(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      }),
+    });
+  });
+
   beforeEach(() => {
     app = new AppElement();
   });
@@ -14,6 +30,6 @@ describe('AppElement', () => {
   it('should have a greeting', () => {
     app.connectedCallback();
 
-    expect(app.querySelector('h1').innerHTML).toContain('Welcome lit-playground');
+    expect(app.innerHTML).toContain('<lit-form>');
   });
 });
