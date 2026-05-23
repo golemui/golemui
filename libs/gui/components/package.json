@@ -102,6 +102,11 @@
       "import": "./lib/components/select.js",
       "require": "./lib/components/select.umd.cjs"
     },
+    "./tags": {
+      "types": "./lib/components/tags.d.ts",
+      "import": "./lib/components/tags.js",
+      "require": "./lib/components/tags.umd.cjs"
+    },
     "./textarea": {
       "types": "./lib/components/textarea.d.ts",
       "import": "./lib/components/textarea.js",

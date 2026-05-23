@@ -41,6 +41,7 @@ export default defineConfig(() => ({
         'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
         'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',
         'lib/components/select': 'src/lib/components/select.ts',
+        'lib/components/tags': 'src/lib/components/tags.ts',
         'lib/components/textarea': 'src/lib/components/textarea.ts',
         'lib/components/textinput': 'src/lib/components/textinput.ts',
         'lib/components/toggle': 'src/lib/components/toggle.ts',

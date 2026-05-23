@@ -34,6 +34,8 @@ import { repeater as jsonRepeaterTab } from './tabs/repeater';
 import { repeaterTab as dxRepeaterTab } from './tabs/repeater.dx';
 import { select as jsonSelectTab } from './tabs/select';
 import { selectTab as dxSelectTab } from './tabs/select.dx';
+import { tags as jsonTagsTab } from './tabs/tags';
+import { tagsTab as dxTagsTab } from './tabs/tags.dx';
 import { textarea as jsonTextareaTab } from './tabs/textarea';
 import { textareaTab as dxTextareaTab } from './tabs/textarea.dx';
 import { textinput as jsonTextinputTab } from './tabs/textinput';
@@ -253,6 +255,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('repeater tab', () => {
     const json = buildJsonTab(jsonRepeaterTab('tabRepeater')).form;
     const dx = buildDxTab(dxRepeaterTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('tags tab', () => {
+    const json = buildJsonTab(jsonTagsTab('tabTags')).form;
+    const dx = buildDxTab(dxTagsTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 });

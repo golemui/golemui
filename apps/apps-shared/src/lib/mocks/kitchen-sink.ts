@@ -44,6 +44,28 @@ const data = {
       },
     ],
   },
+  tags: {
+    basic: ['hello', 'world'],
+    withIcon: [],
+    noDuplicates: ['unique'],
+    limited: [],
+    scrollable: [
+      'design',
+      'product',
+      'engineering',
+      'research',
+      'marketing',
+      'analytics',
+      'operations',
+      'support',
+      'finance',
+      'legal',
+      'people',
+    ],
+    validated: ['design', 'product'],
+    disabled: ['read', 'only'],
+    readonly: ['frozen'],
+  },
 };
 
 /**

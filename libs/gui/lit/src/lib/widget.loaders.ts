@@ -28,6 +28,7 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   number: async () => (await import('./components/number.element')).NumberElement,
   radiogroup: async () => (await import('./components/radiogroup.element')).RadiogroupElement,
   select: async () => (await import('./components/select.element')).SelectElement,
+  tags: async () => (await import('./components/tags.element')).TagsElement,
 
   // REPEATER
   repeater: async () => (await import('./components/repeater.element')).RepeaterElement,

@@ -39,9 +39,30 @@ gui-checkbox {
     width: 1rem;
     height: 1rem;
     border-radius: var(--gui-radius-sm);
+    background: var(--gui-bg-surface);
+    border: 1px solid var(--gui-border-default);
     accent-color: var(--gui-intent-primary);
     appearance: none;
     margin-top: 1px;
+    transition:
+      border-color var(--gui-transition-normal, 0.2s),
+      box-shadow var(--gui-transition-normal, 0.2s);
+
+    &:focus {
+      outline: 0;
+      border-color: var(--gui-border-focus);
+      box-shadow: var(--gui-shadow-focus);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--gui-intent-error);
+
+      &:focus {
+        outline: 0;
+        border-color: var(--gui-intent-error);
+        box-shadow: var(--gui-shadow-focus-error);
+      }
+    }
 
     &::before {
       content: '';
