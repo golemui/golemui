@@ -11,6 +11,7 @@ import type { GuiMarkdown } from '@golemui/gui-components/markdown';
 import type { GuiMarkdownText } from '@golemui/gui-components/markdown-text';
 import type { GuiNumber } from '@golemui/gui-components/number';
 import type { GuiPassword } from '@golemui/gui-components/password';
+import type { GuiPills } from '@golemui/gui-components/pills';
 import type { GuiRadiogroup } from '@golemui/gui-components/radiogroup';
 import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
 import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
@@ -53,6 +54,9 @@ declare module 'react' {
 
       'gui-password': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiPassword>;
+
+      'gui-pills': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiPills>;
 
       'gui-radiogroup': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRadiogroup>;

@@ -9,6 +9,8 @@ gui-tags {
     display: flex;
     align-items: center;
     position: relative;
+    container-type: inline-size;
+    container-name: gui-pills-widget;
     border: 1px solid var(--gui-color-border);
     border-radius: var(--gui-radius);
     background-color: var(--gui-bg-default);
@@ -22,15 +24,10 @@ gui-tags {
     &--icon {
       & > .gui-widget-icon {
         flex-shrink: 0;
+        border-inline-end: 1px solid var(--gui-border-default);
       }
 
-      .gui-tags__pills-compact {
-        padding-inline-start: 2.5rem;
-      }
-      .gui-tags__input {
-        padding-inline-start: 2.5rem;
-      }
-      .gui-tags__pills-wrapper {
+      & > gui-pills {
         margin-inline-start: 2.5rem;
       }
     }
@@ -38,18 +35,18 @@ gui-tags {
     &[aria-invalid='true'] {
       border-color: var(--gui-intent-error);
 
-      &:has(.gui-tags__chip:focus),
+      &:has(.gui-pills__pill:focus),
       &:has(.gui-tags__input:focus),
-      &:has(.gui-tags__pill--count:focus) {
+      &:has(.gui-pills__count:focus) {
         outline: 0;
         border-color: var(--gui-intent-error);
         box-shadow: var(--gui-shadow-focus-error);
       }
     }
 
-    &:has(.gui-tags__chip:focus),
+    &:has(.gui-pills__pill:focus),
     &:has(.gui-tags__input:focus),
-    &:has(.gui-tags__pill--count:focus) {
+    &:has(.gui-pills__count:focus) {
       outline: 0;
       border-color: var(--gui-border-focus);
       box-shadow: var(--gui-shadow-focus);
@@ -99,7 +96,7 @@ gui-tags {
   .gui-tags__pills {
     display: flex;
     align-items: center;
-    padding: 0 var(--gui-space-1);
+    padding: 0;
     gap: var(--gui-space-2);
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -179,22 +176,7 @@ gui-tags {
     align-self: stretch;
   }
 
-  .gui-tags__pills-compact + .gui-tags__input {
-    padding-inline-start: 0;
-  }
-
-  @container gui-tags-widget (max-width: 540px) {
-    .gui-tags__pills-wrapper {
-      display: none;
-    }
-
-    .gui-tags__pills-compact {
-      display: flex;
-      padding-inline-start: var(--gui-space-2);
-    }
-
-    .gui-tags__pills-dropdown {
-      display: flex;
-    }
+  .gui-tags__pills {
+    border-inline-end: 1px solid var(--gui-border-default);
   }
 }

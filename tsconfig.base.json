@@ -42,6 +42,7 @@
       ],
       "@golemui/gui-components/number": ["libs/gui/components/src/lib/components/number.ts"],
       "@golemui/gui-components/password": ["libs/gui/components/src/lib/components/password.ts"],
+      "@golemui/gui-components/pills": ["libs/gui/components/src/lib/components/pills.ts"],
       "@golemui/gui-components/radiogroup": [
         "libs/gui/components/src/lib/components/radiogroup.ts"
       ],
