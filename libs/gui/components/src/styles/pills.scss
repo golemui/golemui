@@ -55,7 +55,7 @@ gui-pills {
   .gui-pills__strip {
     display: flex;
     align-items: center;
-    padding: 0 var(--gui-space-1);
+    padding: 0;
     gap: var(--gui-space-2);
     flex-wrap: nowrap;
     overflow-x: auto;
