@@ -154,8 +154,8 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
   button: {
     kind: 'action',
     type: 'button',
+    actionType: 'submit',
     label: 'Submit',
-    on: { click: 'submit' },
     props: { variant: 'filled' },
   },
   alert: {
@@ -264,7 +264,10 @@ const NOTES: Record<string, string[]> = {
     'Child paths inside the template MUST follow the form `<repeater.path>.items.<fieldName>`. The `items` segment is reserved — the runtime substitutes it with the current array index per row. For example, a repeater at `path: "users"` with a child `firstName` uses `path: "users.items.firstName"`. Plain `firstName` will NOT bind to the array.',
     'Nested repeaters chain the convention: a repeater at `path: "teams"` whose template contains a repeater at `path: "teams.items.members"` whose children use `path: "teams.items.members.items.<field>"`.',
   ],
-  button: ['`on.click` references an event handler name registered in form config.'],
+  button: [
+    '`actionType` controls the button\'s role. `actionType: "submit"` makes the button fire the form\'s `formSubmit` event natively — the host listens for it via `(formSubmit)` (Angular), `@formSubmit` (Vue), `onFormSubmit` (React), or the `form-submit` event (Lit). No custom handler needed. Use this for the primary submit button on a form.',
+    '`actionType: "button"` (the default, can be omitted) is a regular action button. Wire it via `on.click: "<handlerName>"` where `<handlerName>` is registered in the form config\'s event handlers.',
+  ],
   checkbox: ['Set `validator.const: true` to require the user to tick it (e.g. terms acceptance).'],
 };
 

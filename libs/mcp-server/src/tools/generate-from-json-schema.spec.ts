@@ -22,7 +22,9 @@ describe('generate_from_json_schema', () => {
     const form = result.formDefinition.form as any[];
     // Inputs + a submit button at the end.
     const submit = form[form.length - 1];
-    expect(submit).toMatchObject({ kind: 'action', type: 'button' });
+    expect(submit).toMatchObject({ kind: 'action', type: 'button', actionType: 'submit' });
+    // The native submit pattern shouldn't carry an `on.click` handler.
+    expect(submit.on?.click).toBeUndefined();
 
     const email = form[0];
     expect(email).toMatchObject({

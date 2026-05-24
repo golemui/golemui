@@ -63,7 +63,12 @@ describe('generate_from_openapi', () => {
     const form = r.formDefinition.form as any[];
     expect(form[0]).toMatchObject({ kind: 'input', type: 'textinput', path: 'email' });
     expect(form[0].validator).toMatchObject({ format: 'email', required: true });
-    expect(form[form.length - 1]).toMatchObject({ kind: 'action', type: 'button', label: 'Create user' });
+    expect(form[form.length - 1]).toMatchObject({
+      kind: 'action',
+      type: 'button',
+      actionType: 'submit',
+      label: 'Create user',
+    });
   });
 
   it('resolves by operationId', async () => {

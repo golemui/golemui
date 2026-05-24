@@ -81,11 +81,14 @@ export function jsonSchemaToGui(schema: JsonSchemaLike, opts: MapOptions = {}): 
   }
 
   if (opts.submitAction !== false) {
+    // Use the native `actionType: 'submit'` — the runtime fires a `formSubmit` event on the
+    // host `<gui-form>`. Hosts listen via `(formSubmit)` (Angular), `@formSubmit` (Vue),
+    // `onFormSubmit` (React), or the `form-submit` event (Lit). No custom handler needed.
     fields.push({
       kind: 'action',
       type: 'button',
+      actionType: 'submit',
       label: opts.submitLabel ?? 'Submit',
-      on: { click: 'submit' },
       props: { variant: 'filled' },
     });
   }
