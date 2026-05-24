@@ -120,7 +120,7 @@ export class GuiPills extends LitElement {
           'gui-pills--end-shadow': !this._isEndVisible,
         })}
       >
-        <div class="gui-pills__strip" role="list">
+        <div class="gui-pills__strip" role="list" tabindex="-1">
           <span class="gui-sentinel gui-sentinel__start"></span>
           ${repeat(
             this.items,
