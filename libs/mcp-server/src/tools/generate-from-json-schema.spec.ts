@@ -144,17 +144,47 @@ describe('generate_from_json_schema', () => {
     ]);
   });
 
-  it('reports unmapped fields without failing', () => {
+  it('maps arrays of primitives to the `tags` widget', () => {
+    const r = generateFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        required: ['keywords'],
+        properties: {
+          keywords: {
+            type: 'array',
+            items: { type: 'string' },
+            minItems: 1,
+            maxItems: 10,
+          },
+          scores: { type: 'array', items: { type: 'integer' } },
+        },
+      },
+      submitAction: false,
+    });
+    expect(r.validation.valid).toBe(true);
+    expect(r.unmapped).toEqual([]);
+
+    const form = r.formDefinition.form as any[];
+    expect(form[0]).toMatchObject({
+      kind: 'input',
+      type: 'tags',
+      path: 'keywords',
+      validator: { type: 'array', required: true, minItems: 1, maxItems: 10 },
+    });
+    expect(form[1]).toMatchObject({ kind: 'input', type: 'tags', path: 'scores' });
+  });
+
+  it('reports unmapped for array shapes that have no widget (e.g. arrays of arrays)', () => {
     const r = generateFromJsonSchema({
       jsonSchema: {
         type: 'object',
         properties: {
-          tags: { type: 'array', items: { type: 'string' } }, // arrays of primitives unsupported
+          matrix: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
         },
       },
       submitAction: false,
     });
     expect(r.unmapped.length).toBeGreaterThan(0);
-    expect(r.validation.valid).toBe(true); // the rest of the form is still valid
+    expect(r.validation.valid).toBe(true);
   });
 });

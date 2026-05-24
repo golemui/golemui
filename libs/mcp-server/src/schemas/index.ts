@@ -26,6 +26,7 @@ import rangedatepicker from './data/components/rangedatepicker.schema.json';
 import repeater from './data/components/repeater.schema.json';
 import select from './data/components/select.schema.json';
 import tabs from './data/components/tabs.schema.json';
+import tags from './data/components/tags.schema.json';
 import textarea from './data/components/textarea.schema.json';
 import textinput from './data/components/textinput.schema.json';
 import toggle from './data/components/toggle.schema.json';
@@ -70,6 +71,7 @@ export const COMPONENT_SCHEMAS: Record<string, WidgetSchema> = {
   repeater: repeater as WidgetSchema,
   select: select as WidgetSchema,
   tabs: tabs as WidgetSchema,
+  tags: tags as WidgetSchema,
   textarea: textarea as WidgetSchema,
   textinput: textinput as WidgetSchema,
   toggle: toggle as WidgetSchema,

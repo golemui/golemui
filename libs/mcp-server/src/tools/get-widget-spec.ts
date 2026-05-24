@@ -42,6 +42,25 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     label: 'Bio',
     props: { minimumHeight: 120, autoGrow: true },
   },
+  tags: {
+    kind: 'input',
+    type: 'tags',
+    path: 'keywords',
+    label: 'Keywords',
+    defaultValue: [],
+    props: {
+      placeholder: 'Add a keyword and press Enter',
+      separators: ['Enter', ','],
+      trim: true,
+      allowDuplicates: false,
+      limit: 10,
+    },
+    validator: {
+      type: 'array',
+      minItems: 1,
+      maxItems: 10,
+    },
+  },
   password: {
     kind: 'input',
     type: 'password',
@@ -216,6 +235,11 @@ const NOTES: Record<string, string[]> = {
   markdownText: [
     'Display-only widget for rendering markdown. Can be used as a top-level form widget (inside any layout) or inside templates like `dropdown.props.items[].template`.',
     'The required prop is `md` (the markdown string), not `text`.',
+  ],
+  tags: [
+    'Use `tags` for free-form arrays of primitive values (typically `string[]`) — e.g. keywords, email lists, hashtags. Backing data is `string[]`. For arrays of structured objects, use `repeater` instead.',
+    '`props.separators` controls which keys/characters commit a new tag. Defaults emit on `Enter` and `,`; you can also include `"Tab"` or `"blur"`. `props.trim` strips whitespace from each tag; `props.allowDuplicates: false` rejects repeats; `props.limit` caps the array length.',
+    'Validate with an `arrayValidator`: `{ type: "array", minItems, maxItems, uniqueItems }`. The `tags` widget complements that with UI-level enforcement (`allowDuplicates`, `limit`) but the validator is still authoritative for form-level required/min/max constraints.',
   ],
   dropdown: [
     'PREFER `select` for plain label/value lists (countries, plans, sizes). `dropdown` is for richer item shapes: when each item has extra fields (icons, flags, metadata) that an `itemRenderer` or `labelField`/`valueField` can use.',

@@ -106,6 +106,9 @@
           "$ref": "./components/tabs.schema.json"
         },
         {
+          "$ref": "./components/tags.schema.json"
+        },
+        {
           "$ref": "./components/textarea.schema.json"
         },
         {

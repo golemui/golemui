@@ -29,6 +29,9 @@ export type JsonSchemaLike = {
   exclusiveMinimum?: number;
   exclusiveMaximum?: number;
   multipleOf?: number;
+  minItems?: number;
+  maxItems?: number;
+  uniqueItems?: boolean;
   default?: unknown;
   required?: string[];
   properties?: Record<string, JsonSchemaLike>;
@@ -155,7 +158,7 @@ function mapProperty(
     case 'object':
       return buildObjectGroup(path, name, label, schema, unmapped);
     case 'array':
-      return buildArrayField(path, name, label, schema, unmapped);
+      return buildArrayField(path, name, label, schema, required, unmapped);
     default:
       unmapped.push({
         path,
@@ -307,6 +310,7 @@ function buildArrayField(
   _name: string,
   label: string,
   schema: JsonSchemaLike,
+  required: boolean,
   unmapped: Unmapped[],
 ): unknown | null {
   const items = schema.items ? unwrap(schema.items) : undefined;
@@ -345,11 +349,37 @@ function buildArrayField(
       },
     };
   }
+
+  // Arrays of primitive values (string[] / number[]) map to the `tags` widget.
+  if (items.type === 'string' || items.type === 'number' || items.type === 'integer') {
+    const validator = buildArrayValidator(schema, required);
+    return cleanFields({
+      kind: 'input',
+      type: 'tags',
+      path,
+      label,
+      validator,
+      props: schema.description
+        ? { placeholder: 'Add and press Enter', hint: schema.description }
+        : { placeholder: 'Add and press Enter' },
+    });
+  }
+
   unmapped.push({
     path,
-    reason: 'Only arrays of objects are mappable in v1 (used as repeaters).',
+    reason: 'Array shape is not mappable (only arrays of objects → repeater, or arrays of strings/numbers → tags).',
   });
   return null;
+}
+
+function buildArrayValidator(s: JsonSchemaLike, required: boolean): { type: 'array'; required?: boolean; minItems?: number; maxItems?: number; uniqueItems?: boolean } | undefined {
+  const v: { type: 'array'; required?: boolean; minItems?: number; maxItems?: number; uniqueItems?: boolean } = { type: 'array' };
+  let used = false;
+  if (required) { v.required = true; used = true; }
+  if (typeof s.minItems === 'number') { v.minItems = s.minItems; used = true; }
+  if (typeof s.maxItems === 'number') { v.maxItems = s.maxItems; used = true; }
+  if (s.uniqueItems === true) { v.uniqueItems = true; used = true; }
+  return used ? v : undefined;
 }
 
 function humanLabel(name: string): string {
