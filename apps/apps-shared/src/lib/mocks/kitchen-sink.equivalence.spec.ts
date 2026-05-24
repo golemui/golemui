@@ -6,6 +6,8 @@ import { accordion as jsonAccordionTab } from './tabs/accordion';
 import { accordionTab as dxAccordionTab } from './tabs/accordion.dx';
 import { alert as jsonAlertTab } from './tabs/alert';
 import { alertTab as dxAlertTab } from './tabs/alert.dx';
+import { button as jsonButtonTab } from './tabs/button';
+import { buttonTab as dxButtonTab } from './tabs/button.dx';
 import { calendar as jsonCalendarTab } from './tabs/calendar';
 import { calendarTab as dxCalendarTab } from './tabs/calendar.dx';
 import { checkbox as jsonCheckboxTab } from './tabs/checkbox';
@@ -34,6 +36,8 @@ import { repeater as jsonRepeaterTab } from './tabs/repeater';
 import { repeaterTab as dxRepeaterTab } from './tabs/repeater.dx';
 import { select as jsonSelectTab } from './tabs/select';
 import { selectTab as dxSelectTab } from './tabs/select.dx';
+import { tags as jsonTagsTab } from './tabs/tags';
+import { tagsTab as dxTagsTab } from './tabs/tags.dx';
 import { textarea as jsonTextareaTab } from './tabs/textarea';
 import { textareaTab as dxTextareaTab } from './tabs/textarea.dx';
 import { textinput as jsonTextinputTab } from './tabs/textinput';
@@ -178,6 +182,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
+  it('button tab', () => {
+    const json = buildJsonTab(jsonButtonTab('tabButton')).form;
+    const dx = buildDxTab(dxButtonTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
   it('checkbox tab', () => {
     const json = buildJsonTab(jsonCheckboxTab('tabCheckbox')).form;
     const dx = buildDxTab(dxCheckboxTab);
@@ -253,6 +263,12 @@ describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('repeater tab', () => {
     const json = buildJsonTab(jsonRepeaterTab('tabRepeater')).form;
     const dx = buildDxTab(dxRepeaterTab);
+    expect(normalise(dx)).toEqual(normalise(json));
+  });
+
+  it('tags tab', () => {
+    const json = buildJsonTab(jsonTagsTab('tabTags')).form;
+    const dx = buildDxTab(dxTagsTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 });

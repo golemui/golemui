@@ -8,7 +8,12 @@ import {
   kitchenSink,
   onFormEvent,
 } from '@golemui/apps-shared';
-import { type FormEvent, type FormHealth, devToolsMiddleware } from '@golemui/core';
+import {
+  type FormEvent,
+  type FormHealth,
+  type FormSubmitEvent,
+  devToolsMiddleware,
+} from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -84,6 +89,10 @@ export class AppFormPage {
       mock.onFormEvent(event);
     }
     onFormEvent(event);
+  }
+
+  protected onFormSubmit(event: FormSubmitEvent) {
+    console.log('👉 onFormSubmit', event.data);
   }
 
   protected onLanguageChanged(event: Event) {

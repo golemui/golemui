@@ -44,7 +44,6 @@ export const { gsl: _gslCustomActions, gslByUid: _gslCustomActionByUid } = defin
     eventWiringService.extractOnClickFromMergeResult(
       mergeResult,
       context.eventRegistry,
-      context.formConfig,
       context.eventIdGenerator,
     ),
 });

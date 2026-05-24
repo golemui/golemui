@@ -1,0 +1,65 @@
+// Shared pill / chip visual rules.
+// Consumed by `gui-range-calendar` (date range pills) and `gui-tags` (chips).
+// Host selectors apply these mixins to their own scoped class names so the
+// visual treatment stays in a single source of truth.
+
+@mixin gui-pill {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: var(--gui-space-3);
+  color: var(--gui-color-white);
+  background-color: var(--gui-intent-primary);
+  border-radius: var(--gui-radius-md);
+  padding: var(--gui-space-1);
+  cursor: pointer;
+
+  &:focus {
+    outline: 0;
+    border-color: var(--gui-border-focus);
+    box-shadow: var(--gui-shadow-focus);
+  }
+}
+
+@mixin gui-pill-text {
+  font-size: var(--gui-font-xs);
+}
+
+@mixin gui-pill-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: white;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+// Pill-count badge (the "+N" bubble shown in compact-width fallback layouts).
+// Used by `gui-tags` and mirrored by the equivalent in `gui-range-date-input`.
+@mixin gui-pill-count {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: var(--gui-space-3);
+  color: var(--gui-color-white);
+  background-color: var(--gui-intent-primary);
+  padding: var(--gui-space-1);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  font-size: var(--gui-font-xs);
+  border: none;
+  justify-content: center;
+  border-radius: var(--gui-radius-full);
+
+  &:focus {
+    outline: 0;
+    border-color: var(--gui-border-focus);
+    box-shadow: var(--gui-shadow-focus);
+  }
+}

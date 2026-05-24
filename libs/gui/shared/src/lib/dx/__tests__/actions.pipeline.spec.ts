@@ -1,21 +1,13 @@
-import { type LayoutWidget } from '@golemui/core';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { processDx, getRawChild, resolveDynamic } from './helpers';
 import { _guiButton } from '../shortcuts/actions/guiActions.impl';
 import { formDefs } from '../dx.service';
 import { _guiTextInput } from '../index';
 
-function getRootFromFacadeResult(
-  result: ReturnType<typeof formDefs.processDxFacade>,
-): LayoutWidget {
-  return result.form.form as LayoutWidget;
-}
-
 describe('DX Pipeline — Actions', () => {
   describe('Basic action expansion', () => {
     it('maps explicit onClick button with click event wiring', () => {
-      const myFn = () => null;
-      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Save', onClick: myFn })]);
+      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Save', onClick: () => undefined })]);
 
       const saveButton = root.children?.find(
         (child) => typeof child !== 'function' && (child as { kind?: string }).kind === 'action',
@@ -42,8 +34,8 @@ describe('DX Pipeline — Actions', () => {
     it('wires multiple buttons with unique uids and unique click event names', () => {
       const root = processDx([
         _guiTextInput('name'),
-        _guiButton({ label: 'A', onClick: () => null }),
-        _guiButton({ label: 'B', onClick: () => null }),
+        _guiButton({ label: 'A', onClick: () => undefined }),
+        _guiButton({ label: 'B', onClick: () => undefined }),
       ]);
 
       const actions = (root.children ?? []).filter(
@@ -60,90 +52,13 @@ describe('DX Pipeline — Actions', () => {
     });
   });
 
-  describe('Submit button handling', () => {
-    it("promotes onClick: 'submit' action to #submit with submit event", () => {
-      const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        {},
-      );
-      const root = getRootFromFacadeResult(result);
-      const submit = root.children?.find(
-        (child) => typeof child !== 'function' && (child as { kind?: string }).kind === 'action',
-      ) as { uid?: string; on?: { click?: string } };
-
-      expect(submit.uid).toBe('#submit');
-      expect(submit.on?.click).toBe('submit');
-    });
-
-    it("treats uid '#submit' action as submit and wires submit event", () => {
-      const result = formDefs.processDxFacade([_guiButton({ uid: '#submit', label: 'Send' })], []);
-      const root = getRootFromFacadeResult(result);
-      const submit = root.children?.find(
-        (child) => typeof child !== 'function' && (child as { uid?: string }).uid === '#submit',
-      ) as { on?: { click?: string } };
-
-      expect(submit.on?.click).toBe('submit');
-    });
-
-    it('registers root onSubmit callback into form events when submit action is present', () => {
-      const submitFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      expect(result.events).toBeDefined();
-      expect(typeof result.events).toBe('function');
-
-      result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
-      expect(submitFn).toHaveBeenCalledWith({ ok: true });
-    });
-
-    it('uses explicit onClick callback instead of root onSubmit', () => {
-      const myFn = vi.fn();
-      const submitFn = vi.fn();
-      const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Custom', onClick: myFn })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      expect(result.events).toBeDefined();
-      const root = result.form.form as LayoutWidget;
-      const customButton = root.children?.find(
-        (child) => typeof child !== 'function' && (child as { label?: string }).label === 'Custom',
-      ) as { on?: { click?: string } };
-
-      expect(typeof customButton.on?.click).toBe('string');
-      result.events!({ name: customButton.on?.click ?? '', data: { a: 1 }, callback: vi.fn() });
-
-      expect(myFn).toHaveBeenCalledWith({ a: 1 });
-      expect(submitFn).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('No auto-submit', () => {
-    it('does not inject a submit button when none is declared', () => {
-      const result = formDefs.processDxFacade([_guiTextInput('name')], []);
-      const root = getRootFromFacadeResult(result);
-      const hasSubmit = (root.children ?? []).some(
-        (child) => typeof child !== 'function' && (child as { uid?: string }).uid === '#submit',
-      );
-
-      expect(hasSubmit).toBe(false);
-    });
-  });
-
   describe('Dynamic (callback) actions', () => {
     it('keeps callback action dynamic and wires on.click after resolving', () => {
-      const myFn = () => null;
       const defs = [
         _guiTextInput('name'),
         _guiButton((p: any) => ({
           label: p?.$form?.dirty ? 'Save*' : 'Save',
-          onClick: myFn,
+          onClick: () => undefined,
         })),
       ];
       const root = processDx(defs);
@@ -170,7 +85,7 @@ describe('DX Pipeline — Actions', () => {
   describe('Return type handling', () => {
     it('includes events in DxResult when at least one onClick callback exists', () => {
       const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Go', onClick: () => null })],
+        [_guiButton({ label: 'Go', onClick: () => undefined })],
         [],
       );
 

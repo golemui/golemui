@@ -388,7 +388,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               kind: 'action',
               type: 'button',
               label: 'Submit',
-              on: { click: 'submit' },
+              actionType: 'submit',
             },
             {
               uid: 'errorAlert',
@@ -426,7 +426,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               kind: 'action',
               type: 'button',
               label: 'Submit',
-              on: { click: 'submit' },
+              actionType: 'submit',
             },
             {
               uid: 'formErrorBanner',
@@ -464,7 +464,7 @@ export const runIncludeExcludeComponentTests = (mountFn: MountComponentFn) => {
               kind: 'action',
               type: 'button',
               label: 'Submit',
-              on: { click: 'submit' },
+              actionType: 'submit',
             },
             {
               uid: 'successMessage',

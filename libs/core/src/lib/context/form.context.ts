@@ -8,6 +8,7 @@ import {
   type EventHandlerCallback,
   type EventName,
   type FormEvent,
+  type FormSubmitEvent,
   type ValidateOn,
 } from '../shared';
 import { type Action } from '../store/actions';
@@ -18,6 +19,7 @@ export class FormContext<ComponentType> {
   widgetRegistry = new WidgetRegistry<ComponentType>();
   store: FormStore = {} as FormStore;
   events$ = new Subject<FormEvent>();
+  submit$ = new Subject<FormSubmitEvent>();
   uuid = crypto.randomUUID();
   itemRenderers: Record<string, ItemRenderer> = {};
   localization!: I18nTranslator;
@@ -57,7 +59,7 @@ export class FormContext<ComponentType> {
     if (matchedStates.length > 0) {
       matchedStates.forEach((currentState) => {
         const eventName = widget.on?.[`${eventType}.${currentState}`] as EventName | undefined;
-        this.attemptValidation(eventType, eventName, widget);
+        this.attemptValidation(eventType, widget);
         if (eventName) {
           this.events$.next({
             name: eventName,
@@ -71,7 +73,7 @@ export class FormContext<ComponentType> {
       });
     } else {
       const eventName = widget.on?.[eventType] as EventName | undefined;
-      this.attemptValidation(eventType, eventName, widget);
+      this.attemptValidation(eventType, widget);
       if (eventName) {
         this.events$.next({
           name: eventName,
@@ -85,9 +87,23 @@ export class FormContext<ComponentType> {
     }
   }
 
+  emitSubmitEvent() {
+    this.store.dispatch({
+      type: 'VALIDATE_ALL',
+    });
+
+    if (this.store.getState().isFormValid) {
+      this.submit$.next({
+        data: this.store.getState().data,
+        callback: (action: EventHandlerCallback) => {
+          this.store.dispatch(action);
+        },
+      });
+    }
+  }
+
   private attemptValidation(
     eventType: keyof On<string>,
-    eventName: EventName | undefined,
     widget: InputWidget<any, string> | ActionWidget<string> | LayoutWidget<string>,
   ) {
     // Some layouts (e.g. tabs that are clicked) emit events, but we don't trigger validation for them.
@@ -104,7 +120,11 @@ export class FormContext<ComponentType> {
           uid: widget.uid,
         },
       });
-    } else if (eventType === 'click' && eventName === ('submit' satisfies ValidateOn)) {
+    } else if (
+      eventType === 'click' &&
+      widget.kind === 'action' &&
+      widget.actionType === 'submit'
+    ) {
       this.store.dispatch({
         type: 'VALIDATE_ALL',
       });

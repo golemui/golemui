@@ -72,12 +72,10 @@
           "kind": "action",
           "type": "button",
           "label": "Submit",
+          "actionType": "submit",
           "props": {
             "icon": "save",
             "iconPosition": "right"
-          },
-          "on": {
-            "click": "submit"
           }
         }
       ]

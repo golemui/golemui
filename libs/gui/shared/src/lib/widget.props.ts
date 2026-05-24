@@ -28,6 +28,20 @@ export type TextinputProps = {
   autocomplete?: Autocomplete;
 };
 
+export type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | (string & {});
+
+export type TagsProps = {
+  hint?: string;
+  placeholder?: string;
+  icon?: string;
+  separators?: TagsSeparator[];
+  allowDuplicates?: boolean;
+  trim?: boolean;
+  limit?: number;
+  removeAriaLabel?: string;
+  removeIcon?: string;
+};
+
 export type PasswordProps = {
   hint?: string;
   placeholder?: string;

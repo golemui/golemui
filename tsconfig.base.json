@@ -42,6 +42,7 @@
       ],
       "@golemui/gui-components/number": ["libs/gui/components/src/lib/components/number.ts"],
       "@golemui/gui-components/password": ["libs/gui/components/src/lib/components/password.ts"],
+      "@golemui/gui-components/pills": ["libs/gui/components/src/lib/components/pills.ts"],
       "@golemui/gui-components/radiogroup": [
         "libs/gui/components/src/lib/components/radiogroup.ts"
       ],
@@ -52,6 +53,7 @@
         "libs/gui/components/src/lib/components/range-date-input.ts"
       ],
       "@golemui/gui-components/select": ["libs/gui/components/src/lib/components/select.ts"],
+      "@golemui/gui-components/tags": ["libs/gui/components/src/lib/components/tags.ts"],
       "@golemui/gui-components/textarea": ["libs/gui/components/src/lib/components/textarea.ts"],
       "@golemui/gui-components/textinput": ["libs/gui/components/src/lib/components/textinput.ts"],
       "@golemui/gui-components/toggle": ["libs/gui/components/src/lib/components/toggle.ts"],

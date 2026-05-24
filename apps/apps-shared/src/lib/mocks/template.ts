@@ -10,7 +10,6 @@ const formDef = {
   },
   form: [
     {
-      uid: '',
       kind: 'display',
       type: 'heading',
       props: {
@@ -19,22 +18,18 @@ const formDef = {
       },
     },
     {
-      uid: '',
       kind: 'input',
       type: 'textinput',
       path: 'textinput',
     },
     {
-      uid: '',
       kind: 'action',
       type: 'button',
+      actionType: 'submit',
       label: 'Create',
       props: {
         icon: 'save',
         iconPosition: 'right',
-      },
-      on: {
-        click: 'submit',
       },
     },
   ],

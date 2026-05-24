@@ -11,6 +11,7 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
   const {
     uid,
     label,
+    actionType,
     disabled,
     on,
     onClick: _onClick,
@@ -22,12 +23,13 @@ function mapToWidget<StateKeys extends UiState = never, FormData extends Record<
     exclude: _exclude,
     states: _states,
     ...buttonProps
-  } = def;
+  } = def as ActionDecorator & { on?: { click: string } };
   return {
     uid: uid ?? '',
     kind: 'action',
     type: 'button',
     disabled,
+    actionType,
     label,
     ...(on != null ? { on } : {}),
     props: buttonProps,
@@ -46,7 +48,6 @@ export const { gsl: _gslActions, gslByUid: _gslActionByUid } = defineShortcutTyp
     eventWiringService.extractOnClickFromMergeResult(
       mergeResult,
       context.eventRegistry,
-      context.formConfig,
       context.eventIdGenerator,
     ),
 });

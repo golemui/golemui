@@ -1,6 +1,6 @@
 ---
 title: Events
-description: Wire widget events through onClick, onChange, onLoad, onFilter, onBlur — plus the special submit.
+description: Wire widget events through onClick, onChange, onLoad, onFilter, onBlur — plus actionType submit.
 sidebar:
   order: 6
 ---
@@ -10,16 +10,16 @@ import Demo from '../../../components/landing/Demo.astro';
 
 Each widget kind exposes a small set of event hooks. Every event has a **string name** the form emits through `formEvent`; your application's event-handler map catches the name and reacts (or, in the demos below, dispatches an `OVERRIDE_WIDGET_PROP` to push feedback right back into the form).
 
-| Hook       | Available on                                                                                                                         |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `onClick`  | `gui.actions.button`, `gui.actions.custom`                                                                                           |
-| `onChange` | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion`                                                                          |
-| `onLoad`   | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select`                                                                        |
-| `onFilter` | `gui.inputs.dropdown`                                                                                                                |
-| `onBlur`   | `gui.inputs.*`                                                                                                                       |
-| `submit`   | `gui.actions.submitButton` / `gui.actions.button({ onClick: 'submit' })` — triggers form-level validation first, then emits `submit` |
+| Hook                   | Available on                                                                                        |
+| ---------------------- | --------------------------------------------------------------------------------------------------- |
+| `onClick`              | `gui.actions.button`, `gui.actions.custom`                                                          |
+| `onChange`             | `gui.inputs.*`, `gui.layouts.tabs`, `gui.layouts.accordion`                                         |
+| `onLoad`               | `gui.inputs.dropdown`, `gui.inputs.list`, `gui.inputs.select`                                       |
+| `onFilter`             | `gui.inputs.dropdown`                                                                               |
+| `onBlur`               | `gui.inputs.*`                                                                                      |
+| `actionType: 'submit'` | `gui.actions.button` — validates the form on click, emits through the dedicated `formSubmit` output |
 
-Each value is a flat camelCase prop on the shortcut — `onClick: 'eventName'`, `onBlur: 'eventName'`, etc. The DX layer translates them all into the lower-level `on: { click | change | blur | … : 'name' }` block the engine consumes.
+Each value is a flat camelCase prop on the shortcut — `onClick: () => 'eventName'`, `onBlur: 'eventName'`, etc. The DX layer translates them all into the lower-level `on: { click | change | blur | … : 'name' }` block the engine consumes.
 
 The `OVERRIDE_WIDGET_PROP` action used throughout these examples targets a widget by **`path`** (the widget's data-binding key, for control kinds) or by **`uid`** (the widget's unique ID, for any kind). Use `uid` when the target is a display widget such as `gui.displays.alert` — those have no data path.
 
@@ -127,7 +127,7 @@ Buttons fire `onClick` events. The handler matches by `event.name` and dispatche
 const formDef = [
   gui.actions.button({
     label: 'Click me',
-    onClick: 'evClick',
+    onClick: () => 'evClick',
   }),
   gui.inputs.textInput('evClickResult', {
     label: 'Last click',
@@ -276,11 +276,13 @@ function handleFormEvent(event: FormEvent) {
 
 <Demo src="/template/index.html?renderer=events-blur" minHeight="200" />
 
-## `submit`
+## `actionType: 'submit'`
 
-The `'submit'` literal is special. Wiring it on a button (or using `gui.actions.submitButton`) makes the click trigger **form-level validation first**: every input is touched, validators run, and the `submit` event only fires if the whole form is valid.
+Setting `actionType: 'submit'` on a button makes the click trigger **form-level validation first**: every input is touched, validators run, and the result only emits if the whole form is valid — through the dedicated `formSubmit` output on the form component (not `formEvent`).
 
 ```ts
+import type { FormSubmitEvent } from '@golemui/core';
+
 const formDef = [
   gui.inputs.textInput('evEmail', {
     label: 'Email',
@@ -293,9 +295,7 @@ const formDef = [
       },
     },
   }),
-  gui.actions.submitButton({ label: 'Submit' }),
-  // — or equivalently —
-  // gui.actions.button({ label: 'Submit', onClick: 'submit' }),
+  gui.actions.button({ label: 'Submit', actionType: 'submit' }),
   gui.inputs.textInput('evSubmittedEmail', {
     label: 'Result',
     readonly: true,
@@ -303,23 +303,40 @@ const formDef = [
   }),
 ];
 
-function handleFormEvent(event: FormEvent) {
-  if (event.name === 'submit') {
-    event.callback({
-      type: 'OVERRIDE_WIDGET_PROP',
-      payload: {
-        path: 'evSubmittedEmail',
-        prop: 'hint',
-        value: `Submitted: ${event.data.evEmail}`,
-      },
-    });
-  }
+function handleFormSubmit(event: FormSubmitEvent) {
+  // event.data contains the validated form data
+  console.log('Submitted:', event.data.evEmail);
 }
 ```
 
+Wire `formSubmit` on the form component:
+
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    <GuiForm config={config} formSubmit={handleFormSubmit} />
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```html
+    <gui-form [config]="config" (formSubmit)="onFormSubmit($event)"></gui-form>
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    html`<gui-form .config=${this.config} @formSubmit=${this.onFormSubmit}></gui-form>`
+    ```
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <GuiForm :config="config" @form-submit="onFormSubmit" />
+    ```
+  </Fragment>
+</IntegrationTabs>
+
 <Demo src="/template/index.html?renderer=events-submit" minHeight="280" />
 
-Try clicking submit while the email is empty or invalid — validation messages appear and no `submit` event fires. Enter a valid email and click again to see the result land in the read-only field.
+Try clicking submit while the email is empty or invalid — validation messages appear and `formSubmit` never fires. Enter a valid email and click again to see the result.
 
 ## `onClick` vs. the other hooks
 
@@ -327,13 +344,12 @@ There's one asymmetry worth knowing about. The handler shape differs between `on
 
 | Hook                                       | What the handler receives                                               |
 | ------------------------------------------ | ----------------------------------------------------------------------- |
-| `onClick` (function form)                  | `event.data` — only the form data, no `callback` / `update`             |
+| `onClick`                                  | `event.data` — only the form data, no `callback` / `update`             |
 | `onChange`, `onLoad`, `onFilter`, `onBlur` | The full wrapped `DxFormEvent` — `data`, `detail`, `callback`, `update` |
 
-In the **string** form (`'evClick'`, `'evChange'`, …), this distinction doesn't matter — the engine routes the event name through `formEvent` to your application code, and the application-side handler always sees the full event regardless of which hook fired it. The asymmetry only shows up when you pass a **runtime function** directly:
+`onClick` always receives a function — either `(data) => 'eventName'` (routes through `formEvent`) or `(data) => void` (side-effecty callback). For click-driven dispatch back into the form, return an event name string and handle it in your application's `formEvent` callback.
 
-- A function `onChange` / `onLoad` / `onFilter` / `onBlur` can read live data **and** dispatch overrides (`event.update({ path, prop: value })`) without leaving the form definition. See [Runtime Functions](/form-definition/runtime-functions/#a-reactive-event-handler).
-- A function `onClick` can only read `event.data` and run side-effecty code — it can't push overrides back into the form. For click-driven dispatch into the form, prefer the **string** form and handle the named event in your application's `formEvent` callback.
+`onChange` / `onLoad` / `onFilter` / `onBlur` can be either a string event name or a runtime function that reads live data and dispatches overrides (`event.update({ path, prop: value })`) without leaving the form definition. See [Runtime Functions](/form-definition/runtime-functions/#a-reactive-event-handler).
 
 ## See also
 

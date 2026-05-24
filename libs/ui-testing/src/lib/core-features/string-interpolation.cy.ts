@@ -355,7 +355,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
                 kind: 'action',
                 type: 'button',
                 label: 'Submit',
-                on: { click: 'submit' },
+                actionType: 'submit',
               },
               {
                 uid: 'status-display',
@@ -389,7 +389,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
                 kind: 'action',
                 type: 'button',
                 label: 'Submit',
-                on: { click: 'submit' },
+                actionType: 'submit',
               },
               {
                 uid: 'status-display',
@@ -451,7 +451,7 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
                 kind: 'action',
                 type: 'button',
                 label: 'Submit',
-                on: { click: 'submit' },
+                actionType: 'submit',
               },
               {
                 uid: 'error-display',

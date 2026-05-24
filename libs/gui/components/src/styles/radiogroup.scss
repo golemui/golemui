@@ -21,9 +21,30 @@ gui-radiogroup {
       height: 0.5em;
       padding: 0.6em;
       border-radius: 50%;
+      background: var(--gui-bg-surface);
+      border: 1px solid var(--gui-border-default);
 
       appearance: none;
       margin: 0;
+      transition:
+        border-color var(--gui-transition-normal, 0.2s),
+        box-shadow var(--gui-transition-normal, 0.2s);
+
+      &:focus {
+        outline: 0;
+        border-color: var(--gui-border-focus);
+        box-shadow: var(--gui-shadow-focus);
+      }
+
+      &[aria-invalid='true'] {
+        border-color: var(--gui-intent-error);
+
+        &:focus {
+          outline: 0;
+          border-color: var(--gui-intent-error);
+          box-shadow: var(--gui-shadow-focus-error);
+        }
+      }
 
       &::before {
         content: '';

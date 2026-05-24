@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, output, type Type, viewChild } from '@angular/core';
 import { type AngularItemRenderer, FormCoreComponent } from '@golemui/angular';
-import type { FormEvent, FormHealth, WidgetLoaders, WithWidget } from '@golemui/core';
+import type {
+  FormEvent,
+  FormHealth,
+  FormSubmitEvent,
+  WidgetLoaders,
+  WithWidget,
+} from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { resolveFormInput } from '@golemui/gui-shared/internals';
@@ -53,10 +59,15 @@ export class FormComponent {
 
   formHealth = output<FormHealth>();
   formEvent = output<FormEvent>();
+  formSubmit = output<FormSubmitEvent>();
 
   protected onCoreFormEvent(event: FormEvent): void {
     this.resolved().formEvent?.(event);
     this.formEvent.emit(event);
+  }
+
+  protected onCoreFormSubmitEvent(event: FormSubmitEvent): void {
+    this.formSubmit.emit(event);
   }
 
   setData(data: Record<string, any>): void {

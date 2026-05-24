@@ -1,7 +1,6 @@
 import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { repeat } from 'lit-html/directives/repeat.js';
 import {
   createDateRange,
   getDayLabel,
@@ -10,8 +9,9 @@ import {
   isToday,
   mergeDateRanges,
 } from '../utils/date';
-import { createIntersectionObserver } from './tabs';
 import { AbstractCalendar, type AbstractCalendarDay } from './abstract-calendar';
+import './pills';
+import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import { type DateRange } from '@golemui/gui-shared';
 
 export interface RangeCalendarDay extends AbstractCalendarDay {
@@ -34,13 +34,8 @@ export class GuiRangeCalendar extends AbstractCalendar {
   @state() private _anchorDate: Date | null = null;
   @state() private _nextDate: RangeCalendarDay | null = null;
   @state() private _isSelecting = false;
-  @state() private _isStartVisible = true;
-  @state() private _isEndVisible = true;
 
   private _skipValueNavigation = false;
-
-  private startObserver: IntersectionObserver | undefined;
-  private endObserver: IntersectionObserver | undefined;
 
   override createRenderRoot() {
     return this;
@@ -320,85 +315,66 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
   // --- Pills ---
 
-  override updated() {
-    if (!this.hidePills) {
-      this.setupObservers();
-    }
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.disconnectObservers();
-  }
-
   override renderAboveCalendar() {
     if (this.hidePills) return nothing;
 
     const pills = this.getSortedPills();
     if (pills.length === 0) return nothing;
 
+    const pillItems: GuiPillItem[] = pills.map((pill) => {
+      const startFormatted = this.formatDateForDisplay(pill.start);
+      const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
+      const pillLabel = `${startFormatted} - ${endFormatted}`;
+      return {
+        key: `${pill.start}-${pill.end ?? pill.start}`,
+        label: pillLabel,
+        ariaLabel: `${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}`,
+      };
+    });
+
     return html`
-      <div
-        class=${classMap({
-          'gui-range-calendar__pills-wrapper': true,
-          'gui-range-calendar--start-shadow': !this._isStartVisible,
-          'gui-range-calendar--end-shadow': !this._isEndVisible,
-        })}
-      >
-        <div class="gui-range-calendar__pills" role="list">
-          <span class="gui-sentinel gui-sentinel__start"></span>
-          ${repeat(
-            pills,
-            (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-            (pill, index) => this.renderPill(pill, index),
-          )}
-          <span class="gui-sentinel gui-sentinel__end"></span>
-        </div>
-      </div>
+      <gui-pills
+        class="gui-range-calendar__pills"
+        .items=${pillItems}
+        .removable=${true}
+        .clickable=${true}
+        .bubble=${false}
+        ?disabled=${this.disabled}
+        ?readonly=${this.readOnly}
+        .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
+        @pillremove=${this.onPillRemoveEvent}
+        @pillclick=${this.onPillClickEvent}
+      ></gui-pills>
     `;
   }
 
-  private renderPill(pill: DateRange, index: number) {
-    const startFormatted = this.formatDateForDisplay(pill.start);
-    const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
-    const pillLabel = `${startFormatted} - ${endFormatted}`;
+  private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    if (this.disabled || this.readOnly) return;
+    const sorted = this.getSortedPills();
+    const removed = sorted.find(
+      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
+    );
+    if (!removed) return;
+    const next = (this.value ?? []).filter(
+      (pill) => !(pill.start === removed.start && (pill.end ?? null) === (removed.end ?? null)),
+    );
+    this.value = next;
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  };
 
-    return html`
-      <div
-        class="gui-range-calendar__pill"
-        role="listitem"
-        tabindex="0"
-        aria-label="${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}"
-        @click=${() => this.navigateToDate(pill.start)}
-        @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
-      >
-        <span class="gui-range-calendar__pill-text">${pillLabel}</span>
-        <button
-          type="button"
-          class="gui-range-calendar__pill-remove"
-          tabindex="-1"
-          ?disabled=${this.disabled || this.readOnly}
-          @click=${(e: Event) => {
-            e.stopPropagation();
-            this.removePill(index);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
-            ></path>
-          </svg>
-        </button>
-      </div>
-    `;
-  }
+  private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    const sorted = this.getSortedPills();
+    const range = sorted.find(
+      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
+    );
+    if (range) this.navigateToDate(range.start);
+  };
 
   private formatDateForDisplay(isoDate: string): string {
     const date = new Date(isoDate);
@@ -417,50 +393,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
     );
   }
 
-  private removePill(index: number) {
-    if (this.disabled || this.readOnly) return;
-
-    const sorted = this.getSortedPills();
-    sorted.splice(index, 1);
-    this.value = [...sorted];
-
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
-  private handlePillKeydown(e: KeyboardEvent, index: number) {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      e.preventDefault();
-      this.removePill(index);
-      return;
-    }
-
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const sorted = this.getSortedPills();
-      if (sorted[index]) {
-        this.navigateToDate(sorted[index].start);
-      }
-      return;
-    }
-
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      const pills = this.querySelectorAll<HTMLElement>(
-        '.gui-range-calendar__pills .gui-range-calendar__pill',
-      );
-      const newIndex = e.key === 'ArrowLeft' ? index - 1 : index + 1;
-      if (newIndex >= 0 && newIndex < pills.length) {
-        pills[newIndex].focus();
-      }
-    }
-  }
-
   private navigateToDate(isoDate: string) {
     const date = new Date(isoDate);
     if (
@@ -471,42 +403,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
     }
   }
 
-  private setupObservers() {
-    const startSentinel = this.querySelector('.gui-sentinel__start');
-    const endSentinel = this.querySelector('.gui-sentinel__end');
-
-    if (startSentinel && !this.startObserver) {
-      this.startObserver = createIntersectionObserver(
-        startSentinel,
-        (isIntersecting) => (this._isStartVisible = isIntersecting),
-      );
-    }
-
-    if (endSentinel && !this.endObserver) {
-      this.endObserver = createIntersectionObserver(
-        endSentinel,
-        (isIntersecting) => (this._isEndVisible = isIntersecting),
-      );
-    }
-
-    if (!startSentinel && this.startObserver) {
-      this.startObserver.disconnect();
-      this.startObserver = undefined;
-      this._isStartVisible = true;
-    }
-    if (!endSentinel && this.endObserver) {
-      this.endObserver.disconnect();
-      this.endObserver = undefined;
-      this._isEndVisible = true;
-    }
-  }
-
-  private disconnectObservers() {
-    this.startObserver?.disconnect();
-    this.endObserver?.disconnect();
-    this.startObserver = undefined;
-    this.endObserver = undefined;
-  }
 }
 
 declare global {

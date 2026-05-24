@@ -56,7 +56,7 @@ const form = [
     include: { when: '$form.subscribeNewsletter === true' },
   }),
 
-  gui.actions.submitButton({ label: 'Submit ticket' }),
+  gui.actions.button({ label: 'Submit ticket', actionType: 'submit' }),
 ];
 
 const config = {

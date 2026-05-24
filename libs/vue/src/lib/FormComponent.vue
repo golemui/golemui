@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import {
+  type FormEvent,
+  type FormHealth,
+  type FormSubmitEvent,
   type LayoutWidget,
   formHealth as watchFormHealth,
   getDirectionFromLanguage,
@@ -10,14 +13,14 @@ import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
 import WidgetRenderer from './WidgetRenderer.vue';
 import { VueFormContext } from './VueFormContext';
 import { provideFormContext } from './provideFormContext';
-import type {
-  FormComponentEmits,
-  FormComponentHandle,
-  FormComponentProps,
-} from './FormComponent.types';
+import type { FormComponentHandle, FormComponentProps } from './FormComponent.types';
 
 const props = defineProps<FormComponentProps>();
-const emit = defineEmits<FormComponentEmits>();
+const emit = defineEmits<{
+  'form-event': [event: FormEvent];
+  'form-submit': [event: FormSubmitEvent];
+  'form-health': [health: FormHealth];
+}>();
 
 const formContext = new VueFormContext();
 const formName = ref<string>(props.config.formName ?? shortUUID());
@@ -109,7 +112,12 @@ watch(
   { immediate: true },
 );
 
+/**
+ * Stable events subscriptions.
+ * ( Stable events are those that survive store replacements )
+ */
 const eventSub = formContext.events$.subscribe((event) => emit('form-event', event));
+const submitSub = formContext.submit$.subscribe((event) => emit('form-submit', event));
 
 let unsubscribeLang: (() => void) | null = null;
 onMounted(() => {
@@ -126,6 +134,7 @@ onUnmounted(() => {
   entrySub?.unsubscribe();
   healthSub?.unsubscribe();
   eventSub.unsubscribe();
+  submitSub.unsubscribe();
   unsubscribeLang?.();
 });
 
@@ -133,11 +142,22 @@ defineExpose<FormComponentHandle>({
   setData: (data) => formContext.store.dispatch({ type: 'SET_DATA', payload: { data } }),
   setMeta: (meta) => formContext.store.dispatch({ type: 'SET_META', payload: { meta } }),
 });
+
+const onFormSubmit = (event: SubmitEvent) => {
+  event.preventDefault();
+  formContext.emitSubmitEvent();
+};
 </script>
 
 <template>
   <div v-if="formLayoutField" class="gui-form">
-    <form :id="formName" novalidate :dir="direction" :autocomplete="autocomplete">
+    <form
+      :id="formName"
+      novalidate
+      :dir="direction"
+      :autocomplete="autocomplete"
+      @submit.stop="onFormSubmit"
+    >
       <WidgetErrorBoundary :widget="formLayoutField">
         <WidgetRenderer :widget="formLayoutField" />
       </WidgetErrorBoundary>

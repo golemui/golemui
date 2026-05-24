@@ -29,7 +29,7 @@ import { _guiRangeDatePicker } from './shortcuts/range-date-picker/guiRangeDateP
 import { _guiCustomInput } from './shortcuts/custom-input/guiCustomInput.impl';
 
 // ─── Actions ───
-import { _guiButton, _guiSubmitButton } from './shortcuts/actions/guiActions.impl';
+import { _guiButton } from './shortcuts/actions/guiActions.impl';
 import { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl';
 
 // ─── Displays ───
@@ -52,6 +52,9 @@ import { _guiCustomLayout } from './shortcuts/custom-layout/guiCustomLayout.impl
 
 // ─── Repeater ───
 import { _guiRepeater } from './shortcuts/repeater/guiRepeater.impl';
+
+// ─── Tags ───
+import { _guiTags } from './shortcuts/tags/guiTags.impl';
 
 // ─── Selectors — chain root ───
 import { ScopeChain } from './shortcuts/scopes/scopeChain';
@@ -77,11 +80,11 @@ export const gui = {
     rangeDateInput: _guiRangeDateInput,
     rangeDatePicker: _guiRangeDatePicker,
     repeater: _guiRepeater,
+    tags: _guiTags,
     custom: _guiCustomInput,
   },
   actions: {
     button: _guiButton,
-    submitButton: _guiSubmitButton,
     custom: _guiCustomAction,
   },
   displays: {

@@ -22,9 +22,7 @@ export const runSelectComponentTests = (mountFn: MountComponentFn) => {
               kind: 'action',
               type: 'button',
               label: 'Test',
-              on: {
-                click: 'submit',
-              },
+              actionType: 'submit',
             },
           ],
         }),

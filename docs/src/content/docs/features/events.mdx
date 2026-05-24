@@ -26,7 +26,7 @@ const formDef = [
     onChange: 'countryChanged',
     items: ['US', 'CA', 'MX'],
   }),
-  gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+  gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
 ];
 ```
 
@@ -73,7 +73,7 @@ const formDef = [
 
     const formDef = [
       gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-      gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+      gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
     ];
 
     function handleFormEvent(event: FormEvent) {
@@ -110,7 +110,7 @@ const formDef = [
       protected config = {
         formDef: [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-          gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+          gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
         ],
       };
 
@@ -141,7 +141,7 @@ const formDef = [
       config = {
         formDef: [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-          gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+          gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
         ],
       };
 
@@ -180,7 +180,7 @@ const formDef = [
     const config = {
       formDef: [
         gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-        gui.actions.button('submit', { label: 'Submit', onClick: 'submitForm' }),
+        gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
       ],
     };
 

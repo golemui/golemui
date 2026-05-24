@@ -19,6 +19,7 @@ const iconPosition = computed(() => templateData.value.iconPosition || 'left');
   <div class="gui-button gui-field" :style="{ flex: templateData.size }">
     <gui-button
       :uid="uid"
+      :actionType="templateData.actionType ?? 'button'"
       :label="templateData.label"
       :disabled="templateData.disabled"
       :variant.prop="variant"

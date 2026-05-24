@@ -1,3 +1,13 @@
 <div>
-  <gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>
+  @if (error) {
+    <div style="border: 2px solid red; padding: 8px 12px; margin-bottom: 12px; color: red">
+      {{ error }}
+    </div>
+  }
+  <gui-form
+    [config]="config"
+    (formEvent)="onFormEvent($event)"
+    (formHealth)="onFormHealth($event)"
+    (formSubmit)="onFormSubmit($event)"
+  ></gui-form>
 </div>

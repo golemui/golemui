@@ -104,6 +104,7 @@ export class GuiNumber extends LitElement {
           inputmode="decimal"
           id=${this.uid}
           data-cy=${`${this.uid}_number`}
+          class="gui-widget-input"
           style=${styleMap(inputStyles)}
           value=${this.value}
           ?required=${this.required}

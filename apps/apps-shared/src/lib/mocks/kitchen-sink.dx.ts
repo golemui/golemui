@@ -10,6 +10,7 @@ import type { CustomValidatorSchemas } from '@golemui/gui-validators';
 import { allowedNames } from '../custom-validators/allowed-names';
 import { accordionTab } from './tabs/accordion.dx';
 import { alertTab } from './tabs/alert.dx';
+import { buttonTab } from './tabs/button.dx';
 import { calendarTab } from './tabs/calendar.dx';
 import { checkboxTab } from './tabs/checkbox.dx';
 import { currencyTab } from './tabs/currency.dx';
@@ -22,9 +23,10 @@ import { markdownTab } from './tabs/markdown.dx';
 import { numberTab } from './tabs/number.dx';
 import { passwordTab } from './tabs/password.dx';
 import { radiogroupTab } from './tabs/radiogroup.dx';
-import { repeaterTab } from './tabs/repeater.dx';
 import { buildRendererTab } from './tabs/renderer.dx';
+import { repeaterTab } from './tabs/repeater.dx';
 import { selectTab } from './tabs/select.dx';
+import { tagsTab } from './tabs/tags.dx';
 import { textareaTab } from './tabs/textarea.dx';
 import { textinputTab } from './tabs/textinput.dx';
 import { toggleTab } from './tabs/toggle.dx';
@@ -99,6 +101,28 @@ const data: Record<string, unknown> = {
       { firstName: 'Diana', lastName: 'Rodriguez' },
     ],
   },
+  tags: {
+    basic: ['hello', 'world'],
+    withIcon: [],
+    noDuplicates: ['unique'],
+    limited: [],
+    scrollable: [
+      'design',
+      'product',
+      'engineering',
+      'research',
+      'marketing',
+      'analytics',
+      'operations',
+      'support',
+      'finance',
+      'legal',
+      'people',
+    ],
+    validated: ['design', 'product'],
+    disabled: ['read', 'only'],
+    readonly: ['frozen'],
+  },
 };
 
 export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenSinkDx => ({
@@ -108,6 +132,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
     gui.layouts.tabs(
       [
         { label: 'Alert Component', uid: 'tabAlert', children: [alertTab] },
+        { label: 'Button Component', uid: 'tabButton', children: [buttonTab] },
         { label: 'Markdown Text Component', uid: 'tabMarkdownText', children: [markdownTextTab] },
         { label: 'Accordion Layout', uid: 'tabAccordion', children: [accordionTab] },
         { label: 'Flex Layout', uid: 'tabFlex', children: [flexTab] },
@@ -126,6 +151,7 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
         { label: 'Dropdown Component', uid: 'tabDropdown', children: [dropdownTab] },
         { label: 'List Component', uid: 'tabList', children: [listTab] },
         { label: 'Repeater Component', uid: 'tabRepeater', children: [repeaterTab] },
+        { label: 'Tags Component', uid: 'tabTags', children: [tagsTab] },
         ...(options.rendererExample !== undefined
           ? [
               {
@@ -138,7 +164,14 @@ export const buildKitchenSinkDx = (options: KitchenSinkDxOptions = {}): KitchenS
       ],
       { defaultOpen: 'tabAlert', onChange: 'onTabEvent' },
     ),
-    gui.actions.button({ label: 'Create', icon: 'save', iconPosition: 'right', onClick: 'submit' }),
+    gui.actions.button({
+      uid: 'submit-button',
+      actionType: 'submit',
+      label: 'Submit',
+      icon: 'save',
+      iconPosition: 'right',
+      disabled: { when: '$formIsInvalid' },
+    }),
   ],
   formSelectors: [
     // Suppress DX-layer auto-labels and auto-placeholders on every input —

@@ -1,0 +1,15 @@
+{
+  "form": [
+    {
+      "uid": "",
+      "kind": "input",
+      "type": "tags",
+      "path": "keywords",
+      "label": "Keywords (max 3)",
+      "props": {
+        "limit": 3,
+        "placeholder": "Up to 3 tags"
+      }
+    }
+  ]
+}

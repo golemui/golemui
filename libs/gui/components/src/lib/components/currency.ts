@@ -88,6 +88,7 @@ export class GuiCurrency extends LitElement {
     const currencyIcon = addIcon('currency', templateData);
 
     const fieldClasses: { [key: string]: boolean } = {
+      'gui-widget-input': true,
       [`gui-currency--icon`]: !!this.icon,
     };
 

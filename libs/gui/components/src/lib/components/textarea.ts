@@ -119,6 +119,7 @@ export class GuiTextarea extends LitElement {
         <textarea
           id=${this.uid}
           data-cy=${`${this.uid}_textarea`}
+          class="gui-widget-input"
           style=${styleMap(autoGrowStyles)}
           ?required=${templateData.required}
           ?disabled=${templateData.disabled}

@@ -28,6 +28,7 @@ import '@golemui/gui-components/range-date-input';
     '[style.flex]': 'this.adapter.templateData().size',
     '(document:click)': 'onDocumentClick($event)',
     '(focusout)': 'onFocusOut($event)',
+    '(dropdowntoggle)': 'onDropdownToggle($event)',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -43,7 +44,17 @@ export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
   readonly isCalendarOpen = signal(false);
   readonly focusDate = signal<string | undefined>(undefined);
 
+  // Set by `openCalendar` when the dropdown was open and is being closed as
+  // part of opening the calendar. Removing the dropdown removes the focused
+  // pill from the DOM, triggering a focusout with `relatedTarget=null` —
+  // which would otherwise immediately close the calendar we just opened.
+  private _ignoreNextFocusOut = false;
+
   onFocusOut(event: FocusEvent) {
+    if (this._ignoreNextFocusOut) {
+      this._ignoreNextFocusOut = false;
+      return;
+    }
     if (!this.isCalendarOpen()) return;
 
     const newFocusTarget = event.relatedTarget as Node;
@@ -92,23 +103,40 @@ export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
     const target = event.target as HTMLElement;
     const isInputClick = target.closest('.gui-range-date-input__part');
     const isCalendarClick = target.closest('gui-range-calendar');
-    const isPillClick = target.closest('.gui-range-date-input__pill');
-    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
-    if (isInputClick || isCalendarClick || isPillClick) {
+    if (isInputClick || isCalendarClick) {
       this.openCalendar();
-    } else if (isPillCountClick) {
+    } else if (this.isCalendarOpen()) {
       this.closeCalendar();
     } else {
-      this.isCalendarOpen.set(!this.isCalendarOpen());
+      this.openCalendar();
+    }
+  }
+
+  // Dropdown (from the inner gui-pills compact bubble) and the calendar
+  // popover are mutually exclusive — opening one closes the other.
+  onDropdownToggle(event: Event) {
+    const detail = (event as CustomEvent<{ open: boolean }>).detail;
+    if (detail?.open && this.isCalendarOpen()) {
+      this.closeCalendar();
     }
   }
 
   openCalendar() {
+    const dropdownWasOpen = !!this.el.nativeElement.querySelector('.gui-pills__dropdown');
+    if (dropdownWasOpen) this._ignoreNextFocusOut = true;
+    this.closePillsDropdown();
     this.isCalendarOpen.set(true);
   }
 
   closeCalendar() {
     this.isCalendarOpen.set(false);
+  }
+
+  private closePillsDropdown() {
+    const pills = this.el.nativeElement.querySelector('gui-pills') as
+      | (HTMLElement & { closeDropdown?: () => void })
+      | null;
+    pills?.closeDropdown?.();
   }
 
   ngOnDestroy(): void {

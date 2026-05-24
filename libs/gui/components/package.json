@@ -82,6 +82,11 @@
       "import": "./lib/components/password.js",
       "require": "./lib/components/password.umd.cjs"
     },
+    "./pills": {
+      "types": "./lib/components/pills.d.ts",
+      "import": "./lib/components/pills.js",
+      "require": "./lib/components/pills.umd.cjs"
+    },
     "./radiogroup": {
       "types": "./lib/components/radiogroup.d.ts",
       "import": "./lib/components/radiogroup.js",
@@ -101,6 +106,11 @@
       "types": "./lib/components/select.d.ts",
       "import": "./lib/components/select.js",
       "require": "./lib/components/select.umd.cjs"
+    },
+    "./tags": {
+      "types": "./lib/components/tags.d.ts",
+      "import": "./lib/components/tags.js",
+      "require": "./lib/components/tags.umd.cjs"
     },
     "./textarea": {
       "types": "./lib/components/textarea.d.ts",

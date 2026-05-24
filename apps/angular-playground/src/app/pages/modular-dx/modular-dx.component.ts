@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { modularDx, onFormEvent } from '@golemui/apps-shared';
-import type { FormEvent } from '@golemui/core';
+import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 
@@ -19,8 +19,19 @@ export class ModularDxPage {
     formSelectors: md.formSelectors,
     formConfig: md.formConfig,
   };
+  protected error = '';
 
-  protected async onFormEvent(event: FormEvent) {
-    await onFormEvent(event);
+  protected onFormEvent(event: FormEvent) {
+    onFormEvent(event);
+  }
+
+  protected onFormHealth(formHealth: FormHealth) {
+    if (formHealth.status === 'errored') {
+      this.error = formHealth.message;
+    }
+  }
+
+  protected onFormSubmit(event: FormSubmitEvent) {
+    console.log('👉 onFormSubmit', event.data);
   }
 }

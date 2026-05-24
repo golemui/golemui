@@ -36,11 +36,11 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
         injectValidationIssues([e.detail.message]);
       };
       const focusHandler = () => {
-        setIsCalendarOpen(true);
+        openCalendar();
       };
       const pillClickHandler = (e: CustomEvent) => {
         setFocusDate(e.detail.range.start);
-        setIsCalendarOpen(true);
+        openCalendar();
       };
 
       dateControlRef.current = node;
@@ -122,20 +122,48 @@ export function RangeDatePicker(widgetInstance: WithWidget) {
     setIsCalendarOpen(false);
   };
 
+  const closePillsDropdown = () => {
+    const pills = containerRef.current?.querySelector('gui-pills') as
+      | (HTMLElement & { closeDropdown?: () => void })
+      | null;
+    pills?.closeDropdown?.();
+  };
+
+  const openCalendar = () => {
+    closePillsDropdown();
+    setIsCalendarOpen(true);
+  };
+
   const toggleCalendar = (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
     const isInputClick = target.closest('.gui-range-date-input__part');
     const isCalendarClick = target.closest('gui-range-calendar');
-    const isPillClick = target.closest('.gui-range-date-input__pill');
-    const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
-    if (isInputClick || isCalendarClick || isPillClick) {
-      if (!isCalendarOpen) setIsCalendarOpen(true);
-    } else if (isPillCountClick) {
-      if (isCalendarOpen) setIsCalendarOpen(false);
+    if (isInputClick || isCalendarClick) {
+      if (!isCalendarOpen) openCalendar();
+    } else if (isCalendarOpen) {
+      setIsCalendarOpen(false);
     } else {
-      setIsCalendarOpen((prev) => !prev);
+      openCalendar();
     }
   };
+
+  // Dropdown (from the inner gui-pills compact bubble) and the calendar
+  // popover are mutually exclusive — opening one closes the other. The
+  // `dropdowntoggle` custom event bubbles up from `<gui-pills>` through
+  // `<gui-range-date>` to this container; React doesn't auto-bind custom
+  // events on a `<div>`, so we wire the listener imperatively.
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ open: boolean }>).detail;
+      if (detail?.open && isCalendarOpen) {
+        setIsCalendarOpen(false);
+      }
+    };
+    node.addEventListener('dropdowntoggle', handler);
+    return () => node.removeEventListener('dropdowntoggle', handler);
+  }, [isCalendarOpen]);
 
   const hint = templateData.hint;
   const icon = templateData.icon;

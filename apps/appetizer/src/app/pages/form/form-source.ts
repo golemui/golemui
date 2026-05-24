@@ -103,7 +103,7 @@ export const travelPlannerForm = [
   gui.actions.button({
     uid: 'btn-submit',
     label: { key: 'travelPlanner.btn.submit', default: 'Search My Trip' },
-    onClick: 'handleSubmit',
+    onClick: () => 'handleSubmit',
   }),
 ];
 `;

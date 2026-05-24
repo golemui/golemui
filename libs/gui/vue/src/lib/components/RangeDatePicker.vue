@@ -41,14 +41,14 @@ const dateChange = (e: Event) => {
   onValueChanged((e as CustomEvent).detail.value);
 };
 const dateFocus = () => {
-  isCalendarOpen.value = true;
+  openCalendar();
 };
 const dateError = (e: Event) => {
   injectValidationIssues([(e as CustomEvent).detail.message]);
 };
 const datePillClick = (e: Event) => {
   focusDate.value = (e as CustomEvent).detail.range.start;
-  isCalendarOpen.value = true;
+  openCalendar();
 };
 let currentDate: HTMLElement | null = null;
 watch(dateControlRef, (el) => {
@@ -110,32 +110,64 @@ onUnmounted(() => {
   currentCal?.removeEventListener('change', calChange);
 });
 
+// Set by `openCalendar` when the dropdown was open and is being closed as
+// part of opening the calendar. Removing the dropdown removes the focused
+// pill from the DOM, triggering a focusout with `relatedTarget=null` —
+// which would otherwise immediately close the calendar we just opened.
+let ignoreNextFocusOut = false;
+
 const onFocusOut = (event: FocusEvent) => {
+  if (ignoreNextFocusOut) {
+    ignoreNextFocusOut = false;
+    return;
+  }
   if (!isCalendarOpen.value) return;
   const newFocus = event.relatedTarget as Node;
   if (newFocus && containerRef.value?.contains(newFocus)) return;
   isCalendarOpen.value = false;
 };
 
+const closePillsDropdown = () => {
+  const pills = containerRef.value?.querySelector('gui-pills') as
+    | (HTMLElement & { closeDropdown?: () => void })
+    | null;
+  pills?.closeDropdown?.();
+};
+
+const openCalendar = () => {
+  const dropdownWasOpen = !!containerRef.value?.querySelector('.gui-pills__dropdown');
+  if (dropdownWasOpen) ignoreNextFocusOut = true;
+  closePillsDropdown();
+  isCalendarOpen.value = true;
+};
+
 const toggleCalendar = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
   const isInputClick = target.closest('.gui-range-date-input__part');
   const isCalendarClick = target.closest('gui-range-calendar');
-  const isPillClick = target.closest('.gui-range-date-input__pill');
-  const isPillCountClick = target.closest('.gui-range-date-input__pill--count');
-  if (isInputClick || isCalendarClick || isPillClick) {
-    if (!isCalendarOpen.value) isCalendarOpen.value = true;
-  } else if (isPillCountClick) {
-    if (isCalendarOpen.value) isCalendarOpen.value = false;
+  if (isInputClick || isCalendarClick) {
+    if (!isCalendarOpen.value) openCalendar();
+  } else if (isCalendarOpen.value) {
+    isCalendarOpen.value = false;
   } else {
-    isCalendarOpen.value = !isCalendarOpen.value;
+    openCalendar();
+  }
+};
+
+// Dropdown (from the inner gui-pills compact bubble) and the calendar
+// popover are mutually exclusive — opening one closes the other.
+const onDropdownToggle = (event: Event) => {
+  const detail = (event as CustomEvent<{ open: boolean }>).detail;
+  if (detail?.open && isCalendarOpen.value) {
+    isCalendarOpen.value = false;
   }
 };
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (event.target !== event.currentTarget) return;
   if (event.key === 'Enter' || event.key === ' ') {
-    isCalendarOpen.value = !isCalendarOpen.value;
+    if (isCalendarOpen.value) isCalendarOpen.value = false;
+    else openCalendar();
   }
 };
 </script>
@@ -146,6 +178,7 @@ const onKeyUp = (event: KeyboardEvent) => {
     class="gui-range-date-picker gui-field"
     :style="{ flex: templateData.size }"
     @focusout="onFocusOut"
+    @dropdowntoggle="onDropdownToggle"
   >
     <label v-if="templateData.label" class="gui-label" :for="uid" :data-cy="`${uid}_label`">
       {{ templateData.label }}{{ required ? ' *' : '' }}

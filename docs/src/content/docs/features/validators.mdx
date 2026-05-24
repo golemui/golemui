@@ -260,7 +260,7 @@ Where `validateOn` lives on the form component depends on the path:
           },
         },
       }),
-      gui.actions.submitButton({ label: 'Create User' }),
+      gui.actions.button({ label: 'Create User', actionType: 'submit' }),
     ];
 
     const formConfig = { validateOn: 'change' as const };
@@ -298,7 +298,7 @@ Where `validateOn` lives on the form component depends on the path:
               },
             },
           }),
-          gui.actions.submitButton({ label: 'Create User' }),
+          gui.actions.button({ label: 'Create User', actionType: 'submit' }),
         ],
         formConfig: { validateOn: 'change' as ValidateOn },
       };
@@ -328,7 +328,7 @@ Where `validateOn` lives on the form component depends on the path:
               },
             },
           }),
-          gui.actions.submitButton({ label: 'Create User' }),
+          gui.actions.button({ label: 'Create User', actionType: 'submit' }),
         ],
         formConfig: { validateOn: 'change' as ValidateOn },
       };
@@ -359,7 +359,7 @@ Where `validateOn` lives on the form component depends on the path:
           },
         },
       }),
-      gui.actions.submitButton({ label: 'Create User' }),
+      gui.actions.button({ label: 'Create User', actionType: 'submit' }),
     ];
 
     const formConfig = { validateOn: 'change' as const };

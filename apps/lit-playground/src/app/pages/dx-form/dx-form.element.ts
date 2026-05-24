@@ -1,5 +1,5 @@
 import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
-import type { FormEvent } from '@golemui/core';
+import type { FormEvent, FormHealth } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, LitElement } from 'lit';
@@ -43,18 +43,40 @@ const config: GuiFormInitConfig = {
 
 @customElement('lit-dx-form')
 export class DxFormElement extends LitElement {
+  private errors: string[] = [];
+
   override createRenderRoot() {
     return this;
   }
 
-  protected async onFormEvent(event: CustomEvent<FormEvent>) {
-    await onFormEvent(event.detail);
+  protected onFormEvent(event: CustomEvent<FormEvent>) {
+    onFormEvent(event.detail);
+  }
+
+  protected onFormHealth(event: CustomEvent<FormHealth>) {
+    if (event.detail.status === 'errored') {
+      this.errors = [...this.errors, event.detail.message];
+      this.requestUpdate();
+    }
   }
 
   override render() {
     return html`
       <div>
-        <gui-form .config=${config} @formEvent=${this.onFormEvent}></gui-form>
+        ${this.errors.length > 0
+          ? html`<div
+              style="border: 2px solid red; padding: 8px 12px; margin-bottom: 12px; color: red"
+            >
+              <ul style="margin: 0; padding-left: 20px">
+                ${this.errors.map((e) => html`<li>${e}</li>`)}
+              </ul>
+            </div>`
+          : ''}
+        <gui-form
+          .config=${config}
+          @formEvent=${this.onFormEvent}
+          @formHealth=${this.onFormHealth}
+        ></gui-form>
       </div>
     `;
   }
