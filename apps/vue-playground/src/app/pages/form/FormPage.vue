@@ -10,6 +10,7 @@ import {
   type Form,
   type FormEvent,
   type FormHealth,
+  type FormSubmitEvent,
   type ValidateOn,
   devToolsMiddleware,
 } from '@golemui/core';
@@ -57,6 +58,9 @@ const validateOn: ValidateOn = 'eager';
 function formEventHandler(event: FormEvent) {
   if (mock.onFormEvent) mock.onFormEvent(event);
   onFormEvent(event);
+}
+function formSubmitHandler(event: FormSubmitEvent) {
+  console.log('👉 onFormSubmit', event.data);
 }
 
 const error = ref('');
@@ -116,6 +120,7 @@ const onLanguageChanged = (event: Event) => {
       autocomplete="off"
       @form-health="onFormHealth"
       @form-event="formEventHandler"
+      @form-submit="formSubmitHandler"
     />
   </div>
 </template>

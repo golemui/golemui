@@ -1,8 +1,7 @@
 import {
-  Decoder,
-  type FromDecoder,
   array,
   boolean,
+  Decoder,
   err,
   lazy,
   literal,
@@ -13,6 +12,7 @@ import {
   optional,
   string,
   succeed,
+  type FromDecoder,
 } from 'ts.data.json';
 import { type Localizable, type TranslationConfig } from './i18n';
 import {
@@ -111,6 +111,7 @@ export type ActionWidget<
 > = SomeSuffixable<
   BaseWidget<StateKeys, FormType, Props> & {
     kind: 'action';
+    actionType?: 'button' | 'submit';
     label?: ReactiveWidgetPropertyValue<Localizable, FormType>;
     disabled?: boolean | { when: ReactiveExpression };
     on?: On<StateKeys, FormType>;
@@ -326,6 +327,9 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>(
     kind: { decoder: literal('action') },
     uid: { decoder: uidDecoder },
     type: { decoder: string() },
+    actionType: {
+      decoder: optional(oneOf([literal('button'), literal('submit')], 'button | submit ')),
+    },
     size: { suffixed: true, decoder: optional(number()) },
     include: { decoder: optional(includeDecoder) },
     exclude: { decoder: optional(excludeDecoder) },

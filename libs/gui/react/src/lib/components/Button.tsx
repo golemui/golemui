@@ -12,6 +12,7 @@ export function Button(widgetInstance: WithWidget) {
     <div className="gui-button gui-field" style={{ flex: templateData.size }}>
       <gui-button
         uid={uid}
+        actionType={templateData.actionType ?? 'button'}
         label={templateData.label as string}
         disabled={templateData.disabled as boolean}
         variant={templateData.variant}

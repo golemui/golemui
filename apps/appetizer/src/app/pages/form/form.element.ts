@@ -117,7 +117,7 @@ const STAGE_PROMPT_CODE: Record<Stage, string> = {
     'Code for the pets toggle. A plain boolean field, conditionally included once currency is set.',
   petsToggled: 'Code for the date picker. ISO dates, with optional min/max and disabled ranges.',
   dateEntered:
-    'And the submit handler. onSubmit gets the form data — do whatever you want with it.',
+    'And the submit button. actionType: \'submit\' validates the form and emits through formSubmit.',
   submitted: 'That was the whole form.',
 };
 
@@ -201,14 +201,14 @@ const TOKEN_INFO: Record<Token, TokenInfo> = {
     docs: '/dx/features/states/',
   },
   submit: {
-    title: 'onSubmit',
+    title: 'formSubmit',
     base: () =>
-      html`The form's submit handler. Receives the current form data — do whatever you need: fetch,
-      log, navigate.`,
+      html`Add a submit button with <code>actionType: 'submit'</code>. It validates the form on
+      click and emits through the <code>formSubmit</code> output — no event name needed.`,
     context: {
       dateEntered: () =>
-        html`In this case it just calls <code>process(data)</code> — your handler. The flip is
-          incidental.`,
+        html`Wire <code>formSubmit</code> on your component to receive the validated form data. The
+          flip is incidental.`,
     },
     docs: '/dx/features/events/',
   },
@@ -658,7 +658,7 @@ export class FormElement extends LitElement {
   }
 
   private renderSubmitCode() {
-    return html`formConfig: { ${this.renderToken('submit', 'onSubmit: (data) => process(data)')}, }`;
+    return html`${this.renderToken('submit', "gui.actions.button({ label: 'Submit', actionType: 'submit' })")},`;
   }
 
   private renderCurrentCode() {
@@ -862,9 +862,11 @@ export class FormElement extends LitElement {
   gui.inputs.datePicker('startDate', {
     include: { when: '$form.pets != null' },
   }),
+  gui.actions.button({ label: 'Submit', actionType: 'submit' }),
 ];
 
-const formConfig = { onSubmit: (data) => process(data) };</code></pre>
+// Wire formSubmit on your component:
+// formSubmit={(event) => process(event.data)}</code></pre>
               </div>
             </div>
             <div class="poc-stage__back-footer">

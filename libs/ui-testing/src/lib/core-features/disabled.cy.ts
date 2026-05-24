@@ -1,5 +1,5 @@
 import { defineForm } from '@golemui/core';
-import { type Option } from '@golemui/gui-shared';
+import { golemForm, type Option } from '@golemui/gui-shared';
 import { type MountComponentFn } from '../utils';
 
 const options: Option[] = [
@@ -531,7 +531,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
 
         it('should be disabled via $formIsInvalid when form has validation errors', () => {
           mountFn({
-            formDef: defineForm({
+            formDef: golemForm().create({
               form: [
                 {
                   uid: 'userName',
@@ -546,7 +546,7 @@ export const runDisabledComponentTests = (mountFn: MountComponentFn) => {
                   type: 'button',
                   label: 'Submit',
                   disabled: { when: '$formIsInvalid' },
-                  on: { click: 'submit' },
+                  actionType: 'submit',
                 },
               ],
             }),

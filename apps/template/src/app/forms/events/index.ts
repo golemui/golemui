@@ -6,7 +6,7 @@ export const eventsClickDemo = {
   form: [
     gui.actions.button({
       label: 'Click me',
-      onClick: 'evClick',
+      onClick: () => 'evClick',
     }),
     gui.inputs.textInput('evClickResult', {
       label: 'Last click',
@@ -85,7 +85,7 @@ export const eventsSubmitDemo = {
         },
       },
     }),
-    gui.actions.submitButton({ label: 'Submit' }),
+    gui.actions.button({ label: 'Submit', actionType: 'submit' }),
     gui.inputs.textInput('evSubmittedEmail', {
       label: 'Result',
       readonly: true,

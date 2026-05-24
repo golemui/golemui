@@ -270,7 +270,7 @@ const formDef: DxDefinitions = [
       key: 'travelPlanner.btn.submit',
       default: 'Search My Trip',
     },
-    on: { click: 'handleSubmit' },
+    onClick: () => 'handleSubmit',
   }),
 ];
 

@@ -893,7 +893,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
                 kind: 'action',
                 type: 'button',
                 label: 'Submit',
-                on: { click: 'submit' },
+                actionType: 'submit',
               },
               {
                 uid: 'errorSummary',
@@ -937,7 +937,7 @@ export const runStatesComponentTests = (mountFn: MountComponentFn) => {
                 kind: 'action',
                 type: 'button',
                 label: 'Submit',
-                on: { click: 'submit' },
+                actionType: 'submit',
               },
               {
                 uid: 'invalidBanner',

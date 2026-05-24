@@ -40,6 +40,7 @@ export default defineConfig(() => ({
   test: {
     name: 'gui-lit',
     watch: false,
+    passWithNoTests: true,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

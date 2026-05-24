@@ -156,8 +156,7 @@
       "kind": "action",
       "type": "button",
       "label": "Reserve",
-      "uid": "submit",
-      "on": { "click": "submit" }
+      "actionType": "submit"
     }
   ]
 }

@@ -24,7 +24,9 @@ gui.actions.button(
     iconPosition: 'right',
     disabled: false,
     uid: 'save-btn',
-    onClick: 'saveChanges', // event name routed through `formEvent` (or 'submit' to trigger validation)
+    actionType: 'submit', // renders as <button type="submit">, validates the form on click
+    // — or —
+    onClick: () => 'saveChanges', // function returning the event name routed through formEvent
     states: {
       // per-state overrides — see /form-definition/states/
       submitting: { label: 'Saving…', disabled: true },
@@ -32,20 +34,19 @@ gui.actions.button(
   },
   ['primary'], // tags — addressable groups for selectors
 );
-
-gui.actions.submitButton({ label: 'Submit' }); // shorthand for { uid: '#submit', label: '…' }
 ```
 
-`onClick` accepts a literal `'submit'` (triggers form-level validation first), any other string (the event name your `formEvent` callback receives), or a function callback that runs on click. See [Events](/form-definition/events/) for the full table.
+`actionType: 'submit'` makes the button render as `<button type="submit">`, triggers form-level validation on click, and emits the result through `formSubmit` (not `formEvent`). See [Events](/form-definition/events/) for the full table.
+
+`onClick` accepts a function that receives the current form data and returns either a string event name (routed through `formEvent`) or `void` (for side-effecty callbacks). String literals are not accepted — always use a function.
 
 ## Shortcuts
 
-| Shortcut                   | Renders                                         | Reference                                               |
-| -------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
-| `gui.actions.button`       | a button (typed `ActionDecorator` props)        | [Button](/widgets-reference/interactive-fields/button/) |
-| `gui.actions.submitButton` | a button preconfigured with `onClick: 'submit'` | [Button](/widgets-reference/interactive-fields/button/) |
-| `gui.actions.custom`       | your custom action                              | [Custom Widgets](/form-definition/custom-widgets/)      |
+| Shortcut             | Renders                                  | Reference                                               |
+| -------------------- | ---------------------------------------- | ------------------------------------------------------- |
+| `gui.actions.button` | a button (typed `ActionDecorator` props) | [Button](/widgets-reference/interactive-fields/button/) |
+| `gui.actions.custom` | your custom action                       | [Custom Widgets](/form-definition/custom-widgets/)      |
 
 ## See also
 
-- [Events](/form-definition/events/) — wiring `onClick` and friends.
+- [Events](/form-definition/events/) — wiring `onClick`, `actionType: 'submit'`, and `formSubmit`.

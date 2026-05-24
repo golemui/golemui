@@ -71,7 +71,6 @@ export interface GslLeafSelector {
 
 export interface FormConfig {
   suppressAutomaticStack?: boolean;
-  onSubmit?: (data: any) => void;
   dependencies?: Dependencies;
   widgetLoaders?: Record<string, () => Promise<unknown>>;
   validateOn?: ValidateOn;

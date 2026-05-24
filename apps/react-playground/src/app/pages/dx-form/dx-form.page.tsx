@@ -1,5 +1,7 @@
 import { buildKitchenSinkDx, initializeI18n, onFormEvent } from '@golemui/apps-shared';
+import type { FormHealth } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
+import { useCallback, useState } from 'react';
 import snarkdown from 'snarkdown';
 import { AirportItemRenderer } from '../../item-renderers/AirportItemRenderer';
 import { ComplexListItemRenderer } from '../../item-renderers/ComplexListItemRenderer';
@@ -41,9 +43,33 @@ const config = {
 };
 
 export function DxFormPage() {
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const onFormHealth = useCallback((event: FormHealth) => {
+    if (event.status === 'errored') {
+      setErrors((prev) => [...prev, event.message]);
+    }
+  }, []);
+
   return (
     <div>
-      <GuiForm config={config} formEvent={onFormEvent} />
+      {errors.length > 0 && (
+        <div
+          style={{
+            border: '2px solid red',
+            padding: '8px 12px',
+            marginBottom: '12px',
+            color: 'red',
+          }}
+        >
+          <ul style={{ margin: 0, paddingLeft: '20px' }}>
+            {errors.map((error, i) => (
+              <li key={i}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <GuiForm config={config} formEvent={onFormEvent} formHealth={onFormHealth} />
     </div>
   );
 }

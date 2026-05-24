@@ -8,6 +8,7 @@ import {
   type WithWidget,
   getDirectionFromLanguage,
   shortUUID,
+  type FormSubmitEvent,
 } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
 import { useEffect, useImperativeHandle, useRef, useState } from 'react';
@@ -24,6 +25,7 @@ export interface FormComponentProps {
   config: FormInitConfig<React.ComponentType<WithWidget>>;
   validators: ValidatorFn<any>;
   formEvent?: (event: FormEvent) => void;
+  formSubmit?: (event: FormSubmitEvent) => void;
   formHealth?: (error: FormHealth) => void;
   autocomplete?: string;
   ref?: React.Ref<FormComponentHandle>;
@@ -34,6 +36,7 @@ export function FormComponent({
   validators,
   formHealth,
   formEvent,
+  formSubmit,
   autocomplete,
   ref,
 }: FormComponentProps) {
@@ -82,13 +85,24 @@ export function FormComponent({
     };
   }, [formHealth, storeVersion]);
 
-  // EVENTS
+  /**
+   * Stable events subscriptions
+   * ( Stable events are those that survive store replacements )
+   */
   useEffect(() => {
     const sub = formContextRef.current.events$.subscribe((event) => formEvent?.(event));
     return () => {
       sub.unsubscribe();
     };
   }, [formEvent]);
+  useEffect(() => {
+    const sub = formContextRef.current.submit$.subscribe((event) => {
+      formSubmit?.(event);
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [formSubmit]);
 
   // FORM ENTRY POINT
   // Re-subscribes when store is recreated so the rendered form tree is always
@@ -149,6 +163,11 @@ export function FormComponent({
     [],
   );
 
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    formContextRef.current.emitSubmitEvent();
+  };
+
   if (!formLayoutField) {
     return null;
   }
@@ -156,7 +175,13 @@ export function FormComponent({
   return (
     <ReactFormContextProvider formContext={formContextRef.current}>
       <div className="gui-form">
-        <form id={formNameRef.current} noValidate dir={direction} autoComplete={autocomplete}>
+        <form
+          id={formNameRef.current}
+          noValidate
+          dir={direction}
+          autoComplete={autocomplete}
+          onSubmit={onFormSubmit}
+        >
           <WidgetErrorBoundary widget={formLayoutField}>
             <WidgetRenderer widget={formLayoutField} />
           </WidgetErrorBoundary>

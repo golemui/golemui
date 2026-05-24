@@ -2,7 +2,7 @@
 // DX Base Types — public and internal decorator bases
 // ═══════════════════════════════════════════════════
 
-import type { FormEvent, Localizable, ReactiveExpression } from '@golemui/core';
+import type { ActionWidget, FormEvent, Localizable, ReactiveExpression } from '@golemui/core';
 
 /**
  * DX-enriched FormEvent. Extends the core FormEvent with `update()` — the
@@ -87,6 +87,7 @@ export interface DxInputBase {
 export interface DxActionBase {
   label?: Localizable;
   disabled?: boolean | { when: ReactiveExpression };
+  actionType?: ActionWidget['actionType'];
 }
 
 /**

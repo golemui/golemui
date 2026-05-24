@@ -45,6 +45,7 @@ export type {
   DotPath,
   EventHandlerCallback,
   FormEvent,
+  FormSubmitEvent,
   FunctionWidgetParams,
   LayoutTemplateData,
   ReactiveExpression,

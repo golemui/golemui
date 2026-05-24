@@ -1,0 +1,52 @@
+{
+  "$schema": "../../../../../../libs/gui/shared/src/lib/schemas/layout-widget.schema.json",
+  "uid": "tabButton",
+  "kind": "layout",
+  "type": "flex",
+  "children": [
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Save"
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "props": {
+        "variant": "outlined"
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "props": {
+        "variant": "link"
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "props": {
+        "icon": "save"
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "props": {
+        "icon": "save",
+        "iconPosition": "right"
+      }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Save",
+      "disabled": true
+    }
+  ]
+}

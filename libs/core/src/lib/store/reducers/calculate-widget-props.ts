@@ -151,6 +151,7 @@ function computeActionFields(t: ChangeTracker, ctx: ResolverCtx): void {
   applyCoreField(t, ctx, 'exclude');
   applyCoreField(t, ctx, 'label');
   applyCoreField(t, ctx, 'disabled');
+  applyCoreField(t, ctx, 'actionType');
 }
 
 function computeInputFields(t: ChangeTracker, ctx: ResolverCtx): void {
@@ -229,7 +230,8 @@ type CoreField =
   | 'readonly'
   | 'validator'
   | 'path'
-  | 'defaultValue';
+  | 'defaultValue'
+  | 'actionType';
 
 function applyCoreField(t: ChangeTracker, ctx: ResolverCtx, field: CoreField): void {
   const source = t.source as Record<string, unknown>;

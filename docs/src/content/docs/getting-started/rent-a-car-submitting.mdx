@@ -13,11 +13,11 @@ import Demo from '../../../components/landing/Demo.astro';
 export const configJson = '06-final.json';
 export const configDx = '06-final.ts';
 
-The reservation button currently fires the special `'submit'` event, which runs form-level validation but doesn't notify your application code. Let's wire it to a real handler instead, so we can read the data and confirm the booking.
+The Reserve button currently uses `actionType: 'submit'`, which validates the form and emits through `formSubmit`. For this tutorial we'll switch it to a named `onClick` event instead — that routes the click through the standard `formEvent` callback so the application can read the data and react.
 
-## Step 1 — Emit a custom event from the button
+## Step 1 — Switch the button to a named event
 
-Replace `onClick: 'submit'` with `on: { click: 'handleReservation' }`. The `'submit'` literal triggers form-level validation and emits the event only when the form is valid; for arbitrary event names, use the legacy `on: { click: '<eventName>' }` shape.
+Replace `actionType: 'submit'` with `onClick: () => 'handleReservation'`. The button no longer triggers automatic form validation on click; add `disabled: { when: '$formIsInvalid' }` if you want to keep the button locked until the form is clean.
 
 ## Step 2 — Listen for it
 

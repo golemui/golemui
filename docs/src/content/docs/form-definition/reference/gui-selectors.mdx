@@ -99,7 +99,7 @@ The umbrella `inputs(...)` matches every input-kind itemType (textInputs, dropdo
 
 | Leaf method              | Matches                                                                            |
 | ------------------------ | ---------------------------------------------------------------------------------- |
-| `actions(config)`        | **Umbrella** — every action kind (`button`, `submitButton`, custom actions).       |
+| `actions(config)`        | **Umbrella** — every action kind (`button`, custom actions).                       |
 | `displays(config)`       | **Umbrella** — every display kind (`alert`, `display(callback)`, custom displays). |
 | `alerts(config)`         | Only `gui.displays.alert`.                                                         |
 | `layouts(config)`        | **Umbrella** — every layout kind (`flex`, `grid`, `tabs`, `accordion`, custom).    |
@@ -140,7 +140,7 @@ Each leaf has a `<leaf>ByUid` variant that targets a **single** widget by its `u
 
 | Leaf method                       | Matches                                             |
 | --------------------------------- | --------------------------------------------------- |
-| `actionByUid(uid, config)`        | A single action (`button`, `submitButton`, custom). |
+| `actionByUid(uid, config)`        | A single action (`button`, custom).                 |
 | `customActionByUid(uid, config)`  | A single `gui.actions.custom(...)`.                 |
 | `displayByUid(uid, config)`       | A single display (any kind).                        |
 | `alertByUid(uid, config)`         | A single `gui.displays.alert`.                      |
