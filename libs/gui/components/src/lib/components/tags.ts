@@ -210,23 +210,30 @@ export class GuiTags extends LitElement {
       return;
     }
 
-    // ArrowLeft enters the pill list only when the caret is at position 0
-    // with no selection — otherwise it's normal cursor movement inside the draft.
-    if (e.key === 'ArrowLeft' && caretAtStart) {
-      const tags = this.getValue();
-      if (tags.length > 0) {
-        e.preventDefault();
-        this.enterPillList(tags.length - 1);
-      }
+    const tags = this.getValue();
+    const isCompact = this.isCompactMode();
+
+    // Compact mode: ArrowDown opens the dropdown — visually pills are now
+    // "below" the input as a dropdown, not "to the left" as a strip, so
+    // ArrowLeft would be confusing here. Lands on the FIRST pill (top of list).
+    if (e.key === 'ArrowDown' && isCompact && tags.length > 0) {
+      e.preventDefault();
+      this.enterPillList(0);
       return;
     }
 
-    if (e.key === 'Backspace' && draft === '') {
-      const tags = this.getValue();
-      if (tags.length > 0) {
-        e.preventDefault();
-        this.enterPillList(tags.length - 1);
-      }
+    // Strip mode: ArrowLeft enters the strip at the last pill, but only when
+    // the caret is at position 0 with no selection — otherwise it's normal
+    // cursor movement inside the draft.
+    if (e.key === 'ArrowLeft' && !isCompact && caretAtStart && tags.length > 0) {
+      e.preventDefault();
+      this.enterPillList(tags.length - 1);
+      return;
+    }
+
+    if (e.key === 'Backspace' && draft === '' && tags.length > 0) {
+      e.preventDefault();
+      this.enterPillList(tags.length - 1);
       return;
     }
   }
@@ -328,6 +335,15 @@ export class GuiTags extends LitElement {
     return !!pills?.querySelector('.gui-pills__dropdown');
   }
 
+  /** True when the host wrapper has shrunk past the compact threshold and
+   *  gui-pills is displaying the bubble instead of the strip. */
+  private isCompactMode(): boolean {
+    const pills = this.getPills();
+    if (!pills) return false;
+    const wrapper = pills.querySelector<HTMLElement>('.gui-pills__strip-wrapper');
+    return wrapper ? getComputedStyle(wrapper).display === 'none' : false;
+  }
+
   /**
    * Enter the pill list at `index`. In compact mode the strip is hidden, so
    * we open the dropdown overlay first so the user can see the focused pill.
@@ -335,9 +351,7 @@ export class GuiTags extends LitElement {
   private enterPillList(index: number) {
     const pills = this.getPills();
     if (!pills) return;
-    const wrapper = pills.querySelector<HTMLElement>('.gui-pills__strip-wrapper');
-    const wrapperHidden = wrapper ? getComputedStyle(wrapper).display === 'none' : false;
-    if (wrapperHidden) {
+    if (this.isCompactMode()) {
       pills.openDropdown();
       requestAnimationFrame(() => pills.focusPillAt(index));
     } else {

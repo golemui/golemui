@@ -89,6 +89,7 @@ gui-range-date {
       outline: none;
       width: 24px;
       text-align: center;
+      color: var(--gui-text-default);
 
       &.gui-range-date-input__part {
         min-width: 48px;
