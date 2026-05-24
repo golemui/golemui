@@ -33,6 +33,7 @@ export function useTemplateData<
         };
         assertNoPropCollisions(calculatedWidget['uid'], calculatedWidget.props, obj);
         const templateData = {
+          ...widget,
           ...obj,
           ...calculatedWidget.props,
         } as unknown as WithFlattenedProps<F, ExtraProps>;

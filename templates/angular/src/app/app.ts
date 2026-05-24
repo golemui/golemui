@@ -70,7 +70,7 @@ const formDef = [
   gui.actions.button({
     label: 'Submit',
     uid: 'submit',
-    onClick: 'handleSubmit',
+    onClick: () => 'handleSubmit',
   }),
 ];
 

@@ -41,6 +41,7 @@ export default defineConfig(() => ({
   test: {
     name: 'vue',
     watch: false,
+    passWithNoTests: true,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts}'],

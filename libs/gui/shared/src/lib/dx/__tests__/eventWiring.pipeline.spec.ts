@@ -291,21 +291,9 @@ describe('DX Pipeline — Event Wiring', () => {
       expect(clickFn).toHaveBeenCalledWith({ x: 1 });
     });
 
-    it('onSubmit still receives event.data (backward compat)', () => {
-      const submitFn = vi.fn();
+    it('onClick returning string lands as on.click for host-managed dispatch', () => {
       const result = formDefs.processDxFacade(
-        [_guiTextInput('name'), _guiButton({ label: 'Go', onClick: 'submit' })],
-        [],
-        { onSubmit: submitFn },
-      );
-
-      result.events!({ name: 'submit', data: { ok: true }, callback: vi.fn() });
-      expect(submitFn).toHaveBeenCalledWith({ ok: true });
-    });
-
-    it('arbitrary string onClick lands as on.click for host-managed dispatch', () => {
-      const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Click me', onClick: 'evClick' })],
+        [_guiButton({ label: 'Click me', onClick: () => 'evClick' })],
         [],
         {},
       );
@@ -315,10 +303,10 @@ describe('DX Pipeline — Event Wiring', () => {
         (c) => typeof c !== 'function' && (c as any).kind === 'action',
       ) as any;
 
-      // The DX layer translates `onClick: 'evClick'` to `on: { click: 'evClick' }`
-      // — exactly the shape host applications listen for via formEvent.
+      // The DX layer probes the function and uses the returned string as on.click,
+      // exactly the shape host applications listen for via formEvent.
       expect(button.on?.click).toBe('evClick');
-      // No internal event registry entry — the engine just routes the name through.
+      // No internal event registry entry — host manages dispatch.
       const clickFn = vi.fn();
       result.events?.({ name: 'evClick', data: {}, callback: clickFn });
       expect(clickFn).not.toHaveBeenCalled();

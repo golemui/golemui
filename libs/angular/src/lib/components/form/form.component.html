@@ -5,6 +5,7 @@
   novalidate
   [attr.dir]="direction()"
   [attr.autocomplete]="autocomplete()"
+  (submit)="onFormSubmit($event)"
 >
   @if (formState && formState.formDef && context.widgetRegistry.ready) {
     <ng-container guiWidget [widget]="formState.formDef.form" />

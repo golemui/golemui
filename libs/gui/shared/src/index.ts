@@ -32,7 +32,6 @@ export {
   _guiRangeDatePicker,
   _guiRepeater,
   _guiSelect,
-  _guiSubmitButton,
   _guiTabs,
   _guiTextarea,
   _guiTextInput,

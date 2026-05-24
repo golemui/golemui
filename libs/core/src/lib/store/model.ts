@@ -56,6 +56,11 @@ export type State = {
   injectedValidations: Record<DotPath, ValidationStatus>;
 
   /**
+   * caclulated each time the validation kicks-in. It atkes into account both `validations` and `injectedValidations`.
+   */
+  isFormValid: boolean;
+
+  /**
    * Tracks widgets with state expressions.
    * When data changes, these widgets are updated and their flags recalculated.
    */
@@ -113,6 +118,7 @@ export const createInitialState = (lang: string): State => ({
   validations: {},
   touchedControls: {},
   injectedValidations: {},
+  isFormValid: true,
   widgetFlags: {},
   widgetPropOverrides: {},
   data: {},

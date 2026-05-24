@@ -39,7 +39,7 @@ Assemble the `config` object **once** — as a module-level constant in React/Vu
 
     const formDef = [
       gui.inputs.textInput('name', { label: 'Name' }),
-      gui.actions.submitButton({ label: 'Submit' }),
+      gui.actions.button({ label: 'Submit', actionType: 'submit' }),
     ];
     ```
 
@@ -243,7 +243,7 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
 
     const formDef = [
       gui.inputs.textInput('name', { label: 'Name' }),
-      gui.actions.submitButton({ label: 'Submit' }),
+      gui.actions.button({ label: 'Submit', actionType: 'submit' }),
     ];
     const formSelectors = [
       gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
@@ -274,7 +274,7 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
       protected config = {
         formDef: [
           gui.inputs.textInput('name', { label: 'Name' }),
-          gui.actions.submitButton({ label: 'Submit' }),
+          gui.actions.button({ label: 'Submit', actionType: 'submit' }),
         ],
         formSelectors: [
           gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
@@ -297,7 +297,7 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
       config = {
         formDef: [
           gui.inputs.textInput('name', { label: 'Name' }),
-          gui.actions.submitButton({ label: 'Submit' }),
+          gui.actions.button({ label: 'Submit', actionType: 'submit' }),
         ],
         formSelectors: [
           gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
@@ -323,7 +323,7 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
     const config = {
       formDef: [
         gui.inputs.textInput('name', { label: 'Name' }),
-        gui.actions.submitButton({ label: 'Submit' }),
+        gui.actions.button({ label: 'Submit', actionType: 'submit' }),
       ],
       formSelectors: [
         gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),

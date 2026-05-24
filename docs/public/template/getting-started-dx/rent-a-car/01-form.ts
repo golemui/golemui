@@ -101,7 +101,6 @@ export default [
   }),
   gui.actions.button({
     label: 'Reserve',
-    uid: 'submit',
-    onClick: 'submit',
+    actionType: 'submit',
   }),
 ];

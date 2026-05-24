@@ -107,9 +107,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
             kind: 'action',
             type: 'button',
             label: 'Login',
-            on: {
-              click: 'submit',
-            },
+            actionType: 'submit',
           },
         ],
       });
@@ -302,7 +300,7 @@ export const runRepeaterComponentTests = (mountFn: MountComponentFn) => {
               type: 'button',
               label: 'Submit',
               disabled: { when: '$formIsInvalid' },
-              on: { click: 'submit' },
+              actionType: 'submit',
             },
           ],
         }),

@@ -2,6 +2,7 @@ import {
   type FormEvent,
   type FormHealth,
   type FormInitConfig,
+  type FormSubmitEvent,
   type State,
   type ValidatorFn,
   formHealth,
@@ -37,20 +38,41 @@ export class FormElement extends LitElement {
   private stateSub: Subscription | undefined;
   private healthSub: Subscription | undefined;
   // Subscriptions stable for the element lifetime.
-  private eventSub: Subscription | undefined;
+  private eventSub: Subscription[] = [];
   private unsubscribeI18n: () => void = () => undefined;
   private readonly _defaultFormName = shortUUID();
 
+  static FORM_SUBMIT_EVENT = 'formSubmit';
   static FORM_HEALTH_EVENT = 'formHealth';
   static FORM_EVENT = 'formEvent';
 
   override connectedCallback() {
     super.connectedCallback();
     this.classList.add('gui-form');
-    // events$ is a stable Subject - subscribe once for the element lifetime.
-    this.eventSub = this.context.events$.subscribe((event) =>
-      this.dispatchEvent(
-        new CustomEvent<FormEvent>(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
+    this.configureLongLivedEvents();
+  }
+
+  /**
+   * Stable events subscriptions.
+   * ( Stable events are those that survive store replacements )
+   */
+  private configureLongLivedEvents() {
+    this.eventSub.push(
+      this.context.events$.subscribe((event) =>
+        this.dispatchEvent(
+          new CustomEvent<FormEvent>(FormElement.FORM_EVENT, { detail: event, bubbles: true }),
+        ),
+      ),
+    );
+
+    this.eventSub.push(
+      this.context.submit$.subscribe((event) =>
+        this.dispatchEvent(
+          new CustomEvent<FormSubmitEvent>(FormElement.FORM_SUBMIT_EVENT, {
+            detail: event,
+            bubbles: true,
+          }),
+        ),
       ),
     );
   }
@@ -121,6 +143,7 @@ export class FormElement extends LitElement {
         novalidate
         dir=${this.direction}
         autocomplete=${this.autocomplete || nothing}
+        @submit=${this.onFormSubmit}
       >
         ${when(
           ready,
@@ -129,6 +152,11 @@ export class FormElement extends LitElement {
         )}
       </form>
     `;
+  }
+
+  private onFormSubmit(event: SubmitEvent) {
+    event.preventDefault();
+    this.context.emitSubmitEvent();
   }
 
   setData(data: Record<string, any>): void {
@@ -143,7 +171,7 @@ export class FormElement extends LitElement {
     super.disconnectedCallback();
     this.stateSub?.unsubscribe();
     this.healthSub?.unsubscribe();
-    this.eventSub?.unsubscribe();
+    this.eventSub.map((sub) => sub.unsubscribe());
     this.unsubscribeI18n();
   }
 }

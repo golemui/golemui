@@ -1,5 +1,5 @@
 import { type FormEvent, type FunctionWidgetParams } from '@golemui/core';
-import { type FormConfig, type MergeResult, type RuntimeFunction } from './dx.domain';
+import { type MergeResult, type RuntimeFunction } from './dx.domain';
 import { type ActionDecorator } from '../shortcuts/actions/actions.domain';
 import { type EventIdGenerator } from './itemTypeRegistry';
 
@@ -22,63 +22,49 @@ const INPUT_LAYOUT_EVENT_KEYS = Object.keys(INPUT_LAYOUT_EVENT_PROPS);
  * Generalisation of ActionOnClickService.
  *
  * Two entry points:
- * - `extractOnClickFromMergeResult` — action-specific: handles onClick + submit promotion.
+ * - `extractOnClickFromMergeResult` — action-specific: handles onClick wiring.
  *   Called from the actions afterMerge hook.
  * - `wireInputLayoutEvents` — universal: handles onLoad, onChange, onFilter on any widget.
  *   Called from ItemWalker.processItem for every item.
  */
 export class EventWiringService {
-  // ── Action-specific: onClick + submit ─────────────────────────
+  // ── Action-specific: onClick ───────────────────────────────────
 
   extractOnClickFromMergeResult(
     mergeResult: MergeResult,
     eventRegistry: EventRegistry,
-    formConfig: FormConfig,
     eventIdGenerator: EventIdGenerator,
   ): MergeResult {
     if (mergeResult.kind === 'dynamic') {
       const originalFn = mergeResult.fn;
       const wrappedFn: RuntimeFunction = (params: FunctionWidgetParams<any>) => {
         const result = originalFn(params) as ActionDecorator & Record<string, any>;
-        return this.wireOnClick(result, eventRegistry, formConfig, eventIdGenerator);
+        return this.wireOnClick(result, eventRegistry, eventIdGenerator);
       };
       return { kind: 'dynamic', fn: wrappedFn };
     }
 
     const actionDef = mergeResult.def as ActionDecorator & Record<string, any>;
-    const wired = this.wireOnClick(actionDef, eventRegistry, formConfig, eventIdGenerator);
+    const wired = this.wireOnClick(actionDef, eventRegistry, eventIdGenerator);
     return { kind: 'static', def: wired as ActionDecorator };
   }
 
   private wireOnClick(
     actionDef: ActionDecorator & Record<string, any>,
     eventRegistry: EventRegistry,
-    formConfig: FormConfig,
     eventIdGenerator: EventIdGenerator,
   ): Record<string, any> {
-    const isSubmit = actionDef.uid === '#submit' || actionDef.onClick === 'submit';
-    const actionId = isSubmit ? '#submit' : eventIdGenerator.next();
-    const eventName = isSubmit ? 'submit' : actionId;
-
+    const actionId = eventIdGenerator.next();
     const rawOnClick = actionDef.onClick;
-    const explicitCallback = typeof rawOnClick === 'function' ? rawOnClick : undefined;
-    const effectiveOnClick = explicitCallback ?? (isSubmit ? formConfig.onSubmit : undefined);
 
-    if (effectiveOnClick) {
-      // Wrap action onClick: callback receives event.data for backward compat
-      eventRegistry.set(eventName, (event: FormEvent) => effectiveOnClick(event.data));
+    if (typeof rawOnClick === 'function') {
       const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: eventName } };
-    }
-
-    if (isSubmit) {
-      const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: 'submit' } };
-    }
-
-    if (typeof rawOnClick === 'string') {
-      const { onClick: _, ...rest } = actionDef;
-      return { ...rest, uid: actionId, on: { click: rawOnClick } };
+      const probeResult = rawOnClick(undefined);
+      if (typeof probeResult === 'string') {
+        return { ...rest, uid: actionId, on: { click: probeResult } };
+      }
+      eventRegistry.set(actionId, (event: FormEvent) => rawOnClick(event.data));
+      return { ...rest, uid: actionId, on: { click: actionId } };
     }
 
     return { ...actionDef, uid: actionId };

@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import Ajv2020 from 'ajv/dist/2020';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { golemForm } from '../../golem-form';
 import {
   type GetSchema,
   registerGolemSchemas,
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
-import { golemForm } from '../../golem-form';
 
 const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/components/button.schema.json';
 
@@ -51,6 +51,7 @@ describe('Button schema validation', () => {
           {
             kind: 'action',
             type: 'button',
+            actionType: 'submit',
             props: {
               variant: 'filled',
               icon: 'settings_icon',
@@ -156,6 +157,26 @@ describe('Button schema validation', () => {
         validate.errors?.some(
           (e) => e.keyword === 'enum' && e.instancePath === '/props/iconPosition',
         ),
+      ).toBe(true);
+    });
+
+    it('should fail on invalid actionType enum', () => {
+      const formDef = golemForm().create({
+        form: [
+          // @ts-expect-error Expected, invalid iconPosition
+          {
+            kind: 'action',
+            type: 'button',
+            actionType: 'banana ice cream',
+          },
+        ],
+      });
+
+      const invalidButton = formDef.form.children[0];
+      const isValid = validate(invalidButton);
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some((e) => e.keyword === 'enum' && e.instancePath === '/actionType'),
       ).toBe(true);
     });
 

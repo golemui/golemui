@@ -142,7 +142,7 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
               kind: 'action',
               type: 'button',
               label: 'Submit',
-              on: { click: 'submit' },
+              actionType: 'submit',
             },
             {
               uid: 'status-display',

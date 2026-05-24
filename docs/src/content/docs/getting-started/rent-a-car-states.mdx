@@ -89,7 +89,7 @@ gui.inputs.booleanInput('driverOver25', {
 
 GolemUI emits a `formHealth` callback whenever the form's validation status changes. You can wire it to a piece of UI state and conditionally disable your submit handler — or use the `disabled` prop on the button with a `when` expression that references `$form.<paths>`.
 
-The example above uses the simpler **`'submit'` literal** on the button: `onClick: 'submit'` triggers form-level validation before the event fires, so an invalid form won't fire the event at all. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
+The example above uses `actionType: 'submit'` on the Reserve button. This renders the button as `<button type="submit">` and triggers form-level validation on click — an invalid form won't fire `formSubmit` at all. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
 
 ## Next
 

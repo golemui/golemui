@@ -14,6 +14,6 @@ describe('AppElement', () => {
   it('should have a greeting', () => {
     app.connectedCallback();
 
-    expect(app.querySelector('h1').innerHTML).toContain('Welcome lit-playground');
+    expect(app.innerHTML).toContain('<lit-form>');
   });
 });

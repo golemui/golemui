@@ -1,4 +1,4 @@
-import type { FormEvent, FormHealth } from '@golemui/core';
+import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
 import type { GuiFormInitConfig } from '@golemui/gui-shared';
 
 export interface GuiFormProps {
@@ -7,8 +7,9 @@ export interface GuiFormProps {
 }
 
 export type GuiFormEmits = {
-  (e: 'form-event', event: FormEvent): void;
-  (e: 'form-health', health: FormHealth): void;
+  'form-event': [event: FormEvent];
+  'form-submit': [event: FormSubmitEvent];
+  'form-health': [health: FormHealth];
 };
 
 export interface GuiFormHandle {

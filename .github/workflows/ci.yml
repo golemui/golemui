@@ -33,4 +33,7 @@ jobs:
       - name: Build affected
         run: npx nx affected --target=build --exclude=docs
 
+      - name: Test affected
+        run: npx nx affected --target=vite:test
+
       - run: npm run lint:affected
