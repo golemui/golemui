@@ -37,6 +37,7 @@ export default defineConfig(() => ({
         'lib/components/markdown-text': 'src/lib/components/markdown-text.ts',
         'lib/components/number': 'src/lib/components/number.ts',
         'lib/components/password': 'src/lib/components/password.ts',
+        'lib/components/pills': 'src/lib/components/pills.ts',
         'lib/components/radiogroup': 'src/lib/components/radiogroup.ts',
         'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
         'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',

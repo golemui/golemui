@@ -1,0 +1,143 @@
+@use 'pill' as *;
+
+// `<gui-pills>` does NOT own its own container or position context. The
+// compact-mode threshold compares against the *host wrapper's* width — hosts
+// that want the bubble fallback must declare:
+//   container-type: inline-size;
+//   container-name: gui-pills-widget;
+//   position: relative; // for the dropdown overlay
+// on the element that wraps `<gui-pills>` (e.g. `.gui-tags-input`).
+gui-pills {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 1;
+
+  .gui-pills__strip-wrapper {
+    display: flex;
+    min-height: 40px;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    flex-shrink: 1;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    &::before {
+      left: 0;
+      background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &::after {
+      right: 0;
+      background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &.gui-pills--start-shadow::before {
+      opacity: 1;
+    }
+    &.gui-pills--end-shadow::after {
+      opacity: 1;
+    }
+  }
+
+  .gui-pills__strip {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--gui-space-1);
+    gap: var(--gui-space-2);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .gui-sentinel {
+    width: 0;
+    height: 0;
+    flex-shrink: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    &__start {
+      margin-inline-end: 0;
+    }
+    &__end {
+      margin-inline-start: -1px;
+    }
+  }
+
+  .gui-pills__pill {
+    @include gui-pill;
+
+    cursor: default;
+
+    &--clickable {
+      cursor: pointer;
+    }
+  }
+
+  .gui-pills__pill-text {
+    @include gui-pill-text;
+  }
+
+  .gui-pills__pill-remove {
+    @include gui-pill-remove;
+  }
+
+  .gui-pills__compact {
+    display: none;
+    align-items: center;
+  }
+
+  .gui-pills__count {
+    @include gui-pill-count;
+  }
+
+  .gui-pills__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--gui-bg-default);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    box-shadow: var(--gui-shadow-md);
+    padding: var(--gui-space-2);
+    gap: var(--gui-space-2);
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: var(--gui-space-1);
+
+    .gui-pills__pill {
+      justify-content: space-between;
+    }
+  }
+
+  @container gui-pills-widget (max-width: 540px) {
+    .gui-pills__strip-wrapper {
+      display: none;
+    }
+
+    .gui-pills__compact {
+      display: flex;
+      width: 40px;
+      height: 40px;
+      justify-content: center;
+    }
+  }
+}

@@ -7,7 +7,8 @@ import { live } from 'lit/directives/live.js';
 import { GUIAriaController } from '../controllers/aria.controller';
 import { mergeDateRanges, toISODateString } from '../utils/date';
 import { addErrors, addLabel, type ControlTemplateData } from '../utils/templates';
-import { createIntersectionObserver } from './tabs';
+import './pills';
+import type { GuiPillEventDetail, GuiPillItem } from './pills';
 
 interface DateParts {
   day: string;
@@ -37,12 +38,6 @@ export class GuiRangeDateInput extends LitElement {
 
   @state() private _startDate: DateParts = { day: '', month: '', year: '' };
   @state() private _endDate: DateParts = { day: '', month: '', year: '' };
-  @state() private _isStartVisible = true;
-  @state() private _isEndVisible = true;
-  @state() private _showPillsList = false;
-
-  private startObserver: IntersectionObserver | undefined;
-  private endObserver: IntersectionObserver | undefined;
 
   private readonly MIN_DAY = 1;
   private readonly MAX_DAY = 31;
@@ -83,16 +78,6 @@ export class GuiRangeDateInput extends LitElement {
     this.classList.add('gui-field');
   }
 
-  override updated() {
-    this.setupObservers();
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.disconnectObservers();
-    this.removeOutsideListeners();
-  }
-
   override render() {
     const templateData: ControlTemplateData<DateRange[]> & RangeDateInputProps = {
       uid: this.uid,
@@ -113,6 +98,16 @@ export class GuiRangeDateInput extends LitElement {
     }).formatToParts(new Date());
 
     const pills = this.getSortedPills();
+    const pillItems: GuiPillItem[] = pills.map((pill) => {
+      const startFormatted = this.formatDateForDisplay(pill.start);
+      const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
+      const pillLabel = `${startFormatted} - ${endFormatted}`;
+      return {
+        key: `${pill.start}-${pill.end ?? pill.start}`,
+        label: pillLabel,
+        ariaLabel: `${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}`,
+      };
+    });
 
     const iconClassMap = {
       'gui-widget-icon': true,
@@ -131,36 +126,20 @@ export class GuiRangeDateInput extends LitElement {
           ${this.icon
             ? html`<span class=${classMap(iconClassMap)} data-icon=${this.icon}></span>`
             : nothing}
-          ${pills.length > 0
-            ? html`<div
-                  class=${classMap({
-                    'gui-range-date-input__pills-wrapper': true,
-                    'gui-range-date-input--start-shadow': !this._isStartVisible,
-                    'gui-range-date-input--end-shadow': !this._isEndVisible,
-                  })}
-                >
-                  <div class="gui-range-date-input__pills" role="list">
-                    <span class="gui-sentinel gui-sentinel__start"></span>
-                    ${repeat(
-                      pills,
-                      (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-                      (pill, index) => this.renderPill(pill, index),
-                    )}
-                    <span class="gui-sentinel gui-sentinel__end"></span>
-                  </div>
-                </div>
-                <div class="gui-range-date-input__pills-compact">
-                  <button
-                    type="button"
-                    tabindex="0"
-                    class="gui-range-date-input__pill--count"
-                    aria-label="${pills.length} date ranges"
-                    @click=${this.togglePillsList}
-                  >
-                    ${pills.length}
-                  </button>
-                </div>`
-            : nothing}
+
+          <gui-pills
+            class="gui-range-date-input__pills"
+            .items=${pillItems}
+            .removable=${true}
+            .clickable=${true}
+            .bubble=${true}
+            ?disabled=${this.disabled}
+            ?readonly=${this.readOnly}
+            .removeAriaLabel=${this.removePillAriaLabel ?? 'Remove date'}
+            .compactAriaLabel=${`${pillItems.length} date ranges`}
+            @pillremove=${this.onPillRemoveEvent}
+            @pillclick=${this.onPillClickEvent}
+          ></gui-pills>
 
           <div class="gui-range-date-input__inputs">
             <div
@@ -182,62 +161,52 @@ export class GuiRangeDateInput extends LitElement {
             </div>
           </div>
         </div>
-        ${this._showPillsList && pills.length > 0
-          ? html`<div class="gui-range-date-input__pills-dropdown" role="list">
-              ${repeat(
-                pills,
-                (pill) => `${pill.start}-${pill.end ?? pill.start}`,
-                (pill, index) => this.renderPill(pill, index),
-              )}
-            </div>`
+
+        ${this.showErrors && this.errors?.length
+          ? addErrors(this.uid as string, templateData)
           : nothing}
       </div>
-
-      ${this.showErrors && this.errors?.length
-        ? addErrors(this.uid as string, templateData)
-        : nothing}
     `;
   }
 
-  private renderPill(pill: DateRange, index: number) {
-    const startFormatted = this.formatDateForDisplay(pill.start);
-    const endFormatted = pill.end ? this.formatDateForDisplay(pill.end) : startFormatted;
-    const pillLabel = `${startFormatted} - ${endFormatted}`;
+  private onPillRemoveEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    if (this.disabled || this.readOnly) return;
+    const sorted = this.getSortedPills();
+    const idx = sorted.findIndex(
+      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
+    );
+    if (idx < 0) return;
+    const removed = sorted[idx];
+    const next = (this.value ?? []).filter(
+      (pill) => !(pill.start === removed.start && (pill.end ?? null) === (removed.end ?? null)),
+    );
+    this.value = next;
 
-    return html`
-      <div
-        class="gui-range-date-input__pill"
-        role="listitem"
-        tabindex="0"
-        aria-label="${this.removePillAriaLabel ?? 'Remove date'} ${pillLabel}"
-        @click=${() => this.onPillClick(pill)}
-        @focus=${this.handlePillFocus}
-        @keydown=${(e: KeyboardEvent) => this.handlePillKeydown(e, index)}
-      >
-        <span class="gui-range-date-input__pill-text">${pillLabel}</span>
-        <button
-          type="button"
-          class="gui-range-date-input__pill-remove"
-          tabindex="-1"
-          ?disabled=${this.disabled || this.readOnly}
-          @click=${() => this.removePill(index)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 256 256"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
-            ></path>
-          </svg>
-        </button>
-      </div>
-    `;
-  }
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+
+    if (next.length === 0) {
+      requestAnimationFrame(() => {
+        const firstInput = this.querySelector<HTMLInputElement>(
+          '.gui-range-date-input__field input',
+        );
+        firstInput?.focus();
+      });
+    }
+  };
+
+  private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
+    const sorted = this.getSortedPills();
+    const range = sorted.find(
+      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
+    );
+    if (range) this.onPillClick(range);
+  };
 
   private renderDateInputs(group: 'start' | 'end', parts: Intl.DateTimeFormatPart[]) {
     const dateParts = group === 'start' ? this._startDate : this._endDate;
@@ -314,117 +283,6 @@ export class GuiRangeDateInput extends LitElement {
     return [...this.value].sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
     );
-  }
-
-  private togglePillsList() {
-    this._showPillsList = !this._showPillsList;
-    if (this._showPillsList) {
-      requestAnimationFrame(() => {
-        document.addEventListener('pointerdown', this.handleOutsideInteraction);
-        document.addEventListener('focusin', this.handleOutsideInteraction);
-        const firstPill = this.querySelector<HTMLElement>(
-          '.gui-range-date-input__pills-dropdown .gui-range-date-input__pill',
-        );
-        firstPill?.focus();
-      });
-    } else {
-      this.removeOutsideListeners();
-    }
-  }
-
-  private removeOutsideListeners() {
-    document.removeEventListener('pointerdown', this.handleOutsideInteraction);
-    document.removeEventListener('focusin', this.handleOutsideInteraction);
-  }
-
-  private handleOutsideInteraction = (e: Event) => {
-    const compact = this.querySelector('.gui-range-date-input__pills-compact');
-    const dropdown = this.querySelector('.gui-range-date-input__pills-dropdown');
-    const target = e.composedPath()[0] as Node;
-    if (!compact?.contains(target) && !dropdown?.contains(target)) {
-      this._showPillsList = false;
-      this.removeOutsideListeners();
-    }
-  };
-
-  private removePill(index: number) {
-    if (this.disabled || this.readOnly) return;
-
-    const sorted = this.getSortedPills();
-    sorted.splice(index, 1);
-    this.value = [...sorted];
-
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-
-    if (this._showPillsList && sorted.length === 0) {
-      this._showPillsList = false;
-      this.removeOutsideListeners();
-    }
-
-    // Focus next pill or first input
-    requestAnimationFrame(() => {
-      const selector = this._showPillsList
-        ? '.gui-range-date-input__pills-dropdown .gui-range-date-input__pill'
-        : '.gui-range-date-input__pills .gui-range-date-input__pill';
-      const pills = this.querySelectorAll<HTMLElement>(selector);
-      if (pills.length > 0) {
-        const focusIndex = Math.min(index, pills.length - 1);
-        pills[focusIndex].focus();
-      } else {
-        const firstInput = this.querySelector<HTMLInputElement>(
-          '.gui-range-date-input__field input',
-        );
-        firstInput?.focus();
-      }
-    });
-  }
-
-  private handlePillFocus(e: FocusEvent) {
-    (e.target as Element).scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'nearest',
-    });
-  }
-
-  private handlePillKeydown(e: KeyboardEvent, index: number) {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      e.preventDefault();
-      e.stopPropagation();
-      this.removePill(index);
-      return;
-    }
-
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      const sorted = this.getSortedPills();
-      if (sorted[index]) {
-        this.onPillClick(sorted[index]);
-      }
-      return;
-    }
-
-    const isDropdown = this._showPillsList;
-    const prevKey = isDropdown ? 'ArrowUp' : 'ArrowLeft';
-    const nextKey = isDropdown ? 'ArrowDown' : 'ArrowRight';
-
-    if (e.key === prevKey || e.key === nextKey) {
-      e.preventDefault();
-      const selector = isDropdown
-        ? '.gui-range-date-input__pills-dropdown .gui-range-date-input__pill'
-        : '.gui-range-date-input__pills .gui-range-date-input__pill';
-      const pills = this.querySelectorAll<HTMLElement>(selector);
-      const newIndex = e.key === prevKey ? index - 1 : index + 1;
-      if (newIndex >= 0 && newIndex < pills.length) {
-        pills[newIndex].focus();
-      }
-    }
   }
 
   private onPillClick(range: DateRange) {
@@ -628,44 +486,6 @@ export class GuiRangeDateInput extends LitElement {
     }
 
     return new Date(yearVal, monthVal - 1, dayVal);
-  }
-
-  private setupObservers() {
-    const startSentinel = this.querySelector('.gui-sentinel__start');
-    const endSentinel = this.querySelector('.gui-sentinel__end');
-
-    if (startSentinel && !this.startObserver) {
-      this.startObserver = createIntersectionObserver(
-        startSentinel,
-        (isIntersecting) => (this._isStartVisible = isIntersecting),
-      );
-    }
-
-    if (endSentinel && !this.endObserver) {
-      this.endObserver = createIntersectionObserver(
-        endSentinel,
-        (isIntersecting) => (this._isEndVisible = isIntersecting),
-      );
-    }
-
-    // If pills were removed and sentinels are gone, clean up
-    if (!startSentinel && this.startObserver) {
-      this.startObserver.disconnect();
-      this.startObserver = undefined;
-      this._isStartVisible = true;
-    }
-    if (!endSentinel && this.endObserver) {
-      this.endObserver.disconnect();
-      this.endObserver = undefined;
-      this._isEndVisible = true;
-    }
-  }
-
-  private disconnectObservers() {
-    this.startObserver?.disconnect();
-    this.endObserver?.disconnect();
-    this.startObserver = undefined;
-    this.endObserver = undefined;
   }
 
   private tryCreatePill() {

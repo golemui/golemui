@@ -28,6 +28,13 @@ export {
   updateOptions,
 } from './lib/components/one-of';
 export { GuiPassword } from './lib/components/password';
+export { GuiPills } from './lib/components/pills';
+export type {
+  GuiPillItem,
+  GuiPillEventDetail,
+  GuiPillKeydownEventDetail,
+  GuiPillsDropdownEventDetail,
+} from './lib/components/pills';
 export { GuiRadiogroup } from './lib/components/radiogroup';
 export { GuiRangeCalendar } from './lib/components/range-calendar';
 export type { RangeCalendarDay } from './lib/components/range-calendar';
