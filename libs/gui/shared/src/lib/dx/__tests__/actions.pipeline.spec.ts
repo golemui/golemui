@@ -7,8 +7,7 @@ import { _guiTextInput } from '../index';
 describe('DX Pipeline — Actions', () => {
   describe('Basic action expansion', () => {
     it('maps explicit onClick button with click event wiring', () => {
-      const myFn = () => null;
-      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Save', onClick: myFn })]);
+      const root = processDx([_guiTextInput('name'), _guiButton({ label: 'Save', onClick: () => undefined })]);
 
       const saveButton = root.children?.find(
         (child) => typeof child !== 'function' && (child as { kind?: string }).kind === 'action',
@@ -35,8 +34,8 @@ describe('DX Pipeline — Actions', () => {
     it('wires multiple buttons with unique uids and unique click event names', () => {
       const root = processDx([
         _guiTextInput('name'),
-        _guiButton({ label: 'A', onClick: () => null }),
-        _guiButton({ label: 'B', onClick: () => null }),
+        _guiButton({ label: 'A', onClick: () => undefined }),
+        _guiButton({ label: 'B', onClick: () => undefined }),
       ]);
 
       const actions = (root.children ?? []).filter(
@@ -55,12 +54,11 @@ describe('DX Pipeline — Actions', () => {
 
   describe('Dynamic (callback) actions', () => {
     it('keeps callback action dynamic and wires on.click after resolving', () => {
-      const myFn = () => null;
       const defs = [
         _guiTextInput('name'),
         _guiButton((p: any) => ({
           label: p?.$form?.dirty ? 'Save*' : 'Save',
-          onClick: myFn,
+          onClick: () => undefined,
         })),
       ];
       const root = processDx(defs);
@@ -87,7 +85,7 @@ describe('DX Pipeline — Actions', () => {
   describe('Return type handling', () => {
     it('includes events in DxResult when at least one onClick callback exists', () => {
       const result = formDefs.processDxFacade(
-        [_guiButton({ label: 'Go', onClick: () => null })],
+        [_guiButton({ label: 'Go', onClick: () => undefined })],
         [],
       );
 
