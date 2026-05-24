@@ -39,6 +39,7 @@
 }
 
 // Pill-count badge (the "+N" bubble shown in compact-width fallback layouts).
+// Used by `gui-tags` and mirrored by the equivalent in `gui-range-date-input`.
 @mixin gui-pill-count {
   display: flex;
   align-items: center;
@@ -47,7 +48,7 @@
   gap: var(--gui-space-3);
   color: var(--gui-color-white);
   background-color: var(--gui-intent-primary);
-  padding: 0;
+  padding: var(--gui-space-1);
   cursor: pointer;
   width: 20px;
   height: 20px;

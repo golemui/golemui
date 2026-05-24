@@ -1,5 +1,9 @@
+@use 'pill' as *;
+
 gui-tags {
   display: block;
+  container-type: inline-size;
+  container-name: gui-tags-widget;
 
   .gui-tags-input {
     display: flex;
@@ -46,6 +50,117 @@ gui-tags {
       outline: 0;
       border-color: var(--gui-border-focus);
       box-shadow: var(--gui-shadow-focus);
+    }
+  }
+
+  .gui-tags__pills-wrapper {
+    display: flex;
+    min-height: 40px;
+    border-inline-end: 1px solid var(--gui-border-default);
+    border-inline-start: 1px solid var(--gui-border-default);
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    &::before {
+      left: 0;
+      background: linear-gradient(to right, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &::after {
+      right: 0;
+      background: linear-gradient(to left, var(--gui-bg-default) 20%, transparent);
+    }
+
+    &.gui-tags--start-shadow::before {
+      opacity: 1;
+    }
+    &.gui-tags--end-shadow::after {
+      opacity: 1;
+    }
+  }
+
+  .gui-tags__pills {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--gui-space-1);
+    gap: var(--gui-space-2);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .gui-sentinel {
+    width: 0;
+    height: 0;
+    flex-shrink: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    &__start {
+      margin-inline-end: 0;
+    }
+    &__end {
+      margin-inline-start: -1px;
+    }
+  }
+
+  .gui-tags__chip {
+    @include gui-pill;
+
+    cursor: default;
+  }
+
+  .gui-tags__chip-text {
+    @include gui-pill-text;
+  }
+
+  .gui-tags__chip-remove {
+    @include gui-pill-remove;
+  }
+
+  .gui-tags__pills-compact {
+    display: none;
+    align-items: center;
+  }
+
+  .gui-tags__pill--count {
+    @include gui-pill-count;
+  }
+
+  .gui-tags__pills-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--gui-bg-default);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    box-shadow: var(--gui-shadow-md);
+    padding: var(--gui-space-2);
+    gap: var(--gui-space-2);
+    max-height: 200px;
+    overflow-y: auto;
+
+    .gui-tags__chip {
+      justify-content: space-between;
     }
   }
 

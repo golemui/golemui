@@ -1,3 +1,5 @@
+@use 'pill' as *;
+
 :root {
   --gui-radius-range: calc(var(--gui-radius-md) * 2);
 }
