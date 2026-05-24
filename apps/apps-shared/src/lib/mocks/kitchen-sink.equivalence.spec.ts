@@ -2,47 +2,47 @@ import { formDefs } from '@golemui/gui-shared';
 import { describe, expect, it } from 'vitest';
 
 import { buildKitchenSinkDx } from './kitchen-sink.dx';
-import { accordion as jsonAccordionTab } from './tabs/accordion';
+import jsonAccordionTab from './tabs/accordion.form-chunk.json';
 import { accordionTab as dxAccordionTab } from './tabs/accordion.dx';
-import { alert as jsonAlertTab } from './tabs/alert';
+import jsonAlertTab from './tabs/alert.form-chunk.json';
 import { alertTab as dxAlertTab } from './tabs/alert.dx';
-import { button as jsonButtonTab } from './tabs/button';
+import jsonButtonTab from './tabs/button.form-chunk.json';
 import { buttonTab as dxButtonTab } from './tabs/button.dx';
-import { calendar as jsonCalendarTab } from './tabs/calendar';
+import jsonCalendarTab from './tabs/calendar.form-chunk.json';
 import { calendarTab as dxCalendarTab } from './tabs/calendar.dx';
-import { checkbox as jsonCheckboxTab } from './tabs/checkbox';
+import jsonCheckboxTab from './tabs/checkbox.form-chunk.json';
 import { checkboxTab as dxCheckboxTab } from './tabs/checkbox.dx';
-import { currency as jsonCurrencyTab } from './tabs/currency';
+import jsonCurrencyTab from './tabs/currency.form-chunk.json';
 import { currencyTab as dxCurrencyTab } from './tabs/currency.dx';
-import { dropdown as jsonDropdownTab } from './tabs/dropdown';
+import jsonDropdownTab from './tabs/dropdown.form-chunk.json';
 import { dropdownTab as dxDropdownTab } from './tabs/dropdown.dx';
-import { flex as jsonFlexTab } from './tabs/flex';
+import jsonFlexTab from './tabs/flex.form-chunk.json';
 import { flexTab as dxFlexTab } from './tabs/flex.dx';
-import { grid as jsonGridTab } from './tabs/grid';
+import jsonGridTab from './tabs/grid.form-chunk.json';
 import { gridTab as dxGridTab } from './tabs/grid.dx';
-import { list as jsonListTab } from './tabs/list';
+import jsonListTab from './tabs/list.form-chunk.json';
 import { listTab as dxListTab } from './tabs/list.dx';
-import { markdown as jsonMarkdownTab } from './tabs/markdown';
-import { markdownText as jsonMarkdownTextTab } from './tabs/markdown-text';
+import jsonMarkdownTab from './tabs/markdown.form-chunk.json';
+import jsonMarkdownTextTab from './tabs/markdown-text.form-chunk.json';
 import { markdownTextTab as dxMarkdownTextTab } from './tabs/markdown-text.dx';
 import { markdownTab as dxMarkdownTab } from './tabs/markdown.dx';
-import { number as jsonNumberTab } from './tabs/number';
+import jsonNumberTab from './tabs/number.form-chunk.json';
 import { numberTab as dxNumberTab } from './tabs/number.dx';
-import { password as jsonPasswordTab } from './tabs/password';
+import jsonPasswordTab from './tabs/password.form-chunk.json';
 import { passwordTab as dxPasswordTab } from './tabs/password.dx';
-import { radiogroup as jsonRadiogroupTab } from './tabs/radiogroup';
+import jsonRadiogroupTab from './tabs/radiogroup.form-chunk.json';
 import { radiogroupTab as dxRadiogroupTab } from './tabs/radiogroup.dx';
-import { repeater as jsonRepeaterTab } from './tabs/repeater';
+import jsonRepeaterTab from './tabs/repeater.form-chunk.json';
 import { repeaterTab as dxRepeaterTab } from './tabs/repeater.dx';
-import { select as jsonSelectTab } from './tabs/select';
+import jsonSelectTab from './tabs/select.form-chunk.json';
 import { selectTab as dxSelectTab } from './tabs/select.dx';
-import { tags as jsonTagsTab } from './tabs/tags';
+import jsonTagsTab from './tabs/tags.form-chunk.json';
 import { tagsTab as dxTagsTab } from './tabs/tags.dx';
-import { textarea as jsonTextareaTab } from './tabs/textarea';
+import jsonTextareaTab from './tabs/textarea.form-chunk.json';
 import { textareaTab as dxTextareaTab } from './tabs/textarea.dx';
-import { textinput as jsonTextinputTab } from './tabs/textinput';
+import jsonTextinputTab from './tabs/textinput.form-chunk.json';
 import { textinputTab as dxTextinputTab } from './tabs/textinput.dx';
-import { toggle as jsonToggleTab } from './tabs/toggle';
+import jsonToggleTab from './tabs/toggle.form-chunk.json';
 import { toggleTab as dxToggleTab } from './tabs/toggle.dx';
 
 // ─── Per-tab equivalence test ───────────────────────────────────────────────
@@ -114,7 +114,7 @@ const stripFields = (node: any, fields: readonly string[]): any => {
 //   - autoFit: DX grid layouts default to `autoFit: true` (sensible-default for
 //     responsive layouts); JSON path doesn't set it. Pipeline default.
 const stripped = (form: any) =>
-  stripFields(form, ['uid', 'validator', 'direction', 'renderMode', 'autoFit']);
+  stripFields(form, ['uid', '$schema', 'validator', 'direction', 'renderMode', 'autoFit']);
 
 // `_guiAccordion` (and similar layouts) hard-wrap each section's children in a
 // flex layout, even when the section's direct child is already a layout. JSON
@@ -147,127 +147,127 @@ const normalise = (form: any) => collapseLayoutWrappers(stripped(form));
 
 describe('Kitchen Sink — JSON ↔ DX equivalence', () => {
   it('textinput tab', () => {
-    const json = buildJsonTab(jsonTextinputTab('tabTextinput')).form;
+    const json = buildJsonTab(jsonTextinputTab).form;
     const dx = buildDxTab(dxTextinputTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('password tab', () => {
-    const json = buildJsonTab(jsonPasswordTab('tabPassword')).form;
+    const json = buildJsonTab(jsonPasswordTab).form;
     const dx = buildDxTab(dxPasswordTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('currency tab', () => {
-    const json = buildJsonTab(jsonCurrencyTab('tabCurrency')).form;
+    const json = buildJsonTab(jsonCurrencyTab).form;
     const dx = buildDxTab(dxCurrencyTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('number tab', () => {
-    const json = buildJsonTab(jsonNumberTab('tabNumber')).form;
+    const json = buildJsonTab(jsonNumberTab).form;
     const dx = buildDxTab(dxNumberTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('markdown-text tab', () => {
-    const json = buildJsonTab(jsonMarkdownTextTab('tabMarkdownText')).form;
+    const json = buildJsonTab(jsonMarkdownTextTab).form;
     const dx = buildDxTab(dxMarkdownTextTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('alert tab', () => {
-    const json = buildJsonTab(jsonAlertTab('tabAlert')).form;
+    const json = buildJsonTab(jsonAlertTab).form;
     const dx = buildDxTab(dxAlertTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('button tab', () => {
-    const json = buildJsonTab(jsonButtonTab('tabButton')).form;
+    const json = buildJsonTab(jsonButtonTab).form;
     const dx = buildDxTab(dxButtonTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('checkbox tab', () => {
-    const json = buildJsonTab(jsonCheckboxTab('tabCheckbox')).form;
+    const json = buildJsonTab(jsonCheckboxTab).form;
     const dx = buildDxTab(dxCheckboxTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('toggle tab', () => {
-    const json = buildJsonTab(jsonToggleTab('tabToggle')).form;
+    const json = buildJsonTab(jsonToggleTab).form;
     const dx = buildDxTab(dxToggleTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('markdown tab', () => {
-    const json = buildJsonTab(jsonMarkdownTab('tabMarkdown')).form;
+    const json = buildJsonTab(jsonMarkdownTab).form;
     const dx = buildDxTab(dxMarkdownTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('select tab', () => {
-    const json = buildJsonTab(jsonSelectTab('tabSelect')).form;
+    const json = buildJsonTab(jsonSelectTab).form;
     const dx = buildDxTab(dxSelectTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('radiogroup tab', () => {
-    const json = buildJsonTab(jsonRadiogroupTab('tabRadiogroup')).form;
+    const json = buildJsonTab(jsonRadiogroupTab).form;
     const dx = buildDxTab(dxRadiogroupTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('textarea tab', () => {
-    const json = buildJsonTab(jsonTextareaTab('tabTextarea')).form;
+    const json = buildJsonTab(jsonTextareaTab).form;
     const dx = buildDxTab(dxTextareaTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('list tab', () => {
-    const json = buildJsonTab(jsonListTab('tabList')).form;
+    const json = buildJsonTab(jsonListTab).form;
     const dx = buildDxTab(dxListTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('flex tab', () => {
-    const json = buildJsonTab(jsonFlexTab('tabFlex')).form;
+    const json = buildJsonTab(jsonFlexTab).form;
     const dx = buildDxTab(dxFlexTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('accordion tab', () => {
-    const json = buildJsonTab(jsonAccordionTab('tabAccordion')).form;
+    const json = buildJsonTab(jsonAccordionTab).form;
     const dx = buildDxTab(dxAccordionTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('grid tab', () => {
-    const json = buildJsonTab(jsonGridTab('tabGrid')).form;
+    const json = buildJsonTab(jsonGridTab).form;
     const dx = buildDxTab(dxGridTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('calendar tab', () => {
-    const json = buildJsonTab(jsonCalendarTab('tabDate')).form;
+    const json = buildJsonTab(jsonCalendarTab).form;
     const dx = buildDxTab(dxCalendarTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('dropdown tab', () => {
-    const json = buildJsonTab(jsonDropdownTab('tabDropdown')).form;
+    const json = buildJsonTab(jsonDropdownTab).form;
     const dx = buildDxTab(dxDropdownTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('repeater tab', () => {
-    const json = buildJsonTab(jsonRepeaterTab('tabRepeater')).form;
+    const json = buildJsonTab(jsonRepeaterTab).form;
     const dx = buildDxTab(dxRepeaterTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
 
   it('tags tab', () => {
-    const json = buildJsonTab(jsonTagsTab('tabTags')).form;
+    const json = buildJsonTab(jsonTagsTab).form;
     const dx = buildDxTab(dxTagsTab);
     expect(normalise(dx)).toEqual(normalise(json));
   });
