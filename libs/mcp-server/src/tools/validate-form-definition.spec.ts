@@ -295,4 +295,156 @@ describe('validate_form_definition', () => {
     });
     expect(result.expressionWarnings.some((w) => /Unclosed/.test(w.message))).toBe(true);
   });
+
+  // ---------------------------------------------------------------------------
+  // Defensive-coding rules (R1–R4). Each has a positive case (must flag) and a
+  // negative case (must NOT flag).
+  // ---------------------------------------------------------------------------
+
+  const formWith = (when: string) => ({
+    formDefinition: {
+      form: [{ kind: 'input', type: 'textinput', path: 'x', include: { when } }],
+    },
+  });
+  const has = (result: { expressionWarnings: Array<{ message: string }> }, pattern: RegExp) =>
+    result.expressionWarnings.some((w) => pattern.test(w.message));
+
+  describe('R1 — loose equality', () => {
+    it('flags loose `==`', () => {
+      const r = validateFormDefinition(formWith('$form.x == "y"'));
+      expect(has(r, /loose equality/)).toBe(true);
+    });
+    it('flags loose `!=`', () => {
+      const r = validateFormDefinition(formWith('$form.x != null'));
+      expect(has(r, /loose equality/)).toBe(true);
+    });
+    it('does not flag strict `===`/`!==`', () => {
+      const r = validateFormDefinition(formWith('$form.x === "y" && $form.y !== undefined'));
+      expect(has(r, /loose equality/)).toBe(false);
+    });
+  });
+
+  describe('R2 — negation of reference', () => {
+    it('flags `!$form.x`', () => {
+      const r = validateFormDefinition(formWith('!$form.x'));
+      expect(has(r, /negates a `\$form/)).toBe(true);
+    });
+    it('flags `! $form.user?.name` (with whitespace, with optional chain)', () => {
+      const r = validateFormDefinition(formWith('! $form.user?.name'));
+      expect(has(r, /negates a `\$form/)).toBe(true);
+    });
+    it('does not flag `!==` / `!=` operators', () => {
+      const r = validateFormDefinition(formWith('$form.x !== undefined'));
+      expect(has(r, /negates a `\$form/)).toBe(false);
+    });
+  });
+
+  describe('R3 — chained access without optional chaining', () => {
+    it('flags `$form.user.name`', () => {
+      const r = validateFormDefinition(formWith('$form.user.name === "Joan"'));
+      expect(has(r, /optional chaining/)).toBe(true);
+    });
+    it('flags `$form.a?.b.c` (last hop unsafe)', () => {
+      const r = validateFormDefinition(formWith('$form.a?.b.c === 1'));
+      expect(has(r, /optional chaining/)).toBe(true);
+    });
+    it('does not flag fully optional-chained access', () => {
+      const r = validateFormDefinition(formWith('$form.user?.name === "Joan"'));
+      expect(has(r, /optional chaining/)).toBe(false);
+    });
+    it('does not flag single-level access `$form.x`', () => {
+      const r = validateFormDefinition(formWith('$form.x === 1'));
+      expect(has(r, /optional chaining/)).toBe(false);
+    });
+  });
+
+  describe('R4 — reference as truthy/falsy boolean', () => {
+    it('flags a bare reference `$form.x`', () => {
+      const r = validateFormDefinition(formWith('$form.x'));
+      expect(has(r, /directly as a boolean/)).toBe(true);
+    });
+    it('flags reference before `&&`', () => {
+      const r = validateFormDefinition(formWith('$form.x && $form.y === "z"'));
+      expect(has(r, /directly as a boolean/)).toBe(true);
+    });
+    it('flags reference before ternary `?`', () => {
+      const r = validateFormDefinition(formWith('$form.x ? true : false'));
+      expect(has(r, /directly as a boolean/)).toBe(true);
+    });
+    it('flags trailing reference after `||`', () => {
+      const r = validateFormDefinition(formWith('$form.x === "z" || $form.y'));
+      expect(has(r, /directly as a boolean/)).toBe(true);
+    });
+    it('does not flag optional chaining `?.` (must not be confused with ternary)', () => {
+      const r = validateFormDefinition(formWith('$form.user?.name === "Joan"'));
+      expect(has(r, /directly as a boolean/)).toBe(false);
+    });
+    it('does not flag nullish coalescing `??`', () => {
+      const r = validateFormDefinition(formWith('($form.x ?? "default") === "default"'));
+      expect(has(r, /directly as a boolean/)).toBe(false);
+    });
+    it('does not flag a reference used as a comparison RHS', () => {
+      const r = validateFormDefinition(formWith('$form.x === $form.y'));
+      expect(has(r, /directly as a boolean/)).toBe(false);
+    });
+    it('does not flag idiomatic length checks', () => {
+      const r = validateFormDefinition(formWith('$form.items?.length > 0'));
+      expect(has(r, /directly as a boolean/)).toBe(false);
+    });
+  });
+
+  describe('R5 — comparison/arithmetic on possibly-undefined leaf', () => {
+    it('flags `$form.x > 180`', () => {
+      const r = validateFormDefinition(formWith('$form.size > 180'));
+      expect(has(r, /comparison or arithmetic/)).toBe(true);
+    });
+    it('flags `$form.user?.age >= 18` even with optional chain (leaf still possibly undefined)', () => {
+      const r = validateFormDefinition(formWith('$form.user?.age >= 18'));
+      expect(has(r, /comparison or arithmetic/)).toBe(true);
+    });
+    it('flags arithmetic `$form.x + 1`', () => {
+      const r = validateFormDefinition(formWith('$form.x + 1 === 2'));
+      expect(has(r, /comparison or arithmetic/)).toBe(true);
+    });
+    it('does not flag strict equality `===`', () => {
+      const r = validateFormDefinition(formWith('$form.x === 180'));
+      expect(has(r, /comparison or arithmetic/)).toBe(false);
+    });
+    it('does not flag nullish coalescing `??`', () => {
+      const r = validateFormDefinition(formWith('($form.x ?? 0) > 180'));
+      // The ref `$form.x` here is operand of `??`, not `>`. The wrapper `(... ?? 0)` is what's > 180.
+      expect(has(r, /comparison or arithmetic/)).toBe(false);
+    });
+    it('does not flag `$index > 0` (index is always defined)', () => {
+      const r = validateFormDefinition(formWith('$index > 0'));
+      expect(has(r, /comparison or arithmetic/)).toBe(false);
+    });
+    it('does not flag a guarded comparison', () => {
+      const r = validateFormDefinition(
+        formWith('$form.size !== undefined && $form.size > 180'),
+      );
+      expect(has(r, /comparison or arithmetic/)).toBe(false);
+    });
+  });
+
+  it('leaves existing idiomatic safe expressions unflagged', () => {
+    // Composite safe expression touching all four new rules.
+    const r = validateFormDefinition({
+      formDefinition: {
+        states: {
+          systemMessage: '$meta.systemMessage !== undefined',
+          remote: '$form.details?.isRemote === true',
+        },
+        form: [
+          {
+            kind: 'input',
+            type: 'textinput',
+            path: 'name',
+            include: { when: '$form.terms === true && $form.user?.name !== undefined' },
+          },
+        ],
+      },
+    });
+    expect(r.expressionWarnings).toEqual([]);
+  });
 });
