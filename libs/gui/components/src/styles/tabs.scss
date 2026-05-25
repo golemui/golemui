@@ -33,7 +33,7 @@
         top: 0;
         bottom: 0;
         width: 60px;
-        height: 40px;
+        height: var(--gui-widget-size);
         z-index: 2;
         pointer-events: none;
         transition: opacity 0.3s ease;

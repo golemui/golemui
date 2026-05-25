@@ -56,7 +56,7 @@
     font-family: var(--gui-font-family);
     font-size: var(--gui-font-sm);
     padding: 0 0.75rem;
-    height: 40px;
+    height: var(--gui-widget-size);
     border-radius: var(--gui-radius-md);
     background: var(--gui-bg-surface);
     border: 1px solid var(--gui-border-default);
@@ -98,8 +98,8 @@
 
   &-icon {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: var(--gui-widget-size);
+    height: var(--gui-widget-size);
     color: var(--gui-text-default);
     display: flex;
     justify-content: center;
@@ -118,7 +118,7 @@
 .gui-widget .gui-tags-input,
 .gui-widget .gui-range-date-input {
   padding: 0;
-  min-height: 40px;
+  min-height: var(--gui-widget-size);
 }
 
 @container gui-form (max-width: 480px) {
