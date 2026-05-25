@@ -4,7 +4,7 @@
       padding: 0 var(--gui-space-4);
       margin: 0;
       display: flex;
-      min-height: 40px;
+      min-height: var(--gui-widget-size);
       border-radius: var(--gui-radius-md);
       border: 1px solid;
       font-size: var(--gui-font-sm);

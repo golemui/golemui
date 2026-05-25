@@ -11,6 +11,7 @@ import type {
   GuiPillKeydownEventDetail,
   GuiPills,
 } from './pills';
+import { styleMap } from 'lit-html/directives/style-map.js';
 
 type TagsSeparator = 'Enter' | ',' | 'Tab' | 'blur' | string;
 
@@ -123,6 +124,7 @@ export class GuiTags extends LitElement {
 
           <gui-pills
             class="gui-tags__pills"
+            style=${styleMap(pillItems.length ? {} : {'min-width': 0})}
             .items=${pillItems}
             .removable=${true}
             .clickable=${false}

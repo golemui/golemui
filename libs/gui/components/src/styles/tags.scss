@@ -55,7 +55,7 @@ gui-tags {
 
   .gui-tags__pills-wrapper {
     display: flex;
-    min-height: 40px;
+    min-height: var(--gui-widget-size);
     border-inline-end: 1px solid var(--gui-border-default);
     border-inline-start: 1px solid var(--gui-border-default);
     position: relative;
@@ -165,8 +165,8 @@ gui-tags {
   }
 
   .gui-tags__input {
-    flex: 1 1 300px;
-    min-width: 300px;
+    flex: 1 1 100px;
+    min-width: 100px;
     border: 0;
     outline: 0;
     background: transparent;
