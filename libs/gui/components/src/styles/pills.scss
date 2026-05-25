@@ -10,12 +10,12 @@
 gui-pills {
   display: flex;
   align-items: center;
-  min-width: 0;
+  min-width: var(--gui-widget-size);
   flex-shrink: 1;
 
   .gui-pills__strip-wrapper {
     display: flex;
-    min-height: 40px;
+    min-height: var(--gui-widget-size);
     position: relative;
     overflow: hidden;
     min-width: 0;
@@ -135,8 +135,8 @@ gui-pills {
 
     .gui-pills__compact {
       display: flex;
-      width: 40px;
-      height: 40px;
+      width: var(--gui-widget-size);
+      height: var(--gui-widget-size);
       justify-content: center;
     }
   }

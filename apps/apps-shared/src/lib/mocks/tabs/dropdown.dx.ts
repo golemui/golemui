@@ -1,7 +1,7 @@
 import { gui } from '@golemui/gui-shared';
 
-const thousandsOfItems = Array.from({ length: 1000 }, (_, i) => i);
-const thousandsOfObjectItems = Array.from({ length: 1000 }, (_, i) => ({
+const thousandsOfItems = Array.from({ length: 20 }, (_, i) => i);
+const thousandsOfObjectItems = Array.from({ length: 20 }, (_, i) => ({
   label: `Item ${i}`,
   value: i,
 }));
