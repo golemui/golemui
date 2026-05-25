@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -18,8 +21,26 @@ import {
   validateFormDefinition,
 } from './tools/validate-form-definition';
 
-const PKG_NAME = '@golemui/mcp-server';
-const PKG_VERSION = '0.0.1';
+/**
+ * Resolve the server's name and version from package.json at runtime. Tried in order:
+ *   1. `package.json` next to the bundle (the dist layout — what Nx release stamps versions onto).
+ *   2. `../package.json` (running from source via tsx, e.g. tests).
+ * Falls back to hard-coded defaults if neither exists, so the MCP handshake never fails.
+ */
+function readPackageMeta(): { name: string; version: string } {
+  const here = dirname(fileURLToPath(import.meta.url));
+  for (const candidate of [join(here, 'package.json'), join(here, '..', 'package.json')]) {
+    try {
+      const pkg = JSON.parse(readFileSync(candidate, 'utf-8')) as { name?: string; version?: string };
+      if (pkg.name && pkg.version) return { name: pkg.name, version: pkg.version };
+    } catch {
+      // try next
+    }
+  }
+  return { name: '@golemui/mcp-server', version: '0.0.0' };
+}
+
+const { name: PKG_NAME, version: PKG_VERSION } = readPackageMeta();
 
 const TOOLS = [
   VALIDATE_FORM_DEFINITION_TOOL,
