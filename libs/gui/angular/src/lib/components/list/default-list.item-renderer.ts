@@ -1,26 +1,25 @@
-import { Component, Input } from '@angular/core';
-import { type ItemRenderContext } from '@golemui/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'gui-default-list-item-renderer',
   standalone: true,
   template: `<div
     class="gui-list__item"
-    [class.gui-list__item-disabled]="disabled"
-    [class.gui-list__item-selected]="selected"
-    [class.gui-list__item-focused]="focused"
+    [class.gui-list__item-disabled]="disabled()"
+    [class.gui-list__item-selected]="selected()"
+    [class.gui-list__item-focused]="focused()"
   >
-    {{ template }}
+    {{ template() }}
   </div>`,
   host: {
     class: 'gui-default-list-item-renderer',
   },
 })
-export class DefaultListItemRenderer implements ItemRenderContext<string> {
-  @Input({ required: true }) template!: string;
-  @Input({ required: true }) value!: string | number;
-  @Input({ required: true }) index!: number;
-  @Input() selected?: boolean;
-  @Input() disabled?: boolean;
-  @Input() focused?: boolean;
+export class DefaultListItemRenderer {
+  template = input.required<string>();
+  value = input.required<string | number>();
+  index = input.required<number>();
+  selected = input<boolean | undefined>(undefined);
+  disabled = input<boolean | undefined>(undefined);
+  focused = input<boolean | undefined>(undefined);
 }

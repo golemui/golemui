@@ -1,5 +1,4 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { type AngularItemRenderer } from '@golemui/angular';
 import type { FormEvent, ValidateOn } from '@golemui/core';
 import { FormComponent } from '@golemui/gui-angular';
 import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
@@ -88,7 +87,7 @@ export class App {
       validateOn: 'submit' as ValidateOn,
       itemRenderers: {
         currencyItemRenderer: CurrencyItemRenderer,
-      } as Record<string, AngularItemRenderer<any>>,
+      },
     },
   };
 

@@ -1,5 +1,4 @@
-import { Component, Input } from '@angular/core';
-import { type ItemRenderContext } from '@golemui/core';
+import { Component, input } from '@angular/core';
 
 export type CurrencyItem = { code: string; symbol: string; name: string };
 
@@ -43,20 +42,20 @@ export type CurrencyItem = { code: string; symbol: string; name: string };
   template: `
     <div
       class="currency-item"
-      [class.is-selected]="selected"
-      [class.is-focused]="focused"
+      [class.is-selected]="selected()"
+      [class.is-focused]="focused()"
     >
-      <span class="currency-item__symbol">{{ template.symbol }}</span>
-      <span class="currency-item__code">{{ template.code }}</span>
-      <span class="currency-item__name">{{ template.name }}</span>
+      <span class="currency-item__symbol">{{ template().symbol }}</span>
+      <span class="currency-item__code">{{ template().code }}</span>
+      <span class="currency-item__name">{{ template().name }}</span>
     </div>
   `,
 })
-export class CurrencyItemRenderer implements ItemRenderContext<CurrencyItem> {
-  @Input({ required: true }) template!: CurrencyItem;
-  @Input({ required: true }) value!: string | number;
-  @Input({ required: true }) index!: number;
-  @Input() selected?: boolean;
-  @Input() disabled?: boolean;
-  @Input() focused?: boolean;
+export class CurrencyItemRenderer {
+  template = input.required<CurrencyItem>();
+  value = input.required<string | number>();
+  index = input.required<number>();
+  selected = input<boolean | undefined>(undefined);
+  disabled = input<boolean | undefined>(undefined);
+  focused = input<boolean | undefined>(undefined);
 }
