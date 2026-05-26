@@ -15,6 +15,7 @@
     "start:lit": "nx run lit-playground:serve",
     "start:react": "nx run react-playground:serve",
     "start:vue": "nx run vue-playground:serve",
+    "start:mcp": "npx nx run gui-mcp:build && npx @modelcontextprotocol/inspector node dist/libs/gui/mcp/index.js",
     "test:angular": "nx run gui-angular:component-test --watch",
     "test:lit": "nx run gui-lit:component-test --watch",
     "test:react": "nx run gui-react:component-test --watch",

@@ -1,0 +1,31 @@
+{
+  "name": "@golemui/gui-schemas",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    },
+    "./schemas/*.schema.json": "./schemas/*.schema.json",
+    "./schemas/components/*.schema.json": "./schemas/components/*.schema.json"
+  },
+  "files": [
+    "lib",
+    "schemas",
+    "index.d.ts",
+    "index.js",
+    "index.umd.cjs",
+    "*.md"
+  ],
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golemui/golemui.git",
+    "directory": "libs/gui/schemas"
+  }
+}
