@@ -17,7 +17,8 @@ The form from the previous chapter renders every field unconditionally. We'll no
 
 1. **Declare two states** — `differentReturn` and `hasDiscount` — that mirror the matching toggles.
 2. **Gate the optional fields** with `include: { in: [...] }`.
-3. **Add validators** to every required field so the form's health goes from `errored` → `ok` only when all validators pass.
+
+Validators come next — they're covered end-to-end in the [Validation errors](/getting-started/rent-a-car-messages/) chapter.
 
 ## Declaring states
 
@@ -111,29 +112,6 @@ gui.inputs.textInput('discountCode', {
 
 The toggles that drive the states (`differentReturn` and `hasDiscountCode`) stay in the form unconditionally — they're what the user interacts with to flip the state on or off.
 
-## Adding validators
-
-Every required field gets a `validator`. The form's health stays `errored` until every validator passes; once it goes `ok`, the submit button can fire its event.
-
-```ts
-gui.inputs.dropdown('car', {
-  label: 'Select car',
-  validator: { type: 'string', required: true },
-  // …items…
-});
-
-gui.inputs.rangeCalendar('rentalDates', {
-  label: 'Rental dates',
-  numberOfMonths: 2,
-  validator: { required: true, minItems: 1, maxItems: 1 },
-});
-
-gui.inputs.booleanInput('driverOver25', {
-  label: 'Driver aged over 25',
-  validator: { const: true, required: true },
-});
-```
-
 ## Result
 
 <DslCode dxCode={statesDx} jsonCode={statesJson} dxTitle={configDx} jsonTitle={configJson} />
@@ -143,15 +121,11 @@ gui.inputs.booleanInput('driverOver25', {
 - The **Return to office** dropdown only appears when **Choose a different return location** is on.
 - The **Discount code** input only appears when **I have a discount code** is on.
 
-## Disabling submit until valid
-
-GolemUI emits a `formHealth` callback whenever the form's validation status changes. You can wire it to a piece of UI state and conditionally disable your submit handler — or use the `disabled` prop on the button with a `when` expression that references `$form.<paths>`.
-
-The example above uses `actionType: 'submit'` on the Reserve button. This renders the button as `<button type="submit">` and triggers form-level validation on click — an invalid form won't fire `formSubmit` at all. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
+The embedded snippet already includes the validator on every required field — those are introduced in the next chapter.
 
 ## Next
 
-[Custom error messages →](/getting-started/rent-a-car-messages/)
+[Validation errors →](/getting-started/rent-a-car-messages/)
 
 ## See also
 
