@@ -23,6 +23,11 @@
     "*.md"
   ],
   "dependencies": {},
+  "devDependencies": {
+    "vitest": "^4.0.0",
+    "ajv": "^8.0.0",
+    "@golemui/gui-shared": "*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/golemui/golemui.git",
