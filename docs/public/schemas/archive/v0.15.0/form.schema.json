@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/form.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/form.schema.json",
   "title": "Golem Form DSL",
   "type": "object",
   "properties": {
@@ -23,15 +23,21 @@
       "type": "string"
     }
   },
-  "required": ["form"],
+  "required": [
+    "form"
+  ],
   "additionalProperties": false,
   "$defs": {
     "chunkRef": {
       "type": "object",
       "properties": {
-        "$ref": { "type": "string" }
+        "$ref": {
+          "type": "string"
+        }
       },
-      "required": ["$ref"],
+      "required": [
+        "$ref"
+      ],
       "additionalProperties": false
     },
     "formWidget": {

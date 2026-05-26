@@ -1,38 +1,44 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
-  "title": "Number Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/radiogroup.schema.json",
+  "title": "RadioGroup Widget",
   "type": "object",
   "$defs": {
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "placeholderProp": {
+    "labelDef": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "stepProp": {
-      "type": "number"
+    "optionsProp": {
+      "type": "array",
+      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
+      "items": {
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
+      }
     },
-    "minimumProp": {
-      "type": "number"
-    },
-    "maximumProp": {
-      "type": "number"
-    },
-    "autoGrowProp": {
-      "type": "boolean"
-    },
-    "autocompleteProp": {
+    "labelFieldProp": {
       "type": "string"
+    },
+    "valueFieldProp": {
+      "type": "string"
+    },
+    "directionProp": {
+      "enum": [
+        "row",
+        "column"
+      ],
+      "default": "column"
     }
   },
   "allOf": [
@@ -45,7 +51,7 @@
       "const": "input"
     },
     "type": {
-      "const": "number"
+      "const": "radiogroup"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -65,55 +71,40 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
-    "defaultValue": {
-      "type": "number"
-    },
     "props": {
       "type": "object",
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "step": {
-          "$ref": "#/$defs/stepProp"
+        "options": {
+          "$ref": "#/$defs/optionsProp"
         },
-        "minimum": {
-          "$ref": "#/$defs/minimumProp"
+        "labelField": {
+          "$ref": "#/$defs/labelFieldProp"
         },
-        "maximum": {
-          "$ref": "#/$defs/maximumProp"
+        "valueField": {
+          "$ref": "#/$defs/valueFieldProp"
         },
-        "autoGrow": {
-          "$ref": "#/$defs/autoGrowProp"
-        },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
+        "direction": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^step\\.[^.]+$": {
-          "$ref": "#/$defs/stepProp"
+        "^options\\.[^.]+$": {
+          "$ref": "#/$defs/optionsProp"
         },
-        "^minimum\\.[^.]+$": {
-          "$ref": "#/$defs/minimumProp"
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
         },
-        "^maximum\\.[^.]+$": {
-          "$ref": "#/$defs/maximumProp"
+        "^valueField\\.[^.]+$": {
+          "$ref": "#/$defs/valueFieldProp"
         },
-        "^autoGrow\\.[^.]+$": {
-          "$ref": "#/$defs/autoGrowProp"
-        },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
+        "^direction\\.[^.]+$": {
+          "$ref": "#/$defs/directionProp"
         }
       },
       "additionalProperties": false

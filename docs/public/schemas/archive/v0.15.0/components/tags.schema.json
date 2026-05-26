@@ -1,37 +1,46 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
-  "title": "Number Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/tags.schema.json",
+  "title": "Tags Widget",
   "type": "object",
   "$defs": {
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "placeholderProp": {
+    "labelDef": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "stepProp": {
-      "type": "number"
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "minimumProp": {
-      "type": "number"
+    "iconProp": {
+      "type": "string"
     },
-    "maximumProp": {
-      "type": "number"
+    "separatorsProp": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
-    "autoGrowProp": {
+    "allowDuplicatesProp": {
       "type": "boolean"
     },
-    "autocompleteProp": {
+    "trimProp": {
+      "type": "boolean"
+    },
+    "limitProp": {
+      "type": "number"
+    },
+    "removeAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removeIconProp": {
       "type": "string"
     }
   },
@@ -45,7 +54,7 @@
       "const": "input"
     },
     "type": {
-      "const": "number"
+      "const": "tags"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -66,68 +75,83 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
-      "type": "number"
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "props": {
       "type": "object",
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "step": {
-          "$ref": "#/$defs/stepProp"
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
         },
-        "minimum": {
-          "$ref": "#/$defs/minimumProp"
+        "icon": {
+          "$ref": "#/$defs/iconProp"
         },
-        "maximum": {
-          "$ref": "#/$defs/maximumProp"
+        "separators": {
+          "$ref": "#/$defs/separatorsProp"
         },
-        "autoGrow": {
-          "$ref": "#/$defs/autoGrowProp"
+        "allowDuplicates": {
+          "$ref": "#/$defs/allowDuplicatesProp"
         },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
+        "trim": {
+          "$ref": "#/$defs/trimProp"
+        },
+        "limit": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "removeAriaLabel": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "removeIcon": {
+          "$ref": "#/$defs/removeIconProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^step\\.[^.]+$": {
-          "$ref": "#/$defs/stepProp"
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
         },
-        "^minimum\\.[^.]+$": {
-          "$ref": "#/$defs/minimumProp"
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
         },
-        "^maximum\\.[^.]+$": {
-          "$ref": "#/$defs/maximumProp"
+        "^separators\\.[^.]+$": {
+          "$ref": "#/$defs/separatorsProp"
         },
-        "^autoGrow\\.[^.]+$": {
-          "$ref": "#/$defs/autoGrowProp"
+        "^allowDuplicates\\.[^.]+$": {
+          "$ref": "#/$defs/allowDuplicatesProp"
         },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
+        "^trim\\.[^.]+$": {
+          "$ref": "#/$defs/trimProp"
+        },
+        "^limit\\.[^.]+$": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "^removeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "^removeIcon\\.[^.]+$": {
+          "$ref": "#/$defs/removeIconProp"
         }
       },
       "additionalProperties": false
     }
   },
   "patternProperties": {
-    "^label\\.[^.]+$": {
-      "$ref": "#/$defs/labelDef"
-    },
     "^disabled\\.[^.]+$": {
       "$ref": "#/$defs/disabledDef"
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
     },
     "^validator\\.[^.]+$": {
       "$ref": "../validators.schema.json#/$defs/validator"

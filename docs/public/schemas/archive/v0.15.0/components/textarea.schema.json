@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
-  "title": "Number Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/textarea.schema.json",
+  "title": "TextArea Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -13,23 +13,26 @@
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "stepProp": {
-      "type": "number"
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "minimumProp": {
-      "type": "number"
+    "counterModeProp": {
+      "enum": [
+        "remaining",
+        "current"
+      ]
     },
-    "maximumProp": {
+    "minimumHeightProp": {
       "type": "number"
     },
     "autoGrowProp": {
       "type": "boolean"
+    },
+    "maxLengthProp": {
+      "type": "number"
     },
     "autocompleteProp": {
       "type": "string"
@@ -45,7 +48,7 @@
       "const": "input"
     },
     "type": {
-      "const": "number"
+      "const": "textarea"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -66,51 +69,51 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
-      "type": "number"
+      "type": "string"
     },
     "props": {
       "type": "object",
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "step": {
-          "$ref": "#/$defs/stepProp"
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
         },
-        "minimum": {
-          "$ref": "#/$defs/minimumProp"
+        "counterMode": {
+          "$ref": "#/$defs/counterModeProp"
         },
-        "maximum": {
-          "$ref": "#/$defs/maximumProp"
+        "minimumHeight": {
+          "$ref": "#/$defs/minimumHeightProp"
         },
         "autoGrow": {
           "$ref": "#/$defs/autoGrowProp"
+        },
+        "maxLength": {
+          "$ref": "#/$defs/maxLengthProp"
         },
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^step\\.[^.]+$": {
-          "$ref": "#/$defs/stepProp"
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
         },
-        "^minimum\\.[^.]+$": {
-          "$ref": "#/$defs/minimumProp"
+        "^counterMode\\.[^.]+$": {
+          "$ref": "#/$defs/counterModeProp"
         },
-        "^maximum\\.[^.]+$": {
-          "$ref": "#/$defs/maximumProp"
+        "^minimumHeight\\.[^.]+$": {
+          "$ref": "#/$defs/minimumHeightProp"
         },
         "^autoGrow\\.[^.]+$": {
           "$ref": "#/$defs/autoGrowProp"
+        },
+        "^maxLength\\.[^.]+$": {
+          "$ref": "#/$defs/maxLengthProp"
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"

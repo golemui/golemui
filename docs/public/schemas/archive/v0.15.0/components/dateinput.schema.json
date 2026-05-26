@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
-  "title": "Number Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/dateinput.schema.json",
+  "title": "DateInput Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -13,25 +13,10 @@
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "stepProp": {
-      "type": "number"
-    },
-    "minimumProp": {
-      "type": "number"
-    },
-    "maximumProp": {
-      "type": "number"
-    },
-    "autoGrowProp": {
-      "type": "boolean"
-    },
-    "autocompleteProp": {
+    "iconProp": {
       "type": "string"
     }
   },
@@ -45,7 +30,7 @@
       "const": "input"
     },
     "type": {
-      "const": "number"
+      "const": "dateInput"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -65,55 +50,22 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
-    "defaultValue": {
-      "type": "number"
-    },
     "props": {
       "type": "object",
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "step": {
-          "$ref": "#/$defs/stepProp"
-        },
-        "minimum": {
-          "$ref": "#/$defs/minimumProp"
-        },
-        "maximum": {
-          "$ref": "#/$defs/maximumProp"
-        },
-        "autoGrow": {
-          "$ref": "#/$defs/autoGrowProp"
-        },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
+        "icon": {
+          "$ref": "#/$defs/iconProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^step\\.[^.]+$": {
-          "$ref": "#/$defs/stepProp"
-        },
-        "^minimum\\.[^.]+$": {
-          "$ref": "#/$defs/minimumProp"
-        },
-        "^maximum\\.[^.]+$": {
-          "$ref": "#/$defs/maximumProp"
-        },
-        "^autoGrow\\.[^.]+$": {
-          "$ref": "#/$defs/autoGrowProp"
-        },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
         }
       },
       "additionalProperties": false

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/select.schema.json",
-  "title": "Select Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/dropdown.schema.json",
+  "title": "Dropdown Widget",
   "type": "object",
   "$defs": {
     "disabledDef": {
@@ -13,15 +13,15 @@
     "labelDef": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "iconProp": {
-      "type": "string"
-    },
-    "optionsProp": {
+    "itemsProp": {
       "type": "array",
-      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
+      "description": "Items are either primitive values (string/number) or arbitrary record objects (paired with `labelField`/`valueField`/`itemRenderer` for custom rendering). Note: widget templates inside items are only supported on `repeater`, not here.",
       "items": {
         "type": [
           "string",
@@ -30,14 +30,29 @@
         ]
       }
     },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "labelFieldProp": {
       "type": "string"
     },
     "valueFieldProp": {
       "type": "string"
+    },
+    "searchFieldsProp": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "heightProp": {
+      "type": "number"
+    },
+    "itemHeightProp": {
+      "type": "number"
+    },
+    "itemRendererProp": {
+      "type": "string"
+    },
+    "inputDebounceProp": {
+      "type": "number"
     },
     "autocompleteProp": {
       "type": "string"
@@ -53,7 +68,7 @@
       "const": "input"
     },
     "type": {
-      "const": "select"
+      "const": "dropdown"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -75,18 +90,18 @@
     },
     "props": {
       "type": "object",
+      "required": [
+        "items"
+      ],
       "properties": {
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "icon": {
-          "$ref": "#/$defs/iconProp"
-        },
-        "options": {
-          "$ref": "#/$defs/optionsProp"
-        },
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
+        "items": {
+          "$ref": "#/$defs/itemsProp"
         },
         "labelField": {
           "$ref": "#/$defs/labelFieldProp"
@@ -94,28 +109,55 @@
         "valueField": {
           "$ref": "#/$defs/valueFieldProp"
         },
+        "searchFields": {
+          "$ref": "#/$defs/searchFieldsProp"
+        },
+        "height": {
+          "$ref": "#/$defs/heightProp"
+        },
+        "itemHeight": {
+          "$ref": "#/$defs/itemHeightProp"
+        },
+        "itemRenderer": {
+          "$ref": "#/$defs/itemRendererProp"
+        },
+        "inputDebounce": {
+          "$ref": "#/$defs/inputDebounceProp"
+        },
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^icon\\.[^.]+$": {
-          "$ref": "#/$defs/iconProp"
-        },
-        "^options\\.[^.]+$": {
-          "$ref": "#/$defs/optionsProp"
-        },
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
+        "^items\\.[^.]+$": {
+          "$ref": "#/$defs/itemsProp"
         },
         "^labelField\\.[^.]+$": {
           "$ref": "#/$defs/labelFieldProp"
         },
         "^valueField\\.[^.]+$": {
           "$ref": "#/$defs/valueFieldProp"
+        },
+        "^searchFields\\.[^.]+$": {
+          "$ref": "#/$defs/searchFieldsProp"
+        },
+        "^height\\.[^.]+$": {
+          "$ref": "#/$defs/heightProp"
+        },
+        "^itemHeight\\.[^.]+$": {
+          "$ref": "#/$defs/itemHeightProp"
+        },
+        "^itemRenderer\\.[^.]+$": {
+          "$ref": "#/$defs/itemRendererProp"
+        },
+        "^inputDebounce\\.[^.]+$": {
+          "$ref": "#/$defs/inputDebounceProp"
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"
@@ -141,7 +183,8 @@
   "required": [
     "kind",
     "type",
-    "path"
+    "path",
+    "props"
   ],
   "unevaluatedProperties": false
 }

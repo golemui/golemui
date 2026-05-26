@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/common.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/common.schema.json",
   "title": "Golem Common Definitions",
   "$defs": {
     "reactiveExpression": {
@@ -15,10 +15,16 @@
       "type": "object",
       "description": "A single date range used by calendar/date-picker widgets to mark days as disabled.",
       "properties": {
-        "start": { "type": "string" },
-        "end": { "type": "string" }
+        "start": {
+          "type": "string"
+        },
+        "end": {
+          "type": "string"
+        }
       },
-      "required": ["start"],
+      "required": [
+        "start"
+      ],
       "additionalProperties": false
     },
     "uid": {
@@ -43,7 +49,9 @@
               "type": "object"
             }
           },
-          "required": ["key"],
+          "required": [
+            "key"
+          ],
           "additionalProperties": false
         }
       ]
@@ -60,7 +68,9 @@
               }
             }
           },
-          "required": ["in"],
+          "required": [
+            "in"
+          ],
           "additionalProperties": false
         },
         {
@@ -70,7 +80,9 @@
               "$ref": "#/$defs/reactiveExpression"
             }
           },
-          "required": ["when"],
+          "required": [
+            "when"
+          ],
           "additionalProperties": false
         }
       ]
@@ -87,7 +99,9 @@
               }
             }
           },
-          "required": ["from"],
+          "required": [
+            "from"
+          ],
           "additionalProperties": false
         },
         {
@@ -97,7 +111,9 @@
               "$ref": "#/$defs/reactiveExpression"
             }
           },
-          "required": ["when"],
+          "required": [
+            "when"
+          ],
           "additionalProperties": false
         }
       ]
@@ -114,7 +130,9 @@
               "$ref": "#/$defs/reactiveExpression"
             }
           },
-          "required": ["when"],
+          "required": [
+            "when"
+          ],
           "additionalProperties": false
         }
       ]
@@ -179,7 +197,9 @@
           "$ref": "#/$defs/exclude"
         }
       },
-      "required": ["type"]
+      "required": [
+        "type"
+      ]
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/number.schema.json",
   "title": "Number Widget",
   "type": "object",
   "$defs": {

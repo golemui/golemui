@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
-  "title": "Number Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/currency.schema.json",
+  "title": "Currency Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -13,23 +13,26 @@
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
-    "hintProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+    "currencyProp": {
+      "type": "string"
     },
     "stepProp": {
       "type": "number"
     },
-    "minimumProp": {
+    "maximumFractionDigitsProp": {
       "type": "number"
     },
-    "maximumProp": {
+    "minimumFractionDigitsProp": {
       "type": "number"
     },
-    "autoGrowProp": {
-      "type": "boolean"
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
     },
     "autocompleteProp": {
       "type": "string"
@@ -45,7 +48,7 @@
       "const": "input"
     },
     "type": {
-      "const": "number"
+      "const": "currency"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -71,46 +74,52 @@
     "props": {
       "type": "object",
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
-        "hint": {
-          "$ref": "#/$defs/hintProp"
+        "currency": {
+          "$ref": "#/$defs/currencyProp"
         },
         "step": {
           "$ref": "#/$defs/stepProp"
         },
-        "minimum": {
-          "$ref": "#/$defs/minimumProp"
+        "maximumFractionDigits": {
+          "$ref": "#/$defs/maximumFractionDigitsProp"
         },
-        "maximum": {
-          "$ref": "#/$defs/maximumProp"
+        "minimumFractionDigits": {
+          "$ref": "#/$defs/minimumFractionDigitsProp"
         },
-        "autoGrow": {
-          "$ref": "#/$defs/autoGrowProp"
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
         },
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
-        "^hint\\.[^.]+$": {
-          "$ref": "#/$defs/hintProp"
+        "^currency\\.[^.]+$": {
+          "$ref": "#/$defs/currencyProp"
         },
         "^step\\.[^.]+$": {
           "$ref": "#/$defs/stepProp"
         },
-        "^minimum\\.[^.]+$": {
-          "$ref": "#/$defs/minimumProp"
+        "^maximumFractionDigits\\.[^.]+$": {
+          "$ref": "#/$defs/maximumFractionDigitsProp"
         },
-        "^maximum\\.[^.]+$": {
-          "$ref": "#/$defs/maximumProp"
+        "^minimumFractionDigits\\.[^.]+$": {
+          "$ref": "#/$defs/minimumFractionDigitsProp"
         },
-        "^autoGrow\\.[^.]+$": {
-          "$ref": "#/$defs/autoGrowProp"
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"

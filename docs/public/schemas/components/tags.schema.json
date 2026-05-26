@@ -1,17 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/password.schema.json",
-  "title": "Password Widget",
+  "$id": "https://golemui.com/schemas/components/tags.schema.json",
+  "title": "Tags Widget",
   "type": "object",
   "$defs": {
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
@@ -22,19 +22,25 @@
     "iconProp": {
       "type": "string"
     },
-    "showPasswordIconProp": {
-      "type": "string"
+    "separatorsProp": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
-    "hidePasswordIconProp": {
-      "type": "string"
+    "allowDuplicatesProp": {
+      "type": "boolean"
     },
-    "showPasswordLabelProp": {
+    "trimProp": {
+      "type": "boolean"
+    },
+    "limitProp": {
+      "type": "number"
+    },
+    "removeAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "hidePasswordLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
-    "autocompleteProp": {
+    "removeIconProp": {
       "type": "string"
     }
   },
@@ -48,7 +54,7 @@
       "const": "input"
     },
     "type": {
-      "const": "password"
+      "const": "tags"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -69,7 +75,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     },
     "defaultValue": {
-      "type": "string"
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "props": {
       "type": "object",
@@ -83,20 +92,23 @@
         "icon": {
           "$ref": "#/$defs/iconProp"
         },
-        "showPasswordIcon": {
-          "$ref": "#/$defs/showPasswordIconProp"
+        "separators": {
+          "$ref": "#/$defs/separatorsProp"
         },
-        "hidePasswordIcon": {
-          "$ref": "#/$defs/hidePasswordIconProp"
+        "allowDuplicates": {
+          "$ref": "#/$defs/allowDuplicatesProp"
         },
-        "showPasswordLabel": {
-          "$ref": "#/$defs/showPasswordLabelProp"
+        "trim": {
+          "$ref": "#/$defs/trimProp"
         },
-        "hidePasswordLabel": {
-          "$ref": "#/$defs/hidePasswordLabelProp"
+        "limit": {
+          "$ref": "#/$defs/limitProp"
         },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
+        "removeAriaLabel": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "removeIcon": {
+          "$ref": "#/$defs/removeIconProp"
         }
       },
       "patternProperties": {
@@ -109,43 +121,42 @@
         "^icon\\.[^.]+$": {
           "$ref": "#/$defs/iconProp"
         },
-        "^showPasswordIcon\\.[^.]+$": {
-          "$ref": "#/$defs/showPasswordIconProp"
+        "^separators\\.[^.]+$": {
+          "$ref": "#/$defs/separatorsProp"
         },
-        "^hidePasswordIcon\\.[^.]+$": {
-          "$ref": "#/$defs/hidePasswordIconProp"
+        "^allowDuplicates\\.[^.]+$": {
+          "$ref": "#/$defs/allowDuplicatesProp"
         },
-        "^showPasswordLabel\\.[^.]+$": {
-          "$ref": "#/$defs/showPasswordLabelProp"
+        "^trim\\.[^.]+$": {
+          "$ref": "#/$defs/trimProp"
         },
-        "^hidePasswordLabel\\.[^.]+$": {
-          "$ref": "#/$defs/hidePasswordLabelProp"
+        "^limit\\.[^.]+$": {
+          "$ref": "#/$defs/limitProp"
         },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
+        "^removeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "^removeIcon\\.[^.]+$": {
+          "$ref": "#/$defs/removeIconProp"
         }
       },
       "additionalProperties": false
     }
   },
   "patternProperties": {
-    "^label\\.[^.]+$": {
-      "$ref": "#/$defs/labelDef"
-    },
     "^disabled\\.[^.]+$": {
       "$ref": "#/$defs/disabledDef"
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
     },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
     "^validator\\.[^.]+$": {
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

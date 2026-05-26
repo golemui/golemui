@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/button.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/button.schema.json",
   "title": "Button Widget",
   "type": "object",
   "$defs": {
@@ -11,7 +11,11 @@
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "variantProp": {
-      "enum": ["filled", "outlined", "link"]
+      "enum": [
+        "filled",
+        "outlined",
+        "link"
+      ]
     }
   },
   "allOf": [
@@ -27,7 +31,10 @@
       "const": "button"
     },
     "actionType": {
-      "enum": ["button", "submit"]
+      "enum": [
+        "button",
+        "submit"
+      ]
     },
     "label": {
       "$ref": "#/$defs/labelDef"
@@ -48,7 +55,10 @@
           "type": "string"
         },
         "iconPosition": {
-          "enum": ["left", "right"]
+          "enum": [
+            "left",
+            "right"
+          ]
         }
       },
       "patternProperties": {
@@ -67,6 +77,9 @@
       "$ref": "#/$defs/labelDef"
     }
   },
-  "required": ["kind", "type"],
+  "required": [
+    "kind",
+    "type"
+  ],
   "unevaluatedProperties": false
 }

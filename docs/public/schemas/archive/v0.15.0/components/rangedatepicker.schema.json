@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/calendar.schema.json",
-  "title": "Calendar Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/rangedatepicker.schema.json",
+  "title": "RangeDatePicker Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -14,6 +14,21 @@
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "separatorProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "startDateAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "endDateAriaLabelProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "prevMonthIconProp": {
@@ -76,7 +91,7 @@
       "const": "input"
     },
     "type": {
-      "const": "calendar"
+      "const": "rangeDatePicker"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -101,6 +116,21 @@
       "properties": {
         "hint": {
           "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "separator": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "startDateAriaLabel": {
+          "$ref": "#/$defs/startDateAriaLabelProp"
+        },
+        "endDateAriaLabel": {
+          "$ref": "#/$defs/endDateAriaLabelProp"
         },
         "prevMonthIcon": {
           "$ref": "#/$defs/prevMonthIconProp"
@@ -139,6 +169,21 @@
       "patternProperties": {
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^separator\\.[^.]+$": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "^startDateAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/startDateAriaLabelProp"
+        },
+        "^endDateAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/endDateAriaLabelProp"
         },
         "^prevMonthIcon\\.[^.]+$": {
           "$ref": "#/$defs/prevMonthIconProp"

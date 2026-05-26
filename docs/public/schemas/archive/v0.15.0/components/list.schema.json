@@ -1,37 +1,45 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/number.schema.json",
-  "title": "Number Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.15.0/components/list.schema.json",
+  "title": "List Widget",
   "type": "object",
   "$defs": {
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "placeholderProp": {
+    "labelDef": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "stepProp": {
+    "itemsProp": {
+      "type": "array",
+      "description": "Items are either primitive values (string/number) or arbitrary record objects (paired with `labelField`/`valueField`/`itemRenderer` for custom rendering). Note: widget templates inside items are only supported on `repeater`, not here.",
+      "items": {
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
+      }
+    },
+    "labelFieldProp": {
+      "type": "string"
+    },
+    "valueFieldProp": {
+      "type": "string"
+    },
+    "heightProp": {
       "type": "number"
     },
-    "minimumProp": {
+    "itemHeightProp": {
       "type": "number"
     },
-    "maximumProp": {
-      "type": "number"
-    },
-    "autoGrowProp": {
-      "type": "boolean"
-    },
-    "autocompleteProp": {
+    "itemRendererProp": {
       "type": "string"
     }
   },
@@ -45,7 +53,7 @@
       "const": "input"
     },
     "type": {
-      "const": "number"
+      "const": "list"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -65,55 +73,52 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
-    "defaultValue": {
-      "type": "number"
-    },
     "props": {
       "type": "object",
       "properties": {
-        "placeholder": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "step": {
-          "$ref": "#/$defs/stepProp"
+        "items": {
+          "$ref": "#/$defs/itemsProp"
         },
-        "minimum": {
-          "$ref": "#/$defs/minimumProp"
+        "labelField": {
+          "$ref": "#/$defs/labelFieldProp"
         },
-        "maximum": {
-          "$ref": "#/$defs/maximumProp"
+        "valueField": {
+          "$ref": "#/$defs/valueFieldProp"
         },
-        "autoGrow": {
-          "$ref": "#/$defs/autoGrowProp"
+        "height": {
+          "$ref": "#/$defs/heightProp"
         },
-        "autocomplete": {
-          "$ref": "#/$defs/autocompleteProp"
+        "itemHeight": {
+          "$ref": "#/$defs/itemHeightProp"
+        },
+        "itemRenderer": {
+          "$ref": "#/$defs/itemRendererProp"
         }
       },
       "patternProperties": {
-        "^placeholder\\.[^.]+$": {
-          "$ref": "#/$defs/placeholderProp"
-        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^step\\.[^.]+$": {
-          "$ref": "#/$defs/stepProp"
+        "^items\\.[^.]+$": {
+          "$ref": "#/$defs/itemsProp"
         },
-        "^minimum\\.[^.]+$": {
-          "$ref": "#/$defs/minimumProp"
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
         },
-        "^maximum\\.[^.]+$": {
-          "$ref": "#/$defs/maximumProp"
+        "^valueField\\.[^.]+$": {
+          "$ref": "#/$defs/valueFieldProp"
         },
-        "^autoGrow\\.[^.]+$": {
-          "$ref": "#/$defs/autoGrowProp"
+        "^height\\.[^.]+$": {
+          "$ref": "#/$defs/heightProp"
         },
-        "^autocomplete\\.[^.]+$": {
-          "$ref": "#/$defs/autocompleteProp"
+        "^itemHeight\\.[^.]+$": {
+          "$ref": "#/$defs/itemHeightProp"
+        },
+        "^itemRenderer\\.[^.]+$": {
+          "$ref": "#/$defs/itemRendererProp"
         }
       },
       "additionalProperties": false

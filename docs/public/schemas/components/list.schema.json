@@ -18,18 +18,13 @@
     },
     "itemsProp": {
       "type": "array",
+      "description": "Items are either primitive values (string/number) or arbitrary record objects (paired with `labelField`/`valueField`/`itemRenderer` for custom rendering). Note: widget templates inside items are only supported on `repeater`, not here.",
       "items": {
-        "type": "object",
-        "properties": {
-          "template": {
-            "type": "object"
-          },
-          "value": {
-            "type": ["string", "number", "boolean", "null"]
-          }
-        },
-        "required": ["template", "value"],
-        "additionalProperties": false
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
       }
     },
     "labelFieldProp": {
@@ -138,8 +133,15 @@
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }
