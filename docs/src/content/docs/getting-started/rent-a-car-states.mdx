@@ -7,6 +7,7 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import statesJson from '../../../../public/template/getting-started/rent-a-car/02-states.json?raw';
 import statesDx from '../../../../public/template/getting-started-dx/rent-a-car/02-states.ts?raw';
 export const configJson = '02-states.json';
@@ -20,16 +21,73 @@ The form from the previous chapter renders every field unconditionally. We'll no
 
 ## Declaring states
 
-States are named boolean expressions evaluated against `$form`. Pass them as the second arg of the `formConfig`:
+States are named boolean expressions evaluated against `$form`. They live under `formConfig.states` — and `formConfig` is a top-level property of the same `config` object you wired to the form component in the [previous chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives), right next to `formDef`:
 
-```ts
-const formConfig = {
-  states: {
-    differentReturn: '$form.differentReturn === true',
-    hasDiscount: '$form.hasDiscountCode === true',
-  },
-};
-```
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // rent-a-car.page.tsx
+    const config = {
+      formDef: rentACarForm,
+      formConfig: {
+        states: {
+          differentReturn: '$form.differentReturn === true',
+          hasDiscount: '$form.hasDiscountCode === true',
+        },
+      },
+    };
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // rent-a-car.page.component.ts
+    export class RentACarPage {
+      protected config = {
+        formDef: rentACarForm,
+        formConfig: {
+          states: {
+            differentReturn: '$form.differentReturn === true',
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        },
+      };
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // rent-a-car.page.element.ts
+    export class RentACarPage extends LitElement {
+      config = {
+        formDef: rentACarForm,
+        formConfig: {
+          states: {
+            differentReturn: '$form.differentReturn === true',
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        },
+      };
+      // …rest of the class unchanged…
+    }
+    ```
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <!-- RentACarPage.vue -->
+    <script setup lang="ts">
+    const config = {
+      formDef: rentACarForm,
+      formConfig: {
+        states: {
+          differentReturn: '$form.differentReturn === true',
+          hasDiscount: '$form.hasDiscountCode === true',
+        },
+      },
+    };
+    </script>
+    ```
+  </Fragment>
+</IntegrationTabs>
 
 JSON forms put the same map at the form root under `"states"`.
 
