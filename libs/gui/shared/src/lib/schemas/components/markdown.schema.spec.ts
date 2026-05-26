@@ -71,6 +71,7 @@ describe('Markdown schema validation', () => {
               linkTitle: 'Link',
               orderedListTitle: 'Ordered list',
               unorderedListTitle: 'Unordered list',
+              splitViewTitle: 'Split view',
             },
           },
         ],

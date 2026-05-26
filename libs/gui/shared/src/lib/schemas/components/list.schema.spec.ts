@@ -60,7 +60,7 @@ describe('List schema validation', () => {
             type: 'list',
             props: {
               hint: 'Select tags',
-              items: [{ template: { label: 'Tech' }, value: 'tech' }],
+              items: [{ label: 'Tech', value: 'tech' }],
               labelField: 'label',
               valueField: 'value',
               height: 300,
@@ -95,7 +95,7 @@ describe('List schema validation', () => {
             props: {
               items: [],
               'hint.hasError': 'Must select at least one',
-              'items.isLoaded': [{ template: { label: 'Science' }, value: 'science' }],
+              'items.isLoaded': [{ label: 'Science', value: 'science' }],
               'height.isMobile': 200,
             },
           },
@@ -166,6 +166,47 @@ describe('List schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate items as primitive values', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'ls-1',
+            path: 'pick',
+            kind: 'input',
+            type: 'list',
+            props: { items: ['one', 'two', 3] },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate items as arbitrary objects with labelField/valueField/itemRenderer', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'ls-country',
+            path: 'country',
+            kind: 'input',
+            type: 'list',
+            props: {
+              labelField: 'label',
+              valueField: 'id',
+              itemRenderer: 'countryItemRenderer',
+              items: [{ id: 'AU', label: 'Australia' }],
+            },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {
@@ -192,5 +233,6 @@ describe('List schema validation', () => {
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/items'),
       ).toBe(true);
     });
+
   });
 });

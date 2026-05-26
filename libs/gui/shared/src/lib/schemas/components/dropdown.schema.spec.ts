@@ -59,7 +59,7 @@ describe('Dropdown schema validation', () => {
             props: {
               placeholder: 'Select a country',
               hint: 'Choose your location',
-              items: [{ template: { label: 'USA' }, value: 'US' }],
+              items: [{ label: 'USA', value: 'US' }],
               labelField: 'label',
               valueField: 'value',
               searchFields: ['label'],
@@ -92,7 +92,7 @@ describe('Dropdown schema validation', () => {
               items: [],
               'placeholder.isEmpty': 'No countries available',
               'hint.hasError': 'Selection required',
-              'items.hasData': [{ template: { label: 'UK' }, value: 'UK' }],
+              'items.hasData': [{ label: 'UK', value: 'UK' }],
               'inputDebounce.isSlow': 1000,
             },
           },
@@ -187,6 +187,50 @@ describe('Dropdown schema validation', () => {
       }
       expect(isValid).toBe(true);
     });
+
+    it('should validate items as primitive values (string/number)', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'dd-1',
+            path: 'choice',
+            kind: 'input',
+            type: 'dropdown',
+            props: { items: ['one', 'two', 3] },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate items as arbitrary objects paired with labelField/valueField/itemRenderer', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'dd-country',
+            path: 'country',
+            kind: 'input',
+            type: 'dropdown',
+            props: {
+              labelField: 'label',
+              valueField: 'id',
+              itemRenderer: 'countryItemRenderer',
+              items: [
+                { id: 'AU', flag: '🇦🇺', label: 'Australia' },
+                { id: 'BR', flag: '🇧🇷', label: 'Brazil' },
+              ],
+            },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
+      expect(isValid).toBe(true);
+    });
   });
 
   describe('Invalid configurations', () => {
@@ -259,5 +303,6 @@ describe('Dropdown schema validation', () => {
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/items'),
       ).toBe(true);
     });
+
   });
 });

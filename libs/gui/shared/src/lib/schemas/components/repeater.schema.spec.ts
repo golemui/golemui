@@ -74,6 +74,9 @@ describe('Repeater schema validation', () => {
               addLabel: 'Add Item',
               removeLabel: 'Remove Item',
               limit: 5,
+              title: 'Items',
+              addButtonIcon: 'plus',
+              removeButtonIcon: 'trash',
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
@@ -170,6 +173,40 @@ describe('Repeater schema validation', () => {
       if (!isValid) {
         specValidationErrorsLogger(validate, i18nRepeater);
       }
+      expect(isValid).toBe(true);
+    });
+
+    it('should validate template using any layout widget kind (grid, tabs, accordion, flex)', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'grid-rep',
+            path: 'rows',
+            kind: 'input',
+            type: 'repeater',
+            props: {
+              addLabel: 'Add Row',
+              template: {
+                uid: 'row-tpl',
+                kind: 'layout',
+                type: 'grid',
+                props: { autoFit: false, direction: 'row' },
+                children: [
+                  {
+                    uid: 'name',
+                    kind: 'input',
+                    type: 'textinput',
+                    path: 'rows.items.name',
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      });
+      const widget = formDef.form.children[0];
+      const isValid = validate(widget);
+      if (!isValid) specValidationErrorsLogger(validate, widget);
       expect(isValid).toBe(true);
     });
 

@@ -62,6 +62,13 @@ describe('Datepicker schema validation', () => {
               dayFormat: '2-digit',
               monthFormat: 'long',
               weekdayFormat: 'short',
+              minDate: '2023-01-01',
+              maxDate: '2025-12-31',
+              numberOfMonths: 2,
+              disabledRanges: [
+                { start: '2023-12-25', end: '2024-01-01' },
+                { start: '2024-07-04' },
+              ],
             },
           },
         ],
@@ -175,6 +182,32 @@ describe('Datepicker schema validation', () => {
       expect(isValid).toBe(false);
       expect(
         validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/icon'),
+      ).toBe(true);
+    });
+
+    it('should reject `placeholder` — date inputs use locale-derived placeholders', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            uid: 'dp-1',
+            path: 'bday',
+            kind: 'input',
+            type: 'datePicker',
+            // @ts-expect-error Expected — placeholder is not a valid prop on datePicker
+            props: { placeholder: 'dd/mm/yyyy' },
+          },
+        ],
+      });
+
+      const invalidDatepicker = formDef.form.children[0];
+      const isValid = validate(invalidDatepicker);
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some(
+          (e) =>
+            e.keyword === 'additionalProperties' &&
+            (e.params as { additionalProperty?: string }).additionalProperty === 'placeholder',
+        ),
       ).toBe(true);
     });
   });

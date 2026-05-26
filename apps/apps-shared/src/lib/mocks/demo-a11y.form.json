@@ -6,7 +6,7 @@
       "kind": "layout",
       "type": "tabs",
       "props": {
-        "activeTab": "login",
+        "defaultOpen": "login",
         "tabs": [
           { "label": "Login", "uid": "login-flex" },
           { "label": "Register", "uid": "register-flex" }
@@ -17,7 +17,7 @@
           "uid": "login-flex",
           "kind": "layout",
           "type": "grid",
-          "props": { "gap": 20, "direction": "column" },
+          "props": { "columnGap": 20, "direction": "column" },
           "children": [
             {
               "uid": "login-email",
@@ -25,7 +25,7 @@
               "type": "textinput",
               "path": "login.email",
               "label": "Email Address",
-              "props": { "type": "email", "placeholder": "example@domain.com" }
+              "props": { "placeholder": "example@domain.com" }
             },
             {
               "uid": "login-password",
@@ -33,7 +33,7 @@
               "type": "textinput",
               "path": "login.password",
               "label": "Password",
-              "props": { "type": "password", "placeholder": "Enter your password..." }
+              "props": { "placeholder": "Enter your password..." }
             },
             {
               "uid": "login-submit",
@@ -47,7 +47,7 @@
           "uid": "register-flex",
           "kind": "layout",
           "type": "grid",
-          "props": { "gap": 20, "direction": "column" },
+          "props": { "columnGap": 20, "direction": "column" },
           "children": [
             {
               "uid": "login-firstName",
@@ -118,7 +118,6 @@
               "path": "register.email",
               "label": "Email Address",
               "props": {
-                "type": "email",
                 "placeholder": "example@domain.com",
                 "hint": "We will send you a confirmation email to verify your account."
               }

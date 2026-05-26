@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify MCP server bundled schemas are in sync
+        run: npm run check:mcp-schemas
+
       - name: Build affected
         run: npx nx affected --target=build --exclude=docs
 
