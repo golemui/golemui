@@ -14,7 +14,7 @@ import { execSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const SCHEMAS_SOURCE = 'libs/gui/shared/src/lib/schemas';
+const SCHEMAS_SOURCE = 'libs/gui/schemas/src/lib';
 const SCHEMAS_DEST = 'docs/public/schemas';
 const SCHEMA_BASE_URL = 'https://golemui.com/schemas/';
 
