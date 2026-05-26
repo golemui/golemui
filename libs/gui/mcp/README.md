@@ -91,14 +91,53 @@ version-locked to a specific GolemUI release. A CI check in this monorepo
 against the exact same schema definitions as `@golemui/gui-*@X.Y.Z`.
 
 No LLM calls happen inside this server — every tool is deterministic. The MCP is the
-*grounding layer* the host IDE's model calls into.
+_grounding layer_ the host IDE's model calls into.
 
 ## Development
 
+### Interactive testing with MCP Inspector
+
+Start the MCP server and open a local web UI at http://localhost:5173
+
 ```bash
-# from the repo root
-npx nx run gui-mcp:build            # build to dist/libs/gui/mcp
-npx nx run gui-mcp:vite:test        # run the test suite
+npm run start:mcp
+```
+
+To use the server from within Claude Code conversations, register with local Claude Code:
+
+#### With the Calude code CLI
+
+```bash
+claude mcp add golemui-local -- node /Users/{USER}/{...}/golem/golemui/dist/libs/gui/mcp/index.js
+```
+
+Then restart or reload the session. The tools appear in Claude's tool list.
+
+Remove with claude mcp remove golemui-local when done.
+
+#### With the Calude code extension
+
+Create or edit the project-level MCP config at .mcp.json in the workspace root:
+
+```json
+{
+  "mcpServers": {
+    "golemui-local": {
+      "command": "node",
+      "args": ["/Users/{USER}/{...}/golem/golemui/dist/libs/gui/mcp/index.js"]
+    }
+  }
+}
+```
+
+Then reload the VS Code window (Cmd+Shift+P -> "Developer: Reload Window"). The 4 tools will appear in Claude's tool list for this workspace.
+
+Remove the entry from .mcp.json when done.
+
+### Other development commands
+
+```bash
+npx nx run gui-mcp:vite:test     # run the test suite
 npm run sync:mcp-schemas            # refresh bundled schemas from libs/gui/shared
 npm run check:mcp-schemas           # CI mode — exits non-zero if out of sync
 ```
