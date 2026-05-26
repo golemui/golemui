@@ -1,5 +1,5 @@
 {
-  "name": "@golemui/mcp-server",
+  "name": "@golemui/gui-mcp",
   "version": "0.0.1",
   "description": "Model Context Protocol server for GolemUI — gives AI coding assistants deterministic schema validation and form generation for GolemUI form definitions.",
   "type": "module",
@@ -39,6 +39,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/golemui/golemui.git",
-    "directory": "libs/mcp-server"
+    "directory": "libs/gui/mcp"
   }
 }

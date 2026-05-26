@@ -1,7 +1,7 @@
 {
-  "name": "mcp-server",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/mcp-server/src",
+  "name": "gui-mcp",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/gui/mcp/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -10,14 +10,14 @@
       "fallbackCurrentVersionResolver": "disk"
     }
   },
-  "tags": ["scope:tooling", "type:lib"],
+  "tags": ["scope:gui", "type:lib"],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/mcp-server",
-        "configFile": "libs/mcp-server/vite.config.ts"
+        "outputPath": "dist/libs/gui/mcp",
+        "configFile": "libs/gui/mcp/vite.config.ts"
       }
     },
     "nx-release-publish": {
