@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
+  "$schema": "../../../../../libs/gui/schemas/src/lib/form.schema.json",
   "form": [
     {
       "uid": "login-flex",

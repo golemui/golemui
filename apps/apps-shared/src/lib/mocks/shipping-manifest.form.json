@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../libs/gui/shared/src/lib/schemas/form.schema.json",
+  "$schema": "../../../../../libs/gui/schemas/src/lib/form.schema.json",
   "states": {
     "isHazardous": "$form.isHazardous === true"
   },
