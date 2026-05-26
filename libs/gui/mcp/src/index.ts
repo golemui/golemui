@@ -37,7 +37,7 @@ function readPackageMeta(): { name: string; version: string } {
       // try next
     }
   }
-  return { name: '@golemui/mcp-server', version: '0.0.0' };
+  return { name: '@golemui/gui-mcp', version: '0.0.0' };
 }
 
 const { name: PKG_NAME, version: PKG_VERSION } = readPackageMeta();

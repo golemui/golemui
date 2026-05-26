@@ -1,5 +1,5 @@
 /**
- * Sync the bundled JSON Schemas in @golemui/mcp-server with the source schemas in @golemui/gui-shared.
+ * Sync the bundled JSON Schemas in @golemui/gui-mcp with the source schemas in @golemui/gui-shared.
  *
  * Usage:
  *   tsx tools/sync-mcp-schemas.ts          # copy schemas, overwrite stale snapshots
@@ -20,7 +20,7 @@ import {
 import { join, relative } from 'node:path';
 
 const SOURCE = 'libs/gui/shared/src/lib/schemas';
-const DEST = 'libs/mcp-server/src/schemas/data';
+const DEST = 'libs/gui/mcp/src/schemas/data';
 
 function listJsonFiles(dir: string, prefix = ''): string[] {
   const entries = readdirSync(dir, { withFileTypes: true });

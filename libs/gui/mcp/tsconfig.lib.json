@@ -4,18 +4,19 @@
     "module": "esnext",
     "target": "es2022",
     "moduleResolution": "bundler",
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../../dist/out-tsc",
+    "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
+    "types": ["node"]
   },
-  "include": [
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "exclude": [
     "vite.config.ts",
     "vite.config.mts",
     "vitest.config.ts",
     "vitest.config.mts",
-    "src/**/*.ts",
-    "src/**/*.json",
-    "src/**/*.d.ts"
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
   ]
 }

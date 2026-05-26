@@ -1,4 +1,4 @@
-# @golemui/mcp-server
+# @golemui/gui-mcp
 
 A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI coding
 assistants (Claude Code, Cursor, Windsurf, …) deterministic schema validation and form
@@ -17,7 +17,7 @@ no project install required.
 ### Claude Code
 
 ```bash
-claude mcp add golemui -- npx -y @golemui/mcp-server
+claude mcp add golemui -- npx -y @golemui/gui-mcp
 ```
 
 Or paste this into `~/.claude/settings.json` (or your project's `.mcp.json`):
@@ -27,7 +27,7 @@ Or paste this into `~/.claude/settings.json` (or your project's `.mcp.json`):
   "mcpServers": {
     "golemui": {
       "command": "npx",
-      "args": ["-y", "@golemui/mcp-server"]
+      "args": ["-y", "@golemui/gui-mcp"]
     }
   }
 }
@@ -35,13 +35,13 @@ Or paste this into `~/.claude/settings.json` (or your project's `.mcp.json`):
 
 ### Cursor / Windsurf / other MCP-capable IDEs
 
-Same config — point an `mcpServers.golemui` entry at `npx -y @golemui/mcp-server`.
+Same config — point an `mcpServers.golemui` entry at `npx -y @golemui/gui-mcp`.
 
 ### Verify
 
 ```bash
-npx -y @golemui/mcp-server < /dev/null
-# → @golemui/mcp-server v0.0.1 ready on stdio
+npx -y @golemui/gui-mcp < /dev/null
+# → @golemui/gui-mcp v0.0.1 ready on stdio
 ```
 
 ## Tools
@@ -87,7 +87,7 @@ single GolemUI widget. Cheaper than dumping the whole API into the model's conte
 The server ships a frozen snapshot of the GolemUI JSON Schemas inside its npm package,
 version-locked to a specific GolemUI release. A CI check in this monorepo
 (`npm run check:mcp-schemas`) fails if the snapshot drifts from the source schemas in
-`@golemui/gui-shared`, so a published `@golemui/mcp-server@X.Y.Z` always validates
+`@golemui/gui-shared`, so a published `@golemui/gui-mcp@X.Y.Z` always validates
 against the exact same schema definitions as `@golemui/gui-*@X.Y.Z`.
 
 No LLM calls happen inside this server — every tool is deterministic. The MCP is the
@@ -97,8 +97,8 @@ No LLM calls happen inside this server — every tool is deterministic. The MCP 
 
 ```bash
 # from the repo root
-npx nx run mcp-server:build         # build to dist/libs/mcp-server
-npx nx run mcp-server:vite:test     # run the test suite
+npx nx run gui-mcp:build            # build to dist/libs/gui/mcp
+npx nx run gui-mcp:vite:test        # run the test suite
 npm run sync:mcp-schemas            # refresh bundled schemas from libs/gui/shared
 npm run check:mcp-schemas           # CI mode — exits non-zero if out of sync
 ```

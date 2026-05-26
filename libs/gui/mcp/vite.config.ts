@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/libs/mcp-server',
+  cacheDir: '../../../node_modules/.vite/libs/gui/mcp',
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -17,7 +17,7 @@ export default defineConfig(() => ({
     }),
   ],
   build: {
-    outDir: '../../dist/libs/mcp-server',
+    outDir: '../../../dist/libs/gui/mcp',
     emptyOutDir: true,
     reportCompressedSize: true,
     target: 'node18',
@@ -35,14 +35,14 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: 'mcp-server',
+    name: 'gui-mcp',
     watch: false,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/libs/mcp-server',
+      reportsDirectory: '../../../coverage/libs/gui/mcp',
       provider: 'v8' as const,
     },
   },
