@@ -7,6 +7,7 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import rendererJson from '../../../../public/template/getting-started/rent-a-car/04-renderer.json?raw';
 import rendererDx from '../../../../public/template/getting-started-dx/rent-a-car/04-renderer.ts?raw';
@@ -19,14 +20,30 @@ The default dropdown item template is just a label. Real applications usually wa
 
 The car items now carry an emoji thumbnail and a price:
 
-```ts
-items: [
-  { id: 'compact', label: 'Compact', img: '🚗', price: 35 },
-  { id: 'suv', label: 'SUV', img: '🚙', price: 75 },
-  { id: 'convertible', label: 'Convertible', img: '🏎️', price: 110 },
-  { id: 'luxury', label: 'Luxury', img: '🚘', price: 180 },
-],
-```
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    items: [
+      { id: 'compact', label: 'Compact', img: '🚗', price: 35 },
+      { id: 'suv', label: 'SUV', img: '🚙', price: 75 },
+      { id: 'convertible', label: 'Convertible', img: '🏎️', price: 110 },
+      { id: 'luxury', label: 'Luxury', img: '🚘', price: 180 },
+    ],
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    "props": {
+      "items": [
+        { "id": "compact", "label": "Compact", "img": "🚗", "price": 35 },
+        { "id": "suv", "label": "SUV", "img": "🚙", "price": 75 },
+        { "id": "convertible", "label": "Convertible", "img": "🏎️", "price": 110 },
+        { "id": "luxury", "label": "Luxury", "img": "🚘", "price": 180 }
+      ]
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
 ## Step 2 — Implement the renderer
 
@@ -185,85 +202,148 @@ Drop the following into a global stylesheet:
 
 ## Step 4 — Register the renderer
 
-`itemRenderers` is a top-level key on the same `config` object you've been wiring since the [intro chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives) — sitting next to `formDef` and the `formConfig` we set up for [states](/getting-started/rent-a-car-states/#declaring-states):
+`itemRenderers` is a top-level key on the same `config` object you've been wiring since the [intro chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives) — it maps a renderer **name** to the framework component. Unlike states, it always lives on the component (the form file can only carry a string name, never a real component reference):
 
-<IntegrationTabs>
-  <Fragment slot="react">
-    ```tsx
-    // rent-a-car.page.tsx
-    const config = {
-      formDef: rentACarForm,
-      formConfig: {
-        states: {
-          differentReturn: '$form.differentReturn === true',
-          hasDiscount: '$form.hasDiscountCode === true',
-        },
-      },
-      itemRenderers: {
-        carItemRenderer: CarItemRenderer,
-      },
-    };
-    ```
-  </Fragment>
-  <Fragment slot="angular">
-    ```ts
-    // rent-a-car.page.component.ts
-    export class RentACarPage {
-      protected config = {
-        formDef: rentACarForm,
-        formConfig: {
-          states: {
-            differentReturn: '$form.differentReturn === true',
-            hasDiscount: '$form.hasDiscountCode === true',
+<DslTabs>
+  <Fragment slot="dx">
+    In the programmatic API, `itemRenderers` sits next to `formDef` and the `formConfig` we set up for [states](/getting-started/rent-a-car-states/#declaring-states):
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        // rent-a-car.page.tsx
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
           },
-        },
-        itemRenderers: {
-          carItemRenderer: CarItemRenderer,
-        },
-      };
-    }
-    ```
-  </Fragment>
-  <Fragment slot="lit">
-    ```ts
-    // rent-a-car.page.element.ts
-    export class RentACarPage extends LitElement {
-      config = {
-        formDef: rentACarForm,
-        formConfig: {
-          states: {
-            differentReturn: '$form.differentReturn === true',
-            hasDiscount: '$form.hasDiscountCode === true',
+          itemRenderers: {
+            carItemRenderer: CarItemRenderer,
           },
-        },
-        itemRenderers: {
-          carItemRenderer: CarItemRenderer,
-        },
-      };
-      // …rest of the class unchanged…
-    }
-    ```
+        };
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // rent-a-car.page.component.ts
+        export class RentACarPage {
+          protected config = {
+            formDef: rentACarForm,
+            formConfig: {
+              states: {
+                differentReturn: '$form.differentReturn === true',
+                hasDiscount: '$form.hasDiscountCode === true',
+              },
+            },
+            itemRenderers: {
+              carItemRenderer: CarItemRenderer,
+            },
+          };
+        }
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        // rent-a-car.page.element.ts
+        export class RentACarPage extends LitElement {
+          config = {
+            formDef: rentACarForm,
+            formConfig: {
+              states: {
+                differentReturn: '$form.differentReturn === true',
+                hasDiscount: '$form.hasDiscountCode === true',
+              },
+            },
+            itemRenderers: {
+              carItemRenderer: CarItemRenderer,
+            },
+          };
+          // …rest of the class unchanged…
+        }
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```vue
+        <!-- RentACarPage.vue -->
+        <script setup lang="ts">
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
+          },
+          itemRenderers: {
+            carItemRenderer: CarItemRenderer,
+          },
+        };
+        </script>
+        ```
+      </Fragment>
+    </IntegrationTabs>
   </Fragment>
-  <Fragment slot="vue">
-    ```vue
-    <!-- RentACarPage.vue -->
-    <script setup lang="ts">
-    const config = {
-      formDef: rentACarForm,
-      formConfig: {
-        states: {
-          differentReturn: '$form.differentReturn === true',
-          hasDiscount: '$form.hasDiscountCode === true',
-        },
-      },
-      itemRenderers: {
-        carItemRenderer: CarItemRenderer,
-      },
-    };
-    </script>
-    ```
+  <Fragment slot="json">
+    In the JSON API, the states are already declared in the form file's `"states"` block, so the component just adds `itemRenderers` next to `formDef`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        // rent-a-car.page.tsx
+        const config = {
+          formDef: rentACarForm,
+          itemRenderers: {
+            carItemRenderer: CarItemRenderer,
+          },
+        };
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // rent-a-car.page.component.ts
+        export class RentACarPage {
+          protected config = {
+            formDef: rentACarForm,
+            itemRenderers: {
+              carItemRenderer: CarItemRenderer,
+            },
+          };
+        }
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        // rent-a-car.page.element.ts
+        export class RentACarPage extends LitElement {
+          config = {
+            formDef: rentACarForm,
+            itemRenderers: {
+              carItemRenderer: CarItemRenderer,
+            },
+          };
+          // …rest of the class unchanged…
+        }
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```vue
+        <!-- RentACarPage.vue -->
+        <script setup lang="ts">
+        const config = {
+          formDef: rentACarForm,
+          itemRenderers: {
+            carItemRenderer: CarItemRenderer,
+          },
+        };
+        </script>
+        ```
+      </Fragment>
+    </IntegrationTabs>
   </Fragment>
-</IntegrationTabs>
+</DslTabs>
 
 ## Step 5 — Reference it from the dropdown
 

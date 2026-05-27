@@ -7,6 +7,7 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import statesJson from '../../../../public/template/getting-started/rent-a-car/02-states.json?raw';
 import statesDx from '../../../../public/template/getting-started-dx/rent-a-car/02-states.ts?raw';
@@ -22,93 +23,173 @@ Validators come next — they're covered end-to-end in the [Validation errors](/
 
 ## Declaring states
 
-States are named boolean expressions evaluated against `$form`. They live under `formConfig.states` — and `formConfig` is a top-level property of the same `config` object you wired to the form component in the [previous chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives), right next to `formDef`:
+States are named boolean expressions evaluated against `$form`. Where they live depends on which API you picked:
 
-<IntegrationTabs>
-  <Fragment slot="react">
-    ```tsx
-    // rent-a-car.page.tsx
-    const config = {
-      formDef: rentACarForm,
-      formConfig: {
-        states: {
-          differentReturn: '$form.differentReturn === true',
-          hasDiscount: '$form.hasDiscountCode === true',
-        },
-      },
-    };
-    ```
-  </Fragment>
-  <Fragment slot="angular">
-    ```ts
-    // rent-a-car.page.component.ts
-    export class RentACarPage {
-      protected config = {
-        formDef: rentACarForm,
-        formConfig: {
-          states: {
-            differentReturn: '$form.differentReturn === true',
-            hasDiscount: '$form.hasDiscountCode === true',
+<DslTabs>
+  <Fragment slot="dx">
+    In the programmatic API, states live under `formConfig.states` — a top-level property of the same `config` object you wired to the form component in the [previous chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives), right next to `formDef`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        // rent-a-car.page.tsx
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
           },
-        },
-      };
+        };
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // rent-a-car.page.component.ts
+        export class RentACarPage {
+          protected config = {
+            formDef: rentACarForm,
+            formConfig: {
+              states: {
+                differentReturn: '$form.differentReturn === true',
+                hasDiscount: '$form.hasDiscountCode === true',
+              },
+            },
+          };
+        }
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        // rent-a-car.page.element.ts
+        export class RentACarPage extends LitElement {
+          config = {
+            formDef: rentACarForm,
+            formConfig: {
+              states: {
+                differentReturn: '$form.differentReturn === true',
+                hasDiscount: '$form.hasDiscountCode === true',
+              },
+            },
+          };
+          // …rest of the class unchanged…
+        }
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```vue
+        <!-- RentACarPage.vue -->
+        <script setup lang="ts">
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
+          },
+        };
+        </script>
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    In the JSON API, states live at the form file's root, alongside `"form"`:
+
+    ```json
+    // rent-a-car.form.json
+    {
+      "states": {
+        "differentReturn": "$form.differentReturn === true",
+        "hasDiscount": "$form.hasDiscountCode === true"
+      },
+      "form": [
+        // …widgets…
+      ]
     }
     ```
-  </Fragment>
-  <Fragment slot="lit">
-    ```ts
-    // rent-a-car.page.element.ts
-    export class RentACarPage extends LitElement {
-      config = {
-        formDef: rentACarForm,
-        formConfig: {
-          states: {
-            differentReturn: '$form.differentReturn === true',
-            hasDiscount: '$form.hasDiscountCode === true',
-          },
-        },
-      };
-      // …rest of the class unchanged…
-    }
-    ```
-  </Fragment>
-  <Fragment slot="vue">
-    ```vue
-    <!-- RentACarPage.vue -->
-    <script setup lang="ts">
-    const config = {
-      formDef: rentACarForm,
-      formConfig: {
-        states: {
-          differentReturn: '$form.differentReturn === true',
-          hasDiscount: '$form.hasDiscountCode === true',
-        },
-      },
-    };
-    </script>
-    ```
-  </Fragment>
-</IntegrationTabs>
 
-JSON forms put the same map at the form root under `"states"`.
+    The page component stays exactly as it was in the [intro chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives) — `config` just carries `formDef`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        // rent-a-car.page.tsx
+        const config = { formDef: rentACarForm };
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // rent-a-car.page.component.ts
+        export class RentACarPage {
+          protected config = { formDef: rentACarForm };
+        }
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        // rent-a-car.page.element.ts
+        export class RentACarPage extends LitElement {
+          config = { formDef: rentACarForm };
+          // …rest of the class unchanged…
+        }
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```vue
+        <!-- RentACarPage.vue -->
+        <script setup lang="ts">
+        const config = { formDef: rentACarForm };
+        </script>
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+</DslTabs>
 
 ## Gating fields with include
 
 Add `include: { in: ['<stateName>'] }` to each optional widget — it will only render while the named state is active. In our form, that's two widgets: the return-office dropdown (gated by `differentReturn`) and the discount-code input (gated by `hasDiscount`).
 
-```ts
-gui.inputs.dropdown('returnOffice', {
-  label: 'Return to office',
-  include: { in: ['differentReturn'] },
-  // …items, validator…
-});
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    gui.inputs.dropdown('returnOffice', {
+      label: 'Return to office',
+      include: { in: ['differentReturn'] },
+      // …items, validator…
+    });
 
-gui.inputs.textInput('discountCode', {
-  label: 'Discount code',
-  include: { in: ['hasDiscount'] },
-  validator: { required: true, minLength: 4 },
-});
-```
+    gui.inputs.textInput('discountCode', {
+      label: 'Discount code',
+      include: { in: ['hasDiscount'] },
+      validator: { required: true, minLength: 4 },
+    });
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "returnOffice",
+      "label": "Return to office",
+      "include": { "in": ["differentReturn"] }
+    }
+
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "discountCode",
+      "label": "Discount code",
+      "include": { "in": ["hasDiscount"] },
+      "validator": { "required": true, "minLength": 4 }
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
 The toggles that drive the states (`differentReturn` and `hasDiscountCode`) stay in the form unconditionally — they're what the user interacts with to flip the state on or off.
 

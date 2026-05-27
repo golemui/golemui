@@ -7,6 +7,7 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import searchJson from '../../../../public/template/getting-started/rent-a-car/05-search.json?raw';
 import searchDx from '../../../../public/template/getting-started-dx/rent-a-car/05-search.ts?raw';
@@ -49,36 +50,64 @@ export function searchCars(query: string): Promise<Car[]> {
 
 ## Step 2 — Wire `onLoad` and `onFilter`
 
-In the form definition, attach the event names to the dropdown's `onLoad` and `onFilter` props:
+In the form definition, attach the event names to the dropdown's load and filter event hooks:
 
-```ts
-import { gui } from '@golemui/gui-shared';
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    gui.inputs.dropdown('car', {
+      labelField: 'label',
+      valueField: 'id',
+      itemRenderer: 'carItemRenderer',
+      inputDebounce: 300,
+      onLoad: 'loadCars',
+      onFilter: 'filterCars',
+      items: [],
+      label: 'Select car',
+      validator: {
+        type: 'string',
+        required: true,
+        messages: {
+          required: 'Please pick a car model',
+          invalid: 'Please pick a car model',
+        },
+      },
+    }),
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "car",
+      "label": "Select car",
+      "on": { "load": "loadCars", "filter": "filterCars" },
+      "props": {
+        "labelField": "label",
+        "valueField": "id",
+        "itemRenderer": "carItemRenderer",
+        "inputDebounce": 300,
+        "items": []
+      },
+      "validator": {
+        "type": "string",
+        "required": true,
+        "messages": {
+          "required": "Please pick a car model",
+          "invalid": "Please pick a car model"
+        }
+      }
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
-gui.inputs.dropdown('car', {
-  labelField: 'label',
-  valueField: 'id',
-  itemRenderer: 'carItemRenderer',
-  inputDebounce: 300,
-  onLoad: 'loadCars',
-  onFilter: 'filterCars',
-  items: [],
-  label: 'Select car',
-  validator: {
-    type: 'string',
-    required: true,
-    messages: {
-      required: 'Please pick a car model',
-      invalid: 'Please pick a car model',
-    },
-  },
-}),
-```
-
-Starting with `items: []` makes the intent explicit — no hard-coded list; `onLoad` populates the dropdown the first time it opens and `onFilter` re-populates it as the user types. The `inputDebounce: 300` prop tells the dropdown to wait 300ms after the user stops typing before firing `onFilter`.
+Starting with an empty `items` list makes the intent explicit — no hard-coded list; the load event populates the dropdown the first time it opens and the filter event re-populates it as the user types. The `inputDebounce: 300` prop tells the dropdown to wait 300ms after the user stops typing before firing the filter event.
 
 ## Step 3 — Handle the events
 
-Define a `handleFormEvent` handler that matches on the event name, calls `searchCars`, and dispatches an `OVERRIDE_WIDGET_PROP` action to update the dropdown's `items` prop. Then wire it to the form component's `formEvent` output — each framework spells that wiring differently:
+Define a `handleFormEvent` handler that matches on the event name, calls `searchCars`, and dispatches an `OVERRIDE_WIDGET_PROP` action to update the dropdown's `items` prop. Then wire it to the form component's `formEvent` output — each framework spells that wiring differently. The snippets below import the JSON form file (`./rent-a-car.form.json`); if you're using the programmatic API, swap the import path for `./rent-a-car.form` (the `.ts` file):
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -87,12 +116,12 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     import { GuiForm } from '@golemui/gui-react';
     import type { FormEvent } from '@golemui/core';
     import { searchCars } from './car.service';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
     import { CarItemRenderer } from './CarItemRenderer';
 
     const config = {
       formDef: rentACarForm,
-      // …formConfig.states and itemRenderers from earlier chapters…
+      // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
     };
 
     async function handleFormEvent(event: FormEvent) {
@@ -119,7 +148,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     import { FormComponent } from '@golemui/gui-angular';
     import type { FormEvent } from '@golemui/core';
     import { searchCars } from './car.service';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
     import { CarItemRenderer } from './car-item-renderer.component';
 
     @Component({
@@ -135,7 +164,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     export class RentACarPage {
       protected config = {
         formDef: rentACarForm,
-        // …formConfig.states and itemRenderers from earlier chapters…
+        // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
       };
 
       async handleFormEvent(event: FormEvent) {
@@ -160,13 +189,13 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     import type { FormEvent } from '@golemui/core';
     import { searchCars } from './car.service';
     import { carItemRenderer } from './car-item-renderer';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
 
     @customElement('rent-a-car-page')
     export class RentACarPage extends LitElement {
       config = {
         formDef: rentACarForm,
-        // …formConfig.states and itemRenderers from earlier chapters…
+        // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
       };
 
       async handleFormEvent(event: FormEvent) {
@@ -202,12 +231,12 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     import { GuiForm } from '@golemui/gui-vue';
     import type { FormEvent } from '@golemui/core';
     import { searchCars } from './car.service';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
     import CarItemRenderer from './CarItemRenderer.vue';
 
     const config = {
       formDef: rentACarForm,
-      // …formConfig.states and itemRenderers from earlier chapters…
+      // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
     };
 
     async function handleFormEvent(event: FormEvent) {

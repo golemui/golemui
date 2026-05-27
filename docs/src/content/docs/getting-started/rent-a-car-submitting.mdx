@@ -8,6 +8,7 @@ sidebar:
 import finalDx from '../../../../public/template/getting-started-dx/rent-a-car/06-final.ts?raw';
 import finalJson from '../../../../public/template/getting-started/rent-a-car/06-final.json?raw';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import Demo from '../../../components/landing/Demo.astro';
 export const configJson = '06-final.json';
@@ -19,18 +20,32 @@ The Reserve button uses `actionType: 'submit'`. On click the form runs every val
 
 The button stays as it was in the previous chapters — `actionType: 'submit'` is all the wiring you need on the widget side:
 
-```ts
-gui.actions.button({
-  label: 'Reserve',
-  actionType: 'submit',
-}),
-```
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    gui.actions.button({
+      label: 'Reserve',
+      actionType: 'submit',
+    }),
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Reserve",
+      "actionType": "submit"
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
 Validation gates submission for free: an invalid form simply surfaces the error messages from [the validation chapter](/getting-started/rent-a-car-messages/) and never fires `formSubmit`.
 
 ## Step 2 — Listen for it
 
-Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongside the existing `formEvent` listener from the previous chapter. The handler receives a `FormSubmitEvent` whose `.data` is the collected form data:
+Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongside the existing `formEvent` listener from the previous chapter. The handler receives a `FormSubmitEvent` whose `.data` is the collected form data. The snippets below import the JSON form file (`./rent-a-car.form.json`); if you're using the programmatic API, swap the import path for `./rent-a-car.form` (the `.ts` file):
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -39,12 +54,12 @@ Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongsid
     import { GuiForm } from '@golemui/gui-react';
     import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { searchCars } from './car.service';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
     import { CarItemRenderer } from './CarItemRenderer';
 
     const config = {
       formDef: rentACarForm,
-      // …formConfig.states and itemRenderers from earlier chapters…
+      // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
     };
 
     async function handleFormEvent(event: FormEvent) {
@@ -74,7 +89,7 @@ Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongsid
     import { FormComponent } from '@golemui/gui-angular';
     import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { searchCars } from './car.service';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
     import { CarItemRenderer } from './car-item-renderer.component';
 
     @Component({
@@ -91,7 +106,7 @@ Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongsid
     export class RentACarPage {
       protected config = {
         formDef: rentACarForm,
-        // …formConfig.states and itemRenderers from earlier chapters…
+        // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
       };
 
       async handleFormEvent(event: FormEvent) {
@@ -113,13 +128,13 @@ Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongsid
     import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { searchCars } from './car.service';
     import { carItemRenderer } from './car-item-renderer';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
 
     @customElement('rent-a-car-page')
     export class RentACarPage extends LitElement {
       config = {
         formDef: rentACarForm,
-        // …formConfig.states and itemRenderers from earlier chapters…
+        // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
       };
 
       async handleFormEvent(event: FormEvent) {
@@ -153,12 +168,12 @@ Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongsid
     import { GuiForm } from '@golemui/gui-vue';
     import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { searchCars } from './car.service';
-    import rentACarForm from './rent-a-car.form';
+    import rentACarForm from './rent-a-car.form.json';
     import CarItemRenderer from './CarItemRenderer.vue';
 
     const config = {
       formDef: rentACarForm,
-      // …formConfig.states and itemRenderers from earlier chapters…
+      // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
     };
 
     async function handleFormEvent(event: FormEvent) {
@@ -193,7 +208,7 @@ Fill the form, click **Reserve**, and the collected form data arrives in your `h
 
 You've now built a real-world form that uses:
 
-- declarative widget composition with `gui.layouts.grid` and `gui.layouts.flex`,
+- declarative widget composition with `grid` and `flex` layouts,
 - validators per field,
 - named states with `include` rules,
 - a custom item renderer,
@@ -203,6 +218,6 @@ You've now built a real-world form that uses:
 ## Where next?
 
 - **[Features](/features/overview/)** — deep dives into every cross-cutting capability.
-- **[Form Definition API](/form-definition/overview/)** — the canonical reference for `gui.*`.
+- **[Form Definition API](/form-definition/overview/)** — the canonical JSON schema reference (and the matching `gui.*` programmatic shortcuts).
 - **[Extending GolemUI](/extending/widgets/overview/)** — building your own widgets.
 - **[Widgets Reference](/widgets-reference/input-fields/overview/)** — every built-in widget.
