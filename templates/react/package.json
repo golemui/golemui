@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@golemui/gui-react": "0.15.0",
+    "@golemui/gui-react": "0.15.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
