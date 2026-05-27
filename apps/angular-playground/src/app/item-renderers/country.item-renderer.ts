@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { type ItemRenderContext } from '@golemui/core';
+import { Component, input } from '@angular/core';
+import { type AngularItemRenderContext } from '@golemui/angular';
 
 type CountryItem = {
   id: string;
@@ -47,19 +47,19 @@ type CountryItem = {
   `,
   template: `<div
     class="country-renderer"
-    [class.selected]="selected"
-    [class.focused]="focused"
-    [class.odd]="index % 2"
+    [class.selected]="selected()"
+    [class.focused]="focused()"
+    [class.odd]="index() % 2"
   >
-    <span>{{ template.label }}</span>
-    <span>{{ template.flag }}</span>
+    <span>{{ template().label }}</span>
+    <span>{{ template().flag }}</span>
   </div>`,
 })
-export class CountryItemRenderer implements ItemRenderContext<CountryItem> {
-  @Input({ required: true }) template!: CountryItem;
-  @Input({ required: true }) value!: string | number;
-  @Input({ required: true }) index!: number;
-  @Input() selected?: boolean;
-  @Input() disabled?: boolean;
-  @Input() focused?: boolean;
+export class CountryItemRenderer implements AngularItemRenderContext<CountryItem> {
+  template = input.required<CountryItem>();
+  value = input.required<string | number>();
+  index = input.required<number>();
+  selected = input<boolean | undefined>(undefined);
+  disabled = input<boolean | undefined>(undefined);
+  focused = input<boolean | undefined>(undefined);
 }

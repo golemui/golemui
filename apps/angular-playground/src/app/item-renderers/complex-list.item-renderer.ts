@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { type ItemRenderContext } from '@golemui/core';
+import { Component, input } from '@angular/core';
+import { type AngularItemRenderContext } from '@golemui/angular';
 
 type ComplexItem = {
   title: string;
@@ -42,20 +42,20 @@ type ComplexItem = {
   `,
   template: `<div
     class="product-renderer"
-    [class.disabled]="disabled"
-    [class.selected]="selected"
-    [class.focused]="focused"
-    [class.odd]="index % 2"
+    [class.disabled]="disabled()"
+    [class.selected]="selected()"
+    [class.focused]="focused()"
+    [class.odd]="index() % 2"
   >
-    <h2>{{ template.title }}</h2>
-    <p>{{ template.description }}</p>
+    <h2>{{ template().title }}</h2>
+    <p>{{ template().description }}</p>
   </div>`,
 })
-export class ComplexListItemRenderer implements ItemRenderContext<ComplexItem> {
-  @Input({ required: true }) template!: ComplexItem;
-  @Input({ required: true }) value!: string | number;
-  @Input({ required: true }) index!: number;
-  @Input() selected?: boolean;
-  @Input() disabled?: boolean;
-  @Input() focused?: boolean;
+export class ComplexListItemRenderer implements AngularItemRenderContext<ComplexItem> {
+  template = input.required<ComplexItem>();
+  value = input.required<string | number>();
+  index = input.required<number>();
+  selected = input<boolean | undefined>(undefined);
+  disabled = input<boolean | undefined>(undefined);
+  focused = input<boolean | undefined>(undefined);
 }
