@@ -1,6 +1,6 @@
 {
   "name": "@golemui/lit",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "type": "module",
   "main": "./index.umd.cjs",
   "module": "./index.js",

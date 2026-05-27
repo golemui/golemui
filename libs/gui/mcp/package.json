@@ -1,6 +1,6 @@
 {
   "name": "@golemui/gui-mcp",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Model Context Protocol server for GolemUI — gives AI coding assistants deterministic schema validation and form generation for GolemUI form definitions.",
   "type": "module",
   "main": "./index.js",

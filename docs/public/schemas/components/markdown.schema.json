@@ -20,7 +20,10 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "counterModeProp": {
-      "enum": ["remaining", "current"]
+      "enum": [
+        "remaining",
+        "current"
+      ]
     },
     "minimumHeightProp": {
       "type": "number"
@@ -37,13 +40,19 @@
     "toolsProp": {
       "type": "array",
       "items": {
-        "enum": ["H", "B", "I", "Q", "L", "OL", "UL", "|"]
+        "enum": [
+          "H",
+          "B",
+          "I",
+          "Q",
+          "L",
+          "OL",
+          "UL",
+          "|"
+        ]
       }
     },
-    "writeTabLabelProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
-    "previewTabLabelProp": {
+    "splitViewTitleProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "headingTitleProp": {
@@ -134,11 +143,8 @@
         "tools": {
           "$ref": "#/$defs/toolsProp"
         },
-        "writeTabLabel": {
-          "$ref": "#/$defs/writeTabLabelProp"
-        },
-        "previewTabLabel": {
-          "$ref": "#/$defs/previewTabLabelProp"
+        "splitViewTitle": {
+          "$ref": "#/$defs/splitViewTitleProp"
         },
         "headingTitle": {
           "$ref": "#/$defs/headingTitleProp"
@@ -193,11 +199,8 @@
         "^tools\\.[^.]+$": {
           "$ref": "#/$defs/toolsProp"
         },
-        "^writeTabLabel\\.[^.]+$": {
-          "$ref": "#/$defs/writeTabLabelProp"
-        },
-        "^previewTabLabel\\.[^.]+$": {
-          "$ref": "#/$defs/previewTabLabelProp"
+        "^splitViewTitle\\.[^.]+$": {
+          "$ref": "#/$defs/splitViewTitleProp"
         },
         "^headingTitle\\.[^.]+$": {
           "$ref": "#/$defs/headingTitleProp"
@@ -239,8 +242,15 @@
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

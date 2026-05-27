@@ -18,18 +18,13 @@
     },
     "optionsProp": {
       "type": "array",
+      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
       "items": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string"
-          },
-          "value": {
-            "type": ["string", "number", "boolean"]
-          }
-        },
-        "required": ["label", "value"],
-        "additionalProperties": false
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
       }
     },
     "labelFieldProp": {
@@ -39,7 +34,10 @@
       "type": "string"
     },
     "directionProp": {
-      "enum": ["row", "column"],
+      "enum": [
+        "row",
+        "column"
+      ],
       "default": "column"
     }
   },
@@ -121,8 +119,15 @@
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

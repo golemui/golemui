@@ -1,3 +1,36 @@
+## 0.15.1 (2026-05-27)
+
+### 🩹 Fixes
+
+- **angular:** add signals interface for angular item renderers ([#135](https://github.com/golemui/golemui/pull/135))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
+## 0.15.0 (2026-05-26)
+
+### 🚀 Features
+
+- add tags widget ([#121](https://github.com/golemui/golemui/pull/121))
+- add mcp server ([#127](https://github.com/golemui/golemui/pull/127))
+- create the new gui-schemas project ([#131](https://github.com/golemui/golemui/pull/131))
+- add schemas lib ([#133](https://github.com/golemui/golemui/pull/133))
+- **core:** add actionType: 'submit' to action widgets ([#120](https://github.com/golemui/golemui/pull/120))
+
+### 🩹 Fixes
+
+- release from 0.0.0 ([#134](https://github.com/golemui/golemui/pull/134))
+- **angular:** add support for input signals to angular item renderers ([#130](https://github.com/golemui/golemui/pull/130))
+- **pills:** fix pills component issues in compact mode ([#126](https://github.com/golemui/golemui/pull/126))
+
+### ❤️ Thank You
+
+- Mud Scientist
+- mudscientist
+- Raul Jimenez @Elecash
+- Raúl Jiménez @Elecash
+
 ## 0.14.0 (2026-05-21)
 
 ### 🚀 Features

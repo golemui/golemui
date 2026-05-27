@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.15.1/components/rangecalendar.schema.json",
+  "title": "RangeCalendar Widget",
+  "type": "object",
+  "$defs": {
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "prevMonthIconProp": {
+      "type": "string"
+    },
+    "nextMonthIconProp": {
+      "type": "string"
+    },
+    "prevMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "nextMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "dayFormatProp": {
+      "enum": [
+        "numeric",
+        "2-digit"
+      ]
+    },
+    "weekdayFormatProp": {
+      "enum": [
+        "short",
+        "long",
+        "narrow"
+      ]
+    },
+    "monthFormatProp": {
+      "enum": [
+        "numeric",
+        "2-digit",
+        "long",
+        "short",
+        "narrow"
+      ]
+    },
+    "minDateProp": {
+      "type": "string"
+    },
+    "maxDateProp": {
+      "type": "string"
+    },
+    "numberOfMonthsProp": {
+      "type": "number"
+    },
+    "disabledRangesProp": {
+      "type": "array",
+      "items": {
+        "$ref": "../common.schema.json#/$defs/dateRange"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "rangeCalendar"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "prevMonthIcon": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "nextMonthIcon": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "prevMonthAriaLabel": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "nextMonthAriaLabel": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "dayFormat": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "weekdayFormat": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "monthFormat": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "minDate": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "maxDate": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "numberOfMonths": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        },
+        "disabledRanges": {
+          "$ref": "#/$defs/disabledRangesProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^prevMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "^nextMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "^prevMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "^nextMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "^dayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "^weekdayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "^monthFormat\\.[^.]+$": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "^minDate\\.[^.]+$": {
+          "$ref": "#/$defs/minDateProp"
+        },
+        "^maxDate\\.[^.]+$": {
+          "$ref": "#/$defs/maxDateProp"
+        },
+        "^numberOfMonths\\.[^.]+$": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        },
+        "^disabledRanges\\.[^.]+$": {
+          "$ref": "#/$defs/disabledRangesProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
+  "unevaluatedProperties": false
+}

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.15.1/components/tabs.schema.json",
+  "title": "Tabs Widget",
+  "type": "object",
+  "$defs": {
+    "defaultOpenProp": {
+      "type": "string"
+    },
+    "renderModeProp": {
+      "enum": [
+        "all",
+        "activeOnly"
+      ]
+    },
+    "tabsProp": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "$ref": "../common.schema.json#/$defs/localizable"
+          },
+          "uid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "uid"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "layout"
+    },
+    "type": {
+      "const": "tabs"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "children": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "../form.schema.json#/$defs/formWidget"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "defaultOpen": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "renderMode": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "tabs": {
+          "$ref": "#/$defs/tabsProp"
+        }
+      },
+      "required": [
+        "tabs"
+      ],
+      "patternProperties": {
+        "^defaultOpen\\.[^.]+$": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "^renderMode\\.[^.]+$": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "^tabs\\.[^.]+$": {
+          "$ref": "#/$defs/tabsProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "children",
+    "props"
+  ],
+  "unevaluatedProperties": false
+}

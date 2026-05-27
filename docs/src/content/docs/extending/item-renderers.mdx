@@ -14,12 +14,12 @@ Item renderers are framework-specific functions or components that the form engi
 
 Each framework adapts the same `ItemRenderContext<T>` to its idiomatic shape:
 
-| Framework | Type                     | What the engine passes                                                                              |
-| --------- | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| React     | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                 |
-| Angular   | `AngularItemRenderer<T>` | A `Type<ItemRenderContext<T>>` — the component declares a signal `input()` for each context field.  |
-| Lit       | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element. |
-| Vue       | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.       |
+| Framework | Type                     | What the engine passes                                                                                                    |
+| --------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| React     | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                                       |
+| Angular   | `AngularItemRenderer<T>` | A component class structurally matching `AngularItemRenderContext<T>` — one signal `input()` per context field. |
+| Lit       | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element.                       |
+| Vue       | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.                             |
 
 The shared context shape comes from `@golemui/core`:
 
@@ -69,6 +69,7 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
   <Fragment slot="angular">
     ```ts
     import { Component, input } from '@angular/core';
+    import { type AngularItemRenderContext } from '@golemui/angular';
 
     type Country = { id: string; flag: string; label: string };
 
@@ -88,17 +89,40 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
         </div>
       `,
     })
-    export class CountryItemRenderer {
+    export class CountryItemRenderer implements AngularItemRenderContext<Country> {
       template = input.required<Country>();
       value = input.required<string | number>();
       index = input.required<number>();
-      selected = input<boolean>();
-      disabled = input<boolean>();
-      focused = input<boolean>();
+      selected = input<boolean | undefined>(undefined);
+      disabled = input<boolean | undefined>(undefined);
+      focused = input<boolean | undefined>(undefined);
     }
     ```
 
-    The component declares one signal input per context field; the engine binds each one when rendering an item. Read each value by calling the signal — `template().flag`, `selected()`, etc.
+    Declare one signal input per context field; the engine binds each one when rendering an item. Read each value by calling the signal — `template().flag`, `selected()`, etc.
+
+    `implements AngularItemRenderContext<T>` is the recommended contract for signal-based renderers: TypeScript enforces the full set of inputs and their signal types, so a missing or mistyped field is a compile error.
+
+    :::note[Backwards compatibility with `@Input()`]
+    Renderers written with the classic `@Input()` decorator stay supported — `AngularItemRenderer<T>` accepts both styles. For those, keep using `implements ItemRenderContext<T>` from `@golemui/core`:
+
+    ```ts
+    import { Component, Input } from '@angular/core';
+    import { type ItemRenderContext } from '@golemui/core';
+
+    @Component({ /* ... */ })
+    export class CountryItemRenderer implements ItemRenderContext<Country> {
+      @Input({ required: true }) template!: Country;
+      @Input({ required: true }) value!: string | number;
+      @Input({ required: true }) index!: number;
+      @Input() selected?: boolean;
+      @Input() disabled?: boolean;
+      @Input() focused?: boolean;
+    }
+    ```
+
+    Reach for `AngularItemRenderContext<T>` only when you opt in to signal inputs — the field types are different (`InputSignal<T>` vs. plain `T`), so the two interfaces are not interchangeable on the same class.
+    :::
 
   </Fragment>
   <Fragment slot="lit">

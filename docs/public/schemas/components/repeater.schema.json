@@ -17,7 +17,16 @@
       "type": "number"
     },
     "templateProp": {
-      "$ref": "./flex.schema.json"
+      "$ref": "../layout-widget.schema.json"
+    },
+    "titleProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "addButtonIconProp": {
+      "type": "string"
+    },
+    "removeButtonIconProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -58,9 +67,20 @@
         },
         "template": {
           "$ref": "#/$defs/templateProp"
+        },
+        "title": {
+          "$ref": "#/$defs/titleProp"
+        },
+        "addButtonIcon": {
+          "$ref": "#/$defs/addButtonIconProp"
+        },
+        "removeButtonIcon": {
+          "$ref": "#/$defs/removeButtonIconProp"
         }
       },
-      "required": ["template"],
+      "required": [
+        "template"
+      ],
       "patternProperties": {
         "^addLabel\\.[^.]+$": {
           "$ref": "#/$defs/addLabelProp"
@@ -73,6 +93,15 @@
         },
         "^template\\.[^.]+$": {
           "$ref": "#/$defs/templateProp"
+        },
+        "^title\\.[^.]+$": {
+          "$ref": "#/$defs/titleProp"
+        },
+        "^addButtonIcon\\.[^.]+$": {
+          "$ref": "#/$defs/addButtonIconProp"
+        },
+        "^removeButtonIcon\\.[^.]+$": {
+          "$ref": "#/$defs/removeButtonIconProp"
         }
       },
       "additionalProperties": false
@@ -81,8 +110,16 @@
   "patternProperties": {
     "^label\\.[^.]+$": {
       "$ref": "#/$defs/labelDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path", "props"],
+  "required": [
+    "kind",
+    "type",
+    "path",
+    "props"
+  ],
   "unevaluatedProperties": false
 }

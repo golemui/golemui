@@ -29,13 +29,26 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
-      "enum": ["numeric", "2-digit"]
+      "enum": [
+        "numeric",
+        "2-digit"
+      ]
     },
     "weekdayFormatProp": {
-      "enum": ["short", "long", "narrow"]
+      "enum": [
+        "short",
+        "long",
+        "narrow"
+      ]
     },
     "monthFormatProp": {
-      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+      "enum": [
+        "numeric",
+        "2-digit",
+        "long",
+        "short",
+        "narrow"
+      ]
     },
     "minDateProp": {
       "type": "string"
@@ -45,6 +58,12 @@
     },
     "numberOfMonthsProp": {
       "type": "number"
+    },
+    "disabledRangesProp": {
+      "type": "array",
+      "items": {
+        "$ref": "../common.schema.json#/$defs/dateRange"
+      }
     }
   },
   "allOf": [
@@ -112,6 +131,9 @@
         },
         "numberOfMonths": {
           "$ref": "#/$defs/numberOfMonthsProp"
+        },
+        "disabledRanges": {
+          "$ref": "#/$defs/disabledRangesProp"
         }
       },
       "patternProperties": {
@@ -147,6 +169,9 @@
         },
         "^numberOfMonths\\.[^.]+$": {
           "$ref": "#/$defs/numberOfMonthsProp"
+        },
+        "^disabledRanges\\.[^.]+$": {
+          "$ref": "#/$defs/disabledRangesProp"
         }
       },
       "additionalProperties": false
@@ -161,8 +186,15 @@
     },
     "^readonly\\.[^.]+$": {
       "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

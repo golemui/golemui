@@ -70,6 +70,9 @@
           "$ref": "./components/markdown.schema.json"
         },
         {
+          "$ref": "./components/markdowntext.schema.json"
+        },
+        {
           "$ref": "./components/number.schema.json"
         },
         {
@@ -101,6 +104,9 @@
         },
         {
           "$ref": "./components/tabs.schema.json"
+        },
+        {
+          "$ref": "./components/tags.schema.json"
         },
         {
           "$ref": "./components/textarea.schema.json"
