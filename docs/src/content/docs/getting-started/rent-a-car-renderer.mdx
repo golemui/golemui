@@ -53,8 +53,8 @@ Item renderers are framework-specific components.
   <Fragment slot="angular">
     ```ts
     // car-item-renderer.component.ts
-    import { Component } from '@angular/core';
-    import type { AngularItemRenderer } from '@golemui/angular';
+    import { Component, input } from '@angular/core';
+    import { type AngularItemRenderContext } from '@golemui/angular';
 
     type Car = { id: string; label: string; img: string; price: number };
 
@@ -63,16 +63,23 @@ Item renderers are framework-specific components.
       selector: 'car-item-renderer',
       template: `
         <div class="car-item">
-          <span class="car-item__img">{{ item.img }}</span>
-          <span class="car-item__label">{{ item.label }}</span>
-          <span class="car-item__price">\${{ item.price }}/day</span>
+          <span class="car-item__img">{{ template().img }}</span>
+          <span class="car-item__label">{{ template().label }}</span>
+          <span class="car-item__price">\${{ template().price }}/day</span>
         </div>
       `,
     })
-    export class CarItemRenderer implements AngularItemRenderer<Car> {
-      item!: Car;
+    export class CarItemRenderer implements AngularItemRenderContext<Car> {
+      template = input.required<Car>();
+      value = input.required<string | number>();
+      index = input.required<number>();
+      selected = input<boolean | undefined>(undefined);
+      disabled = input<boolean | undefined>(undefined);
+      focused = input<boolean | undefined>(undefined);
     }
     ```
+
+    `implements AngularItemRenderContext<Car>` is the contract for signal-based renderers — TypeScript enforces every input. If you prefer the classic `@Input()` decorator style, `implements ItemRenderContext<Car>` from `@golemui/core` works instead; see [Extending / Item Renderers](/extending/item-renderers/) for both forms.
 
   </Fragment>
   <Fragment slot="lit">

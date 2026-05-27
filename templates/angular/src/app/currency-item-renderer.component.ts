@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { type AngularItemRenderContext } from '@golemui/angular';
 
 export type CurrencyItem = { code: string; symbol: string; name: string };
 
@@ -51,7 +52,7 @@ export type CurrencyItem = { code: string; symbol: string; name: string };
     </div>
   `,
 })
-export class CurrencyItemRenderer {
+export class CurrencyItemRenderer implements AngularItemRenderContext<CurrencyItem> {
   template = input.required<CurrencyItem>();
   value = input.required<string | number>();
   index = input.required<number>();
