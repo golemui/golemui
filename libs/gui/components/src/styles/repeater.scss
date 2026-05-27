@@ -68,13 +68,13 @@
         }
 
         &:hover {
-          color: var(--gui-color-white);
+          color: var(--gui-intent-error-text);
           background: var(--gui-intent-error-bg);
           border-color: var(--gui-intent-error);
           opacity: 1;
 
           .gui-button-icon {
-            color: var(--gui-color-white);
+            color: var(--gui-intent-error-text);
           }
         }
       }

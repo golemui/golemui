@@ -69,6 +69,7 @@
 
       &.selected {
         background-color: var(--gui-intent-primary);
+        color: var(--gui-color-white);
       }
 
       &[disabled] {
