@@ -99,10 +99,7 @@ export class GuiList extends LitElement {
   }
 
   public scrollToSelectedIndex() {
-    const selectedIndex = this.items.findIndex((item) => {
-      const itemValue = this.valueField ? item[this.valueField as keyof ListItem<any>] : item;
-      return itemValue === this.value;
-    });
+    const selectedIndex = this._items.findIndex((item) => item.value === this.value);
     this.scrollToIndex(selectedIndex);
   }
 
@@ -141,10 +138,9 @@ export class GuiList extends LitElement {
         break;
       case 'Enter':
       case ' ': {
-        const value = this.items[this._focusedIndex];
-        const hasValue = value !== undefined && value !== null;
-        if (this._focusedIndex >= 0 && hasValue) {
-          this.selectItem(this.items[this._focusedIndex]);
+        const item = this._items[this._focusedIndex];
+        if (this._focusedIndex >= 0 && item != null) {
+          this.selectItem(item);
         }
         handled = true;
         break;
@@ -159,10 +155,7 @@ export class GuiList extends LitElement {
   private onFocus() {
     if (!this.value || !this.items.length) return;
 
-    const selectedIndex = this.items.findIndex((item) => {
-      const itemValue = this.valueField ? item[this.valueField as keyof ListItem<any>] : item;
-      return itemValue === this.value;
-    });
+    const selectedIndex = this._items.findIndex((item) => item.value === this.value);
 
     this._focusedIndex = selectedIndex;
     this.scrollToIndex(selectedIndex);
@@ -214,7 +207,7 @@ export class GuiList extends LitElement {
   private selectItem(item: ListItem<any>) {
     this.dispatchEvent(
       new CustomEvent('change', {
-        detail: { value: this.valueField ? item[this.valueField as keyof ListItem<any>] : item },
+        detail: { value: item.value },
         bubbles: true,
         composed: true,
       }),
