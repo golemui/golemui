@@ -4,7 +4,7 @@ gui-textarea {
   .gui-widget {
     justify-content: flex-start;
 
-    textarea {
+    .gui-widget-input {
       padding: var(--gui-space-2) var(--gui-space-3);
       resize: vertical;
     }

@@ -73,7 +73,7 @@
   /* Semantic Tokens - Backgrounds */
   --gui-bg-default: var(--gui-color-white);
   --gui-bg-surface: var(--gui-color-white);
-  --gui-bg-surface-hover: var(--gui-color-neutral-50);
+  --gui-bg-surface-hover: var(--gui-color-neutral-200);
   --gui-bg-surface-active: var(--gui-color-neutral-100);
   --gui-bg-disabled: var(--gui-color-neutral-300);
   --gui-bg-inverse: var(--gui-color-neutral-900);
@@ -212,7 +212,7 @@
   --gui-md-blockquote-bg: var(--gui-bg-surface-hover);
   --gui-md-blockquote-border-color: var(--gui-border-strong);
   --gui-md-blockquote-color: var(--gui-text-secondary);
-  --gui-md-code-bg: var(--gui-bg-surface-active);
+  --gui-md-code-bg: var(--gui-color-neutral-300);
   --gui-md-code-color: var(--gui-text-default);
   --gui-md-code-radius: var(--gui-radius-sm);
   --gui-md-hr-color: var(--gui-border-default);
@@ -261,8 +261,12 @@
   --gui-intent-warning-bg: color-mix(in srgb, var(--gui-color-warning-500) 20%, transparent);
   --gui-intent-warning-text: var(--gui-color-warning-400);
 
-  --gui-intent-error-bg: color-mix(in srgb, var(--gui-color-error-500) 20%, transparent);
-  --gui-intent-error-text: var(--gui-color-error-400);
+  --gui-intent-error: var(--gui-color-error-400);
+  --gui-intent-error-hover: var(--gui-color-error-300);
+  --gui-intent-error-bg: var(--gui-color-error-900);
+  --gui-intent-error-text: var(--gui-color-error-100);
+
+  --gui-md-code-bg: var(--gui-color-neutral-700);
 }
 
 [data-theme='dark'] {

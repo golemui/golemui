@@ -15,13 +15,12 @@ gui-select {
       transform-origin: 50% 40%;
       pointer-events: none;
     }
-  }
+    select {
+      appearance: none;
 
-  select {
-    appearance: none;
-
-    &.gui-select--icon {
-      padding-inline-start: 2.5rem;
+      &.gui-select--icon {
+        padding-inline-start: 2.5rem;
+      }
     }
   }
 }

@@ -45,15 +45,18 @@ gui-list {
 
     &-selected {
       background-color: var(--gui-intent-primary);
+      color: var(--gui-intent-primary-text);
     }
 
     &-focused {
       box-shadow: var(--gui-shadow-focus);
       background-color: var(--gui-intent-primary-hover);
+      color: var(--gui-intent-primary-text);
     }
 
     &:hover {
       background-color: var(--gui-intent-primary-hover);
+      color: var(--gui-intent-primary-text);
     }
   }
 }
