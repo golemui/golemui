@@ -7,6 +7,7 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import searchJson from '../../../../public/template/getting-started/rent-a-car/05-search.json?raw';
 import searchDx from '../../../../public/template/getting-started-dx/rent-a-car/05-search.ts?raw';
 export const configJson = '05-search.json';
@@ -21,9 +22,10 @@ Wire both to event names, and handle them in your application's `formEvent` call
 
 ## Step 1 — A simple service stub
 
-Pretend you have a service that returns cars matching a query string. We'll fake it with a `setTimeout` to emulate network latency:
+Create a new file alongside your page component — `car.service.ts` is a common convention (Angular users may prefer wrapping this in an `@Injectable()` class; the rest of the chapter uses the plain exported function for brevity). It returns cars matching a query string, faking network latency with `setTimeout`:
 
 ```ts
+// car.service.ts
 type Car = { id: string; label: string; img: string; price: number };
 
 const ALL_CARS: Car[] = [
@@ -35,7 +37,7 @@ const ALL_CARS: Car[] = [
   { id: 'pickup', label: 'Pickup', img: '🛻', price: 85 },
 ];
 
-function searchCars(query: string): Promise<Car[]> {
+export function searchCars(query: string): Promise<Car[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
       const q = query.toLowerCase();
@@ -47,36 +49,185 @@ function searchCars(query: string): Promise<Car[]> {
 
 ## Step 2 — Wire `onLoad` and `onFilter`
 
-In the form definition, attach event handlers:
+In the form definition, attach the event names to the dropdown's `onLoad` and `onFilter` props:
 
 ```ts
 import { gui } from '@golemui/gui-shared';
 
 gui.inputs.dropdown('car', {
-  label: 'Select car',
   labelField: 'label',
   valueField: 'id',
   itemRenderer: 'carItemRenderer',
   inputDebounce: 300,
-  on: { load: 'loadCars', filter: 'filterCars' },
-});
+  onLoad: 'loadCars',
+  onFilter: 'filterCars',
+  items: [],
+  label: 'Select car',
+  validator: {
+    type: 'string',
+    required: true,
+    messages: {
+      required: 'Please pick a car model',
+      invalid: 'Please pick a car model',
+    },
+  },
+}),
 ```
 
-The `inputDebounce: 300` prop tells the dropdown to wait 300ms after the user stops typing before firing `onFilter`.
+Starting with `items: []` makes the intent explicit — no hard-coded list; `onLoad` populates the dropdown the first time it opens and `onFilter` re-populates it as the user types. The `inputDebounce: 300` prop tells the dropdown to wait 300ms after the user stops typing before firing `onFilter`.
 
 ## Step 3 — Handle the events
 
-In your `formEvent` callback, populate the dropdown by emitting an `update` for the dropdown's `items`:
+Define a `handleFormEvent` handler that matches on the event name, calls `searchCars`, and dispatches an `OVERRIDE_WIDGET_PROP` action to update the dropdown's `items` prop. Then wire it to the form component's `formEvent` output — each framework spells that wiring differently:
 
-```ts
-async function handleFormEvent(event) {
-  if (event.name === 'loadCars' || event.name === 'filterCars') {
-    const query = event.detail ?? '';
-    const cars = await searchCars(query);
-    event.update({ path: 'car', items: cars });
-  }
-}
-```
+<IntegrationTabs>
+  <Fragment slot="react">
+    ```tsx
+    // rent-a-car.page.tsx
+    import { GuiForm } from '@golemui/gui-react';
+    import type { FormEvent } from '@golemui/core';
+    import { searchCars } from './car.service';
+    import rentACarForm from './rent-a-car.form';
+    import { CarItemRenderer } from './CarItemRenderer';
+
+    const config = {
+      formDef: rentACarForm,
+      // …formConfig.states and itemRenderers from earlier chapters…
+    };
+
+    async function handleFormEvent(event: FormEvent) {
+      if (event.name === 'loadCars' || event.name === 'filterCars') {
+        const query = event.detail ?? '';
+        const cars = await searchCars(query);
+        event.callback({
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { path: 'car', prop: 'items', value: cars },
+        });
+      }
+    }
+
+    export function RentACarPage() {
+      return <GuiForm config={config} formEvent={handleFormEvent} />;
+    }
+    ```
+  </Fragment>
+  <Fragment slot="angular">
+    ```ts
+    // rent-a-car.page.component.ts
+    import { Component } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { FormComponent } from '@golemui/gui-angular';
+    import type { FormEvent } from '@golemui/core';
+    import { searchCars } from './car.service';
+    import rentACarForm from './rent-a-car.form';
+    import { CarItemRenderer } from './car-item-renderer.component';
+
+    @Component({
+      imports: [CommonModule, FormComponent],
+      selector: 'app-rent-a-car',
+      template: `
+        <gui-form
+          [config]="config"
+          (formEvent)="handleFormEvent($event)"
+        ></gui-form>
+      `,
+    })
+    export class RentACarPage {
+      protected config = {
+        formDef: rentACarForm,
+        // …formConfig.states and itemRenderers from earlier chapters…
+      };
+
+      async handleFormEvent(event: FormEvent) {
+        if (event.name === 'loadCars' || event.name === 'filterCars') {
+          const query = event.detail ?? '';
+          const cars = await searchCars(query);
+          event.callback({
+            type: 'OVERRIDE_WIDGET_PROP',
+            payload: { path: 'car', prop: 'items', value: cars },
+          });
+        }
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="lit">
+    ```ts
+    // rent-a-car.page.element.ts
+    import { LitElement, html } from 'lit';
+    import { customElement } from 'lit/decorators.js';
+    import '@golemui/gui-lit';
+    import type { FormEvent } from '@golemui/core';
+    import { searchCars } from './car.service';
+    import { carItemRenderer } from './car-item-renderer';
+    import rentACarForm from './rent-a-car.form';
+
+    @customElement('rent-a-car-page')
+    export class RentACarPage extends LitElement {
+      config = {
+        formDef: rentACarForm,
+        // …formConfig.states and itemRenderers from earlier chapters…
+      };
+
+      async handleFormEvent(event: FormEvent) {
+        if (event.name === 'loadCars' || event.name === 'filterCars') {
+          const query = event.detail ?? '';
+          const cars = await searchCars(query);
+          event.callback({
+            type: 'OVERRIDE_WIDGET_PROP',
+            payload: { path: 'car', prop: 'items', value: cars },
+          });
+        }
+      }
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override render() {
+        return html`
+          <gui-form
+            .config=${this.config}
+            @formEvent=${(e: CustomEvent<FormEvent>) => this.handleFormEvent(e.detail)}
+          ></gui-form>
+        `;
+      }
+    }
+    ```
+  </Fragment>
+  <Fragment slot="vue">
+    ```vue
+    <!-- RentACarPage.vue -->
+    <script setup lang="ts">
+    import { GuiForm } from '@golemui/gui-vue';
+    import type { FormEvent } from '@golemui/core';
+    import { searchCars } from './car.service';
+    import rentACarForm from './rent-a-car.form';
+    import CarItemRenderer from './CarItemRenderer.vue';
+
+    const config = {
+      formDef: rentACarForm,
+      // …formConfig.states and itemRenderers from earlier chapters…
+    };
+
+    async function handleFormEvent(event: FormEvent) {
+      if (event.name === 'loadCars' || event.name === 'filterCars') {
+        const query = event.detail ?? '';
+        const cars = await searchCars(query);
+        event.callback({
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { path: 'car', prop: 'items', value: cars },
+        });
+      }
+    }
+    </script>
+
+    <template>
+      <GuiForm :config="config" @form-event="handleFormEvent" />
+    </template>
+    ```
+  </Fragment>
+</IntegrationTabs>
 
 Pass `handleFormEvent` to `<gui-form>` via the `formEvent` callback.
 

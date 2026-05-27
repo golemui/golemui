@@ -94,9 +94,17 @@ Try clicking **Reserve** without filling anything in: each field shows its custo
 
 ## Disabling submit until valid
 
-GolemUI emits a `formHealth` callback whenever the form's validation status changes. You can wire it to a piece of UI state and conditionally disable your submit handler — or use the `disabled` prop on the button with a `when` expression that references `$form.<paths>`.
+GolemUI exposes a built-in `$formIsInvalid` form property — `true` whenever any validator is failing. Bind it to the button's `disabled.when` to keep the button greyed out until everything passes:
 
-The example above uses `actionType: 'submit'` on the Reserve button. This renders the button as `<button type="submit">` and triggers form-level validation on click — an invalid form won't fire `formSubmit` at all. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
+```ts
+gui.actions.button({
+  label: 'Reserve',
+  actionType: 'submit',
+  disabled: { when: '$formIsInvalid' },
+}),
+```
+
+That's the visual lock-out. The behavioural one comes from `actionType: 'submit'`: it renders the button as `<button type="submit">` and triggers form-level validation on click, so an invalid form never fires `formSubmit` even if the disabled binding is removed. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
 
 ## Localizing messages
 
