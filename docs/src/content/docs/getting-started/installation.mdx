@@ -90,35 +90,32 @@ This guide walks you from an empty directory to a rendered form in five steps.
 
 2.  ##### Install GolemUI and the Golem Widgets
 
-    Pick the adapter package for the framework you're using.
+    Install the framework adapter together with `@golemui/core`, `@golemui/gui-shared`, and the framework-specific <FrameworkContent inline><Fragment slot="react">`@golemui/react`</Fragment><Fragment slot="angular">`@golemui/angular`</Fragment><Fragment slot="lit">`@golemui/lit`</Fragment><Fragment slot="vue">`@golemui/vue`</Fragment></FrameworkContent>.
 
     <IntegrationTabs>
       <Fragment slot="react">
         ```bash
-        npm i @golemui/gui-react --save
+        npm i @golemui/core @golemui/gui-shared @golemui/react @golemui/gui-react --save
         ```
       </Fragment>
       <Fragment slot="angular">
         ```bash
-        npm i @golemui/gui-angular --save
+        npm i @golemui/core @golemui/gui-shared @golemui/angular @golemui/gui-angular --save
         ```
       </Fragment>
       <Fragment slot="lit">
         ```bash
-        npm i @golemui/gui-lit --save
+        npm i @golemui/core @golemui/gui-shared @golemui/lit @golemui/gui-lit --save
         ```
       </Fragment>
       <Fragment slot="vue">
         ```bash
-        npm i @golemui/gui-vue --save
+        npm i @golemui/core @golemui/gui-shared @golemui/vue @golemui/gui-vue --save
         ```
       </Fragment>
     </IntegrationTabs>
 
-    This installs the adapter along with all its peer dependencies.
-    - **GolemUI packages** (shared across all adapters): `@golemui/core`, `@golemui/gui-shared`, `@golemui/gui-components`, `@golemui/gui-validators`.
-
-    - **GolemUI Framework adapter**: <FrameworkContent inline><Fragment slot="react">`@golemui/react`</Fragment><Fragment slot="angular">`@golemui/angular`</Fragment><Fragment slot="lit">`@golemui/lit`</Fragment><Fragment slot="vue">`@golemui/vue`</Fragment></FrameworkContent>
+    The adapter still pulls in `@golemui/gui-components` and `@golemui/gui-validators` as peer dependencies — you won't import from those directly.
 
 3.  ##### Import the Golem Widgets styles
 

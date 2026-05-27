@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@golemui/core": "0.15.1",
+    "@golemui/lit": "0.15.1",
     "@golemui/gui-lit": "0.15.1",
+    "@golemui/gui-shared": "0.15.1",
     "lit": "^3.3.1"
   },
   "devDependencies": {

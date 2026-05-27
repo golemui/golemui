@@ -1,18 +1,106 @@
 ---
-title: 'Rent a car: Custom error messages'
-description: Replace the default Zod validation messages with friendlier copy for every rule in the form.
+title: 'Rent a car: Validation errors'
+description: Wire validators to every required field, then replace the default Zod messages with friendlier copy.
 sidebar:
   order: 5
 ---
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import messagesJson from '../../../../public/template/getting-started/rent-a-car/03-messages.json?raw';
 import messagesDx from '../../../../public/template/getting-started-dx/rent-a-car/03-messages.ts?raw';
 export const configJson = '03-messages.json';
 export const configDx = '03-messages.ts';
 
-By default, GolemUI's validators show concise, generic messages from Zod. They're fine, but for a real product you'll usually want copy that matches your tone and explains _what_ the user needs to do.
+Every required field in the Rent a Car form needs a `validator`. The form's health stays `errored` until every validator passes; once it goes `ok`, the **Reserve** button can fire its `formSubmit` event.
+
+## Adding validators
+
+A validator is a per-widget object listing rules — `required`, `minLength`, `maxLength`, `minItems`, `maxItems`, `const`, `pattern`, `type`, etc. Each rule that fails produces an error on that field.
+
+Here's what each field in the form needs:
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    gui.inputs.dropdown('car', {
+      validator: { type: 'string', required: true },
+      // …items…
+    });
+
+    gui.inputs.dropdown('collectOffice', {
+      validator: { type: 'string', required: true },
+      // …items…
+    });
+
+    gui.inputs.dropdown('returnOffice', {
+      validator: { type: 'string', required: true },
+      include: { in: ['differentReturn'] },
+      // …items…
+    });
+
+    gui.inputs.rangeCalendar('rentalDates', {
+      numberOfMonths: 2,
+      validator: { required: true, minItems: 1, maxItems: 1 },
+    });
+
+    gui.inputs.radiogroup('rentalType', {
+      validator: { type: 'string', required: true },
+      // …options…
+    });
+
+    gui.inputs.booleanInput('driverOver25', {
+      validator: { const: true, required: true },
+    });
+
+    gui.inputs.textInput('discountCode', {
+      validator: { required: true, minLength: 4 },
+      include: { in: ['hasDiscount'] },
+    });
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    { "kind": "input", "type": "dropdown", "path": "car",
+      "validator": { "type": "string", "required": true }
+    }
+
+    { "kind": "input", "type": "dropdown", "path": "collectOffice",
+      "validator": { "type": "string", "required": true }
+    }
+
+    { "kind": "input", "type": "dropdown", "path": "returnOffice",
+      "include": { "in": ["differentReturn"] },
+      "validator": { "type": "string", "required": true }
+    }
+
+    { "kind": "input", "type": "rangeCalendar", "path": "rentalDates",
+      "props": { "numberOfMonths": 2 },
+      "validator": { "required": true, "minItems": 1, "maxItems": 1 }
+    }
+
+    { "kind": "input", "type": "radiogroup", "path": "rentalType",
+      "validator": { "type": "string", "required": true }
+    }
+
+    { "kind": "input", "type": "toggle", "path": "driverOver25",
+      "validator": { "type": "boolean", "const": true, "required": true }
+    }
+
+    { "kind": "input", "type": "textinput", "path": "discountCode",
+      "include": { "in": ["hasDiscount"] },
+      "validator": { "required": true, "minLength": 4 }
+    }
+    ```
+  </Fragment>
+</DslTabs>
+
+The two driver-of-the-states toggles (`differentReturn` and `hasDiscountCode`) carry no validator — they're optional controls.
+
+## Default messages
+
+By default, GolemUI's validators show concise, generic messages from [Zod](https://zod.dev/). They're fine, but for a real product you'll usually want copy that matches your tone and explains _what_ the user needs to do.
 
 Every validator's `messages` property lets you override the message per rule key — `required`, `minLength`, `maxLength`, `pattern`, `minItems`, `maxItems`, `const`, `invalid`, etc.
 
@@ -20,16 +108,32 @@ Every validator's `messages` property lets you override the message per rule key
 
 Each `messages` entry maps a rule key to either a plain string or a `Localizable` (i18n) descriptor:
 
-```ts
-validator: {
-  required: true,
-  minLength: 4,
-  messages: {
-    required: 'Enter your discount code',
-    minLength: 'Discount codes are at least 4 characters',
-  },
-}
-```
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    validator: {
+      required: true,
+      minLength: 4,
+      messages: {
+        required: 'Enter your discount code',
+        minLength: 'Discount codes are at least 4 characters',
+      },
+    }
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    "validator": {
+      "required": true,
+      "minLength": 4,
+      "messages": {
+        "required": "Enter your discount code",
+        "minLength": "Discount codes are at least 4 characters"
+      }
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
 If a rule fires and there's a matching key in `messages`, the engine renders your copy instead of Zod's default. Rules without a custom message keep the default.
 
@@ -43,15 +147,55 @@ Below, every validator in the Rent a Car form gets human-friendly messages — p
 
 Try clicking **Reserve** without filling anything in: each field shows its custom message. Try selecting more than one date range in the calendar: the `maxItems` message kicks in. Toggle **Driver aged over 25** off and back on without confirming and the boolean `const` message explains what's expected.
 
+## Disabling submit until valid
+
+GolemUI exposes a built-in `$formIsInvalid` form property — `true` whenever any validator is failing. Bind it to the button's `disabled.when` to keep the button greyed out until everything passes:
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    gui.actions.button({
+      label: 'Reserve',
+      actionType: 'submit',
+      disabled: { when: '$formIsInvalid' },
+    }),
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Reserve",
+      "actionType": "submit",
+      "disabled": { "when": "$formIsInvalid" }
+    }
+    ```
+  </Fragment>
+</DslTabs>
+
+That's the visual lock-out. The behavioural one comes from `actionType: 'submit'`: it renders the button as `<button type="submit">` and triggers form-level validation on click, so an invalid form never fires `formSubmit` even if the disabled binding is removed. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
+
 ## Localizing messages
 
 For multi-language apps, swap any string for a `Localizable`:
 
-```ts
-messages: {
-  required: { key: 'rentACar.car.required', default: 'Please pick a car model' },
-}
-```
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    messages: {
+      required: { key: 'rentACar.car.required', default: 'Please pick a car model' },
+    }
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    "messages": {
+      "required": { "key": "rentACar.car.required", "default": "Please pick a car model" }
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
 The default text fires when the active translator can't resolve the key. See [Features / i18n](/features/i18n/) for how to wire a translator.
 
@@ -62,4 +206,4 @@ The default text fires when the active translator can't resolve the key. See [Fe
 ## See also
 
 - [Features / Validators](/features/validators/) — every validator type and its rule keys.
-- [Form Definition API / Reference / `gui.inputs`](/form-definition/reference/gui-inputs/) — typed `validator` props per input.
+- [Form Definition API / Reference / Inputs](/form-definition/reference/gui-inputs/) — every input's `validator` props.

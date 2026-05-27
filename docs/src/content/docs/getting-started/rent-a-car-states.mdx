@@ -7,6 +7,8 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
+import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 import statesJson from '../../../../public/template/getting-started/rent-a-car/02-states.json?raw';
 import statesDx from '../../../../public/template/getting-started-dx/rent-a-car/02-states.ts?raw';
 export const configJson = '02-states.json';
@@ -16,65 +18,180 @@ The form from the previous chapter renders every field unconditionally. We'll no
 
 1. **Declare two states** — `differentReturn` and `hasDiscount` — that mirror the matching toggles.
 2. **Gate the optional fields** with `include: { in: [...] }`.
-3. **Add validators** to every required field so the form's health goes from `errored` → `ok` only when all validators pass.
+
+Validators come next — they're covered end-to-end in the [Validation errors](/getting-started/rent-a-car-messages/) chapter.
 
 ## Declaring states
 
-States are named boolean expressions evaluated against `$form`. Pass them as the second arg of the `formConfig`:
+States are named boolean expressions evaluated against `$form`. Where they live depends on which API you picked:
 
-```ts
-const formConfig = {
-  states: {
-    differentReturn: '$form.differentReturn === true',
-    hasDiscount: '$form.hasDiscountCode === true',
-  },
-};
-```
+<DslTabs>
+  <Fragment slot="dx">
+    In the programmatic API, states live under `formConfig.states` — a top-level property of the same `config` object you wired to the form component in the [previous chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives), right next to `formDef`:
 
-JSON forms put the same map at the form root under `"states"`.
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        // rent-a-car.page.tsx
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
+          },
+        };
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // rent-a-car.page.component.ts
+        export class RentACarPage {
+          protected config = {
+            formDef: rentACarForm,
+            formConfig: {
+              states: {
+                differentReturn: '$form.differentReturn === true',
+                hasDiscount: '$form.hasDiscountCode === true',
+              },
+            },
+          };
+        }
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        // rent-a-car.page.element.ts
+        export class RentACarPage extends LitElement {
+          config = {
+            formDef: rentACarForm,
+            formConfig: {
+              states: {
+                differentReturn: '$form.differentReturn === true',
+                hasDiscount: '$form.hasDiscountCode === true',
+              },
+            },
+          };
+          // …rest of the class unchanged…
+        }
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```vue
+        <!-- RentACarPage.vue -->
+        <script setup lang="ts">
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
+          },
+        };
+        </script>
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+  <Fragment slot="json">
+    In the JSON API, states live at the form file's root, alongside `"form"`:
+
+    ```json
+    // rent-a-car.form.json
+    {
+      "states": {
+        "differentReturn": "$form.differentReturn === true",
+        "hasDiscount": "$form.hasDiscountCode === true"
+      },
+      "form": [
+        // …widgets…
+      ]
+    }
+    ```
+
+    The page component stays exactly as it was in the [intro chapter](/getting-started/rent-a-car-introduction/#where-the-form-definition-lives) — `config` just carries `formDef`:
+
+    <IntegrationTabs>
+      <Fragment slot="react">
+        ```tsx
+        // rent-a-car.page.tsx
+        const config = { formDef: rentACarForm };
+        ```
+      </Fragment>
+      <Fragment slot="angular">
+        ```ts
+        // rent-a-car.page.component.ts
+        export class RentACarPage {
+          protected config = { formDef: rentACarForm };
+        }
+        ```
+      </Fragment>
+      <Fragment slot="lit">
+        ```ts
+        // rent-a-car.page.element.ts
+        export class RentACarPage extends LitElement {
+          config = { formDef: rentACarForm };
+          // …rest of the class unchanged…
+        }
+        ```
+      </Fragment>
+      <Fragment slot="vue">
+        ```vue
+        <!-- RentACarPage.vue -->
+        <script setup lang="ts">
+        const config = { formDef: rentACarForm };
+        </script>
+        ```
+      </Fragment>
+    </IntegrationTabs>
+  </Fragment>
+</DslTabs>
 
 ## Gating fields with include
 
 Add `include: { in: ['<stateName>'] }` to each optional widget — it will only render while the named state is active. In our form, that's two widgets: the return-office dropdown (gated by `differentReturn`) and the discount-code input (gated by `hasDiscount`).
 
-```ts
-gui.inputs.dropdown('returnOffice', {
-  label: 'Return to office',
-  include: { in: ['differentReturn'] },
-  // …items, validator…
-});
+<DslTabs>
+  <Fragment slot="dx">
+    ```ts
+    gui.inputs.dropdown('returnOffice', {
+      label: 'Return to office',
+      include: { in: ['differentReturn'] },
+      // …items, validator…
+    });
 
-gui.inputs.textInput('discountCode', {
-  label: 'Discount code',
-  include: { in: ['hasDiscount'] },
-  validator: { required: true, minLength: 4 },
-});
-```
+    gui.inputs.textInput('discountCode', {
+      label: 'Discount code',
+      include: { in: ['hasDiscount'] },
+      validator: { required: true, minLength: 4 },
+    });
+    ```
+  </Fragment>
+  <Fragment slot="json">
+    ```json
+    {
+      "kind": "input",
+      "type": "dropdown",
+      "path": "returnOffice",
+      "label": "Return to office",
+      "include": { "in": ["differentReturn"] }
+    }
+
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "discountCode",
+      "label": "Discount code",
+      "include": { "in": ["hasDiscount"] },
+      "validator": { "required": true, "minLength": 4 }
+    }
+    ```
+  </Fragment>
+</DslTabs>
 
 The toggles that drive the states (`differentReturn` and `hasDiscountCode`) stay in the form unconditionally — they're what the user interacts with to flip the state on or off.
-
-## Adding validators
-
-Every required field gets a `validator`. The form's health stays `errored` until every validator passes; once it goes `ok`, the submit button can fire its event.
-
-```ts
-gui.inputs.dropdown('car', {
-  label: 'Select car',
-  validator: { type: 'string', required: true },
-  // …items…
-});
-
-gui.inputs.rangeCalendar('rentalDates', {
-  label: 'Rental dates',
-  numberOfMonths: 2,
-  validator: { required: true, minItems: 1, maxItems: 1 },
-});
-
-gui.inputs.booleanInput('driverOver25', {
-  label: 'Driver aged over 25',
-  validator: { const: true, required: true },
-});
-```
 
 ## Result
 
@@ -85,15 +202,11 @@ gui.inputs.booleanInput('driverOver25', {
 - The **Return to office** dropdown only appears when **Choose a different return location** is on.
 - The **Discount code** input only appears when **I have a discount code** is on.
 
-## Disabling submit until valid
-
-GolemUI emits a `formHealth` callback whenever the form's validation status changes. You can wire it to a piece of UI state and conditionally disable your submit handler — or use the `disabled` prop on the button with a `when` expression that references `$form.<paths>`.
-
-The example above uses `actionType: 'submit'` on the Reserve button. This renders the button as `<button type="submit">` and triggers form-level validation on click — an invalid form won't fire `formSubmit` at all. See [Submitting the form](/getting-started/rent-a-car-submitting/) for the full submit wiring.
+The embedded snippet already includes the validator on every required field — those are introduced in the next chapter.
 
 ## Next
 
-[Custom error messages →](/getting-started/rent-a-car-messages/)
+[Validation errors →](/getting-started/rent-a-car-messages/)
 
 ## See also
 

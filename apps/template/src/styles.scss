@@ -196,6 +196,41 @@ lit-root {
   }
 }
 
+.car-renderer {
+  display: flex;
+  align-items: center;
+  padding: var(--gui-space-2);
+  gap: var(--gui-space-3);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--gui-intent-primary-hover);
+    color: var(--gui-text-inverse);
+
+    .car-renderer__price {
+      color: var(--gui-text-inverse);
+    }
+  }
+
+  &.selected {
+    background-color: var(--gui-intent-primary-active);
+    color: var(--gui-text-inverse);
+
+    .car-renderer__price {
+      color: var(--gui-text-inverse);
+    }
+  }
+}
+.car-renderer__img {
+  font-size: var(--gui-font-xl);
+}
+.car-renderer__label {
+  flex: 1;
+}
+.car-renderer__price {
+  color: var(--gui-text-secondary);
+}
+
 .country-renderer {
   display: flex;
   flex-direction: row;
