@@ -75,7 +75,7 @@ export class DropdownElement extends LitElement implements WithWidget {
     this.subscriptions.push(
       this.adapter.templateDataChanged$.subscribe(() => {
         const data = this.adapter.templateData;
-        if (data.items && this._listItems.length === 0 && this._filteredItems.length === 0) {
+        if (data.items && this._listItems?.length === 0 && this._filteredItems?.length === 0) {
           this._filteredItems = data.items;
           this._listItems = data.items;
         }
@@ -287,7 +287,7 @@ export class DropdownElement extends LitElement implements WithWidget {
           ?disabled=${templateData.disabled}
           ?readonly=${templateData.readonly}
           placeholder=${templateData.placeholder ?? ''}
-          autocomplete=${templateData.autocomplete || nothing}
+          autocomplete=${(templateData.autocomplete as any) || nothing}
           @keydown=${this._onKeyDown}
           @input=${this._onInput}
           @focusout=${this._onFocusOutInput}

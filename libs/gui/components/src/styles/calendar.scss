@@ -114,6 +114,7 @@ gui-calendar {
       &:hover {
         border: 1px solid var(--gui-border-default);
         background-color: var(--gui-text-secondary);
+        color: var(--gui-color-white);
       }
 
       &.today {
@@ -231,6 +232,7 @@ gui-calendar {
         &:hover {
           border: 1px solid var(--gui-border-default);
           background-color: var(--gui-text-secondary);
+          color: var(--gui-color-white);
         }
 
         &.current {

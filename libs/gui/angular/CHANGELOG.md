@@ -1,3 +1,13 @@
+## 0.15.1 (2026-05-27)
+
+### 🩹 Fixes
+
+- **angular:** add signals interface for angular item renderers ([#135](https://github.com/golemui/golemui/pull/135))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.15.0 (2026-05-26)
 
 ### 🚀 Features

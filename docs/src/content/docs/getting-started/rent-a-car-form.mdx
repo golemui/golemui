@@ -7,6 +7,7 @@ sidebar:
 
 import Demo from '../../../components/landing/Demo.astro';
 import DslCode from '../../../components/DslCode.astro';
+import DslTabs from '../../../components/DslTabs.astro';
 import formJson from '../../../../public/template/getting-started/rent-a-car/01-form.json?raw';
 import formDx from '../../../../public/template/getting-started-dx/rent-a-car/01-form.ts?raw';
 export const configJson = '01-form.json';
@@ -18,8 +19,16 @@ In this chapter you'll declare every input the form needs, in a sensible order, 
 
 GolemUI ships two layouts that cover most needs:
 
-- **`gui.layouts.grid`** for **rows**. Subgrid alignment keeps labels, inputs, and validation messages aligned across all children in a row.
-- **`gui.layouts.flex`** for **columns**. Lighter, more flexible for vertical stacks.
+<DslTabs>
+  <Fragment slot="dx">
+    - **`gui.layouts.grid`** for **rows**. Subgrid alignment keeps labels, inputs, and validation messages aligned across all children in a row.
+    - **`gui.layouts.flex`** for **columns**. Lighter, more flexible for vertical stacks.
+  </Fragment>
+  <Fragment slot="json">
+    - **`{ "kind": "layout", "type": "grid" }`** for **rows**. Subgrid alignment keeps labels, inputs, and validation messages aligned across all children in a row.
+    - **`{ "kind": "layout", "type": "flex" }`** for **columns**. Lighter, more flexible for vertical stacks.
+  </Fragment>
+</DslTabs>
 
 The top-level form definition is implicitly stacked vertically (the engine adds an auto-stack — see [Sensible defaults](/form-definition/selectors/sensible-defaults/)), so we only need a `grid` when we want fields side-by-side.
 

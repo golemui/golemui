@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { type AngularItemRenderContext } from '@golemui/angular';
 
 @Component({
   selector: 'gui-default-list-item-renderer',
@@ -15,7 +16,7 @@ import { Component, input } from '@angular/core';
     class: 'gui-default-list-item-renderer',
   },
 })
-export class DefaultListItemRenderer {
+export class DefaultListItemRenderer implements AngularItemRenderContext<string> {
   template = input.required<string>();
   value = input.required<string | number>();
   index = input.required<number>();

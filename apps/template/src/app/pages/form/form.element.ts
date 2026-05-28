@@ -8,7 +8,7 @@ import {
   template,
 } from '@golemui/apps-shared';
 import { iframeResizer } from '@golemui/apps-shared';
-import type { FormEvent, FormHealth, ValidateOn } from '@golemui/core';
+import type { FormEvent, FormHealth, FormSubmitEvent, ValidateOn } from '@golemui/core';
 import '@golemui/gui-lit';
 import { type Dependencies, type GuiFormInitConfig } from '@golemui/gui-shared';
 import type { CustomValidatorSchemas } from '@golemui/gui-validators';
@@ -209,6 +209,10 @@ export class FormElement extends LitElement {
     Promise.resolve().then(() => this.requestUpdate());
   }
 
+  protected async onFormSubmit(event: CustomEvent<FormSubmitEvent>) {
+    console.log(event.detail.data);
+  }
+
   render() {
     const themes = this.formThemes.length > 0 ? this.formThemes : [''];
 
@@ -225,6 +229,7 @@ export class FormElement extends LitElement {
                 .config=${this.config}
                 @formHealth=${this.onFormHealth}
                 @formEvent=${this.onFormEvent}
+                @formSubmit=${this.onFormSubmit}
               ></gui-form>
             </div>
           `,

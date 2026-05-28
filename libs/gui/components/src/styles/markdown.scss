@@ -30,6 +30,10 @@ gui-markdown {
       border-color 0.2s,
       box-shadow 0.2s;
 
+    .gui-widget-input {
+      border: 0;
+    }
+
     &:has(textarea[aria-invalid='true']) {
       border-color: var(--gui-intent-error);
     }
@@ -113,11 +117,17 @@ gui-markdown {
 
       &:hover {
         background: var(--gui-bg-surface-hover);
+        fill: var(--gui-intent-primary);
       }
 
       &--active {
         background: var(--gui-intent-primary);
         fill: var(--gui-intent-primary-text);
+
+        &:hover {
+          background: var(--gui-intent-primary-hover);
+          fill: var(--gui-intent-primary-text);
+        }
       }
     }
 
