@@ -164,6 +164,32 @@ The application-side handler receives a `FormEvent` object with the event `name`
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    const SHARE_URLS = {
+      twitter: (url) => `https://x.com/intent/tweet?text=${encodeURIComponent('Check out this product!')}&url=${encodeURIComponent(url)}`,
+      facebook: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      reddit: (url) => `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Check out this product!')}`,
+    };
+
+    function handleFormEvent(event) {
+      if (event.name === 'shareEvent') {
+        const buildUrl = SHARE_URLS[event.detail];
+        if (buildUrl) {
+          window.open(buildUrl(window.location.href), '_blank', 'noopener,noreferrer');
+        }
+      }
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = config;
+    form.addEventListener('formEvent', (e) => handleFormEvent(e.detail));
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## See also

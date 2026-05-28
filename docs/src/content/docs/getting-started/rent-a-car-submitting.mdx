@@ -194,6 +194,34 @@ Add a `handleFormSubmit` handler to `<gui-form>`'s `formSubmit` output, alongsid
     </template>
     ```
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { searchCars } from './car.service';
+    import { carItemRenderer } from './car-item-renderer';
+    import rentACarForm from './rent-a-car.form.json';
+
+    const config = {
+      formDef: rentACarForm,
+      // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
+    };
+
+    async function handleFormEvent(event) {
+      // …loadCars / filterCars handling from the previous chapter…
+    }
+
+    function handleFormSubmit(event) {
+      console.log(event.data);
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = config;
+    form.addEventListener('formEvent', (e) => handleFormEvent(e.detail));
+    form.addEventListener('formSubmit', (e) => handleFormSubmit(e.detail));
+    ```
+  </Fragment>
 </IntegrationTabs>
 
 ## Result

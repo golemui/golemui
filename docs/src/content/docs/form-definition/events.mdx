@@ -115,6 +115,21 @@ Every demo on this page uses the same shape: a `formDef` array, a `handleFormEve
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    function handleFormEvent(event) {
+      // see each per-hook section below for the case body.
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
+    form.addEventListener('formEvent', (e) => handleFormEvent(e.detail));
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 The per-hook sections below show only the `formDef` and the relevant `if (event.name === '…')` branch — drop them into your framework's wiring above.
@@ -330,6 +345,11 @@ Wire `formSubmit` on the form component:
   <Fragment slot="vue">
     ```vue
     <GuiForm :config="config" @form-submit="onFormSubmit" />
+    ```
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    form.addEventListener('formSubmit', (e) => onFormSubmit(e.detail));
     ```
   </Fragment>
 </IntegrationTabs>

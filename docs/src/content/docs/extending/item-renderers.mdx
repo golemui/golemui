@@ -14,12 +14,13 @@ Item renderers are framework-specific functions or components that the form engi
 
 Each framework adapts the same `ItemRenderContext<T>` to its idiomatic shape:
 
-| Framework | Type                     | What the engine passes                                                                                                    |
-| --------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| React     | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                                       |
-| Angular   | `AngularItemRenderer<T>` | A component class structurally matching `AngularItemRenderContext<T>` — one signal `input()` per context field. |
-| Lit       | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element.                       |
-| Vue       | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.                             |
+| Framework  | Type                     | What the engine passes                                                                                                    |
+| ---------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| React      | `ReactItemRenderer<T>`   | A `React.ComponentType<ItemRenderContext<T>>` — the context fields arrive as props.                                       |
+| Angular    | `AngularItemRenderer<T>` | A component class structurally matching `AngularItemRenderContext<T>` — one signal `input()` per context field.           |
+| Lit        | `LitItemRenderer<T>`     | A `(ctx: ItemRenderContext<T>) => TemplateResult` — called as a function, **not** a custom element.                       |
+| Vue        | `VueItemRenderer<T>`     | A `Component<Partial<ItemRenderContext<T>>>` — the context fields arrive as props on the SFC.                             |
+| Vanilla JS | `(ctx) => HTMLElement`   | A plain function called with `ItemRenderContext<T>` that returns a DOM node — like Lit's, but returning real DOM instead of a `TemplateResult`. |
 
 The shared context shape comes from `@golemui/core`:
 
@@ -186,6 +187,34 @@ export interface ItemRenderContext<T extends ItemRenderItemData> {
     Vue renderers are **SFCs**. Use optional chaining on `template?.flag` because the props can be undefined while items are loading (`ListItemRendererProps<T>` marks `template` and `value` optional for that reason).
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    // country-item-renderer.js
+
+    export const countryItemRenderer = (ctx) => {
+      const root = document.createElement('div');
+      root.className = 'country-item';
+      if (ctx.selected) root.classList.add('country-item--selected');
+      if (ctx.disabled) root.classList.add('country-item--disabled');
+      if (ctx.focused) root.classList.add('country-item--focused');
+      if (ctx.index % 2 !== 0) root.classList.add('country-item--odd');
+
+      const flag = document.createElement('span');
+      flag.className = 'country-item__flag';
+      flag.textContent = ctx.template.flag;
+
+      const label = document.createElement('span');
+      label.className = 'country-item__label';
+      label.textContent = ctx.template.label;
+
+      root.append(flag, label);
+      return root;
+    };
+    ```
+
+    Vanilla renderers are plain functions called with an `ItemRenderContext<T>` — just like Lit's, but they return a real DOM node rather than a `TemplateResult`. The engine inserts the returned element directly into the dropdown / list.
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Registering the renderer
@@ -201,24 +230,23 @@ In the Programmatic API the renderer map goes inside `formConfig.itemRenderers`:
 import { gui } from '@golemui/gui-shared';
 import { CountryItemRenderer } from './country-item-renderer';
 
-const formConfig = {
-  itemRenderers: { countryItemRenderer: CountryItemRenderer },
+const config = {
+  formDef: [
+    gui.inputs.dropdown('country', {
+      items: [/* … */],
+      itemRenderer: 'countryItemRenderer',
+    }),
+  ],
+  formConfig: { itemRenderers: { countryItemRenderer: CountryItemRenderer } },
 };
 
-const formDef = [
-  gui.inputs.dropdown('country', {
-    items: [
-      /* ... */
-    ],
-    itemRenderer: 'countryItemRenderer',
-  }),
-];
+// <GuiForm config={config} />
 ```
 
   </Fragment>
   <Fragment slot="json">
 
-In the JSON path the renderer map goes in the `itemRenderers` property in the `config` object; the JSON references the renderer by name on the widget.
+In the JSON path the renderer map is a **top-level** property of the `config` object — there is no `formConfig` wrapper for JSON forms. The JSON references the renderer by name on the widget.
 
 ```json
 {
@@ -238,9 +266,12 @@ In the JSON path the renderer map goes in the `itemRenderers` property in the `c
 import { CountryItemRenderer } from './country-item-renderer';
 import formDef from './my-form.json';
 
-// On the form component:
-//   const config = { formDef, itemRenderers: { countryItemRenderer: CountryItemRenderer } };
-//   <GuiForm config={config} />
+const config = {
+  formDef,
+  itemRenderers: { countryItemRenderer: CountryItemRenderer },
+};
+
+// <GuiForm config={config} />
 ```
 
   </Fragment>

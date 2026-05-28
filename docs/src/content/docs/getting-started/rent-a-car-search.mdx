@@ -256,9 +256,39 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     </template>
     ```
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { searchCars } from './car.service';
+    import { carItemRenderer } from './car-item-renderer';
+    import rentACarForm from './rent-a-car.form.json';
+
+    const config = {
+      formDef: rentACarForm,
+      // …itemRenderers (and `formConfig.states` if you're on the programmatic API) from earlier chapters…
+    };
+
+    async function handleFormEvent(event) {
+      if (event.name === 'loadCars' || event.name === 'filterCars') {
+        const query = event.detail ?? '';
+        const cars = await searchCars(query);
+        event.callback({
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { path: 'car', prop: 'items', value: cars },
+        });
+      }
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = config;
+    form.addEventListener('formEvent', (e) => handleFormEvent(e.detail));
+    ```
+  </Fragment>
 </IntegrationTabs>
 
-Pass `handleFormEvent` to `<gui-form>` via the `formEvent` callback.
+Pass `handleFormEvent` to `<gui-form>` via the `formEvent` callback (or, in vanilla JS, via `addEventListener('formEvent', …)`).
 
 ## Result
 

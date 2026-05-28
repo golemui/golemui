@@ -1,22 +1,23 @@
 ---
 title: Integration Overview
-description: Install GolemUI for React, Angular, Lit, or Vue and render your first form.
+description: Install GolemUI for React, Angular, Lit, Vue, or vanilla JS and render your first form.
 sidebar:
   order: 0
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-GolemUI is **framework-agnostic** — your form definition runs unchanged in React, Angular, Lit, and Vue. Pick the adapter package for your framework; the form component, props, and behavior are identical across all four.
+GolemUI is **framework-agnostic** — your form definition runs unchanged in React, Angular, Lit, Vue, and vanilla JS. Pick the adapter package for your framework; the form component, props, and behavior are identical across all five.
 
 ## Pick your framework
 
-| Framework | Adapter package        | Component                    | Setup                              |
-| --------- | ---------------------- | ---------------------------- | ---------------------------------- |
-| React     | `@golemui/gui-react`   | `<GuiForm />`                | [React →](/integration/react/)     |
-| Angular   | `@golemui/gui-angular` | `<gui-form>`                 | [Angular →](/integration/angular/) |
-| Lit       | `@golemui/gui-lit`     | `<gui-form>` (web component) | [Lit →](/integration/lit/)         |
-| Vue       | `@golemui/gui-vue`     | `<GuiForm />`                | [Vue →](/integration/vue/)         |
+| Framework  | Adapter package        | Component     | Setup                                 |
+| ---------- | ---------------------- | ------------- | ------------------------------------- |
+| React      | `@golemui/gui-react`   | `<GuiForm />` | [React →](/integration/react/)        |
+| Angular    | `@golemui/gui-angular` | `<gui-form>`  | [Angular →](/integration/angular/)    |
+| Lit        | `@golemui/gui-lit`     | `<gui-form>`  | [Lit →](/integration/lit/)            |
+| Vue        | `@golemui/gui-vue`     | `<GuiForm />` | [Vue →](/integration/vue/)            |
+| Vanilla JS | `@golemui/gui-lit`     | `<gui-form>`  | [Vanilla JS →](/integration/vanilla/) |
 
 ## What `<gui-form>` does
 
@@ -33,6 +34,6 @@ Switching frameworks later only requires changing the adapter package and the co
 
 ## Next steps
 
-- [React Integration](/integration/react/) · [Angular Integration](/integration/angular/) · [Lit Integration](/integration/lit/) · [Vue Integration](/integration/vue/)
+- [React Integration](/integration/react/) · [Angular Integration](/integration/angular/) · [Lit Integration](/integration/lit/) · [Vue Integration](/integration/vue/) · [Vanilla JS Integration](/integration/vanilla/)
 - [Configuration](/integration/configuration/) — typed reference for every `formConfig` option.
 - [Features Overview](/features/overview/) — every `<gui-form>` input explained.

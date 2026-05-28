@@ -118,6 +118,25 @@ No `formConfig.states` entry is needed — the expression sits on the widget.
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.inputs.booleanInput('includePets', { label: 'I am traveling with pets' }),
+        gui.inputs.numberInput('pets', {
+          label: 'Number of pets',
+          include: { when: '$form.includePets === true' },
+        }),
+      ],
+    };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -209,6 +228,17 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
     ```
 
   </Fragment>

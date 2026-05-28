@@ -40,15 +40,12 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
-    const formDef = [gui.inputs.markdown('content')];
-
-    const formConfig = {
-      dependencies: {
-        markdown: { parse: (md: string) => snarkdown(md) },
+    const config = {
+      formDef: [gui.inputs.markdown('content')],
+      formConfig: {
+        dependencies: { markdown: { parse: (md: string) => snarkdown(md) } },
       },
     };
-
-    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -117,20 +114,34 @@ In the Programmatic API, dependencies go inside `formConfig.dependencies`.
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-vue';
 
-    const formDef = [gui.inputs.markdown('content')];
-
-    const formConfig = {
-      dependencies: {
-        markdown: { parse: (md: string) => snarkdown(md) },
+    const config = {
+      formDef: [gui.inputs.markdown('content')],
+      formConfig: {
+        dependencies: { markdown: { parse: (md: string) => snarkdown(md) } },
       },
     };
-
-    const config = { formDef, formConfig };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import snarkdown from 'snarkdown';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [gui.inputs.markdown('content')],
+      formConfig: {
+        dependencies: { markdown: { parse: (md) => snarkdown(md) } },
+      },
+    };
     ```
 
   </Fragment>
@@ -154,11 +165,10 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
     import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
-    const dependencies = {
-      markdown: { parse: (md: string) => snarkdown(md) },
+    const config = {
+      formDef,
+      dependencies: { markdown: { parse: (md: string) => snarkdown(md) } },
     };
-
-    const config = { formDef, dependencies };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -223,16 +233,30 @@ In the JSON path, dependencies go into the `dependencies` property in the `confi
     import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
-    const dependencies = {
-      markdown: { parse: (md: string) => snarkdown(md) },
+    const config = {
+      formDef,
+      dependencies: { markdown: { parse: (md: string) => snarkdown(md) } },
     };
-
-    const config = { formDef, dependencies };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import snarkdown from 'snarkdown';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      dependencies: { markdown: { parse: (md) => snarkdown(md) } },
+    };
     ```
 
   </Fragment>

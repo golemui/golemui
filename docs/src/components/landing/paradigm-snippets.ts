@@ -350,7 +350,7 @@ export class SignupForm extends LitElement {
 
 export const vanilla: Snippet = {
   id: 'vanilla',
-  label: 'Vanilla',
+  label: 'Vanilla JS',
   headerLabel: 'Vanilla JS',
   pillIcon: 'js',
   lang: 'html',

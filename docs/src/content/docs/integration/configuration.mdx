@@ -2,7 +2,7 @@
 title: Configuration
 description: Every input the form component accepts, what it does, and how it differs between Programmatic and JSON forms.
 sidebar:
-  order: 4
+  order: 1
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -72,6 +72,12 @@ Assemble the `config` object **once** — as a module-level constant in React/Vu
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const form = document.getElementById('app-form');
+        form.config = { formDef };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
     See [Form Definition API](/form-definition/overview/).
@@ -124,6 +130,14 @@ Assemble the `config` object **once** — as a module-level constant in React/Vu
 
         const config = { formDef };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import formDef from './my-form.json';
+
+        const form = document.getElementById('app-form');
+        form.config = { formDef };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -182,6 +196,12 @@ Wire it alongside `formDef`:
     // <GuiForm :config="config" />
     ```
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    const form = document.getElementById('app-form');
+    form.config = { formDef, formSelectors };
+    ```
+  </Fragment>
 </IntegrationTabs>
 
 #### `formConfig`
@@ -227,6 +247,12 @@ Wire it alongside `formDef`:
     ```ts
     const config = { formDef, formConfig };
     // <GuiForm :config="config" />
+    ```
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    const form = document.getElementById('app-form');
+    form.config = { formDef, formConfig };
     ```
   </Fragment>
 </IntegrationTabs>
@@ -335,6 +361,26 @@ A complete component skeleton wiring `formDef`, `formSelectors`, and `formConfig
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const formDef = [
+      gui.inputs.textInput('name', { label: 'Name' }),
+      gui.actions.button({ label: 'Submit', actionType: 'submit' }),
+    ];
+    const formSelectors = [
+      gui.selectors.inputs({ suppressAutomaticPlaceholders: true }),
+    ];
+    const formConfig = { validateOn: 'eager' };
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef, formSelectors, formConfig };
     ```
 
   </Fragment>
@@ -481,6 +527,28 @@ A complete component skeleton wiring a JSON `formDef` plus the standalone engine
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+    import { countryRenderer } from './renderers/country-renderer';
+    import { allowedNames } from './validators/allowed-names';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      customWidgetLoaders: {
+        productCard: async () =>
+          (await import('./widgets/product-card.element')).ProductCardElement,
+      },
+      itemRenderers: { countryRenderer },
+      customValidators: { allowedNames },
+      validateOn: 'eager',
+    };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -527,6 +595,14 @@ The initial form data object. Reads/writes flow through the engine's reactive st
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    const formData = { username: 'golemui', email: 'hello@example.com' };
+    const form = document.getElementById('app-form');
+    form.config = { formDef, data: formData };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 #### `meta`
@@ -565,6 +641,14 @@ Optional out-of-band metadata you want to thread through events and state. The e
     const formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
     const config = { formDef, data: formData, meta: formMeta };
     // <GuiForm :config="config" />
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    const formMeta = { tenantId: 'acme-co', sessionId: 'abc-123' };
+    const form = document.getElementById('app-form');
+    form.config = { formDef, data: formData, meta: formMeta };
     ```
 
   </Fragment>
@@ -634,6 +718,18 @@ Map of widget `type` → async loader. Merged with the framework's default widge
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const formConfig = {
+          widgetLoaders: {
+            productCard: async () =>
+              (await import('./product-card.element')).ProductCardElement,
+          },
+        };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, formConfig };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -673,6 +769,16 @@ Map of widget `type` → async loader. Merged with the framework's default widge
           productCard: async () => (await import('./ProductCard.vue')).default,
         };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const customWidgetLoaders = {
+          productCard: async () =>
+            (await import('./product-card.element')).ProductCardElement,
+        };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, customWidgetLoaders };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -731,6 +837,17 @@ Map of renderer name → framework-specific component. Referenced from a widget'
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import { countryRenderer } from './country-renderer';
+
+        const formConfig = {
+          itemRenderers: { countryRenderer },
+        };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, formConfig };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -768,6 +885,15 @@ Map of renderer name → framework-specific component. Referenced from a widget'
 
         const itemRenderers = { countryRenderer: CountryRenderer };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import { countryRenderer } from './country-renderer';
+
+        const itemRenderers = { countryRenderer };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, itemRenderers };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -844,6 +970,17 @@ export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import { allowedNames } from './validators/allowed-names';
+
+        const formConfig = {
+          customValidators: { allowedNames },
+        };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, formConfig };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -881,6 +1018,15 @@ export const allowedNames: CustomValidatorSchemaFn = (names: string[]) =>
 
         const customValidators = { allowedNames };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import { allowedNames } from './validators/allowed-names';
+
+        const customValidators = { allowedNames };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, customValidators };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -947,6 +1093,13 @@ type ValidateOn =
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const formConfig = { validateOn: 'change' };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, formConfig };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -982,6 +1135,12 @@ type ValidateOn =
         ```ts
         const config = { formDef, validateOn: 'change' as const };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const form = document.getElementById('app-form');
+        form.config = { formDef, validateOn: 'change' };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -1042,6 +1201,17 @@ You can use any markdown parser that exposes a `(markdown: string) => string` fu
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import snarkdown from 'snarkdown';
+
+        const formConfig = {
+          dependencies: { markdown: { parse: snarkdown } },
+        };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, formConfig };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -1079,6 +1249,15 @@ You can use any markdown parser that exposes a `(markdown: string) => string` fu
 
         const dependencies = { markdown: { parse: snarkdown } };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        import snarkdown from 'snarkdown';
+
+        const dependencies = { markdown: { parse: snarkdown } };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, dependencies };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -1137,6 +1316,17 @@ Named boolean expressions evaluated against `$form`.
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const formConfig = {
+          states: {
+            hasDiscount: '$form.hasDiscountCode === true',
+          },
+        };
+        // const form = document.getElementById('app-form');
+        // form.config = { formDef, formConfig };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -1192,6 +1382,12 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
         // <GuiForm :config="config" />
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const form = document.getElementById('app-form');
+        form.config = { formDef, data: formData, formConfig, localization };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
   </Fragment>
@@ -1219,6 +1415,12 @@ Translator implementing the `I18nTranslator` interface from `@golemui/core`. Res
         ```ts
         const config = { formDef, data: formData, customWidgetLoaders, localization };
         // <GuiForm :config="config" />
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        const form = document.getElementById('app-form');
+        form.config = { formDef, data: formData, customWidgetLoaders, localization };
         ```
       </Fragment>
     </IntegrationTabs>
@@ -1274,6 +1476,16 @@ Array of `Middleware` functions wrapping the form's reactive store — used for 
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import { devToolsMiddleware } from '@golemui/core';
+
+    const middlewares = [devToolsMiddleware()];
+    const form = document.getElementById('app-form');
+    form.config = { formDef, data: formData, middlewares };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 #### `autocomplete`
@@ -1300,6 +1512,13 @@ Sets the underlying `<form>` element's `autocomplete` attribute. Useful to disab
   <Fragment slot="vue">
     ```vue
     <GuiForm :config="config" autocomplete="off" />
+    ```
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
+    form.setAttribute('autocomplete', 'off');
     ```
   </Fragment>
 </IntegrationTabs>
@@ -1333,6 +1552,12 @@ Optional form identifier. Useful when you have several `<gui-form>` instances on
     ```ts
     const config = { formDef, formName: 'checkout' };
     // <GuiForm :config="config" />
+    ```
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    const form = document.getElementById('app-form');
+    form.config = { formDef, formName: 'checkout' };
     ```
   </Fragment>
 </IntegrationTabs>
@@ -1412,6 +1637,23 @@ Fired when a widget fires a wired event (`onClick`, `onChange`, `onLoad`, `onFil
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    function onFormEvent(event) {
+      if (event.name === 'submit') {
+        console.log('Submit:', event.data);
+      }
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef, data: formData };
+    form.addEventListener('formEvent', (e) => onFormEvent(e.detail));
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 #### `formHealth`
@@ -1476,6 +1718,21 @@ Fired when the form's validation status changes. Payload: `{ status: 'ok' | 'err
     <template>
       <GuiForm :config="config" @form-health="onFormHealth" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    function onFormHealth(health) {
+      console.log('Health:', health.status);
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef, data: formData };
+    form.addEventListener('formHealth', (e) => onFormHealth(e.detail));
     ```
 
   </Fragment>

@@ -35,9 +35,10 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
-    const formDef = [gui.inputs.textInput('username')];
-    const middlewares = [devToolsMiddleware()];
-    const config = { formDef, middlewares };
+    const config = {
+      formDef: [gui.inputs.textInput('username')],
+      middlewares: [devToolsMiddleware()],
+    };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -98,14 +99,30 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-vue';
 
-    const formDef = [gui.inputs.textInput('username')];
-    const middlewares = [devToolsMiddleware()];
-    const config = { formDef, middlewares };
+    const config = {
+      formDef: [gui.inputs.textInput('username')],
+      middlewares: [devToolsMiddleware()],
+    };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { devToolsMiddleware } from '@golemui/core';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [gui.inputs.textInput('username')],
+      middlewares: [devToolsMiddleware()],
+    };
     ```
 
   </Fragment>
@@ -188,6 +205,18 @@ Pass an array of middlewares inside the `config` object as the `middlewares` pro
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { devToolsMiddleware } from '@golemui/core';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef, middlewares: [devToolsMiddleware()] };
     ```
 
   </Fragment>
