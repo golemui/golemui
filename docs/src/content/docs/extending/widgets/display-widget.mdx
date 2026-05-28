@@ -285,6 +285,92 @@ GolemUI provides a set of framework-agnostic **custom elements** (Web Components
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+
+    **Key concepts (Vanilla JS)**
+
+    - Extend `LitElement` from `lit` (already a transitive dependency via `@golemui/lit`). Consume `formContext` and provide `displayWidgetContext` so the form engine can resolve your widget through the registry.
+    - Subscribe to `adapter.templateDataChanged$` to drive `requestUpdate()`; clean up in `disconnectedCallback`.
+    - Importing `@golemui/gui-components` once unlocks every GolemUI custom element (like `<gui-markdown-text>`) — no framework opt-in needed.
+    - Register the class with `customElements.define('app-product-description', ProductDescriptionElement)` at the bottom of the file.
+    - Adding `class="product-description"` and binding `flex` to `templateData.size` lets the display participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```ts
+    // product-description.element.ts
+    import { html, LitElement } from 'lit';
+    import { consume, provide } from '@lit/context';
+    import { Subscription } from 'rxjs';
+    import type { DisplayWidget, WithWidget } from '@golemui/core';
+    import {
+      DisplayWidgetAdapter,
+      displayWidgetContext,
+      formContext,
+      type LitFormContext,
+    } from '@golemui/lit';
+    import '@golemui/gui-components';
+
+    interface ProductDescriptionProps {
+      img: string;
+      description: string;
+    }
+
+    export class ProductDescriptionElement
+      extends LitElement
+      implements WithWidget
+    {
+      widget!: DisplayWidget;
+
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
+
+      @provide({ context: displayWidgetContext })
+      adapter = new DisplayWidgetAdapter<ProductDescriptionProps>();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-description');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        return html`
+          <div class="product-description__widget" id=${this.widget.uid}>
+            <img
+              class="product-description__image"
+              src=${this.adapter.templateData.img}
+              alt="Product"
+            />
+            <gui-markdown-text
+              .md=${this.adapter.templateData.description}
+            ></gui-markdown-text>
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+
+    customElements.define('app-product-description', ProductDescriptionElement);
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Result

@@ -70,6 +70,26 @@ So in every chapter you'll see one of these:
     </template>
     ```
   </Fragment>
+  <Fragment slot="vanilla">
+    ```ts
+    override connectedCallback() {
+      super.connectedCallback();
+      this.classList.add('my-widget');
+      this.style.flex = String(this.adapter.templateData.size ?? 1);
+      // Re-apply on every templateData change so size overrides stay live:
+      this.subscriptions.push(
+        this.adapter.templateDataChanged$.subscribe(() => {
+          this.style.flex = String(this.adapter.templateData.size ?? 1);
+        }),
+      );
+    }
+
+    // and in your CSS:
+    // .my-widget { /* base styles */ }
+    ```
+    Read `templateData.size` (default `1`) and assign it to `this.style.flex` on the host element. Subscribe to `templateDataChanged$` so size overrides from prop-state mappings stay applied as the form state changes.
+
+  </Fragment>
 </IntegrationTabs>
 
 That single line is what lets a consumer write:
