@@ -1,0 +1,164 @@
+---
+title: Vanilla JS
+description: Set up GolemUI with vanilla JavaScript.
+sidebar:
+  order: 5
+---
+
+import DslTabs from '../../../../src/components/DslTabs.astro';
+
+GolemUI's widgets are standards-based Web Components, so they work in any HTML page without a framework. The `@golemui/lit` package supplies the runtime adapter: import it once for its side effects (custom-element registration) and you're done.
+
+## Installation
+
+```bash
+npm i @golemui/core @golemui/gui-shared @golemui/lit @golemui/gui-lit --save
+```
+
+## Styles
+
+Import the core styles in your HTML or application entry point:
+
+```scss
+@import '@golemui/gui-components/index.css';
+```
+
+## Usage
+
+`<gui-form>` only needs a `formDef`. The framework's built-in widget set is loaded automatically, and an empty form renders fine without initial `data`.
+
+Add the element to your HTML and point it at your module entry:
+
+```html
+<!-- index.html -->
+<gui-form id="app-form"></gui-form>
+<script type="module" src="/src/main.js"></script>
+```
+
+Then wire it up:
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const formDef = [gui.inputs.textInput('username', { label: 'Username' })];
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
+    ```
+
+  </Fragment>
+  <Fragment slot="json">
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
+    ```
+
+  </Fragment>
+</DslTabs>
+
+### Adding optional config
+
+Reach for these only when you need them. `data` prefills the form; `customWidgetLoaders` is for widgets you've built yourself (the framework's built-ins are merged automatically). Every other `config` property in the [table below](#gui-form-properties) follows the same rule — opt in as the form grows.
+
+<DslTabs>
+  <Fragment slot="dx">
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+    import { myCustomWidgets } from './my-custom-widgets';
+
+    const formDef = [gui.inputs.textInput('username', { label: 'Username' })];
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      data: { username: 'octocat' }, // optional — initial form data
+      customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
+    };
+    ```
+
+  </Fragment>
+  <Fragment slot="json">
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { myCustomWidgets } from './my-custom-widgets';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      data: { username: 'octocat' }, // optional — initial form data
+      customWidgetLoaders: myCustomWidgets, // optional — only when the form references widgets you've built yourself
+    };
+    ```
+
+  </Fragment>
+</DslTabs>
+
+### Listening for events
+
+Form events surface as DOM `CustomEvent`s on the `<gui-form>` element. Subscribe with `addEventListener`:
+
+```js
+form.addEventListener('formEvent', (event) => {
+  // event.detail.name — the wired event name (e.g. 'handleSubmit')
+  // event.detail.data — the current form data
+  console.log(event.detail);
+});
+
+form.addEventListener('formHealth', (event) => {
+  // event.detail — the live validation status
+});
+```
+
+## `<gui-form>` properties
+
+All initialization properties are bundled in the required `.config` property (`GuiFormInitConfig`):
+
+| `config` property     | Type                                         | Description                                                                                     |
+| --------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `formDef` (required)  | `FormInput`                                  | Programmatic `gui.*` array or parsed JSON form definition.                                      |
+| `formSelectors`       | `GslSelectorsInput`                          | GSL selector decorators. **Programmatic-only.**                                                 |
+| `formConfig`          | `DxFormConfig`                               | DX engine wiring (loaders, item renderers, dependencies, validateOn, …). **Programmatic-only.** |
+| `data`                | `Record<string, any>`                        | Initial form data.                                                                              |
+| `meta`                | `Record<string, any>`                        | Out-of-band metadata you want to thread through events and state.                               |
+| `customWidgetLoaders` | `WidgetLoaders<Type<WithWidget>>`            | Custom widget map; merged with the default widget set.                                          |
+| `itemRenderers`       | `Record<string, LitItemRenderer<any>>`       | Custom item-renderer map (for dropdown, list, etc.).                                            |
+| `customValidators`    | `CustomValidatorSchemas`                     | Custom validator schemas referenced by `validator: { type: 'custom', ... }`.                    |
+| `middlewares`         | `Middleware<State, Action>[]`                | Store middlewares (logging, persistence, devtools).                                             |
+| `validateOn`          | `ValidateOn`                                 | When validation runs: `'eager'` (default), `'change'`, `'blur'`, `'submit'`, or an array.       |
+| `dependencies`        | `Dependencies`                               | External helpers (e.g. a markdown parser).                                                      |
+| `localization`        | `I18nTranslator`                             | Translator implementing the `I18nTranslator` interface.                                         |
+
+Direct properties (outside `config`):
+
+| Property        | Type     | Description                                                      |
+| --------------- | -------- | ---------------------------------------------------------------- |
+| `.autocomplete` | `string` | Sets the underlying `<form>` element's `autocomplete` attribute. |
+
+The element also dispatches two **custom events**:
+
+| Event         | Detail type       | Description                                                                                    |
+| ------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
+| `formEvent`   | `FormEvent`       | Fired when a widget fires a wired event. Listen via `form.addEventListener('formEvent', ...)`. |
+| `formHealth`  | `FormHealth`      | Fired when the form's validation status changes.                                               |
+
+See [Configuration](/integration/configuration/) for details on each property, plus the **Programmatic-only vs JSON-form** notes.
+
+## Custom widgets in Vanilla JS
+
+Build your own widgets as standard Web Components. The path of least resistance is to extend `LitElement` (already in your dependency tree via `@golemui/lit`) and consume the form context with `@consume({ context: formContext })`, providing the appropriate adapter with `@provide({ context: inputContext })` and friends — all named imports from `@golemui/lit`. Register the result with `customElements.define(...)`. The same widget then works inside React, Angular, or Vue hosts. See [Extending GolemUI / Widgets](/extending/widgets/overview/) for the full walkthrough.

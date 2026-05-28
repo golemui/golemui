@@ -12,7 +12,7 @@ import DslTabs from '../../../components/DslTabs.astro';
 import FrameworkContent from '../../../components/FrameworkContent.astro';
 import IntegrationTabs from '../../../components/IntegrationTabs.astro';
 
-GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files. It provides a free set of UI widgets with support for React, Angular, Lit, and Vue.
+GolemUI is a blazing fast JavaScript library for building dynamic forms from JSON files. It provides a free set of UI widgets with support for React, Angular, Lit, Vue, and Vanilla JS.
 
 This guide walks you from an empty directory to a rendered form in five steps.
 
@@ -52,6 +52,14 @@ This guide walks you from an empty directory to a rendered form in five steps.
 
       Or [open it in StackBlitz](https://stackblitz.com/github/golemui/golemui/tree/main/templates/vue).
     </Fragment>
+    <Fragment slot="vanilla">
+      ```bash
+      npx degit golemui/golemui/templates/js my-app
+      cd my-app && npm install && npm start
+      ```
+
+      Or [open it in StackBlitz](https://stackblitz.com/github/golemui/golemui/tree/main/templates/js).
+    </Fragment>
   </IntegrationTabs>
 </Aside>
 
@@ -86,11 +94,17 @@ This guide walks you from an empty directory to a rendered form in five steps.
         cd my-form && npm install
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```bash
+        npm create vite@latest my-form -- --template vanilla
+        cd my-form && npm install
+        ```
+      </Fragment>
     </IntegrationTabs>
 
 2.  ##### Install GolemUI and the Golem Widgets
 
-    Install the framework adapter together with `@golemui/core`, `@golemui/gui-shared`, and the framework-specific <FrameworkContent inline><Fragment slot="react">`@golemui/react`</Fragment><Fragment slot="angular">`@golemui/angular`</Fragment><Fragment slot="lit">`@golemui/lit`</Fragment><Fragment slot="vue">`@golemui/vue`</Fragment></FrameworkContent>.
+    Install `@golemui/core`, `@golemui/gui-shared`, and the <FrameworkContent inline><Fragment slot="react">React adapter `@golemui/react`</Fragment><Fragment slot="angular">Angular adapter `@golemui/angular`</Fragment><Fragment slot="lit">Lit adapter `@golemui/lit`</Fragment><Fragment slot="vue">Vue adapter `@golemui/vue`</Fragment><Fragment slot="vanilla">Web Components runtime `@golemui/lit`</Fragment></FrameworkContent>.
 
     <IntegrationTabs>
       <Fragment slot="react">
@@ -111,6 +125,11 @@ This guide walks you from an empty directory to a rendered form in five steps.
       <Fragment slot="vue">
         ```bash
         npm i @golemui/core @golemui/gui-shared @golemui/vue @golemui/gui-vue --save
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```bash
+        npm i @golemui/core @golemui/gui-shared @golemui/lit @golemui/gui-lit --save
         ```
       </Fragment>
     </IntegrationTabs>
@@ -212,6 +231,26 @@ This guide walks you from an empty directory to a rendered form in five steps.
                 <GuiForm :config="config" />
               </div>
             </template>
+            ```
+          </Fragment>
+          <Fragment slot="vanilla">
+            ```html
+            <!-- index.html -->
+            <gui-form id="app-form"></gui-form>
+            <script type="module" src="/src/main.js"></script>
+            ```
+
+            ```js
+            // src/main.js
+            import '@golemui/gui-components/index.css';
+            import '@golemui/gui-lit';
+            import { gui } from '@golemui/gui-shared';
+
+            const formDef = [gui.inputs.textInput('username')];
+            const formData = { username: 'golemui' };
+
+            const form = document.getElementById('app-form');
+            form.config = { formDef, data: formData };
             ```
           </Fragment>
         </IntegrationTabs>
