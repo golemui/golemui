@@ -107,6 +107,21 @@ Pass the markdown parser through `formConfig.dependencies` on the form component
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import snarkdown from 'snarkdown';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      data: formData,
+      formConfig: {
+        dependencies: { markdown: { parse: (md) => snarkdown(md) } },
+      },
+    };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 <Aside>The markdown content will only be rendered as HTML when a `dependencies.markdown.parse` function is provided. Without it, the widget renders nothing.</Aside>

@@ -125,6 +125,30 @@ This is the only widget where JSON and Programmatic forms aren't interchangeable
     The render callback returns a Vue `VNode` (built with `h()`). For richer templates, prefer a [custom display widget](/extending/widgets/display-widget/) that uses a full SFC.
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import { gui } from '@golemui/gui-shared';
+
+    const formDef = [
+      gui.displays.display((params) => {
+        const root = document.createElement('div');
+        root.className = 'summary';
+
+        const title = document.createElement('h2');
+        title.textContent = 'Booking summary';
+
+        const customer = document.createElement('p');
+        customer.textContent = `Customer: ${params?.$form?.customer?.name ?? ''}`;
+
+        root.append(title, customer);
+        return root;
+      }),
+    ];
+    ```
+
+    The callback returns an `HTMLElement` built with plain DOM APIs — no template library needed. The engine re-invokes the callback on every form-data change, so build a fresh node each time. For richer templates, prefer a [custom display widget](/extending/widgets/display-widget/).
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Reactivity
