@@ -231,6 +231,7 @@ const NOTES: Record<string, string[]> = {
   textinput: [
     '`path` is the dot-path into form data this field writes to.',
     '`validator.format` supports: `email`, `hostname`, `ipv4`, `ipv6`, `url`, `uuid`, `date`, `time`, `date-time`, `duration`.',
+    'Root props `label`, `disabled`, `readonly`, `validator`, and `size` accept state suffixes — e.g. `"label.<stateName>": "New label"` overrides the label only when that named state is active. Props inside `props` (e.g. `hint`, `placeholder`) also accept suffixes as `"hint.<stateName>"`. Call `get_concept({ concept: "states" })` for the full pattern.',
   ],
   markdownText: [
     'Display-only widget for rendering markdown. Can be used as a top-level form widget (inside any layout) or inside templates like `dropdown.props.items[].template`.',
@@ -263,12 +264,18 @@ const NOTES: Record<string, string[]> = {
     '`props.template` must be a layout widget (flex/grid/tabs/accordion) whose children are the per-item fields.',
     'Child paths inside the template MUST follow the form `<repeater.path>.items.<fieldName>`. The `items` segment is reserved — the runtime substitutes it with the current array index per row. For example, a repeater at `path: "users"` with a child `firstName` uses `path: "users.items.firstName"`. Plain `firstName` will NOT bind to the array.',
     'Nested repeaters chain the convention: a repeater at `path: "teams"` whose template contains a repeater at `path: "teams.items.members"` whose children use `path: "teams.items.members.items.<field>"`.',
+    '`addLabel` supports state suffixes: `"addLabel.<stateName>": "Limit reached"` swaps the add-button label when a named state is active — useful for capping array length. Call `get_concept({ concept: "states" })` for the full pattern.',
   ],
   button: [
     '`actionType` controls the button\'s role. `actionType: "submit"` makes the button fire the form\'s `formSubmit` event natively — the host listens for it via `(formSubmit)` (Angular), `@formSubmit` (Vue), `onFormSubmit` (React), or the `form-submit` event (Lit). No custom handler needed. Use this for the primary submit button on a form.',
     '`actionType: "button"` (the default, can be omitted) is a regular action button. Wire it via `on.click: "<handlerName>"` where `<handlerName>` is registered in the form config\'s event handlers.',
+    'Supports state-suffixed props: `"label.<stateName>"` and `"disabled.<stateName>"` swap the label or disabled state when a named state is active — e.g. disable the submit button until terms are accepted, then re-enable it. Call `get_concept({ concept: "states" })` for the full pattern.',
   ],
   checkbox: ['Set `validator.const: true` to require the user to tick it (e.g. terms acceptance).'],
+  alert: [
+    'Use `include: { in: ["stateName"] }` to show this alert only when a named state is active, or `exclude: { from: ["stateName"] }` to hide it when a state is active. This is cleaner than `include: { when: "..." }` when the same condition is reused across multiple widgets. Call `get_concept({ concept: "states" })` for the full states pattern.',
+    'Props inside `props` (e.g. `text`, `level`) accept state suffixes: `"text.<stateName>": "New message"` swaps the message when that state is active.',
+  ],
 };
 
 function synthesizeExample(widgetType: string, schema: WidgetSchema): Record<string, unknown> {

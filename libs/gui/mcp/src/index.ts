@@ -15,6 +15,7 @@ import {
   GENERATE_FROM_OPENAPI_TOOL,
   generateFromOpenapi,
 } from './tools/generate-from-openapi';
+import { GET_CONCEPT_TOOL, getConcept } from './tools/get-concept';
 import { GET_WIDGET_SPEC_TOOL, getWidgetSpec } from './tools/get-widget-spec';
 import {
   VALIDATE_FORM_DEFINITION_TOOL,
@@ -47,6 +48,7 @@ const TOOLS = [
   GENERATE_FROM_JSON_SCHEMA_TOOL,
   GENERATE_FROM_OPENAPI_TOOL,
   GET_WIDGET_SPEC_TOOL,
+  GET_CONCEPT_TOOL,
 ];
 
 const server = new Server(
@@ -68,6 +70,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return ok(await generateFromOpenapi(args as any));
       case 'get_widget_spec':
         return ok(getWidgetSpec(args as any));
+      case 'get_concept':
+        return ok(getConcept(args as any));
       default:
         return err(`Unknown tool: ${name}`);
     }

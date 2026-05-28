@@ -97,17 +97,16 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   }
 
   // Missing root reference. Allowed roots:
-  //   $form   — form data
-  //   $meta   — user-supplied form metadata (e.g. systemMessage, connectionStatus)
-  //   $item   — current item inside a repeater template
-  //   $index  — current item index inside a repeater template
-  if (!/\$form\b|\$meta\b|\$item\b|\$index\b/.test(trimmed)) {
+  //   $form           — form data
+  //   $meta           — user-supplied form metadata (e.g. systemMessage, connectionStatus)
+  //   $formIsInvalid  — boolean; true when any field currently fails validation
+  if (!/\$form\b|\$meta\b|\$formIsInvalid\b/.test(trimmed)) {
     out.push({
       path,
       expression: expr,
-      message: 'Expression does not reference `$form`, `$meta`, `$item`, or `$index`.',
+      message: 'Expression does not reference `$form`, `$meta`, or `$formIsInvalid`.',
       suggestion:
-        'GolemUI expressions read form data via `$form.fieldName` or form metadata via `$meta.key`. Did you forget the prefix?',
+        'GolemUI expressions read form data via `$form.fieldName`, form metadata via `$meta.key`, or the built-in `$formIsInvalid` boolean. Did you forget the prefix?',
     });
   }
 
@@ -148,14 +147,14 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
     });
   }
 
-  // R2: negation of a `$form`/`$meta`/`$item`/`$index` reference (`!$form.x`).
+  // R2: negation of a `$form`/`$meta` reference (`!$form.x`).
   // The lookbehind/lookahead exclude `!=` and `!==` operators.
-  if (/(?<![=!])!\s*\$(?:form|meta|item|index)\b/.test(trimmed)) {
+  if (/(?<![=!])!\s*\$(?:form|meta)\b/.test(trimmed)) {
     out.push({
       path,
       expression: expr,
       message:
-        'Expression negates a `$form`/`$meta`/`$item`/`$index` reference (relies on truthy/falsy coercion).',
+        'Expression negates a `$form`/`$meta` reference (relies on truthy/falsy coercion).',
       suggestion:
         'Form data values can be `undefined`. Pick the case you actually mean and write it explicitly — `$form.x === undefined`, `$form.x === null`, `$form.x === 0`, `$form.x === ""` — instead of `!$form.x`.',
     });
@@ -164,12 +163,12 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   // R3: chained nested-property access without optional chaining.
   // For each `$root.<chain>` match, split the chain on `.` and walk segment pairs.
   // A transition from segments[i] to segments[i+1] is safe iff segments[i] ends with `?`.
-  const refChainRe = /\$(?:form|meta|item|index)((?:\.[\w?]+)*)/g;
+  const refChainRe = /\$(?:form|meta)\b((?:\.[\w?]+)*)/g;
   let chainFlagged = false;
   let chainMatch: RegExpExecArray | null;
   while ((chainMatch = refChainRe.exec(trimmed)) !== null) {
     const chain = chainMatch[1];
-    if (!chain) continue; // bare `$index` etc. — no chain to walk
+    if (!chain) continue; // bare `$form` / `$meta` — no chain to walk
     const segments = chain.split('.').filter(Boolean);
     let unsafe = false;
     for (let i = 0; i < segments.length - 1; i++) {
@@ -196,10 +195,10 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   //   (a) the whole expression is a bare reference (`$form.x`)
   //   (b) reference followed by `&&` / `||` / ternary `?` (and not `??` or `?.`)
   //   (c) `&&` / `||` followed by a trailing reference at the end of the expression
-  const refOnly = /^\$(?:form|meta|item|index)(?:\.[\w?]+)*$/;
+  const refOnly = /^\$(?:form|meta)(?:\.[\w?]+)*$/;
   const refBeforeBool =
-    /\$(?:form|meta|item|index)(?:\.[\w?]+)*\s*(?:&&|\|\||\?(?![.?]))/;
-  const refAfterBool = /(?:&&|\|\|)\s*\$(?:form|meta|item|index)(?:\.[\w?]+)*\s*$/;
+    /\$(?:form|meta)(?:\.[\w?]+)*\s*(?:&&|\|\||\?(?![.?]))/;
+  const refAfterBool = /(?:&&|\|\|)\s*\$(?:form|meta)(?:\.[\w?]+)*\s*$/;
   if (
     refOnly.test(trimmed) ||
     refBeforeBool.test(trimmed) ||
@@ -216,15 +215,15 @@ function checkExpression(expr: string, path: string, out: ExpressionFinding[]): 
   }
 
   // R5: comparison (`<`, `>`, `<=`, `>=`) or arithmetic (`+`, `-`, `*`, `/`, `%`) applied to a
-  // `$form`/`$meta`/`$item` reference whose leaf may be `undefined`. Strict equality
+  // `$form`/`$meta` reference whose leaf may be `undefined`. Strict equality
   // (`===` / `!==`) and nullish coalescing (`??`) are NOT flagged — they evaluate correctly
-  // when the value is undefined. `$index` is excluded (always a number).
+  // when the value is undefined.
   //
   // Heuristic to avoid over-firing on guarded code: if a `&&` or `||` appears anywhere before
   // the unsafe operator, assume the LHS is the guard (`$form.x !== undefined && $form.x > 180`
   // idiom) and skip. This produces occasional false negatives but no false positives on the
   // common guarding pattern.
-  const refForCmpRe = /\$(?:form|meta|item)(?:\.[\w?]+)+/g;
+  const refForCmpRe = /\$(?:form|meta)(?:\.[\w?]+)+/g;
   let r5Flagged = false;
   let cmpMatch: RegExpExecArray | null;
   while ((cmpMatch = refForCmpRe.exec(trimmed)) !== null) {
