@@ -37,8 +37,8 @@ const STATES_CONCEPT: GetConceptResult = {
         'Each key is a state name; each value is a reactive expression string. ' +
         'Expressions are evaluated at runtime — they have access to `$form` (all current form values), ' +
         '`$meta` (host-supplied metadata), and `$formIsInvalid` (built-in boolean — `true` when any field currently fails validation). ' +
-        'State names can contain letters, numbers, hyphens, underscores, and colons ' +
-        '(colons are used as a convention for composing sub-states, e.g. `"register:adult"`).',
+        'State names can contain letters, numbers, hyphens, and underscores. ' +
+        'Colons enable hierarchical composition — see the "Composed sub-states (colon notation)" pattern below.',
       example: {
         states: {
           termsAccepted: '$form.terms === true',
@@ -46,6 +46,31 @@ const STATES_CONCEPT: GetConceptResult = {
           limitReached: '$form.users?.length === 5',
         },
         form: ['/* ... widgets ... */'],
+      },
+    },
+    {
+      name: 'Composed sub-states (colon notation)',
+      description:
+        'Colons in a state name denote hierarchy: `"register"`, `"register:adult"`, `"register:minor:tall"`. ' +
+        'At runtime the form engine rewrites every child expression by ANDing the full ancestor chain in front of it. ' +
+        'This means you write only the *incremental* condition in a child — the parent conditions are inherited automatically. ' +
+        'A child state is active only when ALL of its ancestors are also active.',
+      example: {
+        // What you write in the form definition:
+        statesAsAuthored: {
+          register: '$form.agreeTerms === true',
+          'register:adult': '$form.user?.age >= 18',
+          'register:minor': '$form.user?.age < 18',
+          'register:minor:tall': '$form.user?.height > 180',
+        },
+        // What the runtime actually evaluates (expandStateExpressions output):
+        statesAtRuntime: {
+          register: '($form.agreeTerms === true)',
+          'register:adult': '($form.agreeTerms === true) && ($form.user?.age >= 18)',
+          'register:minor': '($form.agreeTerms === true) && ($form.user?.age < 18)',
+          'register:minor:tall':
+            '($form.agreeTerms === true) && ($form.user?.age < 18) && ($form.user?.height > 180)',
+        },
       },
     },
     {
@@ -72,13 +97,13 @@ const STATES_CONCEPT: GetConceptResult = {
             type: 'textinput',
             path: 'discountCode',
             label: 'Discount code',
-            'include': { in: ['hasDiscount'] },
+            include: { in: ['hasDiscount'] },
           },
           {
             kind: 'display',
             type: 'alert',
             props: { text: 'No discount applied.' },
-            'exclude': { from: ['hasDiscount'] },
+            exclude: { from: ['hasDiscount'] },
           },
         ],
       },
@@ -97,7 +122,7 @@ const STATES_CONCEPT: GetConceptResult = {
       example: {
         states: {
           termsAccepted: '$form.terms === true',
-          busy: '$form._submitting === true',
+          busy: '$meta.submitting === true',
         },
         form: [
           {
@@ -152,14 +177,17 @@ const STATES_CONCEPT: GetConceptResult = {
 
   rules: [
     'Every state name used in `include.in`, `exclude.from`, or as a property suffix MUST be declared in the root `"states"` map.',
+    'Child state expressions must contain only the *additional* (incremental) condition — ancestor conditions are ANDed in automatically by the runtime. Duplicating a parent condition in a child expression is wrong and redundant.',
+    'A sub-state is only ever active when all of its ancestor states are also active. When using `include.in: ["register:adult"]` you do NOT need to also add `"register"` to the array.',
     'State-suffixed root props — only these support suffixes at the widget root level: `label`, `disabled`, `readonly`, `validator`, `size`. All other overridable properties live inside `props`.',
     'State-suffixed props inside `props` — any key inside the `props` object can be suffixed: `"hint.<state>"`, `"placeholder.<state>"`, `"items.<state>"`, `"addLabel.<state>"`, etc.',
-    'Suffix names must be a single segment (no dots in the state name itself): `"label.myState"` ✅ — `"label.my.state"` ❌.',
+    'Suffix names must not contain dots (the dot is the separator between property and state name): `"label.myState"` ✅, `"label.register:adult"` ✅ — `"label.my.state"` ❌.',
     'Reactive expressions must reference `$form`, `$meta`, or `$formIsInvalid`. A bare identifier like `termsAccepted` without a root reference is invalid. `$formIsInvalid` is a built-in boolean (no property chain — use it as-is: `disabled: { when: "$formIsInvalid" }` or inside a state expression: `states: { formInvalid: "$formIsInvalid" }`).',
     'Use `===` / `!==` for equality, `&&` / `||` for logic. Avoid `=` (assignment), `==`/`!=` (loose equality), or bitwise `&`/`|`.',
-    'When multiple states are active at the same time, the last matching suffix in document order wins for that property.',
+    'When multiple states are active at the same time and a property has more than one matching suffix, the longest state name wins (most specific takes priority). Example: if both `register` and `register:adult` are active, `"label.register:adult"` overrides `"label.register"`.',
     'The `include.when` / `exclude.when` inline form is an alternative to named states for one-off conditions, but it cannot replace state-suffixed props — those require a named state.',
-    '`include.in` and `exclude.in` each accept an ARRAY of state names. A widget included `in: ["a", "b"]` renders when state `a` OR state `b` is active.',
+    '`include.in` and `exclude.from` each accept an Array of state names. A widget included `in: ["a", "b"]` renders when state `a` OR state `b` is active.',
+    'Use optional chaining (`?.`) when accessing nested fields that may not yet exist in the form data: `$form.user?.age >= 18` not `$form.user.age >= 18`.',
   ],
 };
 
@@ -174,10 +202,11 @@ const CONCEPTS: Record<string, GetConceptResult> = {
 export function getConcept(input: GetConceptInput): GetConceptResult {
   const result = CONCEPTS[input.concept];
   if (!result) {
-    const known = Object.keys(CONCEPTS).sort().map((c) => `\`${c}\``).join(', ');
-    throw new Error(
-      `Unknown concept \`${input.concept}\`. Known concepts: ${known}.`,
-    );
+    const known = Object.keys(CONCEPTS)
+      .sort()
+      .map((c) => `\`${c}\``)
+      .join(', ');
+    throw new Error(`Unknown concept \`${input.concept}\`. Known concepts: ${known}.`);
   }
   return result;
 }
