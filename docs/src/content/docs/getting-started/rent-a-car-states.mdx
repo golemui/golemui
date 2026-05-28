@@ -93,6 +93,20 @@ States are named boolean expressions evaluated against `$form`. Where they live 
         </script>
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        // src/main.js
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
+          },
+        };
+        ```
+      </Fragment>
     </IntegrationTabs>
   </Fragment>
   <Fragment slot="json">
@@ -143,6 +157,12 @@ States are named boolean expressions evaluated against `$form`. Where they live 
         <script setup lang="ts">
         const config = { formDef: rentACarForm };
         </script>
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        // src/main.js
+        const config = { formDef: rentACarForm };
         ```
       </Fragment>
     </IntegrationTabs>
