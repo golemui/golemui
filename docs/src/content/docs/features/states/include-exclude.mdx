@@ -27,19 +27,18 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
-    const formDef = [
-      gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
-      gui.inputs.textInput('discountCode', {
-        label: 'Discount code',
-        include: { in: ['hasDiscount'] },
-      }),
-    ];
-
-    const formConfig = {
-      states: { hasDiscount: '$form.hasDiscountCode === true' },
+    const config = {
+      formDef: [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ],
+      formConfig: {
+        states: { hasDiscount: '$form.hasDiscountCode === true' },
+      },
     };
-
-    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -113,24 +112,45 @@ The state lives in `formConfig.states`; the `include` rule sits next to the widg
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-vue';
 
-    const formDef = [
-      gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
-      gui.inputs.textInput('discountCode', {
-        label: 'Discount code',
-        include: { in: ['hasDiscount'] },
-      }),
-    ];
-
-    const formConfig = {
-      states: { hasDiscount: '$form.hasDiscountCode === true' },
+    const config = {
+      formDef: [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ],
+      formConfig: {
+        states: { hasDiscount: '$form.hasDiscountCode === true' },
+      },
     };
-
-    const config = { formDef, formConfig };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.inputs.booleanInput('hasDiscountCode', { label: 'I have a discount code' }),
+        gui.inputs.textInput('discountCode', {
+          label: 'Discount code',
+          include: { in: ['hasDiscount'] },
+        }),
+      ],
+      formConfig: {
+        states: { hasDiscount: '$form.hasDiscountCode === true' },
+      },
+    };
     ```
 
   </Fragment>
@@ -228,6 +248,17 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
     ```
 
   </Fragment>

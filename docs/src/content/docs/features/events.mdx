@@ -26,7 +26,7 @@ const formDef = [
     onChange: 'countryChanged',
     items: ['US', 'CA', 'MX'],
   }),
-  gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
+  gui.actions.button({ actionType: 'submit', label: 'Submit' }),
 ];
 ```
 
@@ -46,9 +46,8 @@ const formDef = [
     {
       "kind": "action",
       "type": "button",
-      "uid": "submit",
       "label": "Submit",
-      "on": { "click": "submitForm" }
+      "actionType": "submit"
     }
   ]
 }
@@ -59,7 +58,7 @@ const formDef = [
 
 ## Handling events in your component
 
-`formEvent` is a callback prop in React, an output in Angular, a `CustomEvent` in Lit, and an emitted event (`@form-event`) in Vue. Match on `event.name` and read `event.data`:
+`formEvent` is a callback prop in React, an output in Angular, a `CustomEvent` in Lit, an emitted event (`@form-event`) in Vue, and a `CustomEvent` you subscribe to via `addEventListener` in vanilla JS. Match on `event.name` and read `event.data`:
 
 <DslTabs>
   <Fragment slot="dx">
@@ -67,28 +66,33 @@ const formDef = [
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
     const formDef = [
       gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-      gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
+      gui.actions.button({ actionType: 'submit', label: 'Submit' }),
     ];
 
     function handleFormEvent(event: FormEvent) {
-      switch (event.name) {
-        case 'countryChanged':
-          console.log('Country selected:', event.data.country);
-          break;
-        case 'submitForm':
-          console.log('Submitting:', event.data);
-          break;
+      if (event.name === 'countryChanged') {
+        console.log('Country selected:', event.data.country);
       }
     }
 
+    function handleFormSubmit(event: FormSubmitEvent) {
+      console.log('Submitting:', event.data);
+    }
+
     export function MyForm() {
-      return <GuiForm config={{ formDef }} formEvent={handleFormEvent} />;
+      return (
+        <GuiForm
+          config={{ formDef }}
+          formEvent={handleFormEvent}
+          formSubmit={handleFormSubmit}
+        />
+      );
     }
     ```
 
@@ -97,32 +101,37 @@ const formDef = [
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
     import { FormComponent } from '@golemui/gui-angular';
 
     @Component({
       imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>`,
+      template: `
+        <gui-form
+          [config]="config"
+          (formEvent)="onFormEvent($event)"
+          (formSubmit)="onFormSubmit($event)"
+        ></gui-form>
+      `,
     })
     export class MyForm {
       protected config = {
         formDef: [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-          gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
+          gui.actions.button({ actionType: 'submit', label: 'Submit' }),
         ],
       };
 
       protected onFormEvent(event: FormEvent) {
-        switch (event.name) {
-          case 'countryChanged':
-            console.log('Country selected:', event.data.country);
-            break;
-          case 'submitForm':
-            console.log('Submitting:', event.data);
-            break;
+        if (event.name === 'countryChanged') {
+          console.log('Country selected:', event.data.country);
         }
+      }
+
+      protected onFormSubmit(event: FormSubmitEvent) {
+        console.log('Submitting:', event.data);
       }
     }
     ```
@@ -132,7 +141,7 @@ const formDef = [
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
     import '@golemui/gui-lit';
 
@@ -141,21 +150,20 @@ const formDef = [
       config = {
         formDef: [
           gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-          gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
+          gui.actions.button({ actionType: 'submit', label: 'Submit' }),
         ],
       };
 
       override createRenderRoot() { return this; }
 
       protected onFormEvent(event: FormEvent) {
-        switch (event.name) {
-          case 'countryChanged':
-            console.log('Country selected:', event.data.country);
-            break;
-          case 'submitForm':
-            console.log('Submitting:', event.data);
-            break;
+        if (event.name === 'countryChanged') {
+          console.log('Country selected:', event.data.country);
         }
+      }
+
+      protected onFormSubmit(event: FormSubmitEvent) {
+        console.log('Submitting:', event.data);
       }
 
       override render() {
@@ -163,6 +171,7 @@ const formDef = [
           <gui-form
             .config=${this.config}
             @formEvent=${(e: CustomEvent<FormEvent>) => this.onFormEvent(e.detail)}
+            @formSubmit=${(e: CustomEvent<FormSubmitEvent>) => this.onFormSubmit(e.detail)}
           ></gui-form>
         `;
       }
@@ -173,32 +182,65 @@ const formDef = [
   <Fragment slot="vue">
     ```vue
     <script setup lang="ts">
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-vue';
 
     const config = {
       formDef: [
         gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
-        gui.actions.button({ uid: 'submit', label: 'Submit', onClick: () => 'submitForm' }),
+        gui.actions.button({ actionType: 'submit', label: 'Submit' }),
       ],
     };
 
     function onFormEvent(event: FormEvent) {
-      switch (event.name) {
-        case 'countryChanged':
-          console.log('Country selected:', event.data.country);
-          break;
-        case 'submitForm':
-          console.log('Submitting:', event.data);
-          break;
+      if (event.name === 'countryChanged') {
+        console.log('Country selected:', event.data.country);
       }
+    }
+
+    function onFormSubmit(event: FormSubmitEvent) {
+      console.log('Submitting:', event.data);
     }
     </script>
 
     <template>
-      <GuiForm :config="config" @form-event="onFormEvent" />
+      <GuiForm
+        :config="config"
+        @form-event="onFormEvent"
+        @form-submit="onFormSubmit"
+      />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const config = {
+      formDef: [
+        gui.inputs.dropdown('country', { onChange: 'countryChanged', items: ['US', 'CA', 'MX'] }),
+        gui.actions.button({ actionType: 'submit', label: 'Submit' }),
+      ],
+    };
+
+    function onFormEvent(event) {
+      if (event.name === 'countryChanged') {
+        console.log('Country selected:', event.data.country);
+      }
+    }
+
+    function onFormSubmit(event) {
+      console.log('Submitting:', event.data);
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = config;
+    form.addEventListener('formEvent', (e) => onFormEvent(e.detail));
+    form.addEventListener('formSubmit', (e) => onFormSubmit(e.detail));
     ```
 
   </Fragment>
@@ -210,23 +252,28 @@ const formDef = [
 <IntegrationTabs>
   <Fragment slot="react">
     ```tsx
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { GuiForm } from '@golemui/gui-react';
     import formDef from './my-form.json';
 
     function handleFormEvent(event: FormEvent) {
-      switch (event.name) {
-        case 'countryChanged':
-          console.log('Country selected:', event.data.country);
-          break;
-        case 'submitForm':
-          console.log('Submitting:', event.data);
-          break;
+      if (event.name === 'countryChanged') {
+        console.log('Country selected:', event.data.country);
       }
     }
 
+    function handleFormSubmit(event: FormSubmitEvent) {
+      console.log('Submitting:', event.data);
+    }
+
     export function MyForm() {
-      return <GuiForm config={{ formDef }} formEvent={handleFormEvent} />;
+      return (
+        <GuiForm
+          config={{ formDef }}
+          formEvent={handleFormEvent}
+          formSubmit={handleFormSubmit}
+        />
+      );
     }
     ```
 
@@ -235,27 +282,32 @@ const formDef = [
     ```ts
     import { Component } from '@angular/core';
     import { CommonModule } from '@angular/common';
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { FormComponent } from '@golemui/gui-angular';
     import formDef from './my-form.json';
 
     @Component({
       imports: [CommonModule, FormComponent],
       selector: 'app-my-form',
-      template: `<gui-form [config]="config" (formEvent)="onFormEvent($event)"></gui-form>`,
+      template: `
+        <gui-form
+          [config]="config"
+          (formEvent)="onFormEvent($event)"
+          (formSubmit)="onFormSubmit($event)"
+        ></gui-form>
+      `,
     })
     export class MyForm {
       protected config = { formDef };
 
       protected onFormEvent(event: FormEvent) {
-        switch (event.name) {
-          case 'countryChanged':
-            console.log('Country selected:', event.data.country);
-            break;
-          case 'submitForm':
-            console.log('Submitting:', event.data);
-            break;
+        if (event.name === 'countryChanged') {
+          console.log('Country selected:', event.data.country);
         }
+      }
+
+      protected onFormSubmit(event: FormSubmitEvent) {
+        console.log('Submitting:', event.data);
       }
     }
     ```
@@ -265,7 +317,7 @@ const formDef = [
     ```ts
     import { LitElement, html } from 'lit';
     import { customElement } from 'lit/decorators.js';
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import '@golemui/gui-lit';
     import formDef from './my-form.json';
 
@@ -276,14 +328,13 @@ const formDef = [
       override createRenderRoot() { return this; }
 
       protected onFormEvent(event: FormEvent) {
-        switch (event.name) {
-          case 'countryChanged':
-            console.log('Country selected:', event.data.country);
-            break;
-          case 'submitForm':
-            console.log('Submitting:', event.data);
-            break;
+        if (event.name === 'countryChanged') {
+          console.log('Country selected:', event.data.country);
         }
+      }
+
+      protected onFormSubmit(event: FormSubmitEvent) {
+        console.log('Submitting:', event.data);
       }
 
       override render() {
@@ -291,6 +342,7 @@ const formDef = [
           <gui-form
             .config=${this.config}
             @formEvent=${(e: CustomEvent<FormEvent>) => this.onFormEvent(e.detail)}
+            @formSubmit=${(e: CustomEvent<FormSubmitEvent>) => this.onFormSubmit(e.detail)}
           ></gui-form>
         `;
       }
@@ -301,27 +353,55 @@ const formDef = [
   <Fragment slot="vue">
     ```vue
     <script setup lang="ts">
-    import type { FormEvent } from '@golemui/core';
+    import type { FormEvent, FormSubmitEvent } from '@golemui/core';
     import { GuiForm } from '@golemui/gui-vue';
     import formDef from './my-form.json';
 
     const config = { formDef };
 
     function onFormEvent(event: FormEvent) {
-      switch (event.name) {
-        case 'countryChanged':
-          console.log('Country selected:', event.data.country);
-          break;
-        case 'submitForm':
-          console.log('Submitting:', event.data);
-          break;
+      if (event.name === 'countryChanged') {
+        console.log('Country selected:', event.data.country);
       }
+    }
+
+    function onFormSubmit(event: FormSubmitEvent) {
+      console.log('Submitting:', event.data);
     }
     </script>
 
     <template>
-      <GuiForm :config="config" @form-event="onFormEvent" />
+      <GuiForm
+        :config="config"
+        @form-event="onFormEvent"
+        @form-submit="onFormSubmit"
+      />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const config = { formDef };
+
+    function onFormEvent(event) {
+      if (event.name === 'countryChanged') {
+        console.log('Country selected:', event.data.country);
+      }
+    }
+
+    function onFormSubmit(event) {
+      console.log('Submitting:', event.data);
+    }
+
+    const form = document.getElementById('app-form');
+    form.config = config;
+    form.addEventListener('formEvent', (e) => onFormEvent(e.detail));
+    form.addEventListener('formSubmit', (e) => onFormSubmit(e.detail));
     ```
 
   </Fragment>
@@ -351,7 +431,7 @@ The `formEvent` callback receives an object with:
 - `detail` — optional payload supplied by the widget (e.g. the network id from a custom share button).
 
 <Aside>
-The `'submit'` literal on `onClick` is special — it triggers form-level validation before invoking your handler.
+Submit buttons (`actionType: 'submit'`) go through the separate `formSubmit` event after form-level validation passes — they don't surface in `formEvent`. That's why the example above wires both callbacks.
 </Aside>
 
 ## See also

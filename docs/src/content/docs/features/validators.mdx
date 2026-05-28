@@ -249,22 +249,22 @@ Where `validateOn` lives on the form component depends on the path:
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
-    const formDef = [
-      gui.inputs.textInput('username', {
-        validator: {
-          required: true,
-          minLength: 2,
-          messages: {
-            required: 'Please enter a username',
-            minLength: 'Username must be at least 2 characters',
+    const config = {
+      formDef: [
+        gui.inputs.textInput('username', {
+          validator: {
+            required: true,
+            minLength: 2,
+            messages: {
+              required: 'Please enter a username',
+              minLength: 'Username must be at least 2 characters',
+            },
           },
-        },
-      }),
-      gui.actions.button({ label: 'Create User', actionType: 'submit' }),
-    ];
-
-    const formConfig = { validateOn: 'change' as const };
-    const config = { formDef, formConfig };
+        }),
+        gui.actions.button({ label: 'Create User', actionType: 'submit' }),
+      ],
+      formConfig: { validateOn: 'change' as const },
+    };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -348,27 +348,53 @@ Where `validateOn` lives on the form component depends on the path:
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-vue';
 
-    const formDef = [
-      gui.inputs.textInput('username', {
-        validator: {
-          required: true,
-          minLength: 2,
-          messages: {
-            required: 'Please enter a username',
-            minLength: 'Username must be at least 2 characters',
+    const config = {
+      formDef: [
+        gui.inputs.textInput('username', {
+          validator: {
+            required: true,
+            minLength: 2,
+            messages: {
+              required: 'Please enter a username',
+              minLength: 'Username must be at least 2 characters',
+            },
           },
-        },
-      }),
-      gui.actions.button({ label: 'Create User', actionType: 'submit' }),
-    ];
-
-    const formConfig = { validateOn: 'change' as const };
-    const config = { formDef, formConfig };
+        }),
+        gui.actions.button({ label: 'Create User', actionType: 'submit' }),
+      ],
+      formConfig: { validateOn: 'change' as const },
+    };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.inputs.textInput('username', {
+          validator: {
+            required: true,
+            minLength: 2,
+            messages: {
+              required: 'Please enter a username',
+              minLength: 'Username must be at least 2 characters',
+            },
+          },
+        }),
+        gui.actions.button({ label: 'Create User', actionType: 'submit' }),
+      ],
+      formConfig: { validateOn: 'change' },
+    };
     ```
 
   </Fragment>
@@ -443,6 +469,17 @@ Where `validateOn` lives on the form component depends on the path:
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef, validateOn: 'change' };
     ```
 
   </Fragment>
