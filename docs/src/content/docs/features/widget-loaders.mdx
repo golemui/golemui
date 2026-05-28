@@ -87,6 +87,17 @@ The built-in widget set covers every input, layout, display, and action widget. 
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef: [gui.inputs.textInput('username')] };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -157,6 +168,17 @@ The built-in widget set covers every input, layout, display, and action widget. 
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
   </Fragment>
@@ -177,18 +199,17 @@ In the Programmatic API your loaders go into `formConfig.widgetLoaders`.
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
-    const formDef = [
-      gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
-    ];
-
-    const formConfig = {
-      widgetLoaders: {
-        productCard: async () =>
-          (await import('./widgets/ProductCard')).ProductCard,
+    const config = {
+      formDef: [
+        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+      ],
+      formConfig: {
+        widgetLoaders: {
+          productCard: async () =>
+            (await import('./widgets/ProductCard')).ProductCard,
+        },
       },
     };
-
-    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -276,6 +297,27 @@ In the Programmatic API your loaders go into `formConfig.widgetLoaders`.
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.layouts.custom('productCard', [/* children */], { title: 'My product' }),
+      ],
+      formConfig: {
+        widgetLoaders: {
+          productCard: async () =>
+            (await import('./widgets/product-card.element')).ProductCardElement,
+        },
+      },
+    };
     ```
 
   </Fragment>
@@ -386,6 +428,23 @@ In the JSON path your loaders go into `customWidgetLoaders` on the `config` obje
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      customWidgetLoaders: {
+        productCard: async () =>
+          (await import('./widgets/product-card.element')).ProductCardElement,
+      },
+    };
     ```
 
   </Fragment>

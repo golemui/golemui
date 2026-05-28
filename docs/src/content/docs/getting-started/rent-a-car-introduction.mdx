@@ -49,7 +49,7 @@ This tutorial follows the GolemUI default:
 
 ## Where the form definition lives
 
-In [Installation](/getting-started/installation/) we authored the form definition inline, in the same file as the React / Angular / Lit / Vue component. That keeps everything in one place while you're getting started, but for any non-trivial form it's a maintenance trap — the component file balloons, and reusing the form shape from a test, a script, or a backend becomes awkward.
+In [Installation](/getting-started/installation/) we authored the form definition inline, in the same file as the React / Angular / Lit / Vue component (or in `main.js` for vanilla JS). That keeps everything in one place while you're getting started, but for any non-trivial form it's a maintenance trap — the component file balloons, and reusing the form shape from a test, a script, or a backend becomes awkward.
 
 From this chapter on, the tutorial moves the form definition into its own dedicated file:
 
@@ -150,6 +150,23 @@ Then import that form from your component and pass it as `formDef` in the `confi
         </template>
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```html
+        <!-- index.html -->
+        <gui-form id="app-form"></gui-form>
+        <script type="module" src="/src/main.js"></script>
+        ```
+
+        ```js
+        // src/main.js
+        import '@golemui/gui-components/index.css';
+        import '@golemui/gui-lit';
+        import rentACarForm from './rent-a-car.form';
+
+        const form = document.getElementById('app-form');
+        form.config = { formDef: rentACarForm };
+        ```
+      </Fragment>
     </IntegrationTabs>
   </Fragment>
   <Fragment slot="json">
@@ -220,9 +237,26 @@ Then import that form from your component and pass it as `formDef` in the `confi
         </template>
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```html
+        <!-- index.html -->
+        <gui-form id="app-form"></gui-form>
+        <script type="module" src="/src/main.js"></script>
+        ```
+
+        ```js
+        // src/main.js
+        import '@golemui/gui-components/index.css';
+        import '@golemui/gui-lit';
+        import rentACarForm from './rent-a-car.form.json';
+
+        const form = document.getElementById('app-form');
+        form.config = { formDef: rentACarForm };
+        ```
+      </Fragment>
     </IntegrationTabs>
 
-    JSON imports require `"resolveJsonModule": true` in your `tsconfig.json` — Vite, Angular CLI, and most starters have it on by default.
+    JSON imports require `"resolveJsonModule": true` in your `tsconfig.json` — Vite, Angular CLI, and most starters have it on by default. (Vanilla JS users on plain Vite get JSON imports for free, no tsconfig needed.)
 
   </Fragment>
 </DslTabs>

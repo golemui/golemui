@@ -184,6 +184,20 @@ GolemUI supports right-to-left layouts for languages like Arabic, Hebrew, and Pe
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      data: formData,
+      localization: { /* i18next implementation */ },
+    };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 <Demo src="/template/index.html?form=template/styling/rtl.json&dir=rtl" />

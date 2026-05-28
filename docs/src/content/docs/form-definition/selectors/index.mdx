@@ -88,6 +88,16 @@ Pass the array as `formSelectors` inside the `config` object:
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef, formSelectors };
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Read on

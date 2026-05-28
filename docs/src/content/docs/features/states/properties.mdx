@@ -28,23 +28,22 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-react';
 
-    const formDef = [
-      gui.inputs.repeater('users', {
-        addLabel: 'Add user',
-        states: {
-          limitReached: { addLabel: "Limit reached, you can't add more" },
-        },
-        children: [
-          gui.inputs.textInput('name', { label: 'Name' }),
-        ],
-      }),
-    ];
-
-    const formConfig = {
-      states: { limitReached: '$form.users?.length === 5' },
+    const config = {
+      formDef: [
+        gui.inputs.repeater('users', {
+          addLabel: 'Add user',
+          states: {
+            limitReached: { addLabel: "Limit reached, you can't add more" },
+          },
+          children: [
+            gui.inputs.textInput('name', { label: 'Name' }),
+          ],
+        }),
+      ],
+      formConfig: {
+        states: { limitReached: '$form.users?.length === 5' },
+      },
     };
-
-    const config = { formDef, formConfig };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -126,28 +125,53 @@ The state lives in `formConfig.states`; the override sits in the repeater's `sta
     import { gui } from '@golemui/gui-shared';
     import { GuiForm } from '@golemui/gui-vue';
 
-    const formDef = [
-      gui.inputs.repeater('users', {
-        addLabel: 'Add user',
-        states: {
-          limitReached: { addLabel: "Limit reached, you can't add more" },
-        },
-        children: [
-          gui.inputs.textInput('name', { label: 'Name' }),
-        ],
-      }),
-    ];
-
-    const formConfig = {
-      states: { limitReached: '$form.users?.length === 5' },
+    const config = {
+      formDef: [
+        gui.inputs.repeater('users', {
+          addLabel: 'Add user',
+          states: {
+            limitReached: { addLabel: "Limit reached, you can't add more" },
+          },
+          children: [
+            gui.inputs.textInput('name', { label: 'Name' }),
+          ],
+        }),
+      ],
+      formConfig: {
+        states: { limitReached: '$form.users?.length === 5' },
+      },
     };
-
-    const config = { formDef, formConfig };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.inputs.repeater('users', {
+          addLabel: 'Add user',
+          states: {
+            limitReached: { addLabel: "Limit reached, you can't add more" },
+          },
+          children: [
+            gui.inputs.textInput('name', { label: 'Name' }),
+          ],
+        }),
+      ],
+      formConfig: {
+        states: { limitReached: '$form.users?.length === 5' },
+      },
+    };
     ```
 
   </Fragment>
@@ -247,6 +271,17 @@ Wire the parsed JSON into your form component the same way as any other JSON `fo
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+
+    const form = document.getElementById('app-form');
+    form.config = { formDef };
     ```
 
   </Fragment>

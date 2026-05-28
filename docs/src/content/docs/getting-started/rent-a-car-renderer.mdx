@@ -47,7 +47,7 @@ The car items now carry an emoji thumbnail and a price:
 
 ## Step 2 — Implement the renderer
 
-Item renderers are framework-specific components.
+Item renderers are framework-specific.
 
 <IntegrationTabs>
   <Fragment slot="react">
@@ -156,6 +156,37 @@ Item renderers are framework-specific components.
     ```
 
     `template` is the per-item data — typed as `Car | undefined` because the list can render placeholder rows while items load, so use optional chaining (`template?.foo`).
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    // car-item-renderer.js
+    export const carItemRenderer = (ctx) => {
+      const root = document.createElement('div');
+      root.className = 'car-renderer';
+      if (ctx.disabled) root.classList.add('disabled');
+      if (ctx.selected) root.classList.add('selected');
+      if (ctx.focused) root.classList.add('focused');
+      if (ctx.index % 2 !== 0) root.classList.add('odd');
+
+      const img = document.createElement('span');
+      img.className = 'car-renderer__img';
+      img.textContent = ctx.template.img;
+
+      const label = document.createElement('span');
+      label.className = 'car-renderer__label';
+      label.textContent = ctx.template.label;
+
+      const price = document.createElement('span');
+      price.className = 'car-renderer__price';
+      price.textContent = `$${ctx.template.price}/day`;
+
+      root.append(img, label, price);
+      return root;
+    };
+    ```
+
+    A vanilla item renderer is a plain function that takes an `ItemRenderContext` and returns a DOM node. `ctx.template` is the per-item data; the flags `ctx.selected`, `ctx.focused`, `ctx.disabled`, and `ctx.index` let you toggle modifier classes from the context — the dropdown can render placeholder rows while items load, so guard against `ctx.template` being undefined if you start with an empty `items` list.
 
   </Fragment>
 </IntegrationTabs>
@@ -284,6 +315,25 @@ Drop the following into a global stylesheet:
         </script>
         ```
       </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        // src/main.js
+        import { carItemRenderer } from './car-item-renderer';
+
+        const config = {
+          formDef: rentACarForm,
+          formConfig: {
+            states: {
+              differentReturn: '$form.differentReturn === true',
+              hasDiscount: '$form.hasDiscountCode === true',
+            },
+          },
+          itemRenderers: {
+            carItemRenderer,
+          },
+        };
+        ```
+      </Fragment>
     </IntegrationTabs>
   </Fragment>
   <Fragment slot="json">
@@ -339,6 +389,19 @@ Drop the following into a global stylesheet:
           },
         };
         </script>
+        ```
+      </Fragment>
+      <Fragment slot="vanilla">
+        ```js
+        // src/main.js
+        import { carItemRenderer } from './car-item-renderer';
+
+        const config = {
+          formDef: rentACarForm,
+          itemRenderers: {
+            carItemRenderer,
+          },
+        };
         ```
       </Fragment>
     </IntegrationTabs>

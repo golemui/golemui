@@ -84,6 +84,17 @@ Each framework has its own mechanism for obtaining a handle to the form componen
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    const form = document.getElementById('app-form');
+    form.config = { /* ... */ };
+    // `form.setData(...)` and `form.setMeta(...)` are available directly on the element.
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## `setData`
@@ -187,6 +198,30 @@ Replaces the form's current data state. All field values are overwritten with th
       <button @click="loadUser('42')">Load user</button>
       <GuiForm ref="formRef" :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```html
+    <!-- index.html -->
+    <button id="load-btn">Load user</button>
+    <gui-form id="app-form"></gui-form>
+    ```
+
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+
+    const form = document.getElementById('app-form');
+    form.config = { /* ... */ };
+
+    async function loadUser(userId) {
+      const user = await fetchUser(userId);
+      form.setData({ name: user.name, email: user.email });
+    }
+
+    document.getElementById('load-btn').addEventListener('click', () => loadUser('42'));
     ```
 
   </Fragment>
@@ -325,6 +360,37 @@ Replaces the form's current meta state. Meta values are available inside the for
       <button @click="goOnline">Connect</button>
       <GuiForm ref="formRef" :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```html
+    <!-- index.html -->
+    <button id="connect-btn">Connect</button>
+    <gui-form id="app-form"></gui-form>
+    ```
+
+    ```js
+    // src/main.js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.displays.alert('status-banner', {
+          text: 'Connection: {{$meta.status}}',
+        }),
+      ],
+      meta: { status: 'offline' },
+    };
+
+    function goOnline() {
+      form.setMeta({ status: 'online' });
+    }
+
+    document.getElementById('connect-btn').addEventListener('click', goOnline);
     ```
 
   </Fragment>

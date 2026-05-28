@@ -235,6 +235,94 @@ Pick your framework — each tab walks through the key concepts and the full imp
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+
+    **Key concepts (Vanilla JS)**
+
+    - Extend `LitElement` from `lit` (already a transitive dependency via `@golemui/lit`). Consume `formContext` and provide `layoutContext` so child widgets can resolve through the registry.
+    - Drive re-renders by subscribing to `adapter.templateDataChanged$` and calling `requestUpdate()`; clean up the subscription in `disconnectedCallback`.
+    - Render children with `<gui-widget>` and the `repeat` directive for keyed list updates.
+    - Register the class with `customElements.define('app-product-card', ProductCardElement)` at the bottom of the file.
+    - Adding `class="product-card"` and binding `flex` to `templateData.size` lets the layout participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```ts
+    // product-card.element.ts
+    import { html, LitElement } from 'lit';
+    import { consume, provide } from '@lit/context';
+    import { repeat } from 'lit-html/directives/repeat.js';
+    import { Subscription } from 'rxjs';
+    import type { LayoutWidget, WithWidget } from '@golemui/core';
+    import {
+      formContext,
+      layoutContext,
+      LayoutWidgetAdapter,
+      type LitFormContext,
+    } from '@golemui/lit';
+
+    interface ProductCardProps {
+      title: string;
+    }
+
+    export class ProductCardElement
+      extends LitElement
+      implements WithWidget
+    {
+      widget!: LayoutWidget;
+
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
+
+      @provide({ context: layoutContext })
+      adapter = new LayoutWidgetAdapter<ProductCardProps>();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-card');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        return html`
+          <div class="product-card__widget" id=${this.widget.uid}>
+            <h2 class="product-card__title">
+              ${this.adapter.templateData.title}
+            </h2>
+            <div class="product-card__content">
+              ${repeat(
+                this.adapter.templateData.children || [],
+                (child: any) => child.uid,
+                (child: any) =>
+                  html`<gui-widget .widget=${child}></gui-widget>`,
+              )}
+            </div>
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+
+    customElements.define('app-product-card', ProductCardElement);
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Result

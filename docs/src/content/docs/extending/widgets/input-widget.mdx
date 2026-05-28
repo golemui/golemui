@@ -363,6 +363,117 @@ gui.inputs.custom('productRating', 'product.rating', {
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+
+    **Key concepts (Vanilla JS)**
+
+    - Extend `LitElement` from `lit` (already a transitive dependency via `@golemui/lit`). Consume `formContext` and provide `inputContext` so any nested widget can resolve through the registry.
+    - Subscribe to `adapter.templateDataChanged$` to drive `requestUpdate()`. Clean up the subscription in `disconnectedCallback`.
+    - Call `this.adapter.valueChanged(newValue)` to update the form data; call `this.adapter.onBlur()` from a `@blur` handler.
+    - Register the class with `customElements.define('app-product-rating', ProductRatingElement)` at the bottom of the file.
+    - Adding `class="product-rating"` and binding `flex` to `templateData.size` lets the input participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```ts
+    // product-rating.element.ts
+    import { html, LitElement, nothing } from 'lit';
+    import { consume, provide } from '@lit/context';
+    import { Subscription } from 'rxjs';
+    import type { InputWidget, WithWidget } from '@golemui/core';
+    import {
+      formContext,
+      inputContext,
+      InputWidgetAdapter,
+      type LitFormContext,
+    } from '@golemui/lit';
+
+    interface ProductRatingProps {
+      maxRating: number;
+    }
+
+    export class ProductRatingElement
+      extends LitElement
+      implements WithWidget
+    {
+      widget!: InputWidget<number>;
+
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
+
+      @provide({ context: inputContext })
+      adapter = new InputWidgetAdapter<number, ProductRatingProps>();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-rating');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        const { value, errors, touched, maxRating } =
+          this.adapter.templateData;
+        const stars = maxRating || 5;
+
+        return html`
+          <div class="product-rating__widget" id=${this.widget.uid}>
+            <div
+              class="product-rating__stars"
+              tabindex="0"
+              @blur=${() => this.adapter.onBlur()}
+            >
+              ${Array.from({ length: stars }, (_, i) => i + 1).map(
+                (star) => html`
+                  <span
+                    role="button"
+                    class="product-rating__star ${star <= (value || 0)
+                      ? 'product-rating__star--active'
+                      : ''}"
+                    @click=${() => this.adapter.valueChanged(star)}
+                  >
+                    ${star <= (value || 0) ? '★' : '☆'}
+                  </span>
+                `,
+              )}
+            </div>
+            ${touched && errors?.length
+              ? html`
+                  <div class="product-rating__errors">
+                    ${errors.map(
+                      (error: string) =>
+                        html`<span class="product-rating__error"
+                          >${error}</span
+                        >`,
+                    )}
+                  </div>
+                `
+              : nothing}
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+
+    customElements.define('app-product-rating', ProductRatingElement);
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Result

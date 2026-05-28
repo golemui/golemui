@@ -175,18 +175,17 @@ The form definition references translation keys through `Localizable` shapes (`{
     import { GuiForm } from '@golemui/gui-react';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
-    const formDef = [
-      gui.inputs.textInput('username', {
-        label: { key: 'username.label', default: 'Username' },
+    const config = {
+      formDef: [
+        gui.inputs.textInput('username', {
+          label: { key: 'username.label', default: 'Username' },
+        }),
+      ],
+      localization: createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
       }),
-    ];
-
-    const localization = createI18nextTranslator({
-      en: { translation: { username: { label: 'Username' } } },
-      es: { translation: { username: { label: 'Usuario' } } },
-    });
-
-    const config = { formDef, localization };
+    };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -261,23 +260,44 @@ The form definition references translation keys through `Localizable` shapes (`{
     import { GuiForm } from '@golemui/gui-vue';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
-    const formDef = [
-      gui.inputs.textInput('username', {
-        label: { key: 'username.label', default: 'Username' },
+    const config = {
+      formDef: [
+        gui.inputs.textInput('username', {
+          label: { key: 'username.label', default: 'Username' },
+        }),
+      ],
+      localization: createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
       }),
-    ];
-
-    const localization = createI18nextTranslator({
-      en: { translation: { username: { label: 'Username' } } },
-      es: { translation: { username: { label: 'Usuario' } } },
-    });
-
-    const config = { formDef, localization };
+    };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import { gui } from '@golemui/gui-shared';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef: [
+        gui.inputs.textInput('username', {
+          label: { key: 'username.label', default: 'Username' },
+        }),
+      ],
+      localization: createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      }),
+    };
     ```
 
   </Fragment>
@@ -308,12 +328,13 @@ The JSON form references the same translation keys inline:
     import formDef from './my-form.json';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
-    const localization = createI18nextTranslator({
-      en: { translation: { username: { label: 'Username' } } },
-      es: { translation: { username: { label: 'Usuario' } } },
-    });
-
-    const config = { formDef, localization };
+    const config = {
+      formDef,
+      localization: createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      }),
+    };
 
     export function MyForm() {
       return <GuiForm config={config} />;
@@ -380,17 +401,36 @@ The JSON form references the same translation keys inline:
     import formDef from './my-form.json';
     import { createI18nextTranslator } from './i18n/i18next-translator';
 
-    const localization = createI18nextTranslator({
-      en: { translation: { username: { label: 'Username' } } },
-      es: { translation: { username: { label: 'Usuario' } } },
-    });
-
-    const config = { formDef, localization };
+    const config = {
+      formDef,
+      localization: createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      }),
+    };
     </script>
 
     <template>
       <GuiForm :config="config" />
     </template>
+    ```
+
+  </Fragment>
+  <Fragment slot="vanilla">
+    ```js
+    import '@golemui/gui-components/index.css';
+    import '@golemui/gui-lit';
+    import formDef from './my-form.json';
+    import { createI18nextTranslator } from './i18n/i18next-translator';
+
+    const form = document.getElementById('app-form');
+    form.config = {
+      formDef,
+      localization: createI18nextTranslator({
+        en: { translation: { username: { label: 'Username' } } },
+        es: { translation: { username: { label: 'Usuario' } } },
+      }),
+    };
     ```
 
   </Fragment>

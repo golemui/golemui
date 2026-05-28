@@ -445,6 +445,127 @@ The `icon` field is intentionally just a string — either inline SVG or a URL. 
     ```
 
   </Fragment>
+  <Fragment slot="vanilla">
+
+    **Key concepts (Vanilla JS)**
+
+    - Extend `LitElement` from `lit` (already a transitive dependency via `@golemui/lit`) and consume `formContext` / provide `actionContext` so the form engine can wire your widget into the registry.
+    - Subscribe to `adapter.templateDataChanged$` to drive `requestUpdate()`; clean up in `disconnectedCallback`.
+    - For URL icons, render an `<img>`. For inline SVG strings, use Lit's `unsafeHTML` directive to inject the SVG as innerHTML on a wrapping span.
+    - Call `this.adapter.click(id)` to emit the wired event with the network id as `detail`.
+    - Register the class with `customElements.define('app-product-share', ProductShareElement)` at the bottom of the file.
+    - Adding `class="product-share"` and binding `flex` to `templateData.size` lets the action participate in `flex` parents — see [Sizing custom widgets](/extending/widgets/sizing/) for the rationale.
+
+    ```ts
+    // product-share.element.ts
+    import { html, LitElement } from 'lit';
+    import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+    import { consume, provide } from '@lit/context';
+    import { Subscription } from 'rxjs';
+    import type { ActionWidget, WithWidget } from '@golemui/core';
+    import {
+      actionContext,
+      ActionWidgetAdapter,
+      formContext,
+      type LitFormContext,
+    } from '@golemui/lit';
+
+    interface ShareNetwork {
+      id: string;
+      label: string;
+      icon?: string;
+    }
+    interface ProductShareProps {
+      networks?: ShareNetwork[];
+    }
+
+    const DEFAULT_NETWORKS: ShareNetwork[] = [
+      { id: 'twitter', label: 'X' },
+      { id: 'facebook', label: 'Facebook' },
+      { id: 'reddit', label: 'Reddit' },
+    ];
+
+    function isInlineSvg(icon: string) {
+      return icon.trim().startsWith('<svg');
+    }
+
+    export class ProductShareElement
+      extends LitElement
+      implements WithWidget
+    {
+      widget!: ActionWidget;
+
+      @consume({ context: formContext })
+      formContext!: LitFormContext<any>;
+
+      @provide({ context: actionContext })
+      adapter = new ActionWidgetAdapter<ProductShareProps>();
+
+      subscriptions: Subscription[] = [];
+
+      override createRenderRoot() {
+        return this;
+      }
+
+      override connectedCallback() {
+        super.connectedCallback();
+        this.classList.add('product-share');
+        this.adapter.context = this.formContext;
+        this.adapter.init(this.widget);
+
+        this.subscriptions.push(
+          this.adapter.templateDataChanged$.subscribe(() =>
+            this.requestUpdate(),
+          ),
+        );
+      }
+
+      override render() {
+        const networks = this.adapter.templateData.networks ?? DEFAULT_NETWORKS;
+        return html`
+          <div class="product-share__widget" id=${this.widget.uid}>
+            <span class="product-share__label">Share this product:</span>
+            <div class="product-share__buttons">
+              ${networks.map(
+                (n) => html`
+                  <button
+                    type="button"
+                    class="product-share__button"
+                    @click=${() => this.adapter.click(n.id)}
+                    title=${n.label}
+                    aria-label=${n.label}
+                  >
+                    ${n.icon
+                      ? isInlineSvg(n.icon)
+                        ? html`<span class="product-share__icon"
+                            >${unsafeHTML(n.icon)}</span
+                          >`
+                        : html`<img
+                            class="product-share__icon"
+                            src=${n.icon}
+                            alt=""
+                            aria-hidden="true"
+                          />`
+                      : html`<span class="product-share__network">${n.label}</span>`}
+                  </button>
+                `,
+              )}
+            </div>
+          </div>
+        `;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.adapter.destroy();
+        this.subscriptions.forEach((s) => s.unsubscribe());
+      }
+    }
+
+    customElements.define('app-product-share', ProductShareElement);
+    ```
+
+  </Fragment>
 </IntegrationTabs>
 
 ## Result
