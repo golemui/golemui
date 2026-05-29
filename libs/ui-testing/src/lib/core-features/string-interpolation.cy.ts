@@ -528,6 +528,26 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
 
         cy.get('.gui-alert [role="alert"]').contains('Role: VIP');
       });
+
+      it('should emit formHealth error when a template expression is invalid', () => {
+        mountFn({
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'result',
+                kind: 'display',
+                type: 'alert',
+                props: { text: '{{$form..broken}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('@formHealth').should('have.been.calledWithMatch', {
+          status: 'errored',
+          code: 40,
+        });
+      });
     });
 
     describe('Edge cases', () => {

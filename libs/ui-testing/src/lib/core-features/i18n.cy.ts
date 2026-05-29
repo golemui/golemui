@@ -229,6 +229,32 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
         'Errors: Invalid input: expected string, received undefined, Invalid: true',
       );
     });
+
+    it('should emit formHealth error when an i18n param expression is invalid', () => {
+      mountFn({
+        localization: i18nTranslator,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'greeting',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'user.name.label',
+                  params: { name: '$form..broken' },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      cy.get('@formHealth').should('have.been.calledWithMatch', {
+        status: 'errored',
+        code: 40,
+      });
+    });
   });
 
   describe('Edge cases', () => {
