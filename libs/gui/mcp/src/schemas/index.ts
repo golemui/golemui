@@ -1,35 +1,36 @@
-import commonSchema from './data/common.schema.json';
-import formSchema from './data/form.schema.json';
-import layoutWidgetSchema from './data/layout-widget.schema.json';
-import validatorsSchema from './data/validators.schema.json';
-
-import accordion from './data/components/accordion.schema.json';
-import alert from './data/components/alert.schema.json';
-import button from './data/components/button.schema.json';
-import calendar from './data/components/calendar.schema.json';
-import checkbox from './data/components/checkbox.schema.json';
-import currency from './data/components/currency.schema.json';
-import dateinput from './data/components/dateinput.schema.json';
-import datepicker from './data/components/datepicker.schema.json';
-import dropdown from './data/components/dropdown.schema.json';
-import flex from './data/components/flex.schema.json';
-import grid from './data/components/grid.schema.json';
-import list from './data/components/list.schema.json';
-import markdown from './data/components/markdown.schema.json';
-import markdowntext from './data/components/markdowntext.schema.json';
-import numberWidget from './data/components/number.schema.json';
-import password from './data/components/password.schema.json';
-import radiogroup from './data/components/radiogroup.schema.json';
-import rangecalendar from './data/components/rangecalendar.schema.json';
-import rangedateinput from './data/components/rangedateinput.schema.json';
-import rangedatepicker from './data/components/rangedatepicker.schema.json';
-import repeater from './data/components/repeater.schema.json';
-import select from './data/components/select.schema.json';
-import tabs from './data/components/tabs.schema.json';
-import tags from './data/components/tags.schema.json';
-import textarea from './data/components/textarea.schema.json';
-import textinput from './data/components/textinput.schema.json';
-import toggle from './data/components/toggle.schema.json';
+import {
+  commonSchema,
+  formSchema,
+  layoutWidgetSchema,
+  validatorsSchema,
+  accordionSchema as accordion,
+  alertSchema as alert,
+  buttonSchema as button,
+  calendarSchema as calendar,
+  checkboxSchema as checkbox,
+  currencySchema as currency,
+  dateinputSchema as dateinput,
+  datepickerSchema as datepicker,
+  dropdownSchema as dropdown,
+  flexSchema as flex,
+  gridSchema as grid,
+  listSchema as list,
+  markdownSchema as markdown,
+  markdowntextSchema as markdowntext,
+  numberSchema as numberWidget,
+  passwordSchema as password,
+  radiogroupSchema as radiogroup,
+  rangecalendarSchema as rangecalendar,
+  rangedateinputSchema as rangedateinput,
+  rangedatepickerSchema as rangedatepicker,
+  repeaterSchema as repeater,
+  selectSchema as select,
+  tabsSchema as tabs,
+  tagsSchema as tags,
+  textareaSchema as textarea,
+  textinputSchema as textinput,
+  toggleSchema as toggle,
+} from '@golemui/gui-schemas';
 
 export type WidgetSchema = {
   $id: string;

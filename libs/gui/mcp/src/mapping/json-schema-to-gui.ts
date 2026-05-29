@@ -54,7 +54,7 @@ export type Unmapped = {
 };
 
 export type MapResult = {
-  formDefinition: { form: unknown[] };
+  formDefinition: { $schema: string; form: unknown[] };
   unmapped: Unmapped[];
 };
 
@@ -109,7 +109,7 @@ export function jsonSchemaToGui(schema: JsonSchemaLike, opts: MapOptions = {}): 
       : fields;
 
   return {
-    formDefinition: { form: wrapped },
+    formDefinition: { $schema: 'https://golemui.com/schemas/form.schema.json', form: wrapped },
     unmapped,
   };
 }
@@ -328,7 +328,13 @@ function buildArrayField(
     // `items` is the reserved segment the runtime expands per array entry.
     const childParent = `${path}.items`;
     for (const [childName, childSchema] of Object.entries(items.properties ?? {})) {
-      const w = mapProperty(childName, unwrap(childSchema), required.has(childName), childParent, unmapped);
+      const w = mapProperty(
+        childName,
+        unwrap(childSchema),
+        required.has(childName),
+        childParent,
+        unmapped,
+      );
       if (w) templateChildren.push(w);
     }
     if (!templateChildren.length) {
@@ -370,18 +376,48 @@ function buildArrayField(
 
   unmapped.push({
     path,
-    reason: 'Array shape is not mappable (only arrays of objects → repeater, or arrays of strings/numbers → tags).',
+    reason:
+      'Array shape is not mappable (only arrays of objects → repeater, or arrays of strings/numbers → tags).',
   });
   return null;
 }
 
-function buildArrayValidator(s: JsonSchemaLike, required: boolean): { type: 'array'; required?: boolean; minItems?: number; maxItems?: number; uniqueItems?: boolean } | undefined {
-  const v: { type: 'array'; required?: boolean; minItems?: number; maxItems?: number; uniqueItems?: boolean } = { type: 'array' };
+function buildArrayValidator(
+  s: JsonSchemaLike,
+  required: boolean,
+):
+  | {
+      type: 'array';
+      required?: boolean;
+      minItems?: number;
+      maxItems?: number;
+      uniqueItems?: boolean;
+    }
+  | undefined {
+  const v: {
+    type: 'array';
+    required?: boolean;
+    minItems?: number;
+    maxItems?: number;
+    uniqueItems?: boolean;
+  } = { type: 'array' };
   let used = false;
-  if (required) { v.required = true; used = true; }
-  if (typeof s.minItems === 'number') { v.minItems = s.minItems; used = true; }
-  if (typeof s.maxItems === 'number') { v.maxItems = s.maxItems; used = true; }
-  if (s.uniqueItems === true) { v.uniqueItems = true; used = true; }
+  if (required) {
+    v.required = true;
+    used = true;
+  }
+  if (typeof s.minItems === 'number') {
+    v.minItems = s.minItems;
+    used = true;
+  }
+  if (typeof s.maxItems === 'number') {
+    v.maxItems = s.maxItems;
+    used = true;
+  }
+  if (s.uniqueItems === true) {
+    v.uniqueItems = true;
+    used = true;
+  }
   return used ? v : undefined;
 }
 

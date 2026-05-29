@@ -32,7 +32,7 @@ export type GenerateFromOpenapiInput = {
 
 export type GenerateFromOpenapiResult = {
   resolvedOperation: { method: string; path: string; operationId?: string };
-  formDefinition: { form: unknown[] };
+  formDefinition: { $schema: string; form: unknown[] };
   unmapped: { path: string; reason: string }[];
   validation: ReturnType<typeof validateFormDefinition>;
 };

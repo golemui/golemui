@@ -9,7 +9,7 @@ export type GenerateFromJsonSchemaInput = {
 };
 
 export type GenerateFromJsonSchemaResult = {
-  formDefinition: { form: unknown[] };
+  formDefinition: { $schema: string; form: unknown[] };
   unmapped: { path: string; reason: string }[];
   validation: ReturnType<typeof validateFormDefinition>;
 };

@@ -92,7 +92,7 @@ describe('validate_form_definition', () => {
     expect(formatError?.suggestion).toMatch(/email/);
   });
 
-  it('flags missing $form/$meta/$item/$index prefix in reactive expressions', () => {
+  it('flags missing $form/$meta prefix in reactive expressions', () => {
     const result = validateFormDefinition({
       formDefinition: {
         form: [
@@ -108,6 +108,39 @@ describe('validate_form_definition', () => {
     // Schema-valid (it's a string), but the linter should catch it.
     expect(result.expressionWarnings.length).toBeGreaterThan(0);
     expect(result.expressionWarnings[0]!.message).toMatch(/\$form/);
+  });
+
+  it('accepts $formIsInvalid as a valid root reference', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        states: { formInvalid: '$formIsInvalid' },
+        form: [
+          {
+            kind: 'action',
+            type: 'button',
+            label: 'Submit',
+            disabled: { when: '$formIsInvalid' },
+          },
+        ],
+      },
+    });
+    expect(result.expressionWarnings.filter((w) => w.message.includes('does not reference'))).toEqual([]);
+  });
+
+  it('does not flag !$formIsInvalid (negation of a boolean is valid)', () => {
+    const result = validateFormDefinition({
+      formDefinition: {
+        form: [
+          {
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'Form is valid' },
+            include: { when: '!$formIsInvalid' },
+          },
+        ],
+      },
+    });
+    expect(result.expressionWarnings.filter((w) => w.message.includes('negates'))).toEqual([]);
   });
 
   it('never returns valid=false with an empty errors list', () => {
@@ -415,8 +448,9 @@ describe('validate_form_definition', () => {
       // The ref `$form.x` here is operand of `??`, not `>`. The wrapper `(... ?? 0)` is what's > 180.
       expect(has(r, /comparison or arithmetic/)).toBe(false);
     });
-    it('does not flag `$index > 0` (index is always defined)', () => {
+    it('flags `$index > 0` for missing root reference, not comparison/arithmetic', () => {
       const r = validateFormDefinition(formWith('$index > 0'));
+      expect(has(r, /does not reference/)).toBe(true);
       expect(has(r, /comparison or arithmetic/)).toBe(false);
     });
     it('does not flag a guarded comparison', () => {
