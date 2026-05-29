@@ -5,97 +5,121 @@ sidebar:
   order: 0
 ---
 
+import DslTabs from '../../../../components/DslTabs.astro';
+
 **Layout widgets** are containers. They take a `children` array (a tabs/accordion takes a `sections` array of `{ label, uid, children }`) and arrange them visually. They have no `path` and don't write to form data themselves.
 
-## The DX shortcuts
+## How to define them
 
-```ts
-import { gui } from '@golemui/gui-shared';
+<DslTabs>
+  <Fragment slot="dx">
 
-const formDef = [
-  // Grid for rows — subgrid keeps labels and inputs aligned across all children.
-  gui.layouts.grid([
-    gui.inputs.textInput('user.firstName'),
-    gui.inputs.textInput('user.lastName'),
-  ]),
+    ```ts
+    import { gui } from '@golemui/gui-shared';
 
-  // Flex for columns.
-  gui.layouts.flex(
-    [gui.inputs.textInput('user.email'), gui.inputs.password('user.password')],
-    { direction: 'column' },
-  ),
+    const formDef = [
+      // Grid for rows — subgrid keeps labels and inputs aligned across all children.
+      gui.layouts.grid([
+        gui.inputs.textInput('user.firstName'),
+        gui.inputs.textInput('user.lastName'),
+      ]),
 
-  // Tabs — first arg is sections, each with its own children.
-  gui.layouts.tabs([
+      // Flex for columns.
+      gui.layouts.flex(
+        [gui.inputs.textInput('user.email'), gui.inputs.password('user.password')],
+        { direction: 'column' },
+      ),
+
+      // Tabs — first arg is sections, each with its own children.
+      gui.layouts.tabs([
+        {
+          label: 'Personal',
+          uid: 'personal',
+          children: [
+            /* ... */
+          ],
+        },
+        {
+          label: 'Work',
+          uid: 'work',
+          children: [
+            /* ... */
+          ],
+        },
+      ]),
+    ];
+    ```
+
+    `flex` and `grid` also have direction-preset variants — `gui.layouts.horizontalFlex` / `verticalFlex` / `horizontalGrid` / `verticalGrid` — equivalent to passing `{ direction: 'row' }` or `{ direction: 'column' }` explicitly. See the [`gui.layouts` reference](/form-definition/reference/gui-layouts/) for the full list.
+
+  </Fragment>
+  <Fragment slot="json">
+
+    Same outcome in JSON — `flex`/`grid` carry children directly; `tabs` and `accordion` declare their sections in `props.tabs`/`props.sections` and bind each section's content to a child by matching `uid`:
+
+    ```json
     {
-      label: 'Personal',
-      uid: 'personal',
-      children: [
-        /* ... */
-      ],
-    },
-    {
-      label: 'Work',
-      uid: 'work',
-      children: [
-        /* ... */
-      ],
-    },
-  ]),
-];
-```
+      "form": [
+        {
+          "kind": "layout",
+          "type": "grid",
+          "children": [
+            { "kind": "input", "type": "textinput", "path": "user.firstName" },
+            { "kind": "input", "type": "textinput", "path": "user.lastName" }
+          ]
+        },
+        {
+          "kind": "layout",
+          "type": "flex",
+          "props": { "direction": "column" },
+          "children": [
+            { "kind": "input", "type": "textinput", "path": "user.email" },
+            { "kind": "input", "type": "password", "path": "user.password" }
+          ]
+        },
+        {
+          "kind": "layout",
+          "type": "tabs",
+          "props": {
+            "tabs": [
+              { "uid": "personal", "label": "Personal" },
+              { "uid": "work", "label": "Work" }
+            ]
+          },
+          "children": [
+            { "uid": "personal", "kind": "layout", "type": "flex", "children": [] },
+            { "uid": "work", "kind": "layout", "type": "flex", "children": [] }
+          ]
+        }
+      ]
+    }
+    ```
 
-| Shortcut                     | Description                                                                             |
-| ---------------------------- | --------------------------------------------------------------------------------------- |
-| `gui.layouts.flex`           | Flex container ([Flex](/widgets-reference/layout-fields/flex/)).                        |
-| `gui.layouts.horizontalFlex` | Flex with `direction: 'row'`.                                                           |
-| `gui.layouts.verticalFlex`   | Flex with `direction: 'column'`.                                                        |
-| `gui.layouts.grid`           | Grid container with subgrid alignment ([Grid](/widgets-reference/layout-fields/grid/)). |
-| `gui.layouts.horizontalGrid` | Grid with `direction: 'row'`.                                                           |
-| `gui.layouts.verticalGrid`   | Grid with `direction: 'column'`.                                                        |
-| `gui.layouts.tabs`           | Tabs ([Tabs](/widgets-reference/layout-fields/tabs/)).                                  |
-| `gui.layouts.accordion`      | Accordion ([Accordion](/widgets-reference/layout-fields/accordion/)).                   |
-| `gui.layouts.custom`         | Plug in your own layout ([Custom Widgets](/form-definition/custom-widgets/)).           |
+    | Property   | Description                                                                                                            |
+    | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+    | `uid`      | Optional unique id; one is generated if absent.                                                                        |
+    | `kind`     | **MANDATORY**. Always `'layout'`.                                                                                      |
+    | `type`     | **MANDATORY**. The layout type (`flex`, `grid`, `tabs`, `accordion`).                                                  |
+    | `children` | **MANDATORY** for `flex` / `grid`. An array of child widgets. (Tabs and accordion match each child by `uid` to a section declared in `props`.) |
+    | `props`    | Layout-specific configuration — direction, gap, align/justify, tab/section definitions, etc. See each layout's reference page. |
+
+  </Fragment>
+</DslTabs>
 
 ### Layout recommendation
 
 - **Use `grid` for rows.** CSS subgrid keeps labels, inputs, and validation messages aligned across every child in the row.
 - **Use `flex` for columns.** Lighter, more flexible for vertical stacks.
 
-## JSON form
-
-The same widget in JSON, with `props` and `children` separated:
-
-```json
-{
-  "form": [
-    {
-      "kind": "layout",
-      "type": "grid",
-      "props": { "direction": "row", "autoFit": true },
-      "children": [
-        { "kind": "input", "type": "textinput", "path": "user.firstName" },
-        { "kind": "input", "type": "textinput", "path": "user.lastName" }
-      ]
-    }
-  ]
-}
-```
-
-| Property   | Description                                                                                                            |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `uid`      | Optional unique id; one is generated if absent.                                                                        |
-| `kind`     | **MANDATORY**. Always `'layout'`.                                                                                      |
-| `type`     | **MANDATORY**. The layout type (`flex`, `grid`, `tabs`, `accordion`).                                                  |
-| `children` | **MANDATORY** for `flex` / `grid`. An array of child widgets. (Tabs and accordion put children inside their sections.) |
-| `props`    | Layout-specific configuration — direction, gap, align/justify, etc. See each layout's reference page.                  |
-
 ## Available widgets
 
-- [Accordion](/widgets-reference/layout-fields/accordion/)
-- [Flex](/widgets-reference/layout-fields/flex/)
-- [Grid](/widgets-reference/layout-fields/grid/) — recommended for rows
-- [Tabs](/widgets-reference/layout-fields/tabs/)
+| Widget    | DX shortcut             | Reference                                                             |
+| --------- | ----------------------- | --------------------------------------------------------------------- |
+| Flex      | `gui.layouts.flex`      | [Flex](/widgets-reference/layout-fields/flex/)                        |
+| Grid      | `gui.layouts.grid`      | [Grid](/widgets-reference/layout-fields/grid/) — recommended for rows |
+| Tabs      | `gui.layouts.tabs`      | [Tabs](/widgets-reference/layout-fields/tabs/)                        |
+| Accordion | `gui.layouts.accordion` | [Accordion](/widgets-reference/layout-fields/accordion/)              |
+| _Custom_  | `gui.layouts.custom`    | [Custom Widgets](/form-definition/custom-widgets/)                    |
 
 ## See also
 
