@@ -7,4 +7,5 @@ export const errorCodes = {
   initializeUidCollisionError: 21,
   initializeUnknownError: 22,
   widgetCouldNotBeLoaded: 30,
+  resolveStringInterpolationError: 40,
 };

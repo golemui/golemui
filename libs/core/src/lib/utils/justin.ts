@@ -26,6 +26,6 @@ export function expressionIsTrue(
 // TODO: add a fast-path conditional to shortcircuit the regexp. Is it worth it?
 // Converts dot notation numeric indexes to bracket notation for JS compatibility.
 // e.g. '$form.teams.1.developers?.0?.firstName' -> '$form.teams[1].developers?.[0]?.firstName'
-function normalizeArrayIndexes(expression: string): string {
+export function normalizeArrayIndexes(expression: string): string {
   return expression.replace(/\?\.(\d+)/g, '?.[$1]').replace(/\.(\d+)/g, '[$1]');
 }

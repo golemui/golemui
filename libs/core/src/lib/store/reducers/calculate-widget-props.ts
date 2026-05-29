@@ -17,16 +17,14 @@ import {
   isTranslationConfig,
   type TranslationConfig,
 } from '../../i18n';
+import { compile, parse } from 'subscript/justin';
 import { type $Errors } from '../../shared';
-import {
-  calculateValidationVariables,
-  isPotentialScopedPath,
-  resolveScopedPath,
-  resolveScopedPaths,
-} from '../../utils/form';
+import { calculateValidationVariables } from '../../utils/form';
+import { normalizeArrayIndexes } from '../../utils/justin';
 import { get, set } from '../../utils/object';
 import { type DerivedWidget, type State } from '../model';
 import { hasWhen } from './utils';
+import { errorCodes } from '../../errors';
 
 // -----------------------------------------------------------------------------
 // Entry point
@@ -34,10 +32,21 @@ import { hasWhen } from './utils';
 
 export const calculateWidgetProps =
   (localization: I18nTranslator) =>
-  (state: State): State => ({
-    ...state,
-    calculatedWidgets: calculateAll(state, localization),
-  });
+  (state: State): State => {
+    try {
+      return { ...state, calculatedWidgets: calculateAll(state, localization) };
+    } catch (err) {
+      const error = err as Error & { code: number };
+      return {
+        ...state,
+        formHealth: {
+          status: 'errored',
+          message: `[${error.code}] ${error.message}`,
+          code: error.code,
+        },
+      };
+    }
+  };
 
 // -----------------------------------------------------------------------------
 // Orchestrator
@@ -289,12 +298,27 @@ function resolveTranslationConfig(tc: TranslationConfig, ctx: ResolverCtx): stri
   return ctx.localization.translate(tc.key, resolveI18nParams(tc.params, ctx), tc.default);
 }
 
+const STRING_INTERPOLATION_REGEX = /\{\{([^}]+)\}\}/g;
+
 function resolveString(input: string, ctx: ResolverCtx): string {
-  return resolveScopedPaths(input, {
-    resolveFormPath: (p) => get(ctx.$form, p) ?? input,
-    resolveMetaPath: (p) => get(ctx.$meta, p) ?? input,
-    resolveErrorsPath: (p) => get(ctx.$errors, p) ?? input,
-    resolveFormIsInvalid: () => String(ctx.$formIsInvalid),
+  if (!input.includes('{{')) {
+    return input;
+  }
+
+  return input.replace(STRING_INTERPOLATION_REGEX, (_match, rawExpr: string) => {
+    const expr = normalizeArrayIndexes(rawExpr.trim());
+    try {
+      const result = compile(parse(expr))({
+        $form: ctx.$form,
+        $meta: ctx.$meta,
+        $errors: ctx.$errors,
+        $formIsInvalid: ctx.$formIsInvalid,
+      });
+      return result == null ? '' : String(result);
+    } catch (err) {
+      const cause = err instanceof Error ? err.message : String(err);
+      throw new StringInterpolationError(`Failed to evaluate '{{${rawExpr.trim()}}}': ${cause}`);
+    }
   });
 }
 
@@ -370,11 +394,20 @@ function pickSuffixedValue<V = unknown>(
   return fieldSource[baseKey] as V | undefined;
 }
 
+function isPotentialExpression(value: string): boolean {
+  return (
+    value.startsWith('$form') ||
+    value.startsWith('$meta') ||
+    value.startsWith('$errors') ||
+    value === '$formIsInvalid'
+  );
+}
+
 /**
  * Resolves i18n interpolation parameters to concrete values.
  *
- * Each parameter value is either a literal (string or number) or a scoped
- * path that is looked up in `$form`, `$meta`, `$errors`, or `$formIsInvalid`.
+ * Each parameter value is either a literal (string or number) or a subscript
+ * expression starting with a scope prefix ($form, $meta, $errors, $formIsInvalid).
  */
 function resolveI18nParams(
   params: I18nParams | undefined,
@@ -385,13 +418,19 @@ function resolveI18nParams(
   }
   return Object.keys(params).reduce((acc, key) => {
     const param = String(params[key]);
-    if (isPotentialScopedPath(param)) {
-      acc[key] = resolveScopedPath(param, {
-        resolveFormPath: (p) => get(ctx.$form, p) ?? param,
-        resolveMetaPath: (p) => get(ctx.$meta, p) ?? param,
-        resolveErrorsPath: (p) => get(ctx.$errors, p) ?? param,
-        resolveFormIsInvalid: () => ctx.$formIsInvalid,
-      });
+    if (isPotentialExpression(param)) {
+      try {
+        const result = compile(parse(normalizeArrayIndexes(param)))({
+          $form: ctx.$form,
+          $meta: ctx.$meta,
+          $errors: ctx.$errors,
+          $formIsInvalid: ctx.$formIsInvalid,
+        });
+        acc[key] = result ?? param;
+      } catch (err) {
+        const cause = err instanceof Error ? err.message : String(err);
+        throw new StringInterpolationError(`Failed to evaluate i18n param '${param}': ${cause}`);
+      }
     } else {
       acc[key] = param;
     }
@@ -497,3 +536,12 @@ function resolveVisibleChildren<C extends { uid?: string }>(
 /** `"abc[0][1]"` -> `[0, 1]`, `"abc"` -> `[]`. */
 const extractRepeaterIndexes = (uid: string): number[] =>
   [...uid.matchAll(/\[(\d+)\]/g)].map((m) => parseInt(m[1], 10));
+
+// -----------------------------------------------------------------------------
+// Custom errors
+// -----------------------------------------------------------------------------
+
+class StringInterpolationError extends Error {
+  readonly code = errorCodes.resolveStringInterpolationError;
+  override name = 'StringInterpolationError';
+}
