@@ -136,6 +136,22 @@ describe('calculateWidgetProps', () => {
       expect(current.validator).toBeUndefined();
     });
 
+    it('InputWidget: preserves defaultValue string without applying string interpolation', () => {
+      const source = {
+        kind: 'input',
+        uid: 'i2',
+        type: 'textinput',
+        path: 'name',
+        defaultValue: '{{$form.other}}',
+      } satisfies InputWidget<any, string>;
+      seed(state, 'i2', source);
+
+      const next = run(state);
+      const current = next.calculatedWidgets['i2'].current as InputWidget<any, string>;
+
+      expect(current.defaultValue).toBe('{{$form.other}}');
+    });
+
     it('LayoutWidget: copies core + children (excluding `on`)', () => {
       // Non-empty children ensure the children branch sees a length change from
       // previous empty state, so `ctx.changed` stays true (the children branch

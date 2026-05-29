@@ -256,6 +256,9 @@ function applyCoreField(t: ChangeTracker, ctx: ResolverCtx, field: CoreField): v
     case 'readonly':
       resolved = resolveBoolOrWhen(raw, ctx, t.source.uid, field);
       break;
+    case 'defaultValue':
+      resolved = raw;
+      break;
     default:
       resolved = resolveValue(raw, ctx);
   }
