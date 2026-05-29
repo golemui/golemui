@@ -22,6 +22,7 @@ import { _gslActions, _gslActionByUid } from '../actions/register';
 import { _gslLayouts, _gslLayoutByUid } from '../layouts/register';
 import { _gslDisplays, _gslDisplayByUid } from '../display/register';
 import { _gslAlerts, _gslAlertByUid } from '../alert/register';
+import { _gslMarkdownTexts, _gslMarkdownTextByUid } from '../markdown-text/register';
 import { _gslTabs, _gslTabsByUid } from '../tabs/register';
 import { _gslAccordions, _gslAccordionByUid } from '../accordion/register';
 import { _gslCustomInputs, _gslCustomInputByUid } from '../custom-input/register';
@@ -261,6 +262,13 @@ export class ScopeChain {
   }
   alertByUid(uid: string, config: CfgByUid<typeof _gslAlertByUid>): GslLeafSelector {
     return this.apply(_gslAlertByUid(uid, config));
+  }
+
+  markdownTexts(config: CfgGsl<typeof _gslMarkdownTexts>): GslLeafSelector {
+    return this.apply(_gslMarkdownTexts(config));
+  }
+  markdownTextByUid(uid: string, config: CfgByUid<typeof _gslMarkdownTextByUid>): GslLeafSelector {
+    return this.apply(_gslMarkdownTextByUid(uid, config));
   }
 
   tabs(config: CfgGsl<typeof _gslTabs>): GslLeafSelector {
