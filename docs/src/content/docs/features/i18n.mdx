@@ -462,23 +462,45 @@ When the active language uses a right-to-left script — Arabic, Hebrew, Persian
 
 The `params` field in a `Localizable` shape accepts **bare expressions** alongside static values. A param value that starts with `$form`, `$meta`, `$errors`, or `$formIsInvalid` is evaluated as a live expression — the same expression language used in [string interpolation](/features/string-interpolation/) `{{...}}` slots, but **without** the `{{}}` delimiters. Any other value is passed through as a static string.
 
-```json
-{
-  "kind": "display",
-  "type": "alert",
-  "props": {
-    "text": {
-      "key": "user.greeting",
-      "params": {
-        "hello": "Hola",
-        "fullName": "$form.firstName + ' ' + $form.lastName",
-        "n": "$form.count + 1",
-        "status": "$meta.connectionStatus"
+<DslTabs>
+  <Fragment slot="dx">
+  ```ts
+  import { gui } from '@golemui/gui-shared';
+
+  gui.displays.alert({
+    uid: 'greeting',
+    text: {
+      key: 'user.greeting',
+      params: {
+        hello: 'Hola',
+        fullName: "$form.firstName + ' ' + $form.lastName",
+        n: '$form.count + 1',
+        status: '$meta.connectionStatus',
+      },
+    },
+  });
+  ```
+  </Fragment> 
+  <Fragment slot="json">
+  ```json
+  {
+    "kind": "display",
+    "type": "alert",
+    "props": {
+      "text": {
+        "key": "user.greeting",
+        "params": {
+          "hello": "Hola",
+          "fullName": "$form.firstName + ' ' + $form.lastName",
+          "n": "$form.count + 1",
+          "status": "$meta.connectionStatus"
+        }
       }
     }
   }
-}
-```
+  ```
+  </Fragment>
+</DslTabs>
 
 Given a translation bundle entry `user.greeting = "{{hello}}, {{fullName}}! Items: {{n}}, Status: {{status}}."` and form data `{ firstName: 'Jane', lastName: 'Doe', count: 4 }` with meta `{ connectionStatus: 'online' }`, this renders as:
 

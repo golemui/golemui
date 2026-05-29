@@ -7,6 +7,7 @@ import Demo from '../../../../../src/components/landing/Demo.astro';
 
 import { Code } from '@astrojs/starlight/components';
 import DslCode from '../../../../components/DslCode.astro';
+import DslTabs from '../../../../components/DslTabs.astro';
 import alertJson from '../../../../../public/template/widgets/alert/alert.json?raw';
 import alertDx from '../../../../../public/template/widgets-dx/alert/alert.ts?raw';
 import alertInfoJson from '../../../../../public/template/widgets/alert/alert-info.json?raw';
@@ -47,27 +48,55 @@ Use the `level` property to change the visual importance and color scheme of the
 
 The `text` prop supports [string interpolation](/features/string-interpolation/) — embed live form data, metadata, or computed expressions using `{{...}}` slots. Slots re-evaluate as the user fills in the form:
 
-```json
-{
-  "kind": "display",
-  "type": "alert",
-  "props": {
-    "text": "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}"
+<DslTabs>
+  <Fragment slot="dx">
+  ```ts
+  import { gui } from '@golemui/gui-shared';
+
+  gui.displays.alert({
+    uid: 'greeting',
+    text: "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}",
+  });
+  ```
+  </Fragment>
+  <Fragment slot="json">
+  ```json
+  {
+    "kind": "display",
+    "type": "alert",
+    "props": {
+      "text": "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}"
+    }
   }
-}
-```
+  ```
+  </Fragment>
+</DslTabs>
 
 Use `$errors` and `$formIsInvalid` to show validation feedback inline:
 
-```json
-{
-  "kind": "display",
-  "type": "alert",
-  "props": {
-    "text": "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}"
+<DslTabs>
+  <Fragment slot="dx">
+  ```ts
+  import { gui } from '@golemui/gui-shared';
+
+  gui.displays.alert({
+    uid: 'form_status',
+    text: "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}",
+  });
+  ```
+  </Fragment>
+  <Fragment slot="json">
+  ```json
+  {
+    "kind": "display",
+    "type": "alert",
+    "props": {
+      "text": "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}"
+    }
   }
-}
-```
+  ```
+  </Fragment>
+</DslTabs>
 
 See [String Interpolation](/features/string-interpolation/) for the full expression reference, including arithmetic, ternary, and optional chaining.
 
