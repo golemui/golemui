@@ -1,6 +1,7 @@
 import { getFormValidator } from '../schemas/ajv';
 import { formatAjvErrors, type FormattedError } from '../utils/errors';
 import { lintReactiveExpressions, type ExpressionFinding } from '../lint/reactive-expressions';
+import { lintStringInterpolations, type InterpolationFinding } from '../lint/string-interpolation';
 
 export type ValidateInput = {
   formDefinition: unknown;
@@ -11,6 +12,7 @@ export type ValidateResult = {
   errors: FormattedError[];
   warnings: FormattedError[];
   expressionWarnings: ExpressionFinding[];
+  interpolationWarnings: InterpolationFinding[];
 };
 
 export function validateFormDefinition(input: ValidateInput): ValidateResult {
@@ -18,6 +20,7 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
   const ajvOk = validate(input.formDefinition) as boolean;
   const { errors, warnings } = formatAjvErrors(validate.errors, input.formDefinition);
   const expressionWarnings = lintReactiveExpressions(input.formDefinition);
+  const interpolationWarnings = lintStringInterpolations(input.formDefinition);
 
   // Safety net: if ajv said the form is invalid but our collapser produced zero errors AND no
   // custom-widget warnings, something in the form definition is being rejected by the schema
@@ -39,6 +42,7 @@ export function validateFormDefinition(input: ValidateInput): ValidateResult {
     errors,
     warnings,
     expressionWarnings,
+    interpolationWarnings,
   };
 }
 
@@ -47,12 +51,14 @@ export const VALIDATE_FORM_DEFINITION_TOOL = {
   description:
     'Validate a GolemUI form definition against the bundled JSON Schemas. Use this AFTER ' +
     'generating or modifying a form definition to guarantee it is correct before the user ' +
-    'pastes it into their codebase. Returns `{ valid, errors, warnings, expressionWarnings }`. ' +
+    'pastes it into their codebase. Returns `{ valid, errors, warnings, expressionWarnings, interpolationWarnings }`. ' +
     'Hard mistakes (typos in widget `type`, missing required props, invalid validator shapes) ' +
     'show up in `errors` and flip `valid` to false. Likely-custom widgets (a `type` value that ' +
     'isn\'t a built-in and isn\'t close to one) show up in `warnings` instead — they don\'t ' +
     'affect `valid`. Reactive expressions (`include.when`, `disabled.when`, etc.) are linted ' +
-    'separately into `expressionWarnings`.',
+    'separately into `expressionWarnings`. String interpolation templates (`{{$form.x}}`, ' +
+    '`{{$meta.y}}`, expressions like `{{$form.count + 1}}`, etc.) in widget props, and bare ' +
+    'expressions inside i18n `params` objects, are linted into `interpolationWarnings`.',
   inputSchema: {
     type: 'object' as const,
     properties: {
