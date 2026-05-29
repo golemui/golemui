@@ -192,11 +192,159 @@ const STATES_CONCEPT: GetConceptResult = {
 };
 
 // ---------------------------------------------------------------------------
+// String interpolation concept
+// ---------------------------------------------------------------------------
+
+const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
+  concept: 'string-interpolation',
+  summary:
+    'GolemUI supports live data binding in text props via `{{expression}}` template slots. ' +
+    'Any string-valued property (e.g. `props.text`, `props.hint`, `label`) can embed one or more ' +
+    '`{{...}}` slots. Each slot is a JavaScript-like expression evaluated against the live form ' +
+    'state using a safe subset of JavaScript (no side effects, no function calls). ' +
+    'i18n translation `params` objects accept a matching bare-expression format — the same ' +
+    'expressions but without the `{{}}` delimiters.',
+
+  patterns: [
+    {
+      name: 'Template slots in display text',
+      description:
+        'Embed `{{expression}}` in any string prop to inject live values. ' +
+        'Available scopes: `$form` (all current field values), `$meta` (host-supplied metadata), ' +
+        '`$errors` (current validation error messages keyed by field uid), ' +
+        '`$formIsInvalid` (boolean — `true` when any field currently fails validation). ' +
+        'Use optional chaining (`?.`) when accessing nested fields that may not yet exist. ' +
+        'Multiple slots can appear in a single string.',
+      example: {
+        form: [
+          {
+            uid: 'userName',
+            kind: 'input',
+            type: 'textinput',
+            path: 'userName',
+            validator: { type: 'string', required: true },
+          },
+          {
+            uid: 'submitBtn',
+            kind: 'action',
+            type: 'button',
+            label: 'Submit',
+            actionType: 'submit',
+          },
+          {
+            uid: 'greeting',
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'Hello {{$form.userName}}' },
+          },
+          {
+            uid: 'status',
+            kind: 'display',
+            type: 'alert',
+            props: {
+              text: 'Error: {{$errors.userName}} | Form invalid: {{$formIsInvalid}}',
+            },
+          },
+          {
+            uid: 'meta-info',
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'Connected as {{$meta.role}} on {{$meta.server}}' },
+          },
+        ],
+      },
+    },
+    {
+      name: 'Expressions in slots',
+      description:
+        'Slots support full JavaScript-like expressions: arithmetic, string concatenation, ' +
+        'ternary conditionals, and optional chaining. The expression is evaluated against the ' +
+        'same scope object (`$form`, `$meta`, `$errors`, `$formIsInvalid`). ' +
+        'If the expression evaluates to `null` or `undefined`, the slot renders as an empty string.',
+      example: {
+        data: { firstName: 'Jane', lastName: 'Doe', count: 4, role: 'admin' },
+        form: [
+          {
+            uid: 'full-name',
+            kind: 'display',
+            type: 'alert',
+            props: { text: "Full name: {{$form.firstName + ' ' + $form.lastName}}" },
+          },
+          {
+            uid: 'next-count',
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'Next item: {{$form.count + 1}}' },
+          },
+          {
+            uid: 'role-label',
+            kind: 'display',
+            type: 'alert',
+            props: { text: "Role: {{$form.role === 'admin' ? 'Administrator' : 'User'}}" },
+          },
+          {
+            uid: 'nested',
+            kind: 'display',
+            type: 'alert',
+            props: { text: 'City: {{$form.address?.city}}' },
+          },
+        ],
+      },
+    },
+    {
+      name: 'i18n param expressions',
+      description:
+        'When using i18n translations, `params` values support the same expression language ' +
+        'as `{{}}` slots, but as **bare expressions** without the `{{}}` delimiters. ' +
+        'Params that start with a `$` scope prefix are evaluated; others are passed as static strings. ' +
+        'The expression has access to `$form`, `$meta`, `$errors`, and `$formIsInvalid`.',
+      example: {
+        data: { firstName: 'Jane', lastName: 'Doe', count: 4 },
+        meta: { connectionStatus: 'online' },
+        form: [
+          {
+            uid: 'greeting',
+            kind: 'display',
+            type: 'alert',
+            props: {
+              text: {
+                key: 'user.greeting',
+                params: {
+                  hello: 'Hola',
+                  fullName: "$form.firstName + ' ' + $form.lastName",
+                  n: '$form.count + 1',
+                  status: '$meta.connectionStatus',
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  ],
+
+  rules: [
+    'Slots must reference at least one of `$form`, `$meta`, `$errors`, or `$formIsInvalid`. A bare identifier without a scope prefix is invalid inside `{{}}`: use `{{$form.name}}` not `{{name}}`.',
+    '`$formIsInvalid` is a built-in boolean — use it as-is: `{{$formIsInvalid}}`. Do not chain properties onto it.',
+    'If an expression evaluates to `null` or `undefined`, the slot renders as an empty string in display text.',
+    'Use optional chaining (`?.`) when accessing nested fields that may not yet exist: `{{$form.address?.city}}` not `{{$form.address.city}}`.',
+    'Do not use assignment `=` inside a slot — slots are read-only. Use `===` for equality checks.',
+    'Slots cannot be nested: `{{$form.a {{$form.b}}}}` is invalid.',
+    'Every `{{` must have a matching `}}`. Unbalanced delimiters cause a lint warning.',
+    'i18n `params` values are bare expressions — do NOT wrap them in `{{}}`. Write `"$form.name"` not `"{{$form.name}}"`.',
+    'Static string params (not starting with `$`) are passed through as-is — use them for constant values like `"Hola"` or `"px"`.',
+    'Supported operators in expressions: arithmetic (`+`, `-`, `*`, `/`, `%`), comparison (`===`, `!==`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `!`), ternary (`? :`), optional chaining (`?.`), nullish coalescing (`??`).',
+    'Expressions are evaluated using a safe subset of JavaScript — no `eval`, no function calls, no side effects.',
+  ],
+};
+
+// ---------------------------------------------------------------------------
 // Concept registry
 // ---------------------------------------------------------------------------
 
 const CONCEPTS: Record<string, GetConceptResult> = {
   states: STATES_CONCEPT,
+  'string-interpolation': STRING_INTERPOLATION_CONCEPT,
 };
 
 export function getConcept(input: GetConceptInput): GetConceptResult {
@@ -220,13 +368,14 @@ export const GET_CONCEPT_TOOL = {
     '(1) change a widget\'s props based on form state (state-suffixed props like `"label.stateName": "…"`), or ' +
     '(2) reuse the same condition across multiple widgets (`include: { in: […] }` / `exclude: { from: […] }`). ' +
     'For a one-off show/hide on a single widget, use `include: { when: "…" }` or `exclude: { when: "…" }` directly — no states needed, no need to call this tool. ' +
-    'Currently supported concepts: `states`.',
+    'Currently supported concepts: `states`, `string-interpolation`.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       concept: {
         type: 'string' as const,
-        description: 'The concept to explain. Currently supported: `"states"`.',
+        description:
+          'The concept to explain. Currently supported: `"states"`, `"string-interpolation"`.',
         enum: Object.keys(CONCEPTS),
       },
     },

@@ -67,6 +67,7 @@ export default defineConfig({
             { slug: 'features/events' },
             { slug: 'features/runtime-methods' },
             { slug: 'features/i18n' },
+            { slug: 'features/string-interpolation' },
             { slug: 'features/dependencies' },
             { label: 'States', autogenerate: { directory: 'features/states' } },
           ],

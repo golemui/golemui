@@ -60,14 +60,14 @@ describe('calculateWidgetProps', () => {
 
   describe('per-kind core fields', () => {
     it('DisplayWidget: copies uid, type, kind, size, include, exclude', () => {
-      const source: DisplayWidget<string> = {
+      const source = {
         kind: 'display',
         uid: 'd1',
         type: 'heading',
         size: 2,
         include: { in: ['foo'] },
         exclude: { from: ['bar'] },
-      } as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd1', source);
 
       const next = run(state);
@@ -89,7 +89,7 @@ describe('calculateWidgetProps', () => {
         size: 1,
         label: 'Submit',
         disabled: false,
-      } as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a1', source);
 
       const next = run(state);
@@ -116,7 +116,7 @@ describe('calculateWidgetProps', () => {
         readonly: false,
         defaultValue: 'initial',
         validator,
-      } as unknown as InputWidget<any, string>;
+      } satisfies InputWidget<any, string>;
       seed(state, 'i1', source);
 
       const next = run(state);
@@ -136,18 +136,34 @@ describe('calculateWidgetProps', () => {
       expect(current.validator).toBeUndefined();
     });
 
+    it('InputWidget: preserves defaultValue string without applying string interpolation', () => {
+      const source = {
+        kind: 'input',
+        uid: 'i2',
+        type: 'textinput',
+        path: 'name',
+        defaultValue: '{{$form.other}}',
+      } satisfies InputWidget<any, string>;
+      seed(state, 'i2', source);
+
+      const next = run(state);
+      const current = next.calculatedWidgets['i2'].current as InputWidget<any, string>;
+
+      expect(current.defaultValue).toBe('{{$form.other}}');
+    });
+
     it('LayoutWidget: copies core + children (excluding `on`)', () => {
       // Non-empty children ensure the children branch sees a length change from
       // previous empty state, so `ctx.changed` stays true (the children branch
       // overwrites changed; we need children diff to stay truthy).
-      const child = { kind: 'display', uid: 'c', type: 'heading' } as any;
+      const child = { kind: 'display', uid: 'c', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
         uid: 'l1',
         type: 'flex',
         size: 1,
         children: [child],
-      } as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l1', source);
 
       const next = run(state);
@@ -167,11 +183,11 @@ describe('calculateWidgetProps', () => {
         uid: 'i2',
         type: 'textinput',
         path: 'x',
-      } as unknown as InputWidget<any, string>;
+      } satisfies InputWidget<any, string>;
       seed(state, 'i2', source);
 
       const next = run(state);
-      const current = next.calculatedWidgets['i2'].current as any;
+      const current = next.calculatedWidgets['i2'].current as InputWidget<any, string>;
 
       expect('label' in current).toBe(false);
     });
@@ -190,7 +206,7 @@ describe('calculateWidgetProps', () => {
         label: 'BASE',
         'label.register': 'REGISTER',
         'label.register:adult': 'REGISTER_ADULT',
-      }) as unknown as ActionWidget<string>;
+      }) satisfies ActionWidget<string>;
 
     it('no matching state → uses base', () => {
       seed(state, 'a', baseSource());
@@ -198,7 +214,7 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('BASE');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('BASE');
     });
 
     it('one matching state → uses that state suffix', () => {
@@ -207,7 +223,7 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('REGISTER');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('REGISTER');
     });
 
     it('non-matching state → falls back to base', () => {
@@ -216,7 +232,7 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('BASE');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('BASE');
     });
 
     it('longest matching state wins (sort by length DESC)', () => {
@@ -225,7 +241,9 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('REGISTER_ADULT');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
+        'REGISTER_ADULT',
+      );
     });
 
     it('longest wins regardless of input order', () => {
@@ -234,7 +252,9 @@ describe('calculateWidgetProps', () => {
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('REGISTER_ADULT');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
+        'REGISTER_ADULT',
+      );
     });
   });
 
@@ -250,13 +270,13 @@ describe('calculateWidgetProps', () => {
         type: 'textinput',
         path: 'x',
         disabled: { when: '$form.x' },
-      } as unknown as InputWidget<any, string>;
+      } satisfies InputWidget<any, string>;
       seed(state, 'i', source);
       state.widgetFlags['i'] = { disabled: true };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['i'].current as any).disabled).toBe(true);
+      expect((next.calculatedWidgets['i'].current as InputWidget<any, string>).disabled).toBe(true);
     });
 
     it('readonly: { when } uses pre-computed widgetFlags[uid].readonly', () => {
@@ -266,13 +286,13 @@ describe('calculateWidgetProps', () => {
         type: 'textinput',
         path: 'x',
         readonly: { when: '$form.x' },
-      } as unknown as InputWidget<any, string>;
+      } satisfies InputWidget<any, string>;
       seed(state, 'i', source);
       state.widgetFlags['i'] = { readonly: true };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['i'].current as any).readonly).toBe(true);
+      expect((next.calculatedWidgets['i'].current as InputWidget<any, string>).readonly).toBe(true);
     });
 
     it('{ when } on a non-disabled/readonly prop passes through unchanged (parity quirk)', () => {
@@ -282,12 +302,14 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { foo: whenObj },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.foo).toBe(whenObj);
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['foo']).toBe(
+        whenObj,
+      );
     });
   });
 
@@ -302,13 +324,15 @@ describe('calculateWidgetProps', () => {
         uid: 'a',
         type: 'button',
         label: ({ $form }: { $form: any }) => `Hello ${$form.name}`,
-      } as unknown as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a', source);
       state.data = { name: 'World' };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('Hello World');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
+        'Hello World',
+      );
     });
 
     it('props field function is invoked and its result is stored', () => {
@@ -319,13 +343,15 @@ describe('calculateWidgetProps', () => {
         props: {
           text: ({ $form }: { $form: any }) => `Hi ${$form.user}`,
         },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.data = { user: 'joan' };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('Hi joan');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'Hi joan',
+      );
     });
   });
 
@@ -345,7 +371,7 @@ describe('calculateWidgetProps', () => {
           default: 'Hello',
           params: { name: '$form.user.name' },
         },
-      } as unknown as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a', source);
       state.data = { user: { name: 'Alice' } };
 
@@ -355,7 +381,9 @@ describe('calculateWidgetProps', () => {
       expect(translator.calls[0].key).toBe('greet');
       expect(translator.calls[0].params).toEqual({ name: 'Alice' });
       expect(translator.calls[0].defaultValue).toBe('Hello');
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('RESOLVED:Alice');
+      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
+        'RESOLVED:Alice',
+      );
     });
 
     it('i18n params: non-scoped values pass through as strings', () => {
@@ -368,12 +396,77 @@ describe('calculateWidgetProps', () => {
           key: 'k',
           params: { a: 'literal', n: 42 as any },
         },
-      } as unknown as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a', source);
 
       run(state, translator);
 
       expect(translator.calls[0].params).toEqual({ a: 'literal', n: '42' });
+    });
+
+    it('i18n params: string concat expression resolves', () => {
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { name: "$form.first + ' ' + $form.last" } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { first: 'John', last: 'Doe' };
+
+      run(state, translator);
+
+      expect(translator.calls[0].params).toEqual({ name: 'John Doe' });
+    });
+
+    it('i18n params: arithmetic expression resolves', () => {
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { n: '$form.count + 1' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { count: 4 };
+
+      run(state, translator);
+
+      expect(translator.calls[0].params).toEqual({ n: 5 });
+    });
+
+    it('i18n params: unknown path falls back to the param string', () => {
+      const translator = makeTranslator();
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { x: '$form.missing' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = {};
+
+      run(state, translator);
+
+      expect(translator.calls[0].params).toEqual({ x: '$form.missing' });
+    });
+
+    it('i18n params: bad expression sets formHealth to errored', () => {
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        label: { key: 'k', params: { x: '$form..broken' } },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+
+      const next = run(state);
+
+      expect(next.formHealth.status).toBe('errored');
+      if (next.formHealth.status === 'errored') {
+        expect(next.formHealth.code).toBe(40);
+      }
     });
   });
 
@@ -388,13 +481,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: 'Hello {{$form.user}}' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.data = { user: 'Bob' };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('Hello Bob');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'Hello Bob',
+      );
     });
 
     it('resolves $meta.path', () => {
@@ -403,13 +498,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: 'Status: {{$meta.status}}' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.meta = { status: 'active' };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('Status: active');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'Status: active',
+      );
     });
 
     it('resolves $formIsInvalid to "true"/"false"', () => {
@@ -418,13 +515,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: 'Invalid? {{$formIsInvalid}}' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source1);
       state.validations = { 'some.path': [{ message: 'bad' }] as any };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('Invalid? true');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'Invalid? true',
+      );
     });
 
     it('resolves $errors.path', () => {
@@ -433,13 +532,13 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: 'Err: {{$errors.user.age}}' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.validations = { 'user.age': [{ message: 'too young' }] as any };
 
       const next = run(state);
 
-      const text = (next.calculatedWidgets['d'].current as any).props.text;
+      const text = (next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text'];
       // Errors serialize via String() inside the template replace → "[object Object]"-ish
       // but that's the current behavior; we just assert resolution happened.
       expect(text.startsWith('Err: ')).toBe(true);
@@ -458,13 +557,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: 'original' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.widgetPropOverrides = { d: { text: 'overridden' } };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('overridden');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'overridden',
+      );
     });
 
     it('overrides a function-result props value', () => {
@@ -473,13 +574,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: () => 'fn result' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.widgetPropOverrides = { d: { text: 'overridden' } };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('overridden');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'overridden',
+      );
     });
 
     it('overrides a TranslationConfig-result props value', () => {
@@ -489,13 +592,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: { key: 'foo' } },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.widgetPropOverrides = { d: { text: 'overridden' } };
 
       const next = run(state, translator);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('overridden');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'overridden',
+      );
     });
 
     it('introduces a key not present on source.props', () => {
@@ -504,13 +609,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: 'x' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.widgetPropOverrides = { d: { newKey: 'new value' } };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.newKey).toBe('new value');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['newKey']).toBe(
+        'new value',
+      );
     });
 
     it('does NOT override core fields', () => {
@@ -519,14 +626,15 @@ describe('calculateWidgetProps', () => {
         uid: 'a',
         type: 'button',
         label: 'original',
-      } as unknown as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a', source);
       // Even though `label` is a core field, the override only applies to `props.*`.
       state.widgetPropOverrides = { a: { label: 'overridden' } };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).label).toBe('original');
+      const cur = next.calculatedWidgets['a'].current as ActionWidget<string>;
+      expect(cur.label).toBe('original');
     });
   });
 
@@ -541,12 +649,13 @@ describe('calculateWidgetProps', () => {
         uid: 'a',
         type: 'button',
         on: { click: 'submit' },
-      } as unknown as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a', source);
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['a'].current as any).on.click).toBe('submit');
+      const cur = next.calculatedWidgets['a'].current as ActionWidget<string>;
+      expect(cur.on?.click).toBe('submit');
     });
 
     it('Input widget: function on.change is invoked', () => {
@@ -558,13 +667,14 @@ describe('calculateWidgetProps', () => {
         on: {
           change: ({ $form }: { $form: any }) => `go:${$form.x}`,
         },
-      } as unknown as InputWidget<any, string>;
+      } satisfies InputWidget<any, string>;
       seed(state, 'i', source);
       state.data = { x: 'go' };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['i'].current as any).on.change).toBe('go:go');
+      const cur = next.calculatedWidgets['i'].current as InputWidget<any, string>;
+      expect(cur.on?.change).toBe('go:go');
     });
 
     it('LayoutWidget on.* is NOT computed (parity quirk)', () => {
@@ -574,12 +684,12 @@ describe('calculateWidgetProps', () => {
         type: 'flex',
         children: [],
         on: { click: 'x' },
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l', source);
 
       const next = run(state);
 
-      expect('on' in (next.calculatedWidgets['l'].current as any)).toBe(false);
+      expect('on' in next.calculatedWidgets['l'].current).toBe(false);
     });
   });
 
@@ -596,7 +706,7 @@ describe('calculateWidgetProps', () => {
             uid: 'ignored',
             type: 'heading',
             props: { text: 'fn!' },
-          }) as unknown as DisplayWidget<string>,
+          }) satisfies DisplayWidget<string>,
         { uid: 'f', type: 'heading' },
       );
       seed(state, 'f', source);
@@ -621,7 +731,7 @@ describe('calculateWidgetProps', () => {
         kind: 'display',
         uid: 'd',
         type: 'heading',
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.widgetFlags['d'] = { hidden: true };
 
@@ -637,14 +747,22 @@ describe('calculateWidgetProps', () => {
 
   describe('layout children filtering', () => {
     it('hidden child is dropped from current.children', () => {
-      const child1 = { kind: 'display', uid: 'c1', type: 'heading' } as any;
-      const child2 = { kind: 'display', uid: 'c2', type: 'heading' } as any;
+      const child1 = {
+        kind: 'display',
+        uid: 'c1',
+        type: 'heading',
+      } satisfies DisplayWidget<string>;
+      const child2 = {
+        kind: 'display',
+        uid: 'c2',
+        type: 'heading',
+      } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         children: [child1, child2],
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l', source);
       state.widgetFlags['c2'] = { hidden: true };
 
@@ -652,21 +770,21 @@ describe('calculateWidgetProps', () => {
       const children = (next.calculatedWidgets['l'].current as LayoutWidget<string>).children;
 
       expect(children).toHaveLength(1);
-      expect((children[0] as any).uid).toBe('c1');
+      expect(children[0].uid).toBe('c1');
     });
 
     it('repeater children: looks up widgetFlags under child uid + [index]', () => {
       // Two children: one hidden under repeater-index suffix, one not.
       // Need a non-trivial filter result (length diff from previous empty) to
       // ensure the children branch flags `ctx.changed = true`.
-      const c1 = { kind: 'display', uid: 'cell1', type: 'heading' } as any;
-      const c2 = { kind: 'display', uid: 'cell2', type: 'heading' } as any;
+      const c1 = { kind: 'display', uid: 'cell1', type: 'heading' } satisfies DisplayWidget<string>;
+      const c2 = { kind: 'display', uid: 'cell2', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
         uid: 'row[0]',
         type: 'flex',
         children: [c1, c2],
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'row[0]', source);
       state.widgetFlags['cell1[0]'] = { hidden: true };
 
@@ -674,18 +792,18 @@ describe('calculateWidgetProps', () => {
       const children = (next.calculatedWidgets['row[0]'].current as LayoutWidget<string>).children;
 
       expect(children).toHaveLength(1);
-      expect((children[0] as any).uid).toBe('cell2');
+      expect(children[0].uid).toBe('cell2');
     });
 
     it('repeater children: nested indexes append [i][j]', () => {
-      const c1 = { kind: 'display', uid: 'leaf1', type: 'heading' } as any;
-      const c2 = { kind: 'display', uid: 'leaf2', type: 'heading' } as any;
+      const c1 = { kind: 'display', uid: 'leaf1', type: 'heading' } satisfies DisplayWidget<string>;
+      const c2 = { kind: 'display', uid: 'leaf2', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
         uid: 'grid[2][3]',
         type: 'flex',
         children: [c1, c2],
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'grid[2][3]', source);
       state.widgetFlags['leaf1[2][3]'] = { hidden: true };
 
@@ -694,34 +812,32 @@ describe('calculateWidgetProps', () => {
         .children;
 
       expect(children).toHaveLength(1);
-      expect((children[0] as any).uid).toBe('leaf2');
+      expect(children[0].uid).toBe('leaf2');
     });
 
     it('structural order change trips change detection (new DerivedWidget ref)', () => {
-      const a = { kind: 'display', uid: 'a', type: 'heading' } as any;
-      const b = { kind: 'display', uid: 'b', type: 'heading' } as any;
+      const a = { kind: 'display', uid: 'a', type: 'heading' } satisfies DisplayWidget<string>;
+      const b = { kind: 'display', uid: 'b', type: 'heading' } satisfies DisplayWidget<string>;
       const source1 = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         children: [a, b],
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l', source1);
 
       const first = run(state);
       const prevDerived = first.calculatedWidgets['l'];
 
       // Swap children order
-      const source2 = { ...source1, children: [b, a] } as unknown as LayoutWidget<string>;
-      first.calculatedWidgets['l'] = { source: source2 as any, current: prevDerived.current };
+      const source2 = { ...source1, children: [b, a] } satisfies LayoutWidget<string>;
+      first.calculatedWidgets['l'] = { source: source2, current: prevDerived.current };
 
       const second = run(first);
 
       expect(second.calculatedWidgets['l']).not.toBe(prevDerived);
       expect(
-        (second.calculatedWidgets['l'].current as LayoutWidget<string>).children.map(
-          (c) => (c as any).uid,
-        ),
+        (second.calculatedWidgets['l'].current as LayoutWidget<string>).children.map((c) => c.uid),
       ).toEqual(['b', 'a']);
     });
 
@@ -735,32 +851,32 @@ describe('calculateWidgetProps', () => {
         type: 'flex',
         size: 1,
         children: [],
-      } as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l', source);
       const prevDerived = state.calculatedWidgets['l'];
 
       const next = run(state);
 
       expect(next.calculatedWidgets['l']).not.toBe(prevDerived);
-      expect((next.calculatedWidgets['l'].current as any).size).toBe(1);
+      expect(next.calculatedWidgets['l'].current.size).toBe(1);
     });
 
     it('structural length change trips change detection', () => {
-      const a = { kind: 'display', uid: 'a', type: 'heading' } as any;
-      const b = { kind: 'display', uid: 'b', type: 'heading' } as any;
+      const a = { kind: 'display', uid: 'a', type: 'heading' } satisfies DisplayWidget<string>;
+      const b = { kind: 'display', uid: 'b', type: 'heading' } satisfies DisplayWidget<string>;
       const source1 = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         children: [a, b],
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l', source1);
 
       const first = run(state);
       const prevDerived = first.calculatedWidgets['l'];
 
-      const source2 = { ...source1, children: [a] } as unknown as LayoutWidget<string>;
-      first.calculatedWidgets['l'] = { source: source2 as any, current: prevDerived.current };
+      const source2 = { ...source1, children: [a] } satisfies LayoutWidget<string>;
+      first.calculatedWidgets['l'] = { source: source2, current: prevDerived.current };
 
       const second = run(first);
 
@@ -783,7 +899,7 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: 'Go',
         disabled: false,
-      } as unknown as ActionWidget<string>;
+      } satisfies ActionWidget<string>;
       seed(state, 'a', source);
 
       const first = run(state);
@@ -793,19 +909,125 @@ describe('calculateWidgetProps', () => {
     });
 
     it('layout with stable structure → same DerivedWidget ref across calls', () => {
-      const child = { kind: 'display', uid: 'c', type: 'heading' } as any;
+      const child = { kind: 'display', uid: 'c', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         children: [child],
-      } as unknown as LayoutWidget<string>;
+      } satisfies LayoutWidget<string>;
       seed(state, 'l', source);
 
       const first = run(state);
       const second = run(first);
 
       expect(second.calculatedWidgets['l']).toBe(first.calculatedWidgets['l']);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Expression templates (subscript evaluation)
+  // ---------------------------------------------------------------------------
+
+  describe('expression templates (subscript evaluation)', () => {
+    it('evaluates string concatenation', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: "{{$form.firstName + ' ' + $form.lastName}}" },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = { firstName: 'John', lastName: 'Doe' };
+
+      const next = run(state);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('John Doe');
+    });
+
+    it('evaluates arithmetic', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'Next: {{$form.count + 1}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = { count: 4 };
+
+      const next = run(state);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Next: 5');
+    });
+
+    it('evaluates ternary expressions', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: "{{$meta.isVip ? 'VIP' : 'Guest'}}" },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.meta = { isVip: true };
+
+      const next = run(state);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('VIP');
+    });
+
+    it('returns empty string when expression evaluates to undefined', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'Hello {{$form.missing}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = {};
+
+      const next = run(state);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Hello ');
+    });
+
+    it('returns empty string when expression evaluates to null', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: '{{$form.x}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = { x: null };
+
+      const next = run(state);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('');
+    });
+
+    it('preserves false and 0 as "false" and "0"', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: '{{$form.flag}} {{$form.count}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+      state.data = { flag: false, count: 0 };
+
+      const next = run(state);
+      expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('false 0');
+    });
+
+    it('sets formHealth to errored on a parse error', () => {
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: 'x: {{$form..broken}}' },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+
+      const next = run(state);
+      expect(next.formHealth.status).toBe('errored');
+      if (next.formHealth.status === 'errored') {
+        expect(next.formHealth.code).toBe(40);
+      }
     });
   });
 
@@ -820,13 +1042,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: '{{$formIsInvalid}}' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.validations = {};
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('false');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'false',
+      );
     });
 
     it('uses $formIsInvalid = true when at least one validation has errors', () => {
@@ -835,13 +1059,15 @@ describe('calculateWidgetProps', () => {
         uid: 'd',
         type: 'heading',
         props: { text: '{{$formIsInvalid}}' },
-      } as unknown as DisplayWidget<string>;
+      } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
       state.validations = { 'u.n': [{ message: 'bad' }] as any };
 
       const next = run(state);
 
-      expect((next.calculatedWidgets['d'].current as any).props.text).toBe('true');
+      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
+        'true',
+      );
     });
   });
 });

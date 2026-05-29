@@ -117,6 +117,64 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       cy.get(`.gui-alert [role="alert"]`).contains('Hola, Pol! You are online.');
     });
 
+    it('should evaluate string concatenation expression params in i18n translations', () => {
+      i18next.addResourceBundle(
+        'en',
+        'translation',
+        { 'user.fullName': 'Hello, {{fullName}}!' },
+        true,
+        true,
+      );
+
+      mountFn({
+        localization: i18nTranslator,
+        data: { firstName: 'Jane', lastName: 'Doe' },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'greeting',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'user.fullName',
+                  params: { fullName: "$form.firstName + ' ' + $form.lastName" },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-alert [role="alert"]').contains('Hello, Jane Doe!');
+    });
+
+    it('should evaluate arithmetic expression params in i18n translations', () => {
+      i18next.addResourceBundle('en', 'translation', { 'item.count': 'Items: {{n}}' }, true, true);
+
+      mountFn({
+        localization: i18nTranslator,
+        data: { count: 4 },
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'items',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'item.count',
+                  params: { n: '$form.count + 1' },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      cy.get('.gui-alert [role="alert"]').contains('Items: 5');
+    });
+
     it('should interpolate $errors and $formIsInvalid in i18n translation params', () => {
       i18next.addResourceBundle(
         'en',
@@ -170,6 +228,32 @@ export const runI18nTests = (mountFn: MountComponentFn) => {
       cy.get('.gui-alert [role="alert"]').contains(
         'Errors: Invalid input: expected string, received undefined, Invalid: true',
       );
+    });
+
+    it('should emit formHealth error when an i18n param expression is invalid', () => {
+      mountFn({
+        localization: i18nTranslator,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'greeting',
+              kind: 'display',
+              type: 'alert',
+              props: {
+                text: {
+                  key: 'user.name.label',
+                  params: { name: '$form..broken' },
+                },
+              },
+            },
+          ],
+        }),
+      });
+
+      cy.get('@formHealth').should('have.been.calledWithMatch', {
+        status: 'errored',
+        code: 40,
+      });
     });
   });
 
