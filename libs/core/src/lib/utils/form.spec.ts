@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type State } from '../store/model';
 import { calculateValidationVariables, flattenForm } from './form';
-import { get } from './object';
 
 describe('utils.form', () => {
   describe('flattenForm', () => {
