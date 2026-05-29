@@ -198,8 +198,11 @@ export const GENERATE_FROM_OPENAPI_TOOL = {
   description:
     'Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. "POST /users"). ' +
     'Resolves the operation\'s JSON request body, dereferences `$ref`s, then maps it to a ' +
-    'validated form definition. Falls back to operation parameters when no request body is ' +
-    'present. Pass either a parsed `document` or a `documentUrl` to fetch.',
+    'form definition that is validated against the GolemUI JSON Schemas before being returned, ' +
+    'so it is guaranteed syntactically correct. Falls back to operation parameters when no ' +
+    'request body is present. Anything the mapper cannot handle is reported in `unmapped` rather ' +
+    'than silently dropped — use that list to surface remaining work to the user. Pass either a ' +
+    'parsed `document` or a `documentUrl` to fetch.',
   inputSchema: {
     type: 'object' as const,
     properties: {
