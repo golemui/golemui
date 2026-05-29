@@ -40,7 +40,7 @@ const UMBRELLA_ITEMTYPES: Record<string, ReadonlySet<string>> = {
     'TAGS',
   ]),
   ACTIONS: new Set(['ACTIONS', 'CUSTOM_ACTION']),
-  DISPLAYS: new Set(['DISPLAYS', 'ALERTS', 'CUSTOM_DISPLAY']),
+  DISPLAYS: new Set(['DISPLAYS', 'ALERTS', 'MARKDOWN_TEXTS', 'CUSTOM_DISPLAY']),
   LAYOUTS: new Set(['LAYOUTS', 'TABS', 'ACCORDION', 'CUSTOM_LAYOUT']),
 };
 

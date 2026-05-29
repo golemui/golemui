@@ -35,6 +35,7 @@ export {
 } from './shortcuts/layouts/guiFlex.impl';
 export { _guiList } from './shortcuts/list/guiList.impl';
 export { _guiMarkdown } from './shortcuts/markdown/guiMarkdown.impl';
+export { _guiMarkdownText } from './shortcuts/markdown-text/guiMarkdownText.impl';
 export { _guiPassword } from './shortcuts/password/guiPassword.impl';
 export { _guiRadiogroup } from './shortcuts/radiogroup/guiRadiogroup.impl';
 export { _guiRangeCalendar } from './shortcuts/range-calendar/guiRangeCalendar.impl';
@@ -71,6 +72,7 @@ export { _gslInputByUid, _gslInputs } from './shortcuts/inputs/register';
 export { _gslLayoutByUid, _gslLayouts } from './shortcuts/layouts/register';
 export { _gslListByUid, _gslLists } from './shortcuts/list/register';
 export { _gslMarkdownByUid, _gslMarkdowns } from './shortcuts/markdown/register';
+export { _gslMarkdownTextByUid, _gslMarkdownTexts } from './shortcuts/markdown-text/register';
 export { _gslPasswordByUid, _gslPasswords } from './shortcuts/password/register';
 export { _gslRadiogroupByUid, _gslRadiogroups } from './shortcuts/radiogroup/register';
 export { _gslRangeCalendarByUid, _gslRangeCalendars } from './shortcuts/range-calendar/register';

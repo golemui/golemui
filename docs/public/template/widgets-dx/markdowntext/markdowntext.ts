@@ -1,7 +1,7 @@
 import { gui } from '@golemui/gui-shared';
 
 export default [
-  gui.displays.custom('markdownText', {
+  gui.displays.markdownText({
     md: `## Welcome
 
 This is a **markdownText** display widget. It renders _markdown_ content as formatted HTML.
