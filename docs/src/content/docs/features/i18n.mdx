@@ -59,9 +59,7 @@ Here's the same `I18nTranslator` implemented against three popular libraries. Pi
 import type { I18nTranslator } from '@golemui/core';
 import i18next, { type Resource } from 'i18next';
 
-export function createI18nextTranslator(
-  resources: Resource,
-): I18nTranslator {
+export function createI18nextTranslator(resources: Resource): I18nTranslator {
   i18next.init({ fallbackLng: 'en', resources });
 
   return {
@@ -460,7 +458,62 @@ When the active language uses a right-to-left script — Arabic, Hebrew, Persian
 
 <Demo src="/template/index.html?form=template/i18n/rtl.json" />
 
+## Dynamic params
+
+The `params` field in a `Localizable` shape accepts **bare expressions** alongside static values. A param value that starts with `$form`, `$meta`, `$errors`, or `$formIsInvalid` is evaluated as a live expression — the same expression language used in [string interpolation](/features/string-interpolation/) `{{...}}` slots, but **without** the `{{}}` delimiters. Any other value is passed through as a static string.
+
+<DslTabs>
+  <Fragment slot="dx">
+  ```ts
+  import { gui } from '@golemui/gui-shared';
+
+  gui.displays.alert({
+    uid: 'greeting',
+    text: {
+      key: 'user.greeting',
+      params: {
+        hello: 'Hola',
+        fullName: "$form.firstName + ' ' + $form.lastName",
+        n: '$form.count + 1',
+        status: '$meta.connectionStatus',
+      },
+    },
+  });
+  ```
+  </Fragment> 
+  <Fragment slot="json">
+  ```json
+  {
+    "kind": "display",
+    "type": "alert",
+    "props": {
+      "text": {
+        "key": "user.greeting",
+        "params": {
+          "hello": "Hola",
+          "fullName": "$form.firstName + ' ' + $form.lastName",
+          "n": "$form.count + 1",
+          "status": "$meta.connectionStatus"
+        }
+      }
+    }
+  }
+  ```
+  </Fragment>
+</DslTabs>
+
+Given a translation bundle entry `user.greeting = "{{hello}}, {{fullName}}! Items: {{n}}, Status: {{status}}."` and form data `{ firstName: 'Jane', lastName: 'Doe', count: 4 }` with meta `{ connectionStatus: 'online' }`, this renders as:
+
+> Hola, Jane Doe! Items: 5, Status: online.
+
+Expressions re-evaluate reactively — the translated string updates as the user changes form data.
+
+:::caution
+Do **not** wrap param expressions in `{{}}` delimiters. Writing `"{{$form.firstName}}"` as a param value is incorrect — the braces are part of your translation message template, not the param expression syntax. The correct form is `"$form.firstName"`.
+:::
+
 ## See also
 
 - [Form Definition API / States](/form-definition/states/) — switch language at runtime by emitting a `change` event from a language dropdown.
 - [Features / Validators](/features/validators/) — using `{ key, default }` messages on validators for translated error text.
+- [Features / String Interpolation](/features/string-interpolation/) — embedding live data directly in widget text props.
