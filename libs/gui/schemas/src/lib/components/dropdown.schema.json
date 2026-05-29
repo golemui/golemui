@@ -31,31 +31,39 @@
       }
     },
     "labelFieldProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Object property used as the display label when items are objects (e.g. `\"name\"` reads `item.name`)"
     },
     "valueFieldProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Object property used as the stored value when items are objects (e.g. `\"id\"` stores `item.id`)"
     },
     "searchFieldsProp": {
       "type": "array",
+      "description": "Object properties searched when the user types in the filter box. Defaults to `labelField` when omitted.",
       "items": {
         "type": "string"
       }
     },
     "heightProp": {
-      "type": "number"
+      "type": "number",
+      "description": "Fixed pixel height of the dropdown list panel (enables virtual scrolling for large lists)"
     },
     "itemHeightProp": {
-      "type": "number"
+      "type": "number",
+      "description": "Fixed pixel height of each item row, required for virtual scrolling when `height` is set"
     },
     "itemRendererProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Name of a registered custom item renderer component used to display each option"
     },
     "inputDebounceProp": {
-      "type": "number"
+      "type": "number",
+      "description": "Milliseconds to debounce the filter input before firing the `on.filter` event (default: 0)"
     },
     "autocompleteProp": {
-      "type": "string"
+      "type": "string",
+      "description": "HTML `autocomplete` attribute applied to the underlying input element"
     }
   },
   "allOf": [

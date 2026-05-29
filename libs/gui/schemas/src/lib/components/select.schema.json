@@ -34,13 +34,16 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "labelFieldProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
     },
     "valueFieldProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
     },
     "autocompleteProp": {
-      "type": "string"
+      "type": "string",
+      "description": "HTML `autocomplete` attribute applied to the underlying input element"
     }
   },
   "allOf": [
