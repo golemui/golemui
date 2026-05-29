@@ -5,63 +5,90 @@ sidebar:
   order: 0
 ---
 
+import DslTabs from '../../../../components/DslTabs.astro';
+
 **Input widgets** are the workhorses of any form. Each one **binds to a `path`** in the form data, supports validators, tracks touched state, and emits `onChange` / `onBlur` events as the user interacts with it.
 
-## The DX shortcuts
+## How to define them
 
-```ts
-import { gui } from '@golemui/gui-shared';
+<DslTabs>
+  <Fragment slot="dx">
 
-const formDef = [
-  gui.inputs.textInput('user.firstName', {
-    label: 'First name',
-    validator: { required: true, minLength: 2 },
-  }),
-  gui.inputs.numberInput('user.age', { validator: { minimum: 0 } }),
-  gui.inputs.dropdown('user.country', {
-    items: [
-      /* ... */
-    ],
-  }),
-  gui.inputs.repeater('contacts', {
-    template: [
-      /* ... */
-    ],
-  }),
-];
-```
+    The first argument is always the **data path**. The optional second argument is the props object — flat for typed inputs (no nested `props: {}` like the JSON shape requires).
 
-The first argument is always the **data path**. The optional second argument is the props object — flat for typed inputs (no nested `props: {}` like the JSON shape requires).
+    ```ts
+    import { gui } from '@golemui/gui-shared';
 
-For the full per-widget signature list, see [`gui.inputs` reference](/form-definition/reference/gui-inputs/).
+    const formDef = [
+      gui.inputs.textInput('user.firstName', {
+        label: 'First name',
+        validator: { required: true, minLength: 2 },
+      }),
+      gui.inputs.numberInput('user.age', { validator: { minimum: 0 } }),
+      gui.inputs.dropdown('user.country', {
+        items: [
+          /* ... */
+        ],
+      }),
+      gui.inputs.repeater('contacts', {
+        template: [
+          /* ... */
+        ],
+      }),
+    ];
+    ```
 
-## JSON form
+    For the full per-widget signature list, see [`gui.inputs` reference](/form-definition/reference/gui-inputs/).
 
-The same widget in JSON, with `props` nested:
+  </Fragment>
+  <Fragment slot="json">
 
-```json
-{
-  "form": [
+    Same outcome in JSON — props are nested under `props`, and every validator carries an explicit `type` discriminator:
+
+    ```json
     {
-      "kind": "input",
-      "type": "textinput",
-      "path": "user.firstName",
-      "label": "First name",
-      "validator": { "type": "string", "required": true, "minLength": 2 }
+      "form": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "user.firstName",
+          "label": "First name",
+          "validator": { "type": "string", "required": true, "minLength": 2 }
+        },
+        {
+          "kind": "input",
+          "type": "number",
+          "path": "user.age",
+          "validator": { "type": "number", "minimum": 0 }
+        },
+        {
+          "kind": "input",
+          "type": "dropdown",
+          "path": "user.country",
+          "props": { "items": [] }
+        },
+        {
+          "kind": "input",
+          "type": "repeater",
+          "path": "contacts",
+          "props": { "template": [] }
+        }
+      ]
     }
-  ]
-}
-```
+    ```
 
-| Property    | Description                                                                 |
-| ----------- | --------------------------------------------------------------------------- |
-| `uid`       | Optional unique id; one is generated if absent.                             |
-| `kind`      | **MANDATORY**. Always `'input'`.                                            |
-| `type`      | **MANDATORY**. The widget type (`textinput`, `dropdown`, etc.).             |
-| `path`      | **MANDATORY**. Dot-separated path in the form data (e.g. `user.firstName`). |
-| `label`     | Visible label text. Accepts a `Localizable` (`{ key, default }`) for i18n.  |
-| `validator` | Validation rules. See [Features / Validators](/features/validators/).       |
-| `props`     | Widget-specific configuration. See each widget's reference page.            |
+    | Property    | Description                                                                 |
+    | ----------- | --------------------------------------------------------------------------- |
+    | `uid`       | Optional unique id; one is generated if absent.                             |
+    | `kind`      | **MANDATORY**. Always `'input'`.                                            |
+    | `type`      | **MANDATORY**. The widget type (`textinput`, `dropdown`, etc.).             |
+    | `path`      | **MANDATORY**. Dot-separated path in the form data (e.g. `user.firstName`). |
+    | `label`     | Visible label text. Accepts a `Localizable` (`{ key, default }`) for i18n.  |
+    | `validator` | Validation rules. See [Features / Validators](/features/validators/).       |
+    | `props`     | Widget-specific configuration. See each widget's reference page.            |
+
+  </Fragment>
+</DslTabs>
 
 ## Available widgets
 

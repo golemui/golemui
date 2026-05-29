@@ -5,61 +5,81 @@ sidebar:
   order: 0
 ---
 
+import DslTabs from '../../../../components/DslTabs.astro';
+
 **Display widgets** render read-only content. They have no `path` and don't write to form data — they just display information. An alert, a markdown block, a custom-rendered summary card are all display widgets.
 
-## The DX shortcuts
+## How to define them
 
-```ts
-import { gui } from '@golemui/gui-shared';
-import { html } from 'lit';
+<DslTabs>
+  <Fragment slot="dx">
 
-const formDef = [
-  gui.displays.alert({
-    text: 'Some fields need your attention',
-    level: 'warning',
-  }),
-  gui.displays.display(({ $form }) => html`<h2>Hello, ${$form.name}!</h2>`),
-  gui.displays.custom('productDescription', {
-    img: 'p.png',
-    description: '### Cool',
-  }),
-];
-```
+    ```ts
+    import { gui } from '@golemui/gui-shared';
+    import { html } from 'lit';
 
-| Shortcut               | Description                                                                                                                   |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `gui.displays.alert`   | A levelled alert ([Alert](/widgets-reference/display-fields/alert/)).                                                         |
-| `gui.displays.display` | A render-callback that returns framework markup ([Renderer](/widgets-reference/display-fields/renderer/)). Programmatic-only. |
-| `gui.displays.custom`  | Plug in your own display widget ([Custom Widgets](/form-definition/custom-widgets/)).                                         |
+    const formDef = [
+      gui.displays.alert({
+        text: 'Some fields need your attention',
+        level: 'warning',
+      }),
+      gui.displays.markdownText({
+        md: '### Welcome\nFill in the form below to get started.',
+      }),
+      // Programmatic-only — the callback can read live form state.
+      gui.displays.display(({ $form }) => html`<h2>Hello, ${$form.name}!</h2>`),
+      gui.displays.custom('productDescription', {
+        img: 'p.png',
+        description: '### Cool',
+      }),
+    ];
+    ```
 
-## JSON form
+  </Fragment>
+  <Fragment slot="json">
 
-The same widgets expressed in JSON:
+    Same outcome in JSON — every display widget carries its data inside `props`. The dynamic Renderer is Programmatic-only because JSON can't serialize a function reference; everything else maps directly:
 
-```json
-{
-  "form": [
+    ```json
     {
-      "kind": "display",
-      "type": "alert",
-      "props": { "text": "Some fields need your attention", "level": "warning" }
+      "form": [
+        {
+          "kind": "display",
+          "type": "alert",
+          "props": { "text": "Some fields need your attention", "level": "warning" }
+        },
+        {
+          "kind": "display",
+          "type": "markdownText",
+          "props": { "md": "### Welcome\nFill in the form below to get started." }
+        },
+        {
+          "kind": "display",
+          "type": "productDescription",
+          "props": { "img": "p.png", "description": "### Cool" }
+        }
+      ]
     }
-  ]
-}
-```
+    ```
 
-| Property | Description                                                                 |
-| -------- | --------------------------------------------------------------------------- |
-| `uid`    | Optional unique id; one is generated if absent.                             |
-| `kind`   | **MANDATORY**. Always `'display'`.                                          |
-| `type`   | **MANDATORY**. The widget type (`alert`, `markdownText`, `renderer`, etc.). |
-| `props`  | Widget-specific configuration — see each widget's reference page.           |
+    | Property | Description                                                                 |
+    | -------- | --------------------------------------------------------------------------- |
+    | `uid`    | Optional unique id; one is generated if absent.                             |
+    | `kind`   | **MANDATORY**. Always `'display'`.                                          |
+    | `type`   | **MANDATORY**. The widget type (`alert`, `markdownText`, or your custom type). |
+    | `props`  | Widget-specific configuration — see each widget's reference page.           |
+
+  </Fragment>
+</DslTabs>
 
 ## Available widgets
 
-- [Alert](/widgets-reference/display-fields/alert/)
-- [Markdown Text](/widgets-reference/display-fields/markdown-text/)
-- [Renderer](/widgets-reference/display-fields/renderer/)
+| Widget        | DX shortcut                 | Reference                                                          |
+| ------------- | --------------------------- | ------------------------------------------------------------------ |
+| Alert         | `gui.displays.alert`        | [Alert](/widgets-reference/display-fields/alert/)                  |
+| Markdown Text | `gui.displays.markdownText` | [Markdown Text](/widgets-reference/display-fields/markdown-text/)  |
+| Renderer      | `gui.displays.display`      | [Renderer](/widgets-reference/display-fields/renderer/) — Programmatic-only |
+| _Custom_      | `gui.displays.custom`       | [Custom Widgets](/form-definition/custom-widgets/)                 |
 
 ## See also
 

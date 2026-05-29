@@ -1,7 +1,7 @@
 import { gui } from '@golemui/gui-shared';
 
 export const markdownTextTab = gui.layouts.flex([
-  gui.displays.custom('markdownText', {
+  gui.displays.markdownText({
     md: `# Welcome
 ## Welcome
 ### Welcome

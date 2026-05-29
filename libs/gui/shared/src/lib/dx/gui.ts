@@ -35,6 +35,7 @@ import { _guiCustomAction } from './shortcuts/custom-action/guiCustomAction.impl
 // ─── Displays ───
 import { _guiDisplay } from './shortcuts/display/guiDisplay.impl';
 import { _guiAlert } from './shortcuts/alert/guiAlert.impl';
+import { _guiMarkdownText } from './shortcuts/markdown-text/guiMarkdownText.impl';
 import { _guiCustomDisplay } from './shortcuts/custom-display/guiCustomDisplay.impl';
 
 // ─── Layouts ───
@@ -90,6 +91,7 @@ export const gui = {
   displays: {
     display: _guiDisplay,
     alert: _guiAlert,
+    markdownText: _guiMarkdownText,
     custom: _guiCustomDisplay,
   },
   layouts: {
