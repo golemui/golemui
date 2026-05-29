@@ -51,9 +51,37 @@ const TOOLS = [
   GET_CONCEPT_TOOL,
 ];
 
+/**
+ * High-level guidance handed to the client on connect (the MCP `initialize`
+ * `instructions` field). Tools carry their own per-call descriptions; this
+ * explains what the server is for and the order to use the tools in — above all
+ * that every form definition must be validated before it reaches the user.
+ */
+const SERVER_INSTRUCTIONS =
+  'This server builds and validates GolemUI form definitions — declarative, JSON-serializable ' +
+  'forms shaped as `{ form: [...widgets], states?: {...} }`. Its job is to help you produce a form ' +
+  'definition that is guaranteed correct before the user pastes it into their codebase.\n\n' +
+  'Recommended workflow:\n' +
+  '1. Starting from an existing schema? Use a generator — both return a pre-validated definition, ' +
+  'so check the returned `unmapped` list and surface anything left over to the user. For a raw JSON ' +
+  'Schema (e.g. an API request body), call `generate_from_json_schema`. For an OpenAPI 3.x spec, ' +
+  'call `generate_from_openapi`: pass `operation` as "METHOD /path" (e.g. "POST /users") or an ' +
+  'exact operationId, plus the spec as a parsed `document` or a `documentUrl` to fetch — it ' +
+  'resolves the operation\'s request body, dereferences `$ref`s, and falls back to the ' +
+  'operation\'s parameters when there is no request body.\n' +
+  '2. Building or editing by hand? Look up a single widget with `get_widget_spec` (its `kind`, ' +
+  '`props`, and `validator` shape), and cross-cutting behavior that spans widgets — conditional ' +
+  'rendering, per-state prop overrides — with `get_concept`.\n' +
+  '3. ALWAYS finish by calling `validate_form_definition`. It checks the definition against the ' +
+  'bundled JSON Schemas and returns `{ valid, errors, warnings, expressionWarnings }`. Treat ' +
+  '`errors` as blocking: fix them and re-validate until `valid` is true. `warnings` (likely-custom ' +
+  'widgets) and `expressionWarnings` (linted reactive expressions) are advisory — surface them, ' +
+  'but they do not flip `valid`.\n\n' +
+  'Do not hand a form definition to the user until `validate_form_definition` reports `valid: true`.';
+
 const server = new Server(
   { name: PKG_NAME, version: PKG_VERSION },
-  { capabilities: { tools: {} } },
+  { capabilities: { tools: {} }, instructions: SERVER_INSTRUCTIONS },
 );
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));

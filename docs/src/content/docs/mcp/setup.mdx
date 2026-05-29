@@ -1,0 +1,104 @@
+---
+title: Setup
+description: Connect the GolemUI MCP server to Claude Code, Cursor, Windsurf, or any MCP-capable IDE.
+sidebar:
+  order: 1
+---
+
+import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The server is a standalone Node CLI distributed on npm. Add it to your IDE's MCP config — there is
+no project install required, and `npx` fetches it on demand. It requires Node 18 or newer.
+
+## Connect it to your IDE
+
+<Tabs>
+  <TabItem label="Claude Code">
+
+Register it with one command:
+
+```bash
+claude mcp add golemui -- npx -y @golemui/gui-mcp
+```
+
+Or paste this into `~/.claude/settings.json` (or your project's `.mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "golemui": {
+      "command": "npx",
+      "args": ["-y", "@golemui/gui-mcp"]
+    }
+  }
+}
+```
+
+  </TabItem>
+  <TabItem label="Cursor / Windsurf">
+
+Add an `mcpServers.golemui` entry pointing at `npx -y @golemui/gui-mcp` in your editor's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "golemui": {
+      "command": "npx",
+      "args": ["-y", "@golemui/gui-mcp"]
+    }
+  }
+}
+```
+
+  </TabItem>
+  <TabItem label="VS Code (project)">
+
+Create or edit a project-level `.mcp.json` in your workspace root, then reload the window
+(`Cmd+Shift+P` → "Developer: Reload Window"):
+
+```json
+{
+  "mcpServers": {
+    "golemui": {
+      "command": "npx",
+      "args": ["-y", "@golemui/gui-mcp"]
+    }
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+The five tools appear in your assistant's tool list once the server is connected.
+
+## Verify
+
+The server speaks JSON-RPC over stdio and prints a ready line to stderr on startup:
+
+```bash
+npx -y @golemui/gui-mcp < /dev/null
+# → @golemui/gui-mcp v<version> ready on stdio
+```
+
+<Aside type="tip">
+On connect, the server hands your assistant a short set of instructions describing the
+generate-then-validate workflow, so it uses the tools in the right order automatically. You don't
+need to prompt it with the workflow yourself.
+</Aside>
+
+## Pin a version (optional)
+
+`npx -y @golemui/gui-mcp` always fetches the latest release. To lock the bundled schemas to a
+specific GolemUI version, pin the package:
+
+```json
+{
+  "mcpServers": {
+    "golemui": {
+      "command": "npx",
+      "args": ["-y", "@golemui/gui-mcp@1.2.3"]
+    }
+  }
+}
+```

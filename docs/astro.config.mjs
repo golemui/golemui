@@ -46,6 +46,15 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'Getting Started', autogenerate: { directory: 'getting-started' } },
+        {
+          label: 'MCP Server',
+          items: [
+            { slug: 'mcp/overview' },
+            { slug: 'mcp/setup' },
+            { slug: 'mcp/tools-reference' },
+            { slug: 'mcp/generating-from-a-schema' },
+          ],
+        },
         { label: 'Integration', autogenerate: { directory: 'integration' } },
         {
           label: 'Features',
