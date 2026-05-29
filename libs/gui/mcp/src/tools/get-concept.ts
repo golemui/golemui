@@ -40,6 +40,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'State names can contain letters, numbers, hyphens, and underscores. ' +
         'Colons enable hierarchical composition — see the "Composed sub-states (colon notation)" pattern below.',
       example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
         states: {
           termsAccepted: '$form.terms === true',
           hasDiscount: '$form.hasDiscountCode === true',
@@ -82,6 +83,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Prefer the named-state form (`in`/`from`) over the inline `when` expression when the same ' +
         'condition applies to several widgets; use `when` for one-off conditions with no reuse.',
       example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
         states: {
           hasDiscount: '$form.hasDiscountCode === true',
         },
@@ -120,6 +122,7 @@ const STATES_CONCEPT: GetConceptResult = {
         'Multiple suffixes can coexist on the same property; when more than one state is active, ' +
         'the last matching suffix in document order wins.',
       example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
         states: {
           termsAccepted: '$form.terms === true',
           busy: '$meta.submitting === true',
@@ -216,6 +219,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'Use optional chaining (`?.`) when accessing nested fields that may not yet exist. ' +
         'Multiple slots can appear in a single string.',
       example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
         form: [
           {
             uid: 'userName',
@@ -262,6 +266,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'same scope object (`$form`, `$meta`, `$errors`, `$formIsInvalid`). ' +
         'If the expression evaluates to `null` or `undefined`, the slot renders as an empty string.',
       example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
         data: { firstName: 'Jane', lastName: 'Doe', count: 4, role: 'admin' },
         form: [
           {
@@ -299,6 +304,7 @@ const STRING_INTERPOLATION_CONCEPT: GetConceptResult = {
         'Params that start with a `$` scope prefix are evaluated; others are passed as static strings. ' +
         'The expression has access to `$form`, `$meta`, `$errors`, and `$formIsInvalid`.',
       example: {
+        $schema: 'https://golemui.com/schemas/form.schema.json',
         data: { firstName: 'Jane', lastName: 'Doe', count: 4 },
         meta: { connectionStatus: 'online' },
         form: [

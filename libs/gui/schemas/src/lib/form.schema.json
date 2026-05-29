@@ -9,18 +9,21 @@
     },
     "states": {
       "type": "object",
+      "description": "Named boolean conditions keyed by state name, each mapping to a reactive expression. States serve two purposes: (1) gating widget visibility via `include.in` / `exclude.from`; (2) overriding individual widget properties when a state is active by appending `\".<stateName>\"` to any property key — e.g. `\"label.myState\": \"Active label\"` or `\"props.hint.myState\": \"Active hint\"`. Root-level suffixable props: `label`, `disabled`, `readonly`, `validator`, `size`. Any key inside `props` can also be suffixed.",
       "additionalProperties": {
         "$ref": "common.schema.json#/$defs/reactiveExpression"
       }
     },
     "form": {
       "type": "array",
+      "description": "The ordered list of widgets that make up the form body",
       "items": {
         "$ref": "#/$defs/formWidget"
       }
     },
     "autocomplete": {
-      "type": "string"
+      "type": "string",
+      "description": "HTML `autocomplete` attribute applied to the `<form>` element (e.g. `on`, `off`)"
     }
   },
   "required": ["form"],
@@ -28,8 +31,9 @@
   "$defs": {
     "chunkRef": {
       "type": "object",
+      "description": "A reference to an external chunk file whose widget array will be inlined at this position in the form",
       "properties": {
-        "$ref": { "type": "string" }
+        "$ref": { "type": "string", "description": "Relative path to a JSON chunk file" }
       },
       "required": ["$ref"],
       "additionalProperties": false

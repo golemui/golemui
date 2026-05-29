@@ -8,25 +8,32 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "addLabelProp": {
+      "description": "Label for the button that adds a new repeated item",
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "removeLabelProp": {
+      "description": "Label for the button that removes an existing repeated item",
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "limitProp": {
-      "type": "number"
+      "type": "number",
+      "description": "Maximum number of items the user can add. No limit when omitted."
     },
     "templateProp": {
+      "description": "Widget tree used as the template for each repeated item. Paths inside are resolved relative to the item's index in the array.",
       "$ref": "../layout-widget.schema.json"
     },
     "titleProp": {
+      "description": "Title displayed in the header of each item panel (supports reactive expressions referencing the item's index via `$index`)",
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "addButtonIconProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Icon name or CSS class for the add-item button icon"
     },
     "removeButtonIconProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Icon name or CSS class for the remove-item button icon"
     }
   },
   "allOf": [

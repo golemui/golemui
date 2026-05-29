@@ -5,20 +5,24 @@
   "type": "object",
   "$defs": {
     "singleOpenProp": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "When true, opening one section automatically closes all others. Defaults to false."
     },
     "defaultOpenProp": {
       "type": "object",
+      "description": "Map of section UIDs to booleans indicating which sections are open on initial render",
       "additionalProperties": {
         "type": "boolean"
       },
       "minProperties": 1
     },
     "renderModeProp": {
+      "description": "Controls when section content is rendered: `all` keeps all sections in the DOM, `activeOnly` unmounts inactive ones",
       "enum": ["all", "activeOnly"]
     },
     "sectionsProp": {
       "type": "array",
+      "description": "Ordered list of section definitions. Each section's `uid` must match the widget UIDs used in `children`.",
       "minItems": 1,
       "items": {
         "type": "object",
@@ -27,7 +31,8 @@
             "$ref": "../common.schema.json#/$defs/localizable"
           },
           "uid": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier linking this section definition to its widgets in `children`"
           }
         },
         "required": ["label", "uid"],
@@ -52,6 +57,7 @@
     },
     "children": {
       "type": "array",
+      "description": "Flat list of widgets belonging to all sections. Each widget must have a `uid` matching one of the section UIDs in `props.sections`.",
       "minItems": 1,
       "items": {
         "$ref": "../form.schema.json#/$defs/formWidget"

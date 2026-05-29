@@ -28,12 +28,15 @@
       }
     },
     "labelFieldProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
     },
     "valueFieldProp": {
-      "type": "string"
+      "type": "string",
+      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
     },
     "directionProp": {
+      "description": "Layout direction for the radio buttons (`row` = horizontal, `column` = vertical). Defaults to `column`.",
       "enum": [
         "row",
         "column"
