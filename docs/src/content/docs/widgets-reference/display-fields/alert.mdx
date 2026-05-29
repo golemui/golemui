@@ -43,6 +43,34 @@ Use the `level` property to change the visual importance and color scheme of the
   src="/template/index.html?form=template/widgets/alert/alert-levels.json"
 />
 
+## Dynamic content
+
+The `text` prop supports [string interpolation](/features/string-interpolation/) — embed live form data, metadata, or computed expressions using `{{...}}` slots. Slots re-evaluate as the user fills in the form:
+
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": "Hello {{$form.firstName + ' ' + $form.lastName}}, status: {{$meta.connectionStatus}}"
+  }
+}
+```
+
+Use `$errors` and `$formIsInvalid` to show validation feedback inline:
+
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": "{{$formIsInvalid ? 'Please fix the errors below.' : 'Everything looks good!'}}"
+  }
+}
+```
+
+See [String Interpolation](/features/string-interpolation/) for the full expression reference, including arithmetic, ternary, and optional chaining.
+
 ## Styling
 
 Alerts can be styled as explained in the [Styling Guide](/styling/overview/).
