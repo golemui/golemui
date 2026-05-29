@@ -470,6 +470,66 @@ export const runStringInterpolationTests = (mountFn: MountComponentFn) => {
       });
     });
 
+    describe('Expression evaluation', () => {
+      it('should evaluate arithmetic in interpolation', () => {
+        mountFn({
+          data: { count: 4 },
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'result',
+                kind: 'display',
+                type: 'alert',
+                props: { text: 'Next: {{$form.count + 1}}' },
+              },
+            ],
+          }),
+        });
+
+        cy.get('.gui-alert [role="alert"]').contains('Next: 5');
+      });
+
+      it('should evaluate string concatenation in interpolation', () => {
+        mountFn({
+          data: { firstName: 'Jane', lastName: 'Doe' },
+          formDef: defineForm({
+            form: [
+              { uid: 'fn', kind: 'input', type: 'textinput', path: 'firstName' },
+              { uid: 'ln', kind: 'input', type: 'textinput', path: 'lastName' },
+              {
+                uid: 'result',
+                kind: 'display',
+                type: 'alert',
+                props: { text: "Full: {{$form.firstName + ' ' + $form.lastName}}" },
+              },
+            ],
+          }),
+        });
+
+        cy.get('.gui-alert [role="alert"]').contains('Full: Jane Doe');
+        cy.get('[data-cy="fn_textinput"]').clear().type('John');
+        cy.get('.gui-alert [role="alert"]').contains('Full: John Doe');
+      });
+
+      it('should evaluate ternary expressions in interpolation', () => {
+        mountFn({
+          meta: { isVip: true },
+          formDef: defineForm({
+            form: [
+              {
+                uid: 'result',
+                kind: 'display',
+                type: 'alert',
+                props: { text: "Role: {{$meta.isVip ? 'VIP' : 'Guest'}}" },
+              },
+            ],
+          }),
+        });
+
+        cy.get('.gui-alert [role="alert"]').contains('Role: VIP');
+      });
+    });
+
     describe('Edge cases', () => {
       it('should handle nested path with numbers in property names', () => {
         mountFn({
