@@ -1,3 +1,13 @@
+## 0.16.2 (2026-05-30)
+
+### 🩹 Fixes
+
+- **mcp:** add missing rollup-generated chunk files ([#147](https://github.com/golemui/golemui/pull/147))
+
+### ❤️ Thank You
+
+- Mud Scientist @mudscientist
+
 ## 0.16.1 (2026-05-30)
 
 ### 🚀 Features
