@@ -23,14 +23,18 @@ export default defineConfig(() => ({
     target: 'node18',
     ssr: true,
     lib: {
-      entry: { index: 'src/index.ts' },
+      entry: {
+        lib: 'src/lib.ts', // library - no server, importable anywhere
+        cli: 'src/cli.ts', // MCP stdio server - Node.js only
+      },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
       external: [/^@modelcontextprotocol\/sdk(\/.*)?$/, /^ajv(\/.*)?$/, 'ajv-formats'],
       output: {
-        banner: '#!/usr/bin/env node',
+        // shebang only on the CLI bundle
+        banner: (chunk) => (chunk.name === 'cli' ? '#!/usr/bin/env node' : ''),
       },
     },
   },
