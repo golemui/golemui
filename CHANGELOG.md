@@ -1,3 +1,21 @@
+## 0.16.0 (2026-05-30)
+
+### 🚀 Features
+
+- **core:** improved string interpolation with full expression support ([#143](https://github.com/golemui/golemui/pull/143))
+- **mcp:** add get_concept tool and fix reactive-expression lint ([#138](https://github.com/golemui/golemui/pull/138))
+
+### 🩹 Fixes
+
+- light mode ([#137](https://github.com/golemui/golemui/pull/137))
+- **schemas:** clean up and enrich JSON schema definitions ([#145](https://github.com/golemui/golemui/pull/145))
+- **shared:** add markdown text shortcut ([#142](https://github.com/golemui/golemui/pull/142))
+
+### ❤️ Thank You
+
+- mudscientist
+- Raúl Jiménez @Elecash
+
 ## 0.15.1 (2026-05-27)
 
 ### 🩹 Fixes

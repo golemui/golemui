@@ -1,3 +1,13 @@
+## 0.16.0 (2026-05-30)
+
+### 🚀 Features
+
+- **core:** improved string interpolation with full expression support ([#143](https://github.com/golemui/golemui/pull/143))
+
+### ❤️ Thank You
+
+- mudscientist
+
 ## 0.15.1 (2026-05-27)
 
 This was a version bump only for core to align it with other projects, there were no code changes.

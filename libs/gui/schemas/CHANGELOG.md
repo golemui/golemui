@@ -1,3 +1,13 @@
+## 0.16.0 (2026-05-30)
+
+### 🩹 Fixes
+
+- **schemas:** clean up and enrich JSON schema definitions ([#145](https://github.com/golemui/golemui/pull/145))
+
+### ❤️ Thank You
+
+- mudscientist
+
 ## 0.15.1 (2026-05-27)
 
 This was a version bump only for gui-schemas to align it with other projects, there were no code changes.

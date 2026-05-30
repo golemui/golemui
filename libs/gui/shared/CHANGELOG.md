@@ -1,3 +1,13 @@
+## 0.16.0 (2026-05-30)
+
+### 🩹 Fixes
+
+- **shared:** add markdown text shortcut ([#142](https://github.com/golemui/golemui/pull/142))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.15.1 (2026-05-27)
 
 This was a version bump only for gui-shared to align it with other projects, there were no code changes.

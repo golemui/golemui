@@ -1,3 +1,13 @@
+## 0.16.0 (2026-05-30)
+
+### 🩹 Fixes
+
+- light mode ([#137](https://github.com/golemui/golemui/pull/137))
+
+### ❤️ Thank You
+
+- Raúl Jiménez @Elecash
+
 ## 0.15.1 (2026-05-27)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.
