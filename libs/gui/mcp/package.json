@@ -16,9 +16,13 @@
     "golemui-mcp": "./cli.js"
   },
   "files": [
-    "lib.js",
-    "lib.d.ts",
-    "cli.js",
+    "*.js",
+    "*.d.ts",
+    "tools",
+    "mapping",
+    "schemas",
+    "utils",
+    "lint",
     "*.md"
   ],
   "keywords": [
@@ -30,10 +34,15 @@
     "json-schema"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "@golemui/gui-schemas": "*"
+  },
+  "peerDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
