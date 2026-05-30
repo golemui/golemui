@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.16.1/components/tags.schema.json",
+  "title": "Tags Widget",
+  "type": "object",
+  "$defs": {
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "separatorsProp": {
+      "type": "array",
+      "description": "Characters or strings that trigger a new tag when typed (e.g. `[\",\", \" \"]`). Defaults to Enter key only.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowDuplicatesProp": {
+      "type": "boolean",
+      "description": "When true, the same tag value may be added more than once. Defaults to false."
+    },
+    "trimProp": {
+      "type": "boolean",
+      "description": "When true, whitespace is trimmed from each tag before it is added. Defaults to true."
+    },
+    "limitProp": {
+      "type": "number",
+      "description": "Maximum number of tags the user can add. No limit when omitted."
+    },
+    "removeAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removeIconProp": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "tags"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "separators": {
+          "$ref": "#/$defs/separatorsProp"
+        },
+        "allowDuplicates": {
+          "$ref": "#/$defs/allowDuplicatesProp"
+        },
+        "trim": {
+          "$ref": "#/$defs/trimProp"
+        },
+        "limit": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "removeAriaLabel": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "removeIcon": {
+          "$ref": "#/$defs/removeIconProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^separators\\.[^.]+$": {
+          "$ref": "#/$defs/separatorsProp"
+        },
+        "^allowDuplicates\\.[^.]+$": {
+          "$ref": "#/$defs/allowDuplicatesProp"
+        },
+        "^trim\\.[^.]+$": {
+          "$ref": "#/$defs/trimProp"
+        },
+        "^limit\\.[^.]+$": {
+          "$ref": "#/$defs/limitProp"
+        },
+        "^removeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removeAriaLabelProp"
+        },
+        "^removeIcon\\.[^.]+$": {
+          "$ref": "#/$defs/removeIconProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
+  "unevaluatedProperties": false
+}

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.16.1/components/select.schema.json",
+  "title": "Select Widget",
+  "type": "object",
+  "$defs": {
+    "disabledDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "optionsProp": {
+      "type": "array",
+      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
+      "items": {
+        "type": [
+          "string",
+          "number",
+          "object"
+        ]
+      }
+    },
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "labelFieldProp": {
+      "type": "string",
+      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
+    },
+    "valueFieldProp": {
+      "type": "string",
+      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
+    },
+    "autocompleteProp": {
+      "type": "string",
+      "description": "HTML `autocomplete` attribute applied to the underlying input element"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "select"
+    },
+    "path": {
+      "$ref": "../common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "options": {
+          "$ref": "#/$defs/optionsProp"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "labelField": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
+        "valueField": {
+          "$ref": "#/$defs/valueFieldProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^options\\.[^.]+$": {
+          "$ref": "#/$defs/optionsProp"
+        },
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
+        "^labelField\\.[^.]+$": {
+          "$ref": "#/$defs/labelFieldProp"
+        },
+        "^valueField\\.[^.]+$": {
+          "$ref": "#/$defs/valueFieldProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
+  "unevaluatedProperties": false
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.16.1/components/tabs.schema.json",
+  "title": "Tabs Widget",
+  "type": "object",
+  "$defs": {
+    "defaultOpenProp": {
+      "type": "string",
+      "description": "UID of the tab that is active on initial render. Defaults to the first tab."
+    },
+    "renderModeProp": {
+      "description": "Controls when tab content is rendered: `all` keeps all tabs in the DOM, `activeOnly` unmounts inactive ones",
+      "enum": [
+        "all",
+        "activeOnly"
+      ]
+    },
+    "tabsProp": {
+      "type": "array",
+      "description": "Ordered list of tab definitions. Each tab's `uid` must match the widget UIDs used in `children`.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "$ref": "../common.schema.json#/$defs/localizable"
+          },
+          "uid": {
+            "type": "string",
+            "description": "Unique identifier linking this tab definition to its widgets in `children`"
+          }
+        },
+        "required": [
+          "label",
+          "uid"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "layout"
+    },
+    "type": {
+      "const": "tabs"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "children": {
+      "type": "array",
+      "description": "Flat list of widgets belonging to all tabs. Each widget must have a `uid` matching one of the tab UIDs in `props.tabs`.",
+      "minItems": 1,
+      "items": {
+        "$ref": "../form.schema.json#/$defs/formWidget"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "defaultOpen": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "renderMode": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "tabs": {
+          "$ref": "#/$defs/tabsProp"
+        }
+      },
+      "required": [
+        "tabs"
+      ],
+      "patternProperties": {
+        "^defaultOpen\\.[^.]+$": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "^renderMode\\.[^.]+$": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "^tabs\\.[^.]+$": {
+          "$ref": "#/$defs/tabsProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "children",
+    "props"
+  ],
+  "unevaluatedProperties": false
+}
