@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/tabs.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/tabs.schema.json",
   "title": "Tabs Widget",
   "type": "object",
   "$defs": {
@@ -10,7 +10,10 @@
     },
     "renderModeProp": {
       "description": "Controls when tab content is rendered: `all` keeps all tabs in the DOM, `activeOnly` unmounts inactive ones",
-      "enum": ["all", "activeOnly"]
+      "enum": [
+        "all",
+        "activeOnly"
+      ]
     },
     "tabsProp": {
       "type": "array",
@@ -27,7 +30,10 @@
             "description": "Unique identifier linking this tab definition to its widgets in `children`"
           }
         },
-        "required": ["label", "uid"],
+        "required": [
+          "label",
+          "uid"
+        ],
         "additionalProperties": false
       }
     }
@@ -68,7 +74,9 @@
           "$ref": "#/$defs/tabsProp"
         }
       },
-      "required": ["tabs"],
+      "required": [
+        "tabs"
+      ],
       "patternProperties": {
         "^defaultOpen\\.[^.]+$": {
           "$ref": "#/$defs/defaultOpenProp"
@@ -83,6 +91,11 @@
       "additionalProperties": false
     }
   },
-  "required": ["kind", "type", "children", "props"],
+  "required": [
+    "kind",
+    "type",
+    "children",
+    "props"
+  ],
   "unevaluatedProperties": false
 }

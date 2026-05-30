@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/tags.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/tags.schema.json",
   "title": "Tags Widget",
   "type": "object",
   "$defs": {
@@ -161,6 +161,10 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": ["kind", "type", "path"],
+  "required": [
+    "kind",
+    "type",
+    "path"
+  ],
   "unevaluatedProperties": false
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/validators.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/validators.schema.json",
   "title": "GolemUI Validator Definitions",
   "$defs": {
     "localizable": {
@@ -91,7 +91,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "numberValidator": {
@@ -99,7 +101,10 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["number", "integer"]
+          "enum": [
+            "number",
+            "integer"
+          ]
         },
         "required": {
           "type": "boolean",
@@ -172,7 +177,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "booleanValidator": {
@@ -204,7 +211,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "arrayValidator": {
@@ -253,7 +262,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "customValidator": {
@@ -268,7 +279,9 @@
           "description": "Makes the field mandatory — evaluation is still delegated to the custom validator"
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": true
     },
     "validator": {

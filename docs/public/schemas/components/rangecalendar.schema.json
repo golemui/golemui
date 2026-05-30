@@ -29,15 +29,18 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "removePillAriaLabelProp": {
+      "description": "Accessible label for the button that clears the selected range pill",
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
+      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
       "enum": [
         "numeric",
         "2-digit"
       ]
     },
     "weekdayFormatProp": {
+      "description": "Formatting of weekday column headers (`short` = Mon, `long` = Monday, `narrow` = M)",
       "enum": [
         "short",
         "long",
@@ -45,6 +48,7 @@
       ]
     },
     "monthFormatProp": {
+      "description": "Formatting of the month heading (`long` = January, `short` = Jan, `narrow` = J, `numeric` = 1, `2-digit` = 01)",
       "enum": [
         "numeric",
         "2-digit",
@@ -54,16 +58,20 @@
       ]
     },
     "minDateProp": {
-      "type": "string"
+      "type": "string",
+      "description": "ISO-8601 date string for the earliest selectable date (inclusive)"
     },
     "maxDateProp": {
-      "type": "string"
+      "type": "string",
+      "description": "ISO-8601 date string for the latest selectable date (inclusive)"
     },
     "numberOfMonthsProp": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of month panels to display side by side. Defaults to 1."
     },
     "disabledRangesProp": {
       "type": "array",
+      "description": "Date ranges that are shown but cannot be selected",
       "items": {
         "$ref": "../common.schema.json#/$defs/dateRange"
       }

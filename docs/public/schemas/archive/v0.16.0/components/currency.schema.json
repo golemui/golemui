@@ -1,49 +1,41 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/select.schema.json",
-  "title": "Select Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/currency.schema.json",
+  "title": "Currency Widget",
   "type": "object",
   "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
+    "currencyProp": {
+      "type": "string"
+    },
+    "stepProp": {
+      "type": "number"
+    },
+    "maximumFractionDigitsProp": {
+      "type": "number"
+    },
+    "minimumFractionDigitsProp": {
+      "type": "number"
     },
     "hintProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "placeholderProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "iconProp": {
       "type": "string"
     },
-    "optionsProp": {
-      "type": "array",
-      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
-      "items": {
-        "type": [
-          "string",
-          "number",
-          "object"
-        ]
-      }
-    },
-    "placeholderProp": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
-    "labelFieldProp": {
-      "type": "string",
-      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
-    },
-    "valueFieldProp": {
-      "type": "string",
-      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
-    },
     "autocompleteProp": {
-      "type": "string",
-      "description": "HTML `autocomplete` attribute applied to the underlying input element"
+      "type": "string"
     }
   },
   "allOf": [
@@ -56,7 +48,7 @@
       "const": "input"
     },
     "type": {
-      "const": "select"
+      "const": "currency"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -76,49 +68,58 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
+    "defaultValue": {
+      "type": "number"
+    },
     "props": {
       "type": "object",
       "properties": {
+        "currency": {
+          "$ref": "#/$defs/currencyProp"
+        },
+        "step": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "maximumFractionDigits": {
+          "$ref": "#/$defs/maximumFractionDigitsProp"
+        },
+        "minimumFractionDigits": {
+          "$ref": "#/$defs/minimumFractionDigitsProp"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
-        },
-        "icon": {
-          "$ref": "#/$defs/iconProp"
-        },
-        "options": {
-          "$ref": "#/$defs/optionsProp"
         },
         "placeholder": {
           "$ref": "#/$defs/placeholderProp"
         },
-        "labelField": {
-          "$ref": "#/$defs/labelFieldProp"
-        },
-        "valueField": {
-          "$ref": "#/$defs/valueFieldProp"
+        "icon": {
+          "$ref": "#/$defs/iconProp"
         },
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
+        "^currency\\.[^.]+$": {
+          "$ref": "#/$defs/currencyProp"
+        },
+        "^step\\.[^.]+$": {
+          "$ref": "#/$defs/stepProp"
+        },
+        "^maximumFractionDigits\\.[^.]+$": {
+          "$ref": "#/$defs/maximumFractionDigitsProp"
+        },
+        "^minimumFractionDigits\\.[^.]+$": {
+          "$ref": "#/$defs/minimumFractionDigitsProp"
+        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
-        },
-        "^icon\\.[^.]+$": {
-          "$ref": "#/$defs/iconProp"
-        },
-        "^options\\.[^.]+$": {
-          "$ref": "#/$defs/optionsProp"
         },
         "^placeholder\\.[^.]+$": {
           "$ref": "#/$defs/placeholderProp"
         },
-        "^labelField\\.[^.]+$": {
-          "$ref": "#/$defs/labelFieldProp"
-        },
-        "^valueField\\.[^.]+$": {
-          "$ref": "#/$defs/valueFieldProp"
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"

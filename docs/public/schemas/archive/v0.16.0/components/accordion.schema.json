@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/accordion.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/accordion.schema.json",
   "title": "Accordion Widget",
   "type": "object",
   "$defs": {
@@ -18,7 +18,10 @@
     },
     "renderModeProp": {
       "description": "Controls when section content is rendered: `all` keeps all sections in the DOM, `activeOnly` unmounts inactive ones",
-      "enum": ["all", "activeOnly"]
+      "enum": [
+        "all",
+        "activeOnly"
+      ]
     },
     "sectionsProp": {
       "type": "array",
@@ -35,7 +38,10 @@
             "description": "Unique identifier linking this section definition to its widgets in `children`"
           }
         },
-        "required": ["label", "uid"],
+        "required": [
+          "label",
+          "uid"
+        ],
         "additionalProperties": false
       }
     }
@@ -79,7 +85,9 @@
           "$ref": "#/$defs/sectionsProp"
         }
       },
-      "required": ["sections"],
+      "required": [
+        "sections"
+      ],
       "patternProperties": {
         "^singleOpen\\.[^.]+$": {
           "$ref": "#/$defs/singleOpenProp"
@@ -97,6 +105,11 @@
       "additionalProperties": false
     }
   },
-  "required": ["kind", "type", "children", "props"],
+  "required": [
+    "kind",
+    "type",
+    "children",
+    "props"
+  ],
   "unevaluatedProperties": false
 }

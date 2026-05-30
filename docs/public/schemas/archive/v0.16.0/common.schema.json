@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/common.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/common.schema.json",
   "title": "Golem Common Definitions",
   "$defs": {
     "reactiveExpression": {
@@ -24,7 +24,9 @@
           "description": "ISO-8601 date string for the end of the disabled range (inclusive). Omit to disable a single day."
         }
       },
-      "required": ["start"],
+      "required": [
+        "start"
+      ],
       "additionalProperties": false
     },
     "uid": {
@@ -53,7 +55,9 @@
               "description": "Interpolation parameters passed to the translation function"
             }
           },
-          "required": ["key"],
+          "required": [
+            "key"
+          ],
           "additionalProperties": false
         }
       ]
@@ -72,7 +76,9 @@
               "description": "List of state names (defined in the form `states` map) in which this widget should be visible"
             }
           },
-          "required": ["in"],
+          "required": [
+            "in"
+          ],
           "additionalProperties": false
         },
         {
@@ -82,7 +88,9 @@
               "$ref": "#/$defs/reactiveExpression"
             }
           },
-          "required": ["when"],
+          "required": [
+            "when"
+          ],
           "additionalProperties": false
         }
       ]
@@ -101,7 +109,9 @@
               "description": "List of state names (defined in the form `states` map) in which this widget should be hidden"
             }
           },
-          "required": ["from"],
+          "required": [
+            "from"
+          ],
           "additionalProperties": false
         },
         {
@@ -111,7 +121,9 @@
               "$ref": "#/$defs/reactiveExpression"
             }
           },
-          "required": ["when"],
+          "required": [
+            "when"
+          ],
           "additionalProperties": false
         }
       ]
@@ -129,7 +141,9 @@
               "$ref": "#/$defs/reactiveExpression"
             }
           },
-          "required": ["when"],
+          "required": [
+            "when"
+          ],
           "additionalProperties": false
         }
       ]
@@ -209,7 +223,9 @@
           "$ref": "#/$defs/exclude"
         }
       },
-      "required": ["type"]
+      "required": [
+        "type"
+      ]
     }
   }
 }

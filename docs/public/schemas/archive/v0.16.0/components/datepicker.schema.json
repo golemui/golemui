@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/calendar.schema.json",
-  "title": "Calendar Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/datepicker.schema.json",
+  "title": "DatePicker Widget",
   "type": "object",
   "$defs": {
     "labelDef": {
@@ -16,6 +16,9 @@
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
+    "iconProp": {
+      "type": "string"
+    },
     "prevMonthIconProp": {
       "type": "string"
     },
@@ -29,14 +32,12 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
-      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
       "enum": [
         "numeric",
         "2-digit"
       ]
     },
     "weekdayFormatProp": {
-      "description": "Formatting of weekday column headers (`short` = Mon, `long` = Monday, `narrow` = M)",
       "enum": [
         "short",
         "long",
@@ -44,7 +45,6 @@
       ]
     },
     "monthFormatProp": {
-      "description": "Formatting of the month heading (`long` = January, `short` = Jan, `narrow` = J, `numeric` = 1, `2-digit` = 01)",
       "enum": [
         "numeric",
         "2-digit",
@@ -54,20 +54,16 @@
       ]
     },
     "minDateProp": {
-      "type": "string",
-      "description": "ISO-8601 date string for the earliest selectable date (inclusive)"
+      "type": "string"
     },
     "maxDateProp": {
-      "type": "string",
-      "description": "ISO-8601 date string for the latest selectable date (inclusive)"
+      "type": "string"
     },
     "numberOfMonthsProp": {
-      "type": "number",
-      "description": "Number of month panels to display side by side. Defaults to 1."
+      "type": "number"
     },
     "disabledRangesProp": {
       "type": "array",
-      "description": "Date ranges that are shown but cannot be selected",
       "items": {
         "$ref": "../common.schema.json#/$defs/dateRange"
       }
@@ -83,7 +79,7 @@
       "const": "input"
     },
     "type": {
-      "const": "calendar"
+      "const": "datePicker"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -108,6 +104,9 @@
       "properties": {
         "hint": {
           "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
         },
         "prevMonthIcon": {
           "$ref": "#/$defs/prevMonthIconProp"
@@ -146,6 +145,9 @@
       "patternProperties": {
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
         },
         "^prevMonthIcon\\.[^.]+$": {
           "$ref": "#/$defs/prevMonthIconProp"

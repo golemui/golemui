@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/form.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/form.schema.json",
   "title": "Golem Form DSL",
   "type": "object",
   "properties": {
@@ -26,16 +26,23 @@
       "description": "HTML `autocomplete` attribute applied to the `<form>` element (e.g. `on`, `off`)"
     }
   },
-  "required": ["form"],
+  "required": [
+    "form"
+  ],
   "additionalProperties": false,
   "$defs": {
     "chunkRef": {
       "type": "object",
       "description": "A reference to an external chunk file whose widget array will be inlined at this position in the form",
       "properties": {
-        "$ref": { "type": "string", "description": "Relative path to a JSON chunk file" }
+        "$ref": {
+          "type": "string",
+          "description": "Relative path to a JSON chunk file"
+        }
       },
-      "required": ["$ref"],
+      "required": [
+        "$ref"
+      ],
       "additionalProperties": false
     },
     "formWidget": {

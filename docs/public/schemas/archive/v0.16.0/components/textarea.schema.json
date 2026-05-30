@@ -1,47 +1,41 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/radiogroup.schema.json",
-  "title": "RadioGroup Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/textarea.schema.json",
+  "title": "TextArea Widget",
   "type": "object",
   "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "optionsProp": {
-      "type": "array",
-      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
-      "items": {
-        "type": [
-          "string",
-          "number",
-          "object"
-        ]
-      }
+    "placeholderProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "labelFieldProp": {
-      "type": "string",
-      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
-    },
-    "valueFieldProp": {
-      "type": "string",
-      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
-    },
-    "directionProp": {
-      "description": "Layout direction for the radio buttons (`row` = horizontal, `column` = vertical). Defaults to `column`.",
+    "counterModeProp": {
       "enum": [
-        "row",
-        "column"
-      ],
-      "default": "column"
+        "remaining",
+        "current"
+      ]
+    },
+    "minimumHeightProp": {
+      "type": "number"
+    },
+    "autoGrowProp": {
+      "type": "boolean"
+    },
+    "maxLengthProp": {
+      "type": "number"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -54,7 +48,7 @@
       "const": "input"
     },
     "type": {
-      "const": "radiogroup"
+      "const": "textarea"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -74,40 +68,55 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
+    "defaultValue": {
+      "type": "string"
+    },
     "props": {
       "type": "object",
       "properties": {
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "options": {
-          "$ref": "#/$defs/optionsProp"
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
         },
-        "labelField": {
-          "$ref": "#/$defs/labelFieldProp"
+        "counterMode": {
+          "$ref": "#/$defs/counterModeProp"
         },
-        "valueField": {
-          "$ref": "#/$defs/valueFieldProp"
+        "minimumHeight": {
+          "$ref": "#/$defs/minimumHeightProp"
         },
-        "direction": {
-          "$ref": "#/$defs/directionProp"
+        "autoGrow": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "maxLength": {
+          "$ref": "#/$defs/maxLengthProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^options\\.[^.]+$": {
-          "$ref": "#/$defs/optionsProp"
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
         },
-        "^labelField\\.[^.]+$": {
-          "$ref": "#/$defs/labelFieldProp"
+        "^counterMode\\.[^.]+$": {
+          "$ref": "#/$defs/counterModeProp"
         },
-        "^valueField\\.[^.]+$": {
-          "$ref": "#/$defs/valueFieldProp"
+        "^minimumHeight\\.[^.]+$": {
+          "$ref": "#/$defs/minimumHeightProp"
         },
-        "^direction\\.[^.]+$": {
-          "$ref": "#/$defs/directionProp"
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "^maxLength\\.[^.]+$": {
+          "$ref": "#/$defs/maxLengthProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false

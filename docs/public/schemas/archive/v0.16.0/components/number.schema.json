@@ -1,47 +1,38 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/radiogroup.schema.json",
-  "title": "RadioGroup Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/number.schema.json",
+  "title": "Number Widget",
   "type": "object",
   "$defs": {
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
-    "labelDef": {
+    "placeholderProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
     },
-    "optionsProp": {
-      "type": "array",
-      "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
-      "items": {
-        "type": [
-          "string",
-          "number",
-          "object"
-        ]
-      }
+    "stepProp": {
+      "type": "number"
     },
-    "labelFieldProp": {
-      "type": "string",
-      "description": "Object property used as the display label when options are objects (e.g. `\"name\"` reads `item.name`)"
+    "minimumProp": {
+      "type": "number"
     },
-    "valueFieldProp": {
-      "type": "string",
-      "description": "Object property used as the stored value when options are objects (e.g. `\"id\"` stores `item.id`)"
+    "maximumProp": {
+      "type": "number"
     },
-    "directionProp": {
-      "description": "Layout direction for the radio buttons (`row` = horizontal, `column` = vertical). Defaults to `column`.",
-      "enum": [
-        "row",
-        "column"
-      ],
-      "default": "column"
+    "autoGrowProp": {
+      "type": "boolean"
+    },
+    "autocompleteProp": {
+      "type": "string"
     }
   },
   "allOf": [
@@ -54,7 +45,7 @@
       "const": "input"
     },
     "type": {
-      "const": "radiogroup"
+      "const": "number"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -74,40 +65,55 @@
     "validator": {
       "$ref": "../validators.schema.json#/$defs/validator"
     },
+    "defaultValue": {
+      "type": "number"
+    },
     "props": {
       "type": "object",
       "properties": {
+        "placeholder": {
+          "$ref": "#/$defs/placeholderProp"
+        },
         "hint": {
           "$ref": "#/$defs/hintProp"
         },
-        "options": {
-          "$ref": "#/$defs/optionsProp"
+        "step": {
+          "$ref": "#/$defs/stepProp"
         },
-        "labelField": {
-          "$ref": "#/$defs/labelFieldProp"
+        "minimum": {
+          "$ref": "#/$defs/minimumProp"
         },
-        "valueField": {
-          "$ref": "#/$defs/valueFieldProp"
+        "maximum": {
+          "$ref": "#/$defs/maximumProp"
         },
-        "direction": {
-          "$ref": "#/$defs/directionProp"
+        "autoGrow": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "autocomplete": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "patternProperties": {
+        "^placeholder\\.[^.]+$": {
+          "$ref": "#/$defs/placeholderProp"
+        },
         "^hint\\.[^.]+$": {
           "$ref": "#/$defs/hintProp"
         },
-        "^options\\.[^.]+$": {
-          "$ref": "#/$defs/optionsProp"
+        "^step\\.[^.]+$": {
+          "$ref": "#/$defs/stepProp"
         },
-        "^labelField\\.[^.]+$": {
-          "$ref": "#/$defs/labelFieldProp"
+        "^minimum\\.[^.]+$": {
+          "$ref": "#/$defs/minimumProp"
         },
-        "^valueField\\.[^.]+$": {
-          "$ref": "#/$defs/valueFieldProp"
+        "^maximum\\.[^.]+$": {
+          "$ref": "#/$defs/maximumProp"
         },
-        "^direction\\.[^.]+$": {
-          "$ref": "#/$defs/directionProp"
+        "^autoGrow\\.[^.]+$": {
+          "$ref": "#/$defs/autoGrowProp"
+        },
+        "^autocomplete\\.[^.]+$": {
+          "$ref": "#/$defs/autocompleteProp"
         }
       },
       "additionalProperties": false

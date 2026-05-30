@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/dropdown.schema.json",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/dropdown.schema.json",
   "title": "Dropdown Widget",
   "type": "object",
   "$defs": {

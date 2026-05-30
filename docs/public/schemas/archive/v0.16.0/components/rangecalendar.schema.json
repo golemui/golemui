@@ -1,17 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/components/calendar.schema.json",
-  "title": "Calendar Widget",
+  "$id": "https://golemui.com/schemas/archive/v0.16.0/components/rangecalendar.schema.json",
+  "title": "RangeCalendar Widget",
   "type": "object",
   "$defs": {
-    "labelDef": {
-      "$ref": "../common.schema.json#/$defs/localizable"
-    },
     "disabledDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
     },
     "readonlyDef": {
       "$ref": "../common.schema.json#/$defs/boolOrWhen"
+    },
+    "labelDef": {
+      "$ref": "../common.schema.json#/$defs/localizable"
     },
     "hintProp": {
       "$ref": "../common.schema.json#/$defs/localizable"
@@ -26,6 +26,10 @@
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "nextMonthAriaLabelProp": {
+      "$ref": "../common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "description": "Accessible label for the button that clears the selected range pill",
       "$ref": "../common.schema.json#/$defs/localizable"
     },
     "dayFormatProp": {
@@ -83,7 +87,7 @@
       "const": "input"
     },
     "type": {
-      "const": "calendar"
+      "const": "rangeCalendar"
     },
     "path": {
       "$ref": "../common.schema.json#/$defs/dotPath"
@@ -120,6 +124,9 @@
         },
         "nextMonthAriaLabel": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
         },
         "dayFormat": {
           "$ref": "#/$defs/dayFormatProp"
@@ -158,6 +165,9 @@
         },
         "^nextMonthAriaLabel\\.[^.]+$": {
           "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
         },
         "^dayFormat\\.[^.]+$": {
           "$ref": "#/$defs/dayFormatProp"
