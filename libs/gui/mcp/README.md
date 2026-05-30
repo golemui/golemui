@@ -82,6 +82,50 @@ single GolemUI widget. Cheaper than dumping the whole API into the model's conte
 **Input:** `{ widgetType }` (one of the widget `type` constants — `textinput`,
 `dropdown`, `repeater`, `flex`, etc.)
 
+### `get_concept`
+
+Returns a detailed guide for a cross-cutting concept - things that span multiple widgets
+and affect the whole form. Use it when you need state-suffixed props
+(`"label.stateName": "..."`) or to reuse a condition across multiple widgets via
+`include`/`exclude`. Currently supported: `"states"`, `"string-interpolation"`.
+
+**Input:** `{ concept }` - one of `"states"`, `"string-interpolation"`
+
+## Library usage
+
+The package also exports all tools as plain functions, so you can call them directly
+from Node.js apps, scripts, or other libraries without running an MCP server.
+
+```bash
+npm install @golemui/gui-mcp
+```
+
+```ts
+import {
+  validateFormDefinition,
+  generateFromJsonSchema,
+  generateFromOpenapi,
+  getWidgetSpec,
+  getConcept,
+} from '@golemui/gui-mcp';
+
+// Validate a form definition
+const result = validateFormDefinition({ formDefinition: myForm });
+if (!result.valid) console.error(result.errors);
+
+// Generate a form from a JSON Schema
+const { form, unmapped } = generateFromJsonSchema({ jsonSchema: mySchema });
+
+// Generate a form from an OpenAPI spec
+const { form } = await generateFromOpenapi({
+  documentUrl: 'https://example.com/openapi.json',
+  operation: 'POST /users',
+});
+```
+
+The tool descriptor objects (`VALIDATE_FORM_DEFINITION_TOOL`, `GENERATE_FROM_JSON_SCHEMA_TOOL`, ...)
+are also exported if you want to register the tools in your own MCP server.
+
 ## How it stays accurate
 
 The server ships a frozen snapshot of the GolemUI JSON Schemas inside its npm package,
@@ -97,7 +141,7 @@ _grounding layer_ the host IDE's model calls into.
 
 ### Interactive testing with MCP Inspector
 
-Start the MCP server and open a local web UI at http://localhost:5173
+Start the MCP server and open a local web UI at <http://localhost:5173>
 
 ```bash
 npm run start:mcp
@@ -105,17 +149,17 @@ npm run start:mcp
 
 To use the server from within Claude Code conversations, register with local Claude Code:
 
-#### With the Calude code CLI
+#### With the Claude code CLI
 
 ```bash
-claude mcp add golemui-local -- node /Users/{USER}/{...}/golem/golemui/dist/libs/gui/mcp/index.js
+claude mcp add golemui-local -- node /Users/{USER}/{...}/golem/golemui/dist/libs/gui/mcp/cli.js
 ```
 
 Then restart or reload the session. The tools appear in Claude's tool list.
 
 Remove with claude mcp remove golemui-local when done.
 
-#### With the Calude code extension
+#### With the Claude code extension
 
 Create or edit the project-level MCP config at .mcp.json in the workspace root:
 
@@ -124,7 +168,7 @@ Create or edit the project-level MCP config at .mcp.json in the workspace root:
   "mcpServers": {
     "golemui-local": {
       "command": "node",
-      "args": ["/Users/{USER}/{...}/golem/golemui/dist/libs/gui/mcp/index.js"]
+      "args": ["/Users/{USER}/{...}/golem/golemui/dist/libs/gui/mcp/cli.js"]
     }
   }
 }

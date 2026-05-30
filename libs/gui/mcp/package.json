@@ -3,21 +3,22 @@
   "version": "0.0.0",
   "description": "Model Context Protocol server for GolemUI — gives AI coding assistants deterministic schema validation and form generation for GolemUI form definitions.",
   "type": "module",
-  "main": "./index.js",
-  "module": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./lib.js",
+  "module": "./lib.js",
+  "types": "./lib.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.js"
+      "types": "./lib.d.ts",
+      "import": "./lib.js"
     }
   },
   "bin": {
-    "golemui-mcp": "./index.js"
+    "golemui-mcp": "./cli.js"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
+    "lib.js",
+    "lib.d.ts",
+    "cli.js",
     "*.md"
   ],
   "keywords": [

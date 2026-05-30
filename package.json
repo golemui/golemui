@@ -15,7 +15,7 @@
     "start:lit": "nx run lit-playground:serve",
     "start:react": "nx run react-playground:serve",
     "start:vue": "nx run vue-playground:serve",
-    "start:mcp": "npx nx run gui-mcp:build && npx @modelcontextprotocol/inspector node dist/libs/gui/mcp/index.js",
+    "start:mcp": "npx nx run gui-mcp:build && npx @modelcontextprotocol/inspector node dist/libs/gui/mcp/cli.js",
     "test:angular": "nx run gui-angular:component-test --watch",
     "test:lit": "nx run gui-lit:component-test --watch",
     "test:react": "nx run gui-react:component-test --watch",
@@ -27,7 +27,7 @@
     "build:libs": "npx nx run-many --target=build --projects=libs/**/*",
     "build:styles": "sh ./tools/build-sass.sh",
     "cz:breaking": "npm run precz && czg break",
-"release": "npm run build:libs && npm run build:styles && tsx tools/release.ts"
+    "release": "npm run build:libs && npm run build:styles && tsx tools/release.ts"
   },
   "private": true,
   "dependencies": {
