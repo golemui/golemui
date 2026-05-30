@@ -1,3 +1,13 @@
+## 0.16.1 (2026-05-30)
+
+### 🚀 Features
+
+- **mcp:** expose tool functions as an importable library alongside the CLI ([#146](https://github.com/golemui/golemui/pull/146))
+
+### ❤️ Thank You
+
+- Mud Scientist
+
 ## 0.16.0 (2026-05-30)
 
 ### 🚀 Features
