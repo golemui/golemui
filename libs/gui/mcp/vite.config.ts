@@ -35,6 +35,8 @@ export default defineConfig(() => ({
       output: {
         // shebang only on the CLI bundle
         banner: (chunk) => (chunk.name === 'cli' ? '#!/usr/bin/env node' : ''),
+        // deterministic chunk names - no content hash, easier to inspect
+        chunkFileNames: '[name].js',
       },
     },
   },
