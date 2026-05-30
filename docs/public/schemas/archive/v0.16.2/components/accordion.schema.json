@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/archive/v0.16.2/components/accordion.schema.json",
+  "title": "Accordion Widget",
+  "type": "object",
+  "$defs": {
+    "singleOpenProp": {
+      "type": "boolean",
+      "description": "When true, opening one section automatically closes all others. Defaults to false."
+    },
+    "defaultOpenProp": {
+      "type": "object",
+      "description": "Map of section UIDs to booleans indicating which sections are open on initial render",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "minProperties": 1
+    },
+    "renderModeProp": {
+      "description": "Controls when section content is rendered: `all` keeps all sections in the DOM, `activeOnly` unmounts inactive ones",
+      "enum": [
+        "all",
+        "activeOnly"
+      ]
+    },
+    "sectionsProp": {
+      "type": "array",
+      "description": "Ordered list of section definitions. Each section's `uid` must match the widget UIDs used in `children`.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "$ref": "../common.schema.json#/$defs/localizable"
+          },
+          "uid": {
+            "type": "string",
+            "description": "Unique identifier linking this section definition to its widgets in `children`"
+          }
+        },
+        "required": [
+          "label",
+          "uid"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "layout"
+    },
+    "type": {
+      "const": "accordion"
+    },
+    "on": {
+      "$ref": "../common.schema.json#/$defs/on"
+    },
+    "children": {
+      "type": "array",
+      "description": "Flat list of widgets belonging to all sections. Each widget must have a `uid` matching one of the section UIDs in `props.sections`.",
+      "minItems": 1,
+      "items": {
+        "$ref": "../form.schema.json#/$defs/formWidget"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "singleOpen": {
+          "$ref": "#/$defs/singleOpenProp"
+        },
+        "defaultOpen": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "renderMode": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "sections": {
+          "$ref": "#/$defs/sectionsProp"
+        }
+      },
+      "required": [
+        "sections"
+      ],
+      "patternProperties": {
+        "^singleOpen\\.[^.]+$": {
+          "$ref": "#/$defs/singleOpenProp"
+        },
+        "^defaultOpen\\.[^.]+$": {
+          "$ref": "#/$defs/defaultOpenProp"
+        },
+        "^renderMode\\.[^.]+$": {
+          "$ref": "#/$defs/renderModeProp"
+        },
+        "^sections\\.[^.]+$": {
+          "$ref": "#/$defs/sectionsProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "kind",
+    "type",
+    "children",
+    "props"
+  ],
+  "unevaluatedProperties": false
+}
