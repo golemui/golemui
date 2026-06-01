@@ -325,7 +325,10 @@ export const GET_WIDGET_SPEC_TOOL = {
         type: 'string' as const,
         description:
           'The widget `type` constant. One of: ' +
-          Object.keys(COMPONENT_SCHEMAS).sort().map((t) => `\`${t}\``).join(', ') +
+          Object.keys(COMPONENT_SCHEMAS)
+            .sort()
+            .map((t) => `\`${t}\``)
+            .join(', ') +
           '.',
       },
     },

@@ -370,9 +370,7 @@ export class GuiRangeCalendar extends AbstractCalendar {
 
   private onPillClickEvent = (e: CustomEvent<GuiPillEventDetail>) => {
     const sorted = this.getSortedPills();
-    const range = sorted.find(
-      (pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key,
-    );
+    const range = sorted.find((pill) => `${pill.start}-${pill.end ?? pill.start}` === e.detail.key);
     if (range) this.navigateToDate(range.start);
   };
 
@@ -402,7 +400,6 @@ export class GuiRangeCalendar extends AbstractCalendar {
       this._currentDate = date;
     }
   }
-
 }
 
 declare global {

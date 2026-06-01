@@ -55,8 +55,7 @@ declare module 'react' {
       'gui-password': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiPassword>;
 
-      'gui-pills': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiPills>;
+      'gui-pills': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & Partial<GuiPills>;
 
       'gui-radiogroup': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiRadiogroup>;

@@ -210,7 +210,9 @@ DX engine wiring container. Holds `widgetLoaders`, `itemRenderers`, `dependencie
 
 ```ts
 const formConfig = {
-  widgetLoaders: { productCard: async () => (await import('./ProductCard')).ProductCard },
+  widgetLoaders: {
+    productCard: async () => (await import('./ProductCard')).ProductCard,
+  },
   itemRenderers: { countryRenderer },
   dependencies: { markdown: { parse: snarkdown } },
   validateOn: 'eager',

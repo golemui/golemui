@@ -37,15 +37,12 @@ export type CurrencyItem = { code: string; symbol: string; name: string };
       color: var(--gui-text-default);
     }
     .currency-item.is-focused {
-      box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gui-intent-primary-hover) 50%, transparent);
+      box-shadow: inset 0 0 0 2px
+        color-mix(in srgb, var(--gui-intent-primary-hover) 50%, transparent);
     }
   `,
   template: `
-    <div
-      class="currency-item"
-      [class.is-selected]="selected()"
-      [class.is-focused]="focused()"
-    >
+    <div class="currency-item" [class.is-selected]="selected()" [class.is-focused]="focused()">
       <span class="currency-item__symbol">{{ template().symbol }}</span>
       <span class="currency-item__code">{{ template().code }}</span>
       <span class="currency-item__name">{{ template().name }}</span>

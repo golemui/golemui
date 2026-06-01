@@ -15,22 +15,24 @@ String interpolation lets you embed live values directly in widget text props us
   ```ts
   import { gui } from '@golemui/gui-shared';
 
-  gui.displays.alert({
-    uid: 'greeting',
-    text: "Hello {{$form.firstName}}, you have {{$formIsInvalid ? 'errors' : 'no errors'}}.",
-  });
-  ```
-  </Fragment>
-  <Fragment slot="json">
-  ```json
-  {
-    "kind": "display",
-    "type": "alert",
-    "props": {
-      "text": "Hello {{$form.firstName}}, you have {{$formIsInvalid ? 'errors' : 'no errors'}}."
-    }
+gui.displays.alert({
+uid: 'greeting',
+text: "Hello {{$form.firstName}}, you have {{$formIsInvalid ? 'errors' : 'no errors'}}.",
+});
+
+````
+</Fragment>
+<Fragment slot="json">
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": "Hello {{$form.firstName}}, you have {{$formIsInvalid ? 'errors' : 'no errors'}}."
   }
-  ```
+}
+````
+
   </Fragment>
 </DslTabs>
 
@@ -70,40 +72,42 @@ Slots support a safe subset of JavaScript — no side effects, no function calls
   ```ts
   import { gui } from '@golemui/gui-shared';
 
-  const formDef = [
-    gui.displays.alert({ uid: 'result', text: 'Next item: {{$form.count + 1}}' }),
-    gui.displays.alert({ uid: 'name', text: "Full name: {{$form.firstName + ' ' + $form.lastName}}" }),
-    gui.displays.alert({ uid: 'role', text: "Role: {{$meta.isVip ? 'VIP' : 'Guest'}}" }),
-  ];
-  ```
-  </Fragment>
-  <Fragment slot="json">
-  ```json
-  {
-    "form": [
-      {
-        "uid": "result",
-        "kind": "display",
-        "type": "alert",
-        "props": { "text": "Next item: {{$form.count + 1}}" }
-      },
-      {
-        "uid": "name",
-        "kind": "display",
-        "type": "alert",
-        "props": {
-          "text": "Full name: {{$form.firstName + ' ' + $form.lastName}}"
-        }
-      },
-      {
-        "uid": "role",
-        "kind": "display",
-        "type": "alert",
-        "props": { "text": "Role: {{$meta.isVip ? 'VIP' : 'Guest'}}" }
+const formDef = [
+gui.displays.alert({ uid: 'result', text: 'Next item: {{$form.count + 1}}' }),
+gui.displays.alert({ uid: 'name', text: "Full name: {{$form.firstName + ' ' + $form.lastName}}" }),
+gui.displays.alert({ uid: 'role', text: "Role: {{$meta.isVip ? 'VIP' : 'Guest'}}" }),
+];
+
+````
+</Fragment>
+<Fragment slot="json">
+```json
+{
+  "form": [
+    {
+      "uid": "result",
+      "kind": "display",
+      "type": "alert",
+      "props": { "text": "Next item: {{$form.count + 1}}" }
+    },
+    {
+      "uid": "name",
+      "kind": "display",
+      "type": "alert",
+      "props": {
+        "text": "Full name: {{$form.firstName + ' ' + $form.lastName}}"
       }
-    ]
-  }
-  ```
+    },
+    {
+      "uid": "role",
+      "kind": "display",
+      "type": "alert",
+      "props": { "text": "Role: {{$meta.isVip ? 'VIP' : 'Guest'}}" }
+    }
+  ]
+}
+````
+
   </Fragment>
 </DslTabs>
 
@@ -120,22 +124,24 @@ Use `$errors` and `$formIsInvalid` to reflect live validation feedback inline:
   ```ts
   import { gui } from '@golemui/gui-shared';
 
-  gui.displays.alert({
-    uid: 'validation_status',
-    text: 'Form valid: {{!$formIsInvalid}} | Username error: {{$errors.userName}}',
-  });
-  ```
-  </Fragment>
-  <Fragment slot="json">
-  ```json
-  {
-    "kind": "display",
-    "type": "alert",
-    "props": {
-      "text": "Form valid: {{!$formIsInvalid}} | Username error: {{$errors.userName}}"
-    }
+gui.displays.alert({
+uid: 'validation_status',
+text: 'Form valid: {{!$formIsInvalid}} | Username error: {{$errors.userName}}',
+});
+
+````
+</Fragment>
+<Fragment slot="json">
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": "Form valid: {{!$formIsInvalid}} | Username error: {{$errors.userName}}"
   }
-  ```
+}
+````
+
   </Fragment>
 </DslTabs>
 

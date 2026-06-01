@@ -65,10 +65,7 @@ export class AppElement extends LitElement {
       <div>
         ${this.error ? html`<p class="error">${this.error}</p>` : null}
 
-        <gui-form
-          .config=${this.config}
-          @formSubmit=${this.onFormSubmit}
-        ></gui-form>
+        <gui-form .config=${this.config} @formSubmit=${this.onFormSubmit}></gui-form>
       </div>
     `;
   }

@@ -7,10 +7,7 @@ defineProps<ListItemRendererProps<CurrencyItem>>();
 </script>
 
 <template>
-  <div
-    class="currency-item"
-    :class="{ 'is-selected': !!selected, 'is-focused': !!focused }"
-  >
+  <div class="currency-item" :class="{ 'is-selected': !!selected, 'is-focused': !!focused }">
     <span class="currency-item__symbol">{{ template?.symbol }}</span>
     <span class="currency-item__code">{{ template?.code }}</span>
     <span class="currency-item__name">{{ template?.name }}</span>

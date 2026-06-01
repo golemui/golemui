@@ -73,8 +73,7 @@ export async function generateFromOpenapi(
 
   const { formDefinition, unmapped } = jsonSchemaToGui(assembled, {
     submitAction: input.submitAction ?? true,
-    submitLabel:
-      input.submitLabel ?? defaultSubmitLabel(method, operation),
+    submitLabel: input.submitLabel ?? defaultSubmitLabel(method, operation),
   });
 
   const validation = validateFormDefinition({ formDefinition });
@@ -90,7 +89,9 @@ export async function generateFromOpenapi(
 async function fetchDoc(url: string): Promise<OpenAPIDoc> {
   const res = await fetch(url);
   if (!res.ok) {
-    throw new Error(`Failed to fetch OpenAPI document from ${url}: ${res.status} ${res.statusText}`);
+    throw new Error(
+      `Failed to fetch OpenAPI document from ${url}: ${res.status} ${res.statusText}`,
+    );
   }
   const text = await res.text();
   try {
@@ -197,7 +198,7 @@ export const GENERATE_FROM_OPENAPI_TOOL = {
   name: 'generate_from_openapi',
   description:
     'Generate a GolemUI form for a specific OpenAPI 3.x operation (e.g. "POST /users"). ' +
-    'Resolves the operation\'s JSON request body, dereferences `$ref`s, then maps it to a ' +
+    "Resolves the operation's JSON request body, dereferences `$ref`s, then maps it to a " +
     'form definition that is validated against the GolemUI JSON Schemas before being returned, ' +
     'so it is guaranteed syntactically correct. Falls back to operation parameters when no ' +
     'request body is present. Anything the mapper cannot handle is reported in `unmapped` rather ' +
@@ -213,7 +214,8 @@ export const GENERATE_FROM_OPENAPI_TOOL = {
       document: {
         type: 'object' as const,
         additionalProperties: true,
-        description: 'Parsed OpenAPI document (JSON object). Either this or `documentUrl` is required.',
+        description:
+          'Parsed OpenAPI document (JSON object). Either this or `documentUrl` is required.',
       },
       operation: {
         type: 'string' as const,

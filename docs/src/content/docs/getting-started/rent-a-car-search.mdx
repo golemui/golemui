@@ -139,6 +139,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
       return <GuiForm config={config} formEvent={handleFormEvent} />;
     }
     ```
+
   </Fragment>
   <Fragment slot="angular">
     ```ts
@@ -179,6 +180,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="lit">
     ```ts
@@ -223,6 +225,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
       }
     }
     ```
+
   </Fragment>
   <Fragment slot="vue">
     ```vue
@@ -255,6 +258,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
       <GuiForm :config="config" @form-event="handleFormEvent" />
     </template>
     ```
+
   </Fragment>
   <Fragment slot="vanilla">
     ```js
@@ -285,6 +289,7 @@ Define a `handleFormEvent` handler that matches on the event name, calls `search
     form.config = config;
     form.addEventListener('formEvent', (e) => handleFormEvent(e.detail));
     ```
+
   </Fragment>
 </IntegrationTabs>
 

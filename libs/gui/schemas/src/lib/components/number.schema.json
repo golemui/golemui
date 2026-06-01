@@ -133,10 +133,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

@@ -467,38 +467,40 @@ The `params` field in a `Localizable` shape accepts **bare expressions** alongsi
   ```ts
   import { gui } from '@golemui/gui-shared';
 
-  gui.displays.alert({
-    uid: 'greeting',
-    text: {
-      key: 'user.greeting',
-      params: {
-        hello: 'Hola',
-        fullName: "$form.firstName + ' ' + $form.lastName",
+gui.displays.alert({
+uid: 'greeting',
+text: {
+key: 'user.greeting',
+params: {
+hello: 'Hola',
+fullName: "$form.firstName + ' ' + $form.lastName",
         n: '$form.count + 1',
-        status: '$meta.connectionStatus',
-      },
-    },
-  });
-  ```
-  </Fragment> 
-  <Fragment slot="json">
-  ```json
-  {
-    "kind": "display",
-    "type": "alert",
-    "props": {
-      "text": {
-        "key": "user.greeting",
-        "params": {
-          "hello": "Hola",
-          "fullName": "$form.firstName + ' ' + $form.lastName",
-          "n": "$form.count + 1",
-          "status": "$meta.connectionStatus"
-        }
+status: '$meta.connectionStatus',
+},
+},
+});
+
+````
+</Fragment>
+<Fragment slot="json">
+```json
+{
+  "kind": "display",
+  "type": "alert",
+  "props": {
+    "text": {
+      "key": "user.greeting",
+      "params": {
+        "hello": "Hola",
+        "fullName": "$form.firstName + ' ' + $form.lastName",
+        "n": "$form.count + 1",
+        "status": "$meta.connectionStatus"
       }
     }
   }
-  ```
+}
+````
+
   </Fragment>
 </DslTabs>
 

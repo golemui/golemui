@@ -43,17 +43,17 @@ shown to the left of the input, and the value bound at the widget's `path` is a 
 
 Use these `props` to customize your Tags widget.
 
-| prop              | type                                              | value                                                                                                       |
-| ----------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `placeholder`     | string                                            | Placeholder text shown in the input when empty                                                              |
-| `hint`            | string                                            | A description displayed below the row                                                                       |
-| `icon`            | string                                            | CSS class string for a leading icon (rendered to the left of the pills)                                     |
-| `separators`      | `('Enter' \| ',' \| 'Tab' \| 'blur' \| string)[]` | Triggers that commit the current draft as a new chip. Defaults to `['Enter', ',', 'Tab', 'blur']`           |
-| `allowDuplicates` | boolean                                           | When `false`, typing an existing tag is silently ignored. Defaults to `true`                                |
-| `trim`            | boolean                                           | When `true` (default), whitespace is trimmed from each value before committing                              |
-| `limit`           | number                                            | Soft cap on the number of chips. The widget stops accepting new chips at the limit (no error)               |
-| `removeAriaLabel` | string                                            | ARIA label prefix used on each chip's remove button. Defaults to `Remove tag`                               |
-| `removeIcon`      | string                                            | CSS class string for a custom remove-icon. When omitted, a built-in `×` glyph is rendered                   |
+| prop              | type                                              | value                                                                                             |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `placeholder`     | string                                            | Placeholder text shown in the input when empty                                                    |
+| `hint`            | string                                            | A description displayed below the row                                                             |
+| `icon`            | string                                            | CSS class string for a leading icon (rendered to the left of the pills)                           |
+| `separators`      | `('Enter' \| ',' \| 'Tab' \| 'blur' \| string)[]` | Triggers that commit the current draft as a new chip. Defaults to `['Enter', ',', 'Tab', 'blur']` |
+| `allowDuplicates` | boolean                                           | When `false`, typing an existing tag is silently ignored. Defaults to `true`                      |
+| `trim`            | boolean                                           | When `true` (default), whitespace is trimmed from each value before committing                    |
+| `limit`           | number                                            | Soft cap on the number of chips. The widget stops accepting new chips at the limit (no error)     |
+| `removeAriaLabel` | string                                            | ARIA label prefix used on each chip's remove button. Defaults to `Remove tag`                     |
+| `removeIcon`      | string                                            | CSS class string for a custom remove-icon. When omitted, a built-in `×` glyph is rendered         |
 
 ### Placeholder
 
@@ -143,18 +143,18 @@ a [Localizable](/i18n/) for i18n.
 The widget keeps the **input as the single tab stop**. Pills are reachable from the input
 via arrow keys, mirroring chip-input conventions in Gmail recipients and MUI Autocomplete.
 
-| Key                                  | Action                                                                              |
-| ------------------------------------ | ----------------------------------------------------------------------------------- |
-| `Enter` / `,` (on input)             | Commit the current draft as a new chip                                              |
-| `Tab` (on input, non-empty draft)    | Commit the current draft, then leave the widget                                     |
-| `Escape` (on input)                  | Clear the current draft without committing                                          |
-| `← Arrow` (caret at start of input)  | Enter the pill list and focus the last pill (opens the dropdown in compact mode)    |
-| `Backspace` (empty input)            | Focus the last pill (does not delete it)                                            |
-| `← Arrow` / `→ Arrow` (pill focused) | Navigate between pills. `→` past the last pill returns focus to the input           |
-| `Home` / `End` (pill focused)        | Focus the first / last pill                                                         |
-| `Delete` / `Backspace` (pill focused)| Remove the focused pill, then focus the next pill, else the previous, else the input |
-| `↑ Arrow` / `↓ Arrow` (pill in dropdown) | Navigate the dropdown list when the count bubble is open                        |
-| `Escape` (pill in dropdown)          | Close the dropdown and return focus to the input                                    |
+| Key                                      | Action                                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| `Enter` / `,` (on input)                 | Commit the current draft as a new chip                                               |
+| `Tab` (on input, non-empty draft)        | Commit the current draft, then leave the widget                                      |
+| `Escape` (on input)                      | Clear the current draft without committing                                           |
+| `← Arrow` (caret at start of input)      | Enter the pill list and focus the last pill (opens the dropdown in compact mode)     |
+| `Backspace` (empty input)                | Focus the last pill (does not delete it)                                             |
+| `← Arrow` / `→ Arrow` (pill focused)     | Navigate between pills. `→` past the last pill returns focus to the input            |
+| `Home` / `End` (pill focused)            | Focus the first / last pill                                                          |
+| `Delete` / `Backspace` (pill focused)    | Remove the focused pill, then focus the next pill, else the previous, else the input |
+| `↑ Arrow` / `↓ Arrow` (pill in dropdown) | Navigate the dropdown list when the count bubble is open                             |
+| `Escape` (pill in dropdown)              | Close the dropdown and return focus to the input                                     |
 
 ## Accessibility
 
@@ -177,21 +177,21 @@ Tags can be styled as explained in the [Styling Guide](/styling/overview/).
 The chip and count-badge visuals are shared with the Range Calendar / Range Date Input
 pills, so they pick up the same intent / spacing / radius tokens.
 
-| CSS Variable             | Description                                |
-| ------------------------ | ------------------------------------------ |
-| `--gui-color-border`     | Group border colour                        |
-| `--gui-color-bg`         | Group background colour and scroll-fade    |
-| `--gui-color-fg`         | Input text colour                          |
-| `--gui-color-primary`    | Group focus-ring colour                    |
-| `--gui-color-error`      | Group border colour when invalid           |
-| `--gui-intent-primary`   | Chip and count-bubble background colour    |
-| `--gui-color-white`      | Chip text / remove-icon colour             |
-| `--gui-radius-md`        | Chip corner radius                         |
-| `--gui-radius-full`      | Count-bubble corner radius                 |
-| `--gui-space-1`          | Chip vertical padding                      |
-| `--gui-space-2`          | Row gap between chips                      |
-| `--gui-space-3`          | Gap between chip text and remove button    |
-| `--gui-font-xs`          | Chip text font-size                        |
+| CSS Variable           | Description                             |
+| ---------------------- | --------------------------------------- |
+| `--gui-color-border`   | Group border colour                     |
+| `--gui-color-bg`       | Group background colour and scroll-fade |
+| `--gui-color-fg`       | Input text colour                       |
+| `--gui-color-primary`  | Group focus-ring colour                 |
+| `--gui-color-error`    | Group border colour when invalid        |
+| `--gui-intent-primary` | Chip and count-bubble background colour |
+| `--gui-color-white`    | Chip text / remove-icon colour          |
+| `--gui-radius-md`      | Chip corner radius                      |
+| `--gui-radius-full`    | Count-bubble corner radius              |
+| `--gui-space-1`        | Chip vertical padding                   |
+| `--gui-space-2`        | Row gap between chips                   |
+| `--gui-space-3`        | Gap between chip text and remove button |
+| `--gui-font-xs`        | Chip text font-size                     |
 
 ### Anatomy
 

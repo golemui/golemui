@@ -117,7 +117,7 @@ const STAGE_PROMPT_CODE: Record<Stage, string> = {
     'Code for the pets toggle. A plain boolean field, conditionally included once currency is set.',
   petsToggled: 'Code for the date picker. ISO dates, with optional min/max and disabled ranges.',
   dateEntered:
-    'And the submit button. actionType: \'submit\' validates the form and emits through formSubmit.',
+    "And the submit button. actionType: 'submit' validates the form and emits through formSubmit.",
   submitted: 'That was the whole form.',
 };
 
@@ -204,7 +204,7 @@ const TOKEN_INFO: Record<Token, TokenInfo> = {
     title: 'formSubmit',
     base: () =>
       html`Add a submit button with <code>actionType: 'submit'</code>. It validates the form on
-      click and emits through the <code>formSubmit</code> output — no event name needed.`,
+        click and emits through the <code>formSubmit</code> output — no event name needed.`,
     context: {
       dateEntered: () =>
         html`Wire <code>formSubmit</code> on your component to receive the validated form data. The
@@ -658,7 +658,10 @@ export class FormElement extends LitElement {
   }
 
   private renderSubmitCode() {
-    return html`${this.renderToken('submit', "gui.actions.button({ label: 'Submit', actionType: 'submit' })")},`;
+    return html`${this.renderToken(
+      'submit',
+      "gui.actions.button({ label: 'Submit', actionType: 'submit' })",
+    )},`;
   }
 
   private renderCurrentCode() {

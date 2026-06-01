@@ -20,11 +20,7 @@
       "type": "array",
       "description": "Items are either primitive values (string/number) or arbitrary record objects (paired with `labelField`/`valueField`/`itemRenderer` for custom rendering). Note: widget templates inside items are only supported on `repeater`, not here.",
       "items": {
-        "type": [
-          "string",
-          "number",
-          "object"
-        ]
+        "type": ["string", "number", "object"]
       }
     },
     "labelFieldProp": {
@@ -138,10 +134,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

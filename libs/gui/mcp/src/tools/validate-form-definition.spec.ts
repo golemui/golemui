@@ -124,7 +124,9 @@ describe('validate_form_definition', () => {
         ],
       },
     });
-    expect(result.expressionWarnings.filter((w) => w.message.includes('does not reference'))).toEqual([]);
+    expect(
+      result.expressionWarnings.filter((w) => w.message.includes('does not reference')),
+    ).toEqual([]);
   });
 
   it('does not flag !$formIsInvalid (negation of a boolean is valid)', () => {
@@ -454,9 +456,7 @@ describe('validate_form_definition', () => {
       expect(has(r, /comparison or arithmetic/)).toBe(false);
     });
     it('does not flag a guarded comparison', () => {
-      const r = validateFormDefinition(
-        formWith('$form.size !== undefined && $form.size > 180'),
-      );
+      const r = validateFormDefinition(formWith('$form.size !== undefined && $form.size > 180'));
       expect(has(r, /comparison or arithmetic/)).toBe(false);
     });
   });

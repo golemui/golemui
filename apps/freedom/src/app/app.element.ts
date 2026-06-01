@@ -293,8 +293,7 @@ function fieldLineJson(field: FieldKey, origin: Origin): unknown {
   }
 
   if (type === 'datepicker') {
-    if (origin === 'golem')
-      return { type: 'datePicker', path: field, label };
+    if (origin === 'golem') return { type: 'datePicker', path: field, label };
     return {
       type: 'custom',
       widget:
@@ -359,8 +358,7 @@ function fieldLineSource(field: FieldKey, origin: Origin): string {
   }
 
   if (type === 'datepicker') {
-    if (origin === 'golem')
-      return `gui.inputs.datePicker('${field}', { label: 'Birthday' }),`;
+    if (origin === 'golem') return `gui.inputs.datePicker('${field}', { label: 'Birthday' }),`;
     if (origin === 'material')
       return `gui.inputs.custom('matDatePicker', '${field}', { label: 'Birthday' }),`;
     if (origin === 'shoelace')

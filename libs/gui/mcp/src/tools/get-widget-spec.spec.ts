@@ -15,16 +15,13 @@ describe('get_widget_spec', () => {
     expect(() => getWidgetSpec({ widgetType: 'nope' })).toThrow(/textinput/);
   });
 
-  it.each(listWidgetTypes())(
-    'example for %s validates against the form schema',
-    (widgetType) => {
-      const r = getWidgetSpec({ widgetType });
-      const result = validateFormDefinition({ formDefinition: { form: [r.example] } });
-      if (!result.valid) {
-        // eslint-disable-next-line no-console
-        console.error(widgetType, JSON.stringify(result.errors, null, 2));
-      }
-      expect(result.valid).toBe(true);
-    },
-  );
+  it.each(listWidgetTypes())('example for %s validates against the form schema', (widgetType) => {
+    const r = getWidgetSpec({ widgetType });
+    const result = validateFormDefinition({ formDefinition: { form: [r.example] } });
+    if (!result.valid) {
+      // eslint-disable-next-line no-console
+      console.error(widgetType, JSON.stringify(result.errors, null, 2));
+    }
+    expect(result.valid).toBe(true);
+  });
 });

@@ -34,28 +34,15 @@
     },
     "dayFormatProp": {
       "description": "Formatting of day numbers in the calendar grid (`numeric` = 1–31, `2-digit` = 01–31)",
-      "enum": [
-        "numeric",
-        "2-digit"
-      ]
+      "enum": ["numeric", "2-digit"]
     },
     "weekdayFormatProp": {
       "description": "Formatting of weekday column headers (`short` = Mon, `long` = Monday, `narrow` = M)",
-      "enum": [
-        "short",
-        "long",
-        "narrow"
-      ]
+      "enum": ["short", "long", "narrow"]
     },
     "monthFormatProp": {
       "description": "Formatting of the month heading (`long` = January, `short` = Jan, `narrow` = J, `numeric` = 1, `2-digit` = 01)",
-      "enum": [
-        "numeric",
-        "2-digit",
-        "long",
-        "short",
-        "narrow"
-      ]
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
     },
     "minDateProp": {
       "type": "string",
@@ -208,10 +195,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }

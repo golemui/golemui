@@ -70,7 +70,9 @@ export function updateTemplateVersions(version: string, dryRun: boolean): string
   if (!dryRun && updated.length > 0) {
     try {
       execSync(`git add ${TEMPLATES_DIR}`, { stdio: 'inherit' });
-      execSync(`git commit -m "chore: bump template versions to v${version}"`, { stdio: 'inherit' });
+      execSync(`git commit -m "chore: bump template versions to v${version}"`, {
+        stdio: 'inherit',
+      });
     } catch (e) {
       console.warn(`Template version commit skipped or failed: ${(e as Error).message}`);
     }

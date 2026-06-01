@@ -20,11 +20,7 @@
       "type": "array",
       "description": "Options may be primitive values (string/number), structured `{ label, value }` records, or arbitrary objects (paired with `labelField`/`valueField` for custom rendering).",
       "items": {
-        "type": [
-          "string",
-          "number",
-          "object"
-        ]
+        "type": ["string", "number", "object"]
       }
     },
     "labelFieldProp": {
@@ -37,10 +33,7 @@
     },
     "directionProp": {
       "description": "Layout direction for the radio buttons (`row` = horizontal, `column` = vertical). Defaults to `column`.",
-      "enum": [
-        "row",
-        "column"
-      ],
+      "enum": ["row", "column"],
       "default": "column"
     }
   },
@@ -127,10 +120,6 @@
       "$ref": "../validators.schema.json#/$defs/validator"
     }
   },
-  "required": [
-    "kind",
-    "type",
-    "path"
-  ],
+  "required": ["kind", "type", "path"],
   "unevaluatedProperties": false
 }
